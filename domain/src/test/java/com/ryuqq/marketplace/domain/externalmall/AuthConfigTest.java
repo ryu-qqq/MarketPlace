@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.domain.externalmall;
 
+import com.ryuqq.marketplace.domain.externalmall.fixture.AuthConfigFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,13 +13,8 @@ class AuthConfigTest {
     @Test
     @DisplayName("OcoAuthConfig 생성 - 유효한 데이터")
     void shouldCreateOcoAuthConfig() {
-        // Given
-        String clientId = "test-client-id";
-        String clientSecret = "test-client-secret";
-        String apiKey = "test-api-key";
-
         // When
-        AuthConfig authConfig = new OcoAuthConfig(clientId, clientSecret, apiKey);
+        AuthConfig authConfig = AuthConfigFixture.ocoAuthConfig();
 
         // Then
         assertThat(authConfig).isNotNull();
@@ -70,10 +66,10 @@ class AuthConfigTest {
     @Test
     @DisplayName("AuthConfig는 sealed interface로 구현됨")
     void shouldBeSealedInterface() {
-        // Given
-        AuthConfig ocoAuthConfig = new OcoAuthConfig("client-id", "client-secret", "api-key");
+        // When
+        AuthConfig ocoAuthConfig = AuthConfigFixture.ocoAuthConfig();
 
-        // When & Then
+        // Then
         // Sealed interface는 허가된 구현체만 가능
         assertThat(ocoAuthConfig).isInstanceOf(AuthConfig.class);
     }
