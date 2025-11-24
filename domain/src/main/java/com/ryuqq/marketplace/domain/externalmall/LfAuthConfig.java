@@ -8,15 +8,15 @@ public record LfAuthConfig(
 ) implements AuthConfig {
 
     public LfAuthConfig {
-        validate(accessToken);
+        validateAccessToken(accessToken);
     }
 
     @Override
     public void validate() {
-        validate(accessToken);
+        validateAccessToken(accessToken);
     }
 
-    private static void validate(String accessToken) {
+    private static void validateAccessToken(String accessToken) {
         if (accessToken == null || accessToken.isBlank()) {
             throw new IllegalArgumentException("accessToken은 필수입니다");
         }

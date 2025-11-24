@@ -13,24 +13,31 @@ public record OcoAuthConfig(
      * OCO 인증 설정 생성자 (검증 포함)
      */
     public OcoAuthConfig {
-        validate(clientId, clientSecret, apiKey);
+        validateClientId(clientId);
+        validateClientSecret(clientSecret);
+        validateApiKey(apiKey);
     }
 
     @Override
     public void validate() {
-        validate(clientId, clientSecret, apiKey);
+        validateClientId(clientId);
+        validateClientSecret(clientSecret);
+        validateApiKey(apiKey);
     }
 
-    /**
-     * OCO 인증 설정 필드 검증
-     */
-    private static void validate(String clientId, String clientSecret, String apiKey) {
+    private static void validateClientId(String clientId) {
         if (clientId == null || clientId.isBlank()) {
             throw new IllegalArgumentException("clientId는 필수입니다");
         }
+    }
+
+    private static void validateClientSecret(String clientSecret) {
         if (clientSecret == null || clientSecret.isBlank()) {
             throw new IllegalArgumentException("clientSecret은 필수입니다");
         }
+    }
+
+    private static void validateApiKey(String apiKey) {
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalArgumentException("apiKey는 필수입니다");
         }

@@ -9,18 +9,23 @@ public record BuymaAuthConfig(
 ) implements AuthConfig {
 
     public BuymaAuthConfig {
-        validate(username, password);
+        validateUsername(username);
+        validatePassword(password);
     }
 
     @Override
     public void validate() {
-        validate(username, password);
+        validateUsername(username);
+        validatePassword(password);
     }
 
-    private static void validate(String username, String password) {
+    private static void validateUsername(String username) {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("username은 필수입니다");
         }
+    }
+
+    private static void validatePassword(String password) {
         if (password == null || password.isBlank()) {
             throw new IllegalArgumentException("password는 필수입니다");
         }
