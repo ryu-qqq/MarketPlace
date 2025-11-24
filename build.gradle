@@ -14,7 +14,7 @@ plugins {
 // Global Configuration
 // ========================================
 allprojects {
-    group = 'com.company.marketplace'
+    group = 'com.ryuqq.marketplace'
     version = '1.0.0-SNAPSHOT'
 
     repositories {

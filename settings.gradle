@@ -1,4 +1,4 @@
-rootProject.name = 'marketplace'
+rootProject.name = 'Marketplace'
 
 // ========================================
 // Core Modules (Hexagonal Architecture)
