@@ -120,6 +120,28 @@ class CategoryEventTest {
             assertThat(event1).isEqualTo(event2);
             assertThat(event1).isNotEqualTo(event3);
         }
+
+        @Test
+        @DisplayName("[성공] of() 팩토리 메서드로 이벤트 생성")
+        void of_ShouldCreateEvent() {
+            // Given
+            Long categoryId = 1L;
+            String code = "FASHION";
+            String name = "패션";
+            Instant before = Instant.now();
+
+            // When
+            CategoryCreatedEvent event = CategoryCreatedEvent.of(categoryId, code, name);
+
+            // Then
+            Instant after = Instant.now();
+            assertThat(event.categoryId()).isEqualTo(categoryId);
+            assertThat(event.code()).isEqualTo(code);
+            assertThat(event.name()).isEqualTo(name);
+            assertThat(event.occurredAt())
+                .isAfterOrEqualTo(before)
+                .isBeforeOrEqualTo(after);
+        }
     }
 
     // ==================== CategoryUpdatedEvent 테스트 ====================
@@ -193,6 +215,24 @@ class CategoryEventTest {
 
             assertThat(event1).isEqualTo(event2);
             assertThat(event1).isNotEqualTo(event3);
+        }
+
+        @Test
+        @DisplayName("[성공] of() 팩토리 메서드로 이벤트 생성")
+        void of_ShouldCreateEvent() {
+            // Given
+            Long categoryId = 1L;
+            Instant before = Instant.now();
+
+            // When
+            CategoryUpdatedEvent event = CategoryUpdatedEvent.of(categoryId);
+
+            // Then
+            Instant after = Instant.now();
+            assertThat(event.categoryId()).isEqualTo(categoryId);
+            assertThat(event.occurredAt())
+                .isAfterOrEqualTo(before)
+                .isBeforeOrEqualTo(after);
         }
     }
 
@@ -308,6 +348,28 @@ class CategoryEventTest {
 
             assertThat(event1).isEqualTo(event2);
             assertThat(event1).isNotEqualTo(event3);
+        }
+
+        @Test
+        @DisplayName("[성공] of() 팩토리 메서드로 이벤트 생성")
+        void of_ShouldCreateEvent() {
+            // Given
+            Long categoryId = 1L;
+            String oldStatus = "ACTIVE";
+            String newStatus = "INACTIVE";
+            Instant before = Instant.now();
+
+            // When
+            CategoryStatusChangedEvent event = CategoryStatusChangedEvent.of(categoryId, oldStatus, newStatus);
+
+            // Then
+            Instant after = Instant.now();
+            assertThat(event.categoryId()).isEqualTo(categoryId);
+            assertThat(event.oldStatus()).isEqualTo(oldStatus);
+            assertThat(event.newStatus()).isEqualTo(newStatus);
+            assertThat(event.occurredAt())
+                .isAfterOrEqualTo(before)
+                .isBeforeOrEqualTo(after);
         }
     }
 }
