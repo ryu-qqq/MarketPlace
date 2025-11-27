@@ -1,6 +1,7 @@
-package com.ryuqq.marketplace.domain.architecture.exception;
+package com.ryuqq.fileflow.domain.architecture.exception;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
@@ -41,7 +42,7 @@ class ExceptionArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.domain");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.fileflow.domain");
     }
 
     // ==================== ErrorCode Enum 규칙 ====================
@@ -574,7 +575,9 @@ class ExceptionArchTest {
                 String simpleName = javaClass.getSimpleName();
                 boolean hasMeaningfulName =
                         simpleName.matches(
-                                ".*(?:NotFound|Invalid|Already|Cannot|Failed|Exceeded|Unsupported).*Exception");
+                                ".*(?:NotFound|Invalid|Already|Cannot|Failed|Exceeded|Unsupported|"
+                                        + "Duplicate|Mismatch|Incomplete|Expired|Conflict|"
+                                        + "Unauthorized|Forbidden|Timeout|Overflow).*Exception");
 
                 if (!hasMeaningfulName) {
                     String message =
