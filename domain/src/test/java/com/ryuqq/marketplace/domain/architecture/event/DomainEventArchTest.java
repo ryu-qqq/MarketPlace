@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.domain.architecture.event;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -28,7 +29,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  *   <li>DomainEvent 인터페이스 구현 필수
  *   <li>Record 타입 필수 (불변성)
  *   <li>과거형 네이밍 (*edEvent, *dEvent)
- *   <li>occurredAt (LocalDateTime) 필드 필수
+ *   <li>occurredAt (Instant 또는 LocalDateTime) 필드 필수
  *   <li>domain.[bc].event 패키지에 위치
  *   <li>Lombok, JPA, Spring 금지
  *   <li>불변성 보장 (final fields)
@@ -165,7 +166,7 @@ class DomainEventArchTest {
 
     /** 규칙 4: Domain Event는 occurredAt 필드를 가져야 한다 */
     @Test
-    @DisplayName("[필수] Domain Event는 occurredAt (LocalDateTime) 필드를 가져야 한다")
+    @DisplayName("[필수] Domain Event는 occurredAt (Instant 또는 LocalDateTime) 필드를 가져야 한다")
     void domainEvents_ShouldHaveOccurredAtField() {
         ArchRule rule =
                 classes()
@@ -187,7 +188,7 @@ class DomainEventArchTest {
                         .doNotHaveSimpleName("DomainEvent")
                         .should(haveOccurredAtField())
                         .because(
-                                "Domain Event는 occurredAt (LocalDateTime) 필드를 가져야 합니다 (이벤트 발생 시각)");
+                                "Domain Event는 occurredAt (Instant 또는 LocalDateTime) 필드를 가져야 합니다 (이벤트 발생 시각)");
 
         rule.check(classes);
     }
@@ -435,21 +436,26 @@ class DomainEventArchTest {
      *
      * <p>DomainEvent는 occurredAt 필드를 직접 가지거나, occurredAt() 메서드를 제공해야 합니다. Record의 경우 다른 필드명(예:
      * completedAt)을 사용하고 occurredAt() 메서드로 반환할 수 있습니다.
+     *
+     * <p>시간 타입은 Instant 또는 LocalDateTime 모두 허용합니다.
      */
     private static ArchCondition<JavaClass> haveOccurredAtField() {
         return new ArchCondition<JavaClass>(
-                "have occurredAt field or method of type LocalDateTime") {
+                "have occurredAt field or method of type Instant or LocalDateTime") {
             @Override
             public void check(JavaClass javaClass, ConditionEvents events) {
-                // 1. occurredAt 필드가 있는지 확인
+                // 1. occurredAt 필드가 있는지 확인 (Instant 또는 LocalDateTime)
                 boolean hasOccurredAtField =
                         javaClass.getAllFields().stream()
                                 .anyMatch(
                                         field ->
                                                 field.getName().equals("occurredAt")
-                                                        && field.getRawType()
-                                                                .isEquivalentTo(
-                                                                        LocalDateTime.class));
+                                                        && (field.getRawType()
+                                                                        .isEquivalentTo(
+                                                                                LocalDateTime.class)
+                                                                || field.getRawType()
+                                                                        .isEquivalentTo(
+                                                                                Instant.class)));
 
                 // 2. occurredAt() 메서드가 있는지 확인 (Record에서 다른 필드를 반환할 수 있음)
                 boolean hasOccurredAtMethod =
@@ -457,15 +463,18 @@ class DomainEventArchTest {
                                 .anyMatch(
                                         method ->
                                                 method.getName().equals("occurredAt")
-                                                        && method.getRawReturnType()
-                                                                .isEquivalentTo(
-                                                                        LocalDateTime.class));
+                                                        && (method.getRawReturnType()
+                                                                        .isEquivalentTo(
+                                                                                LocalDateTime.class)
+                                                                || method.getRawReturnType()
+                                                                        .isEquivalentTo(
+                                                                                Instant.class)));
 
                 if (!hasOccurredAtField && !hasOccurredAtMethod) {
                     String message =
                             String.format(
                                     "Event %s does not have occurredAt field or method of type"
-                                            + " LocalDateTime",
+                                            + " Instant or LocalDateTime",
                                     javaClass.getName());
                     events.add(SimpleConditionEvent.violated(javaClass, message));
                 }

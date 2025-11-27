@@ -578,13 +578,15 @@ class ExceptionArchTest {
                         simpleName.matches(
                                 ".*(?:NotFound|Invalid|Already|Cannot|Failed|Exceeded|Unsupported|"
                                         + "Duplicate|Mismatch|Incomplete|Expired|Conflict|"
-                                        + "Unauthorized|Forbidden|Timeout|Overflow).*Exception");
+                                        + "Unauthorized|Forbidden|Timeout|Overflow|"
+                                        + "Blocked|Has).*Exception");
 
                 if (!hasMeaningfulName) {
                     String message =
                             String.format(
                                     "Exception %s should have a meaningful name (e.g.,"
-                                        + " OrderNotFoundException, InvalidOrderStatusException)",
+                                        + " OrderNotFoundException, InvalidOrderStatusException,"
+                                        + " BrandBlockedException, CategoryHasChildrenException)",
                                     javaClass.getName());
                     events.add(SimpleConditionEvent.violated(javaClass, message));
                 }
