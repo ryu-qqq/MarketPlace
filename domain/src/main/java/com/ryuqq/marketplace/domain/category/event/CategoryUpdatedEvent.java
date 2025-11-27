@@ -25,4 +25,14 @@ public record CategoryUpdatedEvent(
     public CategoryUpdatedEvent(Long categoryId) {
         this(categoryId, Instant.now());
     }
+
+    /**
+     * CategoryUpdatedEvent 생성 (발생 시각 자동 설정)
+     *
+     * @param categoryId 카테고리 ID
+     * @return CategoryUpdatedEvent 인스턴스
+     */
+    public static CategoryUpdatedEvent of(Long categoryId) {
+        return new CategoryUpdatedEvent(categoryId, Instant.now());
+    }
 }

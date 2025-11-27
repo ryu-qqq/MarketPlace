@@ -29,4 +29,16 @@ public record CategoryCreatedEvent(
     public CategoryCreatedEvent(Long categoryId, String code, String name) {
         this(categoryId, code, name, Instant.now());
     }
+
+    /**
+     * CategoryCreatedEvent 생성 (발생 시각 자동 설정)
+     *
+     * @param categoryId 카테고리 ID
+     * @param code 카테고리 코드
+     * @param name 카테고리 이름
+     * @return CategoryCreatedEvent 인스턴스
+     */
+    public static CategoryCreatedEvent of(Long categoryId, String code, String name) {
+        return new CategoryCreatedEvent(categoryId, code, name, Instant.now());
+    }
 }
