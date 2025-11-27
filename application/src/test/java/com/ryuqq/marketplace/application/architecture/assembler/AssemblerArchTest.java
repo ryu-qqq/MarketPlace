@@ -40,7 +40,7 @@ class AssemblerArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.application");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.marketplace.application");
     }
 
     /** 규칙 1: @Component 필수 */
@@ -329,8 +329,8 @@ class AssemblerArchTest {
                         .should()
                         .onlyAccessClassesThat()
                         .resideInAnyPackage(
-                                "com.ryuqq.application..",
-                                "com.ryuqq.domain..",
+                                "com.ryuqq.marketplace.application..",
+                                "com.ryuqq.marketplace.domain..",
                                 "org.springframework..",
                                 "java..",
                                 "jakarta..")

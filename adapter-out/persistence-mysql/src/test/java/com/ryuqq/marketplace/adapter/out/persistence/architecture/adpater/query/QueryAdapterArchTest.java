@@ -37,7 +37,7 @@ class QueryAdapterArchTest {
     @BeforeAll
     static void setUp() {
         queryAdapterClasses = new ClassFileImporter()
-            .importPackages("com.ryuqq.adapter.out.persistence");
+            .importPackages("com.ryuqq.marketplace.adapter.out.persistence");
     }
 
     /**

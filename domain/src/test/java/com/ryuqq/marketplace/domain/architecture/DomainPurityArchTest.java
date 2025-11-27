@@ -1,14 +1,15 @@
-package com.ryuqq.fileflow.domain.architecture;
+package com.ryuqq.marketplace.domain.architecture;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
-
-import com.tngtech.archunit.core.domain.JavaClasses;
-import com.tngtech.archunit.core.importer.ClassFileImporter;
-import com.tngtech.archunit.lang.ArchRule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.lang.ArchRule;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 /**
  * Domain Purity ArchUnit 검증 테스트 (Zero-Tolerance)
@@ -49,7 +50,7 @@ class DomainPurityArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.fileflow.domain");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.marketplace.domain");
     }
 
     // ==================== Lombok 금지 ====================
@@ -61,7 +62,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .beAnnotatedWith("lombok.Data")
                         .orShould()
@@ -112,7 +113,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .beAnnotatedWith("jakarta.persistence.Entity")
                         .orShould()
@@ -171,7 +172,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .beAnnotatedWith("org.springframework.stereotype.Component")
                         .orShould()
@@ -222,7 +223,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .beAnnotatedWith("jakarta.validation.constraints.NotNull")
                         .orShould()
@@ -283,7 +284,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .dependOnClassesThat()
                         .resideInAnyPackage(
@@ -309,7 +310,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .dependOnClassesThat()
                         .resideInAnyPackage("com.google.common..")
@@ -330,7 +331,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .dependOnClassesThat()
                         .resideInAnyPackage("io.vavr..")
@@ -353,7 +354,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .dependOnClassesThat()
                         .resideInAnyPackage("com.fasterxml.jackson..")
@@ -374,7 +375,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .dependOnClassesThat()
                         .resideInAnyPackage("com.google.gson..")
@@ -397,7 +398,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .dependOnClassesThat()
                         .resideInAnyPackage("org.slf4j..")
@@ -418,7 +419,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .dependOnClassesThat()
                         .resideInAnyPackage("ch.qos.logback..")
@@ -439,7 +440,7 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .dependOnClassesThat()
                         .resideInAnyPackage("org.apache.logging.log4j..")
@@ -462,12 +463,12 @@ class DomainPurityArchTest {
         ArchRule rule =
                 noClasses()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .should()
                         .dependOnClassesThat()
                         .resideInAnyPackage(
-                                "com.ryuqq.fileflow.application..",
-                                "com.ryuqq.fileflow.adapter..",
+                                "com.ryuqq.marketplace.application..",
+                                "com.ryuqq.marketplace.adapter..",
                                 "com.ryuqq.bootstrap..",
                                 "com.ryuqq.persistence..")
                         .because(

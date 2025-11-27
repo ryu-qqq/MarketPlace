@@ -50,7 +50,7 @@ class RestApiLayerArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.adapter.in.rest");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.marketplace.adapter.in.rest");
     }
 
     /** 규칙 1: Package 구조 검증 (controller, dto, mapper, error) */
@@ -185,7 +185,7 @@ class RestApiLayerArchTest {
                         .haveSimpleNameNotEndingWith("ErrorMapper")
                         .should()
                         .dependOnClassesThat()
-                        .resideInAnyPackage("com.ryuqq.domain..")
+                        .resideInAnyPackage("com.ryuqq.marketplace.domain..")
                         .because(
                                 "REST API Layer는 Domain Layer를 직접 의존하면 안 됩니다"
                                         + " (GlobalExceptionHandler, ErrorMapper 제외)");
@@ -205,7 +205,7 @@ class RestApiLayerArchTest {
                         .haveSimpleNameContaining("GlobalExceptionHandler")
                         .should()
                         .dependOnClassesThat()
-                        .resideInAPackage("com.ryuqq.domain..exception..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..exception..")
                         .because("GlobalExceptionHandler는 Domain Exception을 처리하기 위해 의존해야 합니다");
 
         rule.allowEmptyShould(true).check(classes);
@@ -223,7 +223,7 @@ class RestApiLayerArchTest {
                         .and()
                         .arePublic()
                         .should()
-                        .haveRawReturnType("com.ryuqq.domain..")
+                        .haveRawReturnType("com.ryuqq.marketplace.domain..")
                         .because("Controller는 Domain 객체를 직접 반환하면 안 되며 API DTO로 변환해야 합니다");
 
         rule.allowEmptyShould(true).check(classes);
@@ -243,7 +243,7 @@ class RestApiLayerArchTest {
                         .haveSimpleNameNotContaining("Error")
                         .should()
                         .dependOnClassesThat()
-                        .resideInAnyPackage("com.ryuqq.domain..")
+                        .resideInAnyPackage("com.ryuqq.marketplace.domain..")
                         .because(
                                 "Mapper는 Application DTO만 사용하며 Domain 직접 의존은 금지됩니다 (ErrorMapper"
                                         + " 제외)");

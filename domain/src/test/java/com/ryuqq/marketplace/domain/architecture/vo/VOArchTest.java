@@ -1,6 +1,9 @@
-package com.ryuqq.fileflow.domain.architecture.vo;
+package com.ryuqq.marketplace.domain.architecture.vo;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
@@ -10,10 +13,8 @@ import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 /**
  * Value Object ArchUnit 아키텍처 검증 테스트
@@ -42,7 +43,7 @@ class VOArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.fileflow.domain");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.marketplace.domain");
     }
 
     /** 규칙 1: Value Object는 Record여야 한다 (Enum 제외) */

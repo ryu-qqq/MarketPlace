@@ -72,7 +72,7 @@ if [ "$pr_merged" != "true" ]; then
     echo "상태: $pr_state"
     echo ""
     echo "계속하시겠습니까? (y/N):"
-    read -r answer
+    read -r answer.txt
     if [ "$answer" != "y" ]; then
         exit 1
     fi
@@ -167,7 +167,7 @@ echo "   - 로컬: feature/${issue_key}-${layer}"
 echo "   - 원격: origin/feature/${issue_key}-${layer}"
 echo ""
 echo "삭제하시겠습니까? (y/N):"
-read -r answer
+read -r answer.txt
 
 if [ "$answer" = "y" ]; then
     # 로컬 브랜치 삭제

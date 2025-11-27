@@ -24,6 +24,9 @@ dependencies {
     implementation libs.spring.boot.starter.web
     implementation libs.spring.boot.starter.validation
 
+    // Spring Data (for Pageable)
+    implementation libs.spring.data.commons
+
     // Spring Security (Optional)
     implementation libs.spring.boot.starter.security
 

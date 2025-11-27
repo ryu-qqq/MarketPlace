@@ -44,17 +44,40 @@ import java.time.Clock;
  */
 public final class SystemClockHolder implements ClockHolder {
 
+    private final Clock clock;
+
     /**
-     * System Clock 반환
+     * 기본 생성자 - System UTC Clock 사용
      *
-     * <p>UTC 기준 시스템 시간을 제공합니다.
+     * @author ryu-qqq
+     * @since 2025-11-21
+     */
+    public SystemClockHolder() {
+        this.clock = Clock.systemUTC();
+    }
+
+    /**
+     * Clock 주입 생성자 - 테스트 환경에서 FixedClock 주입 가능
      *
-     * @return Clock.systemUTC() (Production 환경 시간)
+     * @param clock 주입할 Clock 인스턴스
+     * @author ryu-qqq
+     * @since 2025-11-21
+     */
+    public SystemClockHolder(Clock clock) {
+        this.clock = clock;
+    }
+
+    /**
+     * Clock 반환
+     *
+     * <p>생성자에서 주입받은 Clock을 반환합니다.
+     *
+     * @return 주입된 Clock 인스턴스
      * @author ryu-qqq
      * @since 2025-11-21
      */
     @Override
     public Clock getClock() {
-        return Clock.systemUTC();
+        return clock;
     }
 }

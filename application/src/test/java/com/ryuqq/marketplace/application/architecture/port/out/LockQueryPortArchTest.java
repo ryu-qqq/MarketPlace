@@ -67,7 +67,7 @@ class LockQueryPortArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.application");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.marketplace.application");
     }
 
     /** 규칙 1: 인터페이스명 규칙 */
@@ -81,7 +81,7 @@ class LockQueryPortArchTest {
                         .and()
                         .areInterfaces()
                         .and()
-                        .haveSimpleNameMatching(".*Lock.*")
+                        .haveSimpleNameContaining("Lock")
                         .should()
                         .haveSimpleNameEndingWith("LockQueryPort")
                         .because("락을 사용하는 Query Port는 'LockQueryPort' 접미사를 사용해야 합니다");
@@ -274,9 +274,9 @@ class LockQueryPortArchTest {
                         .should()
                         .onlyAccessClassesThat()
                         .resideInAnyPackage(
-                                "com.ryuqq.domain..",
+                                "com.ryuqq.marketplace.domain..",
                                 "java..",
-                                "com.ryuqq.application.." // 같은 application 내 DTO는 허용
+                                "com.ryuqq.marketplace.application.." // 같은 application 내 DTO는 허용
                                 )
                         .because("LockQueryPort는 Domain Layer만 의존해야 합니다 (Infrastructure 의존 금지)");
 

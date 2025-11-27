@@ -42,7 +42,7 @@ class ControllerArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.adapter.in.rest");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.marketplace.adapter.in.rest");
     }
 
     /** 규칙 1: @RestController 어노테이션 필수 */

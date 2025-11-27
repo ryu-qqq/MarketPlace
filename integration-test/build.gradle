@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.ryuqq.marketplace'
+version = '1.0.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot (without applying plugin)
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Test dependencies
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core'
+
+    // Project modules
+    testImplementation project(':adapter-in:rest-api')
+    testImplementation project(':application')
+    testImplementation project(':domain')
+    testImplementation project(':adapter-out:persistence-mysql')
+    testRuntimeOnly project(':bootstrap:bootstrap-web-api')
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

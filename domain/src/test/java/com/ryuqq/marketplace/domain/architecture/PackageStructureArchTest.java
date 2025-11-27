@@ -1,15 +1,16 @@
-package com.ryuqq.fileflow.domain.architecture;
+package com.ryuqq.marketplace.domain.architecture;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 /**
  * Package Structure ArchUnit 아키텍처 검증 테스트
@@ -56,7 +57,7 @@ class PackageStructureArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.fileflow.domain");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.marketplace.domain");
     }
 
     // ==================== domain.common 패키지 규칙 ====================
@@ -68,7 +69,7 @@ class PackageStructureArchTest {
         ArchRule rule =
                 classes()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain.common.event")
+                        .resideInAPackage("com.ryuqq.marketplace.domain.common.event")
                         .should()
                         .beInterfaces()
                         .because(
@@ -88,7 +89,7 @@ class PackageStructureArchTest {
         ArchRule rule =
                 classes()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain.common.exception")
+                        .resideInAPackage("com.ryuqq.marketplace.domain.common.exception")
                         .and()
                         .haveSimpleNameNotContaining("Test")
                         .should()
@@ -114,7 +115,7 @@ class PackageStructureArchTest {
         ArchRule rule =
                 classes()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain.common.util")
+                        .resideInAPackage("com.ryuqq.marketplace.domain.common.util")
                         .should()
                         .beInterfaces()
                         .because(
@@ -136,7 +137,7 @@ class PackageStructureArchTest {
         ArchRule rule =
                 classes()
                         .that()
-                        .implement("com.ryuqq.fileflow.domain.common.event.DomainEvent")
+                        .implement("com.ryuqq.marketplace.domain.common.event.DomainEvent")
                         .and()
                         .haveSimpleNameNotContaining("Fixture")
                         .and()
@@ -164,7 +165,7 @@ class PackageStructureArchTest {
                 classes()
                         .that()
                         .areAssignableTo(
-                                "com.ryuqq.fileflow.domain.common.exception.DomainException")
+                                "com.ryuqq.marketplace.domain.common.exception.DomainException")
                         .and()
                         .haveSimpleNameNotContaining("Test")
                         .and()
@@ -191,7 +192,7 @@ class PackageStructureArchTest {
     @DisplayName("[필수] Bounded Context 간 순환 의존성이 없어야 한다")
     void boundedContexts_ShouldBeFreeOfCycles() {
         SlicesRuleDefinition.slices()
-                .matching("com.ryuqq.fileflow.domain.(*)..")
+                .matching("com.ryuqq.marketplace.domain.(*)..")
                 .should()
                 .beFreeOfCycles()
                 .because(
@@ -211,13 +212,13 @@ class PackageStructureArchTest {
         ArchRule rule =
                 classes()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain.common..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain.common..")
                         .should()
                         .onlyBeAccessed()
                         .byAnyPackage(
-                                "com.ryuqq.fileflow.domain..",
-                                "com.ryuqq.fileflow.application..",
-                                "com.ryuqq.fileflow.adapter..",
+                                "com.ryuqq.marketplace.domain..",
+                                "com.ryuqq.marketplace.application..",
+                                "com.ryuqq.marketplace.adapter..",
                                 "com.ryuqq.persistence..",
                                 "com.ryuqq.bootstrap..")
                         .because("domain.common 패키지는 공통 인터페이스로 모든 레이어에서 접근 가능합니다");
@@ -237,11 +238,11 @@ class PackageStructureArchTest {
         ArchRule rule =
                 classes()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain..")
                         .and()
-                        .resideOutsideOfPackage("com.ryuqq.fileflow.domain.common..")
+                        .resideOutsideOfPackage("com.ryuqq.marketplace.domain.common..")
                         .should()
-                        .resideInAPackage("com.ryuqq.fileflow.domain.(*)..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain.(*)..")
                         .because(
                                 "Bounded Context 패키지명은 소문자 단어로 구성되어야 합니다\n"
                                     + "예시:\n"
@@ -267,9 +268,9 @@ class PackageStructureArchTest {
         ArchRule rule =
                 classes()
                         .that()
-                        .resideInAPackage("com.ryuqq.fileflow.domain.(*)..")
+                        .resideInAPackage("com.ryuqq.marketplace.domain.(*)..")
                         .and()
-                        .resideOutsideOfPackage("com.ryuqq.fileflow.domain.common..")
+                        .resideOutsideOfPackage("com.ryuqq.marketplace.domain.common..")
                         .and()
                         .resideOutsideOfPackage("..architecture..") // 아키텍처 테스트 클래스 제외
                         .and()
@@ -281,8 +282,8 @@ class PackageStructureArchTest {
                         .should()
                         .onlyDependOnClassesThat()
                         .resideInAnyPackage(
-                                "com.ryuqq.fileflow.domain.common..",
-                                "com.ryuqq.fileflow.domain.(*)..", // 같은 BC는 허용
+                                "com.ryuqq.marketplace.domain.common..",
+                                "com.ryuqq.marketplace.domain.(*)..", // 같은 BC는 허용
                                 "java..",
                                 "jakarta.annotation..",
                                 "edu.umd.cs.findbugs.annotations..") // SpotBugs 어노테이션 허용

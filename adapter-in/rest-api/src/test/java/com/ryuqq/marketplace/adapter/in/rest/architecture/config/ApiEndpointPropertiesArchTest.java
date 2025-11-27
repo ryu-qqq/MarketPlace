@@ -46,7 +46,7 @@ class ApiEndpointPropertiesArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.adapter.in.rest");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.marketplace.adapter.in.rest");
     }
 
     /** 규칙 1: ApiEndpointProperties는 config.properties 패키지에 위치 */

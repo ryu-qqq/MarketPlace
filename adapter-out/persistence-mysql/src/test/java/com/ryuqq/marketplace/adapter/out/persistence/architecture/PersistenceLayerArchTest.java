@@ -39,7 +39,7 @@ class PersistenceLayerArchTest {
 
     @BeforeAll
     static void setUp() {
-        allClasses = new ClassFileImporter().importPackages("com.ryuqq.adapter.out.persistence");
+        allClasses = new ClassFileImporter().importPackages("com.ryuqq.marketplace.adapter.out.persistence");
     }
 
     /** 규칙 1: Package 구조 검증 */
@@ -252,7 +252,7 @@ class PersistenceLayerArchTest {
                         .resideOutsideOfPackages("..architecture..") // 테스트 제외
                         .should()
                         .dependOnClassesThat()
-                        .resideInAnyPackage("com.ryuqq.domain..")
+                        .resideInAnyPackage("com.ryuqq.marketplace.domain..")
                         .because(
                                 "Repository/Entity/Mapper는 Domain Layer를 직접 의존하면 안 됩니다 (Adapter만"
                                         + " Domain 접근 가능)");

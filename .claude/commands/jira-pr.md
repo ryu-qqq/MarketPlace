@@ -66,7 +66,7 @@ echo "완료율: $completion_rate% ($checked/$total)"
 if [ "$unchecked" -gt 0 ]; then
     echo "⚠️ 미완료 항목이 ${unchecked}개 남아있습니다"
     echo "계속하시겠습니까? (y/N):"
-    read -r answer
+    read -r answer.txt
     if [ "$answer" != "y" ]; then
         exit 1
     fi

@@ -36,7 +36,7 @@ class DtoRecordArchTest {
 
     @BeforeAll
     static void setUp() {
-        classes = new ClassFileImporter().importPackages("com.ryuqq.application");
+        classes = new ClassFileImporter().importPackages("com.ryuqq.marketplace.application");
     }
 
     /** 규칙 1: Command는 Record 타입이어야 함 */
@@ -326,7 +326,7 @@ class DtoRecordArchTest {
                         .and()
                         .arePublic()
                         .should()
-                        .haveRawReturnType("com.ryuqq.domain..")
+                        .haveRawReturnType("com.ryuqq.marketplace.domain..")
                         .because("DTO에서 Domain 변환은 Assembler에서 처리해야 합니다 (DTO는 데이터만)");
 
         rule.check(classes);

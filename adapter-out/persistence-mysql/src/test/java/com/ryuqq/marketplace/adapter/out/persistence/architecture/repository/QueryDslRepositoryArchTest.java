@@ -43,7 +43,7 @@ class QueryDslRepositoryArchTest {
     @BeforeAll
     static void setUp() {
         allClasses = new ClassFileImporter()
-            .importPackages("com.ryuqq.adapter.out.persistence");
+            .importPackages("com.ryuqq.marketplace.adapter.out.persistence");
 
         // QueryDslRepository 클래스만
         queryDslRepositoryClasses = allClasses.that(
