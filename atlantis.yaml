@@ -13,6 +13,22 @@ delete_source_branch_on_merge: false
 parallel_plan: false
 parallel_apply: false
 
+# ============================================================================
+# Custom Workflows
+# ============================================================================
+# Clean .terraform cache before init to prevent corrupted module cache errors
+# when multiple modules reference the same git repository
+workflows:
+  clean-init:
+    plan:
+      steps:
+        - run: rm -rf .terraform/modules .terraform.lock.hcl
+        - init
+        - plan
+    apply:
+      steps:
+        - apply
+
 projects:
   # ============================================================================
   # PRODUCTION
@@ -38,6 +54,7 @@ projects:
   - name: marketplace-elasticache-prod
     dir: terraform/environments/prod/elasticache
     workspace: default
+    workflow: clean-init
     autoplan:
       when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
       enabled: true
@@ -46,6 +63,7 @@ projects:
   - name: marketplace-ecs-web-api-prod
     dir: terraform/environments/prod/ecs-web-api
     workspace: default
+    workflow: clean-init
     autoplan:
       when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
       enabled: true
@@ -54,6 +72,7 @@ projects:
   - name: marketplace-ecs-scheduler-prod
     dir: terraform/environments/prod/ecs-scheduler
     workspace: default
+    workflow: clean-init
     autoplan:
       when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
       enabled: true
@@ -82,6 +101,7 @@ projects:
   - name: marketplace-ecs-web-api-stage
     dir: terraform/environments/stage/ecs-web-api
     workspace: default
+    workflow: clean-init
     autoplan:
       when_modified: ["*.tf", "*.tfvars"]
       enabled: true
@@ -90,6 +110,7 @@ projects:
   - name: marketplace-ecs-scheduler-stage
     dir: terraform/environments/stage/ecs-scheduler
     workspace: default
+    workflow: clean-init
     autoplan:
       when_modified: ["*.tf", "*.tfvars"]
       enabled: true
