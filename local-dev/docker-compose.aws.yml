@@ -1,0 +1,103 @@
+version: '3.8'
+name: marketplace-aws
+
+# ===============================================
+# AWS 리소스 연결용 로컬 개발 환경
+# ===============================================
+# 사용법:
+# 1. AWS SSM Session Manager로 포트 포워딩 설정
+# 2. docker-compose -f docker-compose.aws.yml up -d
+# ===============================================
+
+services:
+  # ===============================================
+  # Local Infrastructure (AWS 미배포 리소스)
+  # ===============================================
+
+  redis:
+    image: redis:7-alpine
+    container_name: marketplace-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  # ===============================================
+  # Application Services (AWS 리소스 연결)
+  # ===============================================
+
+  web-api:
+    build:
+      context: ..
+      dockerfile: bootstrap/bootstrap-web-api/Dockerfile
+    container_name: marketplace-web-api
+    env_file:
+      - .env.aws
+    environment:
+      # Static values (override .env.aws)
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8080
+
+      # Database (AWS RDS via SSM Port Forwarding)
+      # SSM으로 localhost:13307 -> RDS:3306 포워딩 필요
+      DB_HOST: host.docker.internal
+      DB_PORT: 13307
+      # DB_NAME, DB_USER, DB_PASSWORD → .env.aws에서 로드
+
+      # Redis (로컬 Redis 컨테이너 사용)
+      REDISSON_ENABLED: "true"
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+      # AWS Credentials → .env.aws에서 로드
+      # AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN
+
+      # S3 → .env.aws에서 로드
+      # AWS_S3_BUCKET (S3_BUCKET)
+
+      # SQS (실제 AWS SQS 사용)
+      SPRING_CLOUD_AWS_SQS_ENABLED: "true"
+      # SQS URLs → .env.aws에서 로드
+
+      # Service Token (Internal API 인증용 - Gateway → AuthHub)
+      SERVICE_TOKEN_SECRET: "local-dev-service-token-secret"
+
+      # AuthHub Client (로컬 Docker에서 8080 포트로 실행 중)
+      AUTHHUB_BASE_URL: "http://host.docker.internal:8080"
+      SECURITY_SERVICE_TOKEN_SECRET: "local-dev-service-token-secret"
+
+      # Swagger UI 활성화 (로컬 개발용)
+      SWAGGER_ENABLED: "true"
+
+      # OpenTelemetry 비활성화 (로컬 개발 시 불필요한 에러 로그 방지)
+      OTEL_JAVAAGENT_ENABLED: "false"
+
+      # Flyway 비활성화 (운영 DB 연결 시 마이그레이션 검증 오류 방지)
+      SPRING_FLYWAY_ENABLED: "false"
+
+      # AWS SES 활성화
+      AWS_SES_ENABLED: "true"
+      AWS_SES_SENDER_EMAIL: "master@connectly.co.kr"
+      AWS_SES_SENDER_NAME: "Connectly"
+
+      # OpenAI 활성화 (OCR 기능)
+      OPENAI_ENABLED: "true"
+      OPENAI_API_KEY: "k-proj-hnSr_GAIEV2ZbzpJtx-JGVKImmPI8b4-loJpuyYxyOkZvzXCmukWo4o4iMhgGMjhnUKvpuEvAjT3BlbkFJ2_CDsX0czqTBNVaDDTPIgbLp4uUopx7U8zUWUFPNnfEBL6rbmtffe5E9he_TflREgAu3stSi4A"
+
+      # AWS SQS 활성화
+      AWS_SQS_ENABLED: "true"
+
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./secrets:/app/secrets:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  redis-data:

@@ -1,0 +1,21 @@
+# ============================================================
+# Scheduler Application 운영 환경 설정
+# ============================================================
+# 활성화: spring.profiles.active=prod
+# ============================================================
+
+logging:
+  level:
+    root: INFO
+    com.ryuqq.setof: INFO
+    com.ryuqq.setof.adapter.in.scheduler: INFO
+    org.hibernate.SQL: WARN
+
+# Sentry 활성화 (운영)
+# DSN은 ECS Task Definition 환경변수로 주입
+sentry:
+  send-default-pii: true
+  attach-stacktrace: true
+  logging:
+    minimum-event-level: error
+    minimum-breadcrumb-level: info

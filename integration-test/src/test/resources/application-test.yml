@@ -1,0 +1,46 @@
+# ===============================================
+# Integration Test Profile Configuration
+# ===============================================
+# E2E 테스트용 Spring Boot 설정
+# - H2 In-Memory Database 사용
+# - 로깅 간소화
+# - Flyway 비활성화 (테스트용 스키마 자동 생성)
+# ===============================================
+
+spring:
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # 테스트 시작 시 스키마 생성, 종료 시 삭제
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+
+  # H2 In-Memory Database
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: false
+
+  # Flyway 비활성화 (JPA ddl-auto 사용)
+  flyway:
+    enabled: false
+
+# 로깅 설정 (간소화)
+logging:
+  level:
+    root: INFO
+    com.ryuqq.marketplace: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# Server 설정 (랜덤 포트)
+server:
+  port: 0

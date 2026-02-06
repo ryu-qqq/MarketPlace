@@ -1,0 +1,9 @@
+# ============================================================
+# AuthHub SDK Stage 환경 설정
+# ============================================================
+
+authhub:
+  base-url: ${AUTHHUB_BASE_URL:http://authhub-web-api-stage.connectly.local}
+  service-token: ${AUTHHUB_SERVICE_TOKEN:}
+  sync:
+    enabled: true

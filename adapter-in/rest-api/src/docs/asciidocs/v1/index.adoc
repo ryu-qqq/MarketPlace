@@ -1,0 +1,115 @@
+= SETOF Commerce Admin API Documentation
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectlinks:
+:sectanchors:
+:source-highlighter: highlightjs
+
+== 개요
+
+=== API 소개
+
+SETOF Commerce Admin API 문서입니다.
+
+[cols="1,3"]
+|===
+|항목 |설명
+
+|Base URL
+|`/api/v1/market`
+
+|인증
+|API Gateway에서 JWT 검증 후 `X-User-Id`, `X-User-Roles` 헤더 전달
+
+|Content-Type
+|`application/json`
+
+|문서 버전
+|v1.0.0
+|===
+
+=== 공통 응답 형식
+
+성공 응답:
+
+[source,json]
+----
+{
+  "data": { ... },
+  "timestamp": "2026-02-06T12:00:00",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+----
+
+페이징 응답:
+
+[source,json]
+----
+{
+  "data": {
+    "content": [ ... ],
+    "totalElements": 100,
+    "totalPages": 10,
+    "pageNumber": 0,
+    "pageSize": 10
+  },
+  "timestamp": "2026-02-06T12:00:00",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+----
+
+
+== 인증 (Auth)
+
+include::auth/auth.adoc[]
+
+
+== 브랜드 (Brand)
+
+include::brand/brand.adoc[]
+
+
+== 카테고리 (Category)
+
+include::category/category.adoc[]
+
+
+== 공통코드 (Common Code)
+
+include::common-code/common-code.adoc[]
+
+
+== 공통코드 유형 (Common Code Type)
+
+include::common-code-type/common-code-type.adoc[]
+
+
+== 셀러 (Seller)
+
+include::seller/seller.adoc[]
+
+
+== 셀러 주소 (Seller Address)
+
+include::seller-address/seller-address.adoc[]
+
+
+== 셀러 어드민 (Seller Admin)
+
+include::seller-admin/seller-admin.adoc[]
+
+
+== 셀러 입점 신청 (Seller Application)
+
+include::seller-application/seller-application.adoc[]
+
+
+== 환불 정책 (Refund Policy)
+
+include::refund-policy/refund-policy.adoc[]
+
+
+== 배송 정책 (Shipping Policy)
+
+include::shipping-policy/shipping-policy.adoc[]

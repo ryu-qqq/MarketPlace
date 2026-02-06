@@ -12,12 +12,6 @@ plugins {
 
 dependencies {
     // ========================================
-    // STRICTLY NO EXTERNAL DEPENDENCIES
-    // ========================================
-    // Domain must remain PURE JAVA - NO external libraries
-    // Business logic ONLY - use Java Standard Library
-
-    // ========================================
     // Test Dependencies
     // ========================================
     // JUnit 5

@@ -1,0 +1,136 @@
+# ============================================================================
+# MarketPlace - Terraform Apply (Stage)
+# ============================================================================
+# 스테이지 환경 인프라 프로비저닝 및 Image Tag 업데이트
+# deploy-stage.yml에서 자동 호출 또는 수동 실행 가능
+#
+# 모듈 순서: ecr → ecs-cluster → ecs-web-api → ecs-scheduler
+# ============================================================================
+
+name: Terraform Apply (Stage)
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      web-api-image-tag:
+        description: 'Web API Docker image tag (e.g., web-api-stage-1-abc1234)'
+        required: false
+        type: string
+      scheduler-image-tag:
+        description: 'Scheduler Docker image tag (e.g., scheduler-stage-1-abc1234)'
+        required: false
+        type: string
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  terraform-apply:
+    name: Terraform Apply (Stage)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      # 순차 실행 (의존성 순서)
+      max-parallel: 1
+      matrix:
+        module:
+          - name: ecr
+            dir: terraform/environments/stage/ecr
+            order: 0
+          - name: ecs-cluster
+            dir: terraform/environments/stage/ecs-cluster
+            order: 1
+          - name: ecs-web-api
+            dir: terraform/environments/stage/ecs-web-api
+            order: 2
+          - name: ecs-scheduler
+            dir: terraform/environments/stage/ecs-scheduler
+            order: 3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-2
+          role-duration-seconds: 3600
+          role-session-name: GitHubActions-MarketPlace-TerraformApply-Stage
+
+      - name: Terraform Init - ${{ matrix.module.name }}
+        working-directory: ${{ matrix.module.dir }}
+        run: terraform init -reconfigure
+
+      - name: Terraform Apply - ${{ matrix.module.name }}
+        working-directory: ${{ matrix.module.dir }}
+        run: |
+          echo "Applying Terraform for ${{ matrix.module.name }} (stage)..."
+
+          EXTRA_VARS=""
+
+          if [ "${{ matrix.module.name }}" == "ecs-web-api" ] && [ -n "${{ inputs.web-api-image-tag }}" ]; then
+            echo "Using Web API image tag: ${{ inputs.web-api-image-tag }}"
+            EXTRA_VARS="-var=image_tag=${{ inputs.web-api-image-tag }}"
+          fi
+
+          if [ "${{ matrix.module.name }}" == "ecs-scheduler" ] && [ -n "${{ inputs.scheduler-image-tag }}" ]; then
+            echo "Using Scheduler image tag: ${{ inputs.scheduler-image-tag }}"
+            EXTRA_VARS="-var=image_tag=${{ inputs.scheduler-image-tag }}"
+          fi
+
+          echo "Generating terraform plan..."
+          terraform plan $EXTRA_VARS -out=tfplan
+
+          terraform apply -auto-approve -no-color tfplan
+          echo "Apply completed for ${{ matrix.module.name }}"
+
+      - name: Terraform Output - ${{ matrix.module.name }}
+        working-directory: ${{ matrix.module.dir }}
+        run: |
+          echo "Outputs for ${{ matrix.module.name }}:"
+          terraform output -json > outputs-${{ matrix.module.name }}.json
+          terraform output
+
+      - name: Upload Apply Results - ${{ matrix.module.name }}
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: apply-results-stage-${{ matrix.module.name }}
+          path: ${{ matrix.module.dir }}/outputs-${{ matrix.module.name }}.json
+          retention-days: 30
+
+  notify-completion:
+    name: Notify Stage Infra Deployment
+    needs: terraform-apply
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Create Deployment Summary
+        run: |
+          echo "## MarketPlace Infrastructure Deployment (Stage)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: ${{ needs.terraform-apply.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: Stage" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployed by**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Modules Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "- ECR Repository (stage)" >> $GITHUB_STEP_SUMMARY
+          echo "- ECS Cluster (stage)" >> $GITHUB_STEP_SUMMARY
+          echo "- ECS Web API (stage)" >> $GITHUB_STEP_SUMMARY
+          echo "- ECS Scheduler (stage)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Service Discovery**: marketplace-api-stage.connectly.local" >> $GITHUB_STEP_SUMMARY

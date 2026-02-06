@@ -1,0 +1,39 @@
+# ============================================================
+# REST API Adapter 로컬 개발 환경 설정
+# ============================================================
+# 활성화: spring.profiles.active=local
+#
+# Gateway-Only 아키텍처:
+# - 로컬에서도 Gateway를 통해 접근 (docker-compose로 Gateway 실행)
+# - Gateway가 X-User-Id, X-User-Roles 헤더 전달
+# - 이 서비스는 헤더만 파싱
+# ============================================================
+
+# ============================================================
+# API Documentation (로컬: 전체 활성화)
+# ============================================================
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  cache:
+    disabled: true
+
+# ============================================================
+# Auth Cookie (로컬: HTTP 허용, CORS 개발 편의)
+# ============================================================
+api:
+  auth:
+    cookie:
+      secure: false
+      same-site: Lax
+
+# ============================================================
+# Logging (로컬: 상세 로깅)
+# ============================================================
+logging:
+  level:
+    com.ryuqq.adapter.in.rest: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG

@@ -1,0 +1,16 @@
+# ============================================================
+# Scheduler Application 스테이징 환경 설정
+# ============================================================
+# 활성화: spring.profiles.active=stage
+# ============================================================
+
+logging:
+  level:
+    root: INFO
+    com.ryuqq.setof: INFO
+    com.ryuqq.setof.adapter.in.scheduler: INFO
+    org.hibernate.SQL: DEBUG
+
+# Sentry 비활성화 (스테이징)
+sentry:
+  dsn: ""
