@@ -1,541 +1,299 @@
 package com.ryuqq.marketplace.domain.category.aggregate;
 
-import com.ryuqq.marketplace.domain.brand.vo.Department;
-import com.ryuqq.marketplace.domain.category.event.CategoryCreatedEvent;
-import com.ryuqq.marketplace.domain.category.event.CategoryStatusChangedEvent;
-import com.ryuqq.marketplace.domain.category.event.CategoryUpdatedEvent;
-import com.ryuqq.marketplace.domain.category.vo.AgeGroup;
+import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.category.vo.CategoryCode;
 import com.ryuqq.marketplace.domain.category.vo.CategoryDepth;
-import com.ryuqq.marketplace.domain.category.vo.CategoryId;
-import com.ryuqq.marketplace.domain.category.vo.CategoryMeta;
+import com.ryuqq.marketplace.domain.category.vo.CategoryGroup;
 import com.ryuqq.marketplace.domain.category.vo.CategoryName;
 import com.ryuqq.marketplace.domain.category.vo.CategoryPath;
 import com.ryuqq.marketplace.domain.category.vo.CategoryStatus;
-import com.ryuqq.marketplace.domain.category.vo.CategoryVisibility;
-import com.ryuqq.marketplace.domain.category.vo.GenderScope;
-import com.ryuqq.marketplace.domain.category.vo.ProductGroup;
+import com.ryuqq.marketplace.domain.category.vo.Department;
 import com.ryuqq.marketplace.domain.category.vo.SortOrder;
-import com.ryuqq.marketplace.domain.common.event.DomainEvent;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
+import java.time.Instant;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * Category Aggregate Root
- *
- * <p><strong>핵심 원칙</strong>:</p>
- * <ul>
- *   <li>Plain Java - Lombok 금지</li>
- *   <li>Law of Demeter 준수 - Getter 체이닝 금지</li>
- *   <li>Tell Don't Ask - 도메인이 스스로 판단</li>
- *   <li>불변성 - 상태 변경은 비즈니스 메서드로만</li>
- * </ul>
- *
- * @author development-team
- * @since 1.0.0
- */
+/** 카테고리 Aggregate Root. */
 public class Category {
 
     private final CategoryId id;
     private final CategoryCode code;
-    private CategoryName name;
+    private CategoryName categoryName;
     private final Long parentId;
-    private final CategoryDepth depth;
-    private final CategoryPath path;
+    private CategoryDepth depth;
+    private CategoryPath path;
     private SortOrder sortOrder;
-    private boolean isLeaf;
+    private boolean leaf;
     private CategoryStatus status;
-    private CategoryVisibility visibility;
     private Department department;
-    private ProductGroup productGroup;
-    private GenderScope genderScope;
-    private AgeGroup ageGroup;
-    private CategoryMeta meta;
-    private final long version;
+    private CategoryGroup categoryGroup;
+    private DeletionStatus deletionStatus;
+    private final Instant createdAt;
+    private Instant updatedAt;
 
-    private final List<DomainEvent> domainEvents = new ArrayList<>();
-
-    // Private Constructor (정적 팩토리 메서드로만 생성)
     private Category(
             CategoryId id,
             CategoryCode code,
-            CategoryName name,
+            CategoryName categoryName,
             Long parentId,
             CategoryDepth depth,
             CategoryPath path,
             SortOrder sortOrder,
-            boolean isLeaf,
+            boolean leaf,
             CategoryStatus status,
-            CategoryVisibility visibility,
             Department department,
-            ProductGroup productGroup,
-            GenderScope genderScope,
-            AgeGroup ageGroup,
-            CategoryMeta meta,
-            long version) {
+            CategoryGroup categoryGroup,
+            DeletionStatus deletionStatus,
+            Instant createdAt,
+            Instant updatedAt) {
         this.id = id;
         this.code = code;
-        this.name = name;
+        this.categoryName = categoryName;
         this.parentId = parentId;
         this.depth = depth;
         this.path = path;
         this.sortOrder = sortOrder;
-        this.isLeaf = isLeaf;
+        this.leaf = leaf;
         this.status = status;
-        this.visibility = visibility;
         this.department = department;
-        this.productGroup = productGroup;
-        this.genderScope = genderScope;
-        this.ageGroup = ageGroup;
-        this.meta = meta;
-        this.version = version;
+        this.categoryGroup = categoryGroup != null ? categoryGroup : CategoryGroup.ETC;
+        this.deletionStatus = deletionStatus != null ? deletionStatus : DeletionStatus.active();
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    /**
-     * 루트 카테고리 생성 (신규)
-     *
-     * @param code 카테고리 코드
-     * @param name 카테고리 이름
-     * @param department 부서 구분
-     * @param productGroup 상품 그룹
-     * @return Category
-     */
-    public static Category createRoot(
+    public static Category forNew(
             CategoryCode code,
-            CategoryName name,
-            Department department,
-            ProductGroup productGroup) {
-
-        var category = new Category(
-                CategoryId.forNew(),
-                code,
-                name,
-                null,
-                CategoryDepth.of(0),
-                null, // path는 persist 후 설정
-                SortOrder.defaultOrder(),
-                true,
-                CategoryStatus.ACTIVE,
-                CategoryVisibility.visible(),
-                department,
-                productGroup,
-                GenderScope.NONE,
-                AgeGroup.NONE,
-                CategoryMeta.empty(),
-                0L
-        );
-
-        category.registerEvent(new CategoryCreatedEvent(null, code.value(), name.displayName()));
-        return category;
-    }
-
-    /**
-     * 하위 카테고리 생성 (신규)
-     *
-     * @param code 카테고리 코드
-     * @param name 카테고리 이름
-     * @param parent 부모 카테고리
-     * @return Category
-     */
-    public static Category createChild(
-            CategoryCode code,
-            CategoryName name,
-            Category parent) {
-
-        CategoryDepth childDepth = parent.depth.increment();
-
-        var category = new Category(
-                CategoryId.forNew(),
-                code,
-                name,
-                parent.idValue(),
-                childDepth,
-                null, // path는 persist 후 설정
-                SortOrder.defaultOrder(),
-                true,
-                CategoryStatus.ACTIVE,
-                CategoryVisibility.visible(),
-                parent.department,
-                parent.productGroup,
-                parent.genderScope,
-                parent.ageGroup,
-                CategoryMeta.empty(),
-                0L
-        );
-
-        category.registerEvent(new CategoryCreatedEvent(null, code.value(), name.displayName()));
-        return category;
-    }
-
-    /**
-     * 재구성 (DB에서 로드)
-     *
-     * @param id 카테고리 ID
-     * @param code 카테고리 코드
-     * @param name 카테고리 이름
-     * @param parentId 부모 카테고리 ID
-     * @param depth 깊이
-     * @param path 경로
-     * @param sortOrder 정렬 순서
-     * @param isLeaf 리프 여부
-     * @param status 상태
-     * @param visibility 표시 설정
-     * @param department 부서 구분
-     * @param productGroup 상품 그룹
-     * @param genderScope 성별 구분
-     * @param ageGroup 연령대 구분
-     * @param meta 메타데이터
-     * @param version 버전
-     * @return Category
-     */
-    public static Category reconstitute(
-            CategoryId id,
-            CategoryCode code,
-            CategoryName name,
+            CategoryName categoryName,
             Long parentId,
             CategoryDepth depth,
             CategoryPath path,
             SortOrder sortOrder,
-            boolean isLeaf,
-            CategoryStatus status,
-            CategoryVisibility visibility,
             Department department,
-            ProductGroup productGroup,
-            GenderScope genderScope,
-            AgeGroup ageGroup,
-            CategoryMeta meta,
-            long version) {
-
+            CategoryGroup categoryGroup,
+            Instant now) {
         return new Category(
-                id, code, name, parentId, depth, path, sortOrder,
-                isLeaf, status, visibility, department, productGroup,
-                genderScope, ageGroup, meta, version
-        );
+                CategoryId.forNew(),
+                code,
+                categoryName,
+                parentId,
+                depth,
+                path,
+                sortOrder,
+                true,
+                CategoryStatus.ACTIVE,
+                department,
+                categoryGroup,
+                DeletionStatus.active(),
+                now,
+                now);
     }
 
-    // ========== Domain Behaviors ==========
-
-    /**
-     * 카테고리 이름 변경
-     *
-     * @param newName 새 이름
-     */
-    public void updateName(CategoryName newName) {
-        this.name = newName;
-        registerEvent(new CategoryUpdatedEvent(idValue()));
-    }
-
-    /**
-     * 정렬 순서 변경
-     *
-     * @param newSortOrder 새 정렬 순서
-     */
-    public void updateSortOrder(SortOrder newSortOrder) {
-        this.sortOrder = newSortOrder;
-    }
-
-    /**
-     * 표시 설정 변경
-     *
-     * @param newVisibility 새 표시 설정
-     */
-    public void updateVisibility(CategoryVisibility newVisibility) {
-        this.visibility = newVisibility;
-        registerEvent(new CategoryUpdatedEvent(idValue()));
-    }
-
-    /**
-     * 메타데이터 변경
-     *
-     * @param newMeta 새 메타데이터
-     */
-    public void updateMeta(CategoryMeta newMeta) {
-        this.meta = newMeta;
-    }
-
-    /**
-     * 비즈니스 정보 변경
-     *
-     * @param department 부서 구분
-     * @param productGroup 상품 그룹
-     * @param genderScope 성별 구분
-     * @param ageGroup 연령대 구분
-     */
-    public void updateBusinessInfo(
+    public static Category reconstitute(
+            CategoryId id,
+            CategoryCode code,
+            CategoryName categoryName,
+            Long parentId,
+            CategoryDepth depth,
+            CategoryPath path,
+            SortOrder sortOrder,
+            boolean leaf,
+            CategoryStatus status,
             Department department,
-            ProductGroup productGroup,
-            GenderScope genderScope,
-            AgeGroup ageGroup) {
-        this.department = department;
-        this.productGroup = productGroup;
-        this.genderScope = genderScope;
-        this.ageGroup = ageGroup;
-        registerEvent(new CategoryUpdatedEvent(idValue()));
+            CategoryGroup categoryGroup,
+            Instant deletedAt,
+            Instant createdAt,
+            Instant updatedAt) {
+        DeletionStatus deletion =
+                deletedAt != null ? DeletionStatus.deletedAt(deletedAt) : DeletionStatus.active();
+        return new Category(
+                id,
+                code,
+                categoryName,
+                parentId,
+                depth,
+                path,
+                sortOrder,
+                leaf,
+                status,
+                department,
+                categoryGroup,
+                deletion,
+                createdAt,
+                updatedAt);
+    }
+
+    public boolean isNew() {
+        return id.isNew();
     }
 
     /**
-     * 상태 변경
+     * 카테고리 정보 수정.
      *
-     * @param newStatus 새 상태
+     * @param updateData 수정 데이터
+     * @param now 현재 시간
      */
-    public void changeStatus(CategoryStatus newStatus) {
-        CategoryStatus oldStatus = this.status;
-        this.status = newStatus;
-        registerEvent(new CategoryStatusChangedEvent(idValue(), oldStatus.name(), newStatus.name()));
+    public void update(CategoryUpdateData updateData, Instant now) {
+        this.categoryName = updateData.categoryName();
+        this.sortOrder = updateData.sortOrder();
+        this.status = updateData.status();
+        this.department = updateData.department();
+        this.categoryGroup = updateData.categoryGroup();
+        this.updatedAt = now;
     }
 
     /**
-     * 리프 카테고리로 표시
-     */
-    public void markAsLeaf() {
-        this.isLeaf = true;
-    }
-
-    /**
-     * 리프 카테고리가 아님을 표시
-     */
-    public void markAsNotLeaf() {
-        this.isLeaf = false;
-    }
-
-    // ========== Query Methods (Law of Demeter 준수) ==========
-
-    /**
-     * 카테고리 ID 반환
+     * 카테고리 이동 (부모 변경 시 경로/깊이 갱신).
      *
-     * @return CategoryId
+     * @param newPath 새 경로
+     * @param newDepth 새 깊이
+     * @param now 현재 시간
      */
-    public CategoryId id() {
-        return id;
+    public void move(CategoryPath newPath, CategoryDepth newDepth, Instant now) {
+        this.path = newPath;
+        this.depth = newDepth;
+        this.updatedAt = now;
+    }
+
+    /** 리프 노드 해제 (자식이 추가될 때). */
+    public void markAsNonLeaf(Instant now) {
+        this.leaf = false;
+        this.updatedAt = now;
+    }
+
+    /** 리프 노드 설정 (자식이 모두 삭제될 때). */
+    public void markAsLeaf(Instant now) {
+        this.leaf = true;
+        this.updatedAt = now;
+    }
+
+    public void activate(Instant now) {
+        this.status = CategoryStatus.ACTIVE;
+        this.updatedAt = now;
+    }
+
+    public void deactivate(Instant now) {
+        this.status = CategoryStatus.INACTIVE;
+        this.updatedAt = now;
     }
 
     /**
-     * 카테고리 ID 값 반환
+     * 카테고리 삭제 (Soft Delete).
      *
-     * @return ID 값 (Long)
+     * @param now 삭제 발생 시각
      */
-    public Long idValue() {
-        return id.value();
+    public void delete(Instant now) {
+        this.deletionStatus = DeletionStatus.deletedAt(now);
+        this.updatedAt = now;
     }
 
     /**
-     * 카테고리 코드 값 반환
+     * 카테고리 복원.
      *
-     * @return 코드 값
+     * @param now 복원 시각
      */
-    public String codeValue() {
-        return code.value();
+    public void restore(Instant now) {
+        this.deletionStatus = DeletionStatus.active();
+        this.updatedAt = now;
     }
 
-    /**
-     * 한국어 이름 반환
-     *
-     * @return 한국어 이름
-     */
-    public String nameKo() {
-        return name.ko();
-    }
-
-    /**
-     * 영어 이름 반환
-     *
-     * @return 영어 이름
-     */
-    public String nameEn() {
-        return name.en();
-    }
-
-    /**
-     * 표시용 이름 반환
-     *
-     * @return 표시용 이름
-     */
-    public String displayName() {
-        return name.displayName();
-    }
-
-    /**
-     * 부모 카테고리 ID 반환
-     *
-     * @return 부모 ID (null 가능)
-     */
-    public Long parentIdValue() {
-        return parentId;
-    }
-
-    /**
-     * 깊이 값 반환
-     *
-     * @return 깊이
-     */
-    public int depthValue() {
-        return depth.value();
-    }
-
-    /**
-     * 경로 값 반환
-     *
-     * @return 경로 (null 가능)
-     */
-    public String pathValue() {
-        return path != null ? path.value() : null;
-    }
-
-    /**
-     * 정렬 순서 값 반환
-     *
-     * @return 정렬 순서
-     */
-    public int sortOrderValue() {
-        return sortOrder.value();
-    }
-
-    /**
-     * 리프 카테고리 여부
-     *
-     * @return 리프이면 true
-     */
-    public boolean isLeaf() {
-        return isLeaf;
-    }
-
-    /**
-     * 루트 카테고리 여부
-     *
-     * @return 루트이면 true
-     */
     public boolean isRoot() {
         return parentId == null;
     }
 
-    /**
-     * 카테고리 상태 반환
-     *
-     * @return CategoryStatus
-     */
+    // Getters
+    public CategoryId id() {
+        return id;
+    }
+
+    public Long idValue() {
+        return id.value();
+    }
+
+    public CategoryCode code() {
+        return code;
+    }
+
+    public String codeValue() {
+        return code.value();
+    }
+
+    public CategoryName categoryName() {
+        return categoryName;
+    }
+
+    public String nameKo() {
+        return categoryName.nameKo();
+    }
+
+    public String nameEn() {
+        return categoryName.nameEn();
+    }
+
+    public Long parentId() {
+        return parentId;
+    }
+
+    public CategoryDepth depth() {
+        return depth;
+    }
+
+    public int depthValue() {
+        return depth.value();
+    }
+
+    public CategoryPath path() {
+        return path;
+    }
+
+    public String pathValue() {
+        return path.value();
+    }
+
+    public SortOrder sortOrder() {
+        return sortOrder;
+    }
+
+    public int sortOrderValue() {
+        return sortOrder.value();
+    }
+
+    public boolean isLeaf() {
+        return leaf;
+    }
+
     public CategoryStatus status() {
         return status;
     }
 
-    /**
-     * 활성 상태 여부
-     *
-     * @return 활성이면 true
-     */
     public boolean isActive() {
-        return status.isUsable();
+        return status.isActive();
     }
 
-    /**
-     * 표시 가능 여부
-     *
-     * @return 표시 가능하면 true
-     */
-    public boolean isVisible() {
-        return visibility.isVisible();
-    }
-
-    /**
-     * 상품 등록 가능 여부
-     *
-     * @return 등록 가능하면 true
-     */
-    public boolean isListable() {
-        return visibility.isListable();
-    }
-
-    /**
-     * 부서 구분 반환
-     *
-     * @return Department
-     */
     public Department department() {
         return department;
     }
 
-    /**
-     * 상품 그룹 반환
-     *
-     * @return ProductGroup
-     */
-    public ProductGroup productGroup() {
-        return productGroup;
+    public CategoryGroup categoryGroup() {
+        return categoryGroup;
     }
 
-    /**
-     * 성별 구분 반환
-     *
-     * @return GenderScope
-     */
-    public GenderScope genderScope() {
-        return genderScope;
+    public DeletionStatus deletionStatus() {
+        return deletionStatus;
     }
 
-    /**
-     * 연령대 구분 반환
-     *
-     * @return AgeGroup
-     */
-    public AgeGroup ageGroup() {
-        return ageGroup;
+    public boolean isDeleted() {
+        return deletionStatus.isDeleted();
     }
 
-    /**
-     * 메타 표시용 이름 반환
-     *
-     * @return 표시용 이름
-     */
-    public String metaDisplayName() {
-        return meta.displayName();
+    public Instant deletedAt() {
+        return deletionStatus.deletedAt();
     }
 
-    /**
-     * SEO 슬러그 반환
-     *
-     * @return SEO 슬러그
-     */
-    public String seoSlug() {
-        return meta.seoSlug();
+    public Instant createdAt() {
+        return createdAt;
     }
 
-    /**
-     * 아이콘 URL 반환
-     *
-     * @return 아이콘 URL
-     */
-    public String iconUrl() {
-        return meta.iconUrl();
-    }
-
-    /**
-     * 버전 반환
-     *
-     * @return 버전
-     */
-    public long version() {
-        return version;
-    }
-
-    // ========== Event Handling ==========
-
-    private void registerEvent(DomainEvent event) {
-        domainEvents.add(event);
-    }
-
-    /**
-     * 도메인 이벤트 목록 반환
-     *
-     * @return 도메인 이벤트 (불변 리스트)
-     */
-    public List<DomainEvent> domainEvents() {
-        return List.copyOf(domainEvents);
-    }
-
-    /**
-     * 도메인 이벤트 초기화
-     */
-    public void clearEvents() {
-        domainEvents.clear();
+    public Instant updatedAt() {
+        return updatedAt;
     }
 }

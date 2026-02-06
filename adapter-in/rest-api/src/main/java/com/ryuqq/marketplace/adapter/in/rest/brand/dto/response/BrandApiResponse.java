@@ -1,19 +1,16 @@
 package com.ryuqq.marketplace.adapter.in.rest.brand.dto.response;
 
-/**
- * 브랜드 기본 정보 응답 DTO
- * RESTful API 응답으로 사용되는 브랜드 기본 정보 record
- */
+import io.swagger.v3.oas.annotations.media.Schema;
+
+/** 브랜드 조회 API 응답 DTO. */
+@Schema(description = "브랜드 조회 응답")
 public record BrandApiResponse(
-    Long id,
-    String code,
-    String canonicalName,
-    String nameKo,
-    String nameEn,
-    String shortName,
-    String country,
-    String department,
-    boolean isLuxury,
-    String status,
-    String logoUrl
-) {}
+        @Schema(description = "브랜드 ID") Long id,
+        @Schema(description = "브랜드 코드") String code,
+        @Schema(description = "한글명") String nameKo,
+        @Schema(description = "영문명") String nameEn,
+        @Schema(description = "약칭") String shortName,
+        @Schema(description = "상태") String status,
+        @Schema(description = "로고 URL") String logoUrl,
+        @Schema(description = "생성일시") String createdAt,
+        @Schema(description = "수정일시") String updatedAt) {}

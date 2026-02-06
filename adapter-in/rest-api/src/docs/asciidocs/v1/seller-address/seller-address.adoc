@@ -1,0 +1,78 @@
+[[seller-address-register]]
+=== 셀러 주소 등록
+
+==== HTTP Request
+include::{snippets}/seller-address/register/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-address/register/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/seller-address/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-address/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-address/register/response-fields.adoc[]
+
+
+[[seller-address-update]]
+=== 셀러 주소 수정
+
+==== HTTP Request
+include::{snippets}/seller-address/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-address/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/seller-address/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-address/update/http-response.adoc[]
+
+
+[[seller-address-delete]]
+=== 셀러 주소 삭제
+
+==== HTTP Request
+include::{snippets}/seller-address/delete/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-address/delete/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-address/delete/http-response.adoc[]
+
+
+[[seller-address-search]]
+=== 셀러 주소 조회
+
+==== HTTP Request
+include::{snippets}/seller-address/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/seller-address/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-address/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-address/search/response-fields.adoc[]
+
+
+[[seller-address-metadata]]
+=== 셀러 주소 메타데이터 조회
+
+==== HTTP Request
+include::{snippets}/seller-address/metadata/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/seller-address/metadata/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-address/metadata/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-address/metadata/response-fields.adoc[]

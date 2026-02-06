@@ -1,0 +1,68 @@
+[[refund-policy-register]]
+=== 환불 정책 등록
+
+==== HTTP Request
+include::{snippets}/refund-policy/register/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/refund-policy/register/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/refund-policy/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/refund-policy/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/refund-policy/register/response-fields.adoc[]
+
+
+[[refund-policy-update]]
+=== 환불 정책 수정
+
+==== HTTP Request
+include::{snippets}/refund-policy/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/refund-policy/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/refund-policy/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/refund-policy/update/http-response.adoc[]
+
+
+[[refund-policy-change-status]]
+=== 환불 정책 상태 변경
+
+==== HTTP Request
+include::{snippets}/refund-policy/change-status/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/refund-policy/change-status/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/refund-policy/change-status/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/refund-policy/change-status/http-response.adoc[]
+
+
+[[refund-policy-search]]
+=== 환불 정책 조회
+
+==== HTTP Request
+include::{snippets}/refund-policy/search/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/refund-policy/search/path-parameters.adoc[]
+
+==== Query Parameters
+include::{snippets}/refund-policy/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/refund-policy/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/refund-policy/search/response-fields.adoc[]

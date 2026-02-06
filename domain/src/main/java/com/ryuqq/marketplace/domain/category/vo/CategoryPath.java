@@ -1,95 +1,47 @@
 package com.ryuqq.marketplace.domain.category.vo;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
- * Category Path Value Object (계층 경로)
+ * 카테고리 경로 (Path Enumeration) Value Object.
  *
- * <p><strong>도메인 규칙</strong>:</p>
- * <ul>
- *   <li>슬래시(/)로 구분된 카테고리 ID 경로</li>
- *   <li>예: "1/10/100" (대 카테고리/중 카테고리/소 카테고리)</li>
- *   <li>최대 1000자</li>
- * </ul>
+ * <p>조상 카테고리 ID를 '/'로 연결한 문자열입니다. (예: "1/2/3")
  *
- * @author development-team
- * @since 1.0.0
+ * @param value 경로 문자열
  */
 public record CategoryPath(String value) {
 
-    private static final String SEPARATOR = "/";
     private static final int MAX_LENGTH = 1000;
 
-    /**
-     * Compact Constructor (검증 로직)
-     */
     public CategoryPath {
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("CategoryPath는 null이거나 빈 문자열일 수 없습니다.");
+            throw new IllegalArgumentException("카테고리 경로는 필수입니다");
         }
+        value = value.trim();
         if (value.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("CategoryPath는 " + MAX_LENGTH + "자를 초과할 수 없습니다: " + value.length());
+            throw new IllegalArgumentException(String.format("카테고리 경로는 %d자 이내여야 합니다", MAX_LENGTH));
         }
     }
 
-    /**
-     * 문자열로부터 경로 생성
-     *
-     * @param path 경로 문자열
-     * @return CategoryPath
-     */
-    public static CategoryPath of(String path) {
-        return new CategoryPath(path);
+    public static CategoryPath of(String value) {
+        return new CategoryPath(value);
     }
 
     /**
-     * Root 경로 생성
-     *
-     * @param categoryId 카테고리 ID
-     * @return CategoryPath
-     */
-    public static CategoryPath root(Long categoryId) {
-        return new CategoryPath(String.valueOf(categoryId));
-    }
-
-    /**
-     * 하위 카테고리 추가
+     * 자식 경로 생성.
      *
      * @param childId 자식 카테고리 ID
-     * @return 새로운 CategoryPath
+     * @return 새로운 경로
      */
     public CategoryPath appendChild(Long childId) {
-        return new CategoryPath(value + SEPARATOR + childId);
+        return new CategoryPath(value + "/" + childId);
     }
 
-    /**
-     * 경로를 ID 리스트로 변환
-     *
-     * @return ID 리스트
-     */
-    public List<Long> toIdList() {
-        return Arrays.stream(value.split(SEPARATOR))
-                .map(Long::parseLong)
-                .toList();
+    /** 루트 카테고리인지 확인. */
+    public boolean isRoot() {
+        return !value.contains("/");
     }
 
-    /**
-     * 경로 깊이 계산
-     *
-     * @return 깊이 (0부터 시작)
-     */
+    /** 경로에 포함된 카테고리 수 반환. */
     public int depth() {
-        return (int) value.chars().filter(c -> c == '/').count();
-    }
-
-    /**
-     * 다른 경로의 하위인지 확인
-     *
-     * @param other 비교 대상 경로
-     * @return 하위 경로이면 true
-     */
-    public boolean isDescendantOf(CategoryPath other) {
-        return value.startsWith(other.value + SEPARATOR);
+        return (int) value.chars().filter(ch -> ch == '/').count();
     }
 }

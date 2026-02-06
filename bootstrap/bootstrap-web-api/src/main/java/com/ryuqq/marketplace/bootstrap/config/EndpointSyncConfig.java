@@ -1,0 +1,64 @@
+package com.ryuqq.marketplace.bootstrap.config;
+
+import com.ryuqq.authhub.sdk.sync.EndpointSyncClient;
+import com.ryuqq.authhub.sdk.sync.EndpointSyncRequest;
+import com.ryuqq.authhub.sdk.sync.EndpointSyncRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+/**
+ * EndpointSync 설정.
+ *
+ * <p>애플리케이션 시작 시 {@code @RequirePermission} 어노테이션이 붙은 엔드포인트를 스캔하여 AuthHub에 동기화합니다.
+ *
+ * <p>{@code authhub.sync.enabled=true}일 때만 활성화됩니다. local/test 환경에서는 비활성화하고 stage/prod에서 활성화하세요.
+ *
+ * @author ryu-qqq
+ * @since 1.0.0
+ */
+@Configuration
+@ConditionalOnProperty(prefix = "authhub.sync", name = "enabled", havingValue = "true")
+public class EndpointSyncConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(EndpointSyncConfig.class);
+
+    @Bean
+    public EndpointSyncClient endpointSyncClient(
+            @Value("${authhub.base-url}") String baseUrl,
+            @Value("${authhub.service-token}") String serviceToken) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        String syncUrl = baseUrl + "/api/v1/internal/endpoints/sync";
+
+        return (EndpointSyncRequest request) -> {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + serviceToken);
+
+            HttpEntity<EndpointSyncRequest> entity = new HttpEntity<>(request, headers);
+            restTemplate.postForEntity(syncUrl, entity, Void.class);
+
+            log.info(
+                    "Endpoint sync completed: {} endpoints synced to AuthHub",
+                    request.endpoints().size());
+        };
+    }
+
+    @Bean
+    public EndpointSyncRunner endpointSyncRunner(
+            RequestMappingHandlerMapping handlerMapping,
+            EndpointSyncClient syncClient,
+            @Value("${authhub.service-code:SVC_MARKET}") String serviceCode) {
+
+        return new EndpointSyncRunner(handlerMapping, syncClient, "marketplace", serviceCode, true);
+    }
+}

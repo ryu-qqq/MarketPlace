@@ -1,66 +1,74 @@
 package com.ryuqq.marketplace.domain.category.vo;
 
+import java.util.Locale;
+
 /**
- * Product Group Enum
+ * 카테고리 그룹.
  *
- * <p><strong>상품 그룹</strong>:</p>
- * <ul>
- *   <li>CLOTHING - 의류</li>
- *   <li>SHOES - 신발</li>
- *   <li>BAGS - 가방</li>
- *   <li>ACCESSORIES - 액세서리</li>
- *   <li>JEWELRY - 주얼리</li>
- *   <li>BEAUTY - 뷰티</li>
- *   <li>HOME - 홈/리빙</li>
- *   <li>ELECTRONICS - 전자기기</li>
- *   <li>ETC - 기타</li>
- * </ul>
- *
- * @author development-team
- * @since 1.0.0
+ * <p>고시정보(notice_category) 및 속성 템플릿(category_attribute_template)과 연결되는 분류 그룹. 각 그룹별로 상품정보제공 고시에 따른
+ * 필수 입력 항목이 다르게 적용됨.
  */
-public enum ProductGroup {
-    CLOTHING("의류"),
-    SHOES("신발"),
-    BAGS("가방"),
-    ACCESSORIES("액세서리"),
-    JEWELRY("주얼리"),
-    BEAUTY("뷰티"),
-    HOME("홈/리빙"),
-    ELECTRONICS("전자기기"),
-    ETC("기타");
+public enum CategoryGroup {
 
-    private final String displayName;
+    /** 의류 - 소재, 색상, 치수, 세탁방법 등 */
+    CLOTHING,
 
-    ProductGroup(String displayName) {
-        this.displayName = displayName;
-    }
+    /** 구두/신발 - 소재, 색상, 굽높이, 사이즈 등 */
+    SHOES,
+
+    /** 가방 - 소재, 색상, 크기 등 */
+    BAGS,
+
+    /** 패션잡화 - 소재, 색상 등 */
+    ACCESSORIES,
+
+    /** 화장품 - 용량, 주요성분, 사용기한 등 */
+    COSMETICS,
+
+    /** 귀금속/보석 - 소재, 중량, 순도 등 */
+    JEWELRY,
+
+    /** 시계 - 케이스 소재, 밴드 소재, 방수 등급 등 */
+    WATCHES,
+
+    /** 가구 - 소재, 크기, 배송/설치비용 등 */
+    FURNITURE,
+
+    /** 디지털/가전 - KC인증, 정격전압, 소비전력, A/S정보 등 */
+    DIGITAL,
+
+    /** 스포츠용품 - 소재, 크기/중량, 사용연령 등 */
+    SPORTS,
+
+    /** 영유아용품 - KC인증(필수), 사용연령, 크기/중량 등 */
+    BABY_KIDS,
+
+    /** 기타 재화 - 기본 고시정보 적용 */
+    ETC;
 
     /**
-     * 표시용 이름 반환
-     *
-     * @return 한글 표시명
-     */
-    public String displayName() {
-        return displayName;
-    }
-
-    /**
-     * 문자열로부터 ProductGroup 찾기
+     * 문자열로부터 CategoryGroup 변환.
      *
      * @param value 문자열 값
-     * @return ProductGroup
-     * @throws IllegalArgumentException 일치하는 ProductGroup이 없는 경우
+     * @return 해당하는 CategoryGroup, 없으면 ETC
      */
-    public static ProductGroup fromString(String value) {
+    public static CategoryGroup fromString(String value) {
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("ProductGroup 값은 null이거나 빈 문자열일 수 없습니다.");
+            return ETC;
         }
-
         try {
-            return valueOf(value.trim().toUpperCase());
+            return CategoryGroup.valueOf(value.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("유효하지 않은 ProductGroup 값입니다: " + value);
+            return ETC;
         }
+    }
+
+    /**
+     * 고시정보 연결이 필요한 그룹인지 확인.
+     *
+     * @return ETC가 아니면 true
+     */
+    public boolean requiresNoticeInfo() {
+        return this != ETC;
     }
 }

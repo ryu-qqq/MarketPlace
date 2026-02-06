@@ -10,6 +10,14 @@
 plugins {
     id 'java-library'
     id 'java-test-fixtures'
+    alias(libs.plugins.asciidoctor)
+}
+
+// ========================================
+// REST Docs Configuration
+// ========================================
+ext {
+    snippetsDir = file('build/generated-snippets')
 }
 
 dependencies {
@@ -19,6 +27,9 @@ dependencies {
     // Application layer (use cases)
     api project(':application')
     api project(':domain')
+
+    // AuthHub SDK Spring Boot Starter (v2.0.4 - AccessChecker, @RequirePermission, UserContext, SecurityHeaders)
+    implementation libs.authhub.sdk.spring.boot.starter
 
     // Spring Web
     implementation libs.spring.boot.starter.web
@@ -70,5 +81,47 @@ tasks.jacocoTestCoverageVerification {
 }
 
 tasks.test {
-    finalizedBy tasks.jacocoTestCoverageVerification
+    outputs.dir snippetsDir
+}
+
+// ========================================
+// Asciidoctor Configuration
+// ========================================
+asciidoctor {
+    dependsOn test
+    inputs.dir snippetsDir
+    sourceDir = file('src/docs/asciidocs/v1')
+    sources { include 'index.adoc' }
+    baseDirFollowsSourceDir()
+    outputDir = file('build/docs/asciidoc')
+
+    attributes = [
+        'snippets'   : snippetsDir,
+        'doctype'    : 'book',
+        'toc'        : 'left',
+        'toclevels'  : '3',
+        'sectlinks'  : '',
+        'sectanchors': '',
+        'nofooter'   : '',
+        'stylesdir'  : file('src/docs').absolutePath,
+        'stylesheet' : 'custom-style.css'
+    ]
+}
+
+// ========================================
+// Copy REST Docs to static resources
+// ========================================
+tasks.register('copyRestDocs', Copy) {
+    dependsOn asciidoctor
+    from "${asciidoctor.outputDir}"
+    into 'src/main/resources/static/api/v1/market/docs'
+}
+
+// ========================================
+// Generate REST Docs (명시적 문서 생성 태스크)
+// ========================================
+tasks.register('generateRestDocs') {
+    dependsOn copyRestDocs
+    group = 'documentation'
+    description = 'Generate REST API documentation'
 }

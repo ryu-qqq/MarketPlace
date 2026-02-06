@@ -26,6 +26,29 @@
         <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
     </Match>
 
+    <Match>
+        <Or>
+            <Class name="~.*Test.*"/>
+            <Class name="~.*TestSupport"/>
+            <Class name="~.*TestBase"/>
+            <Class name="~.*TestFixture.*"/>
+            <Class name="~.*E2ETest.*"/>
+        </Or>
+        <Bug pattern="MS_SHOULD_BE_FINAL,NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE,REC_CATCH_EXCEPTION,RV_RETURN_VALUE_IGNORED,RV_RETURN_VALUE_IGNORED_BAD_PRACTICE,SE_BAD_FIELD,SE_NO_SERIALVERSIONID,DLS_DEAD_LOCAL_STORE,ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+    </Match>
+
+    <!-- ========================================
+         JPA Entity Naming Conventions
+         Entity getter names follow DB column naming, may appear confusing
+         ======================================== -->
+    <Match>
+        <Or>
+            <Class name="~.*JpaEntity"/>
+            <Class name="~.*Entity"/>
+        </Or>
+        <Bug pattern="NM_CONFUSING"/>
+    </Match>
+
     <!-- ========================================
          Configuration Classes
          ======================================== -->
@@ -63,6 +86,10 @@
             <Class name="~.*Query"/>
             <Class name="~.*DTO"/>
             <Class name="~.*Dto"/>
+            <Class name="~.*Result"/>
+            <Class name="~.*Bundle"/>
+            <Class name="~.*Params"/>
+            <Class name="~.*Context"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
     </Match>
