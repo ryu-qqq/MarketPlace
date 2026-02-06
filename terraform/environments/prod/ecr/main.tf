@@ -31,6 +31,10 @@ module "ecr_web_api" {
   image_tag_mutability = "IMMUTABLE"
   scan_on_push         = true
 
+  # KMS encryption for ECR images
+  kms_key_arn  = "arn:aws:kms:ap-northeast-2:646886795421:key/086b1677-614f-46ba-863e-23c215fb5010"
+  force_delete = true
+
   # Lifecycle Policy
   enable_lifecycle_policy    = true
   max_image_count            = 30
@@ -59,6 +63,10 @@ module "ecr_scheduler" {
   name                 = "${var.project_name}-scheduler-${var.environment}"
   image_tag_mutability = "IMMUTABLE"
   scan_on_push         = true
+
+  # KMS encryption for ECR images
+  kms_key_arn  = "arn:aws:kms:ap-northeast-2:646886795421:key/086b1677-614f-46ba-863e-23c215fb5010"
+  force_delete = true
 
   # Lifecycle Policy
   enable_lifecycle_policy    = true
