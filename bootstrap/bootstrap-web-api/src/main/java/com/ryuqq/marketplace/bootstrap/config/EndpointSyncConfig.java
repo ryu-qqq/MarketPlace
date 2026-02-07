@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -40,16 +42,28 @@ public class EndpointSyncConfig {
         String syncUrl = baseUrl + "/api/v1/internal/endpoints/sync";
 
         return (EndpointSyncRequest request) -> {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Authorization", "Bearer " + serviceToken);
+            log.info("Endpoint sync started: {} endpoints to sync to AuthHub (url={})",
+                    request.endpoints().size(), syncUrl);
 
-            HttpEntity<EndpointSyncRequest> entity = new HttpEntity<>(request, headers);
-            restTemplate.postForEntity(syncUrl, entity, Void.class);
+            try {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.set("Authorization", "Bearer " + serviceToken);
 
-            log.info(
-                    "Endpoint sync completed: {} endpoints synced to AuthHub",
-                    request.endpoints().size());
+                HttpEntity<EndpointSyncRequest> entity = new HttpEntity<>(request, headers);
+                restTemplate.postForEntity(syncUrl, entity, Void.class);
+
+                log.info("Endpoint sync completed: {} endpoints synced to AuthHub",
+                        request.endpoints().size());
+            } catch (HttpStatusCodeException e) {
+                log.error("Endpoint sync failed: AuthHub returned HTTP {} - {}",
+                        e.getStatusCode().value(), e.getResponseBodyAsString(), e);
+            } catch (ResourceAccessException e) {
+                log.error("Endpoint sync failed: cannot connect to AuthHub (url={})",
+                        syncUrl, e);
+            } catch (Exception e) {
+                log.error("Endpoint sync failed: unexpected error", e);
+            }
         };
     }
 
