@@ -42,8 +42,10 @@ public class EndpointSyncConfig {
         String syncUrl = baseUrl + "/api/v1/internal/endpoints/sync";
 
         return (EndpointSyncRequest request) -> {
-            log.info("Endpoint sync started: {} endpoints to sync to AuthHub (url={})",
-                    request.endpoints().size(), syncUrl);
+            log.info(
+                    "Endpoint sync started: {} endpoints to sync to AuthHub (url={})",
+                    request.endpoints().size(),
+                    syncUrl);
 
             try {
                 HttpHeaders headers = new HttpHeaders();
@@ -53,14 +55,17 @@ public class EndpointSyncConfig {
                 HttpEntity<EndpointSyncRequest> entity = new HttpEntity<>(request, headers);
                 restTemplate.postForEntity(syncUrl, entity, Void.class);
 
-                log.info("Endpoint sync completed: {} endpoints synced to AuthHub",
+                log.info(
+                        "Endpoint sync completed: {} endpoints synced to AuthHub",
                         request.endpoints().size());
             } catch (HttpStatusCodeException e) {
-                log.error("Endpoint sync failed: AuthHub returned HTTP {} - {}",
-                        e.getStatusCode().value(), e.getResponseBodyAsString(), e);
+                log.error(
+                        "Endpoint sync failed: AuthHub returned HTTP {} - {}",
+                        e.getStatusCode().value(),
+                        e.getResponseBodyAsString(),
+                        e);
             } catch (ResourceAccessException e) {
-                log.error("Endpoint sync failed: cannot connect to AuthHub (url={})",
-                        syncUrl, e);
+                log.error("Endpoint sync failed: cannot connect to AuthHub (url={})", syncUrl, e);
             } catch (Exception e) {
                 log.error("Endpoint sync failed: unexpected error", e);
             }
