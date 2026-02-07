@@ -129,7 +129,7 @@ locals {
   rds_credentials = jsondecode(data.aws_secretsmanager_secret_version.rds.secret_string)
   rds_host        = local.rds_credentials.host
   rds_port        = tostring(local.rds_credentials.port)
-  rds_dbname      = "marketplace"
+  rds_dbname      = "market"
   rds_username    = local.rds_credentials.username
 
   # Redis Configuration (Shared Stage Redis - No Auth, No TLS)
