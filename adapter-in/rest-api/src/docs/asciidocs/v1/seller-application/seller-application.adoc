@@ -1,0 +1,78 @@
+[[seller-application-apply]]
+=== 입점 신청
+
+==== HTTP Request
+include::{snippets}/seller-application/apply/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/seller-application/apply/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-application/apply/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-application/apply/response-fields.adoc[]
+
+
+[[seller-application-approve]]
+=== 입점 승인
+
+==== HTTP Request
+include::{snippets}/seller-application/approve/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-application/approve/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-application/approve/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-application/approve/response-fields.adoc[]
+
+
+[[seller-application-reject]]
+=== 입점 거절
+
+==== HTTP Request
+include::{snippets}/seller-application/reject/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-application/reject/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/seller-application/reject/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-application/reject/http-response.adoc[]
+
+
+[[seller-application-search]]
+=== 입점 신청 검색 조회
+
+==== HTTP Request
+include::{snippets}/seller-application/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/seller-application/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-application/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-application/search/response-fields.adoc[]
+
+
+[[seller-application-get]]
+=== 입점 신청 상세 조회
+
+==== HTTP Request
+include::{snippets}/seller-application/get/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-application/get/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-application/get/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-application/get/response-fields.adoc[]

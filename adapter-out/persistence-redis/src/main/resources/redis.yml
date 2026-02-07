@@ -1,0 +1,34 @@
+# ============================================================
+# Redis Layer 공통 설정
+# ============================================================
+# 환경별 설정은 redis-{profile}.yml 참조
+# - redis-local.yml: 로컬 개발 환경
+# - redis-prod.yml: 운영 환경
+# ============================================================
+
+spring:
+  data:
+    redis:
+      # Command Timeout
+      timeout: 3000ms
+
+      # Client Name (모니터링용)
+      client-name: ${spring.application.name:setof-commerce}-${HOSTNAME:unknown}
+
+  # Redis Cache Settings
+  cache:
+    type: redis
+    redis:
+      # Default TTL (30분)
+      time-to-live: 1800000
+      # Key Prefix
+      key-prefix: "cache::"
+      # Null 값 캐싱 허용 (캐시 펜싱 방지)
+      cache-null-values: true
+      # Prefix 사용
+      use-key-prefix: true
+
+# Redisson 공통 설정
+redisson:
+  threads: 4
+  netty-threads: 4

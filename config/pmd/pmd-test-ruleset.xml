@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<ruleset name="Hexagonal Architecture - Test Ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+         https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        PMD ruleset for test and testFixtures source sets.
+
+        테스트 코드에서는 다음을 허용합니다:
+        - AssertJ/JUnit 체이닝 (DomainLayerDemeterStrict 제외)
+        - Fixture 클래스의 다수 팩토리 메서드 (DomainTooManyMethods 제외)
+        - 테스트 유틸리티의 다수 임포트 (ExcessiveImports 완화)
+        - 테스트 클래스의 긴 코드 (DomainExcessiveClassLength 제외)
+
+        일반 설계 규칙(GodClass, 깊은 중첩 등)은 그대로 적용됩니다.
+    </description>
+
+    <!-- ========================================
+         유지되는 규칙: 일반 설계 규칙
+         ======================================== -->
+
+    <rule ref="category/java/design.xml/DataClass">
+        <priority>2</priority>
+        <properties>
+            <property name="violationSuppressXPath"
+                      value="//ClassDeclaration[
+                             @Interface = true()
+                             or contains(@SimpleName, 'DTO')
+                             or contains(@SimpleName, 'Request')
+                             or contains(@SimpleName, 'Response')
+                             or contains(@SimpleName, 'Command')
+                             or contains(@SimpleName, 'Query')
+                             or contains(@SimpleName, 'Properties')
+                             or contains(@SimpleName, 'Config')
+                             or starts-with(@SimpleName, 'Q')
+                             or ancestor::ClassDeclaration[contains(@SimpleName, 'ApiPaths')]
+                             or ancestor::ClassDeclaration[contains(@SimpleName, 'Paths')]
+                             or contains(@SimpleName, 'JpaEntity')
+                             or (contains(@SimpleName, 'Entity') and ancestor::CompilationUnit/PackageDeclaration[contains(@Name, '.persistence.')])
+                             or contains(@SimpleName, 'Paths')
+                             or contains(@SimpleName, 'Endpoint')
+                             or contains(@SimpleName, 'Fixture')
+                             or contains(@SimpleName, 'Test')
+                             or contains(@SimpleName, 'Constants')
+                             ] | //RecordDeclaration"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml/AvoidDeeplyNestedIfStmts">
+        <priority>2</priority>
+        <properties>
+            <property name="problemDepth" value="3"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml/GodClass">
+        <priority>2</priority>
+        <properties>
+            <property name="violationSuppressXPath"
+                      value="//ClassDeclaration[
+                             ancestor::CompilationUnit/PackageDeclaration[contains(@Name, '.aggregate')]
+                             or contains(@SimpleName, 'Fixture')
+                             or contains(@SimpleName, 'Test')
+                             ]"/>
+        </properties>
+    </rule>
+
+    <!-- Controller: Repository 직접 의존 금지 -->
+    <rule name="ControllerNoRepositoryDependency"
+          language="java"
+          message="Controller must not depend on Repository - use UseCase only"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+<![CDATA[
+//ClassDeclaration[ancestor::CompilationUnit/PackageDeclaration[contains(@Name, '.adapter.in.')]]
+    //FieldDeclaration//ClassType[
+        contains(@SimpleName, 'Repository')
+        and not(contains(@SimpleName, 'AuthorizationRequestRepository'))
+        and not(contains(@SimpleName, 'CookieRepository'))
+    ]
+]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- ========================================
+         제외된 규칙 (테스트 코드에 부적합):
+         - DomainLayerDemeterStrict (AssertJ 체이닝)
+         - DomainTooManyMethods (Fixture 팩토리 메서드)
+         - DomainExcessiveClassLength (테스트 클래스 길이)
+         - ApplicationExcessiveClassLength (테스트 클래스 길이)
+         - GeneralExcessiveClassLength (테스트 클래스 길이)
+         - LawOfDemeter (테스트 메서드 체이닝)
+         - ExcessiveImports (테스트 유틸리티 임포트)
+         - UseCaseTooManyMethods (테스트 해당 없음)
+         - TooManyMethods (테스트 메서드 다수 허용)
+         - TooManyFields (Fixture 필드 다수 허용)
+         ======================================== -->
+
+</ruleset>

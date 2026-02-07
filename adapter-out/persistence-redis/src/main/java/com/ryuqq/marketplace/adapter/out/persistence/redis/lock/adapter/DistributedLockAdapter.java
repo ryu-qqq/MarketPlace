@@ -1,96 +1,119 @@
-package com.ryuqq.fileflow.adapter.out.persistence.redis.lock.adapter;
+package com.ryuqq.marketplace.adapter.out.persistence.redis.lock.adapter;
 
-import com.ryuqq.fileflow.application.common.metrics.annotation.DownstreamMetric;
-import com.ryuqq.fileflow.application.common.port.out.DistributedLockPort;
-import com.ryuqq.fileflow.domain.common.vo.LockKey;
+import com.ryuqq.marketplace.adapter.out.persistence.redis.common.exception.LockAcquisitionException;
+import com.ryuqq.marketplace.application.common.port.out.DistributedLockPort;
+import com.ryuqq.marketplace.domain.common.vo.LockKey;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
- * 분산락 어댑터.
+ * Redisson 분산락 Adapter
  *
- * <p>Redisson을 사용한 DistributedLockPort 구현체.
- *
- * <p><strong>특징</strong>:
+ * <p><strong>책임:</strong>
  *
  * <ul>
- *   <li>Redisson RLock 기반 분산락
- *   <li>Watchdog 자동 갱신 지원 (leaseTime -1)
- *   <li>Reentrant 락 지원
- *   <li>try-finally 패턴 자동 처리
+ *   <li>분산락 획득/해제
+ *   <li>Lock 상태 관리
+ *   <li>Thread-safe Lock 인스턴스 관리
  * </ul>
  *
- * <p><strong>락 키 형식</strong>: {@code {lockType-prefix}:{identifier}}
+ * <p><strong>금지 사항:</strong>
  *
  * <ul>
- *   <li>EXTERNAL_DOWNLOAD: {@code external-download:{externalDownloadId}}
- *   <li>UPLOAD_SESSION: {@code upload-session:{sessionId}}
+ *   <li>비즈니스 로직 포함 금지
+ *   <li>DB 접근 금지
+ *   <li>@Transactional 금지
  * </ul>
  *
- * <p><strong>활성화 조건</strong>: {@code redisson.enabled=true}
+ * <p><strong>Pub/Sub 기반 Lock:</strong>
+ *
+ * <p>Redisson은 Pub/Sub 이벤트 리스너 방식으로 Lock을 대기합니다. Lettuce의 SETNX + 스핀락 방식과 달리 CPU/네트워크 효율적입니다.
+ *
+ * @author Development Team
+ * @since 1.0.0
  */
 @Component
-@ConditionalOnProperty(
-        name = "spring.data.redis.enabled",
-        havingValue = "true",
-        matchIfMissing = true)
 public class DistributedLockAdapter implements DistributedLockPort {
-
-    private static final Logger log = LoggerFactory.getLogger(DistributedLockAdapter.class);
 
     private final RedissonClient redissonClient;
 
+    /**
+     * Thread-safe Lock 인스턴스 캐시
+     *
+     * <p>같은 키에 대해 동일한 Lock 인스턴스를 반환합니다.
+     */
+    private final ConcurrentHashMap<String, RLock> lockCache;
+
     public DistributedLockAdapter(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
+        this.lockCache = new ConcurrentHashMap<>();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p><strong>InterruptedException 처리:</strong>
+     *
+     * <p>인터럽트 발생 시 스레드 인터럽트 상태를 복원하고 LockAcquisitionException을 던집니다.
+     *
+     * @throws LockAcquisitionException Lock 획득 중 인터럽트 발생 시
+     */
     @Override
-    @DownstreamMetric(target = "redis", operation = "lock")
     public boolean tryLock(LockKey key, long waitTime, long leaseTime, TimeUnit unit) {
-        String lockKey = key.value();
-        RLock lock = redissonClient.getLock(lockKey);
+        String keyValue = key.value();
+        RLock lock = getLock(keyValue);
+
         try {
-            boolean acquired = lock.tryLock(waitTime, leaseTime, unit);
-            if (acquired) {
-                log.debug("락 획득 성공: key={}", lockKey);
-            } else {
-                log.debug("락 획득 실패 (대기 시간 초과): key={}", lockKey);
-            }
-            return acquired;
+            return lock.tryLock(waitTime, leaseTime, unit);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.warn("락 획득 중 인터럽트 발생: key={}", lockKey);
-            return false;
+            throw new LockAcquisitionException(
+                    keyValue, String.format("Lock 획득 중 인터럽트 발생: key=%s", keyValue), e);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p><strong>안전한 unlock:</strong>
+     *
+     * <p>현재 스레드가 Lock을 보유한 경우에만 해제합니다. 다른 스레드가 보유한 Lock을 해제하지 않습니다.
+     */
     @Override
-    @DownstreamMetric(target = "redis", operation = "unlock")
     public void unlock(LockKey key) {
-        String lockKey = key.value();
-        RLock lock = redissonClient.getLock(lockKey);
+        RLock lock = getLock(key.value());
+
         if (lock.isHeldByCurrentThread()) {
             lock.unlock();
-            log.debug("락 해제: key={}", lockKey);
-        } else {
-            log.warn("현재 스레드가 보유하지 않은 락 해제 시도: key={}", lockKey);
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isHeldByCurrentThread(LockKey key) {
-        RLock lock = redissonClient.getLock(key.value());
+        RLock lock = getLock(key.value());
         return lock.isHeldByCurrentThread();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isLocked(LockKey key) {
-        RLock lock = redissonClient.getLock(key.value());
+        RLock lock = getLock(key.value());
         return lock.isLocked();
+    }
+
+    /**
+     * Lock 인스턴스 조회 (캐싱)
+     *
+     * <p>같은 키에 대해 동일한 RLock 인스턴스를 반환합니다.
+     *
+     * @param keyValue Lock 키 문자열
+     * @return RLock 인스턴스
+     */
+    private RLock getLock(String keyValue) {
+        return lockCache.computeIfAbsent(keyValue, redissonClient::getLock);
     }
 }

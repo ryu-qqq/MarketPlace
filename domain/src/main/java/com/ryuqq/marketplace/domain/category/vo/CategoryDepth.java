@@ -1,59 +1,37 @@
 package com.ryuqq.marketplace.domain.category.vo;
 
 /**
- * Category Depth Value Object
+ * 카테고리 계층 깊이 Value Object.
  *
- * <p><strong>도메인 규칙</strong>:</p>
- * <ul>
- *   <li>최소 0 (루트)</li>
- *   <li>최대 10</li>
- * </ul>
+ * <p>루트 카테고리는 depth 0입니다.
  *
- * @author development-team
- * @since 1.0.0
+ * @param value 계층 깊이 (0 이상)
  */
 public record CategoryDepth(int value) {
 
+    private static final int MIN_DEPTH = 0;
     private static final int MAX_DEPTH = 10;
 
-    /**
-     * Compact Constructor (검증 로직)
-     */
     public CategoryDepth {
-        if (value < 0) {
-            throw new IllegalArgumentException("CategoryDepth는 음수일 수 없습니다: " + value);
-        }
-        if (value > MAX_DEPTH) {
-            throw new IllegalArgumentException("CategoryDepth는 " + MAX_DEPTH + "를 초과할 수 없습니다: " + value);
+        if (value < MIN_DEPTH || value > MAX_DEPTH) {
+            throw new IllegalArgumentException(
+                    String.format("카테고리 깊이는 %d~%d 범위여야 합니다", MIN_DEPTH, MAX_DEPTH));
         }
     }
 
-    /**
-     * 값 기반 생성
-     *
-     * @param value 깊이 값
-     * @return CategoryDepth
-     * @throws IllegalArgumentException 검증 실패 시
-     */
     public static CategoryDepth of(int value) {
         return new CategoryDepth(value);
     }
 
-    /**
-     * 깊이 증가
-     *
-     * @return 증가된 CategoryDepth
-     * @throws IllegalArgumentException 최대 깊이 초과 시
-     */
-    public CategoryDepth increment() {
+    public static CategoryDepth root() {
+        return new CategoryDepth(0);
+    }
+
+    /** 자식 카테고리 깊이 반환. */
+    public CategoryDepth child() {
         return new CategoryDepth(value + 1);
     }
 
-    /**
-     * 루트 깊이인지 확인
-     *
-     * @return 루트이면 true
-     */
     public boolean isRoot() {
         return value == 0;
     }

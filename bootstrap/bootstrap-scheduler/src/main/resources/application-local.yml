@@ -1,0 +1,15 @@
+# ============================================================
+# Scheduler Application 로컬 환경 설정
+# ============================================================
+# 활성화: spring.profiles.active=local
+# ============================================================
+
+logging:
+  level:
+    com.ryuqq.setof: DEBUG
+    com.ryuqq.setof.adapter.in.scheduler: DEBUG
+    org.hibernate.SQL: DEBUG
+
+# Sentry 비활성화 (로컬)
+sentry:
+  dsn: ""

@@ -1,0 +1,133 @@
+[[seller-admin-application-apply]]
+=== 셀러 어드민 등록 신청
+
+==== HTTP Request
+include::{snippets}/seller-admin-application/apply/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/seller-admin-application/apply/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-admin-application/apply/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-admin-application/apply/response-fields.adoc[]
+
+
+[[seller-admin-application-approve]]
+=== 셀러 어드민 승인
+
+==== HTTP Request
+include::{snippets}/seller-admin-application/approve/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-admin-application/approve/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-admin-application/approve/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-admin-application/approve/response-fields.adoc[]
+
+
+[[seller-admin-application-reject]]
+=== 셀러 어드민 거절
+
+==== HTTP Request
+include::{snippets}/seller-admin-application/reject/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-admin-application/reject/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-admin-application/reject/http-response.adoc[]
+
+
+[[seller-admin-application-bulk-approve]]
+=== 셀러 어드민 일괄 승인
+
+==== HTTP Request
+include::{snippets}/seller-admin-application/bulk-approve/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/seller-admin-application/bulk-approve/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-admin-application/bulk-approve/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-admin-application/bulk-approve/response-fields.adoc[]
+
+
+[[seller-admin-application-bulk-reject]]
+=== 셀러 어드민 일괄 거절
+
+==== HTTP Request
+include::{snippets}/seller-admin-application/bulk-reject/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/seller-admin-application/bulk-reject/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-admin-application/bulk-reject/http-response.adoc[]
+
+
+[[seller-admin-application-reset-password]]
+=== 셀러 어드민 비밀번호 초기화
+
+==== HTTP Request
+include::{snippets}/seller-admin-application/reset-password/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-admin-application/reset-password/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-admin-application/reset-password/http-response.adoc[]
+
+
+[[seller-admin-application-change-password]]
+=== 셀러 어드민 비밀번호 변경
+
+==== HTTP Request
+include::{snippets}/seller-admin-application/change-password/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-admin-application/change-password/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/seller-admin-application/change-password/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-admin-application/change-password/http-response.adoc[]
+
+
+[[seller-admin-application-get]]
+=== 셀러 어드민 상세 조회
+
+==== HTTP Request
+include::{snippets}/seller-admin-application/get/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller-admin-application/get/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-admin-application/get/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-admin-application/get/response-fields.adoc[]
+
+
+[[seller-admin-application-search]]
+=== 셀러 어드민 검색 조회
+
+==== HTTP Request
+include::{snippets}/seller-admin-application/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/seller-admin-application/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller-admin-application/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller-admin-application/search/response-fields.adoc[]

@@ -1,0 +1,14 @@
+[[brand-search]]
+=== 브랜드 검색 조회
+
+==== HTTP Request
+include::{snippets}/brand/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/brand/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/brand/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/brand/search/response-fields.adoc[]

@@ -43,6 +43,7 @@
         <properties>
             <!-- 허용 대상:
                  - DTO, Request, Response, Command, Query (CQRS 패턴)
+                 - *Bundle (복합 데이터 전달 객체)
                  - *Properties (Spring @ConfigurationProperties)
                  - *Config (설정 클래스)
                  - Q* (QueryDSL 자동 생성 클래스)
@@ -61,6 +62,7 @@
                              or contains(@SimpleName, 'Response')
                              or contains(@SimpleName, 'Command')
                              or contains(@SimpleName, 'Query')
+                             or contains(@SimpleName, 'Bundle')
                              or contains(@SimpleName, 'Properties')
                              or contains(@SimpleName, 'Config')
                              or starts-with(@SimpleName, 'Q')
@@ -82,12 +84,14 @@
             <!-- 허용 대상:
                  - Controller (다양한 UseCase, DTO 의존)
                  - ExceptionHandler (다양한 예외 타입 처리)
+                 - Factory (다양한 도메인 객체/VO 생성에 많은 import 필요)
                  - V1Controller (레거시 마이그레이션)
             -->
             <property name="violationSuppressXPath"
                       value="//ClassDeclaration[
                              contains(@SimpleName, 'Controller')
                              or contains(@SimpleName, 'ExceptionHandler')
+                             or contains(@SimpleName, 'Factory')
                              ]"/>
         </properties>
     </rule>

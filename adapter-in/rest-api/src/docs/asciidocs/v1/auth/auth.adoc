@@ -1,0 +1,40 @@
+[[auth-login]]
+=== 로그인
+
+==== HTTP Request
+include::{snippets}/auth/login/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/auth/login/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/auth/login/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/auth/login/response-fields.adoc[]
+
+
+[[auth-logout]]
+=== 로그아웃
+
+==== HTTP Request
+include::{snippets}/auth/logout/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/auth/logout/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/auth/logout/response-fields.adoc[]
+
+
+[[auth-me]]
+=== 내 정보 조회
+
+==== HTTP Request
+include::{snippets}/auth/me/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/auth/me/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/auth/me/response-fields.adoc[]

@@ -1,41 +1,104 @@
-# ===============================================
-# REST API Adapter Configuration
-# ===============================================
-# REST API 어댑터 전용 설정
-# 애플리케이션 런타임 설정은 bootstrap/bootstrap-web-api/application.yml 참조
+# ============================================================
+# REST API Adapter 공통 설정
+# ============================================================
+# 환경별 설정은 rest-api-{profile}.yml 참조
+# - rest-api-local.yml: 로컬 개발 환경
+# - rest-api-prod.yml: 운영 환경
 #
-# @author windsurf
+# 인증 아키텍처: Gateway Only
+# - JWT 검증: API Gateway에서 처리
+# - OAuth2: API Gateway에서 처리
+# - CORS: API Gateway에서 처리
+# - 이 서비스: Gateway가 전달하는 헤더(X-User-Id, X-User-Roles)만 파싱
+#
 # @since 1.0.0
-# ===============================================
+# ============================================================
 
-# ===============================================
-# API Endpoint Configuration
-# ===============================================
-# REST API 엔드포인트 경로 중앙 관리
-# @see com.ryuqq.adapter.in.rest.config.properties.ApiEndpointProperties
+spring:
+  # ============================================================
+  # MessageSource (i18n)
+  # ============================================================
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
+  # ============================================================
+  # Jackson (JSON 직렬화/역직렬화)
+  # ============================================================
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss
+    time-zone: Asia/Seoul
+
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+      FAIL_ON_EMPTY_BEANS: false
+
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+
+    default-property-inclusion: non_null
+
+  # ============================================================
+  # Web Configuration
+  # ============================================================
+  web:
+    locale: ko_KR
+    locale-resolver: fixed
+
+  # ============================================================
+  # MVC Configuration
+  # ============================================================
+  mvc:
+    contentnegotiation:
+      favor-parameter: false
+      favor-path-extension: false
+
+# ============================================================
+# Error Response Configuration (RFC 7807)
+# ============================================================
+# @see com.ryuqq.adapter.in.rest.common.controller.GlobalExceptionHandler
 api:
-  endpoints:
-    # API v1 베이스 경로
-    base-v1: /api/v1
-
-    # Seller 도메인 엔드포인트
-    seller:
-      base: /sellers
-      by-id: /{id}
-      status: /{id}/status
-
-    # Schedule 도메인 엔드포인트
-    schedule:
-      base: /schedules
-      by-id: /{id}
-
-  # 에러 응답 설정 (RFC 7807 Problem Details)
-  # @see com.ryuqq.adapter.in.rest.config.properties.ApiErrorProperties
   error:
-    # 에러 타입 문서 베이스 URL
-    # 프로덕션: https://api.example.com/problems
-    # 개발: about:blank (기본값)
     base-url: about:blank
-
-    # about:blank 사용 여부 (true: 문서 URL 무시, false: base-url 사용)
     use-about-blank: true
+
+  # ============================================================
+  # Auth Cookie Configuration
+  # ============================================================
+  # 게이트웨이 JwtAuthenticationFilter / TokenRefreshFilter 연동용
+  # 환경별 오버라이드: rest-api-{profile}.yml
+  auth:
+    cookie:
+      access-max-age: 3600       # 1시간 (초)
+      refresh-max-age: 604800    # 7일 (초)
+      secure: true
+      same-site: Strict
+      path: /
+      http-only: true
+
+# ============================================================
+# API Documentation (Springdoc OpenAPI)
+# ============================================================
+# Gateway 라우팅 패턴: /api/v1/market/** → 이 서버
+# prefix strip 없이 그대로 전달되므로 경로를 맞춰줌
+#
+# Swagger UI: /api/v1/market/swagger (ApiDocsController에서 서빙)
+# REST Docs:  /api/v1/market/docs (static resources)
+# OpenAPI:    /api/v1/market/api-docs (springdoc)
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api/v1/market/api-docs
+
+  swagger-ui:
+    enabled: false
+
+  packages-to-scan:
+    - com.ryuqq.marketplace.adapter.in.rest
+
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
+  cache:
+    disabled: true

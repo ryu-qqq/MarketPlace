@@ -7,4 +7,11 @@
   <suppress files=".*/adapter-in-.*" checks="RegexpSinglelineJava"/>
   <suppress files=".*/adapter-out-.*" checks="RegexpSinglelineJava"/>
   <suppress files=".*Mapper\.java" checks="RegexpSinglelineJava"/>
+
+  <!-- Test source sets: allow star imports (AssertJ, JUnit) -->
+  <suppress files=".*[\\/]src[\\/]test[\\/].*" checks="AvoidStarImport"/>
+  <suppress files=".*[\\/]src[\\/]testFixtures[\\/].*" checks="AvoidStarImport"/>
+
+  <!-- QueryDSL generated Q* classes -->
+  <suppress files=".*[\\/]build[\\/]generated[\\/].*" checks=".*"/>
 </suppressions>

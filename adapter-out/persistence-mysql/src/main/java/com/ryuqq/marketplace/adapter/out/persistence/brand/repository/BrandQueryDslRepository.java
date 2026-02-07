@@ -1,138 +1,86 @@
 package com.ryuqq.marketplace.adapter.out.persistence.brand.repository;
 
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ryuqq.marketplace.adapter.out.persistence.brand.condition.BrandConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.brand.entity.BrandJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.brand.entity.QBrandAliasJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.brand.entity.QBrandJpaEntity;
-import com.ryuqq.marketplace.application.brand.dto.query.BrandSearchQuery;
-import com.ryuqq.marketplace.application.brand.port.out.query.AliasMatchResult;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
+import com.ryuqq.marketplace.domain.brand.query.BrandSearchCriteria;
+import com.ryuqq.marketplace.domain.brand.query.BrandSortKey;
+import com.ryuqq.marketplace.domain.common.vo.SortDirection;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-/**
- * Brand QueryDSL Repository
- *
- * <p><strong>Zero-Tolerance 규칙 준수</strong>:</p>
- * <ul>
- *   <li>Lombok 금지 - Plain Java class</li>
- *   <li>QueryDSL DTO Projection 사용</li>
- *   <li>동적 쿼리 생성</li>
- * </ul>
- *
- * @author ryu-qqq
- * @since 2025-11-27
- */
+/** Brand QueryDSL Repository. */
 @Repository
 public class BrandQueryDslRepository {
 
+    private static final QBrandJpaEntity brand = QBrandJpaEntity.brandJpaEntity;
+
     private final JPAQueryFactory queryFactory;
-    private final QBrandJpaEntity brand = QBrandJpaEntity.brandJpaEntity;
-    private final QBrandAliasJpaEntity alias = QBrandAliasJpaEntity.brandAliasJpaEntity;
+    private final BrandConditionBuilder conditionBuilder;
 
-    public BrandQueryDslRepository(JPAQueryFactory queryFactory) {
+    public BrandQueryDslRepository(
+            JPAQueryFactory queryFactory, BrandConditionBuilder conditionBuilder) {
         this.queryFactory = queryFactory;
+        this.conditionBuilder = conditionBuilder;
     }
 
-    /**
-     * 브랜드 검색
-     *
-     * @param query 검색 조건
-     * @param pageable 페이징 정보
-     * @return Page<BrandJpaEntity>
-     */
-    public Page<BrandJpaEntity> search(BrandSearchQuery query, Pageable pageable) {
-        List<BrandJpaEntity> content = queryFactory
-            .selectFrom(brand)
-            .where(
-                keywordContains(query.keyword()),
-                statusEq(query.status()),
-                isLuxuryEq(query.isLuxury()),
-                departmentEq(query.department()),
-                countryEq(query.country())
-            )
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-        JPAQuery<Long> countQuery = queryFactory
-            .select(brand.count())
-            .from(brand)
-            .where(
-                keywordContains(query.keyword()),
-                statusEq(query.status()),
-                isLuxuryEq(query.isLuxury()),
-                departmentEq(query.department()),
-                countryEq(query.country())
-            );
-
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    public Optional<BrandJpaEntity> findById(Long id) {
+        BrandJpaEntity entity =
+                queryFactory
+                        .selectFrom(brand)
+                        .where(conditionBuilder.idEq(id), conditionBuilder.notDeleted())
+                        .fetchOne();
+        return Optional.ofNullable(entity);
     }
 
-    /**
-     * 정규화된 별칭으로 브랜드 매칭 결과 조회
-     *
-     * @param normalizedAlias 정규화된 별칭
-     * @return List<AliasMatchResult>
-     */
-    public List<AliasMatchResult> findByNormalizedAlias(String normalizedAlias) {
+    public List<BrandJpaEntity> findByCriteria(BrandSearchCriteria criteria) {
         return queryFactory
-            .select(Projections.constructor(
-                AliasMatchResult.class,
-                brand.id,
-                brand.code,
-                brand.canonicalName,
-                brand.nameKo,
-                alias.confidence
-            ))
-            .from(alias)
-            .join(brand).on(alias.brandId.eq(brand.id))
-            .where(alias.normalizedAlias.eq(normalizedAlias))
-            .fetch();
+                .selectFrom(brand)
+                .where(
+                        conditionBuilder.statusIn(criteria),
+                        conditionBuilder.searchCondition(criteria),
+                        conditionBuilder.notDeleted())
+                .orderBy(resolveOrderSpecifier(criteria))
+                .offset(criteria.offset())
+                .limit(criteria.size())
+                .fetch();
     }
 
-    // ===== Dynamic Query Helpers =====
-
-    private BooleanExpression keywordContains(String keyword) {
-        if (keyword == null || keyword.isBlank()) {
-            return null;
-        }
-        return brand.nameKo.contains(keyword)
-            .or(brand.nameEn.contains(keyword))
-            .or(brand.code.contains(keyword));
+    public long countByCriteria(BrandSearchCriteria criteria) {
+        Long count =
+                queryFactory
+                        .select(brand.count())
+                        .from(brand)
+                        .where(
+                                conditionBuilder.statusIn(criteria),
+                                conditionBuilder.searchCondition(criteria),
+                                conditionBuilder.notDeleted())
+                        .fetchOne();
+        return count != null ? count : 0L;
     }
 
-    private BooleanExpression statusEq(String status) {
-        if (status == null || status.isBlank()) {
-            return null;
-        }
-        return brand.status.stringValue().eq(status);
+    public boolean existsByCode(String code) {
+        Integer result =
+                queryFactory
+                        .selectOne()
+                        .from(brand)
+                        .where(brand.code.eq(code), conditionBuilder.notDeleted())
+                        .fetchFirst();
+        return result != null;
     }
 
-    private BooleanExpression isLuxuryEq(Boolean isLuxury) {
-        if (isLuxury == null) {
-            return null;
-        }
-        return brand.isLuxury.eq(isLuxury);
-    }
+    private OrderSpecifier<?> resolveOrderSpecifier(BrandSearchCriteria criteria) {
+        BrandSortKey sortKey = criteria.queryContext().sortKey();
+        SortDirection direction = criteria.queryContext().sortDirection();
+        boolean isAsc = direction == SortDirection.ASC;
 
-    private BooleanExpression departmentEq(String department) {
-        if (department == null || department.isBlank()) {
-            return null;
-        }
-        return brand.department.stringValue().eq(department);
-    }
-
-    private BooleanExpression countryEq(String country) {
-        if (country == null || country.isBlank()) {
-            return null;
-        }
-        return brand.country.eq(country);
+        return switch (sortKey) {
+            case CREATED_AT -> isAsc ? brand.createdAt.asc() : brand.createdAt.desc();
+            case NAME_KO -> isAsc ? brand.nameKo.asc() : brand.nameKo.desc();
+            case UPDATED_AT -> isAsc ? brand.updatedAt.asc() : brand.updatedAt.desc();
+        };
     }
 }
