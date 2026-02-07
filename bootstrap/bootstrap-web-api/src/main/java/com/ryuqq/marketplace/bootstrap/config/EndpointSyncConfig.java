@@ -78,7 +78,7 @@ public class EndpointSyncConfig {
     public EndpointSyncRunner endpointSyncRunner(
             @Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping,
             EndpointSyncClient syncClient,
-            @Value("${authhub.service-code:SVC_MARKET}") String serviceCode) {
+            @Value("${authhub.service-code:SVC_MARKETPLACE}") String serviceCode) {
 
         return new EndpointSyncRunner(handlerMapping, syncClient, "marketplace", serviceCode, true);
     }
