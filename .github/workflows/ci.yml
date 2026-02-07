@@ -149,7 +149,7 @@ jobs:
       - name: Build JAR
         run: |
           chmod +x gradlew
-          ./gradlew :bootstrap:bootstrap-web-api:bootJar --no-daemon -x test
+          ./gradlew :bootstrap:bootstrap-web-api:bootJar --no-daemon -x test -x asciidoctor
 
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
