@@ -30,7 +30,7 @@ public class CategoryJpaEntity extends SoftDeletableEntity {
     @Column(name = "parent_id")
     private Long parentId;
 
-    @Column(name = "depth", nullable = false)
+    @Column(name = "depth", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private int depth;
 
     @Column(name = "path", nullable = false, length = 1000)
