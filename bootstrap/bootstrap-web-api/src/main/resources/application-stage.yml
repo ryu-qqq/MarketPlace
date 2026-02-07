@@ -31,7 +31,6 @@ spring:
       - classpath:redis-stage.yml
       - classpath:authhub.yml
       - classpath:authhub-stage.yml
-      - optional:classpath:portone.yml
 
 management:
   endpoints:

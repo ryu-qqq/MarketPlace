@@ -29,7 +29,6 @@ spring:
       - classpath:redis-prod.yml
       - classpath:authhub.yml
       - classpath:authhub-prod.yml
-      - classpath:portone.yml
 
 # ===============================================
 # Sentry Configuration (Production Only)
