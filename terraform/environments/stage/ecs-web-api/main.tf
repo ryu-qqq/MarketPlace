@@ -233,7 +233,8 @@ module "web_api_task_execution_role" {
             ]
             Resource = [
               "arn:aws:ssm:${var.aws_region}:*:parameter/shared/*",
-              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*"
+              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*",
+              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*"
             ]
           },
           {
@@ -448,6 +449,7 @@ module "ecs_service" {
   container_secrets = [
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
     { name = "SECURITY_SERVICE_TOKEN_SECRET", valueFrom = data.aws_ssm_parameter.service_token_secret.arn },
+    { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     { name = "AWS_ACCESS_KEY_ID", valueFrom = data.aws_ssm_parameter.ses_access_key_id.arn },
     { name = "AWS_SECRET_ACCESS_KEY", valueFrom = data.aws_ssm_parameter.ses_secret_access_key.arn }
   ]

@@ -118,6 +118,13 @@ data "aws_ssm_parameter" "amp_remote_write_url" {
 }
 
 # ========================================
+# AuthHub Configuration
+# ========================================
+data "aws_ssm_parameter" "authhub_service_token" {
+  name = "/authhub/stage/security/service-token-secret"
+}
+
+# ========================================
 # Locals
 # ========================================
 locals {
