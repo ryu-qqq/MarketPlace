@@ -7,7 +7,7 @@ import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminEmailOut
 import com.ryuqq.marketplace.application.selleradmin.port.in.command.ProcessPendingEmailOutboxUseCase;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdminEmailOutbox;
 import java.util.List;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
  * <p><strong>조건부 활성화</strong>: SellerAdminEmailOutboxProcessor가 존재할 때만 활성화됩니다.
  */
 @Service
-@ConditionalOnBean(SellerAdminEmailOutboxProcessor.class)
+@ConditionalOnProperty(prefix = "ses", name = "sender-email")
 public class ProcessPendingEmailOutboxService implements ProcessPendingEmailOutboxUseCase {
 
     private final SellerAdminEmailOutboxReadManager outboxReadManager;

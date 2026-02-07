@@ -3,7 +3,7 @@ package com.ryuqq.marketplace.application.auth.service;
 import com.ryuqq.marketplace.application.auth.dto.command.LogoutCommand;
 import com.ryuqq.marketplace.application.auth.manager.AuthManager;
 import com.ryuqq.marketplace.application.auth.port.in.LogoutUseCase;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
-@ConditionalOnBean(AuthManager.class)
+@ConditionalOnProperty(prefix = "authhub", name = "base-url")
 public class LogoutService implements LogoutUseCase {
 
     private final AuthManager authManager;

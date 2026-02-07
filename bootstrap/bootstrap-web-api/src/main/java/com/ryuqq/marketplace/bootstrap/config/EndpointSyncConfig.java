@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
@@ -74,7 +75,7 @@ public class EndpointSyncConfig {
 
     @Bean
     public EndpointSyncRunner endpointSyncRunner(
-            RequestMappingHandlerMapping handlerMapping,
+            @Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping,
             EndpointSyncClient syncClient,
             @Value("${authhub.service-code:SVC_MARKET}") String serviceCode) {
 

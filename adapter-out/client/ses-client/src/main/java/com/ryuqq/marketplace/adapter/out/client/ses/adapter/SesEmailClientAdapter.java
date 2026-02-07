@@ -8,7 +8,7 @@ import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdmin
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdminEmailOutbox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sesv2.SesV2Client;
 import software.amazon.awssdk.services.sesv2.model.AccountSuspendedException;
@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.sesv2.model.SesV2Exception;
  * @since 1.0.0
  */
 @Component
-@ConditionalOnBean(SesV2Client.class)
+@ConditionalOnProperty(prefix = "ses", name = "sender-email")
 public class SesEmailClientAdapter implements SellerAdminEmailClient {
 
     private static final Logger log = LoggerFactory.getLogger(SesEmailClientAdapter.class);

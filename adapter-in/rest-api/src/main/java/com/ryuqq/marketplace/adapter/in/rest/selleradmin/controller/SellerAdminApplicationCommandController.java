@@ -26,6 +26,7 @@ import com.ryuqq.marketplace.application.selleradmin.port.in.command.BulkRejectS
 import com.ryuqq.marketplace.application.selleradmin.port.in.command.ChangeSellerAdminPasswordUseCase;
 import com.ryuqq.marketplace.application.selleradmin.port.in.command.RejectSellerAdminUseCase;
 import com.ryuqq.marketplace.application.selleradmin.port.in.command.ResetSellerAdminPasswordUseCase;
+import java.util.Optional;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -85,8 +86,8 @@ public class SellerAdminApplicationCommandController {
      * @param rejectUseCase 거절 UseCase
      * @param bulkApproveUseCase 일괄 승인 UseCase
      * @param bulkRejectUseCase 일괄 거절 UseCase
-     * @param resetPasswordUseCase 비밀번호 초기화 UseCase
-     * @param changePasswordUseCase 비밀번호 변경 UseCase
+     * @param resetPasswordUseCase 비밀번호 초기화 UseCase (인증 서버 미연동 시 비활성)
+     * @param changePasswordUseCase 비밀번호 변경 UseCase (인증 서버 미연동 시 비활성)
      * @param mapper Command API 매퍼
      */
     public SellerAdminApplicationCommandController(
@@ -95,16 +96,16 @@ public class SellerAdminApplicationCommandController {
             RejectSellerAdminUseCase rejectUseCase,
             BulkApproveSellerAdminUseCase bulkApproveUseCase,
             BulkRejectSellerAdminUseCase bulkRejectUseCase,
-            ResetSellerAdminPasswordUseCase resetPasswordUseCase,
-            ChangeSellerAdminPasswordUseCase changePasswordUseCase,
+            Optional<ResetSellerAdminPasswordUseCase> resetPasswordUseCase,
+            Optional<ChangeSellerAdminPasswordUseCase> changePasswordUseCase,
             SellerAdminApplicationCommandApiMapper mapper) {
         this.applyUseCase = applyUseCase;
         this.approveUseCase = approveUseCase;
         this.rejectUseCase = rejectUseCase;
         this.bulkApproveUseCase = bulkApproveUseCase;
         this.bulkRejectUseCase = bulkRejectUseCase;
-        this.resetPasswordUseCase = resetPasswordUseCase;
-        this.changePasswordUseCase = changePasswordUseCase;
+        this.resetPasswordUseCase = resetPasswordUseCase.orElse(null);
+        this.changePasswordUseCase = changePasswordUseCase.orElse(null);
         this.mapper = mapper;
     }
 
@@ -302,6 +303,9 @@ public class SellerAdminApplicationCommandController {
                     @PathVariable(SellerAdminApplicationEndpoints.PATH_SELLER_ADMIN_ID)
                     String sellerAdminId) {
 
+        if (resetPasswordUseCase == null) {
+            throw new UnsupportedOperationException("비밀번호 초기화 기능이 비활성화되어 있습니다. 인증 서버 연동이 필요합니다.");
+        }
         ResetSellerAdminPasswordCommand command = mapper.toResetPasswordCommand(sellerAdminId);
         resetPasswordUseCase.execute(command);
 
@@ -340,6 +344,9 @@ public class SellerAdminApplicationCommandController {
                     String sellerAdminId,
             @Valid @RequestBody ChangeSellerAdminPasswordApiRequest request) {
 
+        if (changePasswordUseCase == null) {
+            throw new UnsupportedOperationException("비밀번호 변경 기능이 비활성화되어 있습니다. 인증 서버 연동이 필요합니다.");
+        }
         ChangeSellerAdminPasswordCommand command =
                 mapper.toChangePasswordCommand(sellerAdminId, request);
         changePasswordUseCase.execute(command);
