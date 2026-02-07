@@ -138,8 +138,8 @@ module "ecs_security_group" {
 
   custom_ingress_rules = [
     {
-      from_port   = 8081
-      to_port     = 8081
+      from_port   = 8083
+      to_port     = 8083
       protocol    = "tcp"
       cidr_block  = data.aws_vpc.main.cidr_block
       description = "VPC internal traffic only (Health check, Service Discovery)"
@@ -395,7 +395,7 @@ module "adot_sidecar" {
   amp_workspace_arn         = local.amp_workspace_arn
   amp_remote_write_endpoint = local.amp_remote_write_url
   log_group_name            = module.scheduler_logs.log_group_name
-  app_port                  = 8081
+  app_port                  = 8083
   cluster_name              = data.aws_ecs_cluster.main.cluster_name
   environment               = var.environment
   config_bucket             = "prod-connectly"
@@ -414,7 +414,7 @@ module "ecs_service" {
   cluster_id      = data.aws_ecs_cluster.main.arn
   container_name  = "scheduler"
   container_image = "${data.aws_ecr_repository.scheduler.repository_url}:${var.image_tag}"
-  container_port  = 8081
+  container_port  = 8083
   cpu             = var.scheduler_cpu
   memory          = var.scheduler_memory
   desired_count   = var.scheduler_desired_count
@@ -455,7 +455,7 @@ module "ecs_service" {
   ]
 
   # Health Check
-  health_check_command      = ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8081/actuator/health || exit 1"]
+  health_check_command      = ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8083/actuator/health || exit 1"]
   health_check_interval     = 30
   health_check_timeout      = 5
   health_check_retries      = 3
