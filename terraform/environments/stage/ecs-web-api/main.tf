@@ -444,7 +444,7 @@ module "ecs_service" {
     # AWS SES
     { name = "AWS_SES_ENABLED", value = "true" },
     # AuthHub
-    { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local" }
+    { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local:8080" }
   ]
 
   # Container Secrets
