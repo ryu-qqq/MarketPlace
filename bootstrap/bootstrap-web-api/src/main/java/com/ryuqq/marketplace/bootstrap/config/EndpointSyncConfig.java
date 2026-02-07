@@ -51,7 +51,8 @@ public class EndpointSyncConfig {
             try {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.set("Authorization", "Bearer " + serviceToken);
+                headers.set("X-Service-Name", "marketplace");
+                headers.set("X-Service-Token", serviceToken);
 
                 HttpEntity<EndpointSyncRequest> entity = new HttpEntity<>(request, headers);
                 restTemplate.postForEntity(syncUrl, entity, Void.class);
