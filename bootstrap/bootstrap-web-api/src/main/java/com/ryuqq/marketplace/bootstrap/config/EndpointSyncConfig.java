@@ -51,7 +51,7 @@ public class EndpointSyncConfig {
             try {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.set("X-Service-Name", "marketplace");
+                headers.set("X-Service-Name", "SVC_MARKETPLACE");
                 headers.set("X-Service-Token", serviceToken);
 
                 HttpEntity<EndpointSyncRequest> entity = new HttpEntity<>(request, headers);
