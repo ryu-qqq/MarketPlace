@@ -4,7 +4,7 @@ import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
 import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
 import com.ryuqq.marketplace.application.auth.port.out.client.AuthClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
-@ConditionalOnBean(AuthClient.class)
+@ConditionalOnProperty(prefix = "authhub", name = "base-url")
 public class AuthManager {
 
     private final AuthClient authClient;

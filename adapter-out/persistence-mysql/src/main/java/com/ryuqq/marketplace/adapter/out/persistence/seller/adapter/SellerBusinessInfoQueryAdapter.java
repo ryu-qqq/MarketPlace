@@ -28,7 +28,8 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnProperty(
         name = "persistence.legacy.seller-business-info.enabled",
-        havingValue = "false")
+        havingValue = "false",
+        matchIfMissing = true)
 public class SellerBusinessInfoQueryAdapter implements SellerBusinessInfoQueryPort {
 
     private final SellerBusinessInfoQueryDslRepository queryDslRepository;

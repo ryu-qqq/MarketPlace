@@ -446,8 +446,12 @@ module "ecs_service" {
   # ADOT Sidecar
   sidecars = [module.adot_sidecar.container_definition]
 
-  # No Auto Scaling - Scheduler should be singleton
-  enable_autoscaling = false
+  # Auto Scaling
+  enable_autoscaling        = true
+  autoscaling_min_capacity  = 1
+  autoscaling_max_capacity  = 2
+  autoscaling_target_cpu    = 70
+  autoscaling_target_memory = 80
 
   # Enable ECS Exec for debugging
   enable_execute_command = true

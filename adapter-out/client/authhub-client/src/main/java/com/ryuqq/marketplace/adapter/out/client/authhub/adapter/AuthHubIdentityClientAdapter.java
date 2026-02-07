@@ -11,7 +11,7 @@ import com.ryuqq.marketplace.adapter.out.client.authhub.mapper.AuthHubIdentityMa
 import com.ryuqq.marketplace.application.seller.dto.response.SellerIdentityProvisioningResult;
 import com.ryuqq.marketplace.application.seller.port.out.client.IdentityClient;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerAuthOutbox;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
-@ConditionalOnBean(OnboardingApi.class)
+@ConditionalOnProperty(prefix = "authhub", name = "base-url")
 public class AuthHubIdentityClientAdapter implements IdentityClient {
 
     private final OnboardingApi onboardingApi;

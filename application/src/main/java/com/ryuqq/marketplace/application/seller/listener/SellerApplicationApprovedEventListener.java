@@ -8,7 +8,7 @@ import com.ryuqq.marketplace.domain.sellerapplication.event.SellerApplicationApp
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -27,11 +27,10 @@ import org.springframework.stereotype.Component;
  *   <li>실패 시 스케줄러에서 재시도
  * </ol>
  *
- * <p><strong>조건부 활성화</strong>: SellerAuthOutboxProcessor가 존재할 때만 활성화됩니다. IdentityClient가 없는 환경에서는
- * Processor와 함께 비활성화되어 스케줄러에서만 Outbox를 처리합니다.
+ * <p><strong>조건부 활성화</strong>: authhub.base-url 설정이 있을 때만 활성화됩니다.
  */
 @Component
-@ConditionalOnBean(SellerAuthOutboxProcessor.class)
+@ConditionalOnProperty(prefix = "authhub", name = "base-url")
 public class SellerApplicationApprovedEventListener {
 
     private static final Logger log =

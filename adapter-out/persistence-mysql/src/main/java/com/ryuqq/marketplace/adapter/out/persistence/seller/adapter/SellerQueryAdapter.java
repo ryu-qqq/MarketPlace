@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
  * <p>활성화 조건: persistence.legacy.seller.enabled=false
  */
 @Component
-@ConditionalOnProperty(name = "persistence.legacy.seller.enabled", havingValue = "false")
+@ConditionalOnProperty(name = "persistence.legacy.seller.enabled", havingValue = "false", matchIfMissing = true)
 public class SellerQueryAdapter implements SellerQueryPort {
 
     private final SellerQueryDslRepository queryDslRepository;
