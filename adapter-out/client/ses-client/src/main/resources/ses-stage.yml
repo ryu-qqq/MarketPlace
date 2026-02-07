@@ -1,0 +1,7 @@
+# ============================================================
+# AWS SES v2 Stage 환경 설정
+# ============================================================
+
+ses:
+  sender-email: ${SES_SENDER_EMAIL:master@connectly.co.kr}
+  sign-up-base-url: ${SES_SIGN_UP_BASE_URL:https://stage-oms.set-of.com}

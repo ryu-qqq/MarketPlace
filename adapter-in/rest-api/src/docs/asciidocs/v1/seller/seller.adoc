@@ -1,0 +1,78 @@
+[[seller-register]]
+=== 셀러 등록
+
+==== HTTP Request
+include::{snippets}/seller/register/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/seller/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller/register/response-fields.adoc[]
+
+
+[[seller-update-full]]
+=== 셀러 전체 수정
+
+==== HTTP Request
+include::{snippets}/seller/update-full/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller/update-full/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/seller/update-full/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/update-full/http-response.adoc[]
+
+
+[[seller-update]]
+=== 셀러 부분 수정
+
+==== HTTP Request
+include::{snippets}/seller/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/seller/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/update/http-response.adoc[]
+
+
+[[seller-get]]
+=== 셀러 상세 조회
+
+==== HTTP Request
+include::{snippets}/seller/get/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller/get/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/get/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller/get/response-fields.adoc[]
+
+
+[[seller-search]]
+=== 셀러 검색 조회
+
+==== HTTP Request
+include::{snippets}/seller/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/seller/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller/search/response-fields.adoc[]

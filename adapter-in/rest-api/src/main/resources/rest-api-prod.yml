@@ -1,0 +1,40 @@
+# ============================================================
+# REST API Adapter 운영 환경 설정
+# ============================================================
+# 활성화: spring.profiles.active=prod
+#
+# Gateway-Only 아키텍처:
+# - Gateway만 이 서비스에 접근 가능 (네트워크 정책으로 강제)
+# - JWT 검증, OAuth2, CORS 모두 Gateway에서 처리
+# - 이 서비스는 X-User-Id, X-User-Roles 헤더만 파싱
+# ============================================================
+
+# ============================================================
+# API Documentation (운영: 활성화)
+# ============================================================
+# Swagger UI는 ApiDocsController에서 /api/v1/market/swagger 로 서빙
+# 모든 환경에서 문서 접근 가능
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  cache:
+    disabled: false
+
+# ============================================================
+# Error Response (운영: 상세 URL 제공)
+# ============================================================
+api:
+  error:
+    base-url: ${API_ERROR_DOCS_URL:https://api.example.com/problems}
+    use-about-blank: false
+
+# ============================================================
+# Logging (운영: 최소화)
+# ============================================================
+logging:
+  level:
+    com.ryuqq.adapter.in.rest: INFO
+    org.springframework.security: WARN
+    org.springframework.web: WARN

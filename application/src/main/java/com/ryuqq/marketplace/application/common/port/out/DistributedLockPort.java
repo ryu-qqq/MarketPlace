@@ -1,6 +1,6 @@
-package com.ryuqq.fileflow.application.common.port.out;
+package com.ryuqq.marketplace.application.common.port.out;
 
-import com.ryuqq.fileflow.domain.common.vo.LockKey;
+import com.ryuqq.marketplace.domain.common.vo.LockKey;
 import java.util.concurrent.TimeUnit;
 
 /**

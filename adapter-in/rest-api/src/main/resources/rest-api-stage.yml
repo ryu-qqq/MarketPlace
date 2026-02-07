@@ -1,0 +1,39 @@
+# ============================================================
+# REST API Adapter 스테이지 환경 설정
+# ============================================================
+# 활성화: spring.profiles.active=stage
+#
+# Gateway-Only 아키텍처:
+# - Gateway만 이 서비스에 접근 가능 (네트워크 정책으로 강제)
+# - JWT 검증, OAuth2, CORS 모두 Gateway에서 처리
+# - 이 서비스는 X-User-Id, X-User-Roles 헤더만 파싱
+# ============================================================
+
+# ============================================================
+# API Documentation (스테이지: 활성화)
+# ============================================================
+# Swagger UI는 ApiDocsController에서 /api/v1/market/swagger 로 서빙
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  cache:
+    disabled: false
+
+# ============================================================
+# Error Response (스테이지: 상세 URL 제공)
+# ============================================================
+api:
+  error:
+    base-url: ${API_ERROR_DOCS_URL:https://stage-api.example.com/problems}
+    use-about-blank: false
+
+# ============================================================
+# Logging (스테이지: INFO 레벨)
+# ============================================================
+logging:
+  level:
+    com.ryuqq.adapter.in.rest: INFO
+    org.springframework.security: WARN
+    org.springframework.web: INFO
