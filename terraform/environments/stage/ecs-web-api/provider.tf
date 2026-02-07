@@ -74,13 +74,13 @@ variable "web_api_desired_count" {
 }
 
 variable "image_tag" {
-  description = "Docker image tag to deploy. Format: web-api-stage-{build-number}-{git-sha}"
+  description = "Docker image tag to deploy. Format: web-api-{build-number}-{git-sha}"
   type        = string
-  default     = "web-api-stage-1-initial"
+  default     = "web-api-1-initial"
 
   validation {
-    condition     = can(regex("^web-api-stage-[0-9]+-[a-zA-Z0-9]+$", var.image_tag))
-    error_message = "Image tag must follow format: web-api-stage-{build-number}-{git-sha} (e.g., web-api-stage-1-abc1234)"
+    condition     = can(regex("^web-api-[0-9]+-[a-zA-Z0-9]+$", var.image_tag))
+    error_message = "Image tag must follow format: web-api-{build-number}-{git-sha} (e.g., web-api-4-c0e0811)"
   }
 }
 
