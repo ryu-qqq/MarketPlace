@@ -8,7 +8,7 @@ import com.ryuqq.marketplace.domain.selleradmin.vo.SellerAdminEmailType;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  * </ol>
  */
 @Component
-@ConditionalOnBean(IdentityClient.class)
+@ConditionalOnProperty(prefix = "authhub", name = "base-url")
 public class SellerAuthOutboxProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(SellerAuthOutboxProcessor.class);

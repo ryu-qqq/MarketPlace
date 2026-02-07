@@ -29,8 +29,7 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(
         prefix = "scheduler.jobs.seller-admin-auth-outbox.process-pending",
         name = "enabled",
-        havingValue = "true",
-        matchIfMissing = true)
+        havingValue = "true")
 public class SellerAdminAuthOutboxScheduler {
 
     private final ProcessPendingSellerAdminOutboxUseCase processPendingOutboxUseCase;

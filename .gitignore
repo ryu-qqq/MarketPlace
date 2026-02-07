@@ -62,3 +62,4 @@ langfuse/tests/__pycache__/
 .pipeline-metrics/report.md
 .env
 local-dev/.env.aws
+local-dev/.env.aws.stage
