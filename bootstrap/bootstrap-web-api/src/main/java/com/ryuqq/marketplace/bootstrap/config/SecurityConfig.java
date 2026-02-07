@@ -125,7 +125,8 @@ public class SecurityConfig {
                                         // API 문서
                                         .requestMatchers(
                                                 "/api/v1/market/api-docs/**",
-                                                "/api/v1/market/swagger/**",
+                                                "/api/v1/market/swagger",
+                                                "/api/v1/market/swagger-ui/**",
                                                 "/api/v1/market/docs/**",
                                                 "/swagger-ui/**",
                                                 "/v3/api-docs/**")
