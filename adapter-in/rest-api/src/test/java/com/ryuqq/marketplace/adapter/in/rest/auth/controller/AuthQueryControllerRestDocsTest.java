@@ -1,0 +1,105 @@
+package com.ryuqq.marketplace.adapter.in.rest.auth.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.ryuqq.marketplace.adapter.in.rest.auth.AuthAdminEndpoints;
+import com.ryuqq.marketplace.adapter.in.rest.auth.AuthApiFixtures;
+import com.ryuqq.marketplace.adapter.in.rest.auth.dto.response.MyInfoApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.auth.mapper.AuthQueryApiMapper;
+import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
+import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
+import com.ryuqq.marketplace.application.auth.port.in.GetMyInfoUseCase;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+@Tag("unit")
+@WebMvcTest(AuthQueryController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureRestDocs
+@DisplayName("AuthQueryController REST Docs 테스트")
+class AuthQueryControllerRestDocsTest {
+
+    private static final String BASE_URL = AuthAdminEndpoints.BASE;
+
+    @Autowired private MockMvc mockMvc;
+
+    @MockitoBean private GetMyInfoUseCase getMyInfoUseCase;
+    @MockitoBean private AuthQueryApiMapper queryMapper;
+    @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
+
+    @Nested
+    @DisplayName("내 정보 조회 API")
+    class MeTest {
+
+        @Test
+        @DisplayName("유효한 토큰이면 200과 내 정보를 반환한다")
+        void me_ValidToken_Returns200WithMyInfo() throws Exception {
+            // given
+            String authorization = "Bearer " + AuthApiFixtures.DEFAULT_ACCESS_TOKEN;
+            MyInfoResult result = AuthApiFixtures.myInfoResult();
+            MyInfoApiResponse response = AuthApiFixtures.myInfoApiResponse();
+
+            given(queryMapper.extractToken(authorization))
+                    .willReturn(AuthApiFixtures.DEFAULT_ACCESS_TOKEN);
+            given(getMyInfoUseCase.execute(AuthApiFixtures.DEFAULT_ACCESS_TOKEN))
+                    .willReturn(result);
+            given(queryMapper.toResponse(any(MyInfoResult.class))).willReturn(response);
+
+            // when & then
+            mockMvc.perform(
+                            RestDocumentationRequestBuilders.get(BASE_URL + AuthAdminEndpoints.ME)
+                                    .header("Authorization", authorization))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.userId").value(AuthApiFixtures.DEFAULT_USER_ID))
+                    .andExpect(jsonPath("$.data.email").value(AuthApiFixtures.DEFAULT_EMAIL))
+                    .andExpect(jsonPath("$.data.name").value(AuthApiFixtures.DEFAULT_NAME))
+                    .andExpect(jsonPath("$.data.roles").isArray())
+                    .andExpect(jsonPath("$.data.permissions").isArray())
+                    .andDo(
+                            document(
+                                    "auth/me",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName("Authorization")
+                                                    .description("Bearer 액세스 토큰")),
+                                    responseFields(
+                                            fieldWithPath("data.userId").description("사용자 ID"),
+                                            fieldWithPath("data.email").description("이메일"),
+                                            fieldWithPath("data.name").description("사용자 이름"),
+                                            fieldWithPath("data.tenantId").description("테넌트 ID"),
+                                            fieldWithPath("data.tenantName").description("테넌트 이름"),
+                                            fieldWithPath("data.organizationId")
+                                                    .description("조직 ID"),
+                                            fieldWithPath("data.organizationName")
+                                                    .description("조직 이름"),
+                                            fieldWithPath("data.roles[]").description("역할 목록"),
+                                            fieldWithPath("data.roles[].id").description("역할 ID"),
+                                            fieldWithPath("data.roles[].name").description("역할 이름"),
+                                            fieldWithPath("data.permissions[]")
+                                                    .description("권한 목록"),
+                                            fieldWithPath("timestamp").description("응답 시간"),
+                                            fieldWithPath("requestId").description("요청 ID"))));
+        }
+    }
+}

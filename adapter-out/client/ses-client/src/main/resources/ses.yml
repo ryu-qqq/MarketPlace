@@ -1,0 +1,14 @@
+# ============================================================
+# AWS SES v2 공통 설정
+# ============================================================
+# 환경변수로 제어:
+#   - SES_SENDER_EMAIL: 발신자 이메일 (필수, 활성화 조건)
+# ============================================================
+
+ses:
+  region: ap-northeast-2
+  sender-email: ${SES_SENDER_EMAIL:}
+  sign-up-base-url: ${SES_SIGN_UP_BASE_URL:}
+  templates:
+    SELLER_APPROVAL_INVITE: seller-approval-invite
+    SELLER_ADMIN_WELCOME: seller-admin-welcome

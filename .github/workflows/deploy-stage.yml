@@ -1,0 +1,146 @@
+# ============================================================================
+# MarketPlace - Stage Deployment Pipeline
+# ============================================================================
+# stage 브랜치에 머지(push) 시 스테이지 환경에 자동 배포
+# dev → PR → stage (머지 시 자동 배포) → PR → main (prod 배포)
+#
+# 컴포넌트: web-api, scheduler (병렬 빌드/배포)
+# 인프라: ECS Fargate + Service Discovery (ALB 없음)
+# ============================================================================
+
+name: Deploy to Stage
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - stage
+    paths-ignore:
+      - 'terraform/**'
+      - '.github/workflows/terraform-*.yml'
+      - '**.md'
+      - 'docs/**'
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: ap-northeast-2
+  ECS_CLUSTER: marketplace-cluster-stage
+
+jobs:
+  # ============================================================================
+  # 테스트 (공통 - 한 번만 실행)
+  # ============================================================================
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Run tests
+        run: |
+          chmod +x gradlew
+          ./gradlew clean test -x jacocoTestCoverageVerification --no-daemon
+
+  # ============================================================================
+  # 빌드 Jobs (병렬 실행)
+  # ============================================================================
+  build-web-api:
+    name: Build web-api
+    needs: test
+    uses: ryu-qqq/Infrastructure/.github/workflows/reusable-build-docker.yml@main
+    with:
+      ecr-repository: marketplace-web-api-stage
+      component: web-api
+      dockerfile: bootstrap/bootstrap-web-api/Dockerfile
+      gradle-task: ":bootstrap:bootstrap-web-api:bootJar"
+      timeout-minutes: 30
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+
+  build-scheduler:
+    name: Build scheduler
+    needs: test
+    uses: ryu-qqq/Infrastructure/.github/workflows/reusable-build-docker.yml@main
+    with:
+      ecr-repository: marketplace-scheduler-stage
+      component: scheduler
+      dockerfile: bootstrap/bootstrap-scheduler/Dockerfile
+      gradle-task: ":bootstrap:bootstrap-scheduler:bootJar"
+      timeout-minutes: 30
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+
+  # ============================================================================
+  # 배포 Jobs (병렬 실행)
+  # ============================================================================
+  deploy-web-api:
+    name: Deploy web-api
+    needs: build-web-api
+    uses: ryu-qqq/Infrastructure/.github/workflows/reusable-deploy-ecs.yml@main
+    with:
+      ecs-cluster: marketplace-cluster-stage
+      ecs-service: marketplace-api-stage
+      image-uri: ${{ needs.build-web-api.outputs.image-uri }}
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+
+  deploy-scheduler:
+    name: Deploy scheduler
+    needs: build-scheduler
+    uses: ryu-qqq/Infrastructure/.github/workflows/reusable-deploy-ecs.yml@main
+    with:
+      ecs-cluster: marketplace-cluster-stage
+      ecs-service: marketplace-scheduler-stage
+      image-uri: ${{ needs.build-scheduler.outputs.image-uri }}
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+
+  # ============================================================================
+  # Terraform Image Tag 업데이트 (자동화)
+  # ============================================================================
+  update-terraform-tags:
+    name: Update Terraform Image Tags (Stage)
+    needs: [build-web-api, build-scheduler]
+    uses: ./.github/workflows/terraform-apply-stage.yml
+    with:
+      web-api-image-tag: ${{ needs.build-web-api.outputs.image-tag }}
+      scheduler-image-tag: ${{ needs.build-scheduler.outputs.image-tag }}
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+
+  # ============================================================================
+  # 배포 요약 (GitHub Summary)
+  # ============================================================================
+  summary:
+    name: Deployment Summary
+    needs: [deploy-web-api, deploy-scheduler, update-terraform-tags]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Create Summary
+        run: |
+          echo "## 🚀 MarketPlace Stage Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| web-api | ${{ needs.deploy-web-api.result == 'success' && '✅ Deployed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| scheduler | ${{ needs.deploy-scheduler.result == 'success' && '✅ Deployed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| terraform-tags | ${{ needs.update-terraform-tags.result == 'success' && '✅ Updated' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: Stage" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Actor**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY

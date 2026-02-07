@@ -1,113 +1,87 @@
-package com.ryuqq.fileflow.application.common.port.out;
+package com.ryuqq.marketplace.application.common.port.out;
 
-import com.ryuqq.fileflow.domain.common.vo.CacheKey;
 import java.time.Duration;
 import java.util.Optional;
 
 /**
- * Cache Port (출력 포트)
+ * Cache Port
  *
- * <p>캐시 저장/조회/무효화를 위한 포트입니다.
+ * <p>캐시 작업을 위한 아웃바운드 포트입니다.
  *
- * <p><strong>Cache-Aside 패턴:</strong>
+ * <p><strong>구현체:</strong>
  *
- * <ol>
- *   <li>Cache 조회 (CachePort.get)
- *   <li>Cache Miss → DB 조회 (QueryPort)
- *   <li>Cache 저장 (CachePort.set)
- * </ol>
+ * <ul>
+ *   <li>ObjectCacheAdapter - 객체 타입 Redis 캐시
+ *   <li>StringCacheAdapter - 문자열 타입 Redis 캐시
+ * </ul>
  *
- * <p><strong>CacheKey 사용:</strong>
- *
- * <p>각 Bounded Context에서 CacheKey 인터페이스를 구현하여 도메인 특화 캐시 키를 정의합니다.
- *
- * <pre>{@code
- * public record ProductCacheKey(Long productId) implements CacheKey {
- *     private static final String PREFIX = "cache:product:";
- *
- *     public ProductCacheKey {
- *         if (productId == null || productId <= 0) {
- *             throw new IllegalArgumentException("productId must be positive");
- *         }
- *     }
- *
- *     @Override
- *     public String value() {
- *         return PREFIX + productId;
- *     }
- * }
- * }</pre>
- *
- * @param <T> 캐시 대상 타입
- * @author Development Team
+ * @param <T> 캐시 값 타입
+ * @author development-team
  * @since 1.0.0
- * @see CacheKey
  */
 public interface CachePort<T> {
 
     /**
-     * 캐시 저장 (기본 TTL)
+     * 기본 TTL로 캐시를 저장합니다.
      *
-     * @param key 캐시 키 (도메인 특화 CacheKey 구현체)
-     * @param value 저장할 값
+     * @param key 캐시 키
+     * @param value 캐시 값
      */
-    void set(CacheKey key, T value);
+    void set(String key, T value);
 
     /**
-     * 캐시 저장 (TTL 지정)
+     * 지정된 TTL로 캐시를 저장합니다.
      *
-     * @param key 캐시 키 (도메인 특화 CacheKey 구현체)
-     * @param value 저장할 값
-     * @param ttl Time-To-Live
+     * @param key 캐시 키
+     * @param value 캐시 값
+     * @param ttl 만료 시간
      */
-    void set(CacheKey key, T value, Duration ttl);
+    void set(String key, T value, Duration ttl);
 
     /**
-     * 캐시 조회
+     * 캐시를 조회합니다.
      *
-     * @param key 캐시 키 (도메인 특화 CacheKey 구현체)
-     * @return Optional<T> (Cache Hit 시 값, Miss 시 Empty)
+     * @param key 캐시 키
+     * @return 캐시 값 (Optional)
      */
-    Optional<T> get(CacheKey key);
+    Optional<T> get(String key);
 
     /**
-     * 캐시 조회 (타입 지정)
+     * 캐시를 지정된 타입으로 조회합니다.
      *
-     * @param key 캐시 키 (도메인 특화 CacheKey 구현체)
-     * @param clazz 타입 클래스
-     * @return Optional<T> (Cache Hit 시 값, Miss 시 Empty)
+     * @param key 캐시 키
+     * @param clazz 대상 타입
+     * @return 캐시 값 (Optional)
      */
-    Optional<T> get(CacheKey key, Class<T> clazz);
+    Optional<T> get(String key, Class<T> clazz);
 
     /**
-     * 캐시 무효화
+     * 캐시를 삭제합니다.
      *
-     * @param key 캐시 키 (도메인 특화 CacheKey 구현체)
+     * @param key 캐시 키
      */
-    void evict(CacheKey key);
+    void evict(String key);
 
     /**
-     * 패턴 기반 캐시 무효화
+     * 패턴에 매칭되는 모든 캐시를 삭제합니다.
      *
-     * <p><strong>주의:</strong> KEYS 명령어 사용 금지, SCAN 사용
-     *
-     * @param pattern 키 패턴 (예: "cache:orders:*")
+     * @param pattern 키 패턴 (glob 스타일)
      */
     void evictByPattern(String pattern);
 
     /**
-     * 캐시 존재 여부 확인
+     * 캐시 존재 여부를 확인합니다.
      *
-     * @param key 캐시 키 (도메인 특화 CacheKey 구현체)
+     * @param key 캐시 키
      * @return 존재 여부
      */
-    boolean exists(CacheKey key);
+    boolean exists(String key);
 
     /**
-     * TTL 조회
+     * 캐시의 남은 TTL을 조회합니다.
      *
-     * @param key 캐시 키 (도메인 특화 CacheKey 구현체)
-     * @return TTL (Duration), 키가 없거나 TTL 없으면 null
+     * @param key 캐시 키
+     * @return 남은 TTL (키가 없거나 TTL이 없으면 null)
      */
-    Duration getTtl(CacheKey key);
+    Duration getTtl(String key);
 }

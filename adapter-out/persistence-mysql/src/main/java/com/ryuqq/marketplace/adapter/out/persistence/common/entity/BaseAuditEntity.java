@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * BaseAuditEntity - 감사 정보 공통 추상 클래스
@@ -49,7 +49,7 @@ public abstract class BaseAuditEntity {
      * <p>updatable = false로 수정 불가능하게 설정합니다.
      */
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     /**
      * 수정 일시
@@ -59,7 +59,7 @@ public abstract class BaseAuditEntity {
      * <p>Mapper에서 of() 메서드로 새 Entity 생성 시 updatedAt을 직접 설정합니다.
      */
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
 
     /**
      * 기본 생성자 (protected)
@@ -76,7 +76,7 @@ public abstract class BaseAuditEntity {
      * @param createdAt 생성 일시
      * @param updatedAt 수정 일시
      */
-    protected BaseAuditEntity(LocalDateTime createdAt, LocalDateTime updatedAt) {
+    protected BaseAuditEntity(Instant createdAt, Instant updatedAt) {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -86,7 +86,7 @@ public abstract class BaseAuditEntity {
      *
      * @return 생성 일시
      */
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
@@ -95,7 +95,11 @@ public abstract class BaseAuditEntity {
      *
      * @return 수정 일시
      */
-    public LocalDateTime getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    protected void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -1,9 +1,11 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '3.5.6'
+    id 'io.spring.dependency-management' version '1.1.5'
 }
 
 group = 'com.ryuqq.marketplace'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.0'
 
 java {
     toolchain {
@@ -13,25 +15,69 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    // Spring Boot (without applying plugin)
-    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    // Spring Boot Test (전체 애플리케이션 컨텍스트)
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // Test dependencies
+    // Bootstrap 모듈
+    testImplementation project(':bootstrap:bootstrap-web-api')
+
+    // Domain & Application
+    testImplementation project(':domain')
+    testImplementation project(':application')
+
+    // Adapter-In (REST API 컨트롤러)
+    testImplementation project(':adapter-in:rest-api')
+
+    // Adapter-Out (영속성)
+    testImplementation project(':adapter-out:persistence-mysql')
+    testImplementation project(':adapter-out:persistence-redis')
+    testImplementation project(':adapter-out:client:authhub-client')
+
+    // Spring Security
+    testImplementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // REST Assured
+    testImplementation 'io.rest-assured:rest-assured:5.5.0'
+    testImplementation 'io.rest-assured:json-path:5.5.0'
+
+    // AssertJ
     testImplementation 'org.assertj:assertj-core'
 
-    // Project modules
-    testImplementation project(':adapter-in:rest-api')
-    testImplementation project(':application')
-    testImplementation project(':domain')
-    testImplementation project(':adapter-out:persistence-mysql')
-    testRuntimeOnly project(':bootstrap:bootstrap-web-api')
+    // H2 Database
+    testRuntimeOnly 'com.h2database:h2:2.2.224'
+
+    // testFixtures
+    testImplementation testFixtures(project(':adapter-out:persistence-mysql'))
+    testImplementation testFixtures(project(':domain'))
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = false
+    }
+
+    maxParallelForks = 1
 }
