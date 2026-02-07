@@ -156,6 +156,9 @@ tasks.register('copyRestDocs', Copy) {
     into "${sourceSets.main.output.resourcesDir}/static/docs"
 }
 
-tasks.processResources {
-    dependsOn copyRestDocs
+// REST docs는 test 실행 시에만 포함 (CI에서 -x test 빌드 시 스킵)
+if (!gradle.startParameter.excludedTaskNames.any { it == 'test' }) {
+    tasks.processResources {
+        dependsOn copyRestDocs
+    }
 }

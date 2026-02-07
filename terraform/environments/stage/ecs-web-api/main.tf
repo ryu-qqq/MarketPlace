@@ -174,6 +174,23 @@ module "ecs_security_group" {
 }
 
 # ========================================
+# RDS Access: ECS → RDS Security Group Ingress
+# ========================================
+data "aws_db_instance" "staging_rds" {
+  db_instance_identifier = "staging-shared-mysql"
+}
+
+resource "aws_security_group_rule" "ecs_to_rds" {
+  type                     = "ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = tolist(data.aws_db_instance.staging_rds.vpc_security_groups)[0]
+  source_security_group_id = module.ecs_security_group.security_group_id
+  description              = "Allow marketplace-web-api-stage ECS to access staging RDS"
+}
+
+# ========================================
 # IAM Roles (using Infrastructure module)
 # ========================================
 

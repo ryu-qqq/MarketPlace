@@ -76,7 +76,7 @@ jobs:
       ecr-repository: marketplace-web-api-stage
       component: web-api
       dockerfile: bootstrap/bootstrap-web-api/Dockerfile
-      gradle-task: ":bootstrap:bootstrap-web-api:bootJar -x asciidoctor"
+      gradle-task: ":bootstrap:bootstrap-web-api:bootJar"
       timeout-minutes: 30
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
@@ -89,7 +89,7 @@ jobs:
       ecr-repository: marketplace-scheduler-stage
       component: scheduler
       dockerfile: bootstrap/bootstrap-scheduler/Dockerfile
-      gradle-task: ":bootstrap:bootstrap-scheduler:bootJar -x asciidoctor"
+      gradle-task: ":bootstrap:bootstrap-scheduler:bootJar"
       timeout-minutes: 30
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
