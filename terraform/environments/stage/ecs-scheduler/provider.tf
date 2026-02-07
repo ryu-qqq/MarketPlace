@@ -132,6 +132,13 @@ data "aws_ssm_parameter" "sentry_dsn" {
 }
 
 # ========================================
+# AuthHub Configuration
+# ========================================
+data "aws_ssm_parameter" "authhub_service_token" {
+  name = "/authhub/stage/security/service-token-secret"
+}
+
+# ========================================
 # Locals
 # ========================================
 locals {

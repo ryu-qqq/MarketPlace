@@ -442,7 +442,9 @@ module "ecs_service" {
     # Service Token
     { name = "SECURITY_SERVICE_TOKEN_ENABLED", value = "true" },
     # AWS SES
-    { name = "AWS_SES_ENABLED", value = "true" }
+    { name = "AWS_SES_ENABLED", value = "true" },
+    # AuthHub
+    { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local" }
   ]
 
   # Container Secrets

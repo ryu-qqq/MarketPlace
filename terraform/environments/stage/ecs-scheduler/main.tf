@@ -215,7 +215,8 @@ module "scheduler_task_execution_role" {
             ]
             Resource = [
               "arn:aws:ssm:${var.aws_region}:*:parameter/shared/*",
-              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*"
+              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*",
+              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*"
             ]
           },
           {
@@ -442,12 +443,15 @@ module "ecs_service" {
     { name = "REDIS_SSL_ENABLED", value = "false" },
     # SES
     { name = "SES_SENDER_EMAIL", value = local.ses_sender_email },
-    { name = "SES_SIGN_UP_BASE_URL", value = "https://stage-oms.set-of.com" }
+    { name = "SES_SIGN_UP_BASE_URL", value = "https://stage-oms.set-of.com" },
+    # AuthHub
+    { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local" }
   ]
 
   # Container Secrets
   container_secrets = [
-    { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" }
+    { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
+    { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn }
   ]
 
   # Health Check
