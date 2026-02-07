@@ -19,6 +19,7 @@ plugins {
 ext {
     snippetsDir = file('build/generated-snippets')
 }
+snippetsDir.mkdirs()
 
 dependencies {
     // ========================================
