@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.domain.shop.query;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.shop.vo.ShopStatus;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Shop 검색 조건 Criteria.
@@ -22,6 +23,7 @@ public record ShopSearchCriteria(
 
     public ShopSearchCriteria {
         statuses = statuses != null ? List.copyOf(statuses) : List.of();
+        Objects.requireNonNull(queryContext, "queryContext must not be null");
     }
 
     public static ShopSearchCriteria of(

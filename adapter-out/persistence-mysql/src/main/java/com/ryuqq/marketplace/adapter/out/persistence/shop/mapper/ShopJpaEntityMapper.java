@@ -22,7 +22,10 @@ public class ShopJpaEntityMapper {
     }
 
     public Shop toDomain(ShopJpaEntity entity) {
-        var id = entity.getId() != null ? ShopId.of(entity.getId()) : ShopId.forNew();
+        if (entity.getId() == null) {
+            throw new IllegalStateException("영속화된 엔티티의 ID는 null일 수 없습니다");
+        }
+        var id = ShopId.of(entity.getId());
         return Shop.reconstitute(
                 id,
                 entity.getShopName(),
