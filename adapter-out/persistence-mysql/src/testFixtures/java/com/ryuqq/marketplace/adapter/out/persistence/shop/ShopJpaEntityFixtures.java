@@ -24,12 +24,12 @@ public final class ShopJpaEntityFixtures {
 
     // ===== Entity Fixtures =====
 
-    /** 활성 상태의 Shop Entity 생성. */
+    /** 활성 상태의 Shop Entity 생성 (ID null - DB 자동생성용). */
     public static ShopJpaEntity activeEntity() {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return ShopJpaEntity.create(
-                seq, "테스트 외부몰 " + seq, DEFAULT_ACCOUNT_ID + seq, STATUS_ACTIVE, now, now, null);
+                null, "테스트 외부몰 " + seq, DEFAULT_ACCOUNT_ID + seq, STATUS_ACTIVE, now, now, null);
     }
 
     /** ID를 지정한 활성 상태 Shop Entity 생성. */
@@ -46,20 +46,36 @@ public final class ShopJpaEntityFixtures {
         return ShopJpaEntity.create(null, shopName, accountId, STATUS_ACTIVE, now, now, null);
     }
 
-    /** 비활성 상태 Shop Entity 생성. */
+    /** ID를 지정한 비활성 상태 Shop Entity 생성. */
+    public static ShopJpaEntity inactiveEntity(Long id) {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ShopJpaEntity.create(
+                id, "테스트 외부몰 " + seq, DEFAULT_ACCOUNT_ID + seq, STATUS_INACTIVE, now, now, null);
+    }
+
+    /** 비활성 상태 Shop Entity 생성 (ID null - DB 자동생성용). */
     public static ShopJpaEntity inactiveEntity() {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return ShopJpaEntity.create(
-                seq, "테스트 외부몰 " + seq, DEFAULT_ACCOUNT_ID + seq, STATUS_INACTIVE, now, now, null);
+                null, "테스트 외부몰 " + seq, DEFAULT_ACCOUNT_ID + seq, STATUS_INACTIVE, now, now, null);
     }
 
-    /** 삭제된 상태 Shop Entity 생성. */
+    /** ID를 지정한 삭제된 상태 Shop Entity 생성. */
+    public static ShopJpaEntity deletedEntity(Long id) {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ShopJpaEntity.create(
+                id, "테스트 외부몰 " + seq, DEFAULT_ACCOUNT_ID + seq, STATUS_INACTIVE, now, now, now);
+    }
+
+    /** 삭제된 상태 Shop Entity 생성 (ID null - DB 자동생성용). */
     public static ShopJpaEntity deletedEntity() {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return ShopJpaEntity.create(
-                seq, "테스트 외부몰 " + seq, DEFAULT_ACCOUNT_ID + seq, STATUS_INACTIVE, now, now, now);
+                null, "테스트 외부몰 " + seq, DEFAULT_ACCOUNT_ID + seq, STATUS_INACTIVE, now, now, now);
     }
 
     /** 새로 생성될 Entity (ID가 null). */
