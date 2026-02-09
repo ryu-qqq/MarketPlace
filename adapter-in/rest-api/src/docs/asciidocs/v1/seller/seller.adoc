@@ -1,6 +1,8 @@
 [[seller-register]]
 === 셀러 등록
 
+SUPER_ADMIN 전용 | 필요 권한: `seller:write`
+
 ==== HTTP Request
 include::{snippets}/seller/register/http-request.adoc[]
 
@@ -16,6 +18,8 @@ include::{snippets}/seller/register/response-fields.adoc[]
 
 [[seller-update-full]]
 === 셀러 전체 수정
+
+SUPER_ADMIN 전용 | 필요 권한: `seller:write`
 
 ==== HTTP Request
 include::{snippets}/seller/update-full/http-request.adoc[]
@@ -33,6 +37,8 @@ include::{snippets}/seller/update-full/http-response.adoc[]
 [[seller-update]]
 === 셀러 부분 수정
 
+셀러 소유자 또는 `seller:write` 권한
+
 ==== HTTP Request
 include::{snippets}/seller/update/http-request.adoc[]
 
@@ -49,6 +55,8 @@ include::{snippets}/seller/update/http-response.adoc[]
 [[seller-get]]
 === 셀러 상세 조회
 
+셀러 소유자 또는 `seller:read` 권한
+
 ==== HTTP Request
 include::{snippets}/seller/get/http-request.adoc[]
 
@@ -64,6 +72,8 @@ include::{snippets}/seller/get/response-fields.adoc[]
 
 [[seller-search]]
 === 셀러 검색 조회
+
+SUPER_ADMIN 전용 | 필요 권한: `seller:read`
 
 ==== HTTP Request
 include::{snippets}/seller/search/http-request.adoc[]

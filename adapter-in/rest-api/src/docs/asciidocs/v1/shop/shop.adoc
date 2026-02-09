@@ -1,0 +1,52 @@
+[[shop-register]]
+=== 외부몰 등록
+
+SUPER_ADMIN 전용 | 필요 권한: `shop:write`
+
+==== HTTP Request
+include::{snippets}/shop/register/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/shop/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/shop/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shop/register/response-fields.adoc[]
+
+
+[[shop-update]]
+=== 외부몰 수정
+
+SUPER_ADMIN 전용 | 필요 권한: `shop:write`
+
+==== HTTP Request
+include::{snippets}/shop/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/shop/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/shop/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/shop/update/http-response.adoc[]
+
+
+[[shop-search]]
+=== 외부몰 검색 조회
+
+SUPER_ADMIN 전용 | 필요 권한: `shop:read`
+
+==== HTTP Request
+include::{snippets}/shop/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/shop/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/shop/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shop/search/response-fields.adoc[]

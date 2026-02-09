@@ -6,11 +6,11 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.SellerAddressApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.query.SearchSellerAddressesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressMetadataApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerOperationMetadataApiResponse;
 import com.ryuqq.marketplace.application.selleraddress.dto.query.SellerAddressSearchParams;
-import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressMetadataResult;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressPageResult;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressResult;
+import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerOperationMetadataResult;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -206,18 +206,18 @@ class SellerAddressQueryApiMapperTest {
     }
 
     @Nested
-    @DisplayName("toMetadataResponse() - 메타데이터 변환")
+    @DisplayName("toMetadataResponse() - 운영 메타데이터 변환")
     class ToMetadataResponseTest {
 
         @Test
-        @DisplayName("SellerAddressMetadataResult를 SellerAddressMetadataApiResponse로 변환한다")
+        @DisplayName("SellerOperationMetadataResult를 SellerOperationMetadataApiResponse로 변환한다")
         void toMetadataResponse_ConvertsResult_ReturnsApiResponse() {
             // given
-            SellerAddressMetadataResult result =
-                    new SellerAddressMetadataResult(5, 3, 2, true, false);
+            SellerOperationMetadataResult result =
+                    new SellerOperationMetadataResult(5, 3, 2, true, false, 2, 1, true, true);
 
             // when
-            SellerAddressMetadataApiResponse response = mapper.toMetadataResponse(result);
+            SellerOperationMetadataApiResponse response = mapper.toMetadataResponse(result);
 
             // then
             assertThat(response.totalCount()).isEqualTo(5);
@@ -225,6 +225,10 @@ class SellerAddressQueryApiMapperTest {
             assertThat(response.returnCount()).isEqualTo(2);
             assertThat(response.hasDefaultShipping()).isTrue();
             assertThat(response.hasDefaultReturn()).isFalse();
+            assertThat(response.shippingPolicyCount()).isEqualTo(2);
+            assertThat(response.refundPolicyCount()).isEqualTo(1);
+            assertThat(response.hasDefaultShippingPolicy()).isTrue();
+            assertThat(response.hasDefaultRefundPolicy()).isTrue();
         }
     }
 }

@@ -1,6 +1,8 @@
 [[seller-address-register]]
 === 셀러 주소 등록
 
+셀러 소유자 또는 `seller-address:write` 권한
+
 ==== HTTP Request
 include::{snippets}/seller-address/register/http-request.adoc[]
 
@@ -20,6 +22,8 @@ include::{snippets}/seller-address/register/response-fields.adoc[]
 [[seller-address-update]]
 === 셀러 주소 수정
 
+셀러 소유자 또는 `seller-address:write` 권한
+
 ==== HTTP Request
 include::{snippets}/seller-address/update/http-request.adoc[]
 
@@ -36,6 +40,8 @@ include::{snippets}/seller-address/update/http-response.adoc[]
 [[seller-address-delete]]
 === 셀러 주소 삭제
 
+셀러 소유자 또는 `seller-address:write` 권한
+
 ==== HTTP Request
 include::{snippets}/seller-address/delete/http-request.adoc[]
 
@@ -48,6 +54,8 @@ include::{snippets}/seller-address/delete/http-response.adoc[]
 
 [[seller-address-search]]
 === 셀러 주소 조회
+
+셀러 소유자 또는 `seller-address:read` 권한
 
 ==== HTTP Request
 include::{snippets}/seller-address/search/http-request.adoc[]
@@ -64,6 +72,8 @@ include::{snippets}/seller-address/search/response-fields.adoc[]
 
 [[seller-address-metadata]]
 === 셀러 주소 메타데이터 조회
+
+SUPER_ADMIN 또는 셀러 소유자 또는 `seller-address:read` 권한
 
 ==== HTTP Request
 include::{snippets}/seller-address/metadata/http-request.adoc[]

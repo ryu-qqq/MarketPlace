@@ -4,11 +4,11 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.query.SearchSellerAddressesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressMetadataApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerOperationMetadataApiResponse;
 import com.ryuqq.marketplace.application.selleraddress.dto.query.SellerAddressSearchParams;
-import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressMetadataResult;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressPageResult;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressResult;
+import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerOperationMetadataResult;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -112,17 +112,22 @@ public class SellerAddressQueryApiMapper {
     }
 
     /**
-     * SellerAddressMetadataResult -> SellerAddressMetadataApiResponse 변환.
+     * SellerOperationMetadataResult -> SellerOperationMetadataApiResponse 변환.
      *
-     * @param result Application 메타데이터 결과 DTO
-     * @return API 메타데이터 응답 DTO
+     * @param result Application 운영 메타데이터 결과 DTO
+     * @return API 운영 메타데이터 응답 DTO
      */
-    public SellerAddressMetadataApiResponse toMetadataResponse(SellerAddressMetadataResult result) {
-        return new SellerAddressMetadataApiResponse(
+    public SellerOperationMetadataApiResponse toMetadataResponse(
+            SellerOperationMetadataResult result) {
+        return new SellerOperationMetadataApiResponse(
                 result.totalCount(),
                 result.shippingCount(),
                 result.returnCount(),
                 result.hasDefaultShipping(),
-                result.hasDefaultReturn());
+                result.hasDefaultReturn(),
+                result.shippingPolicyCount(),
+                result.refundPolicyCount(),
+                result.hasDefaultShippingPolicy(),
+                result.hasDefaultRefundPolicy());
     }
 }

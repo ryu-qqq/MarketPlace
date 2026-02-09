@@ -1,6 +1,8 @@
 [[common-code-type-register]]
 === 공통코드 유형 등록
 
+SUPER_ADMIN 전용 | 필요 권한: `common-code-type:write`
+
 ==== HTTP Request
 include::{snippets}/common-code-type/register/http-request.adoc[]
 
@@ -16,6 +18,8 @@ include::{snippets}/common-code-type/register/response-fields.adoc[]
 
 [[common-code-type-update]]
 === 공통코드 유형 수정
+
+SUPER_ADMIN 전용 | 필요 권한: `common-code-type:write`
 
 ==== HTTP Request
 include::{snippets}/common-code-type/update/http-request.adoc[]
@@ -36,6 +40,8 @@ include::{snippets}/common-code-type/update/response-fields.adoc[]
 [[common-code-type-change-active-status]]
 === 공통코드 유형 상태 변경
 
+SUPER_ADMIN 전용 | 필요 권한: `common-code-type:write`
+
 ==== HTTP Request
 include::{snippets}/common-code-type/change-active-status/http-request.adoc[]
 
@@ -51,6 +57,8 @@ include::{snippets}/common-code-type/change-active-status/response-fields.adoc[]
 
 [[common-code-type-search]]
 === 공통코드 유형 조회
+
+인증 필요 | 필요 권한: `common-code-type:read`
 
 ==== HTTP Request
 include::{snippets}/common-code-type/search/http-request.adoc[]
