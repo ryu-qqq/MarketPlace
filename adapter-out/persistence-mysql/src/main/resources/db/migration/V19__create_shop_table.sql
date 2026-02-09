@@ -7,8 +7,9 @@ CREATE TABLE shop (
     updated_at  DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     deleted_at  DATETIME(6)  NULL,
 
+    UNIQUE KEY uq_shop_name (shop_name),
+    UNIQUE KEY uq_account_id (account_id),
     INDEX idx_shop_status (status),
-    INDEX idx_shop_name (shop_name),
     INDEX idx_shop_updated (updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 COMMENT='외부몰 마스터 테이블';

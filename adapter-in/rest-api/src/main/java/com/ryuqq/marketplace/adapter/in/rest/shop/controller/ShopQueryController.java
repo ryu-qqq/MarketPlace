@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.shop.controller;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shop.ShopAdminEndpoints;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,8 @@ public class ShopQueryController {
     }
 
     @Operation(summary = "외부몰 목록 조회", description = "외부몰 목록을 복합 조건으로 조회합니다.")
+    @PreAuthorize("@access.superAdmin()")
+    @RequirePermission(value = "shop:read", description = "외부몰 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<ShopApiResponse>>> searchShops(
             @ParameterObject @Valid SearchShopsApiRequest request) {
