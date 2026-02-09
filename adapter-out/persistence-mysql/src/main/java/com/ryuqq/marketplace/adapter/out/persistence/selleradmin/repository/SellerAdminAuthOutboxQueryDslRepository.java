@@ -24,8 +24,7 @@ public class SellerAdminAuthOutboxQueryDslRepository {
     private final SellerAdminAuthOutboxConditionBuilder conditionBuilder;
 
     public SellerAdminAuthOutboxQueryDslRepository(
-            JPAQueryFactory queryFactory,
-            SellerAdminAuthOutboxConditionBuilder conditionBuilder) {
+            JPAQueryFactory queryFactory, SellerAdminAuthOutboxConditionBuilder conditionBuilder) {
         this.queryFactory = queryFactory;
         this.conditionBuilder = conditionBuilder;
     }
