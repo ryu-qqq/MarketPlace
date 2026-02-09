@@ -6,6 +6,9 @@ import com.ryuqq.marketplace.application.shop.manager.ShopWriteManager;
 import com.ryuqq.marketplace.application.shop.port.in.command.RegisterShopUseCase;
 import com.ryuqq.marketplace.application.shop.validator.ShopValidator;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import com.ryuqq.marketplace.domain.shop.exception.ShopAccountIdDuplicateException;
+import com.ryuqq.marketplace.domain.shop.exception.ShopNameDuplicateException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 /** Shop 등록 Service. */
@@ -31,6 +34,17 @@ public class RegisterShopService implements RegisterShopUseCase {
         validator.validateAccountIdNotDuplicate(command.accountId());
 
         Shop shop = commandFactory.create(command);
-        return writeManager.persist(shop);
+        try {
+            return writeManager.persist(shop);
+        } catch (DataIntegrityViolationException e) {
+            String message = e.getMessage();
+            if (message != null && message.contains("uq_shop_name")) {
+                throw new ShopNameDuplicateException(command.shopName());
+            }
+            if (message != null && message.contains("uq_account_id")) {
+                throw new ShopAccountIdDuplicateException(command.accountId());
+            }
+            throw e;
+        }
     }
 }

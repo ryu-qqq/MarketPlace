@@ -129,10 +129,16 @@ class ShopQueryFactoryTest {
             ShopSearchParams params = ShopQueryFixtures.searchParams(0, 20);
             SortDirection direction = SortDirection.DESC;
             PageRequest pageRequest = PageRequest.of(0, 20);
+            QueryContext<ShopSortKey> queryContext =
+                    QueryContext.of(ShopSortKey.defaultKey(), direction, pageRequest, false);
 
             given(commonVoFactory.parseSortDirection(params.sortDirection())).willReturn(direction);
             given(commonVoFactory.createPageRequest(params.page(), params.size()))
                     .willReturn(pageRequest);
+            given(
+                            commonVoFactory.createQueryContext(
+                                    ShopSortKey.defaultKey(), direction, pageRequest, false))
+                    .willReturn(queryContext);
 
             // when
             sut.createCriteria(params);

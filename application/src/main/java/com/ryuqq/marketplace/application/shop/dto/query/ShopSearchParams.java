@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.shop.dto.query;
 
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import java.util.List;
+import java.util.Objects;
 
 /** Shop 검색 파라미터 DTO. */
 public record ShopSearchParams(
@@ -9,6 +10,10 @@ public record ShopSearchParams(
         String searchField,
         String searchWord,
         CommonSearchParams searchParams) {
+
+    public ShopSearchParams {
+        Objects.requireNonNull(searchParams, "searchParams must not be null");
+    }
 
     public static ShopSearchParams of(
             List<String> statuses,

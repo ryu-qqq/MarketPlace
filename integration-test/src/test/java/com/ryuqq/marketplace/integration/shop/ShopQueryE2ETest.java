@@ -48,7 +48,7 @@ class ShopQueryE2ETest extends E2ETestBase {
     // ===== GET /shops - 외부몰 목록 조회 =====
 
     @Nested
-    @DisplayName("GET /admin/shops - 외부몰 목록 조회")
+    @DisplayName("GET /shops - 외부몰 목록 조회")
     class SearchShopsTest {
 
         @Test
