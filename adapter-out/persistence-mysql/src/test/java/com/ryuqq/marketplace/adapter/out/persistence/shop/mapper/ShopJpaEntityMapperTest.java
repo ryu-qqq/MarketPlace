@@ -111,7 +111,7 @@ class ShopJpaEntityMapperTest {
         @DisplayName("활성 상태 Entity를 Domain으로 변환합니다")
         void toDomain_WithActiveEntity_ConvertsCorrectly() {
             // given
-            ShopJpaEntity entity = ShopJpaEntityFixtures.activeEntity();
+            ShopJpaEntity entity = ShopJpaEntityFixtures.activeEntity(1L);
 
             // when
             Shop domain = mapper.toDomain(entity);
@@ -127,7 +127,7 @@ class ShopJpaEntityMapperTest {
         @DisplayName("비활성 상태 Entity를 Domain으로 변환합니다")
         void toDomain_WithInactiveEntity_ConvertsCorrectly() {
             // given
-            ShopJpaEntity entity = ShopJpaEntityFixtures.inactiveEntity();
+            ShopJpaEntity entity = ShopJpaEntityFixtures.inactiveEntity(2L);
 
             // when
             Shop domain = mapper.toDomain(entity);
@@ -140,7 +140,7 @@ class ShopJpaEntityMapperTest {
         @DisplayName("삭제된 상태 Entity를 Domain으로 변환합니다")
         void toDomain_WithDeletedEntity_ConvertsCorrectly() {
             // given
-            ShopJpaEntity entity = ShopJpaEntityFixtures.deletedEntity();
+            ShopJpaEntity entity = ShopJpaEntityFixtures.deletedEntity(3L);
 
             // when
             Shop domain = mapper.toDomain(entity);
@@ -192,7 +192,7 @@ class ShopJpaEntityMapperTest {
         @DisplayName("Entity -> Domain -> Entity 변환 시 데이터가 보존됩니다")
         void roundTrip_EntityToDomainToEntity_PreservesData() {
             // given
-            ShopJpaEntity original = ShopJpaEntityFixtures.activeEntity();
+            ShopJpaEntity original = ShopJpaEntityFixtures.activeEntity(10L);
 
             // when
             Shop domain = mapper.toDomain(original);
