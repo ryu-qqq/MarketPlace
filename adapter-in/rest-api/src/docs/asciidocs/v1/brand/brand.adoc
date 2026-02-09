@@ -1,6 +1,8 @@
 [[brand-search]]
 === 브랜드 검색 조회
 
+인증 필요 | 필요 권한: `brand:read`
+
 ==== HTTP Request
 include::{snippets}/brand/search/http-request.adoc[]
 

@@ -25,6 +25,8 @@ springdoc:
 # Error Response (스테이지: 상세 URL 제공)
 # ============================================================
 api:
+  server:
+    url: https://stage-api.set-of.com
   error:
     base-url: ${API_ERROR_DOCS_URL:https://stage-api.example.com/problems}
     use-about-blank: false

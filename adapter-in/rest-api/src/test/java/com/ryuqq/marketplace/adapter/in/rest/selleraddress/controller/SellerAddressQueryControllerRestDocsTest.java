@@ -19,11 +19,11 @@ import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.SellerAddressAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.SellerAddressApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressMetadataApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerOperationMetadataApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.mapper.SellerAddressQueryApiMapper;
-import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressMetadataResult;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressPageResult;
-import com.ryuqq.marketplace.application.selleraddress.port.in.query.GetSellerAddressMetadataUseCase;
+import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerOperationMetadataResult;
+import com.ryuqq.marketplace.application.selleraddress.port.in.query.GetSellerOperationMetadataUseCase;
 import com.ryuqq.marketplace.application.selleraddress.port.in.query.SearchSellerAddressUseCase;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +52,7 @@ class SellerAddressQueryControllerRestDocsTest {
     @Autowired private MockMvc mockMvc;
 
     @MockitoBean private SearchSellerAddressUseCase searchUseCase;
-    @MockitoBean private GetSellerAddressMetadataUseCase metadataUseCase;
+    @MockitoBean private GetSellerOperationMetadataUseCase metadataUseCase;
     @MockitoBean private SellerAddressQueryApiMapper mapper;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
@@ -165,20 +165,20 @@ class SellerAddressQueryControllerRestDocsTest {
     }
 
     @Nested
-    @DisplayName("셀러 주소 메타데이터 조회 API")
+    @DisplayName("셀러 운영 메타데이터 조회 API")
     class MetadataTest {
 
         @Test
-        @DisplayName("유효한 sellerId로 200과 메타데이터를 반환한다")
+        @DisplayName("유효한 sellerId로 200과 운영 메타데이터를 반환한다")
         void getMetadata_ValidSellerId_Returns200WithMetadata() throws Exception {
             // given
-            SellerAddressMetadataResult metadataResult =
-                    new SellerAddressMetadataResult(5, 3, 2, true, false);
-            SellerAddressMetadataApiResponse apiResponse =
-                    new SellerAddressMetadataApiResponse(5, 3, 2, true, false);
+            SellerOperationMetadataResult metadataResult =
+                    new SellerOperationMetadataResult(5, 3, 2, true, false, 2, 1, true, true);
+            SellerOperationMetadataApiResponse apiResponse =
+                    new SellerOperationMetadataApiResponse(5, 3, 2, true, false, 2, 1, true, true);
 
             given(metadataUseCase.execute(eq(SELLER_ID))).willReturn(metadataResult);
-            given(mapper.toMetadataResponse(any(SellerAddressMetadataResult.class)))
+            given(mapper.toMetadataResponse(any(SellerOperationMetadataResult.class)))
                     .willReturn(apiResponse);
 
             // when & then
@@ -192,6 +192,10 @@ class SellerAddressQueryControllerRestDocsTest {
                     .andExpect(jsonPath("$.data.returnCount").value(2))
                     .andExpect(jsonPath("$.data.hasDefaultShipping").value(true))
                     .andExpect(jsonPath("$.data.hasDefaultReturn").value(false))
+                    .andExpect(jsonPath("$.data.shippingPolicyCount").value(2))
+                    .andExpect(jsonPath("$.data.refundPolicyCount").value(1))
+                    .andExpect(jsonPath("$.data.hasDefaultShippingPolicy").value(true))
+                    .andExpect(jsonPath("$.data.hasDefaultRefundPolicy").value(true))
                     .andDo(
                             document(
                                     "seller-address/metadata",
@@ -209,6 +213,14 @@ class SellerAddressQueryControllerRestDocsTest {
                                                     .description("기본 출고지 설정 여부"),
                                             fieldWithPath("data.hasDefaultReturn")
                                                     .description("기본 반품지 설정 여부"),
+                                            fieldWithPath("data.shippingPolicyCount")
+                                                    .description("배송정책 수"),
+                                            fieldWithPath("data.refundPolicyCount")
+                                                    .description("환불정책 수"),
+                                            fieldWithPath("data.hasDefaultShippingPolicy")
+                                                    .description("기본 배송정책 설정 여부"),
+                                            fieldWithPath("data.hasDefaultRefundPolicy")
+                                                    .description("기본 환불정책 설정 여부"),
                                             fieldWithPath("timestamp").description("응답 시간"),
                                             fieldWithPath("requestId").description("요청 ID"))));
         }

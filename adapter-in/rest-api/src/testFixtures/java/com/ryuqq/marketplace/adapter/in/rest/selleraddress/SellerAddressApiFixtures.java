@@ -4,8 +4,10 @@ import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.command.RegisterS
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.command.UpdateSellerAddressApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.query.SearchSellerAddressesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerOperationMetadataApiResponse;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressPageResult;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressResult;
+import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerOperationMetadataResult;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -129,5 +131,17 @@ public final class SellerAddressApiFixtures {
 
     public static List<SellerAddressApiResponse> apiResponses(int count) {
         return IntStream.rangeClosed(1, count).mapToObj(i -> apiResponse((long) i)).toList();
+    }
+
+    // ===== SellerOperationMetadataResult (Application) =====
+
+    public static SellerOperationMetadataResult operationMetadataResult() {
+        return new SellerOperationMetadataResult(5, 3, 2, true, false, 2, 1, true, true);
+    }
+
+    // ===== SellerOperationMetadataApiResponse =====
+
+    public static SellerOperationMetadataApiResponse operationMetadataApiResponse() {
+        return new SellerOperationMetadataApiResponse(5, 3, 2, true, false, 2, 1, true, true);
     }
 }
