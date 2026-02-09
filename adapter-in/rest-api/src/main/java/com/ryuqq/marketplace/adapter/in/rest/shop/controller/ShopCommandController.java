@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.shop.controller;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shop.ShopAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.shop.dto.command.RegisterShopApiRequest;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,6 +54,8 @@ public class ShopCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
+    @PreAuthorize("@access.superAdmin()")
+    @RequirePermission(value = "shop:write", description = "외부몰 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<ShopIdApiResponse>> registerShop(
             @Valid @RequestBody RegisterShopApiRequest request) {
@@ -75,6 +79,8 @@ public class ShopCommandController {
                 responseCode = "404",
                 description = "외부몰을 찾을 수 없음")
     })
+    @PreAuthorize("@access.superAdmin()")
+    @RequirePermission(value = "shop:write", description = "외부몰 수정")
     @PutMapping(ShopAdminEndpoints.SHOP_ID)
     public ResponseEntity<Void> updateShop(
             @Parameter(description = "Shop ID", required = true)
