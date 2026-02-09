@@ -1,6 +1,8 @@
 [[seller-application-apply]]
 === 입점 신청
 
+인증 필요 | 필요 권한: `seller-application:write`
+
 ==== HTTP Request
 include::{snippets}/seller-application/apply/http-request.adoc[]
 
@@ -16,6 +18,8 @@ include::{snippets}/seller-application/apply/response-fields.adoc[]
 
 [[seller-application-approve]]
 === 입점 승인
+
+SUPER_ADMIN 전용 | 필요 권한: `seller-application:approve`
 
 ==== HTTP Request
 include::{snippets}/seller-application/approve/http-request.adoc[]
@@ -33,6 +37,8 @@ include::{snippets}/seller-application/approve/response-fields.adoc[]
 [[seller-application-reject]]
 === 입점 거절
 
+SUPER_ADMIN 전용 | 필요 권한: `seller-application:reject`
+
 ==== HTTP Request
 include::{snippets}/seller-application/reject/http-request.adoc[]
 
@@ -49,6 +55,8 @@ include::{snippets}/seller-application/reject/http-response.adoc[]
 [[seller-application-search]]
 === 입점 신청 검색 조회
 
+SUPER_ADMIN 전용 | 필요 권한: `seller-application:read`
+
 ==== HTTP Request
 include::{snippets}/seller-application/search/http-request.adoc[]
 
@@ -64,6 +72,8 @@ include::{snippets}/seller-application/search/response-fields.adoc[]
 
 [[seller-application-get]]
 === 입점 신청 상세 조회
+
+SUPER_ADMIN 전용 | 필요 권한: `seller-application:read`
 
 ==== HTTP Request
 include::{snippets}/seller-application/get/http-request.adoc[]

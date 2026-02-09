@@ -1,6 +1,8 @@
 [[category-search]]
 === 카테고리 검색 조회
 
+인증 필요 | 필요 권한: `category:read`
+
 ==== HTTP Request
 include::{snippets}/category/search/http-request.adoc[]
 

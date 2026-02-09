@@ -29,6 +29,102 @@ SETOF Commerce Admin API 문서입니다.
 |v1.0.0
 |===
 
+=== 인증 및 권한
+
+==== Gateway 인증 헤더
+
+API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
+
+[cols="2,1,4"]
+|===
+|헤더 |필수 |설명
+
+|`X-User-Id`
+|필수
+|인증된 사용자 ID
+
+|`X-User-Roles`
+|선택
+|사용자 역할 (예: `ROLE_SUPER_ADMIN`)
+
+|`X-User-Permissions`
+|선택
+|사용자 권한 목록 (예: `\*:\*`, `seller:read`)
+
+|`X-Organization-Id`
+|선택
+|소속 조직(셀러) ID
+
+|`X-Authenticated`
+|선택
+|인증 여부 (`true` / `false`)
+|===
+
+==== 권한 레벨
+
+[cols="2,4"]
+|===
+|레벨 |설명
+
+|**Public**
+|인증 불필요 (로그인, 토큰 갱신)
+
+|**인증 필요**
+|유효한 `X-User-Id` 헤더 필수
+
+|**셀러 소유자 또는 권한**
+|해당 셀러 소유자이거나 지정된 권한 보유 시 접근 가능
+
+|**본인 또는 권한**
+|본인이거나 지정된 권한 보유 시 접근 가능
+
+|**SUPER_ADMIN**
+|`ROLE_SUPER_ADMIN` 역할 필수
+|===
+
+==== 사용 가능한 권한 문자열
+
+[cols="2,3"]
+|===
+|권한 |설명
+
+|`*:*`
+|전체 권한 (SUPER_ADMIN)
+
+|`seller:read` / `seller:write`
+|셀러 조회 / 등록·수정
+
+|`seller-address:read` / `seller-address:write`
+|셀러 주소 조회 / 등록·수정·삭제
+
+|`seller-admin:read` / `seller-admin:manage`
+|셀러 어드민 조회 / 관리
+
+|`seller-application:read` / `seller-application:write`
+|입점 신청 조회 / 신청
+
+|`brand:read`
+|브랜드 조회
+
+|`category:read`
+|카테고리 조회
+
+|`common-code:read` / `common-code:write`
+|공통코드 조회 / 등록·수정
+
+|`common-code-type:read` / `common-code-type:write`
+|공통코드 유형 조회 / 등록·수정
+
+|`shop:read` / `shop:write`
+|외부몰 조회 / 등록·수정
+
+|`refund-policy:read` / `refund-policy:write`
+|환불 정책 조회 / 등록·수정
+
+|`shipping-policy:read` / `shipping-policy:write`
+|배송 정책 조회 / 등록·수정
+|===
+
 === 공통 응답 형식
 
 성공 응답:
@@ -103,6 +199,11 @@ include::seller-admin/seller-admin.adoc[]
 == 셀러 입점 신청 (Seller Application)
 
 include::seller-application/seller-application.adoc[]
+
+
+== 외부몰 (Shop)
+
+include::shop/shop.adoc[]
 
 
 == 환불 정책 (Refund Policy)

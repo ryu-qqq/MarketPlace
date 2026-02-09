@@ -41,14 +41,10 @@ public class SellerAdminAuthOutboxConditionBuilder {
     }
 
     public BooleanExpression createdAtBefore(Instant beforeTime) {
-        return beforeTime != null
-                ? sellerAdminAuthOutboxJpaEntity.createdAt.lt(beforeTime)
-                : null;
+        return beforeTime != null ? sellerAdminAuthOutboxJpaEntity.createdAt.lt(beforeTime) : null;
     }
 
     public BooleanExpression updatedAtBefore(Instant beforeTime) {
-        return beforeTime != null
-                ? sellerAdminAuthOutboxJpaEntity.updatedAt.lt(beforeTime)
-                : null;
+        return beforeTime != null ? sellerAdminAuthOutboxJpaEntity.updatedAt.lt(beforeTime) : null;
     }
 }
