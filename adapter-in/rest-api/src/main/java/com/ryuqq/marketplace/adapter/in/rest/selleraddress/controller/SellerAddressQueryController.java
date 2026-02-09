@@ -6,12 +6,12 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.SellerAddressAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.query.SearchSellerAddressesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressMetadataApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerOperationMetadataApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.mapper.SellerAddressQueryApiMapper;
 import com.ryuqq.marketplace.application.selleraddress.dto.query.SellerAddressSearchParams;
-import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressMetadataResult;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressPageResult;
-import com.ryuqq.marketplace.application.selleraddress.port.in.query.GetSellerAddressMetadataUseCase;
+import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerOperationMetadataResult;
+import com.ryuqq.marketplace.application.selleraddress.port.in.query.GetSellerOperationMetadataUseCase;
 import com.ryuqq.marketplace.application.selleraddress.port.in.query.SearchSellerAddressUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,12 +49,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SellerAddressQueryController {
 
     private final SearchSellerAddressUseCase searchUseCase;
-    private final GetSellerAddressMetadataUseCase metadataUseCase;
+    private final GetSellerOperationMetadataUseCase metadataUseCase;
     private final SellerAddressQueryApiMapper mapper;
 
     public SellerAddressQueryController(
             SearchSellerAddressUseCase searchUseCase,
-            GetSellerAddressMetadataUseCase metadataUseCase,
+            GetSellerOperationMetadataUseCase metadataUseCase,
             SellerAddressQueryApiMapper mapper) {
         this.searchUseCase = searchUseCase;
         this.metadataUseCase = metadataUseCase;
@@ -89,14 +89,14 @@ public class SellerAddressQueryController {
     }
 
     /**
-     * 셀러 주소 메타데이터 조회 API.
+     * 셀러 운영 메타데이터 조회 API.
      *
-     * <p>특정 셀러의 주소 유형별 건수 및 기본 주소 설정 여부를 조회합니다.
+     * <p>특정 셀러의 주소/배송정책/환불정책 메타데이터를 조회합니다.
      *
      * @param sellerId 셀러 ID
-     * @return 셀러 주소 메타데이터
+     * @return 셀러 운영 메타데이터
      */
-    @Operation(summary = "셀러 주소 메타데이터 조회", description = "셀러의 배송지/반품지 건수와 기본 주소 설정 여부를 조회합니다.")
+    @Operation(summary = "셀러 운영 메타데이터 조회", description = "셀러의 주소/배송정책/환불정책 메타데이터를 조회합니다.")
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "200",
@@ -105,11 +105,11 @@ public class SellerAddressQueryController {
     @PreAuthorize("@access.isSellerOwnerOr(#sellerId, 'seller-address:read')")
     @RequirePermission(value = "seller-address:read", description = "셀러 주소 조회")
     @GetMapping(SellerAddressAdminEndpoints.METADATA)
-    public ResponseEntity<ApiResponse<SellerAddressMetadataApiResponse>> getMetadata(
+    public ResponseEntity<ApiResponse<SellerOperationMetadataApiResponse>> getMetadata(
             @Parameter(description = "셀러 ID", required = true) @RequestParam Long sellerId) {
 
-        SellerAddressMetadataResult result = metadataUseCase.execute(sellerId);
-        SellerAddressMetadataApiResponse response = mapper.toMetadataResponse(result);
+        SellerOperationMetadataResult result = metadataUseCase.execute(sellerId);
+        SellerOperationMetadataApiResponse response = mapper.toMetadataResponse(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));
     }

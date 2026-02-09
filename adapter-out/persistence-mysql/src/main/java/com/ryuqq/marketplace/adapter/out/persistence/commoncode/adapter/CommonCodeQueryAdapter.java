@@ -31,7 +31,10 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
-@ConditionalOnProperty(name = "persistence.legacy.common-code.enabled", havingValue = "false", matchIfMissing = true)
+@ConditionalOnProperty(
+        name = "persistence.legacy.common-code.enabled",
+        havingValue = "false",
+        matchIfMissing = true)
 public class CommonCodeQueryAdapter implements CommonCodeQueryPort {
 
     private final CommonCodeQueryDslRepository queryDslRepository;

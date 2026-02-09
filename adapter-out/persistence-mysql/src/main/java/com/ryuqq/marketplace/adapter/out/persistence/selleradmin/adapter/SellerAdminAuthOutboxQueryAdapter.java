@@ -35,16 +35,14 @@ public class SellerAdminAuthOutboxQueryAdapter implements SellerAdminAuthOutboxQ
     }
 
     @Override
-    public Optional<SellerAdminAuthOutbox> findPendingBySellerAdminId(
-            SellerAdminId sellerAdminId) {
+    public Optional<SellerAdminAuthOutbox> findPendingBySellerAdminId(SellerAdminId sellerAdminId) {
         return queryDslRepository
                 .findPendingBySellerAdminId(sellerAdminId.value())
                 .map(mapper::toDomain);
     }
 
     @Override
-    public List<SellerAdminAuthOutbox> findPendingOutboxesForRetry(
-            Instant beforeTime, int limit) {
+    public List<SellerAdminAuthOutbox> findPendingOutboxesForRetry(Instant beforeTime, int limit) {
         return queryDslRepository.findPendingOutboxesForRetry(beforeTime, limit).stream()
                 .map(mapper::toDomain)
                 .toList();
@@ -53,9 +51,7 @@ public class SellerAdminAuthOutboxQueryAdapter implements SellerAdminAuthOutboxQ
     @Override
     public List<SellerAdminAuthOutbox> findProcessingTimeoutOutboxes(
             Instant timeoutThreshold, int limit) {
-        return queryDslRepository
-                .findProcessingTimeoutOutboxes(timeoutThreshold, limit)
-                .stream()
+        return queryDslRepository.findProcessingTimeoutOutboxes(timeoutThreshold, limit).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
