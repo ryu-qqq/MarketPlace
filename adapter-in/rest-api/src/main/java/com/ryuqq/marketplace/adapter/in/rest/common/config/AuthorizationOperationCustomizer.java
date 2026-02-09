@@ -71,13 +71,13 @@ public class AuthorizationOperationCustomizer implements OperationCustomizer {
         Matcher sellerOwnerMatcher = SELLER_OWNER_OR_PATTERN.matcher(expression);
         if (sellerOwnerMatcher.find()) {
             String perm = sellerOwnerMatcher.group(1);
-            return formatBlock("셀러 소유자 또는 " + perm + " 권한", perm);
+            return formatBlock("셀러 소유자 또는 권한 보유", perm);
         }
 
         Matcher myselfMatcher = MYSELF_OR_PATTERN.matcher(expression);
         if (myselfMatcher.find()) {
             String perm = myselfMatcher.group(1);
-            return formatBlock("본인 또는 " + perm + " 권한", perm);
+            return formatBlock("본인 또는 권한 보유", perm);
         }
 
         if (AUTHENTICATED_PATTERN.matcher(expression).find()) {
