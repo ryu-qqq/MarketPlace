@@ -24,6 +24,8 @@ springdoc:
 # Auth Cookie (로컬: HTTP 허용, CORS 개발 편의)
 # ============================================================
 api:
+  server:
+    url: http://localhost:8080
   auth:
     cookie:
       secure: false
