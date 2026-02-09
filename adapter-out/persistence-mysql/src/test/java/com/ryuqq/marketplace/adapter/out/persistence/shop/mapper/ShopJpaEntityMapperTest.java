@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.shop.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.ryuqq.marketplace.adapter.out.persistence.shop.ShopJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.shop.entity.ShopJpaEntity;
@@ -150,17 +151,15 @@ class ShopJpaEntityMapperTest {
         }
 
         @Test
-        @DisplayName("ID가 null인 새 Entity를 Domain으로 변환합니다")
-        void toDomain_WithNewEntity_ConvertsCorrectly() {
+        @DisplayName("ID가 null인 Entity 변환 시 IllegalStateException이 발생합니다")
+        void toDomain_WithNullId_ThrowsException() {
             // given
             ShopJpaEntity entity = ShopJpaEntityFixtures.newEntity();
 
-            // when
-            Shop domain = mapper.toDomain(entity);
-
-            // then
-            assertThat(domain.idValue()).isNull();
-            assertThat(domain.shopName()).isEqualTo(entity.getShopName());
+            // when & then
+            assertThatThrownBy(() -> mapper.toDomain(entity))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("ID는 null일 수 없습니다");
         }
     }
 

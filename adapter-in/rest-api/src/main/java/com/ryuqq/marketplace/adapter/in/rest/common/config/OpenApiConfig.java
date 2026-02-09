@@ -39,7 +39,14 @@ public class OpenApiConfig {
                                         .version("v1")
                                         .description("SETOF Commerce Admin API 문서"))
                         .components(securityComponents())
-                        .security(List.of(new SecurityRequirement().addList(HEADER_USER_ID)));
+                        .security(
+                                List.of(
+                                        new SecurityRequirement()
+                                                .addList(HEADER_USER_ID)
+                                                .addList(HEADER_USER_ROLES)
+                                                .addList(HEADER_USER_PERMISSIONS)
+                                                .addList(HEADER_ORGANIZATION_ID)
+                                                .addList(HEADER_AUTHENTICATED)));
 
         if (serverUrl != null && !serverUrl.isBlank()) {
             openAPI.servers(List.of(new Server().url(serverUrl).description("API Server")));

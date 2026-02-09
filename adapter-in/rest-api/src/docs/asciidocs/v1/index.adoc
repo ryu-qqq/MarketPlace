@@ -91,6 +91,9 @@ API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
 |`*:*`
 |전체 권한 (SUPER_ADMIN)
 
+|`auth:read`
+|내 정보 조회
+
 |`seller:read` / `seller:write`
 |셀러 조회 / 등록·수정
 
@@ -102,6 +105,9 @@ API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
 
 |`seller-application:read` / `seller-application:write`
 |입점 신청 조회 / 신청
+
+|`seller-application:approve` / `seller-application:reject`
+|입점 승인 / 거절
 
 |`brand:read`
 |브랜드 조회
