@@ -17,5 +17,6 @@ public record CategoryApiResponse(
         @Schema(description = "상태") String status,
         @Schema(description = "부문") String department,
         @Schema(description = "카테고리 그룹 (고시정보 연결용)") String categoryGroup,
+        @Schema(description = "표시용 이름 경로") String displayPath,
         @Schema(description = "생성일시") String createdAt,
         @Schema(description = "수정일시") String updatedAt) {}

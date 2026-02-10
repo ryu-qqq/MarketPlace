@@ -69,6 +69,7 @@ class CategoryJpaEntityMapperTest {
                             Department.FASHION,
                             CategoryGroup.CLOTHING,
                             null,
+                            null,
                             now,
                             now);
 
@@ -109,6 +110,7 @@ class CategoryJpaEntityMapperTest {
                             Department.BEAUTY,
                             CategoryGroup.COSMETICS,
                             null,
+                            null,
                             now,
                             now);
 
@@ -138,6 +140,7 @@ class CategoryJpaEntityMapperTest {
                             CategoryStatus.ACTIVE,
                             Department.LIVING,
                             CategoryGroup.FURNITURE,
+                            null,
                             deletedAt,
                             now,
                             now);
@@ -165,6 +168,7 @@ class CategoryJpaEntityMapperTest {
                             SortOrder.of(1),
                             Department.FOOD,
                             CategoryGroup.ETC,
+                            null,
                             now);
 
             // when
@@ -193,6 +197,7 @@ class CategoryJpaEntityMapperTest {
                             CategoryStatus.ACTIVE,
                             Department.DIGITAL,
                             CategoryGroup.DIGITAL,
+                            null,
                             null,
                             now,
                             now);
@@ -224,6 +229,7 @@ class CategoryJpaEntityMapperTest {
                             CategoryStatus.ACTIVE,
                             Department.SPORTS,
                             CategoryGroup.SPORTS,
+                            null,
                             null,
                             now,
                             now);
@@ -380,6 +386,7 @@ class CategoryJpaEntityMapperTest {
                             CategoryStatus.ACTIVE,
                             Department.FASHION,
                             CategoryGroup.CLOTHING,
+                            null,
                             null,
                             now,
                             now);

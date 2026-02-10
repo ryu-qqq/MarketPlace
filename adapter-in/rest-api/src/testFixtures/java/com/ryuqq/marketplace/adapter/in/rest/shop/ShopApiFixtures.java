@@ -22,6 +22,7 @@ public final class ShopApiFixtures {
     private ShopApiFixtures() {}
 
     // ===== 상수 =====
+    public static final Long DEFAULT_SALES_CHANNEL_ID = 1L;
     public static final String DEFAULT_SHOP_NAME = "테스트몰";
     public static final String DEFAULT_ACCOUNT_ID = "test_account_01";
     public static final String DEFAULT_STATUS = "ACTIVE";
@@ -29,11 +30,12 @@ public final class ShopApiFixtures {
     // ===== RegisterShopApiRequest =====
 
     public static RegisterShopApiRequest registerRequest() {
-        return new RegisterShopApiRequest(DEFAULT_SHOP_NAME, DEFAULT_ACCOUNT_ID);
+        return new RegisterShopApiRequest(
+                DEFAULT_SALES_CHANNEL_ID, DEFAULT_SHOP_NAME, DEFAULT_ACCOUNT_ID);
     }
 
     public static RegisterShopApiRequest registerRequest(String shopName, String accountId) {
-        return new RegisterShopApiRequest(shopName, accountId);
+        return new RegisterShopApiRequest(DEFAULT_SALES_CHANNEL_ID, shopName, accountId);
     }
 
     // ===== UpdateShopApiRequest =====
@@ -50,25 +52,33 @@ public final class ShopApiFixtures {
     // ===== SearchShopsApiRequest =====
 
     public static SearchShopsApiRequest searchRequest() {
-        return new SearchShopsApiRequest(null, null, null, null, null, 0, 20);
+        return new SearchShopsApiRequest(null, null, null, null, null, null, 0, 20);
     }
 
     public static SearchShopsApiRequest searchRequest(
             List<String> statuses, String searchField, String searchWord, int page, int size) {
         return new SearchShopsApiRequest(
-                statuses, searchField, searchWord, "createdAt", "DESC", page, size);
+                null, statuses, searchField, searchWord, "createdAt", "DESC", page, size);
     }
 
     // ===== ShopResult (Application) =====
 
     public static ShopResult shopResult(Long id) {
         Instant now = Instant.parse("2025-01-23T01:30:00Z");
-        return new ShopResult(id, DEFAULT_SHOP_NAME, DEFAULT_ACCOUNT_ID, DEFAULT_STATUS, now, now);
+        return new ShopResult(
+                id,
+                DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_NAME,
+                DEFAULT_ACCOUNT_ID,
+                DEFAULT_STATUS,
+                now,
+                now);
     }
 
     public static ShopResult shopResult(Long id, String shopName, String status) {
         Instant now = Instant.parse("2025-01-23T01:30:00Z");
-        return new ShopResult(id, shopName, DEFAULT_ACCOUNT_ID, status, now, now);
+        return new ShopResult(
+                id, DEFAULT_SALES_CHANNEL_ID, shopName, DEFAULT_ACCOUNT_ID, status, now, now);
     }
 
     public static List<ShopResult> shopResults(int count) {
@@ -91,6 +101,7 @@ public final class ShopApiFixtures {
     public static ShopApiResponse apiResponse(Long id) {
         return new ShopApiResponse(
                 id,
+                DEFAULT_SALES_CHANNEL_ID,
                 DEFAULT_SHOP_NAME,
                 DEFAULT_ACCOUNT_ID,
                 DEFAULT_STATUS,
@@ -101,6 +112,7 @@ public final class ShopApiFixtures {
     public static ShopApiResponse apiResponse(Long id, String shopName, String status) {
         return new ShopApiResponse(
                 id,
+                DEFAULT_SALES_CHANNEL_ID,
                 shopName,
                 DEFAULT_ACCOUNT_ID,
                 status,

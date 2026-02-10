@@ -44,6 +44,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -65,6 +66,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -86,6 +88,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -107,6 +110,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -128,6 +132,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -149,6 +154,7 @@ public final class CategoryJpaEntityFixtures {
                 "INACTIVE",
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -170,6 +176,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 now);
@@ -191,6 +198,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -212,6 +220,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -233,6 +242,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -254,6 +264,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -275,6 +286,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -296,6 +308,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 department,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -317,6 +330,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 categoryGroup,
+                null,
                 now,
                 now,
                 null);
@@ -338,6 +352,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -359,6 +374,7 @@ public final class CategoryJpaEntityFixtures {
                 "INACTIVE",
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -380,6 +396,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 now);
@@ -401,6 +418,7 @@ public final class CategoryJpaEntityFixtures {
                 "INACTIVE",
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 null);
@@ -422,6 +440,7 @@ public final class CategoryJpaEntityFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 now,
                 now,
                 now);

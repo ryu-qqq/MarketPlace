@@ -96,6 +96,7 @@ public final class CategoryApiFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 DEFAULT_INSTANT,
                 DEFAULT_INSTANT);
     }
@@ -114,6 +115,7 @@ public final class CategoryApiFixtures {
                 status,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 DEFAULT_INSTANT,
                 DEFAULT_INSTANT);
     }
@@ -132,6 +134,7 @@ public final class CategoryApiFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 categoryGroup,
+                null,
                 DEFAULT_INSTANT,
                 DEFAULT_INSTANT);
     }
@@ -167,6 +170,7 @@ public final class CategoryApiFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 DEFAULT_CATEGORY_GROUP,
+                null,
                 DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME);
     }
@@ -185,6 +189,7 @@ public final class CategoryApiFixtures {
                 DEFAULT_STATUS,
                 DEFAULT_DEPARTMENT,
                 categoryGroup,
+                null,
                 DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME);
     }

@@ -57,8 +57,7 @@ public abstract class E2ETestBase {
                 .header("X-Organization-Id", "org-admin-001")
                 .header("X-User-Roles", "ROLE_SUPER_ADMIN")
                 .header("X-User-Permissions", "*:*")
-                .header("X-User-Email", "admin@marketplace.com")
-                .header("X-Authenticated", "true");
+                .header("X-User-Email", "admin@marketplace.com");
     }
 
     /**
@@ -75,8 +74,7 @@ public abstract class E2ETestBase {
                 .header("X-Organization-Id", organizationId)
                 .header("X-User-Roles", "ROLE_USER")
                 .header("X-User-Permissions", String.join(",", permissions))
-                .header("X-User-Email", "seller@example.com")
-                .header("X-Authenticated", "true");
+                .header("X-User-Email", "seller@example.com");
     }
 
     /**
@@ -91,8 +89,7 @@ public abstract class E2ETestBase {
                 .header("X-Tenant-Id", "tenant-001")
                 .header("X-User-Roles", "ROLE_USER")
                 .header("X-User-Permissions", "")
-                .header("X-User-Email", "user@example.com")
-                .header("X-Authenticated", "true");
+                .header("X-User-Email", "user@example.com");
     }
 
     /**

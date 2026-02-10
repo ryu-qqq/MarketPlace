@@ -26,6 +26,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("RegisterShopService 단위 테스트")
 class RegisterShopServiceTest {
 
+    private static final Long SALES_CHANNEL_ID = 1L;
+
     @InjectMocks private RegisterShopService sut;
 
     @Mock private ShopValidator validator;
@@ -52,15 +54,16 @@ class RegisterShopServiceTest {
 
             // then
             assertThat(result).isEqualTo(expectedShopId);
-            then(validator).should().validateShopNameNotDuplicate(command.shopName());
-            then(validator).should().validateAccountIdNotDuplicate(command.accountId());
+            then(validator)
+                    .should()
+                    .validateAccountNotDuplicate(command.salesChannelId(), command.accountId());
             then(commandFactory).should().create(command);
             then(writeManager).should().persist(newShop);
         }
 
         @Test
-        @DisplayName("Shop명과 계정ID 중복 검증을 수행한다")
-        void execute_ValidatesShopNameAndAccountId() {
+        @DisplayName("계정ID 중복 검증을 수행한다")
+        void execute_ValidatesAccountId() {
             // given
             RegisterShopCommand command =
                     ShopCommandFixtures.registerCommand("신규외부몰", "new-account-999");
@@ -74,14 +77,16 @@ class RegisterShopServiceTest {
             sut.execute(command);
 
             // then
-            then(validator).should().validateShopNameNotDuplicate("신규외부몰");
-            then(validator).should().validateAccountIdNotDuplicate("new-account-999");
+            then(validator)
+                    .should()
+                    .validateAccountNotDuplicate(command.salesChannelId(), "new-account-999");
         }
 
         private Shop createNewShop() {
             Instant now = Instant.now();
             return Shop.reconstitute(
                     ShopId.forNew(),
+                    SALES_CHANNEL_ID,
                     "테스트 외부몰",
                     "test-account-123",
                     com.ryuqq.marketplace.domain.shop.vo.ShopStatus.ACTIVE,

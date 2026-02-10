@@ -14,11 +14,8 @@ public interface ShopQueryPort {
 
     long countByCriteria(ShopSearchCriteria criteria);
 
-    boolean existsByShopName(String shopName);
+    boolean existsBySalesChannelIdAndAccountId(Long salesChannelId, String accountId);
 
-    boolean existsByShopNameExcluding(String shopName, ShopId excludeId);
-
-    boolean existsByAccountId(String accountId);
-
-    boolean existsByAccountIdExcluding(String accountId, ShopId excludeId);
+    boolean existsBySalesChannelIdAndAccountIdExcluding(
+            Long salesChannelId, String accountId, ShopId excludeId);
 }

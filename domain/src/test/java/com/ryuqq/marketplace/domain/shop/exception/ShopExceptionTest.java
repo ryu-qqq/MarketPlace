@@ -103,36 +103,6 @@ class ShopExceptionTest {
     }
 
     @Nested
-    @DisplayName("ShopNameDuplicateException 테스트")
-    class ShopNameDuplicateExceptionTest {
-
-        @Test
-        @DisplayName("ShopNameDuplicateException을 생성한다")
-        void createShopNameDuplicateException() {
-            // when
-            ShopNameDuplicateException exception = new ShopNameDuplicateException();
-
-            // then
-            assertThat(exception).isInstanceOf(ShopException.class);
-            assertThat(exception.getErrorCode()).isEqualTo(ShopErrorCode.SHOP_NAME_DUPLICATE);
-        }
-
-        @Test
-        @DisplayName("외부몰명으로 ShopNameDuplicateException을 생성한다")
-        void createShopNameDuplicateExceptionWithShopName() {
-            // given
-            String shopName = "중복된 외부몰명";
-
-            // when
-            ShopNameDuplicateException exception = new ShopNameDuplicateException(shopName);
-
-            // then
-            assertThat(exception.getErrorCode()).isEqualTo(ShopErrorCode.SHOP_NAME_DUPLICATE);
-            assertThat(exception.getMessage()).contains(shopName);
-        }
-    }
-
-    @Nested
     @DisplayName("ShopAccountIdDuplicateException 테스트")
     class ShopAccountIdDuplicateExceptionTest {
 
@@ -144,7 +114,7 @@ class ShopExceptionTest {
 
             // then
             assertThat(exception).isInstanceOf(ShopException.class);
-            assertThat(exception.getErrorCode()).isEqualTo(ShopErrorCode.SHOP_ACCOUNT_ID_DUPLICATE);
+            assertThat(exception.getErrorCode()).isEqualTo(ShopErrorCode.SHOP_ACCOUNT_DUPLICATE);
         }
 
         @Test
@@ -158,7 +128,7 @@ class ShopExceptionTest {
                     new ShopAccountIdDuplicateException(accountId);
 
             // then
-            assertThat(exception.getErrorCode()).isEqualTo(ShopErrorCode.SHOP_ACCOUNT_ID_DUPLICATE);
+            assertThat(exception.getErrorCode()).isEqualTo(ShopErrorCode.SHOP_ACCOUNT_DUPLICATE);
             assertThat(exception.getMessage()).contains(accountId);
         }
     }

@@ -56,7 +56,7 @@ class ShopQueryApiMapperTest {
         void toSearchParams_NullPageSize_UsesDefaults() {
             // given
             SearchShopsApiRequest request =
-                    new SearchShopsApiRequest(null, null, null, null, null, null, null);
+                    new SearchShopsApiRequest(null, null, null, null, null, null, null, null);
 
             // when
             ShopSearchParams result = mapper.toSearchParams(request);

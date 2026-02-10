@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.domain.selleradmin.id.SellerAdminId;
 import com.ryuqq.marketplace.domain.selleradmin.query.SellerAdminSearchCriteria;
 import com.ryuqq.marketplace.domain.selleradmin.vo.SellerAdminStatus;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,17 @@ public class SellerAdminReadManager {
 
     public SellerAdminReadManager(SellerAdminQueryPort queryPort) {
         this.queryPort = queryPort;
+    }
+
+    /**
+     * AuthHub 사용자 ID로 셀러 관리자를 조회합니다.
+     *
+     * @param authUserId AuthHub 사용자 ID
+     * @return 셀러 관리자 (Optional)
+     */
+    @Transactional(readOnly = true)
+    public Optional<SellerAdmin> findByAuthUserId(String authUserId) {
+        return queryPort.findByAuthUserId(authUserId);
     }
 
     /**

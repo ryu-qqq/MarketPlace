@@ -51,6 +51,23 @@ public class SellerAdminQueryDslRepository {
     }
 
     /**
+     * AuthHub 사용자 ID로 셀러 관리자 조회.
+     *
+     * @param authUserId AuthHub 사용자 ID
+     * @return 셀러 관리자 Optional
+     */
+    public Optional<SellerAdminJpaEntity> findByAuthUserId(String authUserId) {
+        SellerAdminJpaEntity entity =
+                queryFactory
+                        .selectFrom(sellerAdminJpaEntity)
+                        .where(
+                                conditionBuilder.authUserIdEq(authUserId),
+                                conditionBuilder.notDeleted())
+                        .fetchOne();
+        return Optional.ofNullable(entity);
+    }
+
+    /**
      * 셀러 ID와 셀러 관리자 ID로 조회.
      *
      * @param sellerId 셀러 ID

@@ -24,6 +24,7 @@ class ShopSearchCriteriaTest {
         @DisplayName("모든 파라미터로 검색 조건을 생성한다")
         void createWithAllParameters() {
             // given
+            Long salesChannelId = 1L;
             List<ShopStatus> statuses = List.of(ShopStatus.ACTIVE);
             ShopSearchField searchField = ShopSearchField.SHOP_NAME;
             String searchWord = "테스트";
@@ -33,9 +34,11 @@ class ShopSearchCriteriaTest {
 
             // when
             ShopSearchCriteria criteria =
-                    ShopSearchCriteria.of(statuses, searchField, searchWord, queryContext);
+                    ShopSearchCriteria.of(
+                            salesChannelId, statuses, searchField, searchWord, queryContext);
 
             // then
+            assertThat(criteria.salesChannelId()).isEqualTo(salesChannelId);
             assertThat(criteria.statuses()).containsExactly(ShopStatus.ACTIVE);
             assertThat(criteria.searchField()).isEqualTo(ShopSearchField.SHOP_NAME);
             assertThat(criteria.searchWord()).isEqualTo("테스트");
@@ -50,9 +53,11 @@ class ShopSearchCriteriaTest {
                     QueryContext.defaultOf(ShopSortKey.defaultKey());
 
             // when
-            ShopSearchCriteria criteria = ShopSearchCriteria.of(null, null, null, queryContext);
+            ShopSearchCriteria criteria =
+                    ShopSearchCriteria.of(null, null, null, null, queryContext);
 
             // then
+            assertThat(criteria.salesChannelId()).isNull();
             assertThat(criteria.statuses()).isEmpty();
             assertThat(criteria.searchField()).isNull();
             assertThat(criteria.searchWord()).isNull();
@@ -67,7 +72,8 @@ class ShopSearchCriteriaTest {
                     QueryContext.defaultOf(ShopSortKey.defaultKey());
 
             // when
-            ShopSearchCriteria criteria = ShopSearchCriteria.of(statuses, null, null, queryContext);
+            ShopSearchCriteria criteria =
+                    ShopSearchCriteria.of(null, statuses, null, null, queryContext);
 
             // then
             assertThat(criteria.statuses()).containsExactly(ShopStatus.ACTIVE, ShopStatus.INACTIVE);
@@ -85,6 +91,7 @@ class ShopSearchCriteriaTest {
             ShopSearchCriteria criteria = ShopSearchCriteria.defaultCriteria();
 
             // then
+            assertThat(criteria.salesChannelId()).isNull();
             assertThat(criteria.statuses()).isEmpty();
             assertThat(criteria.searchField()).isNull();
             assertThat(criteria.searchWord()).isNull();
@@ -106,6 +113,37 @@ class ShopSearchCriteriaTest {
             assertThat(criteria.statuses()).containsExactly(ShopStatus.ACTIVE);
             assertThat(criteria.searchField()).isNull();
             assertThat(criteria.searchWord()).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("hasSalesChannelFilter() - 판매채널 필터 존재 여부")
+    class HasSalesChannelFilterTest {
+
+        @Test
+        @DisplayName("판매채널 필터가 있으면 true를 반환한다")
+        void returnTrueWhenSalesChannelFilterExists() {
+            // given
+            ShopSearchCriteria criteria =
+                    ShopSearchCriteria.of(
+                            1L,
+                            List.of(),
+                            null,
+                            null,
+                            QueryContext.defaultOf(ShopSortKey.defaultKey()));
+
+            // then
+            assertThat(criteria.hasSalesChannelFilter()).isTrue();
+        }
+
+        @Test
+        @DisplayName("판매채널 필터가 null이면 false를 반환한다")
+        void returnFalseWhenSalesChannelFilterIsNull() {
+            // given
+            ShopSearchCriteria criteria = ShopSearchCriteria.defaultCriteria();
+
+            // then
+            assertThat(criteria.hasSalesChannelFilter()).isFalse();
         }
     }
 
@@ -144,6 +182,7 @@ class ShopSearchCriteriaTest {
             // given
             ShopSearchCriteria criteria =
                     ShopSearchCriteria.of(
+                            null,
                             List.of(),
                             ShopSearchField.SHOP_NAME,
                             "검색어",
@@ -169,6 +208,7 @@ class ShopSearchCriteriaTest {
             // given
             ShopSearchCriteria criteria =
                     ShopSearchCriteria.of(
+                            null,
                             List.of(),
                             ShopSearchField.SHOP_NAME,
                             "   ",
@@ -189,6 +229,7 @@ class ShopSearchCriteriaTest {
             // given
             ShopSearchCriteria criteria =
                     ShopSearchCriteria.of(
+                            null,
                             List.of(),
                             ShopSearchField.SHOP_NAME,
                             null,
@@ -221,7 +262,7 @@ class ShopSearchCriteriaTest {
                     QueryContext.of(
                             ShopSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(0, 20));
             ShopSearchCriteria criteria =
-                    ShopSearchCriteria.of(List.of(), null, null, queryContext);
+                    ShopSearchCriteria.of(null, List.of(), null, null, queryContext);
 
             // then
             assertThat(criteria.size()).isEqualTo(20);
@@ -235,7 +276,7 @@ class ShopSearchCriteriaTest {
                     QueryContext.of(
                             ShopSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(2, 10));
             ShopSearchCriteria criteria =
-                    ShopSearchCriteria.of(List.of(), null, null, queryContext);
+                    ShopSearchCriteria.of(null, List.of(), null, null, queryContext);
 
             // then
             assertThat(criteria.offset()).isEqualTo(20L);
@@ -249,7 +290,7 @@ class ShopSearchCriteriaTest {
                     QueryContext.of(
                             ShopSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(3, 10));
             ShopSearchCriteria criteria =
-                    ShopSearchCriteria.of(List.of(), null, null, queryContext);
+                    ShopSearchCriteria.of(null, List.of(), null, null, queryContext);
 
             // then
             assertThat(criteria.page()).isEqualTo(3);
@@ -267,7 +308,11 @@ class ShopSearchCriteriaTest {
             List<ShopStatus> statuses = List.of(ShopStatus.ACTIVE);
             ShopSearchCriteria criteria =
                     ShopSearchCriteria.of(
-                            statuses, null, null, QueryContext.defaultOf(ShopSortKey.defaultKey()));
+                            null,
+                            statuses,
+                            null,
+                            null,
+                            QueryContext.defaultOf(ShopSortKey.defaultKey()));
 
             // when & then
             assertThatThrownBy(() -> criteria.statuses().add(ShopStatus.INACTIVE))

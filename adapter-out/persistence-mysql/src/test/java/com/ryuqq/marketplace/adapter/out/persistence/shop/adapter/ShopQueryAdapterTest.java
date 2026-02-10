@@ -167,112 +167,42 @@ class ShopQueryAdapterTest {
     }
 
     // ========================================================================
-    // 4. existsByShopName 테스트
+    // 4. existsBySalesChannelIdAndAccountId 테스트
     // ========================================================================
 
     @Nested
-    @DisplayName("existsByShopName 메서드 테스트")
-    class ExistsByShopNameTest {
+    @DisplayName("existsBySalesChannelIdAndAccountId 메서드 테스트")
+    class ExistsBySalesChannelIdAndAccountIdTest {
 
         @Test
-        @DisplayName("존재하는 Shop명으로 조회 시 true를 반환합니다")
-        void existsByShopName_WithExistingName_ReturnsTrue() {
+        @DisplayName("해당 판매채널+계정이 존재하면 true를 반환합니다")
+        void existsBySalesChannelIdAndAccountId_Exists_ReturnsTrue() {
             // given
-            String shopName = "테스트 외부몰";
-            given(queryDslRepository.existsByShopName(shopName)).willReturn(true);
-
-            // when
-            boolean result = queryAdapter.existsByShopName(shopName);
-
-            // then
-            assertThat(result).isTrue();
-        }
-
-        @Test
-        @DisplayName("존재하지 않는 Shop명으로 조회 시 false를 반환합니다")
-        void existsByShopName_WithNonExistingName_ReturnsFalse() {
-            // given
-            String shopName = "존재하지 않는 외부몰";
-            given(queryDslRepository.existsByShopName(shopName)).willReturn(false);
-
-            // when
-            boolean result = queryAdapter.existsByShopName(shopName);
-
-            // then
-            assertThat(result).isFalse();
-        }
-    }
-
-    // ========================================================================
-    // 5. existsByShopNameExcluding 테스트
-    // ========================================================================
-
-    @Nested
-    @DisplayName("existsByShopNameExcluding 메서드 테스트")
-    class ExistsByShopNameExcludingTest {
-
-        @Test
-        @DisplayName("특정 ID를 제외하고 Shop명이 존재하면 true를 반환합니다")
-        void existsByShopNameExcluding_WithExistingName_ReturnsTrue() {
-            // given
-            String shopName = "테스트 외부몰";
-            ShopId excludeId = ShopId.of(1L);
-            given(queryDslRepository.existsByShopNameExcluding(shopName, 1L)).willReturn(true);
-
-            // when
-            boolean result = queryAdapter.existsByShopNameExcluding(shopName, excludeId);
-
-            // then
-            assertThat(result).isTrue();
-        }
-
-        @Test
-        @DisplayName("특정 ID를 제외하고 Shop명이 없으면 false를 반환합니다")
-        void existsByShopNameExcluding_WithNonExistingName_ReturnsFalse() {
-            // given
-            String shopName = "유일한 외부몰명";
-            ShopId excludeId = ShopId.of(1L);
-            given(queryDslRepository.existsByShopNameExcluding(shopName, 1L)).willReturn(false);
-
-            // when
-            boolean result = queryAdapter.existsByShopNameExcluding(shopName, excludeId);
-
-            // then
-            assertThat(result).isFalse();
-        }
-    }
-
-    // ========================================================================
-    // 6. existsByAccountId 테스트
-    // ========================================================================
-
-    @Nested
-    @DisplayName("existsByAccountId 메서드 테스트")
-    class ExistsByAccountIdTest {
-
-        @Test
-        @DisplayName("존재하는 AccountId로 조회 시 true를 반환합니다")
-        void existsByAccountId_WithExistingAccountId_ReturnsTrue() {
-            // given
+            Long salesChannelId = 1L;
             String accountId = "test-account-123";
-            given(queryDslRepository.existsByAccountId(accountId)).willReturn(true);
+            given(queryDslRepository.existsBySalesChannelIdAndAccountId(salesChannelId, accountId))
+                    .willReturn(true);
 
             // when
-            boolean result = queryAdapter.existsByAccountId(accountId);
+            boolean result =
+                    queryAdapter.existsBySalesChannelIdAndAccountId(salesChannelId, accountId);
 
             // then
             assertThat(result).isTrue();
         }
 
         @Test
-        @DisplayName("존재하지 않는 AccountId로 조회 시 false를 반환합니다")
-        void existsByAccountId_WithNonExistingAccountId_ReturnsFalse() {
+        @DisplayName("해당 판매채널+계정이 존재하지 않으면 false를 반환합니다")
+        void existsBySalesChannelIdAndAccountId_NotExists_ReturnsFalse() {
             // given
+            Long salesChannelId = 1L;
             String accountId = "non-existing-account";
-            given(queryDslRepository.existsByAccountId(accountId)).willReturn(false);
+            given(queryDslRepository.existsBySalesChannelIdAndAccountId(salesChannelId, accountId))
+                    .willReturn(false);
 
             // when
-            boolean result = queryAdapter.existsByAccountId(accountId);
+            boolean result =
+                    queryAdapter.existsBySalesChannelIdAndAccountId(salesChannelId, accountId);
 
             // then
             assertThat(result).isFalse();
@@ -280,38 +210,50 @@ class ShopQueryAdapterTest {
     }
 
     // ========================================================================
-    // 7. existsByAccountIdExcluding 테스트
+    // 5. existsBySalesChannelIdAndAccountIdExcluding 테스트
     // ========================================================================
 
     @Nested
-    @DisplayName("existsByAccountIdExcluding 메서드 테스트")
-    class ExistsByAccountIdExcludingTest {
+    @DisplayName("existsBySalesChannelIdAndAccountIdExcluding 메서드 테스트")
+    class ExistsBySalesChannelIdAndAccountIdExcludingTest {
 
         @Test
-        @DisplayName("특정 ID를 제외하고 AccountId가 존재하면 true를 반환합니다")
-        void existsByAccountIdExcluding_WithExistingAccountId_ReturnsTrue() {
+        @DisplayName("특정 ID를 제외하고 판매채널+계정이 존재하면 true를 반환합니다")
+        void existsBySalesChannelIdAndAccountIdExcluding_Exists_ReturnsTrue() {
             // given
+            Long salesChannelId = 1L;
             String accountId = "test-account-123";
             ShopId excludeId = ShopId.of(1L);
-            given(queryDslRepository.existsByAccountIdExcluding(accountId, 1L)).willReturn(true);
+            given(
+                            queryDslRepository.existsBySalesChannelIdAndAccountIdExcluding(
+                                    salesChannelId, accountId, 1L))
+                    .willReturn(true);
 
             // when
-            boolean result = queryAdapter.existsByAccountIdExcluding(accountId, excludeId);
+            boolean result =
+                    queryAdapter.existsBySalesChannelIdAndAccountIdExcluding(
+                            salesChannelId, accountId, excludeId);
 
             // then
             assertThat(result).isTrue();
         }
 
         @Test
-        @DisplayName("특정 ID를 제외하고 AccountId가 없으면 false를 반환합니다")
-        void existsByAccountIdExcluding_WithNonExistingAccountId_ReturnsFalse() {
+        @DisplayName("특정 ID를 제외하고 판매채널+계정이 없으면 false를 반환합니다")
+        void existsBySalesChannelIdAndAccountIdExcluding_NotExists_ReturnsFalse() {
             // given
+            Long salesChannelId = 1L;
             String accountId = "unique-account";
             ShopId excludeId = ShopId.of(1L);
-            given(queryDslRepository.existsByAccountIdExcluding(accountId, 1L)).willReturn(false);
+            given(
+                            queryDslRepository.existsBySalesChannelIdAndAccountIdExcluding(
+                                    salesChannelId, accountId, 1L))
+                    .willReturn(false);
 
             // when
-            boolean result = queryAdapter.existsByAccountIdExcluding(accountId, excludeId);
+            boolean result =
+                    queryAdapter.existsBySalesChannelIdAndAccountIdExcluding(
+                            salesChannelId, accountId, excludeId);
 
             // then
             assertThat(result).isFalse();

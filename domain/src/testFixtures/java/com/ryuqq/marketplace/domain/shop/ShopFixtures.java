@@ -19,6 +19,9 @@ public final class ShopFixtures {
 
     private ShopFixtures() {}
 
+    // ===== Default Values =====
+    public static final Long DEFAULT_SALES_CHANNEL_ID = 1L;
+
     // ===== ShopId Fixtures =====
     public static ShopId shopId(Long value) {
         return ShopId.of(value);
@@ -61,16 +64,21 @@ public final class ShopFixtures {
 
     // ===== Shop Aggregate Fixtures =====
     public static Shop newShop() {
-        return Shop.forNew(defaultShopName(), defaultAccountId(), CommonVoFixtures.now());
+        return Shop.forNew(
+                DEFAULT_SALES_CHANNEL_ID,
+                defaultShopName(),
+                defaultAccountId(),
+                CommonVoFixtures.now());
     }
 
     public static Shop newShop(String shopName, String accountId) {
-        return Shop.forNew(shopName, accountId, CommonVoFixtures.now());
+        return Shop.forNew(DEFAULT_SALES_CHANNEL_ID, shopName, accountId, CommonVoFixtures.now());
     }
 
     public static Shop activeShop() {
         return Shop.reconstitute(
                 ShopId.of(1L),
+                DEFAULT_SALES_CHANNEL_ID,
                 defaultShopName(),
                 defaultAccountId(),
                 ShopStatus.ACTIVE,
@@ -82,6 +90,7 @@ public final class ShopFixtures {
     public static Shop activeShop(Long id) {
         return Shop.reconstitute(
                 ShopId.of(id),
+                DEFAULT_SALES_CHANNEL_ID,
                 defaultShopName(),
                 defaultAccountId(),
                 ShopStatus.ACTIVE,
@@ -93,6 +102,7 @@ public final class ShopFixtures {
     public static Shop activeShop(String shopName, String accountId) {
         return Shop.reconstitute(
                 ShopId.of(1L),
+                DEFAULT_SALES_CHANNEL_ID,
                 shopName,
                 accountId,
                 ShopStatus.ACTIVE,
@@ -104,6 +114,7 @@ public final class ShopFixtures {
     public static Shop inactiveShop() {
         return Shop.reconstitute(
                 ShopId.of(2L),
+                DEFAULT_SALES_CHANNEL_ID,
                 defaultShopName(),
                 defaultAccountId(),
                 ShopStatus.INACTIVE,
@@ -116,6 +127,7 @@ public final class ShopFixtures {
         Instant deletedAt = CommonVoFixtures.yesterday();
         return Shop.reconstitute(
                 ShopId.of(3L),
+                DEFAULT_SALES_CHANNEL_ID,
                 defaultShopName(),
                 defaultAccountId(),
                 ShopStatus.INACTIVE,

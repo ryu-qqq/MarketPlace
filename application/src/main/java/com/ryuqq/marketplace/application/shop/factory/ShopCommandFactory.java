@@ -35,7 +35,7 @@ public class ShopCommandFactory {
      */
     public Shop create(RegisterShopCommand command) {
         Instant now = timeProvider.now();
-        return Shop.forNew(command.shopName(), command.accountId(), now);
+        return Shop.forNew(command.salesChannelId(), command.shopName(), command.accountId(), now);
     }
 
     /**

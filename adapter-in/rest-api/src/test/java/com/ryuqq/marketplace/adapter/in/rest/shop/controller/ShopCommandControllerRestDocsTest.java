@@ -82,6 +82,9 @@ class ShopCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(
+                                            fieldWithPath("salesChannelId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("판매채널 ID"),
                                             fieldWithPath("shopName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("외부몰명"),
@@ -100,7 +103,7 @@ class ShopCommandControllerRestDocsTest {
         @DisplayName("유효성 검증 실패 시 400을 반환한다")
         void registerShop_ValidationFails_Returns400() throws Exception {
             // given
-            RegisterShopApiRequest invalidRequest = new RegisterShopApiRequest("", ""); // 빈 값
+            RegisterShopApiRequest invalidRequest = new RegisterShopApiRequest(null, "", ""); // 빈 값
 
             // when & then
             mockMvc.perform(
