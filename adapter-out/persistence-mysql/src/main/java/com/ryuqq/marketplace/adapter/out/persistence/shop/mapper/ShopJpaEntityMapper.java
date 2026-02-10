@@ -13,6 +13,7 @@ public class ShopJpaEntityMapper {
     public ShopJpaEntity toEntity(Shop shop) {
         return ShopJpaEntity.create(
                 shop.idValue(),
+                shop.salesChannelId(),
                 shop.shopName(),
                 shop.accountId(),
                 shop.status().name(),
@@ -28,6 +29,7 @@ public class ShopJpaEntityMapper {
         var id = ShopId.of(entity.getId());
         return Shop.reconstitute(
                 id,
+                entity.getSalesChannelId(),
                 entity.getShopName(),
                 entity.getAccountId(),
                 ShopStatus.fromString(entity.getStatus()),

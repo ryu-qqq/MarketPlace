@@ -51,6 +51,9 @@ public class CategoryJpaEntity extends SoftDeletableEntity {
     @Column(name = "category_group", nullable = false, length = 50)
     private String categoryGroup;
 
+    @Column(name = "display_path", length = 2000)
+    private String displayPath;
+
     protected CategoryJpaEntity() {
         super();
     }
@@ -68,6 +71,7 @@ public class CategoryJpaEntity extends SoftDeletableEntity {
             String status,
             String department,
             String categoryGroup,
+            String displayPath,
             Instant createdAt,
             Instant updatedAt,
             Instant deletedAt) {
@@ -84,6 +88,7 @@ public class CategoryJpaEntity extends SoftDeletableEntity {
         this.status = status;
         this.department = department;
         this.categoryGroup = categoryGroup;
+        this.displayPath = displayPath;
     }
 
     public static CategoryJpaEntity create(
@@ -99,6 +104,7 @@ public class CategoryJpaEntity extends SoftDeletableEntity {
             String status,
             String department,
             String categoryGroup,
+            String displayPath,
             Instant createdAt,
             Instant updatedAt,
             Instant deletedAt) {
@@ -115,6 +121,7 @@ public class CategoryJpaEntity extends SoftDeletableEntity {
                 status,
                 department,
                 categoryGroup,
+                displayPath,
                 createdAt,
                 updatedAt,
                 deletedAt);
@@ -166,5 +173,9 @@ public class CategoryJpaEntity extends SoftDeletableEntity {
 
     public String getCategoryGroup() {
         return categoryGroup;
+    }
+
+    public String getDisplayPath() {
+        return displayPath;
     }
 }

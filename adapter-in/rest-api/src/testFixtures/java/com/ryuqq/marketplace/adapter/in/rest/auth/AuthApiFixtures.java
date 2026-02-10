@@ -72,7 +72,9 @@ public final class AuthApiFixtures {
                 DEFAULT_ORG_ID,
                 DEFAULT_ORG_NAME,
                 defaultRoles(),
-                List.of("READ", "WRITE", "DELETE"));
+                List.of("READ", "WRITE", "DELETE"),
+                1L,
+                "010-1234-5678");
     }
 
     public static MyInfoResult myInfoResultWithNullRoles() {
@@ -85,7 +87,9 @@ public final class AuthApiFixtures {
                 DEFAULT_ORG_ID,
                 DEFAULT_ORG_NAME,
                 null,
-                List.of("READ"));
+                List.of("READ"),
+                null,
+                null);
     }
 
     public static MyInfoResult myInfoResultWithEmptyRoles() {
@@ -98,7 +102,9 @@ public final class AuthApiFixtures {
                 DEFAULT_ORG_ID,
                 DEFAULT_ORG_NAME,
                 List.of(),
-                List.of());
+                List.of(),
+                null,
+                null);
     }
 
     public static List<MyInfoResult.RoleInfo> defaultRoles() {

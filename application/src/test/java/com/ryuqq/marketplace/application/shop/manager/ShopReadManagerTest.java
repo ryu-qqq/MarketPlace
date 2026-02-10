@@ -114,107 +114,39 @@ class ShopReadManagerTest {
     }
 
     @Nested
-    @DisplayName("existsByShopName() - Shop명 존재 여부 확인")
-    class ExistsByShopNameTest {
+    @DisplayName("existsBySalesChannelIdAndAccountId() - 판매채널+계정ID 존재 여부 확인")
+    class ExistsBySalesChannelIdAndAccountIdTest {
 
         @Test
-        @DisplayName("Shop명이 존재하면 true를 반환한다")
-        void existsByShopName_Exists_ReturnsTrue() {
+        @DisplayName("해당 판매채널+계정ID가 존재하면 true를 반환한다")
+        void existsBySalesChannelIdAndAccountId_Exists_ReturnsTrue() {
             // given
-            String shopName = "기존 외부몰";
-
-            given(queryPort.existsByShopName(shopName)).willReturn(true);
-
-            // when
-            boolean result = sut.existsByShopName(shopName);
-
-            // then
-            assertThat(result).isTrue();
-            then(queryPort).should().existsByShopName(shopName);
-        }
-
-        @Test
-        @DisplayName("Shop명이 존재하지 않으면 false를 반환한다")
-        void existsByShopName_NotExists_ReturnsFalse() {
-            // given
-            String shopName = "신규 외부몰";
-
-            given(queryPort.existsByShopName(shopName)).willReturn(false);
-
-            // when
-            boolean result = sut.existsByShopName(shopName);
-
-            // then
-            assertThat(result).isFalse();
-        }
-    }
-
-    @Nested
-    @DisplayName("existsByShopNameExcluding() - Shop명 존재 여부 확인 (자기 제외)")
-    class ExistsByShopNameExcludingTest {
-
-        @Test
-        @DisplayName("자기 제외 시 다른 Shop명이 존재하면 true를 반환한다")
-        void existsByShopNameExcluding_OtherExists_ReturnsTrue() {
-            // given
-            String shopName = "중복 외부몰";
-            ShopId excludeId = ShopId.of(1L);
-
-            given(queryPort.existsByShopNameExcluding(shopName, excludeId)).willReturn(true);
-
-            // when
-            boolean result = sut.existsByShopNameExcluding(shopName, excludeId);
-
-            // then
-            assertThat(result).isTrue();
-        }
-
-        @Test
-        @DisplayName("자기 제외 시 다른 Shop명이 없으면 false를 반환한다")
-        void existsByShopNameExcluding_OnlySelf_ReturnsFalse() {
-            // given
-            String shopName = "내 외부몰";
-            ShopId excludeId = ShopId.of(1L);
-
-            given(queryPort.existsByShopNameExcluding(shopName, excludeId)).willReturn(false);
-
-            // when
-            boolean result = sut.existsByShopNameExcluding(shopName, excludeId);
-
-            // then
-            assertThat(result).isFalse();
-        }
-    }
-
-    @Nested
-    @DisplayName("existsByAccountId() - 계정ID 존재 여부 확인")
-    class ExistsByAccountIdTest {
-
-        @Test
-        @DisplayName("계정ID가 존재하면 true를 반환한다")
-        void existsByAccountId_Exists_ReturnsTrue() {
-            // given
+            Long salesChannelId = 1L;
             String accountId = "existing-account-123";
 
-            given(queryPort.existsByAccountId(accountId)).willReturn(true);
+            given(queryPort.existsBySalesChannelIdAndAccountId(salesChannelId, accountId))
+                    .willReturn(true);
 
             // when
-            boolean result = sut.existsByAccountId(accountId);
+            boolean result = sut.existsBySalesChannelIdAndAccountId(salesChannelId, accountId);
 
             // then
             assertThat(result).isTrue();
+            then(queryPort).should().existsBySalesChannelIdAndAccountId(salesChannelId, accountId);
         }
 
         @Test
-        @DisplayName("계정ID가 존재하지 않으면 false를 반환한다")
-        void existsByAccountId_NotExists_ReturnsFalse() {
+        @DisplayName("해당 판매채널+계정ID가 존재하지 않으면 false를 반환한다")
+        void existsBySalesChannelIdAndAccountId_NotExists_ReturnsFalse() {
             // given
+            Long salesChannelId = 1L;
             String accountId = "new-account-999";
 
-            given(queryPort.existsByAccountId(accountId)).willReturn(false);
+            given(queryPort.existsBySalesChannelIdAndAccountId(salesChannelId, accountId))
+                    .willReturn(false);
 
             // when
-            boolean result = sut.existsByAccountId(accountId);
+            boolean result = sut.existsBySalesChannelIdAndAccountId(salesChannelId, accountId);
 
             // then
             assertThat(result).isFalse();
@@ -222,36 +154,48 @@ class ShopReadManagerTest {
     }
 
     @Nested
-    @DisplayName("existsByAccountIdExcluding() - 계정ID 존재 여부 확인 (자기 제외)")
-    class ExistsByAccountIdExcludingTest {
+    @DisplayName("existsBySalesChannelIdAndAccountIdExcluding() - 판매채널+계정ID 존재 여부 확인 (자기 제외)")
+    class ExistsBySalesChannelIdAndAccountIdExcludingTest {
 
         @Test
-        @DisplayName("자기 제외 시 다른 계정ID가 존재하면 true를 반환한다")
-        void existsByAccountIdExcluding_OtherExists_ReturnsTrue() {
+        @DisplayName("자기 제외 시 해당 판매채널+계정ID가 존재하면 true를 반환한다")
+        void existsBySalesChannelIdAndAccountIdExcluding_Exists_ReturnsTrue() {
             // given
+            Long salesChannelId = 1L;
             String accountId = "duplicate-account-456";
             ShopId excludeId = ShopId.of(1L);
 
-            given(queryPort.existsByAccountIdExcluding(accountId, excludeId)).willReturn(true);
+            given(
+                            queryPort.existsBySalesChannelIdAndAccountIdExcluding(
+                                    salesChannelId, accountId, excludeId))
+                    .willReturn(true);
 
             // when
-            boolean result = sut.existsByAccountIdExcluding(accountId, excludeId);
+            boolean result =
+                    sut.existsBySalesChannelIdAndAccountIdExcluding(
+                            salesChannelId, accountId, excludeId);
 
             // then
             assertThat(result).isTrue();
         }
 
         @Test
-        @DisplayName("자기 제외 시 다른 계정ID가 없으면 false를 반환한다")
-        void existsByAccountIdExcluding_OnlySelf_ReturnsFalse() {
+        @DisplayName("자기 제외 시 해당 판매채널+계정ID가 없으면 false를 반환한다")
+        void existsBySalesChannelIdAndAccountIdExcluding_NotExists_ReturnsFalse() {
             // given
+            Long salesChannelId = 1L;
             String accountId = "my-account-789";
             ShopId excludeId = ShopId.of(1L);
 
-            given(queryPort.existsByAccountIdExcluding(accountId, excludeId)).willReturn(false);
+            given(
+                            queryPort.existsBySalesChannelIdAndAccountIdExcluding(
+                                    salesChannelId, accountId, excludeId))
+                    .willReturn(false);
 
             // when
-            boolean result = sut.existsByAccountIdExcluding(accountId, excludeId);
+            boolean result =
+                    sut.existsBySalesChannelIdAndAccountIdExcluding(
+                            salesChannelId, accountId, excludeId);
 
             // then
             assertThat(result).isFalse();
@@ -262,6 +206,7 @@ class ShopReadManagerTest {
         Instant now = Instant.now();
         return Shop.reconstitute(
                 ShopId.of(shopId),
+                1L,
                 "테스트 외부몰",
                 "test-account-" + shopId,
                 ShopStatus.ACTIVE,

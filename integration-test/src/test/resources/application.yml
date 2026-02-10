@@ -65,7 +65,7 @@ spring:
 authhub:
   base-url: http://localhost:19999
   service-token: test-service-token
-  service-code: SVC_MARKET_TEST
+  service-code: SVC_MARKETPLACE_TEST
   timeout:
     connect: 1s
     read: 1s

@@ -27,7 +27,6 @@ public class OpenApiConfig {
     private static final String HEADER_USER_ROLES = "X-User-Roles";
     private static final String HEADER_USER_PERMISSIONS = "X-User-Permissions";
     private static final String HEADER_ORGANIZATION_ID = "X-Organization-Id";
-    private static final String HEADER_AUTHENTICATED = "X-Authenticated";
 
     @Bean
     public OpenAPI openAPI(@Value("${api.server.url:}") String serverUrl) {
@@ -45,8 +44,7 @@ public class OpenApiConfig {
                                                 .addList(HEADER_USER_ID)
                                                 .addList(HEADER_USER_ROLES)
                                                 .addList(HEADER_USER_PERMISSIONS)
-                                                .addList(HEADER_ORGANIZATION_ID)
-                                                .addList(HEADER_AUTHENTICATED)));
+                                                .addList(HEADER_ORGANIZATION_ID)));
 
         if (serverUrl != null && !serverUrl.isBlank()) {
             openAPI.servers(List.of(new Server().url(serverUrl).description("API Server")));
@@ -84,13 +82,6 @@ public class OpenApiConfig {
                                 .type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.HEADER)
                                 .name(HEADER_ORGANIZATION_ID)
-                                .description("조직 ID"))
-                .addSecuritySchemes(
-                        HEADER_AUTHENTICATED,
-                        new SecurityScheme()
-                                .type(SecurityScheme.Type.APIKEY)
-                                .in(SecurityScheme.In.HEADER)
-                                .name(HEADER_AUTHENTICATED)
-                                .description("인증 여부"));
+                                .description("조직 ID"));
     }
 }

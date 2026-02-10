@@ -50,6 +50,17 @@ public class SellerAdminQueryAdapter implements SellerAdminQueryPort {
     }
 
     /**
+     * AuthHub 사용자 ID로 셀러 관리자 조회.
+     *
+     * @param authUserId AuthHub 사용자 ID
+     * @return 셀러 관리자 Optional
+     */
+    @Override
+    public Optional<SellerAdmin> findByAuthUserId(String authUserId) {
+        return queryDslRepository.findByAuthUserId(authUserId).map(mapper::toDomain);
+    }
+
+    /**
      * 셀러 ID와 셀러 관리자 ID로 조회.
      *
      * @param sellerId 셀러 ID

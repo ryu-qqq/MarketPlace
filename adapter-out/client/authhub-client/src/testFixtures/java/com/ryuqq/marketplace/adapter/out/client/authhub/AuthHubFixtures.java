@@ -58,7 +58,9 @@ public final class AuthHubFixtures {
                 DEFAULT_ORGANIZATION_ID,
                 "조직명",
                 List.of(new MyInfoResult.RoleInfo("role-1", "ADMIN")),
-                List.of("READ", "WRITE"));
+                List.of("READ", "WRITE"),
+                null,
+                null);
     }
 
     // ===== Internal DTO =====

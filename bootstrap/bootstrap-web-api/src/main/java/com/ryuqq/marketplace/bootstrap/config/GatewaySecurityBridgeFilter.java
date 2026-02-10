@@ -39,7 +39,7 @@ public class GatewaySecurityBridgeFilter extends OncePerRequestFilter {
         if (context.isAuthenticated()) {
             List<GrantedAuthority> authorities = new ArrayList<>();
             for (String role : context.getRoles()) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+                authorities.add(new SimpleGrantedAuthority(role));
             }
 
             PreAuthenticatedAuthenticationToken authentication =

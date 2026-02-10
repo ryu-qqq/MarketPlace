@@ -165,6 +165,7 @@ class SearchShopByOffsetServiceTest {
             Instant now = Instant.now();
             return Shop.reconstitute(
                     ShopId.of(shopId),
+                    1L,
                     shopName,
                     "test-account-" + shopId,
                     ShopStatus.ACTIVE,

@@ -38,22 +38,13 @@ class ShopErrorCodeTest {
         }
 
         @Test
-        @DisplayName("SHOP_NAME_DUPLICATE 에러 코드를 검증한다")
-        void shopNameDuplicate() {
+        @DisplayName("SHOP_ACCOUNT_DUPLICATE 에러 코드를 검증한다")
+        void shopAccountDuplicate() {
             // then
-            assertThat(ShopErrorCode.SHOP_NAME_DUPLICATE.getCode()).isEqualTo("SHP-002");
-            assertThat(ShopErrorCode.SHOP_NAME_DUPLICATE.getHttpStatus()).isEqualTo(409);
-            assertThat(ShopErrorCode.SHOP_NAME_DUPLICATE.getMessage()).isEqualTo("이미 존재하는 외부몰명입니다");
-        }
-
-        @Test
-        @DisplayName("SHOP_ACCOUNT_ID_DUPLICATE 에러 코드를 검증한다")
-        void shopAccountIdDuplicate() {
-            // then
-            assertThat(ShopErrorCode.SHOP_ACCOUNT_ID_DUPLICATE.getCode()).isEqualTo("SHP-003");
-            assertThat(ShopErrorCode.SHOP_ACCOUNT_ID_DUPLICATE.getHttpStatus()).isEqualTo(409);
-            assertThat(ShopErrorCode.SHOP_ACCOUNT_ID_DUPLICATE.getMessage())
-                    .isEqualTo("이미 존재하는 외부몰 계정 ID입니다");
+            assertThat(ShopErrorCode.SHOP_ACCOUNT_DUPLICATE.getCode()).isEqualTo("SHP-003");
+            assertThat(ShopErrorCode.SHOP_ACCOUNT_DUPLICATE.getHttpStatus()).isEqualTo(409);
+            assertThat(ShopErrorCode.SHOP_ACCOUNT_DUPLICATE.getMessage())
+                    .isEqualTo("해당 판매채널에 이미 존재하는 계정 ID입니다");
         }
     }
 
@@ -67,9 +58,7 @@ class ShopErrorCodeTest {
             // then
             assertThat(ShopErrorCode.values())
                     .containsExactly(
-                            ShopErrorCode.SHOP_NOT_FOUND,
-                            ShopErrorCode.SHOP_NAME_DUPLICATE,
-                            ShopErrorCode.SHOP_ACCOUNT_ID_DUPLICATE);
+                            ShopErrorCode.SHOP_NOT_FOUND, ShopErrorCode.SHOP_ACCOUNT_DUPLICATE);
         }
 
         @Test
@@ -98,8 +87,7 @@ class ShopErrorCodeTest {
         @DisplayName("중복 에러는 409 상태 코드를 반환한다")
         void duplicateErrorsReturn409() {
             // then
-            assertThat(ShopErrorCode.SHOP_NAME_DUPLICATE.getHttpStatus()).isEqualTo(409);
-            assertThat(ShopErrorCode.SHOP_ACCOUNT_ID_DUPLICATE.getHttpStatus()).isEqualTo(409);
+            assertThat(ShopErrorCode.SHOP_ACCOUNT_DUPLICATE.getHttpStatus()).isEqualTo(409);
         }
     }
 
