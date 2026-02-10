@@ -43,8 +43,8 @@ public class UpdateShopService implements UpdateShopUseCase {
 
         Shop shop = validator.findExistingOrThrow(shopId);
 
-        validator.validateShopNameNotDuplicateExcluding(context.updateData().shopName(), shopId);
-        validator.validateAccountIdNotDuplicateExcluding(context.updateData().accountId(), shopId);
+        validator.validateAccountNotDuplicateExcluding(
+                shop.salesChannelId(), context.updateData().accountId(), shopId);
 
         shop.update(context.updateData(), context.changedAt());
 

@@ -23,25 +23,26 @@ public final class ShopQueryFixtures {
     // ===== ShopSearchParams =====
 
     public static ShopSearchParams searchParams() {
-        return ShopSearchParams.of(null, null, null, defaultCommonSearchParams());
+        return ShopSearchParams.of(null, null, null, null, defaultCommonSearchParams());
     }
 
     public static ShopSearchParams searchParams(int page, int size) {
-        return ShopSearchParams.of(null, null, null, commonSearchParams(page, size));
+        return ShopSearchParams.of(null, null, null, null, commonSearchParams(page, size));
     }
 
     public static ShopSearchParams searchParams(List<String> statuses) {
-        return ShopSearchParams.of(statuses, null, null, defaultCommonSearchParams());
+        return ShopSearchParams.of(null, statuses, null, null, defaultCommonSearchParams());
     }
 
     public static ShopSearchParams searchParams(String searchField, String searchWord) {
-        return ShopSearchParams.of(null, searchField, searchWord, defaultCommonSearchParams());
+        return ShopSearchParams.of(
+                null, null, searchField, searchWord, defaultCommonSearchParams());
     }
 
     public static ShopSearchParams searchParams(
             List<String> statuses, String searchField, String searchWord, int page, int size) {
         return ShopSearchParams.of(
-                statuses, searchField, searchWord, commonSearchParams(page, size));
+                null, statuses, searchField, searchWord, commonSearchParams(page, size));
     }
 
     public static CommonSearchParams defaultCommonSearchParams() {
@@ -56,18 +57,18 @@ public final class ShopQueryFixtures {
 
     public static ShopResult shopResult(Long shopId) {
         Instant now = Instant.now();
-        return new ShopResult(shopId, "테스트 외부몰", "test-account", "ACTIVE", now, now);
+        return new ShopResult(shopId, 1L, "테스트 외부몰", "test-account", "ACTIVE", now, now);
     }
 
     public static ShopResult shopResult(Long shopId, String shopName) {
         Instant now = Instant.now();
-        return new ShopResult(shopId, shopName, "test-account", "ACTIVE", now, now);
+        return new ShopResult(shopId, 1L, shopName, "test-account", "ACTIVE", now, now);
     }
 
     public static ShopResult shopResult(
             Long shopId, String shopName, String accountId, String status) {
         Instant now = Instant.now();
-        return new ShopResult(shopId, shopName, accountId, status, now, now);
+        return new ShopResult(shopId, 1L, shopName, accountId, status, now, now);
     }
 
     // ===== ShopPageResult =====

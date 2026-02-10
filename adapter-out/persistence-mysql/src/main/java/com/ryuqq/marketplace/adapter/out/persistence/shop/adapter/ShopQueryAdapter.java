@@ -38,22 +38,14 @@ public class ShopQueryAdapter implements ShopQueryPort {
     }
 
     @Override
-    public boolean existsByShopName(String shopName) {
-        return repository.existsByShopName(shopName);
+    public boolean existsBySalesChannelIdAndAccountId(Long salesChannelId, String accountId) {
+        return repository.existsBySalesChannelIdAndAccountId(salesChannelId, accountId);
     }
 
     @Override
-    public boolean existsByShopNameExcluding(String shopName, ShopId excludeId) {
-        return repository.existsByShopNameExcluding(shopName, excludeId.value());
-    }
-
-    @Override
-    public boolean existsByAccountId(String accountId) {
-        return repository.existsByAccountId(accountId);
-    }
-
-    @Override
-    public boolean existsByAccountIdExcluding(String accountId, ShopId excludeId) {
-        return repository.existsByAccountIdExcluding(accountId, excludeId.value());
+    public boolean existsBySalesChannelIdAndAccountIdExcluding(
+            Long salesChannelId, String accountId, ShopId excludeId) {
+        return repository.existsBySalesChannelIdAndAccountIdExcluding(
+                salesChannelId, accountId, excludeId.value());
     }
 }

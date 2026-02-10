@@ -41,7 +41,8 @@ public class ShopQueryFactory {
                         ? params.statuses().stream().map(ShopStatus::fromString).toList()
                         : List.of();
 
-        return ShopSearchCriteria.of(statuses, searchField, params.searchWord(), queryContext);
+        return ShopSearchCriteria.of(
+                params.salesChannelId(), statuses, searchField, params.searchWord(), queryContext);
     }
 
     private ShopSortKey resolveSortKey(String sortKeyString) {

@@ -31,6 +31,7 @@ public class CategoryJpaEntityMapper {
                 category.status().name(),
                 category.department().name(),
                 category.categoryGroup().name(),
+                category.displayPath(),
                 category.createdAt(),
                 category.updatedAt(),
                 category.deletedAt());
@@ -50,6 +51,7 @@ public class CategoryJpaEntityMapper {
                 CategoryStatus.fromString(entity.getStatus()),
                 Department.fromString(entity.getDepartment()),
                 CategoryGroup.fromString(entity.getCategoryGroup()),
+                entity.getDisplayPath(),
                 entity.getDeletedAt(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());

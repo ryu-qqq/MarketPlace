@@ -98,6 +98,12 @@ class AuthQueryControllerRestDocsTest {
                                             fieldWithPath("data.roles[].name").description("역할 이름"),
                                             fieldWithPath("data.permissions[]")
                                                     .description("권한 목록"),
+                                            fieldWithPath("data.sellerId")
+                                                    .description("셀러 ID")
+                                                    .optional(),
+                                            fieldWithPath("data.phoneNumber")
+                                                    .description("핸드폰 번호")
+                                                    .optional(),
                                             fieldWithPath("timestamp").description("응답 시간"),
                                             fieldWithPath("requestId").description("요청 ID"))));
         }

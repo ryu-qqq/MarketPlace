@@ -53,7 +53,7 @@ class ShopWriteManagerTest {
         void persist_NewShop_SavesSuccessfully() {
             // given
             Instant now = Instant.now();
-            Shop newShop = Shop.forNew("신규 외부몰", "new-account-123", now);
+            Shop newShop = Shop.forNew(1L, "신규 외부몰", "new-account-123", now);
             Long expectedId = 100L;
 
             given(commandPort.persist(newShop)).willReturn(expectedId);
@@ -85,6 +85,7 @@ class ShopWriteManagerTest {
             Instant now = Instant.now();
             return Shop.reconstitute(
                     ShopId.of(shopId),
+                    1L,
                     "테스트 외부몰",
                     "test-account-" + shopId,
                     ShopStatus.ACTIVE,

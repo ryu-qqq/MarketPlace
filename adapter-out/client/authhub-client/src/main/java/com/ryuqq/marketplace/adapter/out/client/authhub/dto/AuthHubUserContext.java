@@ -15,11 +15,13 @@ import java.util.List;
  * @param organizationName 조직 이름
  * @param roles 역할 목록
  * @param permissions 권한 목록
+ * @param phoneNumber 핸드폰 번호
  */
 public record AuthHubUserContext(
         String userId,
         String email,
         String name,
+        String phoneNumber,
         String tenantId,
         String tenantName,
         String organizationId,
@@ -59,6 +61,7 @@ public record AuthHubUserContext(
                 response.userId(),
                 response.email(),
                 response.name(),
+                response.phoneNumber(),
                 response.tenant() != null ? response.tenant().id() : null,
                 response.tenant() != null ? response.tenant().name() : null,
                 response.organization() != null ? response.organization().id() : null,

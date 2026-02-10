@@ -16,8 +16,10 @@ public class AuthHubProperties {
 
     private String baseUrl;
     private String serviceToken;
+    private String serviceCode;
     private Timeout timeout = new Timeout();
     private Retry retry = new Retry();
+    private Sync sync = new Sync();
 
     public String getBaseUrl() {
         return baseUrl;
@@ -35,6 +37,14 @@ public class AuthHubProperties {
         this.serviceToken = serviceToken;
     }
 
+    public String getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
+    }
+
     public Timeout getTimeout() {
         return timeout;
     }
@@ -49,6 +59,14 @@ public class AuthHubProperties {
 
     public void setRetry(Retry retry) {
         this.retry = retry;
+    }
+
+    public Sync getSync() {
+        return sync;
+    }
+
+    public void setSync(Sync sync) {
+        this.sync = sync;
     }
 
     @SuppressWarnings("PMD.DataClass")
@@ -70,6 +88,19 @@ public class AuthHubProperties {
 
         public void setRead(Duration read) {
             this.read = read;
+        }
+    }
+
+    @SuppressWarnings("PMD.DataClass")
+    public static class Sync {
+        private boolean enabled = false;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
 

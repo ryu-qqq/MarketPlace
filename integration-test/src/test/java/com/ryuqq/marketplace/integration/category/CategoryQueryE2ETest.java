@@ -806,6 +806,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 "FASHION",
                 "CLOTHING",
+                null,
                 now,
                 now,
                 null);
@@ -826,6 +827,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 "FASHION",
                 "CLOTHING",
+                null,
                 now,
                 now,
                 now);
@@ -846,6 +848,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 "FASHION",
                 "CLOTHING",
+                null,
                 now,
                 now,
                 null);
@@ -866,6 +869,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 "FASHION",
                 "CLOTHING",
+                null,
                 now,
                 now,
                 null);
@@ -885,6 +889,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 "FASHION",
                 "CLOTHING",
+                null,
                 now,
                 now,
                 null);
@@ -905,6 +910,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 "FASHION",
                 "CLOTHING",
+                null,
                 now,
                 now,
                 null);
@@ -925,6 +931,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "INACTIVE",
                 "FASHION",
                 "CLOTHING",
+                null,
                 now,
                 now,
                 null);
@@ -945,6 +952,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 department,
                 "CLOTHING",
+                null,
                 now,
                 now,
                 null);
@@ -965,6 +973,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 "FASHION",
                 categoryGroup,
+                null,
                 now,
                 now,
                 null);
@@ -985,6 +994,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 "FASHION",
                 "CLOTHING",
+                null,
                 now,
                 now,
                 null);
@@ -1005,6 +1015,7 @@ class CategoryQueryE2ETest extends E2ETestBase {
                 "ACTIVE",
                 "FASHION",
                 "CLOTHING",
+                null,
                 now,
                 now,
                 null);
