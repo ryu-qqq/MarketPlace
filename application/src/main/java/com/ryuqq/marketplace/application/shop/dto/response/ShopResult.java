@@ -6,6 +6,7 @@ import java.time.Instant;
 /** Shop 조회 결과 DTO. */
 public record ShopResult(
         Long id,
+        Long salesChannelId,
         String shopName,
         String accountId,
         String status,
@@ -15,6 +16,7 @@ public record ShopResult(
     public static ShopResult from(Shop shop) {
         return new ShopResult(
                 shop.idValue(),
+                shop.salesChannelId(),
                 shop.shopName(),
                 shop.accountId(),
                 shop.status().name(),

@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 public class ShopCommandApiMapper {
 
     public RegisterShopCommand toCommand(RegisterShopApiRequest request) {
-        return new RegisterShopCommand(request.shopName(), request.accountId());
+        return new RegisterShopCommand(
+                request.salesChannelId(), request.shopName(), request.accountId());
     }
 
     public UpdateShopCommand toCommand(Long shopId, UpdateShopApiRequest request) {

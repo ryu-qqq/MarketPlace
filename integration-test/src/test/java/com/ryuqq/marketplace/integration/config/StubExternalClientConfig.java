@@ -77,7 +77,9 @@ public class StubExternalClientConfig {
                         "org-admin-001",
                         "Test Organization",
                         List.of(new MyInfoResult.RoleInfo("role-001", "ROLE_SUPER_ADMIN")),
-                        List.of("*:*"));
+                        List.of("*:*"),
+                        null,
+                        null);
             }
         };
     }

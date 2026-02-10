@@ -62,47 +62,27 @@ public class ShopQueryDslRepository {
         return count != null ? count : 0L;
     }
 
-    public boolean existsByShopName(String shopName) {
-        Integer count =
-                queryFactory
-                        .selectOne()
-                        .from(shop)
-                        .where(conditionBuilder.shopNameEq(shopName), conditionBuilder.notDeleted())
-                        .fetchFirst();
-        return count != null;
-    }
-
-    public boolean existsByShopNameExcluding(String shopName, Long excludeId) {
+    public boolean existsBySalesChannelIdAndAccountId(Long salesChannelId, String accountId) {
         Integer count =
                 queryFactory
                         .selectOne()
                         .from(shop)
                         .where(
-                                conditionBuilder.shopNameEq(shopName),
-                                conditionBuilder.idNe(excludeId),
-                                conditionBuilder.notDeleted())
-                        .fetchFirst();
-        return count != null;
-    }
-
-    public boolean existsByAccountId(String accountId) {
-        Integer count =
-                queryFactory
-                        .selectOne()
-                        .from(shop)
-                        .where(
+                                conditionBuilder.salesChannelIdEq(salesChannelId),
                                 conditionBuilder.accountIdEq(accountId),
                                 conditionBuilder.notDeleted())
                         .fetchFirst();
         return count != null;
     }
 
-    public boolean existsByAccountIdExcluding(String accountId, Long excludeId) {
+    public boolean existsBySalesChannelIdAndAccountIdExcluding(
+            Long salesChannelId, String accountId, Long excludeId) {
         Integer count =
                 queryFactory
                         .selectOne()
                         .from(shop)
                         .where(
+                                conditionBuilder.salesChannelIdEq(salesChannelId),
                                 conditionBuilder.accountIdEq(accountId),
                                 conditionBuilder.idNe(excludeId),
                                 conditionBuilder.notDeleted())

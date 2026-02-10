@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.application.shop.validator;
 import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import com.ryuqq.marketplace.domain.shop.exception.ShopAccountIdDuplicateException;
-import com.ryuqq.marketplace.domain.shop.exception.ShopNameDuplicateException;
 import com.ryuqq.marketplace.domain.shop.exception.ShopNotFoundException;
 import com.ryuqq.marketplace.domain.shop.id.ShopId;
 import org.springframework.stereotype.Component;
@@ -36,51 +35,30 @@ public class ShopValidator {
     }
 
     /**
-     * 외부몰명 중복 여부 검증. (등록 시 사용)
+     * 해당 판매채널에서 계정 ID 중복 여부 검증. (등록 시 사용)
      *
-     * @param shopName 외부몰명
-     * @throws ShopNameDuplicateException 이미 존재하는 경우
-     */
-    public void validateShopNameNotDuplicate(String shopName) {
-        if (readManager.existsByShopName(shopName)) {
-            throw new ShopNameDuplicateException(shopName);
-        }
-    }
-
-    /**
-     * 외부몰명 중복 여부 검증 (자기 자신 제외). (수정 시 사용)
-     *
-     * @param shopName 외부몰명
-     * @param excludeId 제외할 외부몰 ID
-     * @throws ShopNameDuplicateException 이미 존재하는 경우
-     */
-    public void validateShopNameNotDuplicateExcluding(String shopName, ShopId excludeId) {
-        if (readManager.existsByShopNameExcluding(shopName, excludeId)) {
-            throw new ShopNameDuplicateException(shopName);
-        }
-    }
-
-    /**
-     * 외부몰 계정 ID 중복 여부 검증. (등록 시 사용)
-     *
+     * @param salesChannelId 판매채널 ID
      * @param accountId 계정 ID
      * @throws ShopAccountIdDuplicateException 이미 존재하는 경우
      */
-    public void validateAccountIdNotDuplicate(String accountId) {
-        if (readManager.existsByAccountId(accountId)) {
+    public void validateAccountNotDuplicate(Long salesChannelId, String accountId) {
+        if (readManager.existsBySalesChannelIdAndAccountId(salesChannelId, accountId)) {
             throw new ShopAccountIdDuplicateException(accountId);
         }
     }
 
     /**
-     * 외부몰 계정 ID 중복 여부 검증 (자기 자신 제외). (수정 시 사용)
+     * 해당 판매채널에서 계정 ID 중복 여부 검증 (자기 자신 제외). (수정 시 사용)
      *
+     * @param salesChannelId 판매채널 ID
      * @param accountId 계정 ID
      * @param excludeId 제외할 외부몰 ID
      * @throws ShopAccountIdDuplicateException 이미 존재하는 경우
      */
-    public void validateAccountIdNotDuplicateExcluding(String accountId, ShopId excludeId) {
-        if (readManager.existsByAccountIdExcluding(accountId, excludeId)) {
+    public void validateAccountNotDuplicateExcluding(
+            Long salesChannelId, String accountId, ShopId excludeId) {
+        if (readManager.existsBySalesChannelIdAndAccountIdExcluding(
+                salesChannelId, accountId, excludeId)) {
             throw new ShopAccountIdDuplicateException(accountId);
         }
     }

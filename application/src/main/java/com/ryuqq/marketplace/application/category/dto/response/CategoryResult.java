@@ -17,6 +17,7 @@ public record CategoryResult(
         String status,
         String department,
         String categoryGroup,
+        String displayPath,
         Instant createdAt,
         Instant updatedAt) {
 
@@ -34,6 +35,7 @@ public record CategoryResult(
                 category.status().name(),
                 category.department().name(),
                 category.categoryGroup().name(),
+                category.displayPath(),
                 category.createdAt(),
                 category.updatedAt());
     }

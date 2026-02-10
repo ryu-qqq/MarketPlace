@@ -6,6 +6,7 @@ import java.util.Objects;
 
 /** Shop 검색 파라미터 DTO. */
 public record ShopSearchParams(
+        Long salesChannelId,
         List<String> statuses,
         String searchField,
         String searchWord,
@@ -16,11 +17,13 @@ public record ShopSearchParams(
     }
 
     public static ShopSearchParams of(
+            Long salesChannelId,
             List<String> statuses,
             String searchField,
             String searchWord,
             CommonSearchParams searchParams) {
-        return new ShopSearchParams(statuses, searchField, searchWord, searchParams);
+        return new ShopSearchParams(
+                salesChannelId, statuses, searchField, searchWord, searchParams);
     }
 
     public int page() {

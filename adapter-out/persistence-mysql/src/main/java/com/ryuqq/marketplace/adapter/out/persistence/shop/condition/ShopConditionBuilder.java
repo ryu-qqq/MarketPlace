@@ -25,6 +25,10 @@ public class ShopConditionBuilder {
         return shopName != null ? shop.shopName.eq(shopName) : null;
     }
 
+    public BooleanExpression salesChannelIdEq(Long salesChannelId) {
+        return salesChannelId != null ? shop.salesChannelId.eq(salesChannelId) : null;
+    }
+
     public BooleanExpression accountIdEq(String accountId) {
         return accountId != null ? shop.accountId.eq(accountId) : null;
     }
