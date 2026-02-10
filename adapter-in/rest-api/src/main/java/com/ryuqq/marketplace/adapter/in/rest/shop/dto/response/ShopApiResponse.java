@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Shop 응답")
 public record ShopApiResponse(
         @Schema(description = "Shop ID", example = "1") Long id,
+        @Schema(description = "판매채널 ID", example = "1") Long salesChannelId,
         @Schema(description = "외부몰명", example = "쿠팡") String shopName,
         @Schema(description = "계정 ID", example = "coupang_account_01") String accountId,
         @Schema(description = "상태", example = "ACTIVE") String status,

@@ -7,7 +7,6 @@ import com.ryuqq.marketplace.application.shop.port.in.command.RegisterShopUseCas
 import com.ryuqq.marketplace.application.shop.validator.ShopValidator;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import com.ryuqq.marketplace.domain.shop.exception.ShopAccountIdDuplicateException;
-import com.ryuqq.marketplace.domain.shop.exception.ShopNameDuplicateException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -30,18 +29,14 @@ public class RegisterShopService implements RegisterShopUseCase {
 
     @Override
     public Long execute(RegisterShopCommand command) {
-        validator.validateShopNameNotDuplicate(command.shopName());
-        validator.validateAccountIdNotDuplicate(command.accountId());
+        validator.validateAccountNotDuplicate(command.salesChannelId(), command.accountId());
 
         Shop shop = commandFactory.create(command);
         try {
             return writeManager.persist(shop);
         } catch (DataIntegrityViolationException e) {
             String message = e.getMessage();
-            if (message != null && message.contains("uq_shop_name")) {
-                throw new ShopNameDuplicateException(command.shopName());
-            }
-            if (message != null && message.contains("uq_account_id")) {
+            if (message != null && message.contains("uq_sc_account")) {
                 throw new ShopAccountIdDuplicateException(command.accountId());
             }
             throw e;

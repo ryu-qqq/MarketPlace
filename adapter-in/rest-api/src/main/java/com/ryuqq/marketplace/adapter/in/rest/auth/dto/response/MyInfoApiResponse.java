@@ -20,7 +20,9 @@ public record MyInfoApiResponse(
         @Schema(description = "조직 ID", example = "org-123") String organizationId,
         @Schema(description = "조직 이름", example = "조직명") String organizationName,
         @Schema(description = "역할 목록") List<RoleApiResponse> roles,
-        @Schema(description = "권한 목록") List<String> permissions) {
+        @Schema(description = "권한 목록") List<String> permissions,
+        @Schema(description = "셀러 ID", example = "1") Long sellerId,
+        @Schema(description = "핸드폰 번호", example = "010-1234-5678") String phoneNumber) {
 
     /** 역할 API 응답. */
     @Schema(description = "역할 정보")
@@ -51,6 +53,8 @@ public record MyInfoApiResponse(
                 result.organizationId(),
                 result.organizationName(),
                 roles,
-                result.permissions());
+                result.permissions(),
+                result.sellerId(),
+                result.phoneNumber());
     }
 }

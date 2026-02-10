@@ -52,6 +52,7 @@ public class CategoryQueryApiMapper {
                 result.status(),
                 result.department(),
                 result.categoryGroup(),
+                result.displayPath(),
                 DateTimeFormatUtils.formatIso8601(result.createdAt()),
                 DateTimeFormatUtils.formatIso8601(result.updatedAt()));
     }

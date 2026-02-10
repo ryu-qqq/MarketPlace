@@ -15,18 +15,20 @@ public final class ShopCommandFixtures {
 
     private ShopCommandFixtures() {}
 
+    public static final Long DEFAULT_SALES_CHANNEL_ID = 1L;
+
     // ===== RegisterShopCommand =====
 
     public static RegisterShopCommand registerCommand() {
-        return new RegisterShopCommand("테스트 외부몰", "test-account-123");
+        return new RegisterShopCommand(DEFAULT_SALES_CHANNEL_ID, "테스트 외부몰", "test-account-123");
     }
 
     public static RegisterShopCommand registerCommand(String shopName) {
-        return new RegisterShopCommand(shopName, "test-account-123");
+        return new RegisterShopCommand(DEFAULT_SALES_CHANNEL_ID, shopName, "test-account-123");
     }
 
     public static RegisterShopCommand registerCommand(String shopName, String accountId) {
-        return new RegisterShopCommand(shopName, accountId);
+        return new RegisterShopCommand(DEFAULT_SALES_CHANNEL_ID, shopName, accountId);
     }
 
     // ===== UpdateShopCommand =====

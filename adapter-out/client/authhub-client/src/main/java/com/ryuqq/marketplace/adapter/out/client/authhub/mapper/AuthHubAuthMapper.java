@@ -110,7 +110,9 @@ public class AuthHubAuthMapper {
                 response.organization() != null ? response.organization().id() : null,
                 response.organization() != null ? response.organization().name() : null,
                 roles,
-                response.permissions() != null ? response.permissions() : List.of());
+                response.permissions() != null ? response.permissions() : List.of(),
+                null,
+                response.phoneNumber());
     }
 
     /**

@@ -8,7 +8,6 @@ import static org.mockito.BDDMockito.then;
 import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import com.ryuqq.marketplace.domain.shop.exception.ShopAccountIdDuplicateException;
-import com.ryuqq.marketplace.domain.shop.exception.ShopNameDuplicateException;
 import com.ryuqq.marketplace.domain.shop.exception.ShopNotFoundException;
 import com.ryuqq.marketplace.domain.shop.id.ShopId;
 import com.ryuqq.marketplace.domain.shop.vo.ShopStatus;
@@ -26,6 +25,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ShopValidator 단위 테스트")
 class ShopValidatorTest {
+
+    private static final Long SALES_CHANNEL_ID = 1L;
 
     @InjectMocks private ShopValidator sut;
 
@@ -68,137 +69,84 @@ class ShopValidatorTest {
     }
 
     @Nested
-    @DisplayName("validateShopNameNotDuplicate() - Shop명 중복 검증")
-    class ValidateShopNameNotDuplicateTest {
-
-        @Test
-        @DisplayName("중복되지 않은 Shop명은 예외 없이 통과한다")
-        void validateShopNameNotDuplicate_NoDuplicate_NoException() {
-            // given
-            String shopName = "신규 외부몰";
-
-            given(readManager.existsByShopName(shopName)).willReturn(false);
-
-            // when & then (no exception)
-            sut.validateShopNameNotDuplicate(shopName);
-
-            then(readManager).should().existsByShopName(shopName);
-        }
-
-        @Test
-        @DisplayName("중복된 Shop명이면 예외가 발생한다")
-        void validateShopNameNotDuplicate_Duplicate_ThrowsException() {
-            // given
-            String shopName = "중복 외부몰";
-
-            given(readManager.existsByShopName(shopName)).willReturn(true);
-
-            // when & then
-            assertThatThrownBy(() -> sut.validateShopNameNotDuplicate(shopName))
-                    .isInstanceOf(ShopNameDuplicateException.class)
-                    .hasMessageContaining(shopName);
-        }
-    }
-
-    @Nested
-    @DisplayName("validateShopNameNotDuplicateExcluding() - Shop명 중복 검증 (자기 제외)")
-    class ValidateShopNameNotDuplicateExcludingTest {
-
-        @Test
-        @DisplayName("자기 제외 시 중복되지 않으면 예외 없이 통과한다")
-        void validateShopNameNotDuplicateExcluding_NoDuplicate_NoException() {
-            // given
-            String shopName = "수정된 외부몰";
-            ShopId excludeId = ShopId.of(1L);
-
-            given(readManager.existsByShopNameExcluding(shopName, excludeId)).willReturn(false);
-
-            // when & then (no exception)
-            sut.validateShopNameNotDuplicateExcluding(shopName, excludeId);
-
-            then(readManager).should().existsByShopNameExcluding(shopName, excludeId);
-        }
-
-        @Test
-        @DisplayName("자기 제외 시 중복되면 예외가 발생한다")
-        void validateShopNameNotDuplicateExcluding_Duplicate_ThrowsException() {
-            // given
-            String shopName = "중복 외부몰";
-            ShopId excludeId = ShopId.of(1L);
-
-            given(readManager.existsByShopNameExcluding(shopName, excludeId)).willReturn(true);
-
-            // when & then
-            assertThatThrownBy(() -> sut.validateShopNameNotDuplicateExcluding(shopName, excludeId))
-                    .isInstanceOf(ShopNameDuplicateException.class)
-                    .hasMessageContaining(shopName);
-        }
-    }
-
-    @Nested
-    @DisplayName("validateAccountIdNotDuplicate() - 계정ID 중복 검증")
-    class ValidateAccountIdNotDuplicateTest {
+    @DisplayName("validateAccountNotDuplicate() - 계정ID 중복 검증")
+    class ValidateAccountNotDuplicateTest {
 
         @Test
         @DisplayName("중복되지 않은 계정ID는 예외 없이 통과한다")
-        void validateAccountIdNotDuplicate_NoDuplicate_NoException() {
+        void validateAccountNotDuplicate_NoDuplicate_NoException() {
             // given
             String accountId = "new-account-123";
 
-            given(readManager.existsByAccountId(accountId)).willReturn(false);
+            given(readManager.existsBySalesChannelIdAndAccountId(SALES_CHANNEL_ID, accountId))
+                    .willReturn(false);
 
             // when & then (no exception)
-            sut.validateAccountIdNotDuplicate(accountId);
+            sut.validateAccountNotDuplicate(SALES_CHANNEL_ID, accountId);
 
-            then(readManager).should().existsByAccountId(accountId);
+            then(readManager)
+                    .should()
+                    .existsBySalesChannelIdAndAccountId(SALES_CHANNEL_ID, accountId);
         }
 
         @Test
         @DisplayName("중복된 계정ID이면 예외가 발생한다")
-        void validateAccountIdNotDuplicate_Duplicate_ThrowsException() {
+        void validateAccountNotDuplicate_Duplicate_ThrowsException() {
             // given
             String accountId = "duplicate-account-999";
 
-            given(readManager.existsByAccountId(accountId)).willReturn(true);
+            given(readManager.existsBySalesChannelIdAndAccountId(SALES_CHANNEL_ID, accountId))
+                    .willReturn(true);
 
             // when & then
-            assertThatThrownBy(() -> sut.validateAccountIdNotDuplicate(accountId))
+            assertThatThrownBy(() -> sut.validateAccountNotDuplicate(SALES_CHANNEL_ID, accountId))
                     .isInstanceOf(ShopAccountIdDuplicateException.class)
                     .hasMessageContaining(accountId);
         }
     }
 
     @Nested
-    @DisplayName("validateAccountIdNotDuplicateExcluding() - 계정ID 중복 검증 (자기 제외)")
-    class ValidateAccountIdNotDuplicateExcludingTest {
+    @DisplayName("validateAccountNotDuplicateExcluding() - 계정ID 중복 검증 (자기 제외)")
+    class ValidateAccountNotDuplicateExcludingTest {
 
         @Test
         @DisplayName("자기 제외 시 중복되지 않으면 예외 없이 통과한다")
-        void validateAccountIdNotDuplicateExcluding_NoDuplicate_NoException() {
+        void validateAccountNotDuplicateExcluding_NoDuplicate_NoException() {
             // given
             String accountId = "updated-account-456";
             ShopId excludeId = ShopId.of(1L);
 
-            given(readManager.existsByAccountIdExcluding(accountId, excludeId)).willReturn(false);
+            given(
+                            readManager.existsBySalesChannelIdAndAccountIdExcluding(
+                                    SALES_CHANNEL_ID, accountId, excludeId))
+                    .willReturn(false);
 
             // when & then (no exception)
-            sut.validateAccountIdNotDuplicateExcluding(accountId, excludeId);
+            sut.validateAccountNotDuplicateExcluding(SALES_CHANNEL_ID, accountId, excludeId);
 
-            then(readManager).should().existsByAccountIdExcluding(accountId, excludeId);
+            then(readManager)
+                    .should()
+                    .existsBySalesChannelIdAndAccountIdExcluding(
+                            SALES_CHANNEL_ID, accountId, excludeId);
         }
 
         @Test
         @DisplayName("자기 제외 시 중복되면 예외가 발생한다")
-        void validateAccountIdNotDuplicateExcluding_Duplicate_ThrowsException() {
+        void validateAccountNotDuplicateExcluding_Duplicate_ThrowsException() {
             // given
             String accountId = "duplicate-account-999";
             ShopId excludeId = ShopId.of(1L);
 
-            given(readManager.existsByAccountIdExcluding(accountId, excludeId)).willReturn(true);
+            given(
+                            readManager.existsBySalesChannelIdAndAccountIdExcluding(
+                                    SALES_CHANNEL_ID, accountId, excludeId))
+                    .willReturn(true);
 
             // when & then
             assertThatThrownBy(
-                            () -> sut.validateAccountIdNotDuplicateExcluding(accountId, excludeId))
+                            () ->
+                                    sut.validateAccountNotDuplicateExcluding(
+                                            SALES_CHANNEL_ID, accountId, excludeId))
                     .isInstanceOf(ShopAccountIdDuplicateException.class)
                     .hasMessageContaining(accountId);
         }
@@ -208,6 +156,7 @@ class ShopValidatorTest {
         Instant now = Instant.now();
         return Shop.reconstitute(
                 ShopId.of(shopId),
+                SALES_CHANNEL_ID,
                 "테스트 외부몰",
                 "test-account-" + shopId,
                 ShopStatus.ACTIVE,

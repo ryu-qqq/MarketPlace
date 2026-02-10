@@ -223,6 +223,7 @@ class CategoryQueryAdapterTest {
                 com.ryuqq.marketplace.domain.category.vo.Department.FASHION,
                 com.ryuqq.marketplace.domain.category.vo.CategoryGroup.CLOTHING,
                 null,
+                null,
                 now,
                 now);
     }

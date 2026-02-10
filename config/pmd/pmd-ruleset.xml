@@ -72,6 +72,7 @@
                              or (contains(@SimpleName, 'Entity') and ancestor::CompilationUnit/PackageDeclaration[contains(@Name, '.persistence.')])
                              or contains(@SimpleName, 'Paths')
                              or contains(@SimpleName, 'Endpoint')
+                             or ancestor::CompilationUnit/PackageDeclaration[contains(@Name, '.aggregate')]
                              ] | //RecordDeclaration"/>
         </properties>
     </rule>

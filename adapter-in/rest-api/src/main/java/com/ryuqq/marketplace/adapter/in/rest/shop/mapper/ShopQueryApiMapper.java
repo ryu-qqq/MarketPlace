@@ -27,12 +27,17 @@ public class ShopQueryApiMapper {
                         request.size() != null ? request.size() : 20);
 
         return ShopSearchParams.of(
-                request.statuses(), request.searchField(), request.searchWord(), searchParams);
+                request.salesChannelId(),
+                request.statuses(),
+                request.searchField(),
+                request.searchWord(),
+                searchParams);
     }
 
     public ShopApiResponse toResponse(ShopResult result) {
         return new ShopApiResponse(
                 result.id(),
+                result.salesChannelId(),
                 result.shopName(),
                 result.accountId(),
                 result.status(),

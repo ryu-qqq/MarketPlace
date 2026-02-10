@@ -14,6 +14,8 @@ import java.util.List;
  * @param organizationName 조직 이름
  * @param roles 역할 목록
  * @param permissions 권한 목록
+ * @param sellerId 셀러 ID
+ * @param phoneNumber 핸드폰 번호
  * @author ryu-qqq
  * @since 1.0.0
  */
@@ -26,7 +28,9 @@ public record MyInfoResult(
         String organizationId,
         String organizationName,
         List<RoleInfo> roles,
-        List<String> permissions) {
+        List<String> permissions,
+        Long sellerId,
+        String phoneNumber) {
 
     /**
      * 역할 정보.
@@ -35,4 +39,26 @@ public record MyInfoResult(
      * @param name 역할 이름
      */
     public record RoleInfo(String id, String name) {}
+
+    /**
+     * 셀러 정보를 보강한 새 인스턴스를 생성합니다.
+     *
+     * @param sellerId 셀러 ID
+     * @param phoneNumber 핸드폰 번호
+     * @return 셀러 정보가 포함된 MyInfoResult
+     */
+    public MyInfoResult withSellerInfo(Long sellerId, String phoneNumber) {
+        return new MyInfoResult(
+                this.userId,
+                this.email,
+                this.name,
+                this.tenantId,
+                this.tenantName,
+                this.organizationId,
+                this.organizationName,
+                this.roles,
+                this.permissions,
+                sellerId,
+                phoneNumber);
+    }
 }

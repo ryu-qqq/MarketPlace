@@ -58,18 +58,16 @@ class UpdateShopServiceTest {
             then(validator).should().findExistingOrThrow(context.id());
             then(validator)
                     .should()
-                    .validateShopNameNotDuplicateExcluding(
-                            context.updateData().shopName(), context.id());
-            then(validator)
-                    .should()
-                    .validateAccountIdNotDuplicateExcluding(
-                            context.updateData().accountId(), context.id());
+                    .validateAccountNotDuplicateExcluding(
+                            existingShop.salesChannelId(),
+                            context.updateData().accountId(),
+                            context.id());
             then(writeManager).should().persist(existingShop);
         }
 
         @Test
-        @DisplayName("Shop명과 계정ID 중복 검증을 자기 자신 제외하고 수행한다")
-        void execute_ValidatesShopNameAndAccountIdExcludingSelf() {
+        @DisplayName("판매채널+계정ID 중복 검증을 자기 자신 제외하고 수행한다")
+        void execute_ValidatesAccountIdExcludingSelf() {
             // given
             Long shopId = 1L;
             UpdateShopCommand command =
@@ -86,12 +84,10 @@ class UpdateShopServiceTest {
             // then
             then(validator)
                     .should()
-                    .validateShopNameNotDuplicateExcluding(
-                            context.updateData().shopName(), context.id());
-            then(validator)
-                    .should()
-                    .validateAccountIdNotDuplicateExcluding(
-                            context.updateData().accountId(), context.id());
+                    .validateAccountNotDuplicateExcluding(
+                            existingShop.salesChannelId(),
+                            context.updateData().accountId(),
+                            context.id());
         }
 
         @Test
@@ -129,6 +125,7 @@ class UpdateShopServiceTest {
             Instant now = Instant.now();
             return Shop.reconstitute(
                     ShopId.of(shopId),
+                    1L,
                     "기존 외부몰",
                     "old-account-123",
                     ShopStatus.ACTIVE,

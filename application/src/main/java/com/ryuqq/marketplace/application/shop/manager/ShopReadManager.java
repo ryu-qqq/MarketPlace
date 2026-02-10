@@ -35,22 +35,14 @@ public class ShopReadManager {
     }
 
     @Transactional(readOnly = true)
-    public boolean existsByShopName(String shopName) {
-        return queryPort.existsByShopName(shopName);
+    public boolean existsBySalesChannelIdAndAccountId(Long salesChannelId, String accountId) {
+        return queryPort.existsBySalesChannelIdAndAccountId(salesChannelId, accountId);
     }
 
     @Transactional(readOnly = true)
-    public boolean existsByShopNameExcluding(String shopName, ShopId excludeId) {
-        return queryPort.existsByShopNameExcluding(shopName, excludeId);
-    }
-
-    @Transactional(readOnly = true)
-    public boolean existsByAccountId(String accountId) {
-        return queryPort.existsByAccountId(accountId);
-    }
-
-    @Transactional(readOnly = true)
-    public boolean existsByAccountIdExcluding(String accountId, ShopId excludeId) {
-        return queryPort.existsByAccountIdExcluding(accountId, excludeId);
+    public boolean existsBySalesChannelIdAndAccountIdExcluding(
+            Long salesChannelId, String accountId, ShopId excludeId) {
+        return queryPort.existsBySalesChannelIdAndAccountIdExcluding(
+                salesChannelId, accountId, excludeId);
     }
 }
