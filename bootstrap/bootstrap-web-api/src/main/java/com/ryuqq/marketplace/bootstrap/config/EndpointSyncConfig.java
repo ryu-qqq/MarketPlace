@@ -34,18 +34,20 @@ public class EndpointSyncConfig {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointSyncConfig.class);
 
-    private final AuthHubProperties authHubProperties;
+    private final String baseUrl;
+    private final String serviceCode;
+    private final String serviceToken;
 
     public EndpointSyncConfig(AuthHubProperties authHubProperties) {
-        this.authHubProperties = authHubProperties;
+        this.baseUrl = authHubProperties.getBaseUrl();
+        this.serviceCode = authHubProperties.getServiceCode();
+        this.serviceToken = authHubProperties.getServiceToken();
     }
 
     @Bean
     public EndpointSyncClient endpointSyncClient() {
         RestTemplate restTemplate = new RestTemplate();
-        String syncUrl = authHubProperties.getBaseUrl() + "/api/v1/internal/endpoints/sync";
-        String serviceCode = authHubProperties.getServiceCode();
-        String serviceToken = authHubProperties.getServiceToken();
+        String syncUrl = baseUrl + "/api/v1/internal/endpoints/sync";
 
         return (EndpointSyncRequest request) -> {
             log.info(
@@ -84,11 +86,6 @@ public class EndpointSyncConfig {
             @Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping,
             EndpointSyncClient syncClient) {
 
-        return new EndpointSyncRunner(
-                handlerMapping,
-                syncClient,
-                "marketplace",
-                authHubProperties.getServiceCode(),
-                true);
+        return new EndpointSyncRunner(handlerMapping, syncClient, "marketplace", serviceCode, true);
     }
 }
