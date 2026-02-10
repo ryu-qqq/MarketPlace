@@ -18,6 +18,9 @@ public class ShopJpaEntity extends SoftDeletableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "sales_channel_id", nullable = false)
+    private Long salesChannelId;
+
     @Column(name = "shop_name", nullable = false, length = 100)
     private String shopName;
 
@@ -33,6 +36,7 @@ public class ShopJpaEntity extends SoftDeletableEntity {
 
     private ShopJpaEntity(
             Long id,
+            Long salesChannelId,
             String shopName,
             String accountId,
             String status,
@@ -41,6 +45,7 @@ public class ShopJpaEntity extends SoftDeletableEntity {
             Instant deletedAt) {
         super(createdAt, updatedAt, deletedAt);
         this.id = id;
+        this.salesChannelId = salesChannelId;
         this.shopName = shopName;
         this.accountId = accountId;
         this.status = status;
@@ -48,13 +53,15 @@ public class ShopJpaEntity extends SoftDeletableEntity {
 
     public static ShopJpaEntity create(
             Long id,
+            Long salesChannelId,
             String shopName,
             String accountId,
             String status,
             Instant createdAt,
             Instant updatedAt,
             Instant deletedAt) {
-        return new ShopJpaEntity(id, shopName, accountId, status, createdAt, updatedAt, deletedAt);
+        return new ShopJpaEntity(
+                id, salesChannelId, shopName, accountId, status, createdAt, updatedAt, deletedAt);
     }
 
     public void update(String shopName, String accountId, String status, Instant updatedAt) {
@@ -66,6 +73,10 @@ public class ShopJpaEntity extends SoftDeletableEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getSalesChannelId() {
+        return salesChannelId;
     }
 
     public String getShopName() {

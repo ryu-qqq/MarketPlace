@@ -151,6 +151,7 @@ class CategoryQueryDslRepositoryTest {
                                     "ACTIVE",
                                     "FASHION",
                                     "CLOTHING",
+                                    null,
                                     now,
                                     now,
                                     null));
@@ -168,6 +169,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -185,6 +187,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -216,6 +219,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -234,6 +238,7 @@ class CategoryQueryDslRepositoryTest {
                                     "ACTIVE",
                                     "FASHION",
                                     "CLOTHING",
+                                    null,
                                     now,
                                     now,
                                     null));
@@ -251,6 +256,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -293,6 +299,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -310,6 +317,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -351,6 +359,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -368,6 +377,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "BEAUTY",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -410,6 +420,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -427,6 +438,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "SHOES",
+                            null,
                             now,
                             now,
                             null));
@@ -460,6 +472,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -477,6 +490,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "SHOES",
+                            null,
                             now,
                             now,
                             null));
@@ -519,6 +533,7 @@ class CategoryQueryDslRepositoryTest {
                                 "ACTIVE",
                                 "FASHION",
                                 "CLOTHING",
+                                null,
                                 now,
                                 now,
                                 null));
@@ -596,6 +611,7 @@ class CategoryQueryDslRepositoryTest {
                                     "ACTIVE",
                                     "FASHION",
                                     "CLOTHING",
+                                    null,
                                     now,
                                     now,
                                     null));
@@ -613,6 +629,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -630,6 +647,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -660,6 +678,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "CLOTHING",
+                            null,
                             now,
                             now,
                             null));
@@ -677,6 +696,7 @@ class CategoryQueryDslRepositoryTest {
                             "ACTIVE",
                             "FASHION",
                             "SHOES",
+                            null,
                             now,
                             now,
                             null));

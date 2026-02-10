@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Shop Aggregate 단위 테스트")
 class ShopTest {
 
+    private static final Long SALES_CHANNEL_ID = 1L;
+
     @Nested
     @DisplayName("forNew() - 신규 Shop 생성")
     class ForNewTest {
@@ -29,11 +31,12 @@ class ShopTest {
             Instant now = CommonVoFixtures.now();
 
             // when
-            Shop shop = Shop.forNew(shopName, accountId, now);
+            Shop shop = Shop.forNew(SALES_CHANNEL_ID, shopName, accountId, now);
 
             // then
             assertThat(shop).isNotNull();
             assertThat(shop.id().isNew()).isTrue();
+            assertThat(shop.salesChannelId()).isEqualTo(SALES_CHANNEL_ID);
             assertThat(shop.shopName()).isEqualTo(shopName);
             assertThat(shop.accountId()).isEqualTo(accountId);
             assertThat(shop.status()).isEqualTo(ShopStatus.ACTIVE);
@@ -50,6 +53,7 @@ class ShopTest {
             assertThatThrownBy(
                             () ->
                                     Shop.forNew(
+                                            SALES_CHANNEL_ID,
                                             null,
                                             ShopFixtures.defaultAccountId(),
                                             CommonVoFixtures.now()))
@@ -64,6 +68,7 @@ class ShopTest {
             assertThatThrownBy(
                             () ->
                                     Shop.forNew(
+                                            SALES_CHANNEL_ID,
                                             "   ",
                                             ShopFixtures.defaultAccountId(),
                                             CommonVoFixtures.now()))
@@ -78,6 +83,7 @@ class ShopTest {
             assertThatThrownBy(
                             () ->
                                     Shop.forNew(
+                                            SALES_CHANNEL_ID,
                                             ShopFixtures.defaultShopName(),
                                             null,
                                             CommonVoFixtures.now()))
@@ -92,6 +98,7 @@ class ShopTest {
             assertThatThrownBy(
                             () ->
                                     Shop.forNew(
+                                            SALES_CHANNEL_ID,
                                             ShopFixtures.defaultShopName(),
                                             "  ",
                                             CommonVoFixtures.now()))
@@ -117,12 +124,21 @@ class ShopTest {
 
             // when
             Shop shop =
-                    Shop.reconstitute(id, shopName, accountId, status, null, createdAt, updatedAt);
+                    Shop.reconstitute(
+                            id,
+                            SALES_CHANNEL_ID,
+                            shopName,
+                            accountId,
+                            status,
+                            null,
+                            createdAt,
+                            updatedAt);
 
             // then
             assertThat(shop).isNotNull();
             assertThat(shop.id()).isEqualTo(id);
             assertThat(shop.id().isNew()).isFalse();
+            assertThat(shop.salesChannelId()).isEqualTo(SALES_CHANNEL_ID);
             assertThat(shop.shopName()).isEqualTo(shopName);
             assertThat(shop.accountId()).isEqualTo(accountId);
             assertThat(shop.status()).isEqualTo(ShopStatus.ACTIVE);
@@ -145,6 +161,7 @@ class ShopTest {
             Shop shop =
                     Shop.reconstitute(
                             id,
+                            SALES_CHANNEL_ID,
                             ShopFixtures.defaultShopName(),
                             ShopFixtures.defaultAccountId(),
                             status,
@@ -171,6 +188,7 @@ class ShopTest {
             Shop shop =
                     Shop.reconstitute(
                             id,
+                            SALES_CHANNEL_ID,
                             ShopFixtures.defaultShopName(),
                             ShopFixtures.defaultAccountId(),
                             ShopStatus.INACTIVE,
@@ -397,11 +415,20 @@ class ShopTest {
             Instant updatedAt = CommonVoFixtures.now();
 
             Shop shop =
-                    Shop.reconstitute(id, shopName, accountId, status, null, createdAt, updatedAt);
+                    Shop.reconstitute(
+                            id,
+                            SALES_CHANNEL_ID,
+                            shopName,
+                            accountId,
+                            status,
+                            null,
+                            createdAt,
+                            updatedAt);
 
             // then
             assertThat(shop.id()).isEqualTo(id);
             assertThat(shop.idValue()).isEqualTo(1L);
+            assertThat(shop.salesChannelId()).isEqualTo(SALES_CHANNEL_ID);
             assertThat(shop.shopName()).isEqualTo(shopName);
             assertThat(shop.accountId()).isEqualTo(accountId);
             assertThat(shop.status()).isEqualTo(status);

@@ -26,6 +26,7 @@ public class Category {
     private CategoryStatus status;
     private Department department;
     private CategoryGroup categoryGroup;
+    private String displayPath;
     private DeletionStatus deletionStatus;
     private final Instant createdAt;
     private Instant updatedAt;
@@ -42,6 +43,7 @@ public class Category {
             CategoryStatus status,
             Department department,
             CategoryGroup categoryGroup,
+            String displayPath,
             DeletionStatus deletionStatus,
             Instant createdAt,
             Instant updatedAt) {
@@ -56,6 +58,7 @@ public class Category {
         this.status = status;
         this.department = department;
         this.categoryGroup = categoryGroup != null ? categoryGroup : CategoryGroup.ETC;
+        this.displayPath = displayPath;
         this.deletionStatus = deletionStatus != null ? deletionStatus : DeletionStatus.active();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -70,6 +73,7 @@ public class Category {
             SortOrder sortOrder,
             Department department,
             CategoryGroup categoryGroup,
+            String displayPath,
             Instant now) {
         return new Category(
                 CategoryId.forNew(),
@@ -83,6 +87,7 @@ public class Category {
                 CategoryStatus.ACTIVE,
                 department,
                 categoryGroup,
+                displayPath,
                 DeletionStatus.active(),
                 now,
                 now);
@@ -100,6 +105,7 @@ public class Category {
             CategoryStatus status,
             Department department,
             CategoryGroup categoryGroup,
+            String displayPath,
             Instant deletedAt,
             Instant createdAt,
             Instant updatedAt) {
@@ -117,6 +123,7 @@ public class Category {
                 status,
                 department,
                 categoryGroup,
+                displayPath,
                 deletion,
                 createdAt,
                 updatedAt);
@@ -275,6 +282,10 @@ public class Category {
 
     public CategoryGroup categoryGroup() {
         return categoryGroup;
+    }
+
+    public String displayPath() {
+        return displayPath;
     }
 
     public DeletionStatus deletionStatus() {

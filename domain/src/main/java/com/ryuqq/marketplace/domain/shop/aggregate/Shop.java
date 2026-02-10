@@ -11,6 +11,7 @@ import java.time.Instant;
 public class Shop {
 
     private final ShopId id;
+    private final Long salesChannelId;
     private ShopName shopName;
     private AccountId accountId;
     private ShopStatus status;
@@ -20,6 +21,7 @@ public class Shop {
 
     private Shop(
             ShopId id,
+            Long salesChannelId,
             ShopName shopName,
             AccountId accountId,
             ShopStatus status,
@@ -27,6 +29,7 @@ public class Shop {
             Instant createdAt,
             Instant updatedAt) {
         this.id = id;
+        this.salesChannelId = salesChannelId;
         this.shopName = shopName;
         this.accountId = accountId;
         this.status = status;
@@ -36,9 +39,10 @@ public class Shop {
     }
 
     /** 신규 Shop 생성 팩토리. */
-    public static Shop forNew(String shopName, String accountId, Instant now) {
+    public static Shop forNew(Long salesChannelId, String shopName, String accountId, Instant now) {
         return new Shop(
                 ShopId.forNew(),
+                salesChannelId,
                 ShopName.of(shopName),
                 AccountId.of(accountId),
                 ShopStatus.ACTIVE,
@@ -50,6 +54,7 @@ public class Shop {
     /** 영속성에서 복원 시 사용. */
     public static Shop reconstitute(
             ShopId id,
+            Long salesChannelId,
             String shopName,
             String accountId,
             ShopStatus status,
@@ -58,6 +63,7 @@ public class Shop {
             Instant updatedAt) {
         return new Shop(
                 id,
+                salesChannelId,
                 ShopName.of(shopName),
                 AccountId.of(accountId),
                 status,
@@ -98,6 +104,10 @@ public class Shop {
 
     public Long idValue() {
         return id.value();
+    }
+
+    public Long salesChannelId() {
+        return salesChannelId;
     }
 
     public String shopName() {

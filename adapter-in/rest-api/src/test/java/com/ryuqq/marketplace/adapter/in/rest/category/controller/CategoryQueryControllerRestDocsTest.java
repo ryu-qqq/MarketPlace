@@ -155,6 +155,9 @@ class CategoryQueryControllerRestDocsTest {
                                                     .description("부문"),
                                             fieldWithPath("data.content[].categoryGroup")
                                                     .description("카테고리 그룹 (고시정보 연결용)"),
+                                            fieldWithPath("data.content[].displayPath")
+                                                    .description("표시용 이름 경로")
+                                                    .optional(),
                                             fieldWithPath("data.content[].createdAt")
                                                     .description("생성일시"),
                                             fieldWithPath("data.content[].updatedAt")

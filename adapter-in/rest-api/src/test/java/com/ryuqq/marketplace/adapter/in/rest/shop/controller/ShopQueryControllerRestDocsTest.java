@@ -115,6 +115,8 @@ class ShopQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[]").description("외부몰 목록"),
                                             fieldWithPath("data.content[].id")
                                                     .description("외부몰 ID"),
+                                            fieldWithPath("data.content[].salesChannelId")
+                                                    .description("판매채널 ID"),
                                             fieldWithPath("data.content[].shopName")
                                                     .description("외부몰명"),
                                             fieldWithPath("data.content[].accountId")

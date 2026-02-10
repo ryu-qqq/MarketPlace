@@ -9,7 +9,7 @@
 authhub:
   base-url: ${AUTHHUB_BASE_URL:}
   service-token: ${AUTHHUB_SERVICE_TOKEN:}
-  service-code: SVC_MARKET
+  service-code: SVC_MARKETPLACE
   timeout:
     connect: 5s
     read: 30s

@@ -39,6 +39,7 @@ class CategoryTest {
                             SortOrder.of(1),
                             Department.FASHION,
                             CategoryGroup.CLOTHING,
+                            null,
                             NOW);
 
             assertThat(category.categoryGroup()).isEqualTo(CategoryGroup.CLOTHING);
@@ -58,6 +59,7 @@ class CategoryTest {
                             CategoryPath.of("1"),
                             SortOrder.of(1),
                             Department.LIVING,
+                            null,
                             null,
                             NOW);
 
@@ -85,6 +87,7 @@ class CategoryTest {
                             CategoryStatus.ACTIVE,
                             Department.FASHION,
                             CategoryGroup.SHOES,
+                            null,
                             null,
                             NOW.minusSeconds(3600),
                             NOW);
@@ -189,6 +192,7 @@ class CategoryTest {
                 SortOrder.of(1),
                 Department.FASHION,
                 categoryGroup,
+                null,
                 NOW);
     }
 }

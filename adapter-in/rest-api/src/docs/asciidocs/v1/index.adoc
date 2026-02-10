@@ -54,10 +54,6 @@ API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
 |`X-Organization-Id`
 |선택
 |소속 조직(셀러) ID
-
-|`X-Authenticated`
-|선택
-|인증 여부 (`true` / `false`)
 |===
 
 ==== 권한 레벨

@@ -5,6 +5,7 @@ import java.util.List;
 
 /** Shop 검색 API 요청 DTO. */
 public record SearchShopsApiRequest(
+        @Parameter(description = "판매채널 ID") Long salesChannelId,
         @Parameter(description = "상태 필터 (ACTIVE, INACTIVE)") List<String> statuses,
         @Parameter(description = "검색 필드 (SHOP_NAME, ACCOUNT_ID)") String searchField,
         @Parameter(description = "검색어") String searchWord,

@@ -44,6 +44,10 @@ public class SellerAdminConditionBuilder {
         return sellerAdminJpaEntity.id.in(ids);
     }
 
+    public BooleanExpression authUserIdEq(String authUserId) {
+        return authUserId != null ? sellerAdminJpaEntity.authUserId.eq(authUserId) : null;
+    }
+
     public BooleanExpression loginIdEq(String loginId) {
         return loginId != null ? sellerAdminJpaEntity.loginId.eq(loginId) : null;
     }

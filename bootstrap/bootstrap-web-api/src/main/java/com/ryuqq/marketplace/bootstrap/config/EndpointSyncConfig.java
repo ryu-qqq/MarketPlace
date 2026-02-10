@@ -3,10 +3,10 @@ package com.ryuqq.marketplace.bootstrap.config;
 import com.ryuqq.authhub.sdk.sync.EndpointSyncClient;
 import com.ryuqq.authhub.sdk.sync.EndpointSyncRequest;
 import com.ryuqq.authhub.sdk.sync.EndpointSyncRunner;
+import com.ryuqq.marketplace.adapter.out.client.authhub.config.AuthHubProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,13 +34,18 @@ public class EndpointSyncConfig {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointSyncConfig.class);
 
-    @Bean
-    public EndpointSyncClient endpointSyncClient(
-            @Value("${authhub.base-url}") String baseUrl,
-            @Value("${authhub.service-token}") String serviceToken) {
+    private final AuthHubProperties authHubProperties;
 
+    public EndpointSyncConfig(AuthHubProperties authHubProperties) {
+        this.authHubProperties = authHubProperties;
+    }
+
+    @Bean
+    public EndpointSyncClient endpointSyncClient() {
         RestTemplate restTemplate = new RestTemplate();
-        String syncUrl = baseUrl + "/api/v1/internal/endpoints/sync";
+        String syncUrl = authHubProperties.getBaseUrl() + "/api/v1/internal/endpoints/sync";
+        String serviceCode = authHubProperties.getServiceCode();
+        String serviceToken = authHubProperties.getServiceToken();
 
         return (EndpointSyncRequest request) -> {
             log.info(
@@ -51,7 +56,7 @@ public class EndpointSyncConfig {
             try {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.set("X-Service-Name", "SVC_MARKETPLACE");
+                headers.set("X-Service-Name", serviceCode);
                 headers.set("X-Service-Token", serviceToken);
 
                 HttpEntity<EndpointSyncRequest> entity = new HttpEntity<>(request, headers);
@@ -77,9 +82,13 @@ public class EndpointSyncConfig {
     @Bean
     public EndpointSyncRunner endpointSyncRunner(
             @Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping,
-            EndpointSyncClient syncClient,
-            @Value("${authhub.service-code:SVC_MARKETPLACE}") String serviceCode) {
+            EndpointSyncClient syncClient) {
 
-        return new EndpointSyncRunner(handlerMapping, syncClient, "marketplace", serviceCode, true);
+        return new EndpointSyncRunner(
+                handlerMapping,
+                syncClient,
+                "marketplace",
+                authHubProperties.getServiceCode(),
+                true);
     }
 }

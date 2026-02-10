@@ -43,6 +43,7 @@ class CategoryJpaEntityTest {
                             CategoryJpaEntityFixtures.DEFAULT_STATUS,
                             CategoryJpaEntityFixtures.DEFAULT_DEPARTMENT,
                             CategoryJpaEntityFixtures.DEFAULT_CATEGORY_GROUP,
+                            null,
                             now,
                             now,
                             null);
@@ -85,6 +86,7 @@ class CategoryJpaEntityTest {
                             CategoryJpaEntityFixtures.DEFAULT_STATUS,
                             CategoryJpaEntityFixtures.DEFAULT_DEPARTMENT,
                             CategoryJpaEntityFixtures.DEFAULT_CATEGORY_GROUP,
+                            null,
                             now,
                             now,
                             null);
@@ -112,6 +114,7 @@ class CategoryJpaEntityTest {
                             CategoryJpaEntityFixtures.DEFAULT_STATUS,
                             CategoryJpaEntityFixtures.DEFAULT_DEPARTMENT,
                             CategoryJpaEntityFixtures.DEFAULT_CATEGORY_GROUP,
+                            null,
                             now,
                             now,
                             null);
@@ -139,6 +142,7 @@ class CategoryJpaEntityTest {
                             CategoryJpaEntityFixtures.DEFAULT_STATUS,
                             CategoryJpaEntityFixtures.DEFAULT_DEPARTMENT,
                             CategoryJpaEntityFixtures.DEFAULT_CATEGORY_GROUP,
+                            null,
                             now,
                             now,
                             null);
@@ -165,6 +169,7 @@ class CategoryJpaEntityTest {
                             CategoryJpaEntityFixtures.DEFAULT_STATUS,
                             CategoryJpaEntityFixtures.DEFAULT_DEPARTMENT,
                             CategoryJpaEntityFixtures.DEFAULT_CATEGORY_GROUP,
+                            null,
                             now,
                             now,
                             deletedAt);
