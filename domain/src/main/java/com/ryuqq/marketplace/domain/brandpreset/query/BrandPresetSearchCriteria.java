@@ -16,6 +16,8 @@ public record BrandPresetSearchCriteria(
         QueryContext<BrandPresetSortKey> queryContext) {
 
     public BrandPresetSearchCriteria {
+        salesChannelIds = salesChannelIds != null ? List.copyOf(salesChannelIds) : List.of();
+        statuses = statuses != null ? List.copyOf(statuses) : List.of();
         Objects.requireNonNull(queryContext, "queryContext must not be null");
     }
 
