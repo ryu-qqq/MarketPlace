@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
-import com.ryuqq.marketplace.adapter.in.rest.saleschannelbrand.SalesChannelBrandAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.saleschannelbrand.SalesChannelBrandApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.saleschannelbrand.dto.command.RegisterSalesChannelBrandApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.saleschannelbrand.mapper.SalesChannelBrandCommandApiMapper;

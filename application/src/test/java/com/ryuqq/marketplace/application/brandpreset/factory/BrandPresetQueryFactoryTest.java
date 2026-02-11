@@ -8,7 +8,6 @@ import com.ryuqq.marketplace.application.brandpreset.BrandPresetQueryFixtures;
 import com.ryuqq.marketplace.application.brandpreset.dto.query.BrandPresetSearchParams;
 import com.ryuqq.marketplace.application.common.factory.CommonVoFactory;
 import com.ryuqq.marketplace.domain.brandpreset.query.BrandPresetSearchCriteria;
-import com.ryuqq.marketplace.domain.brandpreset.query.BrandPresetSortKey;
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
