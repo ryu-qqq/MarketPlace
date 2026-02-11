@@ -1,0 +1,89 @@
+{
+  "data": {
+    "content": [
+      {
+        "id": 15,
+        "productCode": "125694305",
+        "productName": "나이키 에어포스 1 '07 화이트",
+        "imageUrl": "https://via.placeholder.com/100",
+        "price": 129000,
+        "stock": 50,
+        "status": "ON_SALE",
+        "statusLabel": "판매중",
+        "partnerName": "나이키코리아",
+        "createdAt": "2025-12-15",
+        "syncStatus": "SUCCESS",
+        "syncStatusLabel": "연동완료",
+        "lastSyncAt": "2025-12-16 14:30:00"
+      },
+      {
+        "id": 16,
+        "productCode": "125694306",
+        "productName": "아디다스 슈퍼스타 블랙",
+        "imageUrl": "https://via.placeholder.com/100",
+        "price": 119000,
+        "stock": 30,
+        "status": "ON_SALE",
+        "statusLabel": "판매중",
+        "partnerName": "아디다스코리아",
+        "createdAt": "2025-12-14",
+        "syncStatus": "PENDING",
+        "syncStatusLabel": "연동대기",
+        "lastSyncAt": null
+      },
+      {
+        "id": 17,
+        "productCode": "125694307",
+        "productName": "뉴발란스 530 그레이",
+        "imageUrl": "https://via.placeholder.com/100",
+        "price": 139000,
+        "stock": 0,
+        "status": "SOLD_OUT",
+        "statusLabel": "품절",
+        "partnerName": "뉴발란스코리아",
+        "createdAt": "2025-12-13",
+        "syncStatus": "FAILED",
+        "syncStatusLabel": "연동실패",
+        "lastSyncAt": "2025-12-13 10:00:00"
+      },
+      {
+        "id": 18,
+        "productCode": "125694308",
+        "productName": "컨버스 척테일러 화이트",
+        "imageUrl": "https://via.placeholder.com/100",
+        "price": 75000,
+        "stock": 100,
+        "status": "ON_SALE",
+        "statusLabel": "판매중",
+        "partnerName": "컨버스코리아",
+        "createdAt": "2025-12-12",
+        "syncStatus": "SUCCESS",
+        "syncStatusLabel": "연동완료",
+        "lastSyncAt": "2025-12-15 09:00:00"
+      },
+      {
+        "id": 19,
+        "productCode": "125694309",
+        "productName": "반스 올드스쿨 블랙",
+        "imageUrl": "https://via.placeholder.com/100",
+        "price": 69000,
+        "stock": 45,
+        "status": "ON_SALE",
+        "statusLabel": "판매중",
+        "partnerName": "반스코리아",
+        "createdAt": "2025-12-11",
+        "syncStatus": "SUCCESS",
+        "syncStatusLabel": "연동완료",
+        "lastSyncAt": "2025-12-14 11:30:00"
+      }
+    ],
+    "page": 0,
+    "size": 10,
+    "totalElements": 156,
+    "totalPages": 16,
+    "first": true,
+    "last": false
+  },
+  "timestamp": "2025-12-22T10:30:00",
+  "requestId": "req-mock-001"
+}

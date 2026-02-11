@@ -98,6 +98,9 @@ class AuthQueryControllerRestDocsTest {
                                             fieldWithPath("data.roles[].name").description("역할 이름"),
                                             fieldWithPath("data.permissions[]")
                                                     .description("권한 목록"),
+                                            fieldWithPath("data.sellerAdminId")
+                                                    .description("셀러 관리자 ID")
+                                                    .optional(),
                                             fieldWithPath("data.sellerId")
                                                     .description("셀러 ID")
                                                     .optional(),

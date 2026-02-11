@@ -66,6 +66,7 @@ public final class AuthResultFixtures {
                 "조직명",
                 List.of(new MyInfoResult.RoleInfo("role-1", "ADMIN")),
                 List.of("READ", "WRITE"),
+                "sa-001",
                 1L,
                 "010-1234-5678");
     }
@@ -91,6 +92,7 @@ public final class AuthResultFixtures {
                 roles,
                 permissions,
                 null,
+                null,
                 null);
     }
 
@@ -103,6 +105,7 @@ public final class AuthResultFixtures {
                 "테넌트명",
                 "org-123",
                 "조직명",
+                null,
                 null,
                 null,
                 null,
@@ -120,6 +123,7 @@ public final class AuthResultFixtures {
                 "조직명",
                 List.of(),
                 List.of(),
+                null,
                 null,
                 null);
     }

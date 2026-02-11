@@ -18,6 +18,9 @@ public class CategoryMappingJpaEntity extends BaseAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "preset_id")
+    private Long presetId;
+
     @Column(name = "sales_channel_category_id", nullable = false)
     private Long salesChannelCategoryId;
 
@@ -33,6 +36,7 @@ public class CategoryMappingJpaEntity extends BaseAuditEntity {
 
     private CategoryMappingJpaEntity(
             Long id,
+            Long presetId,
             Long salesChannelCategoryId,
             Long internalCategoryId,
             String status,
@@ -40,6 +44,7 @@ public class CategoryMappingJpaEntity extends BaseAuditEntity {
             Instant updatedAt) {
         super(createdAt, updatedAt);
         this.id = id;
+        this.presetId = presetId;
         this.salesChannelCategoryId = salesChannelCategoryId;
         this.internalCategoryId = internalCategoryId;
         this.status = status;
@@ -47,17 +52,28 @@ public class CategoryMappingJpaEntity extends BaseAuditEntity {
 
     public static CategoryMappingJpaEntity create(
             Long id,
+            Long presetId,
             Long salesChannelCategoryId,
             Long internalCategoryId,
             String status,
             Instant createdAt,
             Instant updatedAt) {
         return new CategoryMappingJpaEntity(
-                id, salesChannelCategoryId, internalCategoryId, status, createdAt, updatedAt);
+                id,
+                presetId,
+                salesChannelCategoryId,
+                internalCategoryId,
+                status,
+                createdAt,
+                updatedAt);
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Long getPresetId() {
+        return presetId;
     }
 
     public Long getSalesChannelCategoryId() {

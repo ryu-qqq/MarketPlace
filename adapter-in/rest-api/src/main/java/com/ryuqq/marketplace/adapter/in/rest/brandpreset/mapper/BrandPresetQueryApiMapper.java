@@ -7,6 +7,10 @@ import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.application.brandpreset.dto.query.BrandPresetSearchParams;
 import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetPageResult;
 import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetResult;
+import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -14,18 +18,37 @@ import org.springframework.stereotype.Component;
 @Component
 public class BrandPresetQueryApiMapper {
 
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     public BrandPresetSearchParams toSearchParams(SearchBrandPresetsApiRequest request) {
-        return new BrandPresetSearchParams(
+        CommonSearchParams commonParams =
+                CommonSearchParams.of(
+                        false,
+                        parseDate(request.startDate()),
+                        parseDate(request.endDate()),
+                        request.sortKey(),
+                        request.sortDirection(),
+                        request.page() != null ? request.page() : 0,
+                        request.size() != null ? request.size() : 20);
+
+        return BrandPresetSearchParams.of(
                 request.salesChannelIds(),
                 request.statuses(),
                 request.searchField(),
                 request.searchWord(),
-                request.startDate(),
-                request.endDate(),
-                request.sortKey(),
-                request.sortDirection(),
-                request.page() != null ? request.page() : 0,
-                request.size() != null ? request.size() : 20);
+                commonParams);
+    }
+
+    private LocalDate parseDate(String dateString) {
+        if (dateString == null || dateString.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(dateString, DATE_FORMATTER);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 
     public BrandPresetApiResponse toResponse(BrandPresetResult result) {

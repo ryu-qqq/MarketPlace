@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.authhub.config;
 
 import com.ryuqq.authhub.sdk.api.AuthApi;
 import com.ryuqq.authhub.sdk.api.OnboardingApi;
+import com.ryuqq.authhub.sdk.auth.TokenResolver;
 import com.ryuqq.authhub.sdk.client.AuthHubClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,14 +27,18 @@ public class AuthHubClientConfig {
     /**
      * AuthHubClient 빈 생성.
      *
+     * <p>TokenResolver는 SDK AutoConfiguration이 생성한 ChainTokenResolver를 주입받습니다. ThreadLocal(요청별 사용자
+     * 토큰)을 우선 시도하고, 없으면 서비스 토큰으로 폴백합니다.
+     *
      * @param properties AuthHub 설정
+     * @param tokenResolver SDK AutoConfiguration이 생성한 TokenResolver
      * @return AuthHubClient 인스턴스
      */
     @Bean
-    public AuthHubClient authHubClient(AuthHubProperties properties) {
+    public AuthHubClient authHubClient(AuthHubProperties properties, TokenResolver tokenResolver) {
         return AuthHubClient.builder()
                 .baseUrl(properties.getBaseUrl())
-                .serviceToken(properties.getServiceToken())
+                .tokenResolver(tokenResolver)
                 .connectTimeout(properties.getTimeout().getConnect())
                 .readTimeout(properties.getTimeout().getRead())
                 .build();

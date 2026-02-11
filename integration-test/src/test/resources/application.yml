@@ -60,8 +60,8 @@ spring:
     default-property-inclusion: non_null
 
 # AuthHub 테스트용 더미 설정
-# @ConditionalOnBean이 @Component에서 불안정하므로 빈 체인 활성화 필수
-# 실제 HTTP 호출은 auth E2E 테스트에서만 발생 (런타임 실패 허용)
+# LoginService 등 Application 빈도 @ConditionalOnProperty(authhub.base-url) 게이트이므로
+# base-url 설정 필수. TokenResolver는 StubExternalClientConfig에서 Stub 제공.
 authhub:
   base-url: http://localhost:19999
   service-token: test-service-token

@@ -14,13 +14,19 @@ public class BrandPresetCommandApiMapper {
 
     public RegisterBrandPresetCommand toCommand(RegisterBrandPresetApiRequest request) {
         return new RegisterBrandPresetCommand(
-                request.shopId(), request.salesChannelBrandId(), request.presetName());
+                request.shopId(),
+                request.salesChannelBrandId(),
+                request.presetName(),
+                request.internalBrandIds());
     }
 
     public UpdateBrandPresetCommand toCommand(
             Long brandPresetId, UpdateBrandPresetApiRequest request) {
         return new UpdateBrandPresetCommand(
-                brandPresetId, request.presetName(), request.salesChannelBrandId());
+                brandPresetId,
+                request.presetName(),
+                request.salesChannelBrandId(),
+                request.internalBrandIds());
     }
 
     public DeleteBrandPresetsCommand toDeleteCommand(List<Long> ids) {

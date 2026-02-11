@@ -112,6 +112,7 @@ public class AuthHubAuthMapper {
                 roles,
                 response.permissions() != null ? response.permissions() : List.of(),
                 null,
+                null,
                 response.phoneNumber());
     }
 

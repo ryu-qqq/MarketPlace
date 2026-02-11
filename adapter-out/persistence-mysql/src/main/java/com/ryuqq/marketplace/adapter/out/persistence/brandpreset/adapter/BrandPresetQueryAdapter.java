@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.adapter.out.persistence.brandpreset.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.composite.BrandPresetCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.mapper.BrandPresetJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.repository.BrandPresetQueryDslRepository;
 import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetResult;
@@ -32,7 +31,7 @@ public class BrandPresetQueryAdapter implements BrandPresetQueryPort {
 
     @Override
     public List<BrandPresetResult> findByCriteria(BrandPresetSearchCriteria criteria) {
-        return repository.findByCriteria(criteria).stream().map(this::toResult).toList();
+        return repository.findByCriteria(criteria).stream().map(mapper::toResult).toList();
     }
 
     @Override
@@ -48,19 +47,5 @@ public class BrandPresetQueryAdapter implements BrandPresetQueryPort {
     @Override
     public Optional<Long> findSalesChannelIdBySalesChannelBrandId(Long salesChannelBrandId) {
         return repository.findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
-    }
-
-    private BrandPresetResult toResult(BrandPresetCompositeDto dto) {
-        return new BrandPresetResult(
-                dto.id(),
-                dto.shopId(),
-                dto.shopName(),
-                dto.salesChannelId(),
-                dto.salesChannelName(),
-                dto.accountId(),
-                dto.presetName(),
-                dto.externalBrandName(),
-                dto.externalBrandCode(),
-                dto.createdAt());
     }
 }

@@ -11,11 +11,14 @@ import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
  *
  * @param sellerId 셀러 ID
  * @param searchParams 공통 검색 파라미터 (정렬, 페이징 등)
+ * @param active 활성화 여부 (true: 활성만, false: 비활성만, null: 전체)
  */
-public record RefundPolicySearchParams(Long sellerId, CommonSearchParams searchParams) {
+public record RefundPolicySearchParams(
+        Long sellerId, CommonSearchParams searchParams, Boolean active) {
 
-    public static RefundPolicySearchParams of(Long sellerId, CommonSearchParams searchParams) {
-        return new RefundPolicySearchParams(sellerId, searchParams);
+    public static RefundPolicySearchParams of(
+            Long sellerId, CommonSearchParams searchParams, Boolean active) {
+        return new RefundPolicySearchParams(sellerId, searchParams, active);
     }
 
     // Delegate methods for convenience

@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.selleraddress.factory;
 
+import com.ryuqq.marketplace.application.common.factory.CommonVoFactory;
 import com.ryuqq.marketplace.application.selleraddress.dto.query.SellerAddressSearchParams;
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
@@ -18,6 +19,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class SellerAddressQueryFactory {
 
+    private final CommonVoFactory commonVoFactory;
+
+    public SellerAddressQueryFactory(CommonVoFactory commonVoFactory) {
+        this.commonVoFactory = commonVoFactory;
+    }
+
     public SellerAddressSearchCriteria createSearchCriteria(SellerAddressSearchParams params) {
         List<SellerId> sellerIds =
                 params.sellerIds() == null
@@ -28,11 +35,19 @@ public class SellerAddressQueryFactory {
                                 .toList();
         List<AddressType> addressTypes = parseAddressTypes(params.addressTypes());
 
+        SellerAddressSortKey sortKey = resolveSortKey(params.commonSearchParams().sortKey());
+        SortDirection sortDirection =
+                commonVoFactory.parseSortDirection(params.commonSearchParams().sortDirection());
+        PageRequest pageRequest =
+                commonVoFactory.createPageRequest(
+                        params.commonSearchParams().page(), params.commonSearchParams().size());
+
         QueryContext<SellerAddressSortKey> queryContext =
-                QueryContext.of(
-                        SellerAddressSortKey.defaultKey(),
-                        SortDirection.defaultDirection(),
-                        PageRequest.of(params.page(), params.size()));
+                commonVoFactory.createQueryContext(
+                        sortKey,
+                        sortDirection,
+                        pageRequest,
+                        params.commonSearchParams().includeDeleted());
 
         String keyword =
                 params.searchWord() != null && !params.searchWord().isBlank()
@@ -41,6 +56,19 @@ public class SellerAddressQueryFactory {
 
         return SellerAddressSearchCriteria.of(
                 sellerIds, addressTypes, params.defaultAddress(), keyword, queryContext);
+    }
+
+    private SellerAddressSortKey resolveSortKey(String sortKeyString) {
+        if (sortKeyString == null || sortKeyString.isBlank()) {
+            return SellerAddressSortKey.defaultKey();
+        }
+        for (SellerAddressSortKey key : SellerAddressSortKey.values()) {
+            if (key.fieldName().equalsIgnoreCase(sortKeyString)
+                    || key.name().equalsIgnoreCase(sortKeyString)) {
+                return key;
+            }
+        }
+        return SellerAddressSortKey.defaultKey();
     }
 
     private List<AddressType> parseAddressTypes(List<String> addressTypes) {

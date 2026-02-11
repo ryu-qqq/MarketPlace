@@ -1,0 +1,34 @@
+[[notice-category-search]]
+=== 고시정보 카테고리 검색 조회
+
+인증 필요 | 필요 권한: `notice-category:read`
+
+==== HTTP Request
+include::{snippets}/notice-category/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/notice-category/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/notice-category/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/notice-category/search/response-fields.adoc[]
+
+
+[[notice-category-get-by-category-group]]
+=== 카테고리 그룹별 고시정보 조회
+
+인증 필요 | 필요 권한: `notice-category:read`
+
+==== HTTP Request
+include::{snippets}/notice-category/get-by-category-group/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/notice-category/get-by-category-group/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/notice-category/get-by-category-group/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/notice-category/get-by-category-group/response-fields.adoc[]
