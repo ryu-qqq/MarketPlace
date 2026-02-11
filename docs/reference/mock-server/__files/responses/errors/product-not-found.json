@@ -1,0 +1,9 @@
+{
+  "type": "about:blank",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "상품을 찾을 수 없습니다",
+  "instance": "/api/v1/products/999999",
+  "timestamp": "2025-12-22T10:30:00.000Z",
+  "code": "PRODUCT_NOT_FOUND"
+}

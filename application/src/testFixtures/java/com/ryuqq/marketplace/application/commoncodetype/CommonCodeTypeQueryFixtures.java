@@ -50,6 +50,6 @@ public final class CommonCodeTypeQueryFixtures {
     }
 
     public static CommonSearchParams commonSearchParams(int page, int size) {
-        return new CommonSearchParams(null, null, null, null, null, page, size);
+        return new CommonSearchParams(false, null, null, "createdAt", "DESC", page, size);
     }
 }

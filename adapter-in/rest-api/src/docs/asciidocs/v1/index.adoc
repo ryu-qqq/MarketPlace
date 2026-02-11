@@ -125,6 +125,24 @@ API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
 
 |`shipping-policy:read` / `shipping-policy:write`
 |배송 정책 조회 / 등록·수정
+
+|`brand-preset:read` / `brand-preset:write`
+|브랜드 프리셋 조회 / 등록·수정·삭제
+
+|`category-preset:read` / `category-preset:write`
+|카테고리 프리셋 조회 / 등록·수정·삭제
+
+|`canonical-option-group:read`
+|캐노니컬 옵션 그룹 조회
+
+|`sales-channel-brand:read` / `sales-channel-brand:write`
+|외부채널 브랜드 조회 / 등록
+
+|`sales-channel-category:read` / `sales-channel-category:write`
+|외부채널 카테고리 조회 / 등록
+
+|`notice-category:read`
+|고시정보 카테고리 조회
 |===
 
 === 공통 응답 형식
@@ -216,3 +234,33 @@ include::refund-policy/refund-policy.adoc[]
 == 배송 정책 (Shipping Policy)
 
 include::shipping-policy/shipping-policy.adoc[]
+
+
+== 브랜드 프리셋 (Brand Preset)
+
+include::brand-preset/brand-preset.adoc[]
+
+
+== 카테고리 프리셋 (Category Preset)
+
+include::category-preset/category-preset.adoc[]
+
+
+== 캐노니컬 옵션 그룹 (Canonical Option Group)
+
+include::canonical-option-group/canonical-option-group.adoc[]
+
+
+== 외부채널 브랜드 (Sales Channel Brand)
+
+include::sales-channel-brand/sales-channel-brand.adoc[]
+
+
+== 외부채널 카테고리 (Sales Channel Category)
+
+include::sales-channel-category/sales-channel-category.adoc[]
+
+
+== 고시정보 카테고리 (Notice Category)
+
+include::notice-category/notice-category.adoc[]

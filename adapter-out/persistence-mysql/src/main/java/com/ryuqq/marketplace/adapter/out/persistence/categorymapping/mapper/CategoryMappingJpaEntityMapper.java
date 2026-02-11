@@ -13,6 +13,7 @@ public class CategoryMappingJpaEntityMapper {
     public CategoryMappingJpaEntity toEntity(CategoryMapping categoryMapping) {
         return CategoryMappingJpaEntity.create(
                 categoryMapping.idValue(),
+                categoryMapping.presetId(),
                 categoryMapping.salesChannelCategoryId(),
                 categoryMapping.internalCategoryId(),
                 categoryMapping.status().name(),
@@ -27,6 +28,7 @@ public class CategoryMappingJpaEntityMapper {
         var id = CategoryMappingId.of(entity.getId());
         return CategoryMapping.reconstitute(
                 id,
+                entity.getPresetId(),
                 entity.getSalesChannelCategoryId(),
                 entity.getInternalCategoryId(),
                 CategoryMappingStatus.fromString(entity.getStatus()),

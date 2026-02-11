@@ -2,11 +2,11 @@ package com.ryuqq.marketplace.application.categorypreset.service.command;
 
 import com.ryuqq.marketplace.application.categorypreset.dto.command.DeleteCategoryPresetsCommand;
 import com.ryuqq.marketplace.application.categorypreset.factory.CategoryPresetCommandFactory;
-import com.ryuqq.marketplace.application.categorypreset.manager.CategoryPresetCommandManager;
+import com.ryuqq.marketplace.application.categorypreset.internal.CategoryPresetMappingFacade;
 import com.ryuqq.marketplace.application.categorypreset.manager.CategoryPresetReadManager;
 import com.ryuqq.marketplace.application.categorypreset.port.in.command.DeleteCategoryPresetsUseCase;
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.domain.categorypreset.aggregate.CategoryPreset;
-import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -16,27 +16,22 @@ public class DeleteCategoryPresetsService implements DeleteCategoryPresetsUseCas
 
     private final CategoryPresetReadManager readManager;
     private final CategoryPresetCommandFactory commandFactory;
-    private final CategoryPresetCommandManager commandManager;
+    private final CategoryPresetMappingFacade facade;
 
     public DeleteCategoryPresetsService(
             CategoryPresetReadManager readManager,
             CategoryPresetCommandFactory commandFactory,
-            CategoryPresetCommandManager commandManager) {
+            CategoryPresetMappingFacade facade) {
         this.readManager = readManager;
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
+        this.facade = facade;
     }
 
     @Override
     public int execute(DeleteCategoryPresetsCommand command) {
-        List<CategoryPreset> presets = readManager.findAllByIds(command.ids());
-        if (presets.isEmpty()) {
-            return 0;
-        }
-
-        Instant now = commandFactory.now();
-        presets.forEach(preset -> preset.deactivate(now));
-        commandManager.persistAll(presets);
-        return presets.size();
+        StatusChangeContext<List<Long>> context =
+                commandFactory.createDeactivateContext(command);
+        List<CategoryPreset> presets = readManager.findAllByIds(context.id());
+        return facade.deactivateWithMappings(presets, context.changedAt());
     }
 }

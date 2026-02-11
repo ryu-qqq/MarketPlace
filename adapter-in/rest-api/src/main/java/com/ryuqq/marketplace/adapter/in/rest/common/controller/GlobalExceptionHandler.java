@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.common.controller;
 
+import com.ryuqq.authhub.sdk.exception.AuthHubException;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -296,6 +297,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .headers(headers)
                 .body(entity.getBody());
+    }
+
+    // ======= AuthHub SDK 에러 (외부 인증 서비스 응답) =======
+    private static final String EXTERNAL_AUTH_PREFIX = "EXTERNAL_AUTH_";
+
+    @ExceptionHandler(AuthHubException.class)
+    public ResponseEntity<ProblemDetail> handleAuthHubException(
+            AuthHubException ex, HttpServletRequest req) {
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode());
+        if (status == null) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        String errorCode = EXTERNAL_AUTH_PREFIX + ex.getErrorCode();
+        log.warn(
+                "AuthHub API error: code={}, status={}, message={}",
+                errorCode,
+                ex.getStatusCode(),
+                ex.getErrorMessage());
+        return build(status, status.getReasonPhrase(), ex.getErrorMessage(), errorCode, req);
     }
 
     // ======= 409 - 상태 충돌 =======

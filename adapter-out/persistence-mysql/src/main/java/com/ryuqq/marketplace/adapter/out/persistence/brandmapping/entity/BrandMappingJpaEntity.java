@@ -18,6 +18,9 @@ public class BrandMappingJpaEntity extends BaseAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "preset_id")
+    private Long presetId;
+
     @Column(name = "sales_channel_brand_id", nullable = false)
     private Long salesChannelBrandId;
 
@@ -33,6 +36,7 @@ public class BrandMappingJpaEntity extends BaseAuditEntity {
 
     private BrandMappingJpaEntity(
             Long id,
+            Long presetId,
             Long salesChannelBrandId,
             Long internalBrandId,
             String status,
@@ -40,6 +44,7 @@ public class BrandMappingJpaEntity extends BaseAuditEntity {
             Instant updatedAt) {
         super(createdAt, updatedAt);
         this.id = id;
+        this.presetId = presetId;
         this.salesChannelBrandId = salesChannelBrandId;
         this.internalBrandId = internalBrandId;
         this.status = status;
@@ -47,17 +52,22 @@ public class BrandMappingJpaEntity extends BaseAuditEntity {
 
     public static BrandMappingJpaEntity create(
             Long id,
+            Long presetId,
             Long salesChannelBrandId,
             Long internalBrandId,
             String status,
             Instant createdAt,
             Instant updatedAt) {
         return new BrandMappingJpaEntity(
-                id, salesChannelBrandId, internalBrandId, status, createdAt, updatedAt);
+                id, presetId, salesChannelBrandId, internalBrandId, status, createdAt, updatedAt);
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Long getPresetId() {
+        return presetId;
     }
 
     public Long getSalesChannelBrandId() {

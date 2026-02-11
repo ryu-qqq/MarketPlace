@@ -15,13 +15,19 @@ public class CategoryPresetCommandApiMapper {
     public RegisterCategoryPresetCommand toRegisterCommand(
             RegisterCategoryPresetApiRequest request) {
         return new RegisterCategoryPresetCommand(
-                request.shopId(), request.presetName(), request.categoryCode());
+                request.shopId(),
+                request.presetName(),
+                request.categoryCode(),
+                request.internalCategoryIds());
     }
 
     public UpdateCategoryPresetCommand toUpdateCommand(
             Long presetId, UpdateCategoryPresetApiRequest request) {
         return new UpdateCategoryPresetCommand(
-                presetId, request.presetName(), request.categoryCode());
+                presetId,
+                request.presetName(),
+                request.categoryCode(),
+                request.internalCategoryIds());
     }
 
     public DeleteCategoryPresetsCommand toDeleteCommand(DeleteCategoryPresetsApiRequest request) {

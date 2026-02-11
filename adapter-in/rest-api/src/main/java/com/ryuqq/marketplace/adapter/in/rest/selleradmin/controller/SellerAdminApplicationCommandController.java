@@ -303,9 +303,6 @@ public class SellerAdminApplicationCommandController {
                     @PathVariable(SellerAdminApplicationEndpoints.PATH_SELLER_ADMIN_ID)
                     String sellerAdminId) {
 
-        if (resetPasswordUseCase == null) {
-            throw new UnsupportedOperationException("비밀번호 초기화 기능이 비활성화되어 있습니다. 인증 서버 연동이 필요합니다.");
-        }
         ResetSellerAdminPasswordCommand command = mapper.toResetPasswordCommand(sellerAdminId);
         resetPasswordUseCase.execute(command);
 
@@ -344,9 +341,6 @@ public class SellerAdminApplicationCommandController {
                     String sellerAdminId,
             @Valid @RequestBody ChangeSellerAdminPasswordApiRequest request) {
 
-        if (changePasswordUseCase == null) {
-            throw new UnsupportedOperationException("비밀번호 변경 기능이 비활성화되어 있습니다. 인증 서버 연동이 필요합니다.");
-        }
         ChangeSellerAdminPasswordCommand command =
                 mapper.toChangePasswordCommand(sellerAdminId, request);
         changePasswordUseCase.execute(command);

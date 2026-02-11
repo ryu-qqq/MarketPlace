@@ -160,7 +160,7 @@ class AuthHubAuthClientAdapterTest {
         }
 
         @Test
-        @DisplayName("로그아웃 실패 시 예외를 발생시킨다")
+        @DisplayName("로그아웃 실패 시 AuthHubException을 전파한다")
         void logout_Failed_ThrowsException() {
             // given
             LogoutRequest logoutRequest = new LogoutRequest(DEFAULT_USER_ID);
@@ -172,8 +172,7 @@ class AuthHubAuthClientAdapterTest {
 
             // when & then
             assertThatThrownBy(() -> sut.logout(DEFAULT_USER_ID))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("Failed to logout");
+                    .isInstanceOf(AuthHubException.class);
         }
     }
 
@@ -202,6 +201,7 @@ class AuthHubAuthClientAdapterTest {
                             List.of(new MyInfoResult.RoleInfo("role-1", "ADMIN")),
                             List.of("READ", "WRITE"),
                             null,
+                            null,
                             null);
 
             given(authApi.getMe()).willReturn(apiResponse);
@@ -216,7 +216,7 @@ class AuthHubAuthClientAdapterTest {
         }
 
         @Test
-        @DisplayName("인증 실패 시 예외를 발생시킨다")
+        @DisplayName("인증 실패 시 AuthHubUnauthorizedException을 전파한다")
         void getMyInfo_Unauthorized_ThrowsException() {
             // given
             given(authApi.getMe())
@@ -224,8 +224,7 @@ class AuthHubAuthClientAdapterTest {
 
             // when & then
             assertThatThrownBy(() -> sut.getMyInfo(DEFAULT_ACCESS_TOKEN))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("Unauthorized");
+                    .isInstanceOf(AuthHubUnauthorizedException.class);
         }
     }
 }

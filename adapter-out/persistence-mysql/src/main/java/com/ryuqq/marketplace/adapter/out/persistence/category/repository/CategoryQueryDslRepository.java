@@ -72,6 +72,13 @@ public class CategoryQueryDslRepository {
         return count != null ? count : 0L;
     }
 
+    public List<CategoryJpaEntity> findAllByIds(List<Long> ids) {
+        return queryFactory
+                .selectFrom(category)
+                .where(category.id.in(ids), conditionBuilder.notDeleted())
+                .fetch();
+    }
+
     public boolean existsByCode(String code) {
         Integer result =
                 queryFactory

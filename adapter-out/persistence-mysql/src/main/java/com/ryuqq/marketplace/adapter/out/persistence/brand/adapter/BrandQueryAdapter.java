@@ -41,4 +41,9 @@ public class BrandQueryAdapter implements BrandQueryPort {
     public boolean existsByCode(String code) {
         return repository.existsByCode(code);
     }
+
+    @Override
+    public List<Brand> findAllByIds(List<Long> ids) {
+        return repository.findAllByIds(ids).stream().map(mapper::toDomain).toList();
+    }
 }
