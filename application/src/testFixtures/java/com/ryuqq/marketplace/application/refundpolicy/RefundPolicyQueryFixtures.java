@@ -15,22 +15,22 @@ public final class RefundPolicyQueryFixtures {
     // ===== RefundPolicySearchParams =====
 
     public static RefundPolicySearchParams searchParams(Long sellerId) {
-        return RefundPolicySearchParams.of(sellerId, defaultCommonSearchParams());
+        return RefundPolicySearchParams.of(sellerId, defaultCommonSearchParams(), null);
     }
 
     public static RefundPolicySearchParams searchParams(Long sellerId, int page, int size) {
-        return RefundPolicySearchParams.of(sellerId, commonSearchParams(page, size));
+        return RefundPolicySearchParams.of(sellerId, commonSearchParams(page, size), null);
     }
 
     public static CommonSearchParams defaultCommonSearchParams() {
-        return CommonSearchParams.of(false, null, null, "createdAt", "DESC", 0, 20);
+        return new CommonSearchParams(false, null, null, "createdAt", "DESC", 0, 20);
     }
 
     public static CommonSearchParams commonSearchParams(int page, int size) {
-        return CommonSearchParams.of(false, null, null, "createdAt", "DESC", page, size);
+        return new CommonSearchParams(false, null, null, "createdAt", "DESC", page, size);
     }
 
     public static CommonSearchParams commonSearchParamsIncludeDeleted() {
-        return CommonSearchParams.of(true, null, null, "createdAt", "DESC", 0, 20);
+        return new CommonSearchParams(true, null, null, "createdAt", "DESC", 0, 20);
     }
 }

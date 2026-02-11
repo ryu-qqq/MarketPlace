@@ -1,0 +1,40 @@
+[[sales-channel-category-register]]
+=== 외부채널 카테고리 등록
+
+인증 필요 | 필요 권한: `sales-channel-category:write`
+
+==== HTTP Request
+include::{snippets}/sales-channel-category/register/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/sales-channel-category/register/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/sales-channel-category/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/sales-channel-category/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/sales-channel-category/register/response-fields.adoc[]
+
+
+[[sales-channel-category-search]]
+=== 외부채널 카테고리 검색 조회
+
+인증 필요 | 필요 권한: `sales-channel-category:read`
+
+==== HTTP Request
+include::{snippets}/sales-channel-category/search/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/sales-channel-category/search/path-parameters.adoc[]
+
+==== Query Parameters
+include::{snippets}/sales-channel-category/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/sales-channel-category/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/sales-channel-category/search/response-fields.adoc[]

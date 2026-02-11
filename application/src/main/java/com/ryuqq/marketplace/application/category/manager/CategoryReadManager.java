@@ -38,4 +38,9 @@ public class CategoryReadManager {
     public boolean existsByCode(String code) {
         return queryPort.existsByCode(code);
     }
+
+    @Transactional(readOnly = true)
+    public List<Category> findAllByIds(List<Long> ids) {
+        return queryPort.findAllByIds(ids);
+    }
 }

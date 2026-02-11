@@ -8,6 +8,7 @@ import java.time.Instant;
 public class BrandMapping {
 
     private final BrandMappingId id;
+    private final Long presetId;
     private final Long salesChannelBrandId;
     private final Long internalBrandId;
     private BrandMappingStatus status;
@@ -16,12 +17,14 @@ public class BrandMapping {
 
     private BrandMapping(
             BrandMappingId id,
+            Long presetId,
             Long salesChannelBrandId,
             Long internalBrandId,
             BrandMappingStatus status,
             Instant createdAt,
             Instant updatedAt) {
         this.id = id;
+        this.presetId = presetId;
         this.salesChannelBrandId = salesChannelBrandId;
         this.internalBrandId = internalBrandId;
         this.status = status;
@@ -30,9 +33,11 @@ public class BrandMapping {
     }
 
     /** 신규 BrandMapping 생성 팩토리. */
-    public static BrandMapping forNew(Long salesChannelBrandId, Long internalBrandId, Instant now) {
+    public static BrandMapping forNew(
+            Long presetId, Long salesChannelBrandId, Long internalBrandId, Instant now) {
         return new BrandMapping(
                 BrandMappingId.forNew(),
+                presetId,
                 salesChannelBrandId,
                 internalBrandId,
                 BrandMappingStatus.ACTIVE,
@@ -43,13 +48,14 @@ public class BrandMapping {
     /** 영속성에서 복원 시 사용. */
     public static BrandMapping reconstitute(
             BrandMappingId id,
+            Long presetId,
             Long salesChannelBrandId,
             Long internalBrandId,
             BrandMappingStatus status,
             Instant createdAt,
             Instant updatedAt) {
         return new BrandMapping(
-                id, salesChannelBrandId, internalBrandId, status, createdAt, updatedAt);
+                id, presetId, salesChannelBrandId, internalBrandId, status, createdAt, updatedAt);
     }
 
     /** 활성화. */
@@ -70,6 +76,10 @@ public class BrandMapping {
 
     public Long idValue() {
         return id.value();
+    }
+
+    public Long presetId() {
+        return presetId;
     }
 
     public Long salesChannelBrandId() {

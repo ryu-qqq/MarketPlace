@@ -1,14 +1,20 @@
 package com.ryuqq.marketplace.application.brandpreset.validator;
 
+import com.ryuqq.marketplace.application.brand.manager.BrandReadManager;
 import com.ryuqq.marketplace.application.brandpreset.manager.BrandPresetReadManager;
 import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
+import com.ryuqq.marketplace.domain.brand.aggregate.Brand;
 import com.ryuqq.marketplace.domain.brandpreset.aggregate.BrandPreset;
-import com.ryuqq.marketplace.domain.brandpreset.exception.BrandPresetErrorCode;
-import com.ryuqq.marketplace.domain.brandpreset.exception.BrandPresetException;
+import com.ryuqq.marketplace.domain.brandpreset.exception.BrandPresetChannelMismatchException;
+import com.ryuqq.marketplace.domain.brandpreset.exception.BrandPresetInternalBrandNotFoundException;
 import com.ryuqq.marketplace.domain.brandpreset.exception.BrandPresetNotFoundException;
+import com.ryuqq.marketplace.domain.brandpreset.exception.BrandPresetSalesChannelBrandNotFoundException;
 import com.ryuqq.marketplace.domain.brandpreset.id.BrandPresetId;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import com.ryuqq.marketplace.domain.shop.id.ShopId;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,11 +29,15 @@ public class BrandPresetValidator {
 
     private final BrandPresetReadManager readManager;
     private final ShopReadManager shopReadManager;
+    private final BrandReadManager brandReadManager;
 
     public BrandPresetValidator(
-            BrandPresetReadManager readManager, ShopReadManager shopReadManager) {
+            BrandPresetReadManager readManager,
+            ShopReadManager shopReadManager,
+            BrandReadManager brandReadManager) {
         this.readManager = readManager;
         this.shopReadManager = shopReadManager;
+        this.brandReadManager = brandReadManager;
     }
 
     /**
@@ -46,7 +56,8 @@ public class BrandPresetValidator {
      *
      * @param shopId Shop ID
      * @param salesChannelBrandId SalesChannelBrand ID
-     * @throws BrandPresetException 판매채널이 일치하지 않는 경우
+     * @throws BrandPresetSalesChannelBrandNotFoundException 판매채널 브랜드를 찾을 수 없는 경우
+     * @throws BrandPresetChannelMismatchException 판매채널이 일치하지 않는 경우
      */
     public void validateSameChannel(Long shopId, Long salesChannelBrandId) {
         Shop shop = shopReadManager.getById(ShopId.of(shopId));
@@ -55,19 +66,33 @@ public class BrandPresetValidator {
                         .findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId)
                         .orElseThrow(
                                 () ->
-                                        new BrandPresetException(
-                                                BrandPresetErrorCode.BRAND_PRESET_CHANNEL_MISMATCH,
-                                                String.format(
-                                                        "SalesChannelBrand를 찾을 수 없습니다 (id: %d)",
-                                                        salesChannelBrandId)));
+                                        new BrandPresetSalesChannelBrandNotFoundException(
+                                                salesChannelBrandId));
 
         if (!shop.salesChannelId().equals(brandSalesChannelId)) {
-            throw new BrandPresetException(
-                    BrandPresetErrorCode.BRAND_PRESET_CHANNEL_MISMATCH,
-                    String.format(
-                            "Shop(salesChannelId: %d)과 SalesChannelBrand(salesChannelId: %d)의 판매채널이"
-                                    + " 일치하지 않습니다",
-                            shop.salesChannelId(), brandSalesChannelId));
+            throw new BrandPresetChannelMismatchException(
+                    shop.salesChannelId(), brandSalesChannelId);
+        }
+    }
+
+    /**
+     * 요청한 내부 브랜드 ID 목록이 모두 존재하는지 검증.
+     *
+     * @param internalBrandIds 내부 브랜드 ID 목록
+     * @throws BrandPresetInternalBrandNotFoundException 존재하지 않는 브랜드가 있는 경우
+     */
+    public void validateInternalBrandsExist(List<Long> internalBrandIds) {
+        if (internalBrandIds == null || internalBrandIds.isEmpty()) {
+            return;
+        }
+        Set<Long> uniqueInternalBrandIds = new java.util.HashSet<>(internalBrandIds);
+        List<Brand> foundBrands = brandReadManager.findAllByIds(internalBrandIds);
+        if (foundBrands.size() != uniqueInternalBrandIds.size()) {
+            Set<Long> foundIds =
+                    foundBrands.stream().map(Brand::idValue).collect(Collectors.toSet());
+            List<Long> missingIds =
+                    uniqueInternalBrandIds.stream().filter(id -> !foundIds.contains(id)).toList();
+            throw new BrandPresetInternalBrandNotFoundException(missingIds);
         }
     }
 }

@@ -112,6 +112,8 @@ class ShippingPolicyQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[]").description("배송정책 목록"),
                                             fieldWithPath("data.content[].policyId")
                                                     .description("정책 ID"),
+                                            fieldWithPath("data.content[].sellerId")
+                                                    .description("셀러 ID"),
                                             fieldWithPath("data.content[].policyName")
                                                     .description("정책명"),
                                             fieldWithPath("data.content[].defaultPolicy")
@@ -127,8 +129,24 @@ class ShippingPolicyQueryControllerRestDocsTest {
                                                     .description("기본 배송비"),
                                             fieldWithPath("data.content[].freeThreshold")
                                                     .description("무료배송 기준금액"),
+                                            fieldWithPath("data.content[].jejuExtraFee")
+                                                    .description("제주 추가배송비"),
+                                            fieldWithPath("data.content[].islandExtraFee")
+                                                    .description("도서산간 추가배송비"),
+                                            fieldWithPath("data.content[].returnFee")
+                                                    .description("반품 배송비"),
+                                            fieldWithPath("data.content[].exchangeFee")
+                                                    .description("교환 배송비"),
+                                            fieldWithPath("data.content[].leadTimeMinDays")
+                                                    .description("최소 배송일"),
+                                            fieldWithPath("data.content[].leadTimeMaxDays")
+                                                    .description("최대 배송일"),
+                                            fieldWithPath("data.content[].leadTimeCutoffTime")
+                                                    .description("당일 출고 마감시간 (HH:mm)"),
                                             fieldWithPath("data.content[].createdAt")
                                                     .description("생성일시 (ISO 8601)"),
+                                            fieldWithPath("data.content[].updatedAt")
+                                                    .description("수정일시 (ISO 8601)"),
                                             fieldWithPath("data.page").description("현재 페이지 번호"),
                                             fieldWithPath("data.size").description("페이지 크기"),
                                             fieldWithPath("data.totalElements")

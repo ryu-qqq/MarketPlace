@@ -22,6 +22,7 @@ import jakarta.validation.constraints.Min;
  * @param sortDirection 정렬 방향 (ASC, DESC)
  * @param page 페이지 번호 (0부터 시작)
  * @param size 페이지 크기 (최대 100)
+ * @param active 활성화 여부 (true: 활성만, false: 비활성만, null: 전체)
  * @author ryu-qqq
  * @since 1.0.0
  */
@@ -41,4 +42,7 @@ public record SearchShippingPoliciesPageApiRequest(
                 @Schema(description = "페이지 크기", minimum = "1", maximum = "100")
                 @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다")
                 @Max(value = 100, message = "페이지 크기는 100 이하여야 합니다")
-                Integer size) {}
+                Integer size,
+        @Parameter(description = "활성화 여부 (true: 활성만, false: 비활성만, 미입력: 전체)")
+                @Schema(description = "활성화 여부", nullable = true)
+                Boolean active) {}

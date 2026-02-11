@@ -59,7 +59,7 @@ public class RefundPolicyQueryApiMapper {
                 CommonSearchParams.of(
                         null, null, null, request.sortKey(), request.sortDirection(), page, size);
 
-        return RefundPolicySearchParams.of(sellerId, searchParams);
+        return RefundPolicySearchParams.of(sellerId, searchParams, request.active());
     }
 
     /**
@@ -76,13 +76,19 @@ public class RefundPolicyQueryApiMapper {
 
         return new RefundPolicyApiResponse(
                 result.policyId(),
+                result.sellerId(),
                 result.policyName(),
                 result.defaultPolicy(),
                 result.active(),
                 result.returnPeriodDays(),
                 result.exchangePeriodDays(),
                 conditions,
-                DateTimeFormatUtils.formatIso8601(result.createdAt()));
+                result.partialRefundEnabled(),
+                result.inspectionRequired(),
+                result.inspectionPeriodDays(),
+                result.additionalInfo(),
+                DateTimeFormatUtils.formatIso8601(result.createdAt()),
+                DateTimeFormatUtils.formatIso8601(result.updatedAt()));
     }
 
     /**

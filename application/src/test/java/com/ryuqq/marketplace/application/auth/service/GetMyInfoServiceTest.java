@@ -71,6 +71,7 @@ class GetMyInfoServiceTest {
             MyInfoResult result = sut.execute(accessToken);
 
             // then
+            assertThat(result.sellerAdminId()).isEqualTo("sa-001");
             assertThat(result.sellerId()).isEqualTo(100L);
             assertThat(result.phoneNumber()).isEqualTo("010-1234-5678");
             assertThat(result.userId()).isEqualTo(authInfo.userId());
@@ -93,6 +94,7 @@ class GetMyInfoServiceTest {
             MyInfoResult result = sut.execute(accessToken);
 
             // then
+            assertThat(result.sellerAdminId()).isNull();
             assertThat(result.sellerId()).isNull();
             assertThat(result.phoneNumber()).isNull();
             assertThat(result.userId()).isEqualTo(authInfo.userId());

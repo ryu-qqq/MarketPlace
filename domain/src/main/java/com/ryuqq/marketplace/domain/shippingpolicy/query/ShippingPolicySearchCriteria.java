@@ -10,20 +10,22 @@ import com.ryuqq.marketplace.domain.seller.id.SellerId;
  *
  * @param sellerId 셀러 ID (필수)
  * @param queryContext 정렬 및 페이징 정보
+ * @param active 활성화 여부 (true: 활성만, false: 비활성만, null: 전체)
  */
 public record ShippingPolicySearchCriteria(
-        SellerId sellerId, QueryContext<ShippingPolicySortKey> queryContext) {
+        SellerId sellerId, QueryContext<ShippingPolicySortKey> queryContext, Boolean active) {
 
     /**
      * 검색 조건 생성
      *
      * @param sellerId 셀러 ID
      * @param queryContext 정렬 및 페이징 정보
+     * @param active 활성화 여부
      * @return ShippingPolicySearchCriteria
      */
     public static ShippingPolicySearchCriteria of(
-            SellerId sellerId, QueryContext<ShippingPolicySortKey> queryContext) {
-        return new ShippingPolicySearchCriteria(sellerId, queryContext);
+            SellerId sellerId, QueryContext<ShippingPolicySortKey> queryContext, Boolean active) {
+        return new ShippingPolicySearchCriteria(sellerId, queryContext, active);
     }
 
     /**
@@ -34,7 +36,7 @@ public record ShippingPolicySearchCriteria(
      */
     public static ShippingPolicySearchCriteria defaultCriteria(SellerId sellerId) {
         return new ShippingPolicySearchCriteria(
-                sellerId, QueryContext.defaultOf(ShippingPolicySortKey.defaultKey()));
+                sellerId, QueryContext.defaultOf(ShippingPolicySortKey.defaultKey()), null);
     }
 
     /** 페이지 크기 반환 (편의 메서드) */

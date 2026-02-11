@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.brandmapping.mapper.BrandMa
 import com.ryuqq.marketplace.adapter.out.persistence.brandmapping.repository.BrandMappingJpaRepository;
 import com.ryuqq.marketplace.application.brandmapping.port.out.command.BrandMappingCommandPort;
 import com.ryuqq.marketplace.domain.brandmapping.aggregate.BrandMapping;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /** BrandMapping Command Adapter. */
@@ -25,5 +26,22 @@ public class BrandMappingCommandAdapter implements BrandMappingCommandPort {
         BrandMappingJpaEntity entity = mapper.toEntity(brandMapping);
         BrandMappingJpaEntity saved = repository.save(entity);
         return saved.getId();
+    }
+
+    @Override
+    public List<Long> persistAll(List<BrandMapping> brandMappings) {
+        List<BrandMappingJpaEntity> entities =
+                brandMappings.stream().map(mapper::toEntity).toList();
+        return repository.saveAll(entities).stream().map(BrandMappingJpaEntity::getId).toList();
+    }
+
+    @Override
+    public void deleteAllByPresetId(Long presetId) {
+        repository.deleteAllByPresetId(presetId);
+    }
+
+    @Override
+    public void deleteAllByPresetIds(List<Long> presetIds) {
+        repository.deleteAllByPresetIdIn(presetIds);
     }
 }

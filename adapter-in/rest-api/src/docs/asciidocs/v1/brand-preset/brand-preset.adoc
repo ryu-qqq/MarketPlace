@@ -1,0 +1,70 @@
+[[brand-preset-register]]
+=== 브랜드 프리셋 등록
+
+인증 필요 | 필요 권한: `brand-preset:write`
+
+==== HTTP Request
+include::{snippets}/brand-preset/register/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/brand-preset/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/brand-preset/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/brand-preset/register/response-fields.adoc[]
+
+
+[[brand-preset-update]]
+=== 브랜드 프리셋 수정
+
+인증 필요 | 필요 권한: `brand-preset:write`
+
+==== HTTP Request
+include::{snippets}/brand-preset/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/brand-preset/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/brand-preset/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/brand-preset/update/http-response.adoc[]
+
+
+[[brand-preset-delete]]
+=== 브랜드 프리셋 벌크 삭제
+
+인증 필요 | 필요 권한: `brand-preset:write`
+
+==== HTTP Request
+include::{snippets}/brand-preset/delete/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/brand-preset/delete/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/brand-preset/delete/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/brand-preset/delete/response-fields.adoc[]
+
+
+[[brand-preset-search]]
+=== 브랜드 프리셋 검색 조회
+
+인증 필요 | 필요 권한: `brand-preset:read`
+
+==== HTTP Request
+include::{snippets}/brand-preset/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/brand-preset/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/brand-preset/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/brand-preset/search/response-fields.adoc[]

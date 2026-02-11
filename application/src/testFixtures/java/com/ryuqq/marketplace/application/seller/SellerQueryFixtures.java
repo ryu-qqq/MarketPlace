@@ -39,10 +39,10 @@ public final class SellerQueryFixtures {
     }
 
     public static CommonSearchParams defaultCommonSearchParams() {
-        return CommonSearchParams.of(false, null, null, "createdAt", "DESC", 0, 20);
+        return new CommonSearchParams(false, null, null, "createdAt", "DESC", 0, 20);
     }
 
     public static CommonSearchParams commonSearchParams(int page, int size) {
-        return CommonSearchParams.of(false, null, null, "createdAt", "DESC", page, size);
+        return new CommonSearchParams(false, null, null, "createdAt", "DESC", page, size);
     }
 }

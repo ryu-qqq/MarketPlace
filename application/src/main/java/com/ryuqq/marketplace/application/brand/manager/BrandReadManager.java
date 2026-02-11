@@ -38,4 +38,9 @@ public class BrandReadManager {
     public boolean existsByCode(String code) {
         return queryPort.existsByCode(code);
     }
+
+    @Transactional(readOnly = true)
+    public List<Brand> findAllByIds(List<Long> ids) {
+        return queryPort.findAllByIds(ids);
+    }
 }
