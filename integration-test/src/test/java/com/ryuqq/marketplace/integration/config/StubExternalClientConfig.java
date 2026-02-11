@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.integration.config;
 
+import com.ryuqq.authhub.sdk.auth.TokenResolver;
 import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
 import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
@@ -32,6 +33,14 @@ import org.springframework.context.annotation.Primary;
  */
 @TestConfiguration
 public class StubExternalClientConfig {
+
+    // ===== SDK 인프라 Stubs =====
+
+    @Bean
+    @Primary
+    public TokenResolver stubTokenResolver() {
+        return () -> Optional.of("stub-service-token");
+    }
 
     // ===== 외부 서비스 클라이언트 Stubs =====
 
