@@ -257,7 +257,8 @@ class ShippingPolicyQueryAdapterTest {
                             QueryContext.of(
                                     ShippingPolicySortKey.CREATED_AT,
                                     SortDirection.DESC,
-                                    PageRequest.of(0, 10)));
+                                    PageRequest.of(0, 10)),
+                            null);
 
             ShippingPolicyJpaEntity entity =
                     ShippingPolicyJpaEntityFixtures.activeConditionalFreeEntity();
@@ -293,7 +294,8 @@ class ShippingPolicyQueryAdapterTest {
                             QueryContext.of(
                                     ShippingPolicySortKey.CREATED_AT,
                                     SortDirection.DESC,
-                                    PageRequest.of(0, 10)));
+                                    PageRequest.of(0, 10)),
+                            null);
 
             given(queryDslRepository.countByCriteria(criteria)).willReturn(5L);
 

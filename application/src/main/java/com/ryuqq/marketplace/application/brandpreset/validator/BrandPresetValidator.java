@@ -85,12 +85,15 @@ public class BrandPresetValidator {
         if (internalBrandIds == null || internalBrandIds.isEmpty()) {
             return;
         }
+        Set<Long> uniqueInternalBrandIds = new java.util.HashSet<>(internalBrandIds);
         List<Brand> foundBrands = brandReadManager.findAllByIds(internalBrandIds);
-        if (foundBrands.size() != internalBrandIds.size()) {
+        if (foundBrands.size() != uniqueInternalBrandIds.size()) {
             Set<Long> foundIds =
                     foundBrands.stream().map(Brand::idValue).collect(Collectors.toSet());
             List<Long> missingIds =
-                    internalBrandIds.stream().filter(id -> !foundIds.contains(id)).toList();
+                    uniqueInternalBrandIds.stream()
+                            .filter(id -> !foundIds.contains(id))
+                            .toList();
             throw new BrandPresetInternalBrandNotFoundException(missingIds);
         }
     }

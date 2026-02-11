@@ -246,7 +246,8 @@ class RefundPolicyQueryDslRepositoryTest {
                                     com.ryuqq.marketplace.domain.refundpolicy.query
                                             .RefundPolicySortKey.defaultKey(),
                                     com.ryuqq.marketplace.domain.common.vo.SortDirection.ASC,
-                                    com.ryuqq.marketplace.domain.common.vo.PageRequest.of(1, 2)));
+                                    com.ryuqq.marketplace.domain.common.vo.PageRequest.of(1, 2)),
+                            null);
             var result = repository().findByCriteria(criteria);
 
             assertThat(result).hasSize(2);

@@ -40,7 +40,7 @@ public class ShippingPolicyQueryFactory {
 
         SellerId sellerId = SellerId.of(params.sellerId());
 
-        return new ShippingPolicySearchCriteria(sellerId, queryContext);
+        return new ShippingPolicySearchCriteria(sellerId, queryContext, params.active());
     }
 
     private ShippingPolicySortKey resolveSortKey(String sortKeyString) {

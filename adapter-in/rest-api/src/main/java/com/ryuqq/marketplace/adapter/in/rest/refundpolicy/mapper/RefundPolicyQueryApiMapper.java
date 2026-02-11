@@ -59,7 +59,7 @@ public class RefundPolicyQueryApiMapper {
                 CommonSearchParams.of(
                         null, null, null, request.sortKey(), request.sortDirection(), page, size);
 
-        return RefundPolicySearchParams.of(sellerId, searchParams);
+        return RefundPolicySearchParams.of(sellerId, searchParams, request.active());
     }
 
     /**
