@@ -2,8 +2,6 @@ package com.ryuqq.marketplace.adapter.in.rest.auth.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -13,6 +11,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.ryuqq.authhub.sdk.context.UserContext;
+import com.ryuqq.authhub.sdk.context.UserContextHolder;
 import com.ryuqq.marketplace.adapter.in.rest.auth.AuthAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.auth.AuthApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.response.MyInfoApiResponse;
@@ -20,6 +20,7 @@ import com.ryuqq.marketplace.adapter.in.rest.auth.mapper.AuthQueryApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
 import com.ryuqq.marketplace.application.auth.port.in.GetMyInfoUseCase;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -47,28 +48,36 @@ class AuthQueryControllerRestDocsTest {
     @MockitoBean private AuthQueryApiMapper queryMapper;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
+    @AfterEach
+    void tearDown() {
+        UserContextHolder.clearContext();
+    }
+
     @Nested
     @DisplayName("내 정보 조회 API")
     class MeTest {
 
         @Test
-        @DisplayName("유효한 토큰이면 200과 내 정보를 반환한다")
-        void me_ValidToken_Returns200WithMyInfo() throws Exception {
+        @DisplayName("인증된 사용자면 200과 내 정보를 반환한다")
+        void me_AuthenticatedUser_Returns200WithMyInfo() throws Exception {
             // given
-            String authorization = "Bearer " + AuthApiFixtures.DEFAULT_ACCESS_TOKEN;
+            UserContext userContext =
+                    UserContext.builder()
+                            .userId(AuthApiFixtures.DEFAULT_USER_ID)
+                            .email(AuthApiFixtures.DEFAULT_EMAIL)
+                            .roles(java.util.Set.of("ADMIN"))
+                            .permissions(java.util.Set.of("auth:read"))
+                            .build();
+            UserContextHolder.setContext(userContext);
+
             MyInfoResult result = AuthApiFixtures.myInfoResult();
             MyInfoApiResponse response = AuthApiFixtures.myInfoApiResponse();
 
-            given(queryMapper.extractToken(authorization))
-                    .willReturn(AuthApiFixtures.DEFAULT_ACCESS_TOKEN);
-            given(getMyInfoUseCase.execute(AuthApiFixtures.DEFAULT_ACCESS_TOKEN))
-                    .willReturn(result);
+            given(getMyInfoUseCase.execute(AuthApiFixtures.DEFAULT_USER_ID)).willReturn(result);
             given(queryMapper.toResponse(any(MyInfoResult.class))).willReturn(response);
 
             // when & then
-            mockMvc.perform(
-                            RestDocumentationRequestBuilders.get(BASE_URL + AuthAdminEndpoints.ME)
-                                    .header("Authorization", authorization))
+            mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + AuthAdminEndpoints.ME))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.userId").value(AuthApiFixtures.DEFAULT_USER_ID))
                     .andExpect(jsonPath("$.data.email").value(AuthApiFixtures.DEFAULT_EMAIL))
@@ -80,9 +89,6 @@ class AuthQueryControllerRestDocsTest {
                                     "auth/me",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName("Authorization")
-                                                    .description("Bearer 액세스 토큰")),
                                     responseFields(
                                             fieldWithPath("data.userId").description("사용자 ID"),
                                             fieldWithPath("data.email").description("이메일"),

@@ -58,12 +58,12 @@ public class AuthManager {
     }
 
     /**
-     * 현재 사용자 정보를 조회합니다.
+     * 사용자 정보를 조회합니다.
      *
-     * @param accessToken 액세스 토큰
+     * @param userId 사용자 ID
      * @return 사용자 정보
      */
-    public MyInfoResult getMyInfo(String accessToken) {
-        return authClient.getMyInfo(accessToken);
+    public MyInfoResult getMyInfo(String userId) {
+        return authClient.getMyInfo(userId);
     }
 }
