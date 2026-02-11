@@ -53,8 +53,7 @@ public class AuthQueryController {
     /**
      * 내 정보 조회 API.
      *
-     * <p>현재 로그인한 관리자의 정보를 조회합니다.
-     * Gateway가 전달한 X-User-Id 헤더에서 userId를 추출하여 Internal API로 조회합니다.
+     * <p>현재 로그인한 관리자의 정보를 조회합니다. Gateway가 전달한 X-User-Id 헤더에서 userId를 추출하여 Internal API로 조회합니다.
      *
      * @return 관리자 정보
      */
