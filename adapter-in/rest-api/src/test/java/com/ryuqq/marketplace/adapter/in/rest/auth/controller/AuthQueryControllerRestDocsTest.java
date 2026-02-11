@@ -20,7 +20,6 @@ import com.ryuqq.marketplace.adapter.in.rest.auth.mapper.AuthQueryApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
 import com.ryuqq.marketplace.application.auth.port.in.GetMyInfoUseCase;
-import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -74,13 +73,11 @@ class AuthQueryControllerRestDocsTest {
             MyInfoResult result = AuthApiFixtures.myInfoResult();
             MyInfoApiResponse response = AuthApiFixtures.myInfoApiResponse();
 
-            given(getMyInfoUseCase.execute(AuthApiFixtures.DEFAULT_USER_ID))
-                    .willReturn(result);
+            given(getMyInfoUseCase.execute(AuthApiFixtures.DEFAULT_USER_ID)).willReturn(result);
             given(queryMapper.toResponse(any(MyInfoResult.class))).willReturn(response);
 
             // when & then
-            mockMvc.perform(
-                            RestDocumentationRequestBuilders.get(BASE_URL + AuthAdminEndpoints.ME))
+            mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + AuthAdminEndpoints.ME))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.userId").value(AuthApiFixtures.DEFAULT_USER_ID))
                     .andExpect(jsonPath("$.data.email").value(AuthApiFixtures.DEFAULT_EMAIL))
