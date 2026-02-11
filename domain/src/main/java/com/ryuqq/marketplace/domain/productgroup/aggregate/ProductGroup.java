@@ -230,9 +230,11 @@ public class ProductGroup {
 
     /** 총 옵션 값 수 (전체 그룹 합산). */
     public int totalOptionValueCount() {
-        return sellerOptionGroups.stream()
-                .mapToInt(SellerOptionGroup::optionValueCount)
-                .sum();
+        int total = 0;
+        for (SellerOptionGroup group : sellerOptionGroups) {
+            total += group.optionValueCount();
+        }
+        return total;
     }
 
     // ── Accessor 메서드 ──
