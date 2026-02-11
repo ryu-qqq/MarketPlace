@@ -100,6 +100,8 @@ class RefundPolicyQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[]").description("환불정책 목록"),
                                             fieldWithPath("data.content[].policyId")
                                                     .description("정책 ID"),
+                                            fieldWithPath("data.content[].sellerId")
+                                                    .description("셀러 ID"),
                                             fieldWithPath("data.content[].policyName")
                                                     .description("정책명"),
                                             fieldWithPath("data.content[].defaultPolicy")
@@ -119,8 +121,18 @@ class RefundPolicyQueryControllerRestDocsTest {
                                             fieldWithPath(
                                                             "data.content[].nonReturnableConditions[].displayName")
                                                     .description("조건 표시명"),
+                                            fieldWithPath("data.content[].partialRefundEnabled")
+                                                    .description("부분 환불 허용 여부"),
+                                            fieldWithPath("data.content[].inspectionRequired")
+                                                    .description("검수 필요 여부"),
+                                            fieldWithPath("data.content[].inspectionPeriodDays")
+                                                    .description("검수 기간 (일)"),
+                                            fieldWithPath("data.content[].additionalInfo")
+                                                    .description("추가 안내 문구"),
                                             fieldWithPath("data.content[].createdAt")
-                                                    .description("생성일시"),
+                                                    .description("생성일시 (ISO 8601)"),
+                                            fieldWithPath("data.content[].updatedAt")
+                                                    .description("수정일시 (ISO 8601)"),
                                             fieldWithPath("data.page").description("현재 페이지 번호"),
                                             fieldWithPath("data.size").description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
