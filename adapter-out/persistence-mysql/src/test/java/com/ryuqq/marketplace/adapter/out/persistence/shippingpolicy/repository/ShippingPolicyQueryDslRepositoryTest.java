@@ -276,7 +276,8 @@ class ShippingPolicyQueryDslRepositoryTest {
                             QueryContext.of(
                                     ShippingPolicySortKey.CREATED_AT,
                                     SortDirection.DESC,
-                                    PageRequest.of(0, 2)));
+                                    PageRequest.of(0, 2)),
+                            null);
 
             // when
             var result = repository().findByCriteria(criteria);
@@ -299,7 +300,8 @@ class ShippingPolicyQueryDslRepositoryTest {
                             QueryContext.of(
                                     ShippingPolicySortKey.CREATED_AT,
                                     SortDirection.DESC,
-                                    PageRequest.of(0, 1)));
+                                    PageRequest.of(0, 1)),
+                            null);
 
             // when
             var result = repository().findByCriteria(criteria);
@@ -324,7 +326,8 @@ class ShippingPolicyQueryDslRepositoryTest {
                             QueryContext.of(
                                     ShippingPolicySortKey.CREATED_AT,
                                     SortDirection.ASC,
-                                    PageRequest.of(0, 10)));
+                                    PageRequest.of(0, 10)),
+                            null);
 
             // when
             var result = repository().findByCriteria(criteria);
@@ -350,7 +353,8 @@ class ShippingPolicyQueryDslRepositoryTest {
                             QueryContext.of(
                                     ShippingPolicySortKey.POLICY_NAME,
                                     SortDirection.ASC,
-                                    PageRequest.of(0, 10)));
+                                    PageRequest.of(0, 10)),
+                            null);
 
             // when
             var result = repository().findByCriteria(criteria);
@@ -379,7 +383,8 @@ class ShippingPolicyQueryDslRepositoryTest {
                             QueryContext.of(
                                     ShippingPolicySortKey.BASE_FEE,
                                     SortDirection.ASC,
-                                    PageRequest.of(0, 10)));
+                                    PageRequest.of(0, 10)),
+                            null);
 
             // when
             var result = repository().findByCriteria(criteria);
@@ -405,7 +410,8 @@ class ShippingPolicyQueryDslRepositoryTest {
                             QueryContext.of(
                                     ShippingPolicySortKey.CREATED_AT,
                                     SortDirection.DESC,
-                                    PageRequest.of(0, 10)));
+                                    PageRequest.of(0, 10)),
+                            null);
 
             // when
             var result = repository().findByCriteria(criteria);

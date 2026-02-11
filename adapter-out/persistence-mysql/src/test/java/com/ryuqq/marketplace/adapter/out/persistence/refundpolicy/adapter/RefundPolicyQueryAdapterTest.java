@@ -252,7 +252,8 @@ class RefundPolicyQueryAdapterTest {
                             QueryContext.of(
                                     RefundPolicySortKey.CREATED_AT,
                                     SortDirection.DESC,
-                                    PageRequest.of(0, 10)));
+                                    PageRequest.of(0, 10)),
+                            null);
 
             RefundPolicyJpaEntity entity = RefundPolicyJpaEntityFixtures.activeEntity();
             RefundPolicy domain = RefundPolicyFixtures.activeRefundPolicy();
@@ -287,7 +288,8 @@ class RefundPolicyQueryAdapterTest {
                             QueryContext.of(
                                     RefundPolicySortKey.CREATED_AT,
                                     SortDirection.DESC,
-                                    PageRequest.of(0, 10)));
+                                    PageRequest.of(0, 10)),
+                            null);
 
             given(queryDslRepository.countByCriteria(criteria)).willReturn(5L);
 

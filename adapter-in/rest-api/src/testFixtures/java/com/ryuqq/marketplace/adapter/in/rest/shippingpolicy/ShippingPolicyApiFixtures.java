@@ -99,16 +99,16 @@ public final class ShippingPolicyApiFixtures {
     // ===== SearchShippingPoliciesPageApiRequest =====
 
     public static SearchShippingPoliciesPageApiRequest searchRequest() {
-        return new SearchShippingPoliciesPageApiRequest(null, null, 0, 20);
+        return new SearchShippingPoliciesPageApiRequest(null, null, 0, 20, null);
     }
 
     public static SearchShippingPoliciesPageApiRequest searchRequest(int page, int size) {
-        return new SearchShippingPoliciesPageApiRequest(null, null, page, size);
+        return new SearchShippingPoliciesPageApiRequest(null, null, page, size, null);
     }
 
     public static SearchShippingPoliciesPageApiRequest searchRequestWithSort(
             String sortKey, String sortDirection) {
-        return new SearchShippingPoliciesPageApiRequest(sortKey, sortDirection, 0, 20);
+        return new SearchShippingPoliciesPageApiRequest(sortKey, sortDirection, 0, 20, null);
     }
 
     // ===== ShippingPolicyResult (Application) =====

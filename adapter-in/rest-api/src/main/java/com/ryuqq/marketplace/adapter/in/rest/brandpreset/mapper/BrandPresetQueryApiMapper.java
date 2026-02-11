@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetRes
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +46,7 @@ public class BrandPresetQueryApiMapper {
         }
         try {
             return LocalDate.parse(dateString, DATE_FORMATTER);
-        } catch (Exception e) {
+        } catch (DateTimeParseException e) {
             return null;
         }
     }
