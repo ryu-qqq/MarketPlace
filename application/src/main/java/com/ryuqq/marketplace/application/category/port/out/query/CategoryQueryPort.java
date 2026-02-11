@@ -15,4 +15,6 @@ public interface CategoryQueryPort {
     long countByCriteria(CategorySearchCriteria criteria);
 
     boolean existsByCode(String code);
+
+    List<Category> findAllByIds(List<Long> ids);
 }

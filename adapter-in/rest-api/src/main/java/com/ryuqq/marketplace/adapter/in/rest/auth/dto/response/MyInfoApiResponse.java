@@ -21,6 +21,7 @@ public record MyInfoApiResponse(
         @Schema(description = "조직 이름", example = "조직명") String organizationName,
         @Schema(description = "역할 목록") List<RoleApiResponse> roles,
         @Schema(description = "권한 목록") List<String> permissions,
+        @Schema(description = "셀러 관리자 ID", example = "sa-001") String sellerAdminId,
         @Schema(description = "셀러 ID", example = "1") Long sellerId,
         @Schema(description = "핸드폰 번호", example = "010-1234-5678") String phoneNumber) {
 
@@ -54,6 +55,7 @@ public record MyInfoApiResponse(
                 result.organizationName(),
                 roles,
                 result.permissions(),
+                result.sellerAdminId(),
                 result.sellerId(),
                 result.phoneNumber());
     }

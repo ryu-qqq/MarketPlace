@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.adapter.out.persistence.categorypreset.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.composite.CategoryPresetCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.mapper.CategoryPresetJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.repository.CategoryPresetQueryDslRepository;
 import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetResult;
@@ -32,7 +31,7 @@ public class CategoryPresetQueryAdapter implements CategoryPresetQueryPort {
 
     @Override
     public List<CategoryPresetResult> findByCriteria(CategoryPresetSearchCriteria criteria) {
-        return repository.findByCriteria(criteria).stream().map(this::toResult).toList();
+        return repository.findByCriteria(criteria).stream().map(mapper::toResult).toList();
     }
 
     @Override
@@ -49,19 +48,5 @@ public class CategoryPresetQueryAdapter implements CategoryPresetQueryPort {
     public Optional<Long> findSalesChannelCategoryIdByCode(
             Long salesChannelId, String categoryCode) {
         return repository.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
-    }
-
-    private CategoryPresetResult toResult(CategoryPresetCompositeDto dto) {
-        return new CategoryPresetResult(
-                dto.id(),
-                dto.shopId(),
-                dto.shopName(),
-                dto.salesChannelId(),
-                dto.salesChannelName(),
-                dto.accountId(),
-                dto.presetName(),
-                dto.categoryPath(),
-                dto.externalCategoryCode(),
-                dto.createdAt());
     }
 }

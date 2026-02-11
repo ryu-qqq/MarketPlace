@@ -42,4 +42,9 @@ public class CategoryQueryAdapter implements CategoryQueryPort {
     public boolean existsByCode(String code) {
         return repository.existsByCode(code);
     }
+
+    @Override
+    public List<Category> findAllByIds(List<Long> ids) {
+        return repository.findAllByIds(ids).stream().map(mapper::toDomain).toList();
+    }
 }

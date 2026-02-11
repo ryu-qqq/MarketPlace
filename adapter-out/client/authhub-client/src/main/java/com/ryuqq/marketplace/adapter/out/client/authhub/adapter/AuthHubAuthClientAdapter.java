@@ -58,12 +58,7 @@ public class AuthHubAuthClientAdapter implements AuthClient {
 
     @Override
     public void logout(String userId) {
-        try {
-            authApi.logout(mapper.toLogoutRequest(userId));
-
-        } catch (AuthHubException e) {
-            throw new IllegalStateException("Failed to logout: " + e.getMessage(), e);
-        }
+        authApi.logout(mapper.toLogoutRequest(userId));
     }
 
     @Override
@@ -84,19 +79,11 @@ public class AuthHubAuthClientAdapter implements AuthClient {
 
     @Override
     public MyInfoResult getMyInfo(String accessToken) {
-        try {
-            // TODO: SDK에서 accessToken을 어떻게 처리하는지 확인 필요
-            // 현재 SDK의 getMe()는 파라미터 없이 호출됨 (내부적으로 토큰 관리)
-            ApiResponse<MyContextResponse> response = authApi.getMe();
-
-            return mapper.toMyInfoResult(response.data());
-
-        } catch (AuthHubUnauthorizedException e) {
-            throw new IllegalStateException("Unauthorized: " + e.getMessage(), e);
-
-        } catch (AuthHubException e) {
-            throw new IllegalStateException("Failed to get user context: " + e.getMessage(), e);
-        }
+        // AuthHubTokenContextFilter가 Authorization 헤더의 토큰을 ThreadLocal에 자동 설정하므로,
+        // SDK의 getMe()는 파라미터 없이 호출해도 ThreadLocal 토큰을 사용합니다.
+        // AuthHubException은 GlobalExceptionHandler에서 올바른 HTTP 상태 코드로 매핑됩니다.
+        ApiResponse<MyContextResponse> response = authApi.getMe();
+        return mapper.toMyInfoResult(response.data());
     }
 
     /**
@@ -148,16 +135,7 @@ public class AuthHubAuthClientAdapter implements AuthClient {
      * @return 사용자 컨텍스트 (AuthHub 내부 DTO)
      */
     public AuthHubUserContext getMe() {
-        try {
-            ApiResponse<MyContextResponse> response = authApi.getMe();
-
-            return mapper.toAuthHubUserContext(response.data());
-
-        } catch (AuthHubUnauthorizedException e) {
-            throw new IllegalStateException("Unauthorized: " + e.getMessage(), e);
-
-        } catch (AuthHubException e) {
-            throw new IllegalStateException("Failed to get user context: " + e.getMessage(), e);
-        }
+        ApiResponse<MyContextResponse> response = authApi.getMe();
+        return mapper.toAuthHubUserContext(response.data());
     }
 }

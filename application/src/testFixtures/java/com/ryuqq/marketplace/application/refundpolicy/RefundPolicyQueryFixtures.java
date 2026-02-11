@@ -23,14 +23,14 @@ public final class RefundPolicyQueryFixtures {
     }
 
     public static CommonSearchParams defaultCommonSearchParams() {
-        return CommonSearchParams.of(false, null, null, "createdAt", "DESC", 0, 20);
+        return new CommonSearchParams(false, null, null, "createdAt", "DESC", 0, 20);
     }
 
     public static CommonSearchParams commonSearchParams(int page, int size) {
-        return CommonSearchParams.of(false, null, null, "createdAt", "DESC", page, size);
+        return new CommonSearchParams(false, null, null, "createdAt", "DESC", page, size);
     }
 
     public static CommonSearchParams commonSearchParamsIncludeDeleted() {
-        return CommonSearchParams.of(true, null, null, "createdAt", "DESC", 0, 20);
+        return new CommonSearchParams(true, null, null, "createdAt", "DESC", 0, 20);
     }
 }

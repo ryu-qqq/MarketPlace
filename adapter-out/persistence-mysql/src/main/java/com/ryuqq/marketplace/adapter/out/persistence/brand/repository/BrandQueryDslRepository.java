@@ -62,6 +62,13 @@ public class BrandQueryDslRepository {
         return count != null ? count : 0L;
     }
 
+    public List<BrandJpaEntity> findAllByIds(List<Long> ids) {
+        return queryFactory
+                .selectFrom(brand)
+                .where(brand.id.in(ids), conditionBuilder.notDeleted())
+                .fetch();
+    }
+
     public boolean existsByCode(String code) {
         Integer result =
                 queryFactory

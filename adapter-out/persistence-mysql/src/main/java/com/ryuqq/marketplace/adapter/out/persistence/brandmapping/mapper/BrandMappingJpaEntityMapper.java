@@ -13,6 +13,7 @@ public class BrandMappingJpaEntityMapper {
     public BrandMappingJpaEntity toEntity(BrandMapping brandMapping) {
         return BrandMappingJpaEntity.create(
                 brandMapping.idValue(),
+                brandMapping.presetId(),
                 brandMapping.salesChannelBrandId(),
                 brandMapping.internalBrandId(),
                 brandMapping.status().name(),
@@ -27,6 +28,7 @@ public class BrandMappingJpaEntityMapper {
         var id = BrandMappingId.of(entity.getId());
         return BrandMapping.reconstitute(
                 id,
+                entity.getPresetId(),
                 entity.getSalesChannelBrandId(),
                 entity.getInternalBrandId(),
                 BrandMappingStatus.fromString(entity.getStatus()),
