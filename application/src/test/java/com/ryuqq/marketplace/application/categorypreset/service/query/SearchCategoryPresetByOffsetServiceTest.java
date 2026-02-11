@@ -69,7 +69,9 @@ class SearchCategoryPresetByOffsetServiceTest {
             then(queryFactory).should().createCriteria(params);
             then(readManager).should().findByCriteria(criteria);
             then(readManager).should().countByCriteria(criteria);
-            then(assembler).should().toPageResult(results, params.page(), params.size(), totalCount);
+            then(assembler)
+                    .should()
+                    .toPageResult(results, params.page(), params.size(), totalCount);
         }
 
         @Test
@@ -81,7 +83,8 @@ class SearchCategoryPresetByOffsetServiceTest {
             List<CategoryPresetResult> emptyResults = Collections.emptyList();
             long totalCount = 0L;
             CategoryPresetPageResult expected =
-                    CategoryPresetPageResult.of(emptyResults, params.page(), params.size(), totalCount);
+                    CategoryPresetPageResult.of(
+                            emptyResults, params.page(), params.size(), totalCount);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readManager.findByCriteria(criteria)).willReturn(emptyResults);

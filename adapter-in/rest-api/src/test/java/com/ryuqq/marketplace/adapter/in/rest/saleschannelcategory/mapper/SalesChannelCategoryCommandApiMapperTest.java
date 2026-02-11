@@ -27,7 +27,8 @@ class SalesChannelCategoryCommandApiMapperTest {
     class ToRegisterCommandTest {
 
         @Test
-        @DisplayName("RegisterSalesChannelCategoryApiRequest를 RegisterSalesChannelCategoryCommand로 변환한다")
+        @DisplayName(
+                "RegisterSalesChannelCategoryApiRequest를 RegisterSalesChannelCategoryCommand로 변환한다")
         void toCommand_ConvertsRegisterRequest_ReturnsCommand() {
             // given
             Long salesChannelId = 1L;

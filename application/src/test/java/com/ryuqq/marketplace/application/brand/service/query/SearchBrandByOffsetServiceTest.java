@@ -45,9 +45,7 @@ class SearchBrandByOffsetServiceTest {
             BrandSearchParams params = BrandQueryFixtures.searchParams();
             BrandSearchCriteria criteria = null; // mock 대상
             List<Brand> brands =
-                    List.of(
-                            BrandFixtures.activeBrand(1L),
-                            BrandFixtures.activeBrand(2L));
+                    List.of(BrandFixtures.activeBrand(1L), BrandFixtures.activeBrand(2L));
             long totalElements = 2L;
             BrandPageResult expectedResult =
                     BrandQueryFixtures.brandPageResult(params.page(), params.size(), totalElements);
@@ -66,7 +64,9 @@ class SearchBrandByOffsetServiceTest {
             then(queryFactory).should().createCriteria(params);
             then(readManager).should().findByCriteria(criteria);
             then(readManager).should().countByCriteria(criteria);
-            then(assembler).should().toPageResult(brands, params.page(), params.size(), totalElements);
+            then(assembler)
+                    .should()
+                    .toPageResult(brands, params.page(), params.size(), totalElements);
         }
 
         @Test

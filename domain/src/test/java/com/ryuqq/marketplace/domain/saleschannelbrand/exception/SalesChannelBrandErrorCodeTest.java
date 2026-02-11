@@ -51,9 +51,7 @@ class SalesChannelBrandErrorCodeTest {
                             SalesChannelBrandErrorCode.SALES_CHANNEL_BRAND_CODE_DUPLICATE
                                     .getHttpStatus())
                     .isEqualTo(409);
-            assertThat(
-                            SalesChannelBrandErrorCode.SALES_CHANNEL_BRAND_CODE_DUPLICATE
-                                    .getMessage())
+            assertThat(SalesChannelBrandErrorCode.SALES_CHANNEL_BRAND_CODE_DUPLICATE.getMessage())
                     .isEqualTo("이미 존재하는 외부 브랜드 코드입니다");
         }
     }

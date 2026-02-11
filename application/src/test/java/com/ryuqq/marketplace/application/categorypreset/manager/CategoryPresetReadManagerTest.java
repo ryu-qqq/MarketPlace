@@ -157,7 +157,8 @@ class CategoryPresetReadManagerTest {
                     .willReturn(Optional.of(expected));
 
             // when
-            Optional<Long> result = sut.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
+            Optional<Long> result =
+                    sut.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
 
             // then
             assertThat(result).isPresent();
@@ -175,7 +176,8 @@ class CategoryPresetReadManagerTest {
                     .willReturn(Optional.empty());
 
             // when
-            Optional<Long> result = sut.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
+            Optional<Long> result =
+                    sut.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
 
             // then
             assertThat(result).isEmpty();

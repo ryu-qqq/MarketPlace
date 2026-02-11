@@ -107,7 +107,8 @@ class CanonicalOptionGroupNameTest {
             String maxEnglishName = "a".repeat(100);
 
             // when
-            CanonicalOptionGroupName name = CanonicalOptionGroupName.of(maxKoreanName, maxEnglishName);
+            CanonicalOptionGroupName name =
+                    CanonicalOptionGroupName.of(maxKoreanName, maxEnglishName);
 
             // then
             assertThat(name.nameKo()).hasSize(100);

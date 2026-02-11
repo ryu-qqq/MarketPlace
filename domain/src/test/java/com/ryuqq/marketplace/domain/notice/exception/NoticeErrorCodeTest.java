@@ -32,8 +32,7 @@ class NoticeErrorCodeTest {
         @DisplayName("NOTICE_CATEGORY_NOT_FOUND 에러 코드를 검증한다")
         void noticeCategoryNotFound() {
             // then
-            assertThat(NoticeErrorCode.NOTICE_CATEGORY_NOT_FOUND.getCode())
-                    .isEqualTo("NOTICE-001");
+            assertThat(NoticeErrorCode.NOTICE_CATEGORY_NOT_FOUND.getCode()).isEqualTo("NOTICE-001");
             assertThat(NoticeErrorCode.NOTICE_CATEGORY_NOT_FOUND.getHttpStatus()).isEqualTo(404);
             assertThat(NoticeErrorCode.NOTICE_CATEGORY_NOT_FOUND.getMessage())
                     .isEqualTo("고시정보 카테고리를 찾을 수 없습니다");

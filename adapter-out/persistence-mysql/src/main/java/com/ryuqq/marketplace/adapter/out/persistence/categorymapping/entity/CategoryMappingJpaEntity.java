@@ -59,7 +59,12 @@ public class CategoryMappingJpaEntity extends BaseAuditEntity {
             Instant createdAt,
             Instant updatedAt) {
         return new CategoryMappingJpaEntity(
-                id, presetId, salesChannelCategoryId, internalCategoryId, status, createdAt,
+                id,
+                presetId,
+                salesChannelCategoryId,
+                internalCategoryId,
+                status,
+                createdAt,
                 updatedAt);
     }
 

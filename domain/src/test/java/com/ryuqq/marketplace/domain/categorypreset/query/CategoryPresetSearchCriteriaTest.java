@@ -28,9 +28,15 @@ class CategoryPresetSearchCriteriaTest {
             QueryContext<CategoryPresetSortKey> queryContext =
                     QueryContext.defaultOf(CategoryPresetSortKey.defaultKey());
 
-            CategoryPresetSearchCriteria criteria = new CategoryPresetSearchCriteria(
-                    salesChannelIds, statuses, "presetName", "테스트",
-                    LocalDate.now(), LocalDate.now(), queryContext);
+            CategoryPresetSearchCriteria criteria =
+                    new CategoryPresetSearchCriteria(
+                            salesChannelIds,
+                            statuses,
+                            "presetName",
+                            "테스트",
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            queryContext);
 
             assertThat(criteria.salesChannelIds()).containsExactly(1L, 2L);
             assertThat(criteria.statuses()).containsExactly("ACTIVE");
@@ -44,8 +50,9 @@ class CategoryPresetSearchCriteriaTest {
             QueryContext<CategoryPresetSortKey> queryContext =
                     QueryContext.defaultOf(CategoryPresetSortKey.defaultKey());
 
-            CategoryPresetSearchCriteria criteria = new CategoryPresetSearchCriteria(
-                    null, null, null, null, null, null, queryContext);
+            CategoryPresetSearchCriteria criteria =
+                    new CategoryPresetSearchCriteria(
+                            null, null, null, null, null, null, queryContext);
 
             assertThat(criteria.salesChannelIds()).isEmpty();
             assertThat(criteria.statuses()).isEmpty();
@@ -55,8 +62,9 @@ class CategoryPresetSearchCriteriaTest {
         @DisplayName("queryContext가 null이면 예외가 발생한다")
         void nullQueryContextThrowsException() {
             assertThatThrownBy(
-                            () -> new CategoryPresetSearchCriteria(
-                                    null, null, null, null, null, null, null))
+                            () ->
+                                    new CategoryPresetSearchCriteria(
+                                            null, null, null, null, null, null, null))
                     .isInstanceOf(NullPointerException.class);
         }
     }
@@ -68,9 +76,15 @@ class CategoryPresetSearchCriteriaTest {
         @Test
         @DisplayName("판매채널 필터가 있으면 true를 반환한다")
         void hasSalesChannelFilter() {
-            CategoryPresetSearchCriteria criteria = new CategoryPresetSearchCriteria(
-                    List.of(1L), null, null, null, null, null,
-                    QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
+            CategoryPresetSearchCriteria criteria =
+                    new CategoryPresetSearchCriteria(
+                            List.of(1L),
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasSalesChannelFilter()).isTrue();
         }
@@ -78,9 +92,15 @@ class CategoryPresetSearchCriteriaTest {
         @Test
         @DisplayName("상태 필터가 있으면 true를 반환한다")
         void hasStatusFilter() {
-            CategoryPresetSearchCriteria criteria = new CategoryPresetSearchCriteria(
-                    null, List.of("ACTIVE"), null, null, null, null,
-                    QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
+            CategoryPresetSearchCriteria criteria =
+                    new CategoryPresetSearchCriteria(
+                            null,
+                            List.of("ACTIVE"),
+                            null,
+                            null,
+                            null,
+                            null,
+                            QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasStatusFilter()).isTrue();
         }
@@ -88,9 +108,15 @@ class CategoryPresetSearchCriteriaTest {
         @Test
         @DisplayName("검색 필터가 있으면 true를 반환한다")
         void hasSearchFilter() {
-            CategoryPresetSearchCriteria criteria = new CategoryPresetSearchCriteria(
-                    null, null, "presetName", "테스트", null, null,
-                    QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
+            CategoryPresetSearchCriteria criteria =
+                    new CategoryPresetSearchCriteria(
+                            null,
+                            null,
+                            "presetName",
+                            "테스트",
+                            null,
+                            null,
+                            QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasSearchFilter()).isTrue();
         }
@@ -98,9 +124,15 @@ class CategoryPresetSearchCriteriaTest {
         @Test
         @DisplayName("시작일/종료일 필터를 확인한다")
         void hasDateFilters() {
-            CategoryPresetSearchCriteria criteria = new CategoryPresetSearchCriteria(
-                    null, null, null, null, LocalDate.now(), LocalDate.now(),
-                    QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
+            CategoryPresetSearchCriteria criteria =
+                    new CategoryPresetSearchCriteria(
+                            null,
+                            null,
+                            null,
+                            null,
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasStartDateFilter()).isTrue();
             assertThat(criteria.hasEndDateFilter()).isTrue();
@@ -114,10 +146,14 @@ class CategoryPresetSearchCriteriaTest {
         @Test
         @DisplayName("size()는 QueryContext의 size를 반환한다")
         void sizeReturnsQueryContextSize() {
-            QueryContext<CategoryPresetSortKey> queryContext = QueryContext.of(
-                    CategoryPresetSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(0, 20));
-            CategoryPresetSearchCriteria criteria = new CategoryPresetSearchCriteria(
-                    null, null, null, null, null, null, queryContext);
+            QueryContext<CategoryPresetSortKey> queryContext =
+                    QueryContext.of(
+                            CategoryPresetSortKey.CREATED_AT,
+                            SortDirection.DESC,
+                            PageRequest.of(0, 20));
+            CategoryPresetSearchCriteria criteria =
+                    new CategoryPresetSearchCriteria(
+                            null, null, null, null, null, null, queryContext);
 
             assertThat(criteria.size()).isEqualTo(20);
         }
@@ -125,10 +161,14 @@ class CategoryPresetSearchCriteriaTest {
         @Test
         @DisplayName("offset()은 QueryContext의 offset을 반환한다")
         void offsetReturnsQueryContextOffset() {
-            QueryContext<CategoryPresetSortKey> queryContext = QueryContext.of(
-                    CategoryPresetSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(2, 10));
-            CategoryPresetSearchCriteria criteria = new CategoryPresetSearchCriteria(
-                    null, null, null, null, null, null, queryContext);
+            QueryContext<CategoryPresetSortKey> queryContext =
+                    QueryContext.of(
+                            CategoryPresetSortKey.CREATED_AT,
+                            SortDirection.DESC,
+                            PageRequest.of(2, 10));
+            CategoryPresetSearchCriteria criteria =
+                    new CategoryPresetSearchCriteria(
+                            null, null, null, null, null, null, queryContext);
 
             assertThat(criteria.offset()).isEqualTo(20L);
         }

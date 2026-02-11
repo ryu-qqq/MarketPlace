@@ -25,8 +25,8 @@ class ChannelOptionMappingDuplicateExceptionTest {
 
             // when
             ChannelOptionMappingDuplicateException exception =
-                    new ChannelOptionMappingDuplicateException(salesChannelId,
-                            canonicalOptionValueId);
+                    new ChannelOptionMappingDuplicateException(
+                            salesChannelId, canonicalOptionValueId);
 
             // then
             assertThat(exception).isInstanceOf(DomainException.class);
@@ -46,13 +46,13 @@ class ChannelOptionMappingDuplicateExceptionTest {
 
             // when
             ChannelOptionMappingDuplicateException exception =
-                    new ChannelOptionMappingDuplicateException(salesChannelId,
-                            canonicalOptionValueId);
+                    new ChannelOptionMappingDuplicateException(
+                            salesChannelId, canonicalOptionValueId);
 
             // then
             assertThat(exception.args()).containsEntry("salesChannelId", salesChannelId);
-            assertThat(exception.args()).containsEntry("canonicalOptionValueId",
-                    canonicalOptionValueId);
+            assertThat(exception.args())
+                    .containsEntry("canonicalOptionValueId", canonicalOptionValueId);
         }
     }
 

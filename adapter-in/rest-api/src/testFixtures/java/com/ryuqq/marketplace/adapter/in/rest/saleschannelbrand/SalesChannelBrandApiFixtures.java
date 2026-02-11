@@ -73,7 +73,13 @@ public final class SalesChannelBrandApiFixtures {
 
     public static List<SalesChannelBrandResult> brandResults(int count) {
         return java.util.stream.IntStream.rangeClosed(1, count)
-                .mapToObj(i -> brandResult((long) i, DEFAULT_SALES_CHANNEL_ID, "BRD00" + i, "브랜드_" + i))
+                .mapToObj(
+                        i ->
+                                brandResult(
+                                        (long) i,
+                                        DEFAULT_SALES_CHANNEL_ID,
+                                        "BRD00" + i,
+                                        "브랜드_" + i))
                 .toList();
     }
 

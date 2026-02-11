@@ -1,10 +1,5 @@
 package com.ryuqq.marketplace.domain.product.aggregate;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.product.exception.ProductInvalidPriceException;
 import com.ryuqq.marketplace.domain.product.exception.ProductInvalidStatusTransitionException;
@@ -12,11 +7,12 @@ import com.ryuqq.marketplace.domain.product.id.ProductId;
 import com.ryuqq.marketplace.domain.product.vo.ProductStatus;
 import com.ryuqq.marketplace.domain.product.vo.SkuCode;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-/**
- * 상품(SKU) Aggregate Root.
- * 실제 판매/재고 관리 대상. ProductGroup의 옵션 조합별로 생성된다.
- */
+/** 상품(SKU) Aggregate Root. 실제 판매/재고 관리 대상. ProductGroup의 옵션 조합별로 생성된다. */
 public class Product {
 
     private final ProductId id;
@@ -109,8 +105,19 @@ public class Product {
             Instant createdAt,
             Instant updatedAt) {
         return new Product(
-                id, productGroupId, skuCode, regularPrice, currentPrice, salePrice,
-                discountRate, stockQuantity, status, sortOrder, optionMappings, createdAt, updatedAt);
+                id,
+                productGroupId,
+                skuCode,
+                regularPrice,
+                currentPrice,
+                salePrice,
+                discountRate,
+                stockQuantity,
+                status,
+                sortOrder,
+                optionMappings,
+                createdAt,
+                updatedAt);
     }
 
     // ── 비즈니스 메서드 ──
@@ -152,7 +159,12 @@ public class Product {
     }
 
     /** 가격 수정. */
-    public void updatePrice(Money regularPrice, Money currentPrice, Money salePrice, int discountRate, Instant now) {
+    public void updatePrice(
+            Money regularPrice,
+            Money currentPrice,
+            Money salePrice,
+            int discountRate,
+            Instant now) {
         validatePrice(regularPrice, currentPrice, salePrice, discountRate);
         validateDiscountRate(discountRate);
         this.regularPrice = regularPrice;
@@ -183,10 +195,12 @@ public class Product {
 
     // ── 검증 메서드 ──
 
-    private static void validatePrice(Money regularPrice, Money currentPrice, Money salePrice, int discountRate) {
+    private static void validatePrice(
+            Money regularPrice, Money currentPrice, Money salePrice, int discountRate) {
         if (currentPrice.isGreaterThan(regularPrice)) {
             throw new ProductInvalidPriceException(
-                    regularPrice.value(), currentPrice.value(),
+                    regularPrice.value(),
+                    currentPrice.value(),
                     salePrice != null ? salePrice.value() : 0);
         }
         if (salePrice != null && salePrice.isGreaterThan(currentPrice)) {
@@ -196,7 +210,8 @@ public class Product {
         boolean hasSaleDiscount = salePrice != null && salePrice.isLessThan(currentPrice);
         if (discountRate > 0 && !hasSaleDiscount) {
             throw new ProductInvalidPriceException(
-                    regularPrice.value(), currentPrice.value(),
+                    regularPrice.value(),
+                    currentPrice.value(),
                     salePrice != null ? salePrice.value() : 0);
         }
         if (hasSaleDiscount && discountRate <= 0) {

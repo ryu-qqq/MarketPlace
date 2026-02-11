@@ -16,7 +16,8 @@ public record NoticeCategoryName(String nameKo, String nameEn) {
         }
         nameKo = nameKo.trim();
         if (nameKo.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException(String.format("고시정보 카테고리 한국어 이름은 %d자 이내여야 합니다", MAX_LENGTH));
+            throw new IllegalArgumentException(
+                    String.format("고시정보 카테고리 한국어 이름은 %d자 이내여야 합니다", MAX_LENGTH));
         }
         if (nameEn != null) {
             nameEn = nameEn.trim();

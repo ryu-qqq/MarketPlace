@@ -25,8 +25,7 @@ public class CanonicalOptionValueQueryAdapter implements CanonicalOptionValueQue
     }
 
     @Override
-    public List<CanonicalOptionValue> findByCanonicalOptionGroupId(
-            Long canonicalOptionGroupId) {
+    public List<CanonicalOptionValue> findByCanonicalOptionGroupId(Long canonicalOptionGroupId) {
         return valueJpaRepository
                 .findByCanonicalOptionGroupIdOrderBySortOrder(canonicalOptionGroupId)
                 .stream()
@@ -40,8 +39,9 @@ public class CanonicalOptionValueQueryAdapter implements CanonicalOptionValueQue
         return valueJpaRepository
                 .findByCanonicalOptionGroupIdInOrderBySortOrder(canonicalOptionGroupIds)
                 .stream()
-                .collect(Collectors.groupingBy(
-                        CanonicalOptionValueJpaEntity::getCanonicalOptionGroupId,
-                        Collectors.mapping(mapper::toDomain, Collectors.toList())));
+                .collect(
+                        Collectors.groupingBy(
+                                CanonicalOptionValueJpaEntity::getCanonicalOptionGroupId,
+                                Collectors.mapping(mapper::toDomain, Collectors.toList())));
     }
 }

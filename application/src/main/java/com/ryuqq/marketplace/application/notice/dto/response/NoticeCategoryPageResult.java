@@ -6,7 +6,8 @@ import java.util.List;
 /** 고시정보 카테고리 페이징 조회 결과 DTO. */
 public record NoticeCategoryPageResult(List<NoticeCategoryResult> results, PageMeta pageMeta) {
 
-    public static NoticeCategoryPageResult of(List<NoticeCategoryResult> results, PageMeta pageMeta) {
+    public static NoticeCategoryPageResult of(
+            List<NoticeCategoryResult> results, PageMeta pageMeta) {
         return new NoticeCategoryPageResult(results, pageMeta);
     }
 

@@ -39,9 +39,7 @@ public class NoticeCategoryQueryAdapter implements NoticeCategoryQueryPort {
 
     @Override
     public List<NoticeCategory> findByCriteria(NoticeCategorySearchCriteria criteria) {
-        return queryDslRepository.findByCriteria(criteria).stream()
-                .map(mapper::toDomain)
-                .toList();
+        return queryDslRepository.findByCriteria(criteria).stream().map(mapper::toDomain).toList();
     }
 
     @Override

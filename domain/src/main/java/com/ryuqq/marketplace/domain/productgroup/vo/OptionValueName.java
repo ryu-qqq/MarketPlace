@@ -11,8 +11,7 @@ public record OptionValueName(String value) {
         }
         value = value.trim();
         if (value.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException(
-                    String.format("옵션 값 이름은 %d자 이내여야 합니다", MAX_LENGTH));
+            throw new IllegalArgumentException(String.format("옵션 값 이름은 %d자 이내여야 합니다", MAX_LENGTH));
         }
     }
 

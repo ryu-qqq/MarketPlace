@@ -44,7 +44,8 @@ class SellerAddressReadManagerTest {
             Long addressId = 1L;
             Long sellerId = 1L;
             SellerAddressId id = SellerAddressId.of(addressId);
-            SellerAddress address = SellerAddressFixtures.defaultShippingAddress(addressId, sellerId);
+            SellerAddress address =
+                    SellerAddressFixtures.defaultShippingAddress(addressId, sellerId);
 
             given(queryPort.findById(id)).willReturn(Optional.of(address));
 
@@ -109,7 +110,8 @@ class SellerAddressReadManagerTest {
             AddressType addressType = AddressType.SHIPPING;
             SellerAddress address = SellerAddressFixtures.defaultShippingAddress(1L, sellerId);
 
-            given(queryPort.findDefaultBySellerId(id, addressType)).willReturn(Optional.of(address));
+            given(queryPort.findDefaultBySellerId(id, addressType))
+                    .willReturn(Optional.of(address));
 
             // when
             Optional<SellerAddress> result = sut.findDefaultBySellerId(id, addressType);

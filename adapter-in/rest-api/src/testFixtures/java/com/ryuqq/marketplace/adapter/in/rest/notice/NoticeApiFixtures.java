@@ -34,7 +34,8 @@ public final class NoticeApiFixtures {
     }
 
     public static SearchNoticeCategoriesApiRequest searchRequest(int page, int size) {
-        return new SearchNoticeCategoriesApiRequest(null, null, null, "createdAt", "DESC", page, size);
+        return new SearchNoticeCategoriesApiRequest(
+                null, null, null, "createdAt", "DESC", page, size);
     }
 
     public static SearchNoticeCategoriesApiRequest searchRequest(

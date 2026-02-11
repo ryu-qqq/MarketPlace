@@ -107,7 +107,8 @@ class CanonicalOptionValueNameTest {
             String maxEnglishName = "a".repeat(100);
 
             // when
-            CanonicalOptionValueName name = CanonicalOptionValueName.of(maxKoreanName, maxEnglishName);
+            CanonicalOptionValueName name =
+                    CanonicalOptionValueName.of(maxKoreanName, maxEnglishName);
 
             // then
             assertThat(name.nameKo()).hasSize(100);

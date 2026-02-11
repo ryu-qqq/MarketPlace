@@ -118,8 +118,7 @@ class CategoryMappingJpaEntityMapperTest {
         @DisplayName("활성 상태 Entity를 Domain으로 변환합니다")
         void toDomain_WithActiveEntity_ConvertsCorrectly() {
             // given
-            CategoryMappingJpaEntity entity =
-                    CategoryMappingJpaEntityFixtures.activeEntity(1L);
+            CategoryMappingJpaEntity entity = CategoryMappingJpaEntityFixtures.activeEntity(1L);
 
             // when
             CategoryMapping domain = mapper.toDomain(entity);
@@ -222,8 +221,7 @@ class CategoryMappingJpaEntityMapperTest {
         @DisplayName("Entity -> Domain -> Entity 변환 시 데이터가 보존됩니다")
         void roundTrip_EntityToDomainToEntity_PreservesData() {
             // given
-            CategoryMappingJpaEntity original =
-                    CategoryMappingJpaEntityFixtures.activeEntity(1L);
+            CategoryMappingJpaEntity original = CategoryMappingJpaEntityFixtures.activeEntity(1L);
 
             // when
             CategoryMapping domain = mapper.toDomain(original);

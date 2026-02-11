@@ -92,10 +92,7 @@ class BrandSortKeyTest {
 
             // when
             long uniqueCount =
-                    java.util.Arrays.stream(keys)
-                            .map(BrandSortKey::fieldName)
-                            .distinct()
-                            .count();
+                    java.util.Arrays.stream(keys).map(BrandSortKey::fieldName).distinct().count();
 
             // then
             assertThat(uniqueCount).isEqualTo(keys.length);

@@ -1,10 +1,5 @@
 package com.ryuqq.marketplace.domain.productgroup.aggregate;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidOptionStructureException;
@@ -17,11 +12,14 @@ import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * 상품 그룹 Aggregate Root.
- * 상품의 상위 개념으로, 공통 속성과 셀러 옵션 구조를 관리한다.
- * 상세설명(ProductGroupDescription)은 별도 Aggregate로 분리되어 ProductGroupId로 연결된다.
+ * 상품 그룹 Aggregate Root. 상품의 상위 개념으로, 공통 속성과 셀러 옵션 구조를 관리한다. 상세설명(ProductGroupDescription)은 별도
+ * Aggregate로 분리되어 ProductGroupId로 연결된다.
  */
 public class ProductGroup {
 
@@ -80,20 +78,21 @@ public class ProductGroup {
             List<ProductGroupImage> images,
             List<SellerOptionGroup> sellerOptionGroups,
             Instant now) {
-        ProductGroup productGroup = new ProductGroup(
-                ProductGroupId.forNew(),
-                sellerId,
-                brandId,
-                categoryId,
-                shippingPolicyId,
-                refundPolicyId,
-                productGroupName,
-                optionType,
-                ProductGroupStatus.DRAFT,
-                images,
-                sellerOptionGroups,
-                now,
-                now);
+        ProductGroup productGroup =
+                new ProductGroup(
+                        ProductGroupId.forNew(),
+                        sellerId,
+                        brandId,
+                        categoryId,
+                        shippingPolicyId,
+                        refundPolicyId,
+                        productGroupName,
+                        optionType,
+                        ProductGroupStatus.DRAFT,
+                        images,
+                        sellerOptionGroups,
+                        now,
+                        now);
         productGroup.validateOptionStructure();
         return productGroup;
     }
@@ -114,9 +113,19 @@ public class ProductGroup {
             Instant createdAt,
             Instant updatedAt) {
         return new ProductGroup(
-                id, sellerId, brandId, categoryId, shippingPolicyId, refundPolicyId,
-                productGroupName, optionType, status,
-                images, sellerOptionGroups, createdAt, updatedAt);
+                id,
+                sellerId,
+                brandId,
+                categoryId,
+                shippingPolicyId,
+                refundPolicyId,
+                productGroupName,
+                optionType,
+                status,
+                images,
+                sellerOptionGroups,
+                createdAt,
+                updatedAt);
     }
 
     // ── 비즈니스 메서드 ──
@@ -124,7 +133,8 @@ public class ProductGroup {
     /** 판매 활성화. THUMBNAIL 이미지 최소 1개 필수. */
     public void activate(Instant now) {
         if (!status.canActivate()) {
-            throw new ProductGroupInvalidStatusTransitionException(status, ProductGroupStatus.ACTIVE);
+            throw new ProductGroupInvalidStatusTransitionException(
+                    status, ProductGroupStatus.ACTIVE);
         }
         if (!hasThumbnailImage()) {
             throw new ProductGroupNoThumbnailException(idValue());
@@ -136,7 +146,8 @@ public class ProductGroup {
     /** 판매 중지. */
     public void deactivate(Instant now) {
         if (!status.isActive()) {
-            throw new ProductGroupInvalidStatusTransitionException(status, ProductGroupStatus.INACTIVE);
+            throw new ProductGroupInvalidStatusTransitionException(
+                    status, ProductGroupStatus.INACTIVE);
         }
         this.status = ProductGroupStatus.INACTIVE;
         this.updatedAt = now;
@@ -145,7 +156,8 @@ public class ProductGroup {
     /** 품절 처리. */
     public void markSoldOut(Instant now) {
         if (!status.isActive()) {
-            throw new ProductGroupInvalidStatusTransitionException(status, ProductGroupStatus.SOLDOUT);
+            throw new ProductGroupInvalidStatusTransitionException(
+                    status, ProductGroupStatus.SOLDOUT);
         }
         this.status = ProductGroupStatus.SOLDOUT;
         this.updatedAt = now;
@@ -154,7 +166,8 @@ public class ProductGroup {
     /** 소프트 삭제. */
     public void delete(Instant now) {
         if (!status.canDelete()) {
-            throw new ProductGroupInvalidStatusTransitionException(status, ProductGroupStatus.DELETED);
+            throw new ProductGroupInvalidStatusTransitionException(
+                    status, ProductGroupStatus.DELETED);
         }
         this.status = ProductGroupStatus.DELETED;
         this.updatedAt = now;

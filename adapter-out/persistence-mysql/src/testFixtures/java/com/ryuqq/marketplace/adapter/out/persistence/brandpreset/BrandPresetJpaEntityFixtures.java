@@ -140,6 +140,12 @@ public final class BrandPresetJpaEntityFixtures {
     public static BrandPresetJpaEntity inactiveEntityWithName(String presetName) {
         Instant now = Instant.now();
         return BrandPresetJpaEntity.create(
-                null, DEFAULT_SHOP_ID, DEFAULT_SALES_CHANNEL_BRAND_ID, presetName, "INACTIVE", now, now);
+                null,
+                DEFAULT_SHOP_ID,
+                DEFAULT_SALES_CHANNEL_BRAND_ID,
+                presetName,
+                "INACTIVE",
+                now,
+                now);
     }
 }

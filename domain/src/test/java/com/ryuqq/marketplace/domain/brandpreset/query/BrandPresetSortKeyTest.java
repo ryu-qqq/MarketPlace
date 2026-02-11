@@ -52,8 +52,7 @@ class BrandPresetSortKeyTest {
         @Test
         @DisplayName("모든 정렬 키 값이 존재한다")
         void allValuesExist() {
-            assertThat(BrandPresetSortKey.values())
-                    .containsExactly(BrandPresetSortKey.CREATED_AT);
+            assertThat(BrandPresetSortKey.values()).containsExactly(BrandPresetSortKey.CREATED_AT);
         }
     }
 }

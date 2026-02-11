@@ -53,7 +53,8 @@ class CategoryPresetJpaEntityMapperTest {
             // then
             assertThat(entity.getId()).isEqualTo(domain.idValue());
             assertThat(entity.getShopId()).isEqualTo(domain.shopId());
-            assertThat(entity.getSalesChannelCategoryId()).isEqualTo(domain.salesChannelCategoryId());
+            assertThat(entity.getSalesChannelCategoryId())
+                    .isEqualTo(domain.salesChannelCategoryId());
             assertThat(entity.getPresetName()).isEqualTo(domain.presetName());
             assertThat(entity.getStatus()).isEqualTo(domain.status().name());
         }
@@ -106,7 +107,8 @@ class CategoryPresetJpaEntityMapperTest {
             // then
             assertThat(domain.idValue()).isEqualTo(entity.getId());
             assertThat(domain.shopId()).isEqualTo(entity.getShopId());
-            assertThat(domain.salesChannelCategoryId()).isEqualTo(entity.getSalesChannelCategoryId());
+            assertThat(domain.salesChannelCategoryId())
+                    .isEqualTo(entity.getSalesChannelCategoryId());
             assertThat(domain.presetName()).isEqualTo(entity.getPresetName());
             assertThat(domain.status().name()).isEqualTo(entity.getStatus());
         }
@@ -156,7 +158,8 @@ class CategoryPresetJpaEntityMapperTest {
             // then
             assertThat(converted.idValue()).isEqualTo(original.idValue());
             assertThat(converted.shopId()).isEqualTo(original.shopId());
-            assertThat(converted.salesChannelCategoryId()).isEqualTo(original.salesChannelCategoryId());
+            assertThat(converted.salesChannelCategoryId())
+                    .isEqualTo(original.salesChannelCategoryId());
             assertThat(converted.presetName()).isEqualTo(original.presetName());
             assertThat(converted.status()).isEqualTo(original.status());
         }

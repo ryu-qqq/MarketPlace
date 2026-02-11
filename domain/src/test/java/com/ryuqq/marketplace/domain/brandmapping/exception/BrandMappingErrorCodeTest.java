@@ -19,8 +19,7 @@ class BrandMappingErrorCodeTest {
         @Test
         @DisplayName("ErrorCode 인터페이스를 구현한다")
         void implementsErrorCode() {
-            assertThat(BrandMappingErrorCode.BRAND_MAPPING_NOT_FOUND)
-                    .isInstanceOf(ErrorCode.class);
+            assertThat(BrandMappingErrorCode.BRAND_MAPPING_NOT_FOUND).isInstanceOf(ErrorCode.class);
         }
     }
 

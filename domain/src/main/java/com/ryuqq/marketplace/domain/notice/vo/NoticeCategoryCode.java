@@ -11,7 +11,8 @@ public record NoticeCategoryCode(String value) {
         }
         value = value.trim();
         if (value.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException(String.format("고시정보 카테고리 코드는 %d자 이내여야 합니다", MAX_LENGTH));
+            throw new IllegalArgumentException(
+                    String.format("고시정보 카테고리 코드는 %d자 이내여야 합니다", MAX_LENGTH));
         }
     }
 

@@ -8,8 +8,8 @@ import com.ryuqq.marketplace.adapter.out.persistence.saleschannelcategory.SalesC
 import com.ryuqq.marketplace.adapter.out.persistence.saleschannelcategory.entity.SalesChannelCategoryJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.saleschannelcategory.mapper.SalesChannelCategoryJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.saleschannelcategory.repository.SalesChannelCategoryQueryDslRepository;
-import com.ryuqq.marketplace.domain.saleschannelcategory.SalesChannelCategoryFixtures;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
+import com.ryuqq.marketplace.domain.saleschannelcategory.SalesChannelCategoryFixtures;
 import com.ryuqq.marketplace.domain.saleschannelcategory.aggregate.SalesChannelCategory;
 import com.ryuqq.marketplace.domain.saleschannelcategory.id.SalesChannelCategoryId;
 import com.ryuqq.marketplace.domain.saleschannelcategory.query.SalesChannelCategorySearchCriteria;
@@ -58,11 +58,11 @@ class SalesChannelCategoryQueryAdapterTest {
         @DisplayName("ID로 SalesChannelCategory를 조회합니다")
         void findById_WithValidId_ReturnsCategory() {
             // given
-            SalesChannelCategoryId id = SalesChannelCategoryFixtures.defaultSalesChannelCategoryId();
+            SalesChannelCategoryId id =
+                    SalesChannelCategoryFixtures.defaultSalesChannelCategoryId();
             SalesChannelCategoryJpaEntity entity =
                     SalesChannelCategoryJpaEntityFixtures.activeEntity(1L);
-            SalesChannelCategory domain =
-                    SalesChannelCategoryFixtures.activeSalesChannelCategory();
+            SalesChannelCategory domain = SalesChannelCategoryFixtures.activeSalesChannelCategory();
 
             given(repository.findById(id.value())).willReturn(Optional.of(entity));
             given(mapper.toDomain(entity)).willReturn(domain);
@@ -217,8 +217,9 @@ class SalesChannelCategoryQueryAdapterTest {
             Long salesChannelId = 1L;
             String externalCategoryCode = "CAT001";
 
-            given(repository.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalCategoryCode))
+            given(
+                            repository.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalCategoryCode))
                     .willReturn(true);
 
             // when
@@ -240,8 +241,9 @@ class SalesChannelCategoryQueryAdapterTest {
             Long salesChannelId = 999L;
             String externalCategoryCode = "CAT999";
 
-            given(repository.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalCategoryCode))
+            given(
+                            repository.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalCategoryCode))
                     .willReturn(false);
 
             // when

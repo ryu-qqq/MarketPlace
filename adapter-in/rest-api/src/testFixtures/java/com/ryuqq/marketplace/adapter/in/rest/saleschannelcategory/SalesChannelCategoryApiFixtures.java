@@ -47,7 +47,14 @@ public final class SalesChannelCategoryApiFixtures {
     public static RegisterSalesChannelCategoryApiRequest registerRequest(
             String code, String name, Long parentId, int depth) {
         return new RegisterSalesChannelCategoryApiRequest(
-                code, name, parentId, depth, DEFAULT_PATH, DEFAULT_SORT_ORDER, DEFAULT_LEAF, DEFAULT_DISPLAY_PATH);
+                code,
+                name,
+                parentId,
+                depth,
+                DEFAULT_PATH,
+                DEFAULT_SORT_ORDER,
+                DEFAULT_LEAF,
+                DEFAULT_DISPLAY_PATH);
     }
 
     // ===== SearchSalesChannelCategoriesApiRequest =====
@@ -60,7 +67,16 @@ public final class SalesChannelCategoryApiFixtures {
     public static SearchSalesChannelCategoriesApiRequest searchRequest(
             List<String> statuses, String searchField, String searchWord, int page, int size) {
         return new SearchSalesChannelCategoriesApiRequest(
-                statuses, searchField, searchWord, null, null, null, "createdAt", "DESC", page, size);
+                statuses,
+                searchField,
+                searchWord,
+                null,
+                null,
+                null,
+                "createdAt",
+                "DESC",
+                page,
+                size);
     }
 
     // ===== SalesChannelCategoryResult (Application) =====
@@ -105,7 +121,10 @@ public final class SalesChannelCategoryApiFixtures {
                 .mapToObj(
                         i ->
                                 categoryResult(
-                                        (long) i, 1L, "CAT" + String.format("%03d", i), "카테고리_" + i))
+                                        (long) i,
+                                        1L,
+                                        "CAT" + String.format("%03d", i),
+                                        "카테고리_" + i))
                 .toList();
     }
 

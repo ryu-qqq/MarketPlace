@@ -43,7 +43,10 @@ public final class BrandPresetCommandFixtures {
 
     public static RegisterBrandPresetCommand registerCommand(Long shopId) {
         return new RegisterBrandPresetCommand(
-                shopId, DEFAULT_SALES_CHANNEL_BRAND_ID, DEFAULT_PRESET_NAME, DEFAULT_INTERNAL_BRAND_IDS);
+                shopId,
+                DEFAULT_SALES_CHANNEL_BRAND_ID,
+                DEFAULT_PRESET_NAME,
+                DEFAULT_INTERNAL_BRAND_IDS);
     }
 
     public static RegisterBrandPresetCommand registerCommand(
@@ -55,7 +58,10 @@ public final class BrandPresetCommandFixtures {
     public static RegisterBrandPresetCommand registerCommandWithBrands(
             List<Long> internalBrandIds) {
         return new RegisterBrandPresetCommand(
-                DEFAULT_SHOP_ID, DEFAULT_SALES_CHANNEL_BRAND_ID, DEFAULT_PRESET_NAME, internalBrandIds);
+                DEFAULT_SHOP_ID,
+                DEFAULT_SALES_CHANNEL_BRAND_ID,
+                DEFAULT_PRESET_NAME,
+                internalBrandIds);
     }
 
     // ===== UpdateBrandPresetCommand =====
@@ -68,10 +74,12 @@ public final class BrandPresetCommandFixtures {
                 DEFAULT_INTERNAL_BRAND_IDS);
     }
 
-    public static UpdateBrandPresetCommand updateCommand(
-            Long brandPresetId, String presetName) {
+    public static UpdateBrandPresetCommand updateCommand(Long brandPresetId, String presetName) {
         return new UpdateBrandPresetCommand(
-                brandPresetId, presetName, DEFAULT_SALES_CHANNEL_BRAND_ID, DEFAULT_INTERNAL_BRAND_IDS);
+                brandPresetId,
+                presetName,
+                DEFAULT_SALES_CHANNEL_BRAND_ID,
+                DEFAULT_INTERNAL_BRAND_IDS);
     }
 
     public static UpdateBrandPresetCommand updateCommandWithBrands(
@@ -123,8 +131,7 @@ public final class BrandPresetCommandFixtures {
                 existing, "수정된 프리셋명", salesChannelBrandId, mappings, now);
     }
 
-    public static UpdateBrandPresetBundle updateBundle(
-            BrandPreset existing, String presetName) {
+    public static UpdateBrandPresetBundle updateBundle(BrandPreset existing, String presetName) {
         Long salesChannelBrandId = BrandPresetFixtures.DEFAULT_SALES_CHANNEL_BRAND_ID;
         List<BrandMapping> mappings =
                 List.of(

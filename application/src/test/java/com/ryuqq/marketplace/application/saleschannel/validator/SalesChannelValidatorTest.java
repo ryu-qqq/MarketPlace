@@ -56,8 +56,7 @@ class SalesChannelValidatorTest {
             // given
             SalesChannelId id = SalesChannelId.of(999L);
 
-            given(readManager.getById(id))
-                    .willThrow(new SalesChannelNotFoundException(id.value()));
+            given(readManager.getById(id)).willThrow(new SalesChannelNotFoundException(id.value()));
 
             // when & then
             assertThatThrownBy(() -> sut.findExistingOrThrow(id))

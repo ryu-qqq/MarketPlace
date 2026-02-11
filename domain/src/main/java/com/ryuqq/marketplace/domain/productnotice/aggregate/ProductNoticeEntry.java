@@ -4,10 +4,7 @@ import com.ryuqq.marketplace.domain.notice.id.NoticeFieldId;
 import com.ryuqq.marketplace.domain.productnotice.id.ProductNoticeEntryId;
 import com.ryuqq.marketplace.domain.productnotice.vo.NoticeFieldValue;
 
-/**
- * 고시정보 항목 (Child Entity of ProductNotice).
- * 개별 NoticeField에 대한 값을 보관한다.
- */
+/** 고시정보 항목 (Child Entity of ProductNotice). 개별 NoticeField에 대한 값을 보관한다. */
 public class ProductNoticeEntry {
 
     private final ProductNoticeEntryId id;
@@ -15,9 +12,7 @@ public class ProductNoticeEntry {
     private NoticeFieldValue fieldValue;
 
     private ProductNoticeEntry(
-            ProductNoticeEntryId id,
-            NoticeFieldId noticeFieldId,
-            NoticeFieldValue fieldValue) {
+            ProductNoticeEntryId id, NoticeFieldId noticeFieldId, NoticeFieldValue fieldValue) {
         this.id = id;
         this.noticeFieldId = noticeFieldId;
         this.fieldValue = fieldValue;
@@ -25,19 +20,13 @@ public class ProductNoticeEntry {
 
     /** 신규 고시정보 항목 생성. */
     public static ProductNoticeEntry forNew(
-            NoticeFieldId noticeFieldId,
-            NoticeFieldValue fieldValue) {
-        return new ProductNoticeEntry(
-                ProductNoticeEntryId.forNew(),
-                noticeFieldId,
-                fieldValue);
+            NoticeFieldId noticeFieldId, NoticeFieldValue fieldValue) {
+        return new ProductNoticeEntry(ProductNoticeEntryId.forNew(), noticeFieldId, fieldValue);
     }
 
     /** 영속성에서 복원 시 사용. */
     public static ProductNoticeEntry reconstitute(
-            ProductNoticeEntryId id,
-            NoticeFieldId noticeFieldId,
-            NoticeFieldValue fieldValue) {
+            ProductNoticeEntryId id, NoticeFieldId noticeFieldId, NoticeFieldValue fieldValue) {
         return new ProductNoticeEntry(id, noticeFieldId, fieldValue);
     }
 

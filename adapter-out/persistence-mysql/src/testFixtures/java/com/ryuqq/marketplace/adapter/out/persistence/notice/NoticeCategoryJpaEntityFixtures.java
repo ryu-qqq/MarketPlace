@@ -58,14 +58,7 @@ public final class NoticeCategoryJpaEntityFixtures {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeCategoryJpaEntity.create(
-                seq,
-                code,
-                DEFAULT_NAME_KO,
-                DEFAULT_NAME_EN,
-                targetGroup,
-                true,
-                now,
-                now);
+                seq, code, DEFAULT_NAME_KO, DEFAULT_NAME_EN, targetGroup, true, now, now);
     }
 
     /** 비활성 상태 NoticeCategory Entity 생성. */
@@ -118,14 +111,7 @@ public final class NoticeCategoryJpaEntityFixtures {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeCategoryJpaEntity.create(
-                seq,
-                "DIGITAL",
-                "디지털/가전",
-                "Digital",
-                "DIGITAL",
-                true,
-                now,
-                now);
+                seq, "DIGITAL", "디지털/가전", "Digital", "DIGITAL", true, now, now);
     }
 
     /** 가구 카테고리 Entity 생성. */
@@ -133,14 +119,7 @@ public final class NoticeCategoryJpaEntityFixtures {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeCategoryJpaEntity.create(
-                seq,
-                "FURNITURE",
-                "가구",
-                "Furniture",
-                "FURNITURE",
-                true,
-                now,
-                now);
+                seq, "FURNITURE", "가구", "Furniture", "FURNITURE", true, now, now);
     }
 
     /** 비활성 상태의 새 Entity 생성 (ID는 null). */
@@ -159,8 +138,7 @@ public final class NoticeCategoryJpaEntityFixtures {
     }
 
     /** 커스텀 이름을 가진 활성 상태 Entity 생성. */
-    public static NoticeCategoryJpaEntity activeEntityWithName(
-            String nameKo, String nameEn) {
+    public static NoticeCategoryJpaEntity activeEntityWithName(String nameKo, String nameEn) {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeCategoryJpaEntity.create(

@@ -34,9 +34,8 @@ public class CanonicalOptionGroupQueryApiMapper {
     }
 
     public CanonicalOptionGroupApiResponse toResponse(CanonicalOptionGroupResult result) {
-        List<CanonicalOptionValueApiResponse> valueResponses = result.values().stream()
-                .map(this::toValueResponse)
-                .toList();
+        List<CanonicalOptionValueApiResponse> valueResponses =
+                result.values().stream().map(this::toValueResponse).toList();
 
         return new CanonicalOptionGroupApiResponse(
                 result.id(),
@@ -65,10 +64,6 @@ public class CanonicalOptionGroupQueryApiMapper {
 
     private CanonicalOptionValueApiResponse toValueResponse(CanonicalOptionValueResult result) {
         return new CanonicalOptionValueApiResponse(
-                result.id(),
-                result.code(),
-                result.nameKo(),
-                result.nameEn(),
-                result.sortOrder());
+                result.id(), result.code(), result.nameKo(), result.nameEn(), result.sortOrder());
     }
 }

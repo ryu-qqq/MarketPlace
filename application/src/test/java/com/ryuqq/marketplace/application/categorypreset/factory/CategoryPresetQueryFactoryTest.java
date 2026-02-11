@@ -105,7 +105,8 @@ class CategoryPresetQueryFactoryTest {
             // given
             int page = 2;
             int size = 50;
-            CategoryPresetSearchParams params = CategoryPresetQueryFixtures.searchParams(page, size);
+            CategoryPresetSearchParams params =
+                    CategoryPresetQueryFixtures.searchParams(page, size);
             mockCommonVoFactory(page, size);
 
             // when
@@ -124,11 +125,12 @@ class CategoryPresetQueryFactoryTest {
             given(commonVoFactory.parseSortDirection(any())).willReturn(SortDirection.DESC);
             given(commonVoFactory.createPageRequest(page, size))
                     .willReturn(PageRequest.of(page, size));
-            given(commonVoFactory.createQueryContext(
-                            any(CategoryPresetSortKey.class),
-                            any(SortDirection.class),
-                            any(PageRequest.class),
-                            any(Boolean.class)))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    any(CategoryPresetSortKey.class),
+                                    any(SortDirection.class),
+                                    any(PageRequest.class),
+                                    any(Boolean.class)))
                     .willReturn(
                             QueryContext.of(
                                     CategoryPresetSortKey.CREATED_AT,

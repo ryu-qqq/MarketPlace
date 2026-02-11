@@ -21,7 +21,12 @@ public class CanonicalOptionGroupJpaEntityMapper {
         var name = CanonicalOptionGroupName.of(entity.getNameKo(), entity.getNameEn());
 
         return CanonicalOptionGroup.reconstitute(
-                id, code, name, entity.isActive(),
-                List.of(), entity.getCreatedAt(), entity.getUpdatedAt());
+                id,
+                code,
+                name,
+                entity.isActive(),
+                List.of(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt());
     }
 }

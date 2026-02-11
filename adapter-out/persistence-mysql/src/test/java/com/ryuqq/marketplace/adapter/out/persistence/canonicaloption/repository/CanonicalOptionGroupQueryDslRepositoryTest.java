@@ -87,12 +87,12 @@ class CanonicalOptionGroupQueryDslRepositoryTest {
             var criteria =
                     new com.ryuqq.marketplace.domain.canonicaloption.query
                             .CanonicalOptionGroupSearchCriteria(
-                                    null,
-                                    null,
-                                    null,
-                                    com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                            com.ryuqq.marketplace.domain.canonicaloption.query
-                                                    .CanonicalOptionGroupSortKey.defaultKey()));
+                            null,
+                            null,
+                            null,
+                            com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
+                                    com.ryuqq.marketplace.domain.canonicaloption.query
+                                            .CanonicalOptionGroupSortKey.defaultKey()));
             var result = repository().findByCriteria(criteria);
 
             assertThat(result).hasSize(3);
@@ -108,12 +108,12 @@ class CanonicalOptionGroupQueryDslRepositoryTest {
             var criteria =
                     new com.ryuqq.marketplace.domain.canonicaloption.query
                             .CanonicalOptionGroupSearchCriteria(
-                                    true,
-                                    null,
-                                    null,
-                                    com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                            com.ryuqq.marketplace.domain.canonicaloption.query
-                                                    .CanonicalOptionGroupSortKey.defaultKey()));
+                            true,
+                            null,
+                            null,
+                            com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
+                                    com.ryuqq.marketplace.domain.canonicaloption.query
+                                            .CanonicalOptionGroupSortKey.defaultKey()));
             var result = repository().findByCriteria(criteria);
 
             assertThat(result).hasSize(2);
@@ -129,12 +129,12 @@ class CanonicalOptionGroupQueryDslRepositoryTest {
             var criteria =
                     new com.ryuqq.marketplace.domain.canonicaloption.query
                             .CanonicalOptionGroupSearchCriteria(
-                                    null,
-                                    "CODE",
-                                    "COLOR",
-                                    com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                            com.ryuqq.marketplace.domain.canonicaloption.query
-                                                    .CanonicalOptionGroupSortKey.defaultKey()));
+                            null,
+                            "CODE",
+                            "COLOR",
+                            com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
+                                    com.ryuqq.marketplace.domain.canonicaloption.query
+                                            .CanonicalOptionGroupSortKey.defaultKey()));
             var result = repository().findByCriteria(criteria);
 
             assertThat(result).hasSize(1);
@@ -150,12 +150,12 @@ class CanonicalOptionGroupQueryDslRepositoryTest {
             var criteria =
                     new com.ryuqq.marketplace.domain.canonicaloption.query
                             .CanonicalOptionGroupSearchCriteria(
-                                    null,
-                                    "NAME_KO",
-                                    "색상",
-                                    com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                            com.ryuqq.marketplace.domain.canonicaloption.query
-                                                    .CanonicalOptionGroupSortKey.defaultKey()));
+                            null,
+                            "NAME_KO",
+                            "색상",
+                            com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
+                                    com.ryuqq.marketplace.domain.canonicaloption.query
+                                            .CanonicalOptionGroupSortKey.defaultKey()));
             var result = repository().findByCriteria(criteria);
 
             assertThat(result).hasSize(1);
@@ -174,15 +174,14 @@ class CanonicalOptionGroupQueryDslRepositoryTest {
             var criteria =
                     new com.ryuqq.marketplace.domain.canonicaloption.query
                             .CanonicalOptionGroupSearchCriteria(
-                                    null,
-                                    null,
-                                    null,
-                                    com.ryuqq.marketplace.domain.common.vo.QueryContext.of(
-                                            com.ryuqq.marketplace.domain.canonicaloption.query
-                                                    .CanonicalOptionGroupSortKey.defaultKey(),
-                                            com.ryuqq.marketplace.domain.common.vo.SortDirection.ASC,
-                                            com.ryuqq.marketplace.domain.common.vo.PageRequest.of(
-                                                    1, 2)));
+                            null,
+                            null,
+                            null,
+                            com.ryuqq.marketplace.domain.common.vo.QueryContext.of(
+                                    com.ryuqq.marketplace.domain.canonicaloption.query
+                                            .CanonicalOptionGroupSortKey.defaultKey(),
+                                    com.ryuqq.marketplace.domain.common.vo.SortDirection.ASC,
+                                    com.ryuqq.marketplace.domain.common.vo.PageRequest.of(1, 2)));
             var result = repository().findByCriteria(criteria);
 
             assertThat(result).hasSize(2);
@@ -203,12 +202,12 @@ class CanonicalOptionGroupQueryDslRepositoryTest {
             var criteria =
                     new com.ryuqq.marketplace.domain.canonicaloption.query
                             .CanonicalOptionGroupSearchCriteria(
-                                    null,
-                                    null,
-                                    null,
-                                    com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                            com.ryuqq.marketplace.domain.canonicaloption.query
-                                                    .CanonicalOptionGroupSortKey.defaultKey()));
+                            null,
+                            null,
+                            null,
+                            com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
+                                    com.ryuqq.marketplace.domain.canonicaloption.query
+                                            .CanonicalOptionGroupSortKey.defaultKey()));
             long count = repository().countByCriteria(criteria);
 
             assertThat(count).isEqualTo(3);
@@ -226,12 +225,12 @@ class CanonicalOptionGroupQueryDslRepositoryTest {
             var criteria =
                     new com.ryuqq.marketplace.domain.canonicaloption.query
                             .CanonicalOptionGroupSearchCriteria(
-                                    true,
-                                    null,
-                                    null,
-                                    com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                            com.ryuqq.marketplace.domain.canonicaloption.query
-                                                    .CanonicalOptionGroupSortKey.defaultKey()));
+                            true,
+                            null,
+                            null,
+                            com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
+                                    com.ryuqq.marketplace.domain.canonicaloption.query
+                                            .CanonicalOptionGroupSortKey.defaultKey()));
             long count = repository().countByCriteria(criteria);
 
             assertThat(count).isEqualTo(2);
@@ -246,12 +245,12 @@ class CanonicalOptionGroupQueryDslRepositoryTest {
             var criteria =
                     new com.ryuqq.marketplace.domain.canonicaloption.query
                             .CanonicalOptionGroupSearchCriteria(
-                                    null,
-                                    "NAME_KO",
-                                    "색상",
-                                    com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                            com.ryuqq.marketplace.domain.canonicaloption.query
-                                                    .CanonicalOptionGroupSortKey.defaultKey()));
+                            null,
+                            "NAME_KO",
+                            "색상",
+                            com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
+                                    com.ryuqq.marketplace.domain.canonicaloption.query
+                                            .CanonicalOptionGroupSortKey.defaultKey()));
             long count = repository().countByCriteria(criteria);
 
             assertThat(count).isEqualTo(1);

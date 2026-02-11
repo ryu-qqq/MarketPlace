@@ -60,7 +60,8 @@ class BrandPresetAssemblerTest {
             long totalElements = 0L;
 
             // when
-            BrandPresetPageResult result = sut.toPageResult(emptyResults, page, size, totalElements);
+            BrandPresetPageResult result =
+                    sut.toPageResult(emptyResults, page, size, totalElements);
 
             // then
             assertThat(result).isNotNull();

@@ -46,8 +46,7 @@ class NoticeCategoryJpaEntityMapperTest {
         @DisplayName("활성 상태 Entity를 Domain으로 변환합니다")
         void toDomain_WithActiveEntity_ConvertsCorrectly() {
             // given
-            NoticeCategoryJpaEntity entity =
-                    NoticeCategoryJpaEntityFixtures.activeEntity(1L);
+            NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.activeEntity(1L);
 
             // when
             NoticeCategory domain = mapper.toDomain(entity);
@@ -66,8 +65,7 @@ class NoticeCategoryJpaEntityMapperTest {
         @DisplayName("비활성 상태 Entity를 Domain으로 변환합니다")
         void toDomain_WithInactiveEntity_ConvertsCorrectly() {
             // given
-            NoticeCategoryJpaEntity entity =
-                    NoticeCategoryJpaEntityFixtures.inactiveEntity();
+            NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.inactiveEntity();
 
             // when
             NoticeCategory domain = mapper.toDomain(entity);
@@ -96,8 +94,7 @@ class NoticeCategoryJpaEntityMapperTest {
         void toDomain_WithClothingGroup_ConvertsCorrectly() {
             // given
             NoticeCategoryJpaEntity entity =
-                    NoticeCategoryJpaEntityFixtures.activeEntityWithCode(
-                            "CLOTHING", "CLOTHING");
+                    NoticeCategoryJpaEntityFixtures.activeEntityWithCode("CLOTHING", "CLOTHING");
 
             // when
             NoticeCategory domain = mapper.toDomain(entity);
@@ -110,8 +107,7 @@ class NoticeCategoryJpaEntityMapperTest {
         @DisplayName("DIGITAL 카테고리 그룹을 올바르게 변환합니다")
         void toDomain_WithDigitalGroup_ConvertsCorrectly() {
             // given
-            NoticeCategoryJpaEntity entity =
-                    NoticeCategoryJpaEntityFixtures.electronicsEntity();
+            NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.electronicsEntity();
 
             // when
             NoticeCategory domain = mapper.toDomain(entity);
@@ -149,8 +145,7 @@ class NoticeCategoryJpaEntityMapperTest {
         @DisplayName("생성일시와 수정일시가 올바르게 변환됩니다")
         void toDomain_PreservesTimestamps() {
             // given
-            NoticeCategoryJpaEntity entity =
-                    NoticeCategoryJpaEntityFixtures.activeEntity(1L);
+            NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.activeEntity(1L);
 
             // when
             NoticeCategory domain = mapper.toDomain(entity);
@@ -164,8 +159,7 @@ class NoticeCategoryJpaEntityMapperTest {
         @DisplayName("필드 리스트가 비어있는 상태로 변환됩니다")
         void toDomain_HasEmptyFieldsList() {
             // given
-            NoticeCategoryJpaEntity entity =
-                    NoticeCategoryJpaEntityFixtures.activeEntity(1L);
+            NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.activeEntity(1L);
 
             // when
             NoticeCategory domain = mapper.toDomain(entity);
@@ -190,8 +184,7 @@ class NoticeCategoryJpaEntityMapperTest {
             String longNameKo = "매우 긴 카테고리 이름".repeat(5);
             String longNameEn = "Very Long Category Name".repeat(3);
             NoticeCategoryJpaEntity entity =
-                    NoticeCategoryJpaEntityFixtures.activeEntityWithName(
-                            longNameKo, longNameEn);
+                    NoticeCategoryJpaEntityFixtures.activeEntityWithName(longNameKo, longNameEn);
 
             // when
             NoticeCategory domain = mapper.toDomain(entity);

@@ -52,11 +52,12 @@ class SalesChannelBrandQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(anyString())).willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(anyInt(), anyInt())).willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            SalesChannelBrandSortKey.defaultKey(),
-                            sortDirection,
-                            pageRequest,
-                            false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    SalesChannelBrandSortKey.defaultKey(),
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when
@@ -85,11 +86,12 @@ class SalesChannelBrandQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(anyString())).willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(anyInt(), anyInt())).willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            SalesChannelBrandSortKey.defaultKey(),
-                            sortDirection,
-                            pageRequest,
-                            false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    SalesChannelBrandSortKey.defaultKey(),
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when
@@ -117,11 +119,12 @@ class SalesChannelBrandQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(anyString())).willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(anyInt(), anyInt())).willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            SalesChannelBrandSortKey.defaultKey(),
-                            sortDirection,
-                            pageRequest,
-                            false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    SalesChannelBrandSortKey.defaultKey(),
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when

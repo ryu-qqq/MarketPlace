@@ -141,10 +141,7 @@ public final class BrandPresetApiFixtures {
 
     public static List<BrandPresetResult> brandPresetResults(int count) {
         return java.util.stream.IntStream.rangeClosed(1, count)
-                .mapToObj(
-                        i ->
-                                brandPresetResult(
-                                        (long) i, DEFAULT_PRESET_NAME + "_" + i))
+                .mapToObj(i -> brandPresetResult((long) i, DEFAULT_PRESET_NAME + "_" + i))
                 .toList();
     }
 

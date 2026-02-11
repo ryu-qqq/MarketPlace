@@ -45,8 +45,8 @@ class ChannelOptionMappingNotFoundExceptionTest {
                     new ChannelOptionMappingNotFoundException(channelOptionMappingId);
 
             // then
-            assertThat(exception.args()).containsEntry("channelOptionMappingId",
-                    channelOptionMappingId);
+            assertThat(exception.args())
+                    .containsEntry("channelOptionMappingId", channelOptionMappingId);
         }
     }
 

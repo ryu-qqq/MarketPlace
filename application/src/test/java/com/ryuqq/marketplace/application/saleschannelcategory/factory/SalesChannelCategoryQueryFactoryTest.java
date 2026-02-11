@@ -78,7 +78,8 @@ class SalesChannelCategoryQueryFactoryTest {
             String searchField = "EXTERNAL_NAME";
             String searchWord = "테스트";
             SalesChannelCategorySearchParams params =
-                    SalesChannelCategoryQueryFixtures.searchParams(null, null, searchField, searchWord);
+                    SalesChannelCategoryQueryFixtures.searchParams(
+                            null, null, searchField, searchWord);
 
             // when
             SalesChannelCategorySearchCriteria result = sut.createCriteria(params);

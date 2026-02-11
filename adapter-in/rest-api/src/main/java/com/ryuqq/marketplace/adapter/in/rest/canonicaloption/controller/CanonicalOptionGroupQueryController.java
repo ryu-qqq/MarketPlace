@@ -38,28 +38,21 @@ public class CanonicalOptionGroupQueryController {
         this.mapper = mapper;
     }
 
-    @RequirePermission(
-            value = "canonical-option-group:read",
-            description = "캐노니컬 옵션 그룹 목록 조회")
+    @RequirePermission(value = "canonical-option-group:read", description = "캐노니컬 옵션 그룹 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<CanonicalOptionGroupApiResponse>>>
             searchCanonicalOptionGroupsByOffset(
-                    @ParameterObject @Valid
-                            SearchCanonicalOptionGroupsApiRequest request) {
+                    @ParameterObject @Valid SearchCanonicalOptionGroupsApiRequest request) {
         CanonicalOptionGroupPageResult pageResult =
-                searchCanonicalOptionGroupByOffsetUseCase.execute(
-                        mapper.toSearchParams(request));
+                searchCanonicalOptionGroupByOffsetUseCase.execute(mapper.toSearchParams(request));
         return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponse(pageResult)));
     }
 
-    @RequirePermission(
-            value = "canonical-option-group:read",
-            description = "캐노니컬 옵션 그룹 단건 조회")
+    @RequirePermission(value = "canonical-option-group:read", description = "캐노니컬 옵션 그룹 단건 조회")
     @GetMapping(CanonicalOptionAdminEndpoints.CANONICAL_OPTION_GROUP_ID)
-    public ResponseEntity<ApiResponse<CanonicalOptionGroupApiResponse>>
-            getCanonicalOptionGroup(
-                    @PathVariable(CanonicalOptionAdminEndpoints.PATH_CANONICAL_OPTION_GROUP_ID)
-                            Long canonicalOptionGroupId) {
+    public ResponseEntity<ApiResponse<CanonicalOptionGroupApiResponse>> getCanonicalOptionGroup(
+            @PathVariable(CanonicalOptionAdminEndpoints.PATH_CANONICAL_OPTION_GROUP_ID)
+                    Long canonicalOptionGroupId) {
         CanonicalOptionGroupResult result =
                 getCanonicalOptionGroupUseCase.execute(canonicalOptionGroupId);
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));

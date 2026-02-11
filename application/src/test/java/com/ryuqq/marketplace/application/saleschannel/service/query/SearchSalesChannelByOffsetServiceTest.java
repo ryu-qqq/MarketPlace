@@ -55,7 +55,9 @@ class SearchSalesChannelByOffsetServiceTest {
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readManager.findByCriteria(criteria)).willReturn(salesChannels);
             given(readManager.countByCriteria(criteria)).willReturn(totalElements);
-            given(assembler.toPageResult(salesChannels, params.page(), params.size(), totalElements))
+            given(
+                            assembler.toPageResult(
+                                    salesChannels, params.page(), params.size(), totalElements))
                     .willReturn(expectedResult);
 
             // when
@@ -66,7 +68,9 @@ class SearchSalesChannelByOffsetServiceTest {
             then(queryFactory).should().createCriteria(params);
             then(readManager).should().findByCriteria(criteria);
             then(readManager).should().countByCriteria(criteria);
-            then(assembler).should().toPageResult(salesChannels, params.page(), params.size(), totalElements);
+            then(assembler)
+                    .should()
+                    .toPageResult(salesChannels, params.page(), params.size(), totalElements);
         }
 
         @Test
@@ -82,7 +86,12 @@ class SearchSalesChannelByOffsetServiceTest {
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readManager.findByCriteria(criteria)).willReturn(emptySalesChannels);
             given(readManager.countByCriteria(criteria)).willReturn(totalElements);
-            given(assembler.toPageResult(emptySalesChannels, params.page(), params.size(), totalElements))
+            given(
+                            assembler.toPageResult(
+                                    emptySalesChannels,
+                                    params.page(),
+                                    params.size(),
+                                    totalElements))
                     .willReturn(emptyResult);
 
             // when
@@ -109,7 +118,12 @@ class SearchSalesChannelByOffsetServiceTest {
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readManager.findByCriteria(criteria)).willReturn(activeSalesChannels);
             given(readManager.countByCriteria(criteria)).willReturn(totalElements);
-            given(assembler.toPageResult(activeSalesChannels, params.page(), params.size(), totalElements))
+            given(
+                            assembler.toPageResult(
+                                    activeSalesChannels,
+                                    params.page(),
+                                    params.size(),
+                                    totalElements))
                     .willReturn(expectedResult);
 
             // when

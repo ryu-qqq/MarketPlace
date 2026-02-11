@@ -49,8 +49,12 @@ class SalesChannelQueryFactoryTest {
                     .willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(params.page(), params.size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            SalesChannelSortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    SalesChannelSortKey.CREATED_AT,
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when
@@ -77,8 +81,12 @@ class SalesChannelQueryFactoryTest {
                     .willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(params.page(), params.size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            SalesChannelSortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    SalesChannelSortKey.CREATED_AT,
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when
@@ -105,8 +113,12 @@ class SalesChannelQueryFactoryTest {
                     .willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(params.page(), params.size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            SalesChannelSortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    SalesChannelSortKey.CREATED_AT,
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when

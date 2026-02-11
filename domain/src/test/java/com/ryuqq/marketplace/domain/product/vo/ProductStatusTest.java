@@ -165,12 +165,12 @@ class ProductStatusTest {
         void allStatesAreDefined() {
             ProductStatus[] values = ProductStatus.values();
             assertThat(values).hasSize(4);
-            assertThat(values).containsExactlyInAnyOrder(
-                    ProductStatus.ACTIVE,
-                    ProductStatus.INACTIVE,
-                    ProductStatus.SOLDOUT,
-                    ProductStatus.DELETED
-            );
+            assertThat(values)
+                    .containsExactlyInAnyOrder(
+                            ProductStatus.ACTIVE,
+                            ProductStatus.INACTIVE,
+                            ProductStatus.SOLDOUT,
+                            ProductStatus.DELETED);
         }
     }
 }

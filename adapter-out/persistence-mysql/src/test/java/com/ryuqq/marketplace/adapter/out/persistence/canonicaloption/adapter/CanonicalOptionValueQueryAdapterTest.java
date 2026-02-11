@@ -70,8 +70,7 @@ class CanonicalOptionValueQueryAdapterTest {
             given(mapper.toDomain(entity2)).willReturn(domain2);
 
             // when
-            List<CanonicalOptionValue> result =
-                    queryAdapter.findByCanonicalOptionGroupId(groupId);
+            List<CanonicalOptionValue> result = queryAdapter.findByCanonicalOptionGroupId(groupId);
 
             // then
             assertThat(result).hasSize(2);
@@ -90,8 +89,7 @@ class CanonicalOptionValueQueryAdapterTest {
                     .willReturn(List.of());
 
             // when
-            List<CanonicalOptionValue> result =
-                    queryAdapter.findByCanonicalOptionGroupId(groupId);
+            List<CanonicalOptionValue> result = queryAdapter.findByCanonicalOptionGroupId(groupId);
 
             // then
             assertThat(result).isEmpty();
@@ -170,7 +168,9 @@ class CanonicalOptionValueQueryAdapterTest {
             assertThat(result.get(2L)).hasSize(1);
             assertThat(result.get(1L).get(0).codeValue()).isEqualTo("RED");
             assertThat(result.get(2L).get(0).codeValue()).isEqualTo("SMALL");
-            then(valueJpaRepository).should().findByCanonicalOptionGroupIdInOrderBySortOrder(groupIds);
+            then(valueJpaRepository)
+                    .should()
+                    .findByCanonicalOptionGroupIdInOrderBySortOrder(groupIds);
         }
 
         @Test

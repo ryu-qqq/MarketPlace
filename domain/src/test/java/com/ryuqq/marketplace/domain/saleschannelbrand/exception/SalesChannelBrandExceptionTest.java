@@ -40,7 +40,8 @@ class SalesChannelBrandExceptionTest {
             // when
             SalesChannelBrandException exception =
                     new SalesChannelBrandException(
-                            SalesChannelBrandErrorCode.SALES_CHANNEL_BRAND_NOT_FOUND, customMessage);
+                            SalesChannelBrandErrorCode.SALES_CHANNEL_BRAND_NOT_FOUND,
+                            customMessage);
 
             // then
             assertThat(exception.getErrorCode())

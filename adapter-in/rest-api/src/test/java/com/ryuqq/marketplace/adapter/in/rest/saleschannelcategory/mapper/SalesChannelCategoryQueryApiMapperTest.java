@@ -32,7 +32,8 @@ class SalesChannelCategoryQueryApiMapperTest {
     class ToSearchParamsTest {
 
         @Test
-        @DisplayName("SearchSalesChannelCategoriesApiRequest를 SalesChannelCategorySearchParams로 변환한다")
+        @DisplayName(
+                "SearchSalesChannelCategoriesApiRequest를 SalesChannelCategorySearchParams로 변환한다")
         void toSearchParams_ConvertsRequest_ReturnsSearchParams() {
             // given
             List<Long> salesChannelIds = List.of(1L);

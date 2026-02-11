@@ -68,10 +68,18 @@ public final class CanonicalOptionValueJpaEntityFixtures {
     }
 
     /** 커스텀 코드를 가진 옵션 값 Entity 생성. */
-    public static CanonicalOptionValueJpaEntity entityWithCode(Long groupId, String code, int sortOrder) {
+    public static CanonicalOptionValueJpaEntity entityWithCode(
+            Long groupId, String code, int sortOrder) {
         Instant now = Instant.now();
         return CanonicalOptionValueJpaEntity.create(
-                SEQUENCE.getAndIncrement(), groupId, code, DEFAULT_NAME_KO, DEFAULT_NAME_EN, sortOrder, now, now);
+                SEQUENCE.getAndIncrement(),
+                groupId,
+                code,
+                DEFAULT_NAME_KO,
+                DEFAULT_NAME_EN,
+                sortOrder,
+                now,
+                now);
     }
 
     /** 커스텀 이름을 가진 옵션 값 Entity 생성. */
@@ -120,35 +128,30 @@ public final class CanonicalOptionValueJpaEntityFixtures {
     /** COLOR 그룹의 RED 옵션 값 생성. */
     public static CanonicalOptionValueJpaEntity colorRedEntity() {
         Instant now = Instant.now();
-        return CanonicalOptionValueJpaEntity.create(
-                1L, 1L, "RED", "빨강", "Red", 1, now, now);
+        return CanonicalOptionValueJpaEntity.create(1L, 1L, "RED", "빨강", "Red", 1, now, now);
     }
 
     /** COLOR 그룹의 BLUE 옵션 값 생성. */
     public static CanonicalOptionValueJpaEntity colorBlueEntity() {
         Instant now = Instant.now();
-        return CanonicalOptionValueJpaEntity.create(
-                2L, 1L, "BLUE", "파랑", "Blue", 2, now, now);
+        return CanonicalOptionValueJpaEntity.create(2L, 1L, "BLUE", "파랑", "Blue", 2, now, now);
     }
 
     /** SIZE 그룹의 SMALL 옵션 값 생성. */
     public static CanonicalOptionValueJpaEntity sizeSmallEntity() {
         Instant now = Instant.now();
-        return CanonicalOptionValueJpaEntity.create(
-                3L, 2L, "SMALL", "소형", "Small", 1, now, now);
+        return CanonicalOptionValueJpaEntity.create(3L, 2L, "SMALL", "소형", "Small", 1, now, now);
     }
 
     /** SIZE 그룹의 MEDIUM 옵션 값 생성. */
     public static CanonicalOptionValueJpaEntity sizeMediumEntity() {
         Instant now = Instant.now();
-        return CanonicalOptionValueJpaEntity.create(
-                4L, 2L, "MEDIUM", "중형", "Medium", 2, now, now);
+        return CanonicalOptionValueJpaEntity.create(4L, 2L, "MEDIUM", "중형", "Medium", 2, now, now);
     }
 
     /** SIZE 그룹의 LARGE 옵션 값 생성. */
     public static CanonicalOptionValueJpaEntity sizeLargeEntity() {
         Instant now = Instant.now();
-        return CanonicalOptionValueJpaEntity.create(
-                5L, 2L, "LARGE", "대형", "Large", 3, now, now);
+        return CanonicalOptionValueJpaEntity.create(5L, 2L, "LARGE", "대형", "Large", 3, now, now);
     }
 }

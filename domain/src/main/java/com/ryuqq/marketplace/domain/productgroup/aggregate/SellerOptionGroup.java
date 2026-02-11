@@ -1,17 +1,16 @@
 package com.ryuqq.marketplace.domain.productgroup.aggregate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionGroupName;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * 셀러 옵션 그룹 (Child Entity of ProductGroup).
- * 셀러가 정의한 옵션 그룹 (예: "색상", "사이즈"). 캐노니컬 옵션 그룹에 매핑 가능 (nullable).
+ * 셀러 옵션 그룹 (Child Entity of ProductGroup). 셀러가 정의한 옵션 그룹 (예: "색상", "사이즈"). 캐노니컬 옵션 그룹에 매핑 가능
+ * (nullable).
  */
 public class SellerOptionGroup {
 
@@ -76,7 +75,13 @@ public class SellerOptionGroup {
             CanonicalOptionGroupId canonicalOptionGroupId,
             int sortOrder,
             List<SellerOptionValue> optionValues) {
-        return new SellerOptionGroup(id, productGroupId, optionGroupName, canonicalOptionGroupId, sortOrder, optionValues);
+        return new SellerOptionGroup(
+                id,
+                productGroupId,
+                optionGroupName,
+                canonicalOptionGroupId,
+                sortOrder,
+                optionValues);
     }
 
     /** 옵션 그룹명 수정. */

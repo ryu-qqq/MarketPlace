@@ -161,8 +161,7 @@ public final class NoticeFixtures {
 
     // ===== NoticeField Entity Fixtures =====
     public static NoticeField newNoticeField() {
-        return NoticeField.forNew(
-                defaultNoticeFieldCode(), defaultNoticeFieldName(), true, 1);
+        return NoticeField.forNew(defaultNoticeFieldCode(), defaultNoticeFieldName(), true, 1);
     }
 
     public static NoticeField newNoticeField(
@@ -172,11 +171,7 @@ public final class NoticeFixtures {
 
     public static NoticeField activeNoticeField() {
         return NoticeField.reconstitute(
-                NoticeFieldId.of(1L),
-                defaultNoticeFieldCode(),
-                defaultNoticeFieldName(),
-                true,
-                1);
+                NoticeFieldId.of(1L), defaultNoticeFieldCode(), defaultNoticeFieldName(), true, 1);
     }
 
     public static NoticeField activeNoticeField(Long id) {

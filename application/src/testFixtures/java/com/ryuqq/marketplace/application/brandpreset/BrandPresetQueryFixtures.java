@@ -23,13 +23,11 @@ public final class BrandPresetQueryFixtures {
     // ===== SearchParams Fixtures =====
 
     public static BrandPresetSearchParams searchParams() {
-        return BrandPresetSearchParams.of(
-                null, null, null, null, defaultCommonSearchParams());
+        return BrandPresetSearchParams.of(null, null, null, null, defaultCommonSearchParams());
     }
 
     public static BrandPresetSearchParams searchParams(int page, int size) {
-        return BrandPresetSearchParams.of(
-                null, null, null, null, commonSearchParams(page, size));
+        return BrandPresetSearchParams.of(null, null, null, null, commonSearchParams(page, size));
     }
 
     public static BrandPresetSearchParams searchParams(List<Long> salesChannelIds) {
@@ -56,11 +54,7 @@ public final class BrandPresetQueryFixtures {
             int page,
             int size) {
         return BrandPresetSearchParams.of(
-                salesChannelIds,
-                statuses,
-                searchField,
-                searchWord,
-                commonSearchParams(page, size));
+                salesChannelIds, statuses, searchField, searchWord, commonSearchParams(page, size));
     }
 
     public static CommonSearchParams defaultCommonSearchParams() {
@@ -103,8 +97,7 @@ public final class BrandPresetQueryFixtures {
                 now);
     }
 
-    public static BrandPresetResult brandPresetResult(
-            Long id, Long shopId, Long salesChannelId) {
+    public static BrandPresetResult brandPresetResult(Long id, Long shopId, Long salesChannelId) {
         Instant now = CommonVoFixtures.now();
         return new BrandPresetResult(
                 id,
@@ -122,14 +115,12 @@ public final class BrandPresetQueryFixtures {
     // ===== PageResult Fixtures =====
 
     public static BrandPresetPageResult brandPresetPageResult() {
-        List<BrandPresetResult> results =
-                List.of(brandPresetResult(1L), brandPresetResult(2L));
+        List<BrandPresetResult> results = List.of(brandPresetResult(1L), brandPresetResult(2L));
         return BrandPresetPageResult.of(results, 0, 20, 2L);
     }
 
     public static BrandPresetPageResult brandPresetPageResult(int page, int size, long totalCount) {
-        List<BrandPresetResult> results =
-                List.of(brandPresetResult(1L), brandPresetResult(2L));
+        List<BrandPresetResult> results = List.of(brandPresetResult(1L), brandPresetResult(2L));
         return BrandPresetPageResult.of(results, page, size, totalCount);
     }
 

@@ -155,8 +155,9 @@ class SalesChannelBrandReadManagerTest {
             Long salesChannelId = 1L;
             String externalBrandCode = "BRAND-001";
 
-            given(queryPort.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalBrandCode))
+            given(
+                            queryPort.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalBrandCode))
                     .willReturn(true);
 
             // when
@@ -174,8 +175,9 @@ class SalesChannelBrandReadManagerTest {
             Long salesChannelId = 1L;
             String externalBrandCode = "BRAND-999";
 
-            given(queryPort.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalBrandCode))
+            given(
+                            queryPort.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalBrandCode))
                     .willReturn(false);
 
             // when

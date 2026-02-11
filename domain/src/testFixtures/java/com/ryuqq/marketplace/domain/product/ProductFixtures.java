@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.domain.product;
 
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
-import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
@@ -9,9 +8,7 @@ import com.ryuqq.marketplace.domain.product.vo.ProductStatus;
 import com.ryuqq.marketplace.domain.product.vo.SkuCode;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
-import java.time.Instant;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Product 도메인 테스트 Fixtures.
@@ -161,15 +158,12 @@ public final class ProductFixtures {
 
     /** 기본 ProductOptionMapping. */
     public static ProductOptionMapping defaultOptionMapping() {
-        return ProductOptionMapping.forNew(
-                ProductId.of(1L),
-                SellerOptionValueId.of(100L));
+        return ProductOptionMapping.forNew(ProductId.of(1L), SellerOptionValueId.of(100L));
     }
 
     /** 특정 ID의 ProductOptionMapping. */
     public static ProductOptionMapping optionMapping(Long productId, Long sellerOptionValueId) {
         return ProductOptionMapping.forNew(
-                ProductId.of(productId),
-                SellerOptionValueId.of(sellerOptionValueId));
+                ProductId.of(productId), SellerOptionValueId.of(sellerOptionValueId));
     }
 }

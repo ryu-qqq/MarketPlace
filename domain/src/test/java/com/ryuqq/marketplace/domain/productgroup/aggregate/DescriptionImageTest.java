@@ -48,11 +48,13 @@ class DescriptionImageTest {
             // given
             DescriptionImageId id = ProductGroupFixtures.defaultDescriptionImageId();
             ImageUrl originUrl = ProductGroupFixtures.defaultImageUrl();
-            ImageUrl uploadedUrl = ProductGroupFixtures.imageUrl("https://s3.example.com/uploaded.jpg");
+            ImageUrl uploadedUrl =
+                    ProductGroupFixtures.imageUrl("https://s3.example.com/uploaded.jpg");
             int sortOrder = 0;
 
             // when
-            DescriptionImage image = DescriptionImage.reconstitute(id, originUrl, uploadedUrl, sortOrder);
+            DescriptionImage image =
+                    DescriptionImage.reconstitute(id, originUrl, uploadedUrl, sortOrder);
 
             // then
             assertThat(image.id()).isEqualTo(id);
@@ -72,7 +74,8 @@ class DescriptionImageTest {
         void updateUploadedUrl() {
             // given
             DescriptionImage image = ProductGroupFixtures.defaultDescriptionImage();
-            ImageUrl uploadedUrl = ProductGroupFixtures.imageUrl("https://s3.example.com/uploaded.jpg");
+            ImageUrl uploadedUrl =
+                    ProductGroupFixtures.imageUrl("https://s3.example.com/uploaded.jpg");
 
             // when
             image.updateUploadedUrl(uploadedUrl);
@@ -130,11 +133,12 @@ class DescriptionImageTest {
         @DisplayName("idValue()는 ID의 값을 반환한다")
         void idValueReturnsIdValue() {
             // given
-            DescriptionImage image = DescriptionImage.reconstitute(
-                    DescriptionImageId.of(100L),
-                    ProductGroupFixtures.defaultImageUrl(),
-                    null,
-                    0);
+            DescriptionImage image =
+                    DescriptionImage.reconstitute(
+                            DescriptionImageId.of(100L),
+                            ProductGroupFixtures.defaultImageUrl(),
+                            null,
+                            0);
 
             // when & then
             assertThat(image.idValue()).isEqualTo(100L);

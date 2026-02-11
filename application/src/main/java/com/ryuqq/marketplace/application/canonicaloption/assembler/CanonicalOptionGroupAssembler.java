@@ -14,9 +14,8 @@ public class CanonicalOptionGroupAssembler {
 
     public CanonicalOptionGroupResult toResult(
             CanonicalOptionGroup group, List<CanonicalOptionValue> values) {
-        List<CanonicalOptionValueResult> valueResults = values.stream()
-                .map(this::toValueResult)
-                .toList();
+        List<CanonicalOptionValueResult> valueResults =
+                values.stream().map(this::toValueResult).toList();
 
         return new CanonicalOptionGroupResult(
                 group.idValue(),

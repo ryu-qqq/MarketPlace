@@ -65,13 +65,11 @@ class CategoryPresetErrorCodeTest {
         @DisplayName("CATEGORY_PRESET_SALES_CHANNEL_CATEGORY_NOT_FOUND 에러 코드를 검증한다")
         void categoryPresetSalesChannelCategoryNotFound() {
             assertThat(
-                            CategoryPresetErrorCode
-                                    .CATEGORY_PRESET_SALES_CHANNEL_CATEGORY_NOT_FOUND
+                            CategoryPresetErrorCode.CATEGORY_PRESET_SALES_CHANNEL_CATEGORY_NOT_FOUND
                                     .getCode())
                     .isEqualTo("CATPRE-004");
             assertThat(
-                            CategoryPresetErrorCode
-                                    .CATEGORY_PRESET_SALES_CHANNEL_CATEGORY_NOT_FOUND
+                            CategoryPresetErrorCode.CATEGORY_PRESET_SALES_CHANNEL_CATEGORY_NOT_FOUND
                                     .getHttpStatus())
                     .isEqualTo(404);
         }

@@ -104,11 +104,9 @@ class CanonicalOptionGroupAssemblerTest {
         void toPageResult_ReturnsPageResult() {
             // given
             CanonicalOptionGroupResult result1 =
-                    sut.toResult(
-                            CanonicalOptionFixtures.activeCanonicalOptionGroup(1L), List.of());
+                    sut.toResult(CanonicalOptionFixtures.activeCanonicalOptionGroup(1L), List.of());
             CanonicalOptionGroupResult result2 =
-                    sut.toResult(
-                            CanonicalOptionFixtures.activeCanonicalOptionGroup(2L), List.of());
+                    sut.toResult(CanonicalOptionFixtures.activeCanonicalOptionGroup(2L), List.of());
             List<CanonicalOptionGroupResult> results = List.of(result1, result2);
             int page = 0;
             int size = 20;

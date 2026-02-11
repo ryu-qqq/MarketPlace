@@ -91,9 +91,7 @@ public class BrandPresetValidator {
             Set<Long> foundIds =
                     foundBrands.stream().map(Brand::idValue).collect(Collectors.toSet());
             List<Long> missingIds =
-                    uniqueInternalBrandIds.stream()
-                            .filter(id -> !foundIds.contains(id))
-                            .toList();
+                    uniqueInternalBrandIds.stream().filter(id -> !foundIds.contains(id)).toList();
             throw new BrandPresetInternalBrandNotFoundException(missingIds);
         }
     }

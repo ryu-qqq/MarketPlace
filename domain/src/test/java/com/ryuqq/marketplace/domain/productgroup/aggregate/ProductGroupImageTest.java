@@ -30,8 +30,8 @@ class ProductGroupImageTest {
             int sortOrder = 0;
 
             // when
-            ProductGroupImage image = ProductGroupImage.forNew(
-                    productGroupId, originUrl, imageType, sortOrder);
+            ProductGroupImage image =
+                    ProductGroupImage.forNew(productGroupId, originUrl, imageType, sortOrder);
 
             // then
             assertThat(image).isNotNull();
@@ -78,13 +78,15 @@ class ProductGroupImageTest {
             ProductGroupImageId id = ProductGroupFixtures.defaultProductGroupImageId();
             ProductGroupId productGroupId = ProductGroupFixtures.defaultProductGroupId();
             ImageUrl originUrl = ProductGroupFixtures.defaultImageUrl();
-            ImageUrl uploadedUrl = ProductGroupFixtures.imageUrl("https://s3.example.com/uploaded.jpg");
+            ImageUrl uploadedUrl =
+                    ProductGroupFixtures.imageUrl("https://s3.example.com/uploaded.jpg");
             ImageType imageType = ImageType.THUMBNAIL;
             int sortOrder = 0;
 
             // when
-            ProductGroupImage image = ProductGroupImage.reconstitute(
-                    id, productGroupId, originUrl, uploadedUrl, imageType, sortOrder);
+            ProductGroupImage image =
+                    ProductGroupImage.reconstitute(
+                            id, productGroupId, originUrl, uploadedUrl, imageType, sortOrder);
 
             // then
             assertThat(image.id()).isEqualTo(id);
@@ -106,7 +108,8 @@ class ProductGroupImageTest {
         void updateUploadedUrl() {
             // given
             ProductGroupImage image = ProductGroupFixtures.thumbnailImage();
-            ImageUrl uploadedUrl = ProductGroupFixtures.imageUrl("https://s3.example.com/uploaded.jpg");
+            ImageUrl uploadedUrl =
+                    ProductGroupFixtures.imageUrl("https://s3.example.com/uploaded.jpg");
 
             // when
             image.updateUploadedUrl(uploadedUrl);
@@ -189,13 +192,14 @@ class ProductGroupImageTest {
         @DisplayName("idValue()는 ID의 값을 반환한다")
         void idValueReturnsIdValue() {
             // given
-            ProductGroupImage image = ProductGroupImage.reconstitute(
-                    ProductGroupImageId.of(100L),
-                    ProductGroupFixtures.defaultProductGroupId(),
-                    ProductGroupFixtures.defaultImageUrl(),
-                    null,
-                    ImageType.THUMBNAIL,
-                    0);
+            ProductGroupImage image =
+                    ProductGroupImage.reconstitute(
+                            ProductGroupImageId.of(100L),
+                            ProductGroupFixtures.defaultProductGroupId(),
+                            ProductGroupFixtures.defaultImageUrl(),
+                            null,
+                            ImageType.THUMBNAIL,
+                            0);
 
             // when & then
             assertThat(image.idValue()).isEqualTo(100L);
@@ -205,13 +209,14 @@ class ProductGroupImageTest {
         @DisplayName("productGroupIdValue()는 ProductGroupId의 값을 반환한다")
         void productGroupIdValueReturnsValue() {
             // given
-            ProductGroupImage image = ProductGroupImage.reconstitute(
-                    ProductGroupFixtures.defaultProductGroupImageId(),
-                    ProductGroupId.of(200L),
-                    ProductGroupFixtures.defaultImageUrl(),
-                    null,
-                    ImageType.THUMBNAIL,
-                    0);
+            ProductGroupImage image =
+                    ProductGroupImage.reconstitute(
+                            ProductGroupFixtures.defaultProductGroupImageId(),
+                            ProductGroupId.of(200L),
+                            ProductGroupFixtures.defaultImageUrl(),
+                            null,
+                            ImageType.THUMBNAIL,
+                            0);
 
             // when & then
             assertThat(image.productGroupIdValue()).isEqualTo(200L);

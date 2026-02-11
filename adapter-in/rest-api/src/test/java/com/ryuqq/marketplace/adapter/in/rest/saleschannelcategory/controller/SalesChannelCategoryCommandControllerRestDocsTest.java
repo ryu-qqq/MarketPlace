@@ -63,7 +63,10 @@ class SalesChannelCategoryCommandControllerRestDocsTest {
             RegisterSalesChannelCategoryApiRequest request =
                     SalesChannelCategoryApiFixtures.registerRequest();
 
-            given(mapper.toCommand(any(Long.class), any(RegisterSalesChannelCategoryApiRequest.class)))
+            given(
+                            mapper.toCommand(
+                                    any(Long.class),
+                                    any(RegisterSalesChannelCategoryApiRequest.class)))
                     .willReturn(null);
             given(registerUseCase.execute(any())).willReturn(CATEGORY_ID);
 
