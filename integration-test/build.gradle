@@ -39,6 +39,9 @@ dependencies {
     testImplementation project(':adapter-out:persistence-redis')
     testImplementation project(':adapter-out:client:authhub-client')
 
+    // AuthHub SDK (TokenResolver stub 제공을 위해 직접 의존)
+    testImplementation libs.authhub.sdk.core
+
     // Spring Security
     testImplementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
