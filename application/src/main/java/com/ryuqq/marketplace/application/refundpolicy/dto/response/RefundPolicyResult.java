@@ -12,26 +12,24 @@ import java.util.List;
  *
  * <p>APP-DTO-002: Result는 Domain 객체에서 직접 변환.
  *
- * @param policyId 정책 ID
- * @param policyName 정책명
- * @param defaultPolicy 기본 정책 여부
- * @param active 활성화 상태
- * @param returnPeriodDays 반품 가능 기간
- * @param exchangePeriodDays 교환 가능 기간
- * @param nonReturnableConditions 반품 불가 조건 목록
- * @param createdAt 생성일시
  * @author ryu-qqq
  * @since 1.0.0
  */
 public record RefundPolicyResult(
         Long policyId,
+        Long sellerId,
         String policyName,
         boolean defaultPolicy,
         boolean active,
         int returnPeriodDays,
         int exchangePeriodDays,
         List<NonReturnableConditionResult> nonReturnableConditions,
-        Instant createdAt) {
+        boolean partialRefundEnabled,
+        boolean inspectionRequired,
+        int inspectionPeriodDays,
+        String additionalInfo,
+        Instant createdAt,
+        Instant updatedAt) {
 
     /**
      * Domain → Result 변환.
@@ -47,13 +45,19 @@ public record RefundPolicyResult(
 
         return new RefundPolicyResult(
                 domain.idValue(),
+                domain.sellerIdValue(),
                 domain.policyNameValue(),
                 domain.isDefaultPolicy(),
                 domain.isActive(),
                 domain.returnPeriodDays(),
                 domain.exchangePeriodDays(),
                 conditionResults,
-                domain.createdAt());
+                domain.isPartialRefundEnabled(),
+                domain.isInspectionRequired(),
+                domain.inspectionPeriodDays(),
+                domain.additionalInfo(),
+                domain.createdAt(),
+                domain.updatedAt());
     }
 
     private static NonReturnableConditionResult toConditionResult(

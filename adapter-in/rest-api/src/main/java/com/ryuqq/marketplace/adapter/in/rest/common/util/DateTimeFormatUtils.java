@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.common.util;
 
 import java.time.Instant;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 public final class DateTimeFormatUtils {
 
     private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private static final ZoneId ZONE_ID = ZoneId.of("Asia/Seoul");
 
     private DateTimeFormatUtils() {
@@ -21,6 +23,13 @@ public final class DateTimeFormatUtils {
         }
         ZonedDateTime zonedDateTime = instant.atZone(ZONE_ID);
         return zonedDateTime.format(ISO_FORMATTER);
+    }
+
+    public static String formatTime(LocalTime time) {
+        if (time == null) {
+            return null;
+        }
+        return time.format(TIME_FORMATTER);
     }
 
     public static String nowIso8601() {

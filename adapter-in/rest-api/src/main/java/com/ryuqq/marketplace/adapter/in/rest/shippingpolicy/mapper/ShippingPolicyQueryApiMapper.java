@@ -71,6 +71,7 @@ public class ShippingPolicyQueryApiMapper {
     public ShippingPolicyApiResponse toResponse(ShippingPolicyResult result) {
         return new ShippingPolicyApiResponse(
                 result.policyId(),
+                result.sellerId(),
                 result.policyName(),
                 result.defaultPolicy(),
                 result.active(),
@@ -78,7 +79,15 @@ public class ShippingPolicyQueryApiMapper {
                 result.shippingFeeTypeDisplayName(),
                 result.baseFee(),
                 result.freeThreshold(),
-                DateTimeFormatUtils.formatIso8601(result.createdAt()));
+                result.jejuExtraFee(),
+                result.islandExtraFee(),
+                result.returnFee(),
+                result.exchangeFee(),
+                result.leadTimeMinDays(),
+                result.leadTimeMaxDays(),
+                DateTimeFormatUtils.formatTime(result.leadTimeCutoffTime()),
+                DateTimeFormatUtils.formatIso8601(result.createdAt()),
+                DateTimeFormatUtils.formatIso8601(result.updatedAt()));
     }
 
     /**
