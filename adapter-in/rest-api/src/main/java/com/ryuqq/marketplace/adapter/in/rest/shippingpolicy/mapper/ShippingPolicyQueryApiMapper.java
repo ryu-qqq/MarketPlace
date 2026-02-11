@@ -57,7 +57,7 @@ public class ShippingPolicyQueryApiMapper {
                 CommonSearchParams.of(
                         null, null, null, request.sortKey(), request.sortDirection(), page, size);
 
-        return ShippingPolicySearchParams.of(sellerId, searchParams);
+        return ShippingPolicySearchParams.of(sellerId, searchParams, request.active());
     }
 
     /**

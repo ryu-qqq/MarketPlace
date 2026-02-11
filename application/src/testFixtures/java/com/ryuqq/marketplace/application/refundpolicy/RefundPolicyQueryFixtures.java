@@ -15,11 +15,11 @@ public final class RefundPolicyQueryFixtures {
     // ===== RefundPolicySearchParams =====
 
     public static RefundPolicySearchParams searchParams(Long sellerId) {
-        return RefundPolicySearchParams.of(sellerId, defaultCommonSearchParams());
+        return RefundPolicySearchParams.of(sellerId, defaultCommonSearchParams(), null);
     }
 
     public static RefundPolicySearchParams searchParams(Long sellerId, int page, int size) {
-        return RefundPolicySearchParams.of(sellerId, commonSearchParams(page, size));
+        return RefundPolicySearchParams.of(sellerId, commonSearchParams(page, size), null);
     }
 
     public static CommonSearchParams defaultCommonSearchParams() {

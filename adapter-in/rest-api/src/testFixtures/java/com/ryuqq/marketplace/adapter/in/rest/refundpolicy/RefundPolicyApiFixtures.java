@@ -98,12 +98,12 @@ public final class RefundPolicyApiFixtures {
     // ===== SearchRefundPoliciesPageApiRequest =====
 
     public static SearchRefundPoliciesPageApiRequest searchRequest() {
-        return new SearchRefundPoliciesPageApiRequest(null, null, null, null);
+        return new SearchRefundPoliciesPageApiRequest(null, null, null, null, null);
     }
 
     public static SearchRefundPoliciesPageApiRequest searchRequest(
             String sortKey, String sortDirection, int page, int size) {
-        return new SearchRefundPoliciesPageApiRequest(sortKey, sortDirection, page, size);
+        return new SearchRefundPoliciesPageApiRequest(sortKey, sortDirection, page, size, null);
     }
 
     // ===== RefundPolicyResult (Application) =====

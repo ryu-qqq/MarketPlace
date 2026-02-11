@@ -32,11 +32,12 @@ class RefundPolicySearchCriteriaTest {
 
             // when
             RefundPolicySearchCriteria criteria =
-                    RefundPolicySearchCriteria.of(sellerId, queryContext);
+                    RefundPolicySearchCriteria.of(sellerId, queryContext, null);
 
             // then
             assertThat(criteria.sellerId()).isEqualTo(sellerId);
             assertThat(criteria.queryContext()).isEqualTo(queryContext);
+            assertThat(criteria.active()).isNull();
         }
 
         @Test
@@ -82,7 +83,7 @@ class RefundPolicySearchCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(2, 20));
             RefundPolicySearchCriteria criteria =
-                    RefundPolicySearchCriteria.of(sellerId, queryContext);
+                    RefundPolicySearchCriteria.of(sellerId, queryContext, null);
 
             // then
             assertThat(criteria.offset()).isEqualTo(40);
@@ -99,7 +100,7 @@ class RefundPolicySearchCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(3, 20));
             RefundPolicySearchCriteria criteria =
-                    RefundPolicySearchCriteria.of(sellerId, queryContext);
+                    RefundPolicySearchCriteria.of(sellerId, queryContext, null);
 
             // then
             assertThat(criteria.page()).isEqualTo(3);

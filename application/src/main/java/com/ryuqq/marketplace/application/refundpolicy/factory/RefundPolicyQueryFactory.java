@@ -40,7 +40,7 @@ public class RefundPolicyQueryFactory {
 
         SellerId sellerId = SellerId.of(params.sellerId());
 
-        return new RefundPolicySearchCriteria(sellerId, queryContext);
+        return new RefundPolicySearchCriteria(sellerId, queryContext, params.active());
     }
 
     private RefundPolicySortKey resolveSortKey(String sortKeyString) {
