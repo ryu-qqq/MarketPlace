@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.ryuqq.marketplace.adapter.out.persistence.notice.NoticeCategoryJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.NoticeCategoryJpaEntity;
 import com.ryuqq.marketplace.domain.category.vo.CategoryGroup;
-import com.ryuqq.marketplace.domain.notice.NoticeFixtures;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

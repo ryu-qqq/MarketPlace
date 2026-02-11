@@ -82,7 +82,9 @@ class ProductNoticeNotFoundExceptionTest {
             Long productNoticeId = 999L;
 
             // when & then
-            assertThatThrownBy(() -> { throw new ProductNoticeNotFoundException(productNoticeId); })
+            assertThatThrownBy(() -> {
+                throw new ProductNoticeNotFoundException(productNoticeId);
+            })
                     .isInstanceOf(ProductNoticeNotFoundException.class)
                     .hasMessageContaining("999")
                     .hasMessageContaining("상품 고시정보를 찾을 수 없습니다");
