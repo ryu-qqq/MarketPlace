@@ -19,8 +19,7 @@ class BrandMappingSearchFieldTest {
         @Test
         @DisplayName("SearchField 인터페이스를 구현한다")
         void implementsSearchField() {
-            assertThat(BrandMappingSearchField.EXTERNAL_BRAND_NAME)
-                    .isInstanceOf(SearchField.class);
+            assertThat(BrandMappingSearchField.EXTERNAL_BRAND_NAME).isInstanceOf(SearchField.class);
         }
     }
 

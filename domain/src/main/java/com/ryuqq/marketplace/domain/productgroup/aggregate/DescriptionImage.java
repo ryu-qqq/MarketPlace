@@ -4,8 +4,8 @@ import com.ryuqq.marketplace.domain.productgroup.id.DescriptionImageId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
 
 /**
- * 상세설명 내 이미지 (Child Entity of ProductGroupDescription).
- * HTML 상세설명에 포함된 이미지의 원본 URL과 S3 업로드 URL을 관리한다.
+ * 상세설명 내 이미지 (Child Entity of ProductGroupDescription). HTML 상세설명에 포함된 이미지의 원본 URL과 S3 업로드 URL을
+ * 관리한다.
  */
 public class DescriptionImage {
 
@@ -15,10 +15,7 @@ public class DescriptionImage {
     private int sortOrder;
 
     private DescriptionImage(
-            DescriptionImageId id,
-            ImageUrl originUrl,
-            ImageUrl uploadedUrl,
-            int sortOrder) {
+            DescriptionImageId id, ImageUrl originUrl, ImageUrl uploadedUrl, int sortOrder) {
         this.id = id;
         this.originUrl = originUrl;
         this.uploadedUrl = uploadedUrl;
@@ -26,22 +23,13 @@ public class DescriptionImage {
     }
 
     /** 신규 상세설명 이미지 생성. */
-    public static DescriptionImage forNew(
-            ImageUrl originUrl,
-            int sortOrder) {
-        return new DescriptionImage(
-                DescriptionImageId.forNew(),
-                originUrl,
-                null,
-                sortOrder);
+    public static DescriptionImage forNew(ImageUrl originUrl, int sortOrder) {
+        return new DescriptionImage(DescriptionImageId.forNew(), originUrl, null, sortOrder);
     }
 
     /** 영속성에서 복원 시 사용. */
     public static DescriptionImage reconstitute(
-            DescriptionImageId id,
-            ImageUrl originUrl,
-            ImageUrl uploadedUrl,
-            int sortOrder) {
+            DescriptionImageId id, ImageUrl originUrl, ImageUrl uploadedUrl, int sortOrder) {
         return new DescriptionImage(id, originUrl, uploadedUrl, sortOrder);
     }
 

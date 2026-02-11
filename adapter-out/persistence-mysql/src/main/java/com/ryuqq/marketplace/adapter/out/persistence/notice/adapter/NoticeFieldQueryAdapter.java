@@ -18,17 +18,14 @@ public class NoticeFieldQueryAdapter implements NoticeFieldQueryPort {
     private final NoticeFieldJpaEntityMapper mapper;
 
     public NoticeFieldQueryAdapter(
-            NoticeFieldJpaRepository fieldJpaRepository,
-            NoticeFieldJpaEntityMapper mapper) {
+            NoticeFieldJpaRepository fieldJpaRepository, NoticeFieldJpaEntityMapper mapper) {
         this.fieldJpaRepository = fieldJpaRepository;
         this.mapper = mapper;
     }
 
     @Override
     public List<NoticeField> findByNoticeCategoryId(Long noticeCategoryId) {
-        return fieldJpaRepository
-                .findByNoticeCategoryIdOrderBySortOrder(noticeCategoryId)
-                .stream()
+        return fieldJpaRepository.findByNoticeCategoryIdOrderBySortOrder(noticeCategoryId).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
@@ -39,8 +36,9 @@ public class NoticeFieldQueryAdapter implements NoticeFieldQueryPort {
         return fieldJpaRepository
                 .findByNoticeCategoryIdInOrderBySortOrder(noticeCategoryIds)
                 .stream()
-                .collect(Collectors.groupingBy(
-                        NoticeFieldJpaEntity::getNoticeCategoryId,
-                        Collectors.mapping(mapper::toDomain, Collectors.toList())));
+                .collect(
+                        Collectors.groupingBy(
+                                NoticeFieldJpaEntity::getNoticeCategoryId,
+                                Collectors.mapping(mapper::toDomain, Collectors.toList())));
     }
 }

@@ -41,11 +41,7 @@ public final class SalesChannelBrandFixtures {
 
     // ===== Aggregate Fixtures =====
     public static SalesChannelBrand newSalesChannelBrand() {
-        return SalesChannelBrand.forNew(
-                1L,
-                "BRAND-001",
-                "테스트 브랜드",
-                CommonVoFixtures.now());
+        return SalesChannelBrand.forNew(1L, "BRAND-001", "테스트 브랜드", CommonVoFixtures.now());
     }
 
     public static SalesChannelBrand newSalesChannelBrand(

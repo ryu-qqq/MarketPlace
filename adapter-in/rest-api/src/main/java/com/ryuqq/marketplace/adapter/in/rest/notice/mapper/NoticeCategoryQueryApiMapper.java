@@ -33,9 +33,8 @@ public class NoticeCategoryQueryApiMapper {
     }
 
     public NoticeCategoryApiResponse toResponse(NoticeCategoryResult result) {
-        List<NoticeFieldApiResponse> fieldResponses = result.fields().stream()
-                .map(this::toFieldResponse)
-                .toList();
+        List<NoticeFieldApiResponse> fieldResponses =
+                result.fields().stream().map(this::toFieldResponse).toList();
 
         return new NoticeCategoryApiResponse(
                 result.id(),

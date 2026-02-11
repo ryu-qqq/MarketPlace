@@ -30,8 +30,7 @@ class ImageTypeTest {
         @Test
         @DisplayName("모든 이미지 타입이 존재한다")
         void allValuesExist() {
-            assertThat(ImageType.values())
-                    .containsExactly(ImageType.THUMBNAIL, ImageType.DETAIL);
+            assertThat(ImageType.values()).containsExactly(ImageType.THUMBNAIL, ImageType.DETAIL);
         }
     }
 }

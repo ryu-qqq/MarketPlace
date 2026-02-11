@@ -47,10 +47,7 @@ public final class CategoryPresetApiFixtures {
     public static RegisterCategoryPresetApiRequest registerRequestWithCategories(
             List<Long> internalCategoryIds) {
         return new RegisterCategoryPresetApiRequest(
-                DEFAULT_SHOP_ID,
-                DEFAULT_PRESET_NAME,
-                DEFAULT_CATEGORY_CODE,
-                internalCategoryIds);
+                DEFAULT_SHOP_ID, DEFAULT_PRESET_NAME, DEFAULT_CATEGORY_CODE, internalCategoryIds);
     }
 
     // ===== UpdateCategoryPresetApiRequest =====
@@ -142,10 +139,7 @@ public final class CategoryPresetApiFixtures {
 
     public static List<CategoryPresetResult> categoryPresetResults(int count) {
         return java.util.stream.IntStream.rangeClosed(1, count)
-                .mapToObj(
-                        i ->
-                                categoryPresetResult(
-                                        (long) i, DEFAULT_PRESET_NAME + "_" + i))
+                .mapToObj(i -> categoryPresetResult((long) i, DEFAULT_PRESET_NAME + "_" + i))
                 .toList();
     }
 

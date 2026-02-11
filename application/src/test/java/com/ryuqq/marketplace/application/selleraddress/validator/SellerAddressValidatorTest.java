@@ -44,7 +44,8 @@ class SellerAddressValidatorTest {
             Long addressId = 1L;
             Long sellerId = 1L;
             SellerAddressId id = SellerAddressId.of(addressId);
-            SellerAddress address = SellerAddressFixtures.defaultShippingAddress(addressId, sellerId);
+            SellerAddress address =
+                    SellerAddressFixtures.defaultShippingAddress(addressId, sellerId);
 
             given(readManager.getById(id)).willReturn(address);
 
@@ -94,7 +95,8 @@ class SellerAddressValidatorTest {
             // given
             Long addressId = 1L;
             Long sellerId = 1L;
-            SellerAddress address = SellerAddressFixtures.defaultShippingAddress(addressId, sellerId);
+            SellerAddress address =
+                    SellerAddressFixtures.defaultShippingAddress(addressId, sellerId);
 
             given(readManager.findAllBySellerId(address.sellerId())).willReturn(List.of(address));
 
@@ -130,8 +132,7 @@ class SellerAddressValidatorTest {
             Long sellerId = 1L;
             SellerAddress defaultShipping =
                     SellerAddressFixtures.defaultShippingAddress(addressId, sellerId);
-            SellerAddress defaultReturn =
-                    SellerAddressFixtures.defaultReturnAddress(2L, sellerId);
+            SellerAddress defaultReturn = SellerAddressFixtures.defaultReturnAddress(2L, sellerId);
 
             given(readManager.findAllBySellerId(defaultShipping.sellerId()))
                     .willReturn(List.of(defaultShipping, defaultReturn));
@@ -155,8 +156,9 @@ class SellerAddressValidatorTest {
             AddressType addressType = AddressType.SHIPPING;
             String addressName = "새로운 주소";
 
-            given(readManager.existsBySellerIdAndAddressTypeAndAddressName(
-                            id, addressType, addressName))
+            given(
+                            readManager.existsBySellerIdAndAddressTypeAndAddressName(
+                                    id, addressType, addressName))
                     .willReturn(false);
 
             // when & then
@@ -173,12 +175,14 @@ class SellerAddressValidatorTest {
             AddressType addressType = AddressType.SHIPPING;
             String addressName = "본사 창고";
 
-            given(readManager.existsBySellerIdAndAddressTypeAndAddressName(
-                            id, addressType, addressName))
+            given(
+                            readManager.existsBySellerIdAndAddressTypeAndAddressName(
+                                    id, addressType, addressName))
                     .willReturn(true);
 
             // when & then
-            assertThatThrownBy(() -> sut.validateNoDuplicateAddressName(id, addressType, addressName))
+            assertThatThrownBy(
+                            () -> sut.validateNoDuplicateAddressName(id, addressType, addressName))
                     .isInstanceOf(DuplicateAddressNameException.class);
         }
 
@@ -191,8 +195,9 @@ class SellerAddressValidatorTest {
             AddressType addressType = AddressType.RETURN;
             String addressName = "본사 창고";
 
-            given(readManager.existsBySellerIdAndAddressTypeAndAddressName(
-                            id, addressType, addressName))
+            given(
+                            readManager.existsBySellerIdAndAddressTypeAndAddressName(
+                                    id, addressType, addressName))
                     .willReturn(false);
 
             // when & then

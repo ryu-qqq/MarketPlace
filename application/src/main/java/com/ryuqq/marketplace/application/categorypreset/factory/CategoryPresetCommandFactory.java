@@ -44,8 +44,12 @@ public class CategoryPresetCommandFactory {
             UpdateCategoryPresetCommand command,
             Long salesChannelCategoryId) {
         Instant now = timeProvider.now();
-        List<CategoryMapping> categoryMappings = createCategoryMappings(
-                existing.idValue(), salesChannelCategoryId, command.internalCategoryIds(), now);
+        List<CategoryMapping> categoryMappings =
+                createCategoryMappings(
+                        existing.idValue(),
+                        salesChannelCategoryId,
+                        command.internalCategoryIds(),
+                        now);
         return new UpdateCategoryPresetBundle(
                 existing, command.presetName(), salesChannelCategoryId, categoryMappings, now);
     }
@@ -57,15 +61,18 @@ public class CategoryPresetCommandFactory {
     }
 
     private List<CategoryMapping> createCategoryMappings(
-            Long presetId, Long salesChannelCategoryId, List<Long> internalCategoryIds,
+            Long presetId,
+            Long salesChannelCategoryId,
+            List<Long> internalCategoryIds,
             Instant now) {
         if (internalCategoryIds == null || internalCategoryIds.isEmpty()) {
             return List.of();
         }
         return internalCategoryIds.stream()
-                .map(internalCategoryId ->
-                        CategoryMapping.forNew(
-                                presetId, salesChannelCategoryId, internalCategoryId, now))
+                .map(
+                        internalCategoryId ->
+                                CategoryMapping.forNew(
+                                        presetId, salesChannelCategoryId, internalCategoryId, now))
                 .toList();
     }
 }

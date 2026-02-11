@@ -101,8 +101,9 @@ class CategoryPresetValidatorTest {
             given(shopReadManager.getById(ShopId.of(shopId))).willReturn(shop);
             given(readManager.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode))
                     .willReturn(Optional.of(expectedCategoryId));
-            given(salesChannelCategoryReadManager.getById(
-                            SalesChannelCategoryId.of(expectedCategoryId)))
+            given(
+                            salesChannelCategoryReadManager.getById(
+                                    SalesChannelCategoryId.of(expectedCategoryId)))
                     .willReturn(salesChannelCategory);
 
             // when
@@ -146,11 +147,11 @@ class CategoryPresetValidatorTest {
             given(shop.salesChannelId()).willReturn(shopSalesChannelId);
             given(salesChannelCategory.salesChannelId()).willReturn(categorySalesChannelId);
             given(shopReadManager.getById(ShopId.of(shopId))).willReturn(shop);
-            given(readManager.findSalesChannelCategoryIdByCode(
-                            shopSalesChannelId, categoryCode))
+            given(readManager.findSalesChannelCategoryIdByCode(shopSalesChannelId, categoryCode))
                     .willReturn(Optional.of(salesChannelCategoryId));
-            given(salesChannelCategoryReadManager.getById(
-                            SalesChannelCategoryId.of(salesChannelCategoryId)))
+            given(
+                            salesChannelCategoryReadManager.getById(
+                                    SalesChannelCategoryId.of(salesChannelCategoryId)))
                     .willReturn(salesChannelCategory);
 
             // when & then
@@ -176,8 +177,9 @@ class CategoryPresetValidatorTest {
             given(shop.salesChannelId()).willReturn(salesChannelId);
             given(salesChannelCategory.salesChannelId()).willReturn(salesChannelId);
             given(shopReadManager.getById(ShopId.of(shopId))).willReturn(shop);
-            given(salesChannelCategoryReadManager.getById(
-                            SalesChannelCategoryId.of(salesChannelCategoryId)))
+            given(
+                            salesChannelCategoryReadManager.getById(
+                                    SalesChannelCategoryId.of(salesChannelCategoryId)))
                     .willReturn(salesChannelCategory);
 
             // when & then
@@ -203,8 +205,9 @@ class CategoryPresetValidatorTest {
             given(shop.salesChannelId()).willReturn(shopSalesChannelId);
             given(salesChannelCategory.salesChannelId()).willReturn(categorySalesChannelId);
             given(shopReadManager.getById(ShopId.of(shopId))).willReturn(shop);
-            given(salesChannelCategoryReadManager.getById(
-                            SalesChannelCategoryId.of(salesChannelCategoryId)))
+            given(
+                            salesChannelCategoryReadManager.getById(
+                                    SalesChannelCategoryId.of(salesChannelCategoryId)))
                     .willReturn(salesChannelCategory);
 
             // when & then
@@ -225,7 +228,8 @@ class CategoryPresetValidatorTest {
             List<Category> foundCategories =
                     List.of(mock(Category.class), mock(Category.class), mock(Category.class));
 
-            given(categoryReadManager.findAllByIds(internalCategoryIds)).willReturn(foundCategories);
+            given(categoryReadManager.findAllByIds(internalCategoryIds))
+                    .willReturn(foundCategories);
 
             // when & then
             sut.validateInternalCategoriesExist(internalCategoryIds);
@@ -247,7 +251,8 @@ class CategoryPresetValidatorTest {
             List<Category> foundCategories =
                     List.of(createMockCategory(1L), createMockCategory(2L));
 
-            given(categoryReadManager.findAllByIds(internalCategoryIds)).willReturn(foundCategories);
+            given(categoryReadManager.findAllByIds(internalCategoryIds))
+                    .willReturn(foundCategories);
 
             // when & then
             assertThatThrownBy(() -> sut.validateInternalCategoriesExist(internalCategoryIds))

@@ -11,8 +11,7 @@ public record ImageUrl(String value) {
         }
         value = value.trim();
         if (value.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException(
-                    String.format("이미지 URL은 %d자 이내여야 합니다", MAX_LENGTH));
+            throw new IllegalArgumentException(String.format("이미지 URL은 %d자 이내여야 합니다", MAX_LENGTH));
         }
     }
 

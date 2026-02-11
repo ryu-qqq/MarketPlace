@@ -103,7 +103,8 @@ class SellerAddressCommandFactoryTest {
         void createUpdateContext_ReturnsContext() {
             // given
             Long addressId = 1L;
-            UpdateSellerAddressCommand command = SellerAddressCommandFixtures.updateCommand(addressId);
+            UpdateSellerAddressCommand command =
+                    SellerAddressCommandFixtures.updateCommand(addressId);
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
 
@@ -149,7 +150,8 @@ class SellerAddressCommandFactoryTest {
         void createDeleteContext_ReturnsContext() {
             // given
             Long addressId = 1L;
-            DeleteSellerAddressCommand command = SellerAddressCommandFixtures.deleteCommand(addressId);
+            DeleteSellerAddressCommand command =
+                    SellerAddressCommandFixtures.deleteCommand(addressId);
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
 

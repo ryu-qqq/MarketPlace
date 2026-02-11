@@ -30,11 +30,8 @@ public class CanonicalOptionGroupQueryAdapter implements CanonicalOptionGroupQue
     }
 
     @Override
-    public List<CanonicalOptionGroup> findByCriteria(
-            CanonicalOptionGroupSearchCriteria criteria) {
-        return queryDslRepository.findByCriteria(criteria).stream()
-                .map(mapper::toDomain)
-                .toList();
+    public List<CanonicalOptionGroup> findByCriteria(CanonicalOptionGroupSearchCriteria criteria) {
+        return queryDslRepository.findByCriteria(criteria).stream().map(mapper::toDomain).toList();
     }
 
     @Override

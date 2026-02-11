@@ -141,7 +141,8 @@ class NoticeCategoryQueryControllerRestDocsTest {
                                             fieldWithPath("data.size").description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
                                                     .description("전체 데이터 수"),
-                                            fieldWithPath("data.totalPages").description("전체 페이지 수"),
+                                            fieldWithPath("data.totalPages")
+                                                    .description("전체 페이지 수"),
                                             fieldWithPath("data.first").description("첫 페이지 여부"),
                                             fieldWithPath("data.last").description("마지막 페이지 여부"),
                                             fieldWithPath("timestamp").description("응답 시간"),

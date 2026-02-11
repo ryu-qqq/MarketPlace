@@ -32,10 +32,7 @@ public class ProductGroupImage {
 
     /** 신규 이미지 생성. */
     public static ProductGroupImage forNew(
-            ProductGroupId productGroupId,
-            ImageUrl originUrl,
-            ImageType imageType,
-            int sortOrder) {
+            ProductGroupId productGroupId, ImageUrl originUrl, ImageType imageType, int sortOrder) {
         return new ProductGroupImage(
                 ProductGroupImageId.forNew(),
                 productGroupId,
@@ -53,7 +50,8 @@ public class ProductGroupImage {
             ImageUrl uploadedUrl,
             ImageType imageType,
             int sortOrder) {
-        return new ProductGroupImage(id, productGroupId, originUrl, uploadedUrl, imageType, sortOrder);
+        return new ProductGroupImage(
+                id, productGroupId, originUrl, uploadedUrl, imageType, sortOrder);
     }
 
     /** S3 업로드 URL 설정. */

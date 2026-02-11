@@ -264,12 +264,15 @@ class CategoryPresetQueryAdapterTest {
                     .willReturn(Optional.of(expectedCategoryId));
 
             // when
-            Optional<Long> result = adapter.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
+            Optional<Long> result =
+                    adapter.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
 
             // then
             assertThat(result).isPresent();
             assertThat(result.get()).isEqualTo(expectedCategoryId);
-            then(repository).should(times(1)).findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
+            then(repository)
+                    .should(times(1))
+                    .findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
         }
 
         @Test
@@ -283,11 +286,14 @@ class CategoryPresetQueryAdapterTest {
                     .willReturn(Optional.empty());
 
             // when
-            Optional<Long> result = adapter.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
+            Optional<Long> result =
+                    adapter.findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
 
             // then
             assertThat(result).isEmpty();
-            then(repository).should(times(1)).findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
+            then(repository)
+                    .should(times(1))
+                    .findSalesChannelCategoryIdByCode(salesChannelId, categoryCode);
         }
     }
 

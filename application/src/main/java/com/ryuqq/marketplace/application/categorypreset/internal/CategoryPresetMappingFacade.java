@@ -44,16 +44,15 @@ public class CategoryPresetMappingFacade {
     }
 
     /**
-     * CategoryPreset 수정 + CategoryMapping 교체를 하나의 트랜잭션으로 처리.
-     * 기존 매핑을 모두 삭제(hard delete)하고 새 매핑으로 교체합니다.
+     * CategoryPreset 수정 + CategoryMapping 교체를 하나의 트랜잭션으로 처리. 기존 매핑을 모두 삭제(hard delete)하고 새 매핑으로
+     * 교체합니다.
      *
      * @param bundle 프리셋 수정 + 매핑 교체에 필요한 데이터 번들
      */
     @Transactional
     public void updateWithMappings(UpdateCategoryPresetBundle bundle) {
         CategoryPreset categoryPreset = bundle.categoryPreset();
-        categoryPreset.update(
-                bundle.presetName(), bundle.salesChannelCategoryId(), bundle.now());
+        categoryPreset.update(bundle.presetName(), bundle.salesChannelCategoryId(), bundle.now());
         presetCommandManager.persist(categoryPreset);
 
         mappingCommandManager.deleteAllByPresetId(categoryPreset.idValue());
@@ -77,8 +76,7 @@ public class CategoryPresetMappingFacade {
         }
         presetCommandManager.persistAll(categoryPresets);
 
-        List<Long> presetIds =
-                categoryPresets.stream().map(CategoryPreset::idValue).toList();
+        List<Long> presetIds = categoryPresets.stream().map(CategoryPreset::idValue).toList();
         mappingCommandManager.deleteAllByPresetIds(presetIds);
 
         return categoryPresets.size();

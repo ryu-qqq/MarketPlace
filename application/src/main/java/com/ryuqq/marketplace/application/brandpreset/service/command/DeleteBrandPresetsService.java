@@ -29,8 +29,7 @@ public class DeleteBrandPresetsService implements DeleteBrandPresetsUseCase {
 
     @Override
     public int execute(DeleteBrandPresetsCommand command) {
-        StatusChangeContext<List<Long>> context =
-                commandFactory.createDeactivateContext(command);
+        StatusChangeContext<List<Long>> context = commandFactory.createDeactivateContext(command);
         List<BrandPreset> brandPresets = readManager.findAllByIds(context.id());
         return facade.deactivateWithMappings(brandPresets, context.changedAt());
     }

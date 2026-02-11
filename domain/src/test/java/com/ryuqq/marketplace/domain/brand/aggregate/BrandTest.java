@@ -110,7 +110,14 @@ class BrandTest {
             // when
             Brand brand =
                     Brand.reconstitute(
-                            id, code, name, BrandStatus.ACTIVE, logoUrl, null, createdAt, updatedAt);
+                            id,
+                            code,
+                            name,
+                            BrandStatus.ACTIVE,
+                            logoUrl,
+                            null,
+                            createdAt,
+                            updatedAt);
 
             // then
             assertThat(brand.id()).isEqualTo(id);

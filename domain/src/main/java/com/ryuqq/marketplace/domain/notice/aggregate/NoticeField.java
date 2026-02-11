@@ -28,16 +28,8 @@ public class NoticeField {
 
     /** 신규 고시정보 필드 생성. */
     public static NoticeField forNew(
-            NoticeFieldCode fieldCode,
-            NoticeFieldName fieldName,
-            boolean required,
-            int sortOrder) {
-        return new NoticeField(
-                NoticeFieldId.forNew(),
-                fieldCode,
-                fieldName,
-                required,
-                sortOrder);
+            NoticeFieldCode fieldCode, NoticeFieldName fieldName, boolean required, int sortOrder) {
+        return new NoticeField(NoticeFieldId.forNew(), fieldCode, fieldName, required, sortOrder);
     }
 
     /** 영속성에서 복원 시 사용. */

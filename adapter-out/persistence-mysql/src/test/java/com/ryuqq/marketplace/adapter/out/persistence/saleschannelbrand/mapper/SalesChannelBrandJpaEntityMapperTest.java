@@ -93,7 +93,8 @@ class SalesChannelBrandJpaEntityMapperTest {
             // given
             Long salesChannelId = 100L;
             SalesChannelBrand domain =
-                    SalesChannelBrandFixtures.activeSalesChannelBrand(1L, salesChannelId, "CODE-100");
+                    SalesChannelBrandFixtures.activeSalesChannelBrand(
+                            1L, salesChannelId, "CODE-100");
 
             // when
             SalesChannelBrandJpaEntity entity = mapper.toEntity(domain);
@@ -115,8 +116,7 @@ class SalesChannelBrandJpaEntityMapperTest {
         @DisplayName("활성 상태 Entity를 Domain으로 변환합니다")
         void toDomain_WithActiveEntity_ConvertsCorrectly() {
             // given
-            SalesChannelBrandJpaEntity entity =
-                    SalesChannelBrandJpaEntityFixtures.activeEntity(1L);
+            SalesChannelBrandJpaEntity entity = SalesChannelBrandJpaEntityFixtures.activeEntity(1L);
 
             // when
             SalesChannelBrand domain = mapper.toDomain(entity);

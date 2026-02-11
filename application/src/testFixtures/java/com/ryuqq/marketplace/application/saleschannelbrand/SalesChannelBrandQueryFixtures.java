@@ -57,8 +57,7 @@ public final class SalesChannelBrandQueryFixtures {
 
     public static SalesChannelBrandResult salesChannelBrandResult(Long id) {
         Instant now = Instant.now();
-        return new SalesChannelBrandResult(
-                id, 1L, "BRAND-001", "테스트 브랜드", "ACTIVE", now, now);
+        return new SalesChannelBrandResult(id, 1L, "BRAND-001", "테스트 브랜드", "ACTIVE", now, now);
     }
 
     public static SalesChannelBrandResult salesChannelBrandResult(

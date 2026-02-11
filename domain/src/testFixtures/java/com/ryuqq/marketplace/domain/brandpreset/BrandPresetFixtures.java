@@ -9,7 +9,6 @@ import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
-import java.time.Instant;
 import java.util.List;
 
 /**
@@ -29,7 +28,9 @@ public final class BrandPresetFixtures {
     // ===== BrandPreset Aggregate Fixtures =====
     public static BrandPreset newBrandPreset() {
         return BrandPreset.forNew(
-                DEFAULT_SHOP_ID, DEFAULT_SALES_CHANNEL_BRAND_ID, DEFAULT_PRESET_NAME,
+                DEFAULT_SHOP_ID,
+                DEFAULT_SALES_CHANNEL_BRAND_ID,
+                DEFAULT_PRESET_NAME,
                 CommonVoFixtures.now());
     }
 
@@ -84,20 +85,35 @@ public final class BrandPresetFixtures {
     // ===== SearchCriteria Fixtures =====
     public static BrandPresetSearchCriteria defaultSearchCriteria() {
         return new BrandPresetSearchCriteria(
-                null, null, null, null, null, null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
     }
 
     public static BrandPresetSearchCriteria searchCriteriaWithSalesChannel(
             List<Long> salesChannelIds) {
         return new BrandPresetSearchCriteria(
-                salesChannelIds, null, null, null, null, null,
+                salesChannelIds,
+                null,
+                null,
+                null,
+                null,
+                null,
                 QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
     }
 
     public static BrandPresetSearchCriteria searchCriteriaWithPaging(int page, int size) {
         return new BrandPresetSearchCriteria(
-                null, null, null, null, null, null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 QueryContext.of(
                         BrandPresetSortKey.CREATED_AT,
                         SortDirection.DESC,

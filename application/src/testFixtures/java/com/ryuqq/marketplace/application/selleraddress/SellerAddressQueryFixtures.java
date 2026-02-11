@@ -23,8 +23,7 @@ public final class SellerAddressQueryFixtures {
                 List.of(sellerId), null, null, null, null, defaultCommonSearchParams());
     }
 
-    public static SellerAddressSearchParams searchParams(
-            Long sellerId, List<String> addressTypes) {
+    public static SellerAddressSearchParams searchParams(Long sellerId, List<String> addressTypes) {
         return SellerAddressSearchParams.of(
                 List.of(sellerId), addressTypes, null, null, null, defaultCommonSearchParams());
     }
@@ -72,16 +71,14 @@ public final class SellerAddressQueryFixtures {
                 sellerId,
                 "SHIPPING",
                 "본사 창고",
-                new SellerAddressResult.AddressResult(
-                        "06164", "서울 강남구 역삼로 123", "5층"),
+                new SellerAddressResult.AddressResult("06164", "서울 강남구 역삼로 123", "5층"),
                 true,
                 null,
                 null);
     }
 
     public static SellerAddressPageResult sellerAddressPageResult() {
-        return SellerAddressPageResult.of(
-                List.of(sellerAddressResult(1L, 1L)), 0, 20, 1L);
+        return SellerAddressPageResult.of(List.of(sellerAddressResult(1L, 1L)), 0, 20, 1L);
     }
 
     public static SellerAddressPageResult emptyPageResult() {

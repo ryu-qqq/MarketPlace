@@ -26,8 +26,7 @@ class CanonicalOptionGroupQueryFactoryTest {
         @DisplayName("SearchParams로 SearchCriteria를 생성한다")
         void createCriteria_FromParams_ReturnsCriteria() {
             // given
-            CanonicalOptionGroupSearchParams params =
-                    CanonicalOptionQueryFixtures.searchParams();
+            CanonicalOptionGroupSearchParams params = CanonicalOptionQueryFixtures.searchParams();
 
             // when
             CanonicalOptionGroupSearchCriteria result = sut.createCriteria(params);

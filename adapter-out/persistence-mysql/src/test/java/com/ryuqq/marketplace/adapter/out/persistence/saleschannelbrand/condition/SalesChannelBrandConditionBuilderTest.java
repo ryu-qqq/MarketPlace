@@ -194,7 +194,10 @@ class SalesChannelBrandConditionBuilderTest {
             // given
             given(criteria.hasStatusFilter()).willReturn(true);
             given(criteria.statuses())
-                    .willReturn(List.of(SalesChannelBrandStatus.ACTIVE, SalesChannelBrandStatus.INACTIVE));
+                    .willReturn(
+                            List.of(
+                                    SalesChannelBrandStatus.ACTIVE,
+                                    SalesChannelBrandStatus.INACTIVE));
 
             // when
             BooleanExpression result = conditionBuilder.statusIn(criteria);

@@ -92,7 +92,8 @@ public final class CanonicalOptionFixtures {
                 sortOrder);
     }
 
-    public static CanonicalOptionValue canonicalOptionValue(Long id, String code, String nameKo, int sortOrder) {
+    public static CanonicalOptionValue canonicalOptionValue(
+            Long id, String code, String nameKo, int sortOrder) {
         return CanonicalOptionValue.reconstitute(
                 CanonicalOptionValueId.of(id),
                 CanonicalOptionValueCode.of(code),

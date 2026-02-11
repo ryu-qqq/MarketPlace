@@ -56,8 +56,7 @@ class CategoryMappingCommandAdapterTest {
         void persist_WithValidDomain_SavesAndReturnsId() {
             // given
             CategoryMapping domain = CategoryMappingFixtures.newCategoryMapping();
-            CategoryMappingJpaEntity entityToSave =
-                    CategoryMappingJpaEntityFixtures.newEntity();
+            CategoryMappingJpaEntity entityToSave = CategoryMappingJpaEntityFixtures.newEntity();
             CategoryMappingJpaEntity savedEntity =
                     CategoryMappingJpaEntityFixtures.activeEntity(100L);
 
@@ -78,8 +77,7 @@ class CategoryMappingCommandAdapterTest {
         void persist_WithActiveCategoryMapping_Saves() {
             // given
             CategoryMapping domain = CategoryMappingFixtures.activeCategoryMapping();
-            CategoryMappingJpaEntity entityToSave =
-                    CategoryMappingJpaEntityFixtures.newEntity();
+            CategoryMappingJpaEntity entityToSave = CategoryMappingJpaEntityFixtures.newEntity();
             CategoryMappingJpaEntity savedEntity =
                     CategoryMappingJpaEntityFixtures.activeEntity(1L);
 
@@ -98,8 +96,7 @@ class CategoryMappingCommandAdapterTest {
         void persist_WithInactiveCategoryMapping_Saves() {
             // given
             CategoryMapping domain = CategoryMappingFixtures.inactiveCategoryMapping();
-            CategoryMappingJpaEntity entityToSave =
-                    CategoryMappingJpaEntityFixtures.newEntity();
+            CategoryMappingJpaEntity entityToSave = CategoryMappingJpaEntityFixtures.newEntity();
             CategoryMappingJpaEntity savedEntity =
                     CategoryMappingJpaEntityFixtures.activeEntity(2L);
 
@@ -118,8 +115,7 @@ class CategoryMappingCommandAdapterTest {
         void persist_CallsMapperOnce() {
             // given
             CategoryMapping domain = CategoryMappingFixtures.newCategoryMapping();
-            CategoryMappingJpaEntity entity =
-                    CategoryMappingJpaEntityFixtures.activeEntity(1L);
+            CategoryMappingJpaEntity entity = CategoryMappingJpaEntityFixtures.activeEntity(1L);
 
             given(mapper.toEntity(domain)).willReturn(entity);
             given(repository.save(entity)).willReturn(entity);
@@ -148,10 +144,8 @@ class CategoryMappingCommandAdapterTest {
             CategoryMapping domain2 = CategoryMappingFixtures.inactiveCategoryMapping();
             List<CategoryMapping> domains = List.of(domain1, domain2);
 
-            CategoryMappingJpaEntity entity1 =
-                    CategoryMappingJpaEntityFixtures.activeEntity(1L);
-            CategoryMappingJpaEntity entity2 =
-                    CategoryMappingJpaEntityFixtures.inactiveEntity();
+            CategoryMappingJpaEntity entity1 = CategoryMappingJpaEntityFixtures.activeEntity(1L);
+            CategoryMappingJpaEntity entity2 = CategoryMappingJpaEntityFixtures.inactiveEntity();
 
             given(mapper.toEntity(domain1)).willReturn(entity1);
             given(mapper.toEntity(domain2)).willReturn(entity2);
@@ -194,8 +188,7 @@ class CategoryMappingCommandAdapterTest {
             CategoryMapping domain3 = CategoryMappingFixtures.newCategoryMapping();
             List<CategoryMapping> domains = List.of(domain1, domain2, domain3);
 
-            CategoryMappingJpaEntity entity =
-                    CategoryMappingJpaEntityFixtures.activeEntity(1L);
+            CategoryMappingJpaEntity entity = CategoryMappingJpaEntityFixtures.activeEntity(1L);
             given(mapper.toEntity(domain1)).willReturn(entity);
             given(mapper.toEntity(domain2)).willReturn(entity);
             given(mapper.toEntity(domain3)).willReturn(entity);

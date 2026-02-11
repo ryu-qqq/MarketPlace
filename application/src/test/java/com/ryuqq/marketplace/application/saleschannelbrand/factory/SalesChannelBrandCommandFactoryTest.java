@@ -58,8 +58,7 @@ class SalesChannelBrandCommandFactoryTest {
         void create_DifferentSalesChannelId_ReturnsSalesChannelBrand() {
             // given
             RegisterSalesChannelBrandCommand command =
-                    SalesChannelBrandCommandFixtures.registerCommand(
-                            2L, "BRAND-002", "다른 브랜드");
+                    SalesChannelBrandCommandFixtures.registerCommand(2L, "BRAND-002", "다른 브랜드");
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
 

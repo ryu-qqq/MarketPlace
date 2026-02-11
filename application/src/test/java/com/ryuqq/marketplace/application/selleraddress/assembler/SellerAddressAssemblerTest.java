@@ -81,7 +81,8 @@ class SellerAddressAssemblerTest {
             List<SellerAddress> addresses =
                     List.of(
                             SellerAddressFixtures.defaultShippingAddress(1L, sellerId),
-                            SellerAddressFixtures.nonDefaultShippingAddress(2L, sellerId, "추가 배송지"));
+                            SellerAddressFixtures.nonDefaultShippingAddress(
+                                    2L, sellerId, "추가 배송지"));
 
             // when
             List<SellerAddressResult> results = sut.toResults(addresses);

@@ -30,8 +30,9 @@ class BrandMappingExceptionTest {
         @Test
         @DisplayName("ErrorCode와 커스텀 메시지로 예외를 생성한다")
         void createWithErrorCodeAndMessage() {
-            BrandMappingException exception = new BrandMappingException(
-                    BrandMappingErrorCode.BRAND_MAPPING_NOT_FOUND, "ID 100 매핑 없음");
+            BrandMappingException exception =
+                    new BrandMappingException(
+                            BrandMappingErrorCode.BRAND_MAPPING_NOT_FOUND, "ID 100 매핑 없음");
 
             assertThat(exception.getMessage()).isEqualTo("ID 100 매핑 없음");
             assertThat(exception.code()).isEqualTo("BRDMAP-001");
@@ -41,8 +42,8 @@ class BrandMappingExceptionTest {
         @DisplayName("ErrorCode와 원인 예외로 예외를 생성한다")
         void createWithErrorCodeAndCause() {
             RuntimeException cause = new RuntimeException("원인 예외");
-            BrandMappingException exception = new BrandMappingException(
-                    BrandMappingErrorCode.BRAND_MAPPING_NOT_FOUND, cause);
+            BrandMappingException exception =
+                    new BrandMappingException(BrandMappingErrorCode.BRAND_MAPPING_NOT_FOUND, cause);
 
             assertThat(exception.getCause()).isEqualTo(cause);
             assertThat(exception.code()).isEqualTo("BRDMAP-001");
@@ -84,8 +85,7 @@ class BrandMappingExceptionTest {
         @Test
         @DisplayName("BrandMappingDuplicateException ID 포함 생성")
         void createBrandMappingDuplicateExceptionWithId() {
-            BrandMappingDuplicateException exception =
-                    new BrandMappingDuplicateException(999L);
+            BrandMappingDuplicateException exception = new BrandMappingDuplicateException(999L);
 
             assertThat(exception.code()).isEqualTo("BRDMAP-002");
             assertThat(exception.getMessage()).contains("999");

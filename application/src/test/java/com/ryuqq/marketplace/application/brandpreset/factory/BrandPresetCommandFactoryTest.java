@@ -114,7 +114,8 @@ class BrandPresetCommandFactoryTest {
             // given
             BrandPreset existing = BrandPresetFixtures.activeBrandPreset();
             UpdateBrandPresetCommand command =
-                    BrandPresetCommandFixtures.updateCommandWithBrands(existing.idValue(), List.of());
+                    BrandPresetCommandFixtures.updateCommandWithBrands(
+                            existing.idValue(), List.of());
             Instant now = CommonVoFixtures.now();
 
             given(timeProvider.now()).willReturn(now);

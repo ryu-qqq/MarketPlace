@@ -44,9 +44,12 @@ class CanonicalOptionValueTest {
         @DisplayName("다양한 sortOrder 값으로 CanonicalOptionValue를 복원한다")
         void reconstituteWithVariousSortOrders() {
             // when
-            CanonicalOptionValue value1 = CanonicalOptionFixtures.canonicalOptionValue(1L, "S", "스몰", 0);
-            CanonicalOptionValue value2 = CanonicalOptionFixtures.canonicalOptionValue(2L, "M", "미디움", 1);
-            CanonicalOptionValue value3 = CanonicalOptionFixtures.canonicalOptionValue(3L, "L", "라지", 2);
+            CanonicalOptionValue value1 =
+                    CanonicalOptionFixtures.canonicalOptionValue(1L, "S", "스몰", 0);
+            CanonicalOptionValue value2 =
+                    CanonicalOptionFixtures.canonicalOptionValue(2L, "M", "미디움", 1);
+            CanonicalOptionValue value3 =
+                    CanonicalOptionFixtures.canonicalOptionValue(3L, "L", "라지", 2);
 
             // then
             assertThat(value1.sortOrder()).isEqualTo(0);
@@ -63,7 +66,8 @@ class CanonicalOptionValueTest {
         @DisplayName("idValue()는 ID의 값을 반환한다")
         void idValueReturnsIdValue() {
             // given
-            CanonicalOptionValue value = CanonicalOptionFixtures.canonicalOptionValue(100L, "CODE", "이름", 0);
+            CanonicalOptionValue value =
+                    CanonicalOptionFixtures.canonicalOptionValue(100L, "CODE", "이름", 0);
 
             // when
             Long idValue = value.idValue();
@@ -76,7 +80,8 @@ class CanonicalOptionValueTest {
         @DisplayName("codeValue()는 코드의 값을 반환한다")
         void codeValueReturnsCodeValue() {
             // given
-            CanonicalOptionValue value = CanonicalOptionFixtures.canonicalOptionValue(1L, "BLACK", "검정색", 0);
+            CanonicalOptionValue value =
+                    CanonicalOptionFixtures.canonicalOptionValue(1L, "BLACK", "검정색", 0);
 
             // when
             String codeValue = value.codeValue();
@@ -89,7 +94,8 @@ class CanonicalOptionValueTest {
         @DisplayName("nameKo()는 한국어 이름을 반환한다")
         void nameKoReturnsKoreanName() {
             // given
-            CanonicalOptionValue value = CanonicalOptionFixtures.canonicalOptionValue(1L, "BLACK", "검정색", 0);
+            CanonicalOptionValue value =
+                    CanonicalOptionFixtures.canonicalOptionValue(1L, "BLACK", "검정색", 0);
 
             // when
             String nameKo = value.nameKo();
@@ -102,11 +108,12 @@ class CanonicalOptionValueTest {
         @DisplayName("nameEn()은 영어 이름을 반환한다")
         void nameEnReturnsEnglishName() {
             // given
-            CanonicalOptionValue value = CanonicalOptionValue.reconstitute(
-                    CanonicalOptionValueId.of(2L),
-                    CanonicalOptionValueCode.of("WHITE"),
-                    CanonicalOptionValueName.of("흰색", "White"),
-                    1);
+            CanonicalOptionValue value =
+                    CanonicalOptionValue.reconstitute(
+                            CanonicalOptionValueId.of(2L),
+                            CanonicalOptionValueCode.of("WHITE"),
+                            CanonicalOptionValueName.of("흰색", "White"),
+                            1);
 
             // when
             String nameEn = value.nameEn();

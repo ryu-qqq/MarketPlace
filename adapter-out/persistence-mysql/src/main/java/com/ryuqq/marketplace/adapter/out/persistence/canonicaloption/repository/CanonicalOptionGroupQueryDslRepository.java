@@ -23,8 +23,7 @@ public class CanonicalOptionGroupQueryDslRepository {
     private final CanonicalOptionGroupConditionBuilder conditionBuilder;
 
     public CanonicalOptionGroupQueryDslRepository(
-            JPAQueryFactory queryFactory,
-            CanonicalOptionGroupConditionBuilder conditionBuilder) {
+            JPAQueryFactory queryFactory, CanonicalOptionGroupConditionBuilder conditionBuilder) {
         this.queryFactory = queryFactory;
         this.conditionBuilder = conditionBuilder;
     }
@@ -63,19 +62,17 @@ public class CanonicalOptionGroupQueryDslRepository {
         return count != null ? count : 0L;
     }
 
-    private OrderSpecifier<?> resolveOrderSpecifier(
-            CanonicalOptionGroupSearchCriteria criteria) {
+    private OrderSpecifier<?> resolveOrderSpecifier(CanonicalOptionGroupSearchCriteria criteria) {
         CanonicalOptionGroupSortKey sortKey = criteria.queryContext().sortKey();
         SortDirection direction = criteria.queryContext().sortDirection();
         boolean isAsc = direction == SortDirection.ASC;
 
         return switch (sortKey) {
             case CREATED_AT ->
-                    isAsc ? canonicalOptionGroup.createdAt.asc()
+                    isAsc
+                            ? canonicalOptionGroup.createdAt.asc()
                             : canonicalOptionGroup.createdAt.desc();
-            case CODE ->
-                    isAsc ? canonicalOptionGroup.code.asc()
-                            : canonicalOptionGroup.code.desc();
+            case CODE -> isAsc ? canonicalOptionGroup.code.asc() : canonicalOptionGroup.code.desc();
         };
     }
 }

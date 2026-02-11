@@ -28,7 +28,9 @@ public final class CategoryPresetFixtures {
     // ===== CategoryPreset Aggregate Fixtures =====
     public static CategoryPreset newCategoryPreset() {
         return CategoryPreset.forNew(
-                DEFAULT_SHOP_ID, DEFAULT_SALES_CHANNEL_CATEGORY_ID, DEFAULT_PRESET_NAME,
+                DEFAULT_SHOP_ID,
+                DEFAULT_SALES_CHANNEL_CATEGORY_ID,
+                DEFAULT_PRESET_NAME,
                 CommonVoFixtures.now());
     }
 
@@ -84,20 +86,35 @@ public final class CategoryPresetFixtures {
     // ===== SearchCriteria Fixtures =====
     public static CategoryPresetSearchCriteria defaultSearchCriteria() {
         return new CategoryPresetSearchCriteria(
-                null, null, null, null, null, null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
     }
 
     public static CategoryPresetSearchCriteria searchCriteriaWithSalesChannel(
             List<Long> salesChannelIds) {
         return new CategoryPresetSearchCriteria(
-                salesChannelIds, null, null, null, null, null,
+                salesChannelIds,
+                null,
+                null,
+                null,
+                null,
+                null,
                 QueryContext.defaultOf(CategoryPresetSortKey.defaultKey()));
     }
 
     public static CategoryPresetSearchCriteria searchCriteriaWithPaging(int page, int size) {
         return new CategoryPresetSearchCriteria(
-                null, null, null, null, null, null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 QueryContext.of(
                         CategoryPresetSortKey.CREATED_AT,
                         SortDirection.DESC,

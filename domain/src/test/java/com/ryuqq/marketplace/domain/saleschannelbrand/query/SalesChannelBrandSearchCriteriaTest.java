@@ -43,7 +43,8 @@ class SalesChannelBrandSearchCriteriaTest {
             // then
             assertThat(criteria.salesChannelIds()).containsExactly(1L, 2L);
             assertThat(criteria.statuses()).containsExactly(SalesChannelBrandStatus.ACTIVE);
-            assertThat(criteria.searchField()).isEqualTo(SalesChannelBrandSearchField.EXTERNAL_NAME);
+            assertThat(criteria.searchField())
+                    .isEqualTo(SalesChannelBrandSearchField.EXTERNAL_NAME);
             assertThat(criteria.searchWord()).isEqualTo("테스트");
             assertThat(criteria.queryContext()).isEqualTo(queryContext);
         }
@@ -211,7 +212,8 @@ class SalesChannelBrandSearchCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(0, 20));
             SalesChannelBrandSearchCriteria criteria =
-                    SalesChannelBrandSearchCriteria.of(List.of(), List.of(), null, null, queryContext);
+                    SalesChannelBrandSearchCriteria.of(
+                            List.of(), List.of(), null, null, queryContext);
 
             // then
             assertThat(criteria.size()).isEqualTo(20);
@@ -227,7 +229,8 @@ class SalesChannelBrandSearchCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(1, 10));
             SalesChannelBrandSearchCriteria criteria =
-                    SalesChannelBrandSearchCriteria.of(List.of(), List.of(), null, null, queryContext);
+                    SalesChannelBrandSearchCriteria.of(
+                            List.of(), List.of(), null, null, queryContext);
 
             // then
             assertThat(criteria.offset()).isEqualTo(10L);
@@ -243,7 +246,8 @@ class SalesChannelBrandSearchCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(3, 10));
             SalesChannelBrandSearchCriteria criteria =
-                    SalesChannelBrandSearchCriteria.of(List.of(), List.of(), null, null, queryContext);
+                    SalesChannelBrandSearchCriteria.of(
+                            List.of(), List.of(), null, null, queryContext);
 
             // then
             assertThat(criteria.page()).isEqualTo(3);

@@ -4,10 +4,7 @@ import com.ryuqq.marketplace.domain.product.id.ProductId;
 import com.ryuqq.marketplace.domain.product.id.ProductOptionMappingId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 
-/**
- * 상품-옵션값 매핑 (Child Entity of Product).
- * Product가 어떤 SellerOptionValue 조합인지를 나타낸다.
- */
+/** 상품-옵션값 매핑 (Child Entity of Product). Product가 어떤 SellerOptionValue 조합인지를 나타낸다. */
 public class ProductOptionMapping {
 
     private final ProductOptionMappingId id;
@@ -25,12 +22,9 @@ public class ProductOptionMapping {
 
     /** 신규 매핑 생성. */
     public static ProductOptionMapping forNew(
-            ProductId productId,
-            SellerOptionValueId sellerOptionValueId) {
+            ProductId productId, SellerOptionValueId sellerOptionValueId) {
         return new ProductOptionMapping(
-                ProductOptionMappingId.forNew(),
-                productId,
-                sellerOptionValueId);
+                ProductOptionMappingId.forNew(), productId, sellerOptionValueId);
     }
 
     /** 영속성에서 복원 시 사용. */

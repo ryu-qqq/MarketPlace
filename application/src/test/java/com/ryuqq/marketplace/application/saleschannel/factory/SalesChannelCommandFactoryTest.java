@@ -90,8 +90,7 @@ class SalesChannelCommandFactoryTest {
             // given
             Long salesChannelId = 1L;
             UpdateSalesChannelCommand command =
-                    SalesChannelCommandFixtures.updateCommand(
-                            salesChannelId, "비활성 채널", "INACTIVE");
+                    SalesChannelCommandFixtures.updateCommand(salesChannelId, "비활성 채널", "INACTIVE");
             Instant now = CommonVoFixtures.now();
 
             given(timeProvider.now()).willReturn(now);

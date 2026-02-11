@@ -29,7 +29,8 @@ class ProductGroupDescriptionTest {
             DescriptionHtml content = ProductGroupFixtures.defaultDescriptionHtml();
 
             // when
-            ProductGroupDescription description = ProductGroupDescription.forNew(productGroupId, content);
+            ProductGroupDescription description =
+                    ProductGroupDescription.forNew(productGroupId, content);
 
             // then
             assertThat(description).isNotNull();
@@ -57,8 +58,9 @@ class ProductGroupDescriptionTest {
             List<DescriptionImage> images = List.of(ProductGroupFixtures.defaultDescriptionImage());
 
             // when
-            ProductGroupDescription description = ProductGroupDescription.reconstitute(
-                    id, productGroupId, content, cdnPath, images);
+            ProductGroupDescription description =
+                    ProductGroupDescription.reconstitute(
+                            id, productGroupId, content, cdnPath, images);
 
             // then
             assertThat(description.id()).isEqualTo(id);
@@ -77,7 +79,8 @@ class ProductGroupDescriptionTest {
         @DisplayName("상세설명 내용을 수정한다")
         void updateContent() {
             // given
-            ProductGroupDescription description = ProductGroupFixtures.defaultProductGroupDescription();
+            ProductGroupDescription description =
+                    ProductGroupFixtures.defaultProductGroupDescription();
             DescriptionHtml newContent = ProductGroupFixtures.descriptionHtml("<p>수정된 설명</p>");
 
             // when
@@ -92,7 +95,8 @@ class ProductGroupDescriptionTest {
         @DisplayName("CDN 경로를 설정한다")
         void updateCdnPath() {
             // given
-            ProductGroupDescription description = ProductGroupFixtures.defaultProductGroupDescription();
+            ProductGroupDescription description =
+                    ProductGroupFixtures.defaultProductGroupDescription();
             CdnPath cdnPath = ProductGroupFixtures.defaultCdnPath();
 
             // when
@@ -112,7 +116,8 @@ class ProductGroupDescriptionTest {
         @DisplayName("상세설명 이미지를 추가한다")
         void addImage() {
             // given
-            ProductGroupDescription description = ProductGroupFixtures.defaultProductGroupDescription();
+            ProductGroupDescription description =
+                    ProductGroupFixtures.defaultProductGroupDescription();
             DescriptionImage image = ProductGroupFixtures.defaultDescriptionImage();
 
             // when
@@ -128,9 +133,10 @@ class ProductGroupDescriptionTest {
         void replaceImages() {
             // given
             ProductGroupDescription description = ProductGroupFixtures.descriptionWithImages();
-            List<DescriptionImage> newImages = List.of(
-                    ProductGroupFixtures.defaultDescriptionImage(),
-                    ProductGroupFixtures.uploadedDescriptionImage());
+            List<DescriptionImage> newImages =
+                    List.of(
+                            ProductGroupFixtures.defaultDescriptionImage(),
+                            ProductGroupFixtures.uploadedDescriptionImage());
 
             // when
             description.replaceImages(newImages);
@@ -143,7 +149,8 @@ class ProductGroupDescriptionTest {
         @DisplayName("모든 이미지가 업로드되었는지 확인한다")
         void isAllImagesUploaded() {
             // given
-            ProductGroupDescription description = ProductGroupFixtures.defaultProductGroupDescription();
+            ProductGroupDescription description =
+                    ProductGroupFixtures.defaultProductGroupDescription();
             DescriptionImage uploadedImage = ProductGroupFixtures.uploadedDescriptionImage();
             description.addImage(uploadedImage);
 
@@ -155,7 +162,8 @@ class ProductGroupDescriptionTest {
         @DisplayName("업로드되지 않은 이미지가 있으면 false를 반환한다")
         void isNotAllImagesUploaded() {
             // given
-            ProductGroupDescription description = ProductGroupFixtures.defaultProductGroupDescription();
+            ProductGroupDescription description =
+                    ProductGroupFixtures.defaultProductGroupDescription();
             description.addImage(ProductGroupFixtures.defaultDescriptionImage());
 
             // when & then
@@ -166,7 +174,8 @@ class ProductGroupDescriptionTest {
         @DisplayName("이미지가 없으면 모두 업로드된 것으로 간주한다")
         void emptyImagesAreAllUploaded() {
             // given
-            ProductGroupDescription description = ProductGroupFixtures.defaultProductGroupDescription();
+            ProductGroupDescription description =
+                    ProductGroupFixtures.defaultProductGroupDescription();
 
             // when & then
             assertThat(description.isAllImagesUploaded()).isTrue();
@@ -181,12 +190,13 @@ class ProductGroupDescriptionTest {
         @DisplayName("content가 null이면 empty로 판단한다")
         void isEmptyWhenContentIsNull() {
             // given
-            ProductGroupDescription description = ProductGroupDescription.reconstitute(
-                    ProductGroupFixtures.defaultProductGroupDescriptionId(),
-                    ProductGroupFixtures.defaultProductGroupId(),
-                    null,
-                    null,
-                    List.of());
+            ProductGroupDescription description =
+                    ProductGroupDescription.reconstitute(
+                            ProductGroupFixtures.defaultProductGroupDescriptionId(),
+                            ProductGroupFixtures.defaultProductGroupId(),
+                            null,
+                            null,
+                            List.of());
 
             // when & then
             assertThat(description.isEmpty()).isTrue();
@@ -196,12 +206,13 @@ class ProductGroupDescriptionTest {
         @DisplayName("content가 empty면 empty로 판단한다")
         void isEmptyWhenContentIsEmpty() {
             // given
-            ProductGroupDescription description = ProductGroupDescription.reconstitute(
-                    ProductGroupFixtures.defaultProductGroupDescriptionId(),
-                    ProductGroupFixtures.defaultProductGroupId(),
-                    ProductGroupFixtures.emptyDescriptionHtml(),
-                    null,
-                    List.of());
+            ProductGroupDescription description =
+                    ProductGroupDescription.reconstitute(
+                            ProductGroupFixtures.defaultProductGroupDescriptionId(),
+                            ProductGroupFixtures.defaultProductGroupId(),
+                            ProductGroupFixtures.emptyDescriptionHtml(),
+                            null,
+                            List.of());
 
             // when & then
             assertThat(description.isEmpty()).isTrue();
@@ -211,7 +222,8 @@ class ProductGroupDescriptionTest {
         @DisplayName("content가 있으면 empty가 아니다")
         void isNotEmptyWhenContentExists() {
             // given
-            ProductGroupDescription description = ProductGroupFixtures.defaultProductGroupDescription();
+            ProductGroupDescription description =
+                    ProductGroupFixtures.defaultProductGroupDescription();
 
             // when & then
             assertThat(description.isEmpty()).isFalse();
@@ -226,12 +238,13 @@ class ProductGroupDescriptionTest {
         @DisplayName("idValue()는 ID의 값을 반환한다")
         void idValueReturnsIdValue() {
             // given
-            ProductGroupDescription description = ProductGroupDescription.reconstitute(
-                    ProductGroupDescriptionId.of(100L),
-                    ProductGroupFixtures.defaultProductGroupId(),
-                    ProductGroupFixtures.defaultDescriptionHtml(),
-                    null,
-                    List.of());
+            ProductGroupDescription description =
+                    ProductGroupDescription.reconstitute(
+                            ProductGroupDescriptionId.of(100L),
+                            ProductGroupFixtures.defaultProductGroupId(),
+                            ProductGroupFixtures.defaultDescriptionHtml(),
+                            null,
+                            List.of());
 
             // when & then
             assertThat(description.idValue()).isEqualTo(100L);
@@ -241,12 +254,13 @@ class ProductGroupDescriptionTest {
         @DisplayName("productGroupIdValue()는 ProductGroupId의 값을 반환한다")
         void productGroupIdValueReturnsValue() {
             // given
-            ProductGroupDescription description = ProductGroupDescription.reconstitute(
-                    ProductGroupFixtures.defaultProductGroupDescriptionId(),
-                    ProductGroupId.of(200L),
-                    ProductGroupFixtures.defaultDescriptionHtml(),
-                    null,
-                    List.of());
+            ProductGroupDescription description =
+                    ProductGroupDescription.reconstitute(
+                            ProductGroupFixtures.defaultProductGroupDescriptionId(),
+                            ProductGroupId.of(200L),
+                            ProductGroupFixtures.defaultDescriptionHtml(),
+                            null,
+                            List.of());
 
             // when & then
             assertThat(description.productGroupIdValue()).isEqualTo(200L);
@@ -256,12 +270,13 @@ class ProductGroupDescriptionTest {
         @DisplayName("contentValue()는 content가 null이면 null을 반환한다")
         void contentValueReturnsNullWhenContentIsNull() {
             // given
-            ProductGroupDescription description = ProductGroupDescription.reconstitute(
-                    ProductGroupFixtures.defaultProductGroupDescriptionId(),
-                    ProductGroupFixtures.defaultProductGroupId(),
-                    null,
-                    null,
-                    List.of());
+            ProductGroupDescription description =
+                    ProductGroupDescription.reconstitute(
+                            ProductGroupFixtures.defaultProductGroupDescriptionId(),
+                            ProductGroupFixtures.defaultProductGroupId(),
+                            null,
+                            null,
+                            List.of());
 
             // when & then
             assertThat(description.contentValue()).isNull();
@@ -271,7 +286,8 @@ class ProductGroupDescriptionTest {
         @DisplayName("cdnPathValue()는 cdnPath가 null이면 null을 반환한다")
         void cdnPathValueReturnsNullWhenCdnPathIsNull() {
             // given
-            ProductGroupDescription description = ProductGroupFixtures.defaultProductGroupDescription();
+            ProductGroupDescription description =
+                    ProductGroupFixtures.defaultProductGroupDescription();
 
             // when & then
             assertThat(description.cdnPathValue()).isNull();

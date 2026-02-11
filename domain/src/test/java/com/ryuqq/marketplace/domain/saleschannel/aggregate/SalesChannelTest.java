@@ -158,7 +158,8 @@ class SalesChannelTest {
             // given
             SalesChannel salesChannel = SalesChannelFixtures.activeSalesChannel();
             SalesChannelUpdateData updateData =
-                    SalesChannelFixtures.salesChannelUpdateData("수정된 채널", SalesChannelStatus.INACTIVE);
+                    SalesChannelFixtures.salesChannelUpdateData(
+                            "수정된 채널", SalesChannelStatus.INACTIVE);
             Instant now = CommonVoFixtures.now();
 
             // when
@@ -176,8 +177,7 @@ class SalesChannelTest {
             // given
             SalesChannel salesChannel = SalesChannelFixtures.activeSalesChannel();
             SalesChannelUpdateData updateData =
-                    SalesChannelFixtures.salesChannelUpdateData(
-                            "새 채널명", SalesChannelStatus.ACTIVE);
+                    SalesChannelFixtures.salesChannelUpdateData("새 채널명", SalesChannelStatus.ACTIVE);
             Instant now = CommonVoFixtures.now();
 
             // when

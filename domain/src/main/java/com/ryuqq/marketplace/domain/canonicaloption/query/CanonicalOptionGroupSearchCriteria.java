@@ -1,8 +1,7 @@
 package com.ryuqq.marketplace.domain.canonicaloption.query;
 
-import java.util.Objects;
-
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
+import java.util.Objects;
 
 /** 캐노니컬 옵션 그룹 검색 조건. */
 public record CanonicalOptionGroupSearchCriteria(

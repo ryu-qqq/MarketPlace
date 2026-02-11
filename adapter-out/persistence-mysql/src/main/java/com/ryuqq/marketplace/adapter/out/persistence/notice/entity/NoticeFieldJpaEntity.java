@@ -65,8 +65,14 @@ public class NoticeFieldJpaEntity extends BaseAuditEntity {
             Instant createdAt,
             Instant updatedAt) {
         return new NoticeFieldJpaEntity(
-                id, noticeCategoryId, fieldCode, fieldName, required, sortOrder,
-                createdAt, updatedAt);
+                id,
+                noticeCategoryId,
+                fieldCode,
+                fieldName,
+                required,
+                sortOrder,
+                createdAt,
+                updatedAt);
     }
 
     public Long getId() {

@@ -26,11 +26,15 @@ class BrandMappingSearchCriteriaTest {
             QueryContext<BrandMappingSortKey> queryContext =
                     QueryContext.defaultOf(BrandMappingSortKey.defaultKey());
 
-            BrandMappingSearchCriteria criteria = BrandMappingSearchCriteria.of(
-                    List.of(100L), List.of(10L), List.of(1L),
-                    List.of(BrandMappingStatus.ACTIVE),
-                    BrandMappingSearchField.EXTERNAL_BRAND_NAME, "테스트",
-                    queryContext);
+            BrandMappingSearchCriteria criteria =
+                    BrandMappingSearchCriteria.of(
+                            List.of(100L),
+                            List.of(10L),
+                            List.of(1L),
+                            List.of(BrandMappingStatus.ACTIVE),
+                            BrandMappingSearchField.EXTERNAL_BRAND_NAME,
+                            "테스트",
+                            queryContext);
 
             assertThat(criteria.salesChannelBrandIds()).containsExactly(100L);
             assertThat(criteria.internalBrandIds()).containsExactly(10L);
@@ -68,11 +72,15 @@ class BrandMappingSearchCriteriaTest {
         @Test
         @DisplayName("각 필터의 존재 여부를 확인한다")
         void checkFilters() {
-            BrandMappingSearchCriteria withFilters = BrandMappingSearchCriteria.of(
-                    List.of(100L), List.of(10L), List.of(1L),
-                    List.of(BrandMappingStatus.ACTIVE),
-                    BrandMappingSearchField.EXTERNAL_BRAND_NAME, "테스트",
-                    QueryContext.defaultOf(BrandMappingSortKey.defaultKey()));
+            BrandMappingSearchCriteria withFilters =
+                    BrandMappingSearchCriteria.of(
+                            List.of(100L),
+                            List.of(10L),
+                            List.of(1L),
+                            List.of(BrandMappingStatus.ACTIVE),
+                            BrandMappingSearchField.EXTERNAL_BRAND_NAME,
+                            "테스트",
+                            QueryContext.defaultOf(BrandMappingSortKey.defaultKey()));
 
             assertThat(withFilters.hasSalesChannelBrandFilter()).isTrue();
             assertThat(withFilters.hasInternalBrandFilter()).isTrue();
@@ -104,10 +112,13 @@ class BrandMappingSearchCriteriaTest {
         @Test
         @DisplayName("size()는 QueryContext의 size를 반환한다")
         void sizeReturnsQueryContextSize() {
-            QueryContext<BrandMappingSortKey> queryContext = QueryContext.of(
-                    BrandMappingSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(0, 20));
-            BrandMappingSearchCriteria criteria = BrandMappingSearchCriteria.of(
-                    null, null, null, null, null, null, queryContext);
+            QueryContext<BrandMappingSortKey> queryContext =
+                    QueryContext.of(
+                            BrandMappingSortKey.CREATED_AT,
+                            SortDirection.DESC,
+                            PageRequest.of(0, 20));
+            BrandMappingSearchCriteria criteria =
+                    BrandMappingSearchCriteria.of(null, null, null, null, null, null, queryContext);
 
             assertThat(criteria.size()).isEqualTo(20);
         }
@@ -115,10 +126,13 @@ class BrandMappingSearchCriteriaTest {
         @Test
         @DisplayName("offset()은 QueryContext의 offset을 반환한다")
         void offsetReturnsQueryContextOffset() {
-            QueryContext<BrandMappingSortKey> queryContext = QueryContext.of(
-                    BrandMappingSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(2, 10));
-            BrandMappingSearchCriteria criteria = BrandMappingSearchCriteria.of(
-                    null, null, null, null, null, null, queryContext);
+            QueryContext<BrandMappingSortKey> queryContext =
+                    QueryContext.of(
+                            BrandMappingSortKey.CREATED_AT,
+                            SortDirection.DESC,
+                            PageRequest.of(2, 10));
+            BrandMappingSearchCriteria criteria =
+                    BrandMappingSearchCriteria.of(null, null, null, null, null, null, queryContext);
 
             assertThat(criteria.offset()).isEqualTo(20L);
         }
@@ -131,9 +145,15 @@ class BrandMappingSearchCriteriaTest {
         @Test
         @DisplayName("null 리스트는 빈 리스트로 변환된다")
         void nullListsConvertedToEmpty() {
-            BrandMappingSearchCriteria criteria = BrandMappingSearchCriteria.of(
-                    null, null, null, null, null, null,
-                    QueryContext.defaultOf(BrandMappingSortKey.defaultKey()));
+            BrandMappingSearchCriteria criteria =
+                    BrandMappingSearchCriteria.of(
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            QueryContext.defaultOf(BrandMappingSortKey.defaultKey()));
 
             assertThat(criteria.salesChannelBrandIds()).isEmpty();
             assertThat(criteria.internalBrandIds()).isEmpty();
@@ -145,8 +165,9 @@ class BrandMappingSearchCriteriaTest {
         @DisplayName("queryContext가 null이면 예외가 발생한다")
         void nullQueryContextThrowsException() {
             assertThatThrownBy(
-                            () -> BrandMappingSearchCriteria.of(
-                                    null, null, null, null, null, null, null))
+                            () ->
+                                    BrandMappingSearchCriteria.of(
+                                            null, null, null, null, null, null, null))
                     .isInstanceOf(NullPointerException.class);
         }
     }

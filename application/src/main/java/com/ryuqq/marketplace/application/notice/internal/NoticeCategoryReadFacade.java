@@ -44,17 +44,17 @@ public class NoticeCategoryReadFacade {
             return List.of();
         }
 
-        List<Long> categoryIds = categories.stream()
-                .map(NoticeCategory::idValue)
-                .toList();
+        List<Long> categoryIds = categories.stream().map(NoticeCategory::idValue).toList();
 
         Map<Long, List<NoticeField>> fieldsMap =
                 fieldReadManager.getGroupedByNoticeCategoryIds(categoryIds);
 
         return categories.stream()
-                .map(category -> assembler.toResult(
-                        category,
-                        fieldsMap.getOrDefault(category.idValue(), List.of())))
+                .map(
+                        category ->
+                                assembler.toResult(
+                                        category,
+                                        fieldsMap.getOrDefault(category.idValue(), List.of())))
                 .toList();
     }
 

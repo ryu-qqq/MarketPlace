@@ -52,11 +52,16 @@ public final class CanonicalOptionGroupJpaEntityFixtures {
     }
 
     /** 커스텀 이름을 가진 활성 상태 옵션 그룹 Entity 생성. ID는 null로 새 엔티티 생성. 코드는 자동 생성. */
-    public static CanonicalOptionGroupJpaEntity activeEntityWithName(
-            String nameKo, String nameEn) {
+    public static CanonicalOptionGroupJpaEntity activeEntityWithName(String nameKo, String nameEn) {
         Instant now = Instant.now();
         return CanonicalOptionGroupJpaEntity.create(
-                null, "CODE_" + SEQUENCE.getAndIncrement(), nameKo, nameEn, DEFAULT_ACTIVE, now, now);
+                null,
+                "CODE_" + SEQUENCE.getAndIncrement(),
+                nameKo,
+                nameEn,
+                DEFAULT_ACTIVE,
+                now,
+                now);
     }
 
     /** 비활성 상태 옵션 그룹 Entity 생성. */
@@ -97,8 +102,7 @@ public final class CanonicalOptionGroupJpaEntityFixtures {
     /** SIZE 옵션 그룹 Entity 생성. */
     public static CanonicalOptionGroupJpaEntity sizeEntity() {
         Instant now = Instant.now();
-        return CanonicalOptionGroupJpaEntity.create(
-                2L, "SIZE", "사이즈", "Size", true, now, now);
+        return CanonicalOptionGroupJpaEntity.create(2L, "SIZE", "사이즈", "Size", true, now, now);
     }
 
     /** MATERIAL 옵션 그룹 Entity 생성. */

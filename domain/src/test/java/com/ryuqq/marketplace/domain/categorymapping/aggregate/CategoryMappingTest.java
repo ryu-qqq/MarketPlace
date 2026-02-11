@@ -28,8 +28,9 @@ class CategoryMappingTest {
             Long internalCategoryId = 20L;
             Instant now = CommonVoFixtures.now();
 
-            CategoryMapping mapping = CategoryMapping.forNew(
-                    presetId, salesChannelCategoryId, internalCategoryId, now);
+            CategoryMapping mapping =
+                    CategoryMapping.forNew(
+                            presetId, salesChannelCategoryId, internalCategoryId, now);
 
             assertThat(mapping.id().isNew()).isTrue();
             assertThat(mapping.presetId()).isEqualTo(presetId);
@@ -52,8 +53,9 @@ class CategoryMappingTest {
             CategoryMappingId id = CategoryMappingId.of(1L);
             Instant createdAt = CommonVoFixtures.yesterday();
 
-            CategoryMapping mapping = CategoryMapping.reconstitute(
-                    id, 1L, 200L, 20L, CategoryMappingStatus.ACTIVE, createdAt, createdAt);
+            CategoryMapping mapping =
+                    CategoryMapping.reconstitute(
+                            id, 1L, 200L, 20L, CategoryMappingStatus.ACTIVE, createdAt, createdAt);
 
             assertThat(mapping.id()).isEqualTo(id);
             assertThat(mapping.idValue()).isEqualTo(1L);

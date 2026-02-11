@@ -46,7 +46,8 @@ class NoticeCategoryAssemblerTest {
             assertThat(result.code()).isEqualTo(category.codeValue());
             assertThat(result.nameKo()).isEqualTo(category.nameKo());
             assertThat(result.nameEn()).isEqualTo(category.nameEn());
-            assertThat(result.targetCategoryGroup()).isEqualTo(category.targetCategoryGroup().name());
+            assertThat(result.targetCategoryGroup())
+                    .isEqualTo(category.targetCategoryGroup().name());
             assertThat(result.active()).isEqualTo(category.isActive());
             assertThat(result.fields()).isEmpty();
             assertThat(result.createdAt()).isEqualTo(category.createdAt());
@@ -96,15 +97,14 @@ class NoticeCategoryAssemblerTest {
             NoticeCategory category1 = NoticeFixtures.activeNoticeCategory(1L);
             NoticeCategory category2 = NoticeFixtures.activeNoticeCategory(2L);
             List<NoticeCategoryResult> results =
-                    List.of(
-                            sut.toResult(category1, List.of()),
-                            sut.toResult(category2, List.of()));
+                    List.of(sut.toResult(category1, List.of()), sut.toResult(category2, List.of()));
             int page = 0;
             int size = 20;
             long totalElements = 2L;
 
             // when
-            NoticeCategoryPageResult pageResult = sut.toPageResult(results, page, size, totalElements);
+            NoticeCategoryPageResult pageResult =
+                    sut.toPageResult(results, page, size, totalElements);
 
             // then
             assertThat(pageResult).isNotNull();
@@ -124,7 +124,8 @@ class NoticeCategoryAssemblerTest {
             long totalElements = 0L;
 
             // when
-            NoticeCategoryPageResult pageResult = sut.toPageResult(emptyList, page, size, totalElements);
+            NoticeCategoryPageResult pageResult =
+                    sut.toPageResult(emptyList, page, size, totalElements);
 
             // then
             assertThat(pageResult.results()).isEmpty();
@@ -143,7 +144,8 @@ class NoticeCategoryAssemblerTest {
             long totalElements = 25L;
 
             // when
-            NoticeCategoryPageResult pageResult = sut.toPageResult(results, page, size, totalElements);
+            NoticeCategoryPageResult pageResult =
+                    sut.toPageResult(results, page, size, totalElements);
 
             // then
             assertThat(pageResult.pageMeta().page()).isEqualTo(2);

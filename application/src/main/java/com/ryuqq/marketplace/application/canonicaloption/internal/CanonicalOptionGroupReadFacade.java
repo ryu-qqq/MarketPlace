@@ -47,17 +47,16 @@ public class CanonicalOptionGroupReadFacade {
             return List.of();
         }
 
-        List<Long> groupIds = groups.stream()
-                .map(CanonicalOptionGroup::idValue)
-                .toList();
+        List<Long> groupIds = groups.stream().map(CanonicalOptionGroup::idValue).toList();
 
         Map<Long, List<CanonicalOptionValue>> valuesMap =
                 valueReadManager.getGroupedByCanonicalOptionGroupIds(groupIds);
 
         return groups.stream()
-                .map(group -> assembler.toResult(
-                        group,
-                        valuesMap.getOrDefault(group.idValue(), List.of())))
+                .map(
+                        group ->
+                                assembler.toResult(
+                                        group, valuesMap.getOrDefault(group.idValue(), List.of())))
                 .toList();
     }
 

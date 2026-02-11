@@ -404,7 +404,8 @@ class CategoryMappingSearchCriteriaTest {
                             queryContext);
 
             // then
-            assertThat(criteria.salesChannelCategoryIds()).isEqualTo(originalSalesChannelCategoryIds);
+            assertThat(criteria.salesChannelCategoryIds())
+                    .isEqualTo(originalSalesChannelCategoryIds);
             assertThatThrownBy(() -> criteria.salesChannelCategoryIds().add(300L))
                     .isInstanceOf(UnsupportedOperationException.class);
         }

@@ -30,10 +30,7 @@ public class NoticeCategoryQueryDslRepository {
 
     public Optional<NoticeCategoryJpaEntity> findById(Long id) {
         NoticeCategoryJpaEntity entity =
-                queryFactory
-                        .selectFrom(noticeCategory)
-                        .where(conditionBuilder.idEq(id))
-                        .fetchOne();
+                queryFactory.selectFrom(noticeCategory).where(conditionBuilder.idEq(id)).fetchOne();
         return Optional.ofNullable(entity);
     }
 
@@ -76,7 +73,8 @@ public class NoticeCategoryQueryDslRepository {
         boolean isAsc = direction == SortDirection.ASC;
 
         return switch (sortKey) {
-            case CREATED_AT -> isAsc ? noticeCategory.createdAt.asc() : noticeCategory.createdAt.desc();
+            case CREATED_AT ->
+                    isAsc ? noticeCategory.createdAt.asc() : noticeCategory.createdAt.desc();
             case CODE -> isAsc ? noticeCategory.code.asc() : noticeCategory.code.desc();
         };
     }

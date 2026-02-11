@@ -73,9 +73,7 @@ class BrandAssemblerTest {
         void toResults_ValidList_ReturnsResultList() {
             // given
             List<Brand> brands =
-                    List.of(
-                            BrandFixtures.activeBrand(1L),
-                            BrandFixtures.activeBrand(2L));
+                    List.of(BrandFixtures.activeBrand(1L), BrandFixtures.activeBrand(2L));
 
             // when
             List<BrandResult> results = sut.toResults(brands);
@@ -109,9 +107,7 @@ class BrandAssemblerTest {
         void toPageResult_ValidList_ReturnsPageResult() {
             // given
             List<Brand> brands =
-                    List.of(
-                            BrandFixtures.activeBrand(1L),
-                            BrandFixtures.activeBrand(2L));
+                    List.of(BrandFixtures.activeBrand(1L), BrandFixtures.activeBrand(2L));
             int page = 0;
             int size = 20;
             long totalElements = 2L;

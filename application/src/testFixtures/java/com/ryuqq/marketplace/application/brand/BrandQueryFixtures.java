@@ -41,7 +41,8 @@ public final class BrandQueryFixtures {
 
     public static BrandSearchParams searchParams(
             List<String> statuses, String searchField, String searchWord, int page, int size) {
-        return BrandSearchParams.of(statuses, searchField, searchWord, commonSearchParams(page, size));
+        return BrandSearchParams.of(
+                statuses, searchField, searchWord, commonSearchParams(page, size));
     }
 
     public static CommonSearchParams defaultCommonSearchParams() {
@@ -68,11 +69,7 @@ public final class BrandQueryFixtures {
     }
 
     public static List<BrandResult> brandResults() {
-        return List.of(
-                brandResult(1L),
-                brandResult(2L),
-                brandResult(3L)
-        );
+        return List.of(brandResult(1L), brandResult(2L), brandResult(3L));
     }
 
     public static BrandPageResult brandPageResult() {

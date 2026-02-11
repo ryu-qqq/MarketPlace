@@ -28,11 +28,13 @@ class SellerOptionGroupTest {
             ProductGroupId productGroupId = ProductGroupFixtures.newProductGroupId();
             OptionGroupName optionGroupName = ProductGroupFixtures.defaultOptionGroupName();
             int sortOrder = 0;
-            List<SellerOptionValue> optionValues = List.of(ProductGroupFixtures.defaultSellerOptionValue());
+            List<SellerOptionValue> optionValues =
+                    List.of(ProductGroupFixtures.defaultSellerOptionValue());
 
             // when
-            SellerOptionGroup optionGroup = SellerOptionGroup.forNew(
-                    productGroupId, optionGroupName, sortOrder, optionValues);
+            SellerOptionGroup optionGroup =
+                    SellerOptionGroup.forNew(
+                            productGroupId, optionGroupName, sortOrder, optionValues);
 
             // then
             assertThat(optionGroup).isNotNull();
@@ -58,11 +60,17 @@ class SellerOptionGroupTest {
             OptionGroupName optionGroupName = ProductGroupFixtures.defaultOptionGroupName();
             CanonicalOptionGroupId canonicalOptionGroupId = CanonicalOptionGroupId.of(1L);
             int sortOrder = 0;
-            List<SellerOptionValue> optionValues = List.of(ProductGroupFixtures.defaultSellerOptionValue());
+            List<SellerOptionValue> optionValues =
+                    List.of(ProductGroupFixtures.defaultSellerOptionValue());
 
             // when
-            SellerOptionGroup optionGroup = SellerOptionGroup.forNewWithCanonical(
-                    productGroupId, optionGroupName, canonicalOptionGroupId, sortOrder, optionValues);
+            SellerOptionGroup optionGroup =
+                    SellerOptionGroup.forNewWithCanonical(
+                            productGroupId,
+                            optionGroupName,
+                            canonicalOptionGroupId,
+                            sortOrder,
+                            optionValues);
 
             // then
             assertThat(optionGroup.canonicalOptionGroupId()).isEqualTo(canonicalOptionGroupId);
@@ -83,11 +91,18 @@ class SellerOptionGroupTest {
             OptionGroupName optionGroupName = ProductGroupFixtures.defaultOptionGroupName();
             CanonicalOptionGroupId canonicalOptionGroupId = CanonicalOptionGroupId.of(1L);
             int sortOrder = 0;
-            List<SellerOptionValue> optionValues = List.of(ProductGroupFixtures.mappedSellerOptionValue());
+            List<SellerOptionValue> optionValues =
+                    List.of(ProductGroupFixtures.mappedSellerOptionValue());
 
             // when
-            SellerOptionGroup optionGroup = SellerOptionGroup.reconstitute(
-                    id, productGroupId, optionGroupName, canonicalOptionGroupId, sortOrder, optionValues);
+            SellerOptionGroup optionGroup =
+                    SellerOptionGroup.reconstitute(
+                            id,
+                            productGroupId,
+                            optionGroupName,
+                            canonicalOptionGroupId,
+                            sortOrder,
+                            optionValues);
 
             // then
             assertThat(optionGroup.id()).isEqualTo(id);
@@ -155,12 +170,13 @@ class SellerOptionGroupTest {
         @DisplayName("그룹은 매핑되었지만 값 중 하나라도 매핑되지 않으면 fully mapped가 아니다")
         void isNotFullyMappedWhenSomeValuesNotMapped() {
             // given
-            SellerOptionGroup optionGroup = SellerOptionGroup.forNewWithCanonical(
-                    ProductGroupFixtures.newProductGroupId(),
-                    ProductGroupFixtures.defaultOptionGroupName(),
-                    CanonicalOptionGroupId.of(1L),
-                    0,
-                    List.of(ProductGroupFixtures.defaultSellerOptionValue())); // 매핑 안 된 값
+            SellerOptionGroup optionGroup =
+                    SellerOptionGroup.forNewWithCanonical(
+                            ProductGroupFixtures.newProductGroupId(),
+                            ProductGroupFixtures.defaultOptionGroupName(),
+                            CanonicalOptionGroupId.of(1L),
+                            0,
+                            List.of(ProductGroupFixtures.defaultSellerOptionValue())); // 매핑 안 된 값
 
             // when & then
             assertThat(optionGroup.isFullyMapped()).isFalse();
@@ -241,13 +257,14 @@ class SellerOptionGroupTest {
         @DisplayName("idValue()는 ID의 값을 반환한다")
         void idValueReturnsIdValue() {
             // given
-            SellerOptionGroup optionGroup = SellerOptionGroup.reconstitute(
-                    SellerOptionGroupId.of(100L),
-                    ProductGroupFixtures.defaultProductGroupId(),
-                    ProductGroupFixtures.defaultOptionGroupName(),
-                    null,
-                    0,
-                    List.of());
+            SellerOptionGroup optionGroup =
+                    SellerOptionGroup.reconstitute(
+                            SellerOptionGroupId.of(100L),
+                            ProductGroupFixtures.defaultProductGroupId(),
+                            ProductGroupFixtures.defaultOptionGroupName(),
+                            null,
+                            0,
+                            List.of());
 
             // when & then
             assertThat(optionGroup.idValue()).isEqualTo(100L);
@@ -257,13 +274,14 @@ class SellerOptionGroupTest {
         @DisplayName("productGroupIdValue()는 ProductGroupId의 값을 반환한다")
         void productGroupIdValueReturnsValue() {
             // given
-            SellerOptionGroup optionGroup = SellerOptionGroup.reconstitute(
-                    ProductGroupFixtures.defaultSellerOptionGroupId(),
-                    ProductGroupId.of(200L),
-                    ProductGroupFixtures.defaultOptionGroupName(),
-                    null,
-                    0,
-                    List.of());
+            SellerOptionGroup optionGroup =
+                    SellerOptionGroup.reconstitute(
+                            ProductGroupFixtures.defaultSellerOptionGroupId(),
+                            ProductGroupId.of(200L),
+                            ProductGroupFixtures.defaultOptionGroupName(),
+                            null,
+                            0,
+                            List.of());
 
             // when & then
             assertThat(optionGroup.productGroupIdValue()).isEqualTo(200L);

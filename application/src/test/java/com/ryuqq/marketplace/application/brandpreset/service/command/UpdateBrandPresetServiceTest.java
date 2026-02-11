@@ -41,7 +41,8 @@ class UpdateBrandPresetServiceTest {
         void execute_ValidCommand_UpdatesBrandPreset() {
             // given
             Long brandPresetId = 1L;
-            UpdateBrandPresetCommand command = BrandPresetCommandFixtures.updateCommand(brandPresetId);
+            UpdateBrandPresetCommand command =
+                    BrandPresetCommandFixtures.updateCommand(brandPresetId);
             BrandPreset existing = BrandPresetFixtures.activeBrandPreset(brandPresetId);
             UpdateBrandPresetBundle bundle = BrandPresetCommandFixtures.updateBundle();
 

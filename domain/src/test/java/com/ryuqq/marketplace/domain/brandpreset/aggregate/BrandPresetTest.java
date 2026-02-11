@@ -60,9 +60,15 @@ class BrandPresetTest {
             Instant updatedAt = CommonVoFixtures.yesterday();
 
             // when
-            BrandPreset preset = BrandPreset.reconstitute(
-                    id, shopId, salesChannelBrandId, presetName,
-                    BrandPresetStatus.ACTIVE, createdAt, updatedAt);
+            BrandPreset preset =
+                    BrandPreset.reconstitute(
+                            id,
+                            shopId,
+                            salesChannelBrandId,
+                            presetName,
+                            BrandPresetStatus.ACTIVE,
+                            createdAt,
+                            updatedAt);
 
             // then
             assertThat(preset.id()).isEqualTo(id);

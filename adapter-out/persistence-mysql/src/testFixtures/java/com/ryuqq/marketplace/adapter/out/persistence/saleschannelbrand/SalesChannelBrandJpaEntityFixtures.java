@@ -170,7 +170,13 @@ public final class SalesChannelBrandJpaEntityFixtures {
             Long salesChannelId, String externalBrandCode, String externalBrandName) {
         Instant now = Instant.now();
         return SalesChannelBrandJpaEntity.create(
-                null, salesChannelId, externalBrandCode, externalBrandName, STATUS_ACTIVE, now, now);
+                null,
+                salesChannelId,
+                externalBrandCode,
+                externalBrandName,
+                STATUS_ACTIVE,
+                now,
+                now);
     }
 
     /** 커스텀 파라미터를 가진 비활성 상태 Entity 생성. */

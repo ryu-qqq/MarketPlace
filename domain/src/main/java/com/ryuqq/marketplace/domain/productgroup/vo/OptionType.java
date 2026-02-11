@@ -2,7 +2,6 @@ package com.ryuqq.marketplace.domain.productgroup.vo;
 
 /** 상품 그룹 옵션 유형. */
 public enum OptionType {
-
     NONE("옵션 없음"),
     SINGLE("단일 옵션"),
     COMBINATION("조합 옵션"),

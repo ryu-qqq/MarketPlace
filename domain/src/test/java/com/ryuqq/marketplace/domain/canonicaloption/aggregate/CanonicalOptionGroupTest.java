@@ -95,8 +95,7 @@ class CanonicalOptionGroupTest {
         @DisplayName("idValue()는 ID의 값을 반환한다")
         void idValueReturnsIdValue() {
             // given
-            CanonicalOptionGroup group =
-                    CanonicalOptionFixtures.activeCanonicalOptionGroup(100L);
+            CanonicalOptionGroup group = CanonicalOptionFixtures.activeCanonicalOptionGroup(100L);
 
             // when
             Long idValue = group.idValue();
@@ -149,13 +148,17 @@ class CanonicalOptionGroupTest {
         void valuesReturnsUnmodifiableList() {
             // given
             List<CanonicalOptionValue> values = CanonicalOptionFixtures.canonicalOptionValues();
-            CanonicalOptionGroup group = CanonicalOptionFixtures.canonicalOptionGroupWithValues(1L, values);
+            CanonicalOptionGroup group =
+                    CanonicalOptionFixtures.canonicalOptionGroupWithValues(1L, values);
 
             // when
             List<CanonicalOptionValue> returnedValues = group.values();
 
             // then
-            assertThatThrownBy(() -> returnedValues.add(CanonicalOptionFixtures.canonicalOptionValue(99L, 99)))
+            assertThatThrownBy(
+                            () ->
+                                    returnedValues.add(
+                                            CanonicalOptionFixtures.canonicalOptionValue(99L, 99)))
                     .isInstanceOf(UnsupportedOperationException.class);
         }
     }
@@ -169,7 +172,8 @@ class CanonicalOptionGroupTest {
         void valuesListIsImmutable() {
             // given
             List<CanonicalOptionValue> values = CanonicalOptionFixtures.canonicalOptionValues();
-            CanonicalOptionGroup group = CanonicalOptionFixtures.canonicalOptionGroupWithValues(1L, values);
+            CanonicalOptionGroup group =
+                    CanonicalOptionFixtures.canonicalOptionGroupWithValues(1L, values);
             List<CanonicalOptionValue> originalValues = group.values();
             int originalSize = originalValues.size();
 

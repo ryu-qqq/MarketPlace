@@ -23,7 +23,13 @@ public class NoticeCategoryJpaEntityMapper {
         var categoryGroup = CategoryGroup.valueOf(entity.getTargetCategoryGroup());
 
         return NoticeCategory.reconstitute(
-                id, code, categoryName, categoryGroup, entity.isActive(),
-                List.of(), entity.getCreatedAt(), entity.getUpdatedAt());
+                id,
+                code,
+                categoryName,
+                categoryGroup,
+                entity.isActive(),
+                List.of(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt());
     }
 }

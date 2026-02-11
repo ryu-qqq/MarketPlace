@@ -68,8 +68,7 @@ class BrandPresetValidatorTest {
             // given
             BrandPresetId id = BrandPresetId.of(999L);
 
-            given(readManager.getById(id))
-                    .willThrow(new BrandPresetNotFoundException(id.value()));
+            given(readManager.getById(id)).willThrow(new BrandPresetNotFoundException(id.value()));
 
             // when & then
             assertThatThrownBy(() -> sut.findExistingOrThrow(id))

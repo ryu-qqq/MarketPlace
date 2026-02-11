@@ -39,13 +39,14 @@ class SearchNoticeCategoryByOffsetServiceTest {
 
     private static NoticeCategorySearchCriteria defaultCriteria() {
         return new NoticeCategorySearchCriteria(
-                null, null, null,
-                QueryContext.defaultOf(NoticeCategorySortKey.defaultKey()));
+                null, null, null, QueryContext.defaultOf(NoticeCategorySortKey.defaultKey()));
     }
 
     private static NoticeCategorySearchCriteria criteriaWithPage(int page, int size) {
         return new NoticeCategorySearchCriteria(
-                null, null, null,
+                null,
+                null,
+                null,
                 QueryContext.of(
                         NoticeCategorySortKey.defaultKey(),
                         SortDirection.DESC,
@@ -68,7 +69,8 @@ class SearchNoticeCategoryByOffsetServiceTest {
                             NoticeQueryFixtures.noticeCategoryResult(1L),
                             NoticeQueryFixtures.noticeCategoryResult(2L));
             long totalElements = 2L;
-            NoticeCategoryPageResult expectedResult = NoticeQueryFixtures.noticeCategoryPageResult();
+            NoticeCategoryPageResult expectedResult =
+                    NoticeQueryFixtures.noticeCategoryPageResult();
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readFacade.findByCriteria(criteria)).willReturn(results);
@@ -99,7 +101,9 @@ class SearchNoticeCategoryByOffsetServiceTest {
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readFacade.findByCriteria(criteria)).willReturn(emptyResults);
             given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
-            given(assembler.toPageResult(emptyResults, criteria.page(), criteria.size(), totalElements))
+            given(
+                            assembler.toPageResult(
+                                    emptyResults, criteria.page(), criteria.size(), totalElements))
                     .willReturn(emptyResult);
 
             // when
@@ -114,9 +118,12 @@ class SearchNoticeCategoryByOffsetServiceTest {
         void execute_WithActiveFilter_ReturnsFilteredResults() {
             // given
             NoticeCategorySearchParams params = NoticeQueryFixtures.searchParams(true);
-            NoticeCategorySearchCriteria criteria = new NoticeCategorySearchCriteria(
-                    true, null, null,
-                    QueryContext.defaultOf(NoticeCategorySortKey.defaultKey()));
+            NoticeCategorySearchCriteria criteria =
+                    new NoticeCategorySearchCriteria(
+                            true,
+                            null,
+                            null,
+                            QueryContext.defaultOf(NoticeCategorySortKey.defaultKey()));
             List<NoticeCategoryResult> activeResults =
                     List.of(NoticeQueryFixtures.noticeCategoryResult(1L, true));
             long totalElements = 1L;
@@ -126,7 +133,9 @@ class SearchNoticeCategoryByOffsetServiceTest {
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readFacade.findByCriteria(criteria)).willReturn(activeResults);
             given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
-            given(assembler.toPageResult(activeResults, criteria.page(), criteria.size(), totalElements))
+            given(
+                            assembler.toPageResult(
+                                    activeResults, criteria.page(), criteria.size(), totalElements))
                     .willReturn(expectedResult);
 
             // when
@@ -140,10 +149,14 @@ class SearchNoticeCategoryByOffsetServiceTest {
         @DisplayName("검색어로 고시정보 카테고리를 필터링 조회한다")
         void execute_WithSearchWord_ReturnsFilteredResults() {
             // given
-            NoticeCategorySearchParams params = NoticeQueryFixtures.searchParams("code", "CLOTHING");
-            NoticeCategorySearchCriteria criteria = new NoticeCategorySearchCriteria(
-                    null, "code", "CLOTHING",
-                    QueryContext.defaultOf(NoticeCategorySortKey.defaultKey()));
+            NoticeCategorySearchParams params =
+                    NoticeQueryFixtures.searchParams("code", "CLOTHING");
+            NoticeCategorySearchCriteria criteria =
+                    new NoticeCategorySearchCriteria(
+                            null,
+                            "code",
+                            "CLOTHING",
+                            QueryContext.defaultOf(NoticeCategorySortKey.defaultKey()));
             List<NoticeCategoryResult> searchResults =
                     List.of(NoticeQueryFixtures.noticeCategoryResult(1L, "CLOTHING"));
             long totalElements = 1L;
@@ -153,7 +166,9 @@ class SearchNoticeCategoryByOffsetServiceTest {
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readFacade.findByCriteria(criteria)).willReturn(searchResults);
             given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
-            given(assembler.toPageResult(searchResults, criteria.page(), criteria.size(), totalElements))
+            given(
+                            assembler.toPageResult(
+                                    searchResults, criteria.page(), criteria.size(), totalElements))
                     .willReturn(expectedResult);
 
             // when

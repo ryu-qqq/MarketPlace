@@ -55,28 +55,20 @@ public final class ProductNoticeFixtures {
     // ===== ProductNoticeEntry Fixtures =====
     public static ProductNoticeEntry defaultEntry() {
         return ProductNoticeEntry.forNew(
-                NoticeFieldId.of(DEFAULT_NOTICE_FIELD_ID),
-                defaultNoticeFieldValue());
+                NoticeFieldId.of(DEFAULT_NOTICE_FIELD_ID), defaultNoticeFieldValue());
     }
 
     public static ProductNoticeEntry entry(Long fieldId, String value) {
-        return ProductNoticeEntry.forNew(
-                NoticeFieldId.of(fieldId),
-                NoticeFieldValue.of(value));
+        return ProductNoticeEntry.forNew(NoticeFieldId.of(fieldId), NoticeFieldValue.of(value));
     }
 
     public static ProductNoticeEntry existingEntry(Long id, Long fieldId, String value) {
         return ProductNoticeEntry.reconstitute(
-                ProductNoticeEntryId.of(id),
-                NoticeFieldId.of(fieldId),
-                NoticeFieldValue.of(value));
+                ProductNoticeEntryId.of(id), NoticeFieldId.of(fieldId), NoticeFieldValue.of(value));
     }
 
     public static List<ProductNoticeEntry> defaultEntries() {
-        return List.of(
-                entry(100L, "제조국"),
-                entry(101L, "제조사"),
-                entry(102L, "품질보증기준"));
+        return List.of(entry(100L, "제조국"), entry(101L, "제조사"), entry(102L, "품질보증기준"));
     }
 
     public static List<ProductNoticeEntry> singleEntryList() {

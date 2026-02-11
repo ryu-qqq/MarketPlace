@@ -1,16 +1,14 @@
 package com.ryuqq.marketplace.domain.channeloptionmapping.aggregate;
 
-import java.time.Instant;
-
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionValueId;
 import com.ryuqq.marketplace.domain.channeloptionmapping.id.ChannelOptionMappingId;
 import com.ryuqq.marketplace.domain.channeloptionmapping.vo.ExternalOptionCode;
 import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
+import java.time.Instant;
 
 /**
- * 채널 옵션 매핑 Aggregate Root.
- * 캐노니컬 옵션 값을 외부몰별 옵션 코드에 매핑한다.
- * salesChannelId + canonicalOptionValueId 조합은 유일해야 한다.
+ * 채널 옵션 매핑 Aggregate Root. 캐노니컬 옵션 값을 외부몰별 옵션 코드에 매핑한다. salesChannelId + canonicalOptionValueId 조합은
+ * 유일해야 한다.
  */
 public class ChannelOptionMapping {
 
@@ -60,7 +58,12 @@ public class ChannelOptionMapping {
             Instant createdAt,
             Instant updatedAt) {
         return new ChannelOptionMapping(
-                id, salesChannelId, canonicalOptionValueId, externalOptionCode, createdAt, updatedAt);
+                id,
+                salesChannelId,
+                canonicalOptionValueId,
+                externalOptionCode,
+                createdAt,
+                updatedAt);
     }
 
     /** 외부 옵션 코드 변경. */

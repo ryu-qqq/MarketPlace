@@ -74,8 +74,9 @@ class SalesChannelBrandValidatorTest {
             Long salesChannelId = 1L;
             String externalBrandCode = "BRAND-NEW";
 
-            given(readManager.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalBrandCode))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalBrandCode))
                     .willReturn(false);
 
             // when & then (no exception)
@@ -89,8 +90,9 @@ class SalesChannelBrandValidatorTest {
             Long salesChannelId = 1L;
             String externalBrandCode = "BRAND-DUPLICATE";
 
-            given(readManager.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalBrandCode))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalBrandCode))
                     .willReturn(true);
 
             // when & then
@@ -109,8 +111,9 @@ class SalesChannelBrandValidatorTest {
             Long salesChannelId2 = 2L;
             String externalBrandCode = "BRAND-001";
 
-            given(readManager.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId2, externalBrandCode))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId2, externalBrandCode))
                     .willReturn(false);
 
             // when & then (no exception)

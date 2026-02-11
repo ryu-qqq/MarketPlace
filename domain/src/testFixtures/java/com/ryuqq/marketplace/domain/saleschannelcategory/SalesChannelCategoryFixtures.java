@@ -168,11 +168,15 @@ public final class SalesChannelCategoryFixtures {
 
     // ===== UpdateData Fixtures =====
     public static SalesChannelCategoryUpdateData salesChannelCategoryUpdateData() {
-        return SalesChannelCategoryUpdateData.of("수정된 카테고리명", 10, true, SalesChannelCategoryStatus.ACTIVE);
+        return SalesChannelCategoryUpdateData.of(
+                "수정된 카테고리명", 10, true, SalesChannelCategoryStatus.ACTIVE);
     }
 
     public static SalesChannelCategoryUpdateData salesChannelCategoryUpdateData(
-            String externalCategoryName, int sortOrder, boolean leaf, SalesChannelCategoryStatus status) {
+            String externalCategoryName,
+            int sortOrder,
+            boolean leaf,
+            SalesChannelCategoryStatus status) {
         return SalesChannelCategoryUpdateData.of(externalCategoryName, sortOrder, leaf, status);
     }
 }

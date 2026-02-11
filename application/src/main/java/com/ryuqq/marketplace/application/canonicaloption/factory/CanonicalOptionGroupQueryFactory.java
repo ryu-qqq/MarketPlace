@@ -21,8 +21,7 @@ public class CanonicalOptionGroupQueryFactory {
 
     public CanonicalOptionGroupSearchCriteria createCriteria(
             CanonicalOptionGroupSearchParams params) {
-        CanonicalOptionGroupSortKey sortKey =
-                resolveSortKey(params.commonSearchParams().sortKey());
+        CanonicalOptionGroupSortKey sortKey = resolveSortKey(params.commonSearchParams().sortKey());
         SortDirection sortDirection =
                 commonVoFactory.parseSortDirection(params.commonSearchParams().sortDirection());
         PageRequest pageRequest =
@@ -37,10 +36,7 @@ public class CanonicalOptionGroupQueryFactory {
                         params.commonSearchParams().includeDeleted());
 
         return new CanonicalOptionGroupSearchCriteria(
-                params.active(),
-                params.searchField(),
-                params.searchWord(),
-                queryContext);
+                params.active(), params.searchField(), params.searchWord(), queryContext);
     }
 
     private CanonicalOptionGroupSortKey resolveSortKey(String sortKeyString) {

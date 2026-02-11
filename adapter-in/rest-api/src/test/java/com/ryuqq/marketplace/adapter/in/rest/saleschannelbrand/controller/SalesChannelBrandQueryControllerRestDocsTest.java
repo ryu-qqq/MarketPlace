@@ -100,14 +100,16 @@ class SalesChannelBrandQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("searchField")
                                                     .description(
-                                                            "검색 필드 (externalBrandCode, externalBrandName)")
+                                                            "검색 필드 (externalBrandCode,"
+                                                                    + " externalBrandName)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
                                                     .description(
-                                                            "정렬 키 (createdAt, updatedAt, externalBrandName)")
+                                                            "정렬 키 (createdAt, updatedAt,"
+                                                                    + " externalBrandName)")
                                                     .optional(),
                                             parameterWithName("sortDirection")
                                                     .description("정렬 방향 (ASC, DESC)")

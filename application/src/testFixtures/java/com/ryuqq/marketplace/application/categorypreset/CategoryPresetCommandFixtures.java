@@ -62,10 +62,7 @@ public final class CategoryPresetCommandFixtures {
 
     public static UpdateCategoryPresetCommand updateCommand(Long categoryPresetId) {
         return new UpdateCategoryPresetCommand(
-                categoryPresetId,
-                "수정된 프리셋명",
-                DEFAULT_CATEGORY_CODE,
-                DEFAULT_INTERNAL_CATEGORY_IDS);
+                categoryPresetId, "수정된 프리셋명", DEFAULT_CATEGORY_CODE, DEFAULT_INTERNAL_CATEGORY_IDS);
     }
 
     public static UpdateCategoryPresetCommand updateCommand(
@@ -104,7 +101,10 @@ public final class CategoryPresetCommandFixtures {
             CategoryPreset categoryPreset, List<Long> internalCategoryIds) {
         Long salesChannelCategoryId = CategoryPresetFixtures.DEFAULT_SALES_CHANNEL_CATEGORY_ID;
         return new RegisterCategoryPresetBundle(
-                categoryPreset, salesChannelCategoryId, internalCategoryIds, CommonVoFixtures.now());
+                categoryPreset,
+                salesChannelCategoryId,
+                internalCategoryIds,
+                CommonVoFixtures.now());
     }
 
     // ===== UpdateCategoryPresetBundle =====

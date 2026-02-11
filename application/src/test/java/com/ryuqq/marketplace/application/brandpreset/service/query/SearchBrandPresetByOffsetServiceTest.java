@@ -49,8 +49,7 @@ class SearchBrandPresetByOffsetServiceTest {
                             BrandPresetQueryFixtures.brandPresetResult(1L),
                             BrandPresetQueryFixtures.brandPresetResult(2L));
             long totalElements = 2L;
-            BrandPresetPageResult expectedResult =
-                    BrandPresetQueryFixtures.brandPresetPageResult();
+            BrandPresetPageResult expectedResult = BrandPresetQueryFixtures.brandPresetPageResult();
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readManager.findByCriteria(criteria)).willReturn(results);
@@ -66,7 +65,9 @@ class SearchBrandPresetByOffsetServiceTest {
             then(queryFactory).should().createCriteria(params);
             then(readManager).should().findByCriteria(criteria);
             then(readManager).should().countByCriteria(criteria);
-            then(assembler).should().toPageResult(results, criteria.page(), criteria.size(), totalElements);
+            then(assembler)
+                    .should()
+                    .toPageResult(results, criteria.page(), criteria.size(), totalElements);
         }
 
         @Test
@@ -74,8 +75,7 @@ class SearchBrandPresetByOffsetServiceTest {
         void execute_WithSalesChannelIds_ReturnsFilteredResult() {
             // given
             List<Long> salesChannelIds = List.of(1L, 2L);
-            BrandPresetSearchParams params =
-                    BrandPresetQueryFixtures.searchParams(salesChannelIds);
+            BrandPresetSearchParams params = BrandPresetQueryFixtures.searchParams(salesChannelIds);
             BrandPresetSearchCriteria criteria =
                     BrandPresetFixtures.searchCriteriaWithSalesChannel(salesChannelIds);
             List<BrandPresetResult> results =
@@ -110,7 +110,9 @@ class SearchBrandPresetByOffsetServiceTest {
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readManager.findByCriteria(criteria)).willReturn(emptyResults);
             given(readManager.countByCriteria(criteria)).willReturn(totalElements);
-            given(assembler.toPageResult(emptyResults, criteria.page(), criteria.size(), totalElements))
+            given(
+                            assembler.toPageResult(
+                                    emptyResults, criteria.page(), criteria.size(), totalElements))
                     .willReturn(expectedResult);
 
             // when

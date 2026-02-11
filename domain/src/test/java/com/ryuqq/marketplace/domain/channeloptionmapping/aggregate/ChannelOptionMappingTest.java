@@ -34,8 +34,9 @@ class ChannelOptionMappingTest {
             Instant now = CommonVoFixtures.now();
 
             // when
-            ChannelOptionMapping mapping = ChannelOptionMapping.forNew(
-                    salesChannelId, canonicalOptionValueId, externalOptionCode, now);
+            ChannelOptionMapping mapping =
+                    ChannelOptionMapping.forNew(
+                            salesChannelId, canonicalOptionValueId, externalOptionCode, now);
 
             // then
             assertThat(mapping.id().isNew()).isTrue();
@@ -53,11 +54,12 @@ class ChannelOptionMappingTest {
             Instant now = CommonVoFixtures.now();
 
             // when
-            ChannelOptionMapping mapping = ChannelOptionMapping.forNew(
-                    ChannelOptionMappingFixtures.defaultSalesChannelId(),
-                    ChannelOptionMappingFixtures.defaultCanonicalOptionValueId(),
-                    ChannelOptionMappingFixtures.defaultExternalOptionCode(),
-                    now);
+            ChannelOptionMapping mapping =
+                    ChannelOptionMapping.forNew(
+                            ChannelOptionMappingFixtures.defaultSalesChannelId(),
+                            ChannelOptionMappingFixtures.defaultCanonicalOptionValueId(),
+                            ChannelOptionMappingFixtures.defaultExternalOptionCode(),
+                            now);
 
             // then
             assertThat(mapping.createdAt()).isEqualTo(mapping.updatedAt());
@@ -72,7 +74,8 @@ class ChannelOptionMappingTest {
         @DisplayName("영속성에서 채널 옵션 매핑을 복원한다")
         void reconstituteChannelOptionMapping() {
             // given
-            ChannelOptionMappingId id = ChannelOptionMappingFixtures.defaultChannelOptionMappingId();
+            ChannelOptionMappingId id =
+                    ChannelOptionMappingFixtures.defaultChannelOptionMappingId();
             SalesChannelId salesChannelId = ChannelOptionMappingFixtures.defaultSalesChannelId();
             CanonicalOptionValueId canonicalOptionValueId =
                     ChannelOptionMappingFixtures.defaultCanonicalOptionValueId();
@@ -82,9 +85,14 @@ class ChannelOptionMappingTest {
             Instant updatedAt = CommonVoFixtures.yesterday();
 
             // when
-            ChannelOptionMapping mapping = ChannelOptionMapping.reconstitute(
-                    id, salesChannelId, canonicalOptionValueId, externalOptionCode, createdAt,
-                    updatedAt);
+            ChannelOptionMapping mapping =
+                    ChannelOptionMapping.reconstitute(
+                            id,
+                            salesChannelId,
+                            canonicalOptionValueId,
+                            externalOptionCode,
+                            createdAt,
+                            updatedAt);
 
             // then
             assertThat(mapping.id()).isEqualTo(id);
@@ -185,8 +193,9 @@ class ChannelOptionMappingTest {
         @DisplayName("salesChannelIdValue()는 판매채널 ID 값을 반환한다")
         void salesChannelIdValueReturnsSalesChannelIdValue() {
             // given
-            ChannelOptionMapping mapping = ChannelOptionMappingFixtures.existingChannelOptionMapping(
-                    1L, 50L, 100L, "CODE-001");
+            ChannelOptionMapping mapping =
+                    ChannelOptionMappingFixtures.existingChannelOptionMapping(
+                            1L, 50L, 100L, "CODE-001");
 
             // when & then
             assertThat(mapping.salesChannelIdValue()).isEqualTo(50L);
@@ -196,8 +205,9 @@ class ChannelOptionMappingTest {
         @DisplayName("canonicalOptionValueIdValue()는 캐노니컬 옵션 값 ID를 반환한다")
         void canonicalOptionValueIdValueReturnsCanonicalOptionValueIdValue() {
             // given
-            ChannelOptionMapping mapping = ChannelOptionMappingFixtures.existingChannelOptionMapping(
-                    1L, 1L, 200L, "CODE-002");
+            ChannelOptionMapping mapping =
+                    ChannelOptionMappingFixtures.existingChannelOptionMapping(
+                            1L, 1L, 200L, "CODE-002");
 
             // when & then
             assertThat(mapping.canonicalOptionValueIdValue()).isEqualTo(200L);
@@ -207,8 +217,9 @@ class ChannelOptionMappingTest {
         @DisplayName("externalOptionCodeValue()는 외부 옵션 코드 값을 반환한다")
         void externalOptionCodeValueReturnsExternalOptionCodeValue() {
             // given
-            ChannelOptionMapping mapping = ChannelOptionMappingFixtures.existingChannelOptionMapping(
-                    1L, 1L, 100L, "TEST-CODE");
+            ChannelOptionMapping mapping =
+                    ChannelOptionMappingFixtures.existingChannelOptionMapping(
+                            1L, 1L, 100L, "TEST-CODE");
 
             // when & then
             assertThat(mapping.externalOptionCodeValue()).isEqualTo("TEST-CODE");

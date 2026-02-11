@@ -1,18 +1,16 @@
 package com.ryuqq.marketplace.domain.productnotice.aggregate;
 
+import com.ryuqq.marketplace.domain.notice.id.NoticeCategoryId;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productnotice.id.ProductNoticeId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.ryuqq.marketplace.domain.notice.id.NoticeCategoryId;
-import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productnotice.id.ProductNoticeId;
-
 /**
- * 상품 고시정보 Aggregate Root.
- * ProductGroup에 대한 고시정보를 NoticCategory 단위로 묶어 관리한다.
- * ProductGroup과는 별도 Aggregate로 독립 관리.
+ * 상품 고시정보 Aggregate Root. ProductGroup에 대한 고시정보를 NoticCategory 단위로 묶어 관리한다. ProductGroup과는 별도
+ * Aggregate로 독립 관리.
  */
 public class ProductNotice {
 
@@ -45,12 +43,7 @@ public class ProductNotice {
             List<ProductNoticeEntry> entries,
             Instant now) {
         return new ProductNotice(
-                ProductNoticeId.forNew(),
-                productGroupId,
-                noticeCategoryId,
-                entries,
-                now,
-                now);
+                ProductNoticeId.forNew(), productGroupId, noticeCategoryId, entries, now, now);
     }
 
     /** 영속성에서 복원 시 사용. */

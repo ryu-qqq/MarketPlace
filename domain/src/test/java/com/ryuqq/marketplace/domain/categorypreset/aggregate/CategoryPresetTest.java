@@ -57,8 +57,9 @@ class CategoryPresetTest {
             Instant createdAt = CommonVoFixtures.yesterday();
 
             // when
-            CategoryPreset preset = CategoryPreset.reconstitute(
-                    id, 1L, 200L, "테스트", CategoryPresetStatus.ACTIVE, createdAt, createdAt);
+            CategoryPreset preset =
+                    CategoryPreset.reconstitute(
+                            id, 1L, 200L, "테스트", CategoryPresetStatus.ACTIVE, createdAt, createdAt);
 
             // then
             assertThat(preset.id()).isEqualTo(id);

@@ -70,8 +70,7 @@ public class CategoryPresetValidator {
         Shop shop = shopReadManager.getById(ShopId.of(shopId));
         Long salesChannelCategoryId =
                 readManager
-                        .findSalesChannelCategoryIdByCode(
-                                shop.salesChannelId(), categoryCode)
+                        .findSalesChannelCategoryIdByCode(shop.salesChannelId(), categoryCode)
                         .orElseThrow(
                                 () ->
                                         new CategoryPresetSalesChannelCategoryNotFoundException(

@@ -29,8 +29,8 @@ class SellerOptionValueTest {
             int sortOrder = 0;
 
             // when
-            SellerOptionValue optionValue = SellerOptionValue.forNew(
-                    sellerOptionGroupId, optionValueName, sortOrder);
+            SellerOptionValue optionValue =
+                    SellerOptionValue.forNew(sellerOptionGroupId, optionValueName, sortOrder);
 
             // then
             assertThat(optionValue).isNotNull();
@@ -57,8 +57,12 @@ class SellerOptionValueTest {
             int sortOrder = 0;
 
             // when
-            SellerOptionValue optionValue = SellerOptionValue.forNewWithCanonical(
-                    sellerOptionGroupId, optionValueName, canonicalOptionValueId, sortOrder);
+            SellerOptionValue optionValue =
+                    SellerOptionValue.forNewWithCanonical(
+                            sellerOptionGroupId,
+                            optionValueName,
+                            canonicalOptionValueId,
+                            sortOrder);
 
             // then
             assertThat(optionValue.canonicalOptionValueId()).isEqualTo(canonicalOptionValueId);
@@ -75,14 +79,20 @@ class SellerOptionValueTest {
         void reconstituteSellerOptionValue() {
             // given
             SellerOptionValueId id = ProductGroupFixtures.defaultSellerOptionValueId();
-            SellerOptionGroupId sellerOptionGroupId = ProductGroupFixtures.defaultSellerOptionGroupId();
+            SellerOptionGroupId sellerOptionGroupId =
+                    ProductGroupFixtures.defaultSellerOptionGroupId();
             OptionValueName optionValueName = ProductGroupFixtures.defaultOptionValueName();
             CanonicalOptionValueId canonicalOptionValueId = CanonicalOptionValueId.of(1L);
             int sortOrder = 0;
 
             // when
-            SellerOptionValue optionValue = SellerOptionValue.reconstitute(
-                    id, sellerOptionGroupId, optionValueName, canonicalOptionValueId, sortOrder);
+            SellerOptionValue optionValue =
+                    SellerOptionValue.reconstitute(
+                            id,
+                            sellerOptionGroupId,
+                            optionValueName,
+                            canonicalOptionValueId,
+                            sortOrder);
 
             // then
             assertThat(optionValue.id()).isEqualTo(id);
@@ -180,12 +190,13 @@ class SellerOptionValueTest {
         @DisplayName("idValue()는 ID의 값을 반환한다")
         void idValueReturnsIdValue() {
             // given
-            SellerOptionValue optionValue = SellerOptionValue.reconstitute(
-                    SellerOptionValueId.of(100L),
-                    ProductGroupFixtures.defaultSellerOptionGroupId(),
-                    ProductGroupFixtures.defaultOptionValueName(),
-                    null,
-                    0);
+            SellerOptionValue optionValue =
+                    SellerOptionValue.reconstitute(
+                            SellerOptionValueId.of(100L),
+                            ProductGroupFixtures.defaultSellerOptionGroupId(),
+                            ProductGroupFixtures.defaultOptionValueName(),
+                            null,
+                            0);
 
             // when & then
             assertThat(optionValue.idValue()).isEqualTo(100L);
@@ -195,12 +206,13 @@ class SellerOptionValueTest {
         @DisplayName("sellerOptionGroupIdValue()는 SellerOptionGroupId의 값을 반환한다")
         void sellerOptionGroupIdValueReturnsValue() {
             // given
-            SellerOptionValue optionValue = SellerOptionValue.reconstitute(
-                    ProductGroupFixtures.defaultSellerOptionValueId(),
-                    SellerOptionGroupId.of(200L),
-                    ProductGroupFixtures.defaultOptionValueName(),
-                    null,
-                    0);
+            SellerOptionValue optionValue =
+                    SellerOptionValue.reconstitute(
+                            ProductGroupFixtures.defaultSellerOptionValueId(),
+                            SellerOptionGroupId.of(200L),
+                            ProductGroupFixtures.defaultOptionValueName(),
+                            null,
+                            0);
 
             // when & then
             assertThat(optionValue.sellerOptionGroupIdValue()).isEqualTo(200L);
