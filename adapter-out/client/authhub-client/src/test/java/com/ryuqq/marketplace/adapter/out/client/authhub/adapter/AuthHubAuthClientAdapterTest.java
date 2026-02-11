@@ -11,13 +11,14 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
 import com.ryuqq.authhub.sdk.api.AuthApi;
+import com.ryuqq.authhub.sdk.api.InternalApi;
 import com.ryuqq.authhub.sdk.exception.AuthHubException;
 import com.ryuqq.authhub.sdk.exception.AuthHubUnauthorizedException;
 import com.ryuqq.authhub.sdk.model.auth.LoginRequest;
 import com.ryuqq.authhub.sdk.model.auth.LoginResponse;
 import com.ryuqq.authhub.sdk.model.auth.LogoutRequest;
-import com.ryuqq.authhub.sdk.model.auth.MyContextResponse;
 import com.ryuqq.authhub.sdk.model.common.ApiResponse;
+import com.ryuqq.authhub.sdk.model.internal.UserContext;
 import com.ryuqq.marketplace.adapter.out.client.authhub.mapper.AuthHubAuthMapper;
 import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
@@ -45,6 +46,7 @@ class AuthHubAuthClientAdapterTest {
     @InjectMocks private AuthHubAuthClientAdapter sut;
 
     @Mock private AuthApi authApi;
+    @Mock private InternalApi internalApi;
     @Mock private AuthHubAuthMapper mapper;
 
     private static final String DEFAULT_IDENTIFIER = "admin@example.com";
@@ -181,13 +183,22 @@ class AuthHubAuthClientAdapterTest {
     class GetMyInfoTest {
 
         @Test
-        @DisplayName("내 정보를 조회한다")
+        @DisplayName("Internal API를 통해 사용자 정보를 조회한다")
         @SuppressWarnings("unchecked")
         void getMyInfo_Success() {
             // given
-            MyContextResponse contextResponse = mock(MyContextResponse.class);
-            ApiResponse<MyContextResponse> apiResponse = mock(ApiResponse.class);
-            given(apiResponse.data()).willReturn(contextResponse);
+            UserContext userContext =
+                    new UserContext(
+                            DEFAULT_USER_ID,
+                            DEFAULT_IDENTIFIER,
+                            "관리자",
+                            null,
+                            new UserContext.TenantInfo("tenant-123", "테넌트명"),
+                            new UserContext.OrganizationInfo("org-123", "조직명"),
+                            List.of(new UserContext.RoleInfo("role-1", "ADMIN")),
+                            List.of("READ", "WRITE"));
+            ApiResponse<UserContext> apiResponse = mock(ApiResponse.class);
+            given(apiResponse.data()).willReturn(userContext);
 
             MyInfoResult expectedResult =
                     new MyInfoResult(
@@ -204,27 +215,27 @@ class AuthHubAuthClientAdapterTest {
                             null,
                             null);
 
-            given(authApi.getMe()).willReturn(apiResponse);
-            given(mapper.toMyInfoResult(contextResponse)).willReturn(expectedResult);
+            given(internalApi.getUserContext(DEFAULT_USER_ID)).willReturn(apiResponse);
+            given(mapper.toMyInfoResultFromInternal(userContext)).willReturn(expectedResult);
 
             // when
-            MyInfoResult result = sut.getMyInfo(DEFAULT_ACCESS_TOKEN);
+            MyInfoResult result = sut.getMyInfo(DEFAULT_USER_ID);
 
             // then
             assertThat(result.userId()).isEqualTo(DEFAULT_USER_ID);
-            then(authApi).should().getMe();
+            then(internalApi).should().getUserContext(DEFAULT_USER_ID);
         }
 
         @Test
-        @DisplayName("인증 실패 시 AuthHubUnauthorizedException을 전파한다")
-        void getMyInfo_Unauthorized_ThrowsException() {
+        @DisplayName("Internal API 호출 실패 시 AuthHubException을 전파한다")
+        void getMyInfo_Error_ThrowsException() {
             // given
-            given(authApi.getMe())
-                    .willThrow(new AuthHubUnauthorizedException("UNAUTHORIZED", "Unauthorized"));
+            given(internalApi.getUserContext(DEFAULT_USER_ID))
+                    .willThrow(new AuthHubException(500, "INTERNAL_ERROR", "Internal error"));
 
             // when & then
-            assertThatThrownBy(() -> sut.getMyInfo(DEFAULT_ACCESS_TOKEN))
-                    .isInstanceOf(AuthHubUnauthorizedException.class);
+            assertThatThrownBy(() -> sut.getMyInfo(DEFAULT_USER_ID))
+                    .isInstanceOf(AuthHubException.class);
         }
     }
 }

@@ -6,6 +6,7 @@ import com.ryuqq.authhub.sdk.model.auth.LogoutRequest;
 import com.ryuqq.authhub.sdk.model.auth.MyContextResponse;
 import com.ryuqq.authhub.sdk.model.auth.RefreshTokenRequest;
 import com.ryuqq.authhub.sdk.model.auth.TokenResponse;
+import com.ryuqq.authhub.sdk.model.internal.UserContext;
 import com.ryuqq.marketplace.adapter.out.client.authhub.dto.AuthHubLoginResult;
 import com.ryuqq.marketplace.adapter.out.client.authhub.dto.AuthHubRefreshResult;
 import com.ryuqq.marketplace.adapter.out.client.authhub.dto.AuthHubUserContext;
@@ -191,5 +192,34 @@ public class AuthHubAuthMapper {
      */
     public AuthHubUserContext toAuthHubUserContext(MyContextResponse response) {
         return AuthHubUserContext.from(response);
+    }
+
+    /**
+     * Internal API UserContext 응답을 Application DTO로 변환합니다.
+     *
+     * @param context Internal API 사용자 컨텍스트 응답
+     * @return 사용자 정보 결과
+     */
+    public MyInfoResult toMyInfoResultFromInternal(UserContext context) {
+        List<MyInfoResult.RoleInfo> roles =
+                context.roles() != null
+                        ? context.roles().stream()
+                                .map(r -> new MyInfoResult.RoleInfo(r.id(), r.name()))
+                                .toList()
+                        : List.of();
+
+        return new MyInfoResult(
+                context.userId(),
+                context.email(),
+                context.name(),
+                context.tenant() != null ? context.tenant().id() : null,
+                context.tenant() != null ? context.tenant().name() : null,
+                context.organization() != null ? context.organization().id() : null,
+                context.organization() != null ? context.organization().name() : null,
+                roles,
+                context.permissions() != null ? context.permissions() : List.of(),
+                null,
+                null,
+                context.phoneNumber());
     }
 }

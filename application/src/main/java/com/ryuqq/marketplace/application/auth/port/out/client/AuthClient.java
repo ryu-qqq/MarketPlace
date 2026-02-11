@@ -41,10 +41,10 @@ public interface AuthClient {
     RefreshResult refresh(String refreshToken);
 
     /**
-     * 현재 사용자 정보를 조회합니다.
+     * 사용자 정보를 조회합니다.
      *
-     * @param accessToken 액세스 토큰
+     * @param userId 사용자 ID
      * @return 사용자 정보
      */
-    MyInfoResult getMyInfo(String accessToken);
+    MyInfoResult getMyInfo(String userId);
 }
