@@ -1,0 +1,99 @@
+{
+  "data": [
+    {
+      "code": "100000000",
+      "name": "식품",
+      "depth": 1,
+      "children": [
+        {
+          "code": "100100000",
+          "name": "과자/베이커리",
+          "depth": 2,
+          "children": [
+            {
+              "code": "100101000",
+              "name": "스낵",
+              "depth": 3,
+              "children": [
+                { "code": "100101001", "name": "젤리", "depth": 4, "children": [] },
+                { "code": "100101002", "name": "사탕", "depth": 4, "children": [] },
+                { "code": "100101003", "name": "초콜릿", "depth": 4, "children": [] }
+              ]
+            },
+            {
+              "code": "100102000",
+              "name": "쿠키",
+              "depth": 3,
+              "children": []
+            },
+            {
+              "code": "100103000",
+              "name": "빵",
+              "depth": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "code": "100200000",
+          "name": "음료",
+          "depth": 2,
+          "children": [
+            { "code": "100201000", "name": "탄산음료", "depth": 3, "children": [] },
+            { "code": "100202000", "name": "주스", "depth": 3, "children": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "200000000",
+      "name": "여성패션",
+      "depth": 1,
+      "children": [
+        {
+          "code": "200100000",
+          "name": "아우터",
+          "depth": 2,
+          "children": [
+            {
+              "code": "200101000",
+              "name": "패딩",
+              "depth": 3,
+              "children": [
+                { "code": "200101001", "name": "롱패딩", "depth": 4, "children": [] },
+                { "code": "200101002", "name": "숏패딩", "depth": 4, "children": [] }
+              ]
+            },
+            {
+              "code": "200102000",
+              "name": "코트",
+              "depth": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "code": "200200000",
+          "name": "상의",
+          "depth": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "code": "300000000",
+      "name": "남성패션",
+      "depth": 1,
+      "children": [
+        {
+          "code": "300100000",
+          "name": "아우터",
+          "depth": 2,
+          "children": []
+        }
+      ]
+    }
+  ],
+  "timestamp": "2025-12-22T10:30:00",
+  "requestId": "req-mock-003"
+}

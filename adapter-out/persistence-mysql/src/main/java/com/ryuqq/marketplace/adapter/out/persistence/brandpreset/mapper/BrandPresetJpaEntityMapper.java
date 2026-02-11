@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.adapter.out.persistence.brandpreset.mapper;
 
+import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.composite.BrandPresetCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.entity.BrandPresetJpaEntity;
+import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetResult;
 import com.ryuqq.marketplace.domain.brandpreset.aggregate.BrandPreset;
 import com.ryuqq.marketplace.domain.brandpreset.id.BrandPresetId;
 import com.ryuqq.marketplace.domain.brandpreset.vo.BrandPresetStatus;
@@ -19,6 +21,20 @@ public class BrandPresetJpaEntityMapper {
                 brandPreset.status().name(),
                 brandPreset.createdAt(),
                 brandPreset.updatedAt());
+    }
+
+    public BrandPresetResult toResult(BrandPresetCompositeDto dto) {
+        return new BrandPresetResult(
+                dto.id(),
+                dto.shopId(),
+                dto.shopName(),
+                dto.salesChannelId(),
+                dto.salesChannelName(),
+                dto.accountId(),
+                dto.presetName(),
+                dto.externalBrandName(),
+                dto.externalBrandCode(),
+                dto.createdAt());
     }
 
     public BrandPreset toDomain(BrandPresetJpaEntity entity) {

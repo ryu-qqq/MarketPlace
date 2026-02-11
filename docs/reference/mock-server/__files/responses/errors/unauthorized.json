@@ -1,0 +1,9 @@
+{
+  "type": "about:blank",
+  "title": "Unauthorized",
+  "status": 401,
+  "detail": "인증이 필요합니다",
+  "instance": "/api/v1/products",
+  "timestamp": "2025-12-22T10:30:00.000Z",
+  "code": "UNAUTHORIZED"
+}

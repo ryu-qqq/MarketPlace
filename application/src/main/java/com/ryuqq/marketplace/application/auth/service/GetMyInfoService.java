@@ -38,6 +38,7 @@ public class GetMyInfoService implements GetMyInfoUseCase {
                 .map(
                         sellerAdmin ->
                                 authInfo.withSellerInfo(
+                                        sellerAdmin.idValue(),
                                         sellerAdmin.sellerIdValue(),
                                         sellerAdmin.phoneNumberValue()))
                 .orElse(authInfo);

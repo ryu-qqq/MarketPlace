@@ -15,4 +15,6 @@ public interface BrandQueryPort {
     long countByCriteria(BrandSearchCriteria criteria);
 
     boolean existsByCode(String code);
+
+    List<Brand> findAllByIds(List<Long> ids);
 }

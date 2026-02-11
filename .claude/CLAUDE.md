@@ -1,4 +1,4 @@
-# setof-commerce - Claude Code Configuration
+# MarketPlace - Claude Code Configuration
 
 이 프로젝트는 **SPRING_BOOT 3.5.x + JAVA 21** 기반의 **hexagonal-multimodule** 프로젝트입니다.
 
