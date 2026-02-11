@@ -33,8 +33,9 @@ class ChannelOptionMappingErrorCodeTest {
         void channelOptionMappingNotFound() {
             assertThat(ChannelOptionMappingErrorCode.CHANNEL_OPTION_MAPPING_NOT_FOUND.getCode())
                     .isEqualTo("CHOPT-001");
-            assertThat(ChannelOptionMappingErrorCode.CHANNEL_OPTION_MAPPING_NOT_FOUND
-                            .getHttpStatus())
+            assertThat(
+                            ChannelOptionMappingErrorCode.CHANNEL_OPTION_MAPPING_NOT_FOUND
+                                    .getHttpStatus())
                     .isEqualTo(404);
             assertThat(ChannelOptionMappingErrorCode.CHANNEL_OPTION_MAPPING_NOT_FOUND.getMessage())
                     .isEqualTo("채널 옵션 매핑을 찾을 수 없습니다");
@@ -45,8 +46,9 @@ class ChannelOptionMappingErrorCodeTest {
         void channelOptionMappingDuplicate() {
             assertThat(ChannelOptionMappingErrorCode.CHANNEL_OPTION_MAPPING_DUPLICATE.getCode())
                     .isEqualTo("CHOPT-002");
-            assertThat(ChannelOptionMappingErrorCode.CHANNEL_OPTION_MAPPING_DUPLICATE
-                            .getHttpStatus())
+            assertThat(
+                            ChannelOptionMappingErrorCode.CHANNEL_OPTION_MAPPING_DUPLICATE
+                                    .getHttpStatus())
                     .isEqualTo(409);
             assertThat(ChannelOptionMappingErrorCode.CHANNEL_OPTION_MAPPING_DUPLICATE.getMessage())
                     .isEqualTo("이미 존재하는 채널 옵션 매핑입니다");

@@ -31,7 +31,8 @@ class SalesChannelBrandTest {
 
             // when
             SalesChannelBrand brand =
-                    SalesChannelBrand.forNew(salesChannelId, externalBrandCode, externalBrandName, now);
+                    SalesChannelBrand.forNew(
+                            salesChannelId, externalBrandCode, externalBrandName, now);
 
             // then
             assertThat(brand).isNotNull();

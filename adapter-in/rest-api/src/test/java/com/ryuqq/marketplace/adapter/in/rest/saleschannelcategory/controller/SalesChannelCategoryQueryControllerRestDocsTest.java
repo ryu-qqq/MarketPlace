@@ -63,9 +63,12 @@ class SalesChannelCategoryQueryControllerRestDocsTest {
             PageApiResponse<SalesChannelCategoryApiResponse> pageResponse =
                     PageApiResponse.of(
                             List.of(
-                                    SalesChannelCategoryApiFixtures.apiResponse(1L, "CAT001", "카테고리_1"),
-                                    SalesChannelCategoryApiFixtures.apiResponse(2L, "CAT002", "카테고리_2"),
-                                    SalesChannelCategoryApiFixtures.apiResponse(3L, "CAT003", "카테고리_3")),
+                                    SalesChannelCategoryApiFixtures.apiResponse(
+                                            1L, "CAT001", "카테고리_1"),
+                                    SalesChannelCategoryApiFixtures.apiResponse(
+                                            2L, "CAT002", "카테고리_2"),
+                                    SalesChannelCategoryApiFixtures.apiResponse(
+                                            3L, "CAT003", "카테고리_3")),
                             0,
                             20,
                             3);
@@ -102,7 +105,8 @@ class SalesChannelCategoryQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("searchField")
                                                     .description(
-                                                            "검색 필드 (externalCategoryCode, externalCategoryName)")
+                                                            "검색 필드 (externalCategoryCode,"
+                                                                    + " externalCategoryName)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
@@ -117,7 +121,9 @@ class SalesChannelCategoryQueryControllerRestDocsTest {
                                                     .description("내부 카테고리 매핑 여부")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 키 (createdAt, updatedAt, sortOrder)")
+                                                    .description(
+                                                            "정렬 키 (createdAt, updatedAt,"
+                                                                    + " sortOrder)")
                                                     .optional(),
                                             parameterWithName("sortDirection")
                                                     .description("정렬 방향 (ASC, DESC)")
@@ -183,7 +189,8 @@ class SalesChannelCategoryQueryControllerRestDocsTest {
             // when & then
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(
-                                    SalesChannelCategoryAdminEndpoints.CATEGORIES, SALES_CHANNEL_ID))
+                                    SalesChannelCategoryAdminEndpoints.CATEGORIES,
+                                    SALES_CHANNEL_ID))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content").isEmpty())
                     .andExpect(jsonPath("$.data.totalElements").value(0));

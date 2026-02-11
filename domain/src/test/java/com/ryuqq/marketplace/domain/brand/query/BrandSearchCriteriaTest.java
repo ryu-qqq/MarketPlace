@@ -70,10 +70,7 @@ class BrandSearchCriteriaTest {
             // when
             BrandSearchCriteria criteria =
                     BrandSearchCriteria.of(
-                            null,
-                            null,
-                            null,
-                            QueryContext.defaultOf(BrandSortKey.defaultKey()));
+                            null, null, null, QueryContext.defaultOf(BrandSortKey.defaultKey()));
 
             // then
             assertThat(criteria.statuses()).isEmpty();
@@ -88,11 +85,15 @@ class BrandSearchCriteriaTest {
             // when
             BrandSearchCriteria criteria =
                     BrandSearchCriteria.of(
-                            statuses, null, null, QueryContext.defaultOf(BrandSortKey.defaultKey()));
+                            statuses,
+                            null,
+                            null,
+                            QueryContext.defaultOf(BrandSortKey.defaultKey()));
 
             // then
             assertThat(criteria.statuses()).isUnmodifiable();
-            assertThat(criteria.statuses()).containsExactly(BrandStatus.ACTIVE, BrandStatus.INACTIVE);
+            assertThat(criteria.statuses())
+                    .containsExactly(BrandStatus.ACTIVE, BrandStatus.INACTIVE);
         }
     }
 

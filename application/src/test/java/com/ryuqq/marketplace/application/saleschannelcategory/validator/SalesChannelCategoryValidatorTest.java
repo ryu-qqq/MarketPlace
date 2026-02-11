@@ -75,8 +75,9 @@ class SalesChannelCategoryValidatorTest {
             Long salesChannelId = 1L;
             String externalCategoryCode = "CAT001";
 
-            given(readManager.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalCategoryCode))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalCategoryCode))
                     .willReturn(false);
 
             // when & then (no exception)
@@ -90,8 +91,9 @@ class SalesChannelCategoryValidatorTest {
             Long salesChannelId = 1L;
             String externalCategoryCode = "CAT001";
 
-            given(readManager.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalCategoryCode))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalCategoryCode))
                     .willReturn(true);
 
             // when & then
@@ -109,8 +111,9 @@ class SalesChannelCategoryValidatorTest {
             Long salesChannelId = 2L;
             String externalCategoryCode = "CAT001";
 
-            given(readManager.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalCategoryCode))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalCategoryCode))
                     .willReturn(false);
 
             // when & then (no exception)

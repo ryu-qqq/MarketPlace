@@ -30,9 +30,15 @@ class BrandPresetSearchCriteriaTest {
                     QueryContext.defaultOf(BrandPresetSortKey.defaultKey());
 
             // when
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    salesChannelIds, statuses, "presetName", "테스트",
-                    LocalDate.now(), LocalDate.now(), queryContext);
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(
+                            salesChannelIds,
+                            statuses,
+                            "presetName",
+                            "테스트",
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            queryContext);
 
             // then
             assertThat(criteria.salesChannelIds()).containsExactly(1L, 2L);
@@ -50,8 +56,8 @@ class BrandPresetSearchCriteriaTest {
                     QueryContext.defaultOf(BrandPresetSortKey.defaultKey());
 
             // when
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, null, null, null, null, null, queryContext);
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(null, null, null, null, null, null, queryContext);
 
             // then
             assertThat(criteria.salesChannelIds()).isEmpty();
@@ -76,9 +82,15 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("판매채널 필터가 있으면 true를 반환한다")
         void hasSalesChannelFilter() {
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    List.of(1L), null, null, null, null, null,
-                    QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(
+                            List.of(1L),
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasSalesChannelFilter()).isTrue();
         }
@@ -86,9 +98,15 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("판매채널 필터가 비어있으면 false를 반환한다")
         void noSalesChannelFilter() {
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, null, null, null, null, null,
-                    QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasSalesChannelFilter()).isFalse();
         }
@@ -96,9 +114,15 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("상태 필터가 있으면 true를 반환한다")
         void hasStatusFilter() {
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, List.of("ACTIVE"), null, null, null, null,
-                    QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(
+                            null,
+                            List.of("ACTIVE"),
+                            null,
+                            null,
+                            null,
+                            null,
+                            QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasStatusFilter()).isTrue();
         }
@@ -106,9 +130,15 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("검색 필터가 있으면 true를 반환한다")
         void hasSearchFilter() {
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, null, "presetName", "테스트", null, null,
-                    QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(
+                            null,
+                            null,
+                            "presetName",
+                            "테스트",
+                            null,
+                            null,
+                            QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasSearchFilter()).isTrue();
         }
@@ -116,9 +146,15 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("검색 필드나 검색어가 없으면 false를 반환한다")
         void noSearchFilter() {
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, null, null, null, null, null,
-                    QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasSearchFilter()).isFalse();
         }
@@ -126,9 +162,15 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("시작일 필터가 있으면 true를 반환한다")
         void hasStartDateFilter() {
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, null, null, null, LocalDate.now(), null,
-                    QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(
+                            null,
+                            null,
+                            null,
+                            null,
+                            LocalDate.now(),
+                            null,
+                            QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasStartDateFilter()).isTrue();
         }
@@ -136,9 +178,15 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("종료일 필터가 있으면 true를 반환한다")
         void hasEndDateFilter() {
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, null, null, null, null, LocalDate.now(),
-                    QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            LocalDate.now(),
+                            QueryContext.defaultOf(BrandPresetSortKey.defaultKey()));
 
             assertThat(criteria.hasEndDateFilter()).isTrue();
         }
@@ -151,10 +199,13 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("size()는 QueryContext의 size를 반환한다")
         void sizeReturnsQueryContextSize() {
-            QueryContext<BrandPresetSortKey> queryContext = QueryContext.of(
-                    BrandPresetSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(0, 20));
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, null, null, null, null, null, queryContext);
+            QueryContext<BrandPresetSortKey> queryContext =
+                    QueryContext.of(
+                            BrandPresetSortKey.CREATED_AT,
+                            SortDirection.DESC,
+                            PageRequest.of(0, 20));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(null, null, null, null, null, null, queryContext);
 
             assertThat(criteria.size()).isEqualTo(20);
         }
@@ -162,10 +213,13 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("offset()은 QueryContext의 offset을 반환한다")
         void offsetReturnsQueryContextOffset() {
-            QueryContext<BrandPresetSortKey> queryContext = QueryContext.of(
-                    BrandPresetSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(2, 10));
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, null, null, null, null, null, queryContext);
+            QueryContext<BrandPresetSortKey> queryContext =
+                    QueryContext.of(
+                            BrandPresetSortKey.CREATED_AT,
+                            SortDirection.DESC,
+                            PageRequest.of(2, 10));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(null, null, null, null, null, null, queryContext);
 
             assertThat(criteria.offset()).isEqualTo(20L);
         }
@@ -173,10 +227,13 @@ class BrandPresetSearchCriteriaTest {
         @Test
         @DisplayName("page()는 QueryContext의 page를 반환한다")
         void pageReturnsQueryContextPage() {
-            QueryContext<BrandPresetSortKey> queryContext = QueryContext.of(
-                    BrandPresetSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(3, 10));
-            BrandPresetSearchCriteria criteria = new BrandPresetSearchCriteria(
-                    null, null, null, null, null, null, queryContext);
+            QueryContext<BrandPresetSortKey> queryContext =
+                    QueryContext.of(
+                            BrandPresetSortKey.CREATED_AT,
+                            SortDirection.DESC,
+                            PageRequest.of(3, 10));
+            BrandPresetSearchCriteria criteria =
+                    new BrandPresetSearchCriteria(null, null, null, null, null, null, queryContext);
 
             assertThat(criteria.page()).isEqualTo(3);
         }

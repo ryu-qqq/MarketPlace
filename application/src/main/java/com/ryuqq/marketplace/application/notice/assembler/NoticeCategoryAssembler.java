@@ -13,9 +13,7 @@ import org.springframework.stereotype.Component;
 public class NoticeCategoryAssembler {
 
     public NoticeCategoryResult toResult(NoticeCategory category, List<NoticeField> fields) {
-        List<NoticeFieldResult> fieldResults = fields.stream()
-                .map(this::toFieldResult)
-                .toList();
+        List<NoticeFieldResult> fieldResults = fields.stream().map(this::toFieldResult).toList();
 
         return new NoticeCategoryResult(
                 category.idValue(),

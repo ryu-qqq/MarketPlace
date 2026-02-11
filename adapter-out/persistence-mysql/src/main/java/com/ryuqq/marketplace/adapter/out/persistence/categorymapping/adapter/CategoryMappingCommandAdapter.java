@@ -32,9 +32,7 @@ public class CategoryMappingCommandAdapter implements CategoryMappingCommandPort
     public List<Long> persistAll(List<CategoryMapping> categoryMappings) {
         List<CategoryMappingJpaEntity> entities =
                 categoryMappings.stream().map(mapper::toEntity).toList();
-        return repository.saveAll(entities).stream()
-                .map(CategoryMappingJpaEntity::getId)
-                .toList();
+        return repository.saveAll(entities).stream().map(CategoryMappingJpaEntity::getId).toList();
     }
 
     @Override

@@ -44,8 +44,7 @@ public record ShippingPolicyApiResponse(
         @Schema(description = "기본 정책 여부", example = "true") boolean defaultPolicy,
         @Schema(description = "활성화 상태", example = "true") boolean active,
         @Schema(description = "배송비 유형 코드", example = "CONDITIONAL_FREE") String shippingFeeType,
-        @Schema(description = "배송비 유형 표시명", example = "조건부 무료배송")
-                String shippingFeeTypeDisplayName,
+        @Schema(description = "배송비 유형 표시명", example = "조건부 무료배송") String shippingFeeTypeDisplayName,
         @Schema(description = "기본 배송비", example = "3000") Long baseFee,
         @Schema(description = "무료배송 기준금액", example = "50000") Long freeThreshold,
         @Schema(description = "제주 추가배송비", example = "3000") Long jejuExtraFee,

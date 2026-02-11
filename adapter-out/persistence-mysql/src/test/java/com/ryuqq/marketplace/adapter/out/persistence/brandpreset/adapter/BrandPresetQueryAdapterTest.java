@@ -263,12 +263,15 @@ class BrandPresetQueryAdapterTest {
                     .willReturn(Optional.of(expectedSalesChannelId));
 
             // when
-            Optional<Long> result = adapter.findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
+            Optional<Long> result =
+                    adapter.findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
 
             // then
             assertThat(result).isPresent();
             assertThat(result.get()).isEqualTo(expectedSalesChannelId);
-            then(repository).should(times(1)).findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
+            then(repository)
+                    .should(times(1))
+                    .findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
         }
 
         @Test
@@ -281,11 +284,14 @@ class BrandPresetQueryAdapterTest {
                     .willReturn(Optional.empty());
 
             // when
-            Optional<Long> result = adapter.findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
+            Optional<Long> result =
+                    adapter.findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
 
             // then
             assertThat(result).isEmpty();
-            then(repository).should(times(1)).findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
+            then(repository)
+                    .should(times(1))
+                    .findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
         }
     }
 

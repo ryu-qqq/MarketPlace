@@ -64,11 +64,11 @@ class ProductErrorCodeTest {
 
             // then
             assertThat(errorCodes).hasSize(3);
-            assertThat(errorCodes).containsExactlyInAnyOrder(
-                    ProductErrorCode.PRODUCT_NOT_FOUND,
-                    ProductErrorCode.PRODUCT_INVALID_STATUS_TRANSITION,
-                    ProductErrorCode.PRODUCT_INVALID_PRICE
-            );
+            assertThat(errorCodes)
+                    .containsExactlyInAnyOrder(
+                            ProductErrorCode.PRODUCT_NOT_FOUND,
+                            ProductErrorCode.PRODUCT_INVALID_STATUS_TRANSITION,
+                            ProductErrorCode.PRODUCT_INVALID_PRICE);
         }
 
         @Test

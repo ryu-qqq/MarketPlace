@@ -134,14 +134,15 @@ class BrandMappingJpaEntityMapperTest {
         void toDomain_WithInactiveEntity_ConvertsCorrectly() {
             // given
             BrandMappingJpaEntity entity = BrandMappingJpaEntityFixtures.inactiveEntity();
-            entity = BrandMappingJpaEntity.create(
-                    1L,
-                    entity.getPresetId(),
-                    entity.getSalesChannelBrandId(),
-                    entity.getInternalBrandId(),
-                    "INACTIVE",
-                    entity.getCreatedAt(),
-                    entity.getUpdatedAt());
+            entity =
+                    BrandMappingJpaEntity.create(
+                            1L,
+                            entity.getPresetId(),
+                            entity.getSalesChannelBrandId(),
+                            entity.getInternalBrandId(),
+                            "INACTIVE",
+                            entity.getCreatedAt(),
+                            entity.getUpdatedAt());
 
             // when
             BrandMapping domain = mapper.toDomain(entity);
@@ -155,14 +156,15 @@ class BrandMappingJpaEntityMapperTest {
         void toDomain_WithoutPresetId_ConvertsCorrectly() {
             // given
             BrandMappingJpaEntity entity = BrandMappingJpaEntityFixtures.entityWithoutPresetId();
-            entity = BrandMappingJpaEntity.create(
-                    1L,
-                    null,
-                    entity.getSalesChannelBrandId(),
-                    entity.getInternalBrandId(),
-                    entity.getStatus(),
-                    entity.getCreatedAt(),
-                    entity.getUpdatedAt());
+            entity =
+                    BrandMappingJpaEntity.create(
+                            1L,
+                            null,
+                            entity.getSalesChannelBrandId(),
+                            entity.getInternalBrandId(),
+                            entity.getStatus(),
+                            entity.getCreatedAt(),
+                            entity.getUpdatedAt());
 
             // when
             BrandMapping domain = mapper.toDomain(entity);

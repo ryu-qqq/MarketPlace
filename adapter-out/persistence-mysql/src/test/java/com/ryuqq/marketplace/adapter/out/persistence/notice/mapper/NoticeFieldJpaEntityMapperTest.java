@@ -90,8 +90,7 @@ class NoticeFieldJpaEntityMapperTest {
         @DisplayName("제조사 필드를 올바르게 변환합니다")
         void toDomain_WithManufacturerField_ConvertsCorrectly() {
             // given
-            NoticeFieldJpaEntity entity =
-                    NoticeFieldJpaEntityFixtures.manufacturerFieldEntity();
+            NoticeFieldJpaEntity entity = NoticeFieldJpaEntityFixtures.manufacturerFieldEntity();
 
             // when
             NoticeField domain = mapper.toDomain(entity);
@@ -120,8 +119,7 @@ class NoticeFieldJpaEntityMapperTest {
         @DisplayName("세탁방법 필드를 올바르게 변환합니다")
         void toDomain_WithWashingMethodField_ConvertsCorrectly() {
             // given
-            NoticeFieldJpaEntity entity =
-                    NoticeFieldJpaEntityFixtures.washingMethodFieldEntity();
+            NoticeFieldJpaEntity entity = NoticeFieldJpaEntityFixtures.washingMethodFieldEntity();
 
             // when
             NoticeField domain = mapper.toDomain(entity);

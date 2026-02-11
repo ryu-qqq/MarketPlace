@@ -35,8 +35,7 @@ public final class CanonicalOptionApiFixtures {
     // ===== SearchCanonicalOptionGroupsApiRequest =====
 
     public static SearchCanonicalOptionGroupsApiRequest searchRequest() {
-        return new SearchCanonicalOptionGroupsApiRequest(
-                null, null, null, null, null, 0, 20);
+        return new SearchCanonicalOptionGroupsApiRequest(null, null, null, null, null, 0, 20);
     }
 
     public static SearchCanonicalOptionGroupsApiRequest searchRequest(
@@ -57,9 +56,7 @@ public final class CanonicalOptionApiFixtures {
     }
 
     public static List<CanonicalOptionValueResult> valueResults(int count) {
-        return IntStream.rangeClosed(1, count)
-                .mapToObj(i -> valueResult((long) i))
-                .toList();
+        return IntStream.rangeClosed(1, count).mapToObj(i -> valueResult((long) i)).toList();
     }
 
     // ===== CanonicalOptionGroupResult (Application) =====
@@ -77,16 +74,18 @@ public final class CanonicalOptionApiFixtures {
 
     public static CanonicalOptionGroupResult groupResult(Long id, String code, boolean active) {
         return new CanonicalOptionGroupResult(
-                id, code, DEFAULT_GROUP_NAME_KO + id, DEFAULT_GROUP_NAME_EN + id, active,
-                valueResults(2), DEFAULT_INSTANT);
+                id,
+                code,
+                DEFAULT_GROUP_NAME_KO + id,
+                DEFAULT_GROUP_NAME_EN + id,
+                active,
+                valueResults(2),
+                DEFAULT_INSTANT);
     }
 
     public static List<CanonicalOptionGroupResult> groupResults(int count) {
         return IntStream.rangeClosed(1, count)
-                .mapToObj(
-                        i ->
-                                groupResult(
-                                        (long) i, DEFAULT_GROUP_CODE + "_" + i, true))
+                .mapToObj(i -> groupResult((long) i, DEFAULT_GROUP_CODE + "_" + i, true))
                 .toList();
     }
 
@@ -111,9 +110,7 @@ public final class CanonicalOptionApiFixtures {
     }
 
     public static List<CanonicalOptionValueApiResponse> valueApiResponses(int count) {
-        return IntStream.rangeClosed(1, count)
-                .mapToObj(i -> valueApiResponse((long) i))
-                .toList();
+        return IntStream.rangeClosed(1, count).mapToObj(i -> valueApiResponse((long) i)).toList();
     }
 
     // ===== CanonicalOptionGroupApiResponse =====
@@ -130,8 +127,6 @@ public final class CanonicalOptionApiFixtures {
     }
 
     public static List<CanonicalOptionGroupApiResponse> groupApiResponses(int count) {
-        return IntStream.rangeClosed(1, count)
-                .mapToObj(i -> groupApiResponse((long) i))
-                .toList();
+        return IntStream.rangeClosed(1, count).mapToObj(i -> groupApiResponse((long) i)).toList();
     }
 }

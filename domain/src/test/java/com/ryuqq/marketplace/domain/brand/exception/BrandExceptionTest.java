@@ -178,9 +178,10 @@ class BrandExceptionTest {
         @DisplayName("BrandNotFoundException을 throw할 수 있다")
         void canThrowBrandNotFoundException() {
             // when & then
-            assertThatThrownBy(() -> {
-                        throw new BrandNotFoundException(100L);
-                    })
+            assertThatThrownBy(
+                            () -> {
+                                throw new BrandNotFoundException(100L);
+                            })
                     .isInstanceOf(BrandNotFoundException.class)
                     .hasMessageContaining("ID가 100인 브랜드를 찾을 수 없습니다");
         }
@@ -189,9 +190,10 @@ class BrandExceptionTest {
         @DisplayName("BrandCodeDuplicateException을 throw할 수 있다")
         void canThrowBrandCodeDuplicateException() {
             // when & then
-            assertThatThrownBy(() -> {
-                        throw new BrandCodeDuplicateException("NIKE");
-                    })
+            assertThatThrownBy(
+                            () -> {
+                                throw new BrandCodeDuplicateException("NIKE");
+                            })
                     .isInstanceOf(BrandCodeDuplicateException.class)
                     .hasMessageContaining("브랜드 코드 'NIKE'가 이미 존재합니다");
         }

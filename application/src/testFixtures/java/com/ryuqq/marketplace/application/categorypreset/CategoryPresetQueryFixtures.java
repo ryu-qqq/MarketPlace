@@ -23,8 +23,7 @@ public final class CategoryPresetQueryFixtures {
     // ===== SearchParams Fixtures =====
 
     public static CategoryPresetSearchParams searchParams() {
-        return CategoryPresetSearchParams.of(
-                null, null, null, null, defaultCommonSearchParams());
+        return CategoryPresetSearchParams.of(null, null, null, null, defaultCommonSearchParams());
     }
 
     public static CategoryPresetSearchParams searchParams(int page, int size) {
@@ -56,11 +55,7 @@ public final class CategoryPresetQueryFixtures {
             int page,
             int size) {
         return CategoryPresetSearchParams.of(
-                salesChannelIds,
-                statuses,
-                searchField,
-                searchWord,
-                commonSearchParams(page, size));
+                salesChannelIds, statuses, searchField, searchWord, commonSearchParams(page, size));
     }
 
     public static CommonSearchParams defaultCommonSearchParams() {
@@ -127,7 +122,8 @@ public final class CategoryPresetQueryFixtures {
         return CategoryPresetPageResult.of(results, 0, 20, 2L);
     }
 
-    public static CategoryPresetPageResult categoryPresetPageResult(int page, int size, long totalCount) {
+    public static CategoryPresetPageResult categoryPresetPageResult(
+            int page, int size, long totalCount) {
         List<CategoryPresetResult> results =
                 List.of(categoryPresetResult(1L), categoryPresetResult(2L));
         return CategoryPresetPageResult.of(results, page, size, totalCount);

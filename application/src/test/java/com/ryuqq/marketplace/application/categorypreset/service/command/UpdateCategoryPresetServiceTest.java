@@ -51,7 +51,9 @@ class UpdateCategoryPresetServiceTest {
 
             given(validator.findExistingOrThrow(CategoryPresetId.of(categoryPresetId)))
                     .willReturn(existing);
-            given(validator.resolveSalesChannelCategoryId(existing.shopId(), command.categoryCode()))
+            given(
+                            validator.resolveSalesChannelCategoryId(
+                                    existing.shopId(), command.categoryCode()))
                     .willReturn(newSalesChannelCategoryId);
             given(commandFactory.createUpdateBundle(existing, command, newSalesChannelCategoryId))
                     .willReturn(bundle);
@@ -61,7 +63,9 @@ class UpdateCategoryPresetServiceTest {
 
             // then
             then(validator).should().findExistingOrThrow(CategoryPresetId.of(categoryPresetId));
-            then(validator).should().resolveSalesChannelCategoryId(existing.shopId(), command.categoryCode());
+            then(validator)
+                    .should()
+                    .resolveSalesChannelCategoryId(existing.shopId(), command.categoryCode());
             then(validator).should().validateInternalCategoriesExist(command.internalCategoryIds());
             then(commandFactory)
                     .should()
@@ -117,7 +121,9 @@ class UpdateCategoryPresetServiceTest {
 
             given(validator.findExistingOrThrow(CategoryPresetId.of(categoryPresetId)))
                     .willReturn(existing);
-            given(validator.resolveSalesChannelCategoryId(existing.shopId(), command.categoryCode()))
+            given(
+                            validator.resolveSalesChannelCategoryId(
+                                    existing.shopId(), command.categoryCode()))
                     .willReturn(newSalesChannelCategoryId);
             given(commandFactory.createUpdateBundle(existing, command, newSalesChannelCategoryId))
                     .willReturn(bundle);

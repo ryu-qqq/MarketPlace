@@ -116,19 +116,11 @@ public final class NoticeFieldJpaEntityFixtures {
     }
 
     /** 커스텀 필드 코드와 이름을 가진 Entity 생성. */
-    public static NoticeFieldJpaEntity entityWithCodeAndName(
-            String fieldCode, String fieldName) {
+    public static NoticeFieldJpaEntity entityWithCodeAndName(String fieldCode, String fieldName) {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeFieldJpaEntity.create(
-                seq,
-                DEFAULT_NOTICE_CATEGORY_ID,
-                fieldCode,
-                fieldName,
-                true,
-                (int) seq,
-                now,
-                now);
+                seq, DEFAULT_NOTICE_CATEGORY_ID, fieldCode, fieldName, true, (int) seq, now, now);
     }
 
     /** 제조사 필드 Entity 생성. */
@@ -136,14 +128,7 @@ public final class NoticeFieldJpaEntityFixtures {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeFieldJpaEntity.create(
-                seq,
-                DEFAULT_NOTICE_CATEGORY_ID,
-                "MANUFACTURER",
-                "제조사",
-                true,
-                1,
-                now,
-                now);
+                seq, DEFAULT_NOTICE_CATEGORY_ID, "MANUFACTURER", "제조사", true, 1, now, now);
     }
 
     /** 원산지 필드 Entity 생성. */
@@ -151,14 +136,7 @@ public final class NoticeFieldJpaEntityFixtures {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeFieldJpaEntity.create(
-                seq,
-                DEFAULT_NOTICE_CATEGORY_ID,
-                "ORIGIN",
-                "원산지",
-                true,
-                2,
-                now,
-                now);
+                seq, DEFAULT_NOTICE_CATEGORY_ID, "ORIGIN", "원산지", true, 2, now, now);
     }
 
     /** 세탁방법 필드 Entity 생성. */
@@ -166,13 +144,6 @@ public final class NoticeFieldJpaEntityFixtures {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeFieldJpaEntity.create(
-                seq,
-                DEFAULT_NOTICE_CATEGORY_ID,
-                "WASHING_METHOD",
-                "세탁방법",
-                false,
-                3,
-                now,
-                now);
+                seq, DEFAULT_NOTICE_CATEGORY_ID, "WASHING_METHOD", "세탁방법", false, 3, now, now);
     }
 }

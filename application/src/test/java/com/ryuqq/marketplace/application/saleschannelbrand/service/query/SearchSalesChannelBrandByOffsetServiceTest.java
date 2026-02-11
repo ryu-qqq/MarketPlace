@@ -99,8 +99,7 @@ class SearchSalesChannelBrandByOffsetServiceTest {
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readManager.findByCriteria(criteria)).willReturn(emptyBrands);
             given(readManager.countByCriteria(criteria)).willReturn(totalElements);
-            given(assembler.toPageResult(
-                            emptyBrands, params.page(), params.size(), totalElements))
+            given(assembler.toPageResult(emptyBrands, params.page(), params.size(), totalElements))
                     .willReturn(expected);
 
             // when

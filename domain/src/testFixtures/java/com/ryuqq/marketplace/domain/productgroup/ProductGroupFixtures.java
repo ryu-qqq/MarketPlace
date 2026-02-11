@@ -11,7 +11,6 @@ import com.ryuqq.marketplace.domain.productgroup.vo.*;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
-
 import java.util.List;
 
 /**
@@ -126,19 +125,13 @@ public final class ProductGroupFixtures {
     /** 기본 ProductGroupImage (THUMBNAIL) */
     public static ProductGroupImage defaultProductGroupImage() {
         return ProductGroupImage.forNew(
-                newProductGroupId(),
-                defaultImageUrl(),
-                ImageType.THUMBNAIL,
-                0);
+                newProductGroupId(), defaultImageUrl(), ImageType.THUMBNAIL, 0);
     }
 
     /** 썸네일 이미지 */
     public static ProductGroupImage thumbnailImage() {
         return ProductGroupImage.forNew(
-                newProductGroupId(),
-                defaultImageUrl(),
-                ImageType.THUMBNAIL,
-                0);
+                newProductGroupId(), defaultImageUrl(), ImageType.THUMBNAIL, 0);
     }
 
     /** 상세 이미지 */
@@ -171,10 +164,7 @@ public final class ProductGroupFixtures {
 
     /** 기본 SellerOptionValue */
     public static SellerOptionValue defaultSellerOptionValue() {
-        return SellerOptionValue.forNew(
-                SellerOptionGroupId.forNew(),
-                defaultOptionValueName(),
-                0);
+        return SellerOptionValue.forNew(SellerOptionGroupId.forNew(), defaultOptionValueName(), 0);
     }
 
     /** 캐노니컬 매핑된 SellerOptionValue */
@@ -207,16 +197,18 @@ public final class ProductGroupFixtures {
 
     /** 완전 매핑된 SellerOptionGroup (그룹과 모든 값이 매핑됨) */
     public static SellerOptionGroup fullyMappedSellerOptionGroup() {
-        SellerOptionValue value1 = SellerOptionValue.forNewWithCanonical(
-                SellerOptionGroupId.forNew(),
-                optionValueName("검정"),
-                CanonicalOptionValueId.of(1L),
-                0);
-        SellerOptionValue value2 = SellerOptionValue.forNewWithCanonical(
-                SellerOptionGroupId.forNew(),
-                optionValueName("흰색"),
-                CanonicalOptionValueId.of(2L),
-                1);
+        SellerOptionValue value1 =
+                SellerOptionValue.forNewWithCanonical(
+                        SellerOptionGroupId.forNew(),
+                        optionValueName("검정"),
+                        CanonicalOptionValueId.of(1L),
+                        0);
+        SellerOptionValue value2 =
+                SellerOptionValue.forNewWithCanonical(
+                        SellerOptionGroupId.forNew(),
+                        optionValueName("흰색"),
+                        CanonicalOptionValueId.of(2L),
+                        1);
 
         return SellerOptionGroup.forNewWithCanonical(
                 newProductGroupId(),
@@ -228,9 +220,7 @@ public final class ProductGroupFixtures {
 
     /** 기본 ProductGroupDescription */
     public static ProductGroupDescription defaultProductGroupDescription() {
-        return ProductGroupDescription.forNew(
-                newProductGroupId(),
-                defaultDescriptionHtml());
+        return ProductGroupDescription.forNew(newProductGroupId(), defaultDescriptionHtml());
     }
 
     /** 이미지 포함 ProductGroupDescription */
@@ -277,20 +267,21 @@ public final class ProductGroupFixtures {
 
     /** 조합 옵션 신규 ProductGroup */
     public static ProductGroup newProductGroupWithCombinationOption() {
-        SellerOptionGroup colorOption = SellerOptionGroup.forNew(
-                newProductGroupId(),
-                optionGroupName("색상"),
-                0,
-                List.of(defaultSellerOptionValue()));
+        SellerOptionGroup colorOption =
+                SellerOptionGroup.forNew(
+                        newProductGroupId(),
+                        optionGroupName("색상"),
+                        0,
+                        List.of(defaultSellerOptionValue()));
 
-        SellerOptionGroup sizeOption = SellerOptionGroup.forNew(
-                newProductGroupId(),
-                optionGroupName("사이즈"),
-                1,
-                List.of(SellerOptionValue.forNew(
-                        SellerOptionGroupId.forNew(),
-                        optionValueName("L"),
-                        0)));
+        SellerOptionGroup sizeOption =
+                SellerOptionGroup.forNew(
+                        newProductGroupId(),
+                        optionGroupName("사이즈"),
+                        1,
+                        List.of(
+                                SellerOptionValue.forNew(
+                                        SellerOptionGroupId.forNew(), optionValueName("L"), 0)));
 
         return ProductGroup.forNew(
                 SellerId.of(DEFAULT_SELLER_ID),

@@ -113,7 +113,8 @@ class SalesChannelAssemblerTest {
             long totalElements = 2L;
 
             // when
-            SalesChannelPageResult result = sut.toPageResult(salesChannels, page, size, totalElements);
+            SalesChannelPageResult result =
+                    sut.toPageResult(salesChannels, page, size, totalElements);
 
             // then
             assertThat(result).isNotNull();

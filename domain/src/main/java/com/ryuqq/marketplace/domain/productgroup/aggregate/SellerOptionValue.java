@@ -5,10 +5,7 @@ import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionValueName;
 
-/**
- * 셀러 옵션 값 (Child Entity of SellerOptionGroup).
- * 셀러가 자유 입력한 옵션 값. 캐노니컬 옵션에 매핑 가능 (nullable).
- */
+/** 셀러 옵션 값 (Child Entity of SellerOptionGroup). 셀러가 자유 입력한 옵션 값. 캐노니컬 옵션에 매핑 가능 (nullable). */
 public class SellerOptionValue {
 
     private final SellerOptionValueId id;
@@ -64,7 +61,8 @@ public class SellerOptionValue {
             OptionValueName optionValueName,
             CanonicalOptionValueId canonicalOptionValueId,
             int sortOrder) {
-        return new SellerOptionValue(id, sellerOptionGroupId, optionValueName, canonicalOptionValueId, sortOrder);
+        return new SellerOptionValue(
+                id, sellerOptionGroupId, optionValueName, canonicalOptionValueId, sortOrder);
     }
 
     /** 옵션 값 이름 수정. */

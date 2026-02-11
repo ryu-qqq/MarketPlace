@@ -41,8 +41,7 @@ class BrandMappingSortKeyTest {
         @Test
         @DisplayName("기본 정렬 키는 CREATED_AT이다")
         void defaultKeyIsCreatedAt() {
-            assertThat(BrandMappingSortKey.defaultKey())
-                    .isEqualTo(BrandMappingSortKey.CREATED_AT);
+            assertThat(BrandMappingSortKey.defaultKey()).isEqualTo(BrandMappingSortKey.CREATED_AT);
         }
     }
 

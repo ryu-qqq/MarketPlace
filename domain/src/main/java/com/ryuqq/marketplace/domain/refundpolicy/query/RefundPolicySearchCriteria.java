@@ -13,9 +13,7 @@ import com.ryuqq.marketplace.domain.seller.id.SellerId;
  * @param active 활성화 여부 (true: 활성만, false: 비활성만, null: 전체)
  */
 public record RefundPolicySearchCriteria(
-        SellerId sellerId,
-        QueryContext<RefundPolicySortKey> queryContext,
-        Boolean active) {
+        SellerId sellerId, QueryContext<RefundPolicySortKey> queryContext, Boolean active) {
 
     /**
      * 검색 조건 생성
@@ -26,9 +24,7 @@ public record RefundPolicySearchCriteria(
      * @return RefundPolicySearchCriteria
      */
     public static RefundPolicySearchCriteria of(
-            SellerId sellerId,
-            QueryContext<RefundPolicySortKey> queryContext,
-            Boolean active) {
+            SellerId sellerId, QueryContext<RefundPolicySortKey> queryContext, Boolean active) {
         return new RefundPolicySearchCriteria(sellerId, queryContext, active);
     }
 

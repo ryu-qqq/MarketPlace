@@ -78,7 +78,8 @@ class SalesChannelBrandQueryApiMapperTest {
         void toSearchParams_AllNulls_ReturnsAllSearchParams() {
             // given
             List<Long> salesChannelIds = List.of(1L);
-            SearchSalesChannelBrandsApiRequest request = SalesChannelBrandApiFixtures.searchRequest();
+            SearchSalesChannelBrandsApiRequest request =
+                    SalesChannelBrandApiFixtures.searchRequest();
 
             // when
             SalesChannelBrandSearchParams params = mapper.toSearchParams(salesChannelIds, request);
@@ -190,8 +191,7 @@ class SalesChannelBrandQueryApiMapperTest {
         @DisplayName("빈 결과이면 빈 페이지 응답을 반환한다")
         void toPageResponse_EmptyResult_ReturnsEmptyPage() {
             // given
-            SalesChannelBrandPageResult pageResult =
-                    SalesChannelBrandApiFixtures.emptyPageResult();
+            SalesChannelBrandPageResult pageResult = SalesChannelBrandApiFixtures.emptyPageResult();
 
             // when
             PageApiResponse<SalesChannelBrandApiResponse> response =

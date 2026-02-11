@@ -77,9 +77,13 @@ class SalesChannelCategoryReadManagerTest {
             // given
             SalesChannelCategorySearchCriteria criteria =
                     SalesChannelCategorySearchCriteria.of(
-                            null, null, null, null,
+                            null,
+                            null,
+                            null,
+                            null,
                             com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.saleschannelcategory.query.SalesChannelCategorySortKey.defaultKey()));
+                                    com.ryuqq.marketplace.domain.saleschannelcategory.query
+                                            .SalesChannelCategorySortKey.defaultKey()));
             List<SalesChannelCategory> expected =
                     List.of(SalesChannelCategoryFixtures.activeSalesChannelCategory());
 
@@ -99,9 +103,13 @@ class SalesChannelCategoryReadManagerTest {
             // given
             SalesChannelCategorySearchCriteria criteria =
                     SalesChannelCategorySearchCriteria.of(
-                            null, null, null, null,
+                            null,
+                            null,
+                            null,
+                            null,
                             com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.saleschannelcategory.query.SalesChannelCategorySortKey.defaultKey()));
+                                    com.ryuqq.marketplace.domain.saleschannelcategory.query
+                                            .SalesChannelCategorySortKey.defaultKey()));
             List<SalesChannelCategory> expected = List.of();
 
             given(queryPort.findByCriteria(criteria)).willReturn(expected);
@@ -124,9 +132,13 @@ class SalesChannelCategoryReadManagerTest {
             // given
             SalesChannelCategorySearchCriteria criteria =
                     SalesChannelCategorySearchCriteria.of(
-                            null, null, null, null,
+                            null,
+                            null,
+                            null,
+                            null,
                             com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.saleschannelcategory.query.SalesChannelCategorySortKey.defaultKey()));
+                                    com.ryuqq.marketplace.domain.saleschannelcategory.query
+                                            .SalesChannelCategorySortKey.defaultKey()));
             long expected = 10L;
 
             given(queryPort.countByCriteria(criteria)).willReturn(expected);
@@ -145,9 +157,13 @@ class SalesChannelCategoryReadManagerTest {
             // given
             SalesChannelCategorySearchCriteria criteria =
                     SalesChannelCategorySearchCriteria.of(
-                            null, null, null, null,
+                            null,
+                            null,
+                            null,
+                            null,
                             com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.saleschannelcategory.query.SalesChannelCategorySortKey.defaultKey()));
+                                    com.ryuqq.marketplace.domain.saleschannelcategory.query
+                                            .SalesChannelCategorySortKey.defaultKey()));
             long expected = 0L;
 
             given(queryPort.countByCriteria(criteria)).willReturn(expected);
@@ -171,8 +187,9 @@ class SalesChannelCategoryReadManagerTest {
             Long salesChannelId = 1L;
             String externalCategoryCode = "CAT001";
 
-            given(queryPort.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalCategoryCode))
+            given(
+                            queryPort.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalCategoryCode))
                     .willReturn(true);
 
             // when
@@ -190,8 +207,9 @@ class SalesChannelCategoryReadManagerTest {
             Long salesChannelId = 1L;
             String externalCategoryCode = "CAT999";
 
-            given(queryPort.existsBySalesChannelIdAndExternalCode(
-                            salesChannelId, externalCategoryCode))
+            given(
+                            queryPort.existsBySalesChannelIdAndExternalCode(
+                                    salesChannelId, externalCategoryCode))
                     .willReturn(false);
 
             // when

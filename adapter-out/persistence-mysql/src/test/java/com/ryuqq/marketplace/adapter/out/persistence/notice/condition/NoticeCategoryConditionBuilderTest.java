@@ -33,7 +33,8 @@ class NoticeCategoryConditionBuilderTest {
         conditionBuilder = new NoticeCategoryConditionBuilder();
     }
 
-    private NoticeCategorySearchCriteria createCriteria(Boolean active, String searchField, String searchWord) {
+    private NoticeCategorySearchCriteria createCriteria(
+            Boolean active, String searchField, String searchWord) {
         QueryContext<NoticeCategorySortKey> queryContext =
                 QueryContext.defaultOf(NoticeCategorySortKey.defaultKey());
         return new NoticeCategorySearchCriteria(active, searchField, searchWord, queryContext);
@@ -100,8 +101,7 @@ class NoticeCategoryConditionBuilderTest {
             String targetCategoryGroup = "CLOTHING";
 
             // when
-            BooleanExpression result =
-                    conditionBuilder.targetCategoryGroupEq(targetCategoryGroup);
+            BooleanExpression result = conditionBuilder.targetCategoryGroupEq(targetCategoryGroup);
 
             // then
             assertThat(result).isNotNull();
@@ -159,8 +159,7 @@ class NoticeCategoryConditionBuilderTest {
         @DisplayName("활성 필터가 false이면 BooleanExpression을 반환합니다")
         void activeEq_WithActiveFalse_ReturnsBooleanExpression() {
             // given
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(false, null, null);
+            NoticeCategorySearchCriteria criteria = createCriteria(false, null, null);
 
             // when
             BooleanExpression result = conditionBuilder.activeEq(criteria);
@@ -174,8 +173,7 @@ class NoticeCategoryConditionBuilderTest {
         @DisplayName("활성 필터가 없으면 null을 반환합니다")
         void activeEq_WithoutActiveFilter_ReturnsNull() {
             // given
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(null, null, null);
+            NoticeCategorySearchCriteria criteria = createCriteria(null, null, null);
 
             // when
             BooleanExpression result = conditionBuilder.activeEq(criteria);
@@ -197,8 +195,7 @@ class NoticeCategoryConditionBuilderTest {
         @DisplayName("CODE 필드 검색 시 BooleanExpression을 반환합니다")
         void searchCondition_WithCodeField_ReturnsBooleanExpression() {
             // given
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(null, "CODE", "CLOTHING");
+            NoticeCategorySearchCriteria criteria = createCriteria(null, "CODE", "CLOTHING");
 
             // when
             BooleanExpression result = conditionBuilder.searchCondition(criteria);
@@ -212,8 +209,7 @@ class NoticeCategoryConditionBuilderTest {
         @DisplayName("NAME_KO 필드 검색 시 BooleanExpression을 반환합니다")
         void searchCondition_WithNameKoField_ReturnsBooleanExpression() {
             // given
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(null, "NAME_KO", "의류");
+            NoticeCategorySearchCriteria criteria = createCriteria(null, "NAME_KO", "의류");
 
             // when
             BooleanExpression result = conditionBuilder.searchCondition(criteria);
@@ -227,8 +223,7 @@ class NoticeCategoryConditionBuilderTest {
         @DisplayName("NAME_EN 필드 검색 시 BooleanExpression을 반환합니다")
         void searchCondition_WithNameEnField_ReturnsBooleanExpression() {
             // given
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(null, "NAME_EN", "Clothing");
+            NoticeCategorySearchCriteria criteria = createCriteria(null, "NAME_EN", "Clothing");
 
             // when
             BooleanExpression result = conditionBuilder.searchCondition(criteria);
@@ -242,8 +237,7 @@ class NoticeCategoryConditionBuilderTest {
         @DisplayName("검색 필터가 없으면 null을 반환합니다")
         void searchCondition_WithoutSearchFilter_ReturnsNull() {
             // given
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(null, null, null);
+            NoticeCategorySearchCriteria criteria = createCriteria(null, null, null);
 
             // when
             BooleanExpression result = conditionBuilder.searchCondition(criteria);
@@ -256,8 +250,7 @@ class NoticeCategoryConditionBuilderTest {
         @DisplayName("알 수 없는 필드는 null을 반환합니다")
         void searchCondition_WithUnknownField_ReturnsNull() {
             // given
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(null, "UNKNOWN_FIELD", "test");
+            NoticeCategorySearchCriteria criteria = createCriteria(null, "UNKNOWN_FIELD", "test");
 
             // when
             BooleanExpression result = conditionBuilder.searchCondition(criteria);
@@ -270,8 +263,7 @@ class NoticeCategoryConditionBuilderTest {
         @DisplayName("빈 검색어는 null을 반환합니다")
         void searchCondition_WithEmptySearchWord_ReturnsNull() {
             // given
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(null, "CODE", "");
+            NoticeCategorySearchCriteria criteria = createCriteria(null, "CODE", "");
 
             // when
             BooleanExpression result = conditionBuilder.searchCondition(criteria);
@@ -295,17 +287,14 @@ class NoticeCategoryConditionBuilderTest {
             // given
             Long id = 1L;
             String targetGroup = "CLOTHING";
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(true, null, null);
+            NoticeCategorySearchCriteria criteria = createCriteria(true, null, null);
 
             // when
             BooleanExpression idCondition = conditionBuilder.idEq(id);
-            BooleanExpression groupCondition =
-                    conditionBuilder.targetCategoryGroupEq(targetGroup);
+            BooleanExpression groupCondition = conditionBuilder.targetCategoryGroupEq(targetGroup);
             BooleanExpression activeCondition = conditionBuilder.activeEq(criteria);
 
-            BooleanExpression combined =
-                    idCondition.and(groupCondition).and(activeCondition);
+            BooleanExpression combined = idCondition.and(groupCondition).and(activeCondition);
 
             // then
             assertThat(combined).isNotNull();
@@ -316,8 +305,7 @@ class NoticeCategoryConditionBuilderTest {
         void combinedConditions_WithNullConditions_IgnoresNull() {
             // given
             Long id = 1L;
-            NoticeCategorySearchCriteria criteria =
-                    createCriteria(null, null, null);
+            NoticeCategorySearchCriteria criteria = createCriteria(null, null, null);
 
             // when
             BooleanExpression idCondition = conditionBuilder.idEq(id);

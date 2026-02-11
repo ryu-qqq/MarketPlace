@@ -31,7 +31,12 @@ public record SellerAddressSearchParams(
             String searchWord,
             CommonSearchParams commonSearchParams) {
         return new SellerAddressSearchParams(
-                sellerIds, addressTypes, defaultAddress, searchField, searchWord, commonSearchParams);
+                sellerIds,
+                addressTypes,
+                defaultAddress,
+                searchField,
+                searchWord,
+                commonSearchParams);
     }
 
     public int page() {

@@ -168,8 +168,7 @@ class ProductNoticeTest {
             int originalCount = notice.entryCount();
             Instant originalUpdatedAt = notice.updatedAt();
 
-            ProductNoticeEntry newEntry =
-                    ProductNoticeFixtures.entry(300L, "추가된 고시정보");
+            ProductNoticeEntry newEntry = ProductNoticeFixtures.entry(300L, "추가된 고시정보");
             Instant now = CommonVoFixtures.now();
 
             // when
@@ -253,8 +252,7 @@ class ProductNoticeTest {
         @DisplayName("productGroupIdValue()는 ProductGroup ID 값을 반환한다")
         void productGroupIdValueReturnsValue() {
             // given
-            ProductNotice notice =
-                    ProductNoticeFixtures.existingProductNotice(1L, 500L, 10L);
+            ProductNotice notice = ProductNoticeFixtures.existingProductNotice(1L, 500L, 10L);
 
             // when & then
             assertThat(notice.productGroupIdValue()).isEqualTo(500L);

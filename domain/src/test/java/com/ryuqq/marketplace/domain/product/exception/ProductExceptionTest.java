@@ -40,9 +40,10 @@ class ProductExceptionTest {
             Long productId = 999L;
 
             // when & then
-            assertThatThrownBy(() -> {
-                throw new ProductNotFoundException(productId);
-            })
+            assertThatThrownBy(
+                            () -> {
+                                throw new ProductNotFoundException(productId);
+                            })
                     .isInstanceOf(ProductNotFoundException.class)
                     .hasMessageContaining("상품을 찾을 수 없습니다")
                     .hasMessageContaining("999");
@@ -81,9 +82,11 @@ class ProductExceptionTest {
             ProductStatus targetStatus = ProductStatus.ACTIVE;
 
             // when & then
-            assertThatThrownBy(() -> {
-                throw new ProductInvalidStatusTransitionException(currentStatus, targetStatus);
-            })
+            assertThatThrownBy(
+                            () -> {
+                                throw new ProductInvalidStatusTransitionException(
+                                        currentStatus, targetStatus);
+                            })
                     .isInstanceOf(ProductInvalidStatusTransitionException.class)
                     .hasMessageContaining("상품 상태를")
                     .hasMessageContaining("DELETED")
@@ -127,9 +130,11 @@ class ProductExceptionTest {
             int salePrice = 80000;
 
             // when & then
-            assertThatThrownBy(() -> {
-                throw new ProductInvalidPriceException(regularPrice, currentPrice, salePrice);
-            })
+            assertThatThrownBy(
+                            () -> {
+                                throw new ProductInvalidPriceException(
+                                        regularPrice, currentPrice, salePrice);
+                            })
                     .isInstanceOf(ProductInvalidPriceException.class)
                     .hasMessageContaining("가격 체계가 유효하지 않습니다")
                     .hasMessageContaining("regularPrice=100000")
@@ -148,8 +153,7 @@ class ProductExceptionTest {
             ProductNotFoundException exception = new ProductNotFoundException(1L);
 
             // then
-            assertThat(exception)
-                    .isInstanceOf(RuntimeException.class);
+            assertThat(exception).isInstanceOf(RuntimeException.class);
         }
 
         @Test
@@ -161,8 +165,7 @@ class ProductExceptionTest {
                             ProductStatus.ACTIVE, ProductStatus.INACTIVE);
 
             // then
-            assertThat(exception)
-                    .isInstanceOf(RuntimeException.class);
+            assertThat(exception).isInstanceOf(RuntimeException.class);
         }
 
         @Test
@@ -173,8 +176,7 @@ class ProductExceptionTest {
                     new ProductInvalidPriceException(100000, 120000, 80000);
 
             // then
-            assertThat(exception)
-                    .isInstanceOf(RuntimeException.class);
+            assertThat(exception).isInstanceOf(RuntimeException.class);
         }
     }
 }

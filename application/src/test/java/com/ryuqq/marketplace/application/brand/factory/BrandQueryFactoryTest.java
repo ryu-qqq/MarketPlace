@@ -51,8 +51,9 @@ class BrandQueryFactoryTest {
                     .willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(params.page(), params.size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            BrandSortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    BrandSortKey.CREATED_AT, sortDirection, pageRequest, false))
                     .willReturn(queryContext);
 
             // when
@@ -80,8 +81,9 @@ class BrandQueryFactoryTest {
                     .willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(params.page(), params.size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            BrandSortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    BrandSortKey.CREATED_AT, sortDirection, pageRequest, false))
                     .willReturn(queryContext);
 
             // when
@@ -107,8 +109,9 @@ class BrandQueryFactoryTest {
                     .willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(params.page(), params.size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            BrandSortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    BrandSortKey.CREATED_AT, sortDirection, pageRequest, false))
                     .willReturn(queryContext);
 
             // when
@@ -134,8 +137,9 @@ class BrandQueryFactoryTest {
                     .willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(params.page(), params.size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            BrandSortKey.defaultKey(), sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    BrandSortKey.defaultKey(), sortDirection, pageRequest, false))
                     .willReturn(queryContext);
 
             // when

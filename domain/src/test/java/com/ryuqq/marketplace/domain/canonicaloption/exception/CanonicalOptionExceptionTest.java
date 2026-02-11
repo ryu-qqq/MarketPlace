@@ -40,7 +40,8 @@ class CanonicalOptionExceptionTest {
             // when
             CanonicalOptionException exception =
                     new CanonicalOptionException(
-                            CanonicalOptionErrorCode.CANONICAL_OPTION_GROUP_NOT_FOUND, customMessage);
+                            CanonicalOptionErrorCode.CANONICAL_OPTION_GROUP_NOT_FOUND,
+                            customMessage);
 
             // then
             assertThat(exception.getErrorCode())
@@ -122,9 +123,10 @@ class CanonicalOptionExceptionTest {
         @DisplayName("CanonicalOptionGroupNotFoundException을 던질 수 있다")
         void canThrowCanonicalOptionGroupNotFoundException() {
             // when & then
-            assertThatThrownBy(() -> {
-                throw new CanonicalOptionGroupNotFoundException(123L);
-            })
+            assertThatThrownBy(
+                            () -> {
+                                throw new CanonicalOptionGroupNotFoundException(123L);
+                            })
                     .isInstanceOf(CanonicalOptionGroupNotFoundException.class)
                     .isInstanceOf(CanonicalOptionException.class)
                     .isInstanceOf(DomainException.class);

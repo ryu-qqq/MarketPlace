@@ -46,11 +46,17 @@ class NoticeCategoryQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(params.commonSearchParams().sortDirection()))
                     .willReturn(sortDirection);
-            given(commonVoFactory.createPageRequest(
-                            params.commonSearchParams().page(), params.commonSearchParams().size()))
+            given(
+                            commonVoFactory.createPageRequest(
+                                    params.commonSearchParams().page(),
+                                    params.commonSearchParams().size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            NoticeCategorySortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    NoticeCategorySortKey.CREATED_AT,
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when
@@ -74,11 +80,17 @@ class NoticeCategoryQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(params.commonSearchParams().sortDirection()))
                     .willReturn(sortDirection);
-            given(commonVoFactory.createPageRequest(
-                            params.commonSearchParams().page(), params.commonSearchParams().size()))
+            given(
+                            commonVoFactory.createPageRequest(
+                                    params.commonSearchParams().page(),
+                                    params.commonSearchParams().size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            NoticeCategorySortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    NoticeCategorySortKey.CREATED_AT,
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when
@@ -93,7 +105,8 @@ class NoticeCategoryQueryFactoryTest {
         @DisplayName("검색어가 있는 경우 SearchCriteria를 생성한다")
         void createCriteria_WithSearchWord_ReturnsCriteria() {
             // given
-            NoticeCategorySearchParams params = NoticeQueryFixtures.searchParams("code", "CLOTHING");
+            NoticeCategorySearchParams params =
+                    NoticeQueryFixtures.searchParams("code", "CLOTHING");
             SortDirection sortDirection = SortDirection.DESC;
             PageRequest pageRequest = PageRequest.of(0, 20);
             QueryContext<NoticeCategorySortKey> queryContext =
@@ -102,11 +115,17 @@ class NoticeCategoryQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(params.commonSearchParams().sortDirection()))
                     .willReturn(sortDirection);
-            given(commonVoFactory.createPageRequest(
-                            params.commonSearchParams().page(), params.commonSearchParams().size()))
+            given(
+                            commonVoFactory.createPageRequest(
+                                    params.commonSearchParams().page(),
+                                    params.commonSearchParams().size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            NoticeCategorySortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    NoticeCategorySortKey.CREATED_AT,
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when
@@ -131,11 +150,17 @@ class NoticeCategoryQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(params.commonSearchParams().sortDirection()))
                     .willReturn(sortDirection);
-            given(commonVoFactory.createPageRequest(
-                            params.commonSearchParams().page(), params.commonSearchParams().size()))
+            given(
+                            commonVoFactory.createPageRequest(
+                                    params.commonSearchParams().page(),
+                                    params.commonSearchParams().size()))
                     .willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            NoticeCategorySortKey.CREATED_AT, sortDirection, pageRequest, false))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    NoticeCategorySortKey.CREATED_AT,
+                                    sortDirection,
+                                    pageRequest,
+                                    false))
                     .willReturn(queryContext);
 
             // when

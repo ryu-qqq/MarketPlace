@@ -84,14 +84,7 @@ class NoticeCategoryTest {
             // when
             NoticeCategory category =
                     NoticeCategory.reconstitute(
-                            id,
-                            code,
-                            name,
-                            group,
-                            true,
-                            java.util.List.of(),
-                            createdAt,
-                            updatedAt);
+                            id, code, name, group, true, java.util.List.of(), createdAt, updatedAt);
 
             // then
             assertThat(category.id().isNew()).isFalse();

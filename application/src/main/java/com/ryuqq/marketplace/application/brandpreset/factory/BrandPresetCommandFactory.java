@@ -41,8 +41,12 @@ public class BrandPresetCommandFactory {
     public UpdateBrandPresetBundle createUpdateBundle(
             BrandPreset existing, UpdateBrandPresetCommand command) {
         Instant now = timeProvider.now();
-        List<BrandMapping> brandMappings = createBrandMappings(
-                existing.idValue(), command.salesChannelBrandId(), command.internalBrandIds(), now);
+        List<BrandMapping> brandMappings =
+                createBrandMappings(
+                        existing.idValue(),
+                        command.salesChannelBrandId(),
+                        command.internalBrandIds(),
+                        now);
         return new UpdateBrandPresetBundle(
                 existing, command.presetName(), command.salesChannelBrandId(), brandMappings, now);
     }
@@ -59,8 +63,10 @@ public class BrandPresetCommandFactory {
             return List.of();
         }
         return internalBrandIds.stream()
-                .map(internalBrandId ->
-                        BrandMapping.forNew(presetId, salesChannelBrandId, internalBrandId, now))
+                .map(
+                        internalBrandId ->
+                                BrandMapping.forNew(
+                                        presetId, salesChannelBrandId, internalBrandId, now))
                 .toList();
     }
 }

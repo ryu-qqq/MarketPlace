@@ -176,7 +176,8 @@ class BrandPresetReadManagerTest {
                     .willReturn(Optional.of(expectedSalesChannelId));
 
             // when
-            Optional<Long> result = sut.findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
+            Optional<Long> result =
+                    sut.findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
 
             // then
             assertThat(result).isPresent();
@@ -194,7 +195,8 @@ class BrandPresetReadManagerTest {
                     .willReturn(Optional.empty());
 
             // when
-            Optional<Long> result = sut.findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
+            Optional<Long> result =
+                    sut.findSalesChannelIdBySalesChannelBrandId(salesChannelBrandId);
 
             // then
             assertThat(result).isEmpty();

@@ -38,8 +38,7 @@ class NoticeExceptionTest {
 
             // when
             NoticeException exception =
-                    new NoticeException(
-                            NoticeErrorCode.NOTICE_CATEGORY_NOT_FOUND, customMessage);
+                    new NoticeException(NoticeErrorCode.NOTICE_CATEGORY_NOT_FOUND, customMessage);
 
             // then
             assertThat(exception.getErrorCode())
@@ -88,8 +87,7 @@ class NoticeExceptionTest {
         @DisplayName("예외에서 HTTP 상태 코드를 조회한다")
         void getHttpStatusFromException() {
             // given
-            NoticeException exception =
-                    new NoticeException(NoticeErrorCode.NOTICE_FIELD_NOT_FOUND);
+            NoticeException exception = new NoticeException(NoticeErrorCode.NOTICE_FIELD_NOT_FOUND);
 
             // when
             int httpStatus = exception.getErrorCode().getHttpStatus();
@@ -118,8 +116,7 @@ class NoticeExceptionTest {
         @DisplayName("NoticeException은 RuntimeException을 상속한다")
         void extendsRuntimeException() {
             // given
-            NoticeException exception =
-                    new NoticeException(NoticeErrorCode.NOTICE_FIELD_NOT_FOUND);
+            NoticeException exception = new NoticeException(NoticeErrorCode.NOTICE_FIELD_NOT_FOUND);
 
             // then
             assertThat(exception).isInstanceOf(RuntimeException.class);

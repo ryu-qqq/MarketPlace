@@ -68,8 +68,7 @@ public class NoticeCategory {
             Instant createdAt,
             Instant updatedAt) {
         return new NoticeCategory(
-                id, code, categoryName, targetCategoryGroup, active,
-                fields, createdAt, updatedAt);
+                id, code, categoryName, targetCategoryGroup, active, fields, createdAt, updatedAt);
     }
 
     /** 카테고리 이름 수정. */

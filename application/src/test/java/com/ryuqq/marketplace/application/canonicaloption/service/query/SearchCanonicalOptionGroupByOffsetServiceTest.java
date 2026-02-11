@@ -47,8 +47,7 @@ class SearchCanonicalOptionGroupByOffsetServiceTest {
         @DisplayName("검색 조건으로 캐노니컬 옵션 그룹 목록을 조회한다")
         void searchCanonicalOptionGroups_Success() {
             // given
-            CanonicalOptionGroupSearchParams params =
-                    CanonicalOptionQueryFixtures.searchParams();
+            CanonicalOptionGroupSearchParams params = CanonicalOptionQueryFixtures.searchParams();
             QueryContext<CanonicalOptionGroupSortKey> queryContext =
                     new QueryContext<>(
                             CanonicalOptionGroupSortKey.CREATED_AT,
@@ -94,7 +93,8 @@ class SearchCanonicalOptionGroupByOffsetServiceTest {
                             PageRequest.of(0, 20),
                             false);
             CanonicalOptionGroupSearchCriteria criteria =
-                    new CanonicalOptionGroupSearchCriteria(null, "code", "NONEXISTENT", queryContext);
+                    new CanonicalOptionGroupSearchCriteria(
+                            null, "code", "NONEXISTENT", queryContext);
             List<CanonicalOptionGroupResult> results = List.of();
             long totalElements = 0L;
             CanonicalOptionGroupPageResult pageResult =

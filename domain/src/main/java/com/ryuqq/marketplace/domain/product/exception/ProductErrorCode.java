@@ -4,7 +4,6 @@ import com.ryuqq.marketplace.domain.common.exception.ErrorCode;
 
 /** Product 도메인 에러 코드. */
 public enum ProductErrorCode implements ErrorCode {
-
     PRODUCT_NOT_FOUND("PRD-001", 404, "상품을 찾을 수 없습니다"),
     PRODUCT_INVALID_STATUS_TRANSITION("PRD-002", 400, "유효하지 않은 상태 전이입니다"),
     PRODUCT_INVALID_PRICE("PRD-003", 400, "할인가는 판매가보다 클 수 없습니다");

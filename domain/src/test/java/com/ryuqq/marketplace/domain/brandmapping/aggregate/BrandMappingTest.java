@@ -57,8 +57,9 @@ class BrandMappingTest {
             Instant createdAt = CommonVoFixtures.yesterday();
 
             // when
-            BrandMapping mapping = BrandMapping.reconstitute(
-                    id, 1L, 100L, 10L, BrandMappingStatus.ACTIVE, createdAt, createdAt);
+            BrandMapping mapping =
+                    BrandMapping.reconstitute(
+                            id, 1L, 100L, 10L, BrandMappingStatus.ACTIVE, createdAt, createdAt);
 
             // then
             assertThat(mapping.id()).isEqualTo(id);

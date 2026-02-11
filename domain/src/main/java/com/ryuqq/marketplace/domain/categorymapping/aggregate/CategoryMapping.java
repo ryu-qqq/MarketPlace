@@ -55,7 +55,12 @@ public class CategoryMapping {
             Instant createdAt,
             Instant updatedAt) {
         return new CategoryMapping(
-                id, presetId, salesChannelCategoryId, internalCategoryId, status, createdAt,
+                id,
+                presetId,
+                salesChannelCategoryId,
+                internalCategoryId,
+                status,
+                createdAt,
                 updatedAt);
     }
 

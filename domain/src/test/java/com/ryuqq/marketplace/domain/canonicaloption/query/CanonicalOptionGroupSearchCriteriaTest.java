@@ -64,8 +64,7 @@ class CanonicalOptionGroupSearchCriteriaTest {
         @DisplayName("queryContext가 null이면 예외가 발생한다")
         void nullQueryContextThrowsException() {
             // when & then
-            assertThatThrownBy(
-                            () -> new CanonicalOptionGroupSearchCriteria(null, null, null, null))
+            assertThatThrownBy(() -> new CanonicalOptionGroupSearchCriteria(null, null, null, null))
                     .isInstanceOf(NullPointerException.class);
         }
     }

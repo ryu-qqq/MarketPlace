@@ -44,9 +44,18 @@ class ProductGroupTest {
             Instant now = CommonVoFixtures.now();
 
             // when
-            ProductGroup productGroup = ProductGroup.forNew(
-                    sellerId, brandId, categoryId, shippingPolicyId, refundPolicyId,
-                    name, optionType, images, List.of(), now);
+            ProductGroup productGroup =
+                    ProductGroup.forNew(
+                            sellerId,
+                            brandId,
+                            categoryId,
+                            shippingPolicyId,
+                            refundPolicyId,
+                            name,
+                            optionType,
+                            images,
+                            List.of(),
+                            now);
 
             // then
             assertThat(productGroup).isNotNull();
@@ -88,18 +97,19 @@ class ProductGroupTest {
         @DisplayName("SINGLE 옵션 타입에 옵션 그룹이 0개면 예외가 발생한다")
         void throwExceptionWhenSingleOptionWithNoGroup() {
             // given & when & then
-            assertThatThrownBy(() ->
-                    ProductGroup.forNew(
-                            CommonVoFixtures.defaultSellerId(),
-                            BrandId.of(100L),
-                            CategoryId.of(200L),
-                            ShippingPolicyId.of(1L),
-                            RefundPolicyId.of(1L),
-                            ProductGroupFixtures.defaultProductGroupName(),
-                            OptionType.SINGLE,
-                            List.of(ProductGroupFixtures.thumbnailImage()),
-                            List.of(),
-                            CommonVoFixtures.now()))
+            assertThatThrownBy(
+                            () ->
+                                    ProductGroup.forNew(
+                                            CommonVoFixtures.defaultSellerId(),
+                                            BrandId.of(100L),
+                                            CategoryId.of(200L),
+                                            ShippingPolicyId.of(1L),
+                                            RefundPolicyId.of(1L),
+                                            ProductGroupFixtures.defaultProductGroupName(),
+                                            OptionType.SINGLE,
+                                            List.of(ProductGroupFixtures.thumbnailImage()),
+                                            List.of(),
+                                            CommonVoFixtures.now()))
                     .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
         }
 
@@ -107,18 +117,21 @@ class ProductGroupTest {
         @DisplayName("NONE 옵션 타입에 옵션 그룹이 있으면 예외가 발생한다")
         void throwExceptionWhenNoneOptionWithGroups() {
             // given & when & then
-            assertThatThrownBy(() ->
-                    ProductGroup.forNew(
-                            CommonVoFixtures.defaultSellerId(),
-                            BrandId.of(100L),
-                            CategoryId.of(200L),
-                            ShippingPolicyId.of(1L),
-                            RefundPolicyId.of(1L),
-                            ProductGroupFixtures.defaultProductGroupName(),
-                            OptionType.NONE,
-                            List.of(ProductGroupFixtures.thumbnailImage()),
-                            List.of(ProductGroupFixtures.defaultSellerOptionGroup()),
-                            CommonVoFixtures.now()))
+            assertThatThrownBy(
+                            () ->
+                                    ProductGroup.forNew(
+                                            CommonVoFixtures.defaultSellerId(),
+                                            BrandId.of(100L),
+                                            CategoryId.of(200L),
+                                            ShippingPolicyId.of(1L),
+                                            RefundPolicyId.of(1L),
+                                            ProductGroupFixtures.defaultProductGroupName(),
+                                            OptionType.NONE,
+                                            List.of(ProductGroupFixtures.thumbnailImage()),
+                                            List.of(
+                                                    ProductGroupFixtures
+                                                            .defaultSellerOptionGroup()),
+                                            CommonVoFixtures.now()))
                     .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
         }
     }
@@ -344,7 +357,12 @@ class ProductGroupTest {
 
             // when
             productGroup.updateBasicInfo(
-                    newName, newBrandId, newCategoryId, newShippingPolicyId, newRefundPolicyId, now);
+                    newName,
+                    newBrandId,
+                    newCategoryId,
+                    newShippingPolicyId,
+                    newRefundPolicyId,
+                    now);
 
             // then
             assertThat(productGroup.productGroupName()).isEqualTo(newName);
@@ -379,10 +397,11 @@ class ProductGroupTest {
         void replaceImages() {
             // given
             ProductGroup productGroup = ProductGroupFixtures.newProductGroup();
-            List<ProductGroupImage> newImages = List.of(
-                    ProductGroupFixtures.thumbnailImage(),
-                    ProductGroupFixtures.detailImage(1),
-                    ProductGroupFixtures.detailImage(2));
+            List<ProductGroupImage> newImages =
+                    List.of(
+                            ProductGroupFixtures.thumbnailImage(),
+                            ProductGroupFixtures.detailImage(1),
+                            ProductGroupFixtures.detailImage(2));
 
             // when
             productGroup.replaceImages(newImages);
@@ -520,7 +539,8 @@ class ProductGroupTest {
             ProductGroup productGroup = ProductGroupFixtures.activeProductGroup();
 
             // when & then
-            assertThat(productGroup.sellerIdValue()).isEqualTo(ProductGroupFixtures.DEFAULT_SELLER_ID);
+            assertThat(productGroup.sellerIdValue())
+                    .isEqualTo(ProductGroupFixtures.DEFAULT_SELLER_ID);
         }
 
         @Test
@@ -530,7 +550,8 @@ class ProductGroupTest {
             ProductGroup productGroup = ProductGroupFixtures.activeProductGroup();
 
             // when & then
-            assertThat(productGroup.brandIdValue()).isEqualTo(ProductGroupFixtures.DEFAULT_BRAND_ID);
+            assertThat(productGroup.brandIdValue())
+                    .isEqualTo(ProductGroupFixtures.DEFAULT_BRAND_ID);
         }
 
         @Test
@@ -540,7 +561,8 @@ class ProductGroupTest {
             ProductGroup productGroup = ProductGroupFixtures.activeProductGroup();
 
             // when & then
-            assertThat(productGroup.productGroupNameValue()).isEqualTo(ProductGroupFixtures.DEFAULT_PRODUCT_GROUP_NAME);
+            assertThat(productGroup.productGroupNameValue())
+                    .isEqualTo(ProductGroupFixtures.DEFAULT_PRODUCT_GROUP_NAME);
         }
     }
 }

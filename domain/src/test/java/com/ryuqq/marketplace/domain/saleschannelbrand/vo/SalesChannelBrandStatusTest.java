@@ -110,7 +110,8 @@ class SalesChannelBrandStatusTest {
         void allValuesExist() {
             // then
             assertThat(SalesChannelBrandStatus.values())
-                    .containsExactly(SalesChannelBrandStatus.ACTIVE, SalesChannelBrandStatus.INACTIVE);
+                    .containsExactly(
+                            SalesChannelBrandStatus.ACTIVE, SalesChannelBrandStatus.INACTIVE);
         }
 
         @Test

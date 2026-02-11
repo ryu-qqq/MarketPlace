@@ -70,8 +70,7 @@ class BrandPresetQueryFactoryTest {
         void createCriteria_WithStatuses_ReturnsCriteriaWithFilter() {
             // given
             List<String> statuses = List.of("ACTIVE", "INACTIVE");
-            BrandPresetSearchParams params =
-                    BrandPresetQueryFixtures.searchParams(null, statuses);
+            BrandPresetSearchParams params = BrandPresetQueryFixtures.searchParams(null, statuses);
             mockCommonVoFactory();
 
             // when

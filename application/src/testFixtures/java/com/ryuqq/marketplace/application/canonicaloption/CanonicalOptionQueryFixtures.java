@@ -25,8 +25,7 @@ public final class CanonicalOptionQueryFixtures {
     // ===== CanonicalOptionGroupSearchParams Fixtures =====
 
     public static CanonicalOptionGroupSearchParams searchParams() {
-        return new CanonicalOptionGroupSearchParams(
-                null, null, null, defaultCommonSearchParams());
+        return new CanonicalOptionGroupSearchParams(null, null, null, defaultCommonSearchParams());
     }
 
     public static CanonicalOptionGroupSearchParams searchParams(Boolean active) {

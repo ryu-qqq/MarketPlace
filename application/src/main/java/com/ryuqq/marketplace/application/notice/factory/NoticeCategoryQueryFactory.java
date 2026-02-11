@@ -35,10 +35,7 @@ public class NoticeCategoryQueryFactory {
                         params.commonSearchParams().includeDeleted());
 
         return new NoticeCategorySearchCriteria(
-                params.active(),
-                params.searchField(),
-                params.searchWord(),
-                queryContext);
+                params.active(), params.searchField(), params.searchWord(), queryContext);
     }
 
     private NoticeCategorySortKey resolveSortKey(String sortKeyString) {

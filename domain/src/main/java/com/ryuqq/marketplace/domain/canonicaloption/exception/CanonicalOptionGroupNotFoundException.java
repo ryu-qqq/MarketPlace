@@ -11,7 +11,6 @@ public class CanonicalOptionGroupNotFoundException extends CanonicalOptionExcept
     }
 
     public CanonicalOptionGroupNotFoundException(Long canonicalOptionGroupId) {
-        super(ERROR_CODE,
-                String.format("캐노니컬 옵션 그룹을 찾을 수 없습니다 (id: %d)", canonicalOptionGroupId));
+        super(ERROR_CODE, String.format("캐노니컬 옵션 그룹을 찾을 수 없습니다 (id: %d)", canonicalOptionGroupId));
     }
 }

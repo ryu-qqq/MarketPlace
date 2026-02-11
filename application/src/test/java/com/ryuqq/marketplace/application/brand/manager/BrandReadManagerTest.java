@@ -61,8 +61,7 @@ class BrandReadManagerTest {
             given(queryPort.findById(id)).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> sut.getById(id))
-                    .isInstanceOf(BrandNotFoundException.class);
+            assertThatThrownBy(() -> sut.getById(id)).isInstanceOf(BrandNotFoundException.class);
         }
     }
 
@@ -76,9 +75,7 @@ class BrandReadManagerTest {
             // given
             BrandSearchCriteria criteria = null; // mock 대상
             List<Brand> expected =
-                    List.of(
-                            BrandFixtures.activeBrand(1L),
-                            BrandFixtures.activeBrand(2L));
+                    List.of(BrandFixtures.activeBrand(1L), BrandFixtures.activeBrand(2L));
 
             given(queryPort.findByCriteria(criteria)).willReturn(expected);
 

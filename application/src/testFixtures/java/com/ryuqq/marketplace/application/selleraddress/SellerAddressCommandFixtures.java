@@ -32,30 +32,25 @@ public final class SellerAddressCommandFixtures {
     }
 
     public static RegisterSellerAddressCommand.AddressCommand addressCommand() {
-        return new RegisterSellerAddressCommand.AddressCommand(
-                "06164", "서울 강남구 역삼로 123", "5층");
+        return new RegisterSellerAddressCommand.AddressCommand("06164", "서울 강남구 역삼로 123", "5층");
     }
 
     public static RegisterSellerAddressCommand.AddressCommand addressCommandWithoutDetail() {
-        return new RegisterSellerAddressCommand.AddressCommand(
-                "06164", "서울 강남구 역삼로 123", null);
+        return new RegisterSellerAddressCommand.AddressCommand("06164", "서울 강남구 역삼로 123", null);
     }
 
     // ===== UpdateSellerAddressCommand =====
 
     public static UpdateSellerAddressCommand updateCommand(Long addressId) {
-        return new UpdateSellerAddressCommand(
-                addressId, "수정된 주소명", updateAddressCommand(), null);
+        return new UpdateSellerAddressCommand(addressId, "수정된 주소명", updateAddressCommand(), null);
     }
 
     public static UpdateSellerAddressCommand updateCommandSetDefault(Long addressId) {
-        return new UpdateSellerAddressCommand(
-                addressId, "수정된 주소명", updateAddressCommand(), true);
+        return new UpdateSellerAddressCommand(addressId, "수정된 주소명", updateAddressCommand(), true);
     }
 
     public static UpdateSellerAddressCommand.AddressCommand updateAddressCommand() {
-        return new UpdateSellerAddressCommand.AddressCommand(
-                "06165", "서울 강남구 테헤란로 456", "10층");
+        return new UpdateSellerAddressCommand.AddressCommand("06165", "서울 강남구 테헤란로 456", "10층");
     }
 
     // ===== DeleteSellerAddressCommand =====

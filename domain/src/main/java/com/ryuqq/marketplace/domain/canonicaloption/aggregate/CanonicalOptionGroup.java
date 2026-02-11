@@ -1,17 +1,13 @@
 package com.ryuqq.marketplace.domain.canonicaloption.aggregate;
 
+import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionGroupId;
+import com.ryuqq.marketplace.domain.canonicaloption.vo.CanonicalOptionGroupCode;
+import com.ryuqq.marketplace.domain.canonicaloption.vo.CanonicalOptionGroupName;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
-import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionGroupId;
-import com.ryuqq.marketplace.domain.canonicaloption.vo.CanonicalOptionGroupCode;
-import com.ryuqq.marketplace.domain.canonicaloption.vo.CanonicalOptionGroupName;
-
-/**
- * 캐노니컬 옵션 그룹 Aggregate Root (read-only).
- * 시스템이 관리하는 정규화된 옵션 표준. DB migration으로만 데이터 관리.
- */
+/** 캐노니컬 옵션 그룹 Aggregate Root (read-only). 시스템이 관리하는 정규화된 옵션 표준. DB migration으로만 데이터 관리. */
 public class CanonicalOptionGroup {
 
     private final CanonicalOptionGroupId id;

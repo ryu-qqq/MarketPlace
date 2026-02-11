@@ -27,7 +27,8 @@ class ProductOptionMappingTest {
             SellerOptionValueId sellerOptionValueId = SellerOptionValueId.of(100L);
 
             // when
-            ProductOptionMapping mapping = ProductOptionMapping.forNew(productId, sellerOptionValueId);
+            ProductOptionMapping mapping =
+                    ProductOptionMapping.forNew(productId, sellerOptionValueId);
 
             // then
             assertThat(mapping.id().isNew()).isTrue();
@@ -49,8 +50,8 @@ class ProductOptionMappingTest {
             SellerOptionValueId sellerOptionValueId = SellerOptionValueId.of(100L);
 
             // when
-            ProductOptionMapping mapping = ProductOptionMapping.reconstitute(
-                    id, productId, sellerOptionValueId);
+            ProductOptionMapping mapping =
+                    ProductOptionMapping.reconstitute(id, productId, sellerOptionValueId);
 
             // then
             assertThat(mapping.id()).isEqualTo(id);
@@ -70,10 +71,11 @@ class ProductOptionMappingTest {
         @DisplayName("idValue()는 ID의 값을 반환한다")
         void idValueReturnsIdValue() {
             // given
-            ProductOptionMapping mapping = ProductOptionMapping.reconstitute(
-                    ProductOptionMappingId.of(123L),
-                    ProductId.of(1L),
-                    SellerOptionValueId.of(100L));
+            ProductOptionMapping mapping =
+                    ProductOptionMapping.reconstitute(
+                            ProductOptionMappingId.of(123L),
+                            ProductId.of(1L),
+                            SellerOptionValueId.of(100L));
 
             // when & then
             assertThat(mapping.idValue()).isEqualTo(123L);

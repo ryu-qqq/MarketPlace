@@ -23,8 +23,7 @@ class ProductNoticeEntryTest {
         @DisplayName("필수 정보로 신규 고시정보 항목을 생성한다")
         void createNewProductNoticeEntry() {
             // given
-            NoticeFieldId fieldId =
-                    NoticeFieldId.of(ProductNoticeFixtures.DEFAULT_NOTICE_FIELD_ID);
+            NoticeFieldId fieldId = NoticeFieldId.of(ProductNoticeFixtures.DEFAULT_NOTICE_FIELD_ID);
             NoticeFieldValue value = ProductNoticeFixtures.defaultNoticeFieldValue();
 
             // when
@@ -36,7 +35,8 @@ class ProductNoticeEntryTest {
             assertThat(entry.noticeFieldIdValue())
                     .isEqualTo(ProductNoticeFixtures.DEFAULT_NOTICE_FIELD_ID);
             assertThat(entry.fieldValue()).isEqualTo(value);
-            assertThat(entry.fieldValueValue()).isEqualTo(ProductNoticeFixtures.DEFAULT_FIELD_VALUE);
+            assertThat(entry.fieldValueValue())
+                    .isEqualTo(ProductNoticeFixtures.DEFAULT_FIELD_VALUE);
         }
     }
 
@@ -67,8 +67,7 @@ class ProductNoticeEntryTest {
         @DisplayName("Fixtures를 사용하여 고시정보 항목을 복원한다")
         void reconstituteUsingFixtures() {
             // when
-            ProductNoticeEntry entry =
-                    ProductNoticeFixtures.existingEntry(123L, 200L, "테스트 값");
+            ProductNoticeEntry entry = ProductNoticeFixtures.existingEntry(123L, 200L, "테스트 값");
 
             // then
             assertThat(entry.idValue()).isEqualTo(123L);

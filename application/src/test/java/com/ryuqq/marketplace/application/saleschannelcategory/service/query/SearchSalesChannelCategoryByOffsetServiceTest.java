@@ -47,9 +47,13 @@ class SearchSalesChannelCategoryByOffsetServiceTest {
                     SalesChannelCategoryQueryFixtures.searchParams(0, 20);
             SalesChannelCategorySearchCriteria criteria =
                     SalesChannelCategorySearchCriteria.of(
-                            null, null, null, null,
+                            null,
+                            null,
+                            null,
+                            null,
                             com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.saleschannelcategory.query.SalesChannelCategorySortKey.defaultKey()));
+                                    com.ryuqq.marketplace.domain.saleschannelcategory.query
+                                            .SalesChannelCategorySortKey.defaultKey()));
             List<SalesChannelCategory> categories =
                     List.of(
                             SalesChannelCategoryFixtures.activeSalesChannelCategory(1L),
@@ -87,9 +91,13 @@ class SearchSalesChannelCategoryByOffsetServiceTest {
                     SalesChannelCategoryQueryFixtures.searchParams(0, 20);
             SalesChannelCategorySearchCriteria criteria =
                     SalesChannelCategorySearchCriteria.of(
-                            null, null, null, null,
+                            null,
+                            null,
+                            null,
+                            null,
                             com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.saleschannelcategory.query.SalesChannelCategorySortKey.defaultKey()));
+                                    com.ryuqq.marketplace.domain.saleschannelcategory.query
+                                            .SalesChannelCategorySortKey.defaultKey()));
             List<SalesChannelCategory> emptyCategories = Collections.emptyList();
             long totalElements = 0L;
 
@@ -99,7 +107,9 @@ class SearchSalesChannelCategoryByOffsetServiceTest {
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readManager.findByCriteria(criteria)).willReturn(emptyCategories);
             given(readManager.countByCriteria(criteria)).willReturn(totalElements);
-            given(assembler.toPageResult(emptyCategories, params.page(), params.size(), totalElements))
+            given(
+                            assembler.toPageResult(
+                                    emptyCategories, params.page(), params.size(), totalElements))
                     .willReturn(expected);
 
             // when
@@ -119,9 +129,13 @@ class SearchSalesChannelCategoryByOffsetServiceTest {
                     SalesChannelCategoryQueryFixtures.searchParams(salesChannelIds);
             SalesChannelCategorySearchCriteria criteria =
                     SalesChannelCategorySearchCriteria.of(
-                            null, null, null, null,
+                            null,
+                            null,
+                            null,
+                            null,
                             com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.saleschannelcategory.query.SalesChannelCategorySortKey.defaultKey()));
+                                    com.ryuqq.marketplace.domain.saleschannelcategory.query
+                                            .SalesChannelCategorySortKey.defaultKey()));
             List<SalesChannelCategory> categories =
                     List.of(SalesChannelCategoryFixtures.activeSalesChannelCategory(1L));
             long totalElements = 1L;
@@ -152,9 +166,13 @@ class SearchSalesChannelCategoryByOffsetServiceTest {
                     SalesChannelCategoryQueryFixtures.searchParams(null, statuses, null, null);
             SalesChannelCategorySearchCriteria criteria =
                     SalesChannelCategorySearchCriteria.of(
-                            null, null, null, null,
+                            null,
+                            null,
+                            null,
+                            null,
                             com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.saleschannelcategory.query.SalesChannelCategorySortKey.defaultKey()));
+                                    com.ryuqq.marketplace.domain.saleschannelcategory.query
+                                            .SalesChannelCategorySortKey.defaultKey()));
             List<SalesChannelCategory> categories =
                     List.of(SalesChannelCategoryFixtures.activeSalesChannelCategory());
             long totalElements = 1L;

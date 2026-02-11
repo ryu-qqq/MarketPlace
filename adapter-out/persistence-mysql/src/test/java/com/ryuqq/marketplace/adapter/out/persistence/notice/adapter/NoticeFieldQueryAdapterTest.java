@@ -168,9 +168,7 @@ class NoticeFieldQueryAdapterTest {
             assertThat(result.get(categoryId2)).hasSize(1);
             assertThat(result.get(categoryId1)).containsExactly(domain1, domain2);
             assertThat(result.get(categoryId2)).containsExactly(domain3);
-            then(fieldJpaRepository)
-                    .should()
-                    .findByNoticeCategoryIdInOrderBySortOrder(categoryIds);
+            then(fieldJpaRepository).should().findByNoticeCategoryIdInOrderBySortOrder(categoryIds);
         }
 
         @Test
@@ -188,9 +186,7 @@ class NoticeFieldQueryAdapterTest {
 
             // then
             assertThat(result).isEmpty();
-            then(fieldJpaRepository)
-                    .should()
-                    .findByNoticeCategoryIdInOrderBySortOrder(categoryIds);
+            then(fieldJpaRepository).should().findByNoticeCategoryIdInOrderBySortOrder(categoryIds);
             then(mapper).shouldHaveNoInteractions();
         }
 

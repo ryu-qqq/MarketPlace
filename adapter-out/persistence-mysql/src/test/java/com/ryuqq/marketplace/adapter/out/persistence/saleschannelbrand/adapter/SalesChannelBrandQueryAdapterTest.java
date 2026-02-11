@@ -59,8 +59,7 @@ class SalesChannelBrandQueryAdapterTest {
         void findById_WithExistingId_ReturnsDomain() {
             // given
             SalesChannelBrandId id = SalesChannelBrandId.of(1L);
-            SalesChannelBrandJpaEntity entity =
-                    SalesChannelBrandJpaEntityFixtures.activeEntity(1L);
+            SalesChannelBrandJpaEntity entity = SalesChannelBrandJpaEntityFixtures.activeEntity(1L);
             SalesChannelBrand domain = SalesChannelBrandFixtures.activeSalesChannelBrand(1L);
 
             given(repository.findById(1L)).willReturn(Optional.of(entity));

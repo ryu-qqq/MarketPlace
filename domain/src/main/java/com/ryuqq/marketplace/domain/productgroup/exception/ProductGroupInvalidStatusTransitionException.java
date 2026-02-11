@@ -1,9 +1,8 @@
 package com.ryuqq.marketplace.domain.productgroup.exception;
 
-import java.util.Map;
-
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
+import java.util.Map;
 
 /** 유효하지 않은 상태 전이 시 발생하는 예외. */
 public class ProductGroupInvalidStatusTransitionException extends DomainException {

@@ -44,7 +44,8 @@ class DeleteSellerAddressServiceTest {
             // given
             Long addressId = 1L;
             Long sellerId = 1L;
-            DeleteSellerAddressCommand command = SellerAddressCommandFixtures.deleteCommand(addressId);
+            DeleteSellerAddressCommand command =
+                    SellerAddressCommandFixtures.deleteCommand(addressId);
             SellerAddress address =
                     SellerAddressFixtures.nonDefaultShippingAddress(addressId, sellerId, "테스트 주소");
             Instant changedAt = CommonVoFixtures.now();
@@ -69,7 +70,8 @@ class DeleteSellerAddressServiceTest {
             // given
             Long addressId = 1L;
             Long sellerId = 1L;
-            DeleteSellerAddressCommand command = SellerAddressCommandFixtures.deleteCommand(addressId);
+            DeleteSellerAddressCommand command =
+                    SellerAddressCommandFixtures.deleteCommand(addressId);
             SellerAddress address =
                     SellerAddressFixtures.nonDefaultShippingAddress(addressId, sellerId, "비기본 주소");
             Instant changedAt = CommonVoFixtures.now();

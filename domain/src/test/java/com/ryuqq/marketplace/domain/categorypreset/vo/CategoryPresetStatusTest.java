@@ -58,8 +58,7 @@ class CategoryPresetStatusTest {
         @Test
         @DisplayName("빈 문자열이면 ACTIVE를 반환한다")
         void blankReturnsActive() {
-            assertThat(CategoryPresetStatus.fromString(""))
-                    .isEqualTo(CategoryPresetStatus.ACTIVE);
+            assertThat(CategoryPresetStatus.fromString("")).isEqualTo(CategoryPresetStatus.ACTIVE);
             assertThat(CategoryPresetStatus.fromString("   "))
                     .isEqualTo(CategoryPresetStatus.ACTIVE);
         }
@@ -80,8 +79,7 @@ class CategoryPresetStatusTest {
         @DisplayName("모든 상태 값이 존재한다")
         void allValuesExist() {
             assertThat(CategoryPresetStatus.values())
-                    .containsExactly(
-                            CategoryPresetStatus.ACTIVE, CategoryPresetStatus.INACTIVE);
+                    .containsExactly(CategoryPresetStatus.ACTIVE, CategoryPresetStatus.INACTIVE);
         }
     }
 }

@@ -80,8 +80,7 @@ class CategoryMappingStatusTest {
         @DisplayName("모든 상태 값이 존재한다")
         void allValuesExist() {
             assertThat(CategoryMappingStatus.values())
-                    .containsExactly(
-                            CategoryMappingStatus.ACTIVE, CategoryMappingStatus.INACTIVE);
+                    .containsExactly(CategoryMappingStatus.ACTIVE, CategoryMappingStatus.INACTIVE);
         }
     }
 }

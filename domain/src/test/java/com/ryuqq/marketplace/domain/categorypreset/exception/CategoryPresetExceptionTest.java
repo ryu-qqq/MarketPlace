@@ -31,8 +31,9 @@ class CategoryPresetExceptionTest {
         @Test
         @DisplayName("ErrorCode와 커스텀 메시지로 예외를 생성한다")
         void createWithErrorCodeAndMessage() {
-            CategoryPresetException exception = new CategoryPresetException(
-                    CategoryPresetErrorCode.CATEGORY_PRESET_NOT_FOUND, "ID 100 프리셋 없음");
+            CategoryPresetException exception =
+                    new CategoryPresetException(
+                            CategoryPresetErrorCode.CATEGORY_PRESET_NOT_FOUND, "ID 100 프리셋 없음");
 
             assertThat(exception.getMessage()).isEqualTo("ID 100 프리셋 없음");
             assertThat(exception.code()).isEqualTo("CATPRE-001");
@@ -42,8 +43,9 @@ class CategoryPresetExceptionTest {
         @DisplayName("ErrorCode와 원인 예외로 예외를 생성한다")
         void createWithErrorCodeAndCause() {
             RuntimeException cause = new RuntimeException("원인 예외");
-            CategoryPresetException exception = new CategoryPresetException(
-                    CategoryPresetErrorCode.CATEGORY_PRESET_NOT_FOUND, cause);
+            CategoryPresetException exception =
+                    new CategoryPresetException(
+                            CategoryPresetErrorCode.CATEGORY_PRESET_NOT_FOUND, cause);
 
             assertThat(exception.getCause()).isEqualTo(cause);
             assertThat(exception.code()).isEqualTo("CATPRE-001");
@@ -114,8 +116,8 @@ class CategoryPresetExceptionTest {
         @Test
         @DisplayName("CategoryPresetException은 DomainException을 상속한다")
         void categoryPresetExceptionExtendsDomainException() {
-            CategoryPresetException exception = new CategoryPresetException(
-                    CategoryPresetErrorCode.CATEGORY_PRESET_NOT_FOUND);
+            CategoryPresetException exception =
+                    new CategoryPresetException(CategoryPresetErrorCode.CATEGORY_PRESET_NOT_FOUND);
             assertThat(exception).isInstanceOf(DomainException.class);
         }
 

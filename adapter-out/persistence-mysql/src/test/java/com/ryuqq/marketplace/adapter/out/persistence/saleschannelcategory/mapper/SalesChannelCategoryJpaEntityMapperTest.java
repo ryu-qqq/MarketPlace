@@ -69,7 +69,8 @@ class SalesChannelCategoryJpaEntityMapperTest {
         @DisplayName("비활성 상태 Domain을 Entity로 변환합니다")
         void toEntity_WithInactiveSalesChannelCategory_ConvertsCorrectly() {
             // given
-            SalesChannelCategory domain = SalesChannelCategoryFixtures.inactiveSalesChannelCategory();
+            SalesChannelCategory domain =
+                    SalesChannelCategoryFixtures.inactiveSalesChannelCategory();
 
             // when
             SalesChannelCategoryJpaEntity entity = mapper.toEntity(domain);
@@ -194,18 +195,19 @@ class SalesChannelCategoryJpaEntityMapperTest {
             // given
             SalesChannelCategoryJpaEntity entity =
                     SalesChannelCategoryJpaEntityFixtures.entityWithoutDisplayPath();
-            entity = SalesChannelCategoryJpaEntityFixtures.customEntity(
-                    4L,
-                    1L,
-                    "CAT004",
-                    "테스트 카테고리",
-                    null,
-                    1,
-                    "/CAT004",
-                    1,
-                    false,
-                    "ACTIVE",
-                    null);
+            entity =
+                    SalesChannelCategoryJpaEntityFixtures.customEntity(
+                            4L,
+                            1L,
+                            "CAT004",
+                            "테스트 카테고리",
+                            null,
+                            1,
+                            "/CAT004",
+                            1,
+                            false,
+                            "ACTIVE",
+                            null);
 
             // when
             SalesChannelCategory domain = mapper.toDomain(entity);
@@ -250,10 +252,8 @@ class SalesChannelCategoryJpaEntityMapperTest {
             // then
             assertThat(converted.idValue()).isEqualTo(original.idValue());
             assertThat(converted.salesChannelId()).isEqualTo(original.salesChannelId());
-            assertThat(converted.externalCategoryCode())
-                    .isEqualTo(original.externalCategoryCode());
-            assertThat(converted.externalCategoryName())
-                    .isEqualTo(original.externalCategoryName());
+            assertThat(converted.externalCategoryCode()).isEqualTo(original.externalCategoryCode());
+            assertThat(converted.externalCategoryName()).isEqualTo(original.externalCategoryName());
             assertThat(converted.parentId()).isEqualTo(original.parentId());
             assertThat(converted.depth()).isEqualTo(original.depth());
             assertThat(converted.path()).isEqualTo(original.path());

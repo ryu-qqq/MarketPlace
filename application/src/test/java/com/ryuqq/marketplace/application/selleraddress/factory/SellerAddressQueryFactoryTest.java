@@ -47,11 +47,12 @@ class SellerAddressQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(anyString())).willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(0, 20)).willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            any(SellerAddressSortKey.class),
-                            any(SortDirection.class),
-                            any(PageRequest.class),
-                            any(Boolean.class)))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    any(SellerAddressSortKey.class),
+                                    any(SortDirection.class),
+                                    any(PageRequest.class),
+                                    any(Boolean.class)))
                     .willCallRealMethod();
 
             // when
@@ -77,11 +78,12 @@ class SellerAddressQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(anyString())).willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(0, 20)).willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            any(SellerAddressSortKey.class),
-                            any(SortDirection.class),
-                            any(PageRequest.class),
-                            any(Boolean.class)))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    any(SellerAddressSortKey.class),
+                                    any(SortDirection.class),
+                                    any(PageRequest.class),
+                                    any(Boolean.class)))
                     .willCallRealMethod();
 
             // when
@@ -105,11 +107,12 @@ class SellerAddressQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(anyString())).willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(0, 20)).willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            any(SellerAddressSortKey.class),
-                            any(SortDirection.class),
-                            any(PageRequest.class),
-                            any(Boolean.class)))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    any(SellerAddressSortKey.class),
+                                    any(SortDirection.class),
+                                    any(PageRequest.class),
+                                    any(Boolean.class)))
                     .willCallRealMethod();
 
             // when
@@ -134,11 +137,12 @@ class SellerAddressQueryFactoryTest {
 
             given(commonVoFactory.parseSortDirection(anyString())).willReturn(sortDirection);
             given(commonVoFactory.createPageRequest(page, size)).willReturn(pageRequest);
-            given(commonVoFactory.createQueryContext(
-                            any(SellerAddressSortKey.class),
-                            any(SortDirection.class),
-                            any(PageRequest.class),
-                            any(Boolean.class)))
+            given(
+                            commonVoFactory.createQueryContext(
+                                    any(SellerAddressSortKey.class),
+                                    any(SortDirection.class),
+                                    any(PageRequest.class),
+                                    any(Boolean.class)))
                     .willCallRealMethod();
 
             // when

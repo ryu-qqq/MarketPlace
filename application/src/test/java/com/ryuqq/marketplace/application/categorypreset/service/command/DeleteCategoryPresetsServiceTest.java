@@ -76,8 +76,7 @@ class DeleteCategoryPresetsServiceTest {
                     CategoryPresetCommandFixtures.deleteCommand(List.of(1L));
             Instant now = CommonVoFixtures.now();
             StatusChangeContext<List<Long>> context = new StatusChangeContext<>(command.ids(), now);
-            List<CategoryPreset> presets =
-                    List.of(CategoryPresetFixtures.activeCategoryPreset(1L));
+            List<CategoryPreset> presets = List.of(CategoryPresetFixtures.activeCategoryPreset(1L));
             int expectedDeactivated = 1;
 
             given(commandFactory.createDeactivateContext(command)).willReturn(context);

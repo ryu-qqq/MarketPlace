@@ -52,8 +52,7 @@ class SalesChannelCategoryCommandAdapterTest {
         @DisplayName("Domain을 Entity로 변환 후 저장하고 ID를 반환합니다")
         void persist_WithValidDomain_SavesAndReturnsId() {
             // given
-            SalesChannelCategory domain =
-                    SalesChannelCategoryFixtures.newSalesChannelCategory();
+            SalesChannelCategory domain = SalesChannelCategoryFixtures.newSalesChannelCategory();
             SalesChannelCategoryJpaEntity entityToSave =
                     SalesChannelCategoryJpaEntityFixtures.newEntity();
             SalesChannelCategoryJpaEntity savedEntity =
@@ -75,8 +74,7 @@ class SalesChannelCategoryCommandAdapterTest {
         @DisplayName("활성 상태 SalesChannelCategory를 저장합니다")
         void persist_WithActiveSalesChannelCategory_Saves() {
             // given
-            SalesChannelCategory domain =
-                    SalesChannelCategoryFixtures.activeSalesChannelCategory();
+            SalesChannelCategory domain = SalesChannelCategoryFixtures.activeSalesChannelCategory();
             SalesChannelCategoryJpaEntity entityToSave =
                     SalesChannelCategoryJpaEntityFixtures.newEntity();
             SalesChannelCategoryJpaEntity savedEntity =
@@ -140,8 +138,7 @@ class SalesChannelCategoryCommandAdapterTest {
         @DisplayName("하위 카테고리를 저장합니다")
         void persist_WithChildCategory_Saves() {
             // given
-            SalesChannelCategory domain =
-                    SalesChannelCategoryFixtures.newChildCategory(100L);
+            SalesChannelCategory domain = SalesChannelCategoryFixtures.newChildCategory(100L);
             SalesChannelCategoryJpaEntity entityToSave =
                     SalesChannelCategoryJpaEntityFixtures.childEntity(100L);
             SalesChannelCategoryJpaEntity savedEntity =

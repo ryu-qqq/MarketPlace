@@ -36,7 +36,10 @@ public final class SalesChannelCategoryQueryFixtures {
     }
 
     public static SalesChannelCategorySearchParams searchParams(
-            List<Long> salesChannelIds, List<String> statuses, String searchField, String searchWord) {
+            List<Long> salesChannelIds,
+            List<String> statuses,
+            String searchField,
+            String searchWord) {
         return SalesChannelCategorySearchParams.of(
                 salesChannelIds, statuses, searchField, searchWord, defaultCommonSearchParams());
     }
@@ -69,7 +72,10 @@ public final class SalesChannelCategoryQueryFixtures {
     }
 
     public static SalesChannelCategoryResult salesChannelCategoryResult(
-            Long id, Long salesChannelId, String externalCategoryCode, String externalCategoryName) {
+            Long id,
+            Long salesChannelId,
+            String externalCategoryCode,
+            String externalCategoryName) {
         Instant now = Instant.now();
         return new SalesChannelCategoryResult(
                 id,

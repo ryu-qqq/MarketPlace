@@ -29,8 +29,7 @@ public class DeleteCategoryPresetsService implements DeleteCategoryPresetsUseCas
 
     @Override
     public int execute(DeleteCategoryPresetsCommand command) {
-        StatusChangeContext<List<Long>> context =
-                commandFactory.createDeactivateContext(command);
+        StatusChangeContext<List<Long>> context = commandFactory.createDeactivateContext(command);
         List<CategoryPreset> presets = readManager.findAllByIds(context.id());
         return facade.deactivateWithMappings(presets, context.changedAt());
     }

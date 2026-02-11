@@ -65,8 +65,7 @@ public class CanonicalOptionValueJpaEntity extends BaseAuditEntity {
             Instant createdAt,
             Instant updatedAt) {
         return new CanonicalOptionValueJpaEntity(
-                id, canonicalOptionGroupId, code, nameKo, nameEn, sortOrder,
-                createdAt, updatedAt);
+                id, canonicalOptionGroupId, code, nameKo, nameEn, sortOrder, createdAt, updatedAt);
     }
 
     public Long getId() {

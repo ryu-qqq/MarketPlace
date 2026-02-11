@@ -120,7 +120,8 @@ class SalesChannelCategoryTest {
         @DisplayName("영속성에서 활성 상태의 카테고리를 복원한다")
         void reconstituteActiveCategory() {
             // given
-            SalesChannelCategoryId id = SalesChannelCategoryFixtures.defaultSalesChannelCategoryId();
+            SalesChannelCategoryId id =
+                    SalesChannelCategoryFixtures.defaultSalesChannelCategoryId();
             Instant createdAt = CommonVoFixtures.yesterday();
             Instant updatedAt = CommonVoFixtures.yesterday();
 
@@ -187,7 +188,8 @@ class SalesChannelCategoryTest {
         @DisplayName("카테고리 정보를 수정한다")
         void updateCategoryInfo() {
             // given
-            SalesChannelCategory category = SalesChannelCategoryFixtures.activeSalesChannelCategory();
+            SalesChannelCategory category =
+                    SalesChannelCategoryFixtures.activeSalesChannelCategory();
             SalesChannelCategoryUpdateData updateData =
                     SalesChannelCategoryFixtures.salesChannelCategoryUpdateData();
             Instant now = CommonVoFixtures.now();
@@ -196,7 +198,8 @@ class SalesChannelCategoryTest {
             category.update(updateData, now);
 
             // then
-            assertThat(category.externalCategoryName()).isEqualTo(updateData.externalCategoryName());
+            assertThat(category.externalCategoryName())
+                    .isEqualTo(updateData.externalCategoryName());
             assertThat(category.sortOrder()).isEqualTo(updateData.sortOrder());
             assertThat(category.isLeaf()).isEqualTo(updateData.leaf());
             assertThat(category.status()).isEqualTo(updateData.status());
@@ -207,7 +210,8 @@ class SalesChannelCategoryTest {
         @DisplayName("카테고리를 말단 노드로 변경한다")
         void updateToLeafCategory() {
             // given
-            SalesChannelCategory category = SalesChannelCategoryFixtures.activeSalesChannelCategory();
+            SalesChannelCategory category =
+                    SalesChannelCategoryFixtures.activeSalesChannelCategory();
             SalesChannelCategoryUpdateData updateData =
                     SalesChannelCategoryFixtures.salesChannelCategoryUpdateData(
                             "변경된 카테고리", 5, true, SalesChannelCategoryStatus.ACTIVE);
@@ -224,7 +228,8 @@ class SalesChannelCategoryTest {
         @DisplayName("카테고리 상태를 비활성화로 변경한다")
         void updateToInactiveStatus() {
             // given
-            SalesChannelCategory category = SalesChannelCategoryFixtures.activeSalesChannelCategory();
+            SalesChannelCategory category =
+                    SalesChannelCategoryFixtures.activeSalesChannelCategory();
             SalesChannelCategoryUpdateData updateData =
                     SalesChannelCategoryFixtures.salesChannelCategoryUpdateData(
                             "비활성 카테고리", 1, false, SalesChannelCategoryStatus.INACTIVE);
@@ -247,7 +252,8 @@ class SalesChannelCategoryTest {
         @DisplayName("idValue()는 ID의 값을 반환한다")
         void idValueReturnsIdValue() {
             // given
-            SalesChannelCategory category = SalesChannelCategoryFixtures.activeSalesChannelCategory(100L);
+            SalesChannelCategory category =
+                    SalesChannelCategoryFixtures.activeSalesChannelCategory(100L);
 
             // when
             Long idValue = category.idValue();
@@ -260,7 +266,8 @@ class SalesChannelCategoryTest {
         @DisplayName("isActive()는 상태가 ACTIVE이면 true를 반환한다")
         void isActiveReturnsTrueWhenStatusIsActive() {
             // given
-            SalesChannelCategory category = SalesChannelCategoryFixtures.activeSalesChannelCategory();
+            SalesChannelCategory category =
+                    SalesChannelCategoryFixtures.activeSalesChannelCategory();
 
             // then
             assertThat(category.isActive()).isTrue();
@@ -270,7 +277,8 @@ class SalesChannelCategoryTest {
         @DisplayName("isActive()는 상태가 INACTIVE이면 false를 반환한다")
         void isActiveReturnsFalseWhenStatusIsInactive() {
             // given
-            SalesChannelCategory category = SalesChannelCategoryFixtures.inactiveSalesChannelCategory();
+            SalesChannelCategory category =
+                    SalesChannelCategoryFixtures.inactiveSalesChannelCategory();
 
             // then
             assertThat(category.isActive()).isFalse();
@@ -285,7 +293,8 @@ class SalesChannelCategoryTest {
         @DisplayName("최상위 카테고리는 부모 ID가 null이다")
         void rootCategoryHasNullParentId() {
             // given & when
-            SalesChannelCategory category = SalesChannelCategoryFixtures.activeSalesChannelCategory();
+            SalesChannelCategory category =
+                    SalesChannelCategoryFixtures.activeSalesChannelCategory();
 
             // then
             assertThat(category.parentId()).isNull();
