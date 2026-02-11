@@ -141,6 +141,9 @@ API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
 |`sales-channel-category:read` / `sales-channel-category:write`
 |외부채널 카테고리 조회 / 등록
 
+|`sales-channel:read` / `sales-channel:write`
+|판매채널 조회 / 등록·수정
+
 |`notice-category:read`
 |고시정보 카테고리 조회
 |===
@@ -249,6 +252,11 @@ include::category-preset/category-preset.adoc[]
 == 캐노니컬 옵션 그룹 (Canonical Option Group)
 
 include::canonical-option-group/canonical-option-group.adoc[]
+
+
+== 판매채널 (Sales Channel)
+
+include::sales-channel/sales-channel.adoc[]
 
 
 == 외부채널 브랜드 (Sales Channel Brand)

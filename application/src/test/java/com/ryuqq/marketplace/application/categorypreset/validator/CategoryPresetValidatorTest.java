@@ -11,7 +11,6 @@ import com.ryuqq.marketplace.application.categorypreset.manager.CategoryPresetRe
 import com.ryuqq.marketplace.application.saleschannelcategory.manager.SalesChannelCategoryReadManager;
 import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.category.aggregate.Category;
-import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.categorypreset.CategoryPresetFixtures;
 import com.ryuqq.marketplace.domain.categorypreset.aggregate.CategoryPreset;
 import com.ryuqq.marketplace.domain.categorypreset.exception.CategoryPresetChannelMismatchException;
@@ -21,7 +20,6 @@ import com.ryuqq.marketplace.domain.categorypreset.exception.CategoryPresetSales
 import com.ryuqq.marketplace.domain.categorypreset.id.CategoryPresetId;
 import com.ryuqq.marketplace.domain.saleschannelcategory.aggregate.SalesChannelCategory;
 import com.ryuqq.marketplace.domain.saleschannelcategory.id.SalesChannelCategoryId;
-import com.ryuqq.marketplace.domain.shop.ShopFixtures;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import com.ryuqq.marketplace.domain.shop.id.ShopId;
 import java.util.List;
