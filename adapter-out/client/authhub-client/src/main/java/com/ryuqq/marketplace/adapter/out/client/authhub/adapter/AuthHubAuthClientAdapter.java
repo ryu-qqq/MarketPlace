@@ -1,12 +1,14 @@
 package com.ryuqq.marketplace.adapter.out.client.authhub.adapter;
 
 import com.ryuqq.authhub.sdk.api.AuthApi;
+import com.ryuqq.authhub.sdk.api.InternalApi;
 import com.ryuqq.authhub.sdk.exception.AuthHubException;
 import com.ryuqq.authhub.sdk.exception.AuthHubUnauthorizedException;
 import com.ryuqq.authhub.sdk.model.auth.LoginResponse;
 import com.ryuqq.authhub.sdk.model.auth.MyContextResponse;
 import com.ryuqq.authhub.sdk.model.auth.TokenResponse;
 import com.ryuqq.authhub.sdk.model.common.ApiResponse;
+import com.ryuqq.authhub.sdk.model.internal.UserContext;
 import com.ryuqq.marketplace.adapter.out.client.authhub.dto.AuthHubLoginResult;
 import com.ryuqq.marketplace.adapter.out.client.authhub.dto.AuthHubRefreshResult;
 import com.ryuqq.marketplace.adapter.out.client.authhub.dto.AuthHubUserContext;
@@ -33,10 +35,13 @@ import org.springframework.stereotype.Component;
 public class AuthHubAuthClientAdapter implements AuthClient {
 
     private final AuthApi authApi;
+    private final InternalApi internalApi;
     private final AuthHubAuthMapper mapper;
 
-    public AuthHubAuthClientAdapter(AuthApi authApi, AuthHubAuthMapper mapper) {
+    public AuthHubAuthClientAdapter(
+            AuthApi authApi, InternalApi internalApi, AuthHubAuthMapper mapper) {
         this.authApi = authApi;
+        this.internalApi = internalApi;
         this.mapper = mapper;
     }
 
@@ -78,12 +83,9 @@ public class AuthHubAuthClientAdapter implements AuthClient {
     }
 
     @Override
-    public MyInfoResult getMyInfo(String accessToken) {
-        // AuthHubTokenContextFilter가 Authorization 헤더의 토큰을 ThreadLocal에 자동 설정하므로,
-        // SDK의 getMe()는 파라미터 없이 호출해도 ThreadLocal 토큰을 사용합니다.
-        // AuthHubException은 GlobalExceptionHandler에서 올바른 HTTP 상태 코드로 매핑됩니다.
-        ApiResponse<MyContextResponse> response = authApi.getMe();
-        return mapper.toMyInfoResult(response.data());
+    public MyInfoResult getMyInfo(String userId) {
+        ApiResponse<UserContext> response = internalApi.getUserContext(userId);
+        return mapper.toMyInfoResultFromInternal(response.data());
     }
 
     /**

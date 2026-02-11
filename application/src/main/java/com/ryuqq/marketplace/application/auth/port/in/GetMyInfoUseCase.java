@@ -15,8 +15,8 @@ public interface GetMyInfoUseCase {
     /**
      * 내 정보를 조회합니다.
      *
-     * @param accessToken 액세스 토큰
+     * @param userId 사용자 ID
      * @return 사용자 정보
      */
-    MyInfoResult execute(String accessToken);
+    MyInfoResult execute(String userId);
 }
