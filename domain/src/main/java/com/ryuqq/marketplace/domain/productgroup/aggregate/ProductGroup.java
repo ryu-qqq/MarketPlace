@@ -11,7 +11,6 @@ import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidOp
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidStatusTransitionException;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupNoThumbnailException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionHtml;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
@@ -22,6 +21,7 @@ import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 /**
  * 상품 그룹 Aggregate Root.
  * 상품의 상위 개념으로, 공통 속성과 셀러 옵션 구조를 관리한다.
+ * 상세설명(ProductGroupDescription)은 별도 Aggregate로 분리되어 ProductGroupId로 연결된다.
  */
 public class ProductGroup {
 
@@ -34,7 +34,6 @@ public class ProductGroup {
     private ProductGroupName productGroupName;
     private final OptionType optionType;
     private ProductGroupStatus status;
-    private ProductGroupDescription description;
     private final List<ProductGroupImage> images;
     private final List<SellerOptionGroup> sellerOptionGroups;
     private final Instant createdAt;
@@ -50,7 +49,6 @@ public class ProductGroup {
             ProductGroupName productGroupName,
             OptionType optionType,
             ProductGroupStatus status,
-            ProductGroupDescription description,
             List<ProductGroupImage> images,
             List<SellerOptionGroup> sellerOptionGroups,
             Instant createdAt,
@@ -64,7 +62,6 @@ public class ProductGroup {
         this.productGroupName = productGroupName;
         this.optionType = optionType;
         this.status = status;
-        this.description = description;
         this.images = new ArrayList<>(images);
         this.sellerOptionGroups = new ArrayList<>(sellerOptionGroups);
         this.createdAt = createdAt;
@@ -80,16 +77,11 @@ public class ProductGroup {
             RefundPolicyId refundPolicyId,
             ProductGroupName productGroupName,
             OptionType optionType,
-            DescriptionHtml descriptionHtml,
             List<ProductGroupImage> images,
             List<SellerOptionGroup> sellerOptionGroups,
             Instant now) {
-        ProductGroupId productGroupId = ProductGroupId.forNew();
-        ProductGroupDescription description = descriptionHtml != null && !descriptionHtml.isEmpty()
-                ? ProductGroupDescription.forNew(productGroupId, descriptionHtml)
-                : null;
         ProductGroup productGroup = new ProductGroup(
-                productGroupId,
+                ProductGroupId.forNew(),
                 sellerId,
                 brandId,
                 categoryId,
@@ -98,7 +90,6 @@ public class ProductGroup {
                 productGroupName,
                 optionType,
                 ProductGroupStatus.DRAFT,
-                description,
                 images,
                 sellerOptionGroups,
                 now,
@@ -118,14 +109,13 @@ public class ProductGroup {
             ProductGroupName productGroupName,
             OptionType optionType,
             ProductGroupStatus status,
-            ProductGroupDescription description,
             List<ProductGroupImage> images,
             List<SellerOptionGroup> sellerOptionGroups,
             Instant createdAt,
             Instant updatedAt) {
         return new ProductGroup(
                 id, sellerId, brandId, categoryId, shippingPolicyId, refundPolicyId,
-                productGroupName, optionType, status, description,
+                productGroupName, optionType, status,
                 images, sellerOptionGroups, createdAt, updatedAt);
     }
 
@@ -186,18 +176,6 @@ public class ProductGroup {
         this.updatedAt = now;
     }
 
-    /** 상세설명 수정. */
-    public void updateDescription(DescriptionHtml descriptionHtml, Instant now) {
-        if (descriptionHtml == null || descriptionHtml.isEmpty()) {
-            this.description = null;
-        } else if (this.description == null) {
-            this.description = ProductGroupDescription.forNew(this.id, descriptionHtml);
-        } else {
-            this.description.updateContent(descriptionHtml);
-        }
-        this.updatedAt = now;
-    }
-
     /** 이미지 추가. */
     public void addImage(ProductGroupImage image) {
         this.images.add(image);
@@ -255,11 +233,6 @@ public class ProductGroup {
         return sellerOptionGroups.stream()
                 .mapToInt(SellerOptionGroup::optionValueCount)
                 .sum();
-    }
-
-    /** 상세설명 존재 여부. */
-    public boolean hasDescription() {
-        return description != null && !description.isEmpty();
     }
 
     // ── Accessor 메서드 ──
@@ -326,10 +299,6 @@ public class ProductGroup {
 
     public ProductGroupStatus status() {
         return status;
-    }
-
-    public ProductGroupDescription description() {
-        return description;
     }
 
     public List<ProductGroupImage> images() {

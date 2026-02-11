@@ -40,14 +40,13 @@ class ProductGroupTest {
             RefundPolicyId refundPolicyId = RefundPolicyId.of(1L);
             ProductGroupName name = ProductGroupFixtures.defaultProductGroupName();
             OptionType optionType = OptionType.NONE;
-            DescriptionHtml descriptionHtml = ProductGroupFixtures.defaultDescriptionHtml();
             List<ProductGroupImage> images = List.of(ProductGroupFixtures.thumbnailImage());
             Instant now = CommonVoFixtures.now();
 
             // when
             ProductGroup productGroup = ProductGroup.forNew(
                     sellerId, brandId, categoryId, shippingPolicyId, refundPolicyId,
-                    name, optionType, descriptionHtml, images, List.of(), now);
+                    name, optionType, images, List.of(), now);
 
             // then
             assertThat(productGroup).isNotNull();
@@ -58,54 +57,9 @@ class ProductGroupTest {
             assertThat(productGroup.productGroupName()).isEqualTo(name);
             assertThat(productGroup.optionType()).isEqualTo(optionType);
             assertThat(productGroup.status()).isEqualTo(ProductGroupStatus.DRAFT);
-            assertThat(productGroup.hasDescription()).isTrue();
             assertThat(productGroup.images()).hasSize(1);
             assertThat(productGroup.createdAt()).isEqualTo(now);
             assertThat(productGroup.updatedAt()).isEqualTo(now);
-        }
-
-        @Test
-        @DisplayName("상세설명이 null이면 description이 null로 설정된다")
-        void createProductGroupWithNullDescription() {
-            // given & when
-            ProductGroup productGroup = ProductGroup.forNew(
-                    CommonVoFixtures.defaultSellerId(),
-                    BrandId.of(100L),
-                    CategoryId.of(200L),
-                    ShippingPolicyId.of(1L),
-                    RefundPolicyId.of(1L),
-                    ProductGroupFixtures.defaultProductGroupName(),
-                    OptionType.NONE,
-                    null,
-                    List.of(ProductGroupFixtures.thumbnailImage()),
-                    List.of(),
-                    CommonVoFixtures.now());
-
-            // then
-            assertThat(productGroup.description()).isNull();
-            assertThat(productGroup.hasDescription()).isFalse();
-        }
-
-        @Test
-        @DisplayName("상세설명이 empty면 description이 null로 설정된다")
-        void createProductGroupWithEmptyDescription() {
-            // given & when
-            ProductGroup productGroup = ProductGroup.forNew(
-                    CommonVoFixtures.defaultSellerId(),
-                    BrandId.of(100L),
-                    CategoryId.of(200L),
-                    ShippingPolicyId.of(1L),
-                    RefundPolicyId.of(1L),
-                    ProductGroupFixtures.defaultProductGroupName(),
-                    OptionType.NONE,
-                    ProductGroupFixtures.emptyDescriptionHtml(),
-                    List.of(ProductGroupFixtures.thumbnailImage()),
-                    List.of(),
-                    CommonVoFixtures.now());
-
-            // then
-            assertThat(productGroup.description()).isNull();
-            assertThat(productGroup.hasDescription()).isFalse();
         }
 
         @Test
@@ -143,7 +97,6 @@ class ProductGroupTest {
                             RefundPolicyId.of(1L),
                             ProductGroupFixtures.defaultProductGroupName(),
                             OptionType.SINGLE,
-                            ProductGroupFixtures.defaultDescriptionHtml(),
                             List.of(ProductGroupFixtures.thumbnailImage()),
                             List.of(),
                             CommonVoFixtures.now()))
@@ -163,7 +116,6 @@ class ProductGroupTest {
                             RefundPolicyId.of(1L),
                             ProductGroupFixtures.defaultProductGroupName(),
                             OptionType.NONE,
-                            ProductGroupFixtures.defaultDescriptionHtml(),
                             List.of(ProductGroupFixtures.thumbnailImage()),
                             List.of(ProductGroupFixtures.defaultSellerOptionGroup()),
                             CommonVoFixtures.now()))
@@ -401,79 +353,6 @@ class ProductGroupTest {
             assertThat(productGroup.shippingPolicyId()).isEqualTo(newShippingPolicyId);
             assertThat(productGroup.refundPolicyId()).isEqualTo(newRefundPolicyId);
             assertThat(productGroup.updatedAt()).isEqualTo(now);
-        }
-
-        @Test
-        @DisplayName("상세설명을 수정한다")
-        void updateDescription() {
-            // given
-            ProductGroup productGroup = ProductGroupFixtures.activeProductGroup();
-            DescriptionHtml newDescription = ProductGroupFixtures.descriptionHtml("<p>수정된 설명</p>");
-            Instant now = CommonVoFixtures.now();
-
-            // when
-            productGroup.updateDescription(newDescription, now);
-
-            // then
-            assertThat(productGroup.hasDescription()).isTrue();
-            assertThat(productGroup.description().content()).isEqualTo(newDescription);
-            assertThat(productGroup.updatedAt()).isEqualTo(now);
-        }
-
-        @Test
-        @DisplayName("상세설명이 null이면 description이 null로 설정된다")
-        void updateDescriptionToNull() {
-            // given
-            ProductGroup productGroup = ProductGroupFixtures.activeProductGroup();
-            Instant now = CommonVoFixtures.now();
-
-            // when
-            productGroup.updateDescription(null, now);
-
-            // then
-            assertThat(productGroup.description()).isNull();
-            assertThat(productGroup.hasDescription()).isFalse();
-        }
-
-        @Test
-        @DisplayName("상세설명이 empty면 description이 null로 설정된다")
-        void updateDescriptionToEmpty() {
-            // given
-            ProductGroup productGroup = ProductGroupFixtures.activeProductGroup();
-            Instant now = CommonVoFixtures.now();
-
-            // when
-            productGroup.updateDescription(ProductGroupFixtures.emptyDescriptionHtml(), now);
-
-            // then
-            assertThat(productGroup.description()).isNull();
-        }
-
-        @Test
-        @DisplayName("description이 null인 상태에서 새로운 설명을 추가한다")
-        void addDescriptionWhenNull() {
-            // given
-            ProductGroup productGroup = ProductGroup.forNew(
-                    CommonVoFixtures.defaultSellerId(),
-                    BrandId.of(100L),
-                    CategoryId.of(200L),
-                    ShippingPolicyId.of(1L),
-                    RefundPolicyId.of(1L),
-                    ProductGroupFixtures.defaultProductGroupName(),
-                    OptionType.NONE,
-                    null,
-                    List.of(ProductGroupFixtures.thumbnailImage()),
-                    List.of(),
-                    CommonVoFixtures.now());
-            DescriptionHtml newDescription = ProductGroupFixtures.defaultDescriptionHtml();
-            Instant now = CommonVoFixtures.now();
-
-            // when
-            productGroup.updateDescription(newDescription, now);
-
-            // then
-            assertThat(productGroup.hasDescription()).isTrue();
-            assertThat(productGroup.description()).isNotNull();
         }
     }
 

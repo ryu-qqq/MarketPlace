@@ -235,13 +235,12 @@ public final class ProductGroupFixtures {
 
     /** 이미지 포함 ProductGroupDescription */
     public static ProductGroupDescription descriptionWithImages() {
-        ProductGroupDescription description = ProductGroupDescription.reconstitute(
+        return ProductGroupDescription.reconstitute(
                 defaultProductGroupDescriptionId(),
                 newProductGroupId(),
                 defaultDescriptionHtml(),
                 defaultCdnPath(),
                 List.of(defaultDescriptionImage(), uploadedDescriptionImage()));
-        return description;
     }
 
     // ===== ProductGroup Aggregate Fixtures =====
@@ -256,7 +255,6 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.NONE,
-                defaultDescriptionHtml(),
                 List.of(thumbnailImage()),
                 List.of(),
                 CommonVoFixtures.now());
@@ -272,7 +270,6 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.SINGLE,
-                defaultDescriptionHtml(),
                 List.of(thumbnailImage()),
                 List.of(defaultSellerOptionGroup()),
                 CommonVoFixtures.now());
@@ -303,7 +300,6 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.COMBINATION,
-                defaultDescriptionHtml(),
                 List.of(thumbnailImage()),
                 List.of(colorOption, sizeOption),
                 CommonVoFixtures.now());
@@ -321,7 +317,6 @@ public final class ProductGroupFixtures {
                 defaultProductGroupName(),
                 OptionType.NONE,
                 ProductGroupStatus.ACTIVE,
-                defaultProductGroupDescription(),
                 List.of(uploadedImage()),
                 List.of(),
                 CommonVoFixtures.yesterday(),
@@ -340,7 +335,6 @@ public final class ProductGroupFixtures {
                 defaultProductGroupName(),
                 OptionType.NONE,
                 ProductGroupStatus.DRAFT,
-                defaultProductGroupDescription(),
                 List.of(thumbnailImage()),
                 List.of(),
                 CommonVoFixtures.yesterday(),
@@ -359,7 +353,6 @@ public final class ProductGroupFixtures {
                 defaultProductGroupName(),
                 OptionType.NONE,
                 ProductGroupStatus.INACTIVE,
-                defaultProductGroupDescription(),
                 List.of(uploadedImage()),
                 List.of(),
                 CommonVoFixtures.yesterday(),
@@ -378,7 +371,6 @@ public final class ProductGroupFixtures {
                 defaultProductGroupName(),
                 OptionType.NONE,
                 ProductGroupStatus.SOLDOUT,
-                defaultProductGroupDescription(),
                 List.of(uploadedImage()),
                 List.of(),
                 CommonVoFixtures.yesterday(),
@@ -397,7 +389,6 @@ public final class ProductGroupFixtures {
                 defaultProductGroupName(),
                 OptionType.NONE,
                 ProductGroupStatus.DELETED,
-                defaultProductGroupDescription(),
                 List.of(uploadedImage()),
                 List.of(),
                 CommonVoFixtures.yesterday(),
@@ -416,7 +407,6 @@ public final class ProductGroupFixtures {
                 defaultProductGroupName(),
                 OptionType.NONE,
                 ProductGroupStatus.DRAFT,
-                defaultProductGroupDescription(),
                 List.of(detailImage(0)),
                 List.of(),
                 CommonVoFixtures.yesterday(),
@@ -435,7 +425,6 @@ public final class ProductGroupFixtures {
                 defaultProductGroupName(),
                 OptionType.SINGLE,
                 ProductGroupStatus.DRAFT,
-                defaultProductGroupDescription(),
                 List.of(thumbnailImage()),
                 List.of(fullyMappedSellerOptionGroup()),
                 CommonVoFixtures.yesterday(),

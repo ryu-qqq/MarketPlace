@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.adapter.in.rest.shippingpolicy.dto.response.Shippin
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyPageResult;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -117,6 +118,7 @@ public final class ShippingPolicyApiFixtures {
         Instant now = Instant.parse("2025-01-23T01:30:00Z");
         return new ShippingPolicyResult(
                 id,
+                DEFAULT_SELLER_ID,
                 DEFAULT_POLICY_NAME,
                 true,
                 true,
@@ -124,6 +126,14 @@ public final class ShippingPolicyApiFixtures {
                 DEFAULT_SHIPPING_FEE_TYPE_DISPLAY_NAME,
                 DEFAULT_BASE_FEE,
                 DEFAULT_FREE_THRESHOLD,
+                DEFAULT_JEJU_EXTRA_FEE,
+                DEFAULT_ISLAND_EXTRA_FEE,
+                DEFAULT_RETURN_FEE,
+                DEFAULT_EXCHANGE_FEE,
+                1,
+                3,
+                LocalTime.of(14, 0),
+                now,
                 now);
     }
 
@@ -131,6 +141,7 @@ public final class ShippingPolicyApiFixtures {
         Instant now = Instant.parse("2025-01-23T01:30:00Z");
         return new ShippingPolicyResult(
                 id,
+                DEFAULT_SELLER_ID,
                 policyName,
                 false,
                 active,
@@ -138,6 +149,14 @@ public final class ShippingPolicyApiFixtures {
                 DEFAULT_SHIPPING_FEE_TYPE_DISPLAY_NAME,
                 DEFAULT_BASE_FEE,
                 DEFAULT_FREE_THRESHOLD,
+                DEFAULT_JEJU_EXTRA_FEE,
+                DEFAULT_ISLAND_EXTRA_FEE,
+                DEFAULT_RETURN_FEE,
+                DEFAULT_EXCHANGE_FEE,
+                1,
+                3,
+                LocalTime.of(14, 0),
+                now,
                 now);
     }
 
@@ -161,6 +180,7 @@ public final class ShippingPolicyApiFixtures {
     public static ShippingPolicyApiResponse apiResponse(Long id) {
         return new ShippingPolicyApiResponse(
                 id,
+                DEFAULT_SELLER_ID,
                 DEFAULT_POLICY_NAME,
                 true,
                 true,
@@ -168,12 +188,21 @@ public final class ShippingPolicyApiFixtures {
                 DEFAULT_SHIPPING_FEE_TYPE_DISPLAY_NAME,
                 DEFAULT_BASE_FEE,
                 DEFAULT_FREE_THRESHOLD,
+                DEFAULT_JEJU_EXTRA_FEE,
+                DEFAULT_ISLAND_EXTRA_FEE,
+                DEFAULT_RETURN_FEE,
+                DEFAULT_EXCHANGE_FEE,
+                1,
+                3,
+                "14:00",
+                "2025-01-23T10:30:00+09:00",
                 "2025-01-23T10:30:00+09:00");
     }
 
     public static ShippingPolicyApiResponse apiResponse(Long id, String policyName) {
         return new ShippingPolicyApiResponse(
                 id,
+                DEFAULT_SELLER_ID,
                 policyName,
                 false,
                 true,
@@ -181,6 +210,14 @@ public final class ShippingPolicyApiFixtures {
                 DEFAULT_SHIPPING_FEE_TYPE_DISPLAY_NAME,
                 DEFAULT_BASE_FEE,
                 DEFAULT_FREE_THRESHOLD,
+                DEFAULT_JEJU_EXTRA_FEE,
+                DEFAULT_ISLAND_EXTRA_FEE,
+                DEFAULT_RETURN_FEE,
+                DEFAULT_EXCHANGE_FEE,
+                1,
+                3,
+                "14:00",
+                "2025-01-23T10:30:00+09:00",
                 "2025-01-23T10:30:00+09:00");
     }
 }

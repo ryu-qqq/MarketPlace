@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.shippingpolicy.dto.response;
 
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import java.time.Instant;
+import java.time.LocalTime;
 
 /**
  * ShippingPolicyResult - 배송정책 조회 결과 DTO.
@@ -10,20 +11,12 @@ import java.time.Instant;
  *
  * <p>APP-DTO-002: Result는 Domain 객체에서 직접 변환.
  *
- * @param policyId 정책 ID
- * @param policyName 정책명
- * @param defaultPolicy 기본 정책 여부
- * @param active 활성화 상태
- * @param shippingFeeType 배송비 유형 코드
- * @param shippingFeeTypeDisplayName 배송비 유형 표시명
- * @param baseFee 기본 배송비
- * @param freeThreshold 무료배송 기준금액
- * @param createdAt 생성일시
  * @author ryu-qqq
  * @since 1.0.0
  */
 public record ShippingPolicyResult(
         Long policyId,
+        Long sellerId,
         String policyName,
         boolean defaultPolicy,
         boolean active,
@@ -31,7 +24,15 @@ public record ShippingPolicyResult(
         String shippingFeeTypeDisplayName,
         Long baseFee,
         Long freeThreshold,
-        Instant createdAt) {
+        Long jejuExtraFee,
+        Long islandExtraFee,
+        Long returnFee,
+        Long exchangeFee,
+        int leadTimeMinDays,
+        int leadTimeMaxDays,
+        LocalTime leadTimeCutoffTime,
+        Instant createdAt,
+        Instant updatedAt) {
 
     /**
      * Domain → Result 변환.
@@ -42,15 +43,26 @@ public record ShippingPolicyResult(
     public static ShippingPolicyResult from(ShippingPolicy domain) {
         return new ShippingPolicyResult(
                 domain.idValue(),
+                domain.sellerIdValue(),
                 domain.policyNameValue(),
                 domain.isDefaultPolicy(),
                 domain.isActive(),
                 domain.shippingFeeType().name(),
                 domain.shippingFeeType().displayName(),
-                domain.baseFeeValue() != null ? domain.baseFeeValue().longValue() : null,
-                domain.freeThresholdValue() != null
-                        ? domain.freeThresholdValue().longValue()
-                        : null,
-                domain.createdAt());
+                toNullableLong(domain.baseFeeValue()),
+                toNullableLong(domain.freeThresholdValue()),
+                toNullableLong(domain.jejuExtraFeeValue()),
+                toNullableLong(domain.islandExtraFeeValue()),
+                toNullableLong(domain.returnFeeValue()),
+                toNullableLong(domain.exchangeFeeValue()),
+                domain.leadTimeMinDays(),
+                domain.leadTimeMaxDays(),
+                domain.leadTimeCutoffTime(),
+                domain.createdAt(),
+                domain.updatedAt());
+    }
+
+    private static Long toNullableLong(Integer value) {
+        return value != null ? value.longValue() : null;
     }
 }
