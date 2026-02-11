@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.query.SearchSellerAddressesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerAddressApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.selleraddress.dto.response.SellerOperationMetadataApiResponse;
+import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.selleraddress.dto.query.SellerAddressSearchParams;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressPageResult;
 import com.ryuqq.marketplace.application.selleraddress.dto.response.SellerAddressResult;
@@ -41,7 +42,7 @@ public class SellerAddressQueryApiMapper {
     /**
      * SearchSellerAddressesApiRequest -> SellerAddressSearchParams 변환.
      *
-     * <p>page/size 기본값은 Mapper에서 적용.
+     * <p>APP-DTO-002: CommonSearchParams를 포함하여 SearchParams 생성.
      *
      * @param request 조회 요청 DTO
      * @return SellerAddressSearchParams 객체
@@ -50,14 +51,17 @@ public class SellerAddressQueryApiMapper {
         int page = request.page() != null ? request.page() : DEFAULT_PAGE;
         int size = request.size() != null ? request.size() : DEFAULT_SIZE;
         List<Long> sellerIds = request.sellerIds() != null ? request.sellerIds() : List.of();
-        return new SellerAddressSearchParams(
+
+        CommonSearchParams commonParams =
+                CommonSearchParams.of(false, null, null, "createdAt", "DESC", page, size);
+
+        return SellerAddressSearchParams.of(
                 sellerIds,
                 request.addressTypes(),
                 request.defaultAddress(),
                 request.searchField(),
                 request.searchWord(),
-                page,
-                size);
+                commonParams);
     }
 
     /**

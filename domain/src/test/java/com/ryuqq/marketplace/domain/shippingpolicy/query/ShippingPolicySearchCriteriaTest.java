@@ -32,11 +32,12 @@ class ShippingPolicySearchCriteriaTest {
 
             // when
             ShippingPolicySearchCriteria criteria =
-                    ShippingPolicySearchCriteria.of(sellerId, queryContext);
+                    ShippingPolicySearchCriteria.of(sellerId, queryContext, null);
 
             // then
             assertThat(criteria.sellerId()).isEqualTo(sellerId);
             assertThat(criteria.queryContext()).isEqualTo(queryContext);
+            assertThat(criteria.active()).isNull();
         }
 
         @Test
@@ -83,7 +84,7 @@ class ShippingPolicySearchCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(2, 20));
             ShippingPolicySearchCriteria criteria =
-                    ShippingPolicySearchCriteria.of(sellerId, queryContext);
+                    ShippingPolicySearchCriteria.of(sellerId, queryContext, null);
 
             // then
             assertThat(criteria.offset()).isEqualTo(40);
@@ -100,7 +101,7 @@ class ShippingPolicySearchCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(3, 20));
             ShippingPolicySearchCriteria criteria =
-                    ShippingPolicySearchCriteria.of(sellerId, queryContext);
+                    ShippingPolicySearchCriteria.of(sellerId, queryContext, null);
 
             // then
             assertThat(criteria.page()).isEqualTo(3);

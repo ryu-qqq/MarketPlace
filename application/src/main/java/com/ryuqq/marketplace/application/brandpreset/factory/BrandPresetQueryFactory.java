@@ -7,8 +7,6 @@ import com.ryuqq.marketplace.domain.brandpreset.query.BrandPresetSortKey;
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import org.springframework.stereotype.Component;
 
 /** BrandPreset Query Factory. */
@@ -22,39 +20,40 @@ public class BrandPresetQueryFactory {
     }
 
     public BrandPresetSearchCriteria createCriteria(BrandPresetSearchParams params) {
-        BrandPresetSortKey sortKey = BrandPresetSortKey.defaultKey();
+        BrandPresetSortKey sortKey = resolveSortKey(params.commonSearchParams().sortKey());
         SortDirection sortDirection =
-                params.sortDirection() != null
-                        ? commonVoFactory.parseSortDirection(params.sortDirection())
-                        : SortDirection.DESC;
-        int page = params.page() != null ? params.page() : 0;
-        int size = params.size() != null ? params.size() : 20;
-        PageRequest pageRequest = commonVoFactory.createPageRequest(page, size);
+                commonVoFactory.parseSortDirection(params.commonSearchParams().sortDirection());
+        PageRequest pageRequest =
+                commonVoFactory.createPageRequest(
+                        params.commonSearchParams().page(), params.commonSearchParams().size());
 
         QueryContext<BrandPresetSortKey> queryContext =
-                commonVoFactory.createQueryContext(sortKey, sortDirection, pageRequest);
-
-        LocalDate startDate = parseDate(params.startDate());
-        LocalDate endDate = parseDate(params.endDate());
+                commonVoFactory.createQueryContext(
+                        sortKey,
+                        sortDirection,
+                        pageRequest,
+                        params.commonSearchParams().includeDeleted());
 
         return new BrandPresetSearchCriteria(
                 params.salesChannelIds(),
                 params.statuses(),
                 params.searchField(),
                 params.searchWord(),
-                startDate,
-                endDate,
+                params.commonSearchParams().startDate(),
+                params.commonSearchParams().endDate(),
                 queryContext);
     }
 
-    private LocalDate parseDate(String dateString) {
-        if (dateString == null || dateString.isBlank()) {
-            return null;
+    private BrandPresetSortKey resolveSortKey(String sortKeyString) {
+        if (sortKeyString == null || sortKeyString.isBlank()) {
+            return BrandPresetSortKey.defaultKey();
         }
-        try {
-            return LocalDate.parse(dateString);
-        } catch (DateTimeParseException e) {
-            return null;
+        for (BrandPresetSortKey key : BrandPresetSortKey.values()) {
+            if (key.fieldName().equalsIgnoreCase(sortKeyString)
+                    || key.name().equalsIgnoreCase(sortKeyString)) {
+                return key;
+            }
         }
+        return BrandPresetSortKey.defaultKey();
     }
 }

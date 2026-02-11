@@ -114,6 +114,7 @@ public class ShippingPolicyQueryDslRepository {
                 .selectFrom(shippingPolicyJpaEntity)
                 .where(
                         conditionBuilder.sellerIdEq(criteria.sellerIdValue()),
+                        conditionBuilder.activeEq(criteria.active()),
                         conditionBuilder.notDeleted())
                 .orderBy(createOrderSpecifier(qc.sortKey(), qc.sortDirection()))
                 .offset(criteria.offset())
@@ -134,6 +135,7 @@ public class ShippingPolicyQueryDslRepository {
                         .from(shippingPolicyJpaEntity)
                         .where(
                                 conditionBuilder.sellerIdEq(criteria.sellerIdValue()),
+                                conditionBuilder.activeEq(criteria.active()),
                                 conditionBuilder.notDeleted())
                         .fetchOne();
         return count != null ? count : 0L;

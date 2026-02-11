@@ -1,0 +1,50 @@
+{
+  "data": {
+    "content": [
+      {
+        "id": 1001,
+        "shopName": "스마트스토어",
+        "accountId": "trexi001",
+        "presetName": "식품 - 과자류 전송용",
+        "categoryPath": "식품 > 과자 > 스낵 > 젤리",
+        "categoryCode": "50000123",
+        "createdAt": "2025-12-15"
+      },
+      {
+        "id": 1002,
+        "shopName": "쿠팡",
+        "accountId": "my_coupang",
+        "presetName": "겨울 시즌 패딩",
+        "categoryPath": "여성패션 > 아우터 > 패딩",
+        "categoryCode": "50000456",
+        "createdAt": "2025-12-14"
+      },
+      {
+        "id": 1003,
+        "shopName": "11번가",
+        "accountId": "st_11_main",
+        "presetName": "기본 잡화 세팅",
+        "categoryPath": "잡화 > 가방 > 백팩",
+        "categoryCode": "50000789",
+        "createdAt": "2025-12-13"
+      },
+      {
+        "id": 1004,
+        "shopName": "G마켓",
+        "accountId": "gmkt_global",
+        "presetName": "해외 직구 상품 전용",
+        "categoryPath": "해외직구 > 패션 > 신발",
+        "categoryCode": "50000999",
+        "createdAt": "2025-12-12"
+      }
+    ],
+    "page": 0,
+    "size": 10,
+    "totalElements": 4,
+    "totalPages": 1,
+    "first": true,
+    "last": true
+  },
+  "timestamp": "2025-12-22T10:30:00",
+  "requestId": "req-mock-005"
+}

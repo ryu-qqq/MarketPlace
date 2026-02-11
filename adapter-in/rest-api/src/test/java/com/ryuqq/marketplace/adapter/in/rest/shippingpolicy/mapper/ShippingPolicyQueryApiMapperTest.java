@@ -71,7 +71,7 @@ class ShippingPolicyQueryApiMapperTest {
             // given
             Long sellerId = 1L;
             SearchShippingPoliciesPageApiRequest request =
-                    new SearchShippingPoliciesPageApiRequest(null, null, null, null);
+                    new SearchShippingPoliciesPageApiRequest(null, null, null, null, null);
 
             // when
             ShippingPolicySearchParams result = mapper.toSearchParams(sellerId, request);

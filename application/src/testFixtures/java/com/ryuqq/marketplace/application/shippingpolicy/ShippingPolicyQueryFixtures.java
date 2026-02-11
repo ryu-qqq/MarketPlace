@@ -15,11 +15,11 @@ public final class ShippingPolicyQueryFixtures {
     // ===== ShippingPolicySearchParams =====
 
     public static ShippingPolicySearchParams searchParams(Long sellerId) {
-        return ShippingPolicySearchParams.of(sellerId, defaultCommonSearchParams());
+        return ShippingPolicySearchParams.of(sellerId, defaultCommonSearchParams(), null);
     }
 
     public static ShippingPolicySearchParams searchParams(Long sellerId, int page, int size) {
-        return ShippingPolicySearchParams.of(sellerId, commonSearchParams(page, size));
+        return ShippingPolicySearchParams.of(sellerId, commonSearchParams(page, size), null);
     }
 
     public static CommonSearchParams defaultCommonSearchParams() {

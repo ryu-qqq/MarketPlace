@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.adapter.out.persistence.categorypreset.mapper;
 
+import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.composite.CategoryPresetCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.entity.CategoryPresetJpaEntity;
+import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetResult;
 import com.ryuqq.marketplace.domain.categorypreset.aggregate.CategoryPreset;
 import com.ryuqq.marketplace.domain.categorypreset.id.CategoryPresetId;
 import com.ryuqq.marketplace.domain.categorypreset.vo.CategoryPresetStatus;
@@ -19,6 +21,20 @@ public class CategoryPresetJpaEntityMapper {
                 categoryPreset.status().name(),
                 categoryPreset.createdAt(),
                 categoryPreset.updatedAt());
+    }
+
+    public CategoryPresetResult toResult(CategoryPresetCompositeDto dto) {
+        return new CategoryPresetResult(
+                dto.id(),
+                dto.shopId(),
+                dto.shopName(),
+                dto.salesChannelId(),
+                dto.salesChannelName(),
+                dto.accountId(),
+                dto.presetName(),
+                dto.categoryPath(),
+                dto.externalCategoryCode(),
+                dto.createdAt());
     }
 
     public CategoryPreset toDomain(CategoryPresetJpaEntity entity) {

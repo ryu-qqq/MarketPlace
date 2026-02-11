@@ -73,6 +73,7 @@ public final class AuthApiFixtures {
                 DEFAULT_ORG_NAME,
                 defaultRoles(),
                 List.of("READ", "WRITE", "DELETE"),
+                "sa-001",
                 1L,
                 "010-1234-5678");
     }
@@ -89,6 +90,7 @@ public final class AuthApiFixtures {
                 null,
                 List.of("READ"),
                 null,
+                null,
                 null);
     }
 
@@ -103,6 +105,7 @@ public final class AuthApiFixtures {
                 DEFAULT_ORG_NAME,
                 List.of(),
                 List.of(),
+                null,
                 null,
                 null);
     }

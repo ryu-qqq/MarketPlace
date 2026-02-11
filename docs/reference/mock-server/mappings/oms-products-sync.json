@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/oms/products/sync"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "responses/products-sync.json",
+    "headers": {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    }
+  }
+}

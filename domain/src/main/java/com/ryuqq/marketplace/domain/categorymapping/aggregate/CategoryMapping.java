@@ -8,6 +8,7 @@ import java.time.Instant;
 public class CategoryMapping {
 
     private final CategoryMappingId id;
+    private final Long presetId;
     private final Long salesChannelCategoryId;
     private final Long internalCategoryId;
     private CategoryMappingStatus status;
@@ -16,12 +17,14 @@ public class CategoryMapping {
 
     private CategoryMapping(
             CategoryMappingId id,
+            Long presetId,
             Long salesChannelCategoryId,
             Long internalCategoryId,
             CategoryMappingStatus status,
             Instant createdAt,
             Instant updatedAt) {
         this.id = id;
+        this.presetId = presetId;
         this.salesChannelCategoryId = salesChannelCategoryId;
         this.internalCategoryId = internalCategoryId;
         this.status = status;
@@ -31,9 +34,10 @@ public class CategoryMapping {
 
     /** 신규 CategoryMapping 생성 팩토리. */
     public static CategoryMapping forNew(
-            Long salesChannelCategoryId, Long internalCategoryId, Instant now) {
+            Long presetId, Long salesChannelCategoryId, Long internalCategoryId, Instant now) {
         return new CategoryMapping(
                 CategoryMappingId.forNew(),
+                presetId,
                 salesChannelCategoryId,
                 internalCategoryId,
                 CategoryMappingStatus.ACTIVE,
@@ -44,13 +48,20 @@ public class CategoryMapping {
     /** 영속성에서 복원 시 사용. */
     public static CategoryMapping reconstitute(
             CategoryMappingId id,
+            Long presetId,
             Long salesChannelCategoryId,
             Long internalCategoryId,
             CategoryMappingStatus status,
             Instant createdAt,
             Instant updatedAt) {
         return new CategoryMapping(
-                id, salesChannelCategoryId, internalCategoryId, status, createdAt, updatedAt);
+                id,
+                presetId,
+                salesChannelCategoryId,
+                internalCategoryId,
+                status,
+                createdAt,
+                updatedAt);
     }
 
     /** 활성화. */
@@ -71,6 +82,10 @@ public class CategoryMapping {
 
     public Long idValue() {
         return id.value();
+    }
+
+    public Long presetId() {
+        return presetId;
     }
 
     public Long salesChannelCategoryId() {

@@ -7,6 +7,10 @@ import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.application.categorypreset.dto.query.CategoryPresetSearchParams;
 import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetPageResult;
 import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetResult;
+import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -14,18 +18,37 @@ import org.springframework.stereotype.Component;
 @Component
 public class CategoryPresetQueryApiMapper {
 
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     public CategoryPresetSearchParams toSearchParams(SearchCategoryPresetsApiRequest request) {
-        return new CategoryPresetSearchParams(
+        CommonSearchParams commonParams =
+                CommonSearchParams.of(
+                        false,
+                        parseDate(request.startDate()),
+                        parseDate(request.endDate()),
+                        request.sortKey(),
+                        request.sortDirection(),
+                        request.page() != null ? request.page() : 0,
+                        request.size() != null ? request.size() : 20);
+
+        return CategoryPresetSearchParams.of(
                 request.salesChannelIds(),
                 request.statuses(),
                 request.searchField(),
                 request.searchWord(),
-                request.startDate(),
-                request.endDate(),
-                request.sortKey(),
-                request.sortDirection(),
-                request.page() != null ? request.page() : 0,
-                request.size() != null ? request.size() : 20);
+                commonParams);
+    }
+
+    private LocalDate parseDate(String dateString) {
+        if (dateString == null || dateString.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(dateString, DATE_FORMATTER);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 
     public CategoryPresetApiResponse toResponse(CategoryPresetResult result) {

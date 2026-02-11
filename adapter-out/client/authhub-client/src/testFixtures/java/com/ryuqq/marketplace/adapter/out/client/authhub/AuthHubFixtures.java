@@ -60,6 +60,7 @@ public final class AuthHubFixtures {
                 List.of(new MyInfoResult.RoleInfo("role-1", "ADMIN")),
                 List.of("READ", "WRITE"),
                 null,
+                null,
                 null);
     }
 

@@ -1,8 +1,9 @@
 package com.ryuqq.marketplace.application.brandpreset.service.command;
 
+import com.ryuqq.marketplace.application.brandpreset.dto.bundle.UpdateBrandPresetBundle;
 import com.ryuqq.marketplace.application.brandpreset.dto.command.UpdateBrandPresetCommand;
 import com.ryuqq.marketplace.application.brandpreset.factory.BrandPresetCommandFactory;
-import com.ryuqq.marketplace.application.brandpreset.manager.BrandPresetCommandManager;
+import com.ryuqq.marketplace.application.brandpreset.internal.BrandPresetMappingFacade;
 import com.ryuqq.marketplace.application.brandpreset.port.in.command.UpdateBrandPresetUseCase;
 import com.ryuqq.marketplace.application.brandpreset.validator.BrandPresetValidator;
 import com.ryuqq.marketplace.domain.brandpreset.aggregate.BrandPreset;
@@ -15,23 +16,25 @@ public class UpdateBrandPresetService implements UpdateBrandPresetUseCase {
 
     private final BrandPresetValidator validator;
     private final BrandPresetCommandFactory commandFactory;
-    private final BrandPresetCommandManager commandManager;
+    private final BrandPresetMappingFacade facade;
 
     public UpdateBrandPresetService(
             BrandPresetValidator validator,
             BrandPresetCommandFactory commandFactory,
-            BrandPresetCommandManager commandManager) {
+            BrandPresetMappingFacade facade) {
         this.validator = validator;
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
+        this.facade = facade;
     }
 
     @Override
     public void execute(UpdateBrandPresetCommand command) {
-        BrandPreset brandPreset =
+        BrandPreset existing =
                 validator.findExistingOrThrow(BrandPresetId.of(command.brandPresetId()));
-        brandPreset.update(
-                command.presetName(), command.salesChannelBrandId(), commandFactory.now());
-        commandManager.persist(brandPreset);
+        validator.validateSameChannel(existing.shopId(), command.salesChannelBrandId());
+        validator.validateInternalBrandsExist(command.internalBrandIds());
+
+        UpdateBrandPresetBundle bundle = commandFactory.createUpdateBundle(existing, command);
+        facade.updateWithMappings(bundle);
     }
 }

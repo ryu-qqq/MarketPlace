@@ -7,7 +7,6 @@ import com.ryuqq.marketplace.domain.categorypreset.query.CategoryPresetSortKey;
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
-import java.time.LocalDate;
 import org.springframework.stereotype.Component;
 
 /** CategoryPreset Query Factory. */
@@ -21,26 +20,40 @@ public class CategoryPresetQueryFactory {
     }
 
     public CategoryPresetSearchCriteria createCriteria(CategoryPresetSearchParams params) {
-        PageRequest pageRequest = commonVoFactory.createPageRequest(params.page(), params.size());
+        CategoryPresetSortKey sortKey = resolveSortKey(params.commonSearchParams().sortKey());
         SortDirection sortDirection =
-                params.sortDirection() != null
-                        ? commonVoFactory.parseSortDirection(params.sortDirection())
-                        : SortDirection.DESC;
+                commonVoFactory.parseSortDirection(params.commonSearchParams().sortDirection());
+        PageRequest pageRequest =
+                commonVoFactory.createPageRequest(
+                        params.commonSearchParams().page(), params.commonSearchParams().size());
+
         QueryContext<CategoryPresetSortKey> queryContext =
                 commonVoFactory.createQueryContext(
-                        CategoryPresetSortKey.defaultKey(), sortDirection, pageRequest);
-
-        LocalDate startDate =
-                params.startDate() != null ? LocalDate.parse(params.startDate()) : null;
-        LocalDate endDate = params.endDate() != null ? LocalDate.parse(params.endDate()) : null;
+                        sortKey,
+                        sortDirection,
+                        pageRequest,
+                        params.commonSearchParams().includeDeleted());
 
         return new CategoryPresetSearchCriteria(
                 params.salesChannelIds(),
                 params.statuses(),
                 params.searchField(),
                 params.searchWord(),
-                startDate,
-                endDate,
+                params.commonSearchParams().startDate(),
+                params.commonSearchParams().endDate(),
                 queryContext);
+    }
+
+    private CategoryPresetSortKey resolveSortKey(String sortKeyString) {
+        if (sortKeyString == null || sortKeyString.isBlank()) {
+            return CategoryPresetSortKey.defaultKey();
+        }
+        for (CategoryPresetSortKey key : CategoryPresetSortKey.values()) {
+            if (key.fieldName().equalsIgnoreCase(sortKeyString)
+                    || key.name().equalsIgnoreCase(sortKeyString)) {
+                return key;
+            }
+        }
+        return CategoryPresetSortKey.defaultKey();
     }
 }
