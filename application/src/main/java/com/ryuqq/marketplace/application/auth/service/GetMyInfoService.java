@@ -30,8 +30,8 @@ public class GetMyInfoService implements GetMyInfoUseCase {
     }
 
     @Override
-    public MyInfoResult execute(String accessToken) {
-        MyInfoResult authInfo = authManager.getMyInfo(accessToken);
+    public MyInfoResult execute(String userId) {
+        MyInfoResult authInfo = authManager.getMyInfo(userId);
 
         return sellerAdminReadManager
                 .findByAuthUserId(authInfo.userId())

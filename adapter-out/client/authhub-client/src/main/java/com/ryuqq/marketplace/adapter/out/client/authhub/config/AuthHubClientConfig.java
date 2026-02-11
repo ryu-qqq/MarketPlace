@@ -1,9 +1,11 @@
 package com.ryuqq.marketplace.adapter.out.client.authhub.config;
 
 import com.ryuqq.authhub.sdk.api.AuthApi;
+import com.ryuqq.authhub.sdk.api.InternalApi;
 import com.ryuqq.authhub.sdk.api.OnboardingApi;
 import com.ryuqq.authhub.sdk.auth.TokenResolver;
 import com.ryuqq.authhub.sdk.client.AuthHubClient;
+import com.ryuqq.authhub.sdk.client.GatewayClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -64,5 +66,37 @@ public class AuthHubClientConfig {
     @Bean
     public OnboardingApi onboardingApi(AuthHubClient authHubClient) {
         return authHubClient.onboarding();
+    }
+
+    /**
+     * GatewayClient 빈 생성.
+     *
+     * <p>서비스 토큰 인증을 사용하여 AuthHub Internal API에 직접 연결합니다.
+     *
+     * @param properties AuthHub 설정
+     * @return GatewayClient 인스턴스
+     */
+    @Bean
+    public GatewayClient gatewayClient(AuthHubProperties properties) {
+        return GatewayClient.builder()
+                .baseUrl(properties.getBaseUrl())
+                .serviceName(properties.getServiceCode())
+                .serviceToken(properties.getServiceToken())
+                .connectTimeout(properties.getTimeout().getConnect())
+                .readTimeout(properties.getTimeout().getRead())
+                .build();
+    }
+
+    /**
+     * InternalApi 빈 생성.
+     *
+     * <p>GatewayClient를 통해 서비스 토큰 인증 기반 Internal API를 제공합니다.
+     *
+     * @param gatewayClient GatewayClient 인스턴스
+     * @return InternalApi 인스턴스
+     */
+    @Bean
+    public InternalApi internalApi(GatewayClient gatewayClient) {
+        return gatewayClient.internal();
     }
 }

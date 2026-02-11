@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.auth.controller;
 
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
+import com.ryuqq.authhub.sdk.context.UserContextHolder;
 import com.ryuqq.marketplace.adapter.in.rest.auth.AuthAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.response.MyInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.auth.mapper.AuthQueryApiMapper;
@@ -13,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,9 +53,8 @@ public class AuthQueryController {
     /**
      * 내 정보 조회 API.
      *
-     * <p>현재 로그인한 관리자의 정보를 조회합니다.
+     * <p>현재 로그인한 관리자의 정보를 조회합니다. Gateway가 전달한 X-User-Id 헤더에서 userId를 추출하여 Internal API로 조회합니다.
      *
-     * @param authorization Authorization 헤더 (Bearer 토큰)
      * @return 관리자 정보
      */
     @Operation(summary = "내 정보 조회", description = "현재 로그인한 관리자의 정보를 조회합니다.")
@@ -70,11 +69,10 @@ public class AuthQueryController {
     @PreAuthorize("@access.authenticated()")
     @RequirePermission(value = "auth:read", description = "내 정보 조회")
     @GetMapping(AuthAdminEndpoints.ME)
-    public ResponseEntity<ApiResponse<MyInfoApiResponse>> me(
-            @RequestHeader("Authorization") String authorization) {
+    public ResponseEntity<ApiResponse<MyInfoApiResponse>> me() {
 
-        String accessToken = queryMapper.extractToken(authorization);
-        MyInfoResult result = getMyInfoUseCase.execute(accessToken);
+        String userId = UserContextHolder.getCurrentUserId();
+        MyInfoResult result = getMyInfoUseCase.execute(userId);
         MyInfoApiResponse response = queryMapper.toResponse(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));
