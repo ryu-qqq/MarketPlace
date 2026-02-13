@@ -4,15 +4,17 @@ import com.ryuqq.marketplace.domain.imageupload.id.ImageUploadOutboxId;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageUploadOutboxIdempotencyKey;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageUploadOutboxStatus;
+import com.ryuqq.marketplace.domain.imageupload.vo.OriginUrl;
 import java.time.Instant;
+import java.util.Locale;
 
 /**
  * 이미지 업로드 Outbox Aggregate.
  *
  * <p>ProductGroup/Description 이미지를 S3에 비동기 업로드하기 위한 Outbox 패턴 구현체입니다.
  *
- * <p>이미지 저장 시 생성되며, 스케줄러에 의해 처리됩니다. FileStoragePort.downloadFromExternalUrl()을 호출하여 원본 URL에서 다운로드 후
- * S3에 업로드합니다.
+ * <p>이미지 저장 시 생성되며, 스케줄러에 의해 처리됩니다. FileStorageClient.downloadFromExternalUrl()을 호출하여 원본 URL에서 다운로드
+ * 후 S3에 업로드합니다.
  *
  * <p><strong>동시성 제어</strong>:
  *
@@ -29,7 +31,7 @@ public class ImageUploadOutbox {
     private final ImageUploadOutboxId id;
     private final Long sourceId;
     private final ImageSourceType sourceType;
-    private final String originUrl;
+    private final OriginUrl originUrl;
     private ImageUploadOutboxStatus status;
     private int retryCount;
     private final int maxRetry;
@@ -44,7 +46,7 @@ public class ImageUploadOutbox {
             ImageUploadOutboxId id,
             Long sourceId,
             ImageSourceType sourceType,
-            String originUrl,
+            OriginUrl originUrl,
             ImageUploadOutboxStatus status,
             int retryCount,
             int maxRetry,
@@ -86,7 +88,7 @@ public class ImageUploadOutbox {
                 ImageUploadOutboxId.forNew(),
                 sourceId,
                 sourceType,
-                originUrl,
+                OriginUrl.of(originUrl),
                 ImageUploadOutboxStatus.PENDING,
                 0,
                 DEFAULT_MAX_RETRY,
@@ -134,7 +136,7 @@ public class ImageUploadOutbox {
                 id,
                 sourceId,
                 sourceType,
-                originUrl,
+                OriginUrl.of(originUrl),
                 status,
                 retryCount,
                 maxRetry,
@@ -270,6 +272,21 @@ public class ImageUploadOutbox {
         return status.isPending();
     }
 
+    /**
+     * S3 업로드용 파일명을 생성합니다.
+     *
+     * <p>형식: {@code {sourceType}_{sourceId}_{epochMilli}{extension}}
+     *
+     * @param now 현재 시각 (파일명 유니크성 보장)
+     * @return 생성된 파일명 (예: "product_group_image_123_1706612400000.jpg")
+     */
+    public String generateFilename(Instant now) {
+        String typeName = sourceType.name();
+        String lowerTypeName = typeName.toLowerCase(Locale.ROOT);
+        String extension = originUrl.extension();
+        return lowerTypeName + "_" + sourceId + "_" + now.toEpochMilli() + extension;
+    }
+
     // Getters
     public ImageUploadOutboxId id() {
         return id;
@@ -287,8 +304,12 @@ public class ImageUploadOutbox {
         return sourceType;
     }
 
-    public String originUrl() {
+    public OriginUrl originUrl() {
         return originUrl;
+    }
+
+    public String originUrlValue() {
+        return originUrl.value();
     }
 
     public ImageUploadOutboxStatus status() {

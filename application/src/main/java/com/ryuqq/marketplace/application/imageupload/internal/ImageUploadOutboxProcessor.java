@@ -1,10 +1,10 @@
 package com.ryuqq.marketplace.application.imageupload.internal;
 
-import com.ryuqq.marketplace.application.common.port.out.FileStoragePort;
+import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
+import com.ryuqq.marketplace.application.common.manager.FileStorageManager;
 import com.ryuqq.marketplace.application.imageupload.manager.ImageUploadOutboxCommandManager;
 import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
 import java.time.Instant;
-import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
  *
  * <ol>
  *   <li>PROCESSING 상태로 변경 (다른 프로세스와 충돌 방지)
- *   <li>FileStoragePort.downloadFromExternalUrl() 호출 (원본 URL → S3 업로드)
+ *   <li>BundleFactory로 다운로드 요청 Bundle 생성
+ *   <li>FileStorageManager를 통해 외부 URL에서 S3 업로드
  *   <li>성공 시: 이미지 uploaded_url 업데이트 + Outbox COMPLETED (Facade를 통해 원자적 처리)
  *   <li>실패 시: 재시도 가능하면 PENDING, 아니면 FAILED
  * </ol>
@@ -35,19 +36,21 @@ import org.springframework.stereotype.Component;
 public class ImageUploadOutboxProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(ImageUploadOutboxProcessor.class);
-    private static final String UPLOAD_CATEGORY = "product-images";
 
     private final ImageUploadOutboxCommandManager outboxCommandManager;
     private final ImageUploadCompletionFacade completionFacade;
-    private final FileStoragePort fileStoragePort;
+    private final FileStorageManager fileStorageManager;
+    private final ImageUploadProcessBundleFactory bundleFactory;
 
     public ImageUploadOutboxProcessor(
             ImageUploadOutboxCommandManager outboxCommandManager,
             ImageUploadCompletionFacade completionFacade,
-            FileStoragePort fileStoragePort) {
+            FileStorageManager fileStorageManager,
+            ImageUploadProcessBundleFactory bundleFactory) {
         this.outboxCommandManager = outboxCommandManager;
         this.completionFacade = completionFacade;
-        this.fileStoragePort = fileStoragePort;
+        this.fileStorageManager = fileStorageManager;
+        this.bundleFactory = bundleFactory;
     }
 
     /**
@@ -63,24 +66,14 @@ public class ImageUploadOutboxProcessor {
             outbox.startProcessing(now);
             outboxCommandManager.persist(outbox);
 
-            String filename =
-                    outbox.sourceType().name().toLowerCase(Locale.ROOT)
-                            + "_"
-                            + outbox.sourceId()
-                            + "_"
-                            + now.toEpochMilli();
-
-            FileStoragePort.ExternalDownloadRequest request =
-                    new FileStoragePort.ExternalDownloadRequest(
-                            outbox.originUrl(), UPLOAD_CATEGORY, filename);
-
-            FileStoragePort.ExternalDownloadResponse response =
-                    fileStoragePort.downloadFromExternalUrl(request);
+            ImageUploadProcessBundle bundle = bundleFactory.create(outbox, now);
+            ExternalDownloadResponse response =
+                    fileStorageManager.downloadFromExternalUrl(bundle.downloadRequest());
 
             if (response.success()) {
-                return handleSuccess(outbox, response.newCdnUrl(), now);
+                return handleSuccess(bundle, response.newCdnUrl());
             } else {
-                return handleFailure(outbox, response.errorMessage(), now);
+                return handleFailure(bundle, response.errorMessage());
             }
 
         } catch (Exception e) {
@@ -98,26 +91,26 @@ public class ImageUploadOutboxProcessor {
         }
     }
 
-    private boolean handleSuccess(ImageUploadOutbox outbox, String newCdnUrl, Instant now) {
+    private boolean handleSuccess(ImageUploadProcessBundle bundle, String newCdnUrl) {
         log.info(
                 "이미지 업로드 성공: sourceType={}, sourceId={}, newCdnUrl={}",
-                outbox.sourceType(),
-                outbox.sourceId(),
+                bundle.outbox().sourceType(),
+                bundle.outbox().sourceId(),
                 newCdnUrl);
 
-        completionFacade.complete(outbox, newCdnUrl, now);
+        completionFacade.complete(bundle.outbox(), newCdnUrl, bundle.processedAt());
         return true;
     }
 
-    private boolean handleFailure(ImageUploadOutbox outbox, String errorMessage, Instant now) {
+    private boolean handleFailure(ImageUploadProcessBundle bundle, String errorMessage) {
         log.warn(
                 "이미지 업로드 실패 (재시도 예정): sourceType={}, sourceId={}, error={}",
-                outbox.sourceType(),
-                outbox.sourceId(),
+                bundle.outbox().sourceType(),
+                bundle.outbox().sourceId(),
                 errorMessage);
 
-        outbox.recordFailure(true, errorMessage, now);
-        outboxCommandManager.persist(outbox);
+        bundle.outbox().recordFailure(true, errorMessage, bundle.processedAt());
+        outboxCommandManager.persist(bundle.outbox());
         return false;
     }
 }

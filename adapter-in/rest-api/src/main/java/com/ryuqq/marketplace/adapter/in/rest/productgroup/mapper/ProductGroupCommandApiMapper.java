@@ -15,7 +15,6 @@ import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductG
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
 import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 /**
@@ -60,7 +59,7 @@ public class ProductGroupCommandApiMapper {
                                                         img.imageType(),
                                                         img.originUrl(),
                                                         img.sortOrder()))
-                                .collect(Collectors.toList())
+                                .toList()
                         : null,
                 request.optionGroups() != null
                         ? request.optionGroups().stream()
@@ -80,8 +79,8 @@ public class ProductGroupCommandApiMapper {
                                                                                                 .canonicalOptionValueId(),
                                                                                         value
                                                                                                 .sortOrder()))
-                                                                .collect(Collectors.toList())))
-                                .collect(Collectors.toList())
+                                                                .toList()))
+                                .toList()
                         : null,
                 request.products() != null
                         ? request.products().stream()
@@ -96,7 +95,7 @@ public class ProductGroupCommandApiMapper {
                                                         product.stockQuantity(),
                                                         product.sortOrder(),
                                                         product.optionIndices()))
-                                .collect(Collectors.toList())
+                                .toList()
                         : null,
                 request.description() != null
                         ? new RegisterProductGroupCommand.DescriptionCommand(
@@ -112,7 +111,7 @@ public class ProductGroupCommandApiMapper {
                                                                 .NoticeEntryCommand(
                                                                 entry.noticeFieldId(),
                                                                 entry.fieldValue()))
-                                        .collect(Collectors.toList()))
+                                        .toList())
                         : null);
     }
 
@@ -140,7 +139,7 @@ public class ProductGroupCommandApiMapper {
                                                         img.imageType(),
                                                         img.originUrl(),
                                                         img.sortOrder()))
-                                .collect(Collectors.toList())
+                                .toList()
                         : null,
                 request.optionGroups() != null
                         ? request.optionGroups().stream()
@@ -161,8 +160,8 @@ public class ProductGroupCommandApiMapper {
                                                                                                 .canonicalOptionValueId(),
                                                                                         value
                                                                                                 .sortOrder()))
-                                                                .collect(Collectors.toList())))
-                                .collect(Collectors.toList())
+                                                                .toList()))
+                                .toList()
                         : null,
                 request.products() != null
                         ? request.products().stream()
@@ -177,7 +176,7 @@ public class ProductGroupCommandApiMapper {
                                                         product.stockQuantity(),
                                                         product.sortOrder(),
                                                         product.optionIndices()))
-                                .collect(Collectors.toList())
+                                .toList()
                         : null,
                 request.description() != null
                         ? new UpdateProductGroupFullCommand.DescriptionCommand(
@@ -193,7 +192,7 @@ public class ProductGroupCommandApiMapper {
                                                                 .NoticeEntryCommand(
                                                                 entry.noticeFieldId(),
                                                                 entry.fieldValue()))
-                                        .collect(Collectors.toList()))
+                                        .toList())
                         : null);
     }
 
@@ -231,7 +230,7 @@ public class ProductGroupCommandApiMapper {
                                 img ->
                                         new UpdateProductGroupImagesCommand.ImageCommand(
                                                 img.imageType(), img.originUrl(), img.sortOrder()))
-                        .collect(Collectors.toList()));
+                        .toList());
     }
 
     /**
@@ -263,7 +262,7 @@ public class ProductGroupCommandApiMapper {
                                 entry ->
                                         new UpdateProductNoticeCommand.NoticeEntryCommand(
                                                 entry.noticeFieldId(), entry.fieldValue()))
-                        .collect(Collectors.toList()));
+                        .toList());
     }
 
     /**
