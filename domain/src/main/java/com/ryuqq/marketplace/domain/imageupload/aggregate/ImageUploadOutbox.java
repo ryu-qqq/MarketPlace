@@ -281,12 +281,10 @@ public class ImageUploadOutbox {
      * @return 생성된 파일명 (예: "product_group_image_123_1706612400000.jpg")
      */
     public String generateFilename(Instant now) {
-        return sourceType.name().toLowerCase(Locale.ROOT)
-                + "_"
-                + sourceId
-                + "_"
-                + now.toEpochMilli()
-                + originUrl.extension();
+        String typeName = sourceType.name();
+        String lowerTypeName = typeName.toLowerCase(Locale.ROOT);
+        String extension = originUrl.extension();
+        return lowerTypeName + "_" + sourceId + "_" + now.toEpochMilli() + extension;
     }
 
     // Getters
