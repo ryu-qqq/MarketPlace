@@ -4,9 +4,16 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 
-import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.BrandPresetJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.entity.BrandPresetJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.repository.BrandPresetJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.saleschannel.SalesChannelJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.saleschannel.repository.SalesChannelJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.saleschannelbrand.SalesChannelBrandJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.saleschannelbrand.repository.SalesChannelBrandJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.shop.ShopJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.shop.repository.ShopJpaRepository;
 import com.ryuqq.marketplace.integration.E2ETestBase;
+import java.time.Instant;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,15 +42,44 @@ class BrandPresetQueryE2ETest extends E2ETestBase {
     private static final String BASE_URL = "/brand-presets";
 
     @Autowired private BrandPresetJpaRepository brandPresetRepository;
+    @Autowired private SalesChannelJpaRepository salesChannelRepository;
+    @Autowired private SalesChannelBrandJpaRepository salesChannelBrandRepository;
+    @Autowired private ShopJpaRepository shopRepository;
+
+    private Long shopId;
+    private Long salesChannelBrandId;
 
     @BeforeEach
     void setUp() {
         brandPresetRepository.deleteAll();
+        salesChannelBrandRepository.deleteAll();
+        shopRepository.deleteAll();
+        salesChannelRepository.deleteAll();
+
+        // BrandPreset QueryDSL JOIN 의존성 생성
+        var channel = salesChannelRepository.save(SalesChannelJpaEntityFixtures.activeEntity());
+        var shop = shopRepository.save(ShopJpaEntityFixtures.activeEntity());
+        var scBrand =
+                salesChannelBrandRepository.save(
+                        SalesChannelBrandJpaEntityFixtures.activeEntityWithSalesChannel(
+                                channel.getId()));
+        shopId = shop.getId();
+        salesChannelBrandId = scBrand.getId();
     }
 
     @AfterEach
     void tearDown() {
         brandPresetRepository.deleteAll();
+        salesChannelBrandRepository.deleteAll();
+        shopRepository.deleteAll();
+        salesChannelRepository.deleteAll();
+    }
+
+    private BrandPresetJpaEntity savePreset() {
+        Instant now = Instant.now();
+        return brandPresetRepository.save(
+                BrandPresetJpaEntity.create(
+                        null, shopId, salesChannelBrandId, "테스트 브랜드 프리셋", "ACTIVE", now, now));
     }
 
     // ===== GET /brand-presets - 브랜드 프리셋 목록 조회 =====
@@ -58,7 +94,7 @@ class BrandPresetQueryE2ETest extends E2ETestBase {
         void searchBrandPresets_withData_returnsOk() {
             // given: 5건 저장
             for (int i = 0; i < 5; i++) {
-                brandPresetRepository.save(BrandPresetJpaEntityFixtures.activeEntity());
+                savePreset();
             }
 
             // when & then
@@ -102,7 +138,7 @@ class BrandPresetQueryE2ETest extends E2ETestBase {
         @DisplayName("[Q1-6] 인증된 일반 사용자 접근")
         void searchBrandPresets_authenticatedUser_returns200() {
             // given
-            brandPresetRepository.save(BrandPresetJpaEntityFixtures.activeEntity());
+            savePreset();
 
             // when & then
             given().spec(givenAuthenticatedUser().header("X-User-Permissions", "brand-preset:read"))
@@ -125,7 +161,7 @@ class BrandPresetQueryE2ETest extends E2ETestBase {
         @DisplayName("[Q2-1] 존재하는 ID로 상세 조회")
         void getBrandPreset_existingId_returns200() {
             // given
-            var preset = brandPresetRepository.save(BrandPresetJpaEntityFixtures.activeEntity());
+            var preset = savePreset();
 
             // when & then
             given().spec(givenAuthenticatedUser().header("X-User-Permissions", "brand-preset:read"))
@@ -160,9 +196,9 @@ class BrandPresetQueryE2ETest extends E2ETestBase {
         @DisplayName("[F2] 목록 조회 → 상세 조회 플로우")
         void fullFlow_listToDetail() {
             // Step 1: 사전 데이터 저장 (3건)
-            var preset1 = brandPresetRepository.save(BrandPresetJpaEntityFixtures.activeEntity());
-            var preset2 = brandPresetRepository.save(BrandPresetJpaEntityFixtures.activeEntity());
-            var preset3 = brandPresetRepository.save(BrandPresetJpaEntityFixtures.activeEntity());
+            var preset1 = savePreset();
+            var preset2 = savePreset();
+            var preset3 = savePreset();
 
             // Step 2: 목록 조회
             var listResponse =

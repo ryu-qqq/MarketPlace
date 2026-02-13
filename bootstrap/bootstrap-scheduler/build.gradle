@@ -31,8 +31,8 @@ dependencies {
     implementation project(':adapter-out:client:authhub-client')
     implementation project(':adapter-out:client:ses-client')
 
-    // AuthHub SDK (Auto-configuration for AuthHubClient, AuthApi, OnboardingApi)
-    implementation libs.authhub.sdk.core
+    // AuthHub SDK (Auto-configuration for TokenResolver, AuthHubClient, AuthApi, OnboardingApi)
+    implementation libs.authhub.sdk.spring.boot.starter
 
     // ========================================
     // Observability

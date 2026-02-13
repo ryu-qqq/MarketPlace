@@ -62,7 +62,7 @@ class CanonicalOptionGroupQueryE2ETest extends E2ETestBase {
             // given: 5건 저장
             for (int i = 0; i < 5; i++) {
                 canonicalOptionGroupRepository.save(
-                        CanonicalOptionGroupJpaEntityFixtures.activeEntity());
+                        CanonicalOptionGroupJpaEntityFixtures.activeEntityWithCode("CODE_Q1_" + i));
             }
 
             // when & then
@@ -119,7 +119,7 @@ class CanonicalOptionGroupQueryE2ETest extends E2ETestBase {
             // given
             var optionGroup =
                     canonicalOptionGroupRepository.save(
-                            CanonicalOptionGroupJpaEntityFixtures.activeEntity());
+                            CanonicalOptionGroupJpaEntityFixtures.activeEntityWithCode("CODE_Q2"));
 
             // when & then
             given().spec(
@@ -160,13 +160,16 @@ class CanonicalOptionGroupQueryE2ETest extends E2ETestBase {
             // Step 1: 사전 데이터 저장 (3건)
             var optionGroup1 =
                     canonicalOptionGroupRepository.save(
-                            CanonicalOptionGroupJpaEntityFixtures.activeEntity());
+                            CanonicalOptionGroupJpaEntityFixtures.activeEntityWithCode(
+                                    "CODE_F1_1"));
             var optionGroup2 =
                     canonicalOptionGroupRepository.save(
-                            CanonicalOptionGroupJpaEntityFixtures.activeEntity());
+                            CanonicalOptionGroupJpaEntityFixtures.activeEntityWithCode(
+                                    "CODE_F1_2"));
             var optionGroup3 =
                     canonicalOptionGroupRepository.save(
-                            CanonicalOptionGroupJpaEntityFixtures.activeEntity());
+                            CanonicalOptionGroupJpaEntityFixtures.activeEntityWithCode(
+                                    "CODE_F1_3"));
 
             // Step 2: 목록 조회
             var listResponse =

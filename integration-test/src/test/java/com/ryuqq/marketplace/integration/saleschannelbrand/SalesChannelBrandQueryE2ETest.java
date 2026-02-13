@@ -67,11 +67,14 @@ class SalesChannelBrandQueryE2ETest extends E2ETestBase {
                     salesChannelRepository.save(
                             SalesChannelJpaEntityFixtures.activeEntityWithName("쿠팡"));
             salesChannelBrandRepository.save(
-                    SalesChannelBrandJpaEntityFixtures.activeEntity(channel.getId()));
+                    SalesChannelBrandJpaEntityFixtures.activeEntityWithSalesChannel(
+                            channel.getId()));
             salesChannelBrandRepository.save(
-                    SalesChannelBrandJpaEntityFixtures.activeEntity(channel.getId()));
+                    SalesChannelBrandJpaEntityFixtures.activeEntityWithSalesChannel(
+                            channel.getId()));
             salesChannelBrandRepository.save(
-                    SalesChannelBrandJpaEntityFixtures.activeEntity(channel.getId()));
+                    SalesChannelBrandJpaEntityFixtures.activeEntityWithSalesChannel(
+                            channel.getId()));
 
             // when & then
             given().spec(givenSuperAdmin())
@@ -153,10 +156,12 @@ class SalesChannelBrandQueryE2ETest extends E2ETestBase {
             // Step 2: 브랜드 2건 등록
             var brand1 =
                     salesChannelBrandRepository.save(
-                            SalesChannelBrandJpaEntityFixtures.activeEntity(channel.getId()));
+                            SalesChannelBrandJpaEntityFixtures.activeEntityWithSalesChannel(
+                                    channel.getId()));
             var brand2 =
                     salesChannelBrandRepository.save(
-                            SalesChannelBrandJpaEntityFixtures.activeEntity(channel.getId()));
+                            SalesChannelBrandJpaEntityFixtures.activeEntityWithSalesChannel(
+                                    channel.getId()));
 
             // Step 3: 브랜드 목록 조회
             given().spec(givenSuperAdmin())

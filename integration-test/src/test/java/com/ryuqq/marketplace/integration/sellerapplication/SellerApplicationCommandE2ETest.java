@@ -89,7 +89,7 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
             // then
             response.then().statusCode(HttpStatus.CREATED.value());
 
-            Long applicationId = response.jsonPath().getLong("data");
+            Long applicationId = response.jsonPath().getLong("data.applicationId");
             assertThat(applicationId).isNotNull();
 
             // DB 검증
@@ -99,11 +99,13 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[C1-2] 필수 필드 누락 - businessName")
-        void applySellerApplication_missingBusinessName_returns400() {
+        @DisplayName("[C1-2] 필수 필드 누락 - companyName")
+        void applySellerApplication_missingCompanyName_returns400() {
             // given
             Map<String, Object> request = createApplyRequest();
-            request.remove("businessName");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> businessInfo = (Map<String, Object>) request.get("businessInfo");
+            businessInfo.remove("companyName");
 
             // when & then
             given().spec(
@@ -122,7 +124,9 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
         void applySellerApplication_missingRegistrationNumber_returns400() {
             // given
             Map<String, Object> request = createApplyRequest();
-            request.put("registrationNumber", "");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> businessInfo = (Map<String, Object>) request.get("businessInfo");
+            businessInfo.put("registrationNumber", "");
 
             // when & then
             given().spec(
@@ -194,7 +198,7 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
             // then
             response.then().statusCode(HttpStatus.OK.value());
 
-            Long sellerId = response.jsonPath().getLong("data");
+            Long sellerId = response.jsonPath().getLong("data.sellerId");
             assertThat(sellerId).isNotNull();
 
             // DB 검증: Seller 생성 확인
@@ -331,7 +335,7 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
                             .post(BASE_URL);
 
             applyResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long applicationId = applyResponse.jsonPath().getLong("data");
+            Long applicationId = applyResponse.jsonPath().getLong("data.applicationId");
 
             // Step 2: 목록 조회
             given().spec(givenSuperAdmin())
@@ -357,7 +361,7 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
                             .post(BASE_URL + "/{id}/approve", applicationId);
 
             approveResponse.then().statusCode(HttpStatus.OK.value());
-            Long sellerId = approveResponse.jsonPath().getLong("data");
+            Long sellerId = approveResponse.jsonPath().getLong("data.sellerId");
 
             // Step 5: 신청 상태 확인
             given().spec(givenSuperAdmin())
@@ -391,7 +395,7 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
                             .post(BASE_URL);
 
             applyResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long applicationId = applyResponse.jsonPath().getLong("data");
+            Long applicationId = applyResponse.jsonPath().getLong("data.applicationId");
 
             // Step 2: 거절
             Map<String, Object> rejectRequest = Map.of("rejectionReason", "서류 미비");
@@ -428,16 +432,36 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
         address.put("line1", "서울시 강남구");
         address.put("line2", "테헤란로 123");
 
+        Map<String, Object> sellerInfo = new HashMap<>();
+        sellerInfo.put("sellerName", "테스트셀러");
+        sellerInfo.put("displayName", "테스트 브랜드");
+
+        Map<String, Object> businessInfo = new HashMap<>();
+        businessInfo.put("registrationNumber", "123-45-67890");
+        businessInfo.put("companyName", "테스트컴퍼니");
+        businessInfo.put("representative", "홍길동");
+        businessInfo.put("businessAddress", address);
+
+        Map<String, Object> csContact = new HashMap<>();
+        csContact.put("phone", "010-1234-5678");
+        csContact.put("email", "contact@example.com");
+
+        Map<String, Object> contactInfo = new HashMap<>();
+        contactInfo.put("name", "김담당");
+        contactInfo.put("phone", "010-1234-5678");
+        contactInfo.put("email", "contact@example.com");
+
+        Map<String, Object> settlementInfo = new HashMap<>();
+        settlementInfo.put("bankName", "신한은행");
+        settlementInfo.put("accountNumber", "110123456789");
+        settlementInfo.put("accountHolderName", "홍길동");
+
         Map<String, Object> request = new HashMap<>();
-        request.put("sellerName", "테스트셀러");
-        request.put("displayName", "테스트 브랜드");
-        request.put("businessName", "테스트컴퍼니");
-        request.put("registrationNumber", "123-45-67890");
-        request.put("representative", "홍길동");
-        request.put("contactName", "김담당");
-        request.put("contactPhone", "010-1234-5678");
-        request.put("contactEmail", "contact@example.com");
-        request.put("businessAddress", address);
+        request.put("sellerInfo", sellerInfo);
+        request.put("businessInfo", businessInfo);
+        request.put("csContact", csContact);
+        request.put("contactInfo", contactInfo);
+        request.put("settlementInfo", settlementInfo);
 
         return request;
     }

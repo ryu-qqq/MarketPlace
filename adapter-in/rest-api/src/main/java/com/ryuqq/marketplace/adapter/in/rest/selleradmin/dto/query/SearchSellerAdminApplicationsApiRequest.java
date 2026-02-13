@@ -15,8 +15,8 @@ import java.util.List;
  * <p>API-DTO-002: Jakarta Validation 필수.
  *
  * @param sellerIds 셀러 ID 목록 (슈퍼관리자: 선택, 셀러관리자: 서버에서 강제 적용)
- * @param status 상태 필터 (PENDING_APPROVAL, REJECTED, ACTIVE 등)
- * @param searchField 검색 필드 (loginId, name)
+ * @param status 상태 필터 (PENDING_APPROVAL, ACTIVE, INACTIVE, SUSPENDED, REJECTED)
+ * @param searchField 검색 필드 (LOGIN_ID, NAME)
  * @param searchWord 검색어
  * @param sortKey 정렬 키 (createdAt)
  * @param sortDirection 정렬 방향 (ASC, DESC)
@@ -34,10 +34,12 @@ public record SearchSellerAdminApplicationsApiRequest(
                         example = "1,2,3")
                 List<Long> sellerIds,
         @Parameter(
-                        description = "상태 필터 목록 (PENDING_APPROVAL, ACTIVE, REJECTED). 복수 선택 가능",
+                        description =
+                                "상태 필터 목록 (PENDING_APPROVAL, ACTIVE, INACTIVE, SUSPENDED,"
+                                        + " REJECTED). 복수 선택 가능",
                         example = "PENDING_APPROVAL")
                 List<String> status,
-        @Parameter(description = "검색 필드 (loginId, name)", example = "loginId") String searchField,
+        @Parameter(description = "검색 필드 (LOGIN_ID, NAME)", example = "loginId") String searchField,
         @Parameter(description = "검색어", example = "admin") String searchWord,
         @Parameter(description = "정렬 키 (createdAt)", example = "createdAt") String sortKey,
         @Parameter(description = "정렬 방향 (ASC, DESC)", example = "DESC") String sortDirection,
