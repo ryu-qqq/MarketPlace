@@ -2,23 +2,16 @@ package com.ryuqq.marketplace.adapter.out.persistence.redis.stock.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.ryuqq.marketplace.adapter.out.persistence.redis.common.RedisTestSupport;
 import com.ryuqq.marketplace.adapter.out.persistence.redis.common.config.LettuceConfig;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * StockCounterAdapter 통합 테스트
@@ -39,21 +32,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @DisplayName("StockCounterAdapter 통합 테스트")
 @SpringBootTest(classes = {LettuceConfig.class, StockCounterAdapter.class})
-@ActiveProfiles("test")
-@Testcontainers
-class StockCounterAdapterTest {
-
-    @Container
-    static GenericContainer<?> redis =
-            new GenericContainer<>("redis:7-alpine").withExposedPorts(6379);
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.redis.host", redis::getHost);
-        registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
-    }
-
-    @Autowired private RedisTemplate<String, Object> redisTemplate;
+class StockCounterAdapterTest extends RedisTestSupport {
 
     private static final String KEY_PREFIX = "stock:counter:";
     private static final int NOT_FOUND = -1;
@@ -65,21 +44,6 @@ class StockCounterAdapterTest {
     @BeforeEach
     void setUp() {
         productStockId = 100L;
-    }
-
-    @AfterEach
-    void tearDown() {
-        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushDb();
-    }
-
-    private void assertKeyExists(String key) {
-        Boolean exists = redisTemplate.hasKey(key);
-        assertThat(exists).as("Key '%s' should exist in Redis", key).isTrue();
-    }
-
-    private void assertKeyNotExists(String key) {
-        Boolean exists = redisTemplate.hasKey(key);
-        assertThat(exists).as("Key '%s' should not exist in Redis", key).isFalse();
     }
 
     @Nested
