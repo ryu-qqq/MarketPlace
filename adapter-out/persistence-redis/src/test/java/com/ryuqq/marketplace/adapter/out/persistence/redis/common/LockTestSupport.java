@@ -12,14 +12,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.AfterEach;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * Lock Adapter 테스트 지원 추상 클래스
@@ -75,17 +75,29 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-@Testcontainers
 public abstract class LockTestSupport {
+
+    private static final Logger log = LoggerFactory.getLogger(LockTestSupport.class);
+
+    private static final boolean CI_ENVIRONMENT =
+            System.getenv("CI") != null || System.getenv("GITHUB_ACTIONS") != null;
 
     /**
      * Redis TestContainer
      *
-     * <p>모든 테스트에서 공유되는 단일 컨테이너입니다.
+     * <p>로컬 환경에서만 사용됩니다. CI 환경에서는 서비스 컨테이너를 사용합니다.
      */
-    @Container
-    protected static GenericContainer<?> redis =
-            new GenericContainer<>("redis:7-alpine").withExposedPorts(6379);
+    protected static GenericContainer<?> redis;
+
+    static {
+        if (!CI_ENVIRONMENT) {
+            redis = new GenericContainer<>("redis:7-alpine").withExposedPorts(6379);
+            redis.start();
+            log.info("Testcontainers Redis started on port {}", redis.getMappedPort(6379));
+        } else {
+            log.info("CI environment detected, using service container Redis at localhost:6379");
+        }
+    }
 
     /**
      * RedissonClient - 분산락용
@@ -95,14 +107,21 @@ public abstract class LockTestSupport {
     @Autowired protected RedissonClient redissonClient;
 
     /**
-     * TestContainers 동적 프로퍼티 설정
+     * 동적 프로퍼티 설정
+     *
+     * <p>로컬: Testcontainers 동적 포트 사용, CI: localhost:6379 사용
      *
      * @param registry 동적 프로퍼티 레지스트리
      */
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.redis.host", redis::getHost);
-        registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+        if (CI_ENVIRONMENT) {
+            registry.add("spring.data.redis.host", () -> "localhost");
+            registry.add("spring.data.redis.port", () -> 6379);
+        } else {
+            registry.add("spring.data.redis.host", redis::getHost);
+            registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+        }
     }
 
     /**
