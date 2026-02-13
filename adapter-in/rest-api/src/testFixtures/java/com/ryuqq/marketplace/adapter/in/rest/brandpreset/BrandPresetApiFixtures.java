@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.brandpreset.dto.command.RegisterBra
 import com.ryuqq.marketplace.adapter.in.rest.brandpreset.dto.command.UpdateBrandPresetApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.brandpreset.dto.query.SearchBrandPresetsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.brandpreset.dto.response.BrandPresetApiResponse;
+import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetDetailResult;
 import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetPageResult;
 import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetResult;
 import java.time.Instant;
@@ -182,5 +183,29 @@ public final class BrandPresetApiFixtures {
                 "테스트 브랜드",
                 "TEST_BRAND_CODE",
                 "2025-02-10T10:30:00+09:00");
+    }
+
+    // ===== BrandPresetDetailResult (Application) =====
+
+    public static BrandPresetDetailResult brandPresetDetailResult(Long id) {
+        Instant now = Instant.parse("2025-02-10T01:30:00Z");
+        BrandPresetDetailResult.MappingBrand mappingBrand =
+                new BrandPresetDetailResult.MappingBrand("TEST_BRAND_CODE", "테스트 브랜드");
+        List<BrandPresetDetailResult.InternalBrand> internalBrands =
+                List.of(
+                        new BrandPresetDetailResult.InternalBrand(100L, "내부 브랜드 A"),
+                        new BrandPresetDetailResult.InternalBrand(200L, "내부 브랜드 B"));
+        return new BrandPresetDetailResult(
+                id,
+                DEFAULT_SHOP_ID,
+                "테스트 Shop",
+                1L,
+                "테스트 판매채널",
+                "test-account",
+                DEFAULT_PRESET_NAME,
+                mappingBrand,
+                internalBrands,
+                now,
+                now);
     }
 }

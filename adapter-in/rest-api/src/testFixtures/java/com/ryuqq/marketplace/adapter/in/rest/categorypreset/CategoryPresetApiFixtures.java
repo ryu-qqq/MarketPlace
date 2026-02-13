@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.categorypreset.dto.command.Register
 import com.ryuqq.marketplace.adapter.in.rest.categorypreset.dto.command.UpdateCategoryPresetApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.categorypreset.dto.query.SearchCategoryPresetsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.categorypreset.dto.response.CategoryPresetApiResponse;
+import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetDetailResult;
 import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetPageResult;
 import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetResult;
 import java.time.Instant;
@@ -180,5 +181,30 @@ public final class CategoryPresetApiFixtures {
                 "식품 > 과자 > 스낵 > 젤리",
                 DEFAULT_CATEGORY_CODE,
                 "2025-02-10T10:30:00+09:00");
+    }
+
+    // ===== CategoryPresetDetailResult (Application) =====
+
+    public static CategoryPresetDetailResult categoryPresetDetailResult(Long id) {
+        Instant now = Instant.parse("2025-02-10T01:30:00Z");
+        CategoryPresetDetailResult.MappingCategory mappingCategory =
+                new CategoryPresetDetailResult.MappingCategory(
+                        DEFAULT_CATEGORY_CODE, "식품 > 과자 > 스낵 > 젤리");
+        List<CategoryPresetDetailResult.InternalCategory> internalCategories =
+                List.of(
+                        new CategoryPresetDetailResult.InternalCategory(100L, "내부 카테고리 A 경로"),
+                        new CategoryPresetDetailResult.InternalCategory(200L, "내부 카테고리 B 경로"));
+        return new CategoryPresetDetailResult(
+                id,
+                DEFAULT_SHOP_ID,
+                "테스트 Shop",
+                1L,
+                "테스트 판매채널",
+                "test-account",
+                DEFAULT_PRESET_NAME,
+                mappingCategory,
+                internalCategories,
+                now,
+                now);
     }
 }

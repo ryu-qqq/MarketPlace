@@ -4,17 +4,16 @@ import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidOptionStructureException;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidStatusTransitionException;
-import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupNoThumbnailException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
+import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupImages;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
+import com.ryuqq.marketplace.domain.productgroup.vo.SellerOptionGroups;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,8 +31,8 @@ public class ProductGroup {
     private ProductGroupName productGroupName;
     private final OptionType optionType;
     private ProductGroupStatus status;
-    private final List<ProductGroupImage> images;
-    private final List<SellerOptionGroup> sellerOptionGroups;
+    private ProductGroupImages productGroupImages;
+    private SellerOptionGroups sellerOptionGroups;
     private final Instant createdAt;
     private Instant updatedAt;
 
@@ -47,8 +46,8 @@ public class ProductGroup {
             ProductGroupName productGroupName,
             OptionType optionType,
             ProductGroupStatus status,
-            List<ProductGroupImage> images,
-            List<SellerOptionGroup> sellerOptionGroups,
+            ProductGroupImages productGroupImages,
+            SellerOptionGroups sellerOptionGroups,
             Instant createdAt,
             Instant updatedAt) {
         this.id = id;
@@ -60,8 +59,8 @@ public class ProductGroup {
         this.productGroupName = productGroupName;
         this.optionType = optionType;
         this.status = status;
-        this.images = new ArrayList<>(images);
-        this.sellerOptionGroups = new ArrayList<>(sellerOptionGroups);
+        this.productGroupImages = productGroupImages;
+        this.sellerOptionGroups = sellerOptionGroups;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -75,8 +74,8 @@ public class ProductGroup {
             RefundPolicyId refundPolicyId,
             ProductGroupName productGroupName,
             OptionType optionType,
-            List<ProductGroupImage> images,
-            List<SellerOptionGroup> sellerOptionGroups,
+            ProductGroupImages images,
+            SellerOptionGroups sellerOptionGroups,
             Instant now) {
         ProductGroup productGroup =
                 new ProductGroup(
@@ -122,22 +121,19 @@ public class ProductGroup {
                 productGroupName,
                 optionType,
                 status,
-                images,
-                sellerOptionGroups,
+                ProductGroupImages.reconstitute(images),
+                SellerOptionGroups.reconstitute(sellerOptionGroups),
                 createdAt,
                 updatedAt);
     }
 
     // ── 비즈니스 메서드 ──
 
-    /** 판매 활성화. THUMBNAIL 이미지 최소 1개 필수. */
+    /** 판매 활성화. ProductGroupImages VO가 THUMBNAIL 존재를 보장. */
     public void activate(Instant now) {
         if (!status.canActivate()) {
             throw new ProductGroupInvalidStatusTransitionException(
                     status, ProductGroupStatus.ACTIVE);
-        }
-        if (!hasThumbnailImage()) {
-            throw new ProductGroupNoThumbnailException(idValue());
         }
         this.status = ProductGroupStatus.ACTIVE;
         this.updatedAt = now;
@@ -189,26 +185,14 @@ public class ProductGroup {
         this.updatedAt = now;
     }
 
-    /** 이미지 추가. */
-    public void addImage(ProductGroupImage image) {
-        this.images.add(image);
+    /** 이미지 전체 교체. ProductGroupImages VO가 검증/정렬을 보장. */
+    public void replaceImages(ProductGroupImages images) {
+        this.productGroupImages = images;
     }
 
-    /** 이미지 전체 교체. */
-    public void replaceImages(List<ProductGroupImage> images) {
-        this.images.clear();
-        this.images.addAll(images);
-    }
-
-    /** 셀러 옵션 그룹 추가. */
-    public void addSellerOptionGroup(SellerOptionGroup optionGroup) {
-        this.sellerOptionGroups.add(optionGroup);
-    }
-
-    /** 셀러 옵션 그룹 전체 교체. */
-    public void replaceSellerOptionGroups(List<SellerOptionGroup> optionGroups) {
-        this.sellerOptionGroups.clear();
-        this.sellerOptionGroups.addAll(optionGroups);
+    /** 셀러 옵션 그룹 전체 교체. SellerOptionGroups VO가 불변식을 보장. */
+    public void replaceSellerOptionGroups(SellerOptionGroups optionGroups) {
+        this.sellerOptionGroups = optionGroups;
         validateOptionStructure();
     }
 
@@ -228,26 +212,14 @@ public class ProductGroup {
 
     // ── 조회 메서드 ──
 
-    /** THUMBNAIL 이미지 존재 여부. */
-    public boolean hasThumbnailImage() {
-        return images.stream().anyMatch(ProductGroupImage::isThumbnail);
-    }
-
     /** 모든 셀러 옵션이 캐노니컬에 매핑되었는지 확인. */
     public boolean isFullyMappedToCanonical() {
-        if (sellerOptionGroups.isEmpty()) {
-            return true;
-        }
-        return sellerOptionGroups.stream().allMatch(SellerOptionGroup::isFullyMapped);
+        return sellerOptionGroups.isFullyMappedToCanonical();
     }
 
     /** 총 옵션 값 수 (전체 그룹 합산). */
     public int totalOptionValueCount() {
-        int total = 0;
-        for (SellerOptionGroup group : sellerOptionGroups) {
-            total += group.optionValueCount();
-        }
-        return total;
+        return sellerOptionGroups.totalOptionValueCount();
     }
 
     // ── Accessor 메서드 ──
@@ -317,11 +289,11 @@ public class ProductGroup {
     }
 
     public List<ProductGroupImage> images() {
-        return Collections.unmodifiableList(images);
+        return productGroupImages.toList();
     }
 
     public List<SellerOptionGroup> sellerOptionGroups() {
-        return Collections.unmodifiableList(sellerOptionGroups);
+        return sellerOptionGroups.toList();
     }
 
     public Instant createdAt() {
