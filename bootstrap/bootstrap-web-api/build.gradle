@@ -33,6 +33,7 @@ dependencies {
     implementation project(':adapter-out:persistence-mysql')
     implementation project(':adapter-out:persistence-redis')
     implementation project(':adapter-out:client:authhub-client')
+    implementation project(':adapter-out:client:fileflow-client')
 
     // ========================================
     // Spring Boot Starters
@@ -45,6 +46,9 @@ dependencies {
 
     // AuthHub SDK Spring Boot Starter (GatewayAuthenticationFilter, UserContext, SecurityHeaders)
     implementation libs.authhub.sdk.spring.boot.starter
+
+    // FileFlow SDK Spring Boot Starter (DownloadTaskApi, SingleUploadSessionApi, AssetApi)
+    implementation libs.fileflow.sdk.spring.boot.starter
 
     // Configuration Processing
     annotationProcessor libs.spring.boot.configuration.processor

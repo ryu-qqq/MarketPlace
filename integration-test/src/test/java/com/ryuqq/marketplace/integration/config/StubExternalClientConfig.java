@@ -5,8 +5,12 @@ import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
 import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
 import com.ryuqq.marketplace.application.auth.port.out.client.AuthClient;
-import com.ryuqq.marketplace.application.common.port.out.FileStoragePort;
+import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
+import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
+import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
+import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
+import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
 import com.ryuqq.marketplace.application.seller.port.out.client.IdentityClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminEmailClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminIdentityClient;
@@ -139,8 +143,8 @@ public class StubExternalClientConfig {
 
     @Bean
     @Primary
-    public FileStoragePort stubFileStoragePort() {
-        return new FileStoragePort() {
+    public FileStorageClient stubFileStorageClient() {
+        return new FileStorageClient() {
             @Override
             public PresignedUrlResponse generateUploadUrl(PresignedUploadUrlRequest request) {
                 return new PresignedUrlResponse(
