@@ -1,0 +1,349 @@
+package com.ryuqq.marketplace.domain.imageupload.aggregate;
+
+import com.ryuqq.marketplace.domain.imageupload.id.ImageUploadOutboxId;
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageUploadOutboxIdempotencyKey;
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageUploadOutboxStatus;
+import java.time.Instant;
+
+/**
+ * 이미지 업로드 Outbox Aggregate.
+ *
+ * <p>ProductGroup/Description 이미지를 S3에 비동기 업로드하기 위한 Outbox 패턴 구현체입니다.
+ *
+ * <p>이미지 저장 시 생성되며, 스케줄러에 의해 처리됩니다. FileStoragePort.downloadFromExternalUrl()을 호출하여 원본 URL에서 다운로드 후
+ * S3에 업로드합니다.
+ *
+ * <p><strong>동시성 제어</strong>:
+ *
+ * <ul>
+ *   <li>version: 낙관적 락을 위한 버전 필드
+ *   <li>updatedAt: PROCESSING 좀비 상태 감지를 위한 갱신 시각
+ *   <li>idempotencyKey: 중복 업로드 방지
+ * </ul>
+ */
+public class ImageUploadOutbox {
+
+    private static final int DEFAULT_MAX_RETRY = 3;
+
+    private final ImageUploadOutboxId id;
+    private final Long sourceId;
+    private final ImageSourceType sourceType;
+    private final String originUrl;
+    private ImageUploadOutboxStatus status;
+    private int retryCount;
+    private final int maxRetry;
+    private final Instant createdAt;
+    private Instant updatedAt;
+    private Instant processedAt;
+    private String errorMessage;
+    private long version;
+    private final ImageUploadOutboxIdempotencyKey idempotencyKey;
+
+    private ImageUploadOutbox(
+            ImageUploadOutboxId id,
+            Long sourceId,
+            ImageSourceType sourceType,
+            String originUrl,
+            ImageUploadOutboxStatus status,
+            int retryCount,
+            int maxRetry,
+            Instant createdAt,
+            Instant updatedAt,
+            Instant processedAt,
+            String errorMessage,
+            long version,
+            ImageUploadOutboxIdempotencyKey idempotencyKey) {
+        this.id = id;
+        this.sourceId = sourceId;
+        this.sourceType = sourceType;
+        this.originUrl = originUrl;
+        this.status = status;
+        this.retryCount = retryCount;
+        this.maxRetry = maxRetry;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.processedAt = processedAt;
+        this.errorMessage = errorMessage;
+        this.version = version;
+        this.idempotencyKey = idempotencyKey;
+    }
+
+    /**
+     * 새 Outbox 생성.
+     *
+     * @param sourceId 이미지 DB ID
+     * @param sourceType 이미지 소스 타입
+     * @param originUrl 다운로드할 원본 URL
+     * @param now 현재 시각
+     * @return 새 ImageUploadOutbox 인스턴스
+     */
+    public static ImageUploadOutbox forNew(
+            Long sourceId, ImageSourceType sourceType, String originUrl, Instant now) {
+        ImageUploadOutboxIdempotencyKey idempotencyKey =
+                ImageUploadOutboxIdempotencyKey.generate(sourceType, sourceId, now);
+        return new ImageUploadOutbox(
+                ImageUploadOutboxId.forNew(),
+                sourceId,
+                sourceType,
+                originUrl,
+                ImageUploadOutboxStatus.PENDING,
+                0,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                null,
+                null,
+                0L,
+                idempotencyKey);
+    }
+
+    /**
+     * DB에서 재구성.
+     *
+     * @param id Outbox ID
+     * @param sourceId 이미지 DB ID
+     * @param sourceType 이미지 소스 타입
+     * @param originUrl 원본 URL
+     * @param status 상태
+     * @param retryCount 재시도 횟수
+     * @param maxRetry 최대 재시도 횟수
+     * @param createdAt 생성일시
+     * @param updatedAt 갱신일시
+     * @param processedAt 처리일시
+     * @param errorMessage 에러 메시지
+     * @param version 낙관적 락 버전
+     * @param idempotencyKey 멱등키 (String)
+     * @return 재구성된 ImageUploadOutbox 인스턴스
+     */
+    public static ImageUploadOutbox reconstitute(
+            ImageUploadOutboxId id,
+            Long sourceId,
+            ImageSourceType sourceType,
+            String originUrl,
+            ImageUploadOutboxStatus status,
+            int retryCount,
+            int maxRetry,
+            Instant createdAt,
+            Instant updatedAt,
+            Instant processedAt,
+            String errorMessage,
+            long version,
+            String idempotencyKey) {
+        return new ImageUploadOutbox(
+                id,
+                sourceId,
+                sourceType,
+                originUrl,
+                status,
+                retryCount,
+                maxRetry,
+                createdAt,
+                updatedAt,
+                processedAt,
+                errorMessage,
+                version,
+                ImageUploadOutboxIdempotencyKey.of(idempotencyKey));
+    }
+
+    public boolean isNew() {
+        return id.isNew();
+    }
+
+    /**
+     * 처리 시작.
+     *
+     * <p>PENDING 또는 PROCESSING 상태에서만 호출 가능합니다.
+     *
+     * @param now 현재 시각 (updatedAt 갱신용)
+     */
+    public void startProcessing(Instant now) {
+        if (!status.canProcess()) {
+            throw new IllegalStateException("처리할 수 없는 상태입니다. 현재 상태: " + status);
+        }
+        this.status = ImageUploadOutboxStatus.PROCESSING;
+        this.updatedAt = now;
+    }
+
+    /**
+     * 처리 완료.
+     *
+     * @param now 처리 완료 시각
+     */
+    public void complete(Instant now) {
+        this.status = ImageUploadOutboxStatus.COMPLETED;
+        this.processedAt = now;
+        this.updatedAt = now;
+        this.errorMessage = null;
+    }
+
+    /**
+     * 처리 실패 및 재시도.
+     *
+     * <p>재시도 횟수를 증가시키고, 최대 재시도 횟수 초과 시 FAILED 상태로 변경합니다.
+     *
+     * @param errorMessage 에러 메시지
+     * @param now 현재 시각
+     */
+    public void failAndRetry(String errorMessage, Instant now) {
+        this.retryCount++;
+        this.errorMessage = errorMessage;
+        this.updatedAt = now;
+
+        if (this.retryCount >= this.maxRetry) {
+            this.status = ImageUploadOutboxStatus.FAILED;
+            this.processedAt = now;
+        } else {
+            this.status = ImageUploadOutboxStatus.PENDING;
+        }
+    }
+
+    /**
+     * 즉시 실패 처리 (재시도 없이).
+     *
+     * @param errorMessage 에러 메시지
+     * @param now 현재 시각
+     */
+    public void fail(String errorMessage, Instant now) {
+        this.status = ImageUploadOutboxStatus.FAILED;
+        this.errorMessage = errorMessage;
+        this.processedAt = now;
+        this.updatedAt = now;
+    }
+
+    /**
+     * 실패 결과를 반영합니다.
+     *
+     * <p>canRetry=true이면 failAndRetry()를 호출하여 재시도 처리하고 (maxRetry 초과 시 자동 FAILED), canRetry=false이면
+     * 즉시 FAILED 상태로 변경합니다.
+     *
+     * @param canRetry 재시도 가능 여부
+     * @param errorMessage 에러 메시지
+     * @param now 현재 시각
+     */
+    public void recordFailure(boolean canRetry, String errorMessage, Instant now) {
+        if (canRetry) {
+            failAndRetry(errorMessage, now);
+        } else {
+            fail(errorMessage, now);
+        }
+    }
+
+    /**
+     * PROCESSING 상태에서 타임아웃으로 복구.
+     *
+     * <p>updatedAt이 특정 시간 이전이면 좀비 상태로 간주하고 PENDING으로 복구합니다.
+     *
+     * @param now 현재 시각
+     */
+    public void recoverFromTimeout(Instant now) {
+        if (this.status != ImageUploadOutboxStatus.PROCESSING) {
+            throw new IllegalStateException("타임아웃 복구는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
+        }
+        this.status = ImageUploadOutboxStatus.PENDING;
+        this.updatedAt = now;
+        this.errorMessage = "타임아웃으로 인한 복구";
+    }
+
+    /**
+     * PROCESSING 타임아웃 여부 확인.
+     *
+     * @param now 현재 시각
+     * @param timeoutSeconds 타임아웃 시간(초)
+     * @return 타임아웃 여부
+     */
+    public boolean isProcessingTimeout(Instant now, long timeoutSeconds) {
+        if (this.status != ImageUploadOutboxStatus.PROCESSING) {
+            return false;
+        }
+        Instant timeoutThreshold = this.updatedAt.plusSeconds(timeoutSeconds);
+        return timeoutThreshold.isBefore(now);
+    }
+
+    /** 재시도 가능 여부. */
+    public boolean canRetry() {
+        return retryCount < maxRetry && status.canProcess();
+    }
+
+    /** 처리 대상 여부 (PENDING 상태). */
+    public boolean shouldProcess() {
+        return status.isPending();
+    }
+
+    // Getters
+    public ImageUploadOutboxId id() {
+        return id;
+    }
+
+    public Long idValue() {
+        return id.value();
+    }
+
+    public Long sourceId() {
+        return sourceId;
+    }
+
+    public ImageSourceType sourceType() {
+        return sourceType;
+    }
+
+    public String originUrl() {
+        return originUrl;
+    }
+
+    public ImageUploadOutboxStatus status() {
+        return status;
+    }
+
+    public int retryCount() {
+        return retryCount;
+    }
+
+    public int maxRetry() {
+        return maxRetry;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
+
+    public Instant processedAt() {
+        return processedAt;
+    }
+
+    public String errorMessage() {
+        return errorMessage;
+    }
+
+    public long version() {
+        return version;
+    }
+
+    public ImageUploadOutboxIdempotencyKey idempotencyKey() {
+        return idempotencyKey;
+    }
+
+    public String idempotencyKeyValue() {
+        return idempotencyKey.value();
+    }
+
+    public boolean isPending() {
+        return status.isPending();
+    }
+
+    public boolean isProcessing() {
+        return status.isProcessing();
+    }
+
+    public boolean isCompleted() {
+        return status.isCompleted();
+    }
+
+    public boolean isFailed() {
+        return status.isFailed();
+    }
+}

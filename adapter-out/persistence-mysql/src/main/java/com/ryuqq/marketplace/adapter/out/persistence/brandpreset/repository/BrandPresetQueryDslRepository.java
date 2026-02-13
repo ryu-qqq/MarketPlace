@@ -4,6 +4,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.composite.BrandPresetCompositeDto;
+import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.composite.BrandPresetDetailCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.condition.BrandPresetConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.entity.BrandPresetJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.entity.QBrandPresetJpaEntity;
@@ -101,6 +102,37 @@ public class BrandPresetQueryDslRepository {
                                 conditionBuilder.createdAtLoe(criteria))
                         .fetchOne();
         return count != null ? count : 0L;
+    }
+
+    public Optional<BrandPresetDetailCompositeDto> findDetailCompositeById(Long id) {
+        BrandPresetDetailCompositeDto result =
+                queryFactory
+                        .select(
+                                Projections.constructor(
+                                        BrandPresetDetailCompositeDto.class,
+                                        brandPreset.id,
+                                        brandPreset.shopId,
+                                        shop.shopName,
+                                        shop.accountId,
+                                        salesChannelBrand.salesChannelId,
+                                        salesChannel.channelName,
+                                        brandPreset.salesChannelBrandId,
+                                        salesChannelBrand.externalBrandCode,
+                                        salesChannelBrand.externalBrandName,
+                                        brandPreset.presetName,
+                                        brandPreset.status,
+                                        brandPreset.createdAt,
+                                        brandPreset.updatedAt))
+                        .from(brandPreset)
+                        .join(shop)
+                        .on(brandPreset.shopId.eq(shop.id))
+                        .join(salesChannelBrand)
+                        .on(brandPreset.salesChannelBrandId.eq(salesChannelBrand.id))
+                        .join(salesChannel)
+                        .on(salesChannelBrand.salesChannelId.eq(salesChannel.id))
+                        .where(conditionBuilder.idEq(id))
+                        .fetchOne();
+        return Optional.ofNullable(result);
     }
 
     public Optional<Long> findSalesChannelIdBySalesChannelBrandId(Long salesChannelBrandId) {

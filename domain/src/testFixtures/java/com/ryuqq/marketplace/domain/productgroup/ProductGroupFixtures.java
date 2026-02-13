@@ -235,6 +235,16 @@ public final class ProductGroupFixtures {
 
     // ===== ProductGroup Aggregate Fixtures =====
 
+    /** 기본 ProductGroupImages (THUMBNAIL 1개) */
+    public static ProductGroupImages defaultProductGroupImages() {
+        return ProductGroupImages.of(List.of(thumbnailImage()));
+    }
+
+    /** THUMBNAIL + DETAIL 이미지 포함 ProductGroupImages */
+    public static ProductGroupImages productGroupImagesWithDetails() {
+        return ProductGroupImages.of(List.of(thumbnailImage(), detailImage(1), detailImage(2)));
+    }
+
     /** 신규 ProductGroup (DRAFT 상태, 옵션 없음) */
     public static ProductGroup newProductGroup() {
         return ProductGroup.forNew(
@@ -245,8 +255,8 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.NONE,
-                List.of(thumbnailImage()),
-                List.of(),
+                defaultProductGroupImages(),
+                SellerOptionGroups.of(List.of()),
                 CommonVoFixtures.now());
     }
 
@@ -260,8 +270,8 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.SINGLE,
-                List.of(thumbnailImage()),
-                List.of(defaultSellerOptionGroup()),
+                defaultProductGroupImages(),
+                SellerOptionGroups.of(List.of(defaultSellerOptionGroup())),
                 CommonVoFixtures.now());
     }
 
@@ -291,8 +301,8 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.COMBINATION,
-                List.of(thumbnailImage()),
-                List.of(colorOption, sizeOption),
+                defaultProductGroupImages(),
+                SellerOptionGroups.of(List.of(colorOption, sizeOption)),
                 CommonVoFixtures.now());
     }
 

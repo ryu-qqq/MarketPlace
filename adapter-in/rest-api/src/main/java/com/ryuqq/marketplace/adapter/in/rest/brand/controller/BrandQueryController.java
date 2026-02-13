@@ -9,6 +9,8 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.application.brand.dto.response.BrandPageResult;
 import com.ryuqq.marketplace.application.brand.port.in.query.SearchBrandByOffsetUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /** 브랜드 조회 API 컨트롤러. */
+@Tag(name = "브랜드 조회", description = "브랜드 조회 API")
 @RestController
 @RequestMapping(BrandAdminEndpoints.BRANDS)
 public class BrandQueryController {
@@ -30,6 +33,7 @@ public class BrandQueryController {
         this.mapper = mapper;
     }
 
+    @Operation(summary = "브랜드 목록 조회", description = "브랜드 목록을 조회합니다.")
     @RequirePermission(value = "brand:read", description = "브랜드 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<BrandApiResponse>>> searchBrandsByOffset(

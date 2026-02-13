@@ -146,6 +146,9 @@ API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
 
 |`notice-category:read`
 |고시정보 카테고리 조회
+
+|`product-group:read` / `product-group:write`
+|상품 그룹 조회 / 등록·수정
 |===
 
 === 공통 응답 형식
@@ -272,3 +275,8 @@ include::sales-channel-category/sales-channel-category.adoc[]
 == 고시정보 카테고리 (Notice Category)
 
 include::notice-category/notice-category.adoc[]
+
+
+== 상품 그룹 (Product Group)
+
+include::product-group/product-group.adoc[]

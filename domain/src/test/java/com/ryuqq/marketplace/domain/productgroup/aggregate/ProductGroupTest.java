@@ -8,7 +8,6 @@ import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidOptionStructureException;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidStatusTransitionException;
-import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupNoThumbnailException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.*;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
@@ -40,7 +39,8 @@ class ProductGroupTest {
             RefundPolicyId refundPolicyId = RefundPolicyId.of(1L);
             ProductGroupName name = ProductGroupFixtures.defaultProductGroupName();
             OptionType optionType = OptionType.NONE;
-            List<ProductGroupImage> images = List.of(ProductGroupFixtures.thumbnailImage());
+            ProductGroupImages images =
+                    ProductGroupImages.of(List.of(ProductGroupFixtures.thumbnailImage()));
             Instant now = CommonVoFixtures.now();
 
             // when
@@ -54,7 +54,7 @@ class ProductGroupTest {
                             name,
                             optionType,
                             images,
-                            List.of(),
+                            SellerOptionGroups.of(List.of()),
                             now);
 
             // then
@@ -107,8 +107,9 @@ class ProductGroupTest {
                                             RefundPolicyId.of(1L),
                                             ProductGroupFixtures.defaultProductGroupName(),
                                             OptionType.SINGLE,
-                                            List.of(ProductGroupFixtures.thumbnailImage()),
-                                            List.of(),
+                                            ProductGroupImages.of(
+                                                    List.of(ProductGroupFixtures.thumbnailImage())),
+                                            SellerOptionGroups.of(List.of()),
                                             CommonVoFixtures.now()))
                     .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
         }
@@ -127,10 +128,12 @@ class ProductGroupTest {
                                             RefundPolicyId.of(1L),
                                             ProductGroupFixtures.defaultProductGroupName(),
                                             OptionType.NONE,
-                                            List.of(ProductGroupFixtures.thumbnailImage()),
-                                            List.of(
-                                                    ProductGroupFixtures
-                                                            .defaultSellerOptionGroup()),
+                                            ProductGroupImages.of(
+                                                    List.of(ProductGroupFixtures.thumbnailImage())),
+                                            SellerOptionGroups.of(
+                                                    List.of(
+                                                            ProductGroupFixtures
+                                                                    .defaultSellerOptionGroup())),
                                             CommonVoFixtures.now()))
                     .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
         }
@@ -216,18 +219,6 @@ class ProductGroupTest {
 
             // then
             assertThat(productGroup.status()).isEqualTo(ProductGroupStatus.ACTIVE);
-        }
-
-        @Test
-        @DisplayName("썸네일 이미지가 없으면 활성화할 수 없다")
-        void cannotActivateWithoutThumbnail() {
-            // given
-            ProductGroup productGroup = ProductGroupFixtures.productGroupWithoutThumbnail();
-            Instant now = CommonVoFixtures.now();
-
-            // when & then
-            assertThatThrownBy(() -> productGroup.activate(now))
-                    .isInstanceOf(ProductGroupNoThumbnailException.class);
         }
 
         @Test
@@ -379,29 +370,16 @@ class ProductGroupTest {
     class ImageManagementTest {
 
         @Test
-        @DisplayName("이미지를 추가한다")
-        void addImage() {
-            // given
-            ProductGroup productGroup = ProductGroupFixtures.newProductGroup();
-            ProductGroupImage newImage = ProductGroupFixtures.detailImage(1);
-
-            // when
-            productGroup.addImage(newImage);
-
-            // then
-            assertThat(productGroup.images()).hasSize(2);
-        }
-
-        @Test
         @DisplayName("이미지 전체를 교체한다")
         void replaceImages() {
             // given
             ProductGroup productGroup = ProductGroupFixtures.newProductGroup();
-            List<ProductGroupImage> newImages =
-                    List.of(
-                            ProductGroupFixtures.thumbnailImage(),
-                            ProductGroupFixtures.detailImage(1),
-                            ProductGroupFixtures.detailImage(2));
+            ProductGroupImages newImages =
+                    ProductGroupImages.of(
+                            List.of(
+                                    ProductGroupFixtures.thumbnailImage(),
+                                    ProductGroupFixtures.detailImage(1),
+                                    ProductGroupFixtures.detailImage(2)));
 
             // when
             productGroup.replaceImages(newImages);
@@ -411,43 +389,19 @@ class ProductGroupTest {
         }
 
         @Test
-        @DisplayName("썸네일 이미지가 존재하는지 확인한다")
-        void hasThumbnailImage() {
+        @DisplayName("이미지가 있는 ProductGroup의 이미지 목록을 조회한다")
+        void imagesReturnsImageList() {
             // given
             ProductGroup productGroup = ProductGroupFixtures.activeProductGroup();
 
             // when & then
-            assertThat(productGroup.hasThumbnailImage()).isTrue();
-        }
-
-        @Test
-        @DisplayName("썸네일 이미지가 없으면 false를 반환한다")
-        void doesNotHaveThumbnailImage() {
-            // given
-            ProductGroup productGroup = ProductGroupFixtures.productGroupWithoutThumbnail();
-
-            // when & then
-            assertThat(productGroup.hasThumbnailImage()).isFalse();
+            assertThat(productGroup.images()).isNotEmpty();
         }
     }
 
     @Nested
     @DisplayName("옵션 관리 메서드 테스트")
     class OptionManagementTest {
-
-        @Test
-        @DisplayName("셀러 옵션 그룹을 추가한다")
-        void addSellerOptionGroup() {
-            // given
-            ProductGroup productGroup = ProductGroupFixtures.draftProductGroup(1L);
-            SellerOptionGroup optionGroup = ProductGroupFixtures.defaultSellerOptionGroup();
-
-            // when
-            productGroup.addSellerOptionGroup(optionGroup);
-
-            // then
-            assertThat(productGroup.sellerOptionGroups()).hasSize(1);
-        }
 
         @Test
         @DisplayName("셀러 옵션 그룹 전체를 교체하고 검증한다")
@@ -457,7 +411,7 @@ class ProductGroupTest {
             SellerOptionGroup newGroup = ProductGroupFixtures.defaultSellerOptionGroup();
 
             // when
-            productGroup.replaceSellerOptionGroups(List.of(newGroup));
+            productGroup.replaceSellerOptionGroups(SellerOptionGroups.of(List.of(newGroup)));
 
             // then
             assertThat(productGroup.sellerOptionGroups()).hasSize(1);
@@ -470,7 +424,10 @@ class ProductGroupTest {
             ProductGroup productGroup = ProductGroupFixtures.newProductGroupWithSingleOption();
 
             // when & then
-            assertThatThrownBy(() -> productGroup.replaceSellerOptionGroups(List.of()))
+            assertThatThrownBy(
+                            () ->
+                                    productGroup.replaceSellerOptionGroups(
+                                            SellerOptionGroups.of(List.of())))
                     .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
         }
 

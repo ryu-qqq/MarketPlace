@@ -86,6 +86,7 @@
                  - Controller (다양한 UseCase, DTO 의존)
                  - ExceptionHandler (다양한 예외 타입 처리)
                  - Factory (다양한 도메인 객체/VO 생성에 많은 import 필요)
+                 - Mapper (Entity ↔ Domain 변환에 다양한 타입 import 필요)
                  - V1Controller (레거시 마이그레이션)
             -->
             <property name="violationSuppressXPath"
@@ -93,6 +94,7 @@
                              contains(@SimpleName, 'Controller')
                              or contains(@SimpleName, 'ExceptionHandler')
                              or contains(@SimpleName, 'Factory')
+                             or contains(@SimpleName, 'Mapper')
                              ]"/>
         </properties>
     </rule>
