@@ -9,6 +9,8 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.application.category.dto.response.CategoryPageResult;
 import com.ryuqq.marketplace.application.category.port.in.query.SearchCategoryByOffsetUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /** 카테고리 조회 API 컨트롤러. */
+@Tag(name = "카테고리 조회", description = "카테고리 조회 API")
 @RestController
 @RequestMapping(CategoryAdminEndpoints.CATEGORIES)
 public class CategoryQueryController {
@@ -31,6 +34,7 @@ public class CategoryQueryController {
         this.mapper = mapper;
     }
 
+    @Operation(summary = "카테고리 목록 조회", description = "카테고리 목록을 조회합니다.")
     @RequirePermission(value = "category:read", description = "카테고리 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<CategoryApiResponse>>>

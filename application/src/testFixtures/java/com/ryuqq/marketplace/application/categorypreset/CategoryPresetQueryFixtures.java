@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.categorypreset;
 
 import com.ryuqq.marketplace.application.categorypreset.dto.query.CategoryPresetSearchParams;
+import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetDetailResult;
 import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetPageResult;
 import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetResult;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
@@ -131,5 +132,29 @@ public final class CategoryPresetQueryFixtures {
 
     public static CategoryPresetPageResult emptyPageResult() {
         return CategoryPresetPageResult.of(List.of(), 0, 20, 0L);
+    }
+
+    // ===== DetailResult Fixtures =====
+
+    public static CategoryPresetDetailResult categoryPresetDetailResult(Long id) {
+        Instant now = CommonVoFixtures.now();
+        CategoryPresetDetailResult.MappingCategory mappingCategory =
+                new CategoryPresetDetailResult.MappingCategory("TEST_CAT_CODE", "카테고리 경로");
+        List<CategoryPresetDetailResult.InternalCategory> internalCategories =
+                List.of(
+                        new CategoryPresetDetailResult.InternalCategory(100L, "내부 카테고리 A 경로"),
+                        new CategoryPresetDetailResult.InternalCategory(200L, "내부 카테고리 B 경로"));
+        return new CategoryPresetDetailResult(
+                id,
+                1L,
+                "테스트 Shop",
+                1L,
+                "테스트 판매채널",
+                "test-account",
+                "테스트 카테고리 프리셋",
+                mappingCategory,
+                internalCategories,
+                now,
+                now);
     }
 }

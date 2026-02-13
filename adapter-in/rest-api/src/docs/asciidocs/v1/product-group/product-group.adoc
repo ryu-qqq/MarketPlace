@@ -1,0 +1,34 @@
+[[product-group-search]]
+=== 상품 그룹 검색 조회
+
+인증 필요 | 필요 권한: `product-group:read`
+
+==== HTTP Request
+include::{snippets}/product-group/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/product-group/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/product-group/search/response-fields.adoc[]
+
+
+[[product-group-get-detail]]
+=== 상품 그룹 상세 조회
+
+인증 필요 | 필요 권한: `product-group:read`
+
+==== HTTP Request
+include::{snippets}/product-group/get-detail/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product-group/get-detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group/get-detail/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/product-group/get-detail/response-fields.adoc[]

@@ -11,6 +11,8 @@ import com.ryuqq.marketplace.application.canonicaloption.dto.response.CanonicalO
 import com.ryuqq.marketplace.application.canonicaloption.dto.response.CanonicalOptionGroupResult;
 import com.ryuqq.marketplace.application.canonicaloption.port.in.query.GetCanonicalOptionGroupUseCase;
 import com.ryuqq.marketplace.application.canonicaloption.port.in.query.SearchCanonicalOptionGroupByOffsetUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /** 캐노니컬 옵션 그룹 조회 API 컨트롤러. */
+@Tag(name = "정규 옵션그룹 조회", description = "정규 옵션그룹 조회 API")
 @RestController
 @RequestMapping(CanonicalOptionAdminEndpoints.CANONICAL_OPTION_GROUPS)
 public class CanonicalOptionGroupQueryController {
@@ -38,6 +41,7 @@ public class CanonicalOptionGroupQueryController {
         this.mapper = mapper;
     }
 
+    @Operation(summary = "정규 옵션그룹 목록 조회", description = "정규 옵션그룹 목록을 조회합니다.")
     @RequirePermission(value = "canonical-option-group:read", description = "캐노니컬 옵션 그룹 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<CanonicalOptionGroupApiResponse>>>
@@ -48,6 +52,7 @@ public class CanonicalOptionGroupQueryController {
         return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponse(pageResult)));
     }
 
+    @Operation(summary = "정규 옵션그룹 상세 조회", description = "정규 옵션그룹 상세 정보를 조회합니다.")
     @RequirePermission(value = "canonical-option-group:read", description = "캐노니컬 옵션 그룹 단건 조회")
     @GetMapping(CanonicalOptionAdminEndpoints.CANONICAL_OPTION_GROUP_ID)
     public ResponseEntity<ApiResponse<CanonicalOptionGroupApiResponse>> getCanonicalOptionGroup(
