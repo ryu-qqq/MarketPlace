@@ -47,6 +47,7 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
       - org.redisson.spring.starter.RedissonAutoConfigurationV2
       - com.ryuqq.authhub.sdk.autoconfigure.AuthHubAutoConfiguration
+      - com.ryuqq.fileflow.sdk.autoconfigure.FileFlowAutoConfiguration
 
   # Jackson
   jackson:
@@ -69,6 +70,11 @@ authhub:
   timeout:
     connect: 1s
     read: 1s
+
+# FileFlow 테스트용 설정
+# FileFlowAutoConfiguration은 exclude, fileflow.base-url 미설정으로
+# FileFlowStorageAdapter(@ConditionalOnProperty) 비활성화.
+# FileStorageClient는 StubExternalClientConfig에서 Stub 제공.
 
 # Server 설정
 server:
