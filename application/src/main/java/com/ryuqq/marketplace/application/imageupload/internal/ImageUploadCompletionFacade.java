@@ -1,7 +1,7 @@
 package com.ryuqq.marketplace.application.imageupload.internal;
 
 import com.ryuqq.marketplace.application.imageupload.manager.ImageUploadOutboxCommandManager;
-import com.ryuqq.marketplace.application.imageupload.port.out.command.ImageUploadedUrlUpdatePort;
+import com.ryuqq.marketplace.application.imageupload.manager.ImageUploadedUrlUpdateManager;
 import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
 import java.time.Instant;
 import org.springframework.stereotype.Component;
@@ -23,13 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class ImageUploadCompletionFacade {
 
     private final ImageUploadOutboxCommandManager outboxCommandManager;
-    private final ImageUploadedUrlUpdatePort imageUploadedUrlUpdatePort;
+    private final ImageUploadedUrlUpdateManager imageUploadedUrlUpdateManager;
 
     public ImageUploadCompletionFacade(
             ImageUploadOutboxCommandManager outboxCommandManager,
-            ImageUploadedUrlUpdatePort imageUploadedUrlUpdatePort) {
+            ImageUploadedUrlUpdateManager imageUploadedUrlUpdateManager) {
         this.outboxCommandManager = outboxCommandManager;
-        this.imageUploadedUrlUpdatePort = imageUploadedUrlUpdatePort;
+        this.imageUploadedUrlUpdateManager = imageUploadedUrlUpdateManager;
     }
 
     /**
@@ -48,7 +48,7 @@ public class ImageUploadCompletionFacade {
      */
     @Transactional
     public void complete(ImageUploadOutbox outbox, String newCdnUrl, Instant now) {
-        imageUploadedUrlUpdatePort.updateUploadedUrl(
+        imageUploadedUrlUpdateManager.updateUploadedUrl(
                 outbox.sourceType(), outbox.sourceId(), newCdnUrl);
         outbox.complete(now);
         outboxCommandManager.persist(outbox);

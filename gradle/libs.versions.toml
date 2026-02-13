@@ -72,6 +72,11 @@ sentry = "7.3.0"
 authhubSdk = "v2.0.6"
 
 # ========================================
+# FileFlow SDK
+# ========================================
+fileflowSdk = "v1.0.2"
+
+# ========================================
 # Utilities
 # ========================================
 commonsLang3 = "3.14.0"
@@ -187,6 +192,11 @@ sentry-spring-boot = { module = "io.sentry:sentry-spring-boot-starter-jakarta", 
 # ========================================
 authhub-sdk-core = { module = "com.github.ryu-qqq.AuthHub:authhub-sdk-core", version.ref = "authhubSdk" }
 authhub-sdk-spring-boot-starter = { module = "com.github.ryu-qqq.AuthHub:authhub-sdk-spring-boot-starter", version.ref = "authhubSdk" }
+
+# ========================================
+# FileFlow SDK
+# ========================================
+fileflow-sdk-spring-boot-starter = { module = "com.github.ryu-qqq.FileFlow:fileflow-sdk-spring-boot-starter", version.ref = "fileflowSdk" }
 
 # ========================================
 # Utilities

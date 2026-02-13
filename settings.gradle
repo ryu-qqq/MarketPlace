@@ -18,6 +18,7 @@ include 'adapter-out:persistence-mysql'
 include 'adapter-out:persistence-redis'
 include 'adapter-out:client:authhub-client'
 include 'adapter-out:client:ses-client'
+include 'adapter-out:client:fileflow-client'
 
 // ========================================
 // Bootstrap Modules (Runnable Applications)
@@ -42,6 +43,7 @@ project(':adapter-out:persistence-mysql').projectDir = file('adapter-out/persist
 project(':adapter-out:persistence-redis').projectDir = file('adapter-out/persistence-redis')
 project(':adapter-out:client:authhub-client').projectDir = file('adapter-out/client/authhub-client')
 project(':adapter-out:client:ses-client').projectDir = file('adapter-out/client/ses-client')
+project(':adapter-out:client:fileflow-client').projectDir = file('adapter-out/client/fileflow-client')
 
 project(':bootstrap:bootstrap-web-api').projectDir = file('bootstrap/bootstrap-web-api')
 project(':bootstrap:bootstrap-scheduler').projectDir = file('bootstrap/bootstrap-scheduler')
