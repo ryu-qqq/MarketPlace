@@ -31,6 +31,8 @@ spring:
       - classpath:redis-stage.yml
       - classpath:authhub.yml
       - classpath:authhub-stage.yml
+      - classpath:fileflow.yml
+      - classpath:fileflow-stage.yml
 
 management:
   endpoints:

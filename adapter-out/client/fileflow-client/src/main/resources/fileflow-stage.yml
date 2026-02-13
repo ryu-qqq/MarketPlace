@@ -1,0 +1,6 @@
+# ============================================================
+# FileFlow SDK Stage 환경 설정
+# ============================================================
+
+fileflow:
+  base-url: ${FILEFLOW_BASE_URL:http://fileflow-web-api-prod.connectly.local}
