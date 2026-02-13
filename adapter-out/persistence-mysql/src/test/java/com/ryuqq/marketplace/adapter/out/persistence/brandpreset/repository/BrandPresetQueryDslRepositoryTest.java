@@ -5,10 +5,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.PersistenceMysqlTestApplication;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.BrandPresetJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.composite.BrandPresetDetailCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.condition.BrandPresetConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.brandpreset.entity.BrandPresetJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.saleschannel.entity.SalesChannelJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.saleschannelbrand.entity.SalesChannelBrandJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.shop.entity.ShopJpaEntity;
 import jakarta.persistence.EntityManager;
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -46,6 +52,13 @@ class BrandPresetQueryDslRepositoryTest {
     }
 
     private BrandPresetJpaEntity persist(BrandPresetJpaEntity entity) {
+        entityManager.persist(entity);
+        entityManager.flush();
+        entityManager.clear();
+        return entity;
+    }
+
+    private <T> T persistEntity(T entity) {
         entityManager.persist(entity);
         entityManager.flush();
         entityManager.clear();
@@ -136,6 +149,87 @@ class BrandPresetQueryDslRepositoryTest {
         void findSalesChannelIdBySalesChannelBrandId_WithNonExistentId_ReturnsEmpty() {
             // when
             var result = repository().findSalesChannelIdBySalesChannelBrandId(999L);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("findDetailCompositeById")
+    class FindDetailCompositeByIdTest {
+
+        @Test
+        @DisplayName("존재하는 프리셋 ID로 조회 시 BrandPresetDetailCompositeDto를 반환한다")
+        void findDetailCompositeById_WithExistingId_ReturnsDto() {
+            // given
+            Instant now = Instant.now();
+
+            SalesChannelJpaEntity salesChannel =
+                    persistEntity(SalesChannelJpaEntity.create(null, "테스트채널", "ACTIVE", now, now));
+
+            SalesChannelBrandJpaEntity salesChannelBrand =
+                    persistEntity(
+                            SalesChannelBrandJpaEntity.create(
+                                    null,
+                                    salesChannel.getId(),
+                                    "B123",
+                                    "테스트브랜드",
+                                    "ACTIVE",
+                                    now,
+                                    now));
+
+            ShopJpaEntity shop =
+                    persistEntity(
+                            ShopJpaEntity.create(
+                                    null,
+                                    salesChannel.getId(),
+                                    "테스트샵",
+                                    "account123",
+                                    "ACTIVE",
+                                    now,
+                                    now,
+                                    null));
+
+            BrandPresetJpaEntity preset =
+                    persistEntity(
+                            BrandPresetJpaEntity.create(
+                                    null,
+                                    shop.getId(),
+                                    salesChannelBrand.getId(),
+                                    "테스트프리셋",
+                                    "ACTIVE",
+                                    now,
+                                    now));
+
+            // when
+            Optional<BrandPresetDetailCompositeDto> result =
+                    repository().findDetailCompositeById(preset.getId());
+
+            // then
+            assertThat(result).isPresent();
+            BrandPresetDetailCompositeDto dto = result.get();
+            assertThat(dto.id()).isEqualTo(preset.getId());
+            assertThat(dto.shopId()).isEqualTo(shop.getId());
+            assertThat(dto.shopName()).isEqualTo("테스트샵");
+            assertThat(dto.accountId()).isEqualTo("account123");
+            assertThat(dto.salesChannelId()).isEqualTo(salesChannel.getId());
+            assertThat(dto.salesChannelName()).isEqualTo("테스트채널");
+            assertThat(dto.salesChannelBrandId()).isEqualTo(salesChannelBrand.getId());
+            assertThat(dto.externalBrandCode()).isEqualTo("B123");
+            assertThat(dto.externalBrandName()).isEqualTo("테스트브랜드");
+            assertThat(dto.presetName()).isEqualTo("테스트프리셋");
+            assertThat(dto.status()).isEqualTo("ACTIVE");
+            assertThat(dto.createdAt()).isNotNull();
+            assertThat(dto.updatedAt()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 ID로 조회 시 Optional.empty()를 반환한다")
+        void findDetailCompositeById_WithNonExistentId_ReturnsEmpty() {
+            // when
+            Optional<BrandPresetDetailCompositeDto> result =
+                    repository().findDetailCompositeById(999L);
 
             // then
             assertThat(result).isEmpty();

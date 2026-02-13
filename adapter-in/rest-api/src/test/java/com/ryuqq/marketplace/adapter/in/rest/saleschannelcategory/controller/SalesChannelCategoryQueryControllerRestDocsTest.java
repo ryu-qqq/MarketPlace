@@ -122,7 +122,8 @@ class SalesChannelCategoryQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("sortKey")
                                                     .description(
-                                                            "정렬 키 (createdAt, updatedAt,"
+                                                            "정렬 키 (createdAt,"
+                                                                    + " externalCategoryName,"
                                                                     + " sortOrder)")
                                                     .optional(),
                                             parameterWithName("sortDirection")

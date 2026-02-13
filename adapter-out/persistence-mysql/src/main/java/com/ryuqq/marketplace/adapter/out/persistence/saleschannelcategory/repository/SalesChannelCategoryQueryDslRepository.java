@@ -61,6 +61,17 @@ public class SalesChannelCategoryQueryDslRepository {
         return count != null ? count : 0L;
     }
 
+    public List<SalesChannelCategoryJpaEntity> findAllByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return queryFactory
+                .selectFrom(category)
+                .where(category.id.in(ids))
+                .orderBy(category.depth.asc())
+                .fetch();
+    }
+
     public boolean existsBySalesChannelIdAndExternalCode(
             Long salesChannelId, String externalCategoryCode) {
         Integer count =

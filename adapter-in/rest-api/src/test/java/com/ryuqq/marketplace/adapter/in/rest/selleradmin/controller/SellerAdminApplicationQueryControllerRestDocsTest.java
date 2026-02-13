@@ -143,11 +143,11 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("status")
                                                     .description(
-                                                            "신청 상태 목록 (PENDING_APPROVAL, APPROVED,"
-                                                                    + " REJECTED)")
+                                                            "상태 필터 목록 (PENDING_APPROVAL, ACTIVE,"
+                                                                + " INACTIVE, SUSPENDED, REJECTED)")
                                                     .optional(),
                                             parameterWithName("searchField")
-                                                    .description("검색 필드 (loginId, name)")
+                                                    .description("검색 필드 (LOGIN_ID, NAME)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
@@ -159,7 +159,7 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
                                                     .description("신청일 종료 (yyyy-MM-dd)")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 기준 (createdAt, updatedAt)")
+                                                    .description("정렬 기준 (createdAt)")
                                                     .optional(),
                                             parameterWithName("sortDirection")
                                                     .description("정렬 방향 (ASC, DESC)")

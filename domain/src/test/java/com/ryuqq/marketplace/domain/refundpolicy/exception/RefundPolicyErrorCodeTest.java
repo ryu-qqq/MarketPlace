@@ -135,6 +135,7 @@ class RefundPolicyErrorCodeTest {
             assertThat(RefundPolicyErrorCode.values())
                     .containsExactly(
                             RefundPolicyErrorCode.REFUND_POLICY_NOT_FOUND,
+                            RefundPolicyErrorCode.REFUND_POLICY_NOT_FOUND_FOR_SELLER,
                             RefundPolicyErrorCode.REFUND_POLICY_INACTIVE,
                             RefundPolicyErrorCode.REFUND_POLICY_ALREADY_DEFAULT,
                             RefundPolicyErrorCode.INVALID_RETURN_PERIOD,

@@ -233,13 +233,19 @@ class SellerQueryControllerRestDocsTest {
                                                     .description("활성화 여부")
                                                     .optional(),
                                             parameterWithName("searchField")
-                                                    .description("검색 필드")
+                                                    .description(
+                                                            "검색 필드 (SELLER_NAME,"
+                                                                    + " REGISTRATION_NUMBER,"
+                                                                    + " COMPANY_NAME,"
+                                                                    + " REPRESENTATIVE_NAME)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 기준")
+                                                    .description(
+                                                            "정렬 기준 (createdAt, sellerName,"
+                                                                    + " displayName)")
                                                     .optional(),
                                             parameterWithName("sortDirection")
                                                     .description("정렬 방향")

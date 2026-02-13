@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.domain.common.exception.ErrorCode;
 /** 환불 정책 도메인 에러 코드. */
 public enum RefundPolicyErrorCode implements ErrorCode {
     REFUND_POLICY_NOT_FOUND("RFP-001", 404, "환불 정책을 찾을 수 없습니다"),
+    REFUND_POLICY_NOT_FOUND_FOR_SELLER("RFP-001-1", 404, "해당 셀러의 환불 정책을 찾을 수 없습니다"),
     REFUND_POLICY_INACTIVE("RFP-002", 400, "비활성화된 환불 정책입니다"),
     REFUND_POLICY_ALREADY_DEFAULT("RFP-003", 400, "이미 기본 환불 정책으로 설정되어 있습니다"),
     INVALID_RETURN_PERIOD("RFP-005", 400, "반품 기간이 유효하지 않습니다"),

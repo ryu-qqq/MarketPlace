@@ -114,6 +114,7 @@ class ShippingPolicyErrorCodeTest {
             assertThat(ShippingPolicyErrorCode.values())
                     .containsExactly(
                             ShippingPolicyErrorCode.SHIPPING_POLICY_NOT_FOUND,
+                            ShippingPolicyErrorCode.SHIPPING_POLICY_NOT_FOUND_FOR_SELLER,
                             ShippingPolicyErrorCode.SHIPPING_POLICY_INACTIVE,
                             ShippingPolicyErrorCode.SHIPPING_POLICY_ALREADY_DEFAULT,
                             ShippingPolicyErrorCode.INVALID_FREE_THRESHOLD,
