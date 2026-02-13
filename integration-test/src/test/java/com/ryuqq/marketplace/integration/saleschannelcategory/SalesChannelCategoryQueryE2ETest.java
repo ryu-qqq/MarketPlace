@@ -67,11 +67,11 @@ class SalesChannelCategoryQueryE2ETest extends E2ETestBase {
                     salesChannelRepository.save(
                             SalesChannelJpaEntityFixtures.activeEntityWithName("쿠팡"));
             salesChannelCategoryRepository.save(
-                    SalesChannelCategoryJpaEntityFixtures.activeEntity(channel.getId()));
+                    SalesChannelCategoryJpaEntityFixtures.entityWithSalesChannel(channel.getId()));
             salesChannelCategoryRepository.save(
-                    SalesChannelCategoryJpaEntityFixtures.activeEntity(channel.getId()));
+                    SalesChannelCategoryJpaEntityFixtures.entityWithSalesChannel(channel.getId()));
             salesChannelCategoryRepository.save(
-                    SalesChannelCategoryJpaEntityFixtures.activeEntity(channel.getId()));
+                    SalesChannelCategoryJpaEntityFixtures.entityWithSalesChannel(channel.getId()));
 
             // when & then
             given().spec(givenSuperAdmin())
@@ -153,10 +153,12 @@ class SalesChannelCategoryQueryE2ETest extends E2ETestBase {
             // Step 2: 카테고리 2건 등록
             var category1 =
                     salesChannelCategoryRepository.save(
-                            SalesChannelCategoryJpaEntityFixtures.activeEntity(channel.getId()));
+                            SalesChannelCategoryJpaEntityFixtures.entityWithSalesChannel(
+                                    channel.getId()));
             var category2 =
                     salesChannelCategoryRepository.save(
-                            SalesChannelCategoryJpaEntityFixtures.activeEntity(channel.getId()));
+                            SalesChannelCategoryJpaEntityFixtures.entityWithSalesChannel(
+                                    channel.getId()));
 
             // Step 3: 카테고리 목록 조회
             given().spec(givenSuperAdmin())

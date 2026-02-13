@@ -17,13 +17,13 @@ import java.util.List;
  */
 @Schema(description = "상품 그룹 페이지 조회 요청")
 public record SearchProductGroupsApiRequest(
-        @Parameter(description = "상태 필터 (PENDING, ACTIVE, INACTIVE, DELETED)")
+        @Parameter(description = "상태 필터 (DRAFT, ACTIVE, INACTIVE, SOLDOUT, DELETED)")
                 List<String> statuses,
         @Parameter(description = "셀러 ID 필터") List<Long> sellerIds,
         @Parameter(description = "브랜드 ID 필터") List<Long> brandIds,
         @Parameter(description = "카테고리 ID 필터") List<Long> categoryIds,
         @Parameter(description = "상품 그룹 ID 필터") List<Long> productGroupIds,
-        @Parameter(description = "검색 필드 (NAME)") String searchField,
+        @Parameter(description = "검색 필드 (NAME, CATEGORY_NAME, BRAND_NAME)") String searchField,
         @Parameter(description = "검색어") String searchWord,
         @Parameter(description = "정렬 키 (createdAt, updatedAt, name)", example = "createdAt")
                 @Schema(description = "정렬 키", nullable = true)

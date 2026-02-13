@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.common.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.io.IOException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author ryu-qqq
  * @since 1.0.0
  */
+@Hidden
 @Controller
 public class ApiDocsController implements WebMvcConfigurer {
 
