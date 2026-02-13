@@ -453,7 +453,8 @@ module "ecs_service" {
   # Container Secrets
   container_secrets = [
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
-    { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn }
+    { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
+    { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn }
   ]
 
   # Health Check
