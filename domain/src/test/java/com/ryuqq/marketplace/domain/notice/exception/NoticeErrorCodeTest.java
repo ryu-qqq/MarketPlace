@@ -60,14 +60,16 @@ class NoticeErrorCodeTest {
             assertThat(NoticeErrorCode.values())
                     .containsExactly(
                             NoticeErrorCode.NOTICE_CATEGORY_NOT_FOUND,
-                            NoticeErrorCode.NOTICE_FIELD_NOT_FOUND);
+                            NoticeErrorCode.NOTICE_FIELD_NOT_FOUND,
+                            NoticeErrorCode.NOTICE_INVALID_FIELD,
+                            NoticeErrorCode.NOTICE_REQUIRED_FIELD_MISSING);
         }
 
         @Test
         @DisplayName("에러 코드 개수가 정확하다")
         void correctNumberOfValues() {
             // then
-            assertThat(NoticeErrorCode.values()).hasSize(2);
+            assertThat(NoticeErrorCode.values()).hasSize(4);
         }
     }
 }

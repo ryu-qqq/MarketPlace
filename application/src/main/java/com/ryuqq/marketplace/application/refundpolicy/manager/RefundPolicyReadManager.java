@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.refundpolicy.manager;
 import com.ryuqq.marketplace.application.refundpolicy.port.out.query.RefundPolicyQueryPort;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.exception.RefundPolicyException;
+import com.ryuqq.marketplace.domain.refundpolicy.exception.RefundPolicyNotFoundForSellerException;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.refundpolicy.query.RefundPolicySearchCriteria;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
@@ -34,6 +35,16 @@ public class RefundPolicyReadManager {
     @Transactional(readOnly = true)
     public Optional<RefundPolicy> findDefaultBySellerId(SellerId sellerId) {
         return queryPort.findDefaultBySellerId(sellerId);
+    }
+
+    @Transactional(readOnly = true)
+    public RefundPolicy getBySellerIdAndId(SellerId sellerId, RefundPolicyId policyId) {
+        return queryPort
+                .findBySellerIdAndId(sellerId, policyId)
+                .orElseThrow(
+                        () ->
+                                new RefundPolicyNotFoundForSellerException(
+                                        sellerId.value(), policyId.value()));
     }
 
     @Transactional(readOnly = true)

@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.application.shippingpolicy.port.out.query.ShippingP
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import com.ryuqq.marketplace.domain.shippingpolicy.exception.ShippingPolicyException;
+import com.ryuqq.marketplace.domain.shippingpolicy.exception.ShippingPolicyNotFoundForSellerException;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import com.ryuqq.marketplace.domain.shippingpolicy.query.ShippingPolicySearchCriteria;
 import java.util.List;
@@ -34,6 +35,16 @@ public class ShippingPolicyReadManager {
     @Transactional(readOnly = true)
     public Optional<ShippingPolicy> findDefaultBySellerId(SellerId sellerId) {
         return queryPort.findDefaultBySellerId(sellerId);
+    }
+
+    @Transactional(readOnly = true)
+    public ShippingPolicy getBySellerIdAndId(SellerId sellerId, ShippingPolicyId policyId) {
+        return queryPort
+                .findBySellerIdAndId(sellerId, policyId)
+                .orElseThrow(
+                        () ->
+                                new ShippingPolicyNotFoundForSellerException(
+                                        sellerId.value(), policyId.value()));
     }
 
     @Transactional(readOnly = true)

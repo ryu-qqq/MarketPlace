@@ -17,7 +17,8 @@ public record SchedulerProperties(Jobs jobs) {
     public record Jobs(
             SellerAuthOutbox sellerAuthOutbox,
             SellerAdminAuthOutbox sellerAdminAuthOutbox,
-            SellerAdminEmailOutbox sellerAdminEmailOutbox) {}
+            SellerAdminEmailOutbox sellerAdminEmailOutbox,
+            ImageUploadOutbox imageUploadOutbox) {}
 
     public record SellerAuthOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
@@ -26,6 +27,8 @@ public record SchedulerProperties(Jobs jobs) {
 
     public record SellerAdminEmailOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record ImageUploadOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
     public record ProcessPending(
             boolean enabled, String cron, String timezone, int batchSize, int delaySeconds) {}

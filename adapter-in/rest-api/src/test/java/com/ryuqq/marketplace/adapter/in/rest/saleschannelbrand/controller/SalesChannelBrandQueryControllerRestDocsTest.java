@@ -108,7 +108,7 @@ class SalesChannelBrandQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("sortKey")
                                                     .description(
-                                                            "정렬 키 (createdAt, updatedAt,"
+                                                            "정렬 키 (createdAt,"
                                                                     + " externalBrandName)")
                                                     .optional(),
                                             parameterWithName("sortDirection")

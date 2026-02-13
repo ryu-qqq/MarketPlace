@@ -22,7 +22,9 @@ public record SearchSellerApplicationsApiRequest(
                         description = "신청 상태 목록 (PENDING, APPROVED, REJECTED). 복수 선택 가능",
                         example = "PENDING")
                 List<String> status,
-        @Parameter(description = "검색 필드 (sellerName, companyName)", example = "sellerName")
+        @Parameter(
+                        description = "검색 필드 (COMPANY_NAME, REPRESENTATIVE_NAME)",
+                        example = "companyName")
                 String searchField,
         @Parameter(description = "검색어", example = "테스트") String searchWord,
         @Parameter(description = "정렬 키", example = "appliedAt") String sortKey,

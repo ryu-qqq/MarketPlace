@@ -2,9 +2,11 @@ package com.ryuqq.marketplace.adapter.in.rest.brandpreset.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.brandpreset.dto.query.SearchBrandPresetsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.brandpreset.dto.response.BrandPresetApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.brandpreset.dto.response.BrandPresetDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.application.brandpreset.dto.query.BrandPresetSearchParams;
+import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetDetailResult;
 import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetPageResult;
 import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetResult;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
@@ -77,5 +79,32 @@ public class BrandPresetQueryApiMapper {
                 pageResult.pageMeta().page(),
                 pageResult.pageMeta().size(),
                 pageResult.pageMeta().totalElements());
+    }
+
+    public BrandPresetDetailApiResponse toDetailResponse(BrandPresetDetailResult result) {
+        BrandPresetDetailApiResponse.MappingBrandResponse mappingBrand =
+                new BrandPresetDetailApiResponse.MappingBrandResponse(
+                        result.mappingBrand().brandCode(), result.mappingBrand().brandName());
+
+        List<BrandPresetDetailApiResponse.InternalBrandResponse> internalBrands =
+                result.internalBrands().stream()
+                        .map(
+                                ib ->
+                                        new BrandPresetDetailApiResponse.InternalBrandResponse(
+                                                ib.id(), ib.brandName()))
+                        .toList();
+
+        return new BrandPresetDetailApiResponse(
+                result.id(),
+                result.shopId(),
+                result.shopName(),
+                result.salesChannelId(),
+                result.salesChannelName(),
+                result.accountId(),
+                result.presetName(),
+                mappingBrand,
+                internalBrands,
+                DateTimeFormatUtils.formatIso8601(result.createdAt()),
+                DateTimeFormatUtils.formatIso8601(result.updatedAt()));
     }
 }

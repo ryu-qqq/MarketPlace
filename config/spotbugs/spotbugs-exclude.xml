@@ -90,6 +90,7 @@
             <Class name="~.*Bundle"/>
             <Class name="~.*Params"/>
             <Class name="~.*Context"/>
+            <Class name="~.*Data"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
     </Match>
@@ -108,6 +109,8 @@
             <Class name="~.*Handler"/>
             <Class name="~.*Controller"/>
             <Class name="~.*Repository"/>
+            <Class name="~.*Processor"/>
+            <Class name="~.*Creator"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
@@ -134,11 +137,14 @@
     </Match>
 
     <!-- ========================================
-         Cache Adapter 주입 필드
-         ObjectMapper 등 인프라 필드는 향후 사용 예정
+         Cache Adapter / Factory 주입 필드
+         인프라 필드 또는 Factory 필드는 향후 사용 예정
          ======================================== -->
     <Match>
-        <Class name="~.*CacheAdapter"/>
+        <Or>
+            <Class name="~.*CacheAdapter"/>
+            <Class name="~.*Factory"/>
+        </Or>
         <Bug pattern="URF_UNREAD_FIELD"/>
     </Match>
 

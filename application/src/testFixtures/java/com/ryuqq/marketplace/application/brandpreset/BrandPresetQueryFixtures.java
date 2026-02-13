@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.brandpreset;
 
 import com.ryuqq.marketplace.application.brandpreset.dto.query.BrandPresetSearchParams;
+import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetDetailResult;
 import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetPageResult;
 import com.ryuqq.marketplace.application.brandpreset.dto.response.BrandPresetResult;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
@@ -126,5 +127,29 @@ public final class BrandPresetQueryFixtures {
 
     public static BrandPresetPageResult emptyPageResult() {
         return BrandPresetPageResult.of(List.of(), 0, 20, 0L);
+    }
+
+    // ===== DetailResult Fixtures =====
+
+    public static BrandPresetDetailResult brandPresetDetailResult(Long id) {
+        Instant now = CommonVoFixtures.now();
+        BrandPresetDetailResult.MappingBrand mappingBrand =
+                new BrandPresetDetailResult.MappingBrand("TEST_BRAND_CODE", "테스트 브랜드");
+        List<BrandPresetDetailResult.InternalBrand> internalBrands =
+                List.of(
+                        new BrandPresetDetailResult.InternalBrand(100L, "내부 브랜드 A"),
+                        new BrandPresetDetailResult.InternalBrand(200L, "내부 브랜드 B"));
+        return new BrandPresetDetailResult(
+                id,
+                1L,
+                "테스트 Shop",
+                1L,
+                "테스트 판매채널",
+                "test-account",
+                "테스트 브랜드 프리셋",
+                mappingBrand,
+                internalBrands,
+                now,
+                now);
     }
 }
