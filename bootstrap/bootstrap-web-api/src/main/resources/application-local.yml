@@ -30,3 +30,4 @@ spring:
       - classpath:redis.yml
       - classpath:redis-local.yml
       - classpath:authhub.yml
+      - classpath:fileflow.yml

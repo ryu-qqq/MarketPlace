@@ -445,7 +445,9 @@ module "ecs_service" {
     { name = "SES_SENDER_EMAIL", value = local.ses_sender_email },
     { name = "SES_SIGN_UP_BASE_URL", value = "https://stage-oms.set-of.com" },
     # AuthHub
-    { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local:8080" }
+    { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local:8080" },
+    # FileFlow
+    { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-prod.connectly.local:8080" }
   ]
 
   # Container Secrets
