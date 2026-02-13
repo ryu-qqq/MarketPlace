@@ -110,8 +110,7 @@ class SalesChannelQueryControllerRestDocsTest {
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description(
-                                                            "정렬 키 (createdAt, channelName)")
+                                                    .description("정렬 키 (createdAt, channelName)")
                                                     .optional(),
                                             parameterWithName("sortDirection")
                                                     .description("정렬 방향 (ASC, DESC)")

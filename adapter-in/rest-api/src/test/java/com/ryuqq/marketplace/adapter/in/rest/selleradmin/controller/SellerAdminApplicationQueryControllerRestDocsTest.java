@@ -143,9 +143,8 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("status")
                                                     .description(
-                                                            "상태 필터 목록 (PENDING_APPROVAL,"
-                                                                + " ACTIVE, INACTIVE, SUSPENDED,"
-                                                                + " REJECTED)")
+                                                            "상태 필터 목록 (PENDING_APPROVAL, ACTIVE,"
+                                                                + " INACTIVE, SUSPENDED, REJECTED)")
                                                     .optional(),
                                             parameterWithName("searchField")
                                                     .description("검색 필드 (LOGIN_ID, NAME)")
