@@ -235,9 +235,9 @@ class SellerQueryControllerRestDocsTest {
                                             parameterWithName("searchField")
                                                     .description(
                                                             "검색 필드 (SELLER_NAME,"
-                                                                + " REGISTRATION_NUMBER,"
-                                                                + " COMPANY_NAME,"
-                                                                + " REPRESENTATIVE_NAME)")
+                                                                    + " REGISTRATION_NUMBER,"
+                                                                    + " COMPANY_NAME,"
+                                                                    + " REPRESENTATIVE_NAME)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
