@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.composite.CategoryPresetCompositeDto;
+import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.composite.CategoryPresetDetailCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.condition.CategoryPresetConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.entity.CategoryPresetJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.entity.QCategoryPresetJpaEntity;
@@ -93,6 +94,37 @@ public class CategoryPresetQueryDslRepository {
                                 salesChannelCategory.externalCategoryCode.eq(categoryCode))
                         .fetchFirst();
         return Optional.ofNullable(id);
+    }
+
+    public Optional<CategoryPresetDetailCompositeDto> findDetailCompositeById(Long id) {
+        CategoryPresetDetailCompositeDto result =
+                queryFactory
+                        .select(
+                                Projections.constructor(
+                                        CategoryPresetDetailCompositeDto.class,
+                                        categoryPreset.id,
+                                        categoryPreset.shopId,
+                                        shop.shopName,
+                                        shop.accountId,
+                                        shop.salesChannelId,
+                                        salesChannel.channelName,
+                                        categoryPreset.salesChannelCategoryId,
+                                        salesChannelCategory.externalCategoryCode,
+                                        salesChannelCategory.displayPath,
+                                        categoryPreset.presetName,
+                                        categoryPreset.status,
+                                        categoryPreset.createdAt,
+                                        categoryPreset.updatedAt))
+                        .from(categoryPreset)
+                        .join(shop)
+                        .on(categoryPreset.shopId.eq(shop.id))
+                        .join(salesChannelCategory)
+                        .on(categoryPreset.salesChannelCategoryId.eq(salesChannelCategory.id))
+                        .join(salesChannel)
+                        .on(shop.salesChannelId.eq(salesChannel.id))
+                        .where(conditionBuilder.idEq(id))
+                        .fetchOne();
+        return Optional.ofNullable(result);
     }
 
     private JPAQuery<CategoryPresetCompositeDto> compositeQuery() {

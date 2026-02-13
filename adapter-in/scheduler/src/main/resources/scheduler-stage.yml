@@ -23,6 +23,23 @@ scheduler:
         # Stage: 중간 타임아웃
         timeout-seconds: 180
 
+    image-upload-outbox:
+      process-pending:
+        # Stage: 3분마다
+        cron: "0 */3 * * * *"
+        # Stage: 중간 배치
+        batch-size: 30
+        # Stage: 중간 지연
+        delay-seconds: 20
+
+      recover-timeout:
+        # Stage: 5분마다
+        cron: "0 */5 * * * *"
+        # Stage: 중간 배치
+        batch-size: 30
+        # Stage: 중간 타임아웃
+        timeout-seconds: 180
+
     seller-admin-auth-outbox:
       process-pending:
         # Stage: 비활성화 (SellerAdminIdentityClient 미구현)

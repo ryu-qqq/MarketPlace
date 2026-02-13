@@ -2,9 +2,11 @@ package com.ryuqq.marketplace.adapter.in.rest.categorypreset.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.categorypreset.dto.query.SearchCategoryPresetsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.categorypreset.dto.response.CategoryPresetApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.categorypreset.dto.response.CategoryPresetDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.application.categorypreset.dto.query.CategoryPresetSearchParams;
+import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetDetailResult;
 import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetPageResult;
 import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetResult;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
@@ -77,5 +79,34 @@ public class CategoryPresetQueryApiMapper {
                 pageResult.pageMeta().page(),
                 pageResult.pageMeta().size(),
                 pageResult.pageMeta().totalElements());
+    }
+
+    public CategoryPresetDetailApiResponse toDetailResponse(CategoryPresetDetailResult result) {
+        CategoryPresetDetailApiResponse.MappingCategoryResponse mappingCategory =
+                new CategoryPresetDetailApiResponse.MappingCategoryResponse(
+                        result.mappingCategory().categoryCode(),
+                        result.mappingCategory().categoryPath());
+
+        List<CategoryPresetDetailApiResponse.InternalCategoryResponse> internalCategories =
+                result.internalCategories().stream()
+                        .map(
+                                ic ->
+                                        new CategoryPresetDetailApiResponse
+                                                .InternalCategoryResponse(
+                                                ic.id(), ic.categoryPath()))
+                        .toList();
+
+        return new CategoryPresetDetailApiResponse(
+                result.id(),
+                result.shopId(),
+                result.shopName(),
+                result.salesChannelId(),
+                result.salesChannelName(),
+                result.accountId(),
+                result.presetName(),
+                mappingCategory,
+                internalCategories,
+                DateTimeFormatUtils.formatIso8601(result.createdAt()),
+                DateTimeFormatUtils.formatIso8601(result.updatedAt()));
     }
 }
