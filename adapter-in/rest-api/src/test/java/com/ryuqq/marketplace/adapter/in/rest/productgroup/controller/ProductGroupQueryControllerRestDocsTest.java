@@ -97,8 +97,8 @@ class ProductGroupQueryControllerRestDocsTest {
                                     queryParameters(
                                             parameterWithName("statuses")
                                                     .description(
-                                                            "상태 필터 (PENDING, ACTIVE, INACTIVE,"
-                                                                    + " DELETED)")
+                                                            "상태 필터 (DRAFT, ACTIVE, INACTIVE,"
+                                                                    + " SOLDOUT, DELETED)")
                                                     .optional(),
                                             parameterWithName("sellerIds")
                                                     .description("셀러 ID 목록")
@@ -113,7 +113,9 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("상품 그룹 ID 목록")
                                                     .optional(),
                                             parameterWithName("searchField")
-                                                    .description("검색 필드 (NAME)")
+                                                    .description(
+                                                            "검색 필드 (NAME, CATEGORY_NAME,"
+                                                                    + " BRAND_NAME)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
@@ -160,8 +162,8 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("옵션 유형 (SINGLE, COMBINATION)"),
                                             fieldWithPath("data.content[].status")
                                                     .description(
-                                                            "상태 (PENDING, ACTIVE, INACTIVE,"
-                                                                    + " DELETED)"),
+                                                            "상태 (DRAFT, ACTIVE, INACTIVE,"
+                                                                    + " SOLDOUT, DELETED)"),
                                             fieldWithPath("data.content[].thumbnailUrl")
                                                     .description("썸네일 이미지 URL"),
                                             fieldWithPath("data.content[].productCount")
@@ -267,8 +269,8 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("옵션 유형 (SINGLE, COMBINATION)"),
                                             fieldWithPath("data.status")
                                                     .description(
-                                                            "상태 (PENDING, ACTIVE, INACTIVE,"
-                                                                    + " DELETED)"),
+                                                            "상태 (DRAFT, ACTIVE, INACTIVE,"
+                                                                    + " SOLDOUT, DELETED)"),
                                             fieldWithPath("data.createdAt").description("등록일시"),
                                             fieldWithPath("data.updatedAt").description("수정일시"),
                                             fieldWithPath("data.images[]").description("이미지 목록"),

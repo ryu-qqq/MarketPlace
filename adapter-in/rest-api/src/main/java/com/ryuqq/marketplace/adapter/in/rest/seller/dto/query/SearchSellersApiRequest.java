@@ -22,9 +22,18 @@ public record SearchSellersApiRequest(
         @Parameter(description = "활성화 여부 (null: 전체, true: 활성, false: 비활성)", example = "true")
                 Boolean active,
         @Parameter(
-                        description = "검색 필드 (null: 전체 필드)",
+                        description =
+                                "검색 필드 (SELLER_NAME, REGISTRATION_NUMBER, COMPANY_NAME,"
+                                        + " REPRESENTATIVE_NAME)",
                         example = "sellerName",
-                        schema = @Schema(allowableValues = {"sellerId", "sellerName"}))
+                        schema =
+                                @Schema(
+                                        allowableValues = {
+                                            "SELLER_NAME",
+                                            "REGISTRATION_NUMBER",
+                                            "COMPANY_NAME",
+                                            "REPRESENTATIVE_NAME"
+                                        }))
                 String searchField,
         @Parameter(description = "검색어", example = "테스트") String searchWord,
         @Parameter(description = "정렬 기준", example = "createdAt") String sortKey,

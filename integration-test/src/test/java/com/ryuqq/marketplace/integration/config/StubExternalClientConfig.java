@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
 import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
 import com.ryuqq.marketplace.application.auth.port.out.client.AuthClient;
+import com.ryuqq.marketplace.application.common.port.out.FileStoragePort;
 import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.seller.port.out.client.IdentityClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminEmailClient;
@@ -22,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * 통합 테스트용 외부 서비스 및 미구현 포트 Stub 설정.
@@ -32,6 +34,7 @@ import org.springframework.context.annotation.Primary;
  * @since 1.0.0
  */
 @TestConfiguration
+@EnableAsync
 public class StubExternalClientConfig {
 
     // ===== SDK 인프라 Stubs =====
@@ -97,7 +100,10 @@ public class StubExternalClientConfig {
     @Bean
     @Primary
     public IdentityClient stubIdentityClient() {
-        return outbox -> null;
+        return outbox ->
+                com.ryuqq.marketplace.application.seller.dto.response
+                        .SellerIdentityProvisioningResult.success(
+                        "stub-tenant-id", "stub-organization-id");
     }
 
     @Bean
@@ -130,6 +136,51 @@ public class StubExternalClientConfig {
     }
 
     // ===== 미구현 포트 Stubs =====
+
+    @Bean
+    @Primary
+    public FileStoragePort stubFileStoragePort() {
+        return new FileStoragePort() {
+            @Override
+            public PresignedUrlResponse generateUploadUrl(PresignedUploadUrlRequest request) {
+                return new PresignedUrlResponse(
+                        "https://stub-presigned-url.example.com",
+                        "stub-file-key",
+                        Instant.now().plusSeconds(3600),
+                        "https://stub-access-url.example.com");
+            }
+
+            @Override
+            public String generateDownloadUrl(String fileAssetId, int expirationMinutes) {
+                return "https://stub-download-url.example.com/" + fileAssetId;
+            }
+
+            @Override
+            public void deleteFile(String fileAssetId) {
+                // stub: no-op
+            }
+
+            @Override
+            public void deleteFiles(List<String> fileAssetIds) {
+                // stub: no-op
+            }
+
+            @Override
+            public ExternalDownloadResponse downloadFromExternalUrl(
+                    ExternalDownloadRequest request) {
+                return ExternalDownloadResponse.success(
+                        request.sourceUrl(),
+                        "https://stub-cdn.example.com/" + request.filename(),
+                        "stub-asset-" + request.filename());
+            }
+
+            @Override
+            public List<ExternalDownloadResponse> downloadFromExternalUrls(
+                    List<ExternalDownloadRequest> requests) {
+                return requests.stream().map(this::downloadFromExternalUrl).toList();
+            }
+        };
+    }
 
     @Bean
     @Primary
