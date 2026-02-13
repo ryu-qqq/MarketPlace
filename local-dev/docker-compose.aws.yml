@@ -55,6 +55,9 @@ services:
       AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
       SECURITY_SERVICE_TOKEN_SECRET: "${AUTHHUB_SERVICE_TOKEN}"
 
+      # FileFlow Client
+      FILEFLOW_BASE_URL: "http://fileflow-web-api-prod.connectly.local"
+
       # OpenTelemetry disabled (local)
       OTEL_JAVAAGENT_ENABLED: "false"
 
@@ -94,6 +97,9 @@ services:
       # AuthHub Client
       AUTHHUB_BASE_URL: "http://authhub-web-api-stage.connectly.local"
       AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+
+      # FileFlow Client
+      FILEFLOW_BASE_URL: "http://fileflow-web-api-prod.connectly.local"
 
       # OpenTelemetry disabled (local)
       OTEL_JAVAAGENT_ENABLED: "false"

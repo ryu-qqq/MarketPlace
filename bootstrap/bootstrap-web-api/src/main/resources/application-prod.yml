@@ -29,6 +29,8 @@ spring:
       - classpath:redis-prod.yml
       - classpath:authhub.yml
       - classpath:authhub-prod.yml
+      - classpath:fileflow.yml
+      - classpath:fileflow-prod.yml
 
 # ===============================================
 # Sentry Configuration (Production Only)

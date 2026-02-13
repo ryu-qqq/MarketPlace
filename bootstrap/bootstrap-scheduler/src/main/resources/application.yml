@@ -21,6 +21,8 @@ spring:
       - optional:classpath:scheduler-${spring.profiles.active:local}.yml
       - classpath:authhub.yml
       - optional:classpath:authhub-${spring.profiles.active:local}.yml
+      - classpath:fileflow.yml
+      - optional:classpath:fileflow-${spring.profiles.active:local}.yml
       - classpath:ses.yml
       - optional:classpath:ses-${spring.profiles.active:local}.yml
 
