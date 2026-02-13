@@ -1,0 +1,18 @@
+package com.ryuqq.marketplace.application.common.dto.command;
+
+/**
+ * Presigned Upload URL ??????.
+ *
+ * @param directory ????????/????????
+ * @param filename ?????????
+ * @param contentType MIME ??????
+ * @param contentLength ????????? ????????? (?????????)
+ */
+public record PresignedUploadUrlRequest(
+        String directory, String filename, String contentType, long contentLength) {
+
+    public static PresignedUploadUrlRequest of(
+            String directory, String filename, String contentType, long contentLength) {
+        return new PresignedUploadUrlRequest(directory, filename, contentType, contentLength);
+    }
+}
