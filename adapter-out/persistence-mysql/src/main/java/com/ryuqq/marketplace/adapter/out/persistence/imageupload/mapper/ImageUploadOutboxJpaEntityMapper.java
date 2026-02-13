@@ -26,7 +26,7 @@ public class ImageUploadOutboxJpaEntityMapper {
                 domain.idValue(),
                 domain.sourceId(),
                 toEntitySourceType(domain.sourceType()),
-                domain.originUrl(),
+                domain.originUrlValue(),
                 toEntityStatus(domain.status()),
                 domain.retryCount(),
                 domain.maxRetry(),

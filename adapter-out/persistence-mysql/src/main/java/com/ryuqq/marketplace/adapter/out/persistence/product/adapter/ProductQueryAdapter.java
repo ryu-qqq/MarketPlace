@@ -8,7 +8,6 @@ import com.ryuqq.marketplace.application.product.port.out.query.ProductQueryPort
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -66,13 +65,13 @@ public class ProductQueryAdapter implements ProductQueryPort {
                         .collect(
                                 Collectors.groupingBy(ProductOptionMappingJpaEntity::getProductId));
 
-        List<Product> products = new ArrayList<>();
-        for (ProductJpaEntity entity : entities) {
-            List<ProductOptionMappingJpaEntity> mappings =
-                    mappingsByProductId.getOrDefault(entity.getId(), List.of());
-            products.add(mapper.toDomain(entity, mappings));
-        }
-
-        return products;
+        return entities.stream()
+                .map(
+                        entity -> {
+                            List<ProductOptionMappingJpaEntity> mappings =
+                                    mappingsByProductId.getOrDefault(entity.getId(), List.of());
+                            return mapper.toDomain(entity, mappings);
+                        })
+                .toList();
     }
 }
