@@ -8,7 +8,7 @@
 # 인프라: ECS Fargate + Service Discovery (ALB 없음)
 # ============================================================================
 
-name: Deploy to Stage
+name: Stage Build and Deploy
 
 on:
   workflow_dispatch:
