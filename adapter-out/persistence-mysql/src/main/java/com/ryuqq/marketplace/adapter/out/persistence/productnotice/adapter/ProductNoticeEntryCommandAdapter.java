@@ -29,4 +29,9 @@ public class ProductNoticeEntryCommandAdapter implements ProductNoticeEntryComma
         ProductNoticeEntryJpaEntity entity = mapper.toEntryEntity(entry);
         repository.save(entity);
     }
+
+    @Override
+    public void deleteByNoticeId(Long noticeId) {
+        repository.deleteByProductNoticeId(noticeId);
+    }
 }

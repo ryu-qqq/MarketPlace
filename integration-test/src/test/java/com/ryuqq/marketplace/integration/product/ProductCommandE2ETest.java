@@ -88,6 +88,7 @@ class ProductCommandE2ETest extends E2ETestBase {
     @Autowired private ProductNoticeEntryJpaRepository productNoticeEntryRepository;
 
     private Long sellerId;
+    private String sellerOrganizationId;
     private Long brandId;
     private Long categoryId;
     private Long shippingPolicyId;
@@ -129,7 +130,9 @@ class ProductCommandE2ETest extends E2ETestBase {
     }
 
     private void seedReferenceData() {
-        sellerId = sellerRepository.save(SellerJpaEntityFixtures.activeEntityWithAuth()).getId();
+        var seller = sellerRepository.save(SellerJpaEntityFixtures.activeEntityWithAuth());
+        sellerId = seller.getId();
+        sellerOrganizationId = seller.getAuthOrganizationId();
         brandId = brandRepository.save(BrandJpaEntityFixtures.newEntity()).getId();
         categoryId = categoryRepository.save(CategoryJpaEntityFixtures.newEntity()).getId();
         shippingPolicyId =
@@ -141,7 +144,7 @@ class ProductCommandE2ETest extends E2ETestBase {
                         .save(RefundPolicyJpaEntityFixtures.newActiveEntity(sellerId))
                         .getId();
         var noticeCategory =
-                noticeCategoryRepository.save(NoticeCategoryJpaEntityFixtures.activeEntity());
+                noticeCategoryRepository.save(NoticeCategoryJpaEntityFixtures.newEntity());
         noticeCategoryId = noticeCategory.getId();
         noticeFieldRepository.save(
                 NoticeFieldJpaEntityFixtures.fieldEntityWithCategoryId(noticeCategoryId));
@@ -156,7 +159,7 @@ class ProductCommandE2ETest extends E2ETestBase {
                 given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
 
         response.then().statusCode(HttpStatus.CREATED.value());
-        productGroupId = response.jsonPath().getLong("data");
+        productGroupId = response.jsonPath().getLong("productGroupId");
 
         // 상품 ID 조회
         Response detail =
@@ -179,7 +182,7 @@ class ProductCommandE2ETest extends E2ETestBase {
                 List.of(
                         Map.of(
                                 "originUrl", "https://example.com/img.jpg",
-                                "imageType", "MAIN",
+                                "imageType", "THUMBNAIL",
                                 "sortOrder", 0)));
 
         request.put(
@@ -191,27 +194,48 @@ class ProductCommandE2ETest extends E2ETestBase {
                                 "optionValues",
                                 List.of(
                                         Map.of("optionValueName", "빨강", "sortOrder", 0),
-                                        Map.of("optionValueName", "파랑", "sortOrder", 1)))));
+                                        Map.of("optionValueName", "파랑", "sortOrder", 1))),
+                        Map.of(
+                                "optionGroupName",
+                                "사이즈",
+                                "optionValues",
+                                List.of(
+                                        Map.of("optionValueName", "M", "sortOrder", 0),
+                                        Map.of("optionValueName", "L", "sortOrder", 1)))));
 
         request.put(
                 "products",
                 List.of(
                         Map.of(
-                                "skuCode", "SKU-RED",
+                                "skuCode", "SKU-RED-M",
                                 "regularPrice", 30000,
                                 "currentPrice", 25000,
                                 "stockQuantity", 100,
                                 "sortOrder", 0,
-                                "optionIndices", List.of(0)),
+                                "optionIndices", List.of(0, 0)),
                         Map.of(
-                                "skuCode", "SKU-BLUE",
+                                "skuCode", "SKU-RED-L",
                                 "regularPrice", 30000,
                                 "currentPrice", 25000,
                                 "stockQuantity", 80,
                                 "sortOrder", 1,
-                                "optionIndices", List.of(1))));
+                                "optionIndices", List.of(0, 1)),
+                        Map.of(
+                                "skuCode", "SKU-BLUE-M",
+                                "regularPrice", 30000,
+                                "currentPrice", 25000,
+                                "stockQuantity", 90,
+                                "sortOrder", 2,
+                                "optionIndices", List.of(1, 0)),
+                        Map.of(
+                                "skuCode", "SKU-BLUE-L",
+                                "regularPrice", 30000,
+                                "currentPrice", 25000,
+                                "stockQuantity", 70,
+                                "sortOrder", 3,
+                                "optionIndices", List.of(1, 1))));
 
-        request.put("description", Map.of("htmlContent", "<p>상세 설명</p>", "images", List.of()));
+        request.put("description", Map.of("content", "<p>상세 설명</p>"));
 
         var noticeFields = noticeFieldRepository.findAll();
         request.put(
@@ -220,12 +244,15 @@ class ProductCommandE2ETest extends E2ETestBase {
                         "noticeCategoryId",
                         noticeCategoryId,
                         "entries",
-                        List.of(
-                                Map.of(
-                                        "noticeFieldId",
-                                        noticeFields.get(0).getId(),
-                                        "value",
-                                        "면 100%"))));
+                        noticeFields.stream()
+                                .map(
+                                        f ->
+                                                Map.of(
+                                                        "noticeFieldId",
+                                                        f.getId(),
+                                                        "fieldValue",
+                                                        "테스트 값"))
+                                .toList()));
         return request;
     }
 
@@ -347,7 +374,7 @@ class ProductCommandE2ETest extends E2ETestBase {
         void batchChangeStatus_ValidRequest_Returns204() {
             List<Long> ids = productIds.stream().map(Integer::longValue).toList();
 
-            given().spec(givenSuperAdmin())
+            given().spec(givenSellerUser(sellerOrganizationId, "product:write"))
                     .body(Map.of("productIds", ids, "targetStatus", "INACTIVE"))
                     .when()
                     .patch(PRODUCTS_STATUS, productGroupId)
@@ -420,6 +447,18 @@ class ProductCommandE2ETest extends E2ETestBase {
                                     })
                             .toList();
 
+            // optionValueId → sortOrder 매핑 구성
+            Map<Object, Integer> valueSortOrderMap = new HashMap<>();
+            for (Map<String, Object> og : optionGroups) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> ovs =
+                        (List<Map<String, Object>>) og.get("optionValues");
+                for (Map<String, Object> ov : ovs) {
+                    valueSortOrderMap.put(
+                            ov.get("id"), ((Number) ov.get("sortOrder")).intValue());
+                }
+            }
+
             // 상품 구성 (가격/재고 변경)
             List<Map<String, Object>> productsReq =
                     products.stream()
@@ -427,18 +466,16 @@ class ProductCommandE2ETest extends E2ETestBase {
                                     p -> {
                                         @SuppressWarnings("unchecked")
                                         List<Integer> optionIndices =
-                                                (List<Integer>)
-                                                        ((List<Map<String, Object>>)
-                                                                        p.get("options"))
-                                                                .stream()
-                                                                        .map(
-                                                                                o ->
-                                                                                        ((Number)
-                                                                                                        o
-                                                                                                                .get(
-                                                                                                                        "sortOrder"))
-                                                                                                .intValue())
-                                                                        .toList();
+                                                ((List<Map<String, Object>>) p.get("options"))
+                                                        .stream()
+                                                                .map(
+                                                                        o ->
+                                                                                valueSortOrderMap
+                                                                                        .getOrDefault(
+                                                                                                o.get(
+                                                                                                        "sellerOptionValueId"),
+                                                                                                0))
+                                                                .toList();
                                         return Map.<String, Object>of(
                                                 "productId",
                                                 p.get("id"),

@@ -331,7 +331,10 @@ public class ProductGroupCompositionQueryDslRepository {
         return queryFactory
                 .select(pgImage.originUrl)
                 .from(pgImage)
-                .where(pgImage.productGroupId.eq(productGroupId), pgImage.imageType.eq("THUMBNAIL"))
+                .where(
+                        pgImage.productGroupId.eq(productGroupId),
+                        pgImage.imageType.eq("THUMBNAIL"),
+                        pgImage.deleted.isFalse())
                 .fetchFirst();
     }
 
@@ -342,7 +345,8 @@ public class ProductGroupCompositionQueryDslRepository {
                         .from(pgImage)
                         .where(
                                 pgImage.productGroupId.in(productGroupIds),
-                                pgImage.imageType.eq("THUMBNAIL"))
+                                pgImage.imageType.eq("THUMBNAIL"),
+                                pgImage.deleted.isFalse())
                         .fetch();
 
         Map<Long, String> map = new LinkedHashMap<>();

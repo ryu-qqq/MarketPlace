@@ -70,6 +70,7 @@ public class ProductNoticeCommandCoordinator {
         ProductNoticeUpdateData updateData = noticeCommandFactory.createUpdateData(command);
         noticeEntriesValidator.validate(updateData);
 
+        entryCommandManager.deleteByNoticeId(existing.idValue());
         existing.update(updateData);
         noticeCommandFacade.persist(existing);
     }

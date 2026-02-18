@@ -140,7 +140,7 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                         .getId();
 
         var noticeCategory =
-                noticeCategoryRepository.save(NoticeCategoryJpaEntityFixtures.activeEntity());
+                noticeCategoryRepository.save(NoticeCategoryJpaEntityFixtures.newEntity());
         noticeCategoryId = noticeCategory.getId();
 
         noticeFieldRepository.save(
@@ -155,7 +155,7 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
         Response response =
                 given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
         response.then().statusCode(HttpStatus.CREATED.value());
-        return response.jsonPath().getLong("data");
+        return response.jsonPath().getLong("productGroupId");
     }
 
     private Map<String, Object> createRegisterRequest() {
@@ -176,7 +176,7 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                                 "originUrl",
                                 "https://example.com/img1.jpg",
                                 "imageType",
-                                "MAIN",
+                                "THUMBNAIL",
                                 "sortOrder",
                                 0)));
         request.put(
@@ -203,30 +203,22 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                                 0,
                                 "optionIndices",
                                 List.of(0))));
-        request.put(
-                "description",
-                Map.of(
-                        "htmlContent",
-                        "<p>초기 상세설명</p>",
-                        "images",
-                        List.of(
-                                Map.of(
-                                        "originUrl",
-                                        "https://example.com/desc1.jpg",
-                                        "sortOrder",
-                                        0))));
+        request.put("description", Map.of("content", "<p>초기 상세설명</p>"));
         request.put(
                 "notice",
                 Map.of(
                         "noticeCategoryId",
                         noticeCategoryId,
                         "entries",
-                        List.of(
-                                Map.of(
-                                        "noticeFieldId",
-                                        noticeFields.get(0).getId(),
-                                        "value",
-                                        "면 100%"))));
+                        noticeFields.stream()
+                                .map(
+                                        f ->
+                                                Map.of(
+                                                        "noticeFieldId",
+                                                        f.getId(),
+                                                        "fieldValue",
+                                                        "테스트 값"))
+                                .toList()));
         return request;
     }
 
@@ -308,21 +300,21 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                             List.of(
                                     Map.of(
                                             "imageType",
-                                            "MAIN",
+                                            "THUMBNAIL",
                                             "originUrl",
                                             "https://example.com/new_main.jpg",
                                             "sortOrder",
                                             0),
                                     Map.of(
                                             "imageType",
-                                            "SUB",
+                                            "DETAIL",
                                             "originUrl",
                                             "https://example.com/new_sub1.jpg",
                                             "sortOrder",
                                             1),
                                     Map.of(
                                             "imageType",
-                                            "SUB",
+                                            "DETAIL",
                                             "originUrl",
                                             "https://example.com/new_sub2.jpg",
                                             "sortOrder",
@@ -456,14 +448,14 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                     .post(BATCH)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.totalCount", equalTo(2))
-                    .body("data.successCount", equalTo(2))
-                    .body("data.failureCount", equalTo(0))
-                    .body("data.results.size()", equalTo(2))
-                    .body("data.results[0].success", equalTo(true))
-                    .body("data.results[0].productGroupId", notNullValue())
-                    .body("data.results[1].success", equalTo(true))
-                    .body("data.results[1].productGroupId", notNullValue());
+                    .body("totalCount", equalTo(2))
+                    .body("successCount", equalTo(2))
+                    .body("failureCount", equalTo(0))
+                    .body("results.size()", equalTo(2))
+                    .body("results[0].success", equalTo(true))
+                    .body("results[0].productGroupId", notNullValue())
+                    .body("results[1].success", equalTo(true))
+                    .body("results[1].productGroupId", notNullValue());
         }
 
         @Test
@@ -483,12 +475,12 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                     .post(BATCH)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.totalCount", equalTo(2))
-                    .body("data.successCount", equalTo(1))
-                    .body("data.failureCount", equalTo(1))
-                    .body("data.results.find { it.index == 0 }.success", equalTo(true))
-                    .body("data.results.find { it.index == 1 }.success", equalTo(false))
-                    .body("data.results.find { it.index == 1 }.errorMessage", notNullValue());
+                    .body("totalCount", equalTo(2))
+                    .body("successCount", equalTo(1))
+                    .body("failureCount", equalTo(1))
+                    .body("results.find { it.index == 0 }.success", equalTo(true))
+                    .body("results.find { it.index == 1 }.success", equalTo(false))
+                    .body("results.find { it.index == 1 }.errorMessage", notNullValue());
         }
 
         @Test
