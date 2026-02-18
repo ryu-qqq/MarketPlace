@@ -96,7 +96,9 @@ public class ProductGroupQueryDslRepository {
     public List<ProductGroupImageJpaEntity> findImagesByProductGroupId(Long productGroupId) {
         return queryFactory
                 .selectFrom(productGroupImage)
-                .where(productGroupImage.productGroupId.eq(productGroupId))
+                .where(
+                        productGroupImage.productGroupId.eq(productGroupId),
+                        productGroupImage.deleted.isFalse())
                 .orderBy(productGroupImage.sortOrder.asc())
                 .fetch();
     }
@@ -105,7 +107,9 @@ public class ProductGroupQueryDslRepository {
             List<Long> productGroupIds) {
         return queryFactory
                 .selectFrom(productGroupImage)
-                .where(productGroupImage.productGroupId.in(productGroupIds))
+                .where(
+                        productGroupImage.productGroupId.in(productGroupIds),
+                        productGroupImage.deleted.isFalse())
                 .orderBy(productGroupImage.sortOrder.asc())
                 .fetch();
     }

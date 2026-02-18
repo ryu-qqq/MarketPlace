@@ -6,4 +6,6 @@ import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNoticeEntry;
 public interface ProductNoticeEntryCommandPort {
 
     void persist(ProductNoticeEntry entry);
+
+    void deleteByNoticeId(Long noticeId);
 }
