@@ -59,12 +59,14 @@ projects:
       enabled: true
 
   # SQS Queues for inspection pipeline
-  - name: marketplace-sqs-prod
-    dir: terraform/environments/prod/sqs
-    workspace: default
-    autoplan:
-      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
-      enabled: true
+  # NOTE: Temporarily disabled - Atlantis role lacks kms:TagResource permission
+  # Re-enable after IAM policy update for atlantis-ecs-task-prod
+  # - name: marketplace-sqs-prod
+  #   dir: terraform/environments/prod/sqs
+  #   workspace: default
+  #   autoplan:
+  #     when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+  #     enabled: true
 
   # ECS Service for worker (SQS consumer, No ALB)
   # NOTE: Temporarily disabled - requires ECR + SQS to be applied first
@@ -113,12 +115,14 @@ projects:
       enabled: true
 
   # SQS Queues for inspection pipeline (stage)
-  - name: marketplace-sqs-stage
-    dir: terraform/environments/stage/sqs
-    workspace: default
-    autoplan:
-      when_modified: ["*.tf", "*.tfvars"]
-      enabled: true
+  # NOTE: Temporarily disabled - Atlantis role lacks kms:TagResource permission
+  # Re-enable after IAM policy update for atlantis-ecs-task-prod
+  # - name: marketplace-sqs-stage
+  #   dir: terraform/environments/stage/sqs
+  #   workspace: default
+  #   autoplan:
+  #     when_modified: ["*.tf", "*.tfvars"]
+  #     enabled: true
 
   # ECS Service for worker (stage, SQS consumer)
   # NOTE: Temporarily disabled - requires ECR + SQS to be applied first
