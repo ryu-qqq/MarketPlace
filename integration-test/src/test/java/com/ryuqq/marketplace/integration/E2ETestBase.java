@@ -2,12 +2,14 @@ package com.ryuqq.marketplace.integration;
 
 import static io.restassured.RestAssured.given;
 
+import com.ryuqq.marketplace.application.seller.service.query.ResolveSellerIdByOrganizationService;
 import com.ryuqq.marketplace.bootstrap.MarketPlaceApplication;
 import com.ryuqq.marketplace.integration.config.StubExternalClientConfig;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
@@ -33,6 +35,8 @@ public abstract class E2ETestBase {
 
     @LocalServerPort protected int port;
 
+    @Autowired private ResolveSellerIdByOrganizationService resolveSellerIdService;
+
     private static final String BASE_PATH = "/api/v1/market";
 
     @BeforeEach
@@ -40,6 +44,7 @@ public abstract class E2ETestBase {
         RestAssured.port = port;
         RestAssured.basePath = BASE_PATH;
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        resolveSellerIdService.clearCache();
     }
 
     // ===== 인증 컨텍스트 헬퍼 메서드 =====

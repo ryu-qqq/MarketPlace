@@ -22,4 +22,9 @@ public class ProductNoticeEntryCommandManager {
             commandPort.persist(entry);
         }
     }
+
+    @Transactional
+    public void deleteByNoticeId(Long noticeId) {
+        commandPort.deleteByNoticeId(noticeId);
+    }
 }

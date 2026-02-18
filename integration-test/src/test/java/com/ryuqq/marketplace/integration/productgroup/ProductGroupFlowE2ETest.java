@@ -85,6 +85,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
     @Autowired private ProductNoticeEntryJpaRepository productNoticeEntryRepository;
 
     private Long sellerId;
+    private String sellerOrganizationId;
     private Long brandId;
     private Long categoryId;
     private Long shippingPolicyId;
@@ -123,7 +124,9 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
     }
 
     private void seedReferenceData() {
-        sellerId = sellerRepository.save(SellerJpaEntityFixtures.activeEntityWithAuth()).getId();
+        var seller = sellerRepository.save(SellerJpaEntityFixtures.activeEntityWithAuth());
+        sellerId = seller.getId();
+        sellerOrganizationId = seller.getAuthOrganizationId();
         brandId = brandRepository.save(BrandJpaEntityFixtures.newEntity()).getId();
         categoryId = categoryRepository.save(CategoryJpaEntityFixtures.newEntity()).getId();
         shippingPolicyId =
@@ -136,7 +139,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                         .getId();
 
         var noticeCategory =
-                noticeCategoryRepository.save(NoticeCategoryJpaEntityFixtures.activeEntity());
+                noticeCategoryRepository.save(NoticeCategoryJpaEntityFixtures.newEntity());
         noticeCategoryId = noticeCategory.getId();
 
         var field1 = NoticeFieldJpaEntityFixtures.fieldEntityWithCategoryId(noticeCategoryId);
@@ -162,11 +165,11 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                 List.of(
                         Map.of(
                                 "originUrl", "https://example.com/img1.jpg",
-                                "imageType", "MAIN",
+                                "imageType", "THUMBNAIL",
                                 "sortOrder", 0),
                         Map.of(
                                 "originUrl", "https://example.com/img2.jpg",
-                                "imageType", "SUB",
+                                "imageType", "DETAIL",
                                 "sortOrder", 1)));
 
         request.put(
@@ -219,18 +222,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                 "sortOrder", 3,
                                 "optionIndices", List.of(1, 1))));
 
-        request.put(
-                "description",
-                Map.of(
-                        "htmlContent",
-                        "<p>테스트 상품 상세설명</p>",
-                        "images",
-                        List.of(
-                                Map.of(
-                                        "originUrl",
-                                        "https://example.com/desc1.jpg",
-                                        "sortOrder",
-                                        0))));
+        request.put("description", Map.of("content", "<p>테스트 상품 상세설명</p>"));
 
         var noticeFields = noticeFieldRepository.findAll();
         request.put(
@@ -243,12 +235,12 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                 Map.of(
                                         "noticeFieldId",
                                         noticeFields.get(0).getId(),
-                                        "value",
+                                        "fieldValue",
                                         "면 100%"),
                                 Map.of(
                                         "noticeFieldId",
                                         noticeFields.get(1).getId(),
-                                        "value",
+                                        "fieldValue",
                                         "대한민국"))));
 
         return request;
@@ -271,7 +263,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("data");
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
             assertThat(productGroupId).isNotNull().isGreaterThan(0);
 
             // ===== Step 2: GET - 상세 조회로 모든 서브 Aggregate 검증 =====
@@ -291,9 +283,9 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     // 이미지 (2개)
                     .body("data.images.size()", equalTo(2))
                     .body("data.images[0].originUrl", equalTo("https://example.com/img1.jpg"))
-                    .body("data.images[0].imageType", equalTo("MAIN"))
+                    .body("data.images[0].imageType", equalTo("THUMBNAIL"))
                     .body("data.images[1].originUrl", equalTo("https://example.com/img2.jpg"))
-                    .body("data.images[1].imageType", equalTo("SUB"))
+                    .body("data.images[1].imageType", equalTo("DETAIL"))
                     // 옵션 그룹 (2개) + 옵션 값 (각 2개)
                     .body("data.optionProductMatrix.optionGroups.size()", equalTo(2))
                     .body(
@@ -310,7 +302,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .body("data.optionProductMatrix.products[0].stockQuantity", equalTo(100))
                     // 설명
                     .body("data.description", notNullValue())
-                    .body("data.description.htmlContent", containsString("테스트 상품 상세설명"))
+                    .body("data.description.content", containsString("테스트 상품 상세설명"))
                     // 고시정보
                     .body("data.productNotice", notNullValue())
                     .body("data.productNotice.entries.size()", equalTo(2));
@@ -358,7 +350,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("data");
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
 
             // ===== Step 2: GET - 기존 데이터 ID 조회 (diff 수정을 위해 ID 필요) =====
             Response detailResponse =
@@ -390,11 +382,11 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     List.of(
                             Map.of(
                                     "originUrl", "https://example.com/img1.jpg",
-                                    "imageType", "MAIN",
+                                    "imageType", "THUMBNAIL",
                                     "sortOrder", 0),
                             Map.of(
                                     "originUrl", "https://example.com/img3_new.jpg",
-                                    "imageType", "SUB",
+                                    "imageType", "DETAIL",
                                     "sortOrder", 1)));
 
             // 옵션 그룹: 기존 2개 유지하되 옵션값 변경
@@ -491,18 +483,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                     "optionIndices", List.of(1, 1))));
 
             // 설명 수정
-            updateRequest.put(
-                    "description",
-                    Map.of(
-                            "htmlContent",
-                            "<p>수정된 상품 상세설명</p>",
-                            "images",
-                            List.of(
-                                    Map.of(
-                                            "originUrl",
-                                            "https://example.com/desc_new.jpg",
-                                            "sortOrder",
-                                            0))));
+            updateRequest.put("description", Map.of("content", "<p>수정된 상품 상세설명</p>"));
 
             // 고시정보 수정
             var noticeFields = noticeFieldRepository.findAll();
@@ -512,12 +493,15 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             "noticeCategoryId",
                             noticeCategoryId,
                             "entries",
-                            List.of(
-                                    Map.of(
-                                            "noticeFieldId",
-                                            noticeFields.get(0).getId(),
-                                            "value",
-                                            "폴리에스터 100%"))));
+                            noticeFields.stream()
+                                    .map(
+                                            f ->
+                                                    Map.of(
+                                                            "noticeFieldId",
+                                                            f.getId(),
+                                                            "fieldValue",
+                                                            "수정된 값"))
+                                    .toList()));
 
             given().spec(givenSuperAdmin())
                     .body(updateRequest)
@@ -544,7 +528,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .body("data.optionProductMatrix.products[0].currentPrice", equalTo(55000))
                     .body("data.optionProductMatrix.products[0].stockQuantity", equalTo(150))
                     // 설명 수정 확인
-                    .body("data.description.htmlContent", containsString("수정된 상품 상세설명"));
+                    .body("data.description.content", containsString("수정된 상품 상세설명"));
         }
     }
 
@@ -564,13 +548,13 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("data");
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
 
             // ===== Step 2: PATCH - 상태 변경 (DRAFT → ACTIVE) =====
             Map<String, Object> statusRequest =
                     Map.of("productGroupIds", List.of(productGroupId), "targetStatus", "ACTIVE");
 
-            given().spec(givenSuperAdmin())
+            given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
                     .body(statusRequest)
                     .when()
                     .patch(PRODUCT_GROUPS_STATUS)
@@ -597,10 +581,10 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .when()
                             .post(PRODUCT_GROUPS);
 
-            Long productGroupId = createResponse.jsonPath().getLong("data");
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
 
             // Step 2: DRAFT → ACTIVE
-            given().spec(givenSuperAdmin())
+            given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
                     .body(
                             Map.of(
                                     "productGroupIds",
@@ -613,7 +597,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .statusCode(HttpStatus.NO_CONTENT.value());
 
             // Step 3: ACTIVE → INACTIVE
-            given().spec(givenSuperAdmin())
+            given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
                     .body(
                             Map.of(
                                     "productGroupIds",
@@ -626,7 +610,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .statusCode(HttpStatus.NO_CONTENT.value());
 
             // Step 4: INACTIVE → ACTIVE
-            given().spec(givenSuperAdmin())
+            given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
                     .body(
                             Map.of(
                                     "productGroupIds",
@@ -656,17 +640,17 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .body(createRegisterRequest())
                             .when()
                             .post(PRODUCT_GROUPS);
-            Long id1 = first.jsonPath().getLong("data");
+            Long id1 = first.jsonPath().getLong("productGroupId");
 
             Response second =
                     given().spec(givenSuperAdmin())
                             .body(createRegisterRequest())
                             .when()
                             .post(PRODUCT_GROUPS);
-            Long id2 = second.jsonPath().getLong("data");
+            Long id2 = second.jsonPath().getLong("productGroupId");
 
             // 배치 상태 변경
-            given().spec(givenSuperAdmin())
+            given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
                     .body(Map.of("productGroupIds", List.of(id1, id2), "targetStatus", "ACTIVE"))
                     .when()
                     .patch(PRODUCT_GROUPS_STATUS)
@@ -701,13 +685,15 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .body(createRegisterRequest())
                             .when()
                             .post(PRODUCT_GROUPS);
-            Long productGroupId = createResponse.jsonPath().getLong("data");
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
 
             // Step 2: 기본 정보 수정
             Map<String, Object> basicInfoRequest = new HashMap<>();
             basicInfoRequest.put("productGroupName", "기본 정보만 수정됨");
             basicInfoRequest.put("brandId", brandId);
             basicInfoRequest.put("categoryId", categoryId);
+            basicInfoRequest.put("shippingPolicyId", shippingPolicyId);
+            basicInfoRequest.put("refundPolicyId", refundPolicyId);
 
             given().spec(givenSuperAdmin())
                     .body(basicInfoRequest)
