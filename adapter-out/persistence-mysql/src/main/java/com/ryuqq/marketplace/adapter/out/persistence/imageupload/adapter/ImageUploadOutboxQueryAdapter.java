@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.imageupload.mapper.ImageUpl
 import com.ryuqq.marketplace.adapter.out.persistence.imageupload.repository.ImageUploadOutboxQueryDslRepository;
 import com.ryuqq.marketplace.application.imageupload.port.out.query.ImageUploadOutboxQueryPort;
 import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,14 @@ public class ImageUploadOutboxQueryAdapter implements ImageUploadOutboxQueryPort
     public List<ImageUploadOutbox> findProcessingTimeoutOutboxes(
             Instant timeoutThreshold, int limit) {
         return queryDslRepository.findProcessingTimeoutOutboxes(timeoutThreshold, limit).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<ImageUploadOutbox> findBySourceIdsAndSourceType(
+            List<Long> sourceIds, ImageSourceType sourceType) {
+        return queryDslRepository.findBySourceIdsAndSourceType(sourceIds, sourceType).stream()
                 .map(mapper::toDomain)
                 .toList();
     }

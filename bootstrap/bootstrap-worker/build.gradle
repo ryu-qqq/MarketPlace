@@ -1,0 +1,60 @@
+// ============================================================
+// MarketPlace - Worker Module
+// ============================================================
+// SQS-based inspection pipeline worker:
+// - Inspection Scoring Consumer
+// - Inspection Enhancement Consumer (LLM)
+// - Inspection Verification Consumer
+// ============================================================
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    // ========================================
+    // Spring Boot
+    // ========================================
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.data.jpa
+    implementation libs.spring.boot.starter.actuator
+
+    // ========================================
+    // Internal Modules
+    // ========================================
+    implementation project(':adapter-in:sqs-consumer')
+    implementation project(':application')
+    implementation project(':domain')
+    implementation project(':adapter-out:persistence-mysql')
+    implementation project(':adapter-out:persistence-redis')
+    implementation project(':adapter-out:client:sqs-client')
+    implementation project(':adapter-out:client:spring-ai-client')
+
+    // ========================================
+    // Observability
+    // ========================================
+    implementation libs.observability.adapter
+    implementation libs.sentry.spring.boot
+    implementation libs.micrometer.prometheus
+    implementation libs.logstash.logback.encoder
+
+    // ========================================
+    // Database
+    // ========================================
+    runtimeOnly libs.mysql.connector
+
+    // ========================================
+    // Test
+    // ========================================
+    testImplementation libs.spring.boot.starter.test
+}
+
+bootJar {
+    enabled = true
+    archiveBaseName = 'bootstrap-worker'
+}
+
+jar {
+    enabled = false
+}

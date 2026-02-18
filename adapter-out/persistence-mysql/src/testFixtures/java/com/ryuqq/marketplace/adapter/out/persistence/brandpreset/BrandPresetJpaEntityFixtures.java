@@ -121,6 +121,15 @@ public final class BrandPresetJpaEntityFixtures {
                 now);
     }
 
+    /** 커스텀 ShopId와 SalesChannelBrandId를 가진 활성 상태 BrandPreset Entity 생성. */
+    public static BrandPresetJpaEntity activeEntityWithShopAndSalesChannelBrand(
+            Long shopId, Long salesChannelBrandId) {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return BrandPresetJpaEntity.create(
+                null, shopId, salesChannelBrandId, "테스트 브랜드 프리셋 " + seq, "ACTIVE", now, now);
+    }
+
     /** 커스텀 SalesChannelBrandId를 가진 활성 상태 BrandPreset Entity 생성. */
     public static BrandPresetJpaEntity activeEntityWithSalesChannelBrandId(
             Long salesChannelBrandId) {

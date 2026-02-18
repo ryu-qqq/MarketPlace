@@ -1,6 +1,6 @@
-package com.ryuqq.marketplace.application.productgroup.port.in.command;
+package com.ryuqq.marketplace.application.productgroupimage.port.in.command;
 
-import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupImagesCommand;
+import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand;
 
 /**
  * UpdateProductGroupImagesUseCase - 상품 그룹 이미지 수정 Use Case.

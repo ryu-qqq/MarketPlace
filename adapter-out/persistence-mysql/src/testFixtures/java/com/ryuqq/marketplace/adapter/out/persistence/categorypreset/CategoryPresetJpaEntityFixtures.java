@@ -121,6 +121,15 @@ public final class CategoryPresetJpaEntityFixtures {
                 now);
     }
 
+    /** 커스텀 ShopId와 SalesChannelCategoryId를 가진 활성 상태 CategoryPreset Entity 생성. */
+    public static CategoryPresetJpaEntity activeEntityWithShopAndSalesChannelCategory(
+            Long shopId, Long salesChannelCategoryId) {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return CategoryPresetJpaEntity.create(
+                null, shopId, salesChannelCategoryId, "테스트 카테고리 프리셋 " + seq, "ACTIVE", now, now);
+    }
+
     /** 커스텀 SalesChannelCategoryId를 가진 활성 상태 CategoryPreset Entity 생성. */
     public static CategoryPresetJpaEntity activeEntityWithSalesChannelCategoryId(
             Long salesChannelCategoryId) {

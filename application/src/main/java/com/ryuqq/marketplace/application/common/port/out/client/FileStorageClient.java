@@ -33,4 +33,14 @@ public interface FileStorageClient {
     ExternalDownloadResponse downloadFromExternalUrl(ExternalDownloadRequest request);
 
     List<ExternalDownloadResponse> downloadFromExternalUrls(List<ExternalDownloadRequest> requests);
+
+    /**
+     * HTML 콘텐츠를 CDN에 업로드합니다.
+     *
+     * @param htmlContent 업로드할 HTML 콘텐츠
+     * @param category 파일 카테고리 (예: "description")
+     * @param filename 파일명 (예: "123.html")
+     * @return 업로드된 CDN URL
+     */
+    String uploadHtmlContent(String htmlContent, String category, String filename);
 }

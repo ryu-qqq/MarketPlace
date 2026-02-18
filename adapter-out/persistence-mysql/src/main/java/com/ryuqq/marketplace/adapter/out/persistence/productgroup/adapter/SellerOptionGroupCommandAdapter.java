@@ -3,7 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.productgroup.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.mapper.ProductGroupJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.repository.SellerOptionGroupJpaRepository;
-import com.ryuqq.marketplace.application.productgroup.port.out.command.SellerOptionGroupCommandPort;
+import com.ryuqq.marketplace.application.selleroption.port.out.command.SellerOptionGroupCommandPort;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -26,21 +26,16 @@ public class SellerOptionGroupCommandAdapter implements SellerOptionGroupCommand
     }
 
     @Override
-    public List<Long> findGroupIdsByProductGroupId(Long productGroupId) {
-        return repository.findByProductGroupId(productGroupId).stream()
-                .map(SellerOptionGroupJpaEntity::getId)
-                .toList();
-    }
-
-    @Override
-    public void deleteByProductGroupId(Long productGroupId) {
-        repository.deleteByProductGroupId(productGroupId);
-    }
-
-    @Override
-    public Long persist(Long productGroupId, SellerOptionGroup group) {
+    public Long persist(SellerOptionGroup group) {
         SellerOptionGroupJpaEntity entity = mapper.toOptionGroupEntity(group);
         SellerOptionGroupJpaEntity saved = repository.save(entity);
         return saved.getId();
+    }
+
+    @Override
+    public void persistAll(List<SellerOptionGroup> groups) {
+        List<SellerOptionGroupJpaEntity> entities =
+                groups.stream().map(mapper::toOptionGroupEntity).toList();
+        repository.saveAll(entities);
     }
 }

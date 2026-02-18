@@ -15,12 +15,23 @@ public final class NoticeCategoryJpaEntityFixtures {
 
     private static final AtomicLong SEQUENCE = new AtomicLong(1);
 
+    /** CategoryGroup enum 값 목록. targetCategoryGroup 유니크 제약 조건을 만족하기 위해 순환 사용합니다. */
+    private static final String[] CATEGORY_GROUPS = {
+        "CLOTHING", "SHOES", "BAGS", "ACCESSORIES", "COSMETICS",
+        "JEWELRY", "WATCHES", "FURNITURE", "DIGITAL", "SPORTS",
+        "BABY_KIDS", "ETC"
+    };
+
     // ===== 기본 상수 =====
     public static final Long DEFAULT_ID = 1L;
     public static final String DEFAULT_CODE = "CLOTHING";
     public static final String DEFAULT_NAME_KO = "의류";
     public static final String DEFAULT_NAME_EN = "Clothing";
     public static final String DEFAULT_TARGET_CATEGORY_GROUP = "CLOTHING";
+
+    private static String uniqueCategoryGroup(long seq) {
+        return CATEGORY_GROUPS[(int) ((seq - 1) % CATEGORY_GROUPS.length)];
+    }
 
     // ===== Entity Fixtures =====
 
@@ -33,7 +44,7 @@ public final class NoticeCategoryJpaEntityFixtures {
                 DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
-                DEFAULT_TARGET_CATEGORY_GROUP,
+                uniqueCategoryGroup(seq),
                 true,
                 now,
                 now);
@@ -41,13 +52,14 @@ public final class NoticeCategoryJpaEntityFixtures {
 
     /** ID를 지정한 활성 상태 NoticeCategory Entity 생성. */
     public static NoticeCategoryJpaEntity activeEntity(Long id) {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeCategoryJpaEntity.create(
                 id,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
-                DEFAULT_TARGET_CATEGORY_GROUP,
+                uniqueCategoryGroup(seq),
                 true,
                 now,
                 now);
@@ -70,7 +82,7 @@ public final class NoticeCategoryJpaEntityFixtures {
                 DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
-                DEFAULT_TARGET_CATEGORY_GROUP,
+                uniqueCategoryGroup(seq),
                 false,
                 now,
                 now);
@@ -85,7 +97,7 @@ public final class NoticeCategoryJpaEntityFixtures {
                 DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
-                DEFAULT_TARGET_CATEGORY_GROUP,
+                uniqueCategoryGroup(seq),
                 true,
                 now,
                 now);
@@ -100,7 +112,7 @@ public final class NoticeCategoryJpaEntityFixtures {
                 DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 null,
-                DEFAULT_TARGET_CATEGORY_GROUP,
+                uniqueCategoryGroup(seq),
                 true,
                 now,
                 now);
@@ -111,7 +123,7 @@ public final class NoticeCategoryJpaEntityFixtures {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeCategoryJpaEntity.create(
-                seq, "DIGITAL", "디지털/가전", "Digital", "DIGITAL", true, now, now);
+                seq, "DIGITAL_" + seq, "디지털/가전", "Digital", "DIGITAL", true, now, now);
     }
 
     /** 가구 카테고리 Entity 생성. */
@@ -119,7 +131,7 @@ public final class NoticeCategoryJpaEntityFixtures {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeCategoryJpaEntity.create(
-                seq, "FURNITURE", "가구", "Furniture", "FURNITURE", true, now, now);
+                seq, "FURNITURE_" + seq, "가구", "Furniture", "FURNITURE", true, now, now);
     }
 
     /** 비활성 상태의 새 Entity 생성 (ID는 null). */
@@ -131,7 +143,7 @@ public final class NoticeCategoryJpaEntityFixtures {
                 DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
-                DEFAULT_TARGET_CATEGORY_GROUP,
+                uniqueCategoryGroup(seq),
                 false,
                 now,
                 now);
@@ -146,7 +158,7 @@ public final class NoticeCategoryJpaEntityFixtures {
                 DEFAULT_CODE + "_" + seq,
                 nameKo,
                 nameEn,
-                DEFAULT_TARGET_CATEGORY_GROUP,
+                uniqueCategoryGroup(seq),
                 true,
                 now,
                 now);

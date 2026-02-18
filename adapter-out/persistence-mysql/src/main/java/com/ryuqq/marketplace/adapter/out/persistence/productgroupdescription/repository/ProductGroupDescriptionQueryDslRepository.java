@@ -33,6 +33,12 @@ public class ProductGroupDescriptionQueryDslRepository {
         this.conditionBuilder = conditionBuilder;
     }
 
+    public Optional<ProductGroupDescriptionJpaEntity> findById(Long id) {
+        ProductGroupDescriptionJpaEntity entity =
+                queryFactory.selectFrom(description).where(description.id.eq(id)).fetchOne();
+        return Optional.ofNullable(entity);
+    }
+
     public Optional<ProductGroupDescriptionJpaEntity> findByProductGroupId(Long productGroupId) {
         ProductGroupDescriptionJpaEntity entity =
                 queryFactory
@@ -42,10 +48,19 @@ public class ProductGroupDescriptionQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
+    public List<ProductGroupDescriptionJpaEntity> findByPublishStatus(
+            String publishStatus, int limit) {
+        return queryFactory
+                .selectFrom(description)
+                .where(description.publishStatus.eq(publishStatus))
+                .limit(limit)
+                .fetch();
+    }
+
     public List<DescriptionImageJpaEntity> findImagesByDescriptionId(Long descriptionId) {
         return queryFactory
                 .selectFrom(image)
-                .where(image.productGroupDescriptionId.eq(descriptionId))
+                .where(image.productGroupDescriptionId.eq(descriptionId), image.deleted.isFalse())
                 .orderBy(image.sortOrder.asc())
                 .fetch();
     }

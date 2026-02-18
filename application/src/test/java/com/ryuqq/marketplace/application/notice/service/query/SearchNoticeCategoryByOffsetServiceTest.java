@@ -10,10 +10,12 @@ import com.ryuqq.marketplace.application.notice.dto.query.NoticeCategorySearchPa
 import com.ryuqq.marketplace.application.notice.dto.response.NoticeCategoryPageResult;
 import com.ryuqq.marketplace.application.notice.dto.response.NoticeCategoryResult;
 import com.ryuqq.marketplace.application.notice.factory.NoticeCategoryQueryFactory;
-import com.ryuqq.marketplace.application.notice.internal.NoticeCategoryReadFacade;
+import com.ryuqq.marketplace.application.notice.manager.NoticeCategoryReadManager;
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
+import com.ryuqq.marketplace.domain.notice.NoticeFixtures;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.notice.query.NoticeCategorySearchCriteria;
 import com.ryuqq.marketplace.domain.notice.query.NoticeCategorySortKey;
 import java.util.List;
@@ -33,7 +35,7 @@ class SearchNoticeCategoryByOffsetServiceTest {
 
     @InjectMocks private SearchNoticeCategoryByOffsetService sut;
 
-    @Mock private NoticeCategoryReadFacade readFacade;
+    @Mock private NoticeCategoryReadManager readManager;
     @Mock private NoticeCategoryQueryFactory queryFactory;
     @Mock private NoticeCategoryAssembler assembler;
 
@@ -64,17 +66,23 @@ class SearchNoticeCategoryByOffsetServiceTest {
             // given
             NoticeCategorySearchParams params = NoticeQueryFixtures.searchParams();
             NoticeCategorySearchCriteria criteria = defaultCriteria();
-            List<NoticeCategoryResult> results =
-                    List.of(
-                            NoticeQueryFixtures.noticeCategoryResult(1L),
-                            NoticeQueryFixtures.noticeCategoryResult(2L));
+
+            NoticeCategory category1 = NoticeFixtures.activeNoticeCategory(1L);
+            NoticeCategory category2 = NoticeFixtures.activeNoticeCategory(2L);
+            List<NoticeCategory> categories = List.of(category1, category2);
             long totalElements = 2L;
+
+            NoticeCategoryResult result1 = NoticeQueryFixtures.noticeCategoryResult(1L);
+            NoticeCategoryResult result2 = NoticeQueryFixtures.noticeCategoryResult(2L);
+            List<NoticeCategoryResult> results = List.of(result1, result2);
             NoticeCategoryPageResult expectedResult =
                     NoticeQueryFixtures.noticeCategoryPageResult();
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readFacade.findByCriteria(criteria)).willReturn(results);
-            given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
+            given(readManager.findByCriteria(criteria)).willReturn(categories);
+            given(readManager.countByCriteria(criteria)).willReturn(totalElements);
+            given(assembler.toResult(category1)).willReturn(result1);
+            given(assembler.toResult(category2)).willReturn(result2);
             given(assembler.toPageResult(results, criteria.page(), criteria.size(), totalElements))
                     .willReturn(expectedResult);
 
@@ -84,8 +92,8 @@ class SearchNoticeCategoryByOffsetServiceTest {
             // then
             assertThat(result).isEqualTo(expectedResult);
             then(queryFactory).should().createCriteria(params);
-            then(readFacade).should().findByCriteria(criteria);
-            then(readFacade).should().countByCriteria(criteria);
+            then(readManager).should().findByCriteria(criteria);
+            then(readManager).should().countByCriteria(criteria);
         }
 
         @Test
@@ -94,13 +102,16 @@ class SearchNoticeCategoryByOffsetServiceTest {
             // given
             NoticeCategorySearchParams params = NoticeQueryFixtures.searchParams();
             NoticeCategorySearchCriteria criteria = defaultCriteria();
-            List<NoticeCategoryResult> emptyResults = List.of();
+
+            List<NoticeCategory> categories = List.of();
             long totalElements = 0L;
+
+            List<NoticeCategoryResult> emptyResults = List.of();
             NoticeCategoryPageResult emptyResult = NoticeQueryFixtures.emptyPageResult();
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readFacade.findByCriteria(criteria)).willReturn(emptyResults);
-            given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
+            given(readManager.findByCriteria(criteria)).willReturn(categories);
+            given(readManager.countByCriteria(criteria)).willReturn(totalElements);
             given(
                             assembler.toPageResult(
                                     emptyResults, criteria.page(), criteria.size(), totalElements))
@@ -124,15 +135,21 @@ class SearchNoticeCategoryByOffsetServiceTest {
                             null,
                             null,
                             QueryContext.defaultOf(NoticeCategorySortKey.defaultKey()));
-            List<NoticeCategoryResult> activeResults =
-                    List.of(NoticeQueryFixtures.noticeCategoryResult(1L, true));
+
+            NoticeCategory category = NoticeFixtures.activeNoticeCategory(1L);
+            List<NoticeCategory> categories = List.of(category);
             long totalElements = 1L;
+
+            NoticeCategoryResult categoryResult =
+                    NoticeQueryFixtures.noticeCategoryResult(1L, true);
+            List<NoticeCategoryResult> activeResults = List.of(categoryResult);
             NoticeCategoryPageResult expectedResult =
                     NoticeQueryFixtures.noticeCategoryPageResult(0, 20, 1L);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readFacade.findByCriteria(criteria)).willReturn(activeResults);
-            given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
+            given(readManager.findByCriteria(criteria)).willReturn(categories);
+            given(readManager.countByCriteria(criteria)).willReturn(totalElements);
+            given(assembler.toResult(category)).willReturn(categoryResult);
             given(
                             assembler.toPageResult(
                                     activeResults, criteria.page(), criteria.size(), totalElements))
@@ -157,15 +174,21 @@ class SearchNoticeCategoryByOffsetServiceTest {
                             "code",
                             "CLOTHING",
                             QueryContext.defaultOf(NoticeCategorySortKey.defaultKey()));
-            List<NoticeCategoryResult> searchResults =
-                    List.of(NoticeQueryFixtures.noticeCategoryResult(1L, "CLOTHING"));
+
+            NoticeCategory category = NoticeFixtures.activeNoticeCategory(1L);
+            List<NoticeCategory> categories = List.of(category);
             long totalElements = 1L;
+
+            NoticeCategoryResult categoryResult =
+                    NoticeQueryFixtures.noticeCategoryResult(1L, "CLOTHING");
+            List<NoticeCategoryResult> searchResults = List.of(categoryResult);
             NoticeCategoryPageResult expectedResult =
                     NoticeQueryFixtures.noticeCategoryPageResult(0, 20, 1L);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readFacade.findByCriteria(criteria)).willReturn(searchResults);
-            given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
+            given(readManager.findByCriteria(criteria)).willReturn(categories);
+            given(readManager.countByCriteria(criteria)).willReturn(totalElements);
+            given(assembler.toResult(category)).willReturn(categoryResult);
             given(
                             assembler.toPageResult(
                                     searchResults, criteria.page(), criteria.size(), totalElements))
@@ -186,15 +209,20 @@ class SearchNoticeCategoryByOffsetServiceTest {
             int size = 10;
             NoticeCategorySearchParams params = NoticeQueryFixtures.searchParams(page, size);
             NoticeCategorySearchCriteria criteria = criteriaWithPage(page, size);
-            List<NoticeCategoryResult> results =
-                    List.of(NoticeQueryFixtures.noticeCategoryResult(1L));
+
+            NoticeCategory category = NoticeFixtures.activeNoticeCategory(1L);
+            List<NoticeCategory> categories = List.of(category);
             long totalElements = 15L;
+
+            NoticeCategoryResult categoryResult = NoticeQueryFixtures.noticeCategoryResult(1L);
+            List<NoticeCategoryResult> results = List.of(categoryResult);
             NoticeCategoryPageResult expectedResult =
                     NoticeQueryFixtures.noticeCategoryPageResult(page, size, totalElements);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readFacade.findByCriteria(criteria)).willReturn(results);
-            given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
+            given(readManager.findByCriteria(criteria)).willReturn(categories);
+            given(readManager.countByCriteria(criteria)).willReturn(totalElements);
+            given(assembler.toResult(category)).willReturn(categoryResult);
             given(assembler.toPageResult(results, criteria.page(), criteria.size(), totalElements))
                     .willReturn(expectedResult);
 

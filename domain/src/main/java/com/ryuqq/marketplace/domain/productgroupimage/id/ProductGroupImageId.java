@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.domain.productgroup.id;
+package com.ryuqq.marketplace.domain.productgroupimage.id;
 
 /** 상품 그룹 이미지 ID Value Object. */
 public record ProductGroupImageId(Long value) {

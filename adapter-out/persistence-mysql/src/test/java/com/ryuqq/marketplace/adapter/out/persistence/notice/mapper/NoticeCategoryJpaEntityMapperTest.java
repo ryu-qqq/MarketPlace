@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.ryuqq.marketplace.adapter.out.persistence.notice.NoticeCategoryJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.notice.NoticeFieldJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.NoticeCategoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.NoticeFieldJpaEntity;
 import com.ryuqq.marketplace.domain.category.vo.CategoryGroup;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +19,7 @@ import org.junit.jupiter.api.Test;
 /**
  * NoticeCategoryJpaEntityMapperTest - 공지사항 카테고리 Entity-Domain 매퍼 단위 테스트.
  *
- * <p>PER-MAP-002: toDomain(Entity) 메서드 제공.
+ * <p>PER-MAP-002: toDomain(Entity, List) 메서드 제공.
  *
  * <p>PER-MAP-003: 순수 변환 로직만.
  *
@@ -31,7 +34,7 @@ class NoticeCategoryJpaEntityMapperTest {
 
     @BeforeEach
     void setUp() {
-        mapper = new NoticeCategoryJpaEntityMapper();
+        mapper = new NoticeCategoryJpaEntityMapper(new NoticeFieldJpaEntityMapper());
     }
 
     // ========================================================================
@@ -49,7 +52,7 @@ class NoticeCategoryJpaEntityMapperTest {
             NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.activeEntity(1L);
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.idValue()).isEqualTo(entity.getId());
@@ -68,7 +71,7 @@ class NoticeCategoryJpaEntityMapperTest {
             NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.inactiveEntity();
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.isActive()).isFalse();
@@ -82,7 +85,7 @@ class NoticeCategoryJpaEntityMapperTest {
                     NoticeCategoryJpaEntityFixtures.entityWithoutEnglishName();
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.nameEn()).isNull();
@@ -97,7 +100,7 @@ class NoticeCategoryJpaEntityMapperTest {
                     NoticeCategoryJpaEntityFixtures.activeEntityWithCode("CLOTHING", "CLOTHING");
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.targetCategoryGroup()).isEqualTo(CategoryGroup.CLOTHING);
@@ -110,7 +113,7 @@ class NoticeCategoryJpaEntityMapperTest {
             NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.electronicsEntity();
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.targetCategoryGroup()).isEqualTo(CategoryGroup.DIGITAL);
@@ -123,7 +126,7 @@ class NoticeCategoryJpaEntityMapperTest {
             NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.furnitureEntity();
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.targetCategoryGroup()).isEqualTo(CategoryGroup.FURNITURE);
@@ -136,7 +139,7 @@ class NoticeCategoryJpaEntityMapperTest {
             NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.newEntity();
 
             // when & then
-            assertThatThrownBy(() -> mapper.toDomain(entity))
+            assertThatThrownBy(() -> mapper.toDomain(entity, List.of()))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("영속화된 엔티티의 ID는 null일 수 없습니다");
         }
@@ -148,7 +151,7 @@ class NoticeCategoryJpaEntityMapperTest {
             NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.activeEntity(1L);
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.createdAt()).isEqualTo(entity.getCreatedAt());
@@ -156,13 +159,30 @@ class NoticeCategoryJpaEntityMapperTest {
         }
 
         @Test
-        @DisplayName("필드 리스트가 비어있는 상태로 변환됩니다")
-        void toDomain_HasEmptyFieldsList() {
+        @DisplayName("필드 목록을 포함한 Domain을 생성합니다")
+        void toDomain_WithFields_ConvertsFields() {
+            // given
+            NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.activeEntity(1L);
+            List<NoticeFieldJpaEntity> fields =
+                    List.of(
+                            NoticeFieldJpaEntityFixtures.requiredFieldEntity(),
+                            NoticeFieldJpaEntityFixtures.requiredFieldEntity());
+
+            // when
+            NoticeCategory domain = mapper.toDomain(entity, fields);
+
+            // then
+            assertThat(domain.fields()).hasSize(2);
+        }
+
+        @Test
+        @DisplayName("빈 필드 목록으로 변환 시 fields는 빈 리스트입니다")
+        void toDomain_WithEmptyFields_HasEmptyFieldsList() {
             // given
             NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.activeEntity(1L);
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.fields()).isEmpty();
@@ -187,7 +207,7 @@ class NoticeCategoryJpaEntityMapperTest {
                     NoticeCategoryJpaEntityFixtures.activeEntityWithName(longNameKo, longNameEn);
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.nameKo()).isEqualTo(longNameKo);
@@ -204,7 +224,7 @@ class NoticeCategoryJpaEntityMapperTest {
                             codeWithSpecialChars, "CLOTHING");
 
             // when
-            NoticeCategory domain = mapper.toDomain(entity);
+            NoticeCategory domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.codeValue()).isEqualTo(codeWithSpecialChars);

@@ -26,13 +26,13 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.OptionGroupS
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
-import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupImageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductOptionMatrixResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionGroupResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionValueResult;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.response.DescriptionImageResult;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.response.ProductGroupDescriptionResult;
+import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductGroupImageResult;
 import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeEntryResult;
 import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import com.ryuqq.marketplace.application.refundpolicy.dto.response.RefundPolicyResult;

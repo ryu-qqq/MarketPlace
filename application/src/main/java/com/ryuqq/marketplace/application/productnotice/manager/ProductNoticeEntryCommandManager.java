@@ -17,12 +17,9 @@ public class ProductNoticeEntryCommandManager {
     }
 
     @Transactional
-    public void deleteByNoticeId(Long productNoticeId) {
-        commandPort.deleteByNoticeId(productNoticeId);
-    }
-
-    @Transactional
-    public void persistAll(Long productNoticeId, List<ProductNoticeEntry> entries) {
-        commandPort.persistAll(productNoticeId, entries);
+    public void persistAll(List<ProductNoticeEntry> entries) {
+        for (ProductNoticeEntry entry : entries) {
+            commandPort.persist(entry);
+        }
     }
 }

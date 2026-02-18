@@ -1,9 +1,11 @@
-package com.ryuqq.marketplace.domain.productgroup.aggregate;
+package com.ryuqq.marketplace.domain.productgroupimage.aggregate;
 
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupImageId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
+import com.ryuqq.marketplace.domain.productgroupimage.id.ProductGroupImageId;
+import java.time.Instant;
 
 /** 상품 그룹 이미지 (Child Entity of ProductGroup). */
 public class ProductGroupImage {
@@ -14,6 +16,7 @@ public class ProductGroupImage {
     private ImageUrl uploadedUrl;
     private final ImageType imageType;
     private int sortOrder;
+    private DeletionStatus deletionStatus;
 
     private ProductGroupImage(
             ProductGroupImageId id,
@@ -21,13 +24,15 @@ public class ProductGroupImage {
             ImageUrl originUrl,
             ImageUrl uploadedUrl,
             ImageType imageType,
-            int sortOrder) {
+            int sortOrder,
+            DeletionStatus deletionStatus) {
         this.id = id;
         this.productGroupId = productGroupId;
         this.originUrl = originUrl;
         this.uploadedUrl = uploadedUrl;
         this.imageType = imageType;
         this.sortOrder = sortOrder;
+        this.deletionStatus = deletionStatus;
     }
 
     /** 신규 이미지 생성. */
@@ -39,7 +44,8 @@ public class ProductGroupImage {
                 originUrl,
                 null,
                 imageType,
-                sortOrder);
+                sortOrder,
+                DeletionStatus.active());
     }
 
     /** 영속성에서 복원 시 사용. */
@@ -49,9 +55,10 @@ public class ProductGroupImage {
             ImageUrl originUrl,
             ImageUrl uploadedUrl,
             ImageType imageType,
-            int sortOrder) {
+            int sortOrder,
+            DeletionStatus deletionStatus) {
         return new ProductGroupImage(
-                id, productGroupId, originUrl, uploadedUrl, imageType, sortOrder);
+                id, productGroupId, originUrl, uploadedUrl, imageType, sortOrder, deletionStatus);
     }
 
     /** S3 업로드 URL 설정. */
@@ -101,6 +108,11 @@ public class ProductGroupImage {
         return imageType;
     }
 
+    /** 이미지 타입의 이름 문자열을 반환합니다. */
+    public String imageTypeName() {
+        return imageType.name();
+    }
+
     public ProductGroupId productGroupId() {
         return productGroupId;
     }
@@ -111,5 +123,18 @@ public class ProductGroupImage {
 
     public int sortOrder() {
         return sortOrder;
+    }
+
+    /** soft delete 처리. */
+    public void delete(Instant occurredAt) {
+        this.deletionStatus = DeletionStatus.deletedAt(occurredAt);
+    }
+
+    public boolean isDeleted() {
+        return deletionStatus.isDeleted();
+    }
+
+    public DeletionStatus deletionStatus() {
+        return deletionStatus;
     }
 }

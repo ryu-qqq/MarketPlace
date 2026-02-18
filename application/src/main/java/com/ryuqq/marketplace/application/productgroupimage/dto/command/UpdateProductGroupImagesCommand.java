@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.application.productgroup.dto.command;
+package com.ryuqq.marketplace.application.productgroupimage.dto.command;
 
 import java.util.List;
 

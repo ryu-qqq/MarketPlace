@@ -1,23 +1,24 @@
 package com.ryuqq.marketplace.application.productgroup.internal;
 
-import com.ryuqq.marketplace.application.imageupload.internal.ImageUploadOutboxCreator;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPersistResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPersistResult.OptionGroupPersistEntry;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
-import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupImageCommandManager;
-import com.ryuqq.marketplace.application.productgroup.manager.SellerOptionGroupCommandManager;
-import com.ryuqq.marketplace.application.productgroup.manager.SellerOptionValueCommandManager;
+import com.ryuqq.marketplace.application.productgroupimage.manager.ProductGroupImageCommandManager;
+import com.ryuqq.marketplace.application.selleroption.manager.SellerOptionGroupCommandManager;
+import com.ryuqq.marketplace.application.selleroption.manager.SellerOptionValueCommandManager;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * ProductGroup Persist Facade.
+ * ProductGroup Persist Facade (수정 플로우 전용).
  *
  * <p>ProductGroup 엔티티 + 자식(Image, OptionGroup, OptionValue) 저장을 조율합니다.
  *
- * <p>delete-insert 전략: 수정 시 기존 자식 삭제 → 새 자식 저장.
+ * <p>등록 플로우는 {@link FullProductGroupRegistrationCoordinator}에서 Manager를 직접 사용합니다.
  */
 @Component
 public class ProductGroupPersistFacade {
@@ -26,65 +27,34 @@ public class ProductGroupPersistFacade {
     private final ProductGroupImageCommandManager imageCommandManager;
     private final SellerOptionGroupCommandManager optionGroupCommandManager;
     private final SellerOptionValueCommandManager optionValueCommandManager;
-    private final ImageUploadOutboxCreator outboxCreator;
 
     public ProductGroupPersistFacade(
             ProductGroupCommandManager productGroupCommandManager,
             ProductGroupImageCommandManager imageCommandManager,
             SellerOptionGroupCommandManager optionGroupCommandManager,
-            SellerOptionValueCommandManager optionValueCommandManager,
-            ImageUploadOutboxCreator outboxCreator) {
+            SellerOptionValueCommandManager optionValueCommandManager) {
         this.productGroupCommandManager = productGroupCommandManager;
         this.imageCommandManager = imageCommandManager;
         this.optionGroupCommandManager = optionGroupCommandManager;
         this.optionValueCommandManager = optionValueCommandManager;
-        this.outboxCreator = outboxCreator;
     }
 
     /**
-     * ProductGroup + 자식 엔티티 저장.
-     *
-     * <p>1. ProductGroup 저장 → productGroupId 획득
-     *
-     * <p>2. 수정 시: 기존 자식 삭제 (OptionValue → OptionGroup → Image)
-     *
-     * <p>3. Image 저장
-     *
-     * <p>4. OptionGroup → OptionValue 저장
+     * ProductGroup + 자식 엔티티 저장 (수정 플로우용).
      *
      * @param productGroup ProductGroup 도메인 객체
-     * @return 저장된 productGroupId
+     * @return ProductGroupPersistResult (productGroupId + imageIds + optionGroupEntries)
      */
     @Transactional
-    public Long persist(ProductGroup productGroup) {
+    public ProductGroupPersistResult persist(ProductGroup productGroup) {
         Long productGroupId = productGroupCommandManager.persist(productGroup);
-
-        if (productGroup.idValue() != null) {
-            deleteChildren(productGroupId);
-        }
-
-        List<Long> imageIds = imageCommandManager.persistAll(productGroupId, productGroup.images());
-        saveOptionGroupsAndValues(productGroupId, productGroup);
-
-        outboxCreator.createForProductGroupImages(imageIds, productGroup.images(), Instant.now());
-
-        return productGroupId;
-    }
-
-    private void deleteChildren(Long productGroupId) {
-        List<Long> groupIds =
-                optionGroupCommandManager.findGroupIdsByProductGroupId(productGroupId);
-        if (!groupIds.isEmpty()) {
-            optionValueCommandManager.deleteByGroupIdIn(groupIds);
-        }
-        optionGroupCommandManager.deleteByProductGroupId(productGroupId);
-        imageCommandManager.deleteByProductGroupId(productGroupId);
-    }
-
-    private void saveOptionGroupsAndValues(Long productGroupId, ProductGroup productGroup) {
+        List<Long> imageIds = imageCommandManager.persistAll(productGroup.images());
+        List<OptionGroupPersistEntry> optionGroupEntries = new ArrayList<>();
         for (SellerOptionGroup group : productGroup.sellerOptionGroups()) {
-            Long groupId = optionGroupCommandManager.persist(productGroupId, group);
-            optionValueCommandManager.persistAll(groupId, group.optionValues());
+            Long groupId = optionGroupCommandManager.persist(group);
+            List<Long> valueIds = optionValueCommandManager.persistAll(group.optionValues());
+            optionGroupEntries.add(new OptionGroupPersistEntry(groupId, valueIds));
         }
+        return new ProductGroupPersistResult(productGroupId, imageIds, optionGroupEntries);
     }
 }

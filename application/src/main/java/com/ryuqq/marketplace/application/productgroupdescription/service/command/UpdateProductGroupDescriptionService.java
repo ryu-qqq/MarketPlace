@@ -2,12 +2,13 @@ package com.ryuqq.marketplace.application.productgroupdescription.service.comman
 
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
 import com.ryuqq.marketplace.application.productgroupdescription.factory.ProductGroupDescriptionCommandFactory;
-import com.ryuqq.marketplace.application.productgroupdescription.manager.ProductGroupDescriptionCommandManager;
+import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupdescription.manager.ProductGroupDescriptionReadManager;
 import com.ryuqq.marketplace.application.productgroupdescription.port.in.command.UpdateProductGroupDescriptionUseCase;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import java.util.Optional;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionImageDiff;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionUpdateData;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,34 +17,32 @@ import org.springframework.stereotype.Service;
  * <p>APP-SVC-001: @Service 어노테이션
  *
  * <p>APP-SVC-002: UseCase 구현
- *
- * <p>APP-TRX-001: @Transactional은 Port-Out (Adapter)에서 처리
  */
 @Service
 public class UpdateProductGroupDescriptionService implements UpdateProductGroupDescriptionUseCase {
 
     private final ProductGroupDescriptionCommandFactory commandFactory;
     private final ProductGroupDescriptionReadManager readManager;
-    private final ProductGroupDescriptionCommandManager commandManager;
+    private final DescriptionCommandCoordinator descriptionCommandCoordinator;
 
     public UpdateProductGroupDescriptionService(
             ProductGroupDescriptionCommandFactory commandFactory,
             ProductGroupDescriptionReadManager readManager,
-            ProductGroupDescriptionCommandManager commandManager) {
+            DescriptionCommandCoordinator descriptionCommandCoordinator) {
         this.commandFactory = commandFactory;
         this.readManager = readManager;
-        this.commandManager = commandManager;
+        this.descriptionCommandCoordinator = descriptionCommandCoordinator;
     }
 
     @Override
     public void execute(UpdateProductGroupDescriptionCommand command) {
-        ProductGroupId productGroupId = ProductGroupId.of(command.productGroupId());
-        Optional<ProductGroupDescription> existingOpt =
-                readManager.findByProductGroupId(productGroupId);
+        DescriptionUpdateData updateData = commandFactory.createUpdateData(command);
 
         ProductGroupDescription description =
-                commandFactory.createOrUpdateDescription(command, existingOpt);
+                readManager.getByProductGroupId(ProductGroupId.of(command.productGroupId()));
 
-        commandManager.persist(description);
+        DescriptionImageDiff diff = description.update(updateData);
+
+        descriptionCommandCoordinator.update(description, diff);
     }
 }

@@ -9,6 +9,4 @@ public interface SellerOptionGroupJpaRepository
         extends JpaRepository<SellerOptionGroupJpaEntity, Long> {
 
     List<SellerOptionGroupJpaEntity> findByProductGroupId(Long productGroupId);
-
-    void deleteByProductGroupId(Long productGroupId);
 }

@@ -4,8 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.CanonicalOptionGroupJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.CanonicalOptionValueJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.entity.CanonicalOptionGroupJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.entity.CanonicalOptionValueJpaEntity;
 import com.ryuqq.marketplace.domain.canonicaloption.aggregate.CanonicalOptionGroup;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,7 +18,7 @@ import org.junit.jupiter.api.Test;
 /**
  * CanonicalOptionGroupJpaEntityMapperTest - 캐노니컬 옵션 그룹 Entity-Domain 매퍼 단위 테스트.
  *
- * <p>PER-MAP-002: toDomain(Entity) 메서드 제공.
+ * <p>PER-MAP-002: toDomain(Entity, List) 메서드 제공.
  *
  * <p>PER-MAP-003: 순수 변환 로직만.
  *
@@ -30,7 +33,7 @@ class CanonicalOptionGroupJpaEntityMapperTest {
 
     @BeforeEach
     void setUp() {
-        mapper = new CanonicalOptionGroupJpaEntityMapper();
+        mapper = new CanonicalOptionGroupJpaEntityMapper(new CanonicalOptionValueJpaEntityMapper());
     }
 
     // ========================================================================
@@ -49,7 +52,7 @@ class CanonicalOptionGroupJpaEntityMapperTest {
                     CanonicalOptionGroupJpaEntityFixtures.activeEntity();
 
             // when
-            CanonicalOptionGroup domain = mapper.toDomain(entity);
+            CanonicalOptionGroup domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.idValue()).isEqualTo(entity.getId());
@@ -68,7 +71,7 @@ class CanonicalOptionGroupJpaEntityMapperTest {
                     CanonicalOptionGroupJpaEntityFixtures.inactiveEntity();
 
             // when
-            CanonicalOptionGroup domain = mapper.toDomain(entity);
+            CanonicalOptionGroup domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.isActive()).isFalse();
@@ -82,7 +85,7 @@ class CanonicalOptionGroupJpaEntityMapperTest {
                     CanonicalOptionGroupJpaEntityFixtures.entityWithoutNameEn();
 
             // when
-            CanonicalOptionGroup domain = mapper.toDomain(entity);
+            CanonicalOptionGroup domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.nameEn()).isNull();
@@ -96,7 +99,7 @@ class CanonicalOptionGroupJpaEntityMapperTest {
                     CanonicalOptionGroupJpaEntityFixtures.newEntity();
 
             // when & then
-            assertThatThrownBy(() -> mapper.toDomain(entity))
+            assertThatThrownBy(() -> mapper.toDomain(entity, List.of()))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("영속화된 엔티티의 ID는 null일 수 없습니다");
         }
@@ -109,11 +112,29 @@ class CanonicalOptionGroupJpaEntityMapperTest {
                     CanonicalOptionGroupJpaEntityFixtures.activeEntity();
 
             // when
-            CanonicalOptionGroup domain = mapper.toDomain(entity);
+            CanonicalOptionGroup domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.createdAt()).isEqualTo(entity.getCreatedAt());
             assertThat(domain.updatedAt()).isEqualTo(entity.getUpdatedAt());
+        }
+
+        @Test
+        @DisplayName("값 목록을 포함한 Domain을 생성합니다")
+        void toDomain_WithValueEntities_ConvertsValues() {
+            // given
+            CanonicalOptionGroupJpaEntity entity =
+                    CanonicalOptionGroupJpaEntityFixtures.activeEntity();
+            List<CanonicalOptionValueJpaEntity> values =
+                    List.of(
+                            CanonicalOptionValueJpaEntityFixtures.defaultEntity(),
+                            CanonicalOptionValueJpaEntityFixtures.defaultEntity());
+
+            // when
+            CanonicalOptionGroup domain = mapper.toDomain(entity, values);
+
+            // then
+            assertThat(domain.values()).hasSize(2);
         }
     }
 
@@ -133,7 +154,7 @@ class CanonicalOptionGroupJpaEntityMapperTest {
                     CanonicalOptionGroupJpaEntityFixtures.sizeEntity();
 
             // when
-            CanonicalOptionGroup domain = mapper.toDomain(entity);
+            CanonicalOptionGroup domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.codeValue()).isEqualTo("SIZE");
@@ -149,7 +170,7 @@ class CanonicalOptionGroupJpaEntityMapperTest {
                     CanonicalOptionGroupJpaEntityFixtures.materialEntity();
 
             // when
-            CanonicalOptionGroup domain = mapper.toDomain(entity);
+            CanonicalOptionGroup domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.codeValue()).isEqualTo("MATERIAL");
@@ -174,7 +195,7 @@ class CanonicalOptionGroupJpaEntityMapperTest {
                     CanonicalOptionGroupJpaEntityFixtures.activeEntity();
 
             // when
-            CanonicalOptionGroup domain = mapper.toDomain(entity);
+            CanonicalOptionGroup domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.id()).isNotNull();
@@ -184,14 +205,14 @@ class CanonicalOptionGroupJpaEntityMapperTest {
         }
 
         @Test
-        @DisplayName("values는 빈 리스트로 초기화됩니다")
-        void toDomain_InitializesEmptyValuesList() {
+        @DisplayName("빈 값 목록으로 변환 시 values는 빈 리스트로 초기화됩니다")
+        void toDomain_WithEmptyValues_InitializesEmptyValuesList() {
             // given
             CanonicalOptionGroupJpaEntity entity =
                     CanonicalOptionGroupJpaEntityFixtures.activeEntity();
 
             // when
-            CanonicalOptionGroup domain = mapper.toDomain(entity);
+            CanonicalOptionGroup domain = mapper.toDomain(entity, List.of());
 
             // then
             assertThat(domain.values()).isNotNull();

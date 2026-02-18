@@ -40,6 +40,7 @@ public record UpdateProductGroupFullApiRequest(
 
     /** 옵션 그룹 API Request. */
     public record OptionGroupApiRequest(
+            @JsonProperty("sellerOptionGroupId") Long sellerOptionGroupId,
             @NotBlank(message = "옵션 그룹명은 필수입니다") String optionGroupName,
             @JsonProperty("canonicalOptionGroupId") Long canonicalOptionGroupId,
             @NotEmpty(message = "옵션 값은 최소 1개 이상 필요합니다") @Valid
@@ -47,6 +48,7 @@ public record UpdateProductGroupFullApiRequest(
 
     /** 옵션 값 API Request. */
     public record OptionValueApiRequest(
+            @JsonProperty("sellerOptionValueId") Long sellerOptionValueId,
             @NotBlank(message = "옵션 값명은 필수입니다") String optionValueName,
             @JsonProperty("canonicalOptionValueId") Long canonicalOptionValueId,
             @NotNull(message = "정렬 순서는 필수입니다") @Min(value = 0, message = "정렬 순서는 0 이상이어야 합니다")
@@ -54,14 +56,12 @@ public record UpdateProductGroupFullApiRequest(
 
     /** 상품 API Request. */
     public record ProductApiRequest(
+            @JsonProperty("productId") Long productId,
             @NotBlank(message = "SKU 코드는 필수입니다") String skuCode,
             @NotNull(message = "정상가는 필수입니다") @Min(value = 0, message = "정상가는 0 이상이어야 합니다")
                     Integer regularPrice,
             @NotNull(message = "판매가는 필수입니다") @Min(value = 0, message = "판매가는 0 이상이어야 합니다")
                     Integer currentPrice,
-            @Min(value = 0, message = "세일가는 0 이상이어야 합니다") Integer salePrice,
-            @NotNull(message = "할인율은 필수입니다") @Min(value = 0, message = "할인율은 0 이상이어야 합니다")
-                    Integer discountRate,
             @NotNull(message = "재고 수량은 필수입니다") @Min(value = 0, message = "재고 수량은 0 이상이어야 합니다")
                     Integer stockQuantity,
             @NotNull(message = "정렬 순서는 필수입니다") @Min(value = 0, message = "정렬 순서는 0 이상이어야 합니다")

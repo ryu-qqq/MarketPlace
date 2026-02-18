@@ -82,6 +82,14 @@ public final class CanonicalOptionValueJpaEntityFixtures {
                 now);
     }
 
+    /** 커스텀 코드를 가진 새 옵션 값 Entity 생성 (ID가 null - 통합 테스트용). */
+    public static CanonicalOptionValueJpaEntity newEntityWithCode(
+            Long groupId, String code, int sortOrder) {
+        Instant now = Instant.now();
+        return CanonicalOptionValueJpaEntity.create(
+                null, groupId, code, DEFAULT_NAME_KO, DEFAULT_NAME_EN, sortOrder, now, now);
+    }
+
     /** 커스텀 이름을 가진 옵션 값 Entity 생성. */
     public static CanonicalOptionValueJpaEntity entityWithName(
             Long groupId, String nameKo, String nameEn, int sortOrder) {

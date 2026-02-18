@@ -5,8 +5,9 @@ import com.ryuqq.marketplace.application.canonicaloption.dto.query.CanonicalOpti
 import com.ryuqq.marketplace.application.canonicaloption.dto.response.CanonicalOptionGroupPageResult;
 import com.ryuqq.marketplace.application.canonicaloption.dto.response.CanonicalOptionGroupResult;
 import com.ryuqq.marketplace.application.canonicaloption.factory.CanonicalOptionGroupQueryFactory;
-import com.ryuqq.marketplace.application.canonicaloption.internal.CanonicalOptionGroupReadFacade;
+import com.ryuqq.marketplace.application.canonicaloption.manager.CanonicalOptionGroupReadManager;
 import com.ryuqq.marketplace.application.canonicaloption.port.in.query.SearchCanonicalOptionGroupByOffsetUseCase;
+import com.ryuqq.marketplace.domain.canonicaloption.aggregate.CanonicalOptionGroup;
 import com.ryuqq.marketplace.domain.canonicaloption.query.CanonicalOptionGroupSearchCriteria;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -16,15 +17,15 @@ import org.springframework.stereotype.Service;
 public class SearchCanonicalOptionGroupByOffsetService
         implements SearchCanonicalOptionGroupByOffsetUseCase {
 
-    private final CanonicalOptionGroupReadFacade readFacade;
+    private final CanonicalOptionGroupReadManager readManager;
     private final CanonicalOptionGroupQueryFactory queryFactory;
     private final CanonicalOptionGroupAssembler assembler;
 
     public SearchCanonicalOptionGroupByOffsetService(
-            CanonicalOptionGroupReadFacade readFacade,
+            CanonicalOptionGroupReadManager readManager,
             CanonicalOptionGroupQueryFactory queryFactory,
             CanonicalOptionGroupAssembler assembler) {
-        this.readFacade = readFacade;
+        this.readManager = readManager;
         this.queryFactory = queryFactory;
         this.assembler = assembler;
     }
@@ -32,8 +33,10 @@ public class SearchCanonicalOptionGroupByOffsetService
     @Override
     public CanonicalOptionGroupPageResult execute(CanonicalOptionGroupSearchParams params) {
         CanonicalOptionGroupSearchCriteria criteria = queryFactory.createCriteria(params);
-        List<CanonicalOptionGroupResult> results = readFacade.findByCriteria(criteria);
-        long totalElements = readFacade.countByCriteria(criteria);
+        List<CanonicalOptionGroup> groups = readManager.findByCriteria(criteria);
+        long totalElements = readManager.countByCriteria(criteria);
+        List<CanonicalOptionGroupResult> results =
+                groups.stream().map(assembler::toResult).toList();
         return assembler.toPageResult(results, criteria.page(), criteria.size(), totalElements);
     }
 }

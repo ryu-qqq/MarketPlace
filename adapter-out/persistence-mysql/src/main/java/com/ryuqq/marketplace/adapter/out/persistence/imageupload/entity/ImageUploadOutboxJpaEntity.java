@@ -1,5 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.imageupload.entity;
 
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageUploadOutboxStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,14 +35,14 @@ public class ImageUploadOutboxJpaEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "source_type", nullable = false, length = 30)
-    private SourceType sourceType;
+    private ImageSourceType sourceType;
 
     @Column(name = "origin_url", nullable = false, length = 500)
     private String originUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private Status status;
+    private ImageUploadOutboxStatus status;
 
     @Column(name = "retry_count", nullable = false)
     private int retryCount;
@@ -72,9 +74,9 @@ public class ImageUploadOutboxJpaEntity {
     private ImageUploadOutboxJpaEntity(
             Long id,
             Long sourceId,
-            SourceType sourceType,
+            ImageSourceType sourceType,
             String originUrl,
-            Status status,
+            ImageUploadOutboxStatus status,
             int retryCount,
             int maxRetry,
             Instant createdAt,
@@ -101,9 +103,9 @@ public class ImageUploadOutboxJpaEntity {
     public static ImageUploadOutboxJpaEntity create(
             Long id,
             Long sourceId,
-            SourceType sourceType,
+            ImageSourceType sourceType,
             String originUrl,
-            Status status,
+            ImageUploadOutboxStatus status,
             int retryCount,
             int maxRetry,
             Instant createdAt,
@@ -136,7 +138,7 @@ public class ImageUploadOutboxJpaEntity {
         return sourceId;
     }
 
-    public SourceType getSourceType() {
+    public ImageSourceType getSourceType() {
         return sourceType;
     }
 
@@ -144,7 +146,7 @@ public class ImageUploadOutboxJpaEntity {
         return originUrl;
     }
 
-    public Status getStatus() {
+    public ImageUploadOutboxStatus getStatus() {
         return status;
     }
 
@@ -178,19 +180,5 @@ public class ImageUploadOutboxJpaEntity {
 
     public String getIdempotencyKey() {
         return idempotencyKey;
-    }
-
-    /** Outbox 상태. */
-    public enum Status {
-        PENDING,
-        PROCESSING,
-        COMPLETED,
-        FAILED
-    }
-
-    /** 이미지 소스 타입. */
-    public enum SourceType {
-        PRODUCT_GROUP_IMAGE,
-        DESCRIPTION_IMAGE
     }
 }

@@ -161,9 +161,11 @@ class ProductGroupStatusTest {
             assertThat(ProductGroupStatus.values())
                     .containsExactly(
                             ProductGroupStatus.DRAFT,
+                            ProductGroupStatus.PROCESSING,
                             ProductGroupStatus.ACTIVE,
                             ProductGroupStatus.INACTIVE,
                             ProductGroupStatus.SOLDOUT,
+                            ProductGroupStatus.REJECTED,
                             ProductGroupStatus.DELETED);
         }
     }

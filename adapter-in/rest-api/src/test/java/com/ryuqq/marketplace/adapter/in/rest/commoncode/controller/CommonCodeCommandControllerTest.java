@@ -4,15 +4,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,18 +29,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @Tag("unit")
 @WebMvcTest(CommonCodeCommandController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@AutoConfigureRestDocs
 @DisplayName("CommonCodeCommandController 단위 테스트")
 class CommonCodeCommandControllerTest {
 
@@ -62,7 +53,7 @@ class CommonCodeCommandControllerTest {
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @Nested
-    @DisplayName("POST /api/v2/admin/common-codes - 공통 코드 등록")
+    @DisplayName("POST /api/v1/market/common-codes - 공통 코드 등록")
     class RegisterTest {
 
         @Test
@@ -80,26 +71,11 @@ class CommonCodeCommandControllerTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.post(BASE_URL)
+                            post(BASE_URL)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.data").value(100))
-                    .andDo(
-                            document(
-                                    "common-code/register",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestFields(
-                                            fieldWithPath("commonCodeTypeId")
-                                                    .description("공통 코드 타입 ID"),
-                                            fieldWithPath("code").description("코드값"),
-                                            fieldWithPath("displayName").description("표시명"),
-                                            fieldWithPath("displayOrder").description("표시 순서")),
-                                    responseFields(
-                                            fieldWithPath("data").description("생성된 공통 코드 ID"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                    .andExpect(jsonPath("$.data").value(100));
 
             then(commandMapper).should().toCommand(any(RegisterCommonCodeApiRequest.class));
             then(registerUseCase).should().execute(command);
@@ -114,7 +90,7 @@ class CommonCodeCommandControllerTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.post(BASE_URL)
+                            post(BASE_URL)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -129,7 +105,7 @@ class CommonCodeCommandControllerTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.post(BASE_URL)
+                            post(BASE_URL)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -144,7 +120,7 @@ class CommonCodeCommandControllerTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.post(BASE_URL)
+                            post(BASE_URL)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -152,7 +128,7 @@ class CommonCodeCommandControllerTest {
     }
 
     @Nested
-    @DisplayName("PUT /api/v2/admin/common-codes/{id} - 공통 코드 수정")
+    @DisplayName("PUT /api/v1/market/common-codes/{id} - 공통 코드 수정")
     class UpdateTest {
 
         @Test
@@ -169,24 +145,11 @@ class CommonCodeCommandControllerTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.put(BASE_URL + "/{id}", id)
+                            put(BASE_URL + "/{id}", id)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data").doesNotExist())
-                    .andDo(
-                            document(
-                                    "common-code/update",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    pathParameters(parameterWithName("id").description("공통 코드 ID")),
-                                    requestFields(
-                                            fieldWithPath("displayName").description("표시명"),
-                                            fieldWithPath("displayOrder").description("표시 순서")),
-                                    responseFields(
-                                            fieldWithPath("data").description("응답 데이터 (null)"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                    .andExpect(jsonPath("$.data").doesNotExist());
 
             then(commandMapper)
                     .should()
@@ -202,7 +165,7 @@ class CommonCodeCommandControllerTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.put(BASE_URL + "/{id}", 1L)
+                            put(BASE_URL + "/{id}", 1L)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -210,7 +173,7 @@ class CommonCodeCommandControllerTest {
     }
 
     @Nested
-    @DisplayName("PATCH /api/v2/admin/common-codes/active-status - 활성화 상태 변경")
+    @DisplayName("PATCH /api/v1/market/common-codes/active-status - 활성화 상태 변경")
     class ChangeActiveStatusTest {
 
         @Test
@@ -227,22 +190,10 @@ class CommonCodeCommandControllerTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.patch(BASE_URL + "/active-status")
+                            patch(BASE_URL + "/active-status")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk())
-                    .andDo(
-                            document(
-                                    "common-code/change-active-status",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestFields(
-                                            fieldWithPath("ids").description("공통 코드 ID 목록"),
-                                            fieldWithPath("active").description("활성화 여부")),
-                                    responseFields(
-                                            fieldWithPath("data").description("응답 데이터 (null)"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                    .andExpect(status().isOk());
 
             then(commandMapper).should().toCommand(any(ChangeActiveStatusApiRequest.class));
             then(changeStatusUseCase).should().execute(command);
@@ -257,7 +208,7 @@ class CommonCodeCommandControllerTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.patch(BASE_URL + "/active-status")
+                            patch(BASE_URL + "/active-status")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -274,7 +225,7 @@ class CommonCodeCommandControllerTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.patch(BASE_URL + "/active-status")
+                            patch(BASE_URL + "/active-status")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(requestJson))
                     .andExpect(status().isBadRequest());

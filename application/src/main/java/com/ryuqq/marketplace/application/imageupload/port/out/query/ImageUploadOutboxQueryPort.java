@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.imageupload.port.out.query;
 
 import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import java.time.Instant;
 import java.util.List;
 
@@ -43,4 +44,16 @@ public interface ImageUploadOutboxQueryPort {
      * @return Outbox 목록
      */
     List<ImageUploadOutbox> findProcessingTimeoutOutboxes(Instant timeoutThreshold, int limit);
+
+    /**
+     * sourceId 목록과 sourceType으로 Outbox 목록 조회.
+     *
+     * <p>상품 그룹 이미지/상세설명 이미지의 업로드 상태 조회에 사용됩니다.
+     *
+     * @param sourceIds 이미지 ID 목록
+     * @param sourceType 이미지 소스 타입
+     * @return Outbox 목록 (sourceId, createdAt DESC 정렬)
+     */
+    List<ImageUploadOutbox> findBySourceIdsAndSourceType(
+            List<Long> sourceIds, ImageSourceType sourceType);
 }

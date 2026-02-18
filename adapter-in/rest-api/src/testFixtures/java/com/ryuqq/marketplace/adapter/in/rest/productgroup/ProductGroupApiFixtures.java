@@ -1,5 +1,10 @@
 package com.ryuqq.marketplace.adapter.in.rest.productgroup;
 
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegisterProductGroupApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupFullApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.query.SearchProductGroupsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.*;
 import com.ryuqq.marketplace.adapter.in.rest.refundpolicy.dto.response.NonReturnableConditionApiResponse;
@@ -13,6 +18,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.application.productgroup.dto.response.*;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.response.DescriptionImageResult;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.response.ProductGroupDescriptionResult;
+import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductGroupImageResult;
 import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeEntryResult;
 import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import com.ryuqq.marketplace.application.refundpolicy.dto.response.NonReturnableConditionResult;
@@ -46,6 +52,120 @@ public final class ProductGroupApiFixtures {
     public static final String DEFAULT_OPTION_TYPE = "COMBINATION";
     public static final String DEFAULT_STATUS = "ACTIVE";
     public static final String DEFAULT_THUMBNAIL_URL = "https://cdn.example.com/thumbnail.jpg";
+
+    // ===== Command Request Fixtures =====
+
+    public static RegisterProductGroupApiRequest registerRequest() {
+        List<RegisterProductGroupApiRequest.ImageApiRequest> images =
+                List.of(
+                        new RegisterProductGroupApiRequest.ImageApiRequest(
+                                "MAIN", "https://origin.example.com/img1.jpg", 1),
+                        new RegisterProductGroupApiRequest.ImageApiRequest(
+                                "DETAIL", "https://origin.example.com/img2.jpg", 2));
+
+        List<RegisterProductGroupApiRequest.OptionGroupApiRequest> optionGroups =
+                List.of(
+                        new RegisterProductGroupApiRequest.OptionGroupApiRequest(
+                                "색상",
+                                10L,
+                                List.of(
+                                        new RegisterProductGroupApiRequest.OptionValueApiRequest(
+                                                "블랙", 100L, 1),
+                                        new RegisterProductGroupApiRequest.OptionValueApiRequest(
+                                                "화이트", 101L, 2))));
+
+        List<RegisterProductGroupApiRequest.ProductApiRequest> products =
+                List.of(
+                        new RegisterProductGroupApiRequest.ProductApiRequest(
+                                "SKU-001", 30000, 25000, 100, 1, List.of(0)),
+                        new RegisterProductGroupApiRequest.ProductApiRequest(
+                                "SKU-002", 30000, 25000, 50, 2, List.of(1)));
+
+        RegisterProductGroupApiRequest.DescriptionApiRequest description =
+                new RegisterProductGroupApiRequest.DescriptionApiRequest("<p>상품 상세 설명</p>");
+
+        RegisterProductGroupApiRequest.NoticeApiRequest notice =
+                new RegisterProductGroupApiRequest.NoticeApiRequest(
+                        1L,
+                        List.of(
+                                new RegisterProductGroupApiRequest.NoticeEntryApiRequest(1L, "제조사"),
+                                new RegisterProductGroupApiRequest.NoticeEntryApiRequest(
+                                        2L, "한국")));
+
+        return new RegisterProductGroupApiRequest(
+                DEFAULT_SELLER_ID,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                1L,
+                1L,
+                DEFAULT_PRODUCT_GROUP_NAME,
+                DEFAULT_OPTION_TYPE,
+                images,
+                optionGroups,
+                products,
+                description,
+                notice);
+    }
+
+    public static UpdateProductGroupFullApiRequest updateFullRequest() {
+        List<UpdateProductGroupFullApiRequest.ImageApiRequest> images =
+                List.of(
+                        new UpdateProductGroupFullApiRequest.ImageApiRequest(
+                                "MAIN", "https://origin.example.com/updated-img1.jpg", 1));
+
+        List<UpdateProductGroupFullApiRequest.OptionGroupApiRequest> optionGroups =
+                List.of(
+                        new UpdateProductGroupFullApiRequest.OptionGroupApiRequest(
+                                1L,
+                                "색상",
+                                10L,
+                                List.of(
+                                        new UpdateProductGroupFullApiRequest.OptionValueApiRequest(
+                                                1L, "블랙", 100L, 1),
+                                        new UpdateProductGroupFullApiRequest.OptionValueApiRequest(
+                                                2L, "화이트", 101L, 2))));
+
+        List<UpdateProductGroupFullApiRequest.ProductApiRequest> products =
+                List.of(
+                        new UpdateProductGroupFullApiRequest.ProductApiRequest(
+                                1L, "SKU-001", 35000, 30000, 80, 1, List.of(0)));
+
+        UpdateProductGroupFullApiRequest.DescriptionApiRequest description =
+                new UpdateProductGroupFullApiRequest.DescriptionApiRequest("<p>수정된 상품 상세 설명</p>");
+
+        UpdateProductGroupFullApiRequest.NoticeApiRequest notice =
+                new UpdateProductGroupFullApiRequest.NoticeApiRequest(
+                        1L,
+                        List.of(
+                                new UpdateProductGroupFullApiRequest.NoticeEntryApiRequest(
+                                        1L, "수정된 제조사")));
+
+        return new UpdateProductGroupFullApiRequest(
+                "수정된 " + DEFAULT_PRODUCT_GROUP_NAME,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                1L,
+                1L,
+                images,
+                optionGroups,
+                products,
+                description,
+                notice);
+    }
+
+    public static UpdateProductGroupBasicInfoApiRequest updateBasicInfoRequest() {
+        return new UpdateProductGroupBasicInfoApiRequest(
+                "수정된 " + DEFAULT_PRODUCT_GROUP_NAME, DEFAULT_BRAND_ID, DEFAULT_CATEGORY_ID, 1L, 1L);
+    }
+
+    public static BatchChangeProductGroupStatusApiRequest batchChangeStatusRequest() {
+        return new BatchChangeProductGroupStatusApiRequest(List.of(1L, 2L, 3L), "ACTIVE");
+    }
+
+    public static BatchRegisterProductGroupApiRequest batchRegisterRequest() {
+        return new BatchRegisterProductGroupApiRequest(
+                List.of(registerRequest(), registerRequest()));
+    }
 
     // ===== SearchProductGroupsApiRequest =====
 

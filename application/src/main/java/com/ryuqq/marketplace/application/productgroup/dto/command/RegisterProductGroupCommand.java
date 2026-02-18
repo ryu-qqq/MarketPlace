@@ -35,8 +35,6 @@ public record RegisterProductGroupCommand(
             String skuCode,
             int regularPrice,
             int currentPrice,
-            int salePrice,
-            int discountRate,
             int stockQuantity,
             int sortOrder,
             List<Integer> optionIndices) {}

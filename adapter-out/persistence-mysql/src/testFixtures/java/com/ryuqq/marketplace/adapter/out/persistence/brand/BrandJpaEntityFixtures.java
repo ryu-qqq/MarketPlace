@@ -28,10 +28,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 활성 상태의 브랜드 Entity 생성. */
     public static BrandJpaEntity activeEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 DEFAULT_ID,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_SHORT_NAME,
@@ -44,10 +45,11 @@ public final class BrandJpaEntityFixtures {
 
     /** ID를 지정한 활성 상태 브랜드 Entity 생성. */
     public static BrandJpaEntity activeEntity(Long id) {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 id,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_SHORT_NAME,
@@ -93,10 +95,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 비활성 상태 브랜드 Entity 생성. */
     public static BrandJpaEntity inactiveEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_INACTIVE_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_SHORT_NAME,
@@ -109,10 +112,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 삭제된 상태 브랜드 Entity 생성. */
     public static BrandJpaEntity deletedEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_DELETED_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_SHORT_NAME,
@@ -125,10 +129,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 새로 생성될 Entity (ID가 null). */
     public static BrandJpaEntity newEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NEW_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_SHORT_NAME,
@@ -141,10 +146,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 로고 URL이 없는 Entity 생성. */
     public static BrandJpaEntity entityWithoutLogoUrl() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NOLOGO_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_SHORT_NAME,
@@ -157,10 +163,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 영문명이 없는 Entity 생성. */
     public static BrandJpaEntity entityWithoutNameEn() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NOEN_" + seq,
                 DEFAULT_NAME_KO,
                 null,
                 DEFAULT_SHORT_NAME,
@@ -173,10 +180,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 약칭이 없는 Entity 생성. */
     public static BrandJpaEntity entityWithoutShortName() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NOSHORT_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 null,
@@ -189,10 +197,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 로고 URL이 없는 새 Entity 생성 (ID는 null). */
     public static BrandJpaEntity newEntityWithoutLogoUrl() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NEWNOLOGO_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_SHORT_NAME,
@@ -205,10 +214,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 비활성 상태의 새 Entity 생성 (ID는 null). */
     public static BrandJpaEntity newInactiveEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NEWINACTIVE_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_SHORT_NAME,
@@ -221,10 +231,11 @@ public final class BrandJpaEntityFixtures {
 
     /** 삭제된 상태의 새 Entity 생성 (ID는 null). */
     public static BrandJpaEntity newDeletedEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return BrandJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NEWDELETED_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_SHORT_NAME,

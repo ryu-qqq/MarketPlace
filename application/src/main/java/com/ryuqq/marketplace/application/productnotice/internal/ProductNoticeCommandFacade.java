@@ -15,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>ProductNotice 저장 → ProductNoticeEntry 저장을 조율합니다.
  */
 @Component
-public class NoticeCommandFacade {
+public class ProductNoticeCommandFacade {
 
     private final ProductNoticeCommandManager noticeCommandManager;
     private final ProductNoticeEntryCommandManager entryCommandManager;
 
-    public NoticeCommandFacade(
+    public ProductNoticeCommandFacade(
             ProductNoticeCommandManager noticeCommandManager,
             ProductNoticeEntryCommandManager entryCommandManager) {
         this.noticeCommandManager = noticeCommandManager;

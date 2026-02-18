@@ -5,7 +5,6 @@ import com.ryuqq.marketplace.adapter.out.persistence.product.mapper.ProductJpaEn
 import com.ryuqq.marketplace.adapter.out.persistence.product.repository.ProductJpaRepository;
 import com.ryuqq.marketplace.application.product.port.out.command.ProductCommandPort;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
-import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,12 +28,5 @@ public class ProductCommandAdapter implements ProductCommandPort {
         ProductJpaEntity entity = mapper.toEntity(product);
         ProductJpaEntity saved = repository.save(entity);
         return saved.getId();
-    }
-
-    @Override
-    public List<Long> persistAll(List<Product> products) {
-        List<ProductJpaEntity> entities = products.stream().map(mapper::toEntity).toList();
-        List<ProductJpaEntity> savedEntities = repository.saveAll(entities);
-        return savedEntities.stream().map(ProductJpaEntity::getId).toList();
     }
 }

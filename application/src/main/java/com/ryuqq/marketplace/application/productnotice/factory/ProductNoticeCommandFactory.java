@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.productnotice.factory;
 
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
 import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
 import com.ryuqq.marketplace.domain.notice.id.NoticeCategoryId;
 import com.ryuqq.marketplace.domain.notice.id.NoticeFieldId;
@@ -8,8 +9,8 @@ import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNoticeEntry;
 import com.ryuqq.marketplace.domain.productnotice.vo.NoticeFieldValue;
+import com.ryuqq.marketplace.domain.productnotice.vo.ProductNoticeUpdateData;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,15 +28,12 @@ public class ProductNoticeCommandFactory {
     }
 
     /**
-     * 고시정보를 생성하거나 기존 고시정보를 업데이트합니다.
+     * 신규 고시정보를 생성합니다.
      *
-     * @param command 수정 Command
-     * @param existingOpt 기존 고시정보 (Optional)
-     * @return 생성 또는 수정된 ProductNotice
+     * @param command 등록 Command
+     * @return 생성된 ProductNotice
      */
-    public ProductNotice createOrUpdateNotice(
-            UpdateProductNoticeCommand command, Optional<ProductNotice> existingOpt) {
-
+    public ProductNotice create(RegisterProductNoticeCommand command) {
         List<ProductNoticeEntry> entries =
                 command.entries().stream()
                         .map(
@@ -45,16 +43,30 @@ public class ProductNoticeCommandFactory {
                                                 NoticeFieldValue.of(entry.fieldValue())))
                         .toList();
 
-        if (existingOpt.isPresent()) {
-            ProductNotice existing = existingOpt.get();
-            existing.replaceEntries(entries, timeProvider.now());
-            return existing;
-        } else {
-            return ProductNotice.forNew(
-                    ProductGroupId.of(command.productGroupId()),
-                    NoticeCategoryId.of(command.noticeCategoryId()),
-                    entries,
-                    timeProvider.now());
-        }
+        return ProductNotice.forNew(
+                ProductGroupId.of(command.productGroupId()),
+                NoticeCategoryId.of(command.noticeCategoryId()),
+                entries,
+                timeProvider.now());
+    }
+
+    /**
+     * 수정 Command로부터 업데이트 데이터를 생성합니다.
+     *
+     * @param command 수정 Command
+     * @return 고시정보 수정 데이터
+     */
+    public ProductNoticeUpdateData createUpdateData(UpdateProductNoticeCommand command) {
+        List<ProductNoticeEntry> entries =
+                command.entries().stream()
+                        .map(
+                                entry ->
+                                        ProductNoticeEntry.forNew(
+                                                NoticeFieldId.of(entry.noticeFieldId()),
+                                                NoticeFieldValue.of(entry.fieldValue())))
+                        .toList();
+
+        return ProductNoticeUpdateData.of(
+                NoticeCategoryId.of(command.noticeCategoryId()), entries, timeProvider.now());
     }
 }

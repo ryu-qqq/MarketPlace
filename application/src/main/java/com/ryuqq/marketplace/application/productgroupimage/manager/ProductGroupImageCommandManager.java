@@ -1,7 +1,8 @@
-package com.ryuqq.marketplace.application.productgroup.manager;
+package com.ryuqq.marketplace.application.productgroupimage.manager;
 
-import com.ryuqq.marketplace.application.productgroup.port.out.command.ProductGroupImageCommandPort;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupImage;
+import com.ryuqq.marketplace.application.productgroupimage.port.out.command.ProductGroupImageCommandPort;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +18,16 @@ public class ProductGroupImageCommandManager {
     }
 
     @Transactional
-    public void deleteByProductGroupId(Long productGroupId) {
-        commandPort.deleteByProductGroupId(productGroupId);
+    public Long persist(ProductGroupImage image) {
+        return commandPort.persist(image);
     }
 
     @Transactional
-    public List<Long> persistAll(Long productGroupId, List<ProductGroupImage> images) {
-        return commandPort.persistAll(productGroupId, images);
+    public List<Long> persistAll(List<ProductGroupImage> images) {
+        List<Long> ids = new ArrayList<>();
+        for (ProductGroupImage image : images) {
+            ids.add(commandPort.persist(image));
+        }
+        return ids;
     }
 }

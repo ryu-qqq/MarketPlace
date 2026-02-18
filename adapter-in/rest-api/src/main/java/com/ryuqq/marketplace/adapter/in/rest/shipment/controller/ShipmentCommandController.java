@@ -19,11 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /** 배송 커맨드 API 컨트롤러. */
 @Tag(name = "배송 명령", description = "배송 명령 API")
 @RestController
+@RequestMapping(ShipmentEndpoints.SHIPMENTS)
 public class ShipmentCommandController {
 
     private final ConfirmShipmentBatchUseCase confirmShipmentBatchUseCase;
@@ -44,7 +46,7 @@ public class ShipmentCommandController {
 
     @Operation(summary = "발주확인 일괄 처리", description = "선택한 배송건의 발주를 일괄 확인합니다.")
     @RequirePermission(value = "shipment:write", description = "발주확인 일괄 처리")
-    @PostMapping(ShipmentEndpoints.SHIPMENTS + ShipmentEndpoints.CONFIRM_BATCH)
+    @PostMapping(ShipmentEndpoints.CONFIRM_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> confirmBatch(
             @RequestBody @Valid ConfirmShipmentBatchApiRequest request) {
         BatchProcessingResult<String> result =
@@ -54,7 +56,7 @@ public class ShipmentCommandController {
 
     @Operation(summary = "송장등록 일괄 처리", description = "선택한 배송건에 송장을 일괄 등록합니다.")
     @RequirePermission(value = "shipment:write", description = "송장등록 일괄 처리")
-    @PostMapping(ShipmentEndpoints.SHIPMENTS + ShipmentEndpoints.SHIP_BATCH)
+    @PostMapping(ShipmentEndpoints.SHIP_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> shipBatch(
             @RequestBody @Valid ShipBatchApiRequest request) {
         BatchProcessingResult<String> result =
@@ -64,7 +66,7 @@ public class ShipmentCommandController {
 
     @Operation(summary = "단건 송장등록", description = "주문에 대해 송장을 등록합니다.")
     @RequirePermission(value = "shipment:write", description = "단건 송장등록")
-    @PostMapping(ShipmentEndpoints.ORDERS + ShipmentEndpoints.SHIP_SINGLE)
+    @PostMapping(ShipmentEndpoints.SHIP_SINGLE)
     public ResponseEntity<ApiResponse<Void>> shipSingle(
             @PathVariable String orderId, @RequestBody @Valid ShipSingleApiRequest request) {
         shipSingleUseCase.execute(mapper.toShipSingleCommand(orderId, request));

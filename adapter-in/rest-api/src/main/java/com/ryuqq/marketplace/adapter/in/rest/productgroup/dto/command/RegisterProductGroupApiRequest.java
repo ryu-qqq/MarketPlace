@@ -54,8 +54,6 @@ public record RegisterProductGroupApiRequest(
             @NotBlank(message = "SKU 코드는 필수입니다") String skuCode,
             @Min(value = 0, message = "정가는 0 이상이어야 합니다") int regularPrice,
             @Min(value = 0, message = "현재가는 0 이상이어야 합니다") int currentPrice,
-            @Min(value = 0, message = "세일가는 0 이상이어야 합니다") int salePrice,
-            @Min(value = 0, message = "할인율은 0 이상이어야 합니다") int discountRate,
             @Min(value = 0, message = "재고 수량은 0 이상이어야 합니다") int stockQuantity,
             @Min(value = 0, message = "정렬 순서는 0 이상이어야 합니다") int sortOrder,
             @NotNull(message = "옵션 인덱스 목록은 필수입니다") List<Integer> optionIndices) {}
