@@ -22,4 +22,8 @@ public class FileStorageManager {
     public ExternalDownloadResponse downloadFromExternalUrl(ExternalDownloadRequest request) {
         return fileStorageClient.downloadFromExternalUrl(request);
     }
+
+    public String uploadHtmlContent(String htmlContent, String category, String filename) {
+        return fileStorageClient.uploadHtmlContent(htmlContent, category, filename);
+    }
 }

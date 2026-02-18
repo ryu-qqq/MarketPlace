@@ -13,11 +13,11 @@ public final class SellerAddressAdminEndpoints {
         throw new UnsupportedOperationException("Utility class cannot be instantiated");
     }
 
-    /** 셀러 주소 기본 경로 (Command용, sellerId path 포함) */
-    public static final String SELLER_ADDRESSES = "/api/v1/market/sellers/{sellerId}/addresses";
+    /** 셀러 주소 기본 경로 */
+    public static final String SELLER_ADDRESSES = "/api/v1/market/seller-addresses";
 
-    /** 셀러 주소 조회 기본 경로 (Query용, sellerId path 없음) */
-    public static final String SELLER_ADDRESSES_QUERY = "/api/v1/market/seller-addresses";
+    /** Seller 경로 */
+    public static final String SELLER = "/sellers/{sellerId}";
 
     /** Seller ID Path Variable 이름 */
     public static final String PATH_SELLER_ID = "sellerId";

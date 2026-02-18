@@ -12,10 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class CanonicalOptionGroupAssembler {
 
-    public CanonicalOptionGroupResult toResult(
-            CanonicalOptionGroup group, List<CanonicalOptionValue> values) {
+    public CanonicalOptionGroupResult toResult(CanonicalOptionGroup group) {
         List<CanonicalOptionValueResult> valueResults =
-                values.stream().map(this::toValueResult).toList();
+                group.values().stream().map(this::toValueResult).toList();
 
         return new CanonicalOptionGroupResult(
                 group.idValue(),

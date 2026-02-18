@@ -8,6 +8,9 @@ import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.*;
 import com.ryuqq.marketplace.domain.productgroup.id.*;
 import com.ryuqq.marketplace.domain.productgroup.vo.*;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
+import com.ryuqq.marketplace.domain.productgroupimage.id.ProductGroupImageId;
+import com.ryuqq.marketplace.domain.productgroupimage.vo.ProductGroupImages;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
@@ -220,7 +223,8 @@ public final class ProductGroupFixtures {
 
     /** 기본 ProductGroupDescription */
     public static ProductGroupDescription defaultProductGroupDescription() {
-        return ProductGroupDescription.forNew(newProductGroupId(), defaultDescriptionHtml());
+        return ProductGroupDescription.forNew(
+                newProductGroupId(), defaultDescriptionHtml(), java.time.Instant.now());
     }
 
     /** 이미지 포함 ProductGroupDescription */
@@ -230,7 +234,10 @@ public final class ProductGroupFixtures {
                 newProductGroupId(),
                 defaultDescriptionHtml(),
                 defaultCdnPath(),
-                List.of(defaultDescriptionImage(), uploadedDescriptionImage()));
+                com.ryuqq.marketplace.domain.productgroup.vo.DescriptionPublishStatus.PENDING,
+                List.of(defaultDescriptionImage(), uploadedDescriptionImage()),
+                java.time.Instant.now(),
+                java.time.Instant.now());
     }
 
     // ===== ProductGroup Aggregate Fixtures =====
@@ -255,14 +262,13 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.NONE,
-                defaultProductGroupImages(),
-                SellerOptionGroups.of(List.of()),
                 CommonVoFixtures.now());
     }
 
-    /** 단일 옵션 신규 ProductGroup */
+    /** 단일 옵션 신규 ProductGroup (옵션은 reconstitute로 설정) */
     public static ProductGroup newProductGroupWithSingleOption() {
-        return ProductGroup.forNew(
+        return ProductGroup.reconstitute(
+                newProductGroupId(),
                 SellerId.of(DEFAULT_SELLER_ID),
                 BrandId.of(DEFAULT_BRAND_ID),
                 CategoryId.of(DEFAULT_CATEGORY_ID),
@@ -270,12 +276,14 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.SINGLE,
-                defaultProductGroupImages(),
-                SellerOptionGroups.of(List.of(defaultSellerOptionGroup())),
+                ProductGroupStatus.DRAFT,
+                List.of(thumbnailImage()),
+                List.of(defaultSellerOptionGroup()),
+                CommonVoFixtures.now(),
                 CommonVoFixtures.now());
     }
 
-    /** 조합 옵션 신규 ProductGroup */
+    /** 조합 옵션 신규 ProductGroup (옵션은 reconstitute로 설정) */
     public static ProductGroup newProductGroupWithCombinationOption() {
         SellerOptionGroup colorOption =
                 SellerOptionGroup.forNew(
@@ -293,7 +301,8 @@ public final class ProductGroupFixtures {
                                 SellerOptionValue.forNew(
                                         SellerOptionGroupId.forNew(), optionValueName("L"), 0)));
 
-        return ProductGroup.forNew(
+        return ProductGroup.reconstitute(
+                newProductGroupId(),
                 SellerId.of(DEFAULT_SELLER_ID),
                 BrandId.of(DEFAULT_BRAND_ID),
                 CategoryId.of(DEFAULT_CATEGORY_ID),
@@ -301,8 +310,10 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.COMBINATION,
-                defaultProductGroupImages(),
-                SellerOptionGroups.of(List.of(colorOption, sizeOption)),
+                ProductGroupStatus.DRAFT,
+                List.of(thumbnailImage()),
+                List.of(colorOption, sizeOption),
+                CommonVoFixtures.now(),
                 CommonVoFixtures.now());
     }
 

@@ -1,0 +1,74 @@
+// ========================================
+// Adapter-Out: SQS Client
+// ========================================
+// Outbound adapter for AWS SQS (Simple Queue Service) integration
+// Implements InspectionSqsPublishClient from application layer
+// Technology: AWS SDK v2 SQS (version managed in libs.versions.toml)
+// NO Lombok allowed
+// ========================================
+
+plugins {
+    id 'java-library'
+    id 'java-test-fixtures'
+}
+
+dependencies {
+    // ========================================
+    // Core Dependencies
+    // ========================================
+    api project(':application')
+    api project(':domain')
+
+    // ========================================
+    // AWS SDK v2 - SQS
+    // ========================================
+    implementation platform(libs.aws.bom)
+    implementation libs.aws.sqs
+
+    // ========================================
+    // Spring Boot (for @Component, @ConfigurationProperties)
+    // ========================================
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    annotationProcessor libs.spring.boot.configuration.processor
+
+    // ========================================
+    // Jackson (for JSON serialization)
+    // ========================================
+    implementation libs.jackson.databind
+    implementation libs.jackson.datatype.jsr310
+
+    // ========================================
+    // Test Dependencies
+    // ========================================
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.archunit.junit5
+    testImplementation testFixtures(project(':domain'))
+
+    // ========================================
+    // Test Fixtures Dependencies
+    // ========================================
+    testFixturesApi project(':domain')
+    testFixturesApi project(':application')
+    testFixturesApi testFixtures(project(':domain'))
+    testFixturesApi testFixtures(project(':application'))
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.30
+            }
+        }
+        rule {
+            element = 'CLASS'
+            excludes = [
+                '*.config.*'
+            ]
+        }
+    }
+}
+
+tasks.test {
+    finalizedBy tasks.jacocoTestCoverageVerification
+}

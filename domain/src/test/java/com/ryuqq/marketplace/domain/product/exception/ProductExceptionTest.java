@@ -104,21 +104,18 @@ class ProductExceptionTest {
             // given
             int regularPrice = 100000;
             int currentPrice = 120000;
-            int salePrice = 90000;
 
             // when
             ProductInvalidPriceException exception =
-                    new ProductInvalidPriceException(regularPrice, currentPrice, salePrice);
+                    new ProductInvalidPriceException(regularPrice, currentPrice);
 
             // then
             assertThat(exception.getErrorCode()).isEqualTo(ProductErrorCode.PRODUCT_INVALID_PRICE);
             assertThat(exception.getMessage()).contains("가격 체계가 유효하지 않습니다");
             assertThat(exception.getMessage()).contains("regularPrice=100000");
             assertThat(exception.getMessage()).contains("currentPrice=120000");
-            assertThat(exception.getMessage()).contains("salePrice=90000");
             assertThat(exception.args()).containsEntry("regularPrice", regularPrice);
             assertThat(exception.args()).containsEntry("currentPrice", currentPrice);
-            assertThat(exception.args()).containsEntry("salePrice", salePrice);
         }
 
         @Test
@@ -127,13 +124,11 @@ class ProductExceptionTest {
             // given
             int regularPrice = 100000;
             int currentPrice = 150000; // regularPrice보다 큼
-            int salePrice = 80000;
 
             // when & then
             assertThatThrownBy(
                             () -> {
-                                throw new ProductInvalidPriceException(
-                                        regularPrice, currentPrice, salePrice);
+                                throw new ProductInvalidPriceException(regularPrice, currentPrice);
                             })
                     .isInstanceOf(ProductInvalidPriceException.class)
                     .hasMessageContaining("가격 체계가 유효하지 않습니다")
@@ -173,7 +168,7 @@ class ProductExceptionTest {
         void productInvalidPriceExceptionExtendsDomainException() {
             // when
             ProductInvalidPriceException exception =
-                    new ProductInvalidPriceException(100000, 120000, 80000);
+                    new ProductInvalidPriceException(100000, 120000);
 
             // then
             assertThat(exception).isInstanceOf(RuntimeException.class);

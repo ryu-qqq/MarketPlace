@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.productgroup.dto.response;
 
+import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductGroupImageResult;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import java.time.Instant;
 import java.util.List;

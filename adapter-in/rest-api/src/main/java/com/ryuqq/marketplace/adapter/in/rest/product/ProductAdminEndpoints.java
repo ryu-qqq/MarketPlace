@@ -32,4 +32,10 @@ public final class ProductAdminEndpoints {
 
     /** 상태 변경 경로 */
     public static final String STATUS = "/status";
+
+    /** 상품 그룹 하위 상품 경로 */
+    public static final String PRODUCT_GROUP = "/product-groups/{productGroupId}";
+
+    /** ProductGroup ID Path Variable 이름 */
+    public static final String PATH_PRODUCT_GROUP_ID = "productGroupId";
 }

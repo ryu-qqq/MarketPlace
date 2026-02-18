@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.productgroup.dto.composite;
 
-import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupImageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductOptionMatrixResult;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.response.ProductGroupDescriptionResult;
+import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductGroupImageResult;
 import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import com.ryuqq.marketplace.application.refundpolicy.dto.response.RefundPolicyResult;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;

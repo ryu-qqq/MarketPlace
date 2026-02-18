@@ -1,17 +1,21 @@
 package com.ryuqq.marketplace.adapter.in.rest.product.controller;
 
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.product.ProductAdminEndpoints;
-import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.ChangeProductStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchChangeProductStatusApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductPriceApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductStockApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.mapper.ProductCommandApiMapper;
-import com.ryuqq.marketplace.application.product.dto.command.ChangeProductStatusCommand;
+import com.ryuqq.marketplace.application.product.dto.command.BatchChangeProductStatusCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductPriceCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
-import com.ryuqq.marketplace.application.product.port.in.command.ChangeProductStatusUseCase;
+import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
+import com.ryuqq.marketplace.application.product.port.in.command.BatchChangeProductStatusUseCase;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductPriceUseCase;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductStockUseCase;
+import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductsUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -56,26 +60,34 @@ public class ProductCommandController {
 
     private final UpdateProductPriceUseCase updatePriceUseCase;
     private final UpdateProductStockUseCase updateStockUseCase;
-    private final ChangeProductStatusUseCase changeStatusUseCase;
+    private final BatchChangeProductStatusUseCase batchChangeStatusUseCase;
+    private final UpdateProductsUseCase updateProductsUseCase;
     private final ProductCommandApiMapper mapper;
+    private final MarketAccessChecker accessChecker;
 
     /**
      * ProductCommandController 생성자.
      *
      * @param updatePriceUseCase 상품 가격 수정 UseCase
      * @param updateStockUseCase 상품 재고 수정 UseCase
-     * @param changeStatusUseCase 상품 상태 변경 UseCase
+     * @param batchChangeStatusUseCase 상품 배치 상태 변경 UseCase
+     * @param updateProductsUseCase 상품 일괄 수정 UseCase
      * @param mapper Command API 매퍼
+     * @param accessChecker 접근 권한 검사기
      */
     public ProductCommandController(
             UpdateProductPriceUseCase updatePriceUseCase,
             UpdateProductStockUseCase updateStockUseCase,
-            ChangeProductStatusUseCase changeStatusUseCase,
-            ProductCommandApiMapper mapper) {
+            BatchChangeProductStatusUseCase batchChangeStatusUseCase,
+            UpdateProductsUseCase updateProductsUseCase,
+            ProductCommandApiMapper mapper,
+            MarketAccessChecker accessChecker) {
         this.updatePriceUseCase = updatePriceUseCase;
         this.updateStockUseCase = updateStockUseCase;
-        this.changeStatusUseCase = changeStatusUseCase;
+        this.batchChangeStatusUseCase = batchChangeStatusUseCase;
+        this.updateProductsUseCase = updateProductsUseCase;
         this.mapper = mapper;
+        this.accessChecker = accessChecker;
     }
 
     /**
@@ -151,15 +163,15 @@ public class ProductCommandController {
     }
 
     /**
-     * 상품 상태 변경 API.
+     * 상품 배치 상태 변경 API (ProductGroup 단위).
      *
-     * <p>상품의 활성화 상태를 변경합니다.
+     * <p>특정 상품 그룹 내 여러 상품의 상태를 일괄 변경합니다. 현재 인증된 사용자의 셀러 소유권을 검증합니다.
      *
-     * @param productId 상품 ID
-     * @param request 상태 변경 요청 DTO
+     * @param productGroupId 상품 그룹 ID
+     * @param request 배치 상태 변경 요청 DTO
      * @return 빈 응답 (204 No Content)
      */
-    @Operation(summary = "상품 상태 변경", description = "상품의 활성화 상태를 변경합니다.")
+    @Operation(summary = "상품 배치 상태 변경", description = "상품 그룹 내 여러 상품의 상태를 일괄 변경합니다.")
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "204",
@@ -168,20 +180,58 @@ public class ProductCommandController {
                 responseCode = "400",
                 description = "잘못된 요청"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "403",
+                description = "소유권 검증 실패")
+    })
+    @PreAuthorize("hasAuthority('product:write')")
+    @RequirePermission(value = "product:write", description = "상품 배치 상태 변경")
+    @PatchMapping(ProductAdminEndpoints.PRODUCT_GROUP + ProductAdminEndpoints.STATUS)
+    public ResponseEntity<Void> batchChangeStatus(
+            @Parameter(description = "상품 그룹 ID", required = true)
+                    @PathVariable(ProductAdminEndpoints.PATH_PRODUCT_GROUP_ID)
+                    Long productGroupId,
+            @Valid @RequestBody BatchChangeProductStatusApiRequest request) {
+
+        long sellerId = accessChecker.resolveCurrentSellerId();
+        BatchChangeProductStatusCommand command =
+                mapper.toCommand(sellerId, productGroupId, request);
+        batchChangeStatusUseCase.execute(command);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 상품 일괄 수정 API.
+     *
+     * <p>상품 그룹 하위 상품들의 가격/재고/SKU/정렬 순서를 일괄 수정합니다.
+     *
+     * @param productGroupId 상품 그룹 ID
+     * @param request 상품 일괄 수정 요청 DTO
+     * @return 빈 응답 (204 No Content)
+     */
+    @Operation(summary = "상품 일괄 수정", description = "상품 그룹 하위 상품들의 가격/재고/SKU/정렬을 일괄 수정합니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "204",
+                description = "수정 성공"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "400",
+                description = "잘못된 요청"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "404",
                 description = "상품을 찾을 수 없음")
     })
-    @PreAuthorize("@access.isSellerOwnerOr(#productId, 'product:write')")
-    @RequirePermission(value = "product:write", description = "상품 상태 변경")
-    @PatchMapping(ProductAdminEndpoints.ID + ProductAdminEndpoints.STATUS)
-    public ResponseEntity<Void> changeStatus(
-            @Parameter(description = "상품 ID", required = true)
-                    @PathVariable(ProductAdminEndpoints.PATH_PRODUCT_ID)
-                    Long productId,
-            @Valid @RequestBody ChangeProductStatusApiRequest request) {
+    @PreAuthorize("@access.isSellerOwnerOr(#productGroupId, 'product:write')")
+    @RequirePermission(value = "product:write", description = "상품 일괄 수정")
+    @PatchMapping(ProductAdminEndpoints.PRODUCT_GROUP)
+    public ResponseEntity<Void> updateProducts(
+            @Parameter(description = "상품 그룹 ID", required = true)
+                    @PathVariable(ProductAdminEndpoints.PATH_PRODUCT_GROUP_ID)
+                    Long productGroupId,
+            @Valid @RequestBody UpdateProductsApiRequest request) {
 
-        ChangeProductStatusCommand command = mapper.toCommand(productId, request);
-        changeStatusUseCase.execute(command);
+        UpdateProductsCommand command = mapper.toCommand(productGroupId, request);
+        updateProductsUseCase.execute(command);
 
         return ResponseEntity.noContent().build();
     }

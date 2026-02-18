@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.productgroupdescription.manager;
 
 import com.ryuqq.marketplace.application.productgroupdescription.port.out.command.DescriptionImageCommandPort;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.DescriptionImage;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +18,16 @@ public class DescriptionImageCommandManager {
     }
 
     @Transactional
-    public void deleteByDescriptionId(Long descriptionId) {
-        commandPort.deleteByDescriptionId(descriptionId);
+    public Long persist(DescriptionImage image) {
+        return commandPort.persist(image);
     }
 
     @Transactional
-    public List<Long> persistAll(Long descriptionId, List<DescriptionImage> images) {
-        return commandPort.persistAll(descriptionId, images);
+    public List<Long> persistAll(List<DescriptionImage> images) {
+        List<Long> ids = new ArrayList<>();
+        for (DescriptionImage image : images) {
+            ids.add(commandPort.persist(image));
+        }
+        return ids;
     }
 }

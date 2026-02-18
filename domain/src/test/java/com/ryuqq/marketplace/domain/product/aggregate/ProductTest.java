@@ -33,8 +33,6 @@ class ProductTest {
             SkuCode skuCode = SkuCode.of("SKU-001");
             Money regularPrice = CommonVoFixtures.money(100000);
             Money currentPrice = CommonVoFixtures.money(80000);
-            Money salePrice = CommonVoFixtures.money(60000);
-            int discountRate = 25;
             int stockQuantity = 100;
             Instant now = CommonVoFixtures.now();
 
@@ -45,8 +43,6 @@ class ProductTest {
                             skuCode,
                             regularPrice,
                             currentPrice,
-                            salePrice,
-                            discountRate,
                             stockQuantity,
                             1,
                             Collections.emptyList(),
@@ -59,8 +55,9 @@ class ProductTest {
             assertThat(product.status()).isEqualTo(ProductStatus.ACTIVE);
             assertThat(product.regularPrice()).isEqualTo(regularPrice);
             assertThat(product.currentPrice()).isEqualTo(currentPrice);
-            assertThat(product.salePrice()).isEqualTo(salePrice);
-            assertThat(product.discountRate()).isEqualTo(discountRate);
+            assertThat(product.salePrice()).isEqualTo(currentPrice);
+            assertThat(product.discountRate())
+                    .isEqualTo(Money.discountRate(regularPrice, currentPrice));
             assertThat(product.stockQuantity()).isEqualTo(stockQuantity);
             assertThat(product.createdAt()).isEqualTo(now);
             assertThat(product.updatedAt()).isEqualTo(now);
@@ -72,7 +69,6 @@ class ProductTest {
             // given
             Money regularPrice = CommonVoFixtures.money(80000);
             Money currentPrice = CommonVoFixtures.money(100000); // regularPrice보다 큼
-            Money salePrice = CommonVoFixtures.money(60000);
 
             // when & then
             assertThatThrownBy(
@@ -82,87 +78,11 @@ class ProductTest {
                                             SkuCode.of("SKU-001"),
                                             regularPrice,
                                             currentPrice,
-                                            salePrice,
-                                            25,
                                             100,
                                             1,
                                             Collections.emptyList(),
                                             CommonVoFixtures.now()))
                     .isInstanceOf(ProductInvalidPriceException.class);
-        }
-
-        @Test
-        @DisplayName("salePrice가 currentPrice보다 크면 예외가 발생한다")
-        void createProduct_WhenSalePriceGreaterThanCurrentPrice_ThrowsException() {
-            // given
-            Money regularPrice = CommonVoFixtures.money(100000);
-            Money currentPrice = CommonVoFixtures.money(80000);
-            Money salePrice = CommonVoFixtures.money(90000); // currentPrice보다 큼
-
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    Product.forNew(
-                                            ProductGroupId.of(1L),
-                                            SkuCode.of("SKU-001"),
-                                            regularPrice,
-                                            currentPrice,
-                                            salePrice,
-                                            25,
-                                            100,
-                                            1,
-                                            Collections.emptyList(),
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(ProductInvalidPriceException.class);
-        }
-
-        @Test
-        @DisplayName("discountRate가 0보다 작으면 예외가 발생한다")
-        void createProduct_WhenDiscountRateNegative_ThrowsException() {
-            // given
-            int invalidDiscountRate = -5;
-
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    Product.forNew(
-                                            ProductGroupId.of(1L),
-                                            SkuCode.of("SKU-001"),
-                                            CommonVoFixtures.money(100000),
-                                            CommonVoFixtures.money(80000),
-                                            null, // salePrice를 null로 설정하여 validatePrice 통과
-                                            invalidDiscountRate,
-                                            100,
-                                            1,
-                                            Collections.emptyList(),
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("할인율은 0~100");
-        }
-
-        @Test
-        @DisplayName("discountRate가 100보다 크면 예외가 발생한다")
-        void createProduct_WhenDiscountRateOver100_ThrowsException() {
-            // given
-            int invalidDiscountRate = 150;
-
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    Product.forNew(
-                                            ProductGroupId.of(1L),
-                                            SkuCode.of("SKU-001"),
-                                            CommonVoFixtures.money(100000),
-                                            CommonVoFixtures.money(80000),
-                                            CommonVoFixtures.money(
-                                                    60000), // 정상 가격 구조로 validatePrice 통과
-                                            invalidDiscountRate,
-                                            100,
-                                            1,
-                                            Collections.emptyList(),
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("할인율은 0~100");
         }
 
         @Test
@@ -179,77 +99,12 @@ class ProductTest {
                                             SkuCode.of("SKU-001"),
                                             CommonVoFixtures.money(100000),
                                             CommonVoFixtures.money(80000),
-                                            CommonVoFixtures.money(60000),
-                                            25,
                                             invalidStockQuantity,
                                             1,
                                             Collections.emptyList(),
                                             CommonVoFixtures.now()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("재고 수량은 0 이상");
-        }
-
-        @Test
-        @DisplayName("discountRate > 0이지만 salePrice가 null이면 예외가 발생한다")
-        void createProduct_WhenDiscountRatePositiveButSalePriceNull_ThrowsException() {
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    Product.forNew(
-                                            ProductGroupId.of(1L),
-                                            SkuCode.of("SKU-001"),
-                                            CommonVoFixtures.money(100000),
-                                            CommonVoFixtures.money(80000),
-                                            null, // salePrice null
-                                            25, // discountRate > 0
-                                            100,
-                                            1,
-                                            Collections.emptyList(),
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(ProductInvalidPriceException.class);
-        }
-
-        @Test
-        @DisplayName("discountRate > 0이지만 salePrice >= currentPrice이면 예외가 발생한다")
-        void
-                createProduct_WhenDiscountRatePositiveButSalePriceNotLessThanCurrentPrice_ThrowsException() {
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    Product.forNew(
-                                            ProductGroupId.of(1L),
-                                            SkuCode.of("SKU-001"),
-                                            CommonVoFixtures.money(100000),
-                                            CommonVoFixtures.money(80000),
-                                            CommonVoFixtures.money(
-                                                    80000), // salePrice == currentPrice
-                                            25,
-                                            100,
-                                            1,
-                                            Collections.emptyList(),
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(ProductInvalidPriceException.class);
-        }
-
-        @Test
-        @DisplayName("salePrice < currentPrice이지만 discountRate == 0이면 예외가 발생한다")
-        void createProduct_WhenSalePriceLessThanCurrentPriceButDiscountRateZero_ThrowsException() {
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    Product.forNew(
-                                            ProductGroupId.of(1L),
-                                            SkuCode.of("SKU-001"),
-                                            CommonVoFixtures.money(100000),
-                                            CommonVoFixtures.money(80000),
-                                            CommonVoFixtures.money(
-                                                    60000), // salePrice < currentPrice
-                                            0, // discountRate == 0 (정합성 위반)
-                                            100,
-                                            1,
-                                            Collections.emptyList(),
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(ProductInvalidPriceException.class);
         }
     }
 
@@ -466,19 +321,17 @@ class ProductTest {
             Product product = ProductFixtures.activeProduct();
             Money newRegularPrice = CommonVoFixtures.money(120000);
             Money newCurrentPrice = CommonVoFixtures.money(100000);
-            Money newSalePrice = CommonVoFixtures.money(80000);
-            int newDiscountRate = 20;
             Instant now = CommonVoFixtures.now();
 
             // when
-            product.updatePrice(
-                    newRegularPrice, newCurrentPrice, newSalePrice, newDiscountRate, now);
+            product.updatePrice(newRegularPrice, newCurrentPrice, now);
 
             // then
             assertThat(product.regularPrice()).isEqualTo(newRegularPrice);
             assertThat(product.currentPrice()).isEqualTo(newCurrentPrice);
-            assertThat(product.salePrice()).isEqualTo(newSalePrice);
-            assertThat(product.discountRate()).isEqualTo(newDiscountRate);
+            assertThat(product.salePrice()).isEqualTo(newCurrentPrice);
+            assertThat(product.discountRate())
+                    .isEqualTo(Money.discountRate(newRegularPrice, newCurrentPrice));
             assertThat(product.updatedAt()).isEqualTo(now);
         }
 
@@ -489,114 +342,13 @@ class ProductTest {
             Product product = ProductFixtures.activeProduct();
             Money regularPrice = CommonVoFixtures.money(80000);
             Money currentPrice = CommonVoFixtures.money(100000);
-            Money salePrice = CommonVoFixtures.money(60000);
 
             // when & then
             assertThatThrownBy(
                             () ->
                                     product.updatePrice(
-                                            regularPrice,
-                                            currentPrice,
-                                            salePrice,
-                                            25,
-                                            CommonVoFixtures.now()))
+                                            regularPrice, currentPrice, CommonVoFixtures.now()))
                     .isInstanceOf(ProductInvalidPriceException.class);
-        }
-
-        @Test
-        @DisplayName("salePrice > currentPrice이면 예외가 발생한다")
-        void updatePrice_WhenSalePriceGreaterThanCurrentPrice_ThrowsException() {
-            // given
-            Product product = ProductFixtures.activeProduct();
-            Money regularPrice = CommonVoFixtures.money(100000);
-            Money currentPrice = CommonVoFixtures.money(80000);
-            Money salePrice = CommonVoFixtures.money(90000);
-
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    product.updatePrice(
-                                            regularPrice,
-                                            currentPrice,
-                                            salePrice,
-                                            25,
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(ProductInvalidPriceException.class);
-        }
-
-        @Test
-        @DisplayName("discountRate > 0이지만 salePrice == null이면 예외가 발생한다")
-        void updatePrice_WhenDiscountRatePositiveButSalePriceNull_ThrowsException() {
-            // given
-            Product product = ProductFixtures.activeProduct();
-
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    product.updatePrice(
-                                            CommonVoFixtures.money(100000),
-                                            CommonVoFixtures.money(80000),
-                                            null,
-                                            25,
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(ProductInvalidPriceException.class);
-        }
-
-        @Test
-        @DisplayName("salePrice < currentPrice이지만 discountRate == 0이면 예외가 발생한다")
-        void updatePrice_WhenSalePriceLessThanCurrentPriceButDiscountRateZero_ThrowsException() {
-            // given
-            Product product = ProductFixtures.activeProduct();
-
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    product.updatePrice(
-                                            CommonVoFixtures.money(100000),
-                                            CommonVoFixtures.money(80000),
-                                            CommonVoFixtures.money(60000),
-                                            0,
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(ProductInvalidPriceException.class);
-        }
-
-        @Test
-        @DisplayName("discountRate가 음수면 예외가 발생한다")
-        void updatePrice_WhenDiscountRateNegative_ThrowsException() {
-            // given
-            Product product = ProductFixtures.activeProduct();
-
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    product.updatePrice(
-                                            CommonVoFixtures.money(100000),
-                                            CommonVoFixtures.money(80000),
-                                            null, // salePrice를 null로 설정하여 validatePrice 통과
-                                            -5,
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("할인율은 0~100");
-        }
-
-        @Test
-        @DisplayName("discountRate > 100이면 예외가 발생한다")
-        void updatePrice_WhenDiscountRateOver100_ThrowsException() {
-            // given
-            Product product = ProductFixtures.activeProduct();
-
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    product.updatePrice(
-                                            CommonVoFixtures.money(100000),
-                                            CommonVoFixtures.money(80000),
-                                            CommonVoFixtures.money(
-                                                    60000), // 정상 가격 구조로 validatePrice 통과
-                                            150,
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("할인율은 0~100");
         }
     }
 

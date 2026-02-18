@@ -46,7 +46,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("SellerAddressQueryController REST Docs 테스트")
 class SellerAddressQueryControllerRestDocsTest {
 
-    private static final String BASE_URL = SellerAddressAdminEndpoints.SELLER_ADDRESSES_QUERY;
+    private static final String BASE_URL = SellerAddressAdminEndpoints.SELLER_ADDRESSES;
     private static final Long SELLER_ID = 1L;
 
     @Autowired private MockMvc mockMvc;

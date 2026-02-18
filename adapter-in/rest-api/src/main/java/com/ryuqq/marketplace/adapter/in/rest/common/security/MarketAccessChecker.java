@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.common.security;
 import com.ryuqq.authhub.sdk.access.BaseAccessChecker;
 import com.ryuqq.marketplace.application.seller.port.in.query.ResolveSellerIdByOrganizationUseCase;
 import java.util.Optional;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -56,6 +57,21 @@ public class MarketAccessChecker extends BaseAccessChecker {
         }
 
         return hasPermission(permission);
+    }
+
+    /**
+     * 현재 인증된 사용자의 sellerId를 반환합니다.
+     *
+     * <p>organizationId로 sellerId를 조회하며, 조회 실패 시 AccessDeniedException을 발생시킵니다.
+     *
+     * @return 현재 사용자의 sellerId
+     * @throws AccessDeniedException 셀러 정보를 찾을 수 없는 경우
+     */
+    public long resolveCurrentSellerId() {
+        String organizationId = getCurrentOrganizationId();
+        return resolveSellerIdUseCase
+                .execute(organizationId)
+                .orElseThrow(() -> new AccessDeniedException("현재 사용자의 셀러 정보를 찾을 수 없습니다"));
     }
 
     /**

@@ -34,7 +34,7 @@
             <Class name="~.*TestFixture.*"/>
             <Class name="~.*E2ETest.*"/>
         </Or>
-        <Bug pattern="MS_SHOULD_BE_FINAL,NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE,NP_LOAD_OF_KNOWN_NULL_VALUE,NM_CONFUSING,UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR,UWF_UNWRITTEN_FIELD,REC_CATCH_EXCEPTION,RV_RETURN_VALUE_IGNORED,RV_RETURN_VALUE_IGNORED_BAD_PRACTICE,SE_BAD_FIELD,SE_NO_SERIALVERSIONID,DLS_DEAD_LOCAL_STORE,ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+        <Bug pattern="MS_SHOULD_BE_FINAL,NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE,NP_LOAD_OF_KNOWN_NULL_VALUE,NP_NONNULL_PARAM_VIOLATION,NM_CONFUSING,UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR,UWF_UNWRITTEN_FIELD,REC_CATCH_EXCEPTION,RV_RETURN_VALUE_IGNORED,RV_RETURN_VALUE_IGNORED_BAD_PRACTICE,RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT,SE_BAD_FIELD,SE_NO_SERIALVERSIONID,DLS_DEAD_LOCAL_STORE,ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD,SIC_INNER_SHOULD_BE_STATIC_ANON"/>
     </Match>
 
     <!-- ========================================
@@ -71,7 +71,10 @@
          enum/VO에서 입력 정규화는 locale-independent가 의도된 동작
          ======================================== -->
     <Match>
-        <Package name="~com\.ryuqq\.setof\.domain\..*"/>
+        <Or>
+            <Package name="~com\.ryuqq\.setof\.domain\..*"/>
+            <Package name="~com\.ryuqq\.marketplace\.adapter\..*"/>
+        </Or>
         <Bug pattern="DM_CONVERT_CASE"/>
     </Match>
 
@@ -96,6 +99,16 @@
     </Match>
 
     <!-- ========================================
+         Domain Diff VO 내부 표현 노출 (의도된 동작)
+         Diff VO는 비교 결과를 운반하는 데이터 컨테이너이며
+         도메인 Aggregate 참조를 의도적으로 보관합니다.
+         ======================================== -->
+    <Match>
+        <Class name="~.*Diff\$.*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- ========================================
          의존성 주입 패턴 (Spring 표준)
          생성자에서 외부 객체 저장은 DI 패턴의 정상 동작
          ======================================== -->
@@ -111,8 +124,19 @@
             <Class name="~.*Repository"/>
             <Class name="~.*Processor"/>
             <Class name="~.*Creator"/>
+            <Class name="~.*Consumer"/>
+            <Class name="~.*Mapper"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- ========================================
+         SQS Consumer 방어적 예외 처리
+         메시지 처리에서 Exception catch는 의도된 방어 로직
+         ======================================== -->
+    <Match>
+        <Class name="~.*Consumer"/>
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
     </Match>
 
     <!-- ========================================

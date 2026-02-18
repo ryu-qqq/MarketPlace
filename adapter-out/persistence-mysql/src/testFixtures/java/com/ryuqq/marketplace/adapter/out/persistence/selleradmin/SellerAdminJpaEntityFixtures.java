@@ -277,4 +277,76 @@ public final class SellerAdminJpaEntityFixtures {
                 now,
                 null);
     }
+
+    /** AuthUserId를 지정한 활성 상태 Entity 생성. */
+    public static SellerAdminJpaEntity activeEntityWithAuthUserId(String id, String authUserId) {
+        Instant now = Instant.now();
+        return SellerAdminJpaEntity.create(
+                id,
+                DEFAULT_SELLER_ID,
+                authUserId,
+                id + "@test.com",
+                DEFAULT_NAME,
+                DEFAULT_PHONE_NUMBER,
+                SellerAdminStatus.ACTIVE,
+                now,
+                now,
+                null);
+    }
+
+    /** 셀러 ID와 상태를 지정한 Entity 생성. */
+    public static SellerAdminJpaEntity entityWithSellerIdAndStatus(
+            String id, Long sellerId, SellerAdminStatus status) {
+        Instant now = Instant.now();
+        return SellerAdminJpaEntity.create(
+                id,
+                sellerId,
+                status == SellerAdminStatus.PENDING_APPROVAL ? null : DEFAULT_AUTH_USER_ID,
+                id + "@test.com",
+                DEFAULT_NAME,
+                DEFAULT_PHONE_NUMBER,
+                status,
+                now,
+                now,
+                null);
+    }
+
+    /** 특정 생성 시각을 가진 Entity 생성. */
+    public static SellerAdminJpaEntity activeEntityWithCreatedAt(
+            String id, String loginId, Instant createdAt) {
+        return SellerAdminJpaEntity.create(
+                id,
+                DEFAULT_SELLER_ID,
+                DEFAULT_AUTH_USER_ID,
+                loginId,
+                DEFAULT_NAME,
+                DEFAULT_PHONE_NUMBER,
+                SellerAdminStatus.ACTIVE,
+                createdAt,
+                createdAt,
+                null);
+    }
+
+    /** 전체 필드를 커스텀 + 생성 시각을 지정할 수 있는 Entity 생성. */
+    public static SellerAdminJpaEntity customEntityWithTimestamp(
+            String id,
+            Long sellerId,
+            String authUserId,
+            String loginId,
+            String name,
+            String phoneNumber,
+            SellerAdminStatus status,
+            Instant createdAt) {
+        return SellerAdminJpaEntity.create(
+                id,
+                sellerId,
+                authUserId,
+                loginId,
+                name,
+                phoneNumber,
+                status,
+                createdAt,
+                createdAt,
+                null);
+    }
 }

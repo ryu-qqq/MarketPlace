@@ -138,6 +138,13 @@ data "aws_ssm_parameter" "sentry_dsn" {
 }
 
 # ========================================
+# OpenAI Configuration
+# ========================================
+data "aws_ssm_parameter" "openai_api_key" {
+  name = "/${var.project_name}/openai/api-key"
+}
+
+# ========================================
 # Locals
 # ========================================
 locals {

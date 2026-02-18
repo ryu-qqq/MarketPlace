@@ -1,12 +1,12 @@
-package com.ryuqq.marketplace.domain.productgroup.aggregate;
+package com.ryuqq.marketplace.domain.productgroupimage.aggregate;
 
 import static org.assertj.core.api.Assertions.*;
 
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupImageId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
+import com.ryuqq.marketplace.domain.productgroupimage.id.ProductGroupImageId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -86,7 +86,13 @@ class ProductGroupImageTest {
             // when
             ProductGroupImage image =
                     ProductGroupImage.reconstitute(
-                            id, productGroupId, originUrl, uploadedUrl, imageType, sortOrder);
+                            id,
+                            productGroupId,
+                            originUrl,
+                            uploadedUrl,
+                            imageType,
+                            sortOrder,
+                            com.ryuqq.marketplace.domain.common.vo.DeletionStatus.active());
 
             // then
             assertThat(image.id()).isEqualTo(id);
@@ -199,7 +205,8 @@ class ProductGroupImageTest {
                             ProductGroupFixtures.defaultImageUrl(),
                             null,
                             ImageType.THUMBNAIL,
-                            0);
+                            0,
+                            com.ryuqq.marketplace.domain.common.vo.DeletionStatus.active());
 
             // when & then
             assertThat(image.idValue()).isEqualTo(100L);
@@ -216,7 +223,8 @@ class ProductGroupImageTest {
                             ProductGroupFixtures.defaultImageUrl(),
                             null,
                             ImageType.THUMBNAIL,
-                            0);
+                            0,
+                            com.ryuqq.marketplace.domain.common.vo.DeletionStatus.active());
 
             // when & then
             assertThat(image.productGroupIdValue()).isEqualTo(200L);

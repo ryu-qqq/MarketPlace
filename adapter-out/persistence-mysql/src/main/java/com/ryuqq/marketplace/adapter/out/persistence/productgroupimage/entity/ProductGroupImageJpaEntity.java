@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity;
+package com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.Instant;
 
 /** ProductGroupImage JPA 엔티티. */
 @Entity
@@ -31,6 +32,12 @@ public class ProductGroupImageJpaEntity {
     @Column(name = "sort_order")
     private int sortOrder;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
     protected ProductGroupImageJpaEntity() {}
 
     private ProductGroupImageJpaEntity(
@@ -39,13 +46,17 @@ public class ProductGroupImageJpaEntity {
             String originUrl,
             String uploadedUrl,
             String imageType,
-            int sortOrder) {
+            int sortOrder,
+            boolean deleted,
+            Instant deletedAt) {
         this.id = id;
         this.productGroupId = productGroupId;
         this.originUrl = originUrl;
         this.uploadedUrl = uploadedUrl;
         this.imageType = imageType;
         this.sortOrder = sortOrder;
+        this.deleted = deleted;
+        this.deletedAt = deletedAt;
     }
 
     public static ProductGroupImageJpaEntity create(
@@ -54,9 +65,18 @@ public class ProductGroupImageJpaEntity {
             String originUrl,
             String uploadedUrl,
             String imageType,
-            int sortOrder) {
+            int sortOrder,
+            boolean deleted,
+            Instant deletedAt) {
         return new ProductGroupImageJpaEntity(
-                id, productGroupId, originUrl, uploadedUrl, imageType, sortOrder);
+                id,
+                productGroupId,
+                originUrl,
+                uploadedUrl,
+                imageType,
+                sortOrder,
+                deleted,
+                deletedAt);
     }
 
     public Long getId() {
@@ -81,5 +101,13 @@ public class ProductGroupImageJpaEntity {
 
     public int getSortOrder() {
         return sortOrder;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public Instant getDeletedAt() {
+        return deletedAt;
     }
 }

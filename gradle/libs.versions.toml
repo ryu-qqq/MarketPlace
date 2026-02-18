@@ -28,6 +28,12 @@ redisson = "3.27.0"
 # AWS SDK
 # ========================================
 awsSdk = "2.25.11"
+springCloudAws = "3.4.2"
+
+# ========================================
+# Spring AI
+# ========================================
+springAi = "1.0.0"
 
 # ========================================
 # Testing
@@ -74,7 +80,7 @@ authhubSdk = "v2.0.6"
 # ========================================
 # FileFlow SDK
 # ========================================
-fileflowSdk = "v1.0.2"
+fileflowSdk = "v1.0.3"
 
 # ========================================
 # Utilities
@@ -141,6 +147,16 @@ aws-ses = { module = "software.amazon.awssdk:ses" }
 aws-sesv2 = { module = "software.amazon.awssdk:sesv2" }
 aws-textract = { module = "software.amazon.awssdk:textract" }
 aws-apache-client = { module = "software.amazon.awssdk:apache-client" }
+
+# ========================================
+# Spring Cloud AWS
+# ========================================
+spring-cloud-aws-starter-sqs = { module = "io.awspring.cloud:spring-cloud-aws-starter-sqs", version.ref = "springCloudAws" }
+
+# ========================================
+# Spring AI
+# ========================================
+spring-ai-openai = { module = "org.springframework.ai:spring-ai-openai-spring-boot-starter", version.ref = "springAi" }
 
 # ========================================
 # Testing
