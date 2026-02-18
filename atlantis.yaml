@@ -67,12 +67,14 @@ projects:
       enabled: true
 
   # ECS Service for worker (SQS consumer, No ALB)
-  - name: marketplace-ecs-worker-prod
-    dir: terraform/environments/prod/ecs-worker
-    workspace: default
-    autoplan:
-      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
-      enabled: true
+  # NOTE: Temporarily disabled - requires ECR + SQS to be applied first
+  # Re-enable after ecr and sqs modules are applied
+  # - name: marketplace-ecs-worker-prod
+  #   dir: terraform/environments/prod/ecs-worker
+  #   workspace: default
+  #   autoplan:
+  #     when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+  #     enabled: true
 
   # ============================================================================
   # STAGE
@@ -119,9 +121,11 @@ projects:
       enabled: true
 
   # ECS Service for worker (stage, SQS consumer)
-  - name: marketplace-ecs-worker-stage
-    dir: terraform/environments/stage/ecs-worker
-    workspace: default
-    autoplan:
-      when_modified: ["*.tf", "*.tfvars"]
-      enabled: true
+  # NOTE: Temporarily disabled - requires ECR + SQS to be applied first
+  # Re-enable after ecr and sqs modules are applied
+  # - name: marketplace-ecs-worker-stage
+  #   dir: terraform/environments/stage/ecs-worker
+  #   workspace: default
+  #   autoplan:
+  #     when_modified: ["*.tf", "*.tfvars"]
+  #     enabled: true
