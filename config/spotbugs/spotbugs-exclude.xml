@@ -126,6 +126,7 @@
             <Class name="~.*Creator"/>
             <Class name="~.*Consumer"/>
             <Class name="~.*Mapper"/>
+            <Class name="~.*Coordinator"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
