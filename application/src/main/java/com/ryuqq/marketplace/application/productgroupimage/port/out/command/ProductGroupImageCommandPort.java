@@ -1,12 +1,9 @@
-package com.ryuqq.marketplace.application.productgroup.port.out.command;
+package com.ryuqq.marketplace.application.productgroupimage.port.out.command;
 
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupImage;
-import java.util.List;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 
 /** ProductGroupImage Command Port. */
 public interface ProductGroupImageCommandPort {
 
-    void deleteByProductGroupId(Long productGroupId);
-
-    List<Long> persistAll(Long productGroupId, List<ProductGroupImage> images);
+    Long persist(ProductGroupImage image);
 }

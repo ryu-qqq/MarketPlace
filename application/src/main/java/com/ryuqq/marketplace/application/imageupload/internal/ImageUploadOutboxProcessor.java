@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.imageupload.internal;
 
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
 import com.ryuqq.marketplace.application.common.manager.FileStorageManager;
+import com.ryuqq.marketplace.application.imageupload.factory.ImageUploadProcessBundleFactory;
 import com.ryuqq.marketplace.application.imageupload.manager.ImageUploadOutboxCommandManager;
 import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
 import java.time.Instant;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
  * <ul>
  *   <li>PROCESSING 상태 변경: 별도 트랜잭션 (외부 API 호출 전 커밋 필요)
  *   <li>실패 시 상태 변경: 별도 트랜잭션 (실패 상태 즉시 커밋 필요)
- *   <li>성공 시 완료 처리: ImageUploadCompletionFacade를 통해 원자적 처리
+ *   <li>성공 시 완료 처리: ImageUploadCompletionCoordinator를 통해 원자적 처리
  * </ul>
  *
  * <p><strong>처리 흐름</strong>:
@@ -28,7 +29,7 @@ import org.springframework.stereotype.Component;
  *   <li>PROCESSING 상태로 변경 (다른 프로세스와 충돌 방지)
  *   <li>BundleFactory로 다운로드 요청 Bundle 생성
  *   <li>FileStorageManager를 통해 외부 URL에서 S3 업로드
- *   <li>성공 시: 이미지 uploaded_url 업데이트 + Outbox COMPLETED (Facade를 통해 원자적 처리)
+ *   <li>성공 시: 이미지 uploaded_url 업데이트 + Outbox COMPLETED (Coordinator를 통해 원자적 처리)
  *   <li>실패 시: 재시도 가능하면 PENDING, 아니면 FAILED
  * </ol>
  */
@@ -38,17 +39,17 @@ public class ImageUploadOutboxProcessor {
     private static final Logger log = LoggerFactory.getLogger(ImageUploadOutboxProcessor.class);
 
     private final ImageUploadOutboxCommandManager outboxCommandManager;
-    private final ImageUploadCompletionFacade completionFacade;
+    private final ImageUploadCompletionCoordinator completionCoordinator;
     private final FileStorageManager fileStorageManager;
     private final ImageUploadProcessBundleFactory bundleFactory;
 
     public ImageUploadOutboxProcessor(
             ImageUploadOutboxCommandManager outboxCommandManager,
-            ImageUploadCompletionFacade completionFacade,
+            ImageUploadCompletionCoordinator completionCoordinator,
             FileStorageManager fileStorageManager,
             ImageUploadProcessBundleFactory bundleFactory) {
         this.outboxCommandManager = outboxCommandManager;
-        this.completionFacade = completionFacade;
+        this.completionCoordinator = completionCoordinator;
         this.fileStorageManager = fileStorageManager;
         this.bundleFactory = bundleFactory;
     }
@@ -71,7 +72,7 @@ public class ImageUploadOutboxProcessor {
                     fileStorageManager.downloadFromExternalUrl(bundle.downloadRequest());
 
             if (response.success()) {
-                return handleSuccess(bundle, response.newCdnUrl());
+                return handleSuccess(bundle, response.newCdnUrl(), response.fileAssetId());
             } else {
                 return handleFailure(bundle, response.errorMessage());
             }
@@ -91,14 +92,16 @@ public class ImageUploadOutboxProcessor {
         }
     }
 
-    private boolean handleSuccess(ImageUploadProcessBundle bundle, String newCdnUrl) {
+    private boolean handleSuccess(
+            ImageUploadProcessBundle bundle, String newCdnUrl, String fileAssetId) {
         log.info(
                 "이미지 업로드 성공: sourceType={}, sourceId={}, newCdnUrl={}",
                 bundle.outbox().sourceType(),
                 bundle.outbox().sourceId(),
                 newCdnUrl);
 
-        completionFacade.complete(bundle.outbox(), newCdnUrl, bundle.processedAt());
+        completionCoordinator.complete(
+                bundle.outbox(), newCdnUrl, fileAssetId, bundle.processedAt());
         return true;
     }
 

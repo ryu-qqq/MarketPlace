@@ -5,8 +5,9 @@ import com.ryuqq.marketplace.application.notice.dto.query.NoticeCategorySearchPa
 import com.ryuqq.marketplace.application.notice.dto.response.NoticeCategoryPageResult;
 import com.ryuqq.marketplace.application.notice.dto.response.NoticeCategoryResult;
 import com.ryuqq.marketplace.application.notice.factory.NoticeCategoryQueryFactory;
-import com.ryuqq.marketplace.application.notice.internal.NoticeCategoryReadFacade;
+import com.ryuqq.marketplace.application.notice.manager.NoticeCategoryReadManager;
 import com.ryuqq.marketplace.application.notice.port.in.query.SearchNoticeCategoryByOffsetUseCase;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.notice.query.NoticeCategorySearchCriteria;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class SearchNoticeCategoryByOffsetService implements SearchNoticeCategoryByOffsetUseCase {
 
-    private final NoticeCategoryReadFacade readFacade;
+    private final NoticeCategoryReadManager readManager;
     private final NoticeCategoryQueryFactory queryFactory;
     private final NoticeCategoryAssembler assembler;
 
     public SearchNoticeCategoryByOffsetService(
-            NoticeCategoryReadFacade readFacade,
+            NoticeCategoryReadManager readManager,
             NoticeCategoryQueryFactory queryFactory,
             NoticeCategoryAssembler assembler) {
-        this.readFacade = readFacade;
+        this.readManager = readManager;
         this.queryFactory = queryFactory;
         this.assembler = assembler;
     }
@@ -31,8 +32,9 @@ public class SearchNoticeCategoryByOffsetService implements SearchNoticeCategory
     @Override
     public NoticeCategoryPageResult execute(NoticeCategorySearchParams params) {
         NoticeCategorySearchCriteria criteria = queryFactory.createCriteria(params);
-        List<NoticeCategoryResult> results = readFacade.findByCriteria(criteria);
-        long totalElements = readFacade.countByCriteria(criteria);
+        List<NoticeCategory> categories = readManager.findByCriteria(criteria);
+        long totalElements = readManager.countByCriteria(criteria);
+        List<NoticeCategoryResult> results = categories.stream().map(assembler::toResult).toList();
         return assembler.toPageResult(results, criteria.page(), criteria.size(), totalElements);
     }
 }

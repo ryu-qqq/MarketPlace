@@ -1,0 +1,280 @@
+package com.ryuqq.marketplace.adapter.out.persistence.productgroup;
+
+import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionGroupJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionValueJpaEntity;
+import java.time.Instant;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * ProductGroupJpaEntity 테스트 Fixtures.
+ *
+ * <p>테스트에서 ProductGroupJpaEntity 관련 객체들을 생성합니다.
+ */
+public final class ProductGroupJpaEntityFixtures {
+
+    private ProductGroupJpaEntityFixtures() {}
+
+    private static final AtomicLong SEQUENCE = new AtomicLong(1);
+
+    // ===== 기본 상수 =====
+    public static final Long DEFAULT_ID = 1L;
+    public static final Long DEFAULT_SELLER_ID = 1L;
+    public static final Long DEFAULT_BRAND_ID = 100L;
+    public static final Long DEFAULT_CATEGORY_ID = 200L;
+    public static final Long DEFAULT_SHIPPING_POLICY_ID = 1L;
+    public static final Long DEFAULT_REFUND_POLICY_ID = 1L;
+    public static final String DEFAULT_PRODUCT_GROUP_NAME = "테스트 상품 그룹";
+    public static final String DEFAULT_OPTION_TYPE = "NONE";
+    public static final String DEFAULT_STATUS = "ACTIVE";
+
+    // ===== ProductGroupJpaEntity Fixtures =====
+
+    /** ACTIVE 상태의 ProductGroup Entity 생성. */
+    public static ProductGroupJpaEntity activeEntity() {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ProductGroupJpaEntity.create(
+                null,
+                DEFAULT_SELLER_ID,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_SHIPPING_POLICY_ID,
+                DEFAULT_REFUND_POLICY_ID,
+                DEFAULT_PRODUCT_GROUP_NAME + " " + seq,
+                DEFAULT_OPTION_TYPE,
+                DEFAULT_STATUS,
+                now,
+                now);
+    }
+
+    /** ID를 지정한 ACTIVE 상태 ProductGroup Entity 생성. */
+    public static ProductGroupJpaEntity activeEntity(Long id) {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ProductGroupJpaEntity.create(
+                id,
+                DEFAULT_SELLER_ID,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_SHIPPING_POLICY_ID,
+                DEFAULT_REFUND_POLICY_ID,
+                DEFAULT_PRODUCT_GROUP_NAME + " " + seq,
+                DEFAULT_OPTION_TYPE,
+                DEFAULT_STATUS,
+                now,
+                now);
+    }
+
+    /** 특정 SellerId를 가진 ACTIVE 상태 ProductGroup Entity 생성. */
+    public static ProductGroupJpaEntity activeEntityWithSeller(Long id, Long sellerId) {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ProductGroupJpaEntity.create(
+                id,
+                sellerId,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_SHIPPING_POLICY_ID,
+                DEFAULT_REFUND_POLICY_ID,
+                DEFAULT_PRODUCT_GROUP_NAME + " " + seq,
+                DEFAULT_OPTION_TYPE,
+                DEFAULT_STATUS,
+                now,
+                now);
+    }
+
+    /** DRAFT 상태의 ProductGroup Entity 생성. */
+    public static ProductGroupJpaEntity draftEntity() {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ProductGroupJpaEntity.create(
+                null,
+                DEFAULT_SELLER_ID,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_SHIPPING_POLICY_ID,
+                DEFAULT_REFUND_POLICY_ID,
+                DEFAULT_PRODUCT_GROUP_NAME + " " + seq,
+                DEFAULT_OPTION_TYPE,
+                "DRAFT",
+                now,
+                now);
+    }
+
+    /** INACTIVE 상태의 ProductGroup Entity 생성. */
+    public static ProductGroupJpaEntity inactiveEntity() {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ProductGroupJpaEntity.create(
+                null,
+                DEFAULT_SELLER_ID,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_SHIPPING_POLICY_ID,
+                DEFAULT_REFUND_POLICY_ID,
+                DEFAULT_PRODUCT_GROUP_NAME + " " + seq,
+                DEFAULT_OPTION_TYPE,
+                "INACTIVE",
+                now,
+                now);
+    }
+
+    /** DELETED 상태의 ProductGroup Entity 생성. */
+    public static ProductGroupJpaEntity deletedEntity() {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ProductGroupJpaEntity.create(
+                null,
+                DEFAULT_SELLER_ID,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_SHIPPING_POLICY_ID,
+                DEFAULT_REFUND_POLICY_ID,
+                DEFAULT_PRODUCT_GROUP_NAME + " " + seq,
+                DEFAULT_OPTION_TYPE,
+                "DELETED",
+                now,
+                now);
+    }
+
+    /** SINGLE 옵션 타입의 ProductGroup Entity 생성. */
+    public static ProductGroupJpaEntity entityWithSingleOption() {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ProductGroupJpaEntity.create(
+                null,
+                DEFAULT_SELLER_ID,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_SHIPPING_POLICY_ID,
+                DEFAULT_REFUND_POLICY_ID,
+                DEFAULT_PRODUCT_GROUP_NAME + " " + seq,
+                "SINGLE",
+                DEFAULT_STATUS,
+                now,
+                now);
+    }
+
+    /** 새로 생성될 Entity (ID가 null). */
+    public static ProductGroupJpaEntity newEntity() {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ProductGroupJpaEntity.create(
+                null,
+                DEFAULT_SELLER_ID,
+                DEFAULT_BRAND_ID,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_SHIPPING_POLICY_ID,
+                DEFAULT_REFUND_POLICY_ID,
+                DEFAULT_PRODUCT_GROUP_NAME + " " + seq,
+                DEFAULT_OPTION_TYPE,
+                DEFAULT_STATUS,
+                now,
+                now);
+    }
+
+    // ===== SellerOptionGroupJpaEntity Fixtures =====
+
+    /** 활성 상태의 SellerOptionGroup Entity 생성. */
+    public static SellerOptionGroupJpaEntity activeOptionGroupEntity(Long productGroupId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionGroupJpaEntity.create(
+                null, productGroupId, "색상 " + seq, null, (int) seq, false, null);
+    }
+
+    /** 삭제된 SellerOptionGroup Entity 생성. */
+    public static SellerOptionGroupJpaEntity deletedOptionGroupEntity(Long productGroupId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionGroupJpaEntity.create(
+                null, productGroupId, "색상 " + seq, null, (int) seq, true, Instant.now());
+    }
+
+    /** 캐노니컬 매핑된 SellerOptionGroup Entity 생성. */
+    public static SellerOptionGroupJpaEntity mappedOptionGroupEntity(
+            Long productGroupId, Long canonicalOptionGroupId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionGroupJpaEntity.create(
+                null,
+                productGroupId,
+                "색상 " + seq,
+                canonicalOptionGroupId,
+                (int) seq,
+                false,
+                null);
+    }
+
+    /** ID를 지정한 활성 상태의 SellerOptionGroup Entity 생성. */
+    public static SellerOptionGroupJpaEntity activeOptionGroupEntityWithId(
+            Long id, Long productGroupId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionGroupJpaEntity.create(
+                id, productGroupId, "색상 " + seq, null, (int) seq, false, null);
+    }
+
+    /** ID를 지정한 캐노니컬 매핑된 SellerOptionGroup Entity 생성. */
+    public static SellerOptionGroupJpaEntity mappedOptionGroupEntityWithId(
+            Long id, Long productGroupId, Long canonicalOptionGroupId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionGroupJpaEntity.create(
+                id,
+                productGroupId,
+                "색상 " + seq,
+                canonicalOptionGroupId,
+                (int) seq,
+                false,
+                null);
+    }
+
+    // ===== SellerOptionValueJpaEntity Fixtures =====
+
+    /** 활성 상태의 SellerOptionValue Entity 생성. */
+    public static SellerOptionValueJpaEntity activeOptionValueEntity(Long sellerOptionGroupId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionValueJpaEntity.create(
+                null, sellerOptionGroupId, "검정 " + seq, null, (int) seq, false, null);
+    }
+
+    /** 삭제된 SellerOptionValue Entity 생성. */
+    public static SellerOptionValueJpaEntity deletedOptionValueEntity(Long sellerOptionGroupId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionValueJpaEntity.create(
+                null, sellerOptionGroupId, "검정 " + seq, null, (int) seq, true, Instant.now());
+    }
+
+    /** 캐노니컬 매핑된 SellerOptionValue Entity 생성. */
+    public static SellerOptionValueJpaEntity mappedOptionValueEntity(
+            Long sellerOptionGroupId, Long canonicalOptionValueId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionValueJpaEntity.create(
+                null,
+                sellerOptionGroupId,
+                "검정 " + seq,
+                canonicalOptionValueId,
+                (int) seq,
+                false,
+                null);
+    }
+
+    /** ID를 지정한 활성 상태의 SellerOptionValue Entity 생성. */
+    public static SellerOptionValueJpaEntity activeOptionValueEntityWithId(
+            Long id, Long sellerOptionGroupId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionValueJpaEntity.create(
+                id, sellerOptionGroupId, "검정 " + seq, null, (int) seq, false, null);
+    }
+
+    /** ID를 지정한 캐노니컬 매핑된 SellerOptionValue Entity 생성. */
+    public static SellerOptionValueJpaEntity mappedOptionValueEntityWithId(
+            Long id, Long sellerOptionGroupId, Long canonicalOptionValueId) {
+        long seq = SEQUENCE.getAndIncrement();
+        return SellerOptionValueJpaEntity.create(
+                id,
+                sellerOptionGroupId,
+                "검정 " + seq,
+                canonicalOptionValueId,
+                (int) seq,
+                false,
+                null);
+    }
+}

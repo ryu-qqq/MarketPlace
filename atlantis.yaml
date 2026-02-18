@@ -58,6 +58,22 @@ projects:
       when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
       enabled: true
 
+  # SQS Queues for inspection pipeline
+  - name: marketplace-sqs-prod
+    dir: terraform/environments/prod/sqs
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
+  # ECS Service for worker (SQS consumer, No ALB)
+  - name: marketplace-ecs-worker-prod
+    dir: terraform/environments/prod/ecs-worker
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
   # ============================================================================
   # STAGE
   # ============================================================================
@@ -89,6 +105,22 @@ projects:
   # ECS Service for scheduler (stage, singleton)
   - name: marketplace-ecs-scheduler-stage
     dir: terraform/environments/stage/ecs-scheduler
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars"]
+      enabled: true
+
+  # SQS Queues for inspection pipeline (stage)
+  - name: marketplace-sqs-stage
+    dir: terraform/environments/stage/sqs
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars"]
+      enabled: true
+
+  # ECS Service for worker (stage, SQS consumer)
+  - name: marketplace-ecs-worker-stage
+    dir: terraform/environments/stage/ecs-worker
     workspace: default
     autoplan:
       when_modified: ["*.tf", "*.tfvars"]

@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.product.condition;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ryuqq.marketplace.adapter.out.persistence.product.entity.QProductJpaEntity;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /** Product QueryDSL 조건 빌더. PER-CND-001: BooleanExpression 조건 반환. */
@@ -12,6 +13,10 @@ public class ProductConditionBuilder {
 
     public BooleanExpression idEq(Long id) {
         return id != null ? product.id.eq(id) : null;
+    }
+
+    public BooleanExpression idIn(List<Long> ids) {
+        return ids != null && !ids.isEmpty() ? product.id.in(ids) : null;
     }
 
     public BooleanExpression productGroupIdEq(Long productGroupId) {

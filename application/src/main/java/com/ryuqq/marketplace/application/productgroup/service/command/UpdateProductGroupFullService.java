@@ -2,8 +2,8 @@ package com.ryuqq.marketplace.application.productgroup.service.command;
 
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
-import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupCommandFactory;
-import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupUpdateCoordinator;
+import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupBundleFactory;
+import com.ryuqq.marketplace.application.productgroup.internal.FullProductGroupUpdateCoordinator;
 import com.ryuqq.marketplace.application.productgroup.port.in.command.UpdateProductGroupFullUseCase;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class UpdateProductGroupFullService implements UpdateProductGroupFullUseCase {
 
-    private final ProductGroupCommandFactory factory;
-    private final ProductGroupUpdateCoordinator coordinator;
+    private final ProductGroupBundleFactory bundleFactory;
+    private final FullProductGroupUpdateCoordinator coordinator;
 
     public UpdateProductGroupFullService(
-            ProductGroupCommandFactory factory, ProductGroupUpdateCoordinator coordinator) {
-        this.factory = factory;
+            ProductGroupBundleFactory bundleFactory,
+            FullProductGroupUpdateCoordinator coordinator) {
+        this.bundleFactory = bundleFactory;
         this.coordinator = coordinator;
     }
 
@@ -37,7 +38,7 @@ public class UpdateProductGroupFullService implements UpdateProductGroupFullUseC
      */
     @Override
     public void execute(UpdateProductGroupFullCommand command) {
-        ProductGroupUpdateBundle bundle = factory.createUpdateBundle(command);
+        ProductGroupUpdateBundle bundle = bundleFactory.createUpdateBundle(command);
         coordinator.update(bundle);
     }
 }

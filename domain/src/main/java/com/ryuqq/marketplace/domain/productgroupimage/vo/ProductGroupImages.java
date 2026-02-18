@@ -1,11 +1,15 @@
-package com.ryuqq.marketplace.domain.productgroup.vo;
+package com.ryuqq.marketplace.domain.productgroupimage.vo;
 
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupImage;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupNoThumbnailException;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 상품 그룹 이미지 컬렉션 VO.
@@ -71,7 +75,7 @@ public class ProductGroupImages {
     }
 
     public ProductGroupImage thumbnail() {
-        return images.get(0);
+        return images.getFirst();
     }
 
     public List<ProductGroupImage> detailImages() {
@@ -81,11 +85,52 @@ public class ProductGroupImages {
         return Collections.unmodifiableList(images.subList(1, images.size()));
     }
 
-    public int size() {
-        return images.size();
-    }
-
     public boolean isEmpty() {
         return images.isEmpty();
+    }
+
+    // === Update ===
+
+    /**
+     * 새 이미지 목록과 비교하여 추가/삭제/유지를 판단하고 상태를 갱신합니다.
+     *
+     * <p>originUrl + imageType 조합을 키로 비교합니다. 유지 대상은 sortOrder를 갱신하고, 삭제 대상은 soft delete 처리합니다.
+     *
+     * @param updateData 수정할 새 이미지 목록과 수정 시각
+     * @return 변경 비교 결과
+     */
+    public ProductGroupImageDiff update(ProductGroupImageUpdateData updateData) {
+        Map<String, ProductGroupImage> existingByKey =
+                images.stream().collect(Collectors.toMap(ProductGroupImages::imageKey, img -> img));
+
+        List<ProductGroupImage> added = new ArrayList<>();
+        List<ProductGroupImage> retained = new ArrayList<>();
+        Set<String> newKeys = new HashSet<>();
+
+        for (ProductGroupImage newImage : updateData.newImages().toList()) {
+            String key = imageKey(newImage);
+            newKeys.add(key);
+
+            ProductGroupImage existing = existingByKey.get(key);
+            if (existing != null) {
+                existing.updateSortOrder(newImage.sortOrder());
+                retained.add(existing);
+            } else {
+                added.add(newImage);
+            }
+        }
+
+        List<ProductGroupImage> removed =
+                images.stream().filter(img -> !newKeys.contains(imageKey(img))).toList();
+
+        for (ProductGroupImage image : removed) {
+            image.delete(updateData.updatedAt());
+        }
+
+        return ProductGroupImageDiff.of(added, removed, retained, updateData.updatedAt());
+    }
+
+    private static String imageKey(ProductGroupImage image) {
+        return image.originUrlValue() + "::" + image.imageTypeName();
     }
 }

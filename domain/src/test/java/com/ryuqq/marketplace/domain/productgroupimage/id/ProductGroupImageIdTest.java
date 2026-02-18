@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.domain.productgroup.id;
+package com.ryuqq.marketplace.domain.productgroupimage.id;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

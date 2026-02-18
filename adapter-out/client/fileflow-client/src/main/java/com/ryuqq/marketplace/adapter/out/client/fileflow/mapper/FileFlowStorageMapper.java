@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRe
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import java.time.Instant;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,6 +25,12 @@ public class FileFlowStorageMapper {
 
     private static final String ACCESS_TYPE_PUBLIC = "PUBLIC";
     private static final String SOURCE = "marketplace";
+
+    private final String cdnDomain;
+
+    public FileFlowStorageMapper(@Value("${fileflow.cdn-domain:}") String cdnDomain) {
+        this.cdnDomain = cdnDomain;
+    }
 
     /**
      * Application 업로드 요청을 SDK 요청으로 변환합니다.
@@ -49,7 +56,7 @@ public class FileFlowStorageMapper {
      */
     public PresignedUrlResponse toPresignedUrlResponse(SingleUploadSessionResponse response) {
         Instant expiresAt = parseInstantOrNull(response.expiresAt());
-        String accessUrl = buildAccessUrl(response.bucket(), response.s3Key());
+        String accessUrl = buildAccessUrl(response.s3Key());
         return new PresignedUrlResponse(
                 response.presignedUrl(), response.s3Key(), expiresAt, accessUrl);
     }
@@ -81,15 +88,15 @@ public class FileFlowStorageMapper {
      */
     public ExternalDownloadResponse toExternalDownloadResponse(
             DownloadTaskResponse response, String sourceUrl) {
-        String newCdnUrl = buildAccessUrl(response.bucket(), response.s3Key());
+        String newCdnUrl = buildAccessUrl(response.s3Key());
         return ExternalDownloadResponse.success(sourceUrl, newCdnUrl, response.downloadTaskId());
     }
 
-    private String buildAccessUrl(String bucket, String s3Key) {
-        if (bucket == null || s3Key == null) {
+    private String buildAccessUrl(String s3Key) {
+        if (cdnDomain == null || cdnDomain.isBlank() || s3Key == null) {
             return null;
         }
-        return "https://" + bucket + "/" + s3Key;
+        return "https://" + cdnDomain + "/" + s3Key;
     }
 
     private Instant parseInstantOrNull(String timestamp) {

@@ -12,4 +12,6 @@ public interface ProductQueryPort {
     Optional<Product> findById(ProductId id);
 
     List<Product> findByProductGroupId(ProductGroupId productGroupId);
+
+    List<Product> findByProductGroupIdAndIdIn(ProductGroupId productGroupId, List<ProductId> ids);
 }

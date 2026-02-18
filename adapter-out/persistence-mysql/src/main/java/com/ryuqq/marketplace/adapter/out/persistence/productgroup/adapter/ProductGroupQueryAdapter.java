@@ -1,11 +1,11 @@
 package com.ryuqq.marketplace.adapter.out.persistence.productgroup.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionValueJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.mapper.ProductGroupJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.repository.ProductGroupQueryDslRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.ProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.application.productgroup.port.out.query.ProductGroupQueryPort;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
@@ -61,6 +61,71 @@ public class ProductGroupQueryAdapter implements ProductGroupQueryPort {
 
                             return mapper.toDomain(entity, images, groups, values);
                         });
+    }
+
+    @Override
+    public List<ProductGroup> findByIdsAndSellerId(List<ProductGroupId> ids, long sellerId) {
+        List<Long> rawIds = ids.stream().map(ProductGroupId::value).toList();
+        List<ProductGroupJpaEntity> parentEntities =
+                queryDslRepository.findByIdsAndSellerId(rawIds, sellerId);
+
+        if (parentEntities.isEmpty()) {
+            return List.of();
+        }
+
+        List<Long> productGroupIds =
+                parentEntities.stream().map(ProductGroupJpaEntity::getId).toList();
+
+        List<ProductGroupImageJpaEntity> allImages =
+                queryDslRepository.findImagesByProductGroupIds(productGroupIds);
+
+        List<SellerOptionGroupJpaEntity> allGroups =
+                queryDslRepository.findOptionGroupsByProductGroupIds(productGroupIds);
+
+        List<Long> allGroupIds = allGroups.stream().map(SellerOptionGroupJpaEntity::getId).toList();
+
+        List<SellerOptionValueJpaEntity> allValues =
+                queryDslRepository.findOptionValuesByOptionGroupIds(allGroupIds);
+
+        Map<Long, List<ProductGroupImageJpaEntity>> imagesByProductGroupId =
+                allImages.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        ProductGroupImageJpaEntity::getProductGroupId));
+
+        Map<Long, List<SellerOptionGroupJpaEntity>> groupsByProductGroupId =
+                allGroups.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        SellerOptionGroupJpaEntity::getProductGroupId));
+
+        Map<Long, List<SellerOptionValueJpaEntity>> valuesByGroupId =
+                allValues.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        SellerOptionValueJpaEntity::getSellerOptionGroupId));
+
+        List<ProductGroup> results = new ArrayList<>();
+        for (ProductGroupJpaEntity parentEntity : parentEntities) {
+            Long pgId = parentEntity.getId();
+
+            List<ProductGroupImageJpaEntity> images =
+                    imagesByProductGroupId.getOrDefault(pgId, List.of());
+
+            List<SellerOptionGroupJpaEntity> groups =
+                    groupsByProductGroupId.getOrDefault(pgId, List.of());
+
+            List<Long> groupIds = groups.stream().map(SellerOptionGroupJpaEntity::getId).toList();
+
+            List<SellerOptionValueJpaEntity> values = new ArrayList<>();
+            for (Long groupId : groupIds) {
+                values.addAll(valuesByGroupId.getOrDefault(groupId, List.of()));
+            }
+
+            results.add(mapper.toDomain(parentEntity, images, groups, values));
+        }
+
+        return results;
     }
 
     @Override

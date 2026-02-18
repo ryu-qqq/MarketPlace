@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.client.authhub.config;
 import com.ryuqq.authhub.sdk.api.AuthApi;
 import com.ryuqq.authhub.sdk.api.InternalApi;
 import com.ryuqq.authhub.sdk.api.OnboardingApi;
+import com.ryuqq.authhub.sdk.api.UserApi;
 import com.ryuqq.authhub.sdk.auth.TokenResolver;
 import com.ryuqq.authhub.sdk.client.AuthHubClient;
 import com.ryuqq.authhub.sdk.client.GatewayClient;
@@ -66,6 +67,19 @@ public class AuthHubClientConfig {
     @Bean
     public OnboardingApi onboardingApi(AuthHubClient authHubClient) {
         return authHubClient.onboarding();
+    }
+
+    /**
+     * UserApi 빈 생성.
+     *
+     * <p>사용자 생성 및 역할 할당 API를 제공합니다.
+     *
+     * @param authHubClient AuthHub 클라이언트
+     * @return UserApi 인스턴스
+     */
+    @Bean
+    public UserApi userApi(AuthHubClient authHubClient) {
+        return authHubClient.user();
     }
 
     /**

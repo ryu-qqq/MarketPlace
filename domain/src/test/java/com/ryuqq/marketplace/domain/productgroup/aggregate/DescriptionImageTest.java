@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.id.DescriptionImageId;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupDescriptionId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,7 +55,13 @@ class DescriptionImageTest {
 
             // when
             DescriptionImage image =
-                    DescriptionImage.reconstitute(id, originUrl, uploadedUrl, sortOrder);
+                    DescriptionImage.reconstitute(
+                            id,
+                            ProductGroupDescriptionId.of(1L),
+                            originUrl,
+                            uploadedUrl,
+                            sortOrder,
+                            com.ryuqq.marketplace.domain.common.vo.DeletionStatus.active());
 
             // then
             assertThat(image.id()).isEqualTo(id);
@@ -136,9 +143,11 @@ class DescriptionImageTest {
             DescriptionImage image =
                     DescriptionImage.reconstitute(
                             DescriptionImageId.of(100L),
+                            ProductGroupDescriptionId.of(1L),
                             ProductGroupFixtures.defaultImageUrl(),
                             null,
-                            0);
+                            0,
+                            com.ryuqq.marketplace.domain.common.vo.DeletionStatus.active());
 
             // when & then
             assertThat(image.idValue()).isEqualTo(100L);

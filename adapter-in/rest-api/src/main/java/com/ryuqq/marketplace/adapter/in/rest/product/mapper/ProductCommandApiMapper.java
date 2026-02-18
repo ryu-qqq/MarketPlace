@@ -1,11 +1,13 @@
 package com.ryuqq.marketplace.adapter.in.rest.product.mapper;
 
-import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.ChangeProductStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchChangeProductStatusApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductPriceApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductStockApiRequest;
-import com.ryuqq.marketplace.application.product.dto.command.ChangeProductStatusCommand;
+import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductsApiRequest;
+import com.ryuqq.marketplace.application.product.dto.command.BatchChangeProductStatusCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductPriceCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
+import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,7 +39,7 @@ public class ProductCommandApiMapper {
     public UpdateProductPriceCommand toCommand(
             Long productId, UpdateProductPriceApiRequest request) {
         return new UpdateProductPriceCommand(
-                productId, request.regularPrice(), request.currentPrice(), request.salePrice());
+                productId, request.regularPrice(), request.currentPrice());
     }
 
     /**
@@ -53,14 +55,60 @@ public class ProductCommandApiMapper {
     }
 
     /**
-     * ChangeProductStatusApiRequest -> ChangeProductStatusCommand 변환.
+     * BatchChangeProductStatusApiRequest -> BatchChangeProductStatusCommand 변환.
      *
-     * @param productId 상품 ID (PathVariable)
+     * @param sellerId 인증 컨텍스트에서 해석된 셀러 ID
+     * @param productGroupId 상품 그룹 ID (PathVariable)
      * @param request API 요청 DTO
      * @return Application Command DTO
      */
-    public ChangeProductStatusCommand toCommand(
-            Long productId, ChangeProductStatusApiRequest request) {
-        return new ChangeProductStatusCommand(productId, request.targetStatus());
+    public BatchChangeProductStatusCommand toCommand(
+            long sellerId, Long productGroupId, BatchChangeProductStatusApiRequest request) {
+        return new BatchChangeProductStatusCommand(
+                sellerId, productGroupId, request.productIds(), request.targetStatus());
+    }
+
+    /**
+     * UpdateProductsApiRequest -> UpdateProductsCommand 변환.
+     *
+     * @param productGroupId 상품 그룹 ID (PathVariable)
+     * @param request API 요청 DTO
+     * @return Application Command DTO
+     */
+    public UpdateProductsCommand toCommand(Long productGroupId, UpdateProductsApiRequest request) {
+        return new UpdateProductsCommand(
+                productGroupId,
+                request.optionGroups().stream()
+                        .map(
+                                g ->
+                                        new UpdateProductsCommand.OptionGroupData(
+                                                g.sellerOptionGroupId(),
+                                                g.optionGroupName(),
+                                                g.canonicalOptionGroupId(),
+                                                g.optionValues().stream()
+                                                        .map(
+                                                                v ->
+                                                                        new UpdateProductsCommand
+                                                                                .OptionValueData(
+                                                                                v
+                                                                                        .sellerOptionValueId(),
+                                                                                v.optionValueName(),
+                                                                                v
+                                                                                        .canonicalOptionValueId(),
+                                                                                v.sortOrder()))
+                                                        .toList()))
+                        .toList(),
+                request.products().stream()
+                        .map(
+                                p ->
+                                        new UpdateProductsCommand.ProductData(
+                                                p.productId(),
+                                                p.skuCode(),
+                                                p.regularPrice(),
+                                                p.currentPrice(),
+                                                p.stockQuantity(),
+                                                p.sortOrder(),
+                                                p.optionIndices()))
+                        .toList());
     }
 }

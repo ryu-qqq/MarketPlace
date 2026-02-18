@@ -350,6 +350,52 @@ public final class SellerApplicationJpaEntityFixtures {
     }
 
     /**
+     * 커스텀 회사명, 대표자명, 사업자등록번호로 대기 상태 Entity 생성.
+     *
+     * @param companyName 회사명
+     * @param representative 대표자명
+     * @param registrationNumber 사업자등록번호
+     * @return 대기 상태 Entity
+     */
+    public static SellerApplicationJpaEntity pendingEntityWithFullInfo(
+            String companyName, String representative, String registrationNumber) {
+        Instant now = Instant.now();
+        return SellerApplicationJpaEntity.create(
+                null,
+                DEFAULT_SELLER_NAME,
+                DEFAULT_DISPLAY_NAME,
+                DEFAULT_LOGO_URL,
+                DEFAULT_DESCRIPTION,
+                registrationNumber,
+                companyName,
+                representative,
+                DEFAULT_SALE_REPORT_NUMBER,
+                DEFAULT_ZIP_CODE,
+                DEFAULT_BASE_ADDRESS,
+                DEFAULT_DETAIL_ADDRESS,
+                DEFAULT_CS_PHONE,
+                DEFAULT_CS_EMAIL,
+                DEFAULT_CONTACT_NAME,
+                DEFAULT_CONTACT_PHONE,
+                DEFAULT_CONTACT_EMAIL,
+                DEFAULT_BANK_CODE,
+                DEFAULT_BANK_NAME,
+                DEFAULT_ACCOUNT_NUMBER,
+                DEFAULT_ACCOUNT_HOLDER_NAME,
+                DEFAULT_SETTLEMENT_CYCLE,
+                DEFAULT_SETTLEMENT_DAY,
+                now,
+                ApplicationStatus.PENDING,
+                now,
+                null,
+                null,
+                null,
+                null,
+                now,
+                now);
+    }
+
+    /**
      * 커스텀 셀러명과 사업자등록번호로 대기 상태 Entity 생성.
      *
      * @param sellerName 셀러명

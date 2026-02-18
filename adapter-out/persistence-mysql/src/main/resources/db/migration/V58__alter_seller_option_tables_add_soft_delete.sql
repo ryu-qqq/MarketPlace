@@ -1,0 +1,7 @@
+ALTER TABLE seller_option_groups
+    ADD COLUMN deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD COLUMN deleted_at TIMESTAMP NULL;
+
+ALTER TABLE seller_option_values
+    ADD COLUMN deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD COLUMN deleted_at TIMESTAMP NULL;

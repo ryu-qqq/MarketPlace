@@ -1,0 +1,34 @@
+[[product-group-image-get-upload-status]]
+=== 상품 그룹 이미지 업로드 상태 조회
+
+인증 필요 | 필요 권한: `product-group:read`
+
+==== HTTP Request
+include::{snippets}/product-group-image/get-upload-status/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product-group-image/get-upload-status/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group-image/get-upload-status/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/product-group-image/get-upload-status/response-fields.adoc[]
+
+
+[[product-group-image-update]]
+=== 상품 그룹 이미지 수정
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product-group-image/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product-group-image/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/product-group-image/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group-image/update/http-response.adoc[]

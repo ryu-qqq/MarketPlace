@@ -1,6 +1,6 @@
-package com.ryuqq.marketplace.adapter.out.persistence.productgroup.repository;
+package com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.repository;
 
-import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupImageJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.ProductGroupImageJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /** ProductGroupImage JPA Repository. */

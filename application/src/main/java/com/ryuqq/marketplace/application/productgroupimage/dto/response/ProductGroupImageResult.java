@@ -1,6 +1,6 @@
-package com.ryuqq.marketplace.application.productgroup.dto.response;
+package com.ryuqq.marketplace.application.productgroupimage.dto.response;
 
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupImage;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 
 /** 상품 그룹 이미지 조회 결과 DTO. */
 public record ProductGroupImageResult(

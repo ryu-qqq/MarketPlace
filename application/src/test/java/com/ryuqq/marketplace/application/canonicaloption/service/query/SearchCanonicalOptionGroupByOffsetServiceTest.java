@@ -10,7 +10,9 @@ import com.ryuqq.marketplace.application.canonicaloption.dto.query.CanonicalOpti
 import com.ryuqq.marketplace.application.canonicaloption.dto.response.CanonicalOptionGroupPageResult;
 import com.ryuqq.marketplace.application.canonicaloption.dto.response.CanonicalOptionGroupResult;
 import com.ryuqq.marketplace.application.canonicaloption.factory.CanonicalOptionGroupQueryFactory;
-import com.ryuqq.marketplace.application.canonicaloption.internal.CanonicalOptionGroupReadFacade;
+import com.ryuqq.marketplace.application.canonicaloption.manager.CanonicalOptionGroupReadManager;
+import com.ryuqq.marketplace.domain.canonicaloption.CanonicalOptionFixtures;
+import com.ryuqq.marketplace.domain.canonicaloption.aggregate.CanonicalOptionGroup;
 import com.ryuqq.marketplace.domain.canonicaloption.query.CanonicalOptionGroupSearchCriteria;
 import com.ryuqq.marketplace.domain.canonicaloption.query.CanonicalOptionGroupSortKey;
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
@@ -33,10 +35,8 @@ class SearchCanonicalOptionGroupByOffsetServiceTest {
 
     @InjectMocks private SearchCanonicalOptionGroupByOffsetService sut;
 
-    @Mock private CanonicalOptionGroupReadFacade readFacade;
-
+    @Mock private CanonicalOptionGroupReadManager readManager;
     @Mock private CanonicalOptionGroupQueryFactory queryFactory;
-
     @Mock private CanonicalOptionGroupAssembler assembler;
 
     @Nested
@@ -56,15 +56,21 @@ class SearchCanonicalOptionGroupByOffsetServiceTest {
                             false);
             CanonicalOptionGroupSearchCriteria criteria =
                     new CanonicalOptionGroupSearchCriteria(null, null, null, queryContext);
-            List<CanonicalOptionGroupResult> results =
-                    List.of(CanonicalOptionQueryFixtures.canonicalOptionGroupResult(1L));
+
+            CanonicalOptionGroup group = CanonicalOptionFixtures.activeCanonicalOptionGroup(1L);
+            List<CanonicalOptionGroup> groups = List.of(group);
             long totalElements = 1L;
+
+            CanonicalOptionGroupResult groupResult =
+                    CanonicalOptionQueryFixtures.canonicalOptionGroupResult(1L);
+            List<CanonicalOptionGroupResult> results = List.of(groupResult);
             CanonicalOptionGroupPageResult pageResult =
                     CanonicalOptionGroupPageResult.of(results, 0, 20, totalElements);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readFacade.findByCriteria(criteria)).willReturn(results);
-            given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
+            given(readManager.findByCriteria(criteria)).willReturn(groups);
+            given(readManager.countByCriteria(criteria)).willReturn(totalElements);
+            given(assembler.toResult(group)).willReturn(groupResult);
             given(assembler.toPageResult(results, 0, 20, totalElements)).willReturn(pageResult);
 
             // when
@@ -75,8 +81,8 @@ class SearchCanonicalOptionGroupByOffsetServiceTest {
             assertThat(result.results()).hasSize(1);
             assertThat(result.pageMeta().totalElements()).isEqualTo(totalElements);
             then(queryFactory).should().createCriteria(params);
-            then(readFacade).should().findByCriteria(criteria);
-            then(readFacade).should().countByCriteria(criteria);
+            then(readManager).should().findByCriteria(criteria);
+            then(readManager).should().countByCriteria(criteria);
             then(assembler).should().toPageResult(results, 0, 20, totalElements);
         }
 
@@ -95,14 +101,17 @@ class SearchCanonicalOptionGroupByOffsetServiceTest {
             CanonicalOptionGroupSearchCriteria criteria =
                     new CanonicalOptionGroupSearchCriteria(
                             null, "code", "NONEXISTENT", queryContext);
-            List<CanonicalOptionGroupResult> results = List.of();
+
+            List<CanonicalOptionGroup> groups = List.of();
             long totalElements = 0L;
+
+            List<CanonicalOptionGroupResult> results = List.of();
             CanonicalOptionGroupPageResult pageResult =
                     CanonicalOptionGroupPageResult.of(results, 0, 20, totalElements);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readFacade.findByCriteria(criteria)).willReturn(results);
-            given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
+            given(readManager.findByCriteria(criteria)).willReturn(groups);
+            given(readManager.countByCriteria(criteria)).willReturn(totalElements);
             given(assembler.toPageResult(results, 0, 20, totalElements)).willReturn(pageResult);
 
             // when
@@ -128,15 +137,21 @@ class SearchCanonicalOptionGroupByOffsetServiceTest {
                             false);
             CanonicalOptionGroupSearchCriteria criteria =
                     new CanonicalOptionGroupSearchCriteria(true, null, null, queryContext);
-            List<CanonicalOptionGroupResult> results =
-                    List.of(CanonicalOptionQueryFixtures.canonicalOptionGroupResult(1L));
+
+            CanonicalOptionGroup group = CanonicalOptionFixtures.activeCanonicalOptionGroup(1L);
+            List<CanonicalOptionGroup> groups = List.of(group);
             long totalElements = 1L;
+
+            CanonicalOptionGroupResult groupResult =
+                    CanonicalOptionQueryFixtures.canonicalOptionGroupResult(1L);
+            List<CanonicalOptionGroupResult> results = List.of(groupResult);
             CanonicalOptionGroupPageResult pageResult =
                     CanonicalOptionGroupPageResult.of(results, 0, 20, totalElements);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readFacade.findByCriteria(criteria)).willReturn(results);
-            given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
+            given(readManager.findByCriteria(criteria)).willReturn(groups);
+            given(readManager.countByCriteria(criteria)).willReturn(totalElements);
+            given(assembler.toResult(group)).willReturn(groupResult);
             given(assembler.toPageResult(results, 0, 20, totalElements)).willReturn(pageResult);
 
             // when
@@ -160,17 +175,25 @@ class SearchCanonicalOptionGroupByOffsetServiceTest {
                             false);
             CanonicalOptionGroupSearchCriteria criteria =
                     new CanonicalOptionGroupSearchCriteria(null, null, null, queryContext);
-            List<CanonicalOptionGroupResult> results =
-                    List.of(
-                            CanonicalOptionQueryFixtures.canonicalOptionGroupResult(11L),
-                            CanonicalOptionQueryFixtures.canonicalOptionGroupResult(12L));
+
+            CanonicalOptionGroup group1 = CanonicalOptionFixtures.activeCanonicalOptionGroup(11L);
+            CanonicalOptionGroup group2 = CanonicalOptionFixtures.activeCanonicalOptionGroup(12L);
+            List<CanonicalOptionGroup> groups = List.of(group1, group2);
             long totalElements = 25L;
+
+            CanonicalOptionGroupResult result1 =
+                    CanonicalOptionQueryFixtures.canonicalOptionGroupResult(11L);
+            CanonicalOptionGroupResult result2 =
+                    CanonicalOptionQueryFixtures.canonicalOptionGroupResult(12L);
+            List<CanonicalOptionGroupResult> results = List.of(result1, result2);
             CanonicalOptionGroupPageResult pageResult =
                     CanonicalOptionGroupPageResult.of(results, 1, 10, totalElements);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readFacade.findByCriteria(criteria)).willReturn(results);
-            given(readFacade.countByCriteria(criteria)).willReturn(totalElements);
+            given(readManager.findByCriteria(criteria)).willReturn(groups);
+            given(readManager.countByCriteria(criteria)).willReturn(totalElements);
+            given(assembler.toResult(group1)).willReturn(result1);
+            given(assembler.toResult(group2)).willReturn(result2);
             given(assembler.toPageResult(results, 1, 10, totalElements)).willReturn(pageResult);
 
             // when

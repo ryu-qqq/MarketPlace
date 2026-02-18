@@ -102,7 +102,7 @@ public class SellerAddressCommandController {
     })
     @PreAuthorize("@access.isSellerOwnerOr(#sellerId, 'seller-address:write')")
     @RequirePermission(value = "seller-address:write", description = "셀러 주소 등록")
-    @PostMapping
+    @PostMapping(SellerAddressAdminEndpoints.SELLER)
     public ResponseEntity<ApiResponse<RegisterSellerAddressApiResponse>> register(
             @Parameter(description = "셀러 ID", required = true)
                     @PathVariable(SellerAddressAdminEndpoints.PATH_SELLER_ID)
@@ -140,7 +140,7 @@ public class SellerAddressCommandController {
     })
     @PreAuthorize("@access.isSellerOwnerOr(#sellerId, 'seller-address:write')")
     @RequirePermission(value = "seller-address:write", description = "셀러 주소 수정")
-    @PutMapping(SellerAddressAdminEndpoints.ID)
+    @PutMapping(SellerAddressAdminEndpoints.SELLER + SellerAddressAdminEndpoints.ID)
     public ResponseEntity<Void> update(
             @Parameter(description = "셀러 ID", required = true)
                     @PathVariable(SellerAddressAdminEndpoints.PATH_SELLER_ID)
@@ -181,7 +181,10 @@ public class SellerAddressCommandController {
     })
     @PreAuthorize("@access.isSellerOwnerOr(#sellerId, 'seller-address:write')")
     @RequirePermission(value = "seller-address:write", description = "셀러 주소 삭제")
-    @PatchMapping(SellerAddressAdminEndpoints.ID + SellerAddressAdminEndpoints.STATUS)
+    @PatchMapping(
+            SellerAddressAdminEndpoints.SELLER
+                    + SellerAddressAdminEndpoints.ID
+                    + SellerAddressAdminEndpoints.STATUS)
     public ResponseEntity<Void> delete(
             @Parameter(description = "셀러 ID", required = true)
                     @PathVariable(SellerAddressAdminEndpoints.PATH_SELLER_ID)

@@ -1,0 +1,76 @@
+// ========================================
+// Adapter-Out: Spring AI Client
+// ========================================
+// Outbound adapter for OpenAI LLM integration via Spring AI
+// Implements CanonicalOptionEnhancementClient, NoticeCompletionEnhancementClient,
+// InspectionVerificationClient from application layer
+// Technology: Spring AI OpenAI (version managed in libs.versions.toml)
+// NO Lombok allowed
+// ========================================
+
+plugins {
+    id 'java-library'
+    id 'java-test-fixtures'
+}
+
+dependencies {
+    // ========================================
+    // Core Dependencies
+    // ========================================
+    api project(':application')
+    api project(':domain')
+
+    // ========================================
+    // Spring AI - OpenAI
+    // TODO: Spring AI 의존성은 실제 LLM 구현 시 추가
+    // implementation libs.spring.ai.openai
+    // ========================================
+
+    // ========================================
+    // Spring Boot (for @Component, @ConfigurationProperties)
+    // ========================================
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.slf4j:slf4j-api'
+    annotationProcessor libs.spring.boot.configuration.processor
+
+    // ========================================
+    // Jackson (for JSON serialization)
+    // ========================================
+    implementation libs.jackson.databind
+    implementation libs.jackson.datatype.jsr310
+
+    // ========================================
+    // Test Dependencies
+    // ========================================
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.archunit.junit5
+    testImplementation testFixtures(project(':domain'))
+
+    // ========================================
+    // Test Fixtures Dependencies
+    // ========================================
+    testFixturesApi project(':domain')
+    testFixturesApi project(':application')
+    testFixturesApi testFixtures(project(':domain'))
+    testFixturesApi testFixtures(project(':application'))
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.30
+            }
+        }
+        rule {
+            element = 'CLASS'
+            excludes = [
+                '*.config.*'
+            ]
+        }
+    }
+}
+
+tasks.test {
+    finalizedBy tasks.jacocoTestCoverageVerification
+}

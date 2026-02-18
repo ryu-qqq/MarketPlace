@@ -1,0 +1,70 @@
+[[product-update-price]]
+=== 상품 가격 수정
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product/update-price/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product/update-price/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/product/update-price/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product/update-price/http-response.adoc[]
+
+
+[[product-update-stock]]
+=== 상품 재고 수정
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product/update-stock/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product/update-stock/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/product/update-stock/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product/update-stock/http-response.adoc[]
+
+
+[[product-batch-change-status]]
+=== 상품 배치 상태 변경
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product/batch-change-status/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product/batch-change-status/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/product/batch-change-status/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product/batch-change-status/http-response.adoc[]
+
+
+[[product-update-products]]
+=== 상품 일괄 수정
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product/update-products/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product/update-products/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/product/update-products/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product/update-products/http-response.adoc[]

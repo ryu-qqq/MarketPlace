@@ -5,6 +5,8 @@ import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.rep
 import com.ryuqq.marketplace.application.productgroupdescription.port.out.query.ProductGroupDescriptionQueryPort;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionPublishStatus;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,18 @@ public class ProductGroupDescriptionQueryAdapter implements ProductGroupDescript
     }
 
     @Override
+    public Optional<ProductGroupDescription> findById(Long id) {
+        return queryDslRepository
+                .findById(id)
+                .map(
+                        entity -> {
+                            var imageEntities =
+                                    queryDslRepository.findImagesByDescriptionId(entity.getId());
+                            return mapper.toDomain(entity, imageEntities);
+                        });
+    }
+
+    @Override
     public Optional<ProductGroupDescription> findByProductGroupId(ProductGroupId productGroupId) {
         return queryDslRepository
                 .findByProductGroupId(productGroupId.value())
@@ -36,5 +50,18 @@ public class ProductGroupDescriptionQueryAdapter implements ProductGroupDescript
                                     queryDslRepository.findImagesByDescriptionId(entity.getId());
                             return mapper.toDomain(entity, imageEntities);
                         });
+    }
+
+    @Override
+    public List<ProductGroupDescription> findByPublishStatus(
+            DescriptionPublishStatus status, int limit) {
+        return queryDslRepository.findByPublishStatus(status.name(), limit).stream()
+                .map(
+                        entity -> {
+                            var imageEntities =
+                                    queryDslRepository.findImagesByDescriptionId(entity.getId());
+                            return mapper.toDomain(entity, imageEntities);
+                        })
+                .toList();
     }
 }

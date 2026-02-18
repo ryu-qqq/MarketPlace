@@ -1,10 +1,10 @@
-package com.ryuqq.marketplace.domain.productgroup.vo;
+package com.ryuqq.marketplace.domain.productgroupimage.vo;
 
 import static org.assertj.core.api.Assertions.*;
 
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupImage;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupNoThumbnailException;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,7 +33,7 @@ class ProductGroupImagesTest {
             ProductGroupImages productGroupImages = ProductGroupImages.of(images);
 
             // then
-            assertThat(productGroupImages.size()).isEqualTo(3);
+            assertThat(productGroupImages.toList().size()).isEqualTo(3);
             assertThat(productGroupImages.thumbnail().isThumbnail()).isTrue();
             assertThat(productGroupImages.detailImages()).hasSize(2);
         }
@@ -94,7 +94,7 @@ class ProductGroupImagesTest {
             ProductGroupImages productGroupImages = ProductGroupImages.of(images);
 
             // then
-            assertThat(productGroupImages.size()).isEqualTo(1);
+            assertThat(productGroupImages.toList().size()).isEqualTo(1);
             assertThat(productGroupImages.thumbnail().isThumbnail()).isTrue();
             assertThat(productGroupImages.detailImages()).isEmpty();
         }
@@ -114,7 +114,7 @@ class ProductGroupImagesTest {
             ProductGroupImages productGroupImages = ProductGroupImages.reconstitute(images);
 
             // then
-            assertThat(productGroupImages.size()).isEqualTo(1);
+            assertThat(productGroupImages.toList().size()).isEqualTo(1);
         }
     }
 

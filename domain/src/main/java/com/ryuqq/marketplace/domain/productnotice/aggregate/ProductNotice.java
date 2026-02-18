@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.domain.productnotice.aggregate;
 import com.ryuqq.marketplace.domain.notice.id.NoticeCategoryId;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productnotice.id.ProductNoticeId;
+import com.ryuqq.marketplace.domain.productnotice.vo.ProductNoticeUpdateData;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +57,20 @@ public class ProductNotice {
             Instant updatedAt) {
         return new ProductNotice(
                 id, productGroupId, noticeCategoryId, entries, createdAt, updatedAt);
+    }
+
+    /** 영속화 후 발급된 ID를 할당하고, 소유 entries에도 전파한다. */
+    public void assignId(ProductNoticeId assignedId) {
+        for (ProductNoticeEntry entry : entries) {
+            entry.assignProductNoticeId(assignedId);
+        }
+    }
+
+    /** 수정 데이터를 적용하여 고시정보를 갱신한다. */
+    public void update(ProductNoticeUpdateData updateData) {
+        this.entries.clear();
+        this.entries.addAll(updateData.entries());
+        this.updatedAt = updateData.updatedAt();
     }
 
     /** 고시정보 항목 전체 교체. */

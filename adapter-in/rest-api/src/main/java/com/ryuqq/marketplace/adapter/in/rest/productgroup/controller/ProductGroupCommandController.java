@@ -1,35 +1,32 @@
 package com.ryuqq.marketplace.adapter.in.rest.productgroup.controller;
 
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupAdminEndpoints;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.ChangeProductGroupStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupDescriptionApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupFullApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupImagesApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductNoticeApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.BatchProductGroupResultApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupIdApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper.ProductGroupCommandApiMapper;
-import com.ryuqq.marketplace.application.productgroup.dto.command.ChangeProductGroupStatusCommand;
+import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
+import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangeProductGroupStatusCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
-import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupImagesCommand;
-import com.ryuqq.marketplace.application.productgroup.port.in.command.ChangeProductGroupStatusUseCase;
-import com.ryuqq.marketplace.application.productgroup.port.in.command.RegisterProductGroupUseCase;
+import com.ryuqq.marketplace.application.productgroup.port.in.command.BatchChangeProductGroupStatusUseCase;
+import com.ryuqq.marketplace.application.productgroup.port.in.command.BatchRegisterProductGroupFullUseCase;
+import com.ryuqq.marketplace.application.productgroup.port.in.command.RegisterProductGroupFullUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.command.UpdateProductGroupBasicInfoUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.command.UpdateProductGroupFullUseCase;
-import com.ryuqq.marketplace.application.productgroup.port.in.command.UpdateProductGroupImagesUseCase;
-import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
-import com.ryuqq.marketplace.application.productgroupdescription.port.in.command.UpdateProductGroupDescriptionUseCase;
-import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
-import com.ryuqq.marketplace.application.productnotice.port.in.command.UpdateProductNoticeUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * ProductGroupCommandController - 상품 그룹 수정 API.
  *
- * <p>상품 그룹 상태 변경 엔드포인트를 제공합니다.
+ * <p>상품 그룹 등록/수정/상태변경 엔드포인트를 제공합니다.
  *
  * <p>API-CTR-001: Controller는 @RestController로 정의.
  *
@@ -70,44 +67,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ProductGroupAdminEndpoints.PRODUCT_GROUPS)
 public class ProductGroupCommandController {
 
-    private final RegisterProductGroupUseCase registerUseCase;
+    private final RegisterProductGroupFullUseCase registerUseCase;
+    private final BatchRegisterProductGroupFullUseCase batchRegisterUseCase;
     private final UpdateProductGroupFullUseCase updateUseCase;
     private final UpdateProductGroupBasicInfoUseCase updateBasicInfoUseCase;
-    private final UpdateProductGroupImagesUseCase updateImagesUseCase;
-    private final UpdateProductGroupDescriptionUseCase updateDescriptionUseCase;
-    private final UpdateProductNoticeUseCase updateNoticeUseCase;
-    private final ChangeProductGroupStatusUseCase changeStatusUseCase;
+    private final BatchChangeProductGroupStatusUseCase batchChangeStatusUseCase;
     private final ProductGroupCommandApiMapper mapper;
+    private final MarketAccessChecker accessChecker;
 
     /**
      * ProductGroupCommandController 생성자.
      *
      * @param registerUseCase 상품 그룹 등록 UseCase
+     * @param batchRegisterUseCase 상품 그룹 배치 등록 UseCase
      * @param updateUseCase 상품 그룹 전체 수정 UseCase
      * @param updateBasicInfoUseCase 기본 정보 수정 UseCase
-     * @param updateImagesUseCase 이미지 수정 UseCase
-     * @param updateDescriptionUseCase 상세 설명 수정 UseCase
-     * @param updateNoticeUseCase 고시정보 수정 UseCase
-     * @param changeStatusUseCase 상품 그룹 상태 변경 UseCase
+     * @param batchChangeStatusUseCase 상품 그룹 배치 상태 변경 UseCase
      * @param mapper Command API 매퍼
+     * @param accessChecker 접근 권한 검사기
      */
     public ProductGroupCommandController(
-            RegisterProductGroupUseCase registerUseCase,
+            RegisterProductGroupFullUseCase registerUseCase,
+            BatchRegisterProductGroupFullUseCase batchRegisterUseCase,
             UpdateProductGroupFullUseCase updateUseCase,
             UpdateProductGroupBasicInfoUseCase updateBasicInfoUseCase,
-            UpdateProductGroupImagesUseCase updateImagesUseCase,
-            UpdateProductGroupDescriptionUseCase updateDescriptionUseCase,
-            UpdateProductNoticeUseCase updateNoticeUseCase,
-            ChangeProductGroupStatusUseCase changeStatusUseCase,
-            ProductGroupCommandApiMapper mapper) {
+            BatchChangeProductGroupStatusUseCase batchChangeStatusUseCase,
+            ProductGroupCommandApiMapper mapper,
+            MarketAccessChecker accessChecker) {
         this.registerUseCase = registerUseCase;
+        this.batchRegisterUseCase = batchRegisterUseCase;
         this.updateUseCase = updateUseCase;
         this.updateBasicInfoUseCase = updateBasicInfoUseCase;
-        this.updateImagesUseCase = updateImagesUseCase;
-        this.updateDescriptionUseCase = updateDescriptionUseCase;
-        this.updateNoticeUseCase = updateNoticeUseCase;
-        this.changeStatusUseCase = changeStatusUseCase;
+        this.batchChangeStatusUseCase = batchChangeStatusUseCase;
         this.mapper = mapper;
+        this.accessChecker = accessChecker;
     }
 
     /**
@@ -138,6 +131,37 @@ public class ProductGroupCommandController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ProductGroupIdApiResponse.of(productGroupId));
+    }
+
+    /**
+     * 상품 그룹 배치 등록 API.
+     *
+     * <p>여러 상품 그룹을 한번에 등록합니다. 각 항목은 독립 트랜잭션으로 처리되며, 일부 실패 시 나머지는 정상 등록됩니다.
+     *
+     * @param request 배치 등록 요청 DTO (최대 100건)
+     * @return 배치 처리 결과 (항목별 성공/실패)
+     */
+    @Operation(
+            summary = "상품 그룹 배치 등록",
+            description = "여러 상품 그룹을 한번에 등록합니다. 각 항목은 독립적으로 처리되며 일부 실패 시 나머지는 정상 등록됩니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "배치 등록 처리 완료 (개별 결과 확인 필요)"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "400",
+                description = "잘못된 요청")
+    })
+    @PreAuthorize("hasAuthority('product-group:write')")
+    @RequirePermission(value = "product-group:write", description = "상품 그룹 배치 등록")
+    @PostMapping(ProductGroupAdminEndpoints.BATCH)
+    public ResponseEntity<BatchProductGroupResultApiResponse> batchRegisterProductGroups(
+            @Valid @RequestBody BatchRegisterProductGroupApiRequest request) {
+
+        List<RegisterProductGroupCommand> commands = mapper.toCommands(request);
+        BatchProcessingResult<Long> result = batchRegisterUseCase.execute(commands);
+
+        return ResponseEntity.ok(BatchProductGroupResultApiResponse.from(result));
     }
 
     /**
@@ -217,123 +241,14 @@ public class ProductGroupCommandController {
     }
 
     /**
-     * 상품 그룹 이미지 수정 API.
+     * 상품 그룹 배치 상태 변경 API.
      *
-     * <p>상품 그룹의 이미지를 전체 교체합니다.
+     * <p>여러 상품 그룹의 상태를 일괄 변경합니다. 현재 인증된 사용자의 셀러 소유권을 검증합니다.
      *
-     * @param productGroupId 상품 그룹 ID
-     * @param request 이미지 수정 요청 DTO
+     * @param request 배치 상태 변경 요청 DTO
      * @return 빈 응답 (204 No Content)
      */
-    @Operation(summary = "이미지 수정", description = "상품 그룹의 이미지를 전체 교체합니다.")
-    @ApiResponses({
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "204",
-                description = "수정 성공"),
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "400",
-                description = "잘못된 요청"),
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "404",
-                description = "상품 그룹을 찾을 수 없음")
-    })
-    @PreAuthorize("@access.isSellerOwnerOr(#productGroupId, 'product-group:write')")
-    @RequirePermission(value = "product-group:write", description = "상품 그룹 이미지 수정")
-    @PutMapping(ProductGroupAdminEndpoints.ID + ProductGroupAdminEndpoints.IMAGES)
-    public ResponseEntity<Void> updateImages(
-            @Parameter(description = "상품 그룹 ID", required = true)
-                    @PathVariable(ProductGroupAdminEndpoints.PATH_PRODUCT_GROUP_ID)
-                    Long productGroupId,
-            @Valid @RequestBody UpdateProductGroupImagesApiRequest request) {
-
-        UpdateProductGroupImagesCommand command = mapper.toCommand(productGroupId, request);
-        updateImagesUseCase.execute(command);
-
-        return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * 상품 그룹 상세 설명 수정 API.
-     *
-     * <p>상품 그룹의 상세 설명을 수정합니다. 기존 설명이 없으면 새로 생성합니다.
-     *
-     * @param productGroupId 상품 그룹 ID
-     * @param request 상세 설명 수정 요청 DTO
-     * @return 빈 응답 (204 No Content)
-     */
-    @Operation(summary = "상세 설명 수정", description = "상품 그룹의 상세 설명을 수정합니다.")
-    @ApiResponses({
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "204",
-                description = "수정 성공"),
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "400",
-                description = "잘못된 요청"),
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "404",
-                description = "상품 그룹을 찾을 수 없음")
-    })
-    @PreAuthorize("@access.isSellerOwnerOr(#productGroupId, 'product-group:write')")
-    @RequirePermission(value = "product-group:write", description = "상품 그룹 상세 설명 수정")
-    @PutMapping(ProductGroupAdminEndpoints.ID + ProductGroupAdminEndpoints.DESCRIPTION)
-    public ResponseEntity<Void> updateDescription(
-            @Parameter(description = "상품 그룹 ID", required = true)
-                    @PathVariable(ProductGroupAdminEndpoints.PATH_PRODUCT_GROUP_ID)
-                    Long productGroupId,
-            @Valid @RequestBody UpdateProductGroupDescriptionApiRequest request) {
-
-        UpdateProductGroupDescriptionCommand command = mapper.toCommand(productGroupId, request);
-        updateDescriptionUseCase.execute(command);
-
-        return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * 상품 그룹 고시정보 수정 API.
-     *
-     * <p>상품 그룹의 고시정보를 수정합니다. 기존 고시정보가 없으면 새로 생성합니다.
-     *
-     * @param productGroupId 상품 그룹 ID
-     * @param request 고시정보 수정 요청 DTO
-     * @return 빈 응답 (204 No Content)
-     */
-    @Operation(summary = "고시정보 수정", description = "상품 그룹의 고시정보를 수정합니다.")
-    @ApiResponses({
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "204",
-                description = "수정 성공"),
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "400",
-                description = "잘못된 요청"),
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "404",
-                description = "상품 그룹을 찾을 수 없음")
-    })
-    @PreAuthorize("@access.isSellerOwnerOr(#productGroupId, 'product-group:write')")
-    @RequirePermission(value = "product-group:write", description = "상품 그룹 고시정보 수정")
-    @PutMapping(ProductGroupAdminEndpoints.ID + ProductGroupAdminEndpoints.NOTICE)
-    public ResponseEntity<Void> updateNotice(
-            @Parameter(description = "상품 그룹 ID", required = true)
-                    @PathVariable(ProductGroupAdminEndpoints.PATH_PRODUCT_GROUP_ID)
-                    Long productGroupId,
-            @Valid @RequestBody UpdateProductNoticeApiRequest request) {
-
-        UpdateProductNoticeCommand command = mapper.toCommand(productGroupId, request);
-        updateNoticeUseCase.execute(command);
-
-        return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * 상품 그룹 상태 변경 API.
-     *
-     * <p>상품 그룹의 활성화 상태를 변경합니다.
-     *
-     * @param productGroupId 상품 그룹 ID
-     * @param request 상태 변경 요청 DTO
-     * @return 빈 응답 (204 No Content)
-     */
-    @Operation(summary = "상품 그룹 상태 변경", description = "상품 그룹의 활성화 상태를 변경합니다.")
+    @Operation(summary = "상품 그룹 배치 상태 변경", description = "여러 상품 그룹의 상태를 일괄 변경합니다.")
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "204",
@@ -342,20 +257,18 @@ public class ProductGroupCommandController {
                 responseCode = "400",
                 description = "잘못된 요청"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "404",
-                description = "상품 그룹을 찾을 수 없음")
+                responseCode = "403",
+                description = "소유권 검증 실패")
     })
-    @PreAuthorize("@access.isSellerOwnerOr(#productGroupId, 'product-group:write')")
-    @RequirePermission(value = "product-group:write", description = "상품 그룹 상태 변경")
-    @PatchMapping(ProductGroupAdminEndpoints.ID + ProductGroupAdminEndpoints.STATUS)
-    public ResponseEntity<Void> changeStatus(
-            @Parameter(description = "상품 그룹 ID", required = true)
-                    @PathVariable(ProductGroupAdminEndpoints.PATH_PRODUCT_GROUP_ID)
-                    Long productGroupId,
-            @Valid @RequestBody ChangeProductGroupStatusApiRequest request) {
+    @PreAuthorize("hasAuthority('product-group:write')")
+    @RequirePermission(value = "product-group:write", description = "상품 그룹 배치 상태 변경")
+    @PatchMapping(ProductGroupAdminEndpoints.STATUS)
+    public ResponseEntity<Void> batchChangeStatus(
+            @Valid @RequestBody BatchChangeProductGroupStatusApiRequest request) {
 
-        ChangeProductGroupStatusCommand command = mapper.toCommand(productGroupId, request);
-        changeStatusUseCase.execute(command);
+        long sellerId = accessChecker.resolveCurrentSellerId();
+        BatchChangeProductGroupStatusCommand command = mapper.toCommand(sellerId, request);
+        batchChangeStatusUseCase.execute(command);
 
         return ResponseEntity.noContent().build();
     }

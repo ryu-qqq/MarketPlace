@@ -27,21 +27,24 @@ public record UpdateProductGroupFullCommand(
 
     /** 옵션 그룹 Command. */
     public record OptionGroupCommand(
+            Long sellerOptionGroupId,
             String optionGroupName,
             Long canonicalOptionGroupId,
             List<OptionValueCommand> optionValues) {}
 
     /** 옵션 값 Command. */
     public record OptionValueCommand(
-            String optionValueName, Long canonicalOptionValueId, int sortOrder) {}
+            Long sellerOptionValueId,
+            String optionValueName,
+            Long canonicalOptionValueId,
+            int sortOrder) {}
 
     /** 상품 Command. */
     public record ProductCommand(
+            Long productId,
             String skuCode,
             int regularPrice,
             int currentPrice,
-            int salePrice,
-            int discountRate,
             int stockQuantity,
             int sortOrder,
             List<Integer> optionIndices) {}

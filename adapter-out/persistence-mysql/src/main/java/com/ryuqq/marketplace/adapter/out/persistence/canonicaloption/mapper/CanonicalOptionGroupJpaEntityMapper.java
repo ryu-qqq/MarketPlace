@@ -1,7 +1,9 @@
 package com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.mapper;
 
 import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.entity.CanonicalOptionGroupJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.entity.CanonicalOptionValueJpaEntity;
 import com.ryuqq.marketplace.domain.canonicaloption.aggregate.CanonicalOptionGroup;
+import com.ryuqq.marketplace.domain.canonicaloption.aggregate.CanonicalOptionValue;
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionGroupId;
 import com.ryuqq.marketplace.domain.canonicaloption.vo.CanonicalOptionGroupCode;
 import com.ryuqq.marketplace.domain.canonicaloption.vo.CanonicalOptionGroupName;
@@ -12,7 +14,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class CanonicalOptionGroupJpaEntityMapper {
 
-    public CanonicalOptionGroup toDomain(CanonicalOptionGroupJpaEntity entity) {
+    private final CanonicalOptionValueJpaEntityMapper valueMapper;
+
+    public CanonicalOptionGroupJpaEntityMapper(CanonicalOptionValueJpaEntityMapper valueMapper) {
+        this.valueMapper = valueMapper;
+    }
+
+    public CanonicalOptionGroup toDomain(
+            CanonicalOptionGroupJpaEntity entity,
+            List<CanonicalOptionValueJpaEntity> valueEntities) {
         if (entity.getId() == null) {
             throw new IllegalStateException("영속화된 엔티티의 ID는 null일 수 없습니다");
         }
@@ -20,12 +30,15 @@ public class CanonicalOptionGroupJpaEntityMapper {
         var code = CanonicalOptionGroupCode.of(entity.getCode());
         var name = CanonicalOptionGroupName.of(entity.getNameKo(), entity.getNameEn());
 
+        List<CanonicalOptionValue> values =
+                valueEntities.stream().map(valueMapper::toDomain).toList();
+
         return CanonicalOptionGroup.reconstitute(
                 id,
                 code,
                 name,
                 entity.isActive(),
-                List.of(),
+                values,
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());
     }

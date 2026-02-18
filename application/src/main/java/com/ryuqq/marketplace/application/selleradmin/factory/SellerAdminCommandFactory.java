@@ -91,14 +91,16 @@ public class SellerAdminCommandFactory {
      * <p>SellerAdmin과 인증 서버 연동용 AuthOutbox를 묶어 반환합니다. 이벤트는 SellerAdmin.approve() 내부에서 생성됩니다.
      *
      * @param sellerAdmin 승인할 셀러 관리자
+     * @param organizationId 인증 서버 조직 ID (Seller에서 조회)
      * @return SellerAdminApprovalBundle
      */
-    public SellerAdminApprovalBundle createApprovalBundle(SellerAdmin sellerAdmin) {
+    public SellerAdminApprovalBundle createApprovalBundle(
+            SellerAdmin sellerAdmin, String organizationId) {
         Instant now = timeProvider.now();
 
         SellerAdminAuthOutbox authOutbox =
                 SellerAdminAuthOutbox.forNew(
-                        sellerAdmin.id(), buildAuthOutboxPayload(sellerAdmin), now);
+                        sellerAdmin.id(), buildAuthOutboxPayload(sellerAdmin, organizationId), now);
 
         return new SellerAdminApprovalBundle(sellerAdmin, authOutbox, now);
     }
@@ -109,13 +111,17 @@ public class SellerAdminCommandFactory {
      * <p>인증 서버에 사용자 생성 시 필요한 정보를 JSON으로 변환합니다.
      *
      * @param sellerAdmin 셀러 관리자
+     * @param organizationId 인증 서버 조직 ID
      * @return JSON payload
      */
-    private String buildAuthOutboxPayload(SellerAdmin sellerAdmin) {
+    private String buildAuthOutboxPayload(SellerAdmin sellerAdmin, String organizationId) {
         return String.format(
-                "{\"sellerAdminId\":\"%s\",\"sellerId\":%d,\"loginId\":\"%s\",\"name\":\"%s\",\"phoneNumber\":\"%s\"}",
+                "{\"sellerAdminId\":\"%s\",\"sellerId\":%d,"
+                        + "\"organizationId\":\"%s\",\"loginId\":\"%s\","
+                        + "\"name\":\"%s\",\"phoneNumber\":\"%s\"}",
                 sellerAdmin.idValue(),
                 sellerAdmin.sellerIdValue(),
+                organizationId,
                 sellerAdmin.loginIdValue(),
                 sellerAdmin.nameValue(),
                 sellerAdmin.phoneNumberValue());

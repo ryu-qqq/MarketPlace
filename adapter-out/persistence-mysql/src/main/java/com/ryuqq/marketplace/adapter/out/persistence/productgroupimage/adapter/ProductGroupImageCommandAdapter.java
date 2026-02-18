@@ -1,11 +1,10 @@
-package com.ryuqq.marketplace.adapter.out.persistence.productgroup.adapter;
+package com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.mapper.ProductGroupJpaEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.productgroup.repository.ProductGroupImageJpaRepository;
-import com.ryuqq.marketplace.application.productgroup.port.out.command.ProductGroupImageCommandPort;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupImage;
-import java.util.List;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.ProductGroupImageJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.repository.ProductGroupImageJpaRepository;
+import com.ryuqq.marketplace.application.productgroupimage.port.out.command.ProductGroupImageCommandPort;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,18 +25,8 @@ public class ProductGroupImageCommandAdapter implements ProductGroupImageCommand
     }
 
     @Override
-    public void deleteByProductGroupId(Long productGroupId) {
-        repository.deleteByProductGroupId(productGroupId);
-    }
-
-    @Override
-    public List<Long> persistAll(Long productGroupId, List<ProductGroupImage> images) {
-        if (images.isEmpty()) {
-            return List.of();
-        }
-        List<ProductGroupImageJpaEntity> entities =
-                images.stream().map(mapper::toImageEntity).toList();
-        List<ProductGroupImageJpaEntity> savedEntities = repository.saveAll(entities);
-        return savedEntities.stream().map(ProductGroupImageJpaEntity::getId).toList();
+    public Long persist(ProductGroupImage image) {
+        ProductGroupImageJpaEntity entity = mapper.toImageEntity(image);
+        return repository.save(entity).getId();
     }
 }

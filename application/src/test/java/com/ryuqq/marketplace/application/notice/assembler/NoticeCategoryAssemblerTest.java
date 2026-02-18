@@ -7,7 +7,6 @@ import com.ryuqq.marketplace.application.notice.dto.response.NoticeCategoryResul
 import com.ryuqq.marketplace.application.notice.dto.response.NoticeFieldResult;
 import com.ryuqq.marketplace.domain.notice.NoticeFixtures;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,10 +34,9 @@ class NoticeCategoryAssemblerTest {
         void toResult_ValidNoticeCategory_ReturnsResult() {
             // given
             NoticeCategory category = NoticeFixtures.activeNoticeCategory(1L);
-            List<NoticeField> fields = List.of();
 
             // when
-            NoticeCategoryResult result = sut.toResult(category, fields);
+            NoticeCategoryResult result = sut.toResult(category);
 
             // then
             assertThat(result).isNotNull();
@@ -57,14 +55,10 @@ class NoticeCategoryAssemblerTest {
         @DisplayName("필드가 포함된 고시정보 카테고리를 Result로 변환한다")
         void toResult_WithFields_ReturnsResultWithFields() {
             // given
-            NoticeCategory category = NoticeFixtures.activeNoticeCategory(1L);
-            List<NoticeField> fields =
-                    List.of(
-                            NoticeFixtures.activeNoticeField(1L),
-                            NoticeFixtures.activeNoticeField(2L));
+            NoticeCategory category = NoticeFixtures.noticeCategoryWithFields();
 
             // when
-            NoticeCategoryResult result = sut.toResult(category, fields);
+            NoticeCategoryResult result = sut.toResult(category);
 
             // then
             assertThat(result.fields()).hasSize(2);
@@ -76,10 +70,9 @@ class NoticeCategoryAssemblerTest {
         void toResult_InactiveCategory_ReturnsInactiveResult() {
             // given
             NoticeCategory category = NoticeFixtures.inactiveNoticeCategory();
-            List<NoticeField> fields = List.of();
 
             // when
-            NoticeCategoryResult result = sut.toResult(category, fields);
+            NoticeCategoryResult result = sut.toResult(category);
 
             // then
             assertThat(result.active()).isFalse();
@@ -97,7 +90,7 @@ class NoticeCategoryAssemblerTest {
             NoticeCategory category1 = NoticeFixtures.activeNoticeCategory(1L);
             NoticeCategory category2 = NoticeFixtures.activeNoticeCategory(2L);
             List<NoticeCategoryResult> results =
-                    List.of(sut.toResult(category1, List.of()), sut.toResult(category2, List.of()));
+                    List.of(sut.toResult(category1), sut.toResult(category2));
             int page = 0;
             int size = 20;
             long totalElements = 2L;
@@ -138,7 +131,7 @@ class NoticeCategoryAssemblerTest {
         void toPageResult_DifferentPaging_ReturnsPageResult() {
             // given
             NoticeCategory category = NoticeFixtures.activeNoticeCategory(1L);
-            List<NoticeCategoryResult> results = List.of(sut.toResult(category, List.of()));
+            List<NoticeCategoryResult> results = List.of(sut.toResult(category));
             int page = 2;
             int size = 10;
             long totalElements = 25L;

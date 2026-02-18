@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupDescriptionId;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.CdnPath;
 import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionHtml;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionPublishStatus;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,7 +31,8 @@ class ProductGroupDescriptionTest {
 
             // when
             ProductGroupDescription description =
-                    ProductGroupDescription.forNew(productGroupId, content);
+                    ProductGroupDescription.forNew(
+                            productGroupId, content, java.time.Instant.now());
 
             // then
             assertThat(description).isNotNull();
@@ -60,7 +62,14 @@ class ProductGroupDescriptionTest {
             // when
             ProductGroupDescription description =
                     ProductGroupDescription.reconstitute(
-                            id, productGroupId, content, cdnPath, images);
+                            id,
+                            productGroupId,
+                            content,
+                            cdnPath,
+                            DescriptionPublishStatus.PENDING,
+                            images,
+                            java.time.Instant.now(),
+                            java.time.Instant.now());
 
             // then
             assertThat(description.id()).isEqualTo(id);
@@ -92,19 +101,23 @@ class ProductGroupDescriptionTest {
         }
 
         @Test
-        @DisplayName("CDN 경로를 설정한다")
-        void updateCdnPath() {
+        @DisplayName("퍼블리시 시 CDN 경로를 설정하고 상태를 PUBLISHED로 변경한다")
+        void publish() {
             // given
             ProductGroupDescription description =
                     ProductGroupFixtures.defaultProductGroupDescription();
             CdnPath cdnPath = ProductGroupFixtures.defaultCdnPath();
 
             // when
-            description.updateCdnPath(cdnPath);
+            description.publish(cdnPath);
 
             // then
             assertThat(description.cdnPath()).isEqualTo(cdnPath);
             assertThat(description.cdnPathValue()).isEqualTo(ProductGroupFixtures.DEFAULT_CDN_PATH);
+            assertThat(description.publishStatus())
+                    .isEqualTo(
+                            com.ryuqq.marketplace.domain.productgroup.vo.DescriptionPublishStatus
+                                    .PUBLISHED);
         }
     }
 
@@ -196,7 +209,10 @@ class ProductGroupDescriptionTest {
                             ProductGroupFixtures.defaultProductGroupId(),
                             null,
                             null,
-                            List.of());
+                            DescriptionPublishStatus.PENDING,
+                            List.of(),
+                            java.time.Instant.now(),
+                            java.time.Instant.now());
 
             // when & then
             assertThat(description.isEmpty()).isTrue();
@@ -212,7 +228,10 @@ class ProductGroupDescriptionTest {
                             ProductGroupFixtures.defaultProductGroupId(),
                             ProductGroupFixtures.emptyDescriptionHtml(),
                             null,
-                            List.of());
+                            DescriptionPublishStatus.PENDING,
+                            List.of(),
+                            java.time.Instant.now(),
+                            java.time.Instant.now());
 
             // when & then
             assertThat(description.isEmpty()).isTrue();
@@ -244,7 +263,10 @@ class ProductGroupDescriptionTest {
                             ProductGroupFixtures.defaultProductGroupId(),
                             ProductGroupFixtures.defaultDescriptionHtml(),
                             null,
-                            List.of());
+                            DescriptionPublishStatus.PENDING,
+                            List.of(),
+                            java.time.Instant.now(),
+                            java.time.Instant.now());
 
             // when & then
             assertThat(description.idValue()).isEqualTo(100L);
@@ -260,7 +282,10 @@ class ProductGroupDescriptionTest {
                             ProductGroupId.of(200L),
                             ProductGroupFixtures.defaultDescriptionHtml(),
                             null,
-                            List.of());
+                            DescriptionPublishStatus.PENDING,
+                            List.of(),
+                            java.time.Instant.now(),
+                            java.time.Instant.now());
 
             // when & then
             assertThat(description.productGroupIdValue()).isEqualTo(200L);
@@ -276,7 +301,10 @@ class ProductGroupDescriptionTest {
                             ProductGroupFixtures.defaultProductGroupId(),
                             null,
                             null,
-                            List.of());
+                            DescriptionPublishStatus.PENDING,
+                            List.of(),
+                            java.time.Instant.now(),
+                            java.time.Instant.now());
 
             // when & then
             assertThat(description.contentValue()).isNull();

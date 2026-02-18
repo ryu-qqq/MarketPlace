@@ -1,9 +1,11 @@
 package com.ryuqq.marketplace.domain.productgroup.aggregate;
 
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionValueId;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionValueName;
+import java.time.Instant;
 
 /** 셀러 옵션 값 (Child Entity of SellerOptionGroup). 셀러가 자유 입력한 옵션 값. 캐노니컬 옵션에 매핑 가능 (nullable). */
 public class SellerOptionValue {
@@ -13,18 +15,21 @@ public class SellerOptionValue {
     private OptionValueName optionValueName;
     private CanonicalOptionValueId canonicalOptionValueId;
     private int sortOrder;
+    private DeletionStatus deletionStatus;
 
     private SellerOptionValue(
             SellerOptionValueId id,
             SellerOptionGroupId sellerOptionGroupId,
             OptionValueName optionValueName,
             CanonicalOptionValueId canonicalOptionValueId,
-            int sortOrder) {
+            int sortOrder,
+            DeletionStatus deletionStatus) {
         this.id = id;
         this.sellerOptionGroupId = sellerOptionGroupId;
         this.optionValueName = optionValueName;
         this.canonicalOptionValueId = canonicalOptionValueId;
         this.sortOrder = sortOrder;
+        this.deletionStatus = deletionStatus;
     }
 
     /** 신규 셀러 옵션 값 생성. */
@@ -37,7 +42,8 @@ public class SellerOptionValue {
                 sellerOptionGroupId,
                 optionValueName,
                 null,
-                sortOrder);
+                sortOrder,
+                DeletionStatus.active());
     }
 
     /** 캐노니컬 매핑과 함께 신규 생성. */
@@ -51,7 +57,8 @@ public class SellerOptionValue {
                 sellerOptionGroupId,
                 optionValueName,
                 canonicalOptionValueId,
-                sortOrder);
+                sortOrder,
+                DeletionStatus.active());
     }
 
     /** 영속성에서 복원 시 사용. */
@@ -60,9 +67,15 @@ public class SellerOptionValue {
             SellerOptionGroupId sellerOptionGroupId,
             OptionValueName optionValueName,
             CanonicalOptionValueId canonicalOptionValueId,
-            int sortOrder) {
+            int sortOrder,
+            DeletionStatus deletionStatus) {
         return new SellerOptionValue(
-                id, sellerOptionGroupId, optionValueName, canonicalOptionValueId, sortOrder);
+                id,
+                sellerOptionGroupId,
+                optionValueName,
+                canonicalOptionValueId,
+                sortOrder,
+                deletionStatus);
     }
 
     /** 옵션 값 이름 수정. */
@@ -120,5 +133,18 @@ public class SellerOptionValue {
 
     public int sortOrder() {
         return sortOrder;
+    }
+
+    /** soft delete 처리. */
+    public void delete(Instant occurredAt) {
+        this.deletionStatus = DeletionStatus.deletedAt(occurredAt);
+    }
+
+    public boolean isDeleted() {
+        return deletionStatus.isDeleted();
+    }
+
+    public DeletionStatus deletionStatus() {
+        return deletionStatus;
     }
 }

@@ -1,0 +1,196 @@
+package com.ryuqq.marketplace.adapter.out.persistence.productgroupinspection;
+
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupinspection.entity.ProductGroupInspectionOutboxJpaEntity;
+import java.time.Instant;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * ProductGroupInspectionOutboxJpaEntity 테스트 Fixtures.
+ *
+ * <p>테스트에서 ProductGroupInspectionOutboxJpaEntity 관련 객체들을 생성합니다.
+ */
+public final class ProductGroupInspectionOutboxJpaEntityFixtures {
+
+    private ProductGroupInspectionOutboxJpaEntityFixtures() {}
+
+    private static final AtomicLong SEQUENCE = new AtomicLong(1);
+
+    // ===== 기본 상수 =====
+    public static final Long DEFAULT_PRODUCT_GROUP_ID = 1L;
+    public static final int DEFAULT_MAX_RETRY = 3;
+    public static final String DEFAULT_INSPECTION_RESULT_JSON =
+            "{\"totalScore\":85,\"passed\":true}";
+    public static final int DEFAULT_TOTAL_SCORE = 85;
+    public static final boolean DEFAULT_PASSED = true;
+
+    // ===== Entity Fixtures =====
+
+    /** PENDING 상태의 신규 Outbox Entity 생성 (ID null). */
+    public static ProductGroupInspectionOutboxJpaEntity newPendingEntity() {
+        Instant now = Instant.now();
+        long seq = SEQUENCE.getAndIncrement();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                null,
+                DEFAULT_PRODUCT_GROUP_ID,
+                ProductGroupInspectionOutboxJpaEntity.Status.PENDING,
+                null,
+                null,
+                null,
+                0,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                null,
+                null,
+                0L,
+                "PGI:" + DEFAULT_PRODUCT_GROUP_ID + ":" + now.toEpochMilli() + ":" + seq);
+    }
+
+    /** PENDING 상태의 Outbox Entity 생성 (ID 지정). */
+    public static ProductGroupInspectionOutboxJpaEntity pendingEntity(Long id) {
+        Instant now = Instant.now();
+        long seq = SEQUENCE.getAndIncrement();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                id,
+                DEFAULT_PRODUCT_GROUP_ID,
+                ProductGroupInspectionOutboxJpaEntity.Status.PENDING,
+                null,
+                null,
+                null,
+                0,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                null,
+                null,
+                0L,
+                "PGI:" + DEFAULT_PRODUCT_GROUP_ID + ":" + now.toEpochMilli() + ":" + seq);
+    }
+
+    /** PROCESSING 상태의 Outbox Entity 생성 (ID null). */
+    public static ProductGroupInspectionOutboxJpaEntity newProcessingEntity() {
+        Instant now = Instant.now();
+        long seq = SEQUENCE.getAndIncrement();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                null,
+                DEFAULT_PRODUCT_GROUP_ID,
+                ProductGroupInspectionOutboxJpaEntity.Status.PROCESSING,
+                null,
+                null,
+                null,
+                0,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                null,
+                null,
+                1L,
+                "PGI:" + DEFAULT_PRODUCT_GROUP_ID + ":" + now.toEpochMilli() + ":" + seq);
+    }
+
+    /** COMPLETED 상태의 Outbox Entity 생성 (ID null). */
+    public static ProductGroupInspectionOutboxJpaEntity newCompletedEntity() {
+        Instant now = Instant.now();
+        long seq = SEQUENCE.getAndIncrement();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                null,
+                DEFAULT_PRODUCT_GROUP_ID,
+                ProductGroupInspectionOutboxJpaEntity.Status.COMPLETED,
+                DEFAULT_INSPECTION_RESULT_JSON,
+                DEFAULT_TOTAL_SCORE,
+                DEFAULT_PASSED,
+                0,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                now,
+                null,
+                2L,
+                "PGI:" + DEFAULT_PRODUCT_GROUP_ID + ":" + now.toEpochMilli() + ":" + seq);
+    }
+
+    /** FAILED 상태의 Outbox Entity 생성 (ID null). */
+    public static ProductGroupInspectionOutboxJpaEntity newFailedEntity() {
+        Instant now = Instant.now();
+        long seq = SEQUENCE.getAndIncrement();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                null,
+                DEFAULT_PRODUCT_GROUP_ID,
+                ProductGroupInspectionOutboxJpaEntity.Status.FAILED,
+                null,
+                null,
+                null,
+                DEFAULT_MAX_RETRY,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                now,
+                "최대 재시도 횟수 초과",
+                3L,
+                "PGI:" + DEFAULT_PRODUCT_GROUP_ID + ":" + now.toEpochMilli() + ":" + seq);
+    }
+
+    /** 재시도 횟수가 남아 있는 PENDING Entity 생성. */
+    public static ProductGroupInspectionOutboxJpaEntity newPendingEntityWithRetry(int retryCount) {
+        Instant now = Instant.now();
+        long seq = SEQUENCE.getAndIncrement();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                null,
+                DEFAULT_PRODUCT_GROUP_ID,
+                ProductGroupInspectionOutboxJpaEntity.Status.PENDING,
+                null,
+                null,
+                null,
+                retryCount,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                null,
+                "이전 실패",
+                0L,
+                "PGI:" + DEFAULT_PRODUCT_GROUP_ID + ":" + now.toEpochMilli() + ":" + seq);
+    }
+
+    /** 오래된 updatedAt을 가진 PROCESSING Entity 생성 (타임아웃 시나리오용). */
+    public static ProductGroupInspectionOutboxJpaEntity newProcessingEntityWithOldUpdatedAt(
+            Instant oldUpdatedAt) {
+        Instant now = Instant.now();
+        long seq = SEQUENCE.getAndIncrement();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                null,
+                DEFAULT_PRODUCT_GROUP_ID,
+                ProductGroupInspectionOutboxJpaEntity.Status.PROCESSING,
+                null,
+                null,
+                null,
+                0,
+                DEFAULT_MAX_RETRY,
+                oldUpdatedAt,
+                oldUpdatedAt,
+                null,
+                null,
+                1L,
+                "PGI:" + DEFAULT_PRODUCT_GROUP_ID + ":" + now.toEpochMilli() + ":" + seq);
+    }
+
+    /** productGroupId를 지정하여 PENDING Entity 생성. */
+    public static ProductGroupInspectionOutboxJpaEntity newPendingEntity(Long productGroupId) {
+        Instant now = Instant.now();
+        long seq = SEQUENCE.getAndIncrement();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                null,
+                productGroupId,
+                ProductGroupInspectionOutboxJpaEntity.Status.PENDING,
+                null,
+                null,
+                null,
+                0,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                null,
+                null,
+                0L,
+                "PGI:" + productGroupId + ":" + now.toEpochMilli() + ":" + seq);
+    }
+}

@@ -423,7 +423,8 @@ module "ecs_service" {
 
   # Container Secrets
   container_secrets = [
-    { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" }
+    { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
+    { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn }
   ]
 
   # Health Check
