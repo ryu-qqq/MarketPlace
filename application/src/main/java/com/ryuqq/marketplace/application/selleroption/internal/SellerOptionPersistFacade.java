@@ -41,8 +41,10 @@ public class SellerOptionPersistFacade {
         return optionGroups.stream()
                 .flatMap(
                         group -> {
-                            groupCommandManager.persist(group);
-                            return valueCommandManager.persistAll(group.optionValues()).stream();
+                            Long groupId = groupCommandManager.persist(group);
+                            return valueCommandManager
+                                    .persistAllForGroup(groupId, group.optionValues())
+                                    .stream();
                         })
                 .map(SellerOptionValueId::of)
                 .toList();

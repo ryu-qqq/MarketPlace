@@ -22,4 +22,9 @@ public class ProductOptionMappingCommandManager {
             commandPort.persist(mapping);
         }
     }
+
+    @Transactional
+    public void persistAllForProduct(Long productId, List<ProductOptionMapping> mappings) {
+        commandPort.persistAllForProduct(productId, mappings);
+    }
 }

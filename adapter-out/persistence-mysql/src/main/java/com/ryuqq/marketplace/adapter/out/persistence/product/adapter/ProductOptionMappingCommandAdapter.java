@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.product.mapper.ProductJpaEn
 import com.ryuqq.marketplace.adapter.out.persistence.product.repository.ProductOptionMappingJpaRepository;
 import com.ryuqq.marketplace.application.product.port.out.command.ProductOptionMappingCommandPort;
 import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,5 +29,12 @@ public class ProductOptionMappingCommandAdapter implements ProductOptionMappingC
     public void persist(ProductOptionMapping mapping) {
         ProductOptionMappingJpaEntity entity = mapper.toMappingEntity(mapping);
         repository.save(entity);
+    }
+
+    @Override
+    public void persistAllForProduct(Long productId, List<ProductOptionMapping> mappings) {
+        List<ProductOptionMappingJpaEntity> entities =
+                mappings.stream().map(m -> mapper.toMappingEntity(m, productId)).toList();
+        repository.saveAll(entities);
     }
 }
