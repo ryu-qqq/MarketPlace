@@ -160,6 +160,57 @@ public final class ProductGroupInspectionOutboxJpaEntityFixtures {
                 uniqueIdempotencyKey());
     }
 
+    // ===== SENT (In-Progress) Entity Fixtures =====
+
+    /**
+     * 신규 SENT Entity 생성 (ID null).
+     *
+     * <p>SQS 전송 완료 상태를 표현합니다.
+     */
+    public static ProductGroupInspectionOutboxJpaEntity newSentEntity() {
+        Instant now = Instant.now();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                null,
+                DEFAULT_PRODUCT_GROUP_ID,
+                ProductGroupInspectionOutboxJpaEntity.Status.SENT,
+                null,
+                null,
+                null,
+                0,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                null,
+                null,
+                0L,
+                uniqueIdempotencyKey());
+    }
+
+    /**
+     * updatedAt을 지정한 신규 SENT Entity 생성 (ID null).
+     *
+     * <p>진행 중 타임아웃 조건 테스트에 사용합니다.
+     */
+    public static ProductGroupInspectionOutboxJpaEntity newSentEntityWithOldUpdatedAt(
+            Instant oldUpdatedAt) {
+        Instant now = Instant.now();
+        return ProductGroupInspectionOutboxJpaEntity.create(
+                null,
+                DEFAULT_PRODUCT_GROUP_ID,
+                ProductGroupInspectionOutboxJpaEntity.Status.SENT,
+                null,
+                null,
+                null,
+                0,
+                DEFAULT_MAX_RETRY,
+                now,
+                oldUpdatedAt,
+                null,
+                null,
+                0L,
+                uniqueIdempotencyKey());
+    }
+
     // ===== COMPLETED Entity Fixtures =====
 
     /**
