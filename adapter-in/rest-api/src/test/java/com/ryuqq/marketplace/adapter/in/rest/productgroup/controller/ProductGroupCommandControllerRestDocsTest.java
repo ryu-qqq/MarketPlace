@@ -117,13 +117,13 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("상품 그룹명"),
                                             fieldWithPath("optionType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("옵션 유형 (SINGLE, COMBINATION)"),
+                                                    .description("옵션 유형 (NONE, SINGLE, COMBINATION, FREE_INPUT)"),
                                             fieldWithPath("images")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("이미지 목록"),
                                             fieldWithPath("images[].imageType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("이미지 유형 (MAIN, DETAIL 등)"),
+                                                    .description("이미지 유형 (THUMBNAIL, DETAIL)"),
                                             fieldWithPath("images[].originUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("원본 이미지 URL"),
@@ -446,7 +446,7 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("이미지 목록 (최소 1개)"),
                                             fieldWithPath("images[].imageType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("이미지 유형 (MAIN, DETAIL 등)"),
+                                                    .description("이미지 유형 (THUMBNAIL, DETAIL)"),
                                             fieldWithPath("images[].originUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("원본 이미지 URL"),

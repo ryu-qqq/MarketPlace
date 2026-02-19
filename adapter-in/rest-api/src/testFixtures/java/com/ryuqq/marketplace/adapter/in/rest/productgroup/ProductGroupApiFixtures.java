@@ -59,7 +59,7 @@ public final class ProductGroupApiFixtures {
         List<RegisterProductGroupApiRequest.ImageApiRequest> images =
                 List.of(
                         new RegisterProductGroupApiRequest.ImageApiRequest(
-                                "MAIN", "https://origin.example.com/img1.jpg", 1),
+                                "THUMBNAIL", "https://origin.example.com/img1.jpg", 1),
                         new RegisterProductGroupApiRequest.ImageApiRequest(
                                 "DETAIL", "https://origin.example.com/img2.jpg", 2));
 
@@ -125,7 +125,7 @@ public final class ProductGroupApiFixtures {
         List<UpdateProductGroupFullApiRequest.ImageApiRequest> images =
                 List.of(
                         new UpdateProductGroupFullApiRequest.ImageApiRequest(
-                                "MAIN", "https://origin.example.com/updated-img1.jpg", 1));
+                                "THUMBNAIL", "https://origin.example.com/updated-img1.jpg", 1));
 
         List<UpdateProductGroupFullApiRequest.OptionGroupApiRequest> optionGroups =
                 List.of(
@@ -332,7 +332,7 @@ public final class ProductGroupApiFixtures {
                                 1L,
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
-                                "MAIN",
+                                "THUMBNAIL",
                                 1),
                         new ProductGroupImageResult(
                                 2L,
@@ -378,7 +378,7 @@ public final class ProductGroupApiFixtures {
                                 1L,
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
-                                "MAIN",
+                                "THUMBNAIL",
                                 1));
 
         ProductOptionMatrixResult matrix = createProductOptionMatrixResult();
@@ -414,7 +414,7 @@ public final class ProductGroupApiFixtures {
                                 1L,
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
-                                "MAIN",
+                                "THUMBNAIL",
                                 1),
                         new ProductGroupImageApiResponse(
                                 2L,
@@ -488,7 +488,7 @@ public final class ProductGroupApiFixtures {
                 "기본 배송 정책",
                 true,
                 true,
-                "FIXED",
+                "PAID",
                 "고정 배송비",
                 3000L,
                 30000L,
@@ -506,8 +506,8 @@ public final class ProductGroupApiFixtures {
     private static RefundPolicyResult createRefundPolicyResult() {
         List<NonReturnableConditionResult> conditions =
                 List.of(
-                        new NonReturnableConditionResult("OPENED", "개봉 상품"),
-                        new NonReturnableConditionResult("USED", "사용 흔적"));
+                        new NonReturnableConditionResult("OPENED_PACKAGING", "포장 개봉"),
+                        new NonReturnableConditionResult("USED_PRODUCT", "사용 흔적"));
 
         return new RefundPolicyResult(
                 1L,
@@ -591,7 +591,7 @@ public final class ProductGroupApiFixtures {
                 "기본 배송 정책",
                 true,
                 true,
-                "FIXED",
+                "PAID",
                 "고정 배송비",
                 3000L,
                 30000L,
@@ -609,8 +609,8 @@ public final class ProductGroupApiFixtures {
     private static RefundPolicyApiResponse createRefundPolicyApiResponse() {
         List<NonReturnableConditionApiResponse> conditions =
                 List.of(
-                        new NonReturnableConditionApiResponse("OPENED", "개봉 상품"),
-                        new NonReturnableConditionApiResponse("USED", "사용 흔적"));
+                        new NonReturnableConditionApiResponse("OPENED_PACKAGING", "포장 개봉"),
+                        new NonReturnableConditionApiResponse("USED_PRODUCT", "사용 흔적"));
 
         return new RefundPolicyApiResponse(
                 1L,
