@@ -25,6 +25,10 @@ spring:
       - optional:classpath:fileflow-${spring.profiles.active:local}.yml
       - classpath:ses.yml
       - optional:classpath:ses-${spring.profiles.active:local}.yml
+      - classpath:sqs-client.yml
+      - optional:classpath:sqs-client-${spring.profiles.active:local}.yml
+      - classpath:spring-ai-client.yml
+      - optional:classpath:spring-ai-client-${spring.profiles.active:local}.yml
 
 # ========================================
 # Management & Actuator
