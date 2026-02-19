@@ -123,8 +123,12 @@ class AuthCommandControllerRestDocsTest {
                                             fieldWithPath("data.expiresIn")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("만료 시간 (초)"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -159,8 +163,12 @@ class AuthCommandControllerRestDocsTest {
                                                         .type(JsonFieldType.OBJECT)
                                                         .description("응답 데이터")
                                                         .optional(),
-                                                fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                                fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                                fieldWithPath("timestamp")
+                                                        .type(JsonFieldType.STRING)
+                                                        .description("응답 시간"),
+                                                fieldWithPath("requestId")
+                                                        .type(JsonFieldType.STRING)
+                                                        .description("요청 ID"))));
             } finally {
                 UserContextHolder.clearContext();
             }

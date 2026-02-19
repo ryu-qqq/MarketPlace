@@ -117,8 +117,12 @@ class SellerAdminApplicationCommandControllerRestDocsTest {
                                             fieldWithPath("data.sellerAdminId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("생성된 셀러 관리자 ID (UUIDv7)"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시각"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시각"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -152,8 +156,12 @@ class SellerAdminApplicationCommandControllerRestDocsTest {
                                             fieldWithPath("data.sellerAdminId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("승인된 셀러 관리자 ID"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시각"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시각"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -231,9 +239,15 @@ class SellerAdminApplicationCommandControllerRestDocsTest {
                                             fieldWithPath("data.totalCount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("전체 처리 건수"),
-                                            fieldWithPath("data.successCount").type(JsonFieldType.NUMBER).description("성공 건수"),
-                                            fieldWithPath("data.failureCount").type(JsonFieldType.NUMBER).description("실패 건수"),
-                                            fieldWithPath("data.results[]").type(JsonFieldType.ARRAY).description("처리 결과 목록"),
+                                            fieldWithPath("data.successCount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("성공 건수"),
+                                            fieldWithPath("data.failureCount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("실패 건수"),
+                                            fieldWithPath("data.results[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("처리 결과 목록"),
                                             fieldWithPath("data.results[].sellerAdminId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("셀러 관리자 ID"),
@@ -248,8 +262,12 @@ class SellerAdminApplicationCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("에러 메시지 (실패 시)")
                                                     .optional(),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시각"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시각"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
 
         @Test
