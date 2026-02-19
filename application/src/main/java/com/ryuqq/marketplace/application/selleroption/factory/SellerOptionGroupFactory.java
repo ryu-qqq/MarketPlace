@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionValue;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionGroupName;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionValueName;
 import com.ryuqq.marketplace.domain.productgroup.vo.SellerOptionGroupUpdateData;
 import com.ryuqq.marketplace.domain.productgroup.vo.SellerOptionGroups;
@@ -37,6 +38,10 @@ public class SellerOptionGroupFactory {
         for (var group : optionGroups) {
             SellerOptionGroupId tempGroupId = SellerOptionGroupId.forNew();
             OptionGroupName groupName = OptionGroupName.of(group.optionGroupName());
+            OptionInputType inputType =
+                    group.inputType() != null
+                            ? OptionInputType.valueOf(group.inputType())
+                            : OptionInputType.PREDEFINED;
 
             List<SellerOptionValue> optionValues =
                     group.optionValues().stream()
@@ -64,12 +69,17 @@ public class SellerOptionGroupFactory {
                                 productGroupId,
                                 groupName,
                                 CanonicalOptionGroupId.of(group.canonicalOptionGroupId()),
+                                inputType,
                                 groupSortOrder++,
                                 optionValues);
             } else {
                 optionGroup =
                         SellerOptionGroup.forNew(
-                                productGroupId, groupName, groupSortOrder++, optionValues);
+                                productGroupId,
+                                groupName,
+                                inputType,
+                                groupSortOrder++,
+                                optionValues);
             }
             result.add(optionGroup);
         }
@@ -84,6 +94,11 @@ public class SellerOptionGroupFactory {
         List<SellerOptionGroupUpdateData.GroupEntry> entries = new ArrayList<>();
 
         for (var group : optionGroups) {
+            OptionInputType inputType =
+                    group.inputType() != null
+                            ? OptionInputType.valueOf(group.inputType())
+                            : OptionInputType.PREDEFINED;
+
             List<SellerOptionGroupUpdateData.ValueEntry> valueEntries =
                     group.optionValues().stream()
                             .map(
@@ -100,6 +115,7 @@ public class SellerOptionGroupFactory {
                             group.sellerOptionGroupId(),
                             group.optionGroupName(),
                             group.canonicalOptionGroupId(),
+                            inputType,
                             entries.size(),
                             valueEntries));
         }

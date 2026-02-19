@@ -74,9 +74,9 @@ public final class ProductApiFixtures {
         List<UpdateProductsApiRequest.OptionGroupApiRequest> optionGroups =
                 List.of(
                         new UpdateProductsApiRequest.OptionGroupApiRequest(
-                                10L, "색상", 1001L, values1),
+                                10L, "색상", 1001L, "PREDEFINED", values1),
                         new UpdateProductsApiRequest.OptionGroupApiRequest(
-                                20L, "사이즈", 1002L, values2));
+                                20L, "사이즈", 1002L, "PREDEFINED", values2));
 
         List<UpdateProductsApiRequest.ProductDataApiRequest> products =
                 List.of(
@@ -139,7 +139,7 @@ public final class ProductApiFixtures {
         List<UpdateProductsApiRequest.OptionGroupApiRequest> optionGroups =
                 List.of(
                         new UpdateProductsApiRequest.OptionGroupApiRequest(
-                                10L, "색상", 1001L, values));
+                                10L, "색상", 1001L, "PREDEFINED", values));
 
         List<UpdateProductsApiRequest.ProductDataApiRequest> products =
                 List.of(
@@ -164,7 +164,7 @@ public final class ProductApiFixtures {
         List<UpdateProductsApiRequest.OptionGroupApiRequest> optionGroups =
                 List.of(
                         new UpdateProductsApiRequest.OptionGroupApiRequest(
-                                null, "색상", null, values));
+                                null, "색상", null, "PREDEFINED", values));
 
         List<UpdateProductsApiRequest.ProductDataApiRequest> products =
                 List.of(

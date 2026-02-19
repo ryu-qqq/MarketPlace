@@ -53,6 +53,7 @@ class SearchSellerAddressServiceTest {
                             null,
                             null,
                             null,
+                            null,
                             QueryContext.defaultOf(SellerAddressSortKey.defaultKey()));
             List<SellerAddress> addresses =
                     List.of(SellerAddressFixtures.defaultShippingAddress(1L, sellerId));
@@ -84,6 +85,7 @@ class SearchSellerAddressServiceTest {
             SellerAddressSearchCriteria criteria =
                     SellerAddressSearchCriteria.of(
                             List.of(SellerId.of(sellerId)),
+                            null,
                             null,
                             null,
                             null,

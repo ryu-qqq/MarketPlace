@@ -26,7 +26,8 @@ public record SellerApplicationApiResponse(
         @Schema(description = "CS 연락처 정보") CsContactInfo csContact,
         @Schema(description = "담당자 연락처") ContactInfo contactInfo,
         @Schema(description = "동의 정보") AgreementInfo agreement,
-        @Schema(description = "신청 상태", example = "PENDING") String status,
+        @Schema(description = "신청 상태 (PENDING, APPROVED, REJECTED)", example = "PENDING")
+                String status,
         @Schema(description = "신청 일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
                 String appliedAt,
         @Schema(description = "처리 일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")

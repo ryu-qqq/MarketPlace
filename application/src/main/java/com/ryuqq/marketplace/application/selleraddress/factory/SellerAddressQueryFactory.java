@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.selleraddress.query.SellerAddressSearchCriteria;
+import com.ryuqq.marketplace.domain.selleraddress.query.SellerAddressSearchField;
 import com.ryuqq.marketplace.domain.selleraddress.query.SellerAddressSortKey;
 import com.ryuqq.marketplace.domain.selleraddress.vo.AddressType;
 import java.util.Collections;
@@ -49,13 +50,20 @@ public class SellerAddressQueryFactory {
                         pageRequest,
                         params.commonSearchParams().includeDeleted());
 
-        String keyword =
+        SellerAddressSearchField searchField =
+                SellerAddressSearchField.fromString(params.searchField());
+        String searchWord =
                 params.searchWord() != null && !params.searchWord().isBlank()
                         ? params.searchWord().trim()
                         : null;
 
         return SellerAddressSearchCriteria.of(
-                sellerIds, addressTypes, params.defaultAddress(), keyword, queryContext);
+                sellerIds,
+                addressTypes,
+                params.defaultAddress(),
+                searchField,
+                searchWord,
+                queryContext);
     }
 
     private SellerAddressSortKey resolveSortKey(String sortKeyString) {

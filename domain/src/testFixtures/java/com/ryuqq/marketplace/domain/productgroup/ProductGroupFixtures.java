@@ -184,6 +184,7 @@ public final class ProductGroupFixtures {
         return SellerOptionGroup.forNew(
                 newProductGroupId(),
                 defaultOptionGroupName(),
+                OptionInputType.PREDEFINED,
                 0,
                 List.of(defaultSellerOptionValue()));
     }
@@ -194,6 +195,7 @@ public final class ProductGroupFixtures {
                 newProductGroupId(),
                 defaultOptionGroupName(),
                 CanonicalOptionGroupId.of(1L),
+                OptionInputType.PREDEFINED,
                 0,
                 List.of(mappedSellerOptionValue()));
     }
@@ -217,6 +219,7 @@ public final class ProductGroupFixtures {
                 newProductGroupId(),
                 optionGroupName("색상"),
                 CanonicalOptionGroupId.of(1L),
+                OptionInputType.PREDEFINED,
                 0,
                 List.of(value1, value2));
     }
@@ -289,6 +292,7 @@ public final class ProductGroupFixtures {
                 SellerOptionGroup.forNew(
                         newProductGroupId(),
                         optionGroupName("색상"),
+                        OptionInputType.PREDEFINED,
                         0,
                         List.of(defaultSellerOptionValue()));
 
@@ -296,6 +300,7 @@ public final class ProductGroupFixtures {
                 SellerOptionGroup.forNew(
                         newProductGroupId(),
                         optionGroupName("사이즈"),
+                        OptionInputType.PREDEFINED,
                         1,
                         List.of(
                                 SellerOptionValue.forNew(

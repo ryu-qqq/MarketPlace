@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.externalcategorymapping.dto.query.SearchExternalCategoryMappingsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.externalcategorymapping.dto.response.ExternalCategoryMappingApiResponse;
+import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.externalcategorymapping.dto.query.ExternalCategoryMappingSearchParams;
 import com.ryuqq.marketplace.application.externalcategorymapping.dto.response.ExternalCategoryMappingPageResult;
 import com.ryuqq.marketplace.application.externalcategorymapping.dto.response.ExternalCategoryMappingResult;
@@ -14,16 +15,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExternalCategoryMappingQueryApiMapper {
 
-    private static final int DEFAULT_PAGE = 0;
-    private static final int DEFAULT_SIZE = 20;
-
     public ExternalCategoryMappingSearchParams toSearchParams(
             Long externalSourceId, SearchExternalCategoryMappingsApiRequest request) {
-        int page = request.page() != null ? request.page() : DEFAULT_PAGE;
-        int size = request.size() != null ? request.size() : DEFAULT_SIZE;
+        CommonSearchParams commonSearchParams =
+                CommonSearchParams.of(
+                        null,
+                        null,
+                        null,
+                        request.sortKey(),
+                        request.sortDirection(),
+                        request.page(),
+                        request.size());
 
         return new ExternalCategoryMappingSearchParams(
-                externalSourceId, null, request.searchWord(), page, size);
+                externalSourceId,
+                null,
+                request.searchField(),
+                request.searchWord(),
+                commonSearchParams);
     }
 
     public ExternalCategoryMappingApiResponse toResponse(ExternalCategoryMappingResult result) {

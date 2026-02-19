@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionGroupName;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +21,7 @@ public class SellerOptionGroup {
     private final ProductGroupId productGroupId;
     private OptionGroupName optionGroupName;
     private CanonicalOptionGroupId canonicalOptionGroupId;
+    private OptionInputType inputType;
     private int sortOrder;
     private final List<SellerOptionValue> optionValues;
     private DeletionStatus deletionStatus;
@@ -29,6 +31,7 @@ public class SellerOptionGroup {
             ProductGroupId productGroupId,
             OptionGroupName optionGroupName,
             CanonicalOptionGroupId canonicalOptionGroupId,
+            OptionInputType inputType,
             int sortOrder,
             List<SellerOptionValue> optionValues,
             DeletionStatus deletionStatus) {
@@ -36,6 +39,7 @@ public class SellerOptionGroup {
         this.productGroupId = productGroupId;
         this.optionGroupName = optionGroupName;
         this.canonicalOptionGroupId = canonicalOptionGroupId;
+        this.inputType = inputType;
         this.sortOrder = sortOrder;
         this.optionValues = new ArrayList<>(optionValues);
         this.deletionStatus = deletionStatus;
@@ -45,6 +49,7 @@ public class SellerOptionGroup {
     public static SellerOptionGroup forNew(
             ProductGroupId productGroupId,
             OptionGroupName optionGroupName,
+            OptionInputType inputType,
             int sortOrder,
             List<SellerOptionValue> optionValues) {
         return new SellerOptionGroup(
@@ -52,6 +57,7 @@ public class SellerOptionGroup {
                 productGroupId,
                 optionGroupName,
                 null,
+                inputType,
                 sortOrder,
                 optionValues,
                 DeletionStatus.active());
@@ -62,6 +68,7 @@ public class SellerOptionGroup {
             ProductGroupId productGroupId,
             OptionGroupName optionGroupName,
             CanonicalOptionGroupId canonicalOptionGroupId,
+            OptionInputType inputType,
             int sortOrder,
             List<SellerOptionValue> optionValues) {
         return new SellerOptionGroup(
@@ -69,6 +76,7 @@ public class SellerOptionGroup {
                 productGroupId,
                 optionGroupName,
                 canonicalOptionGroupId,
+                inputType,
                 sortOrder,
                 optionValues,
                 DeletionStatus.active());
@@ -80,6 +88,7 @@ public class SellerOptionGroup {
             ProductGroupId productGroupId,
             OptionGroupName optionGroupName,
             CanonicalOptionGroupId canonicalOptionGroupId,
+            OptionInputType inputType,
             int sortOrder,
             List<SellerOptionValue> optionValues,
             DeletionStatus deletionStatus) {
@@ -88,6 +97,7 @@ public class SellerOptionGroup {
                 productGroupId,
                 optionGroupName,
                 canonicalOptionGroupId,
+                inputType,
                 sortOrder,
                 optionValues,
                 deletionStatus);
@@ -162,6 +172,10 @@ public class SellerOptionGroup {
 
     public CanonicalOptionGroupId canonicalOptionGroupId() {
         return canonicalOptionGroupId;
+    }
+
+    public OptionInputType inputType() {
+        return inputType;
     }
 
     public int sortOrder() {

@@ -25,7 +25,7 @@ public record SearchSellersApiRequest(
                         description =
                                 "검색 필드 (SELLER_NAME, REGISTRATION_NUMBER, COMPANY_NAME,"
                                         + " REPRESENTATIVE_NAME)",
-                        example = "sellerName",
+                        example = "SELLER_NAME",
                         schema =
                                 @Schema(
                                         allowableValues = {
@@ -36,12 +36,17 @@ public record SearchSellersApiRequest(
                                         }))
                 String searchField,
         @Parameter(description = "검색어", example = "테스트") String searchWord,
-        @Parameter(description = "정렬 기준", example = "createdAt") String sortKey,
-        @Parameter(description = "정렬 방향 (ASC/DESC)", example = "DESC") String sortDirection,
-        @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+        @Parameter(
+                        description =
+                                "정렬 기준 (CREATED_AT, SELLER_NAME, DISPLAY_NAME, 기본값: CREATED_AT)",
+                        example = "CREATED_AT")
+                String sortKey,
+        @Parameter(description = "정렬 방향 (ASC, DESC, 기본값: DESC)", example = "DESC")
+                String sortDirection,
+        @Parameter(description = "페이지 번호 (0부터 시작, 기본값: 0)", example = "0")
                 @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.")
                 Integer page,
-        @Parameter(description = "페이지 크기 (1~100)", example = "20")
+        @Parameter(description = "페이지 크기 (1~100, 기본값: 20)", example = "20")
                 @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.")
                 @Max(value = 100, message = "페이지 크기는 100 이하여야 합니다.")
                 Integer size) {}

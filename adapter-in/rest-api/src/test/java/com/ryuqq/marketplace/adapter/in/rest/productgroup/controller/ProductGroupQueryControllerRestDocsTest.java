@@ -122,16 +122,18 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 키")
+                                                    .description(
+                                                            "정렬 키 (CREATED_AT, UPDATED_AT,"
+                                                                    + " NAME). 기본값: CREATED_AT")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC). 기본값: DESC")
                                                     .optional(),
                                             parameterWithName("page")
-                                                    .description("페이지 번호 (0부터)")
+                                                    .description("페이지 번호 (0부터). 기본값: 0")
                                                     .optional(),
                                             parameterWithName("size")
-                                                    .description("페이지 크기")
+                                                    .description("페이지 크기. 기본값: 20")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.content[]")
@@ -376,6 +378,12 @@ class ProductGroupQueryControllerRestDocsTest {
                                                             "data.optionProductMatrix.optionGroups[].canonicalOptionGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("표준 옵션 그룹 ID"),
+                                            fieldWithPath(
+                                                            "data.optionProductMatrix.optionGroups[].inputType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description(
+                                                            "입력 유형 (PREDEFINED: 사전 정의,"
+                                                                    + " FREE_INPUT: 자유 입력)"),
                                             fieldWithPath(
                                                             "data.optionProductMatrix.optionGroups[].sortOrder")
                                                     .type(JsonFieldType.NUMBER)

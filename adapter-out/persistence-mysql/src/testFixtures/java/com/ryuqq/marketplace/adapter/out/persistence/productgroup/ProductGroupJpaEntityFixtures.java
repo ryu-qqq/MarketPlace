@@ -180,14 +180,21 @@ public final class ProductGroupJpaEntityFixtures {
     public static SellerOptionGroupJpaEntity activeOptionGroupEntity(Long productGroupId) {
         long seq = SEQUENCE.getAndIncrement();
         return SellerOptionGroupJpaEntity.create(
-                null, productGroupId, "색상 " + seq, null, (int) seq, false, null);
+                null, productGroupId, "색상 " + seq, null, "PREDEFINED", (int) seq, false, null);
     }
 
     /** 삭제된 SellerOptionGroup Entity 생성. */
     public static SellerOptionGroupJpaEntity deletedOptionGroupEntity(Long productGroupId) {
         long seq = SEQUENCE.getAndIncrement();
         return SellerOptionGroupJpaEntity.create(
-                null, productGroupId, "색상 " + seq, null, (int) seq, true, Instant.now());
+                null,
+                productGroupId,
+                "색상 " + seq,
+                null,
+                "PREDEFINED",
+                (int) seq,
+                true,
+                Instant.now());
     }
 
     /** 캐노니컬 매핑된 SellerOptionGroup Entity 생성. */
@@ -195,7 +202,14 @@ public final class ProductGroupJpaEntityFixtures {
             Long productGroupId, Long canonicalOptionGroupId) {
         long seq = SEQUENCE.getAndIncrement();
         return SellerOptionGroupJpaEntity.create(
-                null, productGroupId, "색상 " + seq, canonicalOptionGroupId, (int) seq, false, null);
+                null,
+                productGroupId,
+                "색상 " + seq,
+                canonicalOptionGroupId,
+                "PREDEFINED",
+                (int) seq,
+                false,
+                null);
     }
 
     /** ID를 지정한 활성 상태의 SellerOptionGroup Entity 생성. */
@@ -203,7 +217,7 @@ public final class ProductGroupJpaEntityFixtures {
             Long id, Long productGroupId) {
         long seq = SEQUENCE.getAndIncrement();
         return SellerOptionGroupJpaEntity.create(
-                id, productGroupId, "색상 " + seq, null, (int) seq, false, null);
+                id, productGroupId, "색상 " + seq, null, "PREDEFINED", (int) seq, false, null);
     }
 
     /** ID를 지정한 캐노니컬 매핑된 SellerOptionGroup Entity 생성. */
@@ -211,7 +225,14 @@ public final class ProductGroupJpaEntityFixtures {
             Long id, Long productGroupId, Long canonicalOptionGroupId) {
         long seq = SEQUENCE.getAndIncrement();
         return SellerOptionGroupJpaEntity.create(
-                id, productGroupId, "색상 " + seq, canonicalOptionGroupId, (int) seq, false, null);
+                id,
+                productGroupId,
+                "색상 " + seq,
+                canonicalOptionGroupId,
+                "PREDEFINED",
+                (int) seq,
+                false,
+                null);
     }
 
     // ===== SellerOptionValueJpaEntity Fixtures =====

@@ -118,10 +118,11 @@ class CategoryPresetQueryControllerRestDocsTest {
                                                     .description("등록일 종료 (YYYY-MM-DD)")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 키 (createdAt)")
+                                                    .description(
+                                                            "정렬 키 (CREATED_AT). 기본값: CREATED_AT")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC). 기본값: DESC")
                                                     .optional(),
                                             parameterWithName("page")
                                                     .description("페이지 번호 (0부터)")

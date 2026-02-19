@@ -31,6 +31,7 @@ public record UpdateProductGroupFullCommand(
             Long sellerOptionGroupId,
             String optionGroupName,
             Long canonicalOptionGroupId,
+            String inputType,
             List<OptionValueCommand> optionValues) {}
 
     /** 옵션 값 Command. */

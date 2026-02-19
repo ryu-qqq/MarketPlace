@@ -7,4 +7,4 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record UpdateExternalBrandMappingApiRequest(
         @Schema(description = "외부 브랜드명", example = "나이키") String externalBrandName,
         @Schema(description = "내부 브랜드 ID", example = "1") Long internalBrandId,
-        @Schema(description = "상태", example = "ACTIVE") String status) {}
+        @Schema(description = "상태 (ACTIVE, INACTIVE)", example = "ACTIVE") String status) {}

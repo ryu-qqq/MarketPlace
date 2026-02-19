@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.adapter.out.persistence.externalsource.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.externalsource.entity.ExternalSourceJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.externalsource.mapper.ExternalSourceJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.externalsource.repository.ExternalSourceJpaRepository;
-import com.ryuqq.marketplace.adapter.out.persistence.externalsource.repository.ExternalSourceQueryDslRepository;
 import com.ryuqq.marketplace.application.externalsource.port.out.command.ExternalSourceCommandPort;
 import com.ryuqq.marketplace.domain.externalsource.aggregate.ExternalSource;
 import org.springframework.stereotype.Component;
@@ -13,15 +12,11 @@ import org.springframework.stereotype.Component;
 public class ExternalSourceCommandAdapter implements ExternalSourceCommandPort {
 
     private final ExternalSourceJpaRepository repository;
-    private final ExternalSourceQueryDslRepository queryDslRepository;
     private final ExternalSourceJpaEntityMapper mapper;
 
     public ExternalSourceCommandAdapter(
-            ExternalSourceJpaRepository repository,
-            ExternalSourceQueryDslRepository queryDslRepository,
-            ExternalSourceJpaEntityMapper mapper) {
+            ExternalSourceJpaRepository repository, ExternalSourceJpaEntityMapper mapper) {
         this.repository = repository;
-        this.queryDslRepository = queryDslRepository;
         this.mapper = mapper;
     }
 
@@ -30,10 +25,5 @@ public class ExternalSourceCommandAdapter implements ExternalSourceCommandPort {
         ExternalSourceJpaEntity entity = mapper.toEntity(externalSource);
         ExternalSourceJpaEntity saved = repository.save(entity);
         return saved.getId();
-    }
-
-    @Override
-    public boolean existsByCode(String code) {
-        return queryDslRepository.existsByCode(code);
     }
 }

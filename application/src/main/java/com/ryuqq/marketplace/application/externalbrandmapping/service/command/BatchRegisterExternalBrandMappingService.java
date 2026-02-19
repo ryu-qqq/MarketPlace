@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.application.externalbrandmapping.dto.command.BatchR
 import com.ryuqq.marketplace.application.externalbrandmapping.factory.ExternalBrandMappingCommandFactory;
 import com.ryuqq.marketplace.application.externalbrandmapping.manager.ExternalBrandMappingCommandManager;
 import com.ryuqq.marketplace.application.externalbrandmapping.port.in.command.BatchRegisterExternalBrandMappingUseCase;
+import com.ryuqq.marketplace.application.externalbrandmapping.validator.ExternalBrandMappingValidator;
 import com.ryuqq.marketplace.domain.externalbrandmapping.aggregate.ExternalBrandMapping;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -13,18 +14,29 @@ import org.springframework.stereotype.Service;
 public class BatchRegisterExternalBrandMappingService
         implements BatchRegisterExternalBrandMappingUseCase {
 
+    private final ExternalBrandMappingValidator validator;
     private final ExternalBrandMappingCommandFactory commandFactory;
     private final ExternalBrandMappingCommandManager commandManager;
 
     public BatchRegisterExternalBrandMappingService(
+            ExternalBrandMappingValidator validator,
             ExternalBrandMappingCommandFactory commandFactory,
             ExternalBrandMappingCommandManager commandManager) {
+        this.validator = validator;
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
     }
 
     @Override
     public List<Long> execute(BatchRegisterExternalBrandMappingCommand command) {
+        List<String> codes =
+                command.entries().stream()
+                        .map(
+                                BatchRegisterExternalBrandMappingCommand.MappingEntry
+                                        ::externalBrandCode)
+                        .toList();
+        validator.validateNotDuplicateBulk(command.externalSourceId(), codes);
+
         List<ExternalBrandMapping> mappings = commandFactory.createAll(command);
         return commandManager.persistAll(mappings);
     }

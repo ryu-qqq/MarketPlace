@@ -24,15 +24,17 @@ public record SearchSellerApplicationsApiRequest(
                 List<String> status,
         @Parameter(
                         description = "검색 필드 (COMPANY_NAME, REPRESENTATIVE_NAME)",
-                        example = "companyName")
+                        example = "COMPANY_NAME")
                 String searchField,
         @Parameter(description = "검색어", example = "테스트") String searchWord,
-        @Parameter(description = "정렬 키", example = "appliedAt") String sortKey,
-        @Parameter(description = "정렬 방향 (ASC, DESC)", example = "DESC") String sortDirection,
-        @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+        @Parameter(description = "정렬 키 (APPLIED_AT). 기본값: APPLIED_AT", example = "APPLIED_AT")
+                String sortKey,
+        @Parameter(description = "정렬 방향 (ASC, DESC). 기본값: DESC", example = "DESC")
+                String sortDirection,
+        @Parameter(description = "페이지 번호 (0부터 시작). 기본값: 0", example = "0")
                 @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.")
                 Integer page,
-        @Parameter(description = "페이지 크기", example = "20")
+        @Parameter(description = "페이지 크기. 기본값: 20", example = "20")
                 @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.")
                 @Max(value = 100, message = "페이지 크기는 100 이하여야 합니다.")
                 Integer size) {}

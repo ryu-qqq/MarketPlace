@@ -68,6 +68,7 @@ public final class ProductGroupApiFixtures {
                         new RegisterProductGroupApiRequest.OptionGroupApiRequest(
                                 "색상",
                                 10L,
+                                "PREDEFINED",
                                 List.of(
                                         new RegisterProductGroupApiRequest.OptionValueApiRequest(
                                                 "블랙", 100L, 1),
@@ -133,6 +134,7 @@ public final class ProductGroupApiFixtures {
                                 1L,
                                 "색상",
                                 10L,
+                                "PREDEFINED",
                                 List.of(
                                         new UpdateProductGroupFullApiRequest.OptionValueApiRequest(
                                                 1L, "블랙", 100L, 1),
@@ -458,7 +460,8 @@ public final class ProductGroupApiFixtures {
         SellerOptionValueResult optionValue2 = new SellerOptionValueResult(2L, 1L, "화이트", 101L, 2);
 
         SellerOptionGroupResult optionGroup =
-                new SellerOptionGroupResult(1L, "색상", 10L, 1, List.of(optionValue1, optionValue2));
+                new SellerOptionGroupResult(
+                        1L, "색상", 10L, "PREDEFINED", 1, List.of(optionValue1, optionValue2));
 
         List<ResolvedProductOptionResult> productOptions =
                 List.of(new ResolvedProductOptionResult(1L, "색상", 1L, "블랙"));
@@ -561,7 +564,7 @@ public final class ProductGroupApiFixtures {
 
         SellerOptionGroupApiResponse optionGroup =
                 new SellerOptionGroupApiResponse(
-                        1L, "색상", 10L, 1, List.of(optionValue1, optionValue2));
+                        1L, "색상", 10L, "PREDEFINED", 1, List.of(optionValue1, optionValue2));
 
         List<ResolvedProductOptionApiResponse> productOptions =
                 List.of(new ResolvedProductOptionApiResponse(1L, "색상", 1L, "블랙"));

@@ -732,7 +732,8 @@ class ProductGroupJpaEntityMapperTest {
             // given - ID가 있는 삭제된 Entity 직접 생성
             Instant deletedAt = Instant.now();
             SellerOptionGroupJpaEntity entity =
-                    SellerOptionGroupJpaEntity.create(30L, 1L, "삭제된 색상", null, 0, true, deletedAt);
+                    SellerOptionGroupJpaEntity.create(
+                            30L, 1L, "삭제된 색상", null, "PREDEFINED", 0, true, deletedAt);
             List<SellerOptionValue> values = List.of();
 
             // when

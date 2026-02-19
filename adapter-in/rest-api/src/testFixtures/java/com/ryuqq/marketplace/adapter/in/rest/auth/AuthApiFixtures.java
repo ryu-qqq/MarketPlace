@@ -1,10 +1,13 @@
 package com.ryuqq.marketplace.adapter.in.rest.auth;
 
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.command.LoginApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.auth.dto.command.RefreshApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.response.LoginApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.response.MyInfoApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.auth.dto.response.RefreshApiResponse;
 import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
+import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
 import java.util.List;
 
 /**
@@ -122,6 +125,32 @@ public final class AuthApiFixtures {
         return new LoginApiResponse(
                 DEFAULT_ACCESS_TOKEN, DEFAULT_REFRESH_TOKEN,
                 DEFAULT_TOKEN_TYPE, DEFAULT_EXPIRES_IN);
+    }
+
+    // ===== RefreshApiRequest =====
+
+    public static RefreshApiRequest refreshRequest() {
+        return new RefreshApiRequest(DEFAULT_REFRESH_TOKEN);
+    }
+
+    // ===== RefreshResult (Application) =====
+
+    public static RefreshResult successRefreshResult() {
+        return RefreshResult.success(
+                DEFAULT_ACCESS_TOKEN,
+                DEFAULT_REFRESH_TOKEN,
+                DEFAULT_EXPIRES_IN,
+                DEFAULT_TOKEN_TYPE);
+    }
+
+    // ===== RefreshApiResponse =====
+
+    public static RefreshApiResponse refreshApiResponse() {
+        return new RefreshApiResponse(
+                DEFAULT_ACCESS_TOKEN,
+                DEFAULT_REFRESH_TOKEN,
+                DEFAULT_TOKEN_TYPE,
+                DEFAULT_EXPIRES_IN);
     }
 
     // ===== MyInfoApiResponse =====

@@ -93,13 +93,16 @@ class SellerApplicationCommandControllerRestDocsTest {
                                                     .description("셀러명"),
                                             fieldWithPath("sellerInfo.displayName")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("표시명"),
+                                                    .description("표시명")
+                                                    .optional(),
                                             fieldWithPath("sellerInfo.logoUrl")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("로고 URL"),
+                                                    .description("로고 URL")
+                                                    .optional(),
                                             fieldWithPath("sellerInfo.description")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("설명"),
+                                                    .description("설명")
+                                                    .optional(),
                                             fieldWithPath("businessInfo")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("사업자 정보"),
@@ -114,7 +117,8 @@ class SellerApplicationCommandControllerRestDocsTest {
                                                     .description("대표자명"),
                                             fieldWithPath("businessInfo.saleReportNumber")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("통신판매업 신고번호"),
+                                                    .description("통신판매업 신고번호")
+                                                    .optional(),
                                             fieldWithPath("businessInfo.businessAddress")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("사업장 주소"),
@@ -126,7 +130,8 @@ class SellerApplicationCommandControllerRestDocsTest {
                                                     .description("주소"),
                                             fieldWithPath("businessInfo.businessAddress.line2")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("상세주소"),
+                                                    .description("상세주소")
+                                                    .optional(),
                                             fieldWithPath("csContact")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("CS 연락처"),
@@ -138,7 +143,8 @@ class SellerApplicationCommandControllerRestDocsTest {
                                                     .description("이메일"),
                                             fieldWithPath("csContact.mobile")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("휴대폰"),
+                                                    .description("휴대폰")
+                                                    .optional(),
                                             fieldWithPath("contactInfo")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("담당자 연락처")
@@ -160,7 +166,8 @@ class SellerApplicationCommandControllerRestDocsTest {
                                                     .description("정산 정보"),
                                             fieldWithPath("settlementInfo.bankCode")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("은행 코드"),
+                                                    .description("은행 코드")
+                                                    .optional(),
                                             fieldWithPath("settlementInfo.bankName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("은행명"),
@@ -173,11 +180,13 @@ class SellerApplicationCommandControllerRestDocsTest {
                                             fieldWithPath("settlementInfo.settlementCycle")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
-                                                            "정산 주기 (WEEKLY/BIWEEKLY/MONTHLY, 미입력 시"
-                                                                    + " MONTHLY)"),
+                                                            "정산 주기 (WEEKLY, BIWEEKLY, MONTHLY, 미입력"
+                                                                    + " 시 MONTHLY)")
+                                                    .optional(),
                                             fieldWithPath("settlementInfo.settlementDay")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("정산일 1-31 (미입력 시 1)")),
+                                                    .description("정산일 1-31 (미입력 시 1)")
+                                                    .optional()),
                                     responseFields(
                                             fieldWithPath("data.applicationId")
                                                     .type(JsonFieldType.NUMBER)

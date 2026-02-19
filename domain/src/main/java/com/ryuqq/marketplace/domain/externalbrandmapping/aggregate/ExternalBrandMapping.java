@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.domain.externalbrandmapping.aggregate;
 
 import com.ryuqq.marketplace.domain.externalbrandmapping.id.ExternalBrandMappingId;
 import com.ryuqq.marketplace.domain.externalbrandmapping.vo.ExternalBrandMappingStatus;
+import com.ryuqq.marketplace.domain.externalbrandmapping.vo.ExternalBrandMappingUpdateData;
 import java.time.Instant;
 
 /** ExternalBrandMapping Aggregate Root. */
@@ -75,21 +76,10 @@ public class ExternalBrandMapping {
     }
 
     /** 매핑 정보 수정. */
-    public void update(String externalBrandName, Long internalBrandId, Instant now) {
-        this.externalBrandName = externalBrandName;
-        this.internalBrandId = internalBrandId;
-        this.updatedAt = now;
-    }
-
-    /** 활성화. */
-    public void activate(Instant now) {
-        this.status = ExternalBrandMappingStatus.ACTIVE;
-        this.updatedAt = now;
-    }
-
-    /** 비활성화. */
-    public void deactivate(Instant now) {
-        this.status = ExternalBrandMappingStatus.INACTIVE;
+    public void update(ExternalBrandMappingUpdateData updateData, Instant now) {
+        this.externalBrandName = updateData.externalBrandName();
+        this.internalBrandId = updateData.internalBrandId();
+        this.status = updateData.status();
         this.updatedAt = now;
     }
 

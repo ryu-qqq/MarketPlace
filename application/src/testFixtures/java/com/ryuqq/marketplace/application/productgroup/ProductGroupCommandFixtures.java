@@ -102,6 +102,7 @@ public final class ProductGroupCommandFixtures {
                 new OptionGroupCommand(
                         "색상",
                         null,
+                        null,
                         List.of(
                                 new OptionValueCommand("검정", null, 0),
                                 new OptionValueCommand("흰색", null, 1))));
@@ -112,6 +113,7 @@ public final class ProductGroupCommandFixtures {
                 new OptionGroupCommand(
                         "색상",
                         1L,
+                        null,
                         List.of(
                                 new OptionValueCommand("검정", 1L, 0),
                                 new OptionValueCommand("흰색", 2L, 1))));
@@ -200,6 +202,7 @@ public final class ProductGroupCommandFixtures {
                 new UpdateProductGroupFullCommand.OptionGroupCommand(
                         1L,
                         "색상",
+                        null,
                         null,
                         List.of(
                                 new UpdateProductGroupFullCommand.OptionValueCommand(

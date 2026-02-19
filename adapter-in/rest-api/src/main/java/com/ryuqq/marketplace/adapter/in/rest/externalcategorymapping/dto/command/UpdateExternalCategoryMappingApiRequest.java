@@ -7,4 +7,4 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record UpdateExternalCategoryMappingApiRequest(
         @Schema(description = "외부 카테고리명", example = "남성의류") String externalCategoryName,
         @Schema(description = "내부 카테고리 ID", example = "1") Long internalCategoryId,
-        @Schema(description = "상태", example = "ACTIVE") String status) {}
+        @Schema(description = "상태 (ACTIVE, INACTIVE)", example = "ACTIVE") String status) {}

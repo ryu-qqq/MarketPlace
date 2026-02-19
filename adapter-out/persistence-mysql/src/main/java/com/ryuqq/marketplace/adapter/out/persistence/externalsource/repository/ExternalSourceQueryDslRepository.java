@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.externalsource.condition.ExternalSourceConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.externalsource.entity.ExternalSourceJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.externalsource.entity.QExternalSourceJpaEntity;
-import com.ryuqq.marketplace.application.externalsource.dto.query.ExternalSourceSearchParams;
+import com.ryuqq.marketplace.domain.externalsource.query.ExternalSourceSearchCriteria;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -40,27 +40,29 @@ public class ExternalSourceQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public List<ExternalSourceJpaEntity> findByCriteria(ExternalSourceSearchParams params) {
+    public List<ExternalSourceJpaEntity> findByCriteria(ExternalSourceSearchCriteria criteria) {
         return queryFactory
                 .selectFrom(externalSource)
                 .where(
-                        conditionBuilder.typeIn(params),
-                        conditionBuilder.statusIn(params),
-                        conditionBuilder.searchCondition(params))
-                .offset(params.offset())
-                .limit(params.size())
+                        conditionBuilder.typeIn(criteria.typeNames()),
+                        conditionBuilder.statusIn(criteria.statusNames()),
+                        conditionBuilder.searchCondition(
+                                criteria.searchField(), criteria.searchWord()))
+                .offset(criteria.offset())
+                .limit(criteria.size())
                 .fetch();
     }
 
-    public long countByCriteria(ExternalSourceSearchParams params) {
+    public long countByCriteria(ExternalSourceSearchCriteria criteria) {
         Long count =
                 queryFactory
                         .select(externalSource.count())
                         .from(externalSource)
                         .where(
-                                conditionBuilder.typeIn(params),
-                                conditionBuilder.statusIn(params),
-                                conditionBuilder.searchCondition(params))
+                                conditionBuilder.typeIn(criteria.typeNames()),
+                                conditionBuilder.statusIn(criteria.statusNames()),
+                                conditionBuilder.searchCondition(
+                                        criteria.searchField(), criteria.searchWord()))
                         .fetchOne();
         return count != null ? count : 0L;
     }
