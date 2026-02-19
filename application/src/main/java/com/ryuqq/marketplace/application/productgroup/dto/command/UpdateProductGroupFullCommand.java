@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.productgroup.dto.command;
 
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ public record UpdateProductGroupFullCommand(
             int currentPrice,
             int stockQuantity,
             int sortOrder,
-            List<Integer> optionIndices) {}
+            List<SelectedOption> selectedOptions) {}
 
     /** 상세설명 Command. */
     public record DescriptionCommand(

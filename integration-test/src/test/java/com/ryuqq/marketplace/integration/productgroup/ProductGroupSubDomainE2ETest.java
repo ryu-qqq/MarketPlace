@@ -201,8 +201,13 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                                 50,
                                 "sortOrder",
                                 0,
-                                "optionIndices",
-                                List.of(0))));
+                                "selectedOptions",
+                                List.of(
+                                        Map.of(
+                                                "optionGroupName",
+                                                "색상",
+                                                "optionValueName",
+                                                "빨강")))));
         request.put("description", Map.of("content", "<p>초기 상세설명</p>"));
         request.put(
                 "notice",

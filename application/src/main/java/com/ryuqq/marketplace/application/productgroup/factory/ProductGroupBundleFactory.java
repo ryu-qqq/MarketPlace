@@ -88,8 +88,7 @@ public class ProductGroupBundleFactory {
                         toNoticeEntryCommands(command.notice().entries()));
 
         RegisterProductsCommand productCommand =
-                new RegisterProductsCommand(
-                        0L, toProductDataCommands(command.products()), List.of());
+                new RegisterProductsCommand(0L, toProductDataCommands(command.products()));
 
         return new ProductGroupRegistrationBundle(
                 productGroup,
@@ -205,7 +204,7 @@ public class ProductGroupBundleFactory {
                                         p.currentPrice(),
                                         p.stockQuantity(),
                                         p.sortOrder(),
-                                        p.optionIndices()))
+                                        p.selectedOptions()))
                 .toList();
     }
 
@@ -266,7 +265,7 @@ public class ProductGroupBundleFactory {
                                         p.currentPrice(),
                                         p.stockQuantity(),
                                         p.sortOrder(),
-                                        p.optionIndices()))
+                                        p.selectedOptions()))
                 .toList();
     }
 }

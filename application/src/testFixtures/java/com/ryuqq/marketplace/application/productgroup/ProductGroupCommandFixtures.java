@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.productgroup;
 
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangeProductGroupStatusCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand.DescriptionCommand;
@@ -118,8 +119,15 @@ public final class ProductGroupCommandFixtures {
 
     public static List<ProductCommand> defaultProductCommands() {
         return List.of(
-                new ProductCommand(DEFAULT_SKU_CODE, 10000, 9000, 100, 0, List.of(0)),
-                new ProductCommand("SKU-002", 10000, 9000, 50, 1, List.of(1)));
+                new ProductCommand(
+                        DEFAULT_SKU_CODE,
+                        10000,
+                        9000,
+                        100,
+                        0,
+                        List.of(new SelectedOption("색상", "검정"))),
+                new ProductCommand(
+                        "SKU-002", 10000, 9000, 50, 1, List.of(new SelectedOption("색상", "흰색"))));
     }
 
     public static List<ProductCommand> defaultProductCommandsNoOption() {
@@ -204,9 +212,21 @@ public final class ProductGroupCommandFixtures {
             defaultUpdateProductCommands() {
         return List.of(
                 new UpdateProductGroupFullCommand.ProductCommand(
-                        1L, DEFAULT_SKU_CODE, 12000, 10000, 80, 0, List.of(0)),
+                        1L,
+                        DEFAULT_SKU_CODE,
+                        12000,
+                        10000,
+                        80,
+                        0,
+                        List.of(new SelectedOption("색상", "검정"))),
                 new UpdateProductGroupFullCommand.ProductCommand(
-                        null, "SKU-003-NEW", 12000, 10000, 30, 1, List.of(1)));
+                        null,
+                        "SKU-003-NEW",
+                        12000,
+                        10000,
+                        30,
+                        1,
+                        List.of(new SelectedOption("색상", "흰색"))));
     }
 
     public static UpdateProductGroupFullCommand.DescriptionCommand

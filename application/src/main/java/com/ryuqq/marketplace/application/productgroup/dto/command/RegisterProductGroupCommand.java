@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.productgroup.dto.command;
 
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public record RegisterProductGroupCommand(
             int currentPrice,
             int stockQuantity,
             int sortOrder,
-            List<Integer> optionIndices) {}
+            List<SelectedOption> selectedOptions) {}
 
     public record DescriptionCommand(
             String content, List<DescriptionImageCommand> descriptionImages) {}

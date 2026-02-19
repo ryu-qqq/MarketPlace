@@ -44,7 +44,10 @@ public class UpdateProductsService implements UpdateProductsUseCase {
         // 2. Product diff 수정 (retained/added/removed)
         List<ProductDiffUpdateEntry> entries = toEntries(command.products());
         productCoordinator.updateWithDiff(
-                ProductGroupId.of(command.productGroupId()), entries, optionResult);
+                ProductGroupId.of(command.productGroupId()),
+                entries,
+                optionResult,
+                command.optionGroups());
     }
 
     private UpdateSellerOptionGroupsCommand toOptionCommand(UpdateProductsCommand command) {
@@ -84,7 +87,7 @@ public class UpdateProductsService implements UpdateProductsUseCase {
                                         p.currentPrice(),
                                         p.stockQuantity(),
                                         p.sortOrder(),
-                                        p.optionValueIndices()))
+                                        p.selectedOptions()))
                 .toList();
     }
 }

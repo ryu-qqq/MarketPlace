@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegis
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupFullApiRequest;
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangeProductGroupStatusCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
@@ -87,7 +88,15 @@ public class ProductGroupCommandApiMapper {
                                                         product.currentPrice(),
                                                         product.stockQuantity(),
                                                         product.sortOrder(),
-                                                        product.optionIndices()))
+                                                        product.selectedOptions().stream()
+                                                                .map(
+                                                                        so ->
+                                                                                new SelectedOption(
+                                                                                        so
+                                                                                                .optionGroupName(),
+                                                                                        so
+                                                                                                .optionValueName()))
+                                                                .toList()))
                                 .toList()
                         : null,
                 request.description() != null
@@ -170,7 +179,15 @@ public class ProductGroupCommandApiMapper {
                                                         product.currentPrice(),
                                                         product.stockQuantity(),
                                                         product.sortOrder(),
-                                                        product.optionIndices()))
+                                                        product.selectedOptions().stream()
+                                                                .map(
+                                                                        so ->
+                                                                                new SelectedOption(
+                                                                                        so
+                                                                                                .optionGroupName(),
+                                                                                        so
+                                                                                                .optionValueName()))
+                                                                .toList()))
                                 .toList()
                         : null,
                 request.description() != null

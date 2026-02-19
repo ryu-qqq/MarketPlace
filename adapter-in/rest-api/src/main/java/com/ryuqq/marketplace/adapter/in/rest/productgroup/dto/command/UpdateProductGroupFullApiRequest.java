@@ -54,6 +54,11 @@ public record UpdateProductGroupFullApiRequest(
             @NotNull(message = "정렬 순서는 필수입니다") @Min(value = 0, message = "정렬 순서는 0 이상이어야 합니다")
                     Integer sortOrder) {}
 
+    /** 이름 기반 옵션 선택 API Request. */
+    public record SelectedOptionApiRequest(
+            @NotBlank(message = "옵션 그룹명은 필수입니다") String optionGroupName,
+            @NotBlank(message = "옵션 값명은 필수입니다") String optionValueName) {}
+
     /** 상품 API Request. */
     public record ProductApiRequest(
             @JsonProperty("productId") Long productId,
@@ -66,7 +71,8 @@ public record UpdateProductGroupFullApiRequest(
                     Integer stockQuantity,
             @NotNull(message = "정렬 순서는 필수입니다") @Min(value = 0, message = "정렬 순서는 0 이상이어야 합니다")
                     Integer sortOrder,
-            @NotNull(message = "옵션 인덱스는 필수입니다") List<Integer> optionIndices) {}
+            @NotNull(message = "옵션 선택은 필수입니다") @Valid
+                    List<SelectedOptionApiRequest> selectedOptions) {}
 
     /** 상세설명 API Request. */
     public record DescriptionApiRequest(@NotBlank(message = "상세설명 내용은 필수입니다") String content) {}

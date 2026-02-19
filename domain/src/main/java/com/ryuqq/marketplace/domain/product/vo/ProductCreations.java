@@ -2,7 +2,6 @@ package com.ryuqq.marketplace.domain.product.vo;
 
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -29,17 +28,11 @@ public class ProductCreations {
      * Product 리스트로 변환.
      *
      * @param productGroupId 확정된 ProductGroupId
-     * @param allOptionValueIds persist 후 확정된 모든 SellerOptionValueId (그룹 순서대로 플랫)
      * @param now 생성 시각
      * @return Product 도메인 객체 리스트
      */
-    public List<Product> toProducts(
-            ProductGroupId productGroupId,
-            List<SellerOptionValueId> allOptionValueIds,
-            Instant now) {
-        return creationDataList.stream()
-                .map(data -> data.toProduct(productGroupId, allOptionValueIds, now))
-                .toList();
+    public List<Product> toProducts(ProductGroupId productGroupId, Instant now) {
+        return creationDataList.stream().map(data -> data.toProduct(productGroupId, now)).toList();
     }
 
     // === 조회 ===

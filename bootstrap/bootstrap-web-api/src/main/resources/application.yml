@@ -67,6 +67,7 @@ spring:
       - classpath:redis.yml
       - classpath:authhub.yml
       - classpath:fileflow.yml
+      - classpath:naver-commerce.yml
 
   # ===============================================
   # MessageSource (i18n)

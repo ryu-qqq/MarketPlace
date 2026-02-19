@@ -71,6 +71,22 @@ public record UpdateProductsApiRequest(
                     @Min(value = 0, message = "정렬 순서는 0 이상이어야 합니다")
                     Integer sortOrder) {}
 
+    /** 이름 기반 옵션 선택 API Request. */
+    @Schema(description = "이름 기반 옵션 선택")
+    public record SelectedOptionApiRequest(
+            @Schema(
+                            description = "옵션 그룹명",
+                            example = "색상",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
+                    @NotBlank(message = "옵션 그룹명은 필수입니다")
+                    String optionGroupName,
+            @Schema(
+                            description = "옵션 값명",
+                            example = "빨강",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
+                    @NotBlank(message = "옵션 값명은 필수입니다")
+                    String optionValueName) {}
+
     /**
      * 개별 상품 수정 데이터.
      *
@@ -80,7 +96,7 @@ public record UpdateProductsApiRequest(
      * @param currentPrice 판매가
      * @param stockQuantity 재고 수량
      * @param sortOrder 정렬 순서
-     * @param optionIndices orderedActiveValueIds에 대한 인덱스 목록
+     * @param selectedOptions 이름 기반 옵션 선택 목록
      */
     @Schema(description = "개별 상품 수정 데이터")
     public record ProductDataApiRequest(
@@ -118,10 +134,8 @@ public record UpdateProductsApiRequest(
                     @NotNull(message = "정렬 순서는 필수입니다")
                     @Min(value = 0, message = "정렬 순서는 0 이상이어야 합니다")
                     Integer sortOrder,
-            @Schema(
-                            description = "옵션 값 인덱스 목록",
-                            example = "[0, 3]",
-                            requiredMode = Schema.RequiredMode.REQUIRED)
-                    @NotNull(message = "옵션 인덱스는 필수입니다")
-                    List<Integer> optionIndices) {}
+            @Schema(description = "이름 기반 옵션 선택 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+                    @NotNull(message = "옵션 선택은 필수입니다")
+                    @Valid
+                    List<SelectedOptionApiRequest> selectedOptions) {}
 }

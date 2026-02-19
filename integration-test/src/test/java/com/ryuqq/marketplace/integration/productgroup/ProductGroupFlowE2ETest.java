@@ -199,28 +199,72 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                 "currentPrice", 45000,
                                 "stockQuantity", 100,
                                 "sortOrder", 0,
-                                "optionIndices", List.of(0, 0)),
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "빨강"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "S"))),
                         Map.of(
                                 "skuCode", "SKU-RED-M",
                                 "regularPrice", 50000,
                                 "currentPrice", 45000,
                                 "stockQuantity", 80,
                                 "sortOrder", 1,
-                                "optionIndices", List.of(0, 1)),
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "빨강"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "M"))),
                         Map.of(
                                 "skuCode", "SKU-BLUE-S",
                                 "regularPrice", 55000,
                                 "currentPrice", 50000,
                                 "stockQuantity", 60,
                                 "sortOrder", 2,
-                                "optionIndices", List.of(1, 0)),
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "파랑"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "S"))),
                         Map.of(
                                 "skuCode", "SKU-BLUE-M",
                                 "regularPrice", 55000,
                                 "currentPrice", 50000,
                                 "stockQuantity", 40,
                                 "sortOrder", 3,
-                                "optionIndices", List.of(1, 1))));
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "파랑"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "M")))));
 
         request.put("description", Map.of("content", "<p>테스트 상품 상세설명</p>"));
 
@@ -456,7 +500,18 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                     "currentPrice", 55000,
                                     "stockQuantity", 150,
                                     "sortOrder", 0,
-                                    "optionIndices", List.of(0, 0)),
+                                    "selectedOptions",
+                                            List.of(
+                                                    Map.of(
+                                                            "optionGroupName",
+                                                            "색상",
+                                                            "optionValueName",
+                                                            "빨강"),
+                                                    Map.of(
+                                                            "optionGroupName",
+                                                            "사이즈",
+                                                            "optionValueName",
+                                                            "S"))),
                             Map.of(
                                     "productId", existingProductIds.get(1),
                                     "skuCode", "SKU-RED-M",
@@ -464,7 +519,18 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                     "currentPrice", 55000,
                                     "stockQuantity", 120,
                                     "sortOrder", 1,
-                                    "optionIndices", List.of(0, 1)),
+                                    "selectedOptions",
+                                            List.of(
+                                                    Map.of(
+                                                            "optionGroupName",
+                                                            "색상",
+                                                            "optionValueName",
+                                                            "빨강"),
+                                                    Map.of(
+                                                            "optionGroupName",
+                                                            "사이즈",
+                                                            "optionValueName",
+                                                            "M"))),
                             Map.of(
                                     "productId", existingProductIds.get(2),
                                     "skuCode", "SKU-BLUE-S",
@@ -472,7 +538,18 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                     "currentPrice", 60000,
                                     "stockQuantity", 80,
                                     "sortOrder", 2,
-                                    "optionIndices", List.of(1, 0)),
+                                    "selectedOptions",
+                                            List.of(
+                                                    Map.of(
+                                                            "optionGroupName",
+                                                            "색상",
+                                                            "optionValueName",
+                                                            "파랑"),
+                                                    Map.of(
+                                                            "optionGroupName",
+                                                            "사이즈",
+                                                            "optionValueName",
+                                                            "S"))),
                             Map.of(
                                     "productId", existingProductIds.get(3),
                                     "skuCode", "SKU-BLUE-M",
@@ -480,7 +557,18 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                     "currentPrice", 60000,
                                     "stockQuantity", 50,
                                     "sortOrder", 3,
-                                    "optionIndices", List.of(1, 1))));
+                                    "selectedOptions",
+                                            List.of(
+                                                    Map.of(
+                                                            "optionGroupName",
+                                                            "색상",
+                                                            "optionValueName",
+                                                            "파랑"),
+                                                    Map.of(
+                                                            "optionGroupName",
+                                                            "사이즈",
+                                                            "optionValueName",
+                                                            "M")))));
 
             // 설명 수정
             updateRequest.put("description", Map.of("content", "<p>수정된 상품 상세설명</p>"));

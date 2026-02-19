@@ -129,6 +129,17 @@ data "aws_ssm_parameter" "authhub_service_token" {
 }
 
 # ========================================
+# Naver Commerce Configuration
+# ========================================
+data "aws_ssm_parameter" "naver_commerce_client_id" {
+  name = "/naver-commerce/stage/client-id"
+}
+
+data "aws_ssm_parameter" "naver_commerce_client_secret" {
+  name = "/naver-commerce/stage/client-secret"
+}
+
+# ========================================
 # Locals
 # ========================================
 locals {

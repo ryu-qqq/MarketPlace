@@ -1,12 +1,15 @@
 package com.ryuqq.marketplace.application.productgroup.internal;
 
+import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
 import com.ryuqq.marketplace.application.productnotice.internal.ProductNoticeCommandCoordinator;
+import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.result.SellerOptionUpdateResult;
 import com.ryuqq.marketplace.application.selleroption.internal.SellerOptionCommandCoordinator;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,10 +72,39 @@ public class FullProductGroupUpdateCoordinator {
         // 5. Notice → Coordinator
         noticeCommandCoordinator.update(bundle.noticeCommand());
 
-        // 6. Products → Coordinator (productId 기반 diff 매칭)
+        // 6. Products → Coordinator (productId 기반 diff 매칭, 이름 기반 옵션 resolve)
+        List<UpdateProductsCommand.OptionGroupData> optionGroupData =
+                toOptionGroupData(bundle.optionGroupCommand());
         productCommandCoordinator.updateWithDiff(
                 bundle.basicInfoUpdateData().productGroupId(),
                 bundle.productEntries(),
-                optionResult);
+                optionResult,
+                optionGroupData);
+    }
+
+    /**
+     * UpdateSellerOptionGroupsCommand.OptionGroupCommand → UpdateProductsCommand.OptionGroupData
+     * 변환.
+     */
+    private List<UpdateProductsCommand.OptionGroupData> toOptionGroupData(
+            UpdateSellerOptionGroupsCommand optionGroupCommand) {
+        return optionGroupCommand.optionGroups().stream()
+                .map(
+                        g ->
+                                new UpdateProductsCommand.OptionGroupData(
+                                        g.sellerOptionGroupId(),
+                                        g.optionGroupName(),
+                                        g.canonicalOptionGroupId(),
+                                        g.optionValues().stream()
+                                                .map(
+                                                        v ->
+                                                                new UpdateProductsCommand
+                                                                        .OptionValueData(
+                                                                        v.sellerOptionValueId(),
+                                                                        v.optionValueName(),
+                                                                        v.canonicalOptionValueId(),
+                                                                        v.sortOrder()))
+                                                .toList()))
+                .toList();
     }
 }
