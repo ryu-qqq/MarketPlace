@@ -77,8 +77,9 @@ public class ProductCommandCoordinator {
     public List<Long> register(List<Product> products) {
         List<Long> productIds = productCommandManager.persistAll(products);
 
-        for (Product product : products) {
-            optionMappingCommandManager.persistAll(product.optionMappings());
+        for (int i = 0; i < products.size(); i++) {
+            optionMappingCommandManager.persistAllForProduct(
+                    productIds.get(i), products.get(i).optionMappings());
         }
 
         return productIds;

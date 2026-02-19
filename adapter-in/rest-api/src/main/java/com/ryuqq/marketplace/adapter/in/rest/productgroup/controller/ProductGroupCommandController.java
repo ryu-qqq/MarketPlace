@@ -120,7 +120,7 @@ public class ProductGroupCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("hasAuthority('product-group:write')")
+    @PreAuthorize("@access.hasPermission('product-group:write')")
     @RequirePermission(value = "product-group:write", description = "상품 그룹 등록")
     @PostMapping
     public ResponseEntity<ProductGroupIdApiResponse> registerProductGroup(
@@ -152,7 +152,7 @@ public class ProductGroupCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("hasAuthority('product-group:write')")
+    @PreAuthorize("@access.hasPermission('product-group:write')")
     @RequirePermission(value = "product-group:write", description = "상품 그룹 배치 등록")
     @PostMapping(ProductGroupAdminEndpoints.BATCH)
     public ResponseEntity<BatchProductGroupResultApiResponse> batchRegisterProductGroups(
@@ -260,7 +260,7 @@ public class ProductGroupCommandController {
                 responseCode = "403",
                 description = "소유권 검증 실패")
     })
-    @PreAuthorize("hasAuthority('product-group:write')")
+    @PreAuthorize("@access.hasPermission('product-group:write')")
     @RequirePermission(value = "product-group:write", description = "상품 그룹 배치 상태 변경")
     @PatchMapping(ProductGroupAdminEndpoints.STATUS)
     public ResponseEntity<Void> batchChangeStatus(

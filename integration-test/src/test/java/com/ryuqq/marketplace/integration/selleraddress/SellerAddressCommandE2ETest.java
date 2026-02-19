@@ -23,12 +23,12 @@ import org.springframework.http.HttpStatus;
 /**
  * SellerAddress Command API E2E 테스트.
  *
- * <p>POST, PUT, PATCH /api/v1/market/sellers/{sellerId}/addresses 엔드포인트 테스트
+ * <p>POST, PUT, PATCH /api/v1/market/seller-addresses/sellers/{sellerId} 엔드포인트 테스트
  */
 @DisplayName("SellerAddress Command API E2E 테스트")
 class SellerAddressCommandE2ETest extends E2ETestBase {
 
-    private static final String BASE_PATH = "/sellers/{sellerId}/addresses";
+    private static final String BASE_PATH = "/seller-addresses/sellers/{sellerId}";
 
     @Autowired private SellerJpaRepository sellerRepository;
     @Autowired private SellerAddressJpaRepository sellerAddressRepository;

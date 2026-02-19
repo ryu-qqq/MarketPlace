@@ -183,7 +183,7 @@ public class ProductCommandController {
                 responseCode = "403",
                 description = "소유권 검증 실패")
     })
-    @PreAuthorize("hasAuthority('product:write')")
+    @PreAuthorize("@access.hasPermission('product:write')")
     @RequirePermission(value = "product:write", description = "상품 배치 상태 변경")
     @PatchMapping(ProductAdminEndpoints.PRODUCT_GROUP + ProductAdminEndpoints.STATUS)
     public ResponseEntity<Void> batchChangeStatus(
