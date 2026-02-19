@@ -105,8 +105,8 @@ class BrandPresetCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.NULL)
                                                     .description("등록일")
                                                     .optional(),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
 
         @Test
@@ -202,8 +202,8 @@ class BrandPresetCommandControllerRestDocsTest {
                                             fieldWithPath("data.deletedCount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("삭제된 프리셋 수"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
     }
 }

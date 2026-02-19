@@ -31,6 +31,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -109,54 +110,74 @@ class ShippingPolicyQueryControllerRestDocsTest {
                                                     .description("페이지 크기")
                                                     .optional()),
                                     responseFields(
-                                            fieldWithPath("data.content[]").description("배송정책 목록"),
+                                            fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("배송정책 목록"),
                                             fieldWithPath("data.content[].policyId")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("정책 ID"),
                                             fieldWithPath("data.content[].sellerId")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("셀러 ID"),
                                             fieldWithPath("data.content[].policyName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("정책명"),
                                             fieldWithPath("data.content[].defaultPolicy")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("기본 정책 여부"),
                                             fieldWithPath("data.content[].active")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("활성화 상태"),
                                             fieldWithPath("data.content[].shippingFeeType")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("배송비 유형 코드"),
                                             fieldWithPath(
                                                             "data.content[].shippingFeeTypeDisplayName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("배송비 유형 표시명"),
                                             fieldWithPath("data.content[].baseFee")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("기본 배송비"),
                                             fieldWithPath("data.content[].freeThreshold")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("무료배송 기준금액"),
                                             fieldWithPath("data.content[].jejuExtraFee")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("제주 추가배송비"),
                                             fieldWithPath("data.content[].islandExtraFee")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("도서산간 추가배송비"),
                                             fieldWithPath("data.content[].returnFee")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("반품 배송비"),
                                             fieldWithPath("data.content[].exchangeFee")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("교환 배송비"),
                                             fieldWithPath("data.content[].leadTimeMinDays")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("최소 배송일"),
                                             fieldWithPath("data.content[].leadTimeMaxDays")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("최대 배송일"),
                                             fieldWithPath("data.content[].leadTimeCutoffTime")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("당일 출고 마감시간 (HH:mm)"),
                                             fieldWithPath("data.content[].createdAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("생성일시 (ISO 8601)"),
                                             fieldWithPath("data.content[].updatedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("수정일시 (ISO 8601)"),
-                                            fieldWithPath("data.page").description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").description("페이지 크기"),
+                                            fieldWithPath("data.page").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                            fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
+                                            fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
 
         @Test
