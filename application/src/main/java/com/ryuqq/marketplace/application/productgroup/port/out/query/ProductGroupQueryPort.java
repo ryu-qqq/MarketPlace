@@ -11,6 +11,8 @@ public interface ProductGroupQueryPort {
 
     Optional<ProductGroup> findById(ProductGroupId id);
 
+    List<ProductGroup> findByIdsAndSellerId(List<ProductGroupId> ids, long sellerId);
+
     List<ProductGroup> findByCriteria(ProductGroupSearchCriteria criteria);
 
     long countByCriteria(ProductGroupSearchCriteria criteria);

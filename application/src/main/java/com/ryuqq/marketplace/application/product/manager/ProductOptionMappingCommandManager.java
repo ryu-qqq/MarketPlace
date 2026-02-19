@@ -17,17 +17,14 @@ public class ProductOptionMappingCommandManager {
     }
 
     @Transactional
-    public void deleteByProductId(Long productId) {
-        commandPort.deleteByProductId(productId);
+    public void persistAll(List<ProductOptionMapping> mappings) {
+        for (ProductOptionMapping mapping : mappings) {
+            commandPort.persist(mapping);
+        }
     }
 
     @Transactional
-    public void deleteByProductIdIn(List<Long> productIds) {
-        commandPort.deleteByProductIdIn(productIds);
-    }
-
-    @Transactional
-    public void persistAll(Long productId, List<ProductOptionMapping> mappings) {
-        commandPort.persistAll(productId, mappings);
+    public void persistAllForProduct(Long productId, List<ProductOptionMapping> mappings) {
+        commandPort.persistAllForProduct(productId, mappings);
     }
 }

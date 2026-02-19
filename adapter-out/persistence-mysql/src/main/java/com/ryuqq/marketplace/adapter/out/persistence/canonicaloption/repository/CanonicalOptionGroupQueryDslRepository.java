@@ -4,7 +4,9 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.condition.CanonicalOptionGroupConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.entity.CanonicalOptionGroupJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.entity.CanonicalOptionValueJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.entity.QCanonicalOptionGroupJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.canonicaloption.entity.QCanonicalOptionValueJpaEntity;
 import com.ryuqq.marketplace.domain.canonicaloption.query.CanonicalOptionGroupSearchCriteria;
 import com.ryuqq.marketplace.domain.canonicaloption.query.CanonicalOptionGroupSortKey;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
@@ -18,6 +20,8 @@ public class CanonicalOptionGroupQueryDslRepository {
 
     private static final QCanonicalOptionGroupJpaEntity canonicalOptionGroup =
             QCanonicalOptionGroupJpaEntity.canonicalOptionGroupJpaEntity;
+    private static final QCanonicalOptionValueJpaEntity canonicalOptionValue =
+            QCanonicalOptionValueJpaEntity.canonicalOptionValueJpaEntity;
 
     private final JPAQueryFactory queryFactory;
     private final CanonicalOptionGroupConditionBuilder conditionBuilder;
@@ -60,6 +64,35 @@ public class CanonicalOptionGroupQueryDslRepository {
                                 conditionBuilder.searchCondition(criteria))
                         .fetchOne();
         return count != null ? count : 0L;
+    }
+
+    public List<CanonicalOptionGroupJpaEntity> findByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return queryFactory
+                .selectFrom(canonicalOptionGroup)
+                .where(canonicalOptionGroup.id.in(ids))
+                .fetch();
+    }
+
+    public List<CanonicalOptionValueJpaEntity> findValuesByGroupId(Long groupId) {
+        return queryFactory
+                .selectFrom(canonicalOptionValue)
+                .where(canonicalOptionValue.canonicalOptionGroupId.eq(groupId))
+                .orderBy(canonicalOptionValue.sortOrder.asc())
+                .fetch();
+    }
+
+    public List<CanonicalOptionValueJpaEntity> findValuesByGroupIds(List<Long> groupIds) {
+        if (groupIds == null || groupIds.isEmpty()) {
+            return List.of();
+        }
+        return queryFactory
+                .selectFrom(canonicalOptionValue)
+                .where(canonicalOptionValue.canonicalOptionGroupId.in(groupIds))
+                .orderBy(canonicalOptionValue.sortOrder.asc())
+                .fetch();
     }
 
     private OrderSpecifier<?> resolveOrderSpecifier(CanonicalOptionGroupSearchCriteria criteria) {

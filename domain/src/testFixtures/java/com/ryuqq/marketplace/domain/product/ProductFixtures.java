@@ -38,8 +38,6 @@ public final class ProductFixtures {
                 SkuCode.of(DEFAULT_SKU_CODE),
                 CommonVoFixtures.money(DEFAULT_REGULAR_PRICE),
                 CommonVoFixtures.money(DEFAULT_CURRENT_PRICE),
-                CommonVoFixtures.money(DEFAULT_SALE_PRICE),
-                DEFAULT_DISCOUNT_RATE,
                 DEFAULT_STOCK_QUANTITY,
                 DEFAULT_SORT_ORDER,
                 Collections.emptyList(),

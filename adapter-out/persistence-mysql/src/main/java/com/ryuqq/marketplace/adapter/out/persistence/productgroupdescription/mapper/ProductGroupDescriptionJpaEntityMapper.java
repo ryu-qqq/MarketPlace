@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.ma
 
 import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.entity.DescriptionImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.entity.ProductGroupDescriptionJpaEntity;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.DescriptionImage;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import com.ryuqq.marketplace.domain.productgroup.id.DescriptionImageId;
@@ -9,8 +10,8 @@ import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupDescriptionId;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.CdnPath;
 import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionHtml;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionPublishStatus;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
-import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -23,23 +24,25 @@ import org.springframework.stereotype.Component;
 public class ProductGroupDescriptionJpaEntityMapper {
 
     public ProductGroupDescriptionJpaEntity toEntity(ProductGroupDescription domain) {
-        Instant now = Instant.now();
         return ProductGroupDescriptionJpaEntity.create(
                 domain.idValue(),
                 domain.productGroupIdValue(),
                 domain.contentValue(),
                 domain.cdnPathValue(),
-                now,
-                now);
+                domain.publishStatus().name(),
+                domain.createdAt(),
+                domain.updatedAt());
     }
 
-    public DescriptionImageJpaEntity toImageEntity(DescriptionImage image, Long descriptionId) {
+    public DescriptionImageJpaEntity toImageEntity(DescriptionImage image) {
         return DescriptionImageJpaEntity.create(
                 image.idValue(),
-                descriptionId,
+                image.productGroupDescriptionIdValue(),
                 image.originUrlValue(),
                 image.uploadedUrlValue(),
-                image.sortOrder());
+                image.sortOrder(),
+                image.isDeleted(),
+                image.deletionStatus().deletedAt());
     }
 
     public ProductGroupDescription toDomain(
@@ -57,10 +60,13 @@ public class ProductGroupDescriptionJpaEntityMapper {
                 ProductGroupId.of(entity.getProductGroupId()),
                 DescriptionHtml.of(entity.getContent()),
                 entity.getCdnPath() != null ? CdnPath.of(entity.getCdnPath()) : null,
-                images);
+                DescriptionPublishStatus.valueOf(entity.getPublishStatus()),
+                images,
+                entity.getCreatedAt(),
+                entity.getUpdatedAt());
     }
 
-    private DescriptionImage toImageDomain(DescriptionImageJpaEntity entity) {
+    public DescriptionImage toImageDomain(DescriptionImageJpaEntity entity) {
         DescriptionImageId id =
                 entity.getId() != null
                         ? DescriptionImageId.of(entity.getId())
@@ -68,8 +74,10 @@ public class ProductGroupDescriptionJpaEntityMapper {
 
         return DescriptionImage.reconstitute(
                 id,
+                ProductGroupDescriptionId.of(entity.getProductGroupDescriptionId()),
                 ImageUrl.of(entity.getOriginUrl()),
                 entity.getUploadedUrl() != null ? ImageUrl.of(entity.getUploadedUrl()) : null,
-                entity.getSortOrder());
+                entity.getSortOrder(),
+                DeletionStatus.reconstitute(entity.isDeleted(), entity.getDeletedAt()));
     }
 }

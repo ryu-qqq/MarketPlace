@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.Instant;
 
 /**
  * DescriptionImageJpaEntity - 상세설명 이미지 JPA 엔티티.
@@ -32,6 +33,12 @@ public class DescriptionImageJpaEntity {
     @Column(name = "sort_order", nullable = false)
     private int sortOrder;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
     protected DescriptionImageJpaEntity() {}
 
     private DescriptionImageJpaEntity(
@@ -39,12 +46,16 @@ public class DescriptionImageJpaEntity {
             Long productGroupDescriptionId,
             String originUrl,
             String uploadedUrl,
-            int sortOrder) {
+            int sortOrder,
+            boolean deleted,
+            Instant deletedAt) {
         this.id = id;
         this.productGroupDescriptionId = productGroupDescriptionId;
         this.originUrl = originUrl;
         this.uploadedUrl = uploadedUrl;
         this.sortOrder = sortOrder;
+        this.deleted = deleted;
+        this.deletedAt = deletedAt;
     }
 
     public static DescriptionImageJpaEntity create(
@@ -52,9 +63,17 @@ public class DescriptionImageJpaEntity {
             Long productGroupDescriptionId,
             String originUrl,
             String uploadedUrl,
-            int sortOrder) {
+            int sortOrder,
+            boolean deleted,
+            Instant deletedAt) {
         return new DescriptionImageJpaEntity(
-                id, productGroupDescriptionId, originUrl, uploadedUrl, sortOrder);
+                id,
+                productGroupDescriptionId,
+                originUrl,
+                uploadedUrl,
+                sortOrder,
+                deleted,
+                deletedAt);
     }
 
     public Long getId() {
@@ -75,5 +94,13 @@ public class DescriptionImageJpaEntity {
 
     public int getSortOrder() {
         return sortOrder;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public Instant getDeletedAt() {
+        return deletedAt;
     }
 }

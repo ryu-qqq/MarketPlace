@@ -1,18 +1,10 @@
 package com.ryuqq.marketplace.application.productgroup.service.command;
 
-import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupCommandFactory;
-import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
-import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
+import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroup.port.in.command.UpdateProductGroupBasicInfoUseCase;
-import com.ryuqq.marketplace.domain.brand.id.BrandId;
-import com.ryuqq.marketplace.domain.category.id.CategoryId;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
-import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
-import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
-import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
+import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,39 +14,23 @@ import org.springframework.stereotype.Service;
  *
  * <p>APP-SVC-002: UseCase 구현
  *
- * <p>APP-TRX-001: @Transactional은 Port-Out (Adapter)에서 처리
+ * <p>APP-TRX-001: @Transactional은 Coordinator에서 처리
  */
 @Service
 public class UpdateProductGroupBasicInfoService implements UpdateProductGroupBasicInfoUseCase {
 
     private final ProductGroupCommandFactory commandFactory;
-    private final ProductGroupReadManager readManager;
-    private final ProductGroupCommandManager commandManager;
+    private final ProductGroupCommandCoordinator coordinator;
 
     public UpdateProductGroupBasicInfoService(
-            ProductGroupCommandFactory commandFactory,
-            ProductGroupReadManager readManager,
-            ProductGroupCommandManager commandManager) {
+            ProductGroupCommandFactory commandFactory, ProductGroupCommandCoordinator coordinator) {
         this.commandFactory = commandFactory;
-        this.readManager = readManager;
-        this.commandManager = commandManager;
+        this.coordinator = coordinator;
     }
 
     @Override
     public void execute(UpdateProductGroupBasicInfoCommand command) {
-        UpdateContext<ProductGroupId, UpdateProductGroupBasicInfoCommand> context =
-                commandFactory.createBasicInfoUpdateContext(command);
-
-        ProductGroup productGroup = readManager.getById(context.id());
-
-        productGroup.updateBasicInfo(
-                ProductGroupName.of(context.updateData().productGroupName()),
-                BrandId.of(context.updateData().brandId()),
-                CategoryId.of(context.updateData().categoryId()),
-                ShippingPolicyId.of(context.updateData().shippingPolicyId()),
-                RefundPolicyId.of(context.updateData().refundPolicyId()),
-                context.changedAt());
-
-        commandManager.persist(productGroup);
+        ProductGroupUpdateData updateData = commandFactory.createUpdateData(command);
+        coordinator.update(updateData);
     }
 }

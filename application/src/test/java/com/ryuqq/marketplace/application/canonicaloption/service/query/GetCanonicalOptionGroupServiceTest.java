@@ -4,8 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.canonicaloption.assembler.CanonicalOptionGroupAssembler;
 import com.ryuqq.marketplace.application.canonicaloption.dto.response.CanonicalOptionGroupResult;
-import com.ryuqq.marketplace.application.canonicaloption.internal.CanonicalOptionGroupReadFacade;
+import com.ryuqq.marketplace.application.canonicaloption.dto.response.CanonicalOptionValueResult;
+import com.ryuqq.marketplace.application.canonicaloption.manager.CanonicalOptionGroupReadManager;
+import com.ryuqq.marketplace.domain.canonicaloption.CanonicalOptionFixtures;
+import com.ryuqq.marketplace.domain.canonicaloption.aggregate.CanonicalOptionGroup;
+import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionGroupId;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +29,8 @@ class GetCanonicalOptionGroupServiceTest {
 
     @InjectMocks private GetCanonicalOptionGroupService sut;
 
-    @Mock private CanonicalOptionGroupReadFacade readFacade;
+    @Mock private CanonicalOptionGroupReadManager readManager;
+    @Mock private CanonicalOptionGroupAssembler assembler;
 
     @Nested
     @DisplayName("execute() - 캐노니컬 옵션 그룹 단건 조회")
@@ -35,11 +41,14 @@ class GetCanonicalOptionGroupServiceTest {
         void execute_ValidId_ReturnsCanonicalOptionGroupResult() {
             // given
             Long groupId = 1L;
+            CanonicalOptionGroup group =
+                    CanonicalOptionFixtures.activeCanonicalOptionGroup(groupId);
             CanonicalOptionGroupResult expected =
                     new CanonicalOptionGroupResult(
                             groupId, "COLOR", "색상", "Color", true, List.of(), Instant.now());
 
-            given(readFacade.getById(groupId)).willReturn(expected);
+            given(readManager.getById(CanonicalOptionGroupId.of(groupId))).willReturn(group);
+            given(assembler.toResult(group)).willReturn(expected);
 
             // when
             CanonicalOptionGroupResult result = sut.execute(groupId);
@@ -47,7 +56,8 @@ class GetCanonicalOptionGroupServiceTest {
             // then
             assertThat(result).isEqualTo(expected);
             assertThat(result.id()).isEqualTo(groupId);
-            then(readFacade).should().getById(groupId);
+            then(readManager).should().getById(CanonicalOptionGroupId.of(groupId));
+            then(assembler).should().toResult(group);
         }
 
         @Test
@@ -55,6 +65,9 @@ class GetCanonicalOptionGroupServiceTest {
         void execute_GroupWithValues_ReturnsGroupWithValues() {
             // given
             Long groupId = 1L;
+            CanonicalOptionGroup group =
+                    CanonicalOptionFixtures.canonicalOptionGroupWithValues(
+                            groupId, CanonicalOptionFixtures.canonicalOptionValues());
             CanonicalOptionGroupResult expected =
                     new CanonicalOptionGroupResult(
                             groupId,
@@ -62,13 +75,11 @@ class GetCanonicalOptionGroupServiceTest {
                             "색상",
                             "Color",
                             true,
-                            List.of(
-                                    new com.ryuqq.marketplace.application.canonicaloption.dto
-                                            .response.CanonicalOptionValueResult(
-                                            1L, "RED", "빨강", "Red", 1)),
+                            List.of(new CanonicalOptionValueResult(1L, "RED", "빨강", "Red", 1)),
                             Instant.now());
 
-            given(readFacade.getById(groupId)).willReturn(expected);
+            given(readManager.getById(CanonicalOptionGroupId.of(groupId))).willReturn(group);
+            given(assembler.toResult(group)).willReturn(expected);
 
             // when
             CanonicalOptionGroupResult result = sut.execute(groupId);

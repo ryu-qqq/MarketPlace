@@ -56,3 +56,50 @@ scheduler:
         batch-size: 100
         # Prod: 안전한 타임아웃
         timeout-seconds: 300
+
+    image-transform-outbox:
+      process-pending:
+        # Prod: 3분마다
+        cron: "0 */3 * * * *"
+        # Prod: 큰 배치
+        batch-size: 30
+        # Prod: 안전한 지연
+        delay-seconds: 10
+
+      poll-processing:
+        # Prod: 2분마다
+        cron: "0 */2 * * * *"
+        # Prod: 큰 배치
+        batch-size: 30
+
+      recover-timeout:
+        # Prod: 10분마다
+        cron: "0 */10 * * * *"
+        # Prod: 큰 배치
+        batch-size: 30
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 600
+
+    product-group-inspection:
+      process-pending:
+        # Prod: 5분마다
+        cron: "0 */5 * * * *"
+        # Prod: 큰 배치
+        batch-size: 20
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        # Prod: 10분마다
+        cron: "0 */10 * * * *"
+        # Prod: 큰 배치
+        batch-size: 20
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 600
+
+    description-publish:
+      # Prod: 5분마다
+      cron: "0 */5 * * * *"
+      timezone: "Asia/Seoul"
+      # Prod: 큰 배치
+      batch-size: 50

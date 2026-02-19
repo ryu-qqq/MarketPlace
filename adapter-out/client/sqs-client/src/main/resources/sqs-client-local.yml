@@ -1,0 +1,12 @@
+# ============================================================
+# AWS SQS Client Local 환경 설정
+# ============================================================
+# LocalStack SQS 엔드포인트를 사용합니다.
+# ============================================================
+sqs:
+  endpoint: http://localhost:4566
+  queues:
+    inspection-scoring: http://localhost:4566/000000000000/inspection-scoring
+    inspection-enhancement: http://localhost:4566/000000000000/inspection-enhancement
+    inspection-verification: http://localhost:4566/000000000000/inspection-verification
+    inspection-dlq: http://localhost:4566/000000000000/inspection-dlq

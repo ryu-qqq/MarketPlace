@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidOp
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidStatusTransitionException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.*;
+import com.ryuqq.marketplace.domain.productgroupimage.vo.ProductGroupImages;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
@@ -39,8 +40,6 @@ class ProductGroupTest {
             RefundPolicyId refundPolicyId = RefundPolicyId.of(1L);
             ProductGroupName name = ProductGroupFixtures.defaultProductGroupName();
             OptionType optionType = OptionType.NONE;
-            ProductGroupImages images =
-                    ProductGroupImages.of(List.of(ProductGroupFixtures.thumbnailImage()));
             Instant now = CommonVoFixtures.now();
 
             // when
@@ -53,8 +52,6 @@ class ProductGroupTest {
                             refundPolicyId,
                             name,
                             optionType,
-                            images,
-                            SellerOptionGroups.of(List.of()),
                             now);
 
             // then
@@ -66,76 +63,20 @@ class ProductGroupTest {
             assertThat(productGroup.productGroupName()).isEqualTo(name);
             assertThat(productGroup.optionType()).isEqualTo(optionType);
             assertThat(productGroup.status()).isEqualTo(ProductGroupStatus.DRAFT);
-            assertThat(productGroup.images()).hasSize(1);
+            assertThat(productGroup.images()).isEmpty();
             assertThat(productGroup.createdAt()).isEqualTo(now);
             assertThat(productGroup.updatedAt()).isEqualTo(now);
         }
 
         @Test
-        @DisplayName("SINGLE 옵션 타입은 1개의 옵션 그룹이 필요하다")
-        void createProductGroupWithSingleOption() {
+        @DisplayName("forNew()는 빈 이미지/옵션으로 생성되며 옵션 검증은 하지 않는다")
+        void forNewCreatesWithEmptyImagesAndOptions() {
             // given & when
-            ProductGroup productGroup = ProductGroupFixtures.newProductGroupWithSingleOption();
+            ProductGroup productGroup = ProductGroupFixtures.newProductGroup();
 
             // then
-            assertThat(productGroup.optionType()).isEqualTo(OptionType.SINGLE);
-            assertThat(productGroup.sellerOptionGroups()).hasSize(1);
-        }
-
-        @Test
-        @DisplayName("COMBINATION 옵션 타입은 2개의 옵션 그룹이 필요하다")
-        void createProductGroupWithCombinationOption() {
-            // given & when
-            ProductGroup productGroup = ProductGroupFixtures.newProductGroupWithCombinationOption();
-
-            // then
-            assertThat(productGroup.optionType()).isEqualTo(OptionType.COMBINATION);
-            assertThat(productGroup.sellerOptionGroups()).hasSize(2);
-        }
-
-        @Test
-        @DisplayName("SINGLE 옵션 타입에 옵션 그룹이 0개면 예외가 발생한다")
-        void throwExceptionWhenSingleOptionWithNoGroup() {
-            // given & when & then
-            assertThatThrownBy(
-                            () ->
-                                    ProductGroup.forNew(
-                                            CommonVoFixtures.defaultSellerId(),
-                                            BrandId.of(100L),
-                                            CategoryId.of(200L),
-                                            ShippingPolicyId.of(1L),
-                                            RefundPolicyId.of(1L),
-                                            ProductGroupFixtures.defaultProductGroupName(),
-                                            OptionType.SINGLE,
-                                            ProductGroupImages.of(
-                                                    List.of(ProductGroupFixtures.thumbnailImage())),
-                                            SellerOptionGroups.of(List.of()),
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
-        }
-
-        @Test
-        @DisplayName("NONE 옵션 타입에 옵션 그룹이 있으면 예외가 발생한다")
-        void throwExceptionWhenNoneOptionWithGroups() {
-            // given & when & then
-            assertThatThrownBy(
-                            () ->
-                                    ProductGroup.forNew(
-                                            CommonVoFixtures.defaultSellerId(),
-                                            BrandId.of(100L),
-                                            CategoryId.of(200L),
-                                            ShippingPolicyId.of(1L),
-                                            RefundPolicyId.of(1L),
-                                            ProductGroupFixtures.defaultProductGroupName(),
-                                            OptionType.NONE,
-                                            ProductGroupImages.of(
-                                                    List.of(ProductGroupFixtures.thumbnailImage())),
-                                            SellerOptionGroups.of(
-                                                    List.of(
-                                                            ProductGroupFixtures
-                                                                    .defaultSellerOptionGroup())),
-                                            CommonVoFixtures.now()))
-                    .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
+            assertThat(productGroup.images()).isEmpty();
+            assertThat(productGroup.sellerOptionGroups()).isEmpty();
         }
     }
 
@@ -336,7 +277,7 @@ class ProductGroupTest {
 
         @Test
         @DisplayName("기본 정보를 수정한다")
-        void updateBasicInfo() {
+        void update() {
             // given
             ProductGroup productGroup = ProductGroupFixtures.activeProductGroup();
             ProductGroupName newName = ProductGroupFixtures.productGroupName("수정된 상품명");
@@ -346,14 +287,18 @@ class ProductGroupTest {
             RefundPolicyId newRefundPolicyId = RefundPolicyId.of(2L);
             Instant now = CommonVoFixtures.now();
 
+            ProductGroupUpdateData updateData =
+                    ProductGroupUpdateData.of(
+                            productGroup.id(),
+                            newName,
+                            newBrandId,
+                            newCategoryId,
+                            newShippingPolicyId,
+                            newRefundPolicyId,
+                            now);
+
             // when
-            productGroup.updateBasicInfo(
-                    newName,
-                    newBrandId,
-                    newCategoryId,
-                    newShippingPolicyId,
-                    newRefundPolicyId,
-                    now);
+            productGroup.update(updateData);
 
             // then
             assertThat(productGroup.productGroupName()).isEqualTo(newName);
@@ -428,6 +373,29 @@ class ProductGroupTest {
                             () ->
                                     productGroup.replaceSellerOptionGroups(
                                             SellerOptionGroups.of(List.of())))
+                    .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
+        }
+
+        @Test
+        @DisplayName("validateStructure: SINGLE 타입에 옵션 그룹 0개면 예외가 발생한다")
+        void validateStructureThrowsForSingleWithNoGroup() {
+            // given
+            SellerOptionGroups emptyGroups = SellerOptionGroups.of(List.of());
+
+            // when & then
+            assertThatThrownBy(() -> emptyGroups.validateStructure(OptionType.SINGLE))
+                    .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
+        }
+
+        @Test
+        @DisplayName("validateStructure: NONE 타입에 옵션 그룹이 있으면 예외가 발생한다")
+        void validateStructureThrowsForNoneWithGroups() {
+            // given
+            SellerOptionGroups nonEmptyGroups =
+                    SellerOptionGroups.of(List.of(ProductGroupFixtures.defaultSellerOptionGroup()));
+
+            // when & then
+            assertThatThrownBy(() -> nonEmptyGroups.validateStructure(OptionType.NONE))
                     .isInstanceOf(ProductGroupInvalidOptionStructureException.class);
         }
 

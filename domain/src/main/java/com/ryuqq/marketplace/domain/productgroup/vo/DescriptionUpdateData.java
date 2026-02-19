@@ -1,0 +1,41 @@
+package com.ryuqq.marketplace.domain.productgroup.vo;
+
+import com.ryuqq.marketplace.domain.productgroup.aggregate.DescriptionImage;
+import java.time.Instant;
+import java.util.List;
+
+/**
+ * Description 수정 데이터.
+ *
+ * <p>수정할 컨텐츠, 새 이미지 목록, 수정 시각을 불변으로 보관합니다.
+ */
+public class DescriptionUpdateData {
+
+    private final DescriptionHtml content;
+    private final List<DescriptionImage> newImages;
+    private final Instant updatedAt;
+
+    private DescriptionUpdateData(
+            DescriptionHtml content, List<DescriptionImage> newImages, Instant updatedAt) {
+        this.content = content;
+        this.newImages = newImages;
+        this.updatedAt = updatedAt;
+    }
+
+    public static DescriptionUpdateData of(
+            DescriptionHtml content, List<DescriptionImage> newImages, Instant updatedAt) {
+        return new DescriptionUpdateData(content, List.copyOf(newImages), updatedAt);
+    }
+
+    public DescriptionHtml content() {
+        return content;
+    }
+
+    public List<DescriptionImage> newImages() {
+        return newImages;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
+}

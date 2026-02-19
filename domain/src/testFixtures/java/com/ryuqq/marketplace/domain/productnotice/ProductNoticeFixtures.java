@@ -64,7 +64,10 @@ public final class ProductNoticeFixtures {
 
     public static ProductNoticeEntry existingEntry(Long id, Long fieldId, String value) {
         return ProductNoticeEntry.reconstitute(
-                ProductNoticeEntryId.of(id), NoticeFieldId.of(fieldId), NoticeFieldValue.of(value));
+                ProductNoticeEntryId.of(id),
+                defaultProductNoticeId(),
+                NoticeFieldId.of(fieldId),
+                NoticeFieldValue.of(value));
     }
 
     public static List<ProductNoticeEntry> defaultEntries() {

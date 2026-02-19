@@ -4,7 +4,9 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.notice.condition.NoticeCategoryConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.NoticeCategoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.NoticeFieldJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.QNoticeCategoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.QNoticeFieldJpaEntity;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
 import com.ryuqq.marketplace.domain.notice.query.NoticeCategorySearchCriteria;
 import com.ryuqq.marketplace.domain.notice.query.NoticeCategorySortKey;
@@ -18,6 +20,8 @@ public class NoticeCategoryQueryDslRepository {
 
     private static final QNoticeCategoryJpaEntity noticeCategory =
             QNoticeCategoryJpaEntity.noticeCategoryJpaEntity;
+    private static final QNoticeFieldJpaEntity noticeField =
+            QNoticeFieldJpaEntity.noticeFieldJpaEntity;
 
     private final JPAQueryFactory queryFactory;
     private final NoticeCategoryConditionBuilder conditionBuilder;
@@ -65,6 +69,25 @@ public class NoticeCategoryQueryDslRepository {
                                 conditionBuilder.searchCondition(criteria))
                         .fetchOne();
         return count != null ? count : 0L;
+    }
+
+    public List<NoticeFieldJpaEntity> findFieldsByCategoryId(Long categoryId) {
+        return queryFactory
+                .selectFrom(noticeField)
+                .where(noticeField.noticeCategoryId.eq(categoryId))
+                .orderBy(noticeField.sortOrder.asc())
+                .fetch();
+    }
+
+    public List<NoticeFieldJpaEntity> findFieldsByCategoryIds(List<Long> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return List.of();
+        }
+        return queryFactory
+                .selectFrom(noticeField)
+                .where(noticeField.noticeCategoryId.in(categoryIds))
+                .orderBy(noticeField.sortOrder.asc())
+                .fetch();
     }
 
     private OrderSpecifier<?> resolveOrderSpecifier(NoticeCategorySearchCriteria criteria) {

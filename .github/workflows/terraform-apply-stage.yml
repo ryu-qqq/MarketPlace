@@ -4,7 +4,7 @@
 # 스테이지 환경 인프라 프로비저닝 및 Image Tag 업데이트
 # deploy-stage.yml에서 자동 호출 또는 수동 실행 가능
 #
-# 모듈 순서: ecr → ecs-cluster → ecs-web-api → ecs-scheduler
+# 모듈 순서: ecr → ecs-cluster → sqs → ecs-web-api → ecs-scheduler → ecs-worker
 # ============================================================================
 
 name: Terraform Apply (Stage)
@@ -19,6 +19,10 @@ on:
         type: string
       scheduler-image-tag:
         description: 'Scheduler Docker image tag (e.g., scheduler-stage-1-abc1234)'
+        required: false
+        type: string
+      worker-image-tag:
+        description: 'Worker Docker image tag (e.g., worker-stage-1-abc1234)'
         required: false
         type: string
     secrets:
@@ -45,12 +49,18 @@ jobs:
           - name: ecs-cluster
             dir: terraform/environments/stage/ecs-cluster
             order: 1
+          - name: sqs
+            dir: terraform/environments/stage/sqs
+            order: 2
           - name: ecs-web-api
             dir: terraform/environments/stage/ecs-web-api
-            order: 2
+            order: 3
           - name: ecs-scheduler
             dir: terraform/environments/stage/ecs-scheduler
-            order: 3
+            order: 4
+          - name: ecs-worker
+            dir: terraform/environments/stage/ecs-worker
+            order: 5
 
     steps:
       - name: Checkout code
@@ -88,6 +98,11 @@ jobs:
           if [ "${{ matrix.module.name }}" == "ecs-scheduler" ] && [ -n "${{ inputs.scheduler-image-tag }}" ]; then
             echo "Using Scheduler image tag: ${{ inputs.scheduler-image-tag }}"
             EXTRA_VARS="-var=image_tag=${{ inputs.scheduler-image-tag }}"
+          fi
+
+          if [ "${{ matrix.module.name }}" == "ecs-worker" ] && [ -n "${{ inputs.worker-image-tag }}" ]; then
+            echo "Using Worker image tag: ${{ inputs.worker-image-tag }}"
+            EXTRA_VARS="-var=image_tag=${{ inputs.worker-image-tag }}"
           fi
 
           echo "Generating terraform plan..."
@@ -130,7 +145,9 @@ jobs:
           echo "### Modules Deployed" >> $GITHUB_STEP_SUMMARY
           echo "- ECR Repository (stage)" >> $GITHUB_STEP_SUMMARY
           echo "- ECS Cluster (stage)" >> $GITHUB_STEP_SUMMARY
+          echo "- SQS Queues (stage)" >> $GITHUB_STEP_SUMMARY
           echo "- ECS Web API (stage)" >> $GITHUB_STEP_SUMMARY
           echo "- ECS Scheduler (stage)" >> $GITHUB_STEP_SUMMARY
+          echo "- ECS Worker (stage)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Service Discovery**: marketplace-api-stage.connectly.local" >> $GITHUB_STEP_SUMMARY

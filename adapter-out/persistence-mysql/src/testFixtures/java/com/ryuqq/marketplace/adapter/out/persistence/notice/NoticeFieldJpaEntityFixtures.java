@@ -75,7 +75,7 @@ public final class NoticeFieldJpaEntityFixtures {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return NoticeFieldJpaEntity.create(
-                seq,
+                null,
                 noticeCategoryId,
                 DEFAULT_FIELD_CODE + "_" + seq,
                 DEFAULT_FIELD_NAME,

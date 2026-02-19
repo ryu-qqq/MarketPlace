@@ -6,7 +6,6 @@ import com.ryuqq.marketplace.application.selleradmin.port.in.command.ResetSeller
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminIdentityClient;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdmin;
 import com.ryuqq.marketplace.domain.selleradmin.id.SellerAdminId;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
  * @since 1.1.0
  */
 @Service
-@ConditionalOnBean(SellerAdminIdentityClient.class)
 public class ResetSellerAdminPasswordService implements ResetSellerAdminPasswordUseCase {
 
     private final SellerAdminReadManager readManager;

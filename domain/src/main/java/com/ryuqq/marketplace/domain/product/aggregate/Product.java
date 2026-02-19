@@ -58,20 +58,21 @@ public class Product {
         this.updatedAt = updatedAt;
     }
 
-    /** 신규 상품 생성. ACTIVE 상태로 시작. */
+    /**
+     * 신규 상품 생성. ACTIVE 상태로 시작.
+     *
+     * <p>salePrice는 currentPrice와 동일하게, discountRate는 regularPrice 대비 currentPrice로 자동 계산합니다.
+     */
     public static Product forNew(
             ProductGroupId productGroupId,
             SkuCode skuCode,
             Money regularPrice,
             Money currentPrice,
-            Money salePrice,
-            int discountRate,
             int stockQuantity,
             int sortOrder,
             List<ProductOptionMapping> optionMappings,
             Instant now) {
-        validatePrice(regularPrice, currentPrice, salePrice, discountRate);
-        validateDiscountRate(discountRate);
+        validateCurrentPrice(regularPrice, currentPrice);
         validateStockQuantity(stockQuantity);
         return new Product(
                 ProductId.forNew(),
@@ -79,8 +80,8 @@ public class Product {
                 skuCode,
                 regularPrice,
                 currentPrice,
-                salePrice,
-                discountRate,
+                currentPrice,
+                Money.discountRate(regularPrice, currentPrice),
                 stockQuantity,
                 ProductStatus.ACTIVE,
                 sortOrder,
@@ -122,6 +123,17 @@ public class Product {
 
     // ── 비즈니스 메서드 ──
 
+    /** targetStatus에 따라 적절한 상태 전이 메서드를 호출한다. */
+    public void changeStatus(ProductStatus targetStatus, Instant now) {
+        switch (targetStatus) {
+            case ACTIVE -> activate(now);
+            case INACTIVE -> deactivate(now);
+            case SOLDOUT -> markSoldOut(now);
+            case DELETED -> delete(now);
+            default -> throw new IllegalArgumentException("지원하지 않는 상태 변경입니다: " + targetStatus);
+        }
+    }
+
     /** 판매 재개. INACTIVE, SOLDOUT에서만 가능. */
     public void activate(Instant now) {
         if (!status.canActivate()) {
@@ -158,19 +170,17 @@ public class Product {
         this.updatedAt = now;
     }
 
-    /** 가격 수정. */
-    public void updatePrice(
-            Money regularPrice,
-            Money currentPrice,
-            Money salePrice,
-            int discountRate,
-            Instant now) {
-        validatePrice(regularPrice, currentPrice, salePrice, discountRate);
-        validateDiscountRate(discountRate);
+    /**
+     * 가격 수정.
+     *
+     * <p>salePrice는 currentPrice와 동일하게, discountRate는 자동 계산합니다.
+     */
+    public void updatePrice(Money regularPrice, Money currentPrice, Instant now) {
+        validateCurrentPrice(regularPrice, currentPrice);
         this.regularPrice = regularPrice;
         this.currentPrice = currentPrice;
-        this.salePrice = salePrice;
-        this.discountRate = discountRate;
+        this.salePrice = currentPrice;
+        this.discountRate = Money.discountRate(regularPrice, currentPrice);
         this.updatedAt = now;
     }
 
@@ -193,36 +203,25 @@ public class Product {
         this.updatedAt = now;
     }
 
-    // ── 검증 메서드 ──
-
-    private static void validatePrice(
-            Money regularPrice, Money currentPrice, Money salePrice, int discountRate) {
-        if (currentPrice.isGreaterThan(regularPrice)) {
-            throw new ProductInvalidPriceException(
-                    regularPrice.value(),
-                    currentPrice.value(),
-                    salePrice != null ? salePrice.value() : 0);
-        }
-        if (salePrice != null && salePrice.isGreaterThan(currentPrice)) {
-            throw new ProductInvalidPriceException(
-                    regularPrice.value(), currentPrice.value(), salePrice.value());
-        }
-        boolean hasSaleDiscount = salePrice != null && salePrice.isLessThan(currentPrice);
-        if (discountRate > 0 && !hasSaleDiscount) {
-            throw new ProductInvalidPriceException(
-                    regularPrice.value(),
-                    currentPrice.value(),
-                    salePrice != null ? salePrice.value() : 0);
-        }
-        if (hasSaleDiscount && discountRate <= 0) {
-            throw new ProductInvalidPriceException(
-                    regularPrice.value(), currentPrice.value(), salePrice.value());
-        }
+    /** 전체 속성 일괄 수정 (가격 + 재고 + SKU + 정렬 순서). */
+    public void update(
+            SkuCode skuCode,
+            Money regularPrice,
+            Money currentPrice,
+            int stockQuantity,
+            int sortOrder,
+            Instant now) {
+        updatePrice(regularPrice, currentPrice, now);
+        updateStock(stockQuantity, now);
+        updateSkuCode(skuCode, now);
+        updateSortOrder(sortOrder, now);
     }
 
-    private static void validateDiscountRate(int discountRate) {
-        if (discountRate < 0 || discountRate > 100) {
-            throw new IllegalArgumentException("할인율은 0~100 사이여야 합니다: " + discountRate);
+    // ── 검증 메서드 ──
+
+    private static void validateCurrentPrice(Money regularPrice, Money currentPrice) {
+        if (currentPrice.isGreaterThan(regularPrice)) {
+            throw new ProductInvalidPriceException(regularPrice.value(), currentPrice.value());
         }
     }
 

@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "셀러 주소 조회", description = "셀러 주소 조회 API")
 @RestController
-@RequestMapping(SellerAddressAdminEndpoints.SELLER_ADDRESSES_QUERY)
+@RequestMapping(SellerAddressAdminEndpoints.SELLER_ADDRESSES)
 public class SellerAddressQueryController {
 
     private final SearchSellerAddressUseCase searchUseCase;

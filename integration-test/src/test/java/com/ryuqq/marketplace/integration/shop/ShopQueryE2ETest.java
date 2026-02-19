@@ -56,8 +56,8 @@ class ShopQueryE2ETest extends E2ETestBase {
         @DisplayName("[TC-Q1-S01] 외부몰 목록 조회 성공")
         void searchShops_WithDefaultParams_Returns200() {
             // given
-            shopRepository.save(ShopJpaEntityFixtures.activeEntity());
-            shopRepository.save(ShopJpaEntityFixtures.activeEntity());
+            shopRepository.save(ShopJpaEntityFixtures.newEntity());
+            shopRepository.save(ShopJpaEntityFixtures.newEntity());
 
             // when & then
             given().spec(givenSuperAdmin())
@@ -98,8 +98,8 @@ class ShopQueryE2ETest extends E2ETestBase {
         @DisplayName("[TC-Q1-S03] 활성/비활성 상태 필터링 성공")
         void searchShops_WithStatusFilter_Returns200() {
             // given
-            shopRepository.save(ShopJpaEntityFixtures.activeEntity());
-            shopRepository.save(ShopJpaEntityFixtures.inactiveEntity());
+            shopRepository.save(ShopJpaEntityFixtures.newEntity());
+            shopRepository.save(ShopJpaEntityFixtures.newInactiveEntity());
 
             // when & then - 활성만 조회
             given().spec(givenSuperAdmin())
@@ -118,7 +118,7 @@ class ShopQueryE2ETest extends E2ETestBase {
         void searchShops_WithPagingParams_Returns200() {
             // given
             for (int i = 0; i < 5; i++) {
-                shopRepository.save(ShopJpaEntityFixtures.activeEntity());
+                shopRepository.save(ShopJpaEntityFixtures.newEntity());
             }
 
             // when & then
@@ -140,8 +140,8 @@ class ShopQueryE2ETest extends E2ETestBase {
         @DisplayName("[TC-Q1-S05] 삭제된 외부몰은 조회되지 않음")
         void searchShops_ExcludesDeletedShops_Returns200() {
             // given
-            shopRepository.save(ShopJpaEntityFixtures.activeEntity());
-            shopRepository.save(ShopJpaEntityFixtures.deletedEntity());
+            shopRepository.save(ShopJpaEntityFixtures.newEntity());
+            shopRepository.save(ShopJpaEntityFixtures.newDeletedEntity());
 
             // when & then
             given().spec(givenSuperAdmin())

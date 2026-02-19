@@ -1,0 +1,16 @@
+# ============================================================
+# Spring AI Client 공통 설정
+# ============================================================
+spring:
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.3
+
+spring-ai:
+  model: gpt-4o-mini
+  temperature: 0.3
+  max-tokens: 4096

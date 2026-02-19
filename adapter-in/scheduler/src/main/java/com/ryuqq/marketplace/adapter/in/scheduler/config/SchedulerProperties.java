@@ -18,7 +18,10 @@ public record SchedulerProperties(Jobs jobs) {
             SellerAuthOutbox sellerAuthOutbox,
             SellerAdminAuthOutbox sellerAdminAuthOutbox,
             SellerAdminEmailOutbox sellerAdminEmailOutbox,
-            ImageUploadOutbox imageUploadOutbox) {}
+            ImageUploadOutbox imageUploadOutbox,
+            ImageTransformOutbox imageTransformOutbox,
+            DescriptionPublish descriptionPublish,
+            ProductGroupInspection productGroupInspection) {}
 
     public record SellerAuthOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
@@ -29,6 +32,19 @@ public record SchedulerProperties(Jobs jobs) {
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
     public record ImageUploadOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record ImageTransformOutbox(
+            ProcessPending processPending,
+            PollProcessing pollProcessing,
+            RecoverTimeout recoverTimeout) {}
+
+    public record ProductGroupInspection(
+            ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record PollProcessing(boolean enabled, String cron, String timezone, int batchSize) {}
+
+    public record DescriptionPublish(
+            boolean enabled, String cron, String timezone, int batchSize) {}
 
     public record ProcessPending(
             boolean enabled, String cron, String timezone, int batchSize, int delaySeconds) {}
