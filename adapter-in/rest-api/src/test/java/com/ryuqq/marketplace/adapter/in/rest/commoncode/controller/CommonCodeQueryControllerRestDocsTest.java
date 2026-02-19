@@ -31,6 +31,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -114,32 +115,57 @@ class CommonCodeQueryControllerRestDocsTest {
                                                     .description("페이지 크기 (최대 100)")
                                                     .optional()),
                                     responseFields(
-                                            fieldWithPath("data.content[]").description("공통 코드 목록"),
+                                            fieldWithPath("data.content[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("공통 코드 목록"),
                                             fieldWithPath("data.content[].id")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("공통 코드 ID"),
                                             fieldWithPath("data.content[].commonCodeTypeId")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("공통 코드 타입 ID"),
-                                            fieldWithPath("data.content[].code").description("코드값"),
+                                            fieldWithPath("data.content[].code")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("코드값"),
                                             fieldWithPath("data.content[].displayName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("표시명"),
                                             fieldWithPath("data.content[].displayOrder")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("표시 순서"),
                                             fieldWithPath("data.content[].active")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("활성화 여부"),
                                             fieldWithPath("data.content[].createdAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("생성일시 (ISO 8601)"),
                                             fieldWithPath("data.content[].updatedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("수정일시 (ISO 8601)"),
-                                            fieldWithPath("data.page").description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").description("페이지 크기"),
+                                            fieldWithPath("data.page")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재 페이지 번호"),
+                                            fieldWithPath("data.size")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data.first")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("첫 페이지 여부"),
+                                            fieldWithPath("data.last")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 }

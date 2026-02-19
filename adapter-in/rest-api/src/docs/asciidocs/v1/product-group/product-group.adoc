@@ -1,3 +1,90 @@
+[[product-group-register]]
+=== 상품 그룹 등록
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product-group/register/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/product-group/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/product-group/register/response-fields.adoc[]
+
+
+[[product-group-batch-register]]
+=== 상품 그룹 배치 등록
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product-group/batch-register/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/product-group/batch-register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group/batch-register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/product-group/batch-register/response-fields.adoc[]
+
+
+[[product-group-update-full]]
+=== 상품 그룹 전체 수정
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product-group/update-full/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product-group/update-full/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/product-group/update-full/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group/update-full/http-response.adoc[]
+
+
+[[product-group-update-basic-info]]
+=== 상품 그룹 기본 정보 수정
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product-group/update-basic-info/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product-group/update-basic-info/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/product-group/update-basic-info/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group/update-basic-info/http-response.adoc[]
+
+
+[[product-group-batch-change-status]]
+=== 상품 그룹 배치 상태 변경
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product-group/batch-change-status/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/product-group/batch-change-status/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group/batch-change-status/http-response.adoc[]
+
+
 [[product-group-search]]
 === 상품 그룹 검색 조회
 
