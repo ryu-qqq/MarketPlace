@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +46,7 @@ public class ShipmentCommandController {
     }
 
     @Operation(summary = "발주확인 일괄 처리", description = "선택한 배송건의 발주를 일괄 확인합니다.")
+    @PreAuthorize("@access.hasPermission('shipment:write')")
     @RequirePermission(value = "shipment:write", description = "발주확인 일괄 처리")
     @PostMapping(ShipmentEndpoints.CONFIRM_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> confirmBatch(
@@ -55,6 +57,7 @@ public class ShipmentCommandController {
     }
 
     @Operation(summary = "송장등록 일괄 처리", description = "선택한 배송건에 송장을 일괄 등록합니다.")
+    @PreAuthorize("@access.hasPermission('shipment:write')")
     @RequirePermission(value = "shipment:write", description = "송장등록 일괄 처리")
     @PostMapping(ShipmentEndpoints.SHIP_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> shipBatch(
@@ -65,6 +68,7 @@ public class ShipmentCommandController {
     }
 
     @Operation(summary = "단건 송장등록", description = "주문에 대해 송장을 등록합니다.")
+    @PreAuthorize("@access.hasPermission('shipment:write')")
     @RequirePermission(value = "shipment:write", description = "단건 송장등록")
     @PostMapping(ShipmentEndpoints.SHIP_SINGLE)
     public ResponseEntity<ApiResponse<Void>> shipSingle(
