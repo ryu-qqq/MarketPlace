@@ -6,6 +6,4 @@ import com.ryuqq.marketplace.domain.externalsource.aggregate.ExternalSource;
 public interface ExternalSourceCommandPort {
 
     Long persist(ExternalSource externalSource);
-
-    boolean existsByCode(String code);
 }

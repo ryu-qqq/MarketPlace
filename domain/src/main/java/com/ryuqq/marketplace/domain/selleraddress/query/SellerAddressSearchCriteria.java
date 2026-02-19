@@ -11,14 +11,16 @@ import java.util.List;
  * @param sellerIds 셀러 ID 목록 (필수, 1건 이상)
  * @param addressTypes 주소 유형 필터 (null/empty면 전체)
  * @param defaultAddress 기본 주소 필터 (null이면 전체)
- * @param keyword 검색어 (null이면 전체)
+ * @param searchField 검색 필드 (null이면 전체 필드 검색)
+ * @param searchWord 검색어 (null이면 전체)
  * @param queryContext 정렬 및 페이징 정보
  */
 public record SellerAddressSearchCriteria(
         List<SellerId> sellerIds,
         List<AddressType> addressTypes,
         Boolean defaultAddress,
-        String keyword,
+        SellerAddressSearchField searchField,
+        String searchWord,
         QueryContext<SellerAddressSortKey> queryContext) {
 
     public SellerAddressSearchCriteria {
@@ -33,15 +35,17 @@ public record SellerAddressSearchCriteria(
             List<SellerId> sellerIds,
             List<AddressType> addressTypes,
             Boolean defaultAddress,
-            String keyword,
+            SellerAddressSearchField searchField,
+            String searchWord,
             QueryContext<SellerAddressSortKey> queryContext) {
         return new SellerAddressSearchCriteria(
-                sellerIds, addressTypes, defaultAddress, keyword, queryContext);
+                sellerIds, addressTypes, defaultAddress, searchField, searchWord, queryContext);
     }
 
     public static SellerAddressSearchCriteria bySellerId(SellerId sellerId) {
         return new SellerAddressSearchCriteria(
                 List.of(sellerId),
+                null,
                 null,
                 null,
                 null,
@@ -66,8 +70,14 @@ public record SellerAddressSearchCriteria(
         return defaultAddress != null;
     }
 
-    public boolean hasKeyword() {
-        return keyword != null && !keyword.isBlank();
+    /** 검색 조건이 있는지 확인. */
+    public boolean hasSearchCondition() {
+        return searchWord != null && !searchWord.isBlank();
+    }
+
+    /** 특정 필드 검색인지 확인. */
+    public boolean hasSearchField() {
+        return searchField != null;
     }
 
     public int size() {

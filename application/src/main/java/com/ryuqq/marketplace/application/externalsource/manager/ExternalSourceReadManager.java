@@ -1,10 +1,10 @@
 package com.ryuqq.marketplace.application.externalsource.manager;
 
-import com.ryuqq.marketplace.application.externalsource.dto.query.ExternalSourceSearchParams;
 import com.ryuqq.marketplace.application.externalsource.port.out.query.ExternalSourceQueryPort;
 import com.ryuqq.marketplace.domain.externalsource.aggregate.ExternalSource;
 import com.ryuqq.marketplace.domain.externalsource.exception.ExternalSourceNotFoundException;
 import com.ryuqq.marketplace.domain.externalsource.id.ExternalSourceId;
+import com.ryuqq.marketplace.domain.externalsource.query.ExternalSourceSearchCriteria;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,12 +35,12 @@ public class ExternalSourceReadManager {
     }
 
     @Transactional(readOnly = true)
-    public List<ExternalSource> findByCriteria(ExternalSourceSearchParams params) {
-        return queryPort.findByCriteria(params);
+    public List<ExternalSource> findByCriteria(ExternalSourceSearchCriteria criteria) {
+        return queryPort.findByCriteria(criteria);
     }
 
     @Transactional(readOnly = true)
-    public long countByCriteria(ExternalSourceSearchParams params) {
-        return queryPort.countByCriteria(params);
+    public long countByCriteria(ExternalSourceSearchCriteria criteria) {
+        return queryPort.countByCriteria(criteria);
     }
 }

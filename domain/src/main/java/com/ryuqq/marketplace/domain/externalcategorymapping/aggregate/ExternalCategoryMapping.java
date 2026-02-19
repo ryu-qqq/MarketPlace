@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.domain.externalcategorymapping.aggregate;
 
 import com.ryuqq.marketplace.domain.externalcategorymapping.id.ExternalCategoryMappingId;
 import com.ryuqq.marketplace.domain.externalcategorymapping.vo.ExternalCategoryMappingStatus;
+import com.ryuqq.marketplace.domain.externalcategorymapping.vo.ExternalCategoryMappingUpdateData;
 import java.time.Instant;
 
 /** ExternalCategoryMapping Aggregate Root. */
@@ -75,21 +76,10 @@ public class ExternalCategoryMapping {
     }
 
     /** 매핑 정보 수정. */
-    public void update(String externalCategoryName, Long internalCategoryId, Instant now) {
-        this.externalCategoryName = externalCategoryName;
-        this.internalCategoryId = internalCategoryId;
-        this.updatedAt = now;
-    }
-
-    /** 활성화. */
-    public void activate(Instant now) {
-        this.status = ExternalCategoryMappingStatus.ACTIVE;
-        this.updatedAt = now;
-    }
-
-    /** 비활성화. */
-    public void deactivate(Instant now) {
-        this.status = ExternalCategoryMappingStatus.INACTIVE;
+    public void update(ExternalCategoryMappingUpdateData updateData, Instant now) {
+        this.externalCategoryName = updateData.externalCategoryName();
+        this.internalCategoryId = updateData.internalCategoryId();
+        this.status = updateData.status();
         this.updatedAt = now;
     }
 

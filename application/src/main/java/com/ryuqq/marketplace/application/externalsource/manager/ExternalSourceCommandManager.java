@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /** ExternalSource Command Manager. */
 @Component
-@Transactional
 public class ExternalSourceCommandManager {
 
     private final ExternalSourceCommandPort commandPort;
@@ -16,11 +15,8 @@ public class ExternalSourceCommandManager {
         this.commandPort = commandPort;
     }
 
+    @Transactional
     public Long persist(ExternalSource externalSource) {
         return commandPort.persist(externalSource);
-    }
-
-    public boolean existsByCode(String code) {
-        return commandPort.existsByCode(code);
     }
 }

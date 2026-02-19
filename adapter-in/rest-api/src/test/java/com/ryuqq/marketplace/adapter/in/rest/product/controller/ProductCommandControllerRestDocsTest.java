@@ -239,6 +239,12 @@ class ProductCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("표준 옵션 그룹 ID")
                                                     .optional(),
+                                            fieldWithPath("optionGroups[].inputType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description(
+                                                            "입력 유형 (PREDEFINED: 사전 정의,"
+                                                                    + " FREE_INPUT: 자유 입력)")
+                                                    .optional(),
                                             fieldWithPath("optionGroups[].optionValues")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("옵션 값 목록"),

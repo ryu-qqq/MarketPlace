@@ -108,16 +108,18 @@ class NoticeCategoryQueryControllerRestDocsTest {
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 키 (createdAt, code)")
+                                                    .description(
+                                                            "정렬 키 (CREATED_AT, CODE). 기본값:"
+                                                                    + " CREATED_AT")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC). 기본값: DESC")
                                                     .optional(),
                                             parameterWithName("page")
-                                                    .description("페이지 번호 (0부터)")
+                                                    .description("페이지 번호 (0부터). 기본값: 0")
                                                     .optional(),
                                             parameterWithName("size")
-                                                    .description("페이지 크기")
+                                                    .description("페이지 크기. 기본값: 20")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.content[]")

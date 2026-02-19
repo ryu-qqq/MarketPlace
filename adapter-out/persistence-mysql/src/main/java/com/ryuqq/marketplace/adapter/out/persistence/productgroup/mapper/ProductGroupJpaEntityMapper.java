@@ -18,6 +18,7 @@ import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionGroupName;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionValueName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
@@ -71,6 +72,7 @@ public class ProductGroupJpaEntityMapper {
                 group.canonicalOptionGroupId() != null
                         ? group.canonicalOptionGroupId().value()
                         : null,
+                group.inputType().name(),
                 group.sortOrder(),
                 group.isDeleted(),
                 group.deletionStatus().deletedAt());
@@ -173,6 +175,7 @@ public class ProductGroupJpaEntityMapper {
                 entity.getCanonicalOptionGroupId() != null
                         ? CanonicalOptionGroupId.of(entity.getCanonicalOptionGroupId())
                         : null,
+                OptionInputType.valueOf(entity.getInputType()),
                 entity.getSortOrder(),
                 values,
                 DeletionStatus.reconstitute(entity.isDeleted(), entity.getDeletedAt()));

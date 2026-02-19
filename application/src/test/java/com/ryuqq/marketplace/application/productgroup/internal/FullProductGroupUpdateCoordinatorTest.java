@@ -256,6 +256,7 @@ class FullProductGroupUpdateCoordinatorTest {
                                         1L,
                                         "색상",
                                         null,
+                                        null,
                                         List.of(
                                                 new UpdateSellerOptionGroupsCommand
                                                         .OptionValueCommand(1L, "검정", null, 0)))));

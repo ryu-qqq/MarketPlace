@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.externalsource.condition;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ryuqq.marketplace.adapter.out.persistence.externalsource.entity.QExternalSourceJpaEntity;
-import com.ryuqq.marketplace.application.externalsource.dto.query.ExternalSourceSearchParams;
+import com.ryuqq.marketplace.domain.externalsource.query.ExternalSourceSearchField;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -13,28 +13,35 @@ public class ExternalSourceConditionBuilder {
     private static final QExternalSourceJpaEntity externalSource =
             QExternalSourceJpaEntity.externalSourceJpaEntity;
 
-    public BooleanExpression typeIn(ExternalSourceSearchParams params) {
-        List<String> types = params.types();
+    public BooleanExpression typeIn(List<String> types) {
         if (types == null || types.isEmpty()) {
             return null;
         }
         return externalSource.type.in(types);
     }
 
-    public BooleanExpression statusIn(ExternalSourceSearchParams params) {
-        List<String> statuses = params.statuses();
+    public BooleanExpression statusIn(List<String> statuses) {
         if (statuses == null || statuses.isEmpty()) {
             return null;
         }
         return externalSource.status.in(statuses);
     }
 
-    public BooleanExpression searchCondition(ExternalSourceSearchParams params) {
-        String searchWord = params.searchWord();
+    /** 검색 필드별 검색 조건. searchField가 null이면 전체 필드 검색. */
+    public BooleanExpression searchCondition(
+            ExternalSourceSearchField searchField, String searchWord) {
         if (searchWord == null || searchWord.isBlank()) {
             return null;
         }
-        String word = "%" + searchWord + "%";
-        return externalSource.name.like(word).or(externalSource.code.like(word));
+        if (searchField == null) {
+            return externalSource
+                    .name
+                    .containsIgnoreCase(searchWord)
+                    .or(externalSource.code.containsIgnoreCase(searchWord));
+        }
+        return switch (searchField) {
+            case CODE -> externalSource.code.containsIgnoreCase(searchWord);
+            case NAME -> externalSource.name.containsIgnoreCase(searchWord);
+        };
     }
 }

@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.externalbrandmapping.condition.ExternalBrandMappingConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.externalbrandmapping.entity.ExternalBrandMappingJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.externalbrandmapping.entity.QExternalBrandMappingJpaEntity;
-import com.ryuqq.marketplace.application.externalbrandmapping.dto.query.ExternalBrandMappingSearchParams;
+import com.ryuqq.marketplace.domain.externalbrandmapping.query.ExternalBrandMappingSearchCriteria;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -46,6 +46,16 @@ public class ExternalBrandMappingQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
+    public List<ExternalBrandMappingJpaEntity> findByExternalSourceIdAndExternalBrandCodes(
+            Long externalSourceId, List<String> externalBrandCodes) {
+        return queryFactory
+                .selectFrom(externalBrandMapping)
+                .where(
+                        externalBrandMapping.externalSourceId.eq(externalSourceId),
+                        externalBrandMapping.externalBrandCode.in(externalBrandCodes))
+                .fetch();
+    }
+
     public List<ExternalBrandMappingJpaEntity> findByExternalSourceId(Long externalSourceId) {
         return queryFactory
                 .selectFrom(externalBrandMapping)
@@ -54,27 +64,29 @@ public class ExternalBrandMappingQueryDslRepository {
     }
 
     public List<ExternalBrandMappingJpaEntity> findByCriteria(
-            ExternalBrandMappingSearchParams params) {
+            ExternalBrandMappingSearchCriteria criteria) {
         return queryFactory
                 .selectFrom(externalBrandMapping)
                 .where(
-                        conditionBuilder.externalSourceIdEq(params),
-                        conditionBuilder.statusIn(params),
-                        conditionBuilder.searchCondition(params))
-                .offset(params.offset())
-                .limit(params.size())
+                        conditionBuilder.externalSourceIdEq(criteria.externalSourceId()),
+                        conditionBuilder.statusIn(criteria.statusNames()),
+                        conditionBuilder.searchCondition(
+                                criteria.searchField(), criteria.searchWord()))
+                .offset(criteria.offset())
+                .limit(criteria.size())
                 .fetch();
     }
 
-    public long countByCriteria(ExternalBrandMappingSearchParams params) {
+    public long countByCriteria(ExternalBrandMappingSearchCriteria criteria) {
         Long count =
                 queryFactory
                         .select(externalBrandMapping.count())
                         .from(externalBrandMapping)
                         .where(
-                                conditionBuilder.externalSourceIdEq(params),
-                                conditionBuilder.statusIn(params),
-                                conditionBuilder.searchCondition(params))
+                                conditionBuilder.externalSourceIdEq(criteria.externalSourceId()),
+                                conditionBuilder.statusIn(criteria.statusNames()),
+                                conditionBuilder.searchCondition(
+                                        criteria.searchField(), criteria.searchWord()))
                         .fetchOne();
         return count != null ? count : 0L;
     }

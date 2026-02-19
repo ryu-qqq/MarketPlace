@@ -90,6 +90,9 @@ class ShopQueryControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     queryParameters(
+                                            parameterWithName("salesChannelId")
+                                                    .description("판매채널 ID")
+                                                    .optional(),
                                             parameterWithName("statuses")
                                                     .description("상태 필터 (ACTIVE, INACTIVE)")
                                                     .optional(),
@@ -101,16 +104,17 @@ class ShopQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("sortKey")
                                                     .description(
-                                                            "정렬 키 (createdAt, updatedAt, shopName)")
+                                                            "정렬 키 (CREATED_AT, UPDATED_AT,"
+                                                                + " SHOP_NAME). 기본값: CREATED_AT")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC). 기본값: DESC")
                                                     .optional(),
                                             parameterWithName("page")
-                                                    .description("페이지 번호 (0부터 시작)")
+                                                    .description("페이지 번호 (0부터 시작). 기본값: 0")
                                                     .optional(),
                                             parameterWithName("size")
-                                                    .description("페이지 크기")
+                                                    .description("페이지 크기. 기본값: 20")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.content[]")

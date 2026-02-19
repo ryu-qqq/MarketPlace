@@ -22,15 +22,26 @@ import jakarta.validation.constraints.Size;
  */
 @Schema(description = "셀러 입점 신청 요청 DTO")
 public record ApplySellerApplicationApiRequest(
-        @Schema(description = "셀러 기본 정보") @NotNull @Valid SellerInfo sellerInfo,
-        @Schema(description = "사업자 정보") @NotNull @Valid BusinessInfo businessInfo,
-        @Schema(description = "CS 연락처 정보") @NotNull @Valid CsContactInfo csContact,
+        @Schema(description = "셀러 기본 정보", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull
+                @Valid
+                SellerInfo sellerInfo,
+        @Schema(description = "사업자 정보", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid
+                BusinessInfo businessInfo,
+        @Schema(description = "CS 연락처 정보", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull
+                @Valid
+                CsContactInfo csContact,
         @Schema(description = "담당자 연락처") @Valid ContactInfo contactInfo,
-        @Schema(description = "정산 정보") @NotNull @Valid SettlementInfo settlementInfo) {
+        @Schema(description = "정산 정보", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid
+                SettlementInfo settlementInfo) {
 
     @Schema(description = "셀러 기본 정보")
     public record SellerInfo(
-            @Schema(description = "셀러명", example = "테스트셀러")
+            @Schema(
+                            description = "셀러명",
+                            example = "테스트셀러",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "셀러명은 필수입니다.")
                     @Size(max = 100, message = "셀러명은 100자 이하여야 합니다.")
                     String sellerName,
@@ -46,30 +57,48 @@ public record ApplySellerApplicationApiRequest(
 
     @Schema(description = "사업자 정보")
     public record BusinessInfo(
-            @Schema(description = "사업자등록번호", example = "123-45-67890")
+            @Schema(
+                            description = "사업자등록번호",
+                            example = "123-45-67890",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "사업자등록번호는 필수입니다.")
                     @Size(max = 20, message = "사업자등록번호는 20자 이하여야 합니다.")
                     String registrationNumber,
-            @Schema(description = "회사명", example = "테스트컴퍼니")
+            @Schema(
+                            description = "회사명",
+                            example = "테스트컴퍼니",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "회사명은 필수입니다.")
                     @Size(max = 100, message = "회사명은 100자 이하여야 합니다.")
                     String companyName,
-            @Schema(description = "대표자명", example = "홍길동")
+            @Schema(
+                            description = "대표자명",
+                            example = "홍길동",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "대표자명은 필수입니다.")
                     @Size(max = 50, message = "대표자명은 50자 이하여야 합니다.")
                     String representative,
             @Schema(description = "통신판매업 신고번호", example = "제2025-서울강남-1234호")
                     @Size(max = 50, message = "통신판매업 신고번호는 50자 이하여야 합니다.")
                     String saleReportNumber,
-            @Schema(description = "사업장 주소 정보") @NotNull @Valid AddressDetail businessAddress) {}
+            @Schema(description = "사업장 주소 정보", requiredMode = Schema.RequiredMode.REQUIRED)
+                    @NotNull
+                    @Valid
+                    AddressDetail businessAddress) {}
 
     @Schema(description = "CS 연락처 정보")
     public record CsContactInfo(
-            @Schema(description = "전화번호", example = "02-1234-5678")
+            @Schema(
+                            description = "전화번호",
+                            example = "02-1234-5678",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "전화번호는 필수입니다.")
                     @Size(max = 20, message = "전화번호는 20자 이하여야 합니다.")
                     String phone,
-            @Schema(description = "이메일", example = "cs@example.com")
+            @Schema(
+                            description = "이메일",
+                            example = "cs@example.com",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "이메일은 필수입니다.")
                     @Email(message = "올바른 이메일 형식이 아닙니다.")
                     @Size(max = 100, message = "이메일은 100자 이하여야 합니다.")
@@ -80,11 +109,17 @@ public record ApplySellerApplicationApiRequest(
 
     @Schema(description = "주소 상세")
     public record AddressDetail(
-            @Schema(description = "우편번호", example = "12345")
+            @Schema(
+                            description = "우편번호",
+                            example = "12345",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "우편번호는 필수입니다.")
                     @Size(max = 10, message = "우편번호는 10자 이하여야 합니다.")
                     String zipCode,
-            @Schema(description = "주소1", example = "서울시 강남구")
+            @Schema(
+                            description = "주소1",
+                            example = "서울시 강남구",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "주소는 필수입니다.")
                     @Size(max = 200, message = "주소는 200자 이하여야 합니다.")
                     String line1,
@@ -110,16 +145,25 @@ public record ApplySellerApplicationApiRequest(
             @Schema(description = "은행 코드", example = "088")
                     @Size(max = 10, message = "은행 코드는 10자 이하여야 합니다.")
                     String bankCode,
-            @Schema(description = "은행명", example = "신한은행")
+            @Schema(
+                            description = "은행명",
+                            example = "신한은행",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "은행명은 필수입니다.")
                     @Size(max = 50, message = "은행명은 50자 이하여야 합니다.")
                     String bankName,
-            @Schema(description = "계좌번호", example = "110123456789")
+            @Schema(
+                            description = "계좌번호",
+                            example = "110123456789",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "계좌번호는 필수입니다.")
                     @Size(max = 30, message = "계좌번호는 30자 이하여야 합니다.")
                     @Pattern(regexp = "^[0-9]+$", message = "계좌번호는 숫자만 입력 가능합니다.")
                     String accountNumber,
-            @Schema(description = "예금주", example = "홍길동")
+            @Schema(
+                            description = "예금주",
+                            example = "홍길동",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank(message = "예금주는 필수입니다.")
                     @Size(max = 50, message = "예금주는 50자 이하여야 합니다.")
                     String accountHolderName,

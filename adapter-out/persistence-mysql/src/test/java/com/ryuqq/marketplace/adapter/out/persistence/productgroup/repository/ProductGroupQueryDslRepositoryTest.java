@@ -1030,9 +1030,11 @@ class ProductGroupQueryDslRepositoryTest {
             Long pgId = productGroup.getId();
 
             persistOptionGroup(
-                    SellerOptionGroupJpaEntity.create(null, pgId, "사이즈", null, 2, false, null));
+                    SellerOptionGroupJpaEntity.create(
+                            null, pgId, "사이즈", null, "PREDEFINED", 2, false, null));
             persistOptionGroup(
-                    SellerOptionGroupJpaEntity.create(null, pgId, "색상", null, 1, false, null));
+                    SellerOptionGroupJpaEntity.create(
+                            null, pgId, "색상", null, "PREDEFINED", 1, false, null));
 
             // when
             List<SellerOptionGroupJpaEntity> result =

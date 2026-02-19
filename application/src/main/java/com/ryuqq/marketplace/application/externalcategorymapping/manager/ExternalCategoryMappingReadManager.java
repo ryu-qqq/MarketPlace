@@ -1,10 +1,10 @@
 package com.ryuqq.marketplace.application.externalcategorymapping.manager;
 
-import com.ryuqq.marketplace.application.externalcategorymapping.dto.query.ExternalCategoryMappingSearchParams;
 import com.ryuqq.marketplace.application.externalcategorymapping.port.out.query.ExternalCategoryMappingQueryPort;
 import com.ryuqq.marketplace.domain.externalcategorymapping.aggregate.ExternalCategoryMapping;
 import com.ryuqq.marketplace.domain.externalcategorymapping.exception.ExternalCategoryMappingNotFoundException;
 import com.ryuqq.marketplace.domain.externalcategorymapping.id.ExternalCategoryMappingId;
+import com.ryuqq.marketplace.domain.externalcategorymapping.query.ExternalCategoryMappingSearchCriteria;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,13 +45,20 @@ public class ExternalCategoryMappingReadManager {
     }
 
     @Transactional(readOnly = true)
-    public List<ExternalCategoryMapping> findByCriteria(
-            ExternalCategoryMappingSearchParams params) {
-        return queryPort.findByCriteria(params);
+    public List<ExternalCategoryMapping> findByExternalSourceIdAndCodes(
+            long externalSourceId, List<String> externalCategoryCodes) {
+        return queryPort.findByExternalSourceIdAndExternalCategoryCodes(
+                externalSourceId, externalCategoryCodes);
     }
 
     @Transactional(readOnly = true)
-    public long countByCriteria(ExternalCategoryMappingSearchParams params) {
-        return queryPort.countByCriteria(params);
+    public List<ExternalCategoryMapping> findByCriteria(
+            ExternalCategoryMappingSearchCriteria criteria) {
+        return queryPort.findByCriteria(criteria);
+    }
+
+    @Transactional(readOnly = true)
+    public long countByCriteria(ExternalCategoryMappingSearchCriteria criteria) {
+        return queryPort.countByCriteria(criteria);
     }
 }

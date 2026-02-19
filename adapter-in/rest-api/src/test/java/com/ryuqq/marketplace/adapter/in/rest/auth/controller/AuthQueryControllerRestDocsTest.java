@@ -102,16 +102,20 @@ class AuthQueryControllerRestDocsTest {
                                                     .description("사용자 이름"),
                                             fieldWithPath("data.tenantId")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("테넌트 ID"),
+                                                    .description("테넌트 ID")
+                                                    .optional(),
                                             fieldWithPath("data.tenantName")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("테넌트 이름"),
+                                                    .description("테넌트 이름")
+                                                    .optional(),
                                             fieldWithPath("data.organizationId")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("조직 ID"),
+                                                    .description("조직 ID")
+                                                    .optional(),
                                             fieldWithPath("data.organizationName")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("조직 이름"),
+                                                    .description("조직 이름")
+                                                    .optional(),
                                             fieldWithPath("data.roles[]")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("역할 목록"),

@@ -187,7 +187,7 @@ class SellerAddressReadManagerTest {
             Long sellerId = 1L;
             SellerAddressSearchCriteria criteria =
                     SellerAddressSearchCriteria.of(
-                            List.of(SellerId.of(sellerId)), null, null, null, null);
+                            List.of(SellerId.of(sellerId)), null, null, null, null, null);
             List<SellerAddress> addresses =
                     List.of(SellerAddressFixtures.defaultShippingAddress(1L, sellerId));
 
@@ -213,7 +213,7 @@ class SellerAddressReadManagerTest {
             Long sellerId = 1L;
             SellerAddressSearchCriteria criteria =
                     SellerAddressSearchCriteria.of(
-                            List.of(SellerId.of(sellerId)), null, null, null, null);
+                            List.of(SellerId.of(sellerId)), null, null, null, null, null);
             long expectedCount = 5L;
 
             given(queryPort.count(criteria)).willReturn(expectedCount);

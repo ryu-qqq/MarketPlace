@@ -45,6 +45,7 @@ class SellerOptionGroupFactoryTest {
                             new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
                                     "색상",
                                     null,
+                                    null,
                                     List.of(
                                             new RegisterSellerOptionGroupsCommand
                                                     .OptionValueCommand("검정", null, 0))));
@@ -68,6 +69,7 @@ class SellerOptionGroupFactoryTest {
                             new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
                                     "색상",
                                     1L,
+                                    null,
                                     List.of(
                                             new RegisterSellerOptionGroupsCommand
                                                     .OptionValueCommand("검정", 1L, 0))));
@@ -98,6 +100,7 @@ class SellerOptionGroupFactoryTest {
                             new UpdateSellerOptionGroupsCommand.OptionGroupCommand(
                                     1L,
                                     "색상",
+                                    null,
                                     null,
                                     List.of(
                                             new UpdateSellerOptionGroupsCommand.OptionValueCommand(

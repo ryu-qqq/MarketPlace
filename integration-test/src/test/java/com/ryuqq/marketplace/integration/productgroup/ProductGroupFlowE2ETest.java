@@ -414,6 +414,114 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
         return request;
     }
 
+    private Map<String, Object> createMixedInputTypeRegisterRequest() {
+        Map<String, Object> request = new HashMap<>();
+        request.put("sellerId", sellerId);
+        request.put("brandId", brandId);
+        request.put("categoryId", categoryId);
+        request.put("shippingPolicyId", shippingPolicyId);
+        request.put("refundPolicyId", refundPolicyId);
+        request.put("productGroupName", "커스텀 각인 실버 반지");
+        request.put("optionType", "SINGLE");
+
+        request.put(
+                "images",
+                List.of(
+                        Map.of(
+                                "originUrl", "https://example.com/ring_main.jpg",
+                                "imageType", "THUMBNAIL",
+                                "sortOrder", 0)));
+
+        // PREDEFINED 그룹 (사이즈) + FREE_INPUT 그룹 (각인 문구)
+        request.put(
+                "optionGroups",
+                List.of(
+                        Map.of(
+                                "optionGroupName",
+                                "사이즈",
+                                "inputType",
+                                "PREDEFINED",
+                                "optionValues",
+                                List.of(
+                                        Map.of("optionValueName", "11호", "sortOrder", 0),
+                                        Map.of("optionValueName", "13호", "sortOrder", 1),
+                                        Map.of("optionValueName", "15호", "sortOrder", 2))),
+                        Map.of(
+                                "optionGroupName",
+                                "각인 문구",
+                                "inputType",
+                                "FREE_INPUT",
+                                "optionValues",
+                                List.of())));
+
+        // selectedOptions에는 PREDEFINED 그룹(사이즈)만 포함
+        request.put(
+                "products",
+                List.of(
+                        Map.of(
+                                "skuCode", "RING-11",
+                                "regularPrice", 89000,
+                                "currentPrice", 79000,
+                                "stockQuantity", 50,
+                                "sortOrder", 0,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "11호"))),
+                        Map.of(
+                                "skuCode", "RING-13",
+                                "regularPrice", 89000,
+                                "currentPrice", 79000,
+                                "stockQuantity", 50,
+                                "sortOrder", 1,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "13호"))),
+                        Map.of(
+                                "skuCode", "RING-15",
+                                "regularPrice", 89000,
+                                "currentPrice", 79000,
+                                "stockQuantity", 50,
+                                "sortOrder", 2,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "15호")))));
+
+        request.put("description", Map.of("content", "<p>925 실버 각인 반지</p>"));
+
+        var noticeFields = noticeFieldRepository.findAll();
+        request.put(
+                "notice",
+                Map.of(
+                        "noticeCategoryId",
+                        noticeCategoryId,
+                        "entries",
+                        List.of(
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(0).getId(),
+                                        "fieldValue",
+                                        "은 92.5%"),
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(1).getId(),
+                                        "fieldValue",
+                                        "대한민국"))));
+
+        return request;
+    }
+
     // ===== 플로우 테스트 =====
 
     @Nested
@@ -970,9 +1078,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .body("data.optionProductMatrix.products[0].regularPrice", equalTo(99000))
                     .body("data.optionProductMatrix.products[0].currentPrice", equalTo(89000))
                     .body("data.optionProductMatrix.products[0].stockQuantity", equalTo(200))
-                    .body(
-                            "data.optionProductMatrix.products[0].resolvedOptions.size()",
-                            equalTo(0))
+                    .body("data.optionProductMatrix.products[0].options.size()", equalTo(0))
                     // 설명
                     .body("data.description.content", containsString("옵션 없는 단품 상품"))
                     // 고시정보
@@ -1040,20 +1146,12 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .body("data.optionProductMatrix.optionGroups.size()", equalTo(0))
                     // 상품 3개 (옵션 매핑 없음)
                     .body("data.optionProductMatrix.products.size()", equalTo(3))
-                    .body(
-                            "data.optionProductMatrix.products[0].skuCode",
-                            equalTo("CUSTOM-SET-A"))
+                    .body("data.optionProductMatrix.products[0].skuCode", equalTo("CUSTOM-SET-A"))
                     .body("data.optionProductMatrix.products[0].regularPrice", equalTo(45000))
                     .body("data.optionProductMatrix.products[0].currentPrice", equalTo(39000))
-                    .body(
-                            "data.optionProductMatrix.products[0].resolvedOptions.size()",
-                            equalTo(0))
-                    .body(
-                            "data.optionProductMatrix.products[1].skuCode",
-                            equalTo("CUSTOM-SET-B"))
-                    .body(
-                            "data.optionProductMatrix.products[2].skuCode",
-                            equalTo("CUSTOM-SET-C"))
+                    .body("data.optionProductMatrix.products[0].options.size()", equalTo(0))
+                    .body("data.optionProductMatrix.products[1].skuCode", equalTo("CUSTOM-SET-B"))
+                    .body("data.optionProductMatrix.products[2].skuCode", equalTo("CUSTOM-SET-C"))
                     // 설명
                     .body("data.description.content", containsString("자유 입력 커스텀 상품"))
                     // 고시정보
@@ -1105,6 +1203,105 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
 
             given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
                     .body(statusRequest)
+                    .when()
+                    .patch(PRODUCT_GROUPS_STATUS)
+                    .then()
+                    .statusCode(HttpStatus.NO_CONTENT.value());
+
+            // Step 3: 상태 확인
+            given().spec(givenSuperAdmin())
+                    .when()
+                    .get(PRODUCT_GROUPS_ID, productGroupId)
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.status", equalTo("ACTIVE"));
+        }
+    }
+
+    @Nested
+    @DisplayName("혼합 입력 모드: PREDEFINED + FREE_INPUT 옵션 그룹")
+    class MixedInputTypeTest {
+
+        @Test
+        @Tag("P0")
+        @DisplayName(
+                "[FLOW-MIXED-1] SINGLE + 혼합 inputType 등록 후 상세 조회 - PREDEFINED/FREE_INPUT 그룹 검증")
+        void registerMixedInputType_AndGetDetail_BothGroupTypesVerified() {
+            // ===== Step 1: POST - 혼합 inputType 상품그룹 등록 =====
+            Map<String, Object> request = createMixedInputTypeRegisterRequest();
+
+            Response createResponse =
+                    given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
+
+            createResponse.then().statusCode(HttpStatus.CREATED.value());
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            assertThat(productGroupId).isNotNull().isGreaterThan(0);
+
+            // ===== Step 2: GET - 상세 조회로 inputType별 그룹 검증 =====
+            Response detailResponse =
+                    given().spec(givenSuperAdmin()).when().get(PRODUCT_GROUPS_ID, productGroupId);
+
+            detailResponse
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    // 기본 정보
+                    .body("data.id", equalTo(productGroupId.intValue()))
+                    .body("data.productGroupName", equalTo("커스텀 각인 실버 반지"))
+                    .body("data.optionType", equalTo("SINGLE"))
+                    .body("data.status", equalTo("DRAFT"))
+                    // 옵션 그룹 2개 (PREDEFINED 1개 + FREE_INPUT 1개)
+                    .body("data.optionProductMatrix.optionGroups.size()", equalTo(2))
+                    // 첫 번째 그룹: PREDEFINED (사이즈) - 옵션 값 3개
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].optionGroupName",
+                            equalTo("사이즈"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].inputType",
+                            equalTo("PREDEFINED"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].optionValues.size()",
+                            equalTo(3))
+                    // 두 번째 그룹: FREE_INPUT (각인 문구) - 옵션 값 0개
+                    .body(
+                            "data.optionProductMatrix.optionGroups[1].optionGroupName",
+                            equalTo("각인 문구"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[1].inputType",
+                            equalTo("FREE_INPUT"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[1].optionValues.size()",
+                            equalTo(0))
+                    // 상품 3개 (PREDEFINED 그룹의 옵션 값 3개에 대응)
+                    .body("data.optionProductMatrix.products.size()", equalTo(3))
+                    .body("data.optionProductMatrix.products[0].skuCode", equalTo("RING-11"))
+                    .body("data.optionProductMatrix.products[1].skuCode", equalTo("RING-13"))
+                    .body("data.optionProductMatrix.products[2].skuCode", equalTo("RING-15"))
+                    // 각 상품의 옵션 매핑: PREDEFINED 그룹(사이즈)만 매핑됨
+                    .body("data.optionProductMatrix.products[0].options.size()", equalTo(1));
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[FLOW-MIXED-2] 혼합 inputType 등록 후 DRAFT→ACTIVE 상태 전이 성공")
+        void registerMixedInputType_ThenChangeStatus_DraftToActive_Success() {
+            // Step 1: 등록
+            Response createResponse =
+                    given().spec(givenSuperAdmin())
+                            .body(createMixedInputTypeRegisterRequest())
+                            .when()
+                            .post(PRODUCT_GROUPS);
+
+            createResponse.then().statusCode(HttpStatus.CREATED.value());
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+
+            // Step 2: DRAFT → ACTIVE
+            given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
+                    .body(
+                            Map.of(
+                                    "productGroupIds",
+                                    List.of(productGroupId),
+                                    "targetStatus",
+                                    "ACTIVE"))
                     .when()
                     .patch(PRODUCT_GROUPS_STATUS)
                     .then()

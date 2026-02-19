@@ -301,7 +301,7 @@ class SellerAddressQueryAdapterTest {
             given(criteria.sellerIdValues()).willReturn(List.of(1L));
             given(criteria.hasAddressTypesFilter()).willReturn(false);
             given(criteria.hasDefaultFilter()).willReturn(false);
-            given(criteria.hasKeyword()).willReturn(false);
+            given(criteria.hasSearchCondition()).willReturn(false);
             given(criteria.offset()).willReturn(0L);
             given(criteria.size()).willReturn(10);
             given(
@@ -333,7 +333,7 @@ class SellerAddressQueryAdapterTest {
             given(criteria.sellerIdValues()).willReturn(List.of(999L));
             given(criteria.hasAddressTypesFilter()).willReturn(false);
             given(criteria.hasDefaultFilter()).willReturn(false);
-            given(criteria.hasKeyword()).willReturn(false);
+            given(criteria.hasSearchCondition()).willReturn(false);
             given(criteria.offset()).willReturn(0L);
             given(criteria.size()).willReturn(10);
             given(
@@ -366,7 +366,7 @@ class SellerAddressQueryAdapterTest {
             given(criteria.sellerIdValues()).willReturn(List.of(1L));
             given(criteria.hasAddressTypesFilter()).willReturn(false);
             given(criteria.hasDefaultFilter()).willReturn(false);
-            given(criteria.hasKeyword()).willReturn(false);
+            given(criteria.hasSearchCondition()).willReturn(false);
             given(queryDslRepository.count(org.mockito.ArgumentMatchers.any())).willReturn(5L);
 
             // when
@@ -383,7 +383,7 @@ class SellerAddressQueryAdapterTest {
             given(criteria.sellerIdValues()).willReturn(List.of(999L));
             given(criteria.hasAddressTypesFilter()).willReturn(false);
             given(criteria.hasDefaultFilter()).willReturn(false);
-            given(criteria.hasKeyword()).willReturn(false);
+            given(criteria.hasSearchCondition()).willReturn(false);
             given(queryDslRepository.count(org.mockito.ArgumentMatchers.any())).willReturn(0L);
 
             // when

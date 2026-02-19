@@ -32,12 +32,8 @@ public class UpdateCategoryPresetService implements UpdateCategoryPresetUseCase 
         CategoryPreset existing =
                 validator.findExistingOrThrow(CategoryPresetId.of(command.categoryPresetId()));
 
-        Long salesChannelCategoryId = existing.salesChannelCategoryId();
-        if (command.categoryCode() != null && !command.categoryCode().isBlank()) {
-            salesChannelCategoryId =
-                    validator.resolveSalesChannelCategoryId(
-                            existing.shopId(), command.categoryCode());
-        }
+        Long salesChannelCategoryId =
+                validator.resolveSalesChannelCategoryId(existing.shopId(), command.categoryCode());
         validator.validateInternalCategoriesExist(command.internalCategoryIds());
 
         UpdateCategoryPresetBundle bundle =

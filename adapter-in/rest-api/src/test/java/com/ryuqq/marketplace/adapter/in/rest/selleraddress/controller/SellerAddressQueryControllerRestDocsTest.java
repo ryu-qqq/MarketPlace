@@ -98,16 +98,16 @@ class SellerAddressQueryControllerRestDocsTest {
                                                     .description("기본 주소 필터")
                                                     .optional(),
                                             parameterWithName("searchField")
-                                                    .description("검색 필드 (addressName, address 등)")
+                                                    .description("검색 필드 (ADDRESS_NAME, ADDRESS)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("page")
-                                                    .description("페이지 번호 (0-based)")
+                                                    .description("페이지 번호 (0부터 시작, 기본값: 0)")
                                                     .optional(),
                                             parameterWithName("size")
-                                                    .description("페이지 크기")
+                                                    .description("페이지 크기 (기본값: 20)")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.content[]")
@@ -121,7 +121,7 @@ class SellerAddressQueryControllerRestDocsTest {
                                                     .description("셀러 ID"),
                                             fieldWithPath("data.content[].addressType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("주소 유형"),
+                                                    .description("주소 유형 (SHIPPING, RETURN)"),
                                             fieldWithPath("data.content[].addressName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("주소명"),

@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.externalbrandmapping.dto.query.SearchExternalBrandMappingsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.externalbrandmapping.dto.response.ExternalBrandMappingApiResponse;
+import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.externalbrandmapping.dto.query.ExternalBrandMappingSearchParams;
 import com.ryuqq.marketplace.application.externalbrandmapping.dto.response.ExternalBrandMappingPageResult;
 import com.ryuqq.marketplace.application.externalbrandmapping.dto.response.ExternalBrandMappingResult;
@@ -14,16 +15,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExternalBrandMappingQueryApiMapper {
 
-    private static final int DEFAULT_PAGE = 0;
-    private static final int DEFAULT_SIZE = 20;
-
     public ExternalBrandMappingSearchParams toSearchParams(
             Long externalSourceId, SearchExternalBrandMappingsApiRequest request) {
-        int page = request.page() != null ? request.page() : DEFAULT_PAGE;
-        int size = request.size() != null ? request.size() : DEFAULT_SIZE;
+        CommonSearchParams commonSearchParams =
+                CommonSearchParams.of(
+                        null,
+                        null,
+                        null,
+                        request.sortKey(),
+                        request.sortDirection(),
+                        request.page(),
+                        request.size());
 
         return new ExternalBrandMappingSearchParams(
-                externalSourceId, null, request.searchWord(), page, size);
+                externalSourceId,
+                null,
+                request.searchField(),
+                request.searchWord(),
+                commonSearchParams);
     }
 
     public ExternalBrandMappingApiResponse toResponse(ExternalBrandMappingResult result) {

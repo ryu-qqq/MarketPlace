@@ -28,21 +28,23 @@ import jakarta.validation.constraints.Min;
  */
 @Schema(description = "배송정책 페이지 조회 요청")
 public record SearchShippingPoliciesPageApiRequest(
-        @Parameter(description = "정렬 키 (CREATED_AT, POLICY_NAME)", example = "CREATED_AT")
-                @Schema(description = "정렬 키", nullable = true)
+        @Parameter(
+                        description = "정렬 키 (CREATED_AT, POLICY_NAME, BASE_FEE). 기본값: CREATED_AT",
+                        example = "CREATED_AT")
+                @Schema(description = "정렬 키")
                 String sortKey,
-        @Parameter(description = "정렬 방향 (ASC, DESC)", example = "DESC")
-                @Schema(description = "정렬 방향", nullable = true)
+        @Parameter(description = "정렬 방향 (ASC, DESC). 기본값: DESC", example = "DESC")
+                @Schema(description = "정렬 방향")
                 String sortDirection,
-        @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+        @Parameter(description = "페이지 번호 (0부터 시작). 기본값: 0", example = "0")
                 @Schema(description = "페이지 번호 (0부터 시작)", minimum = "0")
                 @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다")
                 Integer page,
-        @Parameter(description = "페이지 크기", example = "20")
+        @Parameter(description = "페이지 크기. 기본값: 20", example = "20")
                 @Schema(description = "페이지 크기", minimum = "1", maximum = "100")
                 @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다")
                 @Max(value = 100, message = "페이지 크기는 100 이하여야 합니다")
                 Integer size,
-        @Parameter(description = "활성화 여부 (true: 활성만, false: 비활성만, 미입력: 전체)")
-                @Schema(description = "활성화 여부", nullable = true)
+        @Parameter(description = "활성화 여부 (true: 활성만, false: 비활성만, 미입력: 전체)", example = "true")
+                @Schema(description = "활성화 여부")
                 Boolean active) {}

@@ -42,6 +42,7 @@ class SellerOptionGroupsUpdateTest {
                 PRODUCT_GROUP_ID,
                 OptionGroupName.of(name),
                 null,
+                OptionInputType.PREDEFINED,
                 sortOrder,
                 values,
                 DeletionStatus.active());
@@ -54,12 +55,14 @@ class SellerOptionGroupsUpdateTest {
             String name,
             int sortOrder,
             List<SellerOptionGroupUpdateData.ValueEntry> values) {
-        return new SellerOptionGroupUpdateData.GroupEntry(groupId, name, null, sortOrder, values);
+        return new SellerOptionGroupUpdateData.GroupEntry(
+                groupId, name, null, OptionInputType.PREDEFINED, sortOrder, values);
     }
 
     private static SellerOptionGroupUpdateData.GroupEntry newGroupEntry(
             String name, int sortOrder, List<SellerOptionGroupUpdateData.ValueEntry> values) {
-        return new SellerOptionGroupUpdateData.GroupEntry(null, name, null, sortOrder, values);
+        return new SellerOptionGroupUpdateData.GroupEntry(
+                null, name, null, OptionInputType.PREDEFINED, sortOrder, values);
     }
 
     private static SellerOptionGroupUpdateData.ValueEntry retainedValueEntry(

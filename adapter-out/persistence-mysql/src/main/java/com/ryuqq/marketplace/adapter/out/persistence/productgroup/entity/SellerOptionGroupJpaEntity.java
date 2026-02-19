@@ -26,6 +26,9 @@ public class SellerOptionGroupJpaEntity {
     @Column(name = "canonical_option_group_id")
     private Long canonicalOptionGroupId;
 
+    @Column(name = "input_type", nullable = false)
+    private String inputType;
+
     @Column(name = "sort_order")
     private int sortOrder;
 
@@ -42,6 +45,7 @@ public class SellerOptionGroupJpaEntity {
             Long productGroupId,
             String optionGroupName,
             Long canonicalOptionGroupId,
+            String inputType,
             int sortOrder,
             boolean deleted,
             Instant deletedAt) {
@@ -49,6 +53,7 @@ public class SellerOptionGroupJpaEntity {
         this.productGroupId = productGroupId;
         this.optionGroupName = optionGroupName;
         this.canonicalOptionGroupId = canonicalOptionGroupId;
+        this.inputType = inputType;
         this.sortOrder = sortOrder;
         this.deleted = deleted;
         this.deletedAt = deletedAt;
@@ -59,6 +64,7 @@ public class SellerOptionGroupJpaEntity {
             Long productGroupId,
             String optionGroupName,
             Long canonicalOptionGroupId,
+            String inputType,
             int sortOrder,
             boolean deleted,
             Instant deletedAt) {
@@ -67,6 +73,7 @@ public class SellerOptionGroupJpaEntity {
                 productGroupId,
                 optionGroupName,
                 canonicalOptionGroupId,
+                inputType,
                 sortOrder,
                 deleted,
                 deletedAt);
@@ -86,6 +93,10 @@ public class SellerOptionGroupJpaEntity {
 
     public Long getCanonicalOptionGroupId() {
         return canonicalOptionGroupId;
+    }
+
+    public String getInputType() {
+        return inputType;
     }
 
     public int getSortOrder() {

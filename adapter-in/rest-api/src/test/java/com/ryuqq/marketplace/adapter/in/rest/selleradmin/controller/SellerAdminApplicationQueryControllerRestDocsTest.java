@@ -108,9 +108,12 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
                                                     .description("휴대폰 번호"),
                                             fieldWithPath("data.status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("신청 상태"),
+                                                    .description(
+                                                            "신청 상태 (PENDING_APPROVAL, ACTIVE,"
+                                                                    + " INACTIVE, SUSPENDED,"
+                                                                    + " REJECTED)"),
                                             fieldWithPath("data.authUserId")
-                                                    .type(JsonFieldType.NUMBER)
+                                                    .type(JsonFieldType.STRING)
                                                     .description("인증 서버 사용자 ID (승인 후)")
                                                     .optional(),
                                             fieldWithPath("data.createdAt")
@@ -180,16 +183,17 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
                                                     .description("신청일 종료 (yyyy-MM-dd)")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 기준 (createdAt)")
+                                                    .description(
+                                                            "정렬 기준 (CREATED_AT). 기본값: CREATED_AT")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC). 기본값: DESC")
                                                     .optional(),
                                             parameterWithName("page")
-                                                    .description("페이지 번호 (0-based)")
+                                                    .description("페이지 번호 (0-based). 기본값: 0")
                                                     .optional(),
                                             parameterWithName("size")
-                                                    .description("페이지 크기")
+                                                    .description("페이지 크기. 기본값: 20")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.content[]")
@@ -212,9 +216,12 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
                                                     .description("휴대폰 번호"),
                                             fieldWithPath("data.content[].status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("신청 상태"),
+                                                    .description(
+                                                            "신청 상태 (PENDING_APPROVAL, ACTIVE,"
+                                                                    + " INACTIVE, SUSPENDED,"
+                                                                    + " REJECTED)"),
                                             fieldWithPath("data.content[].authUserId")
-                                                    .type(JsonFieldType.NUMBER)
+                                                    .type(JsonFieldType.STRING)
                                                     .description("인증 서버 사용자 ID (승인 후)")
                                                     .optional(),
                                             fieldWithPath("data.content[].createdAt")
@@ -277,7 +284,7 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(BASE_URL)
                                     .param("status", "PENDING_APPROVAL")
-                                    .param("searchField", "loginId")
+                                    .param("searchField", "LOGIN_ID")
                                     .param("searchWord", "admin@example.com")
                                     .param("page", "0")
                                     .param("size", "20"))

@@ -92,8 +92,10 @@ public class SellerAddressQueryAdapter implements SellerAddressQueryPort {
         if (criteria.hasDefaultFilter()) {
             builder.and(conditionBuilder.defaultAddressEq(criteria.defaultAddress()));
         }
-        if (criteria.hasKeyword()) {
-            builder.and(conditionBuilder.keywordContains(criteria.keyword()));
+        if (criteria.hasSearchCondition()) {
+            builder.and(
+                    conditionBuilder.searchCondition(
+                            criteria.searchField(), criteria.searchWord()));
         }
         return builder;
     }

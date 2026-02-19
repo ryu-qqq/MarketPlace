@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.selleraddress.condition;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.ryuqq.marketplace.domain.selleraddress.query.SellerAddressSearchField;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -307,59 +308,66 @@ class SellerAddressConditionBuilderTest {
     }
 
     // ========================================================================
-    // 8. keywordContains 테스트
+    // 8. searchCondition 테스트
     // ========================================================================
 
     @Nested
-    @DisplayName("keywordContains 메서드 테스트")
-    class KeywordContainsTest {
+    @DisplayName("searchCondition 메서드 테스트")
+    class SearchConditionTest {
 
         @Test
-        @DisplayName("유효한 키워드 입력 시 BooleanExpression을 반환합니다")
-        void keywordContains_WithValidKeyword_ReturnsBooleanExpression() {
+        @DisplayName("searchField null이면 전체 필드 검색 BooleanExpression을 반환합니다")
+        void searchCondition_WithNullField_ReturnsAllFieldSearch() {
             // given
-            String keyword = "창고";
+            String searchWord = "창고";
 
             // when
-            BooleanExpression result = conditionBuilder.keywordContains(keyword);
+            BooleanExpression result = conditionBuilder.searchCondition(null, searchWord);
 
             // then
             assertThat(result).isNotNull();
         }
 
         @Test
-        @DisplayName("null 키워드 입력 시 null을 반환합니다")
-        void keywordContains_WithNullKeyword_ReturnsNull() {
+        @DisplayName("ADDRESS_NAME 필드 검색 시 주소별칭만 검색합니다")
+        void searchCondition_WithAddressNameField_ReturnsAddressNameSearch() {
             // when
-            BooleanExpression result = conditionBuilder.keywordContains(null);
-
-            // then
-            assertThat(result).isNull();
-        }
-
-        @Test
-        @DisplayName("빈 키워드 입력 시 null을 반환합니다")
-        void keywordContains_WithBlankKeyword_ReturnsNull() {
-            // when
-            BooleanExpression result = conditionBuilder.keywordContains("   ");
-
-            // then
-            assertThat(result).isNull();
-        }
-
-        @Test
-        @DisplayName("키워드는 주소명과 주소에서 OR 조건으로 검색됩니다")
-        void keywordContains_WithKeyword_SearchesInNameAndAddress() {
-            // given
-            String keyword = "강남";
-
-            // when
-            BooleanExpression result = conditionBuilder.keywordContains(keyword);
+            BooleanExpression result =
+                    conditionBuilder.searchCondition(SellerAddressSearchField.ADDRESS_NAME, "본사");
 
             // then
             assertThat(result).isNotNull();
-            // 실제로는 addressName.containsIgnoreCase(keyword).or(address.containsIgnoreCase(keyword))
-            // 반환되는 것을 확인
+        }
+
+        @Test
+        @DisplayName("ADDRESS 필드 검색 시 주소만 검색합니다")
+        void searchCondition_WithAddressField_ReturnsAddressSearch() {
+            // when
+            BooleanExpression result =
+                    conditionBuilder.searchCondition(SellerAddressSearchField.ADDRESS, "강남");
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("null 검색어 입력 시 null을 반환합니다")
+        void searchCondition_WithNullSearchWord_ReturnsNull() {
+            // when
+            BooleanExpression result = conditionBuilder.searchCondition(null, null);
+
+            // then
+            assertThat(result).isNull();
+        }
+
+        @Test
+        @DisplayName("빈 검색어 입력 시 null을 반환합니다")
+        void searchCondition_WithBlankSearchWord_ReturnsNull() {
+            // when
+            BooleanExpression result = conditionBuilder.searchCondition(null, "   ");
+
+            // then
+            assertThat(result).isNull();
         }
     }
 }

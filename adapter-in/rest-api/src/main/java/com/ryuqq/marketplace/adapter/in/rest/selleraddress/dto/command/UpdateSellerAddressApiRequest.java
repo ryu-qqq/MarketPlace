@@ -9,7 +9,8 @@ import jakarta.validation.constraints.NotNull;
 @Schema(description = "셀러 주소 수정 요청")
 public record UpdateSellerAddressApiRequest(
         @Schema(description = "주소명", example = "물류센터") String addressName,
-        @Schema(description = "주소 정보") @NotNull @Valid AddressRequest address,
+        @Schema(description = "주소 정보", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid
+                AddressRequest address,
         @Schema(description = "기본 주소로 설정 여부 (생략 시 변경 없음)") Boolean defaultAddress) {
 
     /** 주소 요청. */

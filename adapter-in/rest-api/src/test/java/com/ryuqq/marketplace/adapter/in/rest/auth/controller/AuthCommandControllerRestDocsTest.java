@@ -20,10 +20,13 @@ import com.ryuqq.marketplace.adapter.in.rest.auth.AuthAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.auth.AuthApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.auth.config.AuthCookieConfig;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.command.LoginApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.auth.dto.command.RefreshApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.response.LoginApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.auth.dto.response.RefreshApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.auth.mapper.AuthCommandApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
+import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
 import com.ryuqq.marketplace.application.auth.port.in.LoginUseCase;
 import com.ryuqq.marketplace.application.auth.port.in.LogoutUseCase;
 import com.ryuqq.marketplace.application.auth.port.in.RefreshTokenUseCase;
@@ -172,6 +175,64 @@ class AuthCommandControllerRestDocsTest {
             } finally {
                 UserContextHolder.clearContext();
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("토큰 갱신 API")
+    class RefreshTest {
+
+        @Test
+        @DisplayName("토큰 갱신 성공")
+        void refresh_Success() throws Exception {
+            // given
+            RefreshApiRequest request = AuthApiFixtures.refreshRequest();
+            RefreshResult result = AuthApiFixtures.successRefreshResult();
+            RefreshApiResponse response = AuthApiFixtures.refreshApiResponse();
+
+            given(commandMapper.toRefreshCommand(any(RefreshApiRequest.class))).willReturn(null);
+            given(refreshTokenUseCase.execute(any())).willReturn(result);
+            given(commandMapper.toRefreshResponse(any(RefreshResult.class))).willReturn(response);
+
+            // when & then
+            mockMvc.perform(
+                            RestDocumentationRequestBuilders.post(
+                                            BASE_URL + AuthAdminEndpoints.REFRESH)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk())
+                    .andExpect(
+                            jsonPath("$.data.accessToken")
+                                    .value(AuthApiFixtures.DEFAULT_ACCESS_TOKEN))
+                    .andExpect(jsonPath("$.data.tokenType").value("Bearer"))
+                    .andDo(
+                            document(
+                                    "auth/refresh",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestFields(
+                                            fieldWithPath("refreshToken")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("리프레시 토큰")),
+                                    responseFields(
+                                            fieldWithPath("data.accessToken")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("액세스 토큰"),
+                                            fieldWithPath("data.refreshToken")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("리프레시 토큰"),
+                                            fieldWithPath("data.tokenType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("토큰 타입"),
+                                            fieldWithPath("data.expiresIn")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("만료 시간 (초)"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 }

@@ -29,7 +29,11 @@ public record SellerAdminApplicationApiResponse(
         @Schema(description = "로그인 ID", example = "admin@example.com") String loginId,
         @Schema(description = "관리자 이름", example = "홍길동") String name,
         @Schema(description = "휴대폰 번호", example = "010-1234-5678") String phoneNumber,
-        @Schema(description = "상태", example = "PENDING_APPROVAL") String status,
+        @Schema(
+                        description =
+                                "상태 (PENDING_APPROVAL, ACTIVE, INACTIVE, SUSPENDED, REJECTED)",
+                        example = "PENDING_APPROVAL")
+                String status,
         @Schema(description = "인증 서버 사용자 ID (승인 후)", example = "auth-user-uuid-123")
                 String authUserId,
         @Schema(description = "생성일시", example = "2026-02-04T10:00:00Z") Instant createdAt,

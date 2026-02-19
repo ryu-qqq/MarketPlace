@@ -109,7 +109,9 @@ class CanonicalOptionGroupQueryControllerRestDocsTest {
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 키 (createdAt, code)")
+                                                    .description(
+                                                            "정렬 키 (CREATED_AT, CODE). 기본값:"
+                                                                    + " CREATED_AT")
                                                     .optional(),
                                             parameterWithName("sortDirection")
                                                     .description("정렬 방향 (ASC, DESC)")

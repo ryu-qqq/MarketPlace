@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.externalcategorymapping.port.out.query;
 
-import com.ryuqq.marketplace.application.externalcategorymapping.dto.query.ExternalCategoryMappingSearchParams;
 import com.ryuqq.marketplace.domain.externalcategorymapping.aggregate.ExternalCategoryMapping;
 import com.ryuqq.marketplace.domain.externalcategorymapping.id.ExternalCategoryMappingId;
+import com.ryuqq.marketplace.domain.externalcategorymapping.query.ExternalCategoryMappingSearchCriteria;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +16,10 @@ public interface ExternalCategoryMappingQueryPort {
 
     List<ExternalCategoryMapping> findByExternalSourceId(Long externalSourceId);
 
-    List<ExternalCategoryMapping> findByCriteria(ExternalCategoryMappingSearchParams params);
+    List<ExternalCategoryMapping> findByExternalSourceIdAndExternalCategoryCodes(
+            Long externalSourceId, List<String> externalCategoryCodes);
 
-    long countByCriteria(ExternalCategoryMappingSearchParams params);
+    List<ExternalCategoryMapping> findByCriteria(ExternalCategoryMappingSearchCriteria criteria);
+
+    long countByCriteria(ExternalCategoryMappingSearchCriteria criteria);
 }

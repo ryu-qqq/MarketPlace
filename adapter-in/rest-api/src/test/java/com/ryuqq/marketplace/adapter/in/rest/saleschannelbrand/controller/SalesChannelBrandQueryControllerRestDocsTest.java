@@ -101,25 +101,25 @@ class SalesChannelBrandQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("searchField")
                                                     .description(
-                                                            "검색 필드 (externalBrandCode,"
-                                                                    + " externalBrandName)")
+                                                            "검색 필드 (EXTERNAL_CODE,"
+                                                                    + " EXTERNAL_NAME)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
                                                     .description(
-                                                            "정렬 키 (createdAt,"
-                                                                    + " externalBrandName)")
+                                                            "정렬 키 (CREATED_AT, EXTERNAL_NAME, 기본값:"
+                                                                    + " CREATED_AT)")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC, 기본값: DESC)")
                                                     .optional(),
                                             parameterWithName("page")
-                                                    .description("페이지 번호 (0부터 시작)")
+                                                    .description("페이지 번호 (0부터 시작, 기본값: 0)")
                                                     .optional(),
                                             parameterWithName("size")
-                                                    .description("페이지 크기")
+                                                    .description("페이지 크기 (기본값: 20)")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.content[]")
@@ -139,7 +139,7 @@ class SalesChannelBrandQueryControllerRestDocsTest {
                                                     .description("외부 브랜드명"),
                                             fieldWithPath("data.content[].status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("상태"),
+                                                    .description("상태 (ACTIVE, INACTIVE)"),
                                             fieldWithPath("data.content[].createdAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("생성일시"),
@@ -191,7 +191,7 @@ class SalesChannelBrandQueryControllerRestDocsTest {
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(BASE_URL, SALES_CHANNEL_ID)
                                     .param("statuses", "ACTIVE")
-                                    .param("searchField", "externalBrandName")
+                                    .param("searchField", "EXTERNAL_NAME")
                                     .param("searchWord", "나이키")
                                     .param("page", "0")
                                     .param("size", "20"))

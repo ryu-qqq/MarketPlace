@@ -2,10 +2,10 @@ package com.ryuqq.marketplace.adapter.out.persistence.externalbrandmapping.adapt
 
 import com.ryuqq.marketplace.adapter.out.persistence.externalbrandmapping.mapper.ExternalBrandMappingJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.externalbrandmapping.repository.ExternalBrandMappingQueryDslRepository;
-import com.ryuqq.marketplace.application.externalbrandmapping.dto.query.ExternalBrandMappingSearchParams;
 import com.ryuqq.marketplace.application.externalbrandmapping.port.out.query.ExternalBrandMappingQueryPort;
 import com.ryuqq.marketplace.domain.externalbrandmapping.aggregate.ExternalBrandMapping;
 import com.ryuqq.marketplace.domain.externalbrandmapping.id.ExternalBrandMappingId;
+import com.ryuqq.marketplace.domain.externalbrandmapping.query.ExternalBrandMappingSearchCriteria;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -38,6 +38,16 @@ public class ExternalBrandMappingQueryAdapter implements ExternalBrandMappingQue
     }
 
     @Override
+    public List<ExternalBrandMapping> findByExternalSourceIdAndExternalBrandCodes(
+            Long externalSourceId, List<String> externalBrandCodes) {
+        return repository
+                .findByExternalSourceIdAndExternalBrandCodes(externalSourceId, externalBrandCodes)
+                .stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<ExternalBrandMapping> findByExternalSourceId(Long externalSourceId) {
         return repository.findByExternalSourceId(externalSourceId).stream()
                 .map(mapper::toDomain)
@@ -45,12 +55,12 @@ public class ExternalBrandMappingQueryAdapter implements ExternalBrandMappingQue
     }
 
     @Override
-    public List<ExternalBrandMapping> findByCriteria(ExternalBrandMappingSearchParams params) {
-        return repository.findByCriteria(params).stream().map(mapper::toDomain).toList();
+    public List<ExternalBrandMapping> findByCriteria(ExternalBrandMappingSearchCriteria criteria) {
+        return repository.findByCriteria(criteria).stream().map(mapper::toDomain).toList();
     }
 
     @Override
-    public long countByCriteria(ExternalBrandMappingSearchParams params) {
-        return repository.countByCriteria(params);
+    public long countByCriteria(ExternalBrandMappingSearchCriteria criteria) {
+        return repository.countByCriteria(criteria);
     }
 }

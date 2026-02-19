@@ -59,6 +59,7 @@ public class UpdateProductsService implements UpdateProductsUseCase {
                                                 g.sellerOptionGroupId(),
                                                 g.optionGroupName(),
                                                 g.canonicalOptionGroupId(),
+                                                g.inputType(),
                                                 g.optionValues().stream()
                                                         .map(
                                                                 v ->

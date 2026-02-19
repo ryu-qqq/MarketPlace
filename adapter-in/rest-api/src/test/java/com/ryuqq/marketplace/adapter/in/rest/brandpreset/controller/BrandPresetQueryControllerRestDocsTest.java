@@ -117,7 +117,8 @@ class BrandPresetQueryControllerRestDocsTest {
                                                     .description("등록일 종료 (YYYY-MM-DD)")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 키 (createdAt)")
+                                                    .description(
+                                                            "정렬 키 (CREATED_AT). 기본값: CREATED_AT")
                                                     .optional(),
                                             parameterWithName("sortDirection")
                                                     .description("정렬 방향 (ASC, DESC)")

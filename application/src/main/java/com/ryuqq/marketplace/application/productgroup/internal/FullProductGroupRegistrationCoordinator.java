@@ -17,6 +17,7 @@ import com.ryuqq.marketplace.domain.product.vo.ProductCreationData;
 import com.ryuqq.marketplace.domain.product.vo.SkuCode;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -126,7 +127,8 @@ public class FullProductGroupRegistrationCoordinator {
     /**
      * 등록용 옵션 이름 맵 생성.
      *
-     * <p>RegisterSellerOptionGroupsCommand의 그룹/값 이름 순서와 resolve된 ID 순서가 일치하는 전제하에 매핑합니다.
+     * <p>RegisterSellerOptionGroupsCommand의 그룹/값 이름 순서와 resolve된 ID 순서가 일치하는 전제하에 매핑합니다. FREE_INPUT
+     * 그룹은 SKU 조합에 참여하지 않으므로 건너뜁니다.
      */
     private Map<String, Map<String, SellerOptionValueId>> buildRegistrationOptionNameMap(
             List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> optionGroups,
@@ -134,6 +136,15 @@ public class FullProductGroupRegistrationCoordinator {
         Map<String, Map<String, SellerOptionValueId>> nameMap = new LinkedHashMap<>();
         int index = 0;
         for (RegisterSellerOptionGroupsCommand.OptionGroupCommand group : optionGroups) {
+            OptionInputType groupInputType =
+                    group.inputType() != null
+                            ? OptionInputType.valueOf(group.inputType())
+                            : OptionInputType.PREDEFINED;
+
+            if (groupInputType == OptionInputType.FREE_INPUT) {
+                continue;
+            }
+
             Map<String, SellerOptionValueId> valueMap = new LinkedHashMap<>();
             for (RegisterSellerOptionGroupsCommand.OptionValueCommand value :
                     group.optionValues()) {

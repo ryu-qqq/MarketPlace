@@ -104,26 +104,32 @@ class CategoryQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("departments")
                                                     .description(
-                                                            "부문 필터 (FASHION, BEAUTY, LIVING 등)")
+                                                            "부문 필터 (FASHION, BEAUTY, LIVING, FOOD,"
+                                                                    + " DIGITAL, SPORTS, KIDS, PET,"
+                                                                    + " CULTURE, HEALTH, ETC)")
                                                     .optional(),
                                             parameterWithName("categoryGroups")
                                                     .description(
-                                                            "카테고리 그룹 필터 (CLOTHING, SHOES, DIGITAL"
-                                                                    + " 등)")
+                                                            "카테고리 그룹 필터 - 고시정보 연결용 (CLOTHING,"
+                                                                + " SHOES, BAGS, ACCESSORIES,"
+                                                                + " COSMETICS, JEWELRY, WATCHES,"
+                                                                + " FURNITURE, DIGITAL, SPORTS,"
+                                                                + " BABY_KIDS, ETC)")
                                                     .optional(),
                                             parameterWithName("searchField")
-                                                    .description("검색 필드 (code, nameKo, nameEn)")
+                                                    .description("검색 필드 (CODE, NAME_KO, NAME_EN)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
                                                     .description(
-                                                            "정렬 키 (sortOrder, createdAt, nameKo,"
-                                                                    + " code)")
+                                                            "정렬 키 (SORT_ORDER, CREATED_AT,"
+                                                                    + " NAME_KO, CODE). 기본값:"
+                                                                    + " SORT_ORDER")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC). 기본값: ASC")
                                                     .optional(),
                                             parameterWithName("page")
                                                     .description("페이지 번호 (0부터)")
@@ -165,13 +171,21 @@ class CategoryQueryControllerRestDocsTest {
                                                     .description("리프 노드 여부"),
                                             fieldWithPath("data.content[].status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("상태"),
+                                                    .description("상태 (ACTIVE, INACTIVE)"),
                                             fieldWithPath("data.content[].department")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("부문"),
+                                                    .description(
+                                                            "부문 (FASHION, BEAUTY, LIVING, FOOD,"
+                                                                    + " DIGITAL, SPORTS, KIDS, PET,"
+                                                                    + " CULTURE, HEALTH, ETC)"),
                                             fieldWithPath("data.content[].categoryGroup")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("카테고리 그룹 (고시정보 연결용)"),
+                                                    .description(
+                                                            "카테고리 그룹 - 고시정보 연결용 (CLOTHING, SHOES,"
+                                                                + " BAGS, ACCESSORIES, COSMETICS,"
+                                                                + " JEWELRY, WATCHES, FURNITURE,"
+                                                                + " DIGITAL, SPORTS, BABY_KIDS,"
+                                                                + " ETC)"),
                                             fieldWithPath("data.content[].displayPath")
                                                     .type(JsonFieldType.STRING)
                                                     .description("표시용 이름 경로")
@@ -225,7 +239,7 @@ class CategoryQueryControllerRestDocsTest {
                             RestDocumentationRequestBuilders.get(BASE_URL)
                                     .param("statuses", "ACTIVE")
                                     .param("departments", "FASHION")
-                                    .param("searchField", "nameKo")
+                                    .param("searchField", "NAME_KO")
                                     .param("searchWord", "테스트")
                                     .param("page", "0")
                                     .param("size", "20"))
