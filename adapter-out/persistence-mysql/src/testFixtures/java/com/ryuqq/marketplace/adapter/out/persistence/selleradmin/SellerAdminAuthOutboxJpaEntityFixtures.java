@@ -141,9 +141,10 @@ public final class SellerAdminAuthOutboxJpaEntityFixtures {
     /** 재시도 횟수가 있는 PENDING 상태 Entity 생성 (저장용, ID null). */
     public static SellerAdminAuthOutboxJpaEntity retriedPendingEntity(int retryCount) {
         Instant now = Instant.now();
+        String sellerAdminId = "sa-retried-" + retryCount + "-" + now.toEpochMilli();
         return SellerAdminAuthOutboxJpaEntity.create(
                 null,
-                DEFAULT_SELLER_ADMIN_ID,
+                sellerAdminId,
                 DEFAULT_PAYLOAD,
                 SellerAdminAuthOutboxJpaEntity.Status.PENDING,
                 retryCount,
@@ -153,7 +154,7 @@ public final class SellerAdminAuthOutboxJpaEntityFixtures {
                 null,
                 "이전 시도 실패",
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SELLER_ADMIN_ID, now));
+                generateIdempotencyKey(sellerAdminId, now));
     }
 
     /** PROCESSING 타임아웃 테스트용 Entity (과거 updatedAt). */
@@ -196,9 +197,10 @@ public final class SellerAdminAuthOutboxJpaEntityFixtures {
     /** 최대 재시도에 도달한 PENDING Entity 생성 (재시도 불가). */
     public static SellerAdminAuthOutboxJpaEntity pendingEntityMaxRetry() {
         Instant now = Instant.now();
+        String sellerAdminId = "sa-max-retry-" + now.toEpochMilli();
         return SellerAdminAuthOutboxJpaEntity.create(
                 null,
-                DEFAULT_SELLER_ADMIN_ID,
+                sellerAdminId,
                 DEFAULT_PAYLOAD,
                 SellerAdminAuthOutboxJpaEntity.Status.PENDING,
                 DEFAULT_MAX_RETRY,
@@ -208,6 +210,6 @@ public final class SellerAdminAuthOutboxJpaEntityFixtures {
                 null,
                 "최대 재시도 도달",
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SELLER_ADMIN_ID, now));
+                generateIdempotencyKey(sellerAdminId, now));
     }
 }
