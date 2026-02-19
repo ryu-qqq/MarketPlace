@@ -175,7 +175,7 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("상품 그룹명"),
                                             fieldWithPath("data.content[].optionType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("옵션 유형 (SINGLE, COMBINATION)"),
+                                                    .description("옵션 유형 (NONE, SINGLE, COMBINATION, FREE_INPUT)"),
                                             fieldWithPath("data.content[].status")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
@@ -324,7 +324,7 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("상품 그룹명"),
                                             fieldWithPath("data.optionType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("옵션 유형 (SINGLE, COMBINATION)"),
+                                                    .description("옵션 유형 (NONE, SINGLE, COMBINATION, FREE_INPUT)"),
                                             fieldWithPath("data.status")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
@@ -350,7 +350,7 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("업로드된 이미지 URL"),
                                             fieldWithPath("data.images[].imageType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("이미지 유형 (MAIN, DETAIL 등)"),
+                                                    .description("이미지 유형 (THUMBNAIL, DETAIL)"),
                                             fieldWithPath("data.images[].sortOrder")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),

@@ -90,7 +90,7 @@ class ProductGroupImageCommandControllerRestDocsTest {
                                                     .description("수정할 이미지 목록"),
                                             fieldWithPath("images[].imageType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("이미지 유형 (MAIN, DETAIL 등)"),
+                                                    .description("이미지 유형 (THUMBNAIL, DETAIL)"),
                                             fieldWithPath("images[].originUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("원본 이미지 URL"),

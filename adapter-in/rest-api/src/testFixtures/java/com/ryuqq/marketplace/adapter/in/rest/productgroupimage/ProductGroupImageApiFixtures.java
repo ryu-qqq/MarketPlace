@@ -21,7 +21,7 @@ public final class ProductGroupImageApiFixtures {
     // ===== 상수 =====
     public static final Long DEFAULT_PRODUCT_GROUP_ID = 1L;
     public static final Long DEFAULT_IMAGE_ID = 100L;
-    public static final String DEFAULT_IMAGE_TYPE = "MAIN";
+    public static final String DEFAULT_IMAGE_TYPE = "THUMBNAIL";
     public static final String DEFAULT_ORIGIN_URL = "https://origin.example.com/img1.jpg";
     public static final String DEFAULT_UPLOADED_URL = "https://cdn.example.com/img1.jpg";
 
@@ -31,7 +31,7 @@ public final class ProductGroupImageApiFixtures {
         List<UpdateProductGroupImagesApiRequest.ImageRequest> images =
                 List.of(
                         new UpdateProductGroupImagesApiRequest.ImageRequest(
-                                "MAIN", "https://origin.example.com/img1.jpg", 1),
+                                "THUMBNAIL", "https://origin.example.com/img1.jpg", 1),
                         new UpdateProductGroupImagesApiRequest.ImageRequest(
                                 "DETAIL", "https://origin.example.com/img2.jpg", 2));
         return new UpdateProductGroupImagesApiRequest(images);
@@ -41,7 +41,7 @@ public final class ProductGroupImageApiFixtures {
         List<UpdateProductGroupImagesApiRequest.ImageRequest> images =
                 List.of(
                         new UpdateProductGroupImagesApiRequest.ImageRequest(
-                                "MAIN", "https://origin.example.com/main.jpg", 1));
+                                "THUMBNAIL", "https://origin.example.com/main.jpg", 1));
         return new UpdateProductGroupImagesApiRequest(images);
     }
 
@@ -52,7 +52,7 @@ public final class ProductGroupImageApiFixtures {
                 productGroupId,
                 List.of(
                         new UpdateProductGroupImagesCommand.ImageCommand(
-                                "MAIN", "https://origin.example.com/img1.jpg", 1),
+                                "THUMBNAIL", "https://origin.example.com/img1.jpg", 1),
                         new UpdateProductGroupImagesCommand.ImageCommand(
                                 "DETAIL", "https://origin.example.com/img2.jpg", 2)));
     }
@@ -64,7 +64,7 @@ public final class ProductGroupImageApiFixtures {
                 List.of(
                         new ProductGroupImageUploadStatusResult.ImageUploadDetail(
                                 100L,
-                                "MAIN",
+                                "THUMBNAIL",
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "COMPLETED",
@@ -87,7 +87,7 @@ public final class ProductGroupImageApiFixtures {
                 List.of(
                         new ProductGroupImageUploadStatusResult.ImageUploadDetail(
                                 100L,
-                                "MAIN",
+                                "THUMBNAIL",
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "COMPLETED",
@@ -102,7 +102,7 @@ public final class ProductGroupImageApiFixtures {
                 List.of(
                         new ProductGroupImageUploadStatusResult.ImageUploadDetail(
                                 100L,
-                                "MAIN",
+                                "THUMBNAIL",
                                 "https://origin.example.com/img1.jpg",
                                 null,
                                 "FAILED",
@@ -119,7 +119,7 @@ public final class ProductGroupImageApiFixtures {
                 List.of(
                         new ProductGroupImageUploadStatusApiResponse.ImageUploadDetailResponse(
                                 100L,
-                                "MAIN",
+                                "THUMBNAIL",
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "COMPLETED",

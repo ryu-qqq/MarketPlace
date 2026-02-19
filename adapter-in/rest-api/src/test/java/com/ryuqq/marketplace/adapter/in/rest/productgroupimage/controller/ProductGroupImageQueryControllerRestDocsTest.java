@@ -114,7 +114,7 @@ class ProductGroupImageQueryControllerRestDocsTest {
                                                     .description("이미지 ID"),
                                             fieldWithPath("data.images[].imageType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("이미지 유형 (MAIN, DETAIL 등)"),
+                                                    .description("이미지 유형 (THUMBNAIL, DETAIL)"),
                                             fieldWithPath("data.images[].originUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("원본 이미지 URL"),
