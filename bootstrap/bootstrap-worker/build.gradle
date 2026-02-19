@@ -30,6 +30,7 @@ dependencies {
     implementation project(':adapter-out:persistence-redis')
     implementation project(':adapter-out:client:sqs-client')
     implementation project(':adapter-out:client:spring-ai-client')
+    implementation project(':adapter-out:client:fileflow-client')
 
     // ========================================
     // Observability

@@ -281,9 +281,17 @@ class ProductCommandControllerRestDocsTest {
                                             fieldWithPath("products[].sortOrder")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),
-                                            fieldWithPath("products[].optionIndices")
+                                            fieldWithPath("products[].selectedOptions")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("옵션 값 인덱스 목록 (숫자 배열)"))));
+                                                    .description("이름 기반 옵션 선택 목록"),
+                                            fieldWithPath(
+                                                            "products[].selectedOptions[].optionGroupName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("옵션 그룹명"),
+                                            fieldWithPath(
+                                                            "products[].selectedOptions[].optionValueName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("옵션 값명"))));
         }
     }
 }

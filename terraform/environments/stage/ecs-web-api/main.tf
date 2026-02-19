@@ -446,7 +446,9 @@ module "ecs_service" {
     # AuthHub
     { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local:8080" },
     # FileFlow
-    { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-prod.connectly.local:8080" }
+    { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-prod.connectly.local:8080" },
+    # Naver Commerce
+    { name = "NAVER_COMMERCE_CLIENT_ID", value = data.aws_ssm_parameter.naver_commerce_client_id.value }
   ]
 
   # Container Secrets
@@ -456,7 +458,8 @@ module "ecs_service" {
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     { name = "AWS_ACCESS_KEY_ID", valueFrom = data.aws_ssm_parameter.ses_access_key_id.arn },
-    { name = "AWS_SECRET_ACCESS_KEY", valueFrom = data.aws_ssm_parameter.ses_secret_access_key.arn }
+    { name = "AWS_SECRET_ACCESS_KEY", valueFrom = data.aws_ssm_parameter.ses_secret_access_key.arn },
+    { name = "NAVER_COMMERCE_CLIENT_SECRET", valueFrom = data.aws_ssm_parameter.naver_commerce_client_secret.arn }
   ]
 
   # Health Check

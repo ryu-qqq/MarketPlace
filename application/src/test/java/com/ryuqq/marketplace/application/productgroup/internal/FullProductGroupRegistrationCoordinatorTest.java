@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.RegisterProductGroupDescriptionCommand;
@@ -211,7 +212,7 @@ class FullProductGroupRegistrationCoordinatorTest {
             sut.register(bundle);
 
             // then
-            then(productCommandCoordinator).should().register(any(RegisterProductsCommand.class));
+            then(productCommandCoordinator).should().register(any(List.class));
         }
 
         @Test
@@ -277,8 +278,12 @@ class FullProductGroupRegistrationCoordinatorTest {
                         0L,
                         List.of(
                                 new RegisterProductsCommand.ProductData(
-                                        "SKU-001", 10000, 9000, 100, 0, List.of(0))),
-                        List.of());
+                                        "SKU-001",
+                                        10000,
+                                        9000,
+                                        100,
+                                        0,
+                                        List.of(new SelectedOption("색상", "검정")))));
 
         return new ProductGroupRegistrationBundle(
                 productGroup,

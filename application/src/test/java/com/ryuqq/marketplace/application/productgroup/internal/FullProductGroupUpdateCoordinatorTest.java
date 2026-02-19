@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
@@ -150,7 +151,8 @@ class FullProductGroupUpdateCoordinatorTest {
                     .updateWithDiff(
                             eq(bundle.basicInfoUpdateData().productGroupId()),
                             eq(bundle.productEntries()),
-                            eq(optionResult));
+                            eq(optionResult),
+                            any());
         }
 
         @Test
@@ -215,9 +217,10 @@ class FullProductGroupUpdateCoordinatorTest {
             then(productCommandCoordinator)
                     .should()
                     .updateWithDiff(
-                            bundle.basicInfoUpdateData().productGroupId(),
-                            bundle.productEntries(),
-                            optionResult);
+                            eq(bundle.basicInfoUpdateData().productGroupId()),
+                            eq(bundle.productEntries()),
+                            eq(optionResult),
+                            any());
         }
     }
 
@@ -267,7 +270,15 @@ class FullProductGroupUpdateCoordinatorTest {
                         List.of(new UpdateProductNoticeCommand.NoticeEntryCommand(1L, "95% 면")));
 
         List<ProductDiffUpdateEntry> productEntries =
-                List.of(new ProductDiffUpdateEntry(1L, "SKU-001", 12000, 10000, 80, 0, List.of(0)));
+                List.of(
+                        new ProductDiffUpdateEntry(
+                                1L,
+                                "SKU-001",
+                                12000,
+                                10000,
+                                80,
+                                0,
+                                List.of(new SelectedOption("색상", "검정"))));
 
         return new ProductGroupUpdateBundle(
                 basicInfoUpdateData,

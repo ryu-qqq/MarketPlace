@@ -89,7 +89,7 @@ class RegisterProductGroupFullServiceTest {
                 new RegisterSellerOptionGroupsCommand(0L, "SINGLE", List.of()),
                 new RegisterProductGroupDescriptionCommand(0L, "<p>상세설명</p>"),
                 new RegisterProductNoticeCommand(0L, 10L, List.of()),
-                new RegisterProductsCommand(0L, List.of(), List.of()),
+                new RegisterProductsCommand(0L, List.of()),
                 CommonVoFixtures.now());
     }
 
@@ -100,7 +100,7 @@ class RegisterProductGroupFullServiceTest {
                 new RegisterSellerOptionGroupsCommand(0L, "NONE", List.of()),
                 new RegisterProductGroupDescriptionCommand(0L, "<p>상세설명</p>"),
                 new RegisterProductNoticeCommand(0L, 10L, List.of()),
-                new RegisterProductsCommand(0L, List.of(), List.of()),
+                new RegisterProductsCommand(0L, List.of()),
                 CommonVoFixtures.now());
     }
 }

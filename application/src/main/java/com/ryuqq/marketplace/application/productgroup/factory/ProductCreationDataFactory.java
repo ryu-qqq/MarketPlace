@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.product.vo.ProductCreationData;
 import com.ryuqq.marketplace.domain.product.vo.ProductCreations;
 import com.ryuqq.marketplace.domain.product.vo.SkuCode;
+import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ public class ProductCreationDataFactory {
                                                 Money.of(productData.currentPrice()),
                                                 productData.stockQuantity(),
                                                 productData.sortOrder(),
-                                                productData.optionIndices()))
+                                                productData.resolvedOptionValueIds()))
                         .toList();
 
         return ProductCreations.of(creationDataList);
@@ -34,5 +35,5 @@ public class ProductCreationDataFactory {
             int currentPrice,
             int stockQuantity,
             int sortOrder,
-            List<Integer> optionIndices) {}
+            List<SellerOptionValueId> resolvedOptionValueIds) {}
 }

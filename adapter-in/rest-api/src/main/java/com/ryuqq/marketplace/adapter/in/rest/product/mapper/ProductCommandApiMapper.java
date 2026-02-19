@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductPr
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductStockApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductsApiRequest;
 import com.ryuqq.marketplace.application.product.dto.command.BatchChangeProductStatusCommand;
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductPriceCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
@@ -108,7 +109,15 @@ public class ProductCommandApiMapper {
                                                 p.currentPrice(),
                                                 p.stockQuantity(),
                                                 p.sortOrder(),
-                                                p.optionIndices()))
+                                                p.selectedOptions().stream()
+                                                        .map(
+                                                                so ->
+                                                                        new SelectedOption(
+                                                                                so
+                                                                                        .optionGroupName(),
+                                                                                so
+                                                                                        .optionValueName()))
+                                                        .toList()))
                         .toList());
     }
 }

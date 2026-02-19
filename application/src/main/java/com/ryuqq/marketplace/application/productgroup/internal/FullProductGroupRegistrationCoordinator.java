@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.productgroup.internal;
 
 import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.BoundCommands;
@@ -8,9 +9,18 @@ import com.ryuqq.marketplace.application.productgroupdescription.internal.Descri
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupinspection.manager.ProductGroupInspectionOutboxCommandManager;
 import com.ryuqq.marketplace.application.productnotice.internal.ProductNoticeCommandCoordinator;
+import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.internal.SellerOptionCommandCoordinator;
+import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.product.aggregate.Product;
+import com.ryuqq.marketplace.domain.product.vo.ProductCreationData;
+import com.ryuqq.marketplace.domain.product.vo.SkuCode;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
+import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,16 +90,83 @@ public class FullProductGroupRegistrationCoordinator {
         // 6. Notice → Coordinator (Factory + Validator + persist)
         noticeCommandCoordinator.register(bound.noticeCommand());
 
-        // 7. Products → Coordinator (Factory + persist)
-        List<Long> allOptionValueIdValues =
-                allOptionValueIds.stream().map(SellerOptionValueId::value).toList();
-        RegisterProductsCommand productCommand =
-                bundle.bindProductCommand(productGroupId, allOptionValueIdValues);
-        productCommandCoordinator.register(productCommand);
+        // 7. Products → 이름 기반 resolve 후 등록
+        Map<String, Map<String, SellerOptionValueId>> nameMap =
+                buildRegistrationOptionNameMap(
+                        bound.optionGroupCommand().optionGroups(), allOptionValueIds);
+
+        RegisterProductsCommand productCommand = bundle.bindProductCommand(productGroupId);
+        ProductGroupId pgId = ProductGroupId.of(productGroupId);
+        Instant now = bundle.createdAt();
+
+        List<Product> products =
+                productCommand.products().stream()
+                        .map(
+                                data -> {
+                                    List<SellerOptionValueId> resolvedIds =
+                                            resolveOptionIds(data.selectedOptions(), nameMap);
+                                    return new ProductCreationData(
+                                                    SkuCode.of(data.skuCode()),
+                                                    Money.of(data.regularPrice()),
+                                                    Money.of(data.currentPrice()),
+                                                    data.stockQuantity(),
+                                                    data.sortOrder(),
+                                                    resolvedIds)
+                                            .toProduct(pgId, now);
+                                })
+                        .toList();
+        productCommandCoordinator.register(products);
 
         // 8. 검수 Outbox 저장 (PENDING) — 스케줄러가 비동기로 검수 수행
         inspectionOutboxCommandManager.persist(bound.inspectionOutbox());
 
         return productGroupId;
+    }
+
+    /**
+     * 등록용 옵션 이름 맵 생성.
+     *
+     * <p>RegisterSellerOptionGroupsCommand의 그룹/값 이름 순서와 resolve된 ID 순서가 일치하는 전제하에 매핑합니다.
+     */
+    private Map<String, Map<String, SellerOptionValueId>> buildRegistrationOptionNameMap(
+            List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> optionGroups,
+            List<SellerOptionValueId> allOptionValueIds) {
+        Map<String, Map<String, SellerOptionValueId>> nameMap = new LinkedHashMap<>();
+        int index = 0;
+        for (RegisterSellerOptionGroupsCommand.OptionGroupCommand group : optionGroups) {
+            Map<String, SellerOptionValueId> valueMap = new LinkedHashMap<>();
+            for (RegisterSellerOptionGroupsCommand.OptionValueCommand value :
+                    group.optionValues()) {
+                valueMap.put(value.optionValueName(), allOptionValueIds.get(index++));
+            }
+            nameMap.put(group.optionGroupName(), valueMap);
+        }
+        return nameMap;
+    }
+
+    /** selectedOptions + 옵션 이름 맵 → List&lt;SellerOptionValueId&gt; 변환. */
+    private List<SellerOptionValueId> resolveOptionIds(
+            List<SelectedOption> selectedOptions,
+            Map<String, Map<String, SellerOptionValueId>> optionNameMap) {
+        return selectedOptions.stream()
+                .map(
+                        so -> {
+                            Map<String, SellerOptionValueId> valueMap =
+                                    optionNameMap.get(so.optionGroupName());
+                            if (valueMap == null) {
+                                throw new IllegalArgumentException(
+                                        "존재하지 않는 옵션 그룹: " + so.optionGroupName());
+                            }
+                            SellerOptionValueId valueId = valueMap.get(so.optionValueName());
+                            if (valueId == null) {
+                                throw new IllegalArgumentException(
+                                        "존재하지 않는 옵션 값: "
+                                                + so.optionGroupName()
+                                                + " > "
+                                                + so.optionValueName());
+                            }
+                            return valueId;
+                        })
+                .toList();
     }
 }

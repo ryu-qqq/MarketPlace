@@ -81,13 +81,53 @@ public final class ProductApiFixtures {
         List<UpdateProductsApiRequest.ProductDataApiRequest> products =
                 List.of(
                         new UpdateProductsApiRequest.ProductDataApiRequest(
-                                1L, "SKU-001", 100000, 90000, 50, 1, List.of(0, 0)),
+                                1L,
+                                "SKU-001",
+                                100000,
+                                90000,
+                                50,
+                                1,
+                                List.of(
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "색상", "블랙"),
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "사이즈", "S"))),
                         new UpdateProductsApiRequest.ProductDataApiRequest(
-                                2L, "SKU-002", 100000, 90000, 30, 2, List.of(0, 1)),
+                                2L,
+                                "SKU-002",
+                                100000,
+                                90000,
+                                30,
+                                2,
+                                List.of(
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "색상", "블랙"),
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "사이즈", "M"))),
                         new UpdateProductsApiRequest.ProductDataApiRequest(
-                                3L, "SKU-003", 100000, 90000, 20, 3, List.of(1, 0)),
+                                3L,
+                                "SKU-003",
+                                100000,
+                                90000,
+                                20,
+                                3,
+                                List.of(
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "색상", "화이트"),
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "사이즈", "S"))),
                         new UpdateProductsApiRequest.ProductDataApiRequest(
-                                4L, "SKU-004", 100000, 90000, 10, 4, List.of(1, 1)));
+                                4L,
+                                "SKU-004",
+                                100000,
+                                90000,
+                                10,
+                                4,
+                                List.of(
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "색상", "화이트"),
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "사이즈", "M"))));
 
         return new UpdateProductsApiRequest(optionGroups, products);
     }
@@ -104,7 +144,15 @@ public final class ProductApiFixtures {
         List<UpdateProductsApiRequest.ProductDataApiRequest> products =
                 List.of(
                         new UpdateProductsApiRequest.ProductDataApiRequest(
-                                1L, "SKU-001", 100000, 90000, 50, 1, List.of(0)));
+                                1L,
+                                "SKU-001",
+                                100000,
+                                90000,
+                                50,
+                                1,
+                                List.of(
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "색상", "블랙"))));
 
         return new UpdateProductsApiRequest(optionGroups, products);
     }
@@ -121,7 +169,15 @@ public final class ProductApiFixtures {
         List<UpdateProductsApiRequest.ProductDataApiRequest> products =
                 List.of(
                         new UpdateProductsApiRequest.ProductDataApiRequest(
-                                null, "SKU-NEW", 80000, 70000, 100, 1, List.of(0)));
+                                null,
+                                "SKU-NEW",
+                                80000,
+                                70000,
+                                100,
+                                1,
+                                List.of(
+                                        new UpdateProductsApiRequest.SelectedOptionApiRequest(
+                                                "색상", "레드"))));
 
         return new UpdateProductsApiRequest(optionGroups, products);
     }
