@@ -12,7 +12,6 @@ import jakarta.validation.constraints.NotNull;
  *
  * @param regularPrice 정가
  * @param currentPrice 판매가
- * @param salePrice 할인가
  * @author ryu-qqq
  * @since 1.0.0
  */
@@ -26,10 +25,4 @@ public record UpdateProductPriceApiRequest(
                         example = "90000",
                         requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotNull(message = "판매가는 필수입니다")
-                Integer currentPrice,
-        @Schema(
-                        description = "할인가 (판매가와 같으면 할인 없음)",
-                        example = "85000",
-                        requiredMode = Schema.RequiredMode.REQUIRED)
-                @NotNull(message = "할인가는 필수입니다")
-                Integer salePrice) {}
+                Integer currentPrice) {}

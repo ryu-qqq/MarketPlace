@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface CanonicalOptionGroupQueryPort {
     Optional<CanonicalOptionGroup> findById(CanonicalOptionGroupId id);
 
+    List<CanonicalOptionGroup> findByIds(List<CanonicalOptionGroupId> ids);
+
     List<CanonicalOptionGroup> findByCriteria(CanonicalOptionGroupSearchCriteria criteria);
 
     long countByCriteria(CanonicalOptionGroupSearchCriteria criteria);

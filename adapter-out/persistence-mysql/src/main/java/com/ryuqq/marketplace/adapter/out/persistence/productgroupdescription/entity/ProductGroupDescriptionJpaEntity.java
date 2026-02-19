@@ -31,6 +31,9 @@ public class ProductGroupDescriptionJpaEntity extends BaseAuditEntity {
     @Column(name = "cdn_path", length = 500)
     private String cdnPath;
 
+    @Column(name = "publish_status", nullable = false, length = 30)
+    private String publishStatus;
+
     protected ProductGroupDescriptionJpaEntity() {
         super();
     }
@@ -40,6 +43,7 @@ public class ProductGroupDescriptionJpaEntity extends BaseAuditEntity {
             Long productGroupId,
             String content,
             String cdnPath,
+            String publishStatus,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
@@ -47,6 +51,7 @@ public class ProductGroupDescriptionJpaEntity extends BaseAuditEntity {
         this.productGroupId = productGroupId;
         this.content = content;
         this.cdnPath = cdnPath;
+        this.publishStatus = publishStatus;
     }
 
     public static ProductGroupDescriptionJpaEntity create(
@@ -54,10 +59,11 @@ public class ProductGroupDescriptionJpaEntity extends BaseAuditEntity {
             Long productGroupId,
             String content,
             String cdnPath,
+            String publishStatus,
             Instant createdAt,
             Instant updatedAt) {
         return new ProductGroupDescriptionJpaEntity(
-                id, productGroupId, content, cdnPath, createdAt, updatedAt);
+                id, productGroupId, content, cdnPath, publishStatus, createdAt, updatedAt);
     }
 
     public Long getId() {
@@ -74,5 +80,9 @@ public class ProductGroupDescriptionJpaEntity extends BaseAuditEntity {
 
     public String getCdnPath() {
         return cdnPath;
+    }
+
+    public String getPublishStatus() {
+        return publishStatus;
     }
 }

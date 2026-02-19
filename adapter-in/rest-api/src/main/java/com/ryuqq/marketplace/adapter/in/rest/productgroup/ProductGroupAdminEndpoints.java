@@ -30,12 +30,6 @@ public final class ProductGroupAdminEndpoints {
     /** 기본 정보 수정 경로 */
     public static final String BASIC_INFO = "/basic-info";
 
-    /** 이미지 수정 경로 */
-    public static final String IMAGES = "/images";
-
-    /** 상세 설명 수정 경로 */
-    public static final String DESCRIPTION = "/description";
-
-    /** 고시정보 수정 경로 */
-    public static final String NOTICE = "/notice";
+    /** 배치 등록 경로 */
+    public static final String BATCH = "/batch";
 }

@@ -1,11 +1,15 @@
 package com.ryuqq.marketplace.adapter.out.persistence.categorypreset.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.CategoryPresetJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.composite.CategoryPresetCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.categorypreset.entity.CategoryPresetJpaEntity;
+import com.ryuqq.marketplace.application.categorypreset.dto.response.CategoryPresetResult;
 import com.ryuqq.marketplace.domain.categorypreset.CategoryPresetFixtures;
 import com.ryuqq.marketplace.domain.categorypreset.aggregate.CategoryPreset;
+import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -138,7 +142,75 @@ class CategoryPresetJpaEntityMapperTest {
     }
 
     // ========================================================================
-    // 3. 양방향 변환 테스트
+    // 3. toResult 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("toResult 메서드 테스트")
+    class ToResultTest {
+
+        @Test
+        @DisplayName("CategoryPresetCompositeDto를 CategoryPresetResult로 변환합니다")
+        void toResult_WithCompositeDto_ConvertsAllFieldsCorrectly() {
+            // given
+            Instant now = Instant.now();
+            CategoryPresetCompositeDto dto =
+                    new CategoryPresetCompositeDto(
+                            100L,
+                            10L,
+                            "테스트샵",
+                            "account-001",
+                            20L,
+                            "테스트채널",
+                            30L,
+                            "EXT-CAT-001",
+                            "패션의류 > 상의 > 티셔츠",
+                            "테스트프리셋",
+                            "ACTIVE",
+                            now);
+
+            // when
+            CategoryPresetResult result = mapper.toResult(dto);
+
+            // then
+            assertThat(result.id()).isEqualTo(100L);
+            assertThat(result.shopId()).isEqualTo(10L);
+            assertThat(result.shopName()).isEqualTo("테스트샵");
+            assertThat(result.salesChannelId()).isEqualTo(20L);
+            assertThat(result.salesChannelName()).isEqualTo("테스트채널");
+            assertThat(result.accountId()).isEqualTo("account-001");
+            assertThat(result.presetName()).isEqualTo("테스트프리셋");
+            assertThat(result.categoryPath()).isEqualTo("패션의류 > 상의 > 티셔츠");
+            assertThat(result.categoryCode()).isEqualTo("EXT-CAT-001");
+            assertThat(result.createdAt()).isEqualTo(now);
+        }
+    }
+
+    // ========================================================================
+    // 4. toDomain 예외 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("toDomain 예외 테스트")
+    class ToDomainExceptionTest {
+
+        @Test
+        @DisplayName("Entity의 ID가 null이면 IllegalStateException이 발생합니다")
+        void toDomain_WithNullId_ThrowsIllegalStateException() {
+            // given
+            CategoryPresetJpaEntity entityWithNullId =
+                    CategoryPresetJpaEntity.create(
+                            null, 10L, 30L, "테스트프리셋", "ACTIVE", Instant.now(), Instant.now());
+
+            // when & then
+            assertThatThrownBy(() -> mapper.toDomain(entityWithNullId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("null");
+        }
+    }
+
+    // ========================================================================
+    // 5. 양방향 변환 테스트
     // ========================================================================
 
     @Nested

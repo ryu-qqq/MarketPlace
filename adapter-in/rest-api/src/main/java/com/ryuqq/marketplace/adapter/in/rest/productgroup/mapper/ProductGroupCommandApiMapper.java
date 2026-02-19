@@ -1,19 +1,14 @@
 package com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper;
 
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.ChangeProductGroupStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupDescriptionApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupFullApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupImagesApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductNoticeApiRequest;
-import com.ryuqq.marketplace.application.productgroup.dto.command.ChangeProductGroupStatusCommand;
+import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangeProductGroupStatusCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
-import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupImagesCommand;
-import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
-import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -90,8 +85,6 @@ public class ProductGroupCommandApiMapper {
                                                         product.skuCode(),
                                                         product.regularPrice(),
                                                         product.currentPrice(),
-                                                        product.salePrice(),
-                                                        product.discountRate(),
                                                         product.stockQuantity(),
                                                         product.sortOrder(),
                                                         product.optionIndices()))
@@ -147,6 +140,7 @@ public class ProductGroupCommandApiMapper {
                                         group ->
                                                 new UpdateProductGroupFullCommand
                                                         .OptionGroupCommand(
+                                                        group.sellerOptionGroupId(),
                                                         group.optionGroupName(),
                                                         group.canonicalOptionGroupId(),
                                                         group.optionValues().stream()
@@ -154,6 +148,8 @@ public class ProductGroupCommandApiMapper {
                                                                         value ->
                                                                                 new UpdateProductGroupFullCommand
                                                                                         .OptionValueCommand(
+                                                                                        value
+                                                                                                .sellerOptionValueId(),
                                                                                         value
                                                                                                 .optionValueName(),
                                                                                         value
@@ -168,11 +164,10 @@ public class ProductGroupCommandApiMapper {
                                 .map(
                                         product ->
                                                 new UpdateProductGroupFullCommand.ProductCommand(
+                                                        product.productId(),
                                                         product.skuCode(),
                                                         product.regularPrice(),
                                                         product.currentPrice(),
-                                                        product.salePrice(),
-                                                        product.discountRate(),
                                                         product.stockQuantity(),
                                                         product.sortOrder(),
                                                         product.optionIndices()))
@@ -215,65 +210,26 @@ public class ProductGroupCommandApiMapper {
     }
 
     /**
-     * UpdateProductGroupImagesApiRequest -> UpdateProductGroupImagesCommand 변환.
+     * BatchChangeProductGroupStatusApiRequest -> BatchChangeProductGroupStatusCommand 변환.
      *
-     * @param productGroupId 상품 그룹 ID (PathVariable)
+     * @param sellerId 인증 컨텍스트에서 해석된 셀러 ID
      * @param request API 요청 DTO
      * @return Application Command DTO
      */
-    public UpdateProductGroupImagesCommand toCommand(
-            Long productGroupId, UpdateProductGroupImagesApiRequest request) {
-        return new UpdateProductGroupImagesCommand(
-                productGroupId,
-                request.images().stream()
-                        .map(
-                                img ->
-                                        new UpdateProductGroupImagesCommand.ImageCommand(
-                                                img.imageType(), img.originUrl(), img.sortOrder()))
-                        .toList());
+    public BatchChangeProductGroupStatusCommand toCommand(
+            long sellerId, BatchChangeProductGroupStatusApiRequest request) {
+        return new BatchChangeProductGroupStatusCommand(
+                sellerId, request.productGroupIds(), request.targetStatus());
     }
 
     /**
-     * UpdateProductGroupDescriptionApiRequest -> UpdateProductGroupDescriptionCommand 변환.
+     * BatchRegisterProductGroupApiRequest -> List&lt;RegisterProductGroupCommand&gt; 변환.
      *
-     * @param productGroupId 상품 그룹 ID (PathVariable)
-     * @param request API 요청 DTO
-     * @return Application Command DTO
+     * @param request 배치 등록 API 요청 DTO
+     * @return Application Command 목록
      */
-    public UpdateProductGroupDescriptionCommand toCommand(
-            Long productGroupId, UpdateProductGroupDescriptionApiRequest request) {
-        return new UpdateProductGroupDescriptionCommand(productGroupId, request.content());
-    }
-
-    /**
-     * UpdateProductNoticeApiRequest -> UpdateProductNoticeCommand 변환.
-     *
-     * @param productGroupId 상품 그룹 ID (PathVariable)
-     * @param request API 요청 DTO
-     * @return Application Command DTO
-     */
-    public UpdateProductNoticeCommand toCommand(
-            Long productGroupId, UpdateProductNoticeApiRequest request) {
-        return new UpdateProductNoticeCommand(
-                productGroupId,
-                request.noticeCategoryId(),
-                request.entries().stream()
-                        .map(
-                                entry ->
-                                        new UpdateProductNoticeCommand.NoticeEntryCommand(
-                                                entry.noticeFieldId(), entry.fieldValue()))
-                        .toList());
-    }
-
-    /**
-     * ChangeProductGroupStatusApiRequest -> ChangeProductGroupStatusCommand 변환.
-     *
-     * @param productGroupId 상품 그룹 ID (PathVariable)
-     * @param request API 요청 DTO
-     * @return Application Command DTO
-     */
-    public ChangeProductGroupStatusCommand toCommand(
-            Long productGroupId, ChangeProductGroupStatusApiRequest request) {
-        return new ChangeProductGroupStatusCommand(productGroupId, request.targetStatus());
+    public List<RegisterProductGroupCommand> toCommands(
+            BatchRegisterProductGroupApiRequest request) {
+        return request.items().stream().map(this::toCommand).toList();
     }
 }

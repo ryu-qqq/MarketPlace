@@ -5,7 +5,6 @@ import com.ryuqq.marketplace.adapter.out.persistence.productnotice.mapper.Produc
 import com.ryuqq.marketplace.adapter.out.persistence.productnotice.repository.ProductNoticeEntryJpaRepository;
 import com.ryuqq.marketplace.application.productnotice.port.out.command.ProductNoticeEntryCommandPort;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNoticeEntry;
-import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,19 +25,13 @@ public class ProductNoticeEntryCommandAdapter implements ProductNoticeEntryComma
     }
 
     @Override
-    public void deleteByNoticeId(Long productNoticeId) {
-        repository.deleteByProductNoticeId(productNoticeId);
+    public void persist(ProductNoticeEntry entry) {
+        ProductNoticeEntryJpaEntity entity = mapper.toEntryEntity(entry);
+        repository.save(entity);
     }
 
     @Override
-    public void persistAll(Long productNoticeId, List<ProductNoticeEntry> entries) {
-        if (entries.isEmpty()) {
-            return;
-        }
-        List<ProductNoticeEntryJpaEntity> entities1 =
-                entries.stream()
-                        .map(entry -> mapper.toEntryEntity(entry, productNoticeId))
-                        .toList();
-        repository.saveAll(entities1);
+    public void deleteByNoticeId(Long noticeId) {
+        repository.deleteByProductNoticeId(noticeId);
     }
 }

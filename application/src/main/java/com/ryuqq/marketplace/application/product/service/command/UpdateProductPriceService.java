@@ -36,21 +36,10 @@ public class UpdateProductPriceService implements UpdateProductPriceUseCase {
     public void execute(UpdateProductPriceCommand command) {
         StatusChangeContext<ProductId> context = commandFactory.createPriceUpdateContext(command);
 
-        boolean hasSale = command.salePrice() < command.currentPrice();
-        Money salePrice = hasSale ? Money.of(command.salePrice()) : null;
-        int discountRate =
-                hasSale
-                        ? (command.currentPrice() - command.salePrice())
-                                * 100
-                                / command.currentPrice()
-                        : 0;
-
         Product product = readManager.getById(context.id());
         product.updatePrice(
                 Money.of(command.regularPrice()),
                 Money.of(command.currentPrice()),
-                salePrice,
-                discountRate,
                 context.changedAt());
 
         commandManager.persist(product);

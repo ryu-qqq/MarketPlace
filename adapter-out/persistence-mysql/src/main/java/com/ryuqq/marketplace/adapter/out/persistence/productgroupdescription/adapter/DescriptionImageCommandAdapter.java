@@ -5,7 +5,6 @@ import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.map
 import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.repository.DescriptionImageJpaRepository;
 import com.ryuqq.marketplace.application.productgroupdescription.port.out.command.DescriptionImageCommandPort;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.DescriptionImage;
-import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,18 +26,8 @@ public class DescriptionImageCommandAdapter implements DescriptionImageCommandPo
     }
 
     @Override
-    public void deleteByDescriptionId(Long descriptionId) {
-        repository.deleteByProductGroupDescriptionId(descriptionId);
-    }
-
-    @Override
-    public List<Long> persistAll(Long descriptionId, List<DescriptionImage> images) {
-        if (images.isEmpty()) {
-            return List.of();
-        }
-        List<DescriptionImageJpaEntity> entities =
-                images.stream().map(image -> mapper.toImageEntity(image, descriptionId)).toList();
-        List<DescriptionImageJpaEntity> savedEntities = repository.saveAll(entities);
-        return savedEntities.stream().map(DescriptionImageJpaEntity::getId).toList();
+    public Long persist(DescriptionImage image) {
+        DescriptionImageJpaEntity entity = mapper.toImageEntity(image);
+        return repository.save(entity).getId();
     }
 }

@@ -33,12 +33,6 @@ public class ProductNoticeQueryDslRepository {
         this.conditionBuilder = conditionBuilder;
     }
 
-    /**
-     * productGroupId로 상품 고시정보 조회.
-     *
-     * @param productGroupId 상품 그룹 ID
-     * @return 고시정보 엔티티 (Optional)
-     */
     public Optional<ProductNoticeJpaEntity> findByProductGroupId(Long productGroupId) {
         ProductNoticeJpaEntity entity =
                 queryFactory
@@ -48,12 +42,6 @@ public class ProductNoticeQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    /**
-     * productNoticeId로 고시정보 항목 목록 조회.
-     *
-     * @param productNoticeId 고시정보 ID
-     * @return 고시정보 항목 엔티티 목록
-     */
     public List<ProductNoticeEntryJpaEntity> findEntriesByProductNoticeId(Long productNoticeId) {
         return queryFactory
                 .selectFrom(productNoticeEntry)

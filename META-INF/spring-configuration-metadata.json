@@ -1,0 +1,48 @@
+{
+  "groups": [
+    {
+      "name": "fileflow",
+      "type": "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowProperties",
+      "sourceType": "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowProperties"
+    },
+    {
+      "name": "fileflow.timeout",
+      "type": "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowProperties$Timeout",
+      "sourceType": "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowProperties",
+      "sourceMethod": "getTimeout()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "fileflow.base-url",
+      "type": "java.lang.String",
+      "sourceType": "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowProperties"
+    },
+    {
+      "name": "fileflow.service-name",
+      "type": "java.lang.String",
+      "sourceType": "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowProperties"
+    },
+    {
+      "name": "fileflow.service-token",
+      "type": "java.lang.String",
+      "sourceType": "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowProperties"
+    },
+    {
+      "name": "fileflow.timeout.connect",
+      "type": "java.time.Duration",
+      "sourceType": "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowProperties$Timeout",
+      "defaultValue": "5s"
+    },
+    {
+      "name": "fileflow.timeout.read",
+      "type": "java.time.Duration",
+      "sourceType": "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowProperties$Timeout",
+      "defaultValue": "30s"
+    }
+  ],
+  "hints": [],
+  "ignored": {
+    "properties": []
+  }
+}

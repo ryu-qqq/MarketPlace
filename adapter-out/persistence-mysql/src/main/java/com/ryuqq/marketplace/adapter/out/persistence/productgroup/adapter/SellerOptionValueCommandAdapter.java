@@ -3,7 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.productgroup.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionValueJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.mapper.ProductGroupJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.repository.SellerOptionValueJpaRepository;
-import com.ryuqq.marketplace.application.productgroup.port.out.command.SellerOptionValueCommandPort;
+import com.ryuqq.marketplace.application.selleroption.port.out.command.SellerOptionValueCommandPort;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionValue;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -26,20 +26,27 @@ public class SellerOptionValueCommandAdapter implements SellerOptionValueCommand
     }
 
     @Override
-    public void deleteByGroupIdIn(List<Long> groupIds) {
-        if (groupIds.isEmpty()) {
-            return;
-        }
-        repository.deleteBySellerOptionGroupIdIn(groupIds);
+    public Long persist(SellerOptionValue value) {
+        SellerOptionValueJpaEntity entity = mapper.toOptionValueEntity(value);
+        SellerOptionValueJpaEntity saved = repository.save(entity);
+        return saved.getId();
     }
 
     @Override
-    public void persistAll(Long groupId, List<SellerOptionValue> values) {
-        if (values.isEmpty()) {
-            return;
-        }
+    public List<Long> persistAll(List<SellerOptionValue> values) {
         List<SellerOptionValueJpaEntity> entities =
                 values.stream().map(mapper::toOptionValueEntity).toList();
-        repository.saveAll(entities);
+        List<SellerOptionValueJpaEntity> saved = repository.saveAll(entities);
+        return saved.stream().map(SellerOptionValueJpaEntity::getId).toList();
+    }
+
+    @Override
+    public List<Long> persistAllForGroup(Long sellerOptionGroupId, List<SellerOptionValue> values) {
+        List<SellerOptionValueJpaEntity> entities =
+                values.stream()
+                        .map(v -> mapper.toOptionValueEntity(v, sellerOptionGroupId))
+                        .toList();
+        List<SellerOptionValueJpaEntity> saved = repository.saveAll(entities);
+        return saved.stream().map(SellerOptionValueJpaEntity::getId).toList();
     }
 }

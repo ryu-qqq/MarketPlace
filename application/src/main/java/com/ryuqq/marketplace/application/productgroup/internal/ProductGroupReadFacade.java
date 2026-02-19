@@ -33,19 +33,19 @@ public class ProductGroupReadFacade {
     private final ProductGroupReadManager productGroupReadManager;
     private final ProductGroupDescriptionReadManager descriptionReadManager;
     private final ProductReadManager productReadManager;
-    private final ProductNoticeReadManager noticeReadManager;
+    private final ProductNoticeReadManager productNoticeReadManager;
 
     public ProductGroupReadFacade(
             ProductGroupCompositionReadManager compositionReadManager,
             ProductGroupReadManager productGroupReadManager,
             ProductGroupDescriptionReadManager descriptionReadManager,
             ProductReadManager productReadManager,
-            ProductNoticeReadManager noticeReadManager) {
+            ProductNoticeReadManager productNoticeReadManager) {
         this.compositionReadManager = compositionReadManager;
         this.productGroupReadManager = productGroupReadManager;
         this.descriptionReadManager = descriptionReadManager;
         this.productReadManager = productReadManager;
-        this.noticeReadManager = noticeReadManager;
+        this.productNoticeReadManager = productNoticeReadManager;
     }
 
     /**
@@ -101,7 +101,7 @@ public class ProductGroupReadFacade {
         Optional<ProductGroupDescription> description =
                 descriptionReadManager.findByProductGroupId(groupId);
 
-        Optional<ProductNotice> notice = noticeReadManager.findByProductGroupId(groupId);
+        Optional<ProductNotice> notice = productNoticeReadManager.findByProductGroupId(groupId);
 
         return new ProductGroupDetailBundle(queryResult, group, products, description, notice);
     }

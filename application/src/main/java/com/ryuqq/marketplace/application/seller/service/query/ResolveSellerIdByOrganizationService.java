@@ -25,6 +25,10 @@ public class ResolveSellerIdByOrganizationService implements ResolveSellerIdByOr
         this.sellerReadManager = sellerReadManager;
     }
 
+    public void clearCache() {
+        cache.clear();
+    }
+
     @Override
     public Optional<Long> execute(String organizationId) {
         if (organizationId == null || organizationId.isBlank()) {

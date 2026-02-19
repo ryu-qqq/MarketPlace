@@ -57,8 +57,11 @@ class BrandPresetQueryE2ETest extends E2ETestBase {
         salesChannelRepository.deleteAll();
 
         // BrandPreset QueryDSL JOIN 의존성 생성
+        // channel.getId()를 shop에 연결해야 JOIN이 성공함
         var channel = salesChannelRepository.save(SalesChannelJpaEntityFixtures.activeEntity());
-        var shop = shopRepository.save(ShopJpaEntityFixtures.activeEntity());
+        var shop =
+                shopRepository.save(
+                        ShopJpaEntityFixtures.activeEntityWithSalesChannelId(channel.getId()));
         var scBrand =
                 salesChannelBrandRepository.save(
                         SalesChannelBrandJpaEntityFixtures.activeEntityWithSalesChannel(

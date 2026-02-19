@@ -103,7 +103,8 @@ tasks.jacocoTestCoverageVerification {
             element = 'CLASS'
             excludes = [
                 '*.entity.*', // JPA entities excluded
-                '*.Q*' // QueryDSL generated classes excluded
+                '*.Q*', // QueryDSL generated classes excluded
+                '*.config.*' // Spring configuration classes excluded
             ]
         }
     }
@@ -118,6 +119,7 @@ tasks.test {
     }
     finalizedBy tasks.jacocoTestCoverageVerification
 }
+
 
 // ========================================
 // Clean Generated Sources

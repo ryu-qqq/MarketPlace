@@ -7,10 +7,10 @@ import com.ryuqq.marketplace.adapter.out.persistence.brand.entity.QBrandJpaEntit
 import com.ryuqq.marketplace.adapter.out.persistence.category.entity.QCategoryJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.product.entity.QProductJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.condition.ProductGroupConditionBuilder;
-import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QProductGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QSellerOptionGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QSellerOptionValueJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.QProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.refundpolicy.entity.QRefundPolicyJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.seller.entity.QSellerJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.shippingpolicy.entity.QShippingPolicyJpaEntity;
@@ -331,7 +331,10 @@ public class ProductGroupCompositionQueryDslRepository {
         return queryFactory
                 .select(pgImage.originUrl)
                 .from(pgImage)
-                .where(pgImage.productGroupId.eq(productGroupId), pgImage.imageType.eq("THUMBNAIL"))
+                .where(
+                        pgImage.productGroupId.eq(productGroupId),
+                        pgImage.imageType.eq("THUMBNAIL"),
+                        pgImage.deleted.isFalse())
                 .fetchFirst();
     }
 
@@ -342,7 +345,8 @@ public class ProductGroupCompositionQueryDslRepository {
                         .from(pgImage)
                         .where(
                                 pgImage.productGroupId.in(productGroupIds),
-                                pgImage.imageType.eq("THUMBNAIL"))
+                                pgImage.imageType.eq("THUMBNAIL"),
+                                pgImage.deleted.isFalse())
                         .fetch();
 
         Map<Long, String> map = new LinkedHashMap<>();

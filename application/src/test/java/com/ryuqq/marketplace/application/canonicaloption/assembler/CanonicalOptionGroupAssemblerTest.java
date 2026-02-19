@@ -28,11 +28,12 @@ class CanonicalOptionGroupAssemblerTest {
         @DisplayName("CanonicalOptionGroup과 Values를 Result로 변환한다")
         void toResult_ReturnsCanonicalOptionGroupResult() {
             // given
-            CanonicalOptionGroup group = CanonicalOptionFixtures.activeCanonicalOptionGroup();
             List<CanonicalOptionValue> values = CanonicalOptionFixtures.canonicalOptionValues();
+            CanonicalOptionGroup group =
+                    CanonicalOptionFixtures.canonicalOptionGroupWithValues(1L, values);
 
             // when
-            CanonicalOptionGroupResult result = sut.toResult(group, values);
+            CanonicalOptionGroupResult result = sut.toResult(group);
 
             // then
             assertThat(result).isNotNull();
@@ -49,10 +50,9 @@ class CanonicalOptionGroupAssemblerTest {
         void toResult_InactiveGroup_ReturnsInactiveResult() {
             // given
             CanonicalOptionGroup group = CanonicalOptionFixtures.inactiveCanonicalOptionGroup();
-            List<CanonicalOptionValue> values = List.of();
 
             // when
-            CanonicalOptionGroupResult result = sut.toResult(group, values);
+            CanonicalOptionGroupResult result = sut.toResult(group);
 
             // then
             assertThat(result.active()).isFalse();
@@ -64,10 +64,9 @@ class CanonicalOptionGroupAssemblerTest {
         void toResult_EmptyValues_ReturnsResultWithEmptyValues() {
             // given
             CanonicalOptionGroup group = CanonicalOptionFixtures.activeCanonicalOptionGroup();
-            List<CanonicalOptionValue> values = List.of();
 
             // when
-            CanonicalOptionGroupResult result = sut.toResult(group, values);
+            CanonicalOptionGroupResult result = sut.toResult(group);
 
             // then
             assertThat(result.values()).isEmpty();
@@ -77,15 +76,16 @@ class CanonicalOptionGroupAssemblerTest {
         @DisplayName("Values의 sortOrder가 정확히 변환된다")
         void toResult_ValuesWithSortOrder_CorrectlyConverted() {
             // given
-            CanonicalOptionGroup group = CanonicalOptionFixtures.activeCanonicalOptionGroup();
             List<CanonicalOptionValue> values =
                     List.of(
                             CanonicalOptionFixtures.canonicalOptionValue(1L, 1),
                             CanonicalOptionFixtures.canonicalOptionValue(2L, 2),
                             CanonicalOptionFixtures.canonicalOptionValue(3L, 3));
+            CanonicalOptionGroup group =
+                    CanonicalOptionFixtures.canonicalOptionGroupWithValues(1L, values);
 
             // when
-            CanonicalOptionGroupResult result = sut.toResult(group, values);
+            CanonicalOptionGroupResult result = sut.toResult(group);
 
             // then
             List<CanonicalOptionValueResult> valueResults = result.values();
@@ -104,9 +104,9 @@ class CanonicalOptionGroupAssemblerTest {
         void toPageResult_ReturnsPageResult() {
             // given
             CanonicalOptionGroupResult result1 =
-                    sut.toResult(CanonicalOptionFixtures.activeCanonicalOptionGroup(1L), List.of());
+                    sut.toResult(CanonicalOptionFixtures.activeCanonicalOptionGroup(1L));
             CanonicalOptionGroupResult result2 =
-                    sut.toResult(CanonicalOptionFixtures.activeCanonicalOptionGroup(2L), List.of());
+                    sut.toResult(CanonicalOptionFixtures.activeCanonicalOptionGroup(2L));
             List<CanonicalOptionGroupResult> results = List.of(result1, result2);
             int page = 0;
             int size = 20;
@@ -146,12 +146,8 @@ class CanonicalOptionGroupAssemblerTest {
             // given
             List<CanonicalOptionGroupResult> results =
                     List.of(
-                            sut.toResult(
-                                    CanonicalOptionFixtures.activeCanonicalOptionGroup(1L),
-                                    List.of()),
-                            sut.toResult(
-                                    CanonicalOptionFixtures.activeCanonicalOptionGroup(2L),
-                                    List.of()));
+                            sut.toResult(CanonicalOptionFixtures.activeCanonicalOptionGroup(1L)),
+                            sut.toResult(CanonicalOptionFixtures.activeCanonicalOptionGroup(2L)));
             int page = 1;
             int size = 2;
             long totalElements = 10L;

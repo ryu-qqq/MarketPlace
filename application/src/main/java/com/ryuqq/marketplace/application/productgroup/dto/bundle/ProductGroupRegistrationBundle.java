@@ -1,89 +1,70 @@
 package com.ryuqq.marketplace.application.productgroup.dto.bundle;
 
-import com.ryuqq.marketplace.domain.product.aggregate.Product;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.DescriptionImage;
+import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
+import com.ryuqq.marketplace.application.productgroupdescription.dto.command.RegisterProductGroupDescriptionCommand;
+import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
+import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
+import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
-import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionHtml;
-import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
-import com.ryuqq.marketplace.domain.productnotice.vo.ProductNoticeEntries;
+import com.ryuqq.marketplace.domain.productgroupinspection.aggregate.ProductGroupInspectionOutbox;
 import java.time.Instant;
 import java.util.List;
 
 /**
  * 상품 그룹 등록 번들.
  *
- * <p>ProductGroup + Description(+Images) + Notice + Products를 한번에 묶어서 관리합니다.
+ * <p>ProductGroup + per-package 등록 Command를 포함하는 immutable record. per-package Command는
+ * productGroupId 없이 생성되며, bindAll / bindProductCommand 메서드로 실제 ID를 바인딩합니다.
  *
- * <p>ProductGroup을 먼저 저장하고, 생성된 ID로 나머지 Aggregate들을 생성합니다.
+ * <p>Product Command는 allOptionValueIds가 SellerOption persist 이후에 확정되므로 bindAll이 아닌 별도의 {@link
+ * #bindProductCommand}를 사용합니다.
+ *
+ * <p>검수 Outbox는 {@link #bindAll}에서 다른 Command와 함께 생성됩니다.
  */
-public class ProductGroupRegistrationBundle {
+public record ProductGroupRegistrationBundle(
+        ProductGroup productGroup,
+        RegisterProductGroupImagesCommand imageCommand,
+        RegisterSellerOptionGroupsCommand optionGroupCommand,
+        RegisterProductGroupDescriptionCommand descriptionCommand,
+        RegisterProductNoticeCommand noticeCommand,
+        RegisterProductsCommand productCommand,
+        Instant createdAt) {
 
-    private final ProductGroup productGroup;
-    private final DescriptionHtml descriptionContent;
-    private final List<DescriptionImage> descriptionImages;
-    private final ProductNoticeEntries noticeEntries;
-    private final ProductCreations productCreations;
-    private final Instant createdAt;
+    /** per-package Command에 productGroupId를 바인딩한 결과 (Product 제외). 검수 Outbox도 포함. */
+    public record BoundCommands(
+            RegisterProductGroupImagesCommand imageCommand,
+            RegisterSellerOptionGroupsCommand optionGroupCommand,
+            RegisterProductGroupDescriptionCommand descriptionCommand,
+            RegisterProductNoticeCommand noticeCommand,
+            ProductGroupInspectionOutbox inspectionOutbox) {}
 
-    private ProductGroupDescription description;
-    private ProductNotice notice;
-    private List<Product> products;
-
-    public ProductGroupRegistrationBundle(
-            ProductGroup productGroup,
-            DescriptionHtml descriptionContent,
-            List<DescriptionImage> descriptionImages,
-            ProductNoticeEntries noticeEntries,
-            ProductCreations productCreations,
-            Instant createdAt) {
-        this.productGroup = productGroup;
-        this.descriptionContent = descriptionContent;
-        this.descriptionImages = descriptionImages;
-        this.noticeEntries = noticeEntries;
-        this.productCreations = productCreations;
-        this.createdAt = createdAt;
+    /** Image, Option, Description, Notice Command + 검수 Outbox에 productGroupId를 한 번에 바인딩합니다. */
+    public BoundCommands bindAll(long productGroupId) {
+        return new BoundCommands(
+                new RegisterProductGroupImagesCommand(productGroupId, imageCommand.images()),
+                new RegisterSellerOptionGroupsCommand(
+                        productGroupId,
+                        optionGroupCommand.optionType(),
+                        optionGroupCommand.optionGroups()),
+                new RegisterProductGroupDescriptionCommand(
+                        productGroupId, descriptionCommand.content()),
+                new RegisterProductNoticeCommand(
+                        productGroupId, noticeCommand.noticeCategoryId(), noticeCommand.entries()),
+                ProductGroupInspectionOutbox.forNew(productGroupId, createdAt));
     }
 
     /**
-     * ProductGroupId를 설정하고 하위 Aggregate들을 생성합니다.
+     * Product Command에 productGroupId와 allOptionValueIds를 바인딩합니다.
      *
-     * @param productGroupId persist 후 확정된 ProductGroup ID
+     * <p>allOptionValueIds는 SellerOption persist 이후에 확정되므로 bindAll과 별도로 바인딩합니다.
+     *
+     * @param productGroupId 확정된 상품 그룹 ID
+     * @param allOptionValueIds persist 후 확정된 모든 SellerOptionValueId (플랫 리스트)
+     * @return productGroupId + allOptionValueIds가 바인딩된 RegisterProductsCommand
      */
-    public void withProductGroupId(ProductGroupId productGroupId) {
-        this.description = ProductGroupDescription.forNew(productGroupId, descriptionContent);
-        this.description.replaceImages(descriptionImages);
-
-        this.notice =
-                ProductNotice.forNew(
-                        productGroupId,
-                        noticeEntries.noticeCategoryId(),
-                        noticeEntries.toList(),
-                        createdAt);
-
-        this.products = productCreations.toProducts(productGroupId, createdAt);
-    }
-
-    // === Getter ===
-
-    public ProductGroup productGroup() {
-        return productGroup;
-    }
-
-    public ProductNoticeEntries noticeEntries() {
-        return noticeEntries;
-    }
-
-    public ProductGroupDescription description() {
-        return description;
-    }
-
-    public ProductNotice notice() {
-        return notice;
-    }
-
-    public List<Product> products() {
-        return products;
+    public RegisterProductsCommand bindProductCommand(
+            long productGroupId, List<Long> allOptionValueIds) {
+        return new RegisterProductsCommand(
+                productGroupId, productCommand.products(), allOptionValueIds);
     }
 }

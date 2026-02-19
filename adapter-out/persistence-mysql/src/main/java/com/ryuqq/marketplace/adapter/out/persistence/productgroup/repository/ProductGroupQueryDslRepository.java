@@ -3,14 +3,14 @@ package com.ryuqq.marketplace.adapter.out.persistence.productgroup.repository;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.condition.ProductGroupConditionBuilder;
-import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QProductGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QSellerOptionGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QSellerOptionValueJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionValueJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.ProductGroupImageJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.QProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchCriteria;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSortKey;
@@ -83,10 +83,22 @@ public class ProductGroupQueryDslRepository {
         return count != null ? count : 0L;
     }
 
+    public List<ProductGroupJpaEntity> findByIdsAndSellerId(List<Long> ids, Long sellerId) {
+        return queryFactory
+                .selectFrom(productGroup)
+                .where(
+                        conditionBuilder.idIn(ids),
+                        conditionBuilder.sellerIdIn(List.of(sellerId)),
+                        conditionBuilder.statusNotDeleted())
+                .fetch();
+    }
+
     public List<ProductGroupImageJpaEntity> findImagesByProductGroupId(Long productGroupId) {
         return queryFactory
                 .selectFrom(productGroupImage)
-                .where(productGroupImage.productGroupId.eq(productGroupId))
+                .where(
+                        productGroupImage.productGroupId.eq(productGroupId),
+                        productGroupImage.deleted.isFalse())
                 .orderBy(productGroupImage.sortOrder.asc())
                 .fetch();
     }
@@ -95,7 +107,9 @@ public class ProductGroupQueryDslRepository {
             List<Long> productGroupIds) {
         return queryFactory
                 .selectFrom(productGroupImage)
-                .where(productGroupImage.productGroupId.in(productGroupIds))
+                .where(
+                        productGroupImage.productGroupId.in(productGroupIds),
+                        productGroupImage.deleted.isFalse())
                 .orderBy(productGroupImage.sortOrder.asc())
                 .fetch();
     }

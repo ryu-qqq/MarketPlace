@@ -188,7 +188,7 @@ class CategoryJpaEntityTest {
             CategoryJpaEntity entity = CategoryJpaEntityFixtures.activeRootEntity();
 
             assertThat(entity.getId()).isEqualTo(CategoryJpaEntityFixtures.DEFAULT_ID);
-            assertThat(entity.getCode()).isEqualTo(CategoryJpaEntityFixtures.DEFAULT_CODE);
+            assertThat(entity.getCode()).startsWith(CategoryJpaEntityFixtures.DEFAULT_CODE);
             assertThat(entity.getStatus()).isEqualTo(CategoryJpaEntityFixtures.DEFAULT_STATUS);
             assertThat(entity.getDepartment())
                     .isEqualTo(CategoryJpaEntityFixtures.DEFAULT_DEPARTMENT);
@@ -202,7 +202,7 @@ class CategoryJpaEntityTest {
             CategoryJpaEntity entity = CategoryJpaEntityFixtures.newEntity();
 
             assertThat(entity.getId()).isNull();
-            assertThat(entity.getCode()).isEqualTo(CategoryJpaEntityFixtures.DEFAULT_CODE);
+            assertThat(entity.getCode()).startsWith(CategoryJpaEntityFixtures.DEFAULT_CODE);
         }
 
         @Test

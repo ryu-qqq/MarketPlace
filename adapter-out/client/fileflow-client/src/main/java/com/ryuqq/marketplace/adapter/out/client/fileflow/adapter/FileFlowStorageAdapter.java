@@ -10,6 +10,7 @@ import com.ryuqq.fileflow.sdk.model.asset.AssetResponse;
 import com.ryuqq.fileflow.sdk.model.common.ApiResponse;
 import com.ryuqq.fileflow.sdk.model.download.CreateDownloadTaskRequest;
 import com.ryuqq.fileflow.sdk.model.download.DownloadTaskResponse;
+import com.ryuqq.fileflow.sdk.model.session.CompleteSingleUploadSessionRequest;
 import com.ryuqq.fileflow.sdk.model.session.CreateSingleUploadSessionRequest;
 import com.ryuqq.fileflow.sdk.model.session.SingleUploadSessionResponse;
 import com.ryuqq.marketplace.adapter.out.client.fileflow.mapper.FileFlowStorageMapper;
@@ -18,10 +19,17 @@ import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRe
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +45,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnProperty(prefix = "fileflow", name = "base-url")
+@SuppressWarnings("PMD.ExcessiveImports")
 public class FileFlowStorageAdapter implements FileStorageClient {
 
     private static final Logger log = LoggerFactory.getLogger(FileFlowStorageAdapter.class);
@@ -50,16 +59,21 @@ public class FileFlowStorageAdapter implements FileStorageClient {
     private final DownloadTaskApi downloadTaskApi;
     private final AssetApi assetApi;
     private final FileFlowStorageMapper mapper;
+    private final String cdnDomain;
+    private final HttpClient httpClient;
 
     public FileFlowStorageAdapter(
             SingleUploadSessionApi singleUploadSessionApi,
             DownloadTaskApi downloadTaskApi,
             AssetApi assetApi,
-            FileFlowStorageMapper mapper) {
+            FileFlowStorageMapper mapper,
+            @Value("${fileflow.cdn-domain:}") String cdnDomain) {
         this.singleUploadSessionApi = singleUploadSessionApi;
         this.downloadTaskApi = downloadTaskApi;
         this.assetApi = assetApi;
         this.mapper = mapper;
+        this.cdnDomain = cdnDomain;
+        this.httpClient = HttpClient.newHttpClient();
     }
 
     @Override
@@ -83,7 +97,7 @@ public class FileFlowStorageAdapter implements FileStorageClient {
         try {
             ApiResponse<AssetResponse> response = assetApi.get(fileAssetId);
             AssetResponse asset = response.data();
-            return "https://" + asset.bucket() + "/" + asset.s3Key();
+            return "https://" + cdnDomain + "/" + asset.s3Key();
         } catch (FileFlowException e) {
             throw new RuntimeException(
                     "FileFlow download URL 생성 실패: assetId="
@@ -145,11 +159,53 @@ public class FileFlowStorageAdapter implements FileStorageClient {
     @Override
     public List<ExternalDownloadResponse> downloadFromExternalUrls(
             List<ExternalDownloadRequest> requests) {
-        List<ExternalDownloadResponse> responses = new ArrayList<>(requests.size());
+        List<CompletableFuture<ExternalDownloadResponse>> futures =
+                new ArrayList<>(requests.size());
         for (ExternalDownloadRequest request : requests) {
-            responses.add(downloadFromExternalUrl(request));
+            futures.add(CompletableFuture.supplyAsync(() -> downloadFromExternalUrl(request)));
         }
-        return responses;
+        return futures.stream().map(CompletableFuture::join).toList();
+    }
+
+    @Override
+    public String uploadHtmlContent(String htmlContent, String category, String filename) {
+        try {
+            byte[] contentBytes = htmlContent.getBytes(StandardCharsets.UTF_8);
+            long fileSize = contentBytes.length;
+
+            CreateSingleUploadSessionRequest request =
+                    new CreateSingleUploadSessionRequest(
+                            filename, "text/html", "PUBLIC", category, SOURCE);
+            ApiResponse<SingleUploadSessionResponse> response =
+                    singleUploadSessionApi.create(request);
+            SingleUploadSessionResponse session = response.data();
+
+            HttpRequest putRequest =
+                    HttpRequest.newBuilder()
+                            .uri(URI.create(session.presignedUrl()))
+                            .header("Content-Type", "text/html; charset=utf-8")
+                            .PUT(HttpRequest.BodyPublishers.ofByteArray(contentBytes))
+                            .build();
+            HttpResponse<String> putResponse =
+                    httpClient.send(putRequest, HttpResponse.BodyHandlers.ofString());
+
+            String etag = putResponse.headers().firstValue("ETag").orElse(null);
+
+            singleUploadSessionApi.complete(
+                    session.sessionId(), new CompleteSingleUploadSessionRequest(fileSize, etag));
+
+            return "https://" + cdnDomain + "/" + session.s3Key();
+        } catch (FileFlowBadRequestException e) {
+            throw new IllegalArgumentException(
+                    "FileFlow HTML 업로드 실패 (잘못된 요청): " + e.getErrorMessage(), e);
+        } catch (FileFlowException e) {
+            throw new RuntimeException("FileFlow HTML 업로드 실패: " + e.getErrorMessage(), e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("FileFlow HTML 업로드 중 인터럽트 발생", e);
+        } catch (Exception e) {
+            throw new RuntimeException("FileFlow HTML 업로드 중 오류 발생: " + e.getMessage(), e);
+        }
     }
 
     private DownloadTaskResponse pollUntilCompleted(String taskId) throws InterruptedException {

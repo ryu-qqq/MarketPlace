@@ -26,23 +26,13 @@ public class ProductOptionMappingCommandAdapter implements ProductOptionMappingC
     }
 
     @Override
-    public void deleteByProductId(Long productId) {
-        repository.deleteByProductId(productId);
+    public void persist(ProductOptionMapping mapping) {
+        ProductOptionMappingJpaEntity entity = mapper.toMappingEntity(mapping);
+        repository.save(entity);
     }
 
     @Override
-    public void deleteByProductIdIn(List<Long> productIds) {
-        if (productIds.isEmpty()) {
-            return;
-        }
-        repository.deleteByProductIdIn(productIds);
-    }
-
-    @Override
-    public void persistAll(Long productId, List<ProductOptionMapping> mappings) {
-        if (mappings.isEmpty()) {
-            return;
-        }
+    public void persistAllForProduct(Long productId, List<ProductOptionMapping> mappings) {
         List<ProductOptionMappingJpaEntity> entities =
                 mappings.stream().map(m -> mapper.toMappingEntity(m, productId)).toList();
         repository.saveAll(entities);
