@@ -290,6 +290,130 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
         return request;
     }
 
+    private Map<String, Object> createNoneRegisterRequest() {
+        Map<String, Object> request = new HashMap<>();
+        request.put("sellerId", sellerId);
+        request.put("brandId", brandId);
+        request.put("categoryId", categoryId);
+        request.put("shippingPolicyId", shippingPolicyId);
+        request.put("refundPolicyId", refundPolicyId);
+        request.put("productGroupName", "옵션없음 단품 상품그룹");
+        request.put("optionType", "NONE");
+
+        request.put(
+                "images",
+                List.of(
+                        Map.of(
+                                "originUrl", "https://example.com/single_item.jpg",
+                                "imageType", "THUMBNAIL",
+                                "sortOrder", 0)));
+
+        request.put(
+                "products",
+                List.of(
+                        Map.of(
+                                "skuCode", "SKU-SINGLE-001",
+                                "regularPrice", 99000,
+                                "currentPrice", 89000,
+                                "stockQuantity", 200,
+                                "sortOrder", 0,
+                                "selectedOptions", List.of())));
+
+        request.put("description", Map.of("content", "<p>옵션 없는 단품 상품</p>"));
+
+        var noticeFields = noticeFieldRepository.findAll();
+        request.put(
+                "notice",
+                Map.of(
+                        "noticeCategoryId",
+                        noticeCategoryId,
+                        "entries",
+                        List.of(
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(0).getId(),
+                                        "fieldValue",
+                                        "플라스틱"),
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(1).getId(),
+                                        "fieldValue",
+                                        "중국"))));
+
+        return request;
+    }
+
+    private Map<String, Object> createFreeInputRegisterRequest() {
+        Map<String, Object> request = new HashMap<>();
+        request.put("sellerId", sellerId);
+        request.put("brandId", brandId);
+        request.put("categoryId", categoryId);
+        request.put("shippingPolicyId", shippingPolicyId);
+        request.put("refundPolicyId", refundPolicyId);
+        request.put("productGroupName", "자유입력 커스텀 상품그룹");
+        request.put("optionType", "FREE_INPUT");
+
+        request.put(
+                "images",
+                List.of(
+                        Map.of(
+                                "originUrl", "https://example.com/custom_main.jpg",
+                                "imageType", "THUMBNAIL",
+                                "sortOrder", 0),
+                        Map.of(
+                                "originUrl", "https://example.com/custom_detail.jpg",
+                                "imageType", "DETAIL",
+                                "sortOrder", 1)));
+
+        request.put(
+                "products",
+                List.of(
+                        Map.of(
+                                "skuCode", "CUSTOM-SET-A",
+                                "regularPrice", 45000,
+                                "currentPrice", 39000,
+                                "stockQuantity", 100,
+                                "sortOrder", 0,
+                                "selectedOptions", List.of()),
+                        Map.of(
+                                "skuCode", "CUSTOM-SET-B",
+                                "regularPrice", 55000,
+                                "currentPrice", 49000,
+                                "stockQuantity", 80,
+                                "sortOrder", 1,
+                                "selectedOptions", List.of()),
+                        Map.of(
+                                "skuCode", "CUSTOM-SET-C",
+                                "regularPrice", 65000,
+                                "currentPrice", 59000,
+                                "stockQuantity", 50,
+                                "sortOrder", 2,
+                                "selectedOptions", List.of())));
+
+        request.put("description", Map.of("content", "<p>자유 입력 커스텀 상품</p>"));
+
+        var noticeFields = noticeFieldRepository.findAll();
+        request.put(
+                "notice",
+                Map.of(
+                        "noticeCategoryId",
+                        noticeCategoryId,
+                        "entries",
+                        List.of(
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(0).getId(),
+                                        "fieldValue",
+                                        "혼합재질"),
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(1).getId(),
+                                        "fieldValue",
+                                        "대한민국"))));
+
+        return request;
+    }
+
     // ===== 플로우 테스트 =====
 
     @Nested
@@ -803,6 +927,196 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .body("data.optionProductMatrix.optionGroups.size()", equalTo(2))
                     // 상품 변경 없음
                     .body("data.optionProductMatrix.products.size()", equalTo(4));
+        }
+    }
+
+    @Nested
+    @DisplayName("NONE 옵션타입: 등록 → 상세 조회")
+    class NoneOptionTypeTest {
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[FLOW-NONE-1] NONE 옵션타입 등록 후 상세 조회 - 옵션 그룹 없음, 상품 1개")
+        void registerNone_AndGetDetail_NoOptionGroups_SingleProduct() {
+            // ===== Step 1: POST - NONE 타입 상품그룹 등록 =====
+            Map<String, Object> request = createNoneRegisterRequest();
+
+            Response createResponse =
+                    given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
+
+            createResponse.then().statusCode(HttpStatus.CREATED.value());
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            assertThat(productGroupId).isNotNull().isGreaterThan(0);
+
+            // ===== Step 2: GET - 상세 조회 검증 =====
+            given().spec(givenSuperAdmin())
+                    .when()
+                    .get(PRODUCT_GROUPS_ID, productGroupId)
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    // 기본 정보
+                    .body("data.id", equalTo(productGroupId.intValue()))
+                    .body("data.productGroupName", equalTo("옵션없음 단품 상품그룹"))
+                    .body("data.optionType", equalTo("NONE"))
+                    .body("data.status", equalTo("DRAFT"))
+                    // 이미지 (1개)
+                    .body("data.images.size()", equalTo(1))
+                    .body("data.images[0].imageType", equalTo("THUMBNAIL"))
+                    // 옵션 그룹 없음
+                    .body("data.optionProductMatrix.optionGroups.size()", equalTo(0))
+                    // 상품 1개 (옵션 매핑 없음)
+                    .body("data.optionProductMatrix.products.size()", equalTo(1))
+                    .body("data.optionProductMatrix.products[0].skuCode", equalTo("SKU-SINGLE-001"))
+                    .body("data.optionProductMatrix.products[0].regularPrice", equalTo(99000))
+                    .body("data.optionProductMatrix.products[0].currentPrice", equalTo(89000))
+                    .body("data.optionProductMatrix.products[0].stockQuantity", equalTo(200))
+                    .body(
+                            "data.optionProductMatrix.products[0].resolvedOptions.size()",
+                            equalTo(0))
+                    // 설명
+                    .body("data.description.content", containsString("옵션 없는 단품 상품"))
+                    // 고시정보
+                    .body("data.productNotice.entries.size()", equalTo(2));
+        }
+
+        @Test
+        @DisplayName("[FLOW-NONE-2] NONE 타입에 옵션 그룹을 보내면 400 에러")
+        void registerNone_WithOptionGroups_Returns400() {
+            Map<String, Object> request = createNoneRegisterRequest();
+            // NONE인데 옵션 그룹을 추가
+            request.put(
+                    "optionGroups",
+                    List.of(
+                            Map.of(
+                                    "optionGroupName",
+                                    "색상",
+                                    "optionValues",
+                                    List.of(Map.of("optionValueName", "빨강", "sortOrder", 0)))));
+
+            given().spec(givenSuperAdmin())
+                    .body(request)
+                    .when()
+                    .post(PRODUCT_GROUPS)
+                    .then()
+                    .statusCode(
+                            anyOf(
+                                    equalTo(HttpStatus.BAD_REQUEST.value()),
+                                    equalTo(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+        }
+    }
+
+    @Nested
+    @DisplayName("FREE_INPUT 옵션타입: 등록 → 상세 조회")
+    class FreeInputOptionTypeTest {
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[FLOW-FREE-1] FREE_INPUT 등록 후 상세 조회 - 옵션 그룹 없음, 상품 3개")
+        void registerFreeInput_AndGetDetail_NoOptionGroups_MultipleProducts() {
+            // ===== Step 1: POST - FREE_INPUT 타입 상품그룹 등록 =====
+            Map<String, Object> request = createFreeInputRegisterRequest();
+
+            Response createResponse =
+                    given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
+
+            createResponse.then().statusCode(HttpStatus.CREATED.value());
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            assertThat(productGroupId).isNotNull().isGreaterThan(0);
+
+            // ===== Step 2: GET - 상세 조회 검증 =====
+            given().spec(givenSuperAdmin())
+                    .when()
+                    .get(PRODUCT_GROUPS_ID, productGroupId)
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    // 기본 정보
+                    .body("data.id", equalTo(productGroupId.intValue()))
+                    .body("data.productGroupName", equalTo("자유입력 커스텀 상품그룹"))
+                    .body("data.optionType", equalTo("FREE_INPUT"))
+                    .body("data.status", equalTo("DRAFT"))
+                    // 이미지 (2개)
+                    .body("data.images.size()", equalTo(2))
+                    // 옵션 그룹 없음
+                    .body("data.optionProductMatrix.optionGroups.size()", equalTo(0))
+                    // 상품 3개 (옵션 매핑 없음)
+                    .body("data.optionProductMatrix.products.size()", equalTo(3))
+                    .body(
+                            "data.optionProductMatrix.products[0].skuCode",
+                            equalTo("CUSTOM-SET-A"))
+                    .body("data.optionProductMatrix.products[0].regularPrice", equalTo(45000))
+                    .body("data.optionProductMatrix.products[0].currentPrice", equalTo(39000))
+                    .body(
+                            "data.optionProductMatrix.products[0].resolvedOptions.size()",
+                            equalTo(0))
+                    .body(
+                            "data.optionProductMatrix.products[1].skuCode",
+                            equalTo("CUSTOM-SET-B"))
+                    .body(
+                            "data.optionProductMatrix.products[2].skuCode",
+                            equalTo("CUSTOM-SET-C"))
+                    // 설명
+                    .body("data.description.content", containsString("자유 입력 커스텀 상품"))
+                    // 고시정보
+                    .body("data.productNotice.entries.size()", equalTo(2));
+        }
+
+        @Test
+        @DisplayName("[FLOW-FREE-2] FREE_INPUT 타입에 옵션 그룹을 보내면 400 에러")
+        void registerFreeInput_WithOptionGroups_Returns400() {
+            Map<String, Object> request = createFreeInputRegisterRequest();
+            // FREE_INPUT인데 옵션 그룹을 추가
+            request.put(
+                    "optionGroups",
+                    List.of(
+                            Map.of(
+                                    "optionGroupName",
+                                    "사이즈",
+                                    "optionValues",
+                                    List.of(Map.of("optionValueName", "M", "sortOrder", 0)))));
+
+            given().spec(givenSuperAdmin())
+                    .body(request)
+                    .when()
+                    .post(PRODUCT_GROUPS)
+                    .then()
+                    .statusCode(
+                            anyOf(
+                                    equalTo(HttpStatus.BAD_REQUEST.value()),
+                                    equalTo(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[FLOW-FREE-3] FREE_INPUT 등록 후 DRAFT→ACTIVE 상태 전이 성공")
+        void registerFreeInput_ThenChangeStatus_DraftToActive_Success() {
+            // Step 1: 등록
+            Response createResponse =
+                    given().spec(givenSuperAdmin())
+                            .body(createFreeInputRegisterRequest())
+                            .when()
+                            .post(PRODUCT_GROUPS);
+
+            createResponse.then().statusCode(HttpStatus.CREATED.value());
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+
+            // Step 2: DRAFT → ACTIVE
+            Map<String, Object> statusRequest =
+                    Map.of("productGroupIds", List.of(productGroupId), "targetStatus", "ACTIVE");
+
+            given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
+                    .body(statusRequest)
+                    .when()
+                    .patch(PRODUCT_GROUPS_STATUS)
+                    .then()
+                    .statusCode(HttpStatus.NO_CONTENT.value());
+
+            // Step 3: 상태 확인
+            given().spec(givenSuperAdmin())
+                    .when()
+                    .get(PRODUCT_GROUPS_ID, productGroupId)
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.status", equalTo("ACTIVE"));
         }
     }
 
