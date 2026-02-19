@@ -211,13 +211,7 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                         noticeCategoryId,
                         "entries",
                         noticeFields.stream()
-                                .map(
-                                        f ->
-                                                Map.of(
-                                                        "noticeFieldId",
-                                                        f.getId(),
-                                                        "fieldValue",
-                                                        "테스트 값"))
+                                .map(f -> Map.of("noticeFieldId", f.getId(), "fieldValue", "테스트 값"))
                                 .toList()));
         return request;
     }
