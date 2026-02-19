@@ -58,13 +58,13 @@ variable "aws_region" {
 variable "worker_cpu" {
   description = "CPU units for worker task"
   type        = number
-  default     = 256
+  default     = 512
 }
 
 variable "worker_memory" {
   description = "Memory for worker task"
   type        = number
-  default     = 512
+  default     = 1024
 }
 
 variable "worker_desired_count" {

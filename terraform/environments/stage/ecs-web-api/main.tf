@@ -234,7 +234,8 @@ module "web_api_task_execution_role" {
             Resource = [
               "arn:aws:ssm:${var.aws_region}:*:parameter/shared/*",
               "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*",
-              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*"
+              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*",
+              "arn:aws:ssm:${var.aws_region}:*:parameter/naver-commerce/*"
             ]
           },
           {
