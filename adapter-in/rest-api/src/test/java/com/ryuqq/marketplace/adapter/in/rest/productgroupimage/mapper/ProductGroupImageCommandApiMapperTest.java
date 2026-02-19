@@ -54,7 +54,7 @@ class ProductGroupImageCommandApiMapperTest {
             UpdateProductGroupImagesCommand command = mapper.toCommand(productGroupId, request);
 
             // then
-            assertThat(command.images().get(0).imageType()).isEqualTo("MAIN");
+            assertThat(command.images().get(0).imageType()).isEqualTo("THUMBNAIL");
             assertThat(command.images().get(1).imageType()).isEqualTo("DETAIL");
         }
 
@@ -106,7 +106,7 @@ class ProductGroupImageCommandApiMapperTest {
             // then
             assertThat(command.productGroupId()).isEqualTo(productGroupId);
             assertThat(command.images()).hasSize(1);
-            assertThat(command.images().get(0).imageType()).isEqualTo("MAIN");
+            assertThat(command.images().get(0).imageType()).isEqualTo("THUMBNAIL");
         }
 
         @Test
