@@ -144,6 +144,13 @@ data "aws_ssm_parameter" "sqs_access_policy_arn" {
 }
 
 # ========================================
+# AuthHub Configuration
+# ========================================
+data "aws_ssm_parameter" "authhub_service_token" {
+  name = "/authhub/stage/security/service-token-secret"
+}
+
+# ========================================
 # OpenAI Configuration
 # ========================================
 data "aws_ssm_parameter" "openai_api_key" {
