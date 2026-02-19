@@ -1,10 +1,10 @@
 package com.ryuqq.marketplace.application.externalbrandmapping.manager;
 
-import com.ryuqq.marketplace.application.externalbrandmapping.dto.query.ExternalBrandMappingSearchParams;
 import com.ryuqq.marketplace.application.externalbrandmapping.port.out.query.ExternalBrandMappingQueryPort;
 import com.ryuqq.marketplace.domain.externalbrandmapping.aggregate.ExternalBrandMapping;
 import com.ryuqq.marketplace.domain.externalbrandmapping.exception.ExternalBrandMappingNotFoundException;
 import com.ryuqq.marketplace.domain.externalbrandmapping.id.ExternalBrandMappingId;
+import com.ryuqq.marketplace.domain.externalbrandmapping.query.ExternalBrandMappingSearchCriteria;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,12 +44,19 @@ public class ExternalBrandMappingReadManager {
     }
 
     @Transactional(readOnly = true)
-    public List<ExternalBrandMapping> findByCriteria(ExternalBrandMappingSearchParams params) {
-        return queryPort.findByCriteria(params);
+    public List<ExternalBrandMapping> findByExternalSourceIdAndCodes(
+            long externalSourceId, List<String> externalBrandCodes) {
+        return queryPort.findByExternalSourceIdAndExternalBrandCodes(
+                externalSourceId, externalBrandCodes);
     }
 
     @Transactional(readOnly = true)
-    public long countByCriteria(ExternalBrandMappingSearchParams params) {
-        return queryPort.countByCriteria(params);
+    public List<ExternalBrandMapping> findByCriteria(ExternalBrandMappingSearchCriteria criteria) {
+        return queryPort.findByCriteria(criteria);
+    }
+
+    @Transactional(readOnly = true)
+    public long countByCriteria(ExternalBrandMappingSearchCriteria criteria) {
+        return queryPort.countByCriteria(criteria);
     }
 }

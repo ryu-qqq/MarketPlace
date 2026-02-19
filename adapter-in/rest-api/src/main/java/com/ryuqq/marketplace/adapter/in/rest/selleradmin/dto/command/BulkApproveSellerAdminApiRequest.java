@@ -18,7 +18,10 @@ import java.util.List;
  */
 @Schema(description = "셀러 관리자 가입 신청 일괄 승인 요청 DTO")
 public record BulkApproveSellerAdminApiRequest(
-        @Schema(description = "승인할 셀러 관리자 ID 목록")
+        @Schema(
+                        description = "승인할 셀러 관리자 ID 목록",
+                        example = "[\"uuid-1\", \"uuid-2\"]",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotEmpty(message = "셀러 관리자 ID 목록은 필수입니다.")
                 @Size(max = 100, message = "한 번에 최대 100건까지 처리 가능합니다.")
                 List<String> sellerAdminIds) {}

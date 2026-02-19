@@ -76,7 +76,11 @@ public class ProductGroupBundleFactory {
 
         RegisterSellerOptionGroupsCommand optionGroupCommand =
                 new RegisterSellerOptionGroupsCommand(
-                        0L, command.optionType(), toOptionGroupCommands(command.optionGroups()));
+                        0L,
+                        command.optionType(),
+                        command.optionGroups() != null
+                                ? toOptionGroupCommands(command.optionGroups())
+                                : List.of());
 
         RegisterProductGroupDescriptionCommand descriptionCommand =
                 new RegisterProductGroupDescriptionCommand(0L, command.description().content());
@@ -128,7 +132,10 @@ public class ProductGroupBundleFactory {
 
         UpdateSellerOptionGroupsCommand optionGroupCommand =
                 new UpdateSellerOptionGroupsCommand(
-                        productGroupId, toUpdateOptionGroupCommands(command.optionGroups()));
+                        productGroupId,
+                        command.optionGroups() != null
+                                ? toUpdateOptionGroupCommands(command.optionGroups())
+                                : List.of());
 
         UpdateProductGroupDescriptionCommand descriptionCommand =
                 new UpdateProductGroupDescriptionCommand(
@@ -171,6 +178,7 @@ public class ProductGroupBundleFactory {
                                 new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
                                         g.optionGroupName(),
                                         g.canonicalOptionGroupId(),
+                                        g.inputType(),
                                         g.optionValues().stream()
                                                 .map(
                                                         v ->
@@ -230,6 +238,7 @@ public class ProductGroupBundleFactory {
                                         g.sellerOptionGroupId(),
                                         g.optionGroupName(),
                                         g.canonicalOptionGroupId(),
+                                        g.inputType(),
                                         g.optionValues().stream()
                                                 .map(
                                                         v ->

@@ -86,6 +86,7 @@ public class ProductCommandApiMapper {
                                                 g.sellerOptionGroupId(),
                                                 g.optionGroupName(),
                                                 g.canonicalOptionGroupId(),
+                                                g.inputType(),
                                                 g.optionValues().stream()
                                                         .map(
                                                                 v ->

@@ -54,6 +54,7 @@ public class SellerOptionGroupUpdateData {
             Long sellerOptionGroupId,
             String optionGroupName,
             Long canonicalOptionGroupId,
+            OptionInputType inputType,
             int sortOrder,
             List<ValueEntry> values) {
 

@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.externalsource.dto.query.SearchExternalSourcesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.externalsource.dto.response.ExternalSourceApiResponse;
+import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.externalsource.dto.query.ExternalSourceSearchParams;
 import com.ryuqq.marketplace.application.externalsource.dto.response.ExternalSourcePageResult;
 import com.ryuqq.marketplace.application.externalsource.dto.response.ExternalSourceResult;
@@ -14,15 +15,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExternalSourceQueryApiMapper {
 
-    private static final int DEFAULT_PAGE = 0;
-    private static final int DEFAULT_SIZE = 20;
-
     public ExternalSourceSearchParams toSearchParams(SearchExternalSourcesApiRequest request) {
-        int page = request.page() != null ? request.page() : DEFAULT_PAGE;
-        int size = request.size() != null ? request.size() : DEFAULT_SIZE;
+        CommonSearchParams commonSearchParams =
+                CommonSearchParams.of(
+                        null,
+                        null,
+                        null,
+                        request.sortKey(),
+                        request.sortDirection(),
+                        request.page(),
+                        request.size());
 
         return new ExternalSourceSearchParams(
-                request.types(), request.statuses(), request.searchWord(), page, size);
+                request.types(),
+                request.statuses(),
+                request.searchField(),
+                request.searchWord(),
+                commonSearchParams);
     }
 
     public ExternalSourceApiResponse toResponse(ExternalSourceResult result) {

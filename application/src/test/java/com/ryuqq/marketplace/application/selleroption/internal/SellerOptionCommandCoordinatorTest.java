@@ -51,6 +51,7 @@ class SellerOptionCommandCoordinatorTest {
                             new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
                                     "색상",
                                     null,
+                                    null,
                                     List.of(
                                             new RegisterSellerOptionGroupsCommand
                                                     .OptionValueCommand("검정", null, 0))));

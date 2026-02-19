@@ -64,18 +64,21 @@ public class ProductGroupCommandApiMapper {
                                                 new RegisterProductGroupCommand.OptionGroupCommand(
                                                         group.optionGroupName(),
                                                         group.canonicalOptionGroupId(),
-                                                        group.optionValues().stream()
-                                                                .map(
-                                                                        value ->
-                                                                                new RegisterProductGroupCommand
-                                                                                        .OptionValueCommand(
-                                                                                        value
-                                                                                                .optionValueName(),
-                                                                                        value
-                                                                                                .canonicalOptionValueId(),
-                                                                                        value
-                                                                                                .sortOrder()))
-                                                                .toList()))
+                                                        group.inputType(),
+                                                        group.optionValues() != null
+                                                                ? group.optionValues().stream()
+                                                                        .map(
+                                                                                value ->
+                                                                                        new RegisterProductGroupCommand
+                                                                                                .OptionValueCommand(
+                                                                                                value
+                                                                                                        .optionValueName(),
+                                                                                                value
+                                                                                                        .canonicalOptionValueId(),
+                                                                                                value
+                                                                                                        .sortOrder()))
+                                                                        .toList()
+                                                                : List.of()))
                                 .toList()
                         : null,
                 request.products() != null
@@ -152,20 +155,23 @@ public class ProductGroupCommandApiMapper {
                                                         group.sellerOptionGroupId(),
                                                         group.optionGroupName(),
                                                         group.canonicalOptionGroupId(),
-                                                        group.optionValues().stream()
-                                                                .map(
-                                                                        value ->
-                                                                                new UpdateProductGroupFullCommand
-                                                                                        .OptionValueCommand(
-                                                                                        value
-                                                                                                .sellerOptionValueId(),
-                                                                                        value
-                                                                                                .optionValueName(),
-                                                                                        value
-                                                                                                .canonicalOptionValueId(),
-                                                                                        value
-                                                                                                .sortOrder()))
-                                                                .toList()))
+                                                        group.inputType(),
+                                                        group.optionValues() != null
+                                                                ? group.optionValues().stream()
+                                                                        .map(
+                                                                                value ->
+                                                                                        new UpdateProductGroupFullCommand
+                                                                                                .OptionValueCommand(
+                                                                                                value
+                                                                                                        .sellerOptionValueId(),
+                                                                                                value
+                                                                                                        .optionValueName(),
+                                                                                                value
+                                                                                                        .canonicalOptionValueId(),
+                                                                                                value
+                                                                                                        .sortOrder()))
+                                                                        .toList()
+                                                                : List.of()))
                                 .toList()
                         : null,
                 request.products() != null

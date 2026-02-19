@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionGroupName;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,7 +36,11 @@ class SellerOptionGroupTest {
             // when
             SellerOptionGroup optionGroup =
                     SellerOptionGroup.forNew(
-                            productGroupId, optionGroupName, sortOrder, optionValues);
+                            productGroupId,
+                            optionGroupName,
+                            OptionInputType.PREDEFINED,
+                            sortOrder,
+                            optionValues);
 
             // then
             assertThat(optionGroup).isNotNull();
@@ -70,6 +75,7 @@ class SellerOptionGroupTest {
                             productGroupId,
                             optionGroupName,
                             canonicalOptionGroupId,
+                            OptionInputType.PREDEFINED,
                             sortOrder,
                             optionValues);
 
@@ -102,6 +108,7 @@ class SellerOptionGroupTest {
                             productGroupId,
                             optionGroupName,
                             canonicalOptionGroupId,
+                            OptionInputType.PREDEFINED,
                             sortOrder,
                             optionValues,
                             DeletionStatus.active());
@@ -177,6 +184,7 @@ class SellerOptionGroupTest {
                             ProductGroupFixtures.newProductGroupId(),
                             ProductGroupFixtures.defaultOptionGroupName(),
                             CanonicalOptionGroupId.of(1L),
+                            OptionInputType.PREDEFINED,
                             0,
                             List.of(ProductGroupFixtures.defaultSellerOptionValue())); // 매핑 안 된 값
 
@@ -265,6 +273,7 @@ class SellerOptionGroupTest {
                             ProductGroupFixtures.defaultProductGroupId(),
                             ProductGroupFixtures.defaultOptionGroupName(),
                             null,
+                            OptionInputType.PREDEFINED,
                             0,
                             List.of(),
                             DeletionStatus.active());
@@ -283,6 +292,7 @@ class SellerOptionGroupTest {
                             ProductGroupId.of(200L),
                             ProductGroupFixtures.defaultOptionGroupName(),
                             null,
+                            OptionInputType.PREDEFINED,
                             0,
                             List.of(),
                             DeletionStatus.active());

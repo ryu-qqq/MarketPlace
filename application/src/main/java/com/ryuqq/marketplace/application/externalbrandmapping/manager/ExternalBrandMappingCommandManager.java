@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /** ExternalBrandMapping Command Manager. */
 @Component
-@Transactional
 public class ExternalBrandMappingCommandManager {
 
     private final ExternalBrandMappingCommandPort commandPort;
@@ -17,10 +16,12 @@ public class ExternalBrandMappingCommandManager {
         this.commandPort = commandPort;
     }
 
+    @Transactional
     public Long persist(ExternalBrandMapping mapping) {
         return commandPort.persist(mapping);
     }
 
+    @Transactional
     public List<Long> persistAll(List<ExternalBrandMapping> mappings) {
         return commandPort.persistAll(mappings);
     }

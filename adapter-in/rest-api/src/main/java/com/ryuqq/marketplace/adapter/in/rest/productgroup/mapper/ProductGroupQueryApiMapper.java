@@ -201,6 +201,7 @@ public class ProductGroupQueryApiMapper {
                 result.id(),
                 result.optionGroupName(),
                 result.canonicalOptionGroupId(),
+                result.inputType(),
                 result.sortOrder(),
                 values);
     }

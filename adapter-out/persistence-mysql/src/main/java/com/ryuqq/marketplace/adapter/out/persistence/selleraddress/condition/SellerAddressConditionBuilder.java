@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.selleraddress.condition;
 import static com.ryuqq.marketplace.adapter.out.persistence.selleraddress.entity.QSellerAddressJpaEntity.sellerAddressJpaEntity;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.ryuqq.marketplace.domain.selleraddress.query.SellerAddressSearchField;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -54,13 +55,21 @@ public class SellerAddressConditionBuilder {
         return sellerAddressJpaEntity.addressName.eq(addressName.trim());
     }
 
-    public BooleanExpression keywordContains(String keyword) {
-        if (keyword == null || keyword.isBlank()) {
+    /** 검색 필드별 검색 조건. searchField가 null이면 전체 필드 검색. */
+    public BooleanExpression searchCondition(
+            SellerAddressSearchField searchField, String searchWord) {
+        if (searchWord == null || searchWord.isBlank()) {
             return null;
         }
-        return sellerAddressJpaEntity
-                .addressName
-                .containsIgnoreCase(keyword)
-                .or(sellerAddressJpaEntity.address.containsIgnoreCase(keyword));
+        if (searchField == null) {
+            return sellerAddressJpaEntity
+                    .addressName
+                    .containsIgnoreCase(searchWord)
+                    .or(sellerAddressJpaEntity.address.containsIgnoreCase(searchWord));
+        }
+        return switch (searchField) {
+            case ADDRESS_NAME -> sellerAddressJpaEntity.addressName.containsIgnoreCase(searchWord);
+            case ADDRESS -> sellerAddressJpaEntity.address.containsIgnoreCase(searchWord);
+        };
     }
 }

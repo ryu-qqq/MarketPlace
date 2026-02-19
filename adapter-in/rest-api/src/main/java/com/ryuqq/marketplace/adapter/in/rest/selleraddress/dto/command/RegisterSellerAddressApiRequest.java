@@ -8,9 +8,15 @@ import jakarta.validation.constraints.NotNull;
 /** 셀러 주소 등록 요청. */
 @Schema(description = "셀러 주소 등록 요청")
 public record RegisterSellerAddressApiRequest(
-        @Schema(description = "주소 유형", example = "SHIPPING") @NotBlank String addressType,
+        @Schema(
+                        description = "주소 유형 (SHIPPING, RETURN)",
+                        example = "SHIPPING",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotBlank
+                String addressType,
         @Schema(description = "주소명", example = "본사 창고") String addressName,
-        @Schema(description = "주소 정보") @NotNull @Valid AddressRequest address,
+        @Schema(description = "주소 정보", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid
+                AddressRequest address,
         @Schema(description = "기본 주소 여부", example = "true") boolean defaultAddress) {
 
     /** 주소 요청. */

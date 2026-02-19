@@ -8,6 +8,7 @@ public record SellerOptionGroupResult(
         Long id,
         String optionGroupName,
         Long canonicalOptionGroupId,
+        String inputType,
         int sortOrder,
         List<SellerOptionValueResult> optionValues) {
 
@@ -21,6 +22,7 @@ public record SellerOptionGroupResult(
                 group.canonicalOptionGroupId() != null
                         ? group.canonicalOptionGroupId().value()
                         : null,
+                group.inputType().name(),
                 group.sortOrder(),
                 values);
     }

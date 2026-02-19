@@ -51,15 +51,23 @@ public record SellerOptionGroups(List<SellerOptionGroup> groups) {
         }
     }
 
-    /** optionType과 옵션 그룹 수 정합성 검증. */
+    /** optionType과 옵션 그룹 수 정합성 검증. PREDEFINED 그룹만 카운트. */
     private void validateGroupCount(OptionType optionType) {
         int expected = optionType.expectedOptionGroupCount();
-        int actual = groups.size();
-        if (optionType.requiresOptionGroup() && actual != expected) {
-            throw new ProductGroupInvalidOptionStructureException(optionType, expected, actual);
-        }
-        if (!optionType.requiresOptionGroup() && actual > 0) {
-            throw new ProductGroupInvalidOptionStructureException(optionType, expected, actual);
+        if (optionType.requiresOptionGroup()) {
+            long predefinedCount =
+                    groups.stream()
+                            .filter(g -> g.inputType() == OptionInputType.PREDEFINED)
+                            .count();
+            if (predefinedCount != expected) {
+                throw new ProductGroupInvalidOptionStructureException(
+                        optionType, expected, (int) predefinedCount);
+            }
+        } else {
+            if (!groups.isEmpty()) {
+                throw new ProductGroupInvalidOptionStructureException(
+                        optionType, expected, groups.size());
+            }
         }
     }
 
@@ -74,10 +82,10 @@ public record SellerOptionGroups(List<SellerOptionGroup> groups) {
         }
     }
 
-    /** 각 옵션 그룹에 최소 1개 옵션 값 존재 검증. */
+    /** 각 옵션 그룹에 최소 1개 옵션 값 존재 검증. PREDEFINED 그룹만 검증. */
     private void validateEachGroupHasValues() {
         for (SellerOptionGroup group : groups) {
-            if (group.optionValueCount() == 0) {
+            if (group.inputType().requiresOptionValues() && group.optionValueCount() == 0) {
                 throw new OptionGroupEmptyValuesException(group.optionGroupNameValue());
             }
         }
@@ -269,10 +277,12 @@ public record SellerOptionGroups(List<SellerOptionGroup> groups) {
                     productGroupId,
                     groupName,
                     CanonicalOptionGroupId.of(entry.canonicalOptionGroupId()),
+                    entry.inputType(),
                     entry.sortOrder(),
                     values);
         }
-        return SellerOptionGroup.forNew(productGroupId, groupName, entry.sortOrder(), values);
+        return SellerOptionGroup.forNew(
+                productGroupId, groupName, entry.inputType(), entry.sortOrder(), values);
     }
 
     /** entry → SellerOptionValue 신규 생성. */

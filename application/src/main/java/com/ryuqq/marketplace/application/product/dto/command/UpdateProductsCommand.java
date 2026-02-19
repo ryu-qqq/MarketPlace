@@ -52,12 +52,14 @@ public record UpdateProductsCommand(
      * @param sellerOptionGroupId 기존 옵션 그룹 ID (nullable: null이면 신규)
      * @param optionGroupName 옵션 그룹명
      * @param canonicalOptionGroupId 표준 옵션 그룹 ID
+     * @param inputType 입력 유형 (PREDEFINED / FREE_INPUT)
      * @param optionValues 옵션 값 목록
      */
     public record OptionGroupData(
             Long sellerOptionGroupId,
             String optionGroupName,
             Long canonicalOptionGroupId,
+            String inputType,
             List<OptionValueData> optionValues) {}
 
     /**

@@ -105,22 +105,24 @@ class SalesChannelQueryControllerRestDocsTest {
                                                     .description("상태 필터 (ACTIVE, INACTIVE)")
                                                     .optional(),
                                             parameterWithName("searchField")
-                                                    .description("검색 필드 (channelName)")
+                                                    .description("검색 필드 (CHANNEL_NAME)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
-                                                    .description("정렬 키 (createdAt, channelName)")
+                                                    .description(
+                                                            "정렬 키 (CREATED_AT, CHANNEL_NAME, 기본값:"
+                                                                    + " CREATED_AT)")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC, 기본값: DESC)")
                                                     .optional(),
                                             parameterWithName("page")
-                                                    .description("페이지 번호 (0부터)")
+                                                    .description("페이지 번호 (0부터, 기본값: 0)")
                                                     .optional(),
                                             parameterWithName("size")
-                                                    .description("페이지 크기")
+                                                    .description("페이지 크기 (기본값: 20)")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.content[]")
@@ -134,7 +136,7 @@ class SalesChannelQueryControllerRestDocsTest {
                                                     .description("판매채널명"),
                                             fieldWithPath("data.content[].status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("상태"),
+                                                    .description("상태 (ACTIVE, INACTIVE)"),
                                             fieldWithPath("data.content[].createdAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("생성일시"),

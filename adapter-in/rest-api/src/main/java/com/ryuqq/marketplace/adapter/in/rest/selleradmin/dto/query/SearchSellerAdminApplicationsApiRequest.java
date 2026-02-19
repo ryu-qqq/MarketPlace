@@ -39,20 +39,22 @@ public record SearchSellerAdminApplicationsApiRequest(
                                         + " REJECTED). 복수 선택 가능",
                         example = "PENDING_APPROVAL")
                 List<String> status,
-        @Parameter(description = "검색 필드 (LOGIN_ID, NAME)", example = "loginId") String searchField,
+        @Parameter(description = "검색 필드 (LOGIN_ID, NAME)", example = "LOGIN_ID") String searchField,
         @Parameter(description = "검색어", example = "admin") String searchWord,
-        @Parameter(description = "정렬 키 (createdAt)", example = "createdAt") String sortKey,
-        @Parameter(description = "정렬 방향 (ASC, DESC)", example = "DESC") String sortDirection,
+        @Parameter(description = "정렬 키 (CREATED_AT). 기본값: CREATED_AT", example = "CREATED_AT")
+                String sortKey,
+        @Parameter(description = "정렬 방향 (ASC, DESC). 기본값: DESC", example = "DESC")
+                String sortDirection,
         @Parameter(description = "검색 시작일 (YYYY-MM-DD)", example = "2025-01-01")
                 @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "날짜 형식은 YYYY-MM-DD이어야 합니다.")
                 String startDate,
         @Parameter(description = "검색 종료일 (YYYY-MM-DD)", example = "2025-12-31")
                 @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "날짜 형식은 YYYY-MM-DD이어야 합니다.")
                 String endDate,
-        @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+        @Parameter(description = "페이지 번호 (0부터 시작). 기본값: 0", example = "0")
                 @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.")
                 Integer page,
-        @Parameter(description = "페이지 크기", example = "20")
+        @Parameter(description = "페이지 크기. 기본값: 20", example = "20")
                 @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.")
                 @Max(value = 100, message = "페이지 크기는 100 이하여야 합니다.")
                 Integer size) {}

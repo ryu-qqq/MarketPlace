@@ -2,10 +2,10 @@ package com.ryuqq.marketplace.adapter.out.persistence.externalsource.adapter;
 
 import com.ryuqq.marketplace.adapter.out.persistence.externalsource.mapper.ExternalSourceJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.externalsource.repository.ExternalSourceQueryDslRepository;
-import com.ryuqq.marketplace.application.externalsource.dto.query.ExternalSourceSearchParams;
 import com.ryuqq.marketplace.application.externalsource.port.out.query.ExternalSourceQueryPort;
 import com.ryuqq.marketplace.domain.externalsource.aggregate.ExternalSource;
 import com.ryuqq.marketplace.domain.externalsource.id.ExternalSourceId;
+import com.ryuqq.marketplace.domain.externalsource.query.ExternalSourceSearchCriteria;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -34,12 +34,12 @@ public class ExternalSourceQueryAdapter implements ExternalSourceQueryPort {
     }
 
     @Override
-    public List<ExternalSource> findByCriteria(ExternalSourceSearchParams params) {
-        return repository.findByCriteria(params).stream().map(mapper::toDomain).toList();
+    public List<ExternalSource> findByCriteria(ExternalSourceSearchCriteria criteria) {
+        return repository.findByCriteria(criteria).stream().map(mapper::toDomain).toList();
     }
 
     @Override
-    public long countByCriteria(ExternalSourceSearchParams params) {
-        return repository.countByCriteria(params);
+    public long countByCriteria(ExternalSourceSearchCriteria criteria) {
+        return repository.countByCriteria(criteria);
     }
 }

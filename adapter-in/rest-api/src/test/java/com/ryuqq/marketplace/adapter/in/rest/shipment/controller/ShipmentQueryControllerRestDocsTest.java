@@ -162,30 +162,30 @@ class ShipmentQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("searchField")
                                                     .description(
-                                                            "검색 필드 (shipmentNumber, orderNumber,"
-                                                                    + " trackingNumber)")
+                                                            "검색 필드 (ORDER_ID, TRACKING_NUMBER,"
+                                                                    + " CUSTOMER_NAME)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("dateField")
                                                     .description(
-                                                            "날짜 검색 대상 필드 (createdAt, shippedAt,"
-                                                                    + " deliveredAt)")
+                                                            "날짜 검색 대상 필드 (PAYMENT,"
+                                                                    + " ORDER_CONFIRMED, SHIPPED)")
                                                     .optional(),
                                             parameterWithName("sortKey")
                                                     .description(
-                                                            "정렬 기준 (createdAt, shippedAt,"
-                                                                    + " deliveredAt)")
+                                                            "정렬 기준 (CREATED_AT, SHIPPED_AT,"
+                                                                + " DELIVERED_AT). 기본값: CREATED_AT")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC). 기본값: DESC")
                                                     .optional(),
                                             parameterWithName("page")
-                                                    .description("페이지 번호 (0부터)")
+                                                    .description("페이지 번호 (0부터). 기본값: 0")
                                                     .optional(),
                                             parameterWithName("size")
-                                                    .description("페이지 크기")
+                                                    .description("페이지 크기. 기본값: 20")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.content[]")
@@ -205,7 +205,10 @@ class ShipmentQueryControllerRestDocsTest {
                                                     .description("주문번호"),
                                             fieldWithPath("data.content[].status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("배송 상태"),
+                                                    .description(
+                                                            "배송 상태 (READY, PREPARING, SHIPPED,"
+                                                                + " IN_TRANSIT, DELIVERED, FAILED,"
+                                                                + " CANCELLED)"),
                                             fieldWithPath("data.content[].trackingNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("송장번호"),
@@ -341,7 +344,10 @@ class ShipmentQueryControllerRestDocsTest {
                                                     .description("주문번호"),
                                             fieldWithPath("data.status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("배송 상태"),
+                                                    .description(
+                                                            "배송 상태 (READY, PREPARING, SHIPPED,"
+                                                                + " IN_TRANSIT, DELIVERED, FAILED,"
+                                                                + " CANCELLED)"),
                                             fieldWithPath("data.shipmentMethod")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("배송 방법 정보")

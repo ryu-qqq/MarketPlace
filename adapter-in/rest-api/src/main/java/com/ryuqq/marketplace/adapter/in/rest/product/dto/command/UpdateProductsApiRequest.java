@@ -45,10 +45,12 @@ public record UpdateProductsApiRequest(
                     String optionGroupName,
             @Schema(description = "표준 옵션 그룹 ID") @JsonProperty("canonicalOptionGroupId")
                     Long canonicalOptionGroupId,
-            @Schema(description = "옵션 값 목록", requiredMode = Schema.RequiredMode.REQUIRED)
-                    @NotEmpty(message = "옵션 값은 최소 1개 이상 필요합니다")
-                    @Valid
-                    List<OptionValueApiRequest> optionValues) {}
+            @Schema(
+                            description = "입력 유형 (PREDEFINED: 사전 정의, FREE_INPUT: 자유 입력)",
+                            example = "PREDEFINED",
+                            nullable = true)
+                    String inputType,
+            @Schema(description = "옵션 값 목록") @Valid List<OptionValueApiRequest> optionValues) {}
 
     /** 옵션 값 API Request. */
     @Schema(description = "옵션 값 수정 데이터")

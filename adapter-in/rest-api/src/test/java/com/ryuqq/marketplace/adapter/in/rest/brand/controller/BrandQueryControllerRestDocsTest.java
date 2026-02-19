@@ -94,14 +94,15 @@ class BrandQueryControllerRestDocsTest {
                                                     .description("상태 필터 (ACTIVE, INACTIVE)")
                                                     .optional(),
                                             parameterWithName("searchField")
-                                                    .description("검색 필드 (code, nameKo, nameEn)")
+                                                    .description("검색 필드 (CODE, NAME_KO, NAME_EN)")
                                                     .optional(),
                                             parameterWithName("searchWord")
                                                     .description("검색어")
                                                     .optional(),
                                             parameterWithName("sortKey")
                                                     .description(
-                                                            "정렬 키 (createdAt, nameKo, updatedAt)")
+                                                            "정렬 키 (CREATED_AT, NAME_KO,"
+                                                                + " UPDATED_AT). 기본값: CREATED_AT")
                                                     .optional(),
                                             parameterWithName("sortDirection")
                                                     .description("정렬 방향 (ASC, DESC)")
@@ -133,7 +134,7 @@ class BrandQueryControllerRestDocsTest {
                                                     .description("약칭"),
                                             fieldWithPath("data.content[].status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("상태"),
+                                                    .description("상태 (ACTIVE, INACTIVE)"),
                                             fieldWithPath("data.content[].logoUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("로고 URL"),
@@ -185,7 +186,7 @@ class BrandQueryControllerRestDocsTest {
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(BASE_URL)
                                     .param("statuses", "ACTIVE")
-                                    .param("searchField", "nameKo")
+                                    .param("searchField", "NAME_KO")
                                     .param("searchWord", "테스트")
                                     .param("page", "0")
                                     .param("size", "20"))

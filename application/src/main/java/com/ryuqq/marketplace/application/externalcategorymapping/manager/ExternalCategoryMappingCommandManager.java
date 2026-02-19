@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /** ExternalCategoryMapping Command Manager. */
 @Component
-@Transactional
 public class ExternalCategoryMappingCommandManager {
 
     private final ExternalCategoryMappingCommandPort commandPort;
@@ -17,10 +16,12 @@ public class ExternalCategoryMappingCommandManager {
         this.commandPort = commandPort;
     }
 
+    @Transactional
     public Long persist(ExternalCategoryMapping mapping) {
         return commandPort.persist(mapping);
     }
 
+    @Transactional
     public List<Long> persistAll(List<ExternalCategoryMapping> mappings) {
         return commandPort.persistAll(mappings);
     }

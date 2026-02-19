@@ -14,6 +14,6 @@ public record SalesChannelCategoryApiResponse(
         @Schema(description = "카테고리 경로", example = "1") String path,
         @Schema(description = "정렬 순서", example = "1") int sortOrder,
         @Schema(description = "리프 노드 여부", example = "false") boolean leaf,
-        @Schema(description = "상태", example = "ACTIVE") String status,
+        @Schema(description = "상태 (ACTIVE, INACTIVE)", example = "ACTIVE") String status,
         @Schema(description = "생성일시", example = "2025-01-23T10:30:00+09:00") String createdAt,
         @Schema(description = "수정일시", example = "2025-01-23T10:30:00+09:00") String updatedAt) {}

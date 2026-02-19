@@ -2,10 +2,10 @@ package com.ryuqq.marketplace.adapter.out.persistence.externalcategorymapping.ad
 
 import com.ryuqq.marketplace.adapter.out.persistence.externalcategorymapping.mapper.ExternalCategoryMappingJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.externalcategorymapping.repository.ExternalCategoryMappingQueryDslRepository;
-import com.ryuqq.marketplace.application.externalcategorymapping.dto.query.ExternalCategoryMappingSearchParams;
 import com.ryuqq.marketplace.application.externalcategorymapping.port.out.query.ExternalCategoryMappingQueryPort;
 import com.ryuqq.marketplace.domain.externalcategorymapping.aggregate.ExternalCategoryMapping;
 import com.ryuqq.marketplace.domain.externalcategorymapping.id.ExternalCategoryMappingId;
+import com.ryuqq.marketplace.domain.externalcategorymapping.query.ExternalCategoryMappingSearchCriteria;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -39,6 +39,17 @@ public class ExternalCategoryMappingQueryAdapter implements ExternalCategoryMapp
     }
 
     @Override
+    public List<ExternalCategoryMapping> findByExternalSourceIdAndExternalCategoryCodes(
+            Long externalSourceId, List<String> externalCategoryCodes) {
+        return repository
+                .findByExternalSourceIdAndExternalCategoryCodes(
+                        externalSourceId, externalCategoryCodes)
+                .stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<ExternalCategoryMapping> findByExternalSourceId(Long externalSourceId) {
         return repository.findByExternalSourceId(externalSourceId).stream()
                 .map(mapper::toDomain)
@@ -47,12 +58,12 @@ public class ExternalCategoryMappingQueryAdapter implements ExternalCategoryMapp
 
     @Override
     public List<ExternalCategoryMapping> findByCriteria(
-            ExternalCategoryMappingSearchParams params) {
-        return repository.findByCriteria(params).stream().map(mapper::toDomain).toList();
+            ExternalCategoryMappingSearchCriteria criteria) {
+        return repository.findByCriteria(criteria).stream().map(mapper::toDomain).toList();
     }
 
     @Override
-    public long countByCriteria(ExternalCategoryMappingSearchParams params) {
-        return repository.countByCriteria(params);
+    public long countByCriteria(ExternalCategoryMappingSearchCriteria criteria) {
+        return repository.countByCriteria(criteria);
     }
 }

@@ -123,13 +123,13 @@ class SellerOptionGroupQueryDslRepositoryTest {
             // sortOrder를 다르게 설정하기 위해 직접 생성
             SellerOptionGroupJpaEntity group1 =
                     SellerOptionGroupJpaEntity.create(
-                            null, productGroupId, "사이즈", null, 2, false, null);
+                            null, productGroupId, "사이즈", null, "PREDEFINED", 2, false, null);
             SellerOptionGroupJpaEntity group2 =
                     SellerOptionGroupJpaEntity.create(
-                            null, productGroupId, "색상", null, 0, false, null);
+                            null, productGroupId, "색상", null, "PREDEFINED", 0, false, null);
             SellerOptionGroupJpaEntity group3 =
                     SellerOptionGroupJpaEntity.create(
-                            null, productGroupId, "재질", null, 1, false, null);
+                            null, productGroupId, "재질", null, "PREDEFINED", 1, false, null);
 
             persist(group1);
             persist(group2);

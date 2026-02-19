@@ -15,6 +15,7 @@ public record RegisterSellerOptionGroupsCommand(
     public record OptionGroupCommand(
             String optionGroupName,
             Long canonicalOptionGroupId,
+            String inputType,
             List<OptionValueCommand> optionValues) {}
 
     public record OptionValueCommand(

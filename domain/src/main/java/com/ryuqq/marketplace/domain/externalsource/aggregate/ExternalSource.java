@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.domain.externalsource.id.ExternalSourceId;
 import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceCode;
 import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceStatus;
 import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceType;
+import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceUpdateData;
 import java.time.Instant;
 
 /** ExternalSource Aggregate Root. */
@@ -69,21 +70,10 @@ public class ExternalSource {
     }
 
     /** 기본 정보 수정. */
-    public void update(String name, String description, Instant now) {
-        this.name = name;
-        this.description = description;
-        this.updatedAt = now;
-    }
-
-    /** 활성화. */
-    public void activate(Instant now) {
-        this.status = ExternalSourceStatus.ACTIVE;
-        this.updatedAt = now;
-    }
-
-    /** 비활성화. */
-    public void deactivate(Instant now) {
-        this.status = ExternalSourceStatus.INACTIVE;
+    public void update(ExternalSourceUpdateData updateData, Instant now) {
+        this.name = updateData.name();
+        this.description = updateData.description();
+        this.status = updateData.status();
         this.updatedAt = now;
     }
 

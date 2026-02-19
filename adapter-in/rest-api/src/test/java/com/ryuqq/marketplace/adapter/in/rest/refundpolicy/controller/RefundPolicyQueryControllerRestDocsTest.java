@@ -86,16 +86,24 @@ class RefundPolicyQueryControllerRestDocsTest {
                                             parameterWithName("sellerId").description("셀러 ID")),
                                     queryParameters(
                                             parameterWithName("sortKey")
-                                                    .description("정렬 기준 (CREATED_AT, POLICY_NAME)")
+                                                    .description(
+                                                            "정렬 기준 (CREATED_AT, POLICY_NAME,"
+                                                                    + " RETURN_PERIOD_DAYS, 기본값:"
+                                                                    + " CREATED_AT)")
                                                     .optional(),
                                             parameterWithName("sortDirection")
-                                                    .description("정렬 방향 (ASC, DESC)")
+                                                    .description("정렬 방향 (ASC, DESC, 기본값: DESC)")
                                                     .optional(),
                                             parameterWithName("page")
-                                                    .description("페이지 번호 (0부터)")
+                                                    .description("페이지 번호 (0부터, 기본값: 0)")
                                                     .optional(),
                                             parameterWithName("size")
-                                                    .description("페이지 크기")
+                                                    .description("페이지 크기 (기본값: 20)")
+                                                    .optional(),
+                                            parameterWithName("active")
+                                                    .description(
+                                                            "활성화 여부 (true: 활성만, false: 비활성만,"
+                                                                    + " 미입력: 전체)")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.content[]")

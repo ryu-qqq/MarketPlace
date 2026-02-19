@@ -16,6 +16,7 @@ public record UpdateSellerOptionGroupsCommand(
             Long sellerOptionGroupId,
             String optionGroupName,
             Long canonicalOptionGroupId,
+            String inputType,
             List<OptionValueCommand> optionValues) {}
 
     public record OptionValueCommand(
