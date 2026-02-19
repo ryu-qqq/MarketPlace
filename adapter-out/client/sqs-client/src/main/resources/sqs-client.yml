@@ -1,0 +1,10 @@
+# ============================================================
+# AWS SQS Client 공통 설정
+# ============================================================
+sqs:
+  region: ap-northeast-2
+  queues:
+    inspection-scoring: ${SQS_INSPECTION_SCORING_URL:}
+    inspection-enhancement: ${SQS_INSPECTION_ENHANCEMENT_URL:}
+    inspection-verification: ${SQS_INSPECTION_VERIFICATION_URL:}
+    inspection-dlq: ${SQS_INSPECTION_DLQ_URL:}

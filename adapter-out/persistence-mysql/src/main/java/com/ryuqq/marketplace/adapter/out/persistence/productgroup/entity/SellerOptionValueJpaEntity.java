@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.Instant;
 
 /** SellerOptionValue JPA 엔티티. */
 @Entity
@@ -28,6 +29,12 @@ public class SellerOptionValueJpaEntity {
     @Column(name = "sort_order")
     private int sortOrder;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
     protected SellerOptionValueJpaEntity() {}
 
     private SellerOptionValueJpaEntity(
@@ -35,12 +42,16 @@ public class SellerOptionValueJpaEntity {
             Long sellerOptionGroupId,
             String optionValueName,
             Long canonicalOptionValueId,
-            int sortOrder) {
+            int sortOrder,
+            boolean deleted,
+            Instant deletedAt) {
         this.id = id;
         this.sellerOptionGroupId = sellerOptionGroupId;
         this.optionValueName = optionValueName;
         this.canonicalOptionValueId = canonicalOptionValueId;
         this.sortOrder = sortOrder;
+        this.deleted = deleted;
+        this.deletedAt = deletedAt;
     }
 
     public static SellerOptionValueJpaEntity create(
@@ -48,9 +59,17 @@ public class SellerOptionValueJpaEntity {
             Long sellerOptionGroupId,
             String optionValueName,
             Long canonicalOptionValueId,
-            int sortOrder) {
+            int sortOrder,
+            boolean deleted,
+            Instant deletedAt) {
         return new SellerOptionValueJpaEntity(
-                id, sellerOptionGroupId, optionValueName, canonicalOptionValueId, sortOrder);
+                id,
+                sellerOptionGroupId,
+                optionValueName,
+                canonicalOptionValueId,
+                sortOrder,
+                deleted,
+                deletedAt);
     }
 
     public Long getId() {
@@ -71,5 +90,13 @@ public class SellerOptionValueJpaEntity {
 
     public int getSortOrder() {
         return sortOrder;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public Instant getDeletedAt() {
+        return deletedAt;
     }
 }

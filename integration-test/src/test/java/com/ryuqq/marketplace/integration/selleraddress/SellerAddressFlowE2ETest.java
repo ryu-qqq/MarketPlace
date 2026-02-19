@@ -26,7 +26,7 @@ import org.springframework.http.HttpStatus;
 @DisplayName("SellerAddress 통합 플로우 E2E 테스트")
 class SellerAddressFlowE2ETest extends E2ETestBase {
 
-    private static final String COMMAND_PATH = "/sellers/{sellerId}/addresses";
+    private static final String COMMAND_PATH = "/seller-addresses/sellers/{sellerId}";
     private static final String QUERY_PATH = "/seller-addresses";
 
     @Autowired private SellerJpaRepository sellerRepository;

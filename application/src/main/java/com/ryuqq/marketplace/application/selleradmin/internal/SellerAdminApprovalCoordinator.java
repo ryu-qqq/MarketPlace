@@ -1,9 +1,11 @@
 package com.ryuqq.marketplace.application.selleradmin.internal;
 
+import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
 import com.ryuqq.marketplace.application.selleradmin.dto.bundle.SellerAdminApprovalBundle;
 import com.ryuqq.marketplace.application.selleradmin.dto.command.ApproveSellerAdminCommand;
 import com.ryuqq.marketplace.application.selleradmin.factory.SellerAdminCommandFactory;
 import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminReadManager;
+import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdmin;
 import com.ryuqq.marketplace.domain.selleradmin.id.SellerAdminId;
 import org.springframework.stereotype.Component;
@@ -22,14 +24,17 @@ import org.springframework.stereotype.Component;
 public class SellerAdminApprovalCoordinator {
 
     private final SellerAdminReadManager sellerAdminReadManager;
+    private final SellerReadManager sellerReadManager;
     private final SellerAdminCommandFactory commandFactory;
     private final SellerAdminApprovalFacade approvalFacade;
 
     public SellerAdminApprovalCoordinator(
             SellerAdminReadManager sellerAdminReadManager,
+            SellerReadManager sellerReadManager,
             SellerAdminCommandFactory commandFactory,
             SellerAdminApprovalFacade approvalFacade) {
         this.sellerAdminReadManager = sellerAdminReadManager;
+        this.sellerReadManager = sellerReadManager;
         this.commandFactory = commandFactory;
         this.approvalFacade = approvalFacade;
     }
@@ -53,7 +58,10 @@ public class SellerAdminApprovalCoordinator {
                 sellerAdminReadManager.getByIdAndStatuses(
                         SellerAdminId.of(command.sellerAdminId()), command.statuses());
 
-        SellerAdminApprovalBundle bundle = commandFactory.createApprovalBundle(sellerAdmin);
+        Seller seller = sellerReadManager.getById(sellerAdmin.sellerId());
+
+        SellerAdminApprovalBundle bundle =
+                commandFactory.createApprovalBundle(sellerAdmin, seller.authOrganizationId());
 
         approvalFacade.approveAndPersist(bundle);
 

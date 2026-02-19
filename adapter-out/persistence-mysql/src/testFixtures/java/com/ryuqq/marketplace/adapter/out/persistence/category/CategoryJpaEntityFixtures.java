@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.category;
 
 import com.ryuqq.marketplace.adapter.out.persistence.category.entity.CategoryJpaEntity;
 import java.time.Instant;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * CategoryJpaEntity 테스트 Fixtures.
@@ -11,6 +12,8 @@ import java.time.Instant;
 public final class CategoryJpaEntityFixtures {
 
     private CategoryJpaEntityFixtures() {}
+
+    private static final AtomicLong SEQUENCE = new AtomicLong(1);
 
     // ===== 기본 상수 =====
     public static final Long DEFAULT_ID = 1L;
@@ -30,10 +33,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 활성 상태의 루트 카테고리 Entity 생성. */
     public static CategoryJpaEntity activeRootEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 DEFAULT_ID,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,
@@ -52,10 +56,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** ID를 지정한 활성 상태 루트 카테고리 Entity 생성. */
     public static CategoryJpaEntity activeRootEntity(Long id) {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 id,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,
@@ -74,15 +79,16 @@ public final class CategoryJpaEntityFixtures {
 
     /** 활성 상태의 자식 카테고리 Entity 생성. */
     public static CategoryJpaEntity activeChildEntity(Long parentId) {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_CHILD_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 parentId,
                 2,
-                "/" + parentId + "/" + DEFAULT_ID,
+                "/" + parentId + "/" + seq,
                 DEFAULT_SORT_ORDER,
                 DEFAULT_LEAF,
                 DEFAULT_STATUS,
@@ -118,10 +124,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 커스텀 이름을 가진 활성 상태 카테고리 Entity 생성. ID는 null로 새 엔티티 생성. */
     public static CategoryJpaEntity activeEntityWithName(String nameKo, String nameEn) {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NAME_" + seq,
                 nameKo,
                 nameEn,
                 DEFAULT_PARENT_ID,
@@ -140,10 +147,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 비활성 상태 카테고리 Entity 생성. */
     public static CategoryJpaEntity inactiveEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_INACTIVE_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,
@@ -162,10 +170,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 삭제된 상태 카테고리 Entity 생성. */
     public static CategoryJpaEntity deletedEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_DELETED_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,
@@ -184,10 +193,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 새로 생성될 Entity (ID가 null). */
     public static CategoryJpaEntity newEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,
@@ -206,10 +216,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 영문명이 없는 Entity 생성. */
     public static CategoryJpaEntity entityWithoutNameEn() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NOEN_" + seq,
                 DEFAULT_NAME_KO,
                 null,
                 DEFAULT_PARENT_ID,
@@ -228,10 +239,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 리프가 아닌 Entity 생성 (자식이 있음). */
     public static CategoryJpaEntity nonLeafEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NONLEAF_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,
@@ -250,15 +262,16 @@ public final class CategoryJpaEntityFixtures {
 
     /** 깊이가 2인 Entity 생성. */
     public static CategoryJpaEntity depth2Entity(Long parentId) {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_D2_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 parentId,
                 2,
-                "/" + parentId + "/" + DEFAULT_ID,
+                "/" + parentId + "/" + seq,
                 DEFAULT_SORT_ORDER,
                 DEFAULT_LEAF,
                 DEFAULT_STATUS,
@@ -272,15 +285,16 @@ public final class CategoryJpaEntityFixtures {
 
     /** 깊이가 3인 Entity 생성. */
     public static CategoryJpaEntity depth3Entity(Long parentId) {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_D3_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 parentId,
                 3,
-                "/" + parentId + "/" + DEFAULT_ID,
+                "/" + parentId + "/" + seq,
                 DEFAULT_SORT_ORDER,
                 DEFAULT_LEAF,
                 DEFAULT_STATUS,
@@ -294,10 +308,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 다른 부문의 Entity 생성. */
     public static CategoryJpaEntity entityWithDepartment(String department) {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_DEPT_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,
@@ -316,10 +331,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 다른 카테고리 그룹의 Entity 생성. */
     public static CategoryJpaEntity entityWithCategoryGroup(String categoryGroup) {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_GRP_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,
@@ -338,10 +354,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 영문명이 없는 새 Entity 생성 (ID는 null). */
     public static CategoryJpaEntity newEntityWithoutNameEn() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NEWNOEN_" + seq,
                 DEFAULT_NAME_KO,
                 null,
                 DEFAULT_PARENT_ID,
@@ -360,10 +377,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 비활성 상태의 새 Entity 생성 (ID는 null). */
     public static CategoryJpaEntity newInactiveEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NEWINACTIVE_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,
@@ -382,10 +400,11 @@ public final class CategoryJpaEntityFixtures {
 
     /** 삭제된 상태의 새 Entity 생성 (ID는 null). */
     public static CategoryJpaEntity newDeletedEntity() {
+        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return CategoryJpaEntity.create(
                 null,
-                DEFAULT_CODE,
+                DEFAULT_CODE + "_NEWDELETED_" + seq,
                 DEFAULT_NAME_KO,
                 DEFAULT_NAME_EN,
                 DEFAULT_PARENT_ID,

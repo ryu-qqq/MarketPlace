@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.domain.productgroup.aggregate;
 import static org.assertj.core.api.Assertions.*;
 
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionValueId;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
@@ -92,7 +93,8 @@ class SellerOptionValueTest {
                             sellerOptionGroupId,
                             optionValueName,
                             canonicalOptionValueId,
-                            sortOrder);
+                            sortOrder,
+                            DeletionStatus.active());
 
             // then
             assertThat(optionValue.id()).isEqualTo(id);
@@ -196,7 +198,8 @@ class SellerOptionValueTest {
                             ProductGroupFixtures.defaultSellerOptionGroupId(),
                             ProductGroupFixtures.defaultOptionValueName(),
                             null,
-                            0);
+                            0,
+                            DeletionStatus.active());
 
             // when & then
             assertThat(optionValue.idValue()).isEqualTo(100L);
@@ -212,7 +215,8 @@ class SellerOptionValueTest {
                             SellerOptionGroupId.of(200L),
                             ProductGroupFixtures.defaultOptionValueName(),
                             null,
-                            0);
+                            0,
+                            DeletionStatus.active());
 
             // when & then
             assertThat(optionValue.sellerOptionGroupIdValue()).isEqualTo(200L);

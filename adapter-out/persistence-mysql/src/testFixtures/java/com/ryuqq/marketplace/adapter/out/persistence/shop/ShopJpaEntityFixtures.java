@@ -8,6 +8,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * ShopJpaEntity 테스트 Fixtures.
  *
  * <p>테스트에서 ShopJpaEntity 관련 객체들을 생성합니다.
+ *
+ * @author ryu-qqq
+ * @since 1.1.0
  */
 public final class ShopJpaEntityFixtures {
 
@@ -20,191 +23,168 @@ public final class ShopJpaEntityFixtures {
     public static final Long DEFAULT_SALES_CHANNEL_ID = 1L;
     public static final String DEFAULT_SHOP_NAME = "테스트 외부몰";
     public static final String DEFAULT_ACCOUNT_ID = "test-account-123";
-    public static final String STATUS_ACTIVE = "ACTIVE";
-    public static final String STATUS_INACTIVE = "INACTIVE";
+    public static final String DEFAULT_STATUS_ACTIVE = "ACTIVE";
+    public static final String DEFAULT_STATUS_INACTIVE = "INACTIVE";
 
     // ===== Entity Fixtures =====
 
-    /** 활성 상태의 Shop Entity 생성 (ID null - DB 자동생성용). */
-    public static ShopJpaEntity activeEntity() {
-        long seq = SEQUENCE.getAndIncrement();
-        Instant now = Instant.now();
-        return ShopJpaEntity.create(
-                null,
-                DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
-                DEFAULT_ACCOUNT_ID + seq,
-                STATUS_ACTIVE,
-                now,
-                now,
-                null);
-    }
-
-    /** ID를 지정한 활성 상태 Shop Entity 생성. */
-    public static ShopJpaEntity activeEntity(Long id) {
-        long seq = SEQUENCE.getAndIncrement();
-        Instant now = Instant.now();
-        return ShopJpaEntity.create(
-                id,
-                DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
-                DEFAULT_ACCOUNT_ID,
-                STATUS_ACTIVE,
-                now,
-                now,
-                null);
-    }
-
-    /** 커스텀 Shop명을 가진 활성 상태 Shop Entity 생성. */
-    public static ShopJpaEntity activeEntityWithName(String shopName, String accountId) {
-        Instant now = Instant.now();
-        return ShopJpaEntity.create(
-                null, DEFAULT_SALES_CHANNEL_ID, shopName, accountId, STATUS_ACTIVE, now, now, null);
-    }
-
-    /** ID를 지정한 비활성 상태 Shop Entity 생성. */
-    public static ShopJpaEntity inactiveEntity(Long id) {
-        long seq = SEQUENCE.getAndIncrement();
-        Instant now = Instant.now();
-        return ShopJpaEntity.create(
-                id,
-                DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
-                DEFAULT_ACCOUNT_ID + seq,
-                STATUS_INACTIVE,
-                now,
-                now,
-                null);
-    }
-
-    /** 비활성 상태 Shop Entity 생성 (ID null - DB 자동생성용). */
-    public static ShopJpaEntity inactiveEntity() {
-        long seq = SEQUENCE.getAndIncrement();
-        Instant now = Instant.now();
-        return ShopJpaEntity.create(
-                null,
-                DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
-                DEFAULT_ACCOUNT_ID + seq,
-                STATUS_INACTIVE,
-                now,
-                now,
-                null);
-    }
-
-    /** ID를 지정한 삭제된 상태 Shop Entity 생성. */
-    public static ShopJpaEntity deletedEntity(Long id) {
-        long seq = SEQUENCE.getAndIncrement();
-        Instant now = Instant.now();
-        return ShopJpaEntity.create(
-                id,
-                DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
-                DEFAULT_ACCOUNT_ID + seq,
-                STATUS_INACTIVE,
-                now,
-                now,
-                now);
-    }
-
-    /** 삭제된 상태 Shop Entity 생성 (ID null - DB 자동생성용). */
-    public static ShopJpaEntity deletedEntity() {
-        long seq = SEQUENCE.getAndIncrement();
-        Instant now = Instant.now();
-        return ShopJpaEntity.create(
-                null,
-                DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
-                DEFAULT_ACCOUNT_ID + seq,
-                STATUS_INACTIVE,
-                now,
-                now,
-                now);
-    }
-
-    /** 새로 생성될 Entity (ID가 null). */
+    /** 기본 Shop Entity 생성 (ID 없음, ACTIVE 상태). */
     public static ShopJpaEntity newEntity() {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return ShopJpaEntity.create(
                 null,
                 DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
-                DEFAULT_ACCOUNT_ID,
-                STATUS_ACTIVE,
+                DEFAULT_SHOP_NAME + "-" + seq,
+                DEFAULT_ACCOUNT_ID + "-" + seq,
+                DEFAULT_STATUS_ACTIVE,
                 now,
                 now,
                 null);
     }
 
-    /** 새로운 비활성 상태 Entity 생성 (ID는 null). */
+    /** ID를 지정한 ACTIVE 상태 Shop Entity 생성. */
+    public static ShopJpaEntity activeEntity(Long id) {
+        Instant now = Instant.now();
+        return ShopJpaEntity.create(
+                id,
+                DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_NAME,
+                DEFAULT_ACCOUNT_ID,
+                DEFAULT_STATUS_ACTIVE,
+                now,
+                now,
+                null);
+    }
+
+    /** 기본 ID(1L)의 ACTIVE 상태 Shop Entity 생성. */
+    public static ShopJpaEntity activeEntity() {
+        return activeEntity(DEFAULT_ID);
+    }
+
+    /** ID를 지정한 INACTIVE 상태 Shop Entity 생성. */
+    public static ShopJpaEntity inactiveEntity(Long id) {
+        Instant now = Instant.now();
+        return ShopJpaEntity.create(
+                id,
+                DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_NAME,
+                DEFAULT_ACCOUNT_ID,
+                DEFAULT_STATUS_INACTIVE,
+                now,
+                now,
+                null);
+    }
+
+    /** 기본 ID(1L)의 INACTIVE 상태 Shop Entity 생성. */
+    public static ShopJpaEntity inactiveEntity() {
+        return inactiveEntity(DEFAULT_ID);
+    }
+
+    /** 소프트 삭제된 Shop Entity 생성 (ID 없음). */
+    public static ShopJpaEntity newDeletedEntity() {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        Instant deletedAt = now.minusSeconds(3600);
+        return ShopJpaEntity.create(
+                null,
+                DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_NAME + "-deleted-" + seq,
+                DEFAULT_ACCOUNT_ID + "-deleted-" + seq,
+                DEFAULT_STATUS_INACTIVE,
+                deletedAt,
+                now,
+                deletedAt);
+    }
+
+    /** 비활성 상태 Shop Entity 생성 (ID 없음). */
     public static ShopJpaEntity newInactiveEntity() {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return ShopJpaEntity.create(
                 null,
                 DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
-                DEFAULT_ACCOUNT_ID,
-                STATUS_INACTIVE,
+                DEFAULT_SHOP_NAME + "-inactive-" + seq,
+                DEFAULT_ACCOUNT_ID + "-inactive-" + seq,
+                DEFAULT_STATUS_INACTIVE,
                 now,
                 now,
                 null);
     }
 
-    /** 새로운 삭제된 상태 Entity 생성 (ID는 null). */
-    public static ShopJpaEntity newDeletedEntity() {
-        long seq = SEQUENCE.getAndIncrement();
+    /** ID를 지정한 소프트 삭제된 Shop Entity 생성. */
+    public static ShopJpaEntity deletedEntity(Long id) {
         Instant now = Instant.now();
+        Instant deletedAt = now.minusSeconds(3600);
         return ShopJpaEntity.create(
-                null,
+                id,
                 DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
+                DEFAULT_SHOP_NAME,
                 DEFAULT_ACCOUNT_ID,
-                STATUS_INACTIVE,
+                DEFAULT_STATUS_INACTIVE,
+                deletedAt,
                 now,
-                now,
-                now);
+                deletedAt);
     }
 
-    /** 커스텀 Shop명을 가진 비활성 상태 Shop Entity 생성. */
-    public static ShopJpaEntity inactiveEntityWithName(String shopName, String accountId) {
-        Instant now = Instant.now();
-        return ShopJpaEntity.create(
-                null,
-                DEFAULT_SALES_CHANNEL_ID,
-                shopName,
-                accountId,
-                STATUS_INACTIVE,
-                now,
-                now,
-                null);
+    /** 기본 ID의 소프트 삭제된 Shop Entity 생성. */
+    public static ShopJpaEntity deletedEntity() {
+        return deletedEntity(DEFAULT_ID);
     }
 
-    /** 커스텀 Shop명을 가진 삭제 상태 Shop Entity 생성. */
-    public static ShopJpaEntity deletedEntityWithName(String shopName, String accountId) {
-        Instant now = Instant.now();
-        return ShopJpaEntity.create(
-                null,
-                DEFAULT_SALES_CHANNEL_ID,
-                shopName,
-                accountId,
-                STATUS_INACTIVE,
-                now,
-                now,
-                now);
-    }
-
-    /** 특정 accountId를 가진 활성 상태 Shop Entity 생성. */
+    /** 특정 accountId를 가진 ACTIVE 상태 Shop Entity 생성 (ID 없음). */
     public static ShopJpaEntity activeEntityWithAccountId(String accountId) {
-        long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
         return ShopJpaEntity.create(
                 null,
                 DEFAULT_SALES_CHANNEL_ID,
-                "테스트 외부몰 " + seq,
+                DEFAULT_SHOP_NAME,
                 accountId,
-                STATUS_ACTIVE,
+                DEFAULT_STATUS_ACTIVE,
+                now,
+                now,
+                null);
+    }
+
+    /** 특정 accountId를 가진 소프트 삭제된 Shop Entity 생성 (ID 없음). */
+    public static ShopJpaEntity deletedEntityWithAccountId(String accountId) {
+        Instant now = Instant.now();
+        Instant deletedAt = now.minusSeconds(3600);
+        return ShopJpaEntity.create(
+                null,
+                DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_NAME,
+                accountId,
+                DEFAULT_STATUS_INACTIVE,
+                deletedAt,
+                now,
+                deletedAt);
+    }
+
+    /** 특정 shopName과 accountId를 가진 ACTIVE 상태 Shop Entity 생성 (ID 없음). */
+    public static ShopJpaEntity activeEntityWithName(String shopName, String accountId) {
+        Instant now = Instant.now();
+        return ShopJpaEntity.create(
+                null,
+                DEFAULT_SALES_CHANNEL_ID,
+                shopName,
+                accountId,
+                DEFAULT_STATUS_ACTIVE,
+                now,
+                now,
+                null);
+    }
+
+    /** 특정 salesChannelId를 가진 ACTIVE 상태 Shop Entity 생성 (ID 없음). */
+    public static ShopJpaEntity activeEntityWithSalesChannelId(Long salesChannelId) {
+        long seq = SEQUENCE.getAndIncrement();
+        Instant now = Instant.now();
+        return ShopJpaEntity.create(
+                null,
+                salesChannelId,
+                DEFAULT_SHOP_NAME + "-" + seq,
+                DEFAULT_ACCOUNT_ID + "-" + seq,
+                DEFAULT_STATUS_ACTIVE,
                 now,
                 now,
                 null);

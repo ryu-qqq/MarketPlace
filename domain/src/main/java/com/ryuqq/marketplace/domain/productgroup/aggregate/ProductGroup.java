@@ -2,14 +2,15 @@ package com.ryuqq.marketplace.domain.productgroup.aggregate;
 
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
-import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidOptionStructureException;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidStatusTransitionException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
-import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupImages;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
+import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
 import com.ryuqq.marketplace.domain.productgroup.vo.SellerOptionGroups;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
+import com.ryuqq.marketplace.domain.productgroupimage.vo.ProductGroupImages;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
@@ -65,7 +66,7 @@ public class ProductGroup {
         this.updatedAt = updatedAt;
     }
 
-    /** 신규 상품 그룹 생성. DRAFT 상태로 시작. */
+    /** 신규 상품 그룹 생성. DRAFT 상태로 시작. 이미지/옵션은 별도 persist. */
     public static ProductGroup forNew(
             SellerId sellerId,
             BrandId brandId,
@@ -74,26 +75,21 @@ public class ProductGroup {
             RefundPolicyId refundPolicyId,
             ProductGroupName productGroupName,
             OptionType optionType,
-            ProductGroupImages images,
-            SellerOptionGroups sellerOptionGroups,
             Instant now) {
-        ProductGroup productGroup =
-                new ProductGroup(
-                        ProductGroupId.forNew(),
-                        sellerId,
-                        brandId,
-                        categoryId,
-                        shippingPolicyId,
-                        refundPolicyId,
-                        productGroupName,
-                        optionType,
-                        ProductGroupStatus.DRAFT,
-                        images,
-                        sellerOptionGroups,
-                        now,
-                        now);
-        productGroup.validateOptionStructure();
-        return productGroup;
+        return new ProductGroup(
+                ProductGroupId.forNew(),
+                sellerId,
+                brandId,
+                categoryId,
+                shippingPolicyId,
+                refundPolicyId,
+                productGroupName,
+                optionType,
+                ProductGroupStatus.DRAFT,
+                ProductGroupImages.reconstitute(List.of()),
+                SellerOptionGroups.reconstitute(List.of()),
+                now,
+                now);
     }
 
     /** 영속성에서 복원 시 사용. */
@@ -128,6 +124,39 @@ public class ProductGroup {
     }
 
     // ── 비즈니스 메서드 ──
+
+    /** targetStatus에 따라 적절한 상태 전이 메서드를 호출한다. */
+    public void changeStatus(ProductGroupStatus targetStatus, Instant now) {
+        switch (targetStatus) {
+            case PROCESSING -> startProcessing(now);
+            case ACTIVE -> activate(now);
+            case INACTIVE -> deactivate(now);
+            case SOLDOUT -> markSoldOut(now);
+            case REJECTED -> reject(now);
+            case DELETED -> delete(now);
+            default -> throw new IllegalArgumentException("지원하지 않는 상태 변경입니다: " + targetStatus);
+        }
+    }
+
+    /** 검수 시작. DRAFT → PROCESSING. */
+    public void startProcessing(Instant now) {
+        if (!status.canProcess()) {
+            throw new ProductGroupInvalidStatusTransitionException(
+                    status, ProductGroupStatus.PROCESSING);
+        }
+        this.status = ProductGroupStatus.PROCESSING;
+        this.updatedAt = now;
+    }
+
+    /** 검수 반려. PROCESSING → REJECTED. */
+    public void reject(Instant now) {
+        if (!status.canReject()) {
+            throw new ProductGroupInvalidStatusTransitionException(
+                    status, ProductGroupStatus.REJECTED);
+        }
+        this.status = ProductGroupStatus.REJECTED;
+        this.updatedAt = now;
+    }
 
     /** 판매 활성화. ProductGroupImages VO가 THUMBNAIL 존재를 보장. */
     public void activate(Instant now) {
@@ -170,19 +199,13 @@ public class ProductGroup {
     }
 
     /** 기본 정보 수정. */
-    public void updateBasicInfo(
-            ProductGroupName productGroupName,
-            BrandId brandId,
-            CategoryId categoryId,
-            ShippingPolicyId shippingPolicyId,
-            RefundPolicyId refundPolicyId,
-            Instant now) {
-        this.productGroupName = productGroupName;
-        this.brandId = brandId;
-        this.categoryId = categoryId;
-        this.shippingPolicyId = shippingPolicyId;
-        this.refundPolicyId = refundPolicyId;
-        this.updatedAt = now;
+    public void update(ProductGroupUpdateData updateData) {
+        this.productGroupName = updateData.productGroupName();
+        this.brandId = updateData.brandId();
+        this.categoryId = updateData.categoryId();
+        this.shippingPolicyId = updateData.shippingPolicyId();
+        this.refundPolicyId = updateData.refundPolicyId();
+        this.updatedAt = updateData.updatedAt();
     }
 
     /** 이미지 전체 교체. ProductGroupImages VO가 검증/정렬을 보장. */
@@ -198,16 +221,9 @@ public class ProductGroup {
 
     // ── 검증 메서드 ──
 
-    /** optionType과 셀러 옵션 그룹 수 정합성 검증. */
+    /** optionType과 내부 셀러 옵션 그룹 수 정합성 검증. */
     private void validateOptionStructure() {
-        int expected = optionType.expectedOptionGroupCount();
-        int actual = sellerOptionGroups.size();
-        if (optionType.requiresOptionGroup() && actual != expected) {
-            throw new ProductGroupInvalidOptionStructureException(optionType, expected, actual);
-        }
-        if (!optionType.requiresOptionGroup() && actual > 0) {
-            throw new ProductGroupInvalidOptionStructureException(optionType, expected, actual);
-        }
+        sellerOptionGroups.validateStructure(optionType);
     }
 
     // ── 조회 메서드 ──
@@ -293,7 +309,7 @@ public class ProductGroup {
     }
 
     public List<SellerOptionGroup> sellerOptionGroups() {
-        return sellerOptionGroups.toList();
+        return sellerOptionGroups.groups();
     }
 
     public Instant createdAt() {

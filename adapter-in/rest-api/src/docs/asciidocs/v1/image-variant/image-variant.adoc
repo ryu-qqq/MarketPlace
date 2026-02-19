@@ -1,0 +1,34 @@
+[[image-variant-get-variants]]
+=== 이미지 Variant 목록 조회
+
+인증 필요 | 필요 권한: `product-group:read`
+
+==== HTTP Request
+include::{snippets}/image-variant/get-variants/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/image-variant/get-variants/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/image-variant/get-variants/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/image-variant/get-variants/response-fields.adoc[]
+
+
+[[image-variant-request-transform]]
+=== 수동 이미지 Variant 변환 요청
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/image-variant/request-transform/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/image-variant/request-transform/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/image-variant/request-transform/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/image-variant/request-transform/http-response.adoc[]

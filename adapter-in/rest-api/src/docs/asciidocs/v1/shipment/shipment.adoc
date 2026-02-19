@@ -1,0 +1,106 @@
+[[shipment-summary]]
+=== 배송 상태별 요약 조회
+
+인증 필요
+
+==== HTTP Request
+include::{snippets}/shipment/summary/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipment/summary/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shipment/summary/response-fields.adoc[]
+
+
+[[shipment-search]]
+=== 배송 목록 검색
+
+인증 필요
+
+==== HTTP Request
+include::{snippets}/shipment/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/shipment/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipment/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shipment/search/response-fields.adoc[]
+
+
+[[shipment-detail]]
+=== 배송 상세 조회
+
+인증 필요
+
+==== HTTP Request
+include::{snippets}/shipment/detail/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/shipment/detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipment/detail/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shipment/detail/response-fields.adoc[]
+
+
+[[shipment-confirm-batch]]
+=== 발주확인 일괄 처리
+
+인증 필요
+
+==== HTTP Request
+include::{snippets}/shipment/confirm-batch/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/shipment/confirm-batch/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipment/confirm-batch/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shipment/confirm-batch/response-fields.adoc[]
+
+
+[[shipment-ship-batch]]
+=== 송장등록 일괄 처리
+
+인증 필요
+
+==== HTTP Request
+include::{snippets}/shipment/ship-batch/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/shipment/ship-batch/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipment/ship-batch/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shipment/ship-batch/response-fields.adoc[]
+
+
+[[shipment-ship-single]]
+=== 단건 송장등록
+
+인증 필요
+
+==== HTTP Request
+include::{snippets}/shipment/ship-single/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/shipment/ship-single/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/shipment/ship-single/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipment/ship-single/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shipment/ship-single/response-fields.adoc[]

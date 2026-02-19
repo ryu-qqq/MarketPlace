@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.adapter.out.persistence.notice.NoticeCategoryJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.NoticeCategoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.NoticeFieldJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.notice.mapper.NoticeCategoryJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.notice.repository.NoticeCategoryQueryDslRepository;
 import com.ryuqq.marketplace.domain.category.vo.CategoryGroup;
@@ -69,10 +70,12 @@ class NoticeCategoryQueryAdapterTest {
             Long id = 1L;
             NoticeCategoryId noticeCategoryId = NoticeCategoryId.of(id);
             NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.activeEntity(id);
+            List<NoticeFieldJpaEntity> fields = List.of();
             NoticeCategory domain = NoticeFixtures.activeNoticeCategory(id);
 
             given(queryDslRepository.findById(id)).willReturn(Optional.of(entity));
-            given(mapper.toDomain(entity)).willReturn(domain);
+            given(queryDslRepository.findFieldsByCategoryId(entity.getId())).willReturn(fields);
+            given(mapper.toDomain(entity, fields)).willReturn(domain);
 
             // when
             Optional<NoticeCategory> result = queryAdapter.findById(noticeCategoryId);
@@ -81,7 +84,7 @@ class NoticeCategoryQueryAdapterTest {
             assertThat(result).isPresent();
             assertThat(result.get()).isEqualTo(domain);
             then(queryDslRepository).should().findById(id);
-            then(mapper).should().toDomain(entity);
+            then(mapper).should().toDomain(entity, fields);
         }
 
         @Test
@@ -118,11 +121,13 @@ class NoticeCategoryQueryAdapterTest {
             CategoryGroup categoryGroup = CategoryGroup.CLOTHING;
             NoticeCategoryJpaEntity entity =
                     NoticeCategoryJpaEntityFixtures.activeEntityWithCode("CLOTHING", "CLOTHING");
+            List<NoticeFieldJpaEntity> fields = List.of();
             NoticeCategory domain = NoticeFixtures.activeNoticeCategory();
 
             given(queryDslRepository.findByTargetCategoryGroup(categoryGroup.name()))
                     .willReturn(Optional.of(entity));
-            given(mapper.toDomain(entity)).willReturn(domain);
+            given(queryDslRepository.findFieldsByCategoryId(entity.getId())).willReturn(fields);
+            given(mapper.toDomain(entity, fields)).willReturn(domain);
 
             // when
             Optional<NoticeCategory> result = queryAdapter.findByCategoryGroup(categoryGroup);
@@ -131,7 +136,7 @@ class NoticeCategoryQueryAdapterTest {
             assertThat(result).isPresent();
             assertThat(result.get()).isEqualTo(domain);
             then(queryDslRepository).should().findByTargetCategoryGroup(categoryGroup.name());
-            then(mapper).should().toDomain(entity);
+            then(mapper).should().toDomain(entity, fields);
         }
 
         @Test
@@ -158,11 +163,13 @@ class NoticeCategoryQueryAdapterTest {
             // given
             CategoryGroup categoryGroup = CategoryGroup.FURNITURE;
             NoticeCategoryJpaEntity entity = NoticeCategoryJpaEntityFixtures.furnitureEntity();
+            List<NoticeFieldJpaEntity> fields = List.of();
             NoticeCategory domain = NoticeFixtures.activeNoticeCategory();
 
             given(queryDslRepository.findByTargetCategoryGroup(categoryGroup.name()))
                     .willReturn(Optional.of(entity));
-            given(mapper.toDomain(entity)).willReturn(domain);
+            given(queryDslRepository.findFieldsByCategoryId(entity.getId())).willReturn(fields);
+            given(mapper.toDomain(entity, fields)).willReturn(domain);
 
             // when
             Optional<NoticeCategory> result = queryAdapter.findByCategoryGroup(categoryGroup);
@@ -194,8 +201,12 @@ class NoticeCategoryQueryAdapterTest {
             NoticeCategory domain2 = NoticeFixtures.activeNoticeCategory(2L);
 
             given(queryDslRepository.findByCriteria(criteria)).willReturn(entities);
-            given(mapper.toDomain(entity1)).willReturn(domain1);
-            given(mapper.toDomain(entity2)).willReturn(domain2);
+            given(
+                            queryDslRepository.findFieldsByCategoryIds(
+                                    List.of(entity1.getId(), entity2.getId())))
+                    .willReturn(List.of());
+            given(mapper.toDomain(entity1, List.of())).willReturn(domain1);
+            given(mapper.toDomain(entity2, List.of())).willReturn(domain2);
 
             // when
             List<NoticeCategory> result = queryAdapter.findByCriteria(criteria);
@@ -204,8 +215,6 @@ class NoticeCategoryQueryAdapterTest {
             assertThat(result).hasSize(2);
             assertThat(result).containsExactly(domain1, domain2);
             then(queryDslRepository).should().findByCriteria(criteria);
-            then(mapper).should().toDomain(entity1);
-            then(mapper).should().toDomain(entity2);
         }
 
         @Test
@@ -235,7 +244,9 @@ class NoticeCategoryQueryAdapterTest {
             NoticeCategory domain = NoticeFixtures.activeNoticeCategory(1L);
 
             given(queryDslRepository.findByCriteria(criteria)).willReturn(List.of(entity));
-            given(mapper.toDomain(entity)).willReturn(domain);
+            given(queryDslRepository.findFieldsByCategoryIds(List.of(entity.getId())))
+                    .willReturn(List.of());
+            given(mapper.toDomain(entity, List.of())).willReturn(domain);
 
             // when
             List<NoticeCategory> result = queryAdapter.findByCriteria(criteria);

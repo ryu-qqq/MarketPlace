@@ -1,19 +1,18 @@
 package com.ryuqq.marketplace.adapter.out.persistence.productgroup.mapper;
 
-import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.SellerOptionValueJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.ProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionGroupId;
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionValueId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupImage;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionValue;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupImageId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
@@ -23,6 +22,8 @@ import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionValueName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
+import com.ryuqq.marketplace.domain.productgroupimage.id.ProductGroupImageId;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
@@ -57,7 +58,9 @@ public class ProductGroupJpaEntityMapper {
                 image.originUrlValue(),
                 image.uploadedUrlValue(),
                 image.imageType().name(),
-                image.sortOrder());
+                image.sortOrder(),
+                image.isDeleted(),
+                image.deletionStatus().deletedAt());
     }
 
     public SellerOptionGroupJpaEntity toOptionGroupEntity(SellerOptionGroup group) {
@@ -68,7 +71,9 @@ public class ProductGroupJpaEntityMapper {
                 group.canonicalOptionGroupId() != null
                         ? group.canonicalOptionGroupId().value()
                         : null,
-                group.sortOrder());
+                group.sortOrder(),
+                group.isDeleted(),
+                group.deletionStatus().deletedAt());
     }
 
     public SellerOptionValueJpaEntity toOptionValueEntity(SellerOptionValue value) {
@@ -79,7 +84,23 @@ public class ProductGroupJpaEntityMapper {
                 value.canonicalOptionValueId() != null
                         ? value.canonicalOptionValueId().value()
                         : null,
-                value.sortOrder());
+                value.sortOrder(),
+                value.isDeleted(),
+                value.deletionStatus().deletedAt());
+    }
+
+    public SellerOptionValueJpaEntity toOptionValueEntity(
+            SellerOptionValue value, Long overrideGroupId) {
+        return SellerOptionValueJpaEntity.create(
+                value.idValue(),
+                overrideGroupId,
+                value.optionValueNameValue(),
+                value.canonicalOptionValueId() != null
+                        ? value.canonicalOptionValueId().value()
+                        : null,
+                value.sortOrder(),
+                value.isDeleted(),
+                value.deletionStatus().deletedAt());
     }
 
     public ProductGroup toDomain(
@@ -132,17 +153,18 @@ public class ProductGroupJpaEntityMapper {
                 entity.getUpdatedAt());
     }
 
-    private ProductGroupImage toImageDomain(ProductGroupImageJpaEntity entity) {
+    public ProductGroupImage toImageDomain(ProductGroupImageJpaEntity entity) {
         return ProductGroupImage.reconstitute(
                 ProductGroupImageId.of(entity.getId()),
                 ProductGroupId.of(entity.getProductGroupId()),
                 ImageUrl.of(entity.getOriginUrl()),
                 entity.getUploadedUrl() != null ? ImageUrl.of(entity.getUploadedUrl()) : null,
                 ImageType.valueOf(entity.getImageType()),
-                entity.getSortOrder());
+                entity.getSortOrder(),
+                DeletionStatus.reconstitute(entity.isDeleted(), entity.getDeletedAt()));
     }
 
-    private SellerOptionGroup toOptionGroupDomain(
+    public SellerOptionGroup toOptionGroupDomain(
             SellerOptionGroupJpaEntity entity, List<SellerOptionValue> values) {
         return SellerOptionGroup.reconstitute(
                 SellerOptionGroupId.of(entity.getId()),
@@ -152,10 +174,11 @@ public class ProductGroupJpaEntityMapper {
                         ? CanonicalOptionGroupId.of(entity.getCanonicalOptionGroupId())
                         : null,
                 entity.getSortOrder(),
-                values);
+                values,
+                DeletionStatus.reconstitute(entity.isDeleted(), entity.getDeletedAt()));
     }
 
-    private SellerOptionValue toOptionValueDomain(SellerOptionValueJpaEntity entity) {
+    public SellerOptionValue toOptionValueDomain(SellerOptionValueJpaEntity entity) {
         return SellerOptionValue.reconstitute(
                 SellerOptionValueId.of(entity.getId()),
                 SellerOptionGroupId.of(entity.getSellerOptionGroupId()),
@@ -163,6 +186,7 @@ public class ProductGroupJpaEntityMapper {
                 entity.getCanonicalOptionValueId() != null
                         ? CanonicalOptionValueId.of(entity.getCanonicalOptionValueId())
                         : null,
-                entity.getSortOrder());
+                entity.getSortOrder(),
+                DeletionStatus.reconstitute(entity.isDeleted(), entity.getDeletedAt()));
     }
 }

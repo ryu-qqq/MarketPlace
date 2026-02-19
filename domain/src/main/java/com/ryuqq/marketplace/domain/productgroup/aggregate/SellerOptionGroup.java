@@ -1,9 +1,11 @@
 package com.ryuqq.marketplace.domain.productgroup.aggregate;
 
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionGroupId;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionGroupName;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +22,7 @@ public class SellerOptionGroup {
     private CanonicalOptionGroupId canonicalOptionGroupId;
     private int sortOrder;
     private final List<SellerOptionValue> optionValues;
+    private DeletionStatus deletionStatus;
 
     private SellerOptionGroup(
             SellerOptionGroupId id,
@@ -27,13 +30,15 @@ public class SellerOptionGroup {
             OptionGroupName optionGroupName,
             CanonicalOptionGroupId canonicalOptionGroupId,
             int sortOrder,
-            List<SellerOptionValue> optionValues) {
+            List<SellerOptionValue> optionValues,
+            DeletionStatus deletionStatus) {
         this.id = id;
         this.productGroupId = productGroupId;
         this.optionGroupName = optionGroupName;
         this.canonicalOptionGroupId = canonicalOptionGroupId;
         this.sortOrder = sortOrder;
         this.optionValues = new ArrayList<>(optionValues);
+        this.deletionStatus = deletionStatus;
     }
 
     /** 신규 셀러 옵션 그룹 생성. */
@@ -48,7 +53,8 @@ public class SellerOptionGroup {
                 optionGroupName,
                 null,
                 sortOrder,
-                optionValues);
+                optionValues,
+                DeletionStatus.active());
     }
 
     /** 캐노니컬 매핑과 함께 신규 생성. */
@@ -64,7 +70,8 @@ public class SellerOptionGroup {
                 optionGroupName,
                 canonicalOptionGroupId,
                 sortOrder,
-                optionValues);
+                optionValues,
+                DeletionStatus.active());
     }
 
     /** 영속성에서 복원 시 사용. */
@@ -74,14 +81,16 @@ public class SellerOptionGroup {
             OptionGroupName optionGroupName,
             CanonicalOptionGroupId canonicalOptionGroupId,
             int sortOrder,
-            List<SellerOptionValue> optionValues) {
+            List<SellerOptionValue> optionValues,
+            DeletionStatus deletionStatus) {
         return new SellerOptionGroup(
                 id,
                 productGroupId,
                 optionGroupName,
                 canonicalOptionGroupId,
                 sortOrder,
-                optionValues);
+                optionValues,
+                deletionStatus);
     }
 
     /** 옵션 그룹명 수정. */
@@ -161,5 +170,21 @@ public class SellerOptionGroup {
 
     public List<SellerOptionValue> optionValues() {
         return Collections.unmodifiableList(optionValues);
+    }
+
+    /** soft delete 처리. 하위 SellerOptionValue도 일괄 delete. */
+    public void delete(Instant occurredAt) {
+        this.deletionStatus = DeletionStatus.deletedAt(occurredAt);
+        for (SellerOptionValue value : optionValues) {
+            value.delete(occurredAt);
+        }
+    }
+
+    public boolean isDeleted() {
+        return deletionStatus.isDeleted();
+    }
+
+    public DeletionStatus deletionStatus() {
+        return deletionStatus;
     }
 }

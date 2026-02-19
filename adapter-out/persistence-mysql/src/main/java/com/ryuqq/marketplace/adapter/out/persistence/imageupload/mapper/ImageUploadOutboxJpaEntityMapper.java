@@ -3,8 +3,6 @@ package com.ryuqq.marketplace.adapter.out.persistence.imageupload.mapper;
 import com.ryuqq.marketplace.adapter.out.persistence.imageupload.entity.ImageUploadOutboxJpaEntity;
 import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
 import com.ryuqq.marketplace.domain.imageupload.id.ImageUploadOutboxId;
-import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
-import com.ryuqq.marketplace.domain.imageupload.vo.ImageUploadOutboxStatus;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,9 +23,9 @@ public class ImageUploadOutboxJpaEntityMapper {
         return ImageUploadOutboxJpaEntity.create(
                 domain.idValue(),
                 domain.sourceId(),
-                toEntitySourceType(domain.sourceType()),
+                domain.sourceType(),
                 domain.originUrlValue(),
-                toEntityStatus(domain.status()),
+                domain.status(),
                 domain.retryCount(),
                 domain.maxRetry(),
                 domain.createdAt(),
@@ -46,9 +44,9 @@ public class ImageUploadOutboxJpaEntityMapper {
         return ImageUploadOutbox.reconstitute(
                 id,
                 entity.getSourceId(),
-                toDomainSourceType(entity.getSourceType()),
+                entity.getSourceType(),
                 entity.getOriginUrl(),
-                toDomainStatus(entity.getStatus()),
+                entity.getStatus(),
                 entity.getRetryCount(),
                 entity.getMaxRetry(),
                 entity.getCreatedAt(),
@@ -57,37 +55,5 @@ public class ImageUploadOutboxJpaEntityMapper {
                 entity.getErrorMessage(),
                 entity.getVersion(),
                 entity.getIdempotencyKey());
-    }
-
-    private ImageUploadOutboxJpaEntity.Status toEntityStatus(ImageUploadOutboxStatus status) {
-        return switch (status) {
-            case PENDING -> ImageUploadOutboxJpaEntity.Status.PENDING;
-            case PROCESSING -> ImageUploadOutboxJpaEntity.Status.PROCESSING;
-            case COMPLETED -> ImageUploadOutboxJpaEntity.Status.COMPLETED;
-            case FAILED -> ImageUploadOutboxJpaEntity.Status.FAILED;
-        };
-    }
-
-    private ImageUploadOutboxStatus toDomainStatus(ImageUploadOutboxJpaEntity.Status status) {
-        return switch (status) {
-            case PENDING -> ImageUploadOutboxStatus.PENDING;
-            case PROCESSING -> ImageUploadOutboxStatus.PROCESSING;
-            case COMPLETED -> ImageUploadOutboxStatus.COMPLETED;
-            case FAILED -> ImageUploadOutboxStatus.FAILED;
-        };
-    }
-
-    private ImageUploadOutboxJpaEntity.SourceType toEntitySourceType(ImageSourceType sourceType) {
-        return switch (sourceType) {
-            case PRODUCT_GROUP_IMAGE -> ImageUploadOutboxJpaEntity.SourceType.PRODUCT_GROUP_IMAGE;
-            case DESCRIPTION_IMAGE -> ImageUploadOutboxJpaEntity.SourceType.DESCRIPTION_IMAGE;
-        };
-    }
-
-    private ImageSourceType toDomainSourceType(ImageUploadOutboxJpaEntity.SourceType sourceType) {
-        return switch (sourceType) {
-            case PRODUCT_GROUP_IMAGE -> ImageSourceType.PRODUCT_GROUP_IMAGE;
-            case DESCRIPTION_IMAGE -> ImageSourceType.DESCRIPTION_IMAGE;
-        };
     }
 }

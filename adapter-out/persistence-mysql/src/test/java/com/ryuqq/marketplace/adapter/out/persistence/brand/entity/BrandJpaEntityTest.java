@@ -107,7 +107,7 @@ class BrandJpaEntityTest {
             BrandJpaEntity entity = BrandJpaEntityFixtures.activeEntity();
 
             assertThat(entity.getId()).isEqualTo(BrandJpaEntityFixtures.DEFAULT_ID);
-            assertThat(entity.getCode()).isEqualTo(BrandJpaEntityFixtures.DEFAULT_CODE);
+            assertThat(entity.getCode()).startsWith(BrandJpaEntityFixtures.DEFAULT_CODE);
             assertThat(entity.getStatus()).isEqualTo(BrandJpaEntityFixtures.DEFAULT_STATUS);
         }
 
@@ -117,7 +117,7 @@ class BrandJpaEntityTest {
             BrandJpaEntity entity = BrandJpaEntityFixtures.newEntity();
 
             assertThat(entity.getId()).isNull();
-            assertThat(entity.getCode()).isEqualTo(BrandJpaEntityFixtures.DEFAULT_CODE);
+            assertThat(entity.getCode()).startsWith(BrandJpaEntityFixtures.DEFAULT_CODE);
         }
     }
 }

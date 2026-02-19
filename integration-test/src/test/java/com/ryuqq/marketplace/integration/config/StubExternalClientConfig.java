@@ -11,11 +11,17 @@ import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadRes
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
+import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
+import com.ryuqq.marketplace.application.imagetransform.port.out.client.ImageTransformClient;
+import com.ryuqq.marketplace.application.productgroupinspection.port.out.client.InspectionEnhancementPublishClient;
+import com.ryuqq.marketplace.application.productgroupinspection.port.out.client.InspectionScoringPublishClient;
+import com.ryuqq.marketplace.application.productgroupinspection.port.out.client.InspectionVerificationPublishClient;
 import com.ryuqq.marketplace.application.seller.port.out.client.IdentityClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminEmailClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminIdentityClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.command.SellerAdminAuthOutboxCommandPort;
 import com.ryuqq.marketplace.application.selleradmin.port.out.query.SellerAdminAuthOutboxQueryPort;
+import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdminAuthOutbox;
 import com.ryuqq.marketplace.domain.selleradmin.id.SellerAdminId;
 import java.time.Instant;
@@ -139,6 +145,46 @@ public class StubExternalClientConfig {
         return outbox -> null;
     }
 
+    @Bean
+    @Primary
+    public ImageTransformClient stubImageTransformClient() {
+        return new ImageTransformClient() {
+            @Override
+            public ImageTransformResponse createTransformRequest(
+                    String uploadedUrl, ImageVariantType variantType) {
+                return ImageTransformResponse.pending("stub-transform-" + UUID.randomUUID());
+            }
+
+            @Override
+            public ImageTransformResponse getTransformRequest(String transformRequestId) {
+                return ImageTransformResponse.completed(
+                        transformRequestId,
+                        "stub-asset-id",
+                        "https://cdn.stub.com/variant.webp",
+                        300,
+                        300);
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public InspectionScoringPublishClient stubInspectionScoringPublishClient() {
+        return messageBody -> "stub-scoring-message-id-" + UUID.randomUUID();
+    }
+
+    @Bean
+    @Primary
+    public InspectionEnhancementPublishClient stubInspectionEnhancementPublishClient() {
+        return messageBody -> "stub-enhancement-message-id-" + UUID.randomUUID();
+    }
+
+    @Bean
+    @Primary
+    public InspectionVerificationPublishClient stubInspectionVerificationPublishClient() {
+        return messageBody -> "stub-verification-message-id-" + UUID.randomUUID();
+    }
+
     // ===== 미구현 포트 Stubs =====
 
     @Bean
@@ -183,6 +229,11 @@ public class StubExternalClientConfig {
                     List<ExternalDownloadRequest> requests) {
                 return requests.stream().map(this::downloadFromExternalUrl).toList();
             }
+
+            @Override
+            public String uploadHtmlContent(String htmlContent, String category, String filename) {
+                return "https://stub-cdn.example.com/" + category + "/" + filename;
+            }
         };
     }
 
@@ -221,5 +272,37 @@ public class StubExternalClientConfig {
                 return Collections.emptyList();
             }
         };
+    }
+
+    // ===== ProductGroupInspection LLM 클라이언트 Stubs =====
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.productgroupinspection.port.out.client
+                    .CanonicalOptionEnhancementClient
+            stubCanonicalOptionEnhancementClient() {
+        return productGroupId ->
+                new com.ryuqq.marketplace.application.productgroupinspection.dto.response
+                        .CanonicalOptionEnhancementResult(java.util.Collections.emptyList(), 0);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.productgroupinspection.port.out.client
+                    .NoticeCompletionEnhancementClient
+            stubNoticeCompletionEnhancementClient() {
+        return productGroupId ->
+                new com.ryuqq.marketplace.application.productgroupinspection.dto.response
+                        .NoticeCompletionEnhancementResult(java.util.Collections.emptyList(), 0);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.productgroupinspection.port.out.client
+                    .InspectionVerificationClient
+            stubInspectionVerificationClient() {
+        return productGroupId ->
+                new com.ryuqq.marketplace.application.productgroupinspection.dto.response
+                        .InspectionVerificationResult(true, 100, java.util.Collections.emptyList());
     }
 }

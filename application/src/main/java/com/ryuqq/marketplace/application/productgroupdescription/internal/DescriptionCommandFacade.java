@@ -1,10 +1,11 @@
 package com.ryuqq.marketplace.application.productgroupdescription.internal;
 
-import com.ryuqq.marketplace.application.imageupload.internal.ImageUploadOutboxCreator;
+import com.ryuqq.marketplace.application.productgroupdescription.dto.response.DescriptionPersistResult;
 import com.ryuqq.marketplace.application.productgroupdescription.manager.DescriptionImageCommandManager;
 import com.ryuqq.marketplace.application.productgroupdescription.manager.ProductGroupDescriptionCommandManager;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
-import java.time.Instant;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupDescriptionId;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionImageDiff;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,45 +13,60 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Description Command Facade.
  *
- * <p>ProductGroupDescription 저장 → DescriptionImage 교체를 조율합니다.
+ * <p>ProductGroupDescription 저장 → ID 할당 → DescriptionImage 저장을 조율합니다.
+ *
+ * <p>아웃박스는 Coordinator에서 Factory + ImageUploadOutboxCommandManager로 처리합니다.
  */
 @Component
 public class DescriptionCommandFacade {
 
     private final ProductGroupDescriptionCommandManager descriptionCommandManager;
     private final DescriptionImageCommandManager imageCommandManager;
-    private final ImageUploadOutboxCreator outboxCreator;
 
     public DescriptionCommandFacade(
             ProductGroupDescriptionCommandManager descriptionCommandManager,
-            DescriptionImageCommandManager imageCommandManager,
-            ImageUploadOutboxCreator outboxCreator) {
+            DescriptionImageCommandManager imageCommandManager) {
         this.descriptionCommandManager = descriptionCommandManager;
         this.imageCommandManager = imageCommandManager;
-        this.outboxCreator = outboxCreator;
     }
 
     /**
-     * Description + Image 저장.
-     *
-     * <p>1. Description 저장 → descriptionId 획득
-     *
-     * <p>2. 기존 이미지 삭제
-     *
-     * <p>3. 새 이미지 저장
+     * Description + Image 저장 후 descriptionId + imageIds 반환.
      *
      * @param description ProductGroupDescription 도메인 객체
-     * @return 저장된 descriptionId
+     * @return 저장 결과 (descriptionId, imageIds)
      */
     @Transactional
-    public Long persist(ProductGroupDescription description) {
+    public DescriptionPersistResult persist(ProductGroupDescription description) {
         Long descriptionId = descriptionCommandManager.persist(description);
+        description.assignId(ProductGroupDescriptionId.of(descriptionId));
+        List<Long> imageIds = imageCommandManager.persistAll(description.images());
+        return new DescriptionPersistResult(descriptionId, imageIds);
+    }
 
-        imageCommandManager.deleteByDescriptionId(descriptionId);
-        List<Long> imageIds = imageCommandManager.persistAll(descriptionId, description.images());
+    /**
+     * Description 수정 + 이미지 diff 기반 저장/삭제.
+     *
+     * @param description 수정된 ProductGroupDescription 도메인 객체
+     * @param diff 이미지 변경 비교 결과
+     * @return 저장 결과 (descriptionId, 신규 imageIds)
+     */
+    @Transactional
+    public DescriptionPersistResult update(
+            ProductGroupDescription description, DescriptionImageDiff diff) {
+        Long descriptionId = descriptionCommandManager.persist(description);
+        imageCommandManager.persistAll(diff.removed());
+        List<Long> newImageIds = imageCommandManager.persistAll(diff.added());
+        return new DescriptionPersistResult(descriptionId, newImageIds);
+    }
 
-        outboxCreator.createForDescriptionImages(imageIds, description.images(), Instant.now());
-
-        return descriptionId;
+    /**
+     * Description만 저장 (이미지 변경 없이 상태 업데이트 시 사용).
+     *
+     * @param description ProductGroupDescription 도메인 객체
+     */
+    @Transactional
+    public void persistDescription(ProductGroupDescription description) {
+        descriptionCommandManager.persist(description);
     }
 }

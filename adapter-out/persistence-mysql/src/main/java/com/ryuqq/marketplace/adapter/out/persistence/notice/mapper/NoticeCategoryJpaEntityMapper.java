@@ -1,8 +1,10 @@
 package com.ryuqq.marketplace.adapter.out.persistence.notice.mapper;
 
 import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.NoticeCategoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.notice.entity.NoticeFieldJpaEntity;
 import com.ryuqq.marketplace.domain.category.vo.CategoryGroup;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
 import com.ryuqq.marketplace.domain.notice.id.NoticeCategoryId;
 import com.ryuqq.marketplace.domain.notice.vo.NoticeCategoryCode;
 import com.ryuqq.marketplace.domain.notice.vo.NoticeCategoryName;
@@ -13,7 +15,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class NoticeCategoryJpaEntityMapper {
 
-    public NoticeCategory toDomain(NoticeCategoryJpaEntity entity) {
+    private final NoticeFieldJpaEntityMapper fieldMapper;
+
+    public NoticeCategoryJpaEntityMapper(NoticeFieldJpaEntityMapper fieldMapper) {
+        this.fieldMapper = fieldMapper;
+    }
+
+    public NoticeCategory toDomain(
+            NoticeCategoryJpaEntity entity, List<NoticeFieldJpaEntity> fieldEntities) {
         if (entity.getId() == null) {
             throw new IllegalStateException("영속화된 엔티티의 ID는 null일 수 없습니다");
         }
@@ -22,13 +31,15 @@ public class NoticeCategoryJpaEntityMapper {
         var categoryName = NoticeCategoryName.of(entity.getNameKo(), entity.getNameEn());
         var categoryGroup = CategoryGroup.valueOf(entity.getTargetCategoryGroup());
 
+        List<NoticeField> fields = fieldEntities.stream().map(fieldMapper::toDomain).toList();
+
         return NoticeCategory.reconstitute(
                 id,
                 code,
                 categoryName,
                 categoryGroup,
                 entity.isActive(),
-                List.of(),
+                fields,
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());
     }

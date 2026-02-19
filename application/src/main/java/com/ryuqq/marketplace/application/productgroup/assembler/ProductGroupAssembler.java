@@ -8,11 +8,11 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
-import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupImageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductOptionMatrixResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionGroupResult;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.response.ProductGroupDescriptionResult;
+import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductGroupImageResult;
 import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;

@@ -63,12 +63,13 @@ class ProductErrorCodeTest {
             ProductErrorCode[] errorCodes = ProductErrorCode.values();
 
             // then
-            assertThat(errorCodes).hasSize(3);
+            assertThat(errorCodes).hasSize(4);
             assertThat(errorCodes)
                     .containsExactlyInAnyOrder(
                             ProductErrorCode.PRODUCT_NOT_FOUND,
                             ProductErrorCode.PRODUCT_INVALID_STATUS_TRANSITION,
-                            ProductErrorCode.PRODUCT_INVALID_PRICE);
+                            ProductErrorCode.PRODUCT_INVALID_PRICE,
+                            ProductErrorCode.PRODUCT_OWNERSHIP_VIOLATION);
         }
 
         @Test
@@ -80,7 +81,7 @@ class ProductErrorCodeTest {
             // then
             assertThat(errorCodes)
                     .extracting(ProductErrorCode::getCode)
-                    .containsExactlyInAnyOrder("PRD-001", "PRD-002", "PRD-003");
+                    .containsExactlyInAnyOrder("PRD-001", "PRD-002", "PRD-003", "PRD-004");
         }
     }
 }

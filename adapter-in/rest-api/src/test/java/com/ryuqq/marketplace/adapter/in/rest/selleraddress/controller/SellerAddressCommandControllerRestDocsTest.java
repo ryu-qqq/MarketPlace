@@ -76,7 +76,9 @@ class SellerAddressCommandControllerRestDocsTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.post(BASE_URL, SELLER_ID)
+                            RestDocumentationRequestBuilders.post(
+                                            BASE_URL + SellerAddressAdminEndpoints.SELLER,
+                                            SELLER_ID)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -136,7 +138,9 @@ class SellerAddressCommandControllerRestDocsTest {
             // when & then
             mockMvc.perform(
                             RestDocumentationRequestBuilders.put(
-                                            BASE_URL + SellerAddressAdminEndpoints.ID,
+                                            BASE_URL
+                                                    + SellerAddressAdminEndpoints.SELLER
+                                                    + SellerAddressAdminEndpoints.ID,
                                             SELLER_ID,
                                             ADDRESS_ID)
                                     .contentType(MediaType.APPLICATION_JSON)
@@ -188,6 +192,7 @@ class SellerAddressCommandControllerRestDocsTest {
             mockMvc.perform(
                             RestDocumentationRequestBuilders.patch(
                                     BASE_URL
+                                            + SellerAddressAdminEndpoints.SELLER
                                             + SellerAddressAdminEndpoints.ID
                                             + SellerAddressAdminEndpoints.STATUS,
                                     SELLER_ID,

@@ -23,6 +23,6 @@ public class ProductCommandManager {
 
     @Transactional
     public List<Long> persistAll(List<Product> products) {
-        return commandPort.persistAll(products);
+        return products.stream().map(commandPort::persist).toList();
     }
 }

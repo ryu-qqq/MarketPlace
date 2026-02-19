@@ -84,6 +84,72 @@ scheduler:
         # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
         timeout-seconds: 300
 
+    # ImageTransformOutbox 처리 스케줄러
+    image-transform-outbox:
+      # PENDING 처리
+      process-pending:
+        enabled: true
+        # Cron: 3분마다
+        cron: "0 */3 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 30
+        # 처리 지연 (생성 후 N초 경과한 건만 처리)
+        delay-seconds: 10
+
+      # PROCESSING 폴링
+      poll-processing:
+        enabled: true
+        # Cron: 2분마다
+        cron: "0 */2 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 30
+
+      # 타임아웃 복구
+      recover-timeout:
+        enabled: true
+        # Cron: 10분마다
+        cron: "0 */10 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 30
+        # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
+        timeout-seconds: 600
+
+    # DescriptionPublish 처리 스케줄러
+    description-publish:
+      enabled: true
+      # Cron: 5분마다
+      cron: "0 */5 * * * *"
+      timezone: Asia/Seoul
+      # 배치 크기
+      batch-size: 50
+
+    # ProductGroupInspection 처리 스케줄러
+    product-group-inspection:
+      # PENDING 처리
+      process-pending:
+        enabled: true
+        # Cron: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 20
+        # 처리 지연 (생성 후 N초 경과한 건만 처리)
+        delay-seconds: 60
+
+      # 타임아웃 복구
+      recover-timeout:
+        enabled: true
+        # Cron: 10분마다
+        cron: "0 */10 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 20
+        # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
+        timeout-seconds: 600
+
     # SellerAdminEmailOutbox 처리 스케줄러
     seller-admin-email-outbox:
       # PENDING 처리

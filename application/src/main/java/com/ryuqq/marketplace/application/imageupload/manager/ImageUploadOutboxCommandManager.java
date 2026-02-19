@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.imageupload.manager;
 
 import com.ryuqq.marketplace.application.imageupload.port.out.command.ImageUploadOutboxCommandPort;
 import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,5 +19,12 @@ public class ImageUploadOutboxCommandManager {
     @Transactional
     public Long persist(ImageUploadOutbox outbox) {
         return commandPort.persist(outbox);
+    }
+
+    @Transactional
+    public void persistAll(List<ImageUploadOutbox> outboxes) {
+        for (ImageUploadOutbox outbox : outboxes) {
+            commandPort.persist(outbox);
+        }
     }
 }

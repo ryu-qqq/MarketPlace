@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import com.ryuqq.marketplace.domain.notice.id.NoticeFieldId;
 import com.ryuqq.marketplace.domain.productnotice.ProductNoticeFixtures;
 import com.ryuqq.marketplace.domain.productnotice.id.ProductNoticeEntryId;
+import com.ryuqq.marketplace.domain.productnotice.id.ProductNoticeId;
 import com.ryuqq.marketplace.domain.productnotice.vo.NoticeFieldValue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -53,7 +54,8 @@ class ProductNoticeEntryTest {
             NoticeFieldValue value = NoticeFieldValue.of("복원된 값");
 
             // when
-            ProductNoticeEntry entry = ProductNoticeEntry.reconstitute(id, fieldId, value);
+            ProductNoticeEntry entry =
+                    ProductNoticeEntry.reconstitute(id, ProductNoticeId.of(1L), fieldId, value);
 
             // then
             assertThat(entry.id()).isEqualTo(id);

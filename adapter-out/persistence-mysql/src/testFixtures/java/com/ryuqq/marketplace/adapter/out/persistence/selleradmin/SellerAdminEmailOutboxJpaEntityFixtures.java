@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.selleradmin;
 
 import com.ryuqq.marketplace.adapter.out.persistence.selleradmin.entity.SellerAdminEmailOutboxJpaEntity;
 import java.time.Instant;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * SellerAdminEmailOutboxJpaEntity 테스트 Fixtures.
@@ -11,6 +12,8 @@ import java.time.Instant;
 public final class SellerAdminEmailOutboxJpaEntityFixtures {
 
     private SellerAdminEmailOutboxJpaEntityFixtures() {}
+
+    private static final AtomicLong SEQUENCE = new AtomicLong(1);
 
     // ===== 기본 상수 =====
     public static final Long DEFAULT_ID = 1L;
@@ -24,7 +27,14 @@ public final class SellerAdminEmailOutboxJpaEntityFixtures {
 
     private static String generateIdempotencyKey(Long sellerId, Instant createdAt) {
         long sellerIdValue = sellerId != null ? sellerId : 0L;
-        return IDEMPOTENCY_KEY_PREFIX + ":" + sellerIdValue + ":" + createdAt.toEpochMilli();
+        long seq = SEQUENCE.getAndIncrement();
+        return IDEMPOTENCY_KEY_PREFIX
+                + ":"
+                + sellerIdValue
+                + ":"
+                + createdAt.toEpochMilli()
+                + ":"
+                + seq;
     }
 
     // ===== Entity Fixtures =====
