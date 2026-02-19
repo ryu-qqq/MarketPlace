@@ -138,7 +138,8 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("옵션 그룹명"),
                                             fieldWithPath("optionGroups[].canonicalOptionGroupId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("표준 옵션 그룹 ID"),
+                                                    .description("표준 옵션 그룹 ID")
+                                                    .optional(),
                                             fieldWithPath("optionGroups[].optionValues")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("옵션 값 목록"),
@@ -149,7 +150,8 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath(
                                                             "optionGroups[].optionValues[].canonicalOptionValueId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("표준 옵션 값 ID"),
+                                                    .description("표준 옵션 값 ID")
+                                                    .optional(),
                                             fieldWithPath("optionGroups[].optionValues[].sortOrder")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),
@@ -187,7 +189,8 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("상세설명"),
                                             fieldWithPath("description.content")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("상세설명 내용 (HTML)"),
+                                                    .description("상세설명 내용 (HTML)")
+                                                    .optional(),
                                             fieldWithPath("notice")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("고시정보"),
@@ -293,7 +296,8 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath(
                                                             "items[].optionGroups[].canonicalOptionGroupId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("표준 옵션 그룹 ID"),
+                                                    .description("표준 옵션 그룹 ID")
+                                                    .optional(),
                                             fieldWithPath("items[].optionGroups[].optionValues")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("옵션 값 목록"),
@@ -304,7 +308,8 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath(
                                                             "items[].optionGroups[].optionValues[].canonicalOptionValueId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("표준 옵션 값 ID"),
+                                                    .description("표준 옵션 값 ID")
+                                                    .optional(),
                                             fieldWithPath(
                                                             "items[].optionGroups[].optionValues[].sortOrder")
                                                     .type(JsonFieldType.NUMBER)
@@ -343,7 +348,8 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("상세설명"),
                                             fieldWithPath("items[].description.content")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("상세설명 내용"),
+                                                    .description("상세설명 내용")
+                                                    .optional(),
                                             fieldWithPath("items[].notice")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("고시정보"),
@@ -464,14 +470,16 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("옵션 그룹명"),
                                             fieldWithPath("optionGroups[].canonicalOptionGroupId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("표준 옵션 그룹 ID"),
+                                                    .description("표준 옵션 그룹 ID")
+                                                    .optional(),
                                             fieldWithPath("optionGroups[].optionValues")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("옵션 값 목록"),
                                             fieldWithPath(
                                                             "optionGroups[].optionValues[].sellerOptionValueId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("셀러 옵션 값 ID (기존 값 수정 시)"),
+                                                    .description("셀러 옵션 값 ID (기존 값 수정 시)")
+                                                    .optional(),
                                             fieldWithPath(
                                                             "optionGroups[].optionValues[].optionValueName")
                                                     .type(JsonFieldType.STRING)
@@ -479,7 +487,8 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath(
                                                             "optionGroups[].optionValues[].canonicalOptionValueId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("표준 옵션 값 ID"),
+                                                    .description("표준 옵션 값 ID")
+                                                    .optional(),
                                             fieldWithPath("optionGroups[].optionValues[].sortOrder")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),
@@ -488,7 +497,8 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("상품(SKU) 목록 (최소 1개)"),
                                             fieldWithPath("products[].productId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("상품 ID (기존 상품 수정 시)"),
+                                                    .description("상품 ID (기존 상품 수정 시)")
+                                                    .optional(),
                                             fieldWithPath("products[].skuCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("SKU 코드"),
