@@ -39,4 +39,14 @@ public class SellerOptionValueCommandAdapter implements SellerOptionValueCommand
         List<SellerOptionValueJpaEntity> saved = repository.saveAll(entities);
         return saved.stream().map(SellerOptionValueJpaEntity::getId).toList();
     }
+
+    @Override
+    public List<Long> persistAllForGroup(Long sellerOptionGroupId, List<SellerOptionValue> values) {
+        List<SellerOptionValueJpaEntity> entities =
+                values.stream()
+                        .map(v -> mapper.toOptionValueEntity(v, sellerOptionGroupId))
+                        .toList();
+        List<SellerOptionValueJpaEntity> saved = repository.saveAll(entities);
+        return saved.stream().map(SellerOptionValueJpaEntity::getId).toList();
+    }
 }

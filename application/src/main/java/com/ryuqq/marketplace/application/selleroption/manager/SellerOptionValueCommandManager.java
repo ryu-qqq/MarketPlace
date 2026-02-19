@@ -25,4 +25,9 @@ public class SellerOptionValueCommandManager {
     public List<Long> persistAll(List<SellerOptionValue> values) {
         return commandPort.persistAll(values);
     }
+
+    @Transactional
+    public List<Long> persistAllForGroup(Long sellerOptionGroupId, List<SellerOptionValue> values) {
+        return commandPort.persistAllForGroup(sellerOptionGroupId, values);
+    }
 }

@@ -89,6 +89,20 @@ public class ProductGroupJpaEntityMapper {
                 value.deletionStatus().deletedAt());
     }
 
+    public SellerOptionValueJpaEntity toOptionValueEntity(
+            SellerOptionValue value, Long overrideGroupId) {
+        return SellerOptionValueJpaEntity.create(
+                value.idValue(),
+                overrideGroupId,
+                value.optionValueNameValue(),
+                value.canonicalOptionValueId() != null
+                        ? value.canonicalOptionValueId().value()
+                        : null,
+                value.sortOrder(),
+                value.isDeleted(),
+                value.deletionStatus().deletedAt());
+    }
+
     public ProductGroup toDomain(
             ProductGroupJpaEntity entity,
             List<ProductGroupImageJpaEntity> imageEntities,
