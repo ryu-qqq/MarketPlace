@@ -183,5 +183,5 @@ locals {
   sqs_scoring_queue_url      = data.aws_ssm_parameter.sqs_scoring_queue_url.value
   sqs_enhancement_queue_url  = data.aws_ssm_parameter.sqs_enhancement_queue_url.value
   sqs_verification_queue_url = data.aws_ssm_parameter.sqs_verification_queue_url.value
-  sqs_access_policy_arn      = data.aws_ssm_parameter.sqs_access_policy_arn.value
+  sqs_access_policy_arn      = nonsensitive(data.aws_ssm_parameter.sqs_access_policy_arn.value)
 }
