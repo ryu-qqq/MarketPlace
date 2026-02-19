@@ -175,7 +175,9 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("상품 그룹명"),
                                             fieldWithPath("data.content[].optionType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("옵션 유형 (NONE, SINGLE, COMBINATION, FREE_INPUT)"),
+                                                    .description(
+                                                            "옵션 유형 (NONE, SINGLE, COMBINATION,"
+                                                                    + " FREE_INPUT)"),
                                             fieldWithPath("data.content[].status")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
@@ -324,7 +326,9 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("상품 그룹명"),
                                             fieldWithPath("data.optionType")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("옵션 유형 (NONE, SINGLE, COMBINATION, FREE_INPUT)"),
+                                                    .description(
+                                                            "옵션 유형 (NONE, SINGLE, COMBINATION,"
+                                                                    + " FREE_INPUT)"),
                                             fieldWithPath("data.status")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
