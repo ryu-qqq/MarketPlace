@@ -91,7 +91,9 @@ class SellerQueryControllerRestDocsTest {
                                             parameterWithName("sellerId").description("셀러 ID")),
                                     responseFields(
                                             // Seller Info
-                                            fieldWithPath("data.seller.id").type(JsonFieldType.NUMBER).description("셀러 ID"),
+                                            fieldWithPath("data.seller.id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("셀러 ID"),
                                             fieldWithPath("data.seller.sellerName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("셀러명"),
@@ -141,7 +143,9 @@ class SellerQueryControllerRestDocsTest {
                                                     .description("사업장 상세주소"),
 
                                             // CS Info
-                                            fieldWithPath("data.csInfo.id").type(JsonFieldType.NUMBER).description("CS 정보 ID"),
+                                            fieldWithPath("data.csInfo.id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("CS 정보 ID"),
                                             fieldWithPath("data.csInfo.csPhone")
                                                     .type(JsonFieldType.STRING)
                                                     .description("CS 전화번호"),
@@ -226,8 +230,12 @@ class SellerQueryControllerRestDocsTest {
                                                     .description("수정일시"),
 
                                             // Common fields
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -299,8 +307,12 @@ class SellerQueryControllerRestDocsTest {
                                                     .description("페이지 크기")
                                                     .optional()),
                                     responseFields(
-                                            fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("셀러 목록"),
-                                            fieldWithPath("data.content[].id").type(JsonFieldType.NUMBER).description("셀러 ID"),
+                                            fieldWithPath("data.content[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("셀러 목록"),
+                                            fieldWithPath("data.content[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("셀러 ID"),
                                             fieldWithPath("data.content[].sellerName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("셀러명"),
@@ -322,18 +334,30 @@ class SellerQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].updatedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("수정일시"),
-                                            fieldWithPath("data.page").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                                            fieldWithPath("data.page")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재 페이지 번호"),
+                                            fieldWithPath("data.size")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("data.first")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("첫 페이지 여부"),
+                                            fieldWithPath("data.last")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
 
         @Test

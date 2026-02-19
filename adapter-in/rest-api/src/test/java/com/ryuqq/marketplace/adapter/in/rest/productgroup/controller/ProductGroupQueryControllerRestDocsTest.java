@@ -134,7 +134,9 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description("페이지 크기")
                                                     .optional()),
                                     responseFields(
-                                            fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("상품 그룹 목록"),
+                                            fieldWithPath("data.content[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("상품 그룹 목록"),
                                             fieldWithPath("data.content[].id")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("상품 그룹 ID"),
@@ -211,18 +213,30 @@ class ProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].updatedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("수정일시"),
-                                            fieldWithPath("data.page").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                                            fieldWithPath("data.page")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재 페이지 번호"),
+                                            fieldWithPath("data.size")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("data.first")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("첫 페이지 여부"),
+                                            fieldWithPath("data.last")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
 
         @Test
@@ -281,13 +295,27 @@ class ProductGroupQueryControllerRestDocsTest {
                                             parameterWithName("productGroupId")
                                                     .description("상품 그룹 ID")),
                                     responseFields(
-                                            fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("상품 그룹 ID"),
-                                            fieldWithPath("data.sellerId").type(JsonFieldType.NUMBER).description("셀러 ID"),
-                                            fieldWithPath("data.sellerName").type(JsonFieldType.STRING).description("셀러명"),
-                                            fieldWithPath("data.brandId").type(JsonFieldType.NUMBER).description("브랜드 ID"),
-                                            fieldWithPath("data.brandName").type(JsonFieldType.STRING).description("브랜드명"),
-                                            fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리 ID"),
-                                            fieldWithPath("data.categoryName").type(JsonFieldType.STRING).description("카테고리명"),
+                                            fieldWithPath("data.id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품 그룹 ID"),
+                                            fieldWithPath("data.sellerId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("셀러 ID"),
+                                            fieldWithPath("data.sellerName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("셀러명"),
+                                            fieldWithPath("data.brandId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("브랜드 ID"),
+                                            fieldWithPath("data.brandName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("브랜드명"),
+                                            fieldWithPath("data.categoryId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("카테고리 ID"),
+                                            fieldWithPath("data.categoryName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("카테고리명"),
                                             fieldWithPath("data.categoryDisplayPath")
                                                     .type(JsonFieldType.STRING)
                                                     .description("카테고리 전체 경로"),
@@ -302,10 +330,18 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .description(
                                                             "상태 (DRAFT, ACTIVE, INACTIVE,"
                                                                     + " SOLDOUT, DELETED)"),
-                                            fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("등록일시"),
-                                            fieldWithPath("data.updatedAt").type(JsonFieldType.STRING).description("수정일시"),
-                                            fieldWithPath("data.images[]").type(JsonFieldType.ARRAY).description("이미지 목록"),
-                                            fieldWithPath("data.images[].id").type(JsonFieldType.NUMBER).description("이미지 ID"),
+                                            fieldWithPath("data.createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("등록일시"),
+                                            fieldWithPath("data.updatedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수정일시"),
+                                            fieldWithPath("data.images[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("이미지 목록"),
+                                            fieldWithPath("data.images[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("이미지 ID"),
                                             fieldWithPath("data.images[].originUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("원본 이미지 URL"),
@@ -651,8 +687,12 @@ class ProductGroupQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("수정일시")
                                                     .optional(),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 }
