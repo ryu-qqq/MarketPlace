@@ -147,18 +147,30 @@ class NoticeCategoryQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].createdAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("생성일시"),
-                                            fieldWithPath("data.page").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                                            fieldWithPath("data.page")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재 페이지 번호"),
+                                            fieldWithPath("data.size")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("data.first")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("첫 페이지 여부"),
+                                            fieldWithPath("data.last")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
 
         @Test
@@ -240,18 +252,30 @@ class NoticeCategoryQueryControllerRestDocsTest {
                                             parameterWithName("categoryGroup")
                                                     .description("카테고리 그룹 (예: CLOTHING)")),
                                     responseFields(
-                                            fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("카테고리 ID"),
-                                            fieldWithPath("data.code").type(JsonFieldType.STRING).description("카테고리 코드"),
-                                            fieldWithPath("data.nameKo").type(JsonFieldType.STRING).description("한글명"),
-                                            fieldWithPath("data.nameEn").type(JsonFieldType.STRING).description("영문명"),
+                                            fieldWithPath("data.id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("카테고리 ID"),
+                                            fieldWithPath("data.code")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("카테고리 코드"),
+                                            fieldWithPath("data.nameKo")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("한글명"),
+                                            fieldWithPath("data.nameEn")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("영문명"),
                                             fieldWithPath("data.targetCategoryGroup")
                                                     .type(JsonFieldType.STRING)
                                                     .description("대상 카테고리 그룹"),
-                                            fieldWithPath("data.active").type(JsonFieldType.BOOLEAN).description("활성 상태"),
+                                            fieldWithPath("data.active")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("활성 상태"),
                                             fieldWithPath("data.fields[]")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("고시정보 필드 목록"),
-                                            fieldWithPath("data.fields[].id").type(JsonFieldType.NUMBER).description("필드 ID"),
+                                            fieldWithPath("data.fields[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("필드 ID"),
                                             fieldWithPath("data.fields[].fieldCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("필드 코드"),
@@ -264,9 +288,15 @@ class NoticeCategoryQueryControllerRestDocsTest {
                                             fieldWithPath("data.fields[].sortOrder")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),
-                                            fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성일시"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("data.createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("생성일시"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
 
         @Test

@@ -91,20 +91,36 @@ class AuthQueryControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     responseFields(
-                                            fieldWithPath("data.userId").type(JsonFieldType.STRING).description("사용자 ID"),
-                                            fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
-                                            fieldWithPath("data.name").type(JsonFieldType.STRING).description("사용자 이름"),
-                                            fieldWithPath("data.tenantId").type(JsonFieldType.STRING).description("테넌트 ID"),
-                                            fieldWithPath("data.tenantName").type(JsonFieldType.STRING).description("테넌트 이름"),
+                                            fieldWithPath("data.userId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("사용자 ID"),
+                                            fieldWithPath("data.email")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("이메일"),
+                                            fieldWithPath("data.name")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("사용자 이름"),
+                                            fieldWithPath("data.tenantId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("테넌트 ID"),
+                                            fieldWithPath("data.tenantName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("테넌트 이름"),
                                             fieldWithPath("data.organizationId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("조직 ID"),
                                             fieldWithPath("data.organizationName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("조직 이름"),
-                                            fieldWithPath("data.roles[]").type(JsonFieldType.ARRAY).description("역할 목록"),
-                                            fieldWithPath("data.roles[].id").type(JsonFieldType.STRING).description("역할 ID"),
-                                            fieldWithPath("data.roles[].name").type(JsonFieldType.STRING).description("역할 이름"),
+                                            fieldWithPath("data.roles[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("역할 목록"),
+                                            fieldWithPath("data.roles[].id")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("역할 ID"),
+                                            fieldWithPath("data.roles[].name")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("역할 이름"),
                                             fieldWithPath("data.permissions[]")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("권한 목록"),
@@ -120,8 +136,12 @@ class AuthQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("핸드폰 번호")
                                                     .optional(),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 }

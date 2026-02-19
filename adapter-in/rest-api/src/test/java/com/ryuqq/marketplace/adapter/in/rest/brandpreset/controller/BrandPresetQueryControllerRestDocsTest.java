@@ -162,18 +162,30 @@ class BrandPresetQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].createdAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("등록일"),
-                                            fieldWithPath("data.page").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                                            fieldWithPath("data.page")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재 페이지 번호"),
+                                            fieldWithPath("data.size")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("data.first")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("첫 페이지 여부"),
+                                            fieldWithPath("data.last")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
 
         @Test
@@ -231,17 +243,27 @@ class BrandPresetQueryControllerRestDocsTest {
                                             parameterWithName("brandPresetId")
                                                     .description("브랜드 프리셋 ID")),
                                     responseFields(
-                                            fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("프리셋 ID"),
-                                            fieldWithPath("data.shopId").type(JsonFieldType.NUMBER).description("Shop ID"),
-                                            fieldWithPath("data.shopName").type(JsonFieldType.STRING).description("쇼핑몰명"),
+                                            fieldWithPath("data.id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("프리셋 ID"),
+                                            fieldWithPath("data.shopId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("Shop ID"),
+                                            fieldWithPath("data.shopName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("쇼핑몰명"),
                                             fieldWithPath("data.salesChannelId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("판매채널 ID"),
                                             fieldWithPath("data.salesChannelName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("판매채널명"),
-                                            fieldWithPath("data.accountId").type(JsonFieldType.STRING).description("계정 ID"),
-                                            fieldWithPath("data.presetName").type(JsonFieldType.STRING).description("프리셋 이름"),
+                                            fieldWithPath("data.accountId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("계정 ID"),
+                                            fieldWithPath("data.presetName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("프리셋 이름"),
                                             fieldWithPath("data.mappingBrand")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("매핑된 판매채널 브랜드"),
@@ -260,10 +282,18 @@ class BrandPresetQueryControllerRestDocsTest {
                                             fieldWithPath("data.internalBrands[].brandName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("브랜드명"),
-                                            fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("등록일"),
-                                            fieldWithPath("data.updatedAt").type(JsonFieldType.STRING).description("수정일"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("data.createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("등록일"),
+                                            fieldWithPath("data.updatedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수정일"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 

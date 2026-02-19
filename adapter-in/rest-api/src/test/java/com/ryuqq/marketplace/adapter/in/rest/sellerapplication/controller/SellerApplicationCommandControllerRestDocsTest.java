@@ -85,7 +85,9 @@ class SellerApplicationCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(
-                                            fieldWithPath("sellerInfo").type(JsonFieldType.OBJECT).description("셀러 기본 정보"),
+                                            fieldWithPath("sellerInfo")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("셀러 기본 정보"),
                                             fieldWithPath("sellerInfo.sellerName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("셀러명"),
@@ -98,7 +100,9 @@ class SellerApplicationCommandControllerRestDocsTest {
                                             fieldWithPath("sellerInfo.description")
                                                     .type(JsonFieldType.STRING)
                                                     .description("설명"),
-                                            fieldWithPath("businessInfo").type(JsonFieldType.OBJECT).description("사업자 정보"),
+                                            fieldWithPath("businessInfo")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("사업자 정보"),
                                             fieldWithPath("businessInfo.registrationNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("사업자등록번호"),
@@ -123,7 +127,9 @@ class SellerApplicationCommandControllerRestDocsTest {
                                             fieldWithPath("businessInfo.businessAddress.line2")
                                                     .type(JsonFieldType.STRING)
                                                     .description("상세주소"),
-                                            fieldWithPath("csContact").type(JsonFieldType.OBJECT).description("CS 연락처"),
+                                            fieldWithPath("csContact")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("CS 연락처"),
                                             fieldWithPath("csContact.phone")
                                                     .type(JsonFieldType.STRING)
                                                     .description("전화번호"),
@@ -149,7 +155,9 @@ class SellerApplicationCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("담당자 이메일")
                                                     .optional(),
-                                            fieldWithPath("settlementInfo").type(JsonFieldType.OBJECT).description("정산 정보"),
+                                            fieldWithPath("settlementInfo")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("정산 정보"),
                                             fieldWithPath("settlementInfo.bankCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("은행 코드"),
@@ -174,8 +182,12 @@ class SellerApplicationCommandControllerRestDocsTest {
                                             fieldWithPath("data.applicationId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("생성된 신청 ID"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -209,8 +221,12 @@ class SellerApplicationCommandControllerRestDocsTest {
                                             fieldWithPath("data.sellerId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("생성된 셀러 ID"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 

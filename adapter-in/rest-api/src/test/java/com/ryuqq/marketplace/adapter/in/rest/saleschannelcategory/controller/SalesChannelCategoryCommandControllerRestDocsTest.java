@@ -117,8 +117,12 @@ class SalesChannelCategoryCommandControllerRestDocsTest {
                                             fieldWithPath("data.categoryIds")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("생성된 카테고리 ID 목록"),
-                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
-                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 }
