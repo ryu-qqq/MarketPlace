@@ -5,15 +5,13 @@ import java.util.List;
 /**
  * 상품(SKU) 일괄 등록 Command.
  *
- * <p>ProductGroup 등록/수정 시 Products를 함께 생성할 때 사용합니다. allOptionValueIds는 SellerOptionGroup persist 후
- * 확정된 값의 플랫 리스트이며, 각 ProductData의 optionValueIndices가 이 리스트의 인덱스를 참조합니다.
+ * <p>ProductGroup 등록/수정 시 Products를 함께 생성할 때 사용합니다. 각 ProductData의 selectedOptions가 이름 기반으로 옵션을
+ * 지정하며, Coordinator에서 실제 SellerOptionValueId로 resolve합니다.
  *
  * @param productGroupId 상품 그룹 ID
  * @param products 상품 데이터 목록
- * @param allOptionValueIds 전체 옵션 값 ID 목록 (플랫 리스트)
  */
-public record RegisterProductsCommand(
-        long productGroupId, List<ProductData> products, List<Long> allOptionValueIds) {
+public record RegisterProductsCommand(long productGroupId, List<ProductData> products) {
 
     /**
      * 개별 상품 생성 데이터.
@@ -25,7 +23,7 @@ public record RegisterProductsCommand(
      * @param currentPrice 판매가
      * @param stockQuantity 재고 수량
      * @param sortOrder 정렬 순서
-     * @param optionValueIndices allOptionValueIds에 대한 인덱스 목록
+     * @param selectedOptions 이름 기반 옵션 선택 목록
      */
     public record ProductData(
             String skuCode,
@@ -33,5 +31,5 @@ public record RegisterProductsCommand(
             int currentPrice,
             int stockQuantity,
             int sortOrder,
-            List<Integer> optionValueIndices) {}
+            List<SelectedOption> selectedOptions) {}
 }

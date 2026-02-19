@@ -212,28 +212,72 @@ class ProductCommandE2ETest extends E2ETestBase {
                                 "currentPrice", 25000,
                                 "stockQuantity", 100,
                                 "sortOrder", 0,
-                                "optionIndices", List.of(0, 0)),
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "빨강"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "M"))),
                         Map.of(
                                 "skuCode", "SKU-RED-L",
                                 "regularPrice", 30000,
                                 "currentPrice", 25000,
                                 "stockQuantity", 80,
                                 "sortOrder", 1,
-                                "optionIndices", List.of(0, 1)),
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "빨강"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "L"))),
                         Map.of(
                                 "skuCode", "SKU-BLUE-M",
                                 "regularPrice", 30000,
                                 "currentPrice", 25000,
                                 "stockQuantity", 90,
                                 "sortOrder", 2,
-                                "optionIndices", List.of(1, 0)),
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "파랑"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "M"))),
                         Map.of(
                                 "skuCode", "SKU-BLUE-L",
                                 "regularPrice", 30000,
                                 "currentPrice", 25000,
                                 "stockQuantity", 70,
                                 "sortOrder", 3,
-                                "optionIndices", List.of(1, 1))));
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "파랑"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "L")))));
 
         request.put("description", Map.of("content", "<p>상세 설명</p>"));
 
@@ -441,33 +485,29 @@ class ProductCommandE2ETest extends E2ETestBase {
                                     })
                             .toList();
 
-            // optionValueId → sortOrder 매핑 구성
-            Map<Object, Integer> valueSortOrderMap = new HashMap<>();
-            for (Map<String, Object> og : optionGroups) {
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> ovs = (List<Map<String, Object>>) og.get("optionValues");
-                for (Map<String, Object> ov : ovs) {
-                    valueSortOrderMap.put(ov.get("id"), ((Number) ov.get("sortOrder")).intValue());
-                }
-            }
-
-            // 상품 구성 (가격/재고 변경)
+            // 상품 구성 (가격/재고 변경) - 이름 기반 옵션 선택
             List<Map<String, Object>> productsReq =
                     products.stream()
                             .map(
                                     p -> {
                                         @SuppressWarnings("unchecked")
-                                        List<Integer> optionIndices =
+                                        List<Map<String, Object>> selectedOptions =
                                                 ((List<Map<String, Object>>) p.get("options"))
                                                         .stream()
                                                                 .map(
                                                                         o ->
-                                                                                valueSortOrderMap
-                                                                                        .getOrDefault(
-                                                                                                o
-                                                                                                        .get(
-                                                                                                                "sellerOptionValueId"),
-                                                                                                0))
+                                                                                Map
+                                                                                        .<String,
+                                                                                                Object>
+                                                                                                of(
+                                                                                                        "optionGroupName",
+                                                                                                        o
+                                                                                                                .get(
+                                                                                                                        "optionGroupName"),
+                                                                                                        "optionValueName",
+                                                                                                        o
+                                                                                                                .get(
+                                                                                                                        "optionValueName")))
                                                                 .toList();
                                         return Map.<String, Object>of(
                                                 "productId",
@@ -482,8 +522,8 @@ class ProductCommandE2ETest extends E2ETestBase {
                                                 999,
                                                 "sortOrder",
                                                 p.get("sortOrder"),
-                                                "optionIndices",
-                                                optionIndices);
+                                                "selectedOptions",
+                                                selectedOptions);
                                     })
                             .toList();
 
@@ -558,7 +598,13 @@ class ProductCommandE2ETest extends E2ETestBase {
                             "currentPrice", 25000,
                             "stockQuantity", 100,
                             "sortOrder", 0,
-                            "optionIndices", List.of(0)));
+                            "selectedOptions",
+                                    List.of(
+                                            Map.of(
+                                                    "optionGroupName",
+                                                    "색상",
+                                                    "optionValueName",
+                                                    "빨강"))));
             productsReq.add(
                     Map.of(
                             "productId", productIds.get(1),
@@ -567,7 +613,13 @@ class ProductCommandE2ETest extends E2ETestBase {
                             "currentPrice", 25000,
                             "stockQuantity", 80,
                             "sortOrder", 1,
-                            "optionIndices", List.of(1)));
+                            "selectedOptions",
+                                    List.of(
+                                            Map.of(
+                                                    "optionGroupName",
+                                                    "색상",
+                                                    "optionValueName",
+                                                    "파랑"))));
             productsReq.add(
                     Map.of(
                             "skuCode", "SKU-GREEN",
@@ -575,7 +627,13 @@ class ProductCommandE2ETest extends E2ETestBase {
                             "currentPrice", 30000,
                             "stockQuantity", 50,
                             "sortOrder", 2,
-                            "optionIndices", List.of(2)));
+                            "selectedOptions",
+                                    List.of(
+                                            Map.of(
+                                                    "optionGroupName",
+                                                    "색상",
+                                                    "optionValueName",
+                                                    "초록"))));
 
             given().spec(givenSuperAdmin())
                     .body(

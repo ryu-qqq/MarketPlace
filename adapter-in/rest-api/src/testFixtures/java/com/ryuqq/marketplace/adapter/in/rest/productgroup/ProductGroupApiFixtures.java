@@ -77,9 +77,23 @@ public final class ProductGroupApiFixtures {
         List<RegisterProductGroupApiRequest.ProductApiRequest> products =
                 List.of(
                         new RegisterProductGroupApiRequest.ProductApiRequest(
-                                "SKU-001", 30000, 25000, 100, 1, List.of(0)),
+                                "SKU-001",
+                                30000,
+                                25000,
+                                100,
+                                1,
+                                List.of(
+                                        new RegisterProductGroupApiRequest.SelectedOptionApiRequest(
+                                                "색상", "블랙"))),
                         new RegisterProductGroupApiRequest.ProductApiRequest(
-                                "SKU-002", 30000, 25000, 50, 2, List.of(1)));
+                                "SKU-002",
+                                30000,
+                                25000,
+                                50,
+                                2,
+                                List.of(
+                                        new RegisterProductGroupApiRequest.SelectedOptionApiRequest(
+                                                "색상", "화이트"))));
 
         RegisterProductGroupApiRequest.DescriptionApiRequest description =
                 new RegisterProductGroupApiRequest.DescriptionApiRequest("<p>상품 상세 설명</p>");
@@ -128,7 +142,15 @@ public final class ProductGroupApiFixtures {
         List<UpdateProductGroupFullApiRequest.ProductApiRequest> products =
                 List.of(
                         new UpdateProductGroupFullApiRequest.ProductApiRequest(
-                                1L, "SKU-001", 35000, 30000, 80, 1, List.of(0)));
+                                1L,
+                                "SKU-001",
+                                35000,
+                                30000,
+                                80,
+                                1,
+                                List.of(
+                                        new UpdateProductGroupFullApiRequest
+                                                .SelectedOptionApiRequest("색상", "블랙"))));
 
         UpdateProductGroupFullApiRequest.DescriptionApiRequest description =
                 new UpdateProductGroupFullApiRequest.DescriptionApiRequest("<p>수정된 상품 상세 설명</p>");

@@ -268,7 +268,11 @@ class ProductCommandApiMapperTest {
             assertThat(firstProduct.currentPrice()).isEqualTo(90000);
             assertThat(firstProduct.stockQuantity()).isEqualTo(50);
             assertThat(firstProduct.sortOrder()).isEqualTo(1);
-            assertThat(firstProduct.optionValueIndices()).containsExactly(0, 0);
+            assertThat(firstProduct.selectedOptions()).hasSize(2);
+            assertThat(firstProduct.selectedOptions().get(0).optionGroupName()).isEqualTo("색상");
+            assertThat(firstProduct.selectedOptions().get(0).optionValueName()).isEqualTo("블랙");
+            assertThat(firstProduct.selectedOptions().get(1).optionGroupName()).isEqualTo("사이즈");
+            assertThat(firstProduct.selectedOptions().get(1).optionValueName()).isEqualTo("S");
         }
 
         @Test

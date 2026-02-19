@@ -8,7 +8,6 @@ import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSeller
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroupinspection.aggregate.ProductGroupInspectionOutbox;
 import java.time.Instant;
-import java.util.List;
 
 /**
  * 상품 그룹 등록 번들.
@@ -54,17 +53,12 @@ public record ProductGroupRegistrationBundle(
     }
 
     /**
-     * Product Command에 productGroupId와 allOptionValueIds를 바인딩합니다.
-     *
-     * <p>allOptionValueIds는 SellerOption persist 이후에 확정되므로 bindAll과 별도로 바인딩합니다.
+     * Product Command에 productGroupId를 바인딩합니다.
      *
      * @param productGroupId 확정된 상품 그룹 ID
-     * @param allOptionValueIds persist 후 확정된 모든 SellerOptionValueId (플랫 리스트)
-     * @return productGroupId + allOptionValueIds가 바인딩된 RegisterProductsCommand
+     * @return productGroupId가 바인딩된 RegisterProductsCommand
      */
-    public RegisterProductsCommand bindProductCommand(
-            long productGroupId, List<Long> allOptionValueIds) {
-        return new RegisterProductsCommand(
-                productGroupId, productCommand.products(), allOptionValueIds);
+    public RegisterProductsCommand bindProductCommand(long productGroupId) {
+        return new RegisterProductsCommand(productGroupId, productCommand.products());
     }
 }

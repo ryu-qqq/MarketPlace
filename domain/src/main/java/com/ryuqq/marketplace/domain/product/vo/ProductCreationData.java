@@ -17,8 +17,8 @@ import java.util.List;
  *
  * <p>salePrice와 discountRate는 도메인 내부에서 자동 계산됩니다.
  *
- * <p>optionValueIndices는 allOptionValues 플랫 리스트에 대한 인덱스이며, toProduct 호출 시 실제 SellerOptionValueId로
- * 변환됩니다.
+ * <p>resolvedOptionValueIds는 이름 기반 resolve가 완료된 SellerOptionValueId 목록이며, toProduct 호출 시 직접
+ * ProductOptionMapping을 생성합니다.
  */
 public record ProductCreationData(
         SkuCode skuCode,
@@ -26,27 +26,20 @@ public record ProductCreationData(
         Money currentPrice,
         int stockQuantity,
         int sortOrder,
-        List<Integer> optionValueIndices) {
+        List<SellerOptionValueId> resolvedOptionValueIds) {
 
     /**
      * Product 도메인 객체 생성.
      *
      * @param productGroupId 확정된 ProductGroupId
-     * @param allOptionValueIds persist 후 확정된 모든 SellerOptionValueId (그룹 순서대로 플랫)
      * @param now 생성 시각
      * @return Product 도메인 객체
      */
-    public Product toProduct(
-            ProductGroupId productGroupId,
-            List<SellerOptionValueId> allOptionValueIds,
-            Instant now) {
+    public Product toProduct(ProductGroupId productGroupId, Instant now) {
         ProductId tempProductId = ProductId.forNew();
         List<ProductOptionMapping> optionMappings =
-                optionValueIndices.stream()
-                        .map(
-                                index ->
-                                        ProductOptionMapping.forNew(
-                                                tempProductId, allOptionValueIds.get(index)))
+                resolvedOptionValueIds.stream()
+                        .map(valueId -> ProductOptionMapping.forNew(tempProductId, valueId))
                         .toList();
 
         return Product.forNew(

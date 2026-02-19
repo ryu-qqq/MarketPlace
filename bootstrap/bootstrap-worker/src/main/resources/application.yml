@@ -21,6 +21,8 @@ spring:
       - optional:classpath:sqs-client-${spring.profiles.active:local}.yml
       - classpath:sqs-consumer.yml
       - optional:classpath:sqs-consumer-${spring.profiles.active:local}.yml
+      - classpath:fileflow.yml
+      - optional:classpath:fileflow-${spring.profiles.active:local}.yml
 
 # ========================================
 # Management & Actuator

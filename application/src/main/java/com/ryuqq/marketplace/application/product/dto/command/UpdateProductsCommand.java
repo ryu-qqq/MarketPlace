@@ -30,7 +30,7 @@ public record UpdateProductsCommand(
      * @param currentPrice 판매가
      * @param stockQuantity 재고 수량
      * @param sortOrder 정렬 순서
-     * @param optionValueIndices orderedActiveValueIds에 대한 인덱스 목록
+     * @param selectedOptions 이름 기반 옵션 선택 목록
      */
     public record ProductData(
             Long productId,
@@ -39,10 +39,10 @@ public record UpdateProductsCommand(
             int currentPrice,
             int stockQuantity,
             int sortOrder,
-            List<Integer> optionValueIndices) {
+            List<SelectedOption> selectedOptions) {
 
         public ProductData {
-            optionValueIndices = List.copyOf(optionValueIndices);
+            selectedOptions = List.copyOf(selectedOptions);
         }
     }
 
