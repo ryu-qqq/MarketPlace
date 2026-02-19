@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.selleroption.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -44,7 +45,8 @@ class SellerOptionPersistFacadeTest {
             List<Long> valueIds = List.of(10L);
 
             given(groupCommandManager.persist(group)).willReturn(expectedGroupId);
-            given(valueCommandManager.persistAll(anyList())).willReturn(valueIds);
+            given(valueCommandManager.persistAllForGroup(eq(expectedGroupId), anyList()))
+                    .willReturn(valueIds);
 
             // when
             List<SellerOptionValueId> result = sut.persistAll(groups);
@@ -53,7 +55,7 @@ class SellerOptionPersistFacadeTest {
             assertThat(result).hasSize(1);
             assertThat(result.get(0).value()).isEqualTo(10L);
             then(groupCommandManager).should().persist(group);
-            then(valueCommandManager).should().persistAll(anyList());
+            then(valueCommandManager).should().persistAllForGroup(eq(expectedGroupId), anyList());
         }
 
         @Test
