@@ -34,6 +34,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -120,40 +121,69 @@ class CanonicalOptionGroupQueryControllerRestDocsTest {
                                                     .description("페이지 크기")
                                                     .optional()),
                                     responseFields(
-                                            fieldWithPath("data.content[]").description("옵션그룹 목록"),
-                                            fieldWithPath("data.content[].id").description("그룹 ID"),
+                                            fieldWithPath("data.content[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("옵션그룹 목록"),
+                                            fieldWithPath("data.content[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("그룹 ID"),
                                             fieldWithPath("data.content[].code")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("그룹 코드"),
                                             fieldWithPath("data.content[].nameKo")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("한글명"),
                                             fieldWithPath("data.content[].nameEn")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("영문명"),
                                             fieldWithPath("data.content[].active")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("활성 상태"),
                                             fieldWithPath("data.content[].values[]")
+                                                    .type(JsonFieldType.ARRAY)
                                                     .description("옵션 값 목록"),
                                             fieldWithPath("data.content[].values[].id")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("옵션 값 ID"),
                                             fieldWithPath("data.content[].values[].code")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("옵션 값 코드"),
                                             fieldWithPath("data.content[].values[].nameKo")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("한글명"),
                                             fieldWithPath("data.content[].values[].nameEn")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("영문명"),
                                             fieldWithPath("data.content[].values[].sortOrder")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),
                                             fieldWithPath("data.content[].createdAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("생성일시"),
-                                            fieldWithPath("data.page").description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").description("페이지 크기"),
+                                            fieldWithPath("data.page")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재 페이지 번호"),
+                                            fieldWithPath("data.size")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data.first")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("첫 페이지 여부"),
+                                            fieldWithPath("data.last")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
 
         @Test
@@ -213,25 +243,48 @@ class CanonicalOptionGroupQueryControllerRestDocsTest {
                                             parameterWithName("canonicalOptionGroupId")
                                                     .description("정규 옵션그룹 ID")),
                                     responseFields(
-                                            fieldWithPath("data.id").description("그룹 ID"),
-                                            fieldWithPath("data.code").description("그룹 코드"),
-                                            fieldWithPath("data.nameKo").description("한글명"),
-                                            fieldWithPath("data.nameEn").description("영문명"),
-                                            fieldWithPath("data.active").description("활성 상태"),
-                                            fieldWithPath("data.values[]").description("옵션 값 목록"),
+                                            fieldWithPath("data.id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("그룹 ID"),
+                                            fieldWithPath("data.code")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("그룹 코드"),
+                                            fieldWithPath("data.nameKo")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("한글명"),
+                                            fieldWithPath("data.nameEn")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("영문명"),
+                                            fieldWithPath("data.active")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("활성 상태"),
+                                            fieldWithPath("data.values[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("옵션 값 목록"),
                                             fieldWithPath("data.values[].id")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("옵션 값 ID"),
                                             fieldWithPath("data.values[].code")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("옵션 값 코드"),
                                             fieldWithPath("data.values[].nameKo")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("한글명"),
                                             fieldWithPath("data.values[].nameEn")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("영문명"),
                                             fieldWithPath("data.values[].sortOrder")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),
-                                            fieldWithPath("data.createdAt").description("생성일시"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data.createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("생성일시"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 }

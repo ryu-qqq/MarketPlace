@@ -101,8 +101,12 @@ class CommonCodeTypeCommandControllerRestDocsTest {
                                             fieldWithPath("data")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("생성된 공통 코드 타입 ID"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -147,9 +151,16 @@ class CommonCodeTypeCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("표시 순서")),
                                     responseFields(
-                                            fieldWithPath("data").description("응답 데이터").optional(),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("응답 데이터")
+                                                    .optional(),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -188,9 +199,16 @@ class CommonCodeTypeCommandControllerRestDocsTest {
                                                     .description(
                                                             "활성화 여부 (true: 활성화, false: 비활성화)")),
                                     responseFields(
-                                            fieldWithPath("data").description("응답 데이터").optional(),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("응답 데이터")
+                                                    .optional(),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 }

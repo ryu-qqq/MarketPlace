@@ -68,3 +68,21 @@ include::{snippets}/category-preset/search/http-response.adoc[]
 
 ==== Response Fields
 include::{snippets}/category-preset/search/response-fields.adoc[]
+
+
+[[category-preset-get-detail]]
+=== 카테고리 프리셋 상세 조회
+
+인증 필요 | 필요 권한: `category-preset:read`
+
+==== HTTP Request
+include::{snippets}/category-preset/get-detail/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/category-preset/get-detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/category-preset/get-detail/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/category-preset/get-detail/response-fields.adoc[]
