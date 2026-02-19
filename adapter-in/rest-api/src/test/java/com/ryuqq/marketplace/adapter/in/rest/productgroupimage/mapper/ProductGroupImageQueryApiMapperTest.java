@@ -60,7 +60,7 @@ class ProductGroupImageQueryApiMapperTest {
             // then
             assertThat(response.images()).hasSize(2);
             assertThat(response.images().get(0).imageId()).isEqualTo(100L);
-            assertThat(response.images().get(0).imageType()).isEqualTo("MAIN");
+            assertThat(response.images().get(0).imageType()).isEqualTo("THUMBNAIL");
             assertThat(response.images().get(0).outboxStatus()).isEqualTo("COMPLETED");
         }
 

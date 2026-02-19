@@ -63,7 +63,7 @@ class ProductGroupCommandApiMapperTest {
 
             // then
             assertThat(command.images()).hasSize(2);
-            assertThat(command.images().get(0).imageType()).isEqualTo("MAIN");
+            assertThat(command.images().get(0).imageType()).isEqualTo("THUMBNAIL");
             assertThat(command.images().get(0).originUrl())
                     .isEqualTo("https://origin.example.com/img1.jpg");
             assertThat(command.images().get(0).sortOrder()).isEqualTo(1);
@@ -199,7 +199,7 @@ class ProductGroupCommandApiMapperTest {
 
             // then
             assertThat(command.images()).hasSize(1);
-            assertThat(command.images().get(0).imageType()).isEqualTo("MAIN");
+            assertThat(command.images().get(0).imageType()).isEqualTo("THUMBNAIL");
             assertThat(command.images().get(0).originUrl())
                     .isEqualTo("https://origin.example.com/updated-img1.jpg");
         }
