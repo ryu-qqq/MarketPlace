@@ -68,3 +68,21 @@ include::{snippets}/brand-preset/search/http-response.adoc[]
 
 ==== Response Fields
 include::{snippets}/brand-preset/search/response-fields.adoc[]
+
+
+[[brand-preset-get-detail]]
+=== 브랜드 프리셋 상세 조회
+
+인증 필요 | 필요 권한: `brand-preset:read`
+
+==== HTTP Request
+include::{snippets}/brand-preset/get-detail/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/brand-preset/get-detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/brand-preset/get-detail/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/brand-preset/get-detail/response-fields.adoc[]

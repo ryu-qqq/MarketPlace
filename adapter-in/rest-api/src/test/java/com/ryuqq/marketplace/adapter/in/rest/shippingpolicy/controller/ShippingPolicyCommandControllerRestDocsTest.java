@@ -126,6 +126,7 @@ class ShippingPolicyCommandControllerRestDocsTest {
                                                     .description("교환 배송비 (원)")
                                                     .optional(),
                                             fieldWithPath("leadTime")
+                                                    .type(JsonFieldType.OBJECT)
                                                     .description("발송 소요일 정보")
                                                     .optional(),
                                             fieldWithPath("leadTime.minDays")
@@ -144,8 +145,8 @@ class ShippingPolicyCommandControllerRestDocsTest {
                                             fieldWithPath("data.policyId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("생성된 정책 ID"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
     }
 
@@ -220,6 +221,7 @@ class ShippingPolicyCommandControllerRestDocsTest {
                                                     .description("교환 배송비 (원)")
                                                     .optional(),
                                             fieldWithPath("leadTime")
+                                                    .type(JsonFieldType.OBJECT)
                                                     .description("발송 소요일 정보")
                                                     .optional(),
                                             fieldWithPath("leadTime.minDays")

@@ -123,8 +123,8 @@ class AuthCommandControllerRestDocsTest {
                                             fieldWithPath("data.expiresIn")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("만료 시간 (초)"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
     }
 
@@ -156,10 +156,11 @@ class AuthCommandControllerRestDocsTest {
                                         preprocessResponse(prettyPrint()),
                                         responseFields(
                                                 fieldWithPath("data")
+                                                        .type(JsonFieldType.OBJECT)
                                                         .description("응답 데이터")
                                                         .optional(),
-                                                fieldWithPath("timestamp").description("응답 시간"),
-                                                fieldWithPath("requestId").description("요청 ID"))));
+                                                fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                                fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
             } finally {
                 UserContextHolder.clearContext();
             }

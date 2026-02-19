@@ -116,6 +116,7 @@ class ProductGroupDescriptionQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("업로드 실패 이미지 수"),
                                             fieldWithPath("data.images[]")
+                                                    .type(JsonFieldType.ARRAY)
                                                     .description("이미지 업로드 상세 목록"),
                                             fieldWithPath("data.images[].imageId")
                                                     .type(JsonFieldType.NUMBER)
@@ -139,8 +140,8 @@ class ProductGroupDescriptionQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("오류 메시지")
                                                     .optional(),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
     }
 }
