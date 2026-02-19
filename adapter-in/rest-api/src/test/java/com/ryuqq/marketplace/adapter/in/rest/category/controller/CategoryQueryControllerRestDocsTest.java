@@ -31,6 +31,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -131,47 +132,64 @@ class CategoryQueryControllerRestDocsTest {
                                                     .description("페이지 크기")
                                                     .optional()),
                                     responseFields(
-                                            fieldWithPath("data.content[]").description("카테고리 목록"),
+                                            fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("카테고리 목록"),
                                             fieldWithPath("data.content[].id")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("카테고리 ID"),
                                             fieldWithPath("data.content[].code")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("카테고리 코드"),
                                             fieldWithPath("data.content[].nameKo")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("한글명"),
                                             fieldWithPath("data.content[].nameEn")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("영문명"),
                                             fieldWithPath("data.content[].parentId")
-                                                    .description("부모 카테고리 ID"),
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("부모 카테고리 ID")
+                                                    .optional(),
                                             fieldWithPath("data.content[].depth")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("계층 깊이"),
-                                            fieldWithPath("data.content[].path").description("경로"),
+                                            fieldWithPath("data.content[].path").type(JsonFieldType.STRING).description("경로"),
                                             fieldWithPath("data.content[].sortOrder")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),
                                             fieldWithPath("data.content[].leaf")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("리프 노드 여부"),
                                             fieldWithPath("data.content[].status")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("상태"),
                                             fieldWithPath("data.content[].department")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("부문"),
                                             fieldWithPath("data.content[].categoryGroup")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("카테고리 그룹 (고시정보 연결용)"),
                                             fieldWithPath("data.content[].displayPath")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("표시용 이름 경로")
                                                     .optional(),
                                             fieldWithPath("data.content[].createdAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("생성일시"),
                                             fieldWithPath("data.content[].updatedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("수정일시"),
-                                            fieldWithPath("data.page").description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").description("페이지 크기"),
+                                            fieldWithPath("data.page").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                            fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
+                                            fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
 
         @Test

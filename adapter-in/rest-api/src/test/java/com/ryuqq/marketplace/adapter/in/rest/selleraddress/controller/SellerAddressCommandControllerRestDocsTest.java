@@ -98,7 +98,7 @@ class SellerAddressCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("주소명")
                                                     .optional(),
-                                            fieldWithPath("address").description("주소 정보"),
+                                            fieldWithPath("address").type(JsonFieldType.OBJECT).description("주소 정보"),
                                             fieldWithPath("address.zipCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("우편번호"),
@@ -116,8 +116,8 @@ class SellerAddressCommandControllerRestDocsTest {
                                             fieldWithPath("data.addressId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("생성된 주소 ID"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
     }
 
@@ -159,7 +159,7 @@ class SellerAddressCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("주소명")
                                                     .optional(),
-                                            fieldWithPath("address").description("주소 정보"),
+                                            fieldWithPath("address").type(JsonFieldType.OBJECT).description("주소 정보"),
                                             fieldWithPath("address.zipCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("우편번호"),

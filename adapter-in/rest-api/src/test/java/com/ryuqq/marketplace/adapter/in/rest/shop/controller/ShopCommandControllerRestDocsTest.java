@@ -95,8 +95,8 @@ class ShopCommandControllerRestDocsTest {
                                             fieldWithPath("data.shopId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("생성된 외부몰 ID"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
 
         @Test

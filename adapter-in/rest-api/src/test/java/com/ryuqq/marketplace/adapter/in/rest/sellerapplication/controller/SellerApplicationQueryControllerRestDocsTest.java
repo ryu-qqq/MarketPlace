@@ -34,6 +34,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -112,83 +113,111 @@ class SellerApplicationQueryControllerRestDocsTest {
                                                     .description("페이지 크기")
                                                     .optional()),
                                     responseFields(
-                                            fieldWithPath("data.content[]").description("입점 신청 목록"),
-                                            fieldWithPath("data.content[].id").description("신청 ID"),
+                                            fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("입점 신청 목록"),
+                                            fieldWithPath("data.content[].id").type(JsonFieldType.NUMBER).description("신청 ID"),
                                             fieldWithPath("data.content[].sellerInfo.sellerName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("셀러명"),
                                             fieldWithPath("data.content[].sellerInfo.displayName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("표시명"),
                                             fieldWithPath("data.content[].sellerInfo.logoUrl")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("로고 URL"),
                                             fieldWithPath("data.content[].sellerInfo.description")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("설명"),
                                             fieldWithPath(
                                                             "data.content[].businessInfo.registrationNumber")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("사업자등록번호"),
                                             fieldWithPath("data.content[].businessInfo.companyName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("회사명"),
                                             fieldWithPath(
                                                             "data.content[].businessInfo.representative")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("대표자명"),
                                             fieldWithPath(
                                                             "data.content[].businessInfo.saleReportNumber")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("통신판매업 신고번호"),
                                             fieldWithPath(
                                                             "data.content[].businessInfo.businessAddress.zipCode")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("우편번호"),
                                             fieldWithPath(
                                                             "data.content[].businessInfo.businessAddress.line1")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("주소"),
                                             fieldWithPath(
                                                             "data.content[].businessInfo.businessAddress.line2")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("상세주소"),
                                             fieldWithPath("data.content[].csContact.phone")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("전화번호"),
                                             fieldWithPath("data.content[].csContact.email")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("이메일"),
                                             fieldWithPath("data.content[].csContact.mobile")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("휴대폰"),
                                             fieldWithPath("data.content[].contactInfo.name")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("담당자명")
                                                     .optional(),
                                             fieldWithPath("data.content[].contactInfo.phone")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("담당자 연락처")
                                                     .optional(),
                                             fieldWithPath("data.content[].contactInfo.email")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("담당자 이메일")
                                                     .optional(),
                                             fieldWithPath("data.content[].agreement.agreedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("동의 일시"),
                                             fieldWithPath("data.content[].agreement.termsAgreed")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("이용약관 동의"),
                                             fieldWithPath("data.content[].agreement.privacyAgreed")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("개인정보처리방침 동의"),
                                             fieldWithPath("data.content[].status")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("신청 상태"),
                                             fieldWithPath("data.content[].appliedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("신청일시"),
                                             fieldWithPath("data.content[].processedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("처리일시")
                                                     .optional(),
                                             fieldWithPath("data.content[].processedBy")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("처리자")
                                                     .optional(),
                                             fieldWithPath("data.content[].rejectionReason")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("거절 사유")
                                                     .optional(),
                                             fieldWithPath("data.content[].approvedSellerId")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("승인된 셀러 ID")
                                                     .optional(),
-                                            fieldWithPath("data.page").description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").description("페이지 크기"),
+                                            fieldWithPath("data.page").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                            fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
+                                            fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
 
         @Test
@@ -246,67 +275,91 @@ class SellerApplicationQueryControllerRestDocsTest {
                                             parameterWithName("applicationId")
                                                     .description("입점 신청 ID")),
                                     responseFields(
-                                            fieldWithPath("data.id").description("신청 ID"),
+                                            fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("신청 ID"),
                                             fieldWithPath("data.sellerInfo.sellerName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("셀러명"),
                                             fieldWithPath("data.sellerInfo.displayName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("표시명"),
                                             fieldWithPath("data.sellerInfo.logoUrl")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("로고 URL"),
                                             fieldWithPath("data.sellerInfo.description")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("설명"),
                                             fieldWithPath("data.businessInfo.registrationNumber")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("사업자등록번호"),
                                             fieldWithPath("data.businessInfo.companyName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("회사명"),
                                             fieldWithPath("data.businessInfo.representative")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("대표자명"),
                                             fieldWithPath("data.businessInfo.saleReportNumber")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("통신판매업 신고번호"),
                                             fieldWithPath(
                                                             "data.businessInfo.businessAddress.zipCode")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("우편번호"),
                                             fieldWithPath("data.businessInfo.businessAddress.line1")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("주소"),
                                             fieldWithPath("data.businessInfo.businessAddress.line2")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("상세주소"),
                                             fieldWithPath("data.csContact.phone")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("전화번호"),
                                             fieldWithPath("data.csContact.email")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("이메일"),
                                             fieldWithPath("data.csContact.mobile")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("휴대폰"),
                                             fieldWithPath("data.contactInfo.name")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("담당자명")
                                                     .optional(),
                                             fieldWithPath("data.contactInfo.phone")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("담당자 연락처")
                                                     .optional(),
                                             fieldWithPath("data.contactInfo.email")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("담당자 이메일")
                                                     .optional(),
                                             fieldWithPath("data.agreement.agreedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("동의 일시"),
                                             fieldWithPath("data.agreement.termsAgreed")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("이용약관 동의"),
                                             fieldWithPath("data.agreement.privacyAgreed")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("개인정보처리방침 동의"),
-                                            fieldWithPath("data.status").description("신청 상태"),
-                                            fieldWithPath("data.appliedAt").description("신청일시"),
+                                            fieldWithPath("data.status").type(JsonFieldType.STRING).description("신청 상태"),
+                                            fieldWithPath("data.appliedAt").type(JsonFieldType.STRING).description("신청일시"),
                                             fieldWithPath("data.processedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("처리일시")
                                                     .optional(),
                                             fieldWithPath("data.processedBy")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("처리자")
                                                     .optional(),
                                             fieldWithPath("data.rejectionReason")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("거절 사유")
                                                     .optional(),
                                             fieldWithPath("data.approvedSellerId")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("승인된 셀러 ID")
                                                     .optional(),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간"),
+                                            fieldWithPath("requestId").type(JsonFieldType.STRING).description("요청 ID"))));
         }
     }
 }
