@@ -245,13 +245,7 @@ class ProductCommandE2ETest extends E2ETestBase {
                         noticeCategoryId,
                         "entries",
                         noticeFields.stream()
-                                .map(
-                                        f ->
-                                                Map.of(
-                                                        "noticeFieldId",
-                                                        f.getId(),
-                                                        "fieldValue",
-                                                        "테스트 값"))
+                                .map(f -> Map.of("noticeFieldId", f.getId(), "fieldValue", "테스트 값"))
                                 .toList()));
         return request;
     }
@@ -451,11 +445,9 @@ class ProductCommandE2ETest extends E2ETestBase {
             Map<Object, Integer> valueSortOrderMap = new HashMap<>();
             for (Map<String, Object> og : optionGroups) {
                 @SuppressWarnings("unchecked")
-                List<Map<String, Object>> ovs =
-                        (List<Map<String, Object>>) og.get("optionValues");
+                List<Map<String, Object>> ovs = (List<Map<String, Object>>) og.get("optionValues");
                 for (Map<String, Object> ov : ovs) {
-                    valueSortOrderMap.put(
-                            ov.get("id"), ((Number) ov.get("sortOrder")).intValue());
+                    valueSortOrderMap.put(ov.get("id"), ((Number) ov.get("sortOrder")).intValue());
                 }
             }
 
@@ -472,8 +464,9 @@ class ProductCommandE2ETest extends E2ETestBase {
                                                                         o ->
                                                                                 valueSortOrderMap
                                                                                         .getOrDefault(
-                                                                                                o.get(
-                                                                                                        "sellerOptionValueId"),
+                                                                                                o
+                                                                                                        .get(
+                                                                                                                "sellerOptionValueId"),
                                                                                                 0))
                                                                 .toList();
                                         return Map.<String, Object>of(
