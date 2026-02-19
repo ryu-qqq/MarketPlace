@@ -194,13 +194,13 @@ class ProductGroupInspectionOutboxQueryDslRepositoryTest {
     class FindProcessingTimeoutOutboxesTest {
 
         @Test
-        @DisplayName("updatedAt이 timeoutThreshold 이전인 PROCESSING Entity를 반환합니다")
+        @DisplayName("updatedAt이 timeoutThreshold 이전인 In-Progress Entity를 반환합니다")
         void findProcessingTimeoutOutboxes_WithTimedOutEntity_ReturnsEntity() {
             // given
             Instant oldTime = Instant.now().minusSeconds(600);
             persist(
-                    ProductGroupInspectionOutboxJpaEntityFixtures
-                            .newProcessingEntityWithOldUpdatedAt(oldTime));
+                    ProductGroupInspectionOutboxJpaEntityFixtures.newSentEntityWithOldUpdatedAt(
+                            oldTime));
             Instant timeoutThreshold = Instant.now().minusSeconds(300);
 
             // when
@@ -210,7 +210,7 @@ class ProductGroupInspectionOutboxQueryDslRepositoryTest {
             // then
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getStatus())
-                    .isEqualTo(ProductGroupInspectionOutboxJpaEntity.Status.PROCESSING);
+                    .isEqualTo(ProductGroupInspectionOutboxJpaEntity.Status.SENT);
         }
 
         @Test
@@ -249,8 +249,8 @@ class ProductGroupInspectionOutboxQueryDslRepositoryTest {
             // given
             Instant oldTime = Instant.now().minusSeconds(600);
             persist(
-                    ProductGroupInspectionOutboxJpaEntityFixtures
-                            .newProcessingEntityWithOldUpdatedAt(oldTime));
+                    ProductGroupInspectionOutboxJpaEntityFixtures.newSentEntityWithOldUpdatedAt(
+                            oldTime));
             // COMPLETED 상태로 새로 생성
             persist(ProductGroupInspectionOutboxJpaEntityFixtures.newCompletedEntity());
             Instant timeoutThreshold = Instant.now().minusSeconds(300);
@@ -259,10 +259,10 @@ class ProductGroupInspectionOutboxQueryDslRepositoryTest {
             List<ProductGroupInspectionOutboxJpaEntity> result =
                     repository().findInProgressTimeoutOutboxes(timeoutThreshold, 10);
 
-            // then - PROCESSING 타임아웃만 조회됨
+            // then - In-Progress 타임아웃만 조회됨
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getStatus())
-                    .isEqualTo(ProductGroupInspectionOutboxJpaEntity.Status.PROCESSING);
+                    .isEqualTo(ProductGroupInspectionOutboxJpaEntity.Status.SENT);
         }
 
         @Test
@@ -271,14 +271,14 @@ class ProductGroupInspectionOutboxQueryDslRepositoryTest {
             // given
             Instant oldTime = Instant.now().minusSeconds(600);
             persist(
-                    ProductGroupInspectionOutboxJpaEntityFixtures
-                            .newProcessingEntityWithOldUpdatedAt(oldTime));
+                    ProductGroupInspectionOutboxJpaEntityFixtures.newSentEntityWithOldUpdatedAt(
+                            oldTime));
             persist(
-                    ProductGroupInspectionOutboxJpaEntityFixtures
-                            .newProcessingEntityWithOldUpdatedAt(oldTime));
+                    ProductGroupInspectionOutboxJpaEntityFixtures.newSentEntityWithOldUpdatedAt(
+                            oldTime));
             persist(
-                    ProductGroupInspectionOutboxJpaEntityFixtures
-                            .newProcessingEntityWithOldUpdatedAt(oldTime));
+                    ProductGroupInspectionOutboxJpaEntityFixtures.newSentEntityWithOldUpdatedAt(
+                            oldTime));
             Instant timeoutThreshold = Instant.now().minusSeconds(300);
 
             // when
