@@ -92,38 +92,36 @@ module "ecr_scheduler" {
 
 # ========================================
 # ECR Repository: worker (Stage)
-# NOTE: Temporarily disabled - Atlantis role lacks kms:CreateGrant permission
-# Re-enable after IAM policy update for atlantis-ecs-task-prod
 # ========================================
-# module "ecr_worker" {
-#   source = "git::https://github.com/ryu-qqq/Infrastructure.git//terraform/modules/ecr?ref=main"
-#
-#   name                 = "${var.project_name}-worker-${local.ecr_name_suffix}"
-#   image_tag_mutability = "MUTABLE"
-#   scan_on_push         = true
-#
-#   # KMS encryption for ECR images
-#   kms_key_arn  = "arn:aws:kms:ap-northeast-2:646886795421:key/086b1677-614f-46ba-863e-23c215fb5010"
-#   force_delete = true
-#
-#   # Lifecycle Policy (Stage: fewer images, shorter retention)
-#   enable_lifecycle_policy    = true
-#   max_image_count            = 15
-#   lifecycle_tag_prefixes     = ["v", "stage", "latest"]
-#   untagged_image_expiry_days = 3
-#
-#   # SSM Parameter for cross-stack reference
-#   create_ssm_parameter = true
-#
-#   # Required Tags (governance compliance)
-#   environment  = local.common_tags.environment
-#   service_name = "${var.project_name}-worker"
-#   team         = local.common_tags.team
-#   owner        = local.common_tags.owner
-#   cost_center  = local.common_tags.cost_center
-#   project      = local.common_tags.project
-#   data_class   = local.common_tags.data_class
-# }
+module "ecr_worker" {
+  source = "git::https://github.com/ryu-qqq/Infrastructure.git//terraform/modules/ecr?ref=main"
+
+  name                 = "${var.project_name}-worker-${local.ecr_name_suffix}"
+  image_tag_mutability = "MUTABLE"
+  scan_on_push         = true
+
+  # KMS encryption for ECR images
+  kms_key_arn  = "arn:aws:kms:ap-northeast-2:646886795421:key/086b1677-614f-46ba-863e-23c215fb5010"
+  force_delete = true
+
+  # Lifecycle Policy (Stage: fewer images, shorter retention)
+  enable_lifecycle_policy    = true
+  max_image_count            = 15
+  lifecycle_tag_prefixes     = ["v", "stage", "latest"]
+  untagged_image_expiry_days = 3
+
+  # SSM Parameter for cross-stack reference
+  create_ssm_parameter = true
+
+  # Required Tags (governance compliance)
+  environment  = local.common_tags.environment
+  service_name = "${var.project_name}-worker"
+  team         = local.common_tags.team
+  owner        = local.common_tags.owner
+  cost_center  = local.common_tags.cost_center
+  project      = local.common_tags.project
+  data_class   = local.common_tags.data_class
+}
 
 # ========================================
 # Outputs
@@ -148,12 +146,12 @@ output "scheduler_repository_arn" {
   value       = module.ecr_scheduler.repository_arn
 }
 
-# output "worker_repository_url" {
-#   description = "ECR repository URL for worker (stage)"
-#   value       = module.ecr_worker.repository_url
-# }
-#
-# output "worker_repository_arn" {
-#   description = "ECR repository ARN for worker (stage)"
-#   value       = module.ecr_worker.repository_arn
-# }
+output "worker_repository_url" {
+  description = "ECR repository URL for worker (stage)"
+  value       = module.ecr_worker.repository_url
+}
+
+output "worker_repository_arn" {
+  description = "ECR repository ARN for worker (stage)"
+  value       = module.ecr_worker.repository_arn
+}

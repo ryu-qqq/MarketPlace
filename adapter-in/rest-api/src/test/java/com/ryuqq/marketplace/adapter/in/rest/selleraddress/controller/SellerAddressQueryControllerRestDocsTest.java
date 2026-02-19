@@ -36,6 +36,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -109,38 +110,66 @@ class SellerAddressQueryControllerRestDocsTest {
                                                     .description("페이지 크기")
                                                     .optional()),
                                     responseFields(
-                                            fieldWithPath("data.content[]").description("셀러 주소 목록"),
-                                            fieldWithPath("data.content[].id").description("주소 ID"),
+                                            fieldWithPath("data.content[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("셀러 주소 목록"),
+                                            fieldWithPath("data.content[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("주소 ID"),
                                             fieldWithPath("data.content[].sellerId")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("셀러 ID"),
                                             fieldWithPath("data.content[].addressType")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("주소 유형"),
                                             fieldWithPath("data.content[].addressName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("주소명"),
                                             fieldWithPath("data.content[].address")
+                                                    .type(JsonFieldType.OBJECT)
                                                     .description("주소 정보"),
                                             fieldWithPath("data.content[].address.zipCode")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("우편번호"),
                                             fieldWithPath("data.content[].address.line1")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("도로명주소"),
                                             fieldWithPath("data.content[].address.line2")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("상세주소"),
                                             fieldWithPath("data.content[].defaultAddress")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("기본 주소 여부"),
                                             fieldWithPath("data.content[].createdAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("생성일시"),
                                             fieldWithPath("data.content[].updatedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("수정일시"),
-                                            fieldWithPath("data.page").description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").description("페이지 크기"),
+                                            fieldWithPath("data.page")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재 페이지 번호"),
+                                            fieldWithPath("data.size")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data.first")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("첫 페이지 여부"),
+                                            fieldWithPath("data.last")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
 
         @Test
@@ -205,24 +234,39 @@ class SellerAddressQueryControllerRestDocsTest {
                                             parameterWithName("sellerId")
                                                     .description("셀러 ID (필수)")),
                                     responseFields(
-                                            fieldWithPath("data.totalCount").description("전체 주소 수"),
+                                            fieldWithPath("data.totalCount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("전체 주소 수"),
                                             fieldWithPath("data.shippingCount")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("출고지 수"),
-                                            fieldWithPath("data.returnCount").description("반품지 수"),
+                                            fieldWithPath("data.returnCount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("반품지 수"),
                                             fieldWithPath("data.hasDefaultShipping")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("기본 출고지 설정 여부"),
                                             fieldWithPath("data.hasDefaultReturn")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("기본 반품지 설정 여부"),
                                             fieldWithPath("data.shippingPolicyCount")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("배송정책 수"),
                                             fieldWithPath("data.refundPolicyCount")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("환불정책 수"),
                                             fieldWithPath("data.hasDefaultShippingPolicy")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("기본 배송정책 설정 여부"),
                                             fieldWithPath("data.hasDefaultRefundPolicy")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("기본 환불정책 설정 여부"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 }

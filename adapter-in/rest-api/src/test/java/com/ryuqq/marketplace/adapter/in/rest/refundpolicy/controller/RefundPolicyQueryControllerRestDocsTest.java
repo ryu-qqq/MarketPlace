@@ -32,6 +32,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -97,52 +98,84 @@ class RefundPolicyQueryControllerRestDocsTest {
                                                     .description("페이지 크기")
                                                     .optional()),
                                     responseFields(
-                                            fieldWithPath("data.content[]").description("환불정책 목록"),
+                                            fieldWithPath("data.content[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("환불정책 목록"),
                                             fieldWithPath("data.content[].policyId")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("정책 ID"),
                                             fieldWithPath("data.content[].sellerId")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("셀러 ID"),
                                             fieldWithPath("data.content[].policyName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("정책명"),
                                             fieldWithPath("data.content[].defaultPolicy")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("기본 정책 여부"),
                                             fieldWithPath("data.content[].active")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("활성화 상태"),
                                             fieldWithPath("data.content[].returnPeriodDays")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("반품 가능 기간 (일)"),
                                             fieldWithPath("data.content[].exchangePeriodDays")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("교환 가능 기간 (일)"),
                                             fieldWithPath(
                                                             "data.content[].nonReturnableConditions[]")
+                                                    .type(JsonFieldType.ARRAY)
                                                     .description("반품 불가 조건 목록"),
                                             fieldWithPath(
                                                             "data.content[].nonReturnableConditions[].code")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("조건 코드"),
                                             fieldWithPath(
                                                             "data.content[].nonReturnableConditions[].displayName")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("조건 표시명"),
                                             fieldWithPath("data.content[].partialRefundEnabled")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("부분 환불 허용 여부"),
                                             fieldWithPath("data.content[].inspectionRequired")
+                                                    .type(JsonFieldType.BOOLEAN)
                                                     .description("검수 필요 여부"),
                                             fieldWithPath("data.content[].inspectionPeriodDays")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("검수 기간 (일)"),
                                             fieldWithPath("data.content[].additionalInfo")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("추가 안내 문구"),
                                             fieldWithPath("data.content[].createdAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("생성일시 (ISO 8601)"),
                                             fieldWithPath("data.content[].updatedAt")
+                                                    .type(JsonFieldType.STRING)
                                                     .description("수정일시 (ISO 8601)"),
-                                            fieldWithPath("data.page").description("현재 페이지 번호"),
-                                            fieldWithPath("data.size").description("페이지 크기"),
+                                            fieldWithPath("data.page")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재 페이지 번호"),
+                                            fieldWithPath("data.size")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("페이지 크기"),
                                             fieldWithPath("data.totalElements")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 데이터 수"),
                                             fieldWithPath("data.totalPages")
+                                                    .type(JsonFieldType.NUMBER)
                                                     .description("전체 페이지 수"),
-                                            fieldWithPath("data.first").description("첫 페이지 여부"),
-                                            fieldWithPath("data.last").description("마지막 페이지 여부"),
-                                            fieldWithPath("timestamp").description("응답 시간"),
-                                            fieldWithPath("requestId").description("요청 ID"))));
+                                            fieldWithPath("data.first")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("첫 페이지 여부"),
+                                            fieldWithPath("data.last")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
 
         @Test
