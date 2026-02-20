@@ -28,8 +28,12 @@ public class ExternalProductSyncOutboxQueryDslRepository {
         this.conditionBuilder = conditionBuilder;
     }
 
+    private static final long MAX_PENDING_FETCH_SIZE = 1000L;
+
     /**
      * 상품그룹 ID로 PENDING 상태의 Outbox 목록 조회.
+     *
+     * <p>메모리 보호를 위해 최대 {@value #MAX_PENDING_FETCH_SIZE}건으로 제한합니다.
      *
      * @param productGroupId 상품그룹 ID
      * @return PENDING 상태의 Outbox 엔티티 목록
@@ -41,6 +45,7 @@ public class ExternalProductSyncOutboxQueryDslRepository {
                 .where(
                         conditionBuilder.productGroupIdEq(productGroupId),
                         conditionBuilder.statusPending())
+                .limit(MAX_PENDING_FETCH_SIZE)
                 .fetch();
     }
 }
