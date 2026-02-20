@@ -10,7 +10,6 @@ public record ProductDetailApiResponse(
         @Schema(description = "SKU 코드", example = "SKU-001") String skuCode,
         @Schema(description = "정가", example = "100000") int regularPrice,
         @Schema(description = "현재가", example = "89000") int currentPrice,
-        @Schema(description = "할인가", example = "85000", nullable = true) Integer salePrice,
         @Schema(description = "할인율", example = "11") int discountRate,
         @Schema(description = "재고수량", example = "100") int stockQuantity,
         @Schema(description = "상태 (ACTIVE, INACTIVE, SOLDOUT)", example = "ACTIVE") String status,

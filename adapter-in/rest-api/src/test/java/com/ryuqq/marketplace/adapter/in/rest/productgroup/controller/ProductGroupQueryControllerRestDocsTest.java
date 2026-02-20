@@ -121,6 +121,12 @@ class ProductGroupQueryControllerRestDocsTest {
                                             parameterWithName("searchWord")
                                                     .description("검색어")
                                                     .optional(),
+                                            parameterWithName("startDate")
+                                                    .description("조회 시작일 (yyyy-MM-dd)")
+                                                    .optional(),
+                                            parameterWithName("endDate")
+                                                    .description("조회 종료일 (yyyy-MM-dd)")
+                                                    .optional(),
                                             parameterWithName("sortKey")
                                                     .description(
                                                             "정렬 키 (CREATED_AT, UPDATED_AT,"
@@ -428,10 +434,6 @@ class ProductGroupQueryControllerRestDocsTest {
                                                             "data.optionProductMatrix.products[].currentPrice")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("현재 판매가"),
-                                            fieldWithPath(
-                                                            "data.optionProductMatrix.products[].salePrice")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("할인가"),
                                             fieldWithPath(
                                                             "data.optionProductMatrix.products[].discountRate")
                                                     .type(JsonFieldType.NUMBER)
