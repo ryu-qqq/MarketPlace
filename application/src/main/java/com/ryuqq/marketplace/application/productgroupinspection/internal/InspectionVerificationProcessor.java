@@ -1,11 +1,13 @@
 package com.ryuqq.marketplace.application.productgroupinspection.internal;
 
+import com.ryuqq.marketplace.application.common.component.TransactionEventRegistry;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
 import com.ryuqq.marketplace.application.productgroupinspection.dto.response.InspectionVerificationResult;
 import com.ryuqq.marketplace.application.productgroupinspection.manager.InspectionVerificationManager;
 import com.ryuqq.marketplace.application.productgroupinspection.manager.ProductGroupInspectionOutboxCommandManager;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.event.ProductGroupActivatedEvent;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroupinspection.aggregate.ProductGroupInspectionOutbox;
 import com.ryuqq.marketplace.domain.productgroupinspection.vo.InspectionResult;
@@ -31,16 +33,19 @@ public class InspectionVerificationProcessor {
     private final InspectionVerificationManager verificationManager;
     private final ProductGroupReadManager productGroupReadManager;
     private final ProductGroupCommandManager productGroupCommandManager;
+    private final TransactionEventRegistry eventRegistry;
 
     public InspectionVerificationProcessor(
             ProductGroupInspectionOutboxCommandManager outboxCommandManager,
             InspectionVerificationManager verificationManager,
             ProductGroupReadManager productGroupReadManager,
-            ProductGroupCommandManager productGroupCommandManager) {
+            ProductGroupCommandManager productGroupCommandManager,
+            TransactionEventRegistry eventRegistry) {
         this.outboxCommandManager = outboxCommandManager;
         this.verificationManager = verificationManager;
         this.productGroupReadManager = productGroupReadManager;
         this.productGroupCommandManager = productGroupCommandManager;
+        this.eventRegistry = eventRegistry;
     }
 
     @Transactional
@@ -64,6 +69,9 @@ public class InspectionVerificationProcessor {
 
             if (verificationResult.passed()) {
                 productGroup.activate(now);
+                eventRegistry.registerForPublish(
+                        ProductGroupActivatedEvent.of(
+                                productGroup.id(), productGroup.sellerId(), now));
             } else {
                 productGroup.reject(now);
             }

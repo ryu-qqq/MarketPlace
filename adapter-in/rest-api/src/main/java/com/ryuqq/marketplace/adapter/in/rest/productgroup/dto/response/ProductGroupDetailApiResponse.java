@@ -23,9 +23,7 @@ public record ProductGroupDetailApiResponse(
         @Schema(description = "카테고리명", example = "운동화") String categoryName,
         @Schema(description = "카테고리 전체 경로", example = "패션의류 > 신발 > 운동화") String categoryDisplayPath,
         @Schema(description = "상품 그룹명", example = "나이키 에어맥스 90") String productGroupName,
-        @Schema(
-                        description = "옵션 유형 (NONE, SINGLE, COMBINATION, FREE_INPUT)",
-                        example = "COMBINATION")
+        @Schema(description = "옵션 유형 (NONE, SINGLE, COMBINATION)", example = "COMBINATION")
                 String optionType,
         @Schema(description = "상태 (DRAFT, ACTIVE, INACTIVE, SOLDOUT, DELETED)", example = "ACTIVE")
                 String status,

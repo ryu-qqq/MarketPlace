@@ -30,9 +30,7 @@ public record ProductGroupListApiResponse(
                         example = "SHOES")
                 String categoryGroup,
         @Schema(description = "상품 그룹명", example = "나이키 에어맥스 90") String productGroupName,
-        @Schema(
-                        description = "옵션 유형 (NONE, SINGLE, COMBINATION, FREE_INPUT)",
-                        example = "COMBINATION")
+        @Schema(description = "옵션 유형 (NONE, SINGLE, COMBINATION)", example = "COMBINATION")
                 String optionType,
         @Schema(description = "상태 (DRAFT, ACTIVE, INACTIVE, SOLDOUT, DELETED)", example = "ACTIVE")
                 String status,
