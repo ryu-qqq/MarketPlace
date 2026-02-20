@@ -29,10 +29,11 @@ public class SellerSalesChannelJpaEntityMapper {
     }
 
     public SellerSalesChannel toDomain(SellerSalesChannelJpaEntity entity) {
-        SellerSalesChannelId id =
-                entity.getId() != null
-                        ? SellerSalesChannelId.of(entity.getId())
-                        : SellerSalesChannelId.forNew();
+        if (entity.getId() == null) {
+            throw new IllegalStateException(
+                    "SellerSalesChannelJpaEntity.id가 null입니다. DB에서 복원된 엔티티에 ID가 없을 수 없습니다.");
+        }
+        SellerSalesChannelId id = SellerSalesChannelId.of(entity.getId());
         return SellerSalesChannel.reconstitute(
                 id,
                 SellerId.of(entity.getSellerId()),

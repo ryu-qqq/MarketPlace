@@ -110,7 +110,7 @@ public class ExternalProductSyncOutboxJpaEntity {
         this.idempotencyKey = idempotencyKey;
     }
 
-    public static ExternalProductSyncOutboxJpaEntity create(
+    public static ExternalProductSyncOutboxJpaEntity of(
             Long id,
             Long productGroupId,
             Long salesChannelId,
