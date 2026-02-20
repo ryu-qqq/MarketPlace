@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -43,6 +44,12 @@ public record SearchProductGroupsApiRequest(
         @Parameter(description = "검색어", example = "나이키")
                 @Schema(description = "검색어", nullable = true)
                 String searchWord,
+        @Parameter(description = "조회 시작일 (yyyy-MM-dd)", example = "2025-01-01")
+                @Schema(description = "조회 시작일", nullable = true)
+                LocalDate startDate,
+        @Parameter(description = "조회 종료일 (yyyy-MM-dd)", example = "2025-12-31")
+                @Schema(description = "조회 종료일", nullable = true)
+                LocalDate endDate,
         @Parameter(
                         description = "정렬 키 (CREATED_AT, UPDATED_AT, NAME). 기본값: CREATED_AT",
                         example = "CREATED_AT",

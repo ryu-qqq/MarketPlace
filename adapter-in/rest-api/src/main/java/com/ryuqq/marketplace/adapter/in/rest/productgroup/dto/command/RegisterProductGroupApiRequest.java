@@ -52,7 +52,7 @@ public record RegisterProductGroupApiRequest(
                 @Size(max = 200, message = "상품 그룹명은 200자 이하여야 합니다")
                 String productGroupName,
         @Schema(
-                        description = "옵션 타입 (COMBINATION, SINGLE, NONE, FREE_INPUT)",
+                        description = "옵션 타입 (COMBINATION, SINGLE, NONE)",
                         example = "COMBINATION",
                         requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotBlank(message = "옵션 타입은 필수입니다")
