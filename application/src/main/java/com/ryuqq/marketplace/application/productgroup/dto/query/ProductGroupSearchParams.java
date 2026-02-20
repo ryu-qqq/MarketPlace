@@ -49,4 +49,12 @@ public record ProductGroupSearchParams(
     public String sortDirection() {
         return searchParams.sortDirection();
     }
+
+    public java.time.LocalDate startDate() {
+        return searchParams.startDate();
+    }
+
+    public java.time.LocalDate endDate() {
+        return searchParams.endDate();
+    }
 }

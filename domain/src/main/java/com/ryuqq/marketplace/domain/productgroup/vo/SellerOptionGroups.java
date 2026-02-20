@@ -53,20 +53,29 @@ public record SellerOptionGroups(List<SellerOptionGroup> groups) {
 
     /** optionType과 옵션 그룹 수 정합성 검증. PREDEFINED 그룹만 카운트. */
     private void validateGroupCount(OptionType optionType) {
-        int expected = optionType.expectedOptionGroupCount();
-        if (optionType.requiresOptionGroup()) {
-            long predefinedCount =
-                    groups.stream()
-                            .filter(g -> g.inputType() == OptionInputType.PREDEFINED)
-                            .count();
-            if (predefinedCount != expected) {
-                throw new ProductGroupInvalidOptionStructureException(
-                        optionType, expected, (int) predefinedCount);
+        long predefinedCount =
+                groups.stream().filter(g -> g.inputType() == OptionInputType.PREDEFINED).count();
+        switch (optionType) {
+            case NONE -> {
+                if (!groups.isEmpty()) {
+                    throw new ProductGroupInvalidOptionStructureException(
+                            optionType, 0, groups.size());
+                }
             }
-        } else {
-            if (!groups.isEmpty()) {
-                throw new ProductGroupInvalidOptionStructureException(
-                        optionType, expected, groups.size());
+            case SINGLE -> {
+                if (predefinedCount > 1) {
+                    throw new ProductGroupInvalidOptionStructureException(
+                            optionType, 1, (int) predefinedCount);
+                }
+                if (groups.isEmpty()) {
+                    throw new ProductGroupInvalidOptionStructureException(optionType, 1, 0);
+                }
+            }
+            case COMBINATION -> {
+                if (predefinedCount != 2) {
+                    throw new ProductGroupInvalidOptionStructureException(
+                            optionType, 2, (int) predefinedCount);
+                }
             }
         }
     }

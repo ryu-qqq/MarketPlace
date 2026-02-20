@@ -49,6 +49,8 @@ class ProductGroupQueryApiMapperTest {
                             null,
                             "NAME",
                             "테스트",
+                            null,
+                            null,
                             "createdAt",
                             "DESC",
                             0,
@@ -74,7 +76,8 @@ class ProductGroupQueryApiMapperTest {
             // given
             SearchProductGroupsApiRequest request =
                     new SearchProductGroupsApiRequest(
-                            null, null, null, null, null, null, null, null, null, null, null);
+                            null, null, null, null, null, null, null, null, null, null, null, null,
+                            null);
 
             // when
             ProductGroupSearchParams params = mapper.toSearchParams(request);

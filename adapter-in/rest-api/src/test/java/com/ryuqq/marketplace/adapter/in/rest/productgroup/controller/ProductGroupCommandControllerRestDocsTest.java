@@ -118,8 +118,7 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath("optionType")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
-                                                            "옵션 유형 (NONE, SINGLE, COMBINATION,"
-                                                                    + " FREE_INPUT)"),
+                                                            "옵션 유형 (NONE, SINGLE, COMBINATION)"),
                                             fieldWithPath("images")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("이미지 목록"),

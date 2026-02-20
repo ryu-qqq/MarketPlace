@@ -63,7 +63,13 @@ public class ProductGroupQueryApiMapper {
 
         CommonSearchParams searchParams =
                 CommonSearchParams.of(
-                        null, null, null, request.sortKey(), request.sortDirection(), page, size);
+                        null,
+                        request.startDate(),
+                        request.endDate(),
+                        request.sortKey(),
+                        request.sortDirection(),
+                        page,
+                        size);
 
         return ProductGroupSearchParams.of(
                 request.statuses(),
@@ -223,7 +229,6 @@ public class ProductGroupQueryApiMapper {
                 result.skuCode(),
                 result.regularPrice(),
                 result.currentPrice(),
-                result.salePrice(),
                 result.discountRate(),
                 result.stockQuantity(),
                 result.status(),

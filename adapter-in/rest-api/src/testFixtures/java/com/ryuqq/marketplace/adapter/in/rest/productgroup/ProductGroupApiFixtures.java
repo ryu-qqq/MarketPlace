@@ -195,18 +195,30 @@ public final class ProductGroupApiFixtures {
 
     public static SearchProductGroupsApiRequest searchRequest() {
         return new SearchProductGroupsApiRequest(
-                null, null, null, null, null, null, null, null, null, 0, 20);
+                null, null, null, null, null, null, null, null, null, null, null, 0, 20);
     }
 
     public static SearchProductGroupsApiRequest searchRequest(int page, int size) {
         return new SearchProductGroupsApiRequest(
-                null, null, null, null, null, null, null, null, null, page, size);
+                null, null, null, null, null, null, null, null, null, null, null, page, size);
     }
 
     public static SearchProductGroupsApiRequest searchRequest(
             List<Long> sellerIds, String searchField, String searchWord) {
         return new SearchProductGroupsApiRequest(
-                null, sellerIds, null, null, null, searchField, searchWord, null, null, 0, 20);
+                null,
+                sellerIds,
+                null,
+                null,
+                null,
+                searchField,
+                searchWord,
+                null,
+                null,
+                null,
+                null,
+                0,
+                20);
     }
 
     // ===== ProductGroupListCompositeResult (Application) =====
@@ -575,7 +587,6 @@ public final class ProductGroupApiFixtures {
                         "SKU-001",
                         30000,
                         25000,
-                        5000,
                         16,
                         100,
                         "ACTIVE",
