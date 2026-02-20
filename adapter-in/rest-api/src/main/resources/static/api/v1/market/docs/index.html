@@ -1865,8 +1865,8 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: access_token=eyJhbGciOiJIUzI1NiJ9.access; Path=/; Max-Age=3600; Expires=Thu, 19 Feb 2026 08:42:18 GMT; Secure; HttpOnly; SameSite=Strict
-Set-Cookie: refresh_token=eyJhbGciOiJIUzI1NiJ9.refresh; Path=/; Max-Age=604800; Expires=Thu, 26 Feb 2026 07:42:18 GMT; Secure; HttpOnly; SameSite=Strict
+Set-Cookie: access_token=eyJhbGciOiJIUzI1NiJ9.access; Path=/; Max-Age=3600; Expires=Fri, 20 Feb 2026 00:21:34 GMT; Secure; HttpOnly; SameSite=Strict
+Set-Cookie: refresh_token=eyJhbGciOiJIUzI1NiJ9.refresh; Path=/; Max-Age=604800; Expires=Thu, 26 Feb 2026 23:21:34 GMT; Secure; HttpOnly; SameSite=Strict
 Content-Type: application/json
 Content-Length: 283
 
@@ -1877,8 +1877,8 @@ Content-Length: 283
     "tokenType" : "Bearer",
     "expiresIn" : 3600
   },
-  "timestamp" : "2026-02-19T16:42:18.258543+09:00",
-  "requestId" : "c75a0ae7-d4be-422c-acc7-517a3703df06"
+  "timestamp" : "2026-02-20T08:21:34.625625+09:00",
+  "requestId" : "d34d0531-46c7-4ff8-b9b8-7b547603e1a2"
 }</code></pre>
 </div>
 </div>
@@ -1968,8 +1968,8 @@ Content-Length: 127
 
 {
   "data" : null,
-  "timestamp" : "2026-02-19T16:42:17.965208+09:00",
-  "requestId" : "c5b1aefd-a24e-4dce-82fb-07ea22d1e6c8"
+  "timestamp" : "2026-02-20T08:21:34.588262+09:00",
+  "requestId" : "31a8c8ad-75fc-4a1d-b301-8dc49aaeeabe"
 }</code></pre>
 </div>
 </div>
@@ -2034,7 +2034,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 622
+Content-Length: 623
 
 {
   "data" : {
@@ -2057,8 +2057,8 @@ Content-Length: 622
     "sellerId" : 1,
     "phoneNumber" : "010-1234-5678"
   },
-  "timestamp" : "2026-02-19T16:42:18.77482+09:00",
-  "requestId" : "7f2a22d5-cde4-4f13-9f71-e6a5157dd555"
+  "timestamp" : "2026-02-20T08:21:35.014733+09:00",
+  "requestId" : "77b441f8-bb2a-4e24-bb4c-28ac5320e066"
 }</code></pre>
 </div>
 </div>
@@ -2102,25 +2102,25 @@ Content-Length: 622
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.tenantId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">테넌트 ID</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.tenantName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">테넌트 이름</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.organizationId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">조직 ID</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.organizationName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">조직 이름</p></td>
 </tr>
 <tr>
@@ -2224,7 +2224,7 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchField</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (code, nameKo, nameEn)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (CODE, NAME_KO, NAME_EN)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchWord</code></p></td>
@@ -2234,7 +2234,7 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (createdAt, nameKo, updatedAt)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, NAME_KO, UPDATED_AT). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
@@ -2302,8 +2302,8 @@ Content-Length: 1250
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:19.308881+09:00",
-  "requestId" : "55898eb6-9da8-438a-874e-0f18d1dc9eb2"
+  "timestamp" : "2026-02-20T08:21:35.512702+09:00",
+  "requestId" : "2ed96b9a-ba65-4361-ae1a-f9dca6b69038"
 }</code></pre>
 </div>
 </div>
@@ -2366,7 +2366,7 @@ Content-Length: 1250
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상태 (ACTIVE, INACTIVE)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].logoUrl</code></p></td>
@@ -2496,17 +2496,17 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>departments</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">부문 필터 (FASHION, BEAUTY, LIVING 등)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">부문 필터 (FASHION, BEAUTY, LIVING, FOOD, DIGITAL, SPORTS, KIDS, PET, CULTURE, HEALTH, ETC)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>categoryGroups</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 그룹 필터 (CLOTHING, SHOES, DIGITAL 등)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 그룹 필터 - 고시정보 연결용 (CLOTHING, SHOES, BAGS, ACCESSORIES, COSMETICS, JEWELRY, WATCHES, FURNITURE, DIGITAL, SPORTS, BABY_KIDS, ETC)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchField</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (code, nameKo, nameEn)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (CODE, NAME_KO, NAME_EN)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchWord</code></p></td>
@@ -2516,12 +2516,12 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (sortOrder, createdAt, nameKo, code)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (SORT_ORDER, CREATED_AT, NAME_KO, CODE). 기본값: SORT_ORDER</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: ASC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
@@ -2602,8 +2602,8 @@ Content-Length: 1631
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:21.126374+09:00",
-  "requestId" : "1df14769-c866-4eca-8b7c-cc93ec52e9c1"
+  "timestamp" : "2026-02-20T08:21:37.156477+09:00",
+  "requestId" : "2bad7d73-fec2-416d-a3b9-4277500eb68c"
 }</code></pre>
 </div>
 </div>
@@ -2690,19 +2690,19 @@ Content-Length: 1631
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상태 (ACTIVE, INACTIVE)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].department</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">부문</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">부문 (FASHION, BEAUTY, LIVING, FOOD, DIGITAL, SPORTS, KIDS, PET, CULTURE, HEALTH, ETC)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].categoryGroup</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 그룹 (고시정보 연결용)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 그룹 - 고시정보 연결용 (CLOTHING, SHOES, BAGS, ACCESSORIES, COSMETICS, JEWELRY, WATCHES, FURNITURE, DIGITAL, SPORTS, BABY_KIDS, ETC)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].displayPath</code></p></td>
@@ -2853,12 +2853,12 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
 Content-Type: application/json
-Content-Length: 126
+Content-Length: 125
 
 {
   "data" : 100,
-  "timestamp" : "2026-02-19T16:42:22.874293+09:00",
-  "requestId" : "76b78ec1-4a20-45b8-bfa5-7ca2b68a14ab"
+  "timestamp" : "2026-02-20T08:21:38.60909+09:00",
+  "requestId" : "9eca56f0-6378-4d34-adac-43eae3d361e6"
 }</code></pre>
 </div>
 </div>
@@ -2989,8 +2989,8 @@ Content-Length: 127
 
 {
   "data" : null,
-  "timestamp" : "2026-02-19T16:42:22.854176+09:00",
-  "requestId" : "89f287b3-0f3a-44f3-8cc4-1b67caf42f03"
+  "timestamp" : "2026-02-20T08:21:38.591814+09:00",
+  "requestId" : "940eee9d-a416-4749-a699-c63196543930"
 }</code></pre>
 </div>
 </div>
@@ -3095,12 +3095,12 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 127
+Content-Length: 125
 
 {
   "data" : null,
-  "timestamp" : "2026-02-19T16:42:22.830814+09:00",
-  "requestId" : "af95a0ba-8727-4fd5-b569-a2daf882fdba"
+  "timestamp" : "2026-02-20T08:21:38.5708+09:00",
+  "requestId" : "ec8a577e-a193-4e96-856c-2191fa583db8"
 }</code></pre>
 </div>
 </div>
@@ -3193,22 +3193,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, DISPLAY_ORDER, CODE)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, DISPLAY_ORDER, CODE). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: DESC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터). 기본값: 0</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기 (최대 100)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기 (최대 100). 기본값: 20</p></td>
 </tr>
 </tbody>
 </table>
@@ -3219,7 +3219,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 1073
+Content-Length: 1072
 
 {
   "data" : {
@@ -3258,8 +3258,8 @@ Content-Length: 1073
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:23.615803+09:00",
-  "requestId" : "b5b2a3e7-8969-4be7-9fa2-3d3725938d19"
+  "timestamp" : "2026-02-20T08:21:39.22219+09:00",
+  "requestId" : "fbca8968-d5fd-4618-835f-d06f6cc7dbaa"
 }</code></pre>
 </div>
 </div>
@@ -3471,8 +3471,8 @@ Content-Length: 124
 
 {
   "data" : 1,
-  "timestamp" : "2026-02-19T16:42:24.296601+09:00",
-  "requestId" : "f4f70fab-ff07-4fb6-b975-5890d1c09b64"
+  "timestamp" : "2026-02-20T08:21:39.776185+09:00",
+  "requestId" : "5712839b-bdaf-4c12-8f0e-728a6bfd1e0b"
 }</code></pre>
 </div>
 </div>
@@ -3610,8 +3610,8 @@ Content-Length: 127
 
 {
   "data" : null,
-  "timestamp" : "2026-02-19T16:42:24.269983+09:00",
-  "requestId" : "68dc5b9d-001e-4715-a01c-6ea94aab9cdb"
+  "timestamp" : "2026-02-20T08:21:39.757353+09:00",
+  "requestId" : "45349912-aa7f-49f8-bb18-d210a96e7b52"
 }</code></pre>
 </div>
 </div>
@@ -3720,8 +3720,8 @@ Content-Length: 127
 
 {
   "data" : null,
-  "timestamp" : "2026-02-19T16:42:24.247226+09:00",
-  "requestId" : "21d5b15e-5ef2-4b46-a050-287c32b99216"
+  "timestamp" : "2026-02-20T08:21:39.739316+09:00",
+  "requestId" : "080cf938-9770-41a1-b982-70692e2586ac"
 }</code></pre>
 </div>
 </div>
@@ -3819,22 +3819,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (CREATED_AT, DISPLAY_ORDER, CODE)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (CREATED_AT, DISPLAY_ORDER, CODE). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: DESC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터). 기본값: 0</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기. 기본값: 20</p></td>
 </tr>
 </tbody>
 </table>
@@ -3845,7 +3845,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 1190
+Content-Length: 1189
 
 {
   "data" : {
@@ -3884,8 +3884,8 @@ Content-Length: 1190
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:24.595159+09:00",
-  "requestId" : "fac6315c-e307-44a2-9c62-803bc80a6f5e"
+  "timestamp" : "2026-02-20T08:21:40.01722+09:00",
+  "requestId" : "084523e7-ac0d-426a-bc00-0177fde4750f"
 }</code></pre>
 </div>
 </div>
@@ -4201,8 +4201,8 @@ Content-Length: 147
   "data" : {
     "sellerId" : 1
   },
-  "timestamp" : "2026-02-19T16:42:30.364769+09:00",
-  "requestId" : "c293fce0-d524-4de5-aa9a-8be6956d38c9"
+  "timestamp" : "2026-02-20T08:21:47.002014+09:00",
+  "requestId" : "245e7bb3-4e1e-442e-9e1e-b0d7492401bc"
 }</code></pre>
 </div>
 </div>
@@ -4453,31 +4453,31 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csInfo.mobile</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">CS 휴대폰</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csInfo.operatingStartTime</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">운영 시작 시간</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csInfo.operatingEndTime</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">운영 종료 시간</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csInfo.operatingDays</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">운영 요일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csInfo.kakaoChannelUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">카카오 채널 URL</p></td>
 </tr>
 <tr>
@@ -4507,7 +4507,7 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contractInfo.specialTerms</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">특약사항</p></td>
 </tr>
 <tr>
@@ -4525,7 +4525,7 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>settlementInfo.bankAccount.bankCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">은행 코드</p></td>
 </tr>
 <tr>
@@ -4681,8 +4681,8 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>address</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">주소</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주소 정보 (선택)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>address.zipCode</code></p></td>
@@ -4705,8 +4705,8 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csInfo</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CS 정보</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CS 정보 (선택)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csInfo.phone</code></p></td>
@@ -4723,14 +4723,14 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csInfo.mobile</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">휴대폰</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>businessInfo</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사업자 정보</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사업자 정보 (선택)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>businessInfo.registrationNumber</code></p></td>
@@ -4892,8 +4892,8 @@ Content-Length: 1936
       "updatedAt" : "2025-01-23T10:30:00+09:00"
     }
   },
-  "timestamp" : "2026-02-19T16:42:30.631831+09:00",
-  "requestId" : "ccda5dd8-1072-4c9e-a57e-ca0d9f1c5a4b"
+  "timestamp" : "2026-02-20T08:21:47.270557+09:00",
+  "requestId" : "c6955a1e-8201-43df-8ebc-5bf720ab6dc3"
 }</code></pre>
 </div>
 </div>
@@ -5238,22 +5238,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (createdAt, sellerName, displayName)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (CREATED_AT, SELLER_NAME, DISPLAY_NAME, 기본값: CREATED_AT)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC, 기본값: DESC)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작, 기본값: 0)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기 (기본값: 20)</p></td>
 </tr>
 </tbody>
 </table>
@@ -5303,8 +5303,8 @@ Content-Length: 1283
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:30.618226+09:00",
-  "requestId" : "2066c605-57dd-41f3-bdbb-6b1ceb2d03ba"
+  "timestamp" : "2026-02-20T08:21:47.258701+09:00",
+  "requestId" : "52affd9c-34f3-455e-9924-a6f8dd8f9072"
 }</code></pre>
 </div>
 </div>
@@ -5562,8 +5562,8 @@ Content-Length: 149
   "data" : {
     "addressId" : 10
   },
-  "timestamp" : "2026-02-19T16:42:30.982114+09:00",
-  "requestId" : "7bb75118-2ec8-401f-89b0-260814d479b4"
+  "timestamp" : "2026-02-20T08:21:47.603549+09:00",
+  "requestId" : "35c65549-bfd7-493f-a38b-f497d84827b0"
 }</code></pre>
 </div>
 </div>
@@ -5824,7 +5824,7 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchField</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (addressName, address 등)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (ADDRESS_NAME, ADDRESS)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchWord</code></p></td>
@@ -5834,12 +5834,12 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0-based)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작, 기본값: 0)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기 (기본값: 20)</p></td>
 </tr>
 </tbody>
 </table>
@@ -5901,8 +5901,8 @@ Content-Length: 1418
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:31.245351+09:00",
-  "requestId" : "7c23a6c2-ae09-49af-9c6a-bafb69d7972b"
+  "timestamp" : "2026-02-20T08:21:47.851236+09:00",
+  "requestId" : "967cfcde-a2f5-4bbc-bf2f-7ff107050aa5"
 }</code></pre>
 </div>
 </div>
@@ -5947,7 +5947,7 @@ Content-Length: 1418
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].addressType</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">주소 유형</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주소 유형 (SHIPPING, RETURN)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].addressName</code></p></td>
@@ -6107,8 +6107,8 @@ Content-Length: 398
     "hasDefaultShippingPolicy" : true,
     "hasDefaultRefundPolicy" : true
   },
-  "timestamp" : "2026-02-19T16:42:31.223132+09:00",
-  "requestId" : "f4aff266-e0e7-4e46-8da8-6eff8c19452c"
+  "timestamp" : "2026-02-20T08:21:47.833383+09:00",
+  "requestId" : "f384619b-df7a-4c09-838c-e7bc8c0557f4"
 }</code></pre>
 </div>
 </div>
@@ -6293,8 +6293,8 @@ Content-Length: 189
   "data" : {
     "sellerAdminId" : "01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f60"
   },
-  "timestamp" : "2026-02-19T16:42:31.887075+09:00",
-  "requestId" : "38925f00-cde7-4782-a18b-885cba64878a"
+  "timestamp" : "2026-02-20T08:21:48.432089+09:00",
+  "requestId" : "b350f13c-61cc-42be-b1aa-4dcce163ed88"
 }</code></pre>
 </div>
 </div>
@@ -6388,8 +6388,8 @@ Content-Length: 189
   "data" : {
     "sellerAdminId" : "01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f60"
   },
-  "timestamp" : "2026-02-19T16:42:31.856655+09:00",
-  "requestId" : "e41d2bc3-14df-4c5c-841f-0b65f759f4d1"
+  "timestamp" : "2026-02-20T08:21:48.411443+09:00",
+  "requestId" : "1bf1d120-cea1-4c54-b872-a9f61cc1e5e8"
 }</code></pre>
 </div>
 </div>
@@ -6552,8 +6552,8 @@ Content-Length: 519
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-02-19T16:42:31.837842+09:00",
-  "requestId" : "ca7d0473-cf07-423e-a570-e1f418e92a12"
+  "timestamp" : "2026-02-20T08:21:48.395265+09:00",
+  "requestId" : "9b113b6e-7f9c-403f-be43-95e7903fc645"
 }</code></pre>
 </div>
 </div>
@@ -6876,8 +6876,8 @@ Content-Length: 453
     "createdAt" : "2025-02-05T01:30:00Z",
     "updatedAt" : "2025-02-05T01:30:00Z"
   },
-  "timestamp" : "2026-02-19T16:42:32.159022+09:00",
-  "requestId" : "f55c1f0f-bd08-4e77-b5ae-0a143036fee3"
+  "timestamp" : "2026-02-20T08:21:48.695939+09:00",
+  "requestId" : "7ae96344-d1e4-4c68-a661-11df84b81337"
 }</code></pre>
 </div>
 </div>
@@ -6934,11 +6934,11 @@ Content-Length: 453
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">신청 상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">신청 상태 (PENDING_APPROVAL, ACTIVE, INACTIVE, SUSPENDED, REJECTED)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.authUserId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">인증 서버 사용자 ID (승인 후)</p></td>
 </tr>
@@ -7033,22 +7033,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (createdAt)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (CREATED_AT). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: DESC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0-based)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0-based). 기본값: 0</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기. 기본값: 20</p></td>
 </tr>
 </tbody>
 </table>
@@ -7099,8 +7099,8 @@ Content-Length: 1283
     "totalElements" : 3,
     "totalPages" : 1
   },
-  "timestamp" : "2026-02-19T16:42:32.147297+09:00",
-  "requestId" : "63b78cf8-346f-4f37-9284-406d84e1600a"
+  "timestamp" : "2026-02-20T08:21:48.686305+09:00",
+  "requestId" : "3fb5f2e0-b597-4dbb-8a12-3a669e940563"
 }</code></pre>
 </div>
 </div>
@@ -7163,11 +7163,11 @@ Content-Length: 1283
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">신청 상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">신청 상태 (PENDING_APPROVAL, ACTIVE, INACTIVE, SUSPENDED, REJECTED)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].authUserId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">인증 서버 사용자 ID (승인 후)</p></td>
 </tr>
@@ -7315,19 +7315,19 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sellerInfo.displayName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">표시명</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sellerInfo.logoUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">로고 URL</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sellerInfo.description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">설명</p></td>
 </tr>
 <tr>
@@ -7357,7 +7357,7 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>businessInfo.saleReportNumber</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">통신판매업 신고번호</p></td>
 </tr>
 <tr>
@@ -7381,7 +7381,7 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>businessInfo.businessAddress.line2</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">상세주소</p></td>
 </tr>
 <tr>
@@ -7405,7 +7405,7 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csContact.mobile</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">휴대폰</p></td>
 </tr>
 <tr>
@@ -7441,7 +7441,7 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>settlementInfo.bankCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">은행 코드</p></td>
 </tr>
 <tr>
@@ -7465,13 +7465,13 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>settlementInfo.settlementCycle</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정산 주기 (WEEKLY/BIWEEKLY/MONTHLY, 미입력 시 MONTHLY)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정산 주기 (WEEKLY, BIWEEKLY, MONTHLY, 미입력 시 MONTHLY)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>settlementInfo.settlementDay</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">정산일 1-31 (미입력 시 1)</p></td>
 </tr>
 </tbody>
@@ -7489,8 +7489,8 @@ Content-Length: 152
   "data" : {
     "applicationId" : 1
   },
-  "timestamp" : "2026-02-19T16:42:32.519592+09:00",
-  "requestId" : "ca8b3af4-6401-45fe-8406-b77637c75b8d"
+  "timestamp" : "2026-02-20T08:21:49.022845+09:00",
+  "requestId" : "710b0115-4ed2-4679-bcd0-7d3bf4a3fbff"
 }</code></pre>
 </div>
 </div>
@@ -7578,14 +7578,14 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 149
+Content-Length: 148
 
 {
   "data" : {
     "sellerId" : 100
   },
-  "timestamp" : "2026-02-19T16:42:32.487746+09:00",
-  "requestId" : "da2f82c8-1a63-488b-95c0-6fc389d30cc8"
+  "timestamp" : "2026-02-20T08:21:48.99581+09:00",
+  "requestId" : "a36e9a0c-ca65-46dd-9056-2f7cb1394a05"
 }</code></pre>
 </div>
 </div>
@@ -7914,8 +7914,8 @@ Content-Length: 4022
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:32.781546+09:00",
-  "requestId" : "11917b41-430c-4c63-93ed-c8bea2a7885e"
+  "timestamp" : "2026-02-20T08:21:49.282547+09:00",
+  "requestId" : "d5ee1dfb-55f4-4e04-b83b-6065c47b9c53"
 }</code></pre>
 </div>
 </div>
@@ -8244,8 +8244,8 @@ Content-Length: 1293
     "rejectionReason" : null,
     "approvedSellerId" : null
   },
-  "timestamp" : "2026-02-19T16:42:32.759659+09:00",
-  "requestId" : "0dd06e72-07f5-4daa-99df-3f88107f4f3c"
+  "timestamp" : "2026-02-20T08:21:49.263088+09:00",
+  "requestId" : "8b1a4bab-8a14-4471-9a84-33a63705efc1"
 }</code></pre>
 </div>
 </div>
@@ -8518,14 +8518,14 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
 Content-Type: application/json
-Content-Length: 145
+Content-Length: 144
 
 {
   "data" : {
     "shopId" : 1
   },
-  "timestamp" : "2026-02-19T16:42:34.235318+09:00",
-  "requestId" : "f02de794-ab8c-49ab-ab6a-8285573a44dc"
+  "timestamp" : "2026-02-20T08:21:50.68397+09:00",
+  "requestId" : "78ed992a-5304-4079-9836-f1f66e7cf9d4"
 }</code></pre>
 </div>
 </div>
@@ -8693,6 +8693,11 @@ Host: localhost:8080</code></pre>
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>salesChannelId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">판매채널 ID</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>statuses</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">상태 필터 (ACTIVE, INACTIVE)</p></td>
@@ -8710,22 +8715,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (createdAt, updatedAt, shopName)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, UPDATED_AT, SHOP_NAME). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: DESC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작). 기본값: 0</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기. 기본값: 20</p></td>
 </tr>
 </tbody>
 </table>
@@ -8772,8 +8777,8 @@ Content-Length: 1019
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:34.443927+09:00",
-  "requestId" : "74493599-d60b-4e1f-9b2c-bd764b2abfde"
+  "timestamp" : "2026-02-20T08:21:50.875717+09:00",
+  "requestId" : "35d61d12-ad44-4312-85d2-99cf310a4672"
 }</code></pre>
 </div>
 </div>
@@ -9038,8 +9043,8 @@ Content-Length: 147
   "data" : {
     "policyId" : 1
   },
-  "timestamp" : "2026-02-19T16:42:28.315814+09:00",
-  "requestId" : "e63fe625-1798-4143-b661-91e54d1537ee"
+  "timestamp" : "2026-02-20T08:21:45.020503+09:00",
+  "requestId" : "e663aaa5-00c0-4235-b798-33e2016fe464"
 }</code></pre>
 </div>
 </div>
@@ -9362,22 +9367,27 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (CREATED_AT, POLICY_NAME)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (CREATED_AT, POLICY_NAME, RETURN_PERIOD_DAYS, 기본값: CREATED_AT)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC, 기본값: DESC)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터, 기본값: 0)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기 (기본값: 20)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>active</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">활성화 여부 (true: 활성만, false: 비활성만, 미입력: 전체)</p></td>
 </tr>
 </tbody>
 </table>
@@ -9472,8 +9482,8 @@ Content-Length: 2693
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:28.537529+09:00",
-  "requestId" : "c0cc3fa9-feb5-429e-9c5c-133350982d5e"
+  "timestamp" : "2026-02-20T08:21:45.241913+09:00",
+  "requestId" : "5a5e1548-f023-4d9f-ac11-7ded92ded6aa"
 }</code></pre>
 </div>
 </div>
@@ -9815,14 +9825,14 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
 Content-Type: application/json
-Content-Length: 148
+Content-Length: 147
 
 {
   "data" : {
     "policyId" : 10
   },
-  "timestamp" : "2026-02-19T16:42:33.734654+09:00",
-  "requestId" : "d747d57e-5baf-4798-804d-e23ce184a816"
+  "timestamp" : "2026-02-20T08:21:50.21969+09:00",
+  "requestId" : "498041e7-d803-47d2-b245-ab3911996165"
 }</code></pre>
 </div>
 </div>
@@ -10174,22 +10184,27 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, POLICY_NAME)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, POLICY_NAME, BASE_FEE). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: DESC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작). 기본값: 0</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기. 기본값: 20</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>active</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">활성화 여부 (true: 활성만, false: 비활성만, 미입력: 전체)</p></td>
 </tr>
 </tbody>
 </table>
@@ -10269,8 +10284,8 @@ Content-Length: 2129
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:33.946976+09:00",
-  "requestId" : "b0139020-5108-4093-885e-6b98a48dcd3e"
+  "timestamp" : "2026-02-20T08:21:50.420862+09:00",
+  "requestId" : "0b4c3143-b797-4028-aa79-c7f63f60c5a9"
 }</code></pre>
 </div>
 </div>
@@ -10333,7 +10348,7 @@ Content-Length: 2129
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].shippingFeeType</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">배송비 유형 코드</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">배송비 유형 코드 (FREE, PAID, CONDITIONAL_FREE, QUANTITY_BASED)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].shippingFeeTypeDisplayName</code></p></td>
@@ -10545,8 +10560,8 @@ Content-Length: 165
     "id" : 1,
     "createdAt" : null
   },
-  "timestamp" : "2026-02-19T16:42:19.808565+09:00",
-  "requestId" : "5ae8c3c2-add0-42ae-91ff-bbffd9567f63"
+  "timestamp" : "2026-02-20T08:21:35.999023+09:00",
+  "requestId" : "2f0f5396-d605-4e0d-bccd-1629809c4e0a"
 }</code></pre>
 </div>
 </div>
@@ -10748,8 +10763,8 @@ Content-Length: 151
   "data" : {
     "deletedCount" : 3
   },
-  "timestamp" : "2026-02-19T16:42:19.757149+09:00",
-  "requestId" : "802e44bf-5542-4aba-954b-a8426583365b"
+  "timestamp" : "2026-02-20T08:21:35.945562+09:00",
+  "requestId" : "104c56dc-1b35-42ce-a764-5c59e5e49a89"
 }</code></pre>
 </div>
 </div>
@@ -10857,7 +10872,7 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (createdAt)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
@@ -10928,8 +10943,8 @@ Content-Length: 1415
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:20.241402+09:00",
-  "requestId" : "fd1c2969-a269-490a-873b-1a88cd59be11"
+  "timestamp" : "2026-02-20T08:21:36.410943+09:00",
+  "requestId" : "facab21b-e803-4267-ae6f-cd982c56e330"
 }</code></pre>
 </div>
 </div>
@@ -11112,7 +11127,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 724
+Content-Length: 725
 
 {
   "data" : {
@@ -11137,8 +11152,8 @@ Content-Length: 724
     "createdAt" : "2025-02-10T10:30:00+09:00",
     "updatedAt" : "2025-02-10T10:30:00+09:00"
   },
-  "timestamp" : "2026-02-19T16:42:20.18967+09:00",
-  "requestId" : "888648a3-315f-417f-a6c2-96c78db25f9f"
+  "timestamp" : "2026-02-20T08:21:36.365868+09:00",
+  "requestId" : "b3cc4559-9ee7-4793-a733-8f89dfe98157"
 }</code></pre>
 </div>
 </div>
@@ -11353,8 +11368,8 @@ Content-Length: 165
     "id" : 1,
     "createdAt" : null
   },
-  "timestamp" : "2026-02-19T16:42:21.580053+09:00",
-  "requestId" : "d5dd112c-07f0-4d34-a238-d5fac3eb7b95"
+  "timestamp" : "2026-02-20T08:21:37.580136+09:00",
+  "requestId" : "afd0fb61-42bc-4d08-af70-fb4d45a86a66"
 }</code></pre>
 </div>
 </div>
@@ -11556,8 +11571,8 @@ Content-Length: 151
   "data" : {
     "deletedCount" : 3
   },
-  "timestamp" : "2026-02-19T16:42:21.521745+09:00",
-  "requestId" : "4a1e555f-78e5-4d73-ac18-360a69585692"
+  "timestamp" : "2026-02-20T08:21:37.509352+09:00",
+  "requestId" : "fc1b5c44-e5ba-4ac7-8628-1128f0fa258f"
 }</code></pre>
 </div>
 </div>
@@ -11665,12 +11680,12 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (createdAt)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: DESC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
@@ -11736,8 +11751,8 @@ Content-Length: 1463
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:22.087742+09:00",
-  "requestId" : "9ae3f8eb-a7f8-45b9-805e-195ee5a97a6a"
+  "timestamp" : "2026-02-20T08:21:37.893631+09:00",
+  "requestId" : "aeb23c1d-5efc-403b-9f84-0dec1a6830c6"
 }</code></pre>
 </div>
 </div>
@@ -11945,8 +11960,8 @@ Content-Length: 774
     "createdAt" : "2025-02-10T10:30:00+09:00",
     "updatedAt" : "2025-02-10T10:30:00+09:00"
   },
-  "timestamp" : "2026-02-19T16:42:22.038849+09:00",
-  "requestId" : "a5579850-ec35-4245-9090-e4307cfec589"
+  "timestamp" : "2026-02-20T08:21:37.865393+09:00",
+  "requestId" : "0258fbf1-ad42-4f80-bef5-f106aa54bb13"
 }</code></pre>
 </div>
 </div>
@@ -12146,8 +12161,8 @@ Content-Length: 562
     } ],
     "createdAt" : "2025-01-23T10:30:00+09:00"
   },
-  "timestamp" : "2026-02-19T16:42:20.719872+09:00",
-  "requestId" : "f5088f13-9221-4f19-9c9f-11c6c21c1753"
+  "timestamp" : "2026-02-20T08:21:36.766772+09:00",
+  "requestId" : "fbbf3dd0-e704-4c76-a41f-2b9847de972c"
 }</code></pre>
 </div>
 </div>
@@ -12306,7 +12321,7 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (createdAt, code)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, CODE). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
@@ -12404,8 +12419,8 @@ Content-Length: 1709
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:20.766284+09:00",
-  "requestId" : "43cbe19e-afe2-48dc-b006-20caaed46416"
+  "timestamp" : "2026-02-20T08:21:36.801771+09:00",
+  "requestId" : "ae42d40c-4c91-4220-8269-817f151f1ddc"
 }</code></pre>
 </div>
 </div>
@@ -12622,8 +12637,8 @@ Content-Length: 153
   "data" : {
     "salesChannelId" : 1
   },
-  "timestamp" : "2026-02-19T16:42:28.822675+09:00",
-  "requestId" : "1e06ed70-b4f4-417c-b326-ac8152dab0fc"
+  "timestamp" : "2026-02-20T08:21:45.534452+09:00",
+  "requestId" : "d1bd7caa-462c-402f-bdb7-59812041a51d"
 }</code></pre>
 </div>
 </div>
@@ -12791,7 +12806,7 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchField</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (channelName)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (CHANNEL_NAME)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchWord</code></p></td>
@@ -12801,22 +12816,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (createdAt, channelName)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, CHANNEL_NAME, 기본값: CREATED_AT)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC, 기본값: DESC)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터, 기본값: 0)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기 (기본값: 20)</p></td>
 </tr>
 </tbody>
 </table>
@@ -12857,8 +12872,8 @@ Content-Length: 817
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:29.055702+09:00",
-  "requestId" : "be6a36ce-54e6-4522-9bf3-4d126a8ee683"
+  "timestamp" : "2026-02-20T08:21:45.739883+09:00",
+  "requestId" : "008fe884-faea-471c-84e3-ad6d50309cad"
 }</code></pre>
 </div>
 </div>
@@ -12903,7 +12918,7 @@ Content-Length: 817
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상태 (ACTIVE, INACTIVE)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].createdAt</code></p></td>
@@ -13062,8 +13077,8 @@ Content-Length: 153
   "data" : {
     "brandIds" : [ 100 ]
   },
-  "timestamp" : "2026-02-19T16:42:29.288315+09:00",
-  "requestId" : "c1038e7a-8961-4e32-851e-5eb43a0333cf"
+  "timestamp" : "2026-02-20T08:21:45.957595+09:00",
+  "requestId" : "10ec7800-e7f7-4134-b114-48ee149298d8"
 }</code></pre>
 </div>
 </div>
@@ -13168,7 +13183,7 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchField</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (externalBrandCode, externalBrandName)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (EXTERNAL_CODE, EXTERNAL_NAME)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchWord</code></p></td>
@@ -13178,22 +13193,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (createdAt, externalBrandName)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, EXTERNAL_NAME, 기본값: CREATED_AT)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC, 기본값: DESC)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작, 기본값: 0)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기 (기본값: 20)</p></td>
 </tr>
 </tbody>
 </table>
@@ -13204,7 +13219,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 1034
+Content-Length: 1033
 
 {
   "data" : {
@@ -13240,8 +13255,8 @@ Content-Length: 1034
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:29.523336+09:00",
-  "requestId" : "356dfdeb-e209-4621-b1d6-9e4e31e1b5d3"
+  "timestamp" : "2026-02-20T08:21:46.17428+09:00",
+  "requestId" : "46ad0804-55b4-447a-bc67-f111f6283e44"
 }</code></pre>
 </div>
 </div>
@@ -13298,7 +13313,7 @@ Content-Length: 1034
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상태 (ACTIVE, INACTIVE)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].createdAt</code></p></td>
@@ -13499,8 +13514,8 @@ Content-Length: 156
   "data" : {
     "categoryIds" : [ 100 ]
   },
-  "timestamp" : "2026-02-19T16:42:29.777404+09:00",
-  "requestId" : "0e48a259-ee9d-45c2-9e87-d928686dc761"
+  "timestamp" : "2026-02-20T08:21:46.389454+09:00",
+  "requestId" : "773a783d-667d-402f-8479-87fe6f207680"
 }</code></pre>
 </div>
 </div>
@@ -13605,7 +13620,7 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchField</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (externalCategoryCode, externalCategoryName)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (EXTERNAL_CODE, EXTERNAL_NAME)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchWord</code></p></td>
@@ -13630,22 +13645,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (createdAt, externalCategoryName, sortOrder)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, EXTERNAL_NAME, SORT_ORDER, 기본값: SORT_ORDER)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC, 기본값: DESC)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작, 기본값: 0)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기 (기본값: 20)</p></td>
 </tr>
 </tbody>
 </table>
@@ -13707,8 +13722,8 @@ Content-Length: 1385
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:29.994209+09:00",
-  "requestId" : "a0cfa5d2-43d7-4ae7-8fac-8af51163aa32"
+  "timestamp" : "2026-02-20T08:21:46.622972+09:00",
+  "requestId" : "6799a6d1-7316-43ec-bf32-4cfcc08c00c2"
 }</code></pre>
 </div>
 </div>
@@ -13795,7 +13810,7 @@ Content-Length: 1385
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상태 (ACTIVE, INACTIVE)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].createdAt</code></p></td>
@@ -13914,22 +13929,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (createdAt, code)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, CODE). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: DESC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터). 기본값: 0</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기. 기본값: 20</p></td>
 </tr>
 </tbody>
 </table>
@@ -13979,8 +13994,8 @@ Content-Length: 995
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:25.410101+09:00",
-  "requestId" : "52a5940a-6602-41bb-a050-92d999393342"
+  "timestamp" : "2026-02-20T08:21:42.347979+09:00",
+  "requestId" : "37c87c33-3e1a-45f8-bf2f-97d167ba1148"
 }</code></pre>
 </div>
 </div>
@@ -14176,8 +14191,8 @@ Content-Length: 614
     } ],
     "createdAt" : "2025-02-10T10:30:00+09:00"
   },
-  "timestamp" : "2026-02-19T16:42:25.385901+09:00",
-  "requestId" : "826546b5-cac9-4ee9-bee2-0d81abc7327d"
+  "timestamp" : "2026-02-20T08:21:42.325649+09:00",
+  "requestId" : "d174479b-c702-4b6c-8740-868c65e1cf43"
 }</code></pre>
 </div>
 </div>
@@ -14310,7 +14325,7 @@ Content-Length: 614
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/market/product-groups HTTP/1.1
 Content-Type: application/json
-Content-Length: 1558
+Content-Length: 1590
 Host: localhost:8080
 
 {
@@ -14333,6 +14348,7 @@ Host: localhost:8080
   "optionGroups" : [ {
     "optionGroupName" : "색상",
     "canonicalOptionGroupId" : 10,
+    "inputType" : "PREDEFINED",
     "optionValues" : [ {
       "optionValueName" : "블랙",
       "canonicalOptionValueId" : 100,
@@ -14482,6 +14498,12 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">표준 옵션 그룹 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>optionGroups[].inputType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">입력 유형 (PREDEFINED: 사전 정의, FREE_INPUT: 자유 입력)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>optionGroups[].optionValues</code></p></td>
@@ -14759,6 +14781,62 @@ Content-Length: 26
 </div>
 </div>
 <div class="sect4">
+<h5 id="_inputtype_옵션_그룹_입력_유형"><a class="anchor" href="#_inputtype_옵션_그룹_입력_유형"></a><a class="link" href="#_inputtype_옵션_그룹_입력_유형">inputType (옵션 그룹 입력 유형)</a></h5>
+<div class="paragraph">
+<p><code>SINGLE</code>, <code>COMBINATION</code> 옵션타입에서 각 옵션 그룹은 <code>inputType</code> 필드로 <strong>입력 방식</strong>을 지정할 수 있습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">inputType</th>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PREDEFINED</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사전 정의 (기본값)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">셀러가 미리 정의한 옵션 값 목록에서 선택 (예: 색상, 사이즈). <strong>SKU 조합에 참여</strong>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FREE_INPUT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">자유 입력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구매자가 주문 시 직접 입력 (예: 각인 문구, 커스텀 텍스트). <strong>SKU 조합에 참여하지 않음</strong>. `optionValues`는 빈 배열.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+`inputType`을 생략하면 기본값 `"PREDEFINED"`가 적용됩니다. 기존 API와 완전히 <strong>하위호환</strong>됩니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<strong>혼합 모드</strong> 지원 — 하나의 상품그룹에 <code>PREDEFINED</code> 그룹과 <code>FREE_INPUT</code> 그룹을 함께 사용할 수 있습니다. 예를 들어 반지 상품에서 사이즈(PREDEFINED)와 각인 문구(FREE_INPUT)를 동시에 제공할 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_optiontype별_등록_예시"><a class="anchor" href="#_optiontype별_등록_예시"></a><a class="link" href="#_optiontype별_등록_예시">OptionType별 등록 예시</a></h5>
 <div class="sect5">
 <h6 id="register-combination"><a class="anchor" href="#register-combination"></a><a class="link" href="#register-combination">1. COMBINATION (조합 옵션) - 색상 x 사이즈</a></h6>
@@ -14783,6 +14861,7 @@ Content-Length: 26
     {
       "optionGroupName": "색상",
       "canonicalOptionGroupId": 1,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "optionValueName": "빨강", "canonicalOptionValueId": 10, "sortOrder": 0 },
         { "optionValueName": "파랑", "canonicalOptionValueId": 11, "sortOrder": 1 }
@@ -14791,6 +14870,7 @@ Content-Length: 26
     {
       "optionGroupName": "사이즈",
       "canonicalOptionGroupId": 2,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "optionValueName": "S", "canonicalOptionValueId": 20, "sortOrder": 0 },
         { "optionValueName": "M", "canonicalOptionValueId": 21, "sortOrder": 1 },
@@ -14855,6 +14935,7 @@ Content-Length: 26
     {
       "optionGroupName": "사이즈",
       "canonicalOptionGroupId": 2,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "optionValueName": "S",  "canonicalOptionValueId": 20, "sortOrder": 0 },
         { "optionValueName": "M",  "canonicalOptionValueId": 21, "sortOrder": 1 },
@@ -14933,7 +15014,7 @@ Content-Length: 26
 <div class="title">Important</div>
 </td>
 <td class="content">
-<code>NONE`에서는 `optionGroups`를 <strong>보내지 않거나 빈 배열 `[]</code></strong> 이어야 합니다. 옵션 그룹을 보내면 400 에러가 발생합니다.
+<code>NONE`에서는 `optionGroups`이 <strong>빈 배열 `[]</code></strong> 이어야 합니다. 옵션 그룹을 보내면 400 에러가 발생합니다.
 </td>
 </tr>
 </table>
@@ -15017,6 +15098,93 @@ Content-Length: 26
 </table>
 </div>
 </div>
+<div class="sect5">
+<h6 id="register-mixed-input"><a class="anchor" href="#register-mixed-input"></a><a class="link" href="#register-mixed-input">5. 혼합 입력 모드 (PREDEFINED + FREE_INPUT) - 반지: 사이즈 + 각인 문구</a></h6>
+<div class="paragraph">
+<p><code>SINGLE</code> 또는 <code>COMBINATION</code> 상품에서 <strong>사전 정의 옵션</strong>과 <strong>자유 입력 옵션</strong>을 함께 사용할 수 있습니다.
+대표적인 사용 사례:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>반지: 사이즈(PREDEFINED) + 각인 문구(FREE_INPUT)</p>
+</li>
+<li>
+<p>티셔츠: 색상 x 사이즈(PREDEFINED) + 프린팅 문구(FREE_INPUT)</p>
+</li>
+<li>
+<p>폰케이스: 기종(PREDEFINED) + 커스텀 이미지(FREE_INPUT)</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "sellerId": 1,
+  "brandId": 100,
+  "categoryId": 1000,
+  "shippingPolicyId": 1,
+  "refundPolicyId": 1,
+  "productGroupName": "커스텀 각인 실버 반지",
+  "optionType": "SINGLE",
+  "images": [
+    { "imageType": "THUMBNAIL", "originUrl": "https://example.com/ring_main.jpg", "sortOrder": 0 }
+  ],
+  "optionGroups": [
+    {
+      "optionGroupName": "사이즈",
+      "canonicalOptionGroupId": 5,
+      "inputType": "PREDEFINED",
+      "optionValues": [
+        { "optionValueName": "11호", "sortOrder": 0 },
+        { "optionValueName": "13호", "sortOrder": 1 },
+        { "optionValueName": "15호", "sortOrder": 2 }
+      ]
+    },
+    {
+      "optionGroupName": "각인 문구",
+      "inputType": "FREE_INPUT",
+      "optionValues": []
+    }
+  ],
+  "products": [
+    { "skuCode": "RING-11", "regularPrice": 89000, "currentPrice": 79000, "stockQuantity": 50, "sortOrder": 0, "selectedOptions": [{"optionGroupName":"사이즈","optionValueName":"11호"}] },
+    { "skuCode": "RING-13", "regularPrice": 89000, "currentPrice": 79000, "stockQuantity": 50, "sortOrder": 1, "selectedOptions": [{"optionGroupName":"사이즈","optionValueName":"13호"}] },
+    { "skuCode": "RING-15", "regularPrice": 89000, "currentPrice": 79000, "stockQuantity": 50, "sortOrder": 2, "selectedOptions": [{"optionGroupName":"사이즈","optionValueName":"15호"}] }
+  ],
+  "description": { "content": "&lt;p&gt;925 실버 각인 반지 - 주문 시 각인 문구 입력&lt;/p&gt;" }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<strong>PREDEFINED 그룹 수</strong>만 `optionType`의 그룹 수 규칙을 따릅니다. `SINGLE`은 PREDEFINED 1개, `COMBINATION`은 PREDEFINED 2개 필수. FREE_INPUT 그룹은 개수 제한 없이 추가할 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>핵심 규칙</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>FREE_INPUT</code> 그룹의 <code>optionValues`는 반드시 <strong>빈 배열 `[]</code></strong> 이어야 합니다 (구매자가 주문 시 입력)</p>
+</li>
+<li>
+<p>`selectedOptions`에는 <strong>PREDEFINED 그룹만</strong> 포함합니다. FREE_INPUT 그룹은 SKU 조합에 참여하지 않습니다</p>
+</li>
+<li>
+<p>상세 조회 응답에서 각 옵션 그룹의 `inputType`으로 PREDEFINED/FREE_INPUT을 구분할 수 있습니다</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect4">
 <h5 id="_free_input_vs_none_비교"><a class="anchor" href="#_free_input_vs_none_비교"></a><a class="link" href="#_free_input_vs_none_비교">FREE_INPUT vs NONE 비교</a></h5>
@@ -15083,16 +15251,23 @@ Content-Length: 26
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">옵션 그룹 수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PREDEFINED 그룹 수</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2개 필수</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1개 필수</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0개 (금지)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0개 (금지)</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FREE_INPUT 그룹</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">추가 가능 (선택)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">추가 가능 (선택)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">불가</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">불가</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">selectedOptions 크기</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2 (PREDEFINED만)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 (PREDEFINED만)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0 (빈 배열)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0 (빈 배열)</p></td>
 </tr>
@@ -15127,20 +15302,27 @@ Content-Length: 26
 
   switch (optionType) {
     case 'COMBINATION':
-      // 옵션 그룹 2개 + 각 상품에 selectedOptions 2개씩
-      request.optionGroups = optionGroups; // 2개
+      // PREDEFINED 그룹 2개 (+ 선택적 FREE_INPUT 그룹)
+      request.optionGroups = optionGroups.map(g =&gt; ({
+        ...g,
+        inputType: g.inputType || 'PREDEFINED' // 생략 시 기본값 PREDEFINED
+      }));
+      // selectedOptions: PREDEFINED 그룹에서만 선택
       request.products = products.map(p =&gt; ({
         ...p,
-        selectedOptions: p.selectedOptions // [{groupName, valueName}, {groupName, valueName}]
+        selectedOptions: p.selectedOptions // PREDEFINED 그룹에서 각 1개씩, 총 2개
       }));
       break;
 
     case 'SINGLE':
-      // 옵션 그룹 1개 + 각 상품에 selectedOptions 1개씩
-      request.optionGroups = optionGroups; // 1개
+      // PREDEFINED 그룹 1개 (+ 선택적 FREE_INPUT 그룹)
+      request.optionGroups = optionGroups.map(g =&gt; ({
+        ...g,
+        inputType: g.inputType || 'PREDEFINED'
+      }));
       request.products = products.map(p =&gt; ({
         ...p,
-        selectedOptions: p.selectedOptions // [{groupName, valueName}]
+        selectedOptions: p.selectedOptions // PREDEFINED 그룹에서 1개
       }));
       break;
 
@@ -15168,12 +15350,15 @@ Content-Length: 26
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// 캐노니컬 매핑 없이 (항상 가능)
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// 기본 PREDEFINED 그룹 (inputType 생략 가능 - 기본값 PREDEFINED)
 { "optionGroupName": "색상", "optionValues": [{ "optionValueName": "빨강", "sortOrder": 0 }] }
 
-// 캐노니컬 매핑 포함 (선택)
-{ "optionGroupName": "색상", "canonicalOptionGroupId": 1,
-  "optionValues": [{ "optionValueName": "빨강", "canonicalOptionValueId": 10, "sortOrder": 0 }] }</code></pre>
+// 캐노니컬 매핑 포함
+{ "optionGroupName": "색상", "canonicalOptionGroupId": 1, "inputType": "PREDEFINED",
+  "optionValues": [{ "optionValueName": "빨강", "canonicalOptionValueId": 10, "sortOrder": 0 }] }
+
+// 자유 입력 그룹 (구매자가 주문 시 직접 입력)
+{ "optionGroupName": "각인 문구", "inputType": "FREE_INPUT", "optionValues": [] }</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -15195,10 +15380,16 @@ Content-Length: 26
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>optionType과 optionGroups 수 일치 필수</strong>: <code>COMBINATION</code>=2개, <code>SINGLE</code>=1개, <code>NONE</code>/<code>FREE_INPUT</code>=0개. 불일치 시 400 에러</p>
+<p><strong>optionType과 PREDEFINED 그룹 수 일치 필수</strong>: <code>COMBINATION</code>=PREDEFINED 2개, <code>SINGLE</code>=PREDEFINED 1개, <code>NONE</code>/<code>FREE_INPUT(optionType)</code>=0개. 불일치 시 400 에러</p>
 </li>
 <li>
-<p><strong>selectedOptions 개수 = 옵션 그룹 수</strong>: <code>COMBINATION`은 2개, `SINGLE`은 1개, `NONE</code>/`FREE_INPUT`은 빈 배열</p>
+<p><strong>FREE_INPUT 그룹은 개수 제한 없음</strong>: <code>SINGLE</code>/`COMBINATION`에서 PREDEFINED 그룹 외에 FREE_INPUT 그룹을 자유롭게 추가 가능</p>
+</li>
+<li>
+<p><strong>FREE_INPUT 그룹의 optionValues는 빈 배열</strong>: 구매자가 주문 시 직접 입력하므로 사전 정의 옵션 값이 없어야 합니다</p>
+</li>
+<li>
+<p><strong>selectedOptions에는 PREDEFINED 그룹만 포함</strong>: FREE_INPUT 그룹은 SKU 조합에 참여하지 않으므로 `selectedOptions`에서 제외</p>
 </li>
 <li>
 <p><strong>selectedOptions 이름 일치</strong>: `optionGroupName`과 `optionValueName`은 `optionGroups`에 정의된 이름과 정확히 일치해야 합니다</p>
@@ -15207,7 +15398,10 @@ Content-Length: 26
 <p><strong>캐노니컬 옵션은 선택</strong>: <code>canonicalOptionGroupId</code>/`canonicalOptionValueId`는 null 허용. 나중에 수정 API로 추가 가능</p>
 </li>
 <li>
-<p><strong>FREE_INPUT은 캐노니컬 매핑 불가</strong>: 옵션 그룹 자체가 없으므로 캐노니컬 체계 사용 불가. 검색/필터 필요 시 <code>SINGLE</code>/<code>COMBINATION</code> 사용</p>
+<p><strong>FREE_INPUT(optionType)은 캐노니컬 매핑 불가</strong>: 옵션 그룹 자체가 없으므로 캐노니컬 체계 사용 불가. 검색/필터 필요 시 <code>SINGLE</code>/<code>COMBINATION</code> 사용</p>
+</li>
+<li>
+<p><strong>inputType 기본값</strong>: `inputType`을 생략하면 `"PREDEFINED"`로 간주합니다. 기존 API 호출을 변경할 필요 없습니다</p>
 </li>
 </ol>
 </div>
@@ -15225,7 +15419,7 @@ Content-Length: 26
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/market/product-groups/batch HTTP/1.1
 Content-Type: application/json
-Content-Length: 3394
+Content-Length: 3462
 Host: localhost:8080
 
 {
@@ -15249,6 +15443,7 @@ Host: localhost:8080
     "optionGroups" : [ {
       "optionGroupName" : "색상",
       "canonicalOptionGroupId" : 10,
+      "inputType" : "PREDEFINED",
       "optionValues" : [ {
         "optionValueName" : "블랙",
         "canonicalOptionValueId" : 100,
@@ -15313,6 +15508,7 @@ Host: localhost:8080
     "optionGroups" : [ {
       "optionGroupName" : "색상",
       "canonicalOptionGroupId" : 10,
+      "inputType" : "PREDEFINED",
       "optionValues" : [ {
         "optionValueName" : "블랙",
         "canonicalOptionValueId" : 100,
@@ -15469,6 +15665,12 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">표준 옵션 그룹 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>items[].optionGroups[].inputType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">입력 유형 (PREDEFINED: 사전 정의, FREE_INPUT: 자유 입력)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>items[].optionGroups[].optionValues</code></p></td>
@@ -15709,7 +15911,7 @@ Content-Length: 328
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /api/v1/market/product-groups/1 HTTP/1.1
 Content-Type: application/json
-Content-Length: 1238
+Content-Length: 1270
 Host: localhost:8080
 
 {
@@ -15727,6 +15929,7 @@ Host: localhost:8080
     "sellerOptionGroupId" : 1,
     "optionGroupName" : "색상",
     "canonicalOptionGroupId" : 10,
+    "inputType" : "PREDEFINED",
     "optionValues" : [ {
       "sellerOptionValueId" : 1,
       "optionValueName" : "블랙",
@@ -15882,6 +16085,12 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">표준 옵션 그룹 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>optionGroups[].inputType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">입력 유형 (PREDEFINED: 사전 정의, FREE_INPUT: 자유 입력)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>optionGroups[].optionValues</code></p></td>
@@ -16264,22 +16473,22 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 키 (CREATED_AT, UPDATED_AT, NAME). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: DESC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터). 기본값: 0</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기. 기본값: 20</p></td>
 </tr>
 </tbody>
 </table>
@@ -16389,8 +16598,8 @@ Content-Length: 3212
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:26.731157+09:00",
-  "requestId" : "9133a29a-22ba-4061-aa48-1a2db4dcba76"
+  "timestamp" : "2026-02-20T08:21:43.515371+09:00",
+  "requestId" : "479066e5-764c-4dfe-919f-f0668c8a89cc"
 }</code></pre>
 </div>
 </div>
@@ -16657,7 +16866,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 4205
+Content-Length: 4242
 
 {
   "data" : {
@@ -16692,6 +16901,7 @@ Content-Length: 4205
         "id" : 1,
         "optionGroupName" : "색상",
         "canonicalOptionGroupId" : 10,
+        "inputType" : "PREDEFINED",
         "sortOrder" : 1,
         "optionValues" : [ {
           "id" : 1,
@@ -16796,8 +17006,8 @@ Content-Length: 4205
       "updatedAt" : "2025-02-10T10:30:00+09:00"
     }
   },
-  "timestamp" : "2026-02-19T16:42:26.67643+09:00",
-  "requestId" : "8b199279-f348-4a1e-a36d-79f0cd74c4bb"
+  "timestamp" : "2026-02-20T08:21:43.467761+09:00",
+  "requestId" : "51db1d15-c1fd-4036-b6ce-aa2de3138aea"
 }</code></pre>
 </div>
 </div>
@@ -16963,6 +17173,12 @@ Content-Length: 4205
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">표준 옵션 그룹 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.optionProductMatrix.optionGroups[].inputType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">입력 유형 (PREDEFINED: 사전 정의, FREE_INPUT: 자유 입력)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.optionProductMatrix.optionGroups[].sortOrder</code></p></td>
@@ -17712,7 +17928,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /api/v1/market/products/product-groups/10 HTTP/1.1
 Content-Type: application/json
-Content-Length: 2242
+Content-Length: 2306
 Host: localhost:8080
 
 {
@@ -17720,6 +17936,7 @@ Host: localhost:8080
     "sellerOptionGroupId" : 10,
     "optionGroupName" : "색상",
     "canonicalOptionGroupId" : 1001,
+    "inputType" : "PREDEFINED",
     "optionValues" : [ {
       "sellerOptionValueId" : 1,
       "optionValueName" : "블랙",
@@ -17735,6 +17952,7 @@ Host: localhost:8080
     "sellerOptionGroupId" : 20,
     "optionGroupName" : "사이즈",
     "canonicalOptionGroupId" : 1002,
+    "inputType" : "PREDEFINED",
     "optionValues" : [ {
       "sellerOptionValueId" : 3,
       "optionValueName" : "S",
@@ -17871,6 +18089,12 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">표준 옵션 그룹 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>optionGroups[].inputType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">입력 유형 (PREDEFINED: 사전 정의, FREE_INPUT: 자유 입력)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>optionGroups[].optionValues</code></p></td>
@@ -18151,6 +18375,7 @@ Host: localhost:8080
       "sellerOptionGroupId": 100,
       "optionGroupName": "색상",
       "canonicalOptionGroupId": 1,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "sellerOptionValueId": 200, "optionValueName": "빨강", "canonicalOptionValueId": 10, "sortOrder": 0 },
         { "sellerOptionValueId": 201, "optionValueName": "파랑", "canonicalOptionValueId": 11, "sortOrder": 1 }
@@ -18160,6 +18385,7 @@ Host: localhost:8080
       "sellerOptionGroupId": 101,
       "optionGroupName": "사이즈",
       "canonicalOptionGroupId": 2,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "sellerOptionValueId": 300, "optionValueName": "S", "canonicalOptionValueId": 20, "sortOrder": 0 },
         { "sellerOptionValueId": 301, "optionValueName": "M", "canonicalOptionValueId": 21, "sortOrder": 1 }
@@ -18201,6 +18427,7 @@ Host: localhost:8080
       "sellerOptionGroupId": 100,
       "optionGroupName": "색상",
       "canonicalOptionGroupId": 1,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "sellerOptionValueId": 200, "optionValueName": "빨강", "canonicalOptionValueId": 10, "sortOrder": 0 },
         { "sellerOptionValueId": 201, "optionValueName": "파랑", "canonicalOptionValueId": 11, "sortOrder": 1 }
@@ -18210,6 +18437,7 @@ Host: localhost:8080
       "sellerOptionGroupId": 101,
       "optionGroupName": "사이즈",
       "canonicalOptionGroupId": 2,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "sellerOptionValueId": 300, "optionValueName": "S", "canonicalOptionValueId": 20, "sortOrder": 0 },
         { "sellerOptionValueId": 301, "optionValueName": "M", "canonicalOptionValueId": 21, "sortOrder": 1 },
@@ -18266,6 +18494,7 @@ Host: localhost:8080
       "sellerOptionGroupId": 100,
       "optionGroupName": "색상",
       "canonicalOptionGroupId": 1,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "sellerOptionValueId": 200, "optionValueName": "빨강", "canonicalOptionValueId": 10, "sortOrder": 0 },
         { "sellerOptionValueId": 201, "optionValueName": "파랑", "canonicalOptionValueId": 11, "sortOrder": 1 }
@@ -18275,6 +18504,7 @@ Host: localhost:8080
       "sellerOptionGroupId": 101,
       "optionGroupName": "사이즈",
       "canonicalOptionGroupId": 2,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "sellerOptionValueId": 301, "optionValueName": "M", "canonicalOptionValueId": 21, "sortOrder": 0 },
         { "sellerOptionValueId": 302, "optionValueName": "L", "canonicalOptionValueId": 22, "sortOrder": 1 }
@@ -18328,6 +18558,7 @@ Host: localhost:8080
       "sellerOptionGroupId": 100,
       "optionGroupName": "색상",
       "canonicalOptionGroupId": 1,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "sellerOptionValueId": 200, "optionValueName": "빨강", "canonicalOptionValueId": 10, "sortOrder": 0 },
         { "sellerOptionValueId": 201, "optionValueName": "파랑", "canonicalOptionValueId": 11, "sortOrder": 1 }
@@ -18337,6 +18568,7 @@ Host: localhost:8080
       "sellerOptionGroupId": null,
       "optionGroupName": "사이즈",
       "canonicalOptionGroupId": 2,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "sellerOptionValueId": null, "optionValueName": "S", "canonicalOptionValueId": 20, "sortOrder": 0 },
         { "sellerOptionValueId": null, "optionValueName": "M", "canonicalOptionValueId": 21, "sortOrder": 1 }
@@ -18378,6 +18610,7 @@ Host: localhost:8080
       "sellerOptionGroupId": 100,
       "optionGroupName": "사이즈",
       "canonicalOptionGroupId": 2,
+      "inputType": "PREDEFINED",
       "optionValues": [
         { "sellerOptionValueId": 300, "optionValueName": "S",   "canonicalOptionValueId": 20, "sortOrder": 0 },
         { "sellerOptionValueId": 301, "optionValueName": "M",   "canonicalOptionValueId": 21, "sortOrder": 1 },
@@ -18506,6 +18739,12 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock">표준 옵션 그룹 ID (매핑용)</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inputType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">입력 유형. <code>PREDEFINED</code>(기본값): 사전 정의 옵션값에서 선택, <code>FREE_INPUT</code>: 구매자가 주문 시 직접 입력. 생략 시 PREDEFINED</p></td>
+</tr>
+<tr>
 <th class="tableblock halign-left valign-top" colspan="4"><p class="tableblock">optionGroups.optionValues</p></th>
 </tr>
 <tr>
@@ -18597,7 +18836,7 @@ Host: localhost:8080
 <p><strong>selectedOptions 이름 일치</strong>: `optionGroupName`과 `optionValueName`은 `optionGroups`에 정의된 이름과 정확히 일치해야 합니다</p>
 </li>
 <li>
-<p><strong>상품별 selectedOptions 개수</strong>: 옵션 그룹 수와 동일해야 합니다 (그룹 2개면 selectedOptions 2개)</p>
+<p><strong>상품별 selectedOptions 개수</strong>: <strong>PREDEFINED</strong> 옵션 그룹 수와 동일해야 합니다 (PREDEFINED 그룹 2개면 selectedOptions 2개). FREE_INPUT 그룹은 제외</p>
 </li>
 <li>
 <p><strong>각 selectedOptions는 서로 다른 옵션 그룹에서 하나씩</strong>: 같은 그룹의 옵션 값을 2개 선택하면 안 됩니다</p>
@@ -18607,6 +18846,9 @@ Host: localhost:8080
 </li>
 <li>
 <p><strong>canonicalOptionGroupId/canonicalOptionValueId</strong>: 선택사항. 표준 옵션에 매핑되지 않은 경우 null</p>
+</li>
+<li>
+<p><strong>inputType</strong>: 생략 시 <code>PREDEFINED</code>(기본값). <code>FREE_INPUT</code> 그룹은 `optionValues`를 빈 배열로 보내야 합니다</p>
 </li>
 </ol>
 </div>
@@ -18688,8 +18930,8 @@ Content-Length: 845
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-02-19T16:42:27.234064+09:00",
-  "requestId" : "f113a110-4487-4f7d-835e-49ea233d851a"
+  "timestamp" : "2026-02-20T08:21:44.047737+09:00",
+  "requestId" : "66b507c5-1cb4-48cd-a916-844a30540e7b"
 }</code></pre>
 </div>
 </div>
@@ -18971,8 +19213,8 @@ Content-Length: 799
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-02-19T16:42:27.711716+09:00",
-  "requestId" : "fa18b326-ca96-48f0-a9fe-10156069fc8d"
+  "timestamp" : "2026-02-20T08:21:44.490564+09:00",
+  "requestId" : "9a2209f2-ebf4-4166-a15a-74bcf80f1e70"
 }</code></pre>
 </div>
 </div>
@@ -19382,8 +19624,8 @@ Content-Length: 735
     "width" : null,
     "height" : null
   } ],
-  "timestamp" : "2026-02-19T16:42:25.096672+09:00",
-  "requestId" : "7968ad85-de9e-41c1-9f48-ce94011c2d0a"
+  "timestamp" : "2026-02-20T08:21:42.069734+09:00",
+  "requestId" : "c2fc1ad8-29de-4816-b450-c2e752fb3179"
 }</code></pre>
 </div>
 </div>
@@ -19567,8 +19809,8 @@ Content-Length: 270
     "failed" : 2,
     "cancelled" : 3
   },
-  "timestamp" : "2026-02-19T16:42:33.424404+09:00",
-  "requestId" : "925b7f41-ddb8-4cac-908c-5647ae1d92e3"
+  "timestamp" : "2026-02-20T08:21:49.898635+09:00",
+  "requestId" : "8ba3202a-45d5-4ca6-808b-d32b3ec189ee"
 }</code></pre>
 </div>
 </div>
@@ -19687,7 +19929,7 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchField</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (shipmentNumber, orderNumber, trackingNumber)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색 필드 (ORDER_ID, TRACKING_NUMBER, CUSTOMER_NAME)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>searchWord</code></p></td>
@@ -19697,27 +19939,27 @@ Host: localhost:8080</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>dateField</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">날짜 검색 대상 필드 (createdAt, shippedAt, deliveredAt)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">날짜 검색 대상 필드 (PAYMENT, ORDER_CONFIRMED, SHIPPED)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortKey</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (createdAt, shippedAt, deliveredAt)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준 (CREATED_AT, SHIPPED_AT, DELIVERED_AT). 기본값: CREATED_AT</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortDirection</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방향 (ASC, DESC). 기본값: DESC</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터). 기본값: 0</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">선택</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기. 기본값: 20</p></td>
 </tr>
 </tbody>
 </table>
@@ -19773,8 +20015,8 @@ Content-Length: 1430
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-02-19T16:42:33.409067+09:00",
-  "requestId" : "97289c4c-aec7-45fc-b9c9-cd65e6a0b5ab"
+  "timestamp" : "2026-02-20T08:21:49.886218+09:00",
+  "requestId" : "7c95a10d-97ca-4468-9091-068d2e4a059b"
 }</code></pre>
 </div>
 </div>
@@ -19831,7 +20073,7 @@ Content-Length: 1430
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">배송 상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">배송 상태 (READY, PREPARING, SHIPPED, IN_TRANSIT, DELIVERED, FAILED, CANCELLED)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].trackingNumber</code></p></td>
@@ -19978,8 +20220,8 @@ Content-Length: 674
     "createdAt" : "2025-01-23T10:30:00+09:00",
     "updatedAt" : "2025-01-23T10:30:00+09:00"
   },
-  "timestamp" : "2026-02-19T16:42:33.388362+09:00",
-  "requestId" : "afe6caa0-399f-4fe1-aab5-f2523c529e4f"
+  "timestamp" : "2026-02-20T08:21:49.869036+09:00",
+  "requestId" : "fc2dbb4c-4581-4189-8476-25c9159904dc"
 }</code></pre>
 </div>
 </div>
@@ -20030,7 +20272,7 @@ Content-Length: 674
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">필수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">배송 상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">배송 상태 (READY, PREPARING, SHIPPED, IN_TRANSIT, DELIVERED, FAILED, CANCELLED)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.shipmentMethod</code></p></td>
@@ -20185,8 +20427,8 @@ Content-Length: 553
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-02-19T16:42:33.121897+09:00",
-  "requestId" : "5bf58585-8aa8-410d-b495-6e09034f69ff"
+  "timestamp" : "2026-02-20T08:21:49.594549+09:00",
+  "requestId" : "4c1ead15-0797-4d37-8629-7362e19d066d"
 }</code></pre>
 </div>
 </div>
@@ -20387,8 +20629,8 @@ Content-Length: 441
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-02-19T16:42:33.100955+09:00",
-  "requestId" : "6a2a0154-5238-4717-9568-ba96617cc745"
+  "timestamp" : "2026-02-20T08:21:49.579058+09:00",
+  "requestId" : "3358c4ba-ca93-495f-b416-0f1e1023aa27"
 }</code></pre>
 </div>
 </div>
@@ -20575,8 +20817,8 @@ Content-Length: 127
 
 {
   "data" : null,
-  "timestamp" : "2026-02-19T16:42:33.074318+09:00",
-  "requestId" : "b38baf0b-723c-49ad-a823-99f5efb11327"
+  "timestamp" : "2026-02-20T08:21:49.560339+09:00",
+  "requestId" : "db5c61c7-115d-40a6-970c-8a53012c0f3d"
 }</code></pre>
 </div>
 </div>
