@@ -32,12 +32,6 @@ class OptionTypeTest {
         void noneDoesNotRequireOptionGroup() {
             assertThat(OptionType.NONE.requiresOptionGroup()).isFalse();
         }
-
-        @Test
-        @DisplayName("FREE_INPUT은 옵션 그룹이 필요하지 않다")
-        void freeInputDoesNotRequireOptionGroup() {
-            assertThat(OptionType.FREE_INPUT.requiresOptionGroup()).isFalse();
-        }
     }
 
     @Nested
@@ -48,12 +42,6 @@ class OptionTypeTest {
         @DisplayName("NONE은 0개의 옵션 그룹을 요구한다")
         void noneExpects0OptionGroups() {
             assertThat(OptionType.NONE.expectedOptionGroupCount()).isEqualTo(0);
-        }
-
-        @Test
-        @DisplayName("FREE_INPUT은 0개의 옵션 그룹을 요구한다")
-        void freeInputExpects0OptionGroups() {
-            assertThat(OptionType.FREE_INPUT.expectedOptionGroupCount()).isEqualTo(0);
         }
 
         @Test
@@ -79,7 +67,6 @@ class OptionTypeTest {
             assertThat(OptionType.NONE.displayName()).isEqualTo("옵션 없음");
             assertThat(OptionType.SINGLE.displayName()).isEqualTo("단일 옵션");
             assertThat(OptionType.COMBINATION.displayName()).isEqualTo("조합 옵션");
-            assertThat(OptionType.FREE_INPUT.displayName()).isEqualTo("자유 입력");
         }
     }
 
@@ -91,11 +78,7 @@ class OptionTypeTest {
         @DisplayName("모든 옵션 타입이 존재한다")
         void allValuesExist() {
             assertThat(OptionType.values())
-                    .containsExactly(
-                            OptionType.NONE,
-                            OptionType.SINGLE,
-                            OptionType.COMBINATION,
-                            OptionType.FREE_INPUT);
+                    .containsExactly(OptionType.NONE, OptionType.SINGLE, OptionType.COMBINATION);
         }
     }
 }

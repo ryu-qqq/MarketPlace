@@ -343,54 +343,44 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
         return request;
     }
 
-    private Map<String, Object> createFreeInputRegisterRequest() {
+    private Map<String, Object> createFreeInputOnlyRegisterRequest() {
         Map<String, Object> request = new HashMap<>();
         request.put("sellerId", sellerId);
         request.put("brandId", brandId);
         request.put("categoryId", categoryId);
         request.put("shippingPolicyId", shippingPolicyId);
         request.put("refundPolicyId", refundPolicyId);
-        request.put("productGroupName", "자유입력 커스텀 상품그룹");
-        request.put("optionType", "FREE_INPUT");
+        request.put("productGroupName", "각인 전용 반지");
+        request.put("optionType", "SINGLE");
 
         request.put(
                 "images",
                 List.of(
                         Map.of(
-                                "originUrl", "https://example.com/custom_main.jpg",
+                                "originUrl", "https://example.com/ring_engrave_main.jpg",
                                 "imageType", "THUMBNAIL",
-                                "sortOrder", 0),
+                                "sortOrder", 0)));
+
+        request.put(
+                "optionGroups",
+                List.of(
                         Map.of(
-                                "originUrl", "https://example.com/custom_detail.jpg",
-                                "imageType", "DETAIL",
-                                "sortOrder", 1)));
+                                "optionGroupName", "각인 문구",
+                                "inputType", "FREE_INPUT",
+                                "optionValues", List.of())));
 
         request.put(
                 "products",
                 List.of(
                         Map.of(
-                                "skuCode", "CUSTOM-SET-A",
-                                "regularPrice", 45000,
-                                "currentPrice", 39000,
+                                "skuCode", "ENGRAVE-RING-001",
+                                "regularPrice", 89000,
+                                "currentPrice", 79000,
                                 "stockQuantity", 100,
                                 "sortOrder", 0,
-                                "selectedOptions", List.of()),
-                        Map.of(
-                                "skuCode", "CUSTOM-SET-B",
-                                "regularPrice", 55000,
-                                "currentPrice", 49000,
-                                "stockQuantity", 80,
-                                "sortOrder", 1,
-                                "selectedOptions", List.of()),
-                        Map.of(
-                                "skuCode", "CUSTOM-SET-C",
-                                "regularPrice", 65000,
-                                "currentPrice", 59000,
-                                "stockQuantity", 50,
-                                "sortOrder", 2,
                                 "selectedOptions", List.of())));
 
-        request.put("description", Map.of("content", "<p>자유 입력 커스텀 상품</p>"));
+        request.put("description", Map.of("content", "<p>각인 전용 반지 - 주문 시 문구 입력</p>"));
 
         var noticeFields = noticeFieldRepository.findAll();
         request.put(
@@ -404,7 +394,254 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                         "noticeFieldId",
                                         noticeFields.get(0).getId(),
                                         "fieldValue",
-                                        "혼합재질"),
+                                        "은 92.5%"),
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(1).getId(),
+                                        "fieldValue",
+                                        "대한민국"))));
+
+        return request;
+    }
+
+    private Map<String, Object> createSinglePredefinedOnlyRegisterRequest() {
+        Map<String, Object> request = new HashMap<>();
+        request.put("sellerId", sellerId);
+        request.put("brandId", brandId);
+        request.put("categoryId", categoryId);
+        request.put("shippingPolicyId", shippingPolicyId);
+        request.put("refundPolicyId", refundPolicyId);
+        request.put("productGroupName", "기본 슬랙스");
+        request.put("optionType", "SINGLE");
+
+        request.put(
+                "images",
+                List.of(
+                        Map.of(
+                                "originUrl", "https://example.com/slacks_main.jpg",
+                                "imageType", "THUMBNAIL",
+                                "sortOrder", 0)));
+
+        request.put(
+                "optionGroups",
+                List.of(
+                        Map.of(
+                                "optionGroupName",
+                                "사이즈",
+                                "inputType",
+                                "PREDEFINED",
+                                "optionValues",
+                                List.of(
+                                        Map.of("optionValueName", "S", "sortOrder", 0),
+                                        Map.of("optionValueName", "M", "sortOrder", 1),
+                                        Map.of("optionValueName", "L", "sortOrder", 2)))));
+
+        request.put(
+                "products",
+                List.of(
+                        Map.of(
+                                "skuCode", "SLACKS-S",
+                                "regularPrice", 45000,
+                                "currentPrice", 40000,
+                                "stockQuantity", 100,
+                                "sortOrder", 0,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "S"))),
+                        Map.of(
+                                "skuCode", "SLACKS-M",
+                                "regularPrice", 45000,
+                                "currentPrice", 40000,
+                                "stockQuantity", 80,
+                                "sortOrder", 1,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "M"))),
+                        Map.of(
+                                "skuCode", "SLACKS-L",
+                                "regularPrice", 45000,
+                                "currentPrice", 40000,
+                                "stockQuantity", 60,
+                                "sortOrder", 2,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "L")))));
+
+        request.put("description", Map.of("content", "<p>데일리 슬랙스</p>"));
+
+        var noticeFields = noticeFieldRepository.findAll();
+        request.put(
+                "notice",
+                Map.of(
+                        "noticeCategoryId",
+                        noticeCategoryId,
+                        "entries",
+                        List.of(
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(0).getId(),
+                                        "fieldValue",
+                                        "폴리에스터"),
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(1).getId(),
+                                        "fieldValue",
+                                        "베트남"))));
+
+        return request;
+    }
+
+    private Map<String, Object> createCombinationMixedRegisterRequest() {
+        Map<String, Object> request = new HashMap<>();
+        request.put("sellerId", sellerId);
+        request.put("brandId", brandId);
+        request.put("categoryId", categoryId);
+        request.put("shippingPolicyId", shippingPolicyId);
+        request.put("refundPolicyId", refundPolicyId);
+        request.put("productGroupName", "커스텀 프린팅 티셔츠");
+        request.put("optionType", "COMBINATION");
+
+        request.put(
+                "images",
+                List.of(
+                        Map.of(
+                                "originUrl", "https://example.com/tshirt_custom.jpg",
+                                "imageType", "THUMBNAIL",
+                                "sortOrder", 0)));
+
+        // PREDEFINED 2개 + FREE_INPUT 1개
+        request.put(
+                "optionGroups",
+                List.of(
+                        Map.of(
+                                "optionGroupName",
+                                "색상",
+                                "inputType",
+                                "PREDEFINED",
+                                "optionValues",
+                                List.of(
+                                        Map.of("optionValueName", "화이트", "sortOrder", 0),
+                                        Map.of("optionValueName", "블랙", "sortOrder", 1))),
+                        Map.of(
+                                "optionGroupName",
+                                "사이즈",
+                                "inputType",
+                                "PREDEFINED",
+                                "optionValues",
+                                List.of(
+                                        Map.of("optionValueName", "M", "sortOrder", 0),
+                                        Map.of("optionValueName", "L", "sortOrder", 1))),
+                        Map.of(
+                                "optionGroupName",
+                                "프린팅 문구",
+                                "inputType",
+                                "FREE_INPUT",
+                                "optionValues",
+                                List.of())));
+
+        request.put(
+                "products",
+                List.of(
+                        Map.of(
+                                "skuCode", "CUST-W-M",
+                                "regularPrice", 35000,
+                                "currentPrice", 30000,
+                                "stockQuantity", 50,
+                                "sortOrder", 0,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "화이트"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "M"))),
+                        Map.of(
+                                "skuCode", "CUST-W-L",
+                                "regularPrice", 35000,
+                                "currentPrice", 30000,
+                                "stockQuantity", 50,
+                                "sortOrder", 1,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "화이트"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "L"))),
+                        Map.of(
+                                "skuCode", "CUST-B-M",
+                                "regularPrice", 35000,
+                                "currentPrice", 30000,
+                                "stockQuantity", 40,
+                                "sortOrder", 2,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "블랙"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "M"))),
+                        Map.of(
+                                "skuCode", "CUST-B-L",
+                                "regularPrice", 35000,
+                                "currentPrice", 30000,
+                                "stockQuantity", 40,
+                                "sortOrder", 3,
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "색상",
+                                                        "optionValueName",
+                                                        "블랙"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "사이즈",
+                                                        "optionValueName",
+                                                        "L")))));
+
+        request.put("description", Map.of("content", "<p>커스텀 프린팅 티셔츠 - 주문 시 문구 입력</p>"));
+
+        var noticeFields = noticeFieldRepository.findAll();
+        request.put(
+                "notice",
+                Map.of(
+                        "noticeCategoryId",
+                        noticeCategoryId,
+                        "entries",
+                        List.of(
+                                Map.of(
+                                        "noticeFieldId",
+                                        noticeFields.get(0).getId(),
+                                        "fieldValue",
+                                        "면 100%"),
                                 Map.of(
                                         "noticeFieldId",
                                         noticeFields.get(1).getId(),
@@ -1112,15 +1349,15 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
     }
 
     @Nested
-    @DisplayName("FREE_INPUT 옵션타입: 등록 → 상세 조회")
-    class FreeInputOptionTypeTest {
+    @DisplayName("SINGLE + FREE_INPUT만으로 구성: 각인 전용 반지")
+    class FreeInputOnlyOptionGroupTest {
 
         @Test
         @Tag("P0")
-        @DisplayName("[FLOW-FREE-1] FREE_INPUT 등록 후 상세 조회 - 옵션 그룹 없음, 상품 3개")
-        void registerFreeInput_AndGetDetail_NoOptionGroups_MultipleProducts() {
-            // ===== Step 1: POST - FREE_INPUT 타입 상품그룹 등록 =====
-            Map<String, Object> request = createFreeInputRegisterRequest();
+        @DisplayName("[FLOW-FREEONLY-1] SINGLE + FREE_INPUT 그룹만으로 등록 후 상세 조회")
+        void registerSingleWithFreeInputOnly_AndGetDetail() {
+            // ===== Step 1: POST - SINGLE + FREE_INPUT 전용 상품그룹 등록 =====
+            Map<String, Object> request = createFreeInputOnlyRegisterRequest();
 
             Response createResponse =
                     given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
@@ -1135,86 +1372,31 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .get(PRODUCT_GROUPS_ID, productGroupId)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    // 기본 정보
                     .body("data.id", equalTo(productGroupId.intValue()))
-                    .body("data.productGroupName", equalTo("자유입력 커스텀 상품그룹"))
-                    .body("data.optionType", equalTo("FREE_INPUT"))
+                    .body("data.productGroupName", equalTo("각인 전용 반지"))
+                    .body("data.optionType", equalTo("SINGLE"))
                     .body("data.status", equalTo("DRAFT"))
-                    // 이미지 (2개)
-                    .body("data.images.size()", equalTo(2))
-                    // 옵션 그룹 없음
-                    .body("data.optionProductMatrix.optionGroups.size()", equalTo(0))
-                    // 상품 3개 (옵션 매핑 없음)
-                    .body("data.optionProductMatrix.products.size()", equalTo(3))
-                    .body("data.optionProductMatrix.products[0].skuCode", equalTo("CUSTOM-SET-A"))
-                    .body("data.optionProductMatrix.products[0].regularPrice", equalTo(45000))
-                    .body("data.optionProductMatrix.products[0].currentPrice", equalTo(39000))
+                    // 옵션 그룹 1개 (FREE_INPUT만)
+                    .body("data.optionProductMatrix.optionGroups.size()", equalTo(1))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].optionGroupName",
+                            equalTo("각인 문구"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].inputType",
+                            equalTo("FREE_INPUT"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].optionValues.size()",
+                            equalTo(0))
+                    // 상품 1개
+                    .body("data.optionProductMatrix.products.size()", equalTo(1))
+                    .body(
+                            "data.optionProductMatrix.products[0].skuCode",
+                            equalTo("ENGRAVE-RING-001"))
                     .body("data.optionProductMatrix.products[0].options.size()", equalTo(0))
-                    .body("data.optionProductMatrix.products[1].skuCode", equalTo("CUSTOM-SET-B"))
-                    .body("data.optionProductMatrix.products[2].skuCode", equalTo("CUSTOM-SET-C"))
                     // 설명
-                    .body("data.description.content", containsString("자유 입력 커스텀 상품"))
+                    .body("data.description.content", containsString("각인 전용 반지"))
                     // 고시정보
                     .body("data.productNotice.entries.size()", equalTo(2));
-        }
-
-        @Test
-        @DisplayName("[FLOW-FREE-2] FREE_INPUT 타입에 옵션 그룹을 보내면 400 에러")
-        void registerFreeInput_WithOptionGroups_Returns400() {
-            Map<String, Object> request = createFreeInputRegisterRequest();
-            // FREE_INPUT인데 옵션 그룹을 추가
-            request.put(
-                    "optionGroups",
-                    List.of(
-                            Map.of(
-                                    "optionGroupName",
-                                    "사이즈",
-                                    "optionValues",
-                                    List.of(Map.of("optionValueName", "M", "sortOrder", 0)))));
-
-            given().spec(givenSuperAdmin())
-                    .body(request)
-                    .when()
-                    .post(PRODUCT_GROUPS)
-                    .then()
-                    .statusCode(
-                            anyOf(
-                                    equalTo(HttpStatus.BAD_REQUEST.value()),
-                                    equalTo(HttpStatus.INTERNAL_SERVER_ERROR.value())));
-        }
-
-        @Test
-        @Tag("P0")
-        @DisplayName("[FLOW-FREE-3] FREE_INPUT 등록 후 DRAFT→ACTIVE 상태 전이 성공")
-        void registerFreeInput_ThenChangeStatus_DraftToActive_Success() {
-            // Step 1: 등록
-            Response createResponse =
-                    given().spec(givenSuperAdmin())
-                            .body(createFreeInputRegisterRequest())
-                            .when()
-                            .post(PRODUCT_GROUPS);
-
-            createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
-
-            // Step 2: DRAFT → ACTIVE
-            Map<String, Object> statusRequest =
-                    Map.of("productGroupIds", List.of(productGroupId), "targetStatus", "ACTIVE");
-
-            given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
-                    .body(statusRequest)
-                    .when()
-                    .patch(PRODUCT_GROUPS_STATUS)
-                    .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
-
-            // Step 3: 상태 확인
-            given().spec(givenSuperAdmin())
-                    .when()
-                    .get(PRODUCT_GROUPS_ID, productGroupId)
-                    .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("data.status", equalTo("ACTIVE"));
         }
     }
 
@@ -1314,6 +1496,215 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.status", equalTo("ACTIVE"));
+        }
+    }
+
+    @Nested
+    @DisplayName("SINGLE + PREDEFINED만으로 구성: 사이즈만")
+    class SinglePredefinedOnlyTest {
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[FLOW-SINGLE-1] SINGLE + PREDEFINED 1개만 등록 후 상세 조회")
+        void registerSinglePredefinedOnly_AndGetDetail() {
+            Map<String, Object> request = createSinglePredefinedOnlyRegisterRequest();
+
+            Response createResponse =
+                    given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
+
+            createResponse.then().statusCode(HttpStatus.CREATED.value());
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            assertThat(productGroupId).isNotNull().isGreaterThan(0);
+
+            given().spec(givenSuperAdmin())
+                    .when()
+                    .get(PRODUCT_GROUPS_ID, productGroupId)
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.productGroupName", equalTo("기본 슬랙스"))
+                    .body("data.optionType", equalTo("SINGLE"))
+                    // 옵션 그룹 1개 (PREDEFINED만)
+                    .body("data.optionProductMatrix.optionGroups.size()", equalTo(1))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].optionGroupName",
+                            equalTo("사이즈"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].inputType",
+                            equalTo("PREDEFINED"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].optionValues.size()",
+                            equalTo(3))
+                    // 상품 3개
+                    .body("data.optionProductMatrix.products.size()", equalTo(3))
+                    .body("data.optionProductMatrix.products[0].skuCode", equalTo("SLACKS-S"))
+                    .body("data.optionProductMatrix.products[0].options.size()", equalTo(1));
+        }
+    }
+
+    @Nested
+    @DisplayName("COMBINATION + PREDEFINED + FREE_INPUT 혼합")
+    class CombinationMixedInputTypeTest {
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[FLOW-COMBMIX-1] COMBINATION + PREDEFINED 2개 + FREE_INPUT 1개 등록 후 상세 조회")
+        void registerCombinationMixed_AndGetDetail() {
+            Map<String, Object> request = createCombinationMixedRegisterRequest();
+
+            Response createResponse =
+                    given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
+
+            createResponse.then().statusCode(HttpStatus.CREATED.value());
+            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            assertThat(productGroupId).isNotNull().isGreaterThan(0);
+
+            given().spec(givenSuperAdmin())
+                    .when()
+                    .get(PRODUCT_GROUPS_ID, productGroupId)
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.productGroupName", equalTo("커스텀 프린팅 티셔츠"))
+                    .body("data.optionType", equalTo("COMBINATION"))
+                    // 옵션 그룹 3개 (PREDEFINED 2 + FREE_INPUT 1)
+                    .body("data.optionProductMatrix.optionGroups.size()", equalTo(3))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[0].inputType",
+                            equalTo("PREDEFINED"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[1].inputType",
+                            equalTo("PREDEFINED"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[2].inputType",
+                            equalTo("FREE_INPUT"))
+                    .body(
+                            "data.optionProductMatrix.optionGroups[2].optionValues.size()",
+                            equalTo(0))
+                    // 상품 4개 (2x2 조합)
+                    .body("data.optionProductMatrix.products.size()", equalTo(4))
+                    // 각 상품에 PREDEFINED 옵션 2개만 매핑
+                    .body("data.optionProductMatrix.products[0].options.size()", equalTo(2));
+        }
+    }
+
+    @Nested
+    @DisplayName("검증 에러 케이스: optionType과 PREDEFINED 그룹 수 불일치")
+    class OptionTypeValidationErrorTest {
+
+        @Test
+        @DisplayName("[ERR-1] SINGLE + PREDEFINED 2개 → 400 에러")
+        void registerSingle_WithTwoPredefined_Returns400() {
+            Map<String, Object> request = new HashMap<>();
+            request.put("sellerId", sellerId);
+            request.put("brandId", brandId);
+            request.put("categoryId", categoryId);
+            request.put("shippingPolicyId", shippingPolicyId);
+            request.put("refundPolicyId", refundPolicyId);
+            request.put("productGroupName", "SINGLE인데 PREDEFINED 2개");
+            request.put("optionType", "SINGLE");
+
+            request.put(
+                    "images",
+                    List.of(
+                            Map.of(
+                                    "originUrl", "https://example.com/err.jpg",
+                                    "imageType", "THUMBNAIL",
+                                    "sortOrder", 0)));
+
+            request.put(
+                    "optionGroups",
+                    List.of(
+                            Map.of(
+                                    "optionGroupName",
+                                    "색상",
+                                    "inputType",
+                                    "PREDEFINED",
+                                    "optionValues",
+                                    List.of(Map.of("optionValueName", "빨강", "sortOrder", 0))),
+                            Map.of(
+                                    "optionGroupName",
+                                    "사이즈",
+                                    "inputType",
+                                    "PREDEFINED",
+                                    "optionValues",
+                                    List.of(Map.of("optionValueName", "M", "sortOrder", 0)))));
+
+            request.put(
+                    "products",
+                    List.of(
+                            Map.of(
+                                    "skuCode", "ERR-001",
+                                    "regularPrice", 10000,
+                                    "currentPrice", 9000,
+                                    "stockQuantity", 10,
+                                    "sortOrder", 0,
+                                    "selectedOptions", List.of())));
+
+            request.put("description", Map.of("content", "<p>에러</p>"));
+
+            given().spec(givenSuperAdmin())
+                    .body(request)
+                    .when()
+                    .post(PRODUCT_GROUPS)
+                    .then()
+                    .statusCode(
+                            anyOf(
+                                    equalTo(HttpStatus.BAD_REQUEST.value()),
+                                    equalTo(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+        }
+
+        @Test
+        @DisplayName("[ERR-2] COMBINATION + PREDEFINED 1개 → 400 에러")
+        void registerCombination_WithOnePredefined_Returns400() {
+            Map<String, Object> request = new HashMap<>();
+            request.put("sellerId", sellerId);
+            request.put("brandId", brandId);
+            request.put("categoryId", categoryId);
+            request.put("shippingPolicyId", shippingPolicyId);
+            request.put("refundPolicyId", refundPolicyId);
+            request.put("productGroupName", "COMBINATION인데 PREDEFINED 1개");
+            request.put("optionType", "COMBINATION");
+
+            request.put(
+                    "images",
+                    List.of(
+                            Map.of(
+                                    "originUrl", "https://example.com/err2.jpg",
+                                    "imageType", "THUMBNAIL",
+                                    "sortOrder", 0)));
+
+            request.put(
+                    "optionGroups",
+                    List.of(
+                            Map.of(
+                                    "optionGroupName",
+                                    "색상",
+                                    "inputType",
+                                    "PREDEFINED",
+                                    "optionValues",
+                                    List.of(Map.of("optionValueName", "빨강", "sortOrder", 0)))));
+
+            request.put(
+                    "products",
+                    List.of(
+                            Map.of(
+                                    "skuCode", "ERR-002",
+                                    "regularPrice", 10000,
+                                    "currentPrice", 9000,
+                                    "stockQuantity", 10,
+                                    "sortOrder", 0,
+                                    "selectedOptions", List.of())));
+
+            request.put("description", Map.of("content", "<p>에러</p>"));
+
+            given().spec(givenSuperAdmin())
+                    .body(request)
+                    .when()
+                    .post(PRODUCT_GROUPS)
+                    .then()
+                    .statusCode(
+                            anyOf(
+                                    equalTo(HttpStatus.BAD_REQUEST.value()),
+                                    equalTo(HttpStatus.INTERNAL_SERVER_ERROR.value())));
         }
     }
 
