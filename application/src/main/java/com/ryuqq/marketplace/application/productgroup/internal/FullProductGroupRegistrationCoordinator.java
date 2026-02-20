@@ -127,8 +127,8 @@ public class FullProductGroupRegistrationCoordinator {
     /**
      * 등록용 옵션 이름 맵 생성.
      *
-     * <p>RegisterSellerOptionGroupsCommand의 그룹/값 이름 순서와 resolve된 ID 순서가 일치하는 전제하에 매핑합니다. FREE_INPUT
-     * 그룹은 SKU 조합에 참여하지 않으므로 건너뜁니다.
+     * <p>RegisterSellerOptionGroupsCommand의 그룹/값 이름 순서와 resolve된 ID 순서가 일치하는 전제하에 매핑합니다.
+     * OptionInputType.FREE_INPUT 그룹은 SKU 조합에 참여하지 않으므로 건너뜁니다.
      */
     private Map<String, Map<String, SellerOptionValueId>> buildRegistrationOptionNameMap(
             List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> optionGroups,
