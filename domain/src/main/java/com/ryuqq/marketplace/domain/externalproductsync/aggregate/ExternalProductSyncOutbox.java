@@ -177,13 +177,14 @@ public class ExternalProductSyncOutbox {
     /**
      * 처리 시작.
      *
-     * <p>PENDING 또는 PROCESSING 상태에서만 호출 가능합니다.
+     * <p>PENDING 상태에서만 PROCESSING으로 전이할 수 있습니다.
      *
      * @param now 현재 시각 (updatedAt 갱신용)
+     * @throws IllegalStateException PENDING 상태가 아닌 경우
      */
     public void startProcessing(Instant now) {
-        if (!status.canProcess()) {
-            throw new IllegalStateException("처리할 수 없는 상태입니다. 현재 상태: " + status);
+        if (!status.isPending()) {
+            throw new IllegalStateException("PENDING 상태에서만 처리를 시작할 수 있습니다. 현재 상태: " + status);
         }
         this.status = SyncStatus.PROCESSING;
         this.updatedAt = now;
@@ -192,9 +193,15 @@ public class ExternalProductSyncOutbox {
     /**
      * 처리 완료.
      *
+     * <p>PROCESSING 상태에서만 COMPLETED로 전이할 수 있습니다.
+     *
      * @param now 처리 완료 시각
+     * @throws IllegalStateException PROCESSING 상태가 아닌 경우
      */
     public void complete(Instant now) {
+        if (!status.isProcessing()) {
+            throw new IllegalStateException("PROCESSING 상태에서만 완료할 수 있습니다. 현재 상태: " + status);
+        }
         this.status = SyncStatus.COMPLETED;
         this.processedAt = now;
         this.updatedAt = now;
@@ -204,12 +211,16 @@ public class ExternalProductSyncOutbox {
     /**
      * 처리 실패 및 재시도.
      *
-     * <p>재시도 횟수를 증가시키고, 최대 재시도 횟수 초과 시 FAILED 상태로 변경합니다.
+     * <p>PROCESSING 상태에서만 호출 가능합니다. 재시도 횟수를 증가시키고, 최대 재시도 횟수 초과 시 FAILED 상태로 변경합니다.
      *
      * @param errorMessage 에러 메시지
      * @param now 현재 시각
+     * @throws IllegalStateException PROCESSING 상태가 아닌 경우
      */
     public void failAndRetry(String errorMessage, Instant now) {
+        if (!status.isProcessing()) {
+            throw new IllegalStateException("PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
+        }
         this.retryCount++;
         this.errorMessage = errorMessage;
         this.updatedAt = now;
@@ -225,10 +236,16 @@ public class ExternalProductSyncOutbox {
     /**
      * 즉시 실패 처리 (재시도 없이).
      *
+     * <p>PROCESSING 상태에서만 호출 가능합니다.
+     *
      * @param errorMessage 에러 메시지
      * @param now 현재 시각
+     * @throws IllegalStateException PROCESSING 상태가 아닌 경우
      */
     public void fail(String errorMessage, Instant now) {
+        if (!status.isProcessing()) {
+            throw new IllegalStateException("PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
+        }
         this.status = SyncStatus.FAILED;
         this.errorMessage = errorMessage;
         this.processedAt = now;
