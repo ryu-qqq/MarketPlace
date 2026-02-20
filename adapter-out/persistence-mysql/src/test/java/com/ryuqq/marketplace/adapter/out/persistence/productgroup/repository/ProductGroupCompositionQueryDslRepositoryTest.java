@@ -227,6 +227,7 @@ class ProductGroupCompositionQueryDslRepositoryTest {
                             List.of(target.getId()),
                             null,
                             null,
+                            null,
                             com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
                                     com.ryuqq.marketplace.domain.productgroup.query
                                             .ProductGroupSortKey.defaultKey()));

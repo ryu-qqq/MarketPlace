@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.productgroup.factory;
 
 import com.ryuqq.marketplace.application.common.factory.CommonVoFactory;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
+import com.ryuqq.marketplace.domain.common.vo.DateRange;
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
@@ -50,6 +51,11 @@ public class ProductGroupQueryFactory {
         List<Long> productGroupIds =
                 params.productGroupIds() != null ? params.productGroupIds() : List.of();
 
+        DateRange dateRange =
+                (params.startDate() != null || params.endDate() != null)
+                        ? DateRange.of(params.startDate(), params.endDate())
+                        : null;
+
         return ProductGroupSearchCriteria.of(
                 statuses,
                 params.sellerIds(),
@@ -58,6 +64,7 @@ public class ProductGroupQueryFactory {
                 productGroupIds,
                 searchField,
                 params.searchWord(),
+                dateRange,
                 queryContext);
     }
 

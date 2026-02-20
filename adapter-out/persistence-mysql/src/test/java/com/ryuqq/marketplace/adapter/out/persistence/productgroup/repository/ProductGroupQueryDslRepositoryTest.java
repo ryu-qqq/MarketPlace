@@ -105,6 +105,7 @@ class ProductGroupQueryDslRepositoryTest {
                 productGroupIds,
                 searchField,
                 searchWord,
+                null,
                 QueryContext.of(sortKey, direction, PageRequest.of(page, size)));
     }
 
