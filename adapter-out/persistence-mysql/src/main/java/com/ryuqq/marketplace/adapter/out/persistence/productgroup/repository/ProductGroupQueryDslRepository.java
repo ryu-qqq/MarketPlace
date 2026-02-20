@@ -59,6 +59,8 @@ public class ProductGroupQueryDslRepository {
                         conditionBuilder.categoryIdIn(criteria.categoryIds()),
                         conditionBuilder.statusIn(criteria),
                         conditionBuilder.searchCondition(criteria),
+                        conditionBuilder.createdAtGoe(criteria),
+                        conditionBuilder.createdAtLoe(criteria),
                         conditionBuilder.statusNotDeleted())
                 .orderBy(resolveOrderSpecifier(criteria))
                 .offset(criteria.offset())
@@ -78,6 +80,8 @@ public class ProductGroupQueryDslRepository {
                                 conditionBuilder.categoryIdIn(criteria.categoryIds()),
                                 conditionBuilder.statusIn(criteria),
                                 conditionBuilder.searchCondition(criteria),
+                                conditionBuilder.createdAtGoe(criteria),
+                                conditionBuilder.createdAtLoe(criteria),
                                 conditionBuilder.statusNotDeleted())
                         .fetchOne();
         return count != null ? count : 0L;
