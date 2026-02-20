@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class ExternalProductSyncOutboxJpaEntityMapper {
 
     public ExternalProductSyncOutboxJpaEntity toEntity(ExternalProductSyncOutbox domain) {
-        return ExternalProductSyncOutboxJpaEntity.create(
+        return ExternalProductSyncOutboxJpaEntity.of(
                 domain.idValue(),
                 domain.productGroupIdValue(),
                 domain.salesChannelIdValue(),
@@ -34,10 +34,11 @@ public class ExternalProductSyncOutboxJpaEntityMapper {
     }
 
     public ExternalProductSyncOutbox toDomain(ExternalProductSyncOutboxJpaEntity entity) {
-        ExternalProductSyncOutboxId id =
-                entity.getId() != null
-                        ? ExternalProductSyncOutboxId.of(entity.getId())
-                        : ExternalProductSyncOutboxId.forNew();
+        if (entity.getId() == null) {
+            throw new IllegalStateException(
+                    "ExternalProductSyncOutboxJpaEntity.id가 null입니다. DB에서 복원된 엔티티에 ID가 없을 수 없습니다.");
+        }
+        ExternalProductSyncOutboxId id = ExternalProductSyncOutboxId.of(entity.getId());
         return ExternalProductSyncOutbox.reconstitute(
                 id,
                 ProductGroupId.of(entity.getProductGroupId()),

@@ -1,7 +1,9 @@
 package com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.entity;
 
+import com.ryuqq.marketplace.adapter.out.persistence.common.converter.EncryptingAttributeConverter;
 import com.ryuqq.marketplace.adapter.out.persistence.common.entity.BaseAuditEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -41,12 +43,15 @@ public class SellerSalesChannelJpaEntity extends BaseAuditEntity {
     @Column(name = "connection_status", nullable = false, length = 20)
     private ConnectionStatus connectionStatus;
 
+    @Convert(converter = EncryptingAttributeConverter.class)
     @Column(name = "api_key", length = 500)
     private String apiKey;
 
+    @Convert(converter = EncryptingAttributeConverter.class)
     @Column(name = "api_secret", length = 500)
     private String apiSecret;
 
+    @Convert(converter = EncryptingAttributeConverter.class)
     @Column(name = "access_token", length = 1000)
     private String accessToken;
 
