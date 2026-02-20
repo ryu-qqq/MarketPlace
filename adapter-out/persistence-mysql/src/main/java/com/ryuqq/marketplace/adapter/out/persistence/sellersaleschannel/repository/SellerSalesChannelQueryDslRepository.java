@@ -5,6 +5,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.e
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.condition.SellerSalesChannelConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.entity.SellerSalesChannelJpaEntity;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -31,9 +32,12 @@ public class SellerSalesChannelQueryDslRepository {
      * 셀러의 CONNECTED 상태 판매채널 목록 조회.
      *
      * @param sellerId 셀러 ID
-     * @return CONNECTED 상태의 판매채널 엔티티 목록
+     * @return CONNECTED 상태의 판매채널 엔티티 목록 (sellerId가 null이면 빈 리스트)
      */
     public List<SellerSalesChannelJpaEntity> findConnectedBySellerId(Long sellerId) {
+        if (sellerId == null) {
+            return Collections.emptyList();
+        }
         return queryFactory
                 .selectFrom(sellerSalesChannelJpaEntity)
                 .where(
