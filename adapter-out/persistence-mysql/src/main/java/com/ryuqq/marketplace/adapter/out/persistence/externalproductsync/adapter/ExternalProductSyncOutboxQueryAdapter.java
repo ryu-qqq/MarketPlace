@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.externalproductsync.mapper.
 import com.ryuqq.marketplace.adapter.out.persistence.externalproductsync.repository.ExternalProductSyncOutboxQueryDslRepository;
 import com.ryuqq.marketplace.application.externalproductsync.port.out.query.ExternalProductSyncOutboxQueryPort;
 import com.ryuqq.marketplace.domain.externalproductsync.aggregate.ExternalProductSyncOutbox;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +23,9 @@ public class ExternalProductSyncOutboxQueryAdapter implements ExternalProductSyn
     }
 
     @Override
-    public List<ExternalProductSyncOutbox> findPendingByProductGroupId(Long productGroupId) {
-        return queryDslRepository.findPendingByProductGroupId(productGroupId).stream()
+    public List<ExternalProductSyncOutbox> findPendingByProductGroupId(
+            ProductGroupId productGroupId) {
+        return queryDslRepository.findPendingByProductGroupId(productGroupId.value()).stream()
                 .map(mapper::toDomain)
                 .toList();
     }

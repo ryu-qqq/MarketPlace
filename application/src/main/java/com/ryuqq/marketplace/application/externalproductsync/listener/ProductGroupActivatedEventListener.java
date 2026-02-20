@@ -71,9 +71,9 @@ public class ProductGroupActivatedEventListener {
                         .map(
                                 channel ->
                                         ExternalProductSyncOutbox.forNew(
-                                                productGroupId,
-                                                channel.salesChannelIdValue(),
-                                                sellerId,
+                                                event.productGroupId(),
+                                                channel.salesChannelId(),
+                                                event.sellerId(),
                                                 SyncType.CREATE,
                                                 "{}",
                                                 now))
