@@ -5,6 +5,9 @@ import com.ryuqq.marketplace.domain.externalproductsync.aggregate.ExternalProduc
 import com.ryuqq.marketplace.domain.externalproductsync.id.ExternalProductSyncOutboxId;
 import com.ryuqq.marketplace.domain.externalproductsync.vo.SyncStatus;
 import com.ryuqq.marketplace.domain.externalproductsync.vo.SyncType;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import org.springframework.stereotype.Component;
 
 /** ExternalProductSyncOutbox Domain ↔ JPA Entity 변환 매퍼. */
@@ -14,9 +17,9 @@ public class ExternalProductSyncOutboxJpaEntityMapper {
     public ExternalProductSyncOutboxJpaEntity toEntity(ExternalProductSyncOutbox domain) {
         return ExternalProductSyncOutboxJpaEntity.create(
                 domain.idValue(),
-                domain.productGroupId(),
-                domain.salesChannelId(),
-                domain.sellerId(),
+                domain.productGroupIdValue(),
+                domain.salesChannelIdValue(),
+                domain.sellerIdValue(),
                 toEntitySyncType(domain.syncType()),
                 toEntityStatus(domain.status()),
                 domain.payload(),
@@ -37,9 +40,9 @@ public class ExternalProductSyncOutboxJpaEntityMapper {
                         : ExternalProductSyncOutboxId.forNew();
         return ExternalProductSyncOutbox.reconstitute(
                 id,
-                entity.getProductGroupId(),
-                entity.getSalesChannelId(),
-                entity.getSellerId(),
+                ProductGroupId.of(entity.getProductGroupId()),
+                SalesChannelId.of(entity.getSalesChannelId()),
+                SellerId.of(entity.getSellerId()),
                 toDomainSyncType(entity.getSyncType()),
                 toDomainStatus(entity.getStatus()),
                 entity.getPayload(),

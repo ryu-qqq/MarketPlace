@@ -4,6 +4,9 @@ import com.ryuqq.marketplace.domain.externalproductsync.id.ExternalProductSyncOu
 import com.ryuqq.marketplace.domain.externalproductsync.vo.SyncOutboxIdempotencyKey;
 import com.ryuqq.marketplace.domain.externalproductsync.vo.SyncStatus;
 import com.ryuqq.marketplace.domain.externalproductsync.vo.SyncType;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import java.time.Instant;
 
 /**
@@ -20,17 +23,15 @@ import java.time.Instant;
  *   <li>updatedAt: PROCESSING 좀비 상태 감지를 위한 갱신 시각
  *   <li>idempotencyKey: 외부 API 호출 멱등성 보장
  * </ul>
- *
- * <p><strong>크로스 도메인 ID</strong>: productGroupId, salesChannelId, sellerId는 Long primitive 사용.
  */
 public class ExternalProductSyncOutbox {
 
     private static final int DEFAULT_MAX_RETRY = 3;
 
     private final ExternalProductSyncOutboxId id;
-    private final Long productGroupId;
-    private final Long salesChannelId;
-    private final Long sellerId;
+    private final ProductGroupId productGroupId;
+    private final SalesChannelId salesChannelId;
+    private final SellerId sellerId;
     private final SyncType syncType;
     private SyncStatus status;
     private final String payload;
@@ -45,9 +46,9 @@ public class ExternalProductSyncOutbox {
 
     private ExternalProductSyncOutbox(
             ExternalProductSyncOutboxId id,
-            Long productGroupId,
-            Long salesChannelId,
-            Long sellerId,
+            ProductGroupId productGroupId,
+            SalesChannelId salesChannelId,
+            SellerId sellerId,
             SyncType syncType,
             SyncStatus status,
             String payload,
@@ -88,14 +89,15 @@ public class ExternalProductSyncOutbox {
      * @return 새 ExternalProductSyncOutbox 인스턴스
      */
     public static ExternalProductSyncOutbox forNew(
-            Long productGroupId,
-            Long salesChannelId,
-            Long sellerId,
+            ProductGroupId productGroupId,
+            SalesChannelId salesChannelId,
+            SellerId sellerId,
             SyncType syncType,
             String payload,
             Instant now) {
         SyncOutboxIdempotencyKey idempotencyKey =
-                SyncOutboxIdempotencyKey.generate(productGroupId, salesChannelId, syncType, now);
+                SyncOutboxIdempotencyKey.generate(
+                        productGroupId.value(), salesChannelId.value(), syncType, now);
         return new ExternalProductSyncOutbox(
                 ExternalProductSyncOutboxId.forNew(),
                 productGroupId,
@@ -136,9 +138,9 @@ public class ExternalProductSyncOutbox {
      */
     public static ExternalProductSyncOutbox reconstitute(
             ExternalProductSyncOutboxId id,
-            Long productGroupId,
-            Long salesChannelId,
-            Long sellerId,
+            ProductGroupId productGroupId,
+            SalesChannelId salesChannelId,
+            SellerId sellerId,
             SyncType syncType,
             SyncStatus status,
             String payload,
@@ -281,16 +283,28 @@ public class ExternalProductSyncOutbox {
         return id.value();
     }
 
-    public Long productGroupId() {
+    public ProductGroupId productGroupId() {
         return productGroupId;
     }
 
-    public Long salesChannelId() {
+    public Long productGroupIdValue() {
+        return productGroupId.value();
+    }
+
+    public SalesChannelId salesChannelId() {
         return salesChannelId;
     }
 
-    public Long sellerId() {
+    public Long salesChannelIdValue() {
+        return salesChannelId.value();
+    }
+
+    public SellerId sellerId() {
         return sellerId;
+    }
+
+    public Long sellerIdValue() {
+        return sellerId.value();
     }
 
     public SyncType syncType() {
