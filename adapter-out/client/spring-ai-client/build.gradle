@@ -1,10 +1,10 @@
 // ========================================
 // Adapter-Out: Spring AI Client
 // ========================================
-// Outbound adapter for OpenAI LLM integration via Spring AI
-// Implements CanonicalOptionEnhancementClient, NoticeCompletionEnhancementClient,
-// InspectionVerificationClient from application layer
-// Technology: Spring AI OpenAI (version managed in libs.versions.toml)
+// Outbound adapter for Anthropic LLM integration via Spring AI
+// Implements DescriptionAnalysisAiClient, OptionAnalysisAiClient,
+// NoticeAnalysisAiClient from application layer
+// Technology: Spring AI Anthropic (version managed in libs.versions.toml)
 // NO Lombok allowed
 // ========================================
 
@@ -21,10 +21,9 @@ dependencies {
     api project(':domain')
 
     // ========================================
-    // Spring AI - OpenAI
-    // TODO: Spring AI 의존성은 실제 LLM 구현 시 추가
-    // implementation libs.spring.ai.openai
+    // Spring AI - Anthropic (Claude)
     // ========================================
+    implementation libs.spring.ai.anthropic
 
     // ========================================
     // Spring Boot (for @Component, @ConfigurationProperties)

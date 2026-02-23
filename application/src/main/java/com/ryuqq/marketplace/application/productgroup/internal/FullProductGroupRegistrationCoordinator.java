@@ -7,7 +7,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupReg
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.BoundCommands;
 import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
-import com.ryuqq.marketplace.application.productgroupinspection.manager.ProductGroupInspectionOutboxCommandManager;
+import com.ryuqq.marketplace.application.productintelligence.manager.IntelligenceOutboxCommandManager;
 import com.ryuqq.marketplace.application.productnotice.internal.ProductNoticeCommandCoordinator;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.internal.SellerOptionCommandCoordinator;
@@ -17,7 +17,7 @@ import com.ryuqq.marketplace.domain.product.vo.ProductCreationData;
 import com.ryuqq.marketplace.domain.product.vo.SkuCode;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
-import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
+import com.ryuqq.marketplace.domain.productintelligence.aggregate.IntelligenceOutbox;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,7 +43,7 @@ public class FullProductGroupRegistrationCoordinator {
     private final DescriptionCommandCoordinator descriptionCommandCoordinator;
     private final ProductNoticeCommandCoordinator noticeCommandCoordinator;
     private final ProductCommandCoordinator productCommandCoordinator;
-    private final ProductGroupInspectionOutboxCommandManager inspectionOutboxCommandManager;
+    private final IntelligenceOutboxCommandManager intelligenceOutboxCommandManager;
 
     public FullProductGroupRegistrationCoordinator(
             ProductGroupCommandCoordinator productGroupCommandCoordinator,
@@ -52,14 +52,14 @@ public class FullProductGroupRegistrationCoordinator {
             DescriptionCommandCoordinator descriptionCommandCoordinator,
             ProductNoticeCommandCoordinator noticeCommandCoordinator,
             ProductCommandCoordinator productCommandCoordinator,
-            ProductGroupInspectionOutboxCommandManager inspectionOutboxCommandManager) {
+            IntelligenceOutboxCommandManager intelligenceOutboxCommandManager) {
         this.productGroupCommandCoordinator = productGroupCommandCoordinator;
         this.imageCommandCoordinator = imageCommandCoordinator;
         this.sellerOptionCommandCoordinator = sellerOptionCommandCoordinator;
         this.descriptionCommandCoordinator = descriptionCommandCoordinator;
         this.noticeCommandCoordinator = noticeCommandCoordinator;
         this.productCommandCoordinator = productCommandCoordinator;
-        this.inspectionOutboxCommandManager = inspectionOutboxCommandManager;
+        this.intelligenceOutboxCommandManager = intelligenceOutboxCommandManager;
     }
 
     /**
@@ -118,8 +118,10 @@ public class FullProductGroupRegistrationCoordinator {
                         .toList();
         productCommandCoordinator.register(products);
 
-        // 8. 검수 Outbox 저장 (PENDING) — 스케줄러가 비동기로 검수 수행
-        inspectionOutboxCommandManager.persist(bound.inspectionOutbox());
+        // 8. Intelligence Outbox 저장 (PENDING) — 스케줄러가 비동기로 분석 파이프라인 실행
+        IntelligenceOutbox intelligenceOutbox =
+                IntelligenceOutbox.forNew(productGroupId, bundle.createdAt());
+        intelligenceOutboxCommandManager.persist(intelligenceOutbox);
 
         return productGroupId;
     }
@@ -127,8 +129,8 @@ public class FullProductGroupRegistrationCoordinator {
     /**
      * 등록용 옵션 이름 맵 생성.
      *
-     * <p>RegisterSellerOptionGroupsCommand의 그룹/값 이름 순서와 resolve된 ID 순서가 일치하는 전제하에 매핑합니다.
-     * OptionInputType.FREE_INPUT 그룹은 SKU 조합에 참여하지 않으므로 건너뜁니다.
+     * <p>RegisterSellerOptionGroupsCommand의 그룹/값 이름 순서와 resolve된 ID 순서가 일치하는 전제하에 매핑합니다. 모든 옵션
+     * 그룹(PREDEFINED, FREE_INPUT)이 selectedOptions 매칭에 참여합니다.
      */
     private Map<String, Map<String, SellerOptionValueId>> buildRegistrationOptionNameMap(
             List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> optionGroups,
@@ -136,15 +138,6 @@ public class FullProductGroupRegistrationCoordinator {
         Map<String, Map<String, SellerOptionValueId>> nameMap = new LinkedHashMap<>();
         int index = 0;
         for (RegisterSellerOptionGroupsCommand.OptionGroupCommand group : optionGroups) {
-            OptionInputType groupInputType =
-                    group.inputType() != null
-                            ? OptionInputType.valueOf(group.inputType())
-                            : OptionInputType.PREDEFINED;
-
-            if (groupInputType == OptionInputType.FREE_INPUT) {
-                continue;
-            }
-
             Map<String, SellerOptionValueId> valueMap = new LinkedHashMap<>();
             for (RegisterSellerOptionGroupsCommand.OptionValueCommand value :
                     group.optionValues()) {

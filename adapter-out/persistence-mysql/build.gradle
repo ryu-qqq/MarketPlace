@@ -43,6 +43,10 @@ dependencies {
     // Connection Pooling
     implementation libs.hikaricp
 
+    // Jackson (JSON serialization for ProductProfile)
+    implementation libs.jackson.databind
+    implementation libs.jackson.datatype.jsr310
+
     // Flyway Migration
     implementation libs.flyway.core
     runtimeOnly libs.flyway.mysql

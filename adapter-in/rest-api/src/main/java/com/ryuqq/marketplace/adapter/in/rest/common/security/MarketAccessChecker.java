@@ -1,8 +1,11 @@
 package com.ryuqq.marketplace.adapter.in.rest.common.security;
 
 import com.ryuqq.authhub.sdk.access.BaseAccessChecker;
+import com.ryuqq.authhub.sdk.context.UserContextHolder;
 import com.ryuqq.marketplace.application.seller.port.in.query.ResolveSellerIdByOrganizationUseCase;
+import com.ryuqq.marketplace.domain.adminmenu.vo.AdminRole;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
@@ -90,5 +93,29 @@ public class MarketAccessChecker extends BaseAccessChecker {
      */
     public boolean canManageProduct() {
         return hasPermission("product:write");
+    }
+
+    /**
+     * 현재 사용자의 가장 높은 AdminRole을 반환.
+     *
+     * <p>UserContextHolder에서 역할 목록을 조회하고, AdminRole로 변환하여 가장 높은 레벨을 반환합니다. 매칭되는 역할이 없으면
+     * AdminRole.VIEWER를 기본값으로 반환합니다.
+     *
+     * @return 가장 높은 AdminRole
+     */
+    public AdminRole resolveHighestRole() {
+        Set<String> roles = UserContextHolder.getContext().getRoles();
+        AdminRole highest = AdminRole.VIEWER;
+        for (String roleName : roles) {
+            try {
+                AdminRole role = AdminRole.fromName(roleName);
+                if (role.level() > highest.level()) {
+                    highest = role;
+                }
+            } catch (IllegalArgumentException ignored) {
+                // 알 수 없는 역할명은 무시
+            }
+        }
+        return highest;
     }
 }

@@ -13,6 +13,7 @@ import com.ryuqq.fileflow.sdk.model.download.DownloadTaskResponse;
 import com.ryuqq.fileflow.sdk.model.session.CompleteSingleUploadSessionRequest;
 import com.ryuqq.fileflow.sdk.model.session.CreateSingleUploadSessionRequest;
 import com.ryuqq.fileflow.sdk.model.session.SingleUploadSessionResponse;
+import com.ryuqq.marketplace.adapter.out.client.fileflow.config.FileFlowClientProperties;
 import com.ryuqq.marketplace.adapter.out.client.fileflow.mapper.FileFlowStorageMapper;
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
@@ -29,7 +30,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -59,7 +59,7 @@ public class FileFlowStorageAdapter implements FileStorageClient {
     private final DownloadTaskApi downloadTaskApi;
     private final AssetApi assetApi;
     private final FileFlowStorageMapper mapper;
-    private final String cdnDomain;
+    private final FileFlowClientProperties properties;
     private final HttpClient httpClient;
 
     public FileFlowStorageAdapter(
@@ -67,12 +67,12 @@ public class FileFlowStorageAdapter implements FileStorageClient {
             DownloadTaskApi downloadTaskApi,
             AssetApi assetApi,
             FileFlowStorageMapper mapper,
-            @Value("${fileflow.cdn-domain:}") String cdnDomain) {
+            FileFlowClientProperties properties) {
         this.singleUploadSessionApi = singleUploadSessionApi;
         this.downloadTaskApi = downloadTaskApi;
         this.assetApi = assetApi;
         this.mapper = mapper;
-        this.cdnDomain = cdnDomain;
+        this.properties = properties;
         this.httpClient = HttpClient.newHttpClient();
     }
 
@@ -93,11 +93,24 @@ public class FileFlowStorageAdapter implements FileStorageClient {
     }
 
     @Override
+    public void completeUploadSession(String sessionId, long fileSize, String etag) {
+        try {
+            singleUploadSessionApi.complete(
+                    sessionId, new CompleteSingleUploadSessionRequest(fileSize, etag));
+        } catch (FileFlowBadRequestException e) {
+            throw new IllegalArgumentException(
+                    "FileFlow 업로드 세션 완료 실패 (잘못된 요청): " + e.getErrorMessage(), e);
+        } catch (FileFlowException e) {
+            throw new RuntimeException("FileFlow 업로드 세션 완료 실패: " + e.getErrorMessage(), e);
+        }
+    }
+
+    @Override
     public String generateDownloadUrl(String fileAssetId, int expirationMinutes) {
         try {
             ApiResponse<AssetResponse> response = assetApi.get(fileAssetId);
             AssetResponse asset = response.data();
-            return "https://" + cdnDomain + "/" + asset.s3Key();
+            return "https://" + properties.cdnDomain() + "/" + asset.s3Key();
         } catch (FileFlowException e) {
             throw new RuntimeException(
                     "FileFlow download URL 생성 실패: assetId="
@@ -194,7 +207,7 @@ public class FileFlowStorageAdapter implements FileStorageClient {
             singleUploadSessionApi.complete(
                     session.sessionId(), new CompleteSingleUploadSessionRequest(fileSize, etag));
 
-            return "https://" + cdnDomain + "/" + session.s3Key();
+            return "https://" + properties.cdnDomain() + "/" + session.s3Key();
         } catch (FileFlowBadRequestException e) {
             throw new IllegalArgumentException(
                     "FileFlow HTML 업로드 실패 (잘못된 요청): " + e.getErrorMessage(), e);

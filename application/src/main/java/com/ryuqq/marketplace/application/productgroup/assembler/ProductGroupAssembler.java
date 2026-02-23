@@ -71,6 +71,7 @@ public class ProductGroupAssembler {
                 queryResult.categoryId(),
                 queryResult.categoryName(),
                 queryResult.categoryDisplayPath(),
+                queryResult.categoryIdPath(),
                 queryResult.productGroupName(),
                 queryResult.optionType(),
                 queryResult.status(),

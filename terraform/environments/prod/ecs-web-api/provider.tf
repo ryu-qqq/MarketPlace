@@ -58,13 +58,13 @@ variable "aws_region" {
 variable "web_api_cpu" {
   description = "CPU units for web-api task"
   type        = number
-  default     = 512
+  default     = 1024
 }
 
 variable "web_api_memory" {
   description = "Memory for web-api task"
   type        = number
-  default     = 1024
+  default     = 2048
 }
 
 variable "web_api_desired_count" {

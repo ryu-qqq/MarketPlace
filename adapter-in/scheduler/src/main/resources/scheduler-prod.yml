@@ -80,22 +80,14 @@ scheduler:
         # Prod: 안전한 타임아웃
         timeout-seconds: 600
 
-    product-group-inspection:
-      process-pending:
-        # Prod: 5분마다
-        cron: "0 */5 * * * *"
-        # Prod: 큰 배치
-        batch-size: 20
-        # Prod: 안전한 지연
-        delay-seconds: 60
-
-      recover-timeout:
+    intelligence-pipeline:
+      recover-stuck-aggregation:
         # Prod: 10분마다
         cron: "0 */10 * * * *"
         # Prod: 큰 배치
         batch-size: 20
-        # Prod: 안전한 타임아웃
-        timeout-seconds: 600
+        # Prod: 안전한 stuck 기준
+        stuck-seconds: 300
 
     description-publish:
       # Prod: 5분마다

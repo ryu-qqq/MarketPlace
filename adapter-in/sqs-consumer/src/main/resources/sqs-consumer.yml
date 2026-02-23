@@ -5,15 +5,7 @@
 # 큐별 활성화/비활성화 제어
 # ============================================================
 sqs:
-  consumer:
-    inspection-scoring:
-      enabled: true
-
-    inspection-enhancement:
-      enabled: true
-
-    inspection-verification:
-      enabled: true
+  consumer: {}
 
 # ============================================================
 # Spring Cloud AWS SQS 설정

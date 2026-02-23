@@ -71,6 +71,11 @@ public class CommonClientFallbackConfig {
             }
 
             @Override
+            public void completeUploadSession(String sessionId, long fileSize, String etag) {
+                throw new UnsupportedOperationException("FileStorageClient not available");
+            }
+
+            @Override
             public String uploadHtmlContent(String htmlContent, String category, String filename) {
                 throw new UnsupportedOperationException("FileStorageClient not available");
             }

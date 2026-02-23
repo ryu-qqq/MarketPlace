@@ -125,8 +125,8 @@ class ProductGroupBundleFactoryTest {
         }
 
         @Test
-        @DisplayName("번들에 createdAt이 포함되어 검수 Outbox 생성에 사용된다")
-        void createProductGroupBundle_IncludesCreatedAtForInspectionOutbox() {
+        @DisplayName("번들에 createdAt이 포함되어 Outbox 생성에 사용된다")
+        void createProductGroupBundle_IncludesCreatedAt() {
             // given
             RegisterProductGroupCommand command = ProductGroupCommandFixtures.registerCommand();
             Instant now = CommonVoFixtures.now();

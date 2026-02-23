@@ -1,10 +1,13 @@
 # ========================================
 # SQS Queues for MarketPlace Inspection Pipeline (Stage)
 # ========================================
-# 3-stage inspection pipeline:
-# 1. Scoring: AI-based product quality scoring
-# 2. Enhancement: LLM-powered content enhancement
-# 3. Verification: Final quality verification
+# Legacy 3-stage pipeline (scoring, enhancement, verification)
+# + New 5-stage Intelligence Pipeline:
+#   1. Orchestration: ProductProfile 생성 + Analyzer 분배
+#   2. Description Analysis: 상세설명 텍스트 AI 분석 (Sonnet)
+#   3. Option Analysis: 캐노니컬 옵션 매핑 분석 (Haiku)
+#   4. Notice Analysis: 고시정보 보강 분석 (Haiku)
+#   5. Aggregation: 전체 분석 결과 집계 + 최종 판정
 # ========================================
 
 # ========================================
@@ -21,10 +24,20 @@ locals {
     data_class   = "internal"
   }
 
+  # Legacy pipeline queues
   queue_names = {
     scoring      = "${var.environment}-${var.project_name}-inspection-scoring"
     enhancement  = "${var.environment}-${var.project_name}-inspection-enhancement"
     verification = "${var.environment}-${var.project_name}-inspection-verification"
+  }
+
+  # New Intelligence Pipeline queues
+  intelligence_queue_names = {
+    orchestration       = "${var.environment}-${var.project_name}-intelligence-orchestration"
+    description_analysis = "${var.environment}-${var.project_name}-intelligence-description-analysis"
+    option_analysis     = "${var.environment}-${var.project_name}-intelligence-option-analysis"
+    notice_analysis     = "${var.environment}-${var.project_name}-intelligence-notice-analysis"
+    aggregation         = "${var.environment}-${var.project_name}-intelligence-aggregation"
   }
 }
 
@@ -183,6 +196,166 @@ resource "aws_sqs_queue" "inspection_verification" {
 }
 
 # ========================================
+# Intelligence Pipeline: Orchestration Queue
+# ========================================
+resource "aws_sqs_queue" "intelligence_orchestration_dlq" {
+  name                      = "${local.intelligence_queue_names.orchestration}-dlq"
+  message_retention_seconds = 1209600 # 14 days
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.intelligence_queue_names.orchestration}-dlq"
+    Purpose = "DLQ for intelligence orchestration"
+  })
+}
+
+resource "aws_sqs_queue" "intelligence_orchestration" {
+  name                       = local.intelligence_queue_names.orchestration
+  visibility_timeout_seconds = 120    # 2 minutes
+  message_retention_seconds  = 345600 # 4 days
+  receive_wait_time_seconds  = 20
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.intelligence_orchestration_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.intelligence_queue_names.orchestration
+    Purpose = "ProductProfile creation and analyzer dispatch"
+  })
+}
+
+# ========================================
+# Intelligence Pipeline: Description Analysis Queue
+# ========================================
+resource "aws_sqs_queue" "intelligence_description_analysis_dlq" {
+  name                      = "${local.intelligence_queue_names.description_analysis}-dlq"
+  message_retention_seconds = 1209600
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.intelligence_queue_names.description_analysis}-dlq"
+    Purpose = "DLQ for description analysis"
+  })
+}
+
+resource "aws_sqs_queue" "intelligence_description_analysis" {
+  name                       = local.intelligence_queue_names.description_analysis
+  visibility_timeout_seconds = 600    # 10 minutes (LLM call)
+  message_retention_seconds  = 345600
+  receive_wait_time_seconds  = 20
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.intelligence_description_analysis_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.intelligence_queue_names.description_analysis
+    Purpose = "Description text AI analysis (Sonnet)"
+  })
+}
+
+# ========================================
+# Intelligence Pipeline: Option Analysis Queue
+# ========================================
+resource "aws_sqs_queue" "intelligence_option_analysis_dlq" {
+  name                      = "${local.intelligence_queue_names.option_analysis}-dlq"
+  message_retention_seconds = 1209600
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.intelligence_queue_names.option_analysis}-dlq"
+    Purpose = "DLQ for option analysis"
+  })
+}
+
+resource "aws_sqs_queue" "intelligence_option_analysis" {
+  name                       = local.intelligence_queue_names.option_analysis
+  visibility_timeout_seconds = 300    # 5 minutes
+  message_retention_seconds  = 345600
+  receive_wait_time_seconds  = 20
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.intelligence_option_analysis_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.intelligence_queue_names.option_analysis
+    Purpose = "Canonical option mapping analysis (Haiku)"
+  })
+}
+
+# ========================================
+# Intelligence Pipeline: Notice Analysis Queue
+# ========================================
+resource "aws_sqs_queue" "intelligence_notice_analysis_dlq" {
+  name                      = "${local.intelligence_queue_names.notice_analysis}-dlq"
+  message_retention_seconds = 1209600
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.intelligence_queue_names.notice_analysis}-dlq"
+    Purpose = "DLQ for notice analysis"
+  })
+}
+
+resource "aws_sqs_queue" "intelligence_notice_analysis" {
+  name                       = local.intelligence_queue_names.notice_analysis
+  visibility_timeout_seconds = 300    # 5 minutes
+  message_retention_seconds  = 345600
+  receive_wait_time_seconds  = 20
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.intelligence_notice_analysis_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.intelligence_queue_names.notice_analysis
+    Purpose = "Notice completion analysis (Haiku)"
+  })
+}
+
+# ========================================
+# Intelligence Pipeline: Aggregation Queue
+# ========================================
+resource "aws_sqs_queue" "intelligence_aggregation_dlq" {
+  name                      = "${local.intelligence_queue_names.aggregation}-dlq"
+  message_retention_seconds = 1209600
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.intelligence_queue_names.aggregation}-dlq"
+    Purpose = "DLQ for intelligence aggregation"
+  })
+}
+
+resource "aws_sqs_queue" "intelligence_aggregation" {
+  name                       = local.intelligence_queue_names.aggregation
+  visibility_timeout_seconds = 300    # 5 minutes
+  message_retention_seconds  = 345600
+  receive_wait_time_seconds  = 20
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.intelligence_aggregation_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.intelligence_queue_names.aggregation
+    Purpose = "Final analysis aggregation and decision"
+  })
+}
+
+# ========================================
 # IAM Policy: SQS Access for ECS Tasks
 # ========================================
 resource "aws_iam_policy" "sqs_access" {
@@ -204,12 +377,24 @@ resource "aws_iam_policy" "sqs_access" {
           "sqs:ChangeMessageVisibility"
         ]
         Resource = [
+          # Legacy inspection queues
           aws_sqs_queue.inspection_scoring.arn,
           aws_sqs_queue.inspection_scoring_dlq.arn,
           aws_sqs_queue.inspection_enhancement.arn,
           aws_sqs_queue.inspection_enhancement_dlq.arn,
           aws_sqs_queue.inspection_verification.arn,
-          aws_sqs_queue.inspection_verification_dlq.arn
+          aws_sqs_queue.inspection_verification_dlq.arn,
+          # Intelligence pipeline queues
+          aws_sqs_queue.intelligence_orchestration.arn,
+          aws_sqs_queue.intelligence_orchestration_dlq.arn,
+          aws_sqs_queue.intelligence_description_analysis.arn,
+          aws_sqs_queue.intelligence_description_analysis_dlq.arn,
+          aws_sqs_queue.intelligence_option_analysis.arn,
+          aws_sqs_queue.intelligence_option_analysis_dlq.arn,
+          aws_sqs_queue.intelligence_notice_analysis.arn,
+          aws_sqs_queue.intelligence_notice_analysis_dlq.arn,
+          aws_sqs_queue.intelligence_aggregation.arn,
+          aws_sqs_queue.intelligence_aggregation_dlq.arn
         ]
       },
       {
@@ -308,6 +493,50 @@ resource "aws_ssm_parameter" "sqs_access_policy_arn" {
 }
 
 # ========================================
+# SSM Parameters: Intelligence Pipeline
+# ========================================
+
+# Orchestration Queue
+resource "aws_ssm_parameter" "intelligence_orchestration_queue_url" {
+  name  = "/${var.project_name}/sqs/intelligence-orchestration-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.intelligence_orchestration.url
+  tags  = local.common_tags
+}
+
+# Description Analysis Queue
+resource "aws_ssm_parameter" "intelligence_description_analysis_queue_url" {
+  name  = "/${var.project_name}/sqs/intelligence-description-analysis-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.intelligence_description_analysis.url
+  tags  = local.common_tags
+}
+
+# Option Analysis Queue
+resource "aws_ssm_parameter" "intelligence_option_analysis_queue_url" {
+  name  = "/${var.project_name}/sqs/intelligence-option-analysis-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.intelligence_option_analysis.url
+  tags  = local.common_tags
+}
+
+# Notice Analysis Queue
+resource "aws_ssm_parameter" "intelligence_notice_analysis_queue_url" {
+  name  = "/${var.project_name}/sqs/intelligence-notice-analysis-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.intelligence_notice_analysis.url
+  tags  = local.common_tags
+}
+
+# Aggregation Queue
+resource "aws_ssm_parameter" "intelligence_aggregation_queue_url" {
+  name  = "/${var.project_name}/sqs/intelligence-aggregation-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.intelligence_aggregation.url
+  tags  = local.common_tags
+}
+
+# ========================================
 # CloudWatch Alarms
 # ========================================
 
@@ -372,6 +601,105 @@ resource "aws_cloudwatch_metric_alarm" "verification_dlq_messages" {
 }
 
 # ========================================
+# CloudWatch Alarms: Intelligence Pipeline DLQs
+# ========================================
+
+resource "aws_cloudwatch_metric_alarm" "intelligence_orchestration_dlq_messages" {
+  alarm_name          = "${var.project_name}-intelligence-orchestration-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in intelligence orchestration DLQ (stage)"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.intelligence_orchestration_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
+resource "aws_cloudwatch_metric_alarm" "intelligence_description_analysis_dlq_messages" {
+  alarm_name          = "${var.project_name}-intelligence-desc-analysis-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in intelligence description analysis DLQ (stage)"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.intelligence_description_analysis_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
+resource "aws_cloudwatch_metric_alarm" "intelligence_option_analysis_dlq_messages" {
+  alarm_name          = "${var.project_name}-intelligence-option-analysis-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in intelligence option analysis DLQ (stage)"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.intelligence_option_analysis_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
+resource "aws_cloudwatch_metric_alarm" "intelligence_notice_analysis_dlq_messages" {
+  alarm_name          = "${var.project_name}-intelligence-notice-analysis-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in intelligence notice analysis DLQ (stage)"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.intelligence_notice_analysis_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
+resource "aws_cloudwatch_metric_alarm" "intelligence_aggregation_dlq_messages" {
+  alarm_name          = "${var.project_name}-intelligence-aggregation-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in intelligence aggregation DLQ (stage)"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.intelligence_aggregation_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
+# ========================================
 # Outputs
 # ========================================
 output "inspection_scoring_queue_url" {
@@ -412,4 +740,30 @@ output "sqs_access_policy_arn" {
 output "sqs_kms_key_arn" {
   description = "KMS key ARN for SQS encryption"
   value       = aws_kms_key.sqs.arn
+}
+
+# Intelligence Pipeline Outputs
+output "intelligence_orchestration_queue_url" {
+  description = "Intelligence orchestration queue URL"
+  value       = aws_sqs_queue.intelligence_orchestration.url
+}
+
+output "intelligence_description_analysis_queue_url" {
+  description = "Intelligence description analysis queue URL"
+  value       = aws_sqs_queue.intelligence_description_analysis.url
+}
+
+output "intelligence_option_analysis_queue_url" {
+  description = "Intelligence option analysis queue URL"
+  value       = aws_sqs_queue.intelligence_option_analysis.url
+}
+
+output "intelligence_notice_analysis_queue_url" {
+  description = "Intelligence notice analysis queue URL"
+  value       = aws_sqs_queue.intelligence_notice_analysis.url
+}
+
+output "intelligence_aggregation_queue_url" {
+  description = "Intelligence aggregation queue URL"
+  value       = aws_sqs_queue.intelligence_aggregation.url
 }
