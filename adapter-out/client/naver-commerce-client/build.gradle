@@ -30,6 +30,11 @@ dependencies {
     implementation libs.jackson.databind
 
     // ========================================
+    // BCrypt (for Naver Commerce API signature)
+    // ========================================
+    implementation libs.jbcrypt
+
+    // ========================================
     // Configuration Processor
     // ========================================
     annotationProcessor libs.spring.boot.configuration.processor

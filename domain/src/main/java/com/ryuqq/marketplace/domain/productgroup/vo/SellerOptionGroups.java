@@ -51,30 +51,26 @@ public record SellerOptionGroups(List<SellerOptionGroup> groups) {
         }
     }
 
-    /** optionType과 옵션 그룹 수 정합성 검증. PREDEFINED 그룹만 카운트. */
+    /** optionType과 옵션 그룹 수 정합성 검증. 전체 그룹 수 기준. */
     private void validateGroupCount(OptionType optionType) {
-        long predefinedCount =
-                groups.stream().filter(g -> g.inputType() == OptionInputType.PREDEFINED).count();
+        int groupCount = groups.size();
         switch (optionType) {
             case NONE -> {
-                if (!groups.isEmpty()) {
+                if (groupCount != 0) {
                     throw new ProductGroupInvalidOptionStructureException(
-                            optionType, 0, groups.size());
+                            optionType, 0, groupCount);
                 }
             }
             case SINGLE -> {
-                if (predefinedCount > 1) {
+                if (groupCount != 1) {
                     throw new ProductGroupInvalidOptionStructureException(
-                            optionType, 1, (int) predefinedCount);
-                }
-                if (groups.isEmpty()) {
-                    throw new ProductGroupInvalidOptionStructureException(optionType, 1, 0);
+                            optionType, 1, groupCount);
                 }
             }
             case COMBINATION -> {
-                if (predefinedCount != 2) {
+                if (groupCount != 2) {
                     throw new ProductGroupInvalidOptionStructureException(
-                            optionType, 2, (int) predefinedCount);
+                            optionType, 2, groupCount);
                 }
             }
         }
@@ -91,10 +87,10 @@ public record SellerOptionGroups(List<SellerOptionGroup> groups) {
         }
     }
 
-    /** 각 옵션 그룹에 최소 1개 옵션 값 존재 검증. PREDEFINED 그룹만 검증. */
+    /** 각 옵션 그룹에 최소 1개 옵션 값 존재 검증. 모든 inputType 대상. */
     private void validateEachGroupHasValues() {
         for (SellerOptionGroup group : groups) {
-            if (group.inputType().requiresOptionValues() && group.optionValueCount() == 0) {
+            if (group.optionValueCount() == 0) {
                 throw new OptionGroupEmptyValuesException(group.optionGroupNameValue());
             }
         }

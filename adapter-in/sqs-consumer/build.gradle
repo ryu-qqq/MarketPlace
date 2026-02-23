@@ -3,7 +3,7 @@
 // ========================================
 // Inbound adapter for AWS SQS message consumption
 // Uses Spring Cloud AWS @SqsListener for declarative message handling
-// Handles inspection pipeline: Scoring → Enhancement → Verification
+// Handles intelligence pipeline: Orchestration → Analysis → Aggregation
 // NO Lombok allowed
 // ========================================
 

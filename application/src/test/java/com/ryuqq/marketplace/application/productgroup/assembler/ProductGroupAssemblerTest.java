@@ -189,6 +189,7 @@ class ProductGroupAssemblerTest {
                 ProductGroupFixtures.DEFAULT_CATEGORY_ID,
                 "테스트 카테고리",
                 "카테고리 > 테스트 카테고리",
+                "1/200",
                 ProductGroupFixtures.DEFAULT_PRODUCT_GROUP_NAME,
                 "NONE",
                 "ACTIVE",

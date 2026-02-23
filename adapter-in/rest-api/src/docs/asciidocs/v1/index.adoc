@@ -149,6 +149,9 @@ API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
 
 |`product-group:read` / `product-group:write`
 |상품 그룹 조회 / 등록·수정
+
+|`file:write`
+|파일 업로드 URL 발급 / 업로드 완료 처리
 |===
 
 === 공통 응답 형식
@@ -185,6 +188,11 @@ API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
 == 인증 (Auth)
 
 include::auth/auth.adoc[]
+
+
+== 관리자 메뉴 (Admin Menu)
+
+include::admin-menu/admin-menu.adoc[]
 
 
 == 브랜드 (Brand)
@@ -305,6 +313,11 @@ include::product-notice/product-notice.adoc[]
 == 이미지 Variant (Image Variant)
 
 include::image-variant/image-variant.adoc[]
+
+
+== 업로드 세션 (Upload Session)
+
+include::upload-session/upload-session.adoc[]
 
 
 == 배송 (Shipment)

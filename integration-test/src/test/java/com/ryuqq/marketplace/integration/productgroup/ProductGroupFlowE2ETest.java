@@ -367,7 +367,13 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                         Map.of(
                                 "optionGroupName", "각인 문구",
                                 "inputType", "FREE_INPUT",
-                                "optionValues", List.of())));
+                                "optionValues",
+                                        List.of(
+                                                Map.of(
+                                                        "optionValueName",
+                                                        "FREE",
+                                                        "sortOrder",
+                                                        0)))));
 
         request.put(
                 "products",
@@ -378,7 +384,11 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                 "currentPrice", 79000,
                                 "stockQuantity", 100,
                                 "sortOrder", 0,
-                                "selectedOptions", List.of())));
+                                "selectedOptions",
+                                        List.of(
+                                                Map.of(
+                                                        "optionGroupName", "각인 문구",
+                                                        "optionValueName", "FREE")))));
 
         request.put("description", Map.of("content", "<p>각인 전용 반지 - 주문 시 문구 입력</p>"));
 
@@ -521,7 +531,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                 "imageType", "THUMBNAIL",
                                 "sortOrder", 0)));
 
-        // PREDEFINED 2개 + FREE_INPUT 1개
+        // PREDEFINED 1개 + FREE_INPUT 1개 = 총 2개 (COMBINATION 규칙 준수)
         request.put(
                 "optionGroups",
                 List.of(
@@ -536,26 +546,17 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                         Map.of("optionValueName", "블랙", "sortOrder", 1))),
                         Map.of(
                                 "optionGroupName",
-                                "사이즈",
-                                "inputType",
-                                "PREDEFINED",
-                                "optionValues",
-                                List.of(
-                                        Map.of("optionValueName", "M", "sortOrder", 0),
-                                        Map.of("optionValueName", "L", "sortOrder", 1))),
-                        Map.of(
-                                "optionGroupName",
                                 "프린팅 문구",
                                 "inputType",
                                 "FREE_INPUT",
                                 "optionValues",
-                                List.of())));
+                                List.of(Map.of("optionValueName", "FREE", "sortOrder", 0)))));
 
         request.put(
                 "products",
                 List.of(
                         Map.of(
-                                "skuCode", "CUST-W-M",
+                                "skuCode", "CUST-W",
                                 "regularPrice", 35000,
                                 "currentPrice", 30000,
                                 "stockQuantity", 50,
@@ -569,14 +570,14 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                                         "화이트"),
                                                 Map.of(
                                                         "optionGroupName",
-                                                        "사이즈",
+                                                        "프린팅 문구",
                                                         "optionValueName",
-                                                        "M"))),
+                                                        "FREE"))),
                         Map.of(
-                                "skuCode", "CUST-W-L",
+                                "skuCode", "CUST-B",
                                 "regularPrice", 35000,
                                 "currentPrice", 30000,
-                                "stockQuantity", 50,
+                                "stockQuantity", 40,
                                 "sortOrder", 1,
                                 "selectedOptions",
                                         List.of(
@@ -584,48 +585,12 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                                         "optionGroupName",
                                                         "색상",
                                                         "optionValueName",
-                                                        "화이트"),
-                                                Map.of(
-                                                        "optionGroupName",
-                                                        "사이즈",
-                                                        "optionValueName",
-                                                        "L"))),
-                        Map.of(
-                                "skuCode", "CUST-B-M",
-                                "regularPrice", 35000,
-                                "currentPrice", 30000,
-                                "stockQuantity", 40,
-                                "sortOrder", 2,
-                                "selectedOptions",
-                                        List.of(
-                                                Map.of(
-                                                        "optionGroupName",
-                                                        "색상",
-                                                        "optionValueName",
                                                         "블랙"),
                                                 Map.of(
                                                         "optionGroupName",
-                                                        "사이즈",
+                                                        "프린팅 문구",
                                                         "optionValueName",
-                                                        "M"))),
-                        Map.of(
-                                "skuCode", "CUST-B-L",
-                                "regularPrice", 35000,
-                                "currentPrice", 30000,
-                                "stockQuantity", 40,
-                                "sortOrder", 3,
-                                "selectedOptions",
-                                        List.of(
-                                                Map.of(
-                                                        "optionGroupName",
-                                                        "색상",
-                                                        "optionValueName",
-                                                        "블랙"),
-                                                Map.of(
-                                                        "optionGroupName",
-                                                        "사이즈",
-                                                        "optionValueName",
-                                                        "L")))));
+                                                        "FREE")))));
 
         request.put("description", Map.of("content", "<p>커스텀 프린팅 티셔츠 - 주문 시 문구 입력</p>"));
 
@@ -659,7 +624,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
         request.put("shippingPolicyId", shippingPolicyId);
         request.put("refundPolicyId", refundPolicyId);
         request.put("productGroupName", "커스텀 각인 실버 반지");
-        request.put("optionType", "SINGLE");
+        request.put("optionType", "COMBINATION");
 
         request.put(
                 "images",
@@ -669,7 +634,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                 "imageType", "THUMBNAIL",
                                 "sortOrder", 0)));
 
-        // PREDEFINED 그룹 (사이즈) + FREE_INPUT 그룹 (각인 문구)
+        // PREDEFINED 그룹 (사이즈) + FREE_INPUT 그룹 (각인 문구) = 총 2개 (COMBINATION 규칙 준수)
         request.put(
                 "optionGroups",
                 List.of(
@@ -689,9 +654,9 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                 "inputType",
                                 "FREE_INPUT",
                                 "optionValues",
-                                List.of())));
+                                List.of(Map.of("optionValueName", "FREE", "sortOrder", 0)))));
 
-        // selectedOptions에는 PREDEFINED 그룹(사이즈)만 포함
+        // selectedOptions에는 모든 그룹 포함 (새 규칙)
         request.put(
                 "products",
                 List.of(
@@ -707,7 +672,12 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                                         "optionGroupName",
                                                         "사이즈",
                                                         "optionValueName",
-                                                        "11호"))),
+                                                        "11호"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "각인 문구",
+                                                        "optionValueName",
+                                                        "FREE"))),
                         Map.of(
                                 "skuCode", "RING-13",
                                 "regularPrice", 89000,
@@ -720,7 +690,12 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                                         "optionGroupName",
                                                         "사이즈",
                                                         "optionValueName",
-                                                        "13호"))),
+                                                        "13호"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "각인 문구",
+                                                        "optionValueName",
+                                                        "FREE"))),
                         Map.of(
                                 "skuCode", "RING-15",
                                 "regularPrice", 89000,
@@ -733,7 +708,12 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                                                         "optionGroupName",
                                                         "사이즈",
                                                         "optionValueName",
-                                                        "15호")))));
+                                                        "15호"),
+                                                Map.of(
+                                                        "optionGroupName",
+                                                        "각인 문구",
+                                                        "optionValueName",
+                                                        "FREE")))));
 
         request.put("description", Map.of("content", "<p>925 실버 각인 반지</p>"));
 
@@ -1376,7 +1356,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .body("data.productGroupName", equalTo("각인 전용 반지"))
                     .body("data.optionType", equalTo("SINGLE"))
                     .body("data.status", equalTo("DRAFT"))
-                    // 옵션 그룹 1개 (FREE_INPUT만)
+                    // 옵션 그룹 1개 (FREE_INPUT만, optionValues 1개)
                     .body("data.optionProductMatrix.optionGroups.size()", equalTo(1))
                     .body(
                             "data.optionProductMatrix.optionGroups[0].optionGroupName",
@@ -1386,13 +1366,13 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             equalTo("FREE_INPUT"))
                     .body(
                             "data.optionProductMatrix.optionGroups[0].optionValues.size()",
-                            equalTo(0))
-                    // 상품 1개
+                            equalTo(1))
+                    // 상품 1개 (옵션 매핑 1개 - FREE_INPUT 그룹 포함)
                     .body("data.optionProductMatrix.products.size()", equalTo(1))
                     .body(
                             "data.optionProductMatrix.products[0].skuCode",
                             equalTo("ENGRAVE-RING-001"))
-                    .body("data.optionProductMatrix.products[0].options.size()", equalTo(0))
+                    .body("data.optionProductMatrix.products[0].options.size()", equalTo(1))
                     // 설명
                     .body("data.description.content", containsString("각인 전용 반지"))
                     // 고시정보
@@ -1401,13 +1381,14 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
     }
 
     @Nested
-    @DisplayName("혼합 입력 모드: PREDEFINED + FREE_INPUT 옵션 그룹")
+    @DisplayName("혼합 입력 모드: PREDEFINED + FREE_INPUT 옵션 그룹 (COMBINATION)")
     class MixedInputTypeTest {
 
         @Test
         @Tag("P0")
         @DisplayName(
-                "[FLOW-MIXED-1] SINGLE + 혼합 inputType 등록 후 상세 조회 - PREDEFINED/FREE_INPUT 그룹 검증")
+                "[FLOW-MIXED-1] COMBINATION + 혼합 inputType 등록 후 상세 조회 - PREDEFINED/FREE_INPUT 그룹"
+                        + " 검증")
         void registerMixedInputType_AndGetDetail_BothGroupTypesVerified() {
             // ===== Step 1: POST - 혼합 inputType 상품그룹 등록 =====
             Map<String, Object> request = createMixedInputTypeRegisterRequest();
@@ -1429,7 +1410,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     // 기본 정보
                     .body("data.id", equalTo(productGroupId.intValue()))
                     .body("data.productGroupName", equalTo("커스텀 각인 실버 반지"))
-                    .body("data.optionType", equalTo("SINGLE"))
+                    .body("data.optionType", equalTo("COMBINATION"))
                     .body("data.status", equalTo("DRAFT"))
                     // 옵션 그룹 2개 (PREDEFINED 1개 + FREE_INPUT 1개)
                     .body("data.optionProductMatrix.optionGroups.size()", equalTo(2))
@@ -1443,7 +1424,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .body(
                             "data.optionProductMatrix.optionGroups[0].optionValues.size()",
                             equalTo(3))
-                    // 두 번째 그룹: FREE_INPUT (각인 문구) - 옵션 값 0개
+                    // 두 번째 그룹: FREE_INPUT (각인 문구) - 옵션 값 1개
                     .body(
                             "data.optionProductMatrix.optionGroups[1].optionGroupName",
                             equalTo("각인 문구"))
@@ -1452,14 +1433,14 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             equalTo("FREE_INPUT"))
                     .body(
                             "data.optionProductMatrix.optionGroups[1].optionValues.size()",
-                            equalTo(0))
-                    // 상품 3개 (PREDEFINED 그룹의 옵션 값 3개에 대응)
+                            equalTo(1))
+                    // 상품 3개 (사이즈 3개 x FREE 1개 = 3개 조합)
                     .body("data.optionProductMatrix.products.size()", equalTo(3))
                     .body("data.optionProductMatrix.products[0].skuCode", equalTo("RING-11"))
                     .body("data.optionProductMatrix.products[1].skuCode", equalTo("RING-13"))
                     .body("data.optionProductMatrix.products[2].skuCode", equalTo("RING-15"))
-                    // 각 상품의 옵션 매핑: PREDEFINED 그룹(사이즈)만 매핑됨
-                    .body("data.optionProductMatrix.products[0].options.size()", equalTo(1));
+                    // 각 상품의 옵션 매핑: 모든 그룹 포함 (2개)
+                    .body("data.optionProductMatrix.products[0].options.size()", equalTo(2));
         }
 
         @Test
@@ -1547,7 +1528,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[FLOW-COMBMIX-1] COMBINATION + PREDEFINED 2개 + FREE_INPUT 1개 등록 후 상세 조회")
+        @DisplayName("[FLOW-COMBMIX-1] COMBINATION + PREDEFINED 1개 + FREE_INPUT 1개 등록 후 상세 조회")
         void registerCombinationMixed_AndGetDetail() {
             Map<String, Object> request = createCombinationMixedRegisterRequest();
 
@@ -1565,34 +1546,31 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     .statusCode(HttpStatus.OK.value())
                     .body("data.productGroupName", equalTo("커스텀 프린팅 티셔츠"))
                     .body("data.optionType", equalTo("COMBINATION"))
-                    // 옵션 그룹 3개 (PREDEFINED 2 + FREE_INPUT 1)
-                    .body("data.optionProductMatrix.optionGroups.size()", equalTo(3))
+                    // 옵션 그룹 2개 (PREDEFINED 1 + FREE_INPUT 1)
+                    .body("data.optionProductMatrix.optionGroups.size()", equalTo(2))
                     .body(
                             "data.optionProductMatrix.optionGroups[0].inputType",
                             equalTo("PREDEFINED"))
                     .body(
                             "data.optionProductMatrix.optionGroups[1].inputType",
-                            equalTo("PREDEFINED"))
-                    .body(
-                            "data.optionProductMatrix.optionGroups[2].inputType",
                             equalTo("FREE_INPUT"))
                     .body(
-                            "data.optionProductMatrix.optionGroups[2].optionValues.size()",
-                            equalTo(0))
-                    // 상품 4개 (2x2 조합)
-                    .body("data.optionProductMatrix.products.size()", equalTo(4))
-                    // 각 상품에 PREDEFINED 옵션 2개만 매핑
+                            "data.optionProductMatrix.optionGroups[1].optionValues.size()",
+                            equalTo(1))
+                    // 상품 2개 (색상 2개 x FREE 1개)
+                    .body("data.optionProductMatrix.products.size()", equalTo(2))
+                    // 각 상품에 모든 옵션 그룹 매핑 (2개)
                     .body("data.optionProductMatrix.products[0].options.size()", equalTo(2));
         }
     }
 
     @Nested
-    @DisplayName("검증 에러 케이스: optionType과 PREDEFINED 그룹 수 불일치")
+    @DisplayName("검증 에러 케이스: optionType과 전체 그룹 수 불일치")
     class OptionTypeValidationErrorTest {
 
         @Test
-        @DisplayName("[ERR-1] SINGLE + PREDEFINED 2개 → 400 에러")
-        void registerSingle_WithTwoPredefined_Returns400() {
+        @DisplayName("[ERR-1] SINGLE + 2개 그룹 → 400 에러 (정확히 1개 필요)")
+        void registerSingle_WithTwoGroups_Returns400() {
             Map<String, Object> request = new HashMap<>();
             request.put("sellerId", sellerId);
             request.put("brandId", brandId);
@@ -1653,8 +1631,8 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
         }
 
         @Test
-        @DisplayName("[ERR-2] COMBINATION + PREDEFINED 1개 → 400 에러")
-        void registerCombination_WithOnePredefined_Returns400() {
+        @DisplayName("[ERR-2] COMBINATION + 1개 그룹 → 400 에러 (정확히 2개 필요)")
+        void registerCombination_WithOneGroup_Returns400() {
             Map<String, Object> request = new HashMap<>();
             request.put("sellerId", sellerId);
             request.put("brandId", brandId);
@@ -1688,6 +1666,61 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     List.of(
                             Map.of(
                                     "skuCode", "ERR-002",
+                                    "regularPrice", 10000,
+                                    "currentPrice", 9000,
+                                    "stockQuantity", 10,
+                                    "sortOrder", 0,
+                                    "selectedOptions", List.of())));
+
+            request.put("description", Map.of("content", "<p>에러</p>"));
+
+            given().spec(givenSuperAdmin())
+                    .body(request)
+                    .when()
+                    .post(PRODUCT_GROUPS)
+                    .then()
+                    .statusCode(
+                            anyOf(
+                                    equalTo(HttpStatus.BAD_REQUEST.value()),
+                                    equalTo(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+        }
+
+        @Test
+        @DisplayName("[ERR-3] optionValues 빈 배열 → 400 에러 (최소 1개 필요)")
+        void registerWithEmptyOptionValues_Returns400() {
+            Map<String, Object> request = new HashMap<>();
+            request.put("sellerId", sellerId);
+            request.put("brandId", brandId);
+            request.put("categoryId", categoryId);
+            request.put("shippingPolicyId", shippingPolicyId);
+            request.put("refundPolicyId", refundPolicyId);
+            request.put("productGroupName", "optionValues 빈 배열");
+            request.put("optionType", "SINGLE");
+
+            request.put(
+                    "images",
+                    List.of(
+                            Map.of(
+                                    "originUrl", "https://example.com/err3.jpg",
+                                    "imageType", "THUMBNAIL",
+                                    "sortOrder", 0)));
+
+            request.put(
+                    "optionGroups",
+                    List.of(
+                            Map.of(
+                                    "optionGroupName",
+                                    "각인 문구",
+                                    "inputType",
+                                    "FREE_INPUT",
+                                    "optionValues",
+                                    List.of())));
+
+            request.put(
+                    "products",
+                    List.of(
+                            Map.of(
+                                    "skuCode", "ERR-003",
                                     "regularPrice", 10000,
                                     "currentPrice", 9000,
                                     "stockQuantity", 10,

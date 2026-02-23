@@ -133,7 +133,9 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("정렬 순서"),
                                             fieldWithPath("optionGroups")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("옵션 그룹 목록"),
+                                                    .description(
+                                                            "옵션 그룹 목록 (NONE=0개, SINGLE=1개,"
+                                                                    + " COMBINATION=2개)"),
                                             fieldWithPath("optionGroups[].optionGroupName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("옵션 그룹명"),
@@ -145,11 +147,12 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description(
                                                             "입력 유형 (PREDEFINED: 사전 정의,"
-                                                                    + " FREE_INPUT: 자유 입력)")
+                                                                    + " FREE_INPUT: OMS 자유 입력 매핑)")
                                                     .optional(),
                                             fieldWithPath("optionGroups[].optionValues")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("옵션 값 목록"),
+                                                    .description(
+                                                            "옵션 값 목록 (모든 inputType에서 최소 1개 필수)"),
                                             fieldWithPath(
                                                             "optionGroups[].optionValues[].optionValueName")
                                                     .type(JsonFieldType.STRING)
@@ -182,7 +185,7 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("정렬 순서"),
                                             fieldWithPath("products[].selectedOptions")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("이름 기반 옵션 선택 목록"),
+                                                    .description("이름 기반 옵션 선택 목록 (모든 그룹 포함)"),
                                             fieldWithPath(
                                                             "products[].selectedOptions[].optionGroupName")
                                                     .type(JsonFieldType.STRING)
@@ -296,7 +299,9 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("정렬 순서"),
                                             fieldWithPath("items[].optionGroups")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("옵션 그룹 목록"),
+                                                    .description(
+                                                            "옵션 그룹 목록 (NONE=0개, SINGLE=1개,"
+                                                                    + " COMBINATION=2개)"),
                                             fieldWithPath("items[].optionGroups[].optionGroupName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("옵션 그룹명"),
@@ -309,11 +314,12 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description(
                                                             "입력 유형 (PREDEFINED: 사전 정의,"
-                                                                    + " FREE_INPUT: 자유 입력)")
+                                                                    + " FREE_INPUT: OMS 자유 입력 매핑)")
                                                     .optional(),
                                             fieldWithPath("items[].optionGroups[].optionValues")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("옵션 값 목록"),
+                                                    .description(
+                                                            "옵션 값 목록 (모든 inputType에서 최소 1개 필수)"),
                                             fieldWithPath(
                                                             "items[].optionGroups[].optionValues[].optionValueName")
                                                     .type(JsonFieldType.STRING)
@@ -347,7 +353,7 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("정렬 순서"),
                                             fieldWithPath("items[].products[].selectedOptions")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("이름 기반 옵션 선택 목록"),
+                                                    .description("이름 기반 옵션 선택 목록 (모든 그룹 포함)"),
                                             fieldWithPath(
                                                             "items[].products[].selectedOptions[].optionGroupName")
                                                     .type(JsonFieldType.STRING)
@@ -474,7 +480,9 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("정렬 순서"),
                                             fieldWithPath("optionGroups")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("옵션 그룹 목록"),
+                                                    .description(
+                                                            "옵션 그룹 목록 (NONE=0개, SINGLE=1개,"
+                                                                    + " COMBINATION=2개)"),
                                             fieldWithPath("optionGroups[].sellerOptionGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("셀러 옵션 그룹 ID (기존 그룹 수정 시)"),
@@ -489,11 +497,12 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description(
                                                             "입력 유형 (PREDEFINED: 사전 정의,"
-                                                                    + " FREE_INPUT: 자유 입력)")
+                                                                    + " FREE_INPUT: OMS 자유 입력 매핑)")
                                                     .optional(),
                                             fieldWithPath("optionGroups[].optionValues")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("옵션 값 목록"),
+                                                    .description(
+                                                            "옵션 값 목록 (모든 inputType에서 최소 1개 필수)"),
                                             fieldWithPath(
                                                             "optionGroups[].optionValues[].sellerOptionValueId")
                                                     .type(JsonFieldType.NUMBER)
@@ -535,7 +544,7 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .description("정렬 순서"),
                                             fieldWithPath("products[].selectedOptions")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("이름 기반 옵션 선택 목록"),
+                                                    .description("이름 기반 옵션 선택 목록 (모든 그룹 포함)"),
                                             fieldWithPath(
                                                             "products[].selectedOptions[].optionGroupName")
                                                     .type(JsonFieldType.STRING)

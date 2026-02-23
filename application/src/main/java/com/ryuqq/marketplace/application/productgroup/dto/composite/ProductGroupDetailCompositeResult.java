@@ -22,6 +22,7 @@ import java.util.List;
  * @param categoryId 카테고리 ID
  * @param categoryName 카테고리명
  * @param categoryDisplayPath 카테고리 전체 경로
+ * @param categoryIdPath 카테고리 ID 경로
  * @param productGroupName 상품 그룹명
  * @param optionType 옵션 유형
  * @param status 상품 그룹 상태
@@ -43,6 +44,7 @@ public record ProductGroupDetailCompositeResult(
         Long categoryId,
         String categoryName,
         String categoryDisplayPath,
+        String categoryIdPath,
         String productGroupName,
         String optionType,
         String status,

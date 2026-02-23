@@ -24,7 +24,7 @@ public class ImageVariantErrorMapper implements ErrorMapper {
         HttpStatus status = HttpStatus.valueOf(ex.httpStatus());
         return new MappedError(
                 status,
-                "Image Variant Not Found",
+                "이미지 변형을 찾을 수 없음",
                 ex.getMessage(),
                 URI.create(ERROR_TYPE_PREFIX + "/" + ex.code().toLowerCase(Locale.ROOT)));
     }

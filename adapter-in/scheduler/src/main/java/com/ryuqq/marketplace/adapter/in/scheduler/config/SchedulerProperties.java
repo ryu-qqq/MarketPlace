@@ -21,7 +21,16 @@ public record SchedulerProperties(Jobs jobs) {
             ImageUploadOutbox imageUploadOutbox,
             ImageTransformOutbox imageTransformOutbox,
             DescriptionPublish descriptionPublish,
-            ProductGroupInspection productGroupInspection) {}
+            IntelligencePipeline intelligencePipeline,
+            InboundProductRetry inboundProductRetry) {}
+
+    public record IntelligencePipeline(
+            ProcessPending processPending,
+            RecoverTimeout recoverTimeout,
+            RecoverStuckAggregation recoverStuckAggregation) {}
+
+    public record RecoverStuckAggregation(
+            boolean enabled, String cron, String timezone, int batchSize, long stuckSeconds) {}
 
     public record SellerAuthOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
@@ -38,9 +47,6 @@ public record SchedulerProperties(Jobs jobs) {
             PollProcessing pollProcessing,
             RecoverTimeout recoverTimeout) {}
 
-    public record ProductGroupInspection(
-            ProcessPending processPending, RecoverTimeout recoverTimeout) {}
-
     public record PollProcessing(boolean enabled, String cron, String timezone, int batchSize) {}
 
     public record DescriptionPublish(
@@ -51,4 +57,6 @@ public record SchedulerProperties(Jobs jobs) {
 
     public record RecoverTimeout(
             boolean enabled, String cron, String timezone, int batchSize, long timeoutSeconds) {}
+
+    public record InboundProductRetry(boolean enabled, String cron, String timezone) {}
 }
