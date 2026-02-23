@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 세토프 어드민용 레거시 QnA(문의) API 호환 컨트롤러.
  *
- * <p>기존 세토프 연동 호환을 위해 제공되는 레거시 엔드포인트입니다.
- * OMS(사방넷)가 호출하는 GET /qnas (문의 목록 조회)를 제공합니다.
+ * <p>기존 세토프 연동 호환을 위해 제공되는 레거시 엔드포인트입니다. OMS(사방넷)가 호출하는 GET /qnas (문의 목록 조회)를 제공합니다.
  */
 @Tag(
         name = "세토프 어드민용 레거시",
@@ -25,8 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacyQnAController {
 
     @GetMapping(QNAS)
-    public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyQnAListResponse>>>
-            getQnas(Pageable pageable) {
+    public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyQnAListResponse>>> getQnas(
+            Pageable pageable) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 }
