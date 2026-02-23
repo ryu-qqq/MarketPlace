@@ -1,7 +1,7 @@
-package com.ryuqq.marketplace.adapter.out.persistence.externalsource.adapter;
+package com.ryuqq.marketplace.adapter.out.persistence.inboundsource.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.externalsource.mapper.ExternalSourceJpaEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.externalsource.repository.ExternalSourceQueryDslRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.mapper.InboundSourceJpaEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.repository.InboundSourceQueryDslRepository;
 import com.ryuqq.marketplace.application.externalsource.port.out.query.ExternalSourceQueryPort;
 import com.ryuqq.marketplace.domain.externalsource.aggregate.ExternalSource;
 import com.ryuqq.marketplace.domain.externalsource.id.ExternalSourceId;
@@ -10,15 +10,15 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
-/** ExternalSource Query Adapter. */
+/** InboundSource Query Adapter (ExternalSourceQueryPort 구현). */
 @Component
-public class ExternalSourceQueryAdapter implements ExternalSourceQueryPort {
+public class InboundSourceQueryAdapter implements ExternalSourceQueryPort {
 
-    private final ExternalSourceQueryDslRepository repository;
-    private final ExternalSourceJpaEntityMapper mapper;
+    private final InboundSourceQueryDslRepository repository;
+    private final InboundSourceJpaEntityMapper mapper;
 
-    public ExternalSourceQueryAdapter(
-            ExternalSourceQueryDslRepository repository, ExternalSourceJpaEntityMapper mapper) {
+    public InboundSourceQueryAdapter(
+            InboundSourceQueryDslRepository repository, InboundSourceJpaEntityMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
