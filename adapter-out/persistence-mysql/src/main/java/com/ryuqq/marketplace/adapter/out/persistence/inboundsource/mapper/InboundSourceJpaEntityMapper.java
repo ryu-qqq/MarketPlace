@@ -1,6 +1,6 @@
-package com.ryuqq.marketplace.adapter.out.persistence.externalsource.mapper;
+package com.ryuqq.marketplace.adapter.out.persistence.inboundsource.mapper;
 
-import com.ryuqq.marketplace.adapter.out.persistence.externalsource.entity.ExternalSourceJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.entity.InboundSourceJpaEntity;
 import com.ryuqq.marketplace.domain.externalsource.aggregate.ExternalSource;
 import com.ryuqq.marketplace.domain.externalsource.id.ExternalSourceId;
 import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceCode;
@@ -8,12 +8,12 @@ import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceStatus;
 import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceType;
 import org.springframework.stereotype.Component;
 
-/** ExternalSource JPA Entity Mapper. */
+/** InboundSource JPA Entity ↔ ExternalSource Domain Mapper. */
 @Component
-public class ExternalSourceJpaEntityMapper {
+public class InboundSourceJpaEntityMapper {
 
-    public ExternalSourceJpaEntity toEntity(ExternalSource source) {
-        return ExternalSourceJpaEntity.create(
+    public InboundSourceJpaEntity toEntity(ExternalSource source) {
+        return InboundSourceJpaEntity.create(
                 source.idValue(),
                 source.codeValue(),
                 source.name(),
@@ -24,7 +24,7 @@ public class ExternalSourceJpaEntityMapper {
                 source.updatedAt());
     }
 
-    public ExternalSource toDomain(ExternalSourceJpaEntity entity) {
+    public ExternalSource toDomain(InboundSourceJpaEntity entity) {
         if (entity.getId() == null) {
             throw new IllegalStateException("영속화된 엔티티의 ID는 null일 수 없습니다");
         }

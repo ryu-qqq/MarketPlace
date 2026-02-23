@@ -1,48 +1,48 @@
-package com.ryuqq.marketplace.adapter.out.persistence.externalsource.repository;
+package com.ryuqq.marketplace.adapter.out.persistence.inboundsource.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ryuqq.marketplace.adapter.out.persistence.externalsource.condition.ExternalSourceConditionBuilder;
-import com.ryuqq.marketplace.adapter.out.persistence.externalsource.entity.ExternalSourceJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.externalsource.entity.QExternalSourceJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.condition.InboundSourceConditionBuilder;
+import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.entity.InboundSourceJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.entity.QInboundSourceJpaEntity;
 import com.ryuqq.marketplace.domain.externalsource.query.ExternalSourceSearchCriteria;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
-/** ExternalSource QueryDSL Repository. */
+/** InboundSource QueryDSL Repository. */
 @Repository
-public class ExternalSourceQueryDslRepository {
+public class InboundSourceQueryDslRepository {
 
-    private static final QExternalSourceJpaEntity externalSource =
-            QExternalSourceJpaEntity.externalSourceJpaEntity;
+    private static final QInboundSourceJpaEntity inboundSource =
+            QInboundSourceJpaEntity.inboundSourceJpaEntity;
 
     private final JPAQueryFactory queryFactory;
-    private final ExternalSourceConditionBuilder conditionBuilder;
+    private final InboundSourceConditionBuilder conditionBuilder;
 
-    public ExternalSourceQueryDslRepository(
-            JPAQueryFactory queryFactory, ExternalSourceConditionBuilder conditionBuilder) {
+    public InboundSourceQueryDslRepository(
+            JPAQueryFactory queryFactory, InboundSourceConditionBuilder conditionBuilder) {
         this.queryFactory = queryFactory;
         this.conditionBuilder = conditionBuilder;
     }
 
-    public Optional<ExternalSourceJpaEntity> findById(Long id) {
-        ExternalSourceJpaEntity entity =
-                queryFactory.selectFrom(externalSource).where(externalSource.id.eq(id)).fetchOne();
+    public Optional<InboundSourceJpaEntity> findById(Long id) {
+        InboundSourceJpaEntity entity =
+                queryFactory.selectFrom(inboundSource).where(inboundSource.id.eq(id)).fetchOne();
         return Optional.ofNullable(entity);
     }
 
-    public Optional<ExternalSourceJpaEntity> findByCode(String code) {
-        ExternalSourceJpaEntity entity =
+    public Optional<InboundSourceJpaEntity> findByCode(String code) {
+        InboundSourceJpaEntity entity =
                 queryFactory
-                        .selectFrom(externalSource)
-                        .where(externalSource.code.eq(code))
+                        .selectFrom(inboundSource)
+                        .where(inboundSource.code.eq(code))
                         .fetchOne();
         return Optional.ofNullable(entity);
     }
 
-    public List<ExternalSourceJpaEntity> findByCriteria(ExternalSourceSearchCriteria criteria) {
+    public List<InboundSourceJpaEntity> findByCriteria(ExternalSourceSearchCriteria criteria) {
         return queryFactory
-                .selectFrom(externalSource)
+                .selectFrom(inboundSource)
                 .where(
                         conditionBuilder.typeIn(criteria.typeNames()),
                         conditionBuilder.statusIn(criteria.statusNames()),
@@ -56,8 +56,8 @@ public class ExternalSourceQueryDslRepository {
     public long countByCriteria(ExternalSourceSearchCriteria criteria) {
         Long count =
                 queryFactory
-                        .select(externalSource.count())
-                        .from(externalSource)
+                        .select(inboundSource.count())
+                        .from(inboundSource)
                         .where(
                                 conditionBuilder.typeIn(criteria.typeNames()),
                                 conditionBuilder.statusIn(criteria.statusNames()),
@@ -71,8 +71,8 @@ public class ExternalSourceQueryDslRepository {
         Integer result =
                 queryFactory
                         .selectOne()
-                        .from(externalSource)
-                        .where(externalSource.code.eq(code))
+                        .from(inboundSource)
+                        .where(inboundSource.code.eq(code))
                         .fetchFirst();
         return result != null;
     }
