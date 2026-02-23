@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.domain.productintelligence.aggregate.IntelligenceOu
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
  * <p>PENDING Outbox를 조회하여 IntelligenceRelayProcessor에 relay를 위임합니다.
  */
 @Service
+@ConditionalOnProperty(name = "intelligence.pipeline.enabled", havingValue = "true")
 public class ProcessPendingIntelligenceService implements ProcessPendingIntelligenceUseCase {
 
     private static final Logger log =
