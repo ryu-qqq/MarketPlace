@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author ryu-qqq
  * @since 1.0.0
  */
-@Tag(name = "상품 그룹 상세설명 관리", description = "상품 그룹 상세설명 조회 API")
+@Tag(name = "상품 그룹 상세설명 관리", description = "상품 그룹 상세 설명 조회 API")
 @RestController
 @RequestMapping(ProductGroupDescriptionAdminEndpoints.PRODUCT_GROUPS)
 public class ProductGroupDescriptionQueryController {

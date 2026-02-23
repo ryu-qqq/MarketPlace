@@ -111,10 +111,11 @@
     <rule ref="category/java/design.xml/GodClass">
         <priority>2</priority>
         <properties>
-            <!-- DDD Aggregate Root는 비즈니스 로직이 집중되므로 예외 처리 -->
+            <!-- DDD Aggregate Root, Legacy Mapper는 비즈니스 로직/변환 로직이 집중되므로 예외 처리 -->
             <property name="violationSuppressXPath"
                       value="//ClassDeclaration[
                              ancestor::CompilationUnit/PackageDeclaration[contains(@Name, '.aggregate')]
+                             or (contains(@SimpleName, 'Mapper') and ancestor::CompilationUnit/PackageDeclaration[contains(@Name, '.legacy.')])
                              ]"/>
         </properties>
     </rule>

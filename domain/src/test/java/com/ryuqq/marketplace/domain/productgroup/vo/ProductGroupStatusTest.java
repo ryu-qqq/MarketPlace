@@ -162,6 +162,7 @@ class ProductGroupStatusTest {
                     .containsExactly(
                             ProductGroupStatus.DRAFT,
                             ProductGroupStatus.PROCESSING,
+                            ProductGroupStatus.PENDING_REVIEW,
                             ProductGroupStatus.ACTIVE,
                             ProductGroupStatus.INACTIVE,
                             ProductGroupStatus.SOLDOUT,

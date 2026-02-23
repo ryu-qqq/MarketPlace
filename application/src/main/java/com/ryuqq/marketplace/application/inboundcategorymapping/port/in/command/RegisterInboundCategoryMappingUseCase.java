@@ -1,0 +1,9 @@
+package com.ryuqq.marketplace.application.inboundcategorymapping.port.in.command;
+
+import com.ryuqq.marketplace.application.inboundcategorymapping.dto.command.RegisterInboundCategoryMappingCommand;
+
+/** 외부 카테고리 매핑 등록 UseCase. */
+public interface RegisterInboundCategoryMappingUseCase {
+
+    Long execute(RegisterInboundCategoryMappingCommand command);
+}

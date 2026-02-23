@@ -11,32 +11,51 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "sqs.consumer")
 public class SqsConsumerProperties {
 
-    private QueueConsumer inspectionScoring = new QueueConsumer();
-    private QueueConsumer inspectionEnhancement = new QueueConsumer();
-    private QueueConsumer inspectionVerification = new QueueConsumer();
+    // Intelligence pipeline consumers
+    private QueueConsumer intelligenceOrchestration = new QueueConsumer();
+    private QueueConsumer intelligenceDescriptionAnalysis = new QueueConsumer();
+    private QueueConsumer intelligenceOptionAnalysis = new QueueConsumer();
+    private QueueConsumer intelligenceNoticeAnalysis = new QueueConsumer();
+    private QueueConsumer intelligenceAggregation = new QueueConsumer();
 
-    public QueueConsumer getInspectionScoring() {
-        return inspectionScoring;
+    public QueueConsumer getIntelligenceOrchestration() {
+        return intelligenceOrchestration;
     }
 
-    public void setInspectionScoring(QueueConsumer inspectionScoring) {
-        this.inspectionScoring = inspectionScoring;
+    public void setIntelligenceOrchestration(QueueConsumer intelligenceOrchestration) {
+        this.intelligenceOrchestration = intelligenceOrchestration;
     }
 
-    public QueueConsumer getInspectionEnhancement() {
-        return inspectionEnhancement;
+    public QueueConsumer getIntelligenceDescriptionAnalysis() {
+        return intelligenceDescriptionAnalysis;
     }
 
-    public void setInspectionEnhancement(QueueConsumer inspectionEnhancement) {
-        this.inspectionEnhancement = inspectionEnhancement;
+    public void setIntelligenceDescriptionAnalysis(QueueConsumer intelligenceDescriptionAnalysis) {
+        this.intelligenceDescriptionAnalysis = intelligenceDescriptionAnalysis;
     }
 
-    public QueueConsumer getInspectionVerification() {
-        return inspectionVerification;
+    public QueueConsumer getIntelligenceOptionAnalysis() {
+        return intelligenceOptionAnalysis;
     }
 
-    public void setInspectionVerification(QueueConsumer inspectionVerification) {
-        this.inspectionVerification = inspectionVerification;
+    public void setIntelligenceOptionAnalysis(QueueConsumer intelligenceOptionAnalysis) {
+        this.intelligenceOptionAnalysis = intelligenceOptionAnalysis;
+    }
+
+    public QueueConsumer getIntelligenceNoticeAnalysis() {
+        return intelligenceNoticeAnalysis;
+    }
+
+    public void setIntelligenceNoticeAnalysis(QueueConsumer intelligenceNoticeAnalysis) {
+        this.intelligenceNoticeAnalysis = intelligenceNoticeAnalysis;
+    }
+
+    public QueueConsumer getIntelligenceAggregation() {
+        return intelligenceAggregation;
+    }
+
+    public void setIntelligenceAggregation(QueueConsumer intelligenceAggregation) {
+        this.intelligenceAggregation = intelligenceAggregation;
     }
 
     public static class QueueConsumer {

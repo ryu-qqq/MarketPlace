@@ -9,12 +9,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 /**
  * Worker Application 진입점.
  *
- * <p>SQS 기반 검수 파이프라인 워커 애플리케이션입니다.
+ * <p>SQS 기반 인텔리전스 파이프라인 워커 애플리케이션입니다.
  *
  * <ul>
- *   <li>Inspection Scoring Consumer (AI 채점)
- *   <li>Inspection Enhancement Consumer (LLM 보강)
- *   <li>Inspection Verification Consumer (최종 검증)
+ *   <li>Intelligence Orchestration Consumer (분석 오케스트레이션)
+ *   <li>Intelligence Analysis Consumers (Description, Option, Notice 분석)
+ *   <li>Intelligence Aggregation Consumer (분석 결과 집계)
  * </ul>
  */
 @SpringBootApplication(

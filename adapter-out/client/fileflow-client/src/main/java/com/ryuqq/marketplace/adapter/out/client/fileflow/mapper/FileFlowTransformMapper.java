@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.fileflow.mapper;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.ryuqq.marketplace.adapter.out.client.fileflow.config.FileFlowClientProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,12 +13,13 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
+@ConditionalOnProperty(prefix = "fileflow", name = "base-url")
 public class FileFlowTransformMapper {
 
-    private final String cdnDomain;
+    private final FileFlowClientProperties properties;
 
-    public FileFlowTransformMapper(@Value("${fileflow.cdn-domain:}") String cdnDomain) {
-        this.cdnDomain = cdnDomain;
+    public FileFlowTransformMapper(FileFlowClientProperties properties) {
+        this.properties = properties;
     }
 
     /**
@@ -33,6 +35,7 @@ public class FileFlowTransformMapper {
             return cdnUrl;
         }
 
+        String cdnDomain = properties.cdnDomain();
         String httpsPrefix = "https://" + cdnDomain + "/";
         if (cdnUrl.startsWith(httpsPrefix)) {
             return cdnUrl.substring(httpsPrefix.length());
@@ -56,7 +59,7 @@ public class FileFlowTransformMapper {
         if (s3Key == null || s3Key.isBlank()) {
             return null;
         }
-        return "https://" + cdnDomain + "/" + s3Key;
+        return "https://" + properties.cdnDomain() + "/" + s3Key;
     }
 
     /**

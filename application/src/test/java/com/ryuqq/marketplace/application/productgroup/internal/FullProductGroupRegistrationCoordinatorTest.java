@@ -13,7 +13,7 @@ import com.ryuqq.marketplace.application.productgroupdescription.dto.command.Reg
 import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
-import com.ryuqq.marketplace.application.productgroupinspection.manager.ProductGroupInspectionOutboxCommandManager;
+import com.ryuqq.marketplace.application.productintelligence.manager.IntelligenceOutboxCommandManager;
 import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
 import com.ryuqq.marketplace.application.productnotice.internal.ProductNoticeCommandCoordinator;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
@@ -22,7 +22,6 @@ import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
-import com.ryuqq.marketplace.domain.productgroupinspection.aggregate.ProductGroupInspectionOutbox;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -46,7 +45,7 @@ class FullProductGroupRegistrationCoordinatorTest {
     @Mock private DescriptionCommandCoordinator descriptionCommandCoordinator;
     @Mock private ProductNoticeCommandCoordinator noticeCommandCoordinator;
     @Mock private ProductCommandCoordinator productCommandCoordinator;
-    @Mock private ProductGroupInspectionOutboxCommandManager inspectionOutboxCommandManager;
+    @Mock private IntelligenceOutboxCommandManager intelligenceOutboxCommandManager;
 
     @Nested
     @DisplayName("register() - 상품 그룹 전체 등록 조율")
@@ -213,30 +212,6 @@ class FullProductGroupRegistrationCoordinatorTest {
 
             // then
             then(productCommandCoordinator).should().register(any(List.class));
-        }
-
-        @Test
-        @DisplayName("번들의 createInspectionOutbox로 검수 Outbox를 생성하고 저장한다")
-        void register_CreatesAndPersistsInspectionOutbox() {
-            // given
-            Long productGroupId = 1L;
-            ProductGroupRegistrationBundle bundle = createBundle();
-            List<SellerOptionValueId> optionValueIds = List.of(SellerOptionValueId.of(10L));
-
-            given(productGroupCommandCoordinator.register(bundle.productGroup()))
-                    .willReturn(productGroupId);
-            given(
-                            sellerOptionCommandCoordinator.register(
-                                    any(RegisterSellerOptionGroupsCommand.class)))
-                    .willReturn(optionValueIds);
-
-            // when
-            sut.register(bundle);
-
-            // then
-            then(inspectionOutboxCommandManager)
-                    .should()
-                    .persist(any(ProductGroupInspectionOutbox.class));
         }
     }
 

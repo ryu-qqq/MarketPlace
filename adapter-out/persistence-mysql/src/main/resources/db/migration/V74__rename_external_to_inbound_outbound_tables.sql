@@ -1,0 +1,4 @@
+RENAME TABLE external_source TO inbound_source;
+RENAME TABLE external_brand_mapping TO inbound_brand_mapping;
+RENAME TABLE external_category_mapping TO inbound_category_mapping;
+RENAME TABLE external_product_sync_outboxes TO outbound_sync_outboxes;

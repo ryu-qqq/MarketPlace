@@ -419,6 +419,7 @@ module "ecs_service" {
 
   # Container Environment Variables
   container_environment = [
+    { name = "JAVA_OPTS", value = "-XX:+UseContainerSupport -Xmx1024m -Xms512m" },
     { name = "SPRING_PROFILES_ACTIVE", value = var.environment },
     { name = "DB_HOST", value = local.rds_host },
     { name = "DB_PORT", value = local.rds_port },

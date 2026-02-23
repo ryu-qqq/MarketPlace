@@ -1,9 +1,12 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 
 /** 세토프 CreateProductImage 호환 요청 DTO. */
 public record LegacyCreateProductImageRequest(
-        @JsonProperty("type") String productImageType,
-        @JsonProperty("productImageUrl") String imageUrl,
-        @JsonProperty("originUrl") String originUrl) {}
+        @NotBlank(message = "이미지 타입(type)은 필수입니다.") String type,
+        @NotBlank(message = "상품 이미지 URL은 필수입니다.")
+                @Length(max = 500, message = "상품 이미지 URL은 500자를 초과할 수 없습니다.")
+                String productImageUrl,
+        @Length(max = 500, message = "원본 이미지 URL은 500자를 초과할 수 없습니다.") String originUrl) {}

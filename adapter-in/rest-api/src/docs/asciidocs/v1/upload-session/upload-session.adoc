@@ -1,0 +1,37 @@
+[[upload-session-generate-upload-url]]
+=== Presigned URL 발급
+
+인증 필요 | 필요 권한: `file:write`
+
+==== HTTP Request
+include::{snippets}/upload-session/generate-upload-url/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/upload-session/generate-upload-url/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/upload-session/generate-upload-url/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/upload-session/generate-upload-url/response-fields.adoc[]
+
+
+[[upload-session-complete]]
+=== 업로드 완료 처리
+
+인증 필요 | 필요 권한: `file:write`
+
+==== HTTP Request
+include::{snippets}/upload-session/complete/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/upload-session/complete/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/upload-session/complete/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/upload-session/complete/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/upload-session/complete/response-fields.adoc[]

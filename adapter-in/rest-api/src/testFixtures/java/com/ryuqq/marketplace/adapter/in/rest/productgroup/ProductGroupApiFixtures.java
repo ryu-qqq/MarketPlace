@@ -48,6 +48,7 @@ public final class ProductGroupApiFixtures {
     public static final Long DEFAULT_CATEGORY_ID = 1000L;
     public static final String DEFAULT_CATEGORY_NAME = "상의";
     public static final String DEFAULT_CATEGORY_PATH = "패션 > 남성패션 > 상의";
+    public static final String DEFAULT_CATEGORY_ID_PATH = "1/5/1000";
     public static final String DEFAULT_PRODUCT_GROUP_NAME = "테스트 상품 그룹";
     public static final String DEFAULT_OPTION_TYPE = "COMBINATION";
     public static final String DEFAULT_STATUS = "ACTIVE";
@@ -239,6 +240,7 @@ public final class ProductGroupApiFixtures {
                 DEFAULT_CATEGORY_ID,
                 DEFAULT_CATEGORY_NAME,
                 DEFAULT_CATEGORY_PATH,
+                DEFAULT_CATEGORY_ID_PATH,
                 3,
                 "MEN",
                 "TOP",
@@ -270,6 +272,7 @@ public final class ProductGroupApiFixtures {
                 DEFAULT_CATEGORY_ID,
                 DEFAULT_CATEGORY_NAME,
                 DEFAULT_CATEGORY_PATH,
+                DEFAULT_CATEGORY_ID_PATH,
                 3,
                 "MEN",
                 "TOP",
@@ -319,6 +322,7 @@ public final class ProductGroupApiFixtures {
                 DEFAULT_CATEGORY_ID,
                 DEFAULT_CATEGORY_NAME,
                 DEFAULT_CATEGORY_PATH,
+                DEFAULT_CATEGORY_ID_PATH,
                 3,
                 "MEN",
                 "TOP",
@@ -370,6 +374,7 @@ public final class ProductGroupApiFixtures {
                 DEFAULT_CATEGORY_ID,
                 DEFAULT_CATEGORY_NAME,
                 DEFAULT_CATEGORY_PATH,
+                DEFAULT_CATEGORY_ID_PATH,
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_OPTION_TYPE,
                 DEFAULT_STATUS,
@@ -406,6 +411,7 @@ public final class ProductGroupApiFixtures {
                 DEFAULT_CATEGORY_ID,
                 DEFAULT_CATEGORY_NAME,
                 DEFAULT_CATEGORY_PATH,
+                DEFAULT_CATEGORY_ID_PATH,
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_OPTION_TYPE,
                 DEFAULT_STATUS,
@@ -452,6 +458,7 @@ public final class ProductGroupApiFixtures {
                 DEFAULT_CATEGORY_ID,
                 DEFAULT_CATEGORY_NAME,
                 DEFAULT_CATEGORY_PATH,
+                DEFAULT_CATEGORY_ID_PATH,
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_OPTION_TYPE,
                 DEFAULT_STATUS,

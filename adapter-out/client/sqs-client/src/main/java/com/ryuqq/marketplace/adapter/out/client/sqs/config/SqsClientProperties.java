@@ -40,41 +40,51 @@ public class SqsClientProperties {
 
     public static class Queues {
 
-        private String inspectionScoring;
-        private String inspectionEnhancement;
-        private String inspectionVerification;
-        private String inspectionDlq;
+        // Intelligence pipeline queues
+        private String intelligenceOrchestration;
+        private String intelligenceDescriptionAnalysis;
+        private String intelligenceOptionAnalysis;
+        private String intelligenceNoticeAnalysis;
+        private String intelligenceAggregation;
 
-        public String getInspectionScoring() {
-            return inspectionScoring;
+        public String getIntelligenceOrchestration() {
+            return intelligenceOrchestration;
         }
 
-        public void setInspectionScoring(String inspectionScoring) {
-            this.inspectionScoring = inspectionScoring;
+        public void setIntelligenceOrchestration(String intelligenceOrchestration) {
+            this.intelligenceOrchestration = intelligenceOrchestration;
         }
 
-        public String getInspectionEnhancement() {
-            return inspectionEnhancement;
+        public String getIntelligenceDescriptionAnalysis() {
+            return intelligenceDescriptionAnalysis;
         }
 
-        public void setInspectionEnhancement(String inspectionEnhancement) {
-            this.inspectionEnhancement = inspectionEnhancement;
+        public void setIntelligenceDescriptionAnalysis(String intelligenceDescriptionAnalysis) {
+            this.intelligenceDescriptionAnalysis = intelligenceDescriptionAnalysis;
         }
 
-        public String getInspectionVerification() {
-            return inspectionVerification;
+        public String getIntelligenceOptionAnalysis() {
+            return intelligenceOptionAnalysis;
         }
 
-        public void setInspectionVerification(String inspectionVerification) {
-            this.inspectionVerification = inspectionVerification;
+        public void setIntelligenceOptionAnalysis(String intelligenceOptionAnalysis) {
+            this.intelligenceOptionAnalysis = intelligenceOptionAnalysis;
         }
 
-        public String getInspectionDlq() {
-            return inspectionDlq;
+        public String getIntelligenceNoticeAnalysis() {
+            return intelligenceNoticeAnalysis;
         }
 
-        public void setInspectionDlq(String inspectionDlq) {
-            this.inspectionDlq = inspectionDlq;
+        public void setIntelligenceNoticeAnalysis(String intelligenceNoticeAnalysis) {
+            this.intelligenceNoticeAnalysis = intelligenceNoticeAnalysis;
+        }
+
+        public String getIntelligenceAggregation() {
+            return intelligenceAggregation;
+        }
+
+        public void setIntelligenceAggregation(String intelligenceAggregation) {
+            this.intelligenceAggregation = intelligenceAggregation;
         }
     }
 }

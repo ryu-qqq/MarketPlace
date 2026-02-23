@@ -88,6 +88,7 @@ fileflowSdk = "v1.0.3"
 commonsLang3 = "3.14.0"
 commonsPool2 = "2.12.0"
 jackson = "2.17.0"
+jbcrypt = "0.4"
 
 [libraries]
 # ========================================
@@ -156,7 +157,8 @@ spring-cloud-aws-starter-sqs = { module = "io.awspring.cloud:spring-cloud-aws-st
 # ========================================
 # Spring AI
 # ========================================
-spring-ai-openai = { module = "org.springframework.ai:spring-ai-openai-spring-boot-starter", version.ref = "springAi" }
+spring-ai-openai = { module = "org.springframework.ai:spring-ai-starter-model-openai", version.ref = "springAi" }
+spring-ai-anthropic = { module = "org.springframework.ai:spring-ai-starter-model-anthropic", version.ref = "springAi" }
 
 # ========================================
 # Testing
@@ -221,6 +223,7 @@ fileflow-sdk-spring-boot-starter = { module = "com.github.ryu-qqq.FileFlow:filef
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind" }
 jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
+jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt" }
 jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version = "3.0.2" }
 jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version = "3.1.0" }
 snakeyaml = { module = "org.yaml:snakeyaml", version = "2.2" }

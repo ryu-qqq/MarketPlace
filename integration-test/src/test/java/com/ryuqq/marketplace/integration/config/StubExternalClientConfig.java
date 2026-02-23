@@ -13,15 +13,22 @@ import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
 import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
 import com.ryuqq.marketplace.application.imagetransform.port.out.client.ImageTransformClient;
-import com.ryuqq.marketplace.application.productgroupinspection.port.out.client.InspectionEnhancementPublishClient;
-import com.ryuqq.marketplace.application.productgroupinspection.port.out.client.InspectionScoringPublishClient;
-import com.ryuqq.marketplace.application.productgroupinspection.port.out.client.InspectionVerificationPublishClient;
+import com.ryuqq.marketplace.application.productintelligence.port.out.client.AggregationPublishClient;
+import com.ryuqq.marketplace.application.productintelligence.port.out.client.DescriptionAnalysisAiClient;
+import com.ryuqq.marketplace.application.productintelligence.port.out.client.DescriptionAnalysisPublishClient;
+import com.ryuqq.marketplace.application.productintelligence.port.out.client.NoticeAnalysisAiClient;
+import com.ryuqq.marketplace.application.productintelligence.port.out.client.NoticeAnalysisPublishClient;
+import com.ryuqq.marketplace.application.productintelligence.port.out.client.OptionAnalysisAiClient;
+import com.ryuqq.marketplace.application.productintelligence.port.out.client.OptionAnalysisPublishClient;
 import com.ryuqq.marketplace.application.seller.port.out.client.IdentityClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminEmailClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminIdentityClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.command.SellerAdminAuthOutboxCommandPort;
 import com.ryuqq.marketplace.application.selleradmin.port.out.query.SellerAdminAuthOutboxQueryPort;
 import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
+import com.ryuqq.marketplace.domain.productintelligence.vo.ExtractedAttribute;
+import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdminAuthOutbox;
 import com.ryuqq.marketplace.domain.selleradmin.id.SellerAdminId;
 import java.time.Instant;
@@ -169,20 +176,91 @@ public class StubExternalClientConfig {
 
     @Bean
     @Primary
-    public InspectionScoringPublishClient stubInspectionScoringPublishClient() {
-        return messageBody -> "stub-scoring-message-id-" + UUID.randomUUID();
+    public DescriptionAnalysisAiClient stubDescriptionAnalysisAiClient() {
+        return (ProductGroupDescription description, List<ExtractedAttribute> previousResults) ->
+                Collections.emptyList();
     }
 
     @Bean
     @Primary
-    public InspectionEnhancementPublishClient stubInspectionEnhancementPublishClient() {
-        return messageBody -> "stub-enhancement-message-id-" + UUID.randomUUID();
+    public NoticeAnalysisAiClient stubNoticeAnalysisAiClient() {
+        return (ProductNotice productNotice,
+                List<com.ryuqq.marketplace.domain.productintelligence.vo.NoticeSuggestion>
+                        previousResults) -> Collections.emptyList();
     }
 
     @Bean
     @Primary
-    public InspectionVerificationPublishClient stubInspectionVerificationPublishClient() {
-        return messageBody -> "stub-verification-message-id-" + UUID.randomUUID();
+    public OptionAnalysisAiClient stubOptionAnalysisAiClient() {
+        return (com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup productGroup,
+                List<com.ryuqq.marketplace.domain.canonicaloption.aggregate.CanonicalOptionGroup>
+                        canonicalOptionGroups,
+                List<com.ryuqq.marketplace.domain.productintelligence.vo.OptionMappingSuggestion>
+                        previousResults) -> Collections.emptyList();
+    }
+
+    @Bean
+    @Primary
+    public DescriptionAnalysisPublishClient stubDescriptionAnalysisPublishClient() {
+        return new DescriptionAnalysisPublishClient() {
+            @Override
+            public String queueName() {
+                return "stub-description-analysis-queue";
+            }
+
+            @Override
+            public String publish(String messageBody) {
+                return "stub-message-id";
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public OptionAnalysisPublishClient stubOptionAnalysisPublishClient() {
+        return new OptionAnalysisPublishClient() {
+            @Override
+            public String queueName() {
+                return "stub-option-analysis-queue";
+            }
+
+            @Override
+            public String publish(String messageBody) {
+                return "stub-message-id";
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public NoticeAnalysisPublishClient stubNoticeAnalysisPublishClient() {
+        return new NoticeAnalysisPublishClient() {
+            @Override
+            public String queueName() {
+                return "stub-notice-analysis-queue";
+            }
+
+            @Override
+            public String publish(String messageBody) {
+                return "stub-message-id";
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public AggregationPublishClient stubAggregationPublishClient() {
+        return new AggregationPublishClient() {
+            @Override
+            public String queueName() {
+                return "stub-aggregation-queue";
+            }
+
+            @Override
+            public String publish(String messageBody) {
+                return "stub-message-id";
+            }
+        };
     }
 
     // ===== 미구현 포트 Stubs =====
@@ -194,6 +272,7 @@ public class StubExternalClientConfig {
             @Override
             public PresignedUrlResponse generateUploadUrl(PresignedUploadUrlRequest request) {
                 return new PresignedUrlResponse(
+                        "stub-session-id",
                         "https://stub-presigned-url.example.com",
                         "stub-file-key",
                         Instant.now().plusSeconds(3600),
@@ -228,6 +307,11 @@ public class StubExternalClientConfig {
             public List<ExternalDownloadResponse> downloadFromExternalUrls(
                     List<ExternalDownloadRequest> requests) {
                 return requests.stream().map(this::downloadFromExternalUrl).toList();
+            }
+
+            @Override
+            public void completeUploadSession(String sessionId, long fileSize, String etag) {
+                // stub: no-op
             }
 
             @Override
@@ -272,37 +356,5 @@ public class StubExternalClientConfig {
                 return Collections.emptyList();
             }
         };
-    }
-
-    // ===== ProductGroupInspection LLM 클라이언트 Stubs =====
-
-    @Bean
-    @Primary
-    public com.ryuqq.marketplace.application.productgroupinspection.port.out.client
-                    .CanonicalOptionEnhancementClient
-            stubCanonicalOptionEnhancementClient() {
-        return productGroupId ->
-                new com.ryuqq.marketplace.application.productgroupinspection.dto.response
-                        .CanonicalOptionEnhancementResult(java.util.Collections.emptyList(), 0);
-    }
-
-    @Bean
-    @Primary
-    public com.ryuqq.marketplace.application.productgroupinspection.port.out.client
-                    .NoticeCompletionEnhancementClient
-            stubNoticeCompletionEnhancementClient() {
-        return productGroupId ->
-                new com.ryuqq.marketplace.application.productgroupinspection.dto.response
-                        .NoticeCompletionEnhancementResult(java.util.Collections.emptyList(), 0);
-    }
-
-    @Bean
-    @Primary
-    public com.ryuqq.marketplace.application.productgroupinspection.port.out.client
-                    .InspectionVerificationClient
-            stubInspectionVerificationClient() {
-        return productGroupId ->
-                new com.ryuqq.marketplace.application.productgroupinspection.dto.response
-                        .InspectionVerificationResult(true, 100, java.util.Collections.emptyList());
     }
 }

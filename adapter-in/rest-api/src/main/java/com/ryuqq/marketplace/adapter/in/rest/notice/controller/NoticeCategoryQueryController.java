@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /** 고시정보 카테고리 조회 API 컨트롤러. */
-@Tag(name = "공지사항 카테고리 조회", description = "공지사항 카테고리 조회 API")
+@Tag(name = "카테고리 표준 고시정보 조회", description = "카테고리 표준 고시정보 조회 API")
 @RestController
 @RequestMapping(NoticeAdminEndpoints.NOTICE_CATEGORIES)
 public class NoticeCategoryQueryController {
@@ -41,8 +41,8 @@ public class NoticeCategoryQueryController {
         this.mapper = mapper;
     }
 
-    @Operation(summary = "공지사항 카테고리 목록 조회", description = "공지사항 카테고리 목록을 조회합니다.")
-    @RequirePermission(value = "notice-category:read", description = "고시정보 카테고리 목록 조회")
+    @Operation(summary = "카테고리 표준 고시정보 목록 조회", description = "카테고리 표준 고시정보 목록을 조회합니다.")
+    @RequirePermission(value = "notice-category:read", description = "카테고리 표준 고시정보 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<NoticeCategoryApiResponse>>>
             searchNoticeCategoriesByOffset(
@@ -52,8 +52,8 @@ public class NoticeCategoryQueryController {
         return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponse(pageResult)));
     }
 
-    @Operation(summary = "카테고리 그룹별 공지사항 조회", description = "카테고리 그룹별 공지사항 카테고리를 조회합니다.")
-    @RequirePermission(value = "notice-category:read", description = "카테고리 그룹별 고시정보 조회")
+    @Operation(summary = "카테고리 그룹별 표준 고시정보 조회", description = "카테고리 그룹별 표준 고시정보를 조회합니다.")
+    @RequirePermission(value = "notice-category:read", description = "카테고리 그룹별 표준 고시정보 조회")
     @GetMapping(NoticeAdminEndpoints.CATEGORY_GROUP)
     public ResponseEntity<ApiResponse<NoticeCategoryApiResponse>> getNoticeCategoryByCategoryGroup(
             @PathVariable(NoticeAdminEndpoints.PATH_CATEGORY_GROUP) CategoryGroup categoryGroup) {
