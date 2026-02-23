@@ -103,7 +103,8 @@ public class LegacyPayloadParser implements InboundProductPayloadParser {
                         now);
 
         RegisterProductGroupImagesCommand imageCommand = buildImageCommand(payload);
-        RegisterSellerOptionGroupsCommand optionGroupCommand = buildOptionGroupCommand(payload);
+        RegisterSellerOptionGroupsCommand optionGroupCommand =
+                buildOptionGroupCommand(payload, product.optionType());
         RegisterProductGroupDescriptionCommand descriptionCommand =
                 buildDescriptionCommand(payload);
         RegisterProductNoticeCommand noticeCommand = buildNoticeCommand(payload);
@@ -171,7 +172,7 @@ public class LegacyPayloadParser implements InboundProductPayloadParser {
     }
 
     private RegisterSellerOptionGroupsCommand buildOptionGroupCommand(
-            LegacyInboundPayload payload) {
+            LegacyInboundPayload payload, String optionTypeFromProduct) {
         List<OptionGroupCommand> optionGroups = new ArrayList<>();
 
         if (payload.productOptions() != null && !payload.productOptions().isEmpty()) {
@@ -203,7 +204,10 @@ public class LegacyPayloadParser implements InboundProductPayloadParser {
             }
         }
 
-        String optionType = payload.optionType() != null ? payload.optionType() : "NONE";
+        String optionType =
+                (optionTypeFromProduct != null && !optionTypeFromProduct.isBlank())
+                        ? optionTypeFromProduct
+                        : "NONE";
         return new RegisterSellerOptionGroupsCommand(0L, optionType, optionGroups);
     }
 

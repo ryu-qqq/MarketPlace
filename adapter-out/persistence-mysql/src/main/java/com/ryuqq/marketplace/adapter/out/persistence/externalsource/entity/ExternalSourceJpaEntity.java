@@ -11,7 +11,7 @@ import java.time.Instant;
 
 /** ExternalSource JPA 엔티티. */
 @Entity
-@Table(name = "external_source")
+@Table(name = "inbound_source")
 public class ExternalSourceJpaEntity extends BaseAuditEntity {
 
     @Id
