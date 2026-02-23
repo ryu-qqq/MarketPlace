@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.application.productgroupdescription.dto.command.Upd
 import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand;
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
+import com.ryuqq.marketplace.application.productintelligence.manager.IntelligenceOutboxCommandManager;
 import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
 import com.ryuqq.marketplace.application.productnotice.internal.ProductNoticeCommandCoordinator;
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand;
@@ -47,6 +48,7 @@ class FullProductGroupUpdateCoordinatorTest {
     @Mock private DescriptionCommandCoordinator descriptionCommandCoordinator;
     @Mock private ProductNoticeCommandCoordinator noticeCommandCoordinator;
     @Mock private ProductCommandCoordinator productCommandCoordinator;
+    @Mock private IntelligenceOutboxCommandManager intelligenceOutboxCommandManager;
 
     @Nested
     @DisplayName("update() - 상품 그룹 전체 수정 조율")

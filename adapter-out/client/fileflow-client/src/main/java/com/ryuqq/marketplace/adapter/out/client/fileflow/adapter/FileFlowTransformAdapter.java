@@ -10,13 +10,13 @@ import com.ryuqq.fileflow.sdk.model.asset.RegisterAssetRequest;
 import com.ryuqq.fileflow.sdk.model.common.ApiResponse;
 import com.ryuqq.fileflow.sdk.model.transform.CreateTransformRequestRequest;
 import com.ryuqq.fileflow.sdk.model.transform.TransformRequestResponse;
+import com.ryuqq.marketplace.adapter.out.client.fileflow.config.FileFlowClientProperties;
 import com.ryuqq.marketplace.adapter.out.client.fileflow.mapper.FileFlowTransformMapper;
 import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
 import com.ryuqq.marketplace.application.imagetransform.port.out.client.ImageTransformClient;
 import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -52,17 +52,17 @@ public class FileFlowTransformAdapter implements ImageTransformClient {
     private final TransformRequestApi transformRequestApi;
     private final AssetApi assetApi;
     private final FileFlowTransformMapper mapper;
-    private final String cdnDomain;
+    private final FileFlowClientProperties properties;
 
     public FileFlowTransformAdapter(
             TransformRequestApi transformRequestApi,
             AssetApi assetApi,
             FileFlowTransformMapper mapper,
-            @Value("${fileflow.cdn-domain:}") String cdnDomain) {
+            FileFlowClientProperties properties) {
         this.transformRequestApi = transformRequestApi;
         this.assetApi = assetApi;
         this.mapper = mapper;
-        this.cdnDomain = cdnDomain;
+        this.properties = properties;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class FileFlowTransformAdapter implements ImageTransformClient {
                     assetApi.register(
                             new RegisterAssetRequest(
                                     s3Key,
-                                    cdnDomain,
+                                    properties.bucket(),
                                     ACCESS_TYPE_PUBLIC,
                                     fileName,
                                     CONTENT_TYPE_WEBP,

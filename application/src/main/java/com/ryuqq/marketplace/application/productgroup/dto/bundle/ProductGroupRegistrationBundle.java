@@ -6,7 +6,6 @@ import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterP
 import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
-import com.ryuqq.marketplace.domain.productgroupinspection.aggregate.ProductGroupInspectionOutbox;
 import java.time.Instant;
 
 /**
@@ -17,8 +16,6 @@ import java.time.Instant;
  *
  * <p>Product Command는 allOptionValueIds가 SellerOption persist 이후에 확정되므로 bindAll이 아닌 별도의 {@link
  * #bindProductCommand}를 사용합니다.
- *
- * <p>검수 Outbox는 {@link #bindAll}에서 다른 Command와 함께 생성됩니다.
  */
 public record ProductGroupRegistrationBundle(
         ProductGroup productGroup,
@@ -29,15 +26,14 @@ public record ProductGroupRegistrationBundle(
         RegisterProductsCommand productCommand,
         Instant createdAt) {
 
-    /** per-package Command에 productGroupId를 바인딩한 결과 (Product 제외). 검수 Outbox도 포함. */
+    /** per-package Command에 productGroupId를 바인딩한 결과 (Product 제외). */
     public record BoundCommands(
             RegisterProductGroupImagesCommand imageCommand,
             RegisterSellerOptionGroupsCommand optionGroupCommand,
             RegisterProductGroupDescriptionCommand descriptionCommand,
-            RegisterProductNoticeCommand noticeCommand,
-            ProductGroupInspectionOutbox inspectionOutbox) {}
+            RegisterProductNoticeCommand noticeCommand) {}
 
-    /** Image, Option, Description, Notice Command + 검수 Outbox에 productGroupId를 한 번에 바인딩합니다. */
+    /** Image, Option, Description, Notice Command에 productGroupId를 한 번에 바인딩합니다. */
     public BoundCommands bindAll(long productGroupId) {
         return new BoundCommands(
                 new RegisterProductGroupImagesCommand(productGroupId, imageCommand.images()),
@@ -48,8 +44,7 @@ public record ProductGroupRegistrationBundle(
                 new RegisterProductGroupDescriptionCommand(
                         productGroupId, descriptionCommand.content()),
                 new RegisterProductNoticeCommand(
-                        productGroupId, noticeCommand.noticeCategoryId(), noticeCommand.entries()),
-                ProductGroupInspectionOutbox.forNew(productGroupId, createdAt));
+                        productGroupId, noticeCommand.noticeCategoryId(), noticeCommand.entries()));
     }
 
     /**
