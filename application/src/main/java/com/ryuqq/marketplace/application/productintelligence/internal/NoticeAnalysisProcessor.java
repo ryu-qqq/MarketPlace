@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>낙관적 락(version)으로 동시성을 제어하며, 버전 충돌 시 SQS visibility timeout 후 재시도됩니다.
  */
 @Component
+@ConditionalOnProperty(name = "intelligence.pipeline.enabled", havingValue = "true")
 public class NoticeAnalysisProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(NoticeAnalysisProcessor.class);

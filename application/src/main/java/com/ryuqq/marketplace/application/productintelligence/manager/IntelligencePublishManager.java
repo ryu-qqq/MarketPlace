@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.application.productintelligence.port.out.client.Not
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.OptionAnalysisPublishClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
  * <p>Orchestrator에서 3개 Analyzer 큐로 동시 발행하고, 마지막 Analyzer 완료 시 Aggregation 큐로 발행합니다.
  */
 @Component
+@ConditionalOnProperty(name = "intelligence.pipeline.enabled", havingValue = "true")
 public class IntelligencePublishManager {
 
     private static final Logger log = LoggerFactory.getLogger(IntelligencePublishManager.class);

@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.domain.productintelligence.aggregate.ProductProfile
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
  * <p>발생 원인: Analyzer가 persist 성공 후 SQS 발행 전에 실패한 경우.
  */
 @Service
+@ConditionalOnProperty(name = "intelligence.pipeline.enabled", havingValue = "true")
 public class RecoverStuckAggregationService implements RecoverStuckAggregationUseCase {
 
     private static final Logger log = LoggerFactory.getLogger(RecoverStuckAggregationService.class);
