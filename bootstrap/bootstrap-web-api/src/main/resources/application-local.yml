@@ -31,3 +31,4 @@ spring:
       - classpath:redis-local.yml
       - classpath:authhub.yml
       - classpath:fileflow.yml
+      - classpath:naver-commerce.yml

@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.productintelligence.internal.OptionAnal
 import com.ryuqq.marketplace.application.productintelligence.port.in.command.ExecuteOptionAnalysisUseCase;
 import com.ryuqq.marketplace.application.productintelligence.validator.ProductProfileAnalysisValidator;
 import com.ryuqq.marketplace.domain.productintelligence.vo.AnalysisType;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
  * ProductProfileAnalysisValidator}에 위임하고, 실제 분석 로직은 {@link OptionAnalysisProcessor}에 위임합니다.
  */
 @Service
+@ConditionalOnProperty(name = "intelligence.pipeline.enabled", havingValue = "true")
 public class ExecuteOptionAnalysisService implements ExecuteOptionAnalysisUseCase {
 
     private final ProductProfileAnalysisValidator validator;
