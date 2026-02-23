@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.domain.productintelligence.aggregate.IntelligenceOu
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
  * <p>실패 시 retry 카운트를 증가시키고 PENDING으로 복귀합니다 (maxRetry 초과 시 FAILED).
  */
 @Component
+@ConditionalOnProperty(name = "intelligence.pipeline.enabled", havingValue = "true")
 public class IntelligenceRelayProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(IntelligenceRelayProcessor.class);
