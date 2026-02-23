@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateProductGroupRequest;
 import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInboundProductCommand;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,7 @@ public class LegacyInboundApiMapper {
         }
 
         String rawPayloadJson = serializeToJson(request);
+        OptionType internalOptionType = mapLegacyOptionTypeToInternal(request.optionType());
 
         return new ReceiveInboundProductCommand(
                 inboundSourceId,
@@ -41,9 +43,19 @@ public class LegacyInboundApiMapper {
                 request.sellerId(),
                 regularPrice,
                 currentPrice,
-                request.optionType(),
+                internalOptionType.name(),
                 request.detailDescription(),
                 rawPayloadJson);
+    }
+
+    /** 레거시(SINGLE, OPTION_ONE, OPTION_TWO) → 내부(NONE, SINGLE, COMBINATION) 매핑. */
+    private OptionType mapLegacyOptionTypeToInternal(String legacyOptionType) {
+        return switch (legacyOptionType.trim().toUpperCase()) {
+            case "SINGLE" -> OptionType.NONE;
+            case "OPTION_ONE" -> OptionType.SINGLE;
+            case "OPTION_TWO" -> OptionType.COMBINATION;
+            default -> OptionType.NONE;
+        };
     }
 
     private String serializeToJson(LegacyCreateProductGroupRequest request) {
