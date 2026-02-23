@@ -9,8 +9,4 @@ public final class LegacyAuthEndpoints {
 
     public static final String AUTH = BASE + "/auth";
     public static final String AUTH_AUTHENTICATION = AUTH + "/authentication";
-    public static final String AUTH_ID = AUTH + "/{authId}";
-    public static final String AUTH_ADMIN_VALIDATION = AUTH + "/admin-validation";
-    public static final String AUTH_SELLER = AUTH + "/{sellerId}";
-    public static final String AUTH_APPROVAL_STATUS = AUTH + "/approval-status";
 }
