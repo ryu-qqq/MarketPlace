@@ -19,6 +19,7 @@ import java.time.Instant;
  * @param categoryId 카테고리 ID
  * @param categoryName 카테고리명
  * @param categoryDisplayPath 카테고리 전체 경로 (예: "상의 > 긴팔 > 숏츠")
+ * @param categoryIdPath 카테고리 ID 경로 (예: "1/5/23")
  * @param productGroupName 상품 그룹명
  * @param optionType 옵션 유형
  * @param status 상품 그룹 상태
@@ -36,6 +37,7 @@ public record ProductGroupDetailCompositeQueryResult(
         Long categoryId,
         String categoryName,
         String categoryDisplayPath,
+        String categoryIdPath,
         String productGroupName,
         String optionType,
         String status,

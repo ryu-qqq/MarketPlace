@@ -51,10 +51,7 @@ public class ProductGroupQueryFactory {
         List<Long> productGroupIds =
                 params.productGroupIds() != null ? params.productGroupIds() : List.of();
 
-        DateRange dateRange =
-                (params.startDate() != null || params.endDate() != null)
-                        ? DateRange.of(params.startDate(), params.endDate())
-                        : null;
+        DateRange dateRange = commonVoFactory.createDateRange(params.startDate(), params.endDate());
 
         return ProductGroupSearchCriteria.of(
                 statuses,

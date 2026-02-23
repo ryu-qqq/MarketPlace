@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author ryu-qqq
  * @since 1.0.0
  */
-@Tag(name = "Image Variant", description = "이미지 Variant 관리")
+@Tag(name = "이미지 변형", description = "상품 이미지의 해상도별 변형(배리언트) 관리. 소/중/대/원본 WebP 변환 요청 및 조회를 제공합니다.")
 @RestController
 @RequestMapping(ImageVariantAdminEndpoints.IMAGE_VARIANTS)
 public class ImageVariantCommandController {
@@ -52,7 +52,7 @@ public class ImageVariantCommandController {
      * @param productGroupId 상품 그룹 ID
      * @return 빈 응답 (202 Accepted)
      */
-    @Operation(summary = "수동 변환 요청", description = "상품 그룹 이미지의 Variant 변환을 수동으로 요청합니다.")
+    @Operation(summary = "수동 변환 요청", description = "상품 그룹 이미지의 해상도별 변형(배리언트) 생성을 수동으로 요청합니다.")
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "202",
@@ -62,7 +62,7 @@ public class ImageVariantCommandController {
                 description = "상품 그룹을 찾을 수 없음")
     })
     @PreAuthorize("@access.isSellerOwnerOr(#productGroupId, 'product-group:write')")
-    @RequirePermission(value = "product-group:write", description = "이미지 Variant 변환 요청")
+    @RequirePermission(value = "product-group:write", description = "이미지 변형 변환 요청")
     @PostMapping(ImageVariantAdminEndpoints.TRANSFORM_REQUEST)
     public ResponseEntity<Void> requestTransform(
             @Parameter(description = "상품 그룹 ID", required = true)

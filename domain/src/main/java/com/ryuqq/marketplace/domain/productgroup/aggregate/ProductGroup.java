@@ -2,6 +2,8 @@ package com.ryuqq.marketplace.domain.productgroup.aggregate;
 
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
+import com.ryuqq.marketplace.domain.common.event.DomainEvent;
+import com.ryuqq.marketplace.domain.productgroup.event.ProductGroupActivatedEvent;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupInvalidStatusTransitionException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
@@ -15,6 +17,8 @@ import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,6 +40,7 @@ public class ProductGroup {
     private SellerOptionGroups sellerOptionGroups;
     private final Instant createdAt;
     private Instant updatedAt;
+    private final List<DomainEvent> events = new ArrayList<>();
 
     private ProductGroup(
             ProductGroupId id,
@@ -132,6 +137,7 @@ public class ProductGroup {
             case ACTIVE -> activate(now);
             case INACTIVE -> deactivate(now);
             case SOLDOUT -> markSoldOut(now);
+            case PENDING_REVIEW -> pendingReview(now);
             case REJECTED -> reject(now);
             case DELETED -> delete(now);
             default -> throw new IllegalArgumentException("지원하지 않는 상태 변경입니다: " + targetStatus);
@@ -148,6 +154,16 @@ public class ProductGroup {
         this.updatedAt = now;
     }
 
+    /** 검수 대기. PROCESSING → PENDING_REVIEW. 분석 판정이 HUMAN_REVIEW일 때. */
+    public void pendingReview(Instant now) {
+        if (!status.canPendingReview()) {
+            throw new ProductGroupInvalidStatusTransitionException(
+                    status, ProductGroupStatus.PENDING_REVIEW);
+        }
+        this.status = ProductGroupStatus.PENDING_REVIEW;
+        this.updatedAt = now;
+    }
+
     /** 검수 반려. PROCESSING → REJECTED. */
     public void reject(Instant now) {
         if (!status.canReject()) {
@@ -158,7 +174,7 @@ public class ProductGroup {
         this.updatedAt = now;
     }
 
-    /** 판매 활성화. ProductGroupImages VO가 THUMBNAIL 존재를 보장. */
+    /** 판매 활성화. ProductGroupImages VO가 THUMBNAIL 존재를 보장. 활성화 이벤트를 자동 등록. */
     public void activate(Instant now) {
         if (!status.canActivate()) {
             throw new ProductGroupInvalidStatusTransitionException(
@@ -166,6 +182,7 @@ public class ProductGroup {
         }
         this.status = ProductGroupStatus.ACTIVE;
         this.updatedAt = now;
+        registerEvent(ProductGroupActivatedEvent.of(id, sellerId, now));
     }
 
     /** 판매 중지. */
@@ -217,6 +234,18 @@ public class ProductGroup {
     public void replaceSellerOptionGroups(SellerOptionGroups optionGroups) {
         this.sellerOptionGroups = optionGroups;
         validateOptionStructure();
+    }
+
+    // ── 이벤트 메서드 ──
+
+    protected void registerEvent(DomainEvent event) {
+        this.events.add(event);
+    }
+
+    public List<DomainEvent> pollEvents() {
+        List<DomainEvent> polled = new ArrayList<>(this.events);
+        this.events.clear();
+        return Collections.unmodifiableList(polled);
     }
 
     // ── 검증 메서드 ──

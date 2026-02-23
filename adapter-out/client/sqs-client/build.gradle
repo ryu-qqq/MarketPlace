@@ -2,7 +2,7 @@
 // Adapter-Out: SQS Client
 // ========================================
 // Outbound adapter for AWS SQS (Simple Queue Service) integration
-// Implements InspectionSqsPublishClient from application layer
+// Implements IntelligenceSqsPublishClient from application layer
 // Technology: AWS SDK v2 SQS (version managed in libs.versions.toml)
 // NO Lombok allowed
 // ========================================

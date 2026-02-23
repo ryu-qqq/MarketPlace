@@ -9,6 +9,7 @@
 fileflow:
   base-url: ${FILEFLOW_BASE_URL:}
   cdn-domain: ${FILEFLOW_CDN_DOMAIN:cdn.set-of.com}
+  bucket: ${FILEFLOW_BUCKET:}
   service-name: SVC_MARKETPLACE
   service-token: ${FILEFLOW_SERVICE_TOKEN:}
   timeout:

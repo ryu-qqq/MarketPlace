@@ -425,7 +425,7 @@ function buildSelectedOptions(optionGroups, selectedValues) {
 | `sellerOptionGroupId` | Long | - | 기존 그룹 ID (null이면 신규)
 | `optionGroupName` | String | O | 옵션 그룹명 (예: "색상", "사이즈")
 | `canonicalOptionGroupId` | Long | - | 표준 옵션 그룹 ID (매핑용)
-| `inputType` | String | - | 입력 유형. `PREDEFINED`(기본값): 사전 정의 옵션값에서 선택, `FREE_INPUT`: 구매자가 주문 시 직접 입력. 생략 시 PREDEFINED
+| `inputType` | String | - | 입력 유형. `PREDEFINED`(기본값): 사전 정의 옵션값에서 선택, `FREE_INPUT`: OMS 연동 시 외부 몰에 자유 입력으로 매핑. 모든 inputType에서 optionValues 최소 1개 필요. 생략 시 PREDEFINED
 
 4+h| optionGroups.optionValues
 | `sellerOptionValueId` | Long | - | 기존 값 ID (null이면 신규)
@@ -450,8 +450,8 @@ function buildSelectedOptions(optionGroups, selectedValues) {
 ===== 주의사항
 
 . **selectedOptions 이름 일치**: `optionGroupName`과 `optionValueName`은 `optionGroups`에 정의된 이름과 정확히 일치해야 합니다
-. **상품별 selectedOptions 개수**: **PREDEFINED** 옵션 그룹 수와 동일해야 합니다 (PREDEFINED 그룹 2개면 selectedOptions 2개). FREE_INPUT 그룹은 제외
+. **상품별 selectedOptions 개수**: **전체 옵션 그룹 수**와 동일해야 합니다 (그룹 2개면 selectedOptions 2개, 그룹 1개면 selectedOptions 1개). 모든 그룹 포함
 . **각 selectedOptions는 서로 다른 옵션 그룹에서 하나씩**: 같은 그룹의 옵션 값을 2개 선택하면 안 됩니다
 . **삭제 = 제외**: 요청에 포함하지 않으면 자동 삭제됩니다. 유지할 항목은 반드시 포함
 . **canonicalOptionGroupId/canonicalOptionValueId**: 선택사항. 표준 옵션에 매핑되지 않은 경우 null
-. **inputType**: 생략 시 `PREDEFINED`(기본값). `FREE_INPUT` 그룹은 `optionValues`를 빈 배열로 보내야 합니다
+. **inputType**: 생략 시 `PREDEFINED`(기본값). `FREE_INPUT` 그룹도 `optionValues`에 최소 1개 필요 (예: `"FREE"`, `"OS"`)

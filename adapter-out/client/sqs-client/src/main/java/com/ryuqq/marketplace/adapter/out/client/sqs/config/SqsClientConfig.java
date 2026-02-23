@@ -13,11 +13,11 @@ import software.amazon.awssdk.services.sqs.SqsClient;
  *
  * <p>SqsClient 빈을 생성합니다.
  *
- * <p>sqs.queues.inspection-scoring 설정이 있을 때만 활성화됩니다.
+ * <p>sqs.queues.intelligence-orchestration 설정이 있을 때만 활성화됩니다.
  */
 @Configuration
 @EnableConfigurationProperties(SqsClientProperties.class)
-@ConditionalOnProperty(prefix = "sqs.queues", name = "inspection-scoring")
+@ConditionalOnProperty(prefix = "sqs.queues", name = "intelligence-orchestration")
 public class SqsClientConfig {
 
     @Bean

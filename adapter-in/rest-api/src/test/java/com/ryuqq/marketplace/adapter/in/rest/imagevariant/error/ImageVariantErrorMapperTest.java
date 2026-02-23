@@ -82,7 +82,7 @@ class ImageVariantErrorMapperTest {
 
             // then
             assertThat(result.status()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(result.title()).isEqualTo("Image Variant Not Found");
+            assertThat(result.title()).isEqualTo("이미지 변형을 찾을 수 없음");
             assertThat(result.detail()).contains("42");
             assertThat(result.type().toString()).startsWith("/errors/image-variant/");
         }
