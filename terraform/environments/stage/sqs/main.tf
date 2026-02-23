@@ -255,7 +255,7 @@ resource "aws_sqs_queue" "intelligence_description_analysis" {
 
   tags = merge(local.common_tags, {
     Name    = local.intelligence_queue_names.description_analysis
-    Purpose = "Description text AI analysis (Sonnet)"
+    Purpose = "Description text AI analysis - Sonnet"
   })
 }
 
@@ -287,7 +287,7 @@ resource "aws_sqs_queue" "intelligence_option_analysis" {
 
   tags = merge(local.common_tags, {
     Name    = local.intelligence_queue_names.option_analysis
-    Purpose = "Canonical option mapping analysis (Haiku)"
+    Purpose = "Canonical option mapping analysis - Haiku"
   })
 }
 
@@ -319,7 +319,7 @@ resource "aws_sqs_queue" "intelligence_notice_analysis" {
 
   tags = merge(local.common_tags, {
     Name    = local.intelligence_queue_names.notice_analysis
-    Purpose = "Notice completion analysis (Haiku)"
+    Purpose = "Notice completion analysis - Haiku"
   })
 }
 
