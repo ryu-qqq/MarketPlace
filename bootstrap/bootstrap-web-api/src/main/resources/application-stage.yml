@@ -33,6 +33,7 @@ spring:
       - classpath:authhub-stage.yml
       - classpath:fileflow.yml
       - classpath:fileflow-stage.yml
+      - classpath:naver-commerce.yml
 
 management:
   endpoints:

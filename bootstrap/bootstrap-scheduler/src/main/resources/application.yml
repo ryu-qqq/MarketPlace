@@ -4,6 +4,10 @@
 server:
   port: 8083
 
+intelligence:
+  pipeline:
+    enabled: true
+
 spring:
   application:
     name: bootstrap-scheduler
