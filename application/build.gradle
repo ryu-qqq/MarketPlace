@@ -26,6 +26,9 @@ dependencies {
     // Spring Data Commons (Page, Pageable)
     implementation libs.spring.data.commons
 
+    // Jackson (rawPayloadJson 파싱용)
+    implementation libs.jackson.databind
+
     // Validation
     implementation libs.spring.boot.starter.validation
 

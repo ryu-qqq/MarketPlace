@@ -1,0 +1,13 @@
+[[admin-menu-get-accessible-menus]]
+=== 역할별 메뉴 조회
+
+인증 필요 | 인증된 사용자의 역할에 따라 접근 가능한 Admin 메뉴를 트리 형태로 반환합니다.
+
+==== HTTP Request
+include::{snippets}/admin-menu/get-accessible-menus/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/admin-menu/get-accessible-menus/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/admin-menu/get-accessible-menus/response-fields.adoc[]

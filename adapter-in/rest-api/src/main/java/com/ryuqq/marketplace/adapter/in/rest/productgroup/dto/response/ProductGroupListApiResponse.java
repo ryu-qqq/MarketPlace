@@ -20,6 +20,7 @@ public record ProductGroupListApiResponse(
         @Schema(description = "카테고리 ID", example = "100") Long categoryId,
         @Schema(description = "카테고리명", example = "운동화") String categoryName,
         @Schema(description = "카테고리 전체 경로", example = "패션의류 > 신발 > 운동화") String categoryDisplayPath,
+        @Schema(description = "카테고리 ID 경로", example = "1/5/23") String categoryIdPath,
         @Schema(description = "카테고리 뎁스", example = "2") int categoryDepth,
         @Schema(description = "상품 부문 (MEN, WOMEN, UNISEX, KIDS 등)", example = "UNISEX")
                 String department,

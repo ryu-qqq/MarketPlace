@@ -1,10 +1,10 @@
 // ============================================================
 // MarketPlace - Worker Module
 // ============================================================
-// SQS-based inspection pipeline worker:
-// - Inspection Scoring Consumer
-// - Inspection Enhancement Consumer (LLM)
-// - Inspection Verification Consumer
+// SQS-based intelligence pipeline worker:
+// - Intelligence Orchestration Consumer
+// - Intelligence Analysis Consumers (Description, Option, Notice)
+// - Intelligence Aggregation Consumer
 // ============================================================
 
 plugins {

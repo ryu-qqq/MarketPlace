@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author ryu-qqq
  * @since 1.0.0
  */
-@Tag(name = "Image Variant", description = "이미지 Variant 조회")
+@Tag(name = "이미지 변형", description = "상품 이미지의 해상도별 변형(배리언트) 관리. 소/중/대/원본 WebP 변환 요청 및 조회를 제공합니다.")
 @RestController
 @RequestMapping(ImageVariantAdminEndpoints.IMAGE_VARIANTS)
 public class ImageVariantQueryController {
@@ -55,7 +55,7 @@ public class ImageVariantQueryController {
      * @param imageId 이미지 ID
      * @return Variant 목록 응답
      */
-    @Operation(summary = "Variant 목록 조회", description = "특정 이미지의 Variant 목록을 조회합니다.")
+    @Operation(summary = "이미지 변형 목록 조회", description = "특정 이미지의 해상도별 변형(배리언트) 목록을 조회합니다.")
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "200",
@@ -65,7 +65,7 @@ public class ImageVariantQueryController {
                 description = "이미지를 찾을 수 없음")
     })
     @PreAuthorize("@access.isSellerOwnerOr(#productGroupId, 'product-group:read')")
-    @RequirePermission(value = "product-group:read", description = "이미지 Variant 목록 조회")
+    @RequirePermission(value = "product-group:read", description = "이미지 변형 목록 조회")
     @GetMapping(ImageVariantAdminEndpoints.VARIANTS)
     public ResponseEntity<ApiResponse<List<ImageVariantApiResponse>>> getVariantsByImageId(
             @Parameter(description = "상품 그룹 ID", required = true)

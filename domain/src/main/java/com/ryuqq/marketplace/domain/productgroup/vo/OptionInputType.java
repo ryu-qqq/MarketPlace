@@ -5,8 +5,8 @@ public enum OptionInputType {
     PREDEFINED,
     FREE_INPUT;
 
-    /** 사전 정의 옵션값이 필수인지 여부. */
+    /** 모든 inputType에서 optionValues가 최소 1개 필수. */
     public boolean requiresOptionValues() {
-        return this == PREDEFINED;
+        return true;
     }
 }

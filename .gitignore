@@ -63,3 +63,12 @@ langfuse/tests/__pycache__/
 .env
 local-dev/.env.aws
 local-dev/.env.aws.stage
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+
+tfplan
+*.tfplan

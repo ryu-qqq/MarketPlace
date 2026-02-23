@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring-ai")
 public class SpringAiClientProperties {
 
-    private String model = "gpt-4o-mini";
+    private String model = "claude-sonnet-4-20250514";
     private double temperature = 0.3;
     private int maxTokens = 4096;
 

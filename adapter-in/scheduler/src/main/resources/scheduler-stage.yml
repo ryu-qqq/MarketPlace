@@ -78,22 +78,14 @@ scheduler:
         # Stage: 중간 타임아웃
         timeout-seconds: 600
 
-    product-group-inspection:
-      process-pending:
-        # Stage: 3분마다
-        cron: "0 */3 * * * *"
-        # Stage: 중간 배치
-        batch-size: 10
-        # Stage: 중간 지연
-        delay-seconds: 30
-
-      recover-timeout:
+    intelligence-pipeline:
+      recover-stuck-aggregation:
         # Stage: 5분마다
         cron: "0 */5 * * * *"
         # Stage: 중간 배치
-        batch-size: 10
-        # Stage: 중간 타임아웃
-        timeout-seconds: 300
+        batch-size: 15
+        # Stage: 중간 stuck 기준
+        stuck-seconds: 180
 
     description-publish:
       # Stage: 5분마다

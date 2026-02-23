@@ -9,6 +9,12 @@ spring:
         options:
           model: gpt-4o-mini
           temperature: 0.3
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      chat:
+        options:
+          model: claude-sonnet-4-20250514
+          temperature: 0.3
 
 spring-ai:
   model: gpt-4o-mini

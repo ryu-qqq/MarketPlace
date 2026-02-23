@@ -5,10 +5,13 @@ import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordina
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
+import com.ryuqq.marketplace.application.productintelligence.manager.IntelligenceOutboxCommandManager;
 import com.ryuqq.marketplace.application.productnotice.internal.ProductNoticeCommandCoordinator;
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.result.SellerOptionUpdateResult;
 import com.ryuqq.marketplace.application.selleroption.internal.SellerOptionCommandCoordinator;
+import com.ryuqq.marketplace.domain.productintelligence.aggregate.IntelligenceOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,7 @@ public class FullProductGroupUpdateCoordinator {
     private final DescriptionCommandCoordinator descriptionCommandCoordinator;
     private final ProductNoticeCommandCoordinator noticeCommandCoordinator;
     private final ProductCommandCoordinator productCommandCoordinator;
+    private final IntelligenceOutboxCommandManager intelligenceOutboxCommandManager;
 
     public FullProductGroupUpdateCoordinator(
             ProductGroupCommandCoordinator productGroupCommandCoordinator,
@@ -38,13 +42,15 @@ public class FullProductGroupUpdateCoordinator {
             SellerOptionCommandCoordinator sellerOptionCommandCoordinator,
             DescriptionCommandCoordinator descriptionCommandCoordinator,
             ProductNoticeCommandCoordinator noticeCommandCoordinator,
-            ProductCommandCoordinator productCommandCoordinator) {
+            ProductCommandCoordinator productCommandCoordinator,
+            IntelligenceOutboxCommandManager intelligenceOutboxCommandManager) {
         this.productGroupCommandCoordinator = productGroupCommandCoordinator;
         this.imageCommandCoordinator = imageCommandCoordinator;
         this.sellerOptionCommandCoordinator = sellerOptionCommandCoordinator;
         this.descriptionCommandCoordinator = descriptionCommandCoordinator;
         this.noticeCommandCoordinator = noticeCommandCoordinator;
         this.productCommandCoordinator = productCommandCoordinator;
+        this.intelligenceOutboxCommandManager = intelligenceOutboxCommandManager;
     }
 
     /**
@@ -80,6 +86,12 @@ public class FullProductGroupUpdateCoordinator {
                 bundle.productEntries(),
                 optionResult,
                 optionGroupData);
+
+        // 7. Intelligence Outbox 저장 (PENDING) — 수정된 내용으로 분석 파이프라인 재실행
+        Long productGroupIdValue = bundle.basicInfoUpdateData().productGroupId().value();
+        IntelligenceOutbox intelligenceOutbox =
+                IntelligenceOutbox.forNew(productGroupIdValue, Instant.now());
+        intelligenceOutboxCommandManager.persist(intelligenceOutbox);
     }
 
     /**

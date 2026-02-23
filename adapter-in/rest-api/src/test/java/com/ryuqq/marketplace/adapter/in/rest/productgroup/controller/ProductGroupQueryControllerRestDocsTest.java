@@ -169,6 +169,9 @@ class ProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].categoryDisplayPath")
                                                     .type(JsonFieldType.STRING)
                                                     .description("카테고리 전체 경로"),
+                                            fieldWithPath("data.content[].categoryIdPath")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("카테고리 ID 경로 (예: 1/5/23)"),
                                             fieldWithPath("data.content[].categoryDepth")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("카테고리 깊이"),
@@ -328,6 +331,9 @@ class ProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.categoryDisplayPath")
                                                     .type(JsonFieldType.STRING)
                                                     .description("카테고리 전체 경로"),
+                                            fieldWithPath("data.categoryIdPath")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("카테고리 ID 경로 (예: 1/5/23)"),
                                             fieldWithPath("data.productGroupName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("상품 그룹명"),

@@ -126,9 +126,9 @@ scheduler:
       # 배치 크기
       batch-size: 50
 
-    # ProductGroupInspection 처리 스케줄러
-    product-group-inspection:
-      # PENDING 처리
+    # IntelligencePipeline Outbox Relay 스케줄러
+    intelligence-pipeline:
+      # PENDING 처리 (3개 Analyzer 큐 발행)
       process-pending:
         enabled: true
         # Cron: 5분마다
@@ -147,8 +147,26 @@ scheduler:
         timezone: Asia/Seoul
         # 배치 크기
         batch-size: 20
-        # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
+        # 타임아웃 기준 (SENT 상태에서 N초 경과 시 복구)
         timeout-seconds: 600
+
+      # Stuck Aggregation 복구 (분석 완료 후 Aggregation 발행 누락)
+      recover-stuck-aggregation:
+        enabled: true
+        # Cron: 10분마다
+        cron: "0 */10 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 20
+        # Stuck 기준 (ANALYZING + allCompleted 상태에서 N초 경과 시 복구)
+        stuck-seconds: 300
+
+    # InboundProduct PENDING_MAPPING 재처리 스케줄러
+    inbound-product-retry:
+      enabled: true
+      # Cron: 10분마다
+      cron: "0 */10 * * * *"
+      timezone: Asia/Seoul
 
     # SellerAdminEmailOutbox 처리 스케줄러
     seller-admin-email-outbox:

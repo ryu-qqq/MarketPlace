@@ -4,12 +4,13 @@ import com.ryuqq.fileflow.sdk.model.download.CreateDownloadTaskRequest;
 import com.ryuqq.fileflow.sdk.model.download.DownloadTaskResponse;
 import com.ryuqq.fileflow.sdk.model.session.CreateSingleUploadSessionRequest;
 import com.ryuqq.fileflow.sdk.model.session.SingleUploadSessionResponse;
+import com.ryuqq.marketplace.adapter.out.client.fileflow.config.FileFlowClientProperties;
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import java.time.Instant;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,15 +22,16 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
+@ConditionalOnProperty(prefix = "fileflow", name = "base-url")
 public class FileFlowStorageMapper {
 
     private static final String ACCESS_TYPE_PUBLIC = "PUBLIC";
     private static final String SOURCE = "marketplace";
 
-    private final String cdnDomain;
+    private final FileFlowClientProperties properties;
 
-    public FileFlowStorageMapper(@Value("${fileflow.cdn-domain:}") String cdnDomain) {
-        this.cdnDomain = cdnDomain;
+    public FileFlowStorageMapper(FileFlowClientProperties properties) {
+        this.properties = properties;
     }
 
     /**
@@ -44,7 +46,7 @@ public class FileFlowStorageMapper {
                 request.filename(),
                 request.contentType(),
                 ACCESS_TYPE_PUBLIC,
-                request.directory(),
+                request.directory().value(),
                 SOURCE);
     }
 
@@ -58,7 +60,11 @@ public class FileFlowStorageMapper {
         Instant expiresAt = parseInstantOrNull(response.expiresAt());
         String accessUrl = buildAccessUrl(response.s3Key());
         return new PresignedUrlResponse(
-                response.presignedUrl(), response.s3Key(), expiresAt, accessUrl);
+                response.sessionId(),
+                response.presignedUrl(),
+                response.s3Key(),
+                expiresAt,
+                accessUrl);
     }
 
     /**
@@ -72,7 +78,7 @@ public class FileFlowStorageMapper {
         return new CreateDownloadTaskRequest(
                 request.sourceUrl(),
                 s3Key,
-                null,
+                properties.bucket(),
                 ACCESS_TYPE_PUBLIC,
                 request.category(),
                 SOURCE,
@@ -93,6 +99,7 @@ public class FileFlowStorageMapper {
     }
 
     private String buildAccessUrl(String s3Key) {
+        String cdnDomain = properties.cdnDomain();
         if (cdnDomain == null || cdnDomain.isBlank() || s3Key == null) {
             return null;
         }
