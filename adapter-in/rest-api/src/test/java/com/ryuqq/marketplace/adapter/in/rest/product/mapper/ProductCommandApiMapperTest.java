@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.product.ProductApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchChangeProductStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchUpdateProductApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductPriceApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductStockApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductsApiRequest;
 import com.ryuqq.marketplace.application.product.dto.command.BatchChangeProductStatusCommand;
+import com.ryuqq.marketplace.application.product.dto.command.BatchUpdateProductCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductPriceCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
@@ -188,6 +190,65 @@ class ProductCommandApiMapperTest {
             assertThat(command.productIds()).hasSize(1);
             assertThat(command.productIds().get(0)).isEqualTo(5L);
             assertThat(command.targetStatus()).isEqualTo("SOLDOUT");
+        }
+    }
+
+    @Nested
+    @DisplayName("toCommand(long, BatchUpdateProductApiRequest) - 배치 가격/재고 수정 Command 변환")
+    class ToBatchUpdateProductCommandTest {
+
+        @Test
+        @DisplayName("sellerId와 항목 목록이 정확히 Command로 변환된다")
+        void toCommand_ValidRequest_ReturnsCommand() {
+            // given
+            long sellerId = ProductApiFixtures.DEFAULT_SELLER_ID;
+            BatchUpdateProductApiRequest request = ProductApiFixtures.batchUpdateRequest();
+
+            // when
+            BatchUpdateProductCommand command = mapper.toCommand(sellerId, request);
+
+            // then
+            assertThat(command.sellerId()).isEqualTo(sellerId);
+            assertThat(command.entries()).hasSize(2);
+        }
+
+        @Test
+        @DisplayName("각 항목의 가격과 재고가 정확히 변환된다")
+        void toCommand_EntryDetails_AreCorrectlyMapped() {
+            // given
+            long sellerId = ProductApiFixtures.DEFAULT_SELLER_ID;
+            BatchUpdateProductApiRequest request = ProductApiFixtures.batchUpdateRequest();
+
+            // when
+            BatchUpdateProductCommand command = mapper.toCommand(sellerId, request);
+
+            // then
+            BatchUpdateProductCommand.Entry first = command.entries().get(0);
+            assertThat(first.productId()).isEqualTo(1L);
+            assertThat(first.regularPrice()).isEqualTo(50000);
+            assertThat(first.currentPrice()).isEqualTo(45000);
+            assertThat(first.stockQuantity()).isEqualTo(100);
+
+            BatchUpdateProductCommand.Entry second = command.entries().get(1);
+            assertThat(second.productId()).isEqualTo(2L);
+            assertThat(second.regularPrice()).isEqualTo(60000);
+            assertThat(second.currentPrice()).isEqualTo(55000);
+            assertThat(second.stockQuantity()).isEqualTo(200);
+        }
+
+        @Test
+        @DisplayName("단일 항목 요청도 정확히 Command로 변환된다")
+        void toCommand_SingleEntry_ReturnsCommand() {
+            // given
+            long sellerId = ProductApiFixtures.DEFAULT_SELLER_ID;
+            BatchUpdateProductApiRequest request = ProductApiFixtures.batchUpdateRequestSingle();
+
+            // when
+            BatchUpdateProductCommand command = mapper.toCommand(sellerId, request);
+
+            // then
+            assertThat(command.entries()).hasSize(1);
+            assertThat(command.entries().get(0).productId()).isEqualTo(1L);
         }
     }
 

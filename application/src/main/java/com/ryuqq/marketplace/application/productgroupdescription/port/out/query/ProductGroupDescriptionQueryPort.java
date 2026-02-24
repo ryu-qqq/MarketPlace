@@ -14,4 +14,6 @@ public interface ProductGroupDescriptionQueryPort {
     Optional<ProductGroupDescription> findByProductGroupId(ProductGroupId productGroupId);
 
     List<ProductGroupDescription> findByPublishStatus(DescriptionPublishStatus status, int limit);
+
+    List<ProductGroupDescription> findByProductGroupIdIn(List<ProductGroupId> productGroupIds);
 }

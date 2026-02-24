@@ -36,6 +36,15 @@ public class ProductGroupDescriptionReadManager {
     }
 
     @Transactional(readOnly = true)
+    public List<ProductGroupDescription> findByProductGroupIds(
+            List<ProductGroupId> productGroupIds) {
+        if (productGroupIds.isEmpty()) {
+            return List.of();
+        }
+        return queryPort.findByProductGroupIdIn(productGroupIds);
+    }
+
+    @Transactional(readOnly = true)
     public ProductGroupDescription getByProductGroupId(ProductGroupId productGroupId) {
         return queryPort
                 .findByProductGroupId(productGroupId)

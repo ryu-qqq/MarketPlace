@@ -72,6 +72,30 @@ public class ProductQueryAdapter implements ProductQueryPort {
         return toDomainWithMappings(entities);
     }
 
+    @Override
+    public List<Product> findByIdIn(List<ProductId> ids) {
+        List<Long> rawIds = ids.stream().map(ProductId::value).toList();
+        List<ProductJpaEntity> entities = queryDslRepository.findByIdIn(rawIds);
+
+        if (entities.isEmpty()) {
+            return List.of();
+        }
+
+        return toDomainWithMappings(entities);
+    }
+
+    @Override
+    public List<Product> findByProductGroupIdIn(List<ProductGroupId> productGroupIds) {
+        List<Long> rawIds = productGroupIds.stream().map(ProductGroupId::value).toList();
+        List<ProductJpaEntity> entities = queryDslRepository.findByProductGroupIdIn(rawIds);
+
+        if (entities.isEmpty()) {
+            return List.of();
+        }
+
+        return toDomainWithMappings(entities);
+    }
+
     private List<Product> toDomainWithMappings(List<ProductJpaEntity> entities) {
         List<Long> productIds = entities.stream().map(ProductJpaEntity::getId).toList();
 

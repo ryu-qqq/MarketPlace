@@ -5,12 +5,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -61,6 +66,103 @@ class ProductGroupAssemblerTest {
 
             // then
             assertThat(result.pageMeta().totalElements()).isZero();
+        }
+    }
+
+    @Nested
+    @DisplayName("toExcelResults() - 엑셀 번들 → ExcelCompositeResult 목록 조립")
+    class ToExcelResultsTest {
+
+        @Test
+        @DisplayName("빈 번들로 빈 목록을 반환한다")
+        void toExcelResults_EmptyBundle_ReturnsEmptyList() {
+            // given
+            ProductGroupExcelBundle bundle =
+                    new ProductGroupExcelBundle(
+                            List.of(), List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 0L);
+
+            // when
+            List<ProductGroupExcelCompositeResult> result = sut.toExcelResults(bundle);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("baseComposites가 있으면 각 항목에 대해 ExcelCompositeResult를 생성한다")
+        void toExcelResults_WithBaseComposites_ReturnsExcelResults() {
+            // given
+            Instant now = Instant.now();
+            ProductGroupListCompositeResult base = createListCompositeResult(1L, now);
+            ProductGroupEnrichmentResult enrichment =
+                    new ProductGroupEnrichmentResult(1L, 10000, 20000, 10, List.of());
+            ProductGroupExcelBundle bundle =
+                    new ProductGroupExcelBundle(
+                            List.of(base),
+                            List.of(enrichment),
+                            Map.of(),
+                            Map.of(),
+                            Map.of(),
+                            Map.of(),
+                            1L);
+
+            // when
+            List<ProductGroupExcelCompositeResult> result = sut.toExcelResults(bundle);
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).base()).isNotNull();
+            assertThat(result.get(0).images()).isEmpty();
+            assertThat(result.get(0).products()).isEmpty();
+            assertThat(result.get(0).descriptionCdnUrl()).isNull();
+            assertThat(result.get(0).notice()).isNull();
+        }
+
+        @Test
+        @DisplayName("여러 baseComposites가 있으면 동일한 수의 ExcelCompositeResult를 반환한다")
+        void toExcelResults_WithMultipleBaseComposites_ReturnsAllResults() {
+            // given
+            Instant now = Instant.now();
+            List<ProductGroupListCompositeResult> baseComposites =
+                    List.of(
+                            createListCompositeResult(1L, now),
+                            createListCompositeResult(2L, now),
+                            createListCompositeResult(3L, now));
+            ProductGroupExcelBundle bundle =
+                    new ProductGroupExcelBundle(
+                            baseComposites, List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 3L);
+
+            // when
+            List<ProductGroupExcelCompositeResult> result = sut.toExcelResults(bundle);
+
+            // then
+            assertThat(result).hasSize(3);
+        }
+
+        @Test
+        @DisplayName("descriptionCdnUrl이 있으면 ExcelCompositeResult에 포함된다")
+        void toExcelResults_WithDescriptionCdnUrl_IncludesCdnUrlInResult() {
+            // given
+            Instant now = Instant.now();
+            Long productGroupId = 1L;
+            ProductGroupListCompositeResult base = createListCompositeResult(productGroupId, now);
+            String cdnUrl = "https://cdn.example.com/products/desc.html";
+            ProductGroupExcelBundle bundle =
+                    new ProductGroupExcelBundle(
+                            List.of(base),
+                            List.of(),
+                            Map.of(),
+                            Map.of(),
+                            Map.of(productGroupId, cdnUrl),
+                            Map.of(),
+                            1L);
+
+            // when
+            List<ProductGroupExcelCompositeResult> result = sut.toExcelResults(bundle);
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).descriptionCdnUrl()).isEqualTo(cdnUrl);
         }
     }
 
@@ -166,6 +268,30 @@ class ProductGroupAssemblerTest {
             assertThat(result.optionProductMatrix()).isNotNull();
             assertThat(result.optionProductMatrix().optionGroups()).isNotEmpty();
         }
+    }
+
+    private ProductGroupListCompositeResult createListCompositeResult(
+            Long productGroupId, Instant now) {
+        return ProductGroupListCompositeResult.ofBase(
+                productGroupId,
+                ProductGroupFixtures.DEFAULT_SELLER_ID,
+                "테스트셀러",
+                ProductGroupFixtures.DEFAULT_BRAND_ID,
+                "테스트브랜드",
+                ProductGroupFixtures.DEFAULT_CATEGORY_ID,
+                "테스트카테고리",
+                "상의 > 긴팔",
+                "1/200",
+                2,
+                "FASHION",
+                "TOPS",
+                ProductGroupFixtures.DEFAULT_PRODUCT_GROUP_NAME,
+                "NONE",
+                "ACTIVE",
+                "https://example.com/thumb.jpg",
+                1,
+                now,
+                now);
     }
 
     private ProductGroupDetailBundle createDetailBundle(

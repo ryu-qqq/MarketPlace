@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.productgroupdescription.manager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.productgroupdescription.port.out.query.ProductGroupDescriptionQueryPort;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
@@ -131,6 +132,57 @@ class ProductGroupDescriptionReadManagerTest {
 
             // when
             List<ProductGroupDescription> result = sut.findPublishReady(limit);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("findByProductGroupIds() - 여러 ProductGroupId로 상세설명 배치 조회")
+    class FindByProductGroupIdsTest {
+
+        @Test
+        @DisplayName("여러 ProductGroupId로 상세설명 목록을 배치 조회한다")
+        void findByProductGroupIds_ValidIds_ReturnsDescriptions() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupFixtures.defaultProductGroupId(), ProductGroupId.of(2L));
+            List<ProductGroupDescription> expected =
+                    List.of(ProductGroupFixtures.defaultProductGroupDescription());
+
+            given(queryPort.findByProductGroupIdIn(productGroupIds)).willReturn(expected);
+
+            // when
+            List<ProductGroupDescription> result = sut.findByProductGroupIds(productGroupIds);
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result).isEqualTo(expected);
+        }
+
+        @Test
+        @DisplayName("빈 productGroupIds 목록이면 쿼리를 실행하지 않고 빈 목록을 반환한다")
+        void findByProductGroupIds_EmptyIds_ReturnsEmptyWithoutQuery() {
+            // when
+            List<ProductGroupDescription> result = sut.findByProductGroupIds(List.of());
+
+            // then
+            assertThat(result).isEmpty();
+            then(queryPort).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("결과가 없으면 빈 목록을 반환한다")
+        void findByProductGroupIds_NoResults_ReturnsEmptyList() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupFixtures.defaultProductGroupId());
+
+            given(queryPort.findByProductGroupIdIn(productGroupIds)).willReturn(List.of());
+
+            // when
+            List<ProductGroupDescription> result = sut.findByProductGroupIds(productGroupIds);
 
             // then
             assertThat(result).isEmpty();

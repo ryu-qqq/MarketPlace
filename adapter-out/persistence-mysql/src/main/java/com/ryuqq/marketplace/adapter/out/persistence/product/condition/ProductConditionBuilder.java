@@ -23,6 +23,12 @@ public class ProductConditionBuilder {
         return productGroupId != null ? product.productGroupId.eq(productGroupId) : null;
     }
 
+    public BooleanExpression productGroupIdIn(List<Long> productGroupIds) {
+        return productGroupIds != null && !productGroupIds.isEmpty()
+                ? product.productGroupId.in(productGroupIds)
+                : null;
+    }
+
     public BooleanExpression statusNotDeleted() {
         return product.status.ne("DELETED");
     }

@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.productgroup;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupExcelApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupFullApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.query.SearchProductGroupsApiRequest;
@@ -11,9 +12,12 @@ import com.ryuqq.marketplace.adapter.in.rest.refundpolicy.dto.response.NonReturn
 import com.ryuqq.marketplace.adapter.in.rest.refundpolicy.dto.response.RefundPolicyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shippingpolicy.dto.response.ShippingPolicyApiResponse;
 import com.ryuqq.marketplace.application.product.dto.response.ProductDetailResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductOptionMappingResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.dto.response.ResolvedProductOptionResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.OptionGroupSummaryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.*;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.response.DescriptionImageResult;
@@ -189,7 +193,21 @@ public final class ProductGroupApiFixtures {
 
     public static BatchRegisterProductGroupApiRequest batchRegisterRequest() {
         return new BatchRegisterProductGroupApiRequest(
-                List.of(registerRequest(), registerRequest()));
+                List.of(registerExcelRequest(), registerExcelRequest()));
+    }
+
+    public static RegisterProductGroupExcelApiRequest registerExcelRequest() {
+        RegisterProductGroupApiRequest request = registerRequest();
+        return new RegisterProductGroupExcelApiRequest(
+                request.brandId(),
+                request.categoryId(),
+                request.productGroupName(),
+                request.optionType(),
+                request.images(),
+                request.optionGroups(),
+                request.products(),
+                request.description(),
+                request.notice());
     }
 
     // ===== SearchProductGroupsApiRequest =====
@@ -472,7 +490,150 @@ public final class ProductGroupApiFixtures {
                 productNotice);
     }
 
+    // ===== Excel Composite Result (Application) =====
+
+    public static ProductGroupExcelCompositeResult productGroupExcelResult(Long id) {
+        ProductGroupListCompositeResult base = productGroupListResult(id);
+
+        List<ProductGroupImageResult> images =
+                List.of(
+                        new ProductGroupImageResult(
+                                1L,
+                                "https://origin.example.com/img1.jpg",
+                                "https://cdn.example.com/img1.jpg",
+                                "THUMBNAIL",
+                                1),
+                        new ProductGroupImageResult(
+                                2L,
+                                "https://origin.example.com/img2.jpg",
+                                "https://cdn.example.com/img2.jpg",
+                                "DETAIL",
+                                2));
+
+        List<ProductResult> products =
+                List.of(createProductResult(1L, id), createProductResult(2L, id));
+
+        ProductNoticeResult notice = createProductNoticeResult();
+
+        return new ProductGroupExcelCompositeResult(
+                base, images, products, "https://cdn.example.com/description/", notice);
+    }
+
+    public static ProductGroupExcelCompositeResult productGroupExcelResultMinimal(Long id) {
+        ProductGroupListCompositeResult base = productGroupListResult(id);
+        return new ProductGroupExcelCompositeResult(base, List.of(), List.of(), null, null);
+    }
+
+    public static List<ProductGroupExcelCompositeResult> productGroupExcelResults(int count) {
+        return java.util.stream.IntStream.rangeClosed(1, count)
+                .mapToObj(i -> productGroupExcelResult((long) i))
+                .toList();
+    }
+
+    // ===== Excel API Response =====
+
+    public static ProductGroupExcelApiResponse productGroupExcelApiResponse(Long id) {
+        List<OptionGroupSummaryApiResponse> optionGroups =
+                List.of(
+                        new OptionGroupSummaryApiResponse("색상", List.of("블랙", "화이트")),
+                        new OptionGroupSummaryApiResponse("사이즈", List.of("S", "M", "L")));
+
+        List<ProductGroupImageApiResponse> images =
+                List.of(
+                        new ProductGroupImageApiResponse(
+                                1L,
+                                "https://origin.example.com/img1.jpg",
+                                "https://cdn.example.com/img1.jpg",
+                                "THUMBNAIL",
+                                1),
+                        new ProductGroupImageApiResponse(
+                                2L,
+                                "https://origin.example.com/img2.jpg",
+                                "https://cdn.example.com/img2.jpg",
+                                "DETAIL",
+                                2));
+
+        List<ProductExcelApiResponse> products =
+                List.of(
+                        createProductExcelApiResponse(1L, id),
+                        createProductExcelApiResponse(2L, id));
+
+        ProductNoticeApiResponse notice = createProductNoticeApiResponse();
+
+        return new ProductGroupExcelApiResponse(
+                id,
+                DEFAULT_SELLER_ID,
+                DEFAULT_SELLER_NAME,
+                DEFAULT_BRAND_ID,
+                DEFAULT_BRAND_NAME,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_CATEGORY_NAME,
+                DEFAULT_CATEGORY_PATH,
+                DEFAULT_CATEGORY_ID_PATH,
+                3,
+                "MEN",
+                "TOP",
+                DEFAULT_PRODUCT_GROUP_NAME + "_" + id,
+                DEFAULT_OPTION_TYPE,
+                DEFAULT_STATUS,
+                DEFAULT_THUMBNAIL_URL,
+                6,
+                10000,
+                50000,
+                30,
+                optionGroups,
+                "2025-02-10T10:30:00+09:00",
+                "2025-02-10T10:30:00+09:00",
+                images,
+                products,
+                "https://cdn.example.com/description/",
+                notice);
+    }
+
     // ===== Helper Methods =====
+
+    private static ProductResult createProductResult(Long productId, Long productGroupId) {
+        Instant now = Instant.parse("2025-02-10T01:30:00Z");
+
+        List<ProductOptionMappingResult> mappings =
+                List.of(new ProductOptionMappingResult(productId * 10, productId, 100L));
+
+        return new ProductResult(
+                productId,
+                productGroupId,
+                "SKU-00" + productId,
+                30000,
+                25000,
+                5000,
+                16,
+                100,
+                "ACTIVE",
+                productId.intValue(),
+                mappings,
+                now,
+                now);
+    }
+
+    private static ProductExcelApiResponse createProductExcelApiResponse(
+            Long productId, Long productGroupId) {
+        List<ProductOptionMappingApiResponse> mappings =
+                List.of(new ProductOptionMappingApiResponse(productId * 10, productId, 100L));
+
+        return new ProductExcelApiResponse(
+                productId,
+                productGroupId,
+                "SKU-00" + productId,
+                30000,
+                25000,
+                5000,
+                16,
+                100,
+                "ACTIVE",
+                productId.intValue(),
+                mappings,
+                "2025-02-10T10:30:00+09:00",
+                "2025-02-10T10:30:00+09:00");
+    }
 
     private static ProductOptionMatrixResult createProductOptionMatrixResult() {
         SellerOptionValueResult optionValue1 = new SellerOptionValueResult(1L, 1L, "블랙", 100L, 1);

@@ -127,7 +127,10 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
     }
 
     private void seedReferenceData() {
-        sellerId = sellerRepository.save(SellerJpaEntityFixtures.activeEntityWithAuth()).getId();
+        sellerId =
+                sellerRepository
+                        .save(SellerJpaEntityFixtures.activeEntityWithOrganization("org-admin-001"))
+                        .getId();
         brandId = brandRepository.save(BrandJpaEntityFixtures.newEntity()).getId();
         categoryId = categoryRepository.save(CategoryJpaEntityFixtures.newEntity()).getId();
         shippingPolicyId =

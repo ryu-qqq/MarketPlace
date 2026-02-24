@@ -19,12 +19,15 @@ import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupExcelApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper.ProductGroupQueryApiMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.GetProductGroupUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupByOffsetUseCase;
+import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupForExcelUseCase;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,6 +54,7 @@ class ProductGroupQueryControllerRestDocsTest {
     @Autowired private MockMvc mockMvc;
 
     @MockitoBean private SearchProductGroupByOffsetUseCase searchProductGroupByOffsetUseCase;
+    @MockitoBean private SearchProductGroupForExcelUseCase searchProductGroupForExcelUseCase;
     @MockitoBean private GetProductGroupUseCase getProductGroupUseCase;
     @MockitoBean private ProductGroupQueryApiMapper mapper;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
@@ -711,6 +715,291 @@ class ProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("requestId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("요청 ID"))));
+        }
+    }
+
+    @Nested
+    @DisplayName("상품 그룹 엑셀 다운로드 조회 API")
+    class SearchProductGroupsForExcelTest {
+
+        @Test
+        @DisplayName("유효한 요청이면 200과 엑셀 데이터를 반환한다")
+        void searchForExcel_ValidRequest_Returns200WithExcelData() throws Exception {
+            // given
+            List<ProductGroupExcelCompositeResult> excelResults =
+                    ProductGroupApiFixtures.productGroupExcelResults(2);
+            List<ProductGroupExcelApiResponse> excelResponses =
+                    List.of(
+                            ProductGroupApiFixtures.productGroupExcelApiResponse(1L),
+                            ProductGroupApiFixtures.productGroupExcelApiResponse(2L));
+
+            given(mapper.toSearchParams(any())).willReturn(null);
+            given(searchProductGroupForExcelUseCase.execute(any())).willReturn(excelResults);
+            given(mapper.toExcelResponses(any())).willReturn(excelResponses);
+
+            // when & then
+            mockMvc.perform(
+                            RestDocumentationRequestBuilders.get(
+                                            BASE_URL + ProductGroupAdminEndpoints.EXCEL)
+                                    .param("page", "0")
+                                    .param("size", "20"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data").isArray())
+                    .andExpect(jsonPath("$.data.length()").value(2))
+                    .andExpect(jsonPath("$.data[0].images").isArray())
+                    .andExpect(jsonPath("$.data[0].products").isArray())
+                    .andDo(
+                            document(
+                                    "product-group/search-for-excel",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    queryParameters(
+                                            parameterWithName("statuses")
+                                                    .description(
+                                                            "상태 필터 (DRAFT, ACTIVE, INACTIVE,"
+                                                                    + " SOLDOUT, DELETED)")
+                                                    .optional(),
+                                            parameterWithName("sellerIds")
+                                                    .description("셀러 ID 목록")
+                                                    .optional(),
+                                            parameterWithName("brandIds")
+                                                    .description("브랜드 ID 목록")
+                                                    .optional(),
+                                            parameterWithName("categoryIds")
+                                                    .description("카테고리 ID 목록")
+                                                    .optional(),
+                                            parameterWithName("productGroupIds")
+                                                    .description("상품 그룹 ID 목록")
+                                                    .optional(),
+                                            parameterWithName("searchField")
+                                                    .description(
+                                                            "검색 필드 (NAME, CATEGORY_NAME,"
+                                                                    + " BRAND_NAME)")
+                                                    .optional(),
+                                            parameterWithName("searchWord")
+                                                    .description("검색어")
+                                                    .optional(),
+                                            parameterWithName("startDate")
+                                                    .description("조회 시작일 (yyyy-MM-dd)")
+                                                    .optional(),
+                                            parameterWithName("endDate")
+                                                    .description("조회 종료일 (yyyy-MM-dd)")
+                                                    .optional(),
+                                            parameterWithName("sortKey")
+                                                    .description("정렬 키")
+                                                    .optional(),
+                                            parameterWithName("sortDirection")
+                                                    .description("정렬 방향")
+                                                    .optional(),
+                                            parameterWithName("page")
+                                                    .description("페이지 번호")
+                                                    .optional(),
+                                            parameterWithName("size")
+                                                    .description("페이지 크기")
+                                                    .optional()),
+                                    responseFields(
+                                            fieldWithPath("data[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("엑셀 다운로드용 상품 그룹 목록"),
+                                            fieldWithPath("data[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품 그룹 ID"),
+                                            fieldWithPath("data[].sellerId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("셀러 ID"),
+                                            fieldWithPath("data[].sellerName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("셀러명"),
+                                            fieldWithPath("data[].brandId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("브랜드 ID"),
+                                            fieldWithPath("data[].brandName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("브랜드명"),
+                                            fieldWithPath("data[].categoryId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("카테고리 ID"),
+                                            fieldWithPath("data[].categoryName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("카테고리명"),
+                                            fieldWithPath("data[].categoryDisplayPath")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("카테고리 전체 경로"),
+                                            fieldWithPath("data[].categoryIdPath")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("카테고리 ID 경로"),
+                                            fieldWithPath("data[].categoryDepth")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("카테고리 깊이"),
+                                            fieldWithPath("data[].department")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("부서"),
+                                            fieldWithPath("data[].categoryGroup")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("카테고리 그룹"),
+                                            fieldWithPath("data[].productGroupName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("상품 그룹명"),
+                                            fieldWithPath("data[].optionType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("옵션 유형"),
+                                            fieldWithPath("data[].status")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("상태"),
+                                            fieldWithPath("data[].thumbnailUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("썸네일 URL"),
+                                            fieldWithPath("data[].productCount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품 수"),
+                                            fieldWithPath("data[].minPrice")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("최저가"),
+                                            fieldWithPath("data[].maxPrice")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("최고가"),
+                                            fieldWithPath("data[].maxDiscountRate")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("최대 할인율"),
+                                            fieldWithPath("data[].optionGroups[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("옵션 그룹 요약"),
+                                            fieldWithPath("data[].optionGroups[].optionGroupName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("옵션 그룹명"),
+                                            fieldWithPath(
+                                                            "data[].optionGroups[].optionValueNames[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("옵션 값 목록"),
+                                            fieldWithPath("data[].createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("등록일시"),
+                                            fieldWithPath("data[].updatedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수정일시"),
+                                            fieldWithPath("data[].images[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("이미지 목록"),
+                                            fieldWithPath("data[].images[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("이미지 ID"),
+                                            fieldWithPath("data[].images[].originUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("원본 URL"),
+                                            fieldWithPath("data[].images[].uploadedUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("업로드 URL"),
+                                            fieldWithPath("data[].images[].imageType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("이미지 유형"),
+                                            fieldWithPath("data[].images[].sortOrder")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("정렬 순서"),
+                                            fieldWithPath("data[].products[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("상품(SKU) 목록"),
+                                            fieldWithPath("data[].products[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품 ID"),
+                                            fieldWithPath("data[].products[].productGroupId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품 그룹 ID"),
+                                            fieldWithPath("data[].products[].skuCode")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("SKU 코드"),
+                                            fieldWithPath("data[].products[].regularPrice")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("정가"),
+                                            fieldWithPath("data[].products[].currentPrice")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재가"),
+                                            fieldWithPath("data[].products[].salePrice")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("할인가"),
+                                            fieldWithPath("data[].products[].discountRate")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("할인율"),
+                                            fieldWithPath("data[].products[].stockQuantity")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("재고 수량"),
+                                            fieldWithPath("data[].products[].status")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("상태"),
+                                            fieldWithPath("data[].products[].sortOrder")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("정렬 순서"),
+                                            fieldWithPath("data[].products[].optionMappings[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("옵션 매핑 목록"),
+                                            fieldWithPath("data[].products[].optionMappings[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("매핑 ID"),
+                                            fieldWithPath(
+                                                            "data[].products[].optionMappings[].productId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품 ID"),
+                                            fieldWithPath(
+                                                            "data[].products[].optionMappings[].sellerOptionValueId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("셀러 옵션값 ID"),
+                                            fieldWithPath("data[].products[].createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("상품 등록일시"),
+                                            fieldWithPath("data[].products[].updatedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("상품 수정일시"),
+                                            fieldWithPath("data[].descriptionCdnUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("상세설명 CDN URL"),
+                                            fieldWithPath("data[].notice")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("고시정보"),
+                                            fieldWithPath("data[].notice.id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("고시정보 ID"),
+                                            fieldWithPath("data[].notice.noticeCategoryId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("고시 카테고리 ID"),
+                                            fieldWithPath("data[].notice.entries[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("고시 항목 목록"),
+                                            fieldWithPath("data[].notice.entries[].id")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("항목 ID"),
+                                            fieldWithPath("data[].notice.entries[].noticeFieldId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("고시 필드 ID"),
+                                            fieldWithPath("data[].notice.entries[].fieldValue")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("필드 값"),
+                                            fieldWithPath("data[].notice.createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("등록일시"),
+                                            fieldWithPath("data[].notice.updatedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수정일시"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
+        }
+
+        @Test
+        @DisplayName("빈 결과이면 200과 빈 목록을 반환한다")
+        void searchForExcel_EmptyResult_Returns200WithEmptyList() throws Exception {
+            // given
+            given(mapper.toSearchParams(any())).willReturn(null);
+            given(searchProductGroupForExcelUseCase.execute(any())).willReturn(List.of());
+            given(mapper.toExcelResponses(any())).willReturn(List.of());
+
+            // when & then
+            mockMvc.perform(
+                            RestDocumentationRequestBuilders.get(
+                                    BASE_URL + ProductGroupAdminEndpoints.EXCEL))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data").isEmpty());
         }
     }
 }

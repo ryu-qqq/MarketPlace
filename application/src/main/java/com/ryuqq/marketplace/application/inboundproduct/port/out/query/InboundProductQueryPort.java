@@ -10,4 +10,7 @@ public interface InboundProductQueryPort {
             Long inboundSourceId, String externalProductCode);
 
     List<InboundProduct> findByStatus(InboundProductStatus status, int limit);
+
+    List<InboundProduct> findByStatusAndRetryCountLessThan(
+            InboundProductStatus status, int maxRetryCount, int limit);
 }

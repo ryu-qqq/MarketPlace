@@ -23,4 +23,4 @@ public record BatchRegisterProductGroupApiRequest(
                 @NotEmpty(message = "등록할 상품 그룹 목록은 필수입니다")
                 @Size(max = 100, message = "한 번에 최대 100건까지 등록할 수 있습니다")
                 @Valid
-                List<RegisterProductGroupApiRequest> items) {}
+                List<RegisterProductGroupExcelApiRequest> items) {}

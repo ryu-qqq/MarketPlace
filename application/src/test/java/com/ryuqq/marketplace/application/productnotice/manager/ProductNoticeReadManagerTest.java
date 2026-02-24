@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.productnotice.manager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.productnotice.port.out.query.ProductNoticeQueryPort;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
@@ -10,6 +11,7 @@ import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productnotice.ProductNoticeFixtures;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import com.ryuqq.marketplace.domain.productnotice.exception.ProductNoticeNotFoundException;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -95,6 +97,60 @@ class ProductNoticeReadManagerTest {
             // when & then
             assertThatThrownBy(() -> sut.getByProductGroupId(productGroupId))
                     .isInstanceOf(ProductNoticeNotFoundException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("findByProductGroupIds() - 여러 ProductGroupId로 고시정보 배치 조회")
+    class FindByProductGroupIdsTest {
+
+        @Test
+        @DisplayName("여러 ProductGroupId로 고시정보 목록을 배치 조회한다")
+        void findByProductGroupIds_ValidIds_ReturnsNotices() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupFixtures.defaultProductGroupId(), ProductGroupId.of(2L));
+            List<ProductNotice> expected =
+                    List.of(
+                            ProductNoticeFixtures.existingProductNotice(1L),
+                            ProductNoticeFixtures.existingProductNotice(2L));
+
+            given(queryPort.findByProductGroupIdIn(productGroupIds)).willReturn(expected);
+
+            // when
+            List<ProductNotice> result = sut.findByProductGroupIds(productGroupIds);
+
+            // then
+            assertThat(result).hasSize(2);
+            assertThat(result).isEqualTo(expected);
+            then(queryPort).should().findByProductGroupIdIn(productGroupIds);
+        }
+
+        @Test
+        @DisplayName("빈 productGroupIds 목록이면 쿼리를 실행하지 않고 빈 목록을 반환한다")
+        void findByProductGroupIds_EmptyIds_ReturnsEmptyWithoutQuery() {
+            // when
+            List<ProductNotice> result = sut.findByProductGroupIds(List.of());
+
+            // then
+            assertThat(result).isEmpty();
+            then(queryPort).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("결과가 없으면 빈 목록을 반환한다")
+        void findByProductGroupIds_NoResults_ReturnsEmptyList() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupFixtures.defaultProductGroupId());
+
+            given(queryPort.findByProductGroupIdIn(productGroupIds)).willReturn(List.of());
+
+            // when
+            List<ProductNotice> result = sut.findByProductGroupIds(productGroupIds);
+
+            // then
+            assertThat(result).isEmpty();
         }
     }
 }
