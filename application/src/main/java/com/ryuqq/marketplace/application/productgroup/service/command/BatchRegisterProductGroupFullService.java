@@ -7,7 +7,16 @@ import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProduc
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupBundleFactory;
 import com.ryuqq.marketplace.application.productgroup.internal.FullProductGroupRegistrationCoordinator;
 import com.ryuqq.marketplace.application.productgroup.port.in.command.BatchRegisterProductGroupFullUseCase;
+import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadManager;
+import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyReadManager;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
+import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
+import com.ryuqq.marketplace.domain.refundpolicy.exception.DefaultRefundPolicyNotFoundException;
+import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
+import com.ryuqq.marketplace.domain.shippingpolicy.exception.DefaultShippingPolicyNotFoundException;
+import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -30,20 +39,27 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class BatchRegisterProductGroupFullService implements BatchRegisterProductGroupFullUseCase {
+    private static final long UNRESOLVED_POLICY_ID = 0L;
 
     private static final Logger log =
             LoggerFactory.getLogger(BatchRegisterProductGroupFullService.class);
 
     private final ProductGroupBundleFactory bundleFactory;
     private final FullProductGroupRegistrationCoordinator coordinator;
+    private final ShippingPolicyReadManager shippingPolicyReadManager;
+    private final RefundPolicyReadManager refundPolicyReadManager;
     private final ExecutorService batchExecutor;
 
     public BatchRegisterProductGroupFullService(
             ProductGroupBundleFactory bundleFactory,
             FullProductGroupRegistrationCoordinator coordinator,
+            ShippingPolicyReadManager shippingPolicyReadManager,
+            RefundPolicyReadManager refundPolicyReadManager,
             @Qualifier("batchExecutor") ExecutorService batchExecutor) {
         this.bundleFactory = bundleFactory;
         this.coordinator = coordinator;
+        this.shippingPolicyReadManager = shippingPolicyReadManager;
+        this.refundPolicyReadManager = refundPolicyReadManager;
         this.batchExecutor = batchExecutor;
     }
 
@@ -76,16 +92,70 @@ public class BatchRegisterProductGroupFullService implements BatchRegisterProduc
     }
 
     private BatchItemResult<Long> processOne(RegisterProductGroupCommand command) {
+        String itemName = command.productGroupName();
         try {
-            ProductGroupRegistrationBundle bundle = bundleFactory.createProductGroupBundle(command);
+            RegisterProductGroupCommand resolvedCommand = resolvePoliciesIfNeeded(command);
+            ProductGroupRegistrationBundle bundle =
+                    bundleFactory.createProductGroupBundle(resolvedCommand);
             Long productGroupId = coordinator.register(bundle);
-            return BatchItemResult.success(productGroupId);
+            return BatchItemResult.success(productGroupId, itemName);
         } catch (DomainException e) {
-            log.warn("배치 등록 실패 - errorCode: {}, message: {}", e.code(), e.getMessage());
-            return BatchItemResult.failure(null, e.code(), e.getMessage());
+            log.warn(
+                    "배치 등록 실패 - itemName: {}, errorCode: {}, message: {}",
+                    itemName,
+                    e.code(),
+                    e.getMessage());
+            return BatchItemResult.failure(null, itemName, e.code(), e.getMessage());
         } catch (Exception e) {
-            log.error("배치 등록 중 예상치 못한 오류 발생", e);
-            return BatchItemResult.failure(null, "INTERNAL_ERROR", e.getMessage());
+            log.error("배치 등록 중 예상치 못한 오류 발생 - itemName: {}", itemName, e);
+            return BatchItemResult.failure(null, itemName, "INTERNAL_ERROR", e.getMessage());
         }
+    }
+
+    private RegisterProductGroupCommand resolvePoliciesIfNeeded(
+            RegisterProductGroupCommand command) {
+        if (command.shippingPolicyId() > UNRESOLVED_POLICY_ID
+                && command.refundPolicyId() > UNRESOLVED_POLICY_ID) {
+            return command;
+        }
+
+        SellerId sellerId = SellerId.of(command.sellerId());
+        long shippingPolicyId =
+                command.shippingPolicyId() > UNRESOLVED_POLICY_ID
+                        ? command.shippingPolicyId()
+                        : shippingPolicyReadManager
+                                .findDefaultBySellerId(sellerId)
+                                .map(ShippingPolicy::id)
+                                .map(ShippingPolicyId::value)
+                                .orElseThrow(
+                                        () ->
+                                                new DefaultShippingPolicyNotFoundException(
+                                                        sellerId.value()));
+
+        long refundPolicyId =
+                command.refundPolicyId() > UNRESOLVED_POLICY_ID
+                        ? command.refundPolicyId()
+                        : refundPolicyReadManager
+                                .findDefaultBySellerId(sellerId)
+                                .map(RefundPolicy::id)
+                                .map(RefundPolicyId::value)
+                                .orElseThrow(
+                                        () ->
+                                                new DefaultRefundPolicyNotFoundException(
+                                                        sellerId.value()));
+
+        return new RegisterProductGroupCommand(
+                command.sellerId(),
+                command.brandId(),
+                command.categoryId(),
+                shippingPolicyId,
+                refundPolicyId,
+                command.productGroupName(),
+                command.optionType(),
+                command.images(),
+                command.optionGroups(),
+                command.products(),
+                command.description(),
+                command.notice());
     }
 }

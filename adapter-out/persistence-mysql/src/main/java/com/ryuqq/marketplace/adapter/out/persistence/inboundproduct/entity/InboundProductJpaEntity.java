@@ -64,6 +64,9 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
     @Column(name = "raw_payload", columnDefinition = "JSON")
     private String rawPayloadJson;
 
+    @Column(name = "retry_count", nullable = false)
+    private int retryCount;
+
     protected InboundProductJpaEntity() {
         super();
     }
@@ -85,6 +88,7 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
             String status,
             String descriptionHtml,
             String rawPayloadJson,
+            int retryCount,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
@@ -104,6 +108,7 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
         this.status = status;
         this.descriptionHtml = descriptionHtml;
         this.rawPayloadJson = rawPayloadJson;
+        this.retryCount = retryCount;
     }
 
     public static InboundProductJpaEntity create(
@@ -123,6 +128,7 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
             String status,
             String descriptionHtml,
             String rawPayloadJson,
+            int retryCount,
             Instant createdAt,
             Instant updatedAt) {
         return new InboundProductJpaEntity(
@@ -142,6 +148,7 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
                 status,
                 descriptionHtml,
                 rawPayloadJson,
+                retryCount,
                 createdAt,
                 updatedAt);
     }
@@ -208,5 +215,9 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
 
     public String getRawPayloadJson() {
         return rawPayloadJson;
+    }
+
+    public int getRetryCount() {
+        return retryCount;
     }
 }

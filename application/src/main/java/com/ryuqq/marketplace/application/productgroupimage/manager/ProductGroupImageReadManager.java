@@ -25,6 +25,14 @@ public class ProductGroupImageReadManager {
     }
 
     @Transactional(readOnly = true)
+    public List<ProductGroupImage> findByProductGroupIds(List<ProductGroupId> productGroupIds) {
+        if (productGroupIds.isEmpty()) {
+            return List.of();
+        }
+        return queryPort.findByProductGroupIdIn(productGroupIds);
+    }
+
+    @Transactional(readOnly = true)
     public ProductGroupImages getByProductGroupId(ProductGroupId productGroupId) {
         List<ProductGroupImage> images = queryPort.findByProductGroupId(productGroupId);
         return ProductGroupImages.reconstitute(images);

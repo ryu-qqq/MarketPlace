@@ -534,8 +534,9 @@ ProductGroupCommandAdapter                                        [Port 구현]
 ```
 [Adapter-In]
 ProductGroupCommandController.batchRegisterProductGroups(BatchRegisterProductGroupApiRequest)
-  ├─ ProductGroupCommandApiMapper.toCommands(request)             [Command 목록 변환]
-  │   └─ List<RegisterProductGroupApiRequest>.stream().map(toCommand) → List<RegisterProductGroupCommand>
+  ├─ accessChecker.resolveCurrentSellerId()                       [인증 컨텍스트에서 sellerId 추출]
+  ├─ ProductGroupCommandApiMapper.toCommands(sellerId, request)   [엑셀용 Command 목록 변환]
+  │   └─ List<RegisterProductGroupExcelApiRequest>.stream().map(toCommand(sellerId, item))
   └─ BatchRegisterProductGroupFullUseCase.execute(commands)       [Port Interface]
       → BatchProductGroupResultApiResponse.from(result)
 
@@ -543,7 +544,10 @@ ProductGroupCommandController.batchRegisterProductGroups(BatchRegisterProductGro
 BatchRegisterProductGroupFullService.execute(List<RegisterProductGroupCommand>)  [UseCase 구현]
   ├─ commands.stream().map(cmd → CompletableFuture.supplyAsync(processOne, batchExecutor))
   └─ processOne(command):                                         [항목별 독립 트랜잭션]
-      ├─ ProductGroupBundleFactory.createProductGroupBundle(command)
+      ├─ resolvePoliciesIfNeeded(command)                        [기본 정책 보정]
+      │   ├─ shippingPolicyId/refundPolicyId=0 이면 findDefaultBySellerId(sellerId) 호출
+      │   └─ 없으면 DefaultShippingPolicyNotFoundException(SHP-015) / DefaultRefundPolicyNotFoundException(RFP-015)
+      ├─ ProductGroupBundleFactory.createProductGroupBundle(resolvedCommand)
       └─ FullProductGroupRegistrationCoordinator.register(bundle) [@Transactional 독립]
           → 성공 시 BatchItemResult.success(productGroupId)
           → DomainException 시 BatchItemResult.failure(null, e.code(), e.getMessage())
@@ -570,8 +574,9 @@ C1과 동일 (항목별 독립 INSERT)
 - **Request DTO**: `BatchRegisterProductGroupApiRequest`
   ```java
   record BatchRegisterProductGroupApiRequest(
-    @Valid @NotEmpty @Size(max=100) List<RegisterProductGroupApiRequest> items
+    @Valid @NotEmpty @Size(max=100) List<RegisterProductGroupExcelApiRequest> items
   )
+  // RegisterProductGroupExcelApiRequest: sellerId/shippingPolicyId/refundPolicyId 없음 (엑셀 배치 전용)
   ```
 
 - **Response DTO**: `BatchProductGroupResultApiResponse`
@@ -593,8 +598,15 @@ C1과 동일 (항목별 독립 INSERT)
   - `@Transactional` 미적용 (항목별 독립 트랜잭션)
   - `@Qualifier("batchExecutor") ExecutorService`: Virtual Thread Executor 주입
   - `CompletableFuture.supplyAsync()`: 병렬 처리
+  - `resolvePoliciesIfNeeded()`: shipping/refund 정책 ID=0이면 셀러 기본 정책 조회
   - `DomainException` 분기 처리: errorCode, errorMessage 수집
   - 배치 결과: 일부 실패해도 200 OK 반환
+
+- **배치 실패 시 errorCode (항목별 results[].errorCode)**:
+  | 코드 | 설명 |
+  |------|------|
+  | SHP-015 | 기본 배송 정책 없음. ShippingPolicyReadManager.findDefaultBySellerId 실패 시 |
+  | RFP-015 | 기본 환불 정책 없음. RefundPolicyReadManager.findDefaultBySellerId 실패 시 |
 
 ---
 

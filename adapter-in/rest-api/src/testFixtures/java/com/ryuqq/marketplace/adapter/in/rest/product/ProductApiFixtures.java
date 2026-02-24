@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.product;
 
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchChangeProductStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchUpdateProductApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductPriceApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductStockApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductsApiRequest;
@@ -56,6 +57,20 @@ public final class ProductApiFixtures {
     public static BatchChangeProductStatusApiRequest batchChangeStatusRequest(
             List<Long> productIds, String targetStatus) {
         return new BatchChangeProductStatusApiRequest(productIds, targetStatus);
+    }
+
+    // ===== BatchUpdateProductApiRequest =====
+
+    public static BatchUpdateProductApiRequest batchUpdateRequest() {
+        return new BatchUpdateProductApiRequest(
+                List.of(
+                        new BatchUpdateProductApiRequest.Entry(1L, 50000, 45000, 100),
+                        new BatchUpdateProductApiRequest.Entry(2L, 60000, 55000, 200)));
+    }
+
+    public static BatchUpdateProductApiRequest batchUpdateRequestSingle() {
+        return new BatchUpdateProductApiRequest(
+                List.of(new BatchUpdateProductApiRequest.Entry(1L, 50000, 45000, 100)));
     }
 
     // ===== UpdateProductsApiRequest =====

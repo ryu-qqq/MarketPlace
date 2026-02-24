@@ -1,10 +1,12 @@
 package com.ryuqq.marketplace.adapter.in.rest.product.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchChangeProductStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchUpdateProductApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductPriceApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductStockApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductsApiRequest;
 import com.ryuqq.marketplace.application.product.dto.command.BatchChangeProductStatusCommand;
+import com.ryuqq.marketplace.application.product.dto.command.BatchUpdateProductCommand;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductPriceCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
@@ -67,6 +69,28 @@ public class ProductCommandApiMapper {
             long sellerId, Long productGroupId, BatchChangeProductStatusApiRequest request) {
         return new BatchChangeProductStatusCommand(
                 sellerId, productGroupId, request.productIds(), request.targetStatus());
+    }
+
+    /**
+     * BatchUpdateProductApiRequest -> BatchUpdateProductCommand 변환.
+     *
+     * @param sellerId 인증 컨텍스트에서 해석된 셀러 ID
+     * @param request API 요청 DTO
+     * @return Application Command DTO
+     */
+    public BatchUpdateProductCommand toCommand(
+            long sellerId, BatchUpdateProductApiRequest request) {
+        return new BatchUpdateProductCommand(
+                sellerId,
+                request.items().stream()
+                        .map(
+                                e ->
+                                        new BatchUpdateProductCommand.Entry(
+                                                e.productId(),
+                                                e.regularPrice(),
+                                                e.currentPrice(),
+                                                e.stockQuantity()))
+                        .toList());
     }
 
     /**

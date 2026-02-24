@@ -30,6 +30,7 @@ public record BatchProductGroupResultApiResponse(
      *
      * @param index 요청 목록 내 인덱스 (0-based)
      * @param productGroupId 생성된 상품 그룹 ID (실패 시 null)
+     * @param productGroupName 요청한 상품 그룹명 (실패 항목 식별용)
      * @param success 성공 여부
      * @param errorCode 에러 코드 (성공 시 null)
      * @param errorMessage 에러 메시지 (성공 시 null)
@@ -39,6 +40,8 @@ public record BatchProductGroupResultApiResponse(
             @Schema(description = "요청 인덱스 (0-based)", example = "0") int index,
             @Schema(description = "생성된 상품 그룹 ID (실패 시 null)", example = "12345")
                     Long productGroupId,
+            @Schema(description = "요청한 상품 그룹명 (실패 항목 식별용)", example = "나이키 에어맥스 90")
+                    String productGroupName,
             @Schema(description = "성공 여부", example = "true") boolean success,
             @Schema(description = "에러 코드 (성공 시 null)") String errorCode,
             @Schema(description = "에러 메시지 (성공 시 null)") String errorMessage) {}
@@ -58,6 +61,7 @@ public record BatchProductGroupResultApiResponse(
                                     return new ItemResult(
                                             i,
                                             item.id(),
+                                            item.itemName(),
                                             item.success(),
                                             item.errorCode(),
                                             item.errorMessage());

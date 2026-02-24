@@ -173,4 +173,94 @@ class ProductGroupImageQueryDslRepositoryTest {
                     .isLessThanOrEqualTo(result.get(2).getSortOrder());
         }
     }
+
+    // ========================================================================
+    // 3. findByProductGroupIdIn 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByProductGroupIdIn")
+    class FindByProductGroupIdInTest {
+
+        @Test
+        @DisplayName("여러 ProductGroupId에 속한 미삭제 이미지를 배치 조회합니다")
+        void findByProductGroupIdIn_WithMultipleGroupIds_ReturnsAllNotDeletedImages() {
+            // given
+            Long productGroupId1 = 40L;
+            Long productGroupId2 = 41L;
+            persist(ProductGroupImageJpaEntityFixtures.thumbnailEntity(productGroupId1));
+            persist(ProductGroupImageJpaEntityFixtures.detailEntity(productGroupId1, 1));
+            persist(ProductGroupImageJpaEntityFixtures.thumbnailEntity(productGroupId2));
+
+            // when
+            List<ProductGroupImageJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of(productGroupId1, productGroupId2));
+
+            // then
+            assertThat(result).hasSize(3);
+            assertThat(result).allMatch(e -> !e.isDeleted());
+        }
+
+        @Test
+        @DisplayName("삭제된 이미지는 배치 조회에서 제외됩니다")
+        void findByProductGroupIdIn_WithDeletedImages_ExcludesDeleted() {
+            // given
+            Long productGroupId1 = 50L;
+            Long productGroupId2 = 51L;
+            persist(ProductGroupImageJpaEntityFixtures.thumbnailEntity(productGroupId1));
+            persist(ProductGroupImageJpaEntityFixtures.deletedEntity(productGroupId1));
+            persist(ProductGroupImageJpaEntityFixtures.thumbnailEntity(productGroupId2));
+
+            // when
+            List<ProductGroupImageJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of(productGroupId1, productGroupId2));
+
+            // then
+            assertThat(result).hasSize(2);
+            assertThat(result).allMatch(e -> !e.isDeleted());
+        }
+
+        @Test
+        @DisplayName("productGroupId 오름차순, sortOrder 오름차순으로 정렬되어 반환됩니다")
+        void findByProductGroupIdIn_ReturnsSortedByGroupIdAndSortOrder() {
+            // given
+            Long productGroupId1 = 60L;
+            Long productGroupId2 = 61L;
+            persist(ProductGroupImageJpaEntityFixtures.detailEntity(productGroupId2, 0));
+            persist(ProductGroupImageJpaEntityFixtures.detailEntity(productGroupId1, 1));
+            persist(ProductGroupImageJpaEntityFixtures.detailEntity(productGroupId1, 0));
+
+            // when
+            List<ProductGroupImageJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of(productGroupId1, productGroupId2));
+
+            // then
+            assertThat(result).hasSize(3);
+            assertThat(result.get(0).getProductGroupId()).isEqualTo(productGroupId1);
+            assertThat(result.get(1).getProductGroupId()).isEqualTo(productGroupId1);
+            assertThat(result.get(2).getProductGroupId()).isEqualTo(productGroupId2);
+        }
+
+        @Test
+        @DisplayName("빈 ID 목록 입력 시 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithEmptyList_ReturnsEmpty() {
+            // when
+            List<ProductGroupImageJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of());
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("해당하는 이미지가 없으면 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithNoMatchingImages_ReturnsEmpty() {
+            // when
+            List<ProductGroupImageJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of(999999L, 1000000L));
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
 }

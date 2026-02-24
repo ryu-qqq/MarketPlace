@@ -4,7 +4,9 @@ import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInbou
 import com.ryuqq.marketplace.application.inboundproduct.dto.response.InboundProductConversionResult;
 import com.ryuqq.marketplace.application.inboundproduct.factory.InboundProductCommandFactory;
 import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductCommandManager;
+import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceType;
 import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
+import com.ryuqq.marketplace.domain.inboundproduct.vo.ExternalProductCode;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +41,13 @@ public class InboundProductRegisterCoordinator {
                 mappingResolver.resolveMappingAndApply(newProduct, now);
 
         if (mapping.isFullyMapped()) {
-            conversionCoordinator.convert(newProduct, now);
+            ExternalSourceType sourceType = conversionCoordinator.convert(newProduct, now);
+
+            if (newProduct.status().isConverted() && sourceType == ExternalSourceType.LEGACY) {
+                newProduct.assignExternalProductCode(
+                        ExternalProductCode.of(String.valueOf(newProduct.internalProductGroupId())),
+                        now);
+            }
         }
 
         commandManager.persist(newProduct);
@@ -52,6 +60,9 @@ public class InboundProductRegisterCoordinator {
         if (newProduct.status().isConverted()) {
             return InboundProductConversionResult.created(
                     newProduct.idValue(), newProduct.internalProductGroupId());
+        }
+        if (newProduct.status().isConvertFailed()) {
+            return InboundProductConversionResult.convertFailed(newProduct.idValue());
         }
         return InboundProductConversionResult.pendingMapping(newProduct.idValue());
     }

@@ -150,4 +150,128 @@ class ProductNoticeQueryDslRepositoryTest {
             assertThat(result).isEmpty();
         }
     }
+
+    // ========================================================================
+    // 3. findByProductGroupIdIn 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByProductGroupIdIn")
+    class FindByProductGroupIdInTest {
+
+        @Test
+        @DisplayName("여러 ProductGroupId로 Notice 목록을 배치 조회합니다")
+        void findByProductGroupIdIn_WithMultipleGroupIds_ReturnsAllNotices() {
+            // given
+            Long productGroupId1 = 10L;
+            Long productGroupId2 = 11L;
+            persist(ProductNoticeJpaEntityFixtures.newEntity(productGroupId1));
+            persist(ProductNoticeJpaEntityFixtures.newEntity(productGroupId2));
+
+            // when
+            List<ProductNoticeJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of(productGroupId1, productGroupId2));
+
+            // then
+            assertThat(result).hasSize(2);
+            assertThat(result)
+                    .extracting(ProductNoticeJpaEntity::getProductGroupId)
+                    .containsExactlyInAnyOrder(productGroupId1, productGroupId2);
+        }
+
+        @Test
+        @DisplayName("빈 ID 목록 입력 시 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithEmptyList_ReturnsEmpty() {
+            // when
+            List<ProductNoticeJpaEntity> result = repository().findByProductGroupIdIn(List.of());
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("해당하는 Notice가 없으면 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithNoMatchingNotices_ReturnsEmpty() {
+            // when
+            List<ProductNoticeJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of(999999L, 1000000L));
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
+
+    // ========================================================================
+    // 4. findEntriesByProductNoticeIds 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findEntriesByProductNoticeIds")
+    class FindEntriesByProductNoticeIdsTest {
+
+        @Test
+        @DisplayName("여러 ProductNoticeId로 Entry 목록을 배치 조회합니다")
+        void findEntriesByProductNoticeIds_WithMultipleNoticeIds_ReturnsAllEntries() {
+            // given
+            ProductNoticeJpaEntity notice1 = persist(ProductNoticeJpaEntityFixtures.newEntity());
+            ProductNoticeJpaEntity notice2 = persist(ProductNoticeJpaEntityFixtures.newEntity());
+
+            persist(ProductNoticeJpaEntityFixtures.entryEntity(notice1.getId(), 100L, "제조국"));
+            persist(ProductNoticeJpaEntityFixtures.entryEntity(notice1.getId(), 101L, "제조사"));
+            persist(ProductNoticeJpaEntityFixtures.entryEntity(notice2.getId(), 200L, "원산지"));
+
+            // when
+            List<ProductNoticeEntryJpaEntity> result =
+                    repository()
+                            .findEntriesByProductNoticeIds(
+                                    List.of(notice1.getId(), notice2.getId()));
+
+            // then
+            assertThat(result).hasSize(3);
+        }
+
+        @Test
+        @DisplayName("특정 Notice의 Entry만 조회하고 다른 Notice Entry는 포함하지 않습니다")
+        void findEntriesByProductNoticeIds_WithSubsetOfIds_ReturnsOnlyMatchingEntries() {
+            // given
+            ProductNoticeJpaEntity notice1 = persist(ProductNoticeJpaEntityFixtures.newEntity());
+            ProductNoticeJpaEntity notice2 = persist(ProductNoticeJpaEntityFixtures.newEntity());
+
+            persist(ProductNoticeJpaEntityFixtures.entryEntity(notice1.getId(), 100L, "제조국"));
+            persist(ProductNoticeJpaEntityFixtures.entryEntity(notice2.getId(), 200L, "원산지"));
+
+            // when
+            List<ProductNoticeEntryJpaEntity> result =
+                    repository().findEntriesByProductNoticeIds(List.of(notice1.getId()));
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).getProductNoticeId()).isEqualTo(notice1.getId());
+        }
+
+        @Test
+        @DisplayName("빈 ID 목록 입력 시 빈 리스트를 반환합니다")
+        void findEntriesByProductNoticeIds_WithEmptyList_ReturnsEmpty() {
+            // when
+            List<ProductNoticeEntryJpaEntity> result =
+                    repository().findEntriesByProductNoticeIds(List.of());
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("해당하는 Entry가 없으면 빈 리스트를 반환합니다")
+        void findEntriesByProductNoticeIds_WithNoEntries_ReturnsEmpty() {
+            // given
+            ProductNoticeJpaEntity notice = persist(ProductNoticeJpaEntityFixtures.newEntity());
+
+            // when
+            List<ProductNoticeEntryJpaEntity> result =
+                    repository().findEntriesByProductNoticeIds(List.of(notice.getId()));
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
 }

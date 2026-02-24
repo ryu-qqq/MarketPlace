@@ -1,5 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.adapter;
 
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.entity.DescriptionImageJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.entity.ProductGroupDescriptionJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.mapper.ProductGroupDescriptionJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.repository.ProductGroupDescriptionQueryDslRepository;
 import com.ryuqq.marketplace.application.productgroupdescription.port.out.query.ProductGroupDescriptionQueryPort;
@@ -7,7 +9,9 @@ import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescripti
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionPublishStatus;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 /**
@@ -61,6 +65,37 @@ public class ProductGroupDescriptionQueryAdapter implements ProductGroupDescript
                             var imageEntities =
                                     queryDslRepository.findImagesByDescriptionId(entity.getId());
                             return mapper.toDomain(entity, imageEntities);
+                        })
+                .toList();
+    }
+
+    @Override
+    public List<ProductGroupDescription> findByProductGroupIdIn(
+            List<ProductGroupId> productGroupIds) {
+        List<Long> rawIds = productGroupIds.stream().map(ProductGroupId::value).toList();
+        List<ProductGroupDescriptionJpaEntity> entities =
+                queryDslRepository.findByProductGroupIdIn(rawIds);
+
+        if (entities.isEmpty()) {
+            return List.of();
+        }
+
+        List<Long> descriptionIds =
+                entities.stream().map(ProductGroupDescriptionJpaEntity::getId).toList();
+        List<DescriptionImageJpaEntity> allImages =
+                queryDslRepository.findImagesByDescriptionIds(descriptionIds);
+        Map<Long, List<DescriptionImageJpaEntity>> imagesByDescriptionId =
+                allImages.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        DescriptionImageJpaEntity::getProductGroupDescriptionId));
+
+        return entities.stream()
+                .map(
+                        entity -> {
+                            List<DescriptionImageJpaEntity> images =
+                                    imagesByDescriptionId.getOrDefault(entity.getId(), List.of());
+                            return mapper.toDomain(entity, images);
                         })
                 .toList();
     }
