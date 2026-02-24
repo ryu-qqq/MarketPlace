@@ -38,4 +38,7 @@ public final class ProductAdminEndpoints {
 
     /** ProductGroup ID Path Variable 이름 */
     public static final String PATH_PRODUCT_GROUP_ID = "productGroupId";
+
+    /** 배치 수정 경로 */
+    public static final String BATCH = "/batch";
 }

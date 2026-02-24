@@ -201,4 +201,72 @@ class ProductQueryDslRepositoryTest {
             assertThat(result.get(0).getId()).isEqualTo(active.getId());
         }
     }
+
+    // ========================================================================
+    // 4. findByProductGroupIdIn 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByProductGroupIdIn")
+    class FindByProductGroupIdInTest {
+
+        @Test
+        @DisplayName("여러 ProductGroupId에 속한 미삭제 상품을 배치 조회합니다")
+        void findByProductGroupIdIn_WithMultipleGroupIds_ReturnsAllActiveProducts() {
+            // given
+            Long productGroupId1 = 500L;
+            Long productGroupId2 = 501L;
+            persist(ProductJpaEntityFixtures.activeEntity(null, productGroupId1));
+            persist(ProductJpaEntityFixtures.activeEntity(null, productGroupId1));
+            persist(ProductJpaEntityFixtures.activeEntity(null, productGroupId2));
+
+            // when
+            List<ProductJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of(productGroupId1, productGroupId2));
+
+            // then
+            assertThat(result).hasSize(3);
+            assertThat(result)
+                    .extracting(ProductJpaEntity::getProductGroupId)
+                    .containsOnly(productGroupId1, productGroupId1, productGroupId2);
+        }
+
+        @Test
+        @DisplayName("DELETED 상태 상품은 배치 조회에서도 제외됩니다")
+        void findByProductGroupIdIn_WithDeletedProducts_ExcludesDeleted() {
+            // given
+            Long productGroupId = 600L;
+            persist(ProductJpaEntityFixtures.activeEntity(null, productGroupId));
+            persist(ProductJpaEntityFixtures.deletedEntity());
+
+            // when
+            List<ProductJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of(productGroupId));
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).getStatus()).isEqualTo("ACTIVE");
+        }
+
+        @Test
+        @DisplayName("빈 ID 목록 입력 시 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithEmptyList_ReturnsEmpty() {
+            // when
+            List<ProductJpaEntity> result = repository().findByProductGroupIdIn(List.of());
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("해당하는 상품이 없으면 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithNoMatchingProducts_ReturnsEmpty() {
+            // when
+            List<ProductJpaEntity> result =
+                    repository().findByProductGroupIdIn(List.of(999999L, 1000000L));
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
 }

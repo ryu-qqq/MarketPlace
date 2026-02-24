@@ -6,12 +6,15 @@ import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.query.SearchProduc
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.DescriptionImageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.OptionGroupSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductExcelApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupDescriptionApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupExcelApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupImageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductNoticeApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductNoticeEntryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductOptionMappingApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductOptionMatrixApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ResolvedProductOptionApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.SellerOptionGroupApiResponse;
@@ -21,9 +24,12 @@ import com.ryuqq.marketplace.adapter.in.rest.refundpolicy.dto.response.RefundPol
 import com.ryuqq.marketplace.adapter.in.rest.shippingpolicy.dto.response.ShippingPolicyApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.product.dto.response.ProductDetailResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductOptionMappingResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.dto.response.ResolvedProductOptionResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.OptionGroupSummaryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
@@ -133,6 +139,84 @@ public class ProductGroupQueryApiMapper {
             OptionGroupSummaryResult result) {
         return new OptionGroupSummaryApiResponse(
                 result.optionGroupName(), result.optionValueNames());
+    }
+
+    // ==================== 엑셀 변환 ====================
+
+    public List<ProductGroupExcelApiResponse> toExcelResponses(
+            List<ProductGroupExcelCompositeResult> results) {
+        return results.stream().map(this::toExcelResponse).toList();
+    }
+
+    private ProductGroupExcelApiResponse toExcelResponse(ProductGroupExcelCompositeResult result) {
+        ProductGroupListCompositeResult base = result.base();
+
+        List<OptionGroupSummaryApiResponse> optionGroups =
+                base.optionGroups().stream().map(this::toOptionGroupSummaryResponse).toList();
+
+        List<ProductGroupImageApiResponse> images =
+                result.images().stream().map(this::toImageResponse).toList();
+
+        List<ProductExcelApiResponse> products =
+                result.products().stream().map(this::toProductExcelResponse).toList();
+
+        ProductNoticeApiResponse notice =
+                result.notice() != null ? toNoticeResponse(result.notice()) : null;
+
+        return new ProductGroupExcelApiResponse(
+                base.id(),
+                base.sellerId(),
+                base.sellerName(),
+                base.brandId(),
+                base.brandName(),
+                base.categoryId(),
+                base.categoryName(),
+                base.categoryDisplayPath(),
+                base.categoryIdPath(),
+                base.categoryDepth(),
+                base.department(),
+                base.categoryGroup(),
+                base.productGroupName(),
+                base.optionType(),
+                base.status(),
+                base.thumbnailUrl(),
+                base.productCount(),
+                base.minPrice(),
+                base.maxPrice(),
+                base.maxDiscountRate(),
+                optionGroups,
+                DateTimeFormatUtils.formatIso8601(base.createdAt()),
+                DateTimeFormatUtils.formatIso8601(base.updatedAt()),
+                images,
+                products,
+                result.descriptionCdnUrl(),
+                notice);
+    }
+
+    private ProductExcelApiResponse toProductExcelResponse(ProductResult result) {
+        List<ProductOptionMappingApiResponse> mappings =
+                result.optionMappings().stream().map(this::toOptionMappingResponse).toList();
+
+        return new ProductExcelApiResponse(
+                result.id(),
+                result.productGroupId(),
+                result.skuCode(),
+                result.regularPrice(),
+                result.currentPrice(),
+                result.salePrice(),
+                result.discountRate(),
+                result.stockQuantity(),
+                result.status(),
+                result.sortOrder(),
+                mappings,
+                DateTimeFormatUtils.formatIso8601(result.createdAt()),
+                DateTimeFormatUtils.formatIso8601(result.updatedAt()));
+    }
+
+    private ProductOptionMappingApiResponse toOptionMappingResponse(
+            ProductOptionMappingResult result) {
+        return new ProductOptionMappingApiResponse(
+                result.id(), result.productId(), result.sellerOptionValueId());
     }
 
     // ==================== 상세 변환 ====================

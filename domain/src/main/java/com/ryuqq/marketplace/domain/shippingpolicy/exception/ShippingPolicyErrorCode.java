@@ -14,7 +14,8 @@ public enum ShippingPolicyErrorCode implements ErrorCode {
     CANNOT_DEACTIVATE_DEFAULT_POLICY("SHP-011", 400, "기본 배송 정책은 비활성화할 수 없습니다"),
     INACTIVE_POLICY_CANNOT_BE_DEFAULT("SHP-012", 400, "비활성화된 정책은 기본으로 지정할 수 없습니다"),
     CANNOT_UNMARK_ONLY_DEFAULT_POLICY("SHP-013", 400, "유일한 기본 배송 정책은 해제할 수 없습니다"),
-    LAST_ACTIVE_POLICY_CANNOT_BE_DEACTIVATED("SHP-014", 400, "최소 1개의 활성 배송 정책이 필요합니다");
+    LAST_ACTIVE_POLICY_CANNOT_BE_DEACTIVATED("SHP-014", 400, "최소 1개의 활성 배송 정책이 필요합니다"),
+    DEFAULT_SHIPPING_POLICY_NOT_FOUND("SHP-015", 400, "기본 배송 정책이 없습니다");
 
     private final String code;
     private final int httpStatus;

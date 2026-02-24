@@ -134,4 +134,70 @@ class ProductGroupImageQueryAdapterTest {
             assertThat(result).isEmpty();
         }
     }
+
+    // ========================================================================
+    // 3. findByProductGroupIdIn 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByProductGroupIdIn 메서드 테스트")
+    class FindByProductGroupIdInTest {
+
+        @Test
+        @DisplayName("여러 ProductGroupId로 이미지 목록을 배치 조회합니다")
+        void findByProductGroupIdIn_WithValidIds_ReturnsDomainList() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupId.of(1L), ProductGroupId.of(2L));
+            ProductGroupImageJpaEntity entity1 =
+                    ProductGroupImageJpaEntityFixtures.thumbnailEntity(1L, 1L);
+            ProductGroupImageJpaEntity entity2 =
+                    ProductGroupImageJpaEntityFixtures.thumbnailEntity(2L, 2L);
+            ProductGroupImage domain1 = ProductGroupFixtures.thumbnailImage();
+            ProductGroupImage domain2 = ProductGroupFixtures.thumbnailImage();
+
+            given(queryDslRepository.findByProductGroupIdIn(List.of(1L, 2L)))
+                    .willReturn(List.of(entity1, entity2));
+            given(mapper.toImageDomain(entity1)).willReturn(domain1);
+            given(mapper.toImageDomain(entity2)).willReturn(domain2);
+
+            // when
+            List<ProductGroupImage> result = queryAdapter.findByProductGroupIdIn(productGroupIds);
+
+            // then
+            assertThat(result).hasSize(2);
+            then(queryDslRepository).should().findByProductGroupIdIn(List.of(1L, 2L));
+        }
+
+        @Test
+        @DisplayName("빈 ProductGroupId 목록 입력 시 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithEmptyIds_ReturnsEmptyList() {
+            // given
+            List<ProductGroupId> productGroupIds = List.of();
+            given(queryDslRepository.findByProductGroupIdIn(List.of())).willReturn(List.of());
+
+            // when
+            List<ProductGroupImage> result = queryAdapter.findByProductGroupIdIn(productGroupIds);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("해당하는 이미지가 없으면 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithNoMatchingImages_ReturnsEmptyList() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupId.of(999L), ProductGroupId.of(1000L));
+            given(queryDslRepository.findByProductGroupIdIn(List.of(999L, 1000L)))
+                    .willReturn(List.of());
+
+            // when
+            List<ProductGroupImage> result = queryAdapter.findByProductGroupIdIn(productGroupIds);
+
+            // then
+            assertThat(result).isEmpty();
+            then(queryDslRepository).should().findByProductGroupIdIn(List.of(999L, 1000L));
+        }
+    }
 }

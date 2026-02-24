@@ -25,7 +25,7 @@ public record UpdateProductsCommand(
      * <p>salePrice와 discountRate는 도메인 내부에서 자동 계산됩니다.
      *
      * @param productId 수정 대상 상품 ID (nullable: null이면 신규)
-     * @param skuCode SKU 코드
+     * @param skuCode SKU 코드 (nullable: 레거시 등 미제공 시 null)
      * @param regularPrice 정가
      * @param currentPrice 판매가
      * @param stockQuantity 재고 수량

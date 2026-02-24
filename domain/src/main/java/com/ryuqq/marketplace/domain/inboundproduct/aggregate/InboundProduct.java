@@ -18,7 +18,7 @@ public class InboundProduct {
 
     private final InboundProductId id;
     private final Long inboundSourceId;
-    private final ExternalProductCode externalProductCode;
+    private ExternalProductCode externalProductCode;
     private String productName;
     private String externalBrandCode;
     private String externalCategoryCode;
@@ -32,6 +32,7 @@ public class InboundProduct {
     private InboundProductStatus status;
     private String descriptionHtml;
     private String rawPayloadJson;
+    private int retryCount;
     private final Instant createdAt;
     private Instant updatedAt;
 
@@ -52,6 +53,7 @@ public class InboundProduct {
             InboundProductStatus status,
             String descriptionHtml,
             String rawPayloadJson,
+            int retryCount,
             Instant createdAt,
             Instant updatedAt) {
         this.id = id;
@@ -70,6 +72,7 @@ public class InboundProduct {
         this.status = status;
         this.descriptionHtml = descriptionHtml;
         this.rawPayloadJson = rawPayloadJson;
+        this.retryCount = retryCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -105,6 +108,7 @@ public class InboundProduct {
                 InboundProductStatus.RECEIVED,
                 descriptionHtml,
                 rawPayloadJson,
+                0,
                 now,
                 now);
     }
@@ -127,6 +131,7 @@ public class InboundProduct {
             InboundProductStatus status,
             String descriptionHtml,
             String rawPayloadJson,
+            int retryCount,
             Instant createdAt,
             Instant updatedAt) {
         return new InboundProduct(
@@ -146,6 +151,7 @@ public class InboundProduct {
                 status,
                 descriptionHtml,
                 rawPayloadJson,
+                retryCount,
                 createdAt,
                 updatedAt);
     }
@@ -168,6 +174,12 @@ public class InboundProduct {
         this.updatedAt = now;
     }
 
+    /** 외부 상품 코드 할당. 레거시 등록 시 변환 완료 후 productGroupId로 교체할 때 사용. */
+    public void assignExternalProductCode(ExternalProductCode code, Instant now) {
+        this.externalProductCode = code;
+        this.updatedAt = now;
+    }
+
     /** ProductGroup 변환 완료 처리. */
     public void markConverted(Long internalProductGroupId, Instant now) {
         this.internalProductGroupId = internalProductGroupId;
@@ -175,10 +187,16 @@ public class InboundProduct {
         this.updatedAt = now;
     }
 
-    /** ProductGroup 변환 실패 처리. */
+    /** ProductGroup 변환 실패 처리. 재시도 횟수를 증가시킵니다. */
     public void markConvertFailed(Instant now) {
         this.status = InboundProductStatus.CONVERT_FAILED;
+        this.retryCount++;
         this.updatedAt = now;
+    }
+
+    /** 재시도 횟수가 최대 허용 횟수에 도달했는지 확인. */
+    public boolean isRetryExhausted(int maxRetry) {
+        return this.retryCount >= maxRetry;
     }
 
     /** 재수신 시 변경 감지. */
@@ -290,6 +308,10 @@ public class InboundProduct {
 
     public String rawPayloadJson() {
         return rawPayloadJson;
+    }
+
+    public int retryCount() {
+        return retryCount;
     }
 
     public Instant createdAt() {

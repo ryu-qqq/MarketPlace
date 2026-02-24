@@ -6,18 +6,22 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.query.SearchProductGroupsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupExcelApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper.ProductGroupQueryApiMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.GetProductGroupUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupByOffsetUseCase;
+import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupForExcelUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,14 +49,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductGroupQueryController {
 
     private final SearchProductGroupByOffsetUseCase searchProductGroupByOffsetUseCase;
+    private final SearchProductGroupForExcelUseCase searchProductGroupForExcelUseCase;
     private final GetProductGroupUseCase getProductGroupUseCase;
     private final ProductGroupQueryApiMapper mapper;
 
     public ProductGroupQueryController(
             SearchProductGroupByOffsetUseCase searchProductGroupByOffsetUseCase,
+            SearchProductGroupForExcelUseCase searchProductGroupForExcelUseCase,
             GetProductGroupUseCase getProductGroupUseCase,
             ProductGroupQueryApiMapper mapper) {
         this.searchProductGroupByOffsetUseCase = searchProductGroupByOffsetUseCase;
+        this.searchProductGroupForExcelUseCase = searchProductGroupForExcelUseCase;
         this.getProductGroupUseCase = getProductGroupUseCase;
         this.mapper = mapper;
     }
@@ -73,6 +80,27 @@ public class ProductGroupQueryController {
         PageApiResponse<ProductGroupListApiResponse> response = mapper.toPageResponse(pageResult);
 
         return ResponseEntity.ok(ApiResponse.of(response));
+    }
+
+    @Operation(
+            summary = "상품 그룹 엑셀 다운로드 조회",
+            description = "상품 그룹 목록을 이미지, 상품(SKU), 상세설명, 고시정보를 포함한 풍부한 데이터로 조회합니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "조회 성공")
+    })
+    @RequirePermission(value = "product-group:read", description = "상품 그룹 엑셀 다운로드 조회")
+    @GetMapping(ProductGroupAdminEndpoints.EXCEL)
+    public ResponseEntity<ApiResponse<List<ProductGroupExcelApiResponse>>> searchForExcel(
+            @Valid SearchProductGroupsApiRequest request) {
+
+        ProductGroupSearchParams searchParams = mapper.toSearchParams(request);
+        List<ProductGroupExcelCompositeResult> results =
+                searchProductGroupForExcelUseCase.execute(searchParams);
+        List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+
+        return ResponseEntity.ok(ApiResponse.of(responses));
     }
 
     @Operation(summary = "상품 그룹 상세 조회", description = "상품 그룹 상세 정보를 조회합니다.")

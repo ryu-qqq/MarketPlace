@@ -42,10 +42,25 @@ public class ProductNoticeQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
+    public List<ProductNoticeJpaEntity> findByProductGroupIdIn(List<Long> productGroupIds) {
+        return queryFactory
+                .selectFrom(productNotice)
+                .where(conditionBuilder.productGroupIdIn(productGroupIds))
+                .fetch();
+    }
+
     public List<ProductNoticeEntryJpaEntity> findEntriesByProductNoticeId(Long productNoticeId) {
         return queryFactory
                 .selectFrom(productNoticeEntry)
                 .where(productNoticeEntry.productNoticeId.eq(productNoticeId))
+                .fetch();
+    }
+
+    public List<ProductNoticeEntryJpaEntity> findEntriesByProductNoticeIds(
+            List<Long> productNoticeIds) {
+        return queryFactory
+                .selectFrom(productNoticeEntry)
+                .where(productNoticeEntry.productNoticeId.in(productNoticeIds))
                 .fetch();
     }
 }

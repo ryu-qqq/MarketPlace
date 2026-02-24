@@ -30,6 +30,30 @@ public class ProductReadManager {
         return queryPort.findByProductGroupId(productGroupId);
     }
 
+    @Transactional(readOnly = true)
+    public List<Product> findByProductGroupIds(List<ProductGroupId> productGroupIds) {
+        if (productGroupIds.isEmpty()) {
+            return List.of();
+        }
+        return queryPort.findByProductGroupIdIn(productGroupIds);
+    }
+
+    /**
+     * 상품 ID 목록으로 배치 조회합니다.
+     *
+     * @param ids 상품 ID 목록
+     * @return 조회된 상품 목록
+     * @throws ProductNotFoundException 요청 수와 조회 수가 불일치할 경우
+     */
+    @Transactional(readOnly = true)
+    public List<Product> getByIds(List<ProductId> ids) {
+        List<Product> products = queryPort.findByIdIn(ids);
+        if (products.size() != ids.size()) {
+            throw new ProductNotFoundException(ids.getFirst().value());
+        }
+        return products;
+    }
+
     /**
      * 상품 그룹 내 특정 상품들을 배치 조회합니다.
      *
