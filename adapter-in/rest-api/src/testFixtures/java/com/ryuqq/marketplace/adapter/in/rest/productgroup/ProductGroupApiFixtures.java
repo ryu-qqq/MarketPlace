@@ -54,7 +54,7 @@ public final class ProductGroupApiFixtures {
     public static final String DEFAULT_CATEGORY_PATH = "패션 > 남성패션 > 상의";
     public static final String DEFAULT_CATEGORY_ID_PATH = "1/5/1000";
     public static final String DEFAULT_PRODUCT_GROUP_NAME = "테스트 상품 그룹";
-    public static final String DEFAULT_OPTION_TYPE = "COMBINATION";
+    public static final String DEFAULT_OPTION_TYPE = "SINGLE";
     public static final String DEFAULT_STATUS = "ACTIVE";
     public static final String DEFAULT_THUMBNAIL_URL = "https://cdn.example.com/thumbnail.jpg";
 
