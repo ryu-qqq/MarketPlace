@@ -11,7 +11,7 @@ import java.util.List;
  * <p>salePrice와 discountRate는 도메인 내부에서 자동 계산됩니다.
  *
  * @param productId 기존 Product ID (nullable: null이면 신규)
- * @param skuCode SKU 코드
+ * @param skuCode SKU 코드 (nullable: 미제공 시 기존 값 유지 또는 빈 값)
  * @param regularPrice 정가
  * @param currentPrice 판매가
  * @param stockQuantity 재고 수량

@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.Length;
 
 /** 세토프 CreateProductGroup 호환 요청 DTO. */
 public record LegacyCreateProductGroupRequest(
-        Long productGroupId,
         @Length(max = 200, message = "상품 그룹명은 200자를 초과할 수 없습니다.") String productGroupName,
         @Positive(message = "셀러 ID는 0보다 커야 합니다.") long sellerId,
         @NotBlank(message = "옵션 타입은 필수입니다.") String optionType,

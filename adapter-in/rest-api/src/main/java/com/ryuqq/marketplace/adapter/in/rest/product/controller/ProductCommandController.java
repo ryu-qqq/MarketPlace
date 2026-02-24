@@ -4,15 +4,18 @@ import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.product.ProductAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchChangeProductStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchUpdateProductApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductPriceApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductStockApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.mapper.ProductCommandApiMapper;
 import com.ryuqq.marketplace.application.product.dto.command.BatchChangeProductStatusCommand;
+import com.ryuqq.marketplace.application.product.dto.command.BatchUpdateProductCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductPriceCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.product.port.in.command.BatchChangeProductStatusUseCase;
+import com.ryuqq.marketplace.application.product.port.in.command.BatchUpdateProductUseCase;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductPriceUseCase;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductStockUseCase;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductsUseCase;
@@ -61,6 +64,7 @@ public class ProductCommandController {
     private final UpdateProductPriceUseCase updatePriceUseCase;
     private final UpdateProductStockUseCase updateStockUseCase;
     private final BatchChangeProductStatusUseCase batchChangeStatusUseCase;
+    private final BatchUpdateProductUseCase batchUpdateProductUseCase;
     private final UpdateProductsUseCase updateProductsUseCase;
     private final ProductCommandApiMapper mapper;
     private final MarketAccessChecker accessChecker;
@@ -71,6 +75,7 @@ public class ProductCommandController {
      * @param updatePriceUseCase 상품 가격 수정 UseCase
      * @param updateStockUseCase 상품 재고 수정 UseCase
      * @param batchChangeStatusUseCase 상품 배치 상태 변경 UseCase
+     * @param batchUpdateProductUseCase 상품 배치 가격/재고 수정 UseCase
      * @param updateProductsUseCase 상품 일괄 수정 UseCase
      * @param mapper Command API 매퍼
      * @param accessChecker 접근 권한 검사기
@@ -79,12 +84,14 @@ public class ProductCommandController {
             UpdateProductPriceUseCase updatePriceUseCase,
             UpdateProductStockUseCase updateStockUseCase,
             BatchChangeProductStatusUseCase batchChangeStatusUseCase,
+            BatchUpdateProductUseCase batchUpdateProductUseCase,
             UpdateProductsUseCase updateProductsUseCase,
             ProductCommandApiMapper mapper,
             MarketAccessChecker accessChecker) {
         this.updatePriceUseCase = updatePriceUseCase;
         this.updateStockUseCase = updateStockUseCase;
         this.batchChangeStatusUseCase = batchChangeStatusUseCase;
+        this.batchUpdateProductUseCase = batchUpdateProductUseCase;
         this.updateProductsUseCase = updateProductsUseCase;
         this.mapper = mapper;
         this.accessChecker = accessChecker;
@@ -196,6 +203,44 @@ public class ProductCommandController {
         BatchChangeProductStatusCommand command =
                 mapper.toCommand(sellerId, productGroupId, request);
         batchChangeStatusUseCase.execute(command);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 상품 배치 가격/재고 수정 API.
+     *
+     * <p>여러 상품의 가격과 재고를 일괄 수정합니다. 현재 인증된 사용자의 셀러 소유권을 검증합니다.
+     *
+     * @param request 배치 수정 요청 DTO (최대 100건)
+     * @return 빈 응답 (204 No Content)
+     */
+    @Operation(
+            summary = "상품 배치 가격/재고 수정",
+            description = "여러 상품의 가격과 재고를 일괄 수정합니다. 최대 100건까지 처리 가능합니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "204",
+                description = "수정 성공"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "400",
+                description = "잘못된 요청"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "403",
+                description = "소유권 검증 실패"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "404",
+                description = "상품을 찾을 수 없음")
+    })
+    @PreAuthorize("@access.hasPermission('product:write')")
+    @RequirePermission(value = "product:write", description = "상품 배치 가격/재고 수정")
+    @PatchMapping(ProductAdminEndpoints.BATCH)
+    public ResponseEntity<Void> batchUpdateProducts(
+            @Valid @RequestBody BatchUpdateProductApiRequest request) {
+
+        long sellerId = accessChecker.resolveCurrentSellerId();
+        BatchUpdateProductCommand command = mapper.toCommand(sellerId, request);
+        batchUpdateProductUseCase.execute(command);
 
         return ResponseEntity.noContent().build();
     }

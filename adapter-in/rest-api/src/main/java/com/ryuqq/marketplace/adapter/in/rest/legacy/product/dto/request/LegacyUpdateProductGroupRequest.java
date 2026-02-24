@@ -1,15 +1,16 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 /** 세토프 UpdateProductGroup 호환 요청 DTO. */
 public record LegacyUpdateProductGroupRequest(
-        LegacyCreateDeliveryNoticeRequest deliveryNotice,
-        LegacyCreateRefundNoticeRequest refundNotice,
-        LegacyCreateProductNoticeRequest productNotice,
-        List<LegacyCreateProductImageRequest> productImageList,
-        LegacyUpdateProductDescriptionRequest detailDescription,
-        List<LegacyCreateOptionRequest> productOptions,
+        @Valid LegacyCreateDeliveryNoticeRequest deliveryNotice,
+        @Valid LegacyCreateRefundNoticeRequest refundNotice,
+        @Valid LegacyCreateProductNoticeRequest productNotice,
+        @Valid List<LegacyCreateProductImageRequest> productImageList,
+        @Valid LegacyUpdateProductDescriptionRequest detailDescription,
+        @Valid List<LegacyCreateOptionRequest> productOptions,
         LegacyUpdateStatusRequest updateStatus) {
 
     public LegacyUpdateProductGroupRequest {

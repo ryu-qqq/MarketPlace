@@ -158,7 +158,8 @@ public class ProductGroupCommandController {
     public ResponseEntity<BatchProductGroupResultApiResponse> batchRegisterProductGroups(
             @Valid @RequestBody BatchRegisterProductGroupApiRequest request) {
 
-        List<RegisterProductGroupCommand> commands = mapper.toCommands(request);
+        long sellerId = accessChecker.resolveCurrentSellerId();
+        List<RegisterProductGroupCommand> commands = mapper.toCommands(sellerId, request);
         BatchProcessingResult<Long> result = batchRegisterUseCase.execute(commands);
 
         return ResponseEntity.ok(BatchProductGroupResultApiResponse.from(result));

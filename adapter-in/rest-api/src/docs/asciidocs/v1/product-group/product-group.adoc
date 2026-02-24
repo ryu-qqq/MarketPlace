@@ -473,6 +473,24 @@ include::{snippets}/product-group/search/http-response.adoc[]
 include::{snippets}/product-group/search/response-fields.adoc[]
 
 
+[[product-group-search-for-excel]]
+=== 상품 그룹 엑셀 다운로드 조회
+
+인증 필요 | 필요 권한: `product-group:read`
+
+==== HTTP Request
+include::{snippets}/product-group/search-for-excel/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/product-group/search-for-excel/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group/search-for-excel/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/product-group/search-for-excel/response-fields.adoc[]
+
+
 [[product-group-get-detail]]
 === 상품 그룹 상세 조회
 

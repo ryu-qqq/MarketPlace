@@ -31,10 +31,10 @@ public class InboundProductConversionCoordinator {
         this.externalSourceReadManager = externalSourceReadManager;
     }
 
-    public void convert(InboundProduct product, Instant now) {
+    public ExternalSourceType convert(InboundProduct product, Instant now) {
+        ExternalSource source = externalSourceReadManager.getById(product.inboundSourceId());
+        ExternalSourceType sourceType = source.type();
         try {
-            ExternalSource source = externalSourceReadManager.getById(product.inboundSourceId());
-            ExternalSourceType sourceType = source.type();
             handleNewRegistration(product, sourceType, now);
         } catch (Exception e) {
             log.error(
@@ -44,6 +44,7 @@ public class InboundProductConversionCoordinator {
                     e);
             product.markConvertFailed(now);
         }
+        return sourceType;
     }
 
     private void handleNewRegistration(

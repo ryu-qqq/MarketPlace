@@ -17,7 +17,8 @@ public enum RefundPolicyErrorCode implements ErrorCode {
     CANNOT_DEACTIVATE_DEFAULT_POLICY("RFP-011", 400, "기본 환불 정책은 비활성화할 수 없습니다"),
     INACTIVE_POLICY_CANNOT_BE_DEFAULT("RFP-012", 400, "비활성화된 정책은 기본으로 지정할 수 없습니다"),
     CANNOT_UNMARK_ONLY_DEFAULT_POLICY("RFP-013", 400, "유일한 기본 환불 정책은 해제할 수 없습니다"),
-    LAST_ACTIVE_POLICY_CANNOT_BE_DEACTIVATED("RFP-014", 400, "최소 1개의 활성 환불 정책이 필요합니다");
+    LAST_ACTIVE_POLICY_CANNOT_BE_DEACTIVATED("RFP-014", 400, "최소 1개의 활성 환불 정책이 필요합니다"),
+    DEFAULT_REFUND_POLICY_NOT_FOUND("RFP-015", 400, "기본 환불 정책이 없습니다");
 
     private final String code;
     private final int httpStatus;

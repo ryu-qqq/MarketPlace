@@ -49,7 +49,7 @@ public class ProductCommandFactory {
     public ProductCreationData toCreationData(
             ProductDiffUpdateEntry entry, List<SellerOptionValueId> resolvedOptionValueIds) {
         return new ProductCreationData(
-                SkuCode.of(entry.skuCode()),
+                SkuCode.of(entry.skuCode() != null ? entry.skuCode() : null),
                 Money.of(entry.regularPrice()),
                 Money.of(entry.currentPrice()),
                 entry.stockQuantity(),

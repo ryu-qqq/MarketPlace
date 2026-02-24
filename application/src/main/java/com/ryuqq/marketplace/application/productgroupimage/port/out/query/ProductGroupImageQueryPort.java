@@ -11,4 +11,6 @@ public interface ProductGroupImageQueryPort {
     Optional<ProductGroupImage> findById(Long id);
 
     List<ProductGroupImage> findByProductGroupId(ProductGroupId productGroupId);
+
+    List<ProductGroupImage> findByProductGroupIdIn(List<ProductGroupId> productGroupIds);
 }

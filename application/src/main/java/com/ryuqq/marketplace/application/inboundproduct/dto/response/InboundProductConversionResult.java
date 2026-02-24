@@ -12,7 +12,8 @@ public record InboundProductConversionResult(
         CREATED,
         UPDATED,
         NO_CHANGE,
-        PENDING_MAPPING
+        PENDING_MAPPING,
+        CONVERT_FAILED
     }
 
     public static InboundProductConversionResult created(
@@ -48,5 +49,13 @@ public record InboundProductConversionResult(
                 null,
                 InboundProductStatus.PENDING_MAPPING,
                 ConversionAction.PENDING_MAPPING);
+    }
+
+    public static InboundProductConversionResult convertFailed(Long inboundProductId) {
+        return new InboundProductConversionResult(
+                inboundProductId,
+                null,
+                InboundProductStatus.CONVERT_FAILED,
+                ConversionAction.CONVERT_FAILED);
     }
 }

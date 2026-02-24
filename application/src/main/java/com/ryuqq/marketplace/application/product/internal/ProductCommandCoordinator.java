@@ -115,8 +115,12 @@ public class ProductCommandCoordinator {
                 if (existing == null) {
                     throw new ProductNotFoundException(entry.productId());
                 }
+                SkuCode skuCode =
+                        (entry.skuCode() != null && !entry.skuCode().isBlank())
+                                ? SkuCode.of(entry.skuCode())
+                                : existing.skuCode();
                 existing.update(
-                        SkuCode.of(entry.skuCode()),
+                        skuCode,
                         Money.of(entry.regularPrice()),
                         Money.of(entry.currentPrice()),
                         entry.stockQuantity(),

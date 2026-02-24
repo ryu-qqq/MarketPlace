@@ -42,4 +42,14 @@ public class ProductGroupImageQueryDslRepository {
                 .orderBy(productGroupImage.sortOrder.asc())
                 .fetch();
     }
+
+    public List<ProductGroupImageJpaEntity> findByProductGroupIdIn(List<Long> productGroupIds) {
+        return queryFactory
+                .selectFrom(productGroupImage)
+                .where(
+                        productGroupImage.productGroupId.in(productGroupIds),
+                        productGroupImage.deleted.isFalse())
+                .orderBy(productGroupImage.productGroupId.asc(), productGroupImage.sortOrder.asc())
+                .fetch();
+    }
 }

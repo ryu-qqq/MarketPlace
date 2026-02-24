@@ -1,9 +1,9 @@
-package com.ryuqq.marketplace.application.legacyproduct.service.command;
+package com.ryuqq.marketplace.adapter.in.rest.legacy.product.facade;
 
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyNoticeCategoryResolver;
 import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyProductIdResolver;
 import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyProductIdResolver.ResolvedLegacyProductId;
-import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductCommandUseCase;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
@@ -31,19 +31,23 @@ import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
 import java.time.Instant;
 import java.util.List;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 레거시 상품 수정 서비스.
+ * 레거시 상품 수정 Facade (Adapter-In 레이어).
  *
- * <p>세토프 PK → 내부 ID 해석 후 기존 Coordinator/Manager에 위임합니다.
+ * <p>세토프 PK → 내부 ID 변환 + 기존 Coordinator/Manager 위임을 담당하는 어댑터 로직입니다. Application 레이어의
+ * LegacyProductCommandUseCase/Service를 대체합니다.
+ *
+ * <p>세토프 마이그레이션 완료 후 레거시 컨트롤러와 함께 제거될 임시 컴포넌트입니다.
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.UseCaseTooManyMethods"})
-@Service
-public class LegacyProductCommandService implements LegacyProductCommandUseCase {
+@SuppressWarnings("PMD.ExcessiveImports")
+@Component
+public class LegacyProductCommandFacade {
 
     private final LegacyProductIdResolver idResolver;
+    private final LegacyNoticeCategoryResolver legacyNoticeCategoryResolver;
     private final FullProductGroupUpdateCoordinator fullProductGroupUpdateCoordinator;
     private final ProductNoticeCommandCoordinator noticeCommandCoordinator;
     private final ImageCommandCoordinator imageCommandCoordinator;
@@ -57,8 +61,9 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
     private final UpdateProductStockUseCase updateProductStockUseCase;
     private final TimeProvider timeProvider;
 
-    public LegacyProductCommandService(
+    public LegacyProductCommandFacade(
             LegacyProductIdResolver idResolver,
+            LegacyNoticeCategoryResolver legacyNoticeCategoryResolver,
             FullProductGroupUpdateCoordinator fullProductGroupUpdateCoordinator,
             ProductNoticeCommandCoordinator noticeCommandCoordinator,
             ImageCommandCoordinator imageCommandCoordinator,
@@ -72,6 +77,7 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
             UpdateProductStockUseCase updateProductStockUseCase,
             TimeProvider timeProvider) {
         this.idResolver = idResolver;
+        this.legacyNoticeCategoryResolver = legacyNoticeCategoryResolver;
         this.fullProductGroupUpdateCoordinator = fullProductGroupUpdateCoordinator;
         this.noticeCommandCoordinator = noticeCommandCoordinator;
         this.imageCommandCoordinator = imageCommandCoordinator;
@@ -86,7 +92,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
         this.timeProvider = timeProvider;
     }
 
-    @Override
     @Transactional
     public void updateFull(long setofProductGroupId, ProductGroupUpdateBundle bundle) {
         ResolvedLegacyProductId resolved = idResolver.resolve(setofProductGroupId);
@@ -96,7 +101,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
         fullProductGroupUpdateCoordinator.update(resolvedBundle);
     }
 
-    @Override
     @Transactional
     public void updateNotice(long setofProductGroupId, UpdateProductNoticeCommand command) {
         ResolvedLegacyProductId resolved = idResolver.resolve(setofProductGroupId);
@@ -108,7 +112,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
         noticeCommandCoordinator.update(resolvedCommand);
     }
 
-    @Override
     @Transactional
     public void updateImages(long setofProductGroupId, UpdateProductGroupImagesCommand command) {
         ResolvedLegacyProductId resolved = idResolver.resolve(setofProductGroupId);
@@ -118,7 +121,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
         imageCommandCoordinator.update(resolvedCommand);
     }
 
-    @Override
     @Transactional
     public void updateDescription(
             long setofProductGroupId, UpdateProductGroupDescriptionCommand command) {
@@ -129,7 +131,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
         descriptionCommandCoordinator.update(resolvedCommand);
     }
 
-    @Override
     @Transactional
     public void updateOptions(
             long setofProductGroupId,
@@ -149,7 +150,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
                 pgId, productEntries, optionResult, optionGroupData);
     }
 
-    @Override
     @Transactional
     public void updatePrice(long setofProductGroupId, int regularPrice, int currentPrice) {
         ResolvedLegacyProductId resolved = idResolver.resolve(setofProductGroupId);
@@ -163,7 +163,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
         productCommandManager.persistAll(products);
     }
 
-    @Override
     @Transactional
     public void updateDisplayStatus(long setofProductGroupId, String displayYn) {
         ResolvedLegacyProductId resolved = idResolver.resolve(setofProductGroupId);
@@ -179,7 +178,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
         productGroupCommandManager.persist(pg);
     }
 
-    @Override
     @Transactional
     public void markOutOfStock(long setofProductGroupId) {
         ResolvedLegacyProductId resolved = idResolver.resolve(setofProductGroupId);
@@ -190,7 +188,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
         productGroupCommandManager.persist(pg);
     }
 
-    @Override
     @Transactional
     public void updateStock(List<UpdateProductStockCommand> commands) {
         for (UpdateProductStockCommand cmd : commands) {
@@ -198,7 +195,6 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
         }
     }
 
-    /** ProductGroupUpdateBundle의 모든 Command에 resolved internalProductGroupId를 적용하여 새 번들 생성. */
     private ProductGroupUpdateBundle replaceProductGroupId(
             ProductGroupUpdateBundle bundle, long internalId) {
         ProductGroupUpdateData originalData = bundle.basicInfoUpdateData();
@@ -234,7 +230,10 @@ public class LegacyProductCommandService implements LegacyProductCommandUseCase 
                 bundle.noticeCommand() != null
                         ? new UpdateProductNoticeCommand(
                                 internalId,
-                                bundle.noticeCommand().noticeCategoryId(),
+                                legacyNoticeCategoryResolver
+                                        .resolveByProductGroupId(internalId)
+                                        .id()
+                                        .value(),
                                 bundle.noticeCommand().entries())
                         : null;
 

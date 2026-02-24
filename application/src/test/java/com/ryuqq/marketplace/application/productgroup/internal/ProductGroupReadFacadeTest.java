@@ -8,18 +8,23 @@ import com.ryuqq.marketplace.application.product.manager.ProductReadManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCompositionReadManager;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
 import com.ryuqq.marketplace.application.productgroupdescription.manager.ProductGroupDescriptionReadManager;
+import com.ryuqq.marketplace.application.productgroupimage.manager.ProductGroupImageReadManager;
 import com.ryuqq.marketplace.application.productnotice.manager.ProductNoticeReadManager;
+import com.ryuqq.marketplace.domain.product.ProductFixtures;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchCriteria;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
+import com.ryuqq.marketplace.domain.productnotice.ProductNoticeFixtures;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import java.time.Instant;
 import java.util.List;
@@ -45,6 +50,7 @@ class ProductGroupReadFacadeTest {
     @Mock private ProductGroupDescriptionReadManager descriptionReadManager;
     @Mock private ProductReadManager productReadManager;
     @Mock private ProductNoticeReadManager productNoticeReadManager;
+    @Mock private ProductGroupImageReadManager imageReadManager;
 
     @Nested
     @DisplayName("getListBundle() - Offset 기반 목록 조회 번들")
@@ -212,6 +218,149 @@ class ProductGroupReadFacadeTest {
             // then
             assertThat(result.description()).isPresent();
             assertThat(result.notice()).isPresent();
+        }
+    }
+
+    @Nested
+    @DisplayName("getExcelBundle() - 엑셀 다운로드용 번들")
+    class GetExcelBundleTest {
+
+        @Test
+        @DisplayName("검색 조건으로 baseComposites + enrichments + 배치 조회 데이터를 포함한 번들을 반환한다")
+        void getExcelBundle_ValidCriteria_ReturnsExcelBundle() {
+            // given
+            ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
+            List<ProductGroupListCompositeResult> baseComposites =
+                    List.of(createListCompositeResult(1L), createListCompositeResult(2L));
+            long totalElements = 2L;
+            List<Long> ids = List.of(1L, 2L);
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupId.of(1L), ProductGroupId.of(2L));
+            List<ProductGroupEnrichmentResult> enrichments =
+                    List.of(
+                            new ProductGroupEnrichmentResult(1L, 10000, 20000, 10, List.of()),
+                            new ProductGroupEnrichmentResult(2L, 15000, 25000, 15, List.of()));
+            List<ProductGroupImage> images = List.of();
+            List<Product> products = List.of();
+            List<ProductGroupDescription> descriptions = List.of();
+            List<ProductNotice> notices = List.of();
+
+            given(compositionReadManager.findCompositeByCriteria(criteria))
+                    .willReturn(baseComposites);
+            given(compositionReadManager.countByCriteria(criteria)).willReturn(totalElements);
+            given(compositionReadManager.findEnrichments(ids)).willReturn(enrichments);
+            given(imageReadManager.findByProductGroupIds(productGroupIds)).willReturn(images);
+            given(productReadManager.findByProductGroupIds(productGroupIds)).willReturn(products);
+            given(descriptionReadManager.findByProductGroupIds(productGroupIds))
+                    .willReturn(descriptions);
+            given(productNoticeReadManager.findByProductGroupIds(productGroupIds))
+                    .willReturn(notices);
+
+            // when
+            ProductGroupExcelBundle result = sut.getExcelBundle(criteria);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.baseComposites()).hasSize(2);
+            assertThat(result.enrichments()).hasSize(2);
+            assertThat(result.totalElements()).isEqualTo(totalElements);
+        }
+
+        @Test
+        @DisplayName("결과가 없으면 빈 번들을 반환하고 배치 조회를 실행하지 않는다")
+        void getExcelBundle_EmptyResult_ReturnsEmptyBundleWithoutBatchQueries() {
+            // given
+            ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
+
+            given(compositionReadManager.findCompositeByCriteria(criteria)).willReturn(List.of());
+            given(compositionReadManager.countByCriteria(criteria)).willReturn(0L);
+
+            // when
+            ProductGroupExcelBundle result = sut.getExcelBundle(criteria);
+
+            // then
+            assertThat(result.baseComposites()).isEmpty();
+            assertThat(result.enrichments()).isEmpty();
+            assertThat(result.imagesByProductGroupId()).isEmpty();
+            assertThat(result.productsByProductGroupId()).isEmpty();
+            assertThat(result.descriptionCdnUrlByProductGroupId()).isEmpty();
+            assertThat(result.noticeByProductGroupId()).isEmpty();
+            assertThat(result.totalElements()).isZero();
+            then(compositionReadManager).should().findCompositeByCriteria(criteria);
+            then(compositionReadManager).should().countByCriteria(criteria);
+            then(compositionReadManager).shouldHaveNoMoreInteractions();
+            then(imageReadManager).shouldHaveNoInteractions();
+            then(productReadManager).shouldHaveNoInteractions();
+            then(descriptionReadManager).shouldHaveNoInteractions();
+            then(productNoticeReadManager).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("baseComposites가 있으면 모든 배치 조회 ReadManager에 위임한다")
+        void getExcelBundle_WithBaseComposites_DelegatesToAllReadManagers() {
+            // given
+            ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
+            List<ProductGroupListCompositeResult> baseComposites =
+                    List.of(createListCompositeResult(1L));
+            List<ProductGroupId> productGroupIds = List.of(ProductGroupId.of(1L));
+            List<Long> ids = List.of(1L);
+
+            given(compositionReadManager.findCompositeByCriteria(criteria))
+                    .willReturn(baseComposites);
+            given(compositionReadManager.countByCriteria(criteria)).willReturn(1L);
+            given(compositionReadManager.findEnrichments(ids)).willReturn(List.of());
+            given(imageReadManager.findByProductGroupIds(productGroupIds)).willReturn(List.of());
+            given(productReadManager.findByProductGroupIds(productGroupIds)).willReturn(List.of());
+            given(descriptionReadManager.findByProductGroupIds(productGroupIds))
+                    .willReturn(List.of());
+            given(productNoticeReadManager.findByProductGroupIds(productGroupIds))
+                    .willReturn(List.of());
+
+            // when
+            sut.getExcelBundle(criteria);
+
+            // then
+            then(compositionReadManager).should().findEnrichments(ids);
+            then(imageReadManager).should().findByProductGroupIds(productGroupIds);
+            then(productReadManager).should().findByProductGroupIds(productGroupIds);
+            then(descriptionReadManager).should().findByProductGroupIds(productGroupIds);
+            then(productNoticeReadManager).should().findByProductGroupIds(productGroupIds);
+        }
+
+        @Test
+        @DisplayName("상품과 고시정보가 있으면 Map 형태로 번들에 포함된다")
+        void getExcelBundle_WithProductsAndNotices_ReturnsBundleWithMappedData() {
+            // given
+            ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
+            Long productGroupId = 1L;
+            List<ProductGroupListCompositeResult> baseComposites =
+                    List.of(createListCompositeResult(productGroupId));
+            List<ProductGroupId> productGroupIds = List.of(ProductGroupId.of(productGroupId));
+            List<Long> ids = List.of(productGroupId);
+
+            Product product = ProductFixtures.activeProduct();
+            ProductNotice notice = ProductNoticeFixtures.existingProductNotice(productGroupId);
+
+            given(compositionReadManager.findCompositeByCriteria(criteria))
+                    .willReturn(baseComposites);
+            given(compositionReadManager.countByCriteria(criteria)).willReturn(1L);
+            given(compositionReadManager.findEnrichments(ids)).willReturn(List.of());
+            given(imageReadManager.findByProductGroupIds(productGroupIds)).willReturn(List.of());
+            given(productReadManager.findByProductGroupIds(productGroupIds))
+                    .willReturn(List.of(product));
+            given(descriptionReadManager.findByProductGroupIds(productGroupIds))
+                    .willReturn(List.of());
+            given(productNoticeReadManager.findByProductGroupIds(productGroupIds))
+                    .willReturn(List.of(notice));
+
+            // when
+            ProductGroupExcelBundle result = sut.getExcelBundle(criteria);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.productsByProductGroupId())
+                    .containsKey(ProductFixtures.DEFAULT_PRODUCT_GROUP_ID);
+            assertThat(result.noticeByProductGroupId()).containsKey(productGroupId);
         }
     }
 

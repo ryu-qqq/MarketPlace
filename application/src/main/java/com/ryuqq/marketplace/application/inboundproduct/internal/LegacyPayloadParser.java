@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.application.inboundproduct.dto.payload.LegacyInboun
 import com.ryuqq.marketplace.application.inboundproduct.dto.payload.LegacyInboundPayload.LegacyPayloadNotice;
 import com.ryuqq.marketplace.application.inboundproduct.dto.payload.LegacyInboundPayload.LegacyPayloadOption;
 import com.ryuqq.marketplace.application.inboundproduct.dto.payload.LegacyInboundPayload.LegacyPayloadOptionDetail;
+import com.ryuqq.marketplace.application.inboundproduct.dto.payload.LegacyInboundUpdatePayload;
 import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
 import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand.ProductData;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
@@ -34,6 +35,7 @@ import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,7 +53,7 @@ import org.springframework.stereotype.Component;
  * <p>rawPayloadJson은 LegacyCreateProductGroupRequest를 ObjectMapper.writeValueAsString()한 결과이므로,
  * LegacyInboundPayload로 역직렬화하여 ProductGroupRegistrationBundle을 조립합니다.
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.AvoidDeeplyNestedIfStmts"})
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.AvoidDeeplyNestedIfStmts", "PMD.GodClass"})
 @Component
 public class LegacyPayloadParser implements InboundProductPayloadParser {
 
@@ -62,13 +64,20 @@ public class LegacyPayloadParser implements InboundProductPayloadParser {
     private final ShippingPolicyReadManager shippingPolicyReadManager;
     private final RefundPolicyReadManager refundPolicyReadManager;
 
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "Spring 관리 빈을 생성자 주입으로 저장하는 표준 DI 패턴")
+    private final LegacyUpdateBundleBuilder updateBundleBuilder;
+
     public LegacyPayloadParser(
             ObjectMapper objectMapper,
             ShippingPolicyReadManager shippingPolicyReadManager,
-            RefundPolicyReadManager refundPolicyReadManager) {
+            RefundPolicyReadManager refundPolicyReadManager,
+            LegacyUpdateBundleBuilder updateBundleBuilder) {
         this.objectMapper = objectMapper.copy();
         this.shippingPolicyReadManager = shippingPolicyReadManager;
         this.refundPolicyReadManager = refundPolicyReadManager;
+        this.updateBundleBuilder = updateBundleBuilder;
     }
 
     @Override
@@ -122,7 +131,8 @@ public class LegacyPayloadParser implements InboundProductPayloadParser {
 
     @Override
     public Optional<ProductGroupUpdateBundle> toUpdateBundle(InboundProduct product) {
-        return Optional.empty();
+        LegacyInboundUpdatePayload payload = parseUpdatePayload(product.rawPayloadJson());
+        return updateBundleBuilder.build(product, payload);
     }
 
     private LegacyInboundPayload parsePayload(String rawPayloadJson) {
@@ -130,6 +140,14 @@ public class LegacyPayloadParser implements InboundProductPayloadParser {
             return objectMapper.readValue(rawPayloadJson, LegacyInboundPayload.class);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("레거시 페이로드 JSON 파싱 실패", e);
+        }
+    }
+
+    private LegacyInboundUpdatePayload parseUpdatePayload(String rawPayloadJson) {
+        try {
+            return objectMapper.readValue(rawPayloadJson, LegacyInboundUpdatePayload.class);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("레거시 업데이트 페이로드 JSON 파싱 실패", e);
         }
     }
 
