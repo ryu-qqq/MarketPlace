@@ -1,15 +1,23 @@
 package com.ryuqq.marketplace.application.inboundproduct.service.command;
 
-import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInboundProductCommand;
+import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductConversionCoordinator;
+import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductMappingResolver;
+import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductMappingResult;
+import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductCommandManager;
 import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductReadManager;
-import com.ryuqq.marketplace.application.inboundproduct.port.in.command.ReceiveInboundProductUseCase;
 import com.ryuqq.marketplace.application.inboundproduct.port.in.command.RetryPendingMappingUseCase;
 import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
+import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * PENDING_MAPPING 상태 인바운드 상품 재처리 서비스.
+ *
+ * <p>MappingResolver + ConversionCoordinator를 직접 호출하여 매핑 재시도 → 변환을 수행합니다.
+ */
 @Service
 public class RetryPendingMappingService implements RetryPendingMappingUseCase {
 
@@ -17,13 +25,19 @@ public class RetryPendingMappingService implements RetryPendingMappingUseCase {
     private static final int RETRY_BATCH_SIZE = 100;
 
     private final InboundProductReadManager readManager;
-    private final ReceiveInboundProductUseCase receiveInboundProductUseCase;
+    private final InboundProductMappingResolver mappingResolver;
+    private final InboundProductConversionCoordinator conversionCoordinator;
+    private final InboundProductCommandManager commandManager;
 
     public RetryPendingMappingService(
             InboundProductReadManager readManager,
-            ReceiveInboundProductUseCase receiveInboundProductUseCase) {
+            InboundProductMappingResolver mappingResolver,
+            InboundProductConversionCoordinator conversionCoordinator,
+            InboundProductCommandManager commandManager) {
         this.readManager = readManager;
-        this.receiveInboundProductUseCase = receiveInboundProductUseCase;
+        this.mappingResolver = mappingResolver;
+        this.conversionCoordinator = conversionCoordinator;
+        this.commandManager = commandManager;
     }
 
     @Override
@@ -40,8 +54,7 @@ public class RetryPendingMappingService implements RetryPendingMappingUseCase {
         int successCount = 0;
         for (InboundProduct product : pendingProducts) {
             try {
-                ReceiveInboundProductCommand retryCommand = toRetryCommand(product);
-                receiveInboundProductUseCase.execute(retryCommand);
+                retryMapping(product);
                 successCount++;
             } catch (Exception e) {
                 log.warn("PENDING_MAPPING 재처리 실패: inboundProductId={}", product.idValue(), e);
@@ -55,18 +68,14 @@ public class RetryPendingMappingService implements RetryPendingMappingUseCase {
         return successCount;
     }
 
-    private ReceiveInboundProductCommand toRetryCommand(InboundProduct product) {
-        return new ReceiveInboundProductCommand(
-                product.inboundSourceId(),
-                product.externalProductCodeValue(),
-                product.productName(),
-                product.externalBrandCode(),
-                product.externalCategoryCode(),
-                product.sellerId(),
-                product.regularPrice(),
-                product.currentPrice(),
-                product.optionType(),
-                product.descriptionHtml(),
-                product.rawPayloadJson());
+    private void retryMapping(InboundProduct product) {
+        Instant now = Instant.now();
+        InboundProductMappingResult mapping = mappingResolver.resolveMappingAndApply(product, now);
+
+        if (mapping.isFullyMapped()) {
+            conversionCoordinator.convert(product, now);
+        }
+
+        commandManager.persist(product);
     }
 }

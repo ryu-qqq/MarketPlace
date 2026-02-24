@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.co
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.entity.QProductGroupDescriptionJpaEntity;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,5 +22,11 @@ public class ProductGroupDescriptionConditionBuilder {
 
     public BooleanExpression productGroupIdEq(Long productGroupId) {
         return productGroupId != null ? description.productGroupId.eq(productGroupId) : null;
+    }
+
+    public BooleanExpression productGroupIdIn(List<Long> productGroupIds) {
+        return productGroupIds != null && !productGroupIds.isEmpty()
+                ? description.productGroupId.in(productGroupIds)
+                : null;
     }
 }

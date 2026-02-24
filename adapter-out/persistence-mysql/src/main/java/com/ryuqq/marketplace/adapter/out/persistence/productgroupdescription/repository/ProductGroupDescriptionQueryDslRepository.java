@@ -57,11 +57,27 @@ public class ProductGroupDescriptionQueryDslRepository {
                 .fetch();
     }
 
+    public List<ProductGroupDescriptionJpaEntity> findByProductGroupIdIn(
+            List<Long> productGroupIds) {
+        return queryFactory
+                .selectFrom(description)
+                .where(conditionBuilder.productGroupIdIn(productGroupIds))
+                .fetch();
+    }
+
     public List<DescriptionImageJpaEntity> findImagesByDescriptionId(Long descriptionId) {
         return queryFactory
                 .selectFrom(image)
                 .where(image.productGroupDescriptionId.eq(descriptionId), image.deleted.isFalse())
                 .orderBy(image.sortOrder.asc())
+                .fetch();
+    }
+
+    public List<DescriptionImageJpaEntity> findImagesByDescriptionIds(List<Long> descriptionIds) {
+        return queryFactory
+                .selectFrom(image)
+                .where(image.productGroupDescriptionId.in(descriptionIds), image.deleted.isFalse())
+                .orderBy(image.productGroupDescriptionId.asc(), image.sortOrder.asc())
                 .fetch();
     }
 }

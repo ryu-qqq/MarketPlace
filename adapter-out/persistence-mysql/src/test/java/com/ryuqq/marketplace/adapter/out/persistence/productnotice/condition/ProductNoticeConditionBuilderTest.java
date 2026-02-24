@@ -3,6 +3,8 @@ package com.ryuqq.marketplace.adapter.out.persistence.productnotice.condition;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -86,6 +88,48 @@ class ProductNoticeConditionBuilderTest {
         void productGroupIdEq_WithNullId_ReturnsNull() {
             // when
             BooleanExpression result = conditionBuilder.productGroupIdEq(null);
+
+            // then
+            assertThat(result).isNull();
+        }
+    }
+
+    // ========================================================================
+    // 3. productGroupIdIn 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("productGroupIdIn 메서드 테스트")
+    class ProductGroupIdInTest {
+
+        @Test
+        @DisplayName("유효한 productGroupId 목록 입력 시 BooleanExpression을 반환합니다")
+        void productGroupIdIn_WithValidIds_ReturnsBooleanExpression() {
+            // given
+            List<Long> productGroupIds = List.of(1L, 2L, 3L);
+
+            // when
+            BooleanExpression result = conditionBuilder.productGroupIdIn(productGroupIds);
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("null 목록 입력 시 null을 반환합니다")
+        void productGroupIdIn_WithNullList_ReturnsNull() {
+            // when
+            BooleanExpression result = conditionBuilder.productGroupIdIn(null);
+
+            // then
+            assertThat(result).isNull();
+        }
+
+        @Test
+        @DisplayName("빈 목록 입력 시 null을 반환합니다")
+        void productGroupIdIn_WithEmptyList_ReturnsNull() {
+            // when
+            BooleanExpression result = conditionBuilder.productGroupIdIn(Collections.emptyList());
 
             // then
             assertThat(result).isNull();

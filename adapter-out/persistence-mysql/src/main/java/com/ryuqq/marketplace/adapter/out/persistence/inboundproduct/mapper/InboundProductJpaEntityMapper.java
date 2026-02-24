@@ -28,6 +28,7 @@ public class InboundProductJpaEntityMapper {
                 product.status().name(),
                 product.descriptionHtml(),
                 product.rawPayloadJson(),
+                product.retryCount(),
                 product.createdAt(),
                 product.updatedAt());
     }
@@ -53,6 +54,7 @@ public class InboundProductJpaEntityMapper {
                 InboundProductStatus.fromString(entity.getStatus()),
                 entity.getDescriptionHtml(),
                 entity.getRawPayloadJson(),
+                entity.getRetryCount(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());
     }

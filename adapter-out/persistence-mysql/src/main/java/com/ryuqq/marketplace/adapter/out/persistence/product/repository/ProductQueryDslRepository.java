@@ -56,6 +56,22 @@ public class ProductQueryDslRepository {
                 .fetch();
     }
 
+    public List<ProductJpaEntity> findByIdIn(List<Long> ids) {
+        return queryFactory
+                .selectFrom(product)
+                .where(conditionBuilder.idIn(ids), conditionBuilder.statusNotDeleted())
+                .fetch();
+    }
+
+    public List<ProductJpaEntity> findByProductGroupIdIn(List<Long> productGroupIds) {
+        return queryFactory
+                .selectFrom(product)
+                .where(
+                        conditionBuilder.productGroupIdIn(productGroupIds),
+                        conditionBuilder.statusNotDeleted())
+                .fetch();
+    }
+
     public List<ProductOptionMappingJpaEntity> findOptionMappingsByProductId(Long productId) {
         return queryFactory
                 .selectFrom(optionMapping)

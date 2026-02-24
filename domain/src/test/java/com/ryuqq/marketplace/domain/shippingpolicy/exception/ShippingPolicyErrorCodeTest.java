@@ -121,7 +121,8 @@ class ShippingPolicyErrorCodeTest {
                             ShippingPolicyErrorCode.CANNOT_DEACTIVATE_DEFAULT_POLICY,
                             ShippingPolicyErrorCode.INACTIVE_POLICY_CANNOT_BE_DEFAULT,
                             ShippingPolicyErrorCode.CANNOT_UNMARK_ONLY_DEFAULT_POLICY,
-                            ShippingPolicyErrorCode.LAST_ACTIVE_POLICY_CANNOT_BE_DEACTIVATED);
+                            ShippingPolicyErrorCode.LAST_ACTIVE_POLICY_CANNOT_BE_DEACTIVATED,
+                            ShippingPolicyErrorCode.DEFAULT_SHIPPING_POLICY_NOT_FOUND);
         }
     }
 }

@@ -99,5 +99,23 @@ class RefundPolicyErrorMapperTest {
             assertThat(result.title()).isEqualTo("Refund Policy Error");
             assertThat(result.type().toString()).contains("/errors/refund-policy/");
         }
+
+        @Test
+        @DisplayName("DefaultRefundPolicyNotFoundException(RFP-015)를 400 MappedError로 변환한다")
+        void map_DefaultRefundPolicyNotFound_Returns400() {
+            // given
+            var ex =
+                    new com.ryuqq.marketplace.domain.refundpolicy.exception
+                            .DefaultRefundPolicyNotFoundException(1L);
+
+            // when
+            ErrorMapper.MappedError result = sut.map(ex, Locale.KOREA);
+
+            // then
+            assertThat(result.status()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(result.title()).isEqualTo("Refund Policy Error");
+            assertThat(result.detail()).contains("기본 환불 정책이 없습니다");
+            assertThat(result.type().toString()).contains("rfp-015");
+        }
     }
 }

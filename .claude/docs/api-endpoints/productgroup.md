@@ -220,16 +220,13 @@
 
 **설명**: 여러 상품 그룹을 한번에 등록합니다. 각 항목은 독립 트랜잭션으로 처리되며, 일부 실패 시 나머지는 정상 등록됩니다. 최대 100건까지 가능합니다.
 
-**Request Body**:
+**Request Body** (엑셀 업로드 기반 배치 전용 – sellerId/shippingPolicyId/refundPolicyId는 서버에서 인증·기본정책으로 해석):
 ```json
 {
   "items": [
     {
-      "sellerId": 1,
       "brandId": 10,
       "categoryId": 100,
-      "shippingPolicyId": 5,
-      "refundPolicyId": 3,
       "productGroupName": "나이키 에어맥스 270",
       "optionType": "COMBINATION",
       "images": [...],
@@ -251,10 +248,16 @@
   "results": [
     { "index": 0, "productGroupId": 1001, "success": true, "errorCode": null, "errorMessage": null },
     { "index": 1, "productGroupId": 1002, "success": true, "errorCode": null, "errorMessage": null },
-    { "index": 2, "productGroupId": null, "success": false, "errorCode": "VALIDATION_ERROR", "errorMessage": "상품 그룹명은 필수입니다" }
+    { "index": 2, "productGroupId": null, "success": false, "errorCode": "SHP-015", "errorMessage": "기본 배송 정책이 없습니다. 먼저 기본 배송 정책을 설정해 주세요 (sellerId: 1)" }
   ]
 }
 ```
+
+**배치 등록 시 항목별 errorCode (실패 시)**:
+| errorCode | HTTP | 설명 |
+|-----------|------|------|
+| SHP-015 | 400 | 기본 배송 정책이 없음. 셀러 기본 배송 정책을 먼저 설정해야 함 |
+| RFP-015 | 400 | 기본 환불 정책이 없음. 셀러 기본 환불 정책을 먼저 설정해야 함 |
 
 **HTTP Status**:
 - `200 OK`: 배치 처리 완료 (개별 항목별 성공/실패 결과 확인 필요)

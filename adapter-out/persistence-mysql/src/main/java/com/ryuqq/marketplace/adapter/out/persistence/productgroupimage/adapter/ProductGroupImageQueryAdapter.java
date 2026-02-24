@@ -40,4 +40,12 @@ public class ProductGroupImageQueryAdapter implements ProductGroupImageQueryPort
                 .map(mapper::toImageDomain)
                 .toList();
     }
+
+    @Override
+    public List<ProductGroupImage> findByProductGroupIdIn(List<ProductGroupId> productGroupIds) {
+        List<Long> rawIds = productGroupIds.stream().map(ProductGroupId::value).toList();
+        return queryDslRepository.findByProductGroupIdIn(rawIds).stream()
+                .map(mapper::toImageDomain)
+                .toList();
+    }
 }

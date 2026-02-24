@@ -32,4 +32,7 @@ public final class ProductGroupAdminEndpoints {
 
     /** 배치 등록 경로 */
     public static final String BATCH = "/batch";
+
+    /** 엑셀 다운로드 경로 */
+    public static final String EXCEL = "/excel";
 }

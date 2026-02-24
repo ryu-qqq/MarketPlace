@@ -1,23 +1,26 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper;
 
-import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateOptionDetailRequest;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateOptionRequest;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateProductImageRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreatePriceRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateProductNoticeRequest;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyUpdateProductDescriptionRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyUpdateDisplayYnRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyUpdateProductGroupRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyUpdateProductStockRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyCreateProductGroupResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyOptionDto;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductFetchResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductStatusResponse;
-import com.ryuqq.marketplace.application.notice.manager.NoticeCategoryReadManager;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyMarkOutOfStockCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateDisplayStatusCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdatePriceCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateStockCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.response.LegacyProductRegistrationResult;
+import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyNoticeCategoryResolver;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
-import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.product.dto.response.ProductDetailResult;
 import com.ryuqq.marketplace.application.product.dto.response.ResolvedProductOptionResult;
+import com.ryuqq.marketplace.application.productgroup.assembler.ProductGroupAssembler;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
@@ -28,7 +31,6 @@ import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
-import com.ryuqq.marketplace.domain.notice.id.NoticeCategoryId;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
@@ -37,30 +39,36 @@ import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.springframework.stereotype.Component;
 
 /**
  * 레거시 세토프 수정 요청 DTO → 내부 Command 변환 매퍼.
  *
- * <p>세토프 PK(productGroupId)는 placeholder로 설정하며, 실제 내부 ID는 LegacyProductCommandService에서 resolve 후
+ * <p>세토프 PK(productGroupId)는 placeholder로 설정하며, 실제 내부 ID는 LegacyProductCommandFacade에서 resolve 후
  * 대체합니다.
  */
 @Component
 public class LegacyProductCommandApiMapper {
 
-    private static final long CLOTHING_NOTICE_CATEGORY_ID = 1L;
+    private final LegacyNoticeCategoryResolver legacyNoticeCategoryResolver;
+    private final ProductGroupAssembler productGroupAssembler;
+    private final LegacyImageCommandApiMapper legacyImageCommandApiMapper;
+    private final LegacyOptionCommandApiMapper legacyOptionCommandApiMapper;
 
-    private final NoticeCategoryReadManager noticeCategoryReadManager;
-
-    public LegacyProductCommandApiMapper(NoticeCategoryReadManager noticeCategoryReadManager) {
-        this.noticeCategoryReadManager = noticeCategoryReadManager;
+    public LegacyProductCommandApiMapper(
+            LegacyNoticeCategoryResolver legacyNoticeCategoryResolver,
+            ProductGroupAssembler productGroupAssembler,
+            LegacyImageCommandApiMapper legacyImageCommandApiMapper,
+            LegacyOptionCommandApiMapper legacyOptionCommandApiMapper) {
+        this.legacyNoticeCategoryResolver = legacyNoticeCategoryResolver;
+        this.productGroupAssembler = productGroupAssembler;
+        this.legacyImageCommandApiMapper = legacyImageCommandApiMapper;
+        this.legacyOptionCommandApiMapper = legacyOptionCommandApiMapper;
     }
 
     /**
@@ -85,28 +93,35 @@ public class LegacyProductCommandApiMapper {
 
         UpdateProductGroupImagesCommand imageCommand =
                 updateStatus != null && updateStatus.imageStatus()
-                        ? toImagesCommand(placeholder, request.productImageList())
+                        ? legacyImageCommandApiMapper.toImagesCommand(
+                                placeholder, request.productImageList())
                         : null;
 
-        UpdateSellerOptionGroupsCommand optionGroupCommand =
-                updateStatus != null && updateStatus.stockOptionStatus()
-                        ? toOptionGroupsCommand(placeholder, request.productOptions())
-                        : null;
+        UpdateSellerOptionGroupsCommand optionGroupCommand;
+        List<ProductDiffUpdateEntry> productEntries;
+        if (updateStatus != null && updateStatus.stockOptionStatus()) {
+            UpdateProductsCommand updateProductsCommand =
+                    legacyOptionCommandApiMapper.toUpdateProductsCommand(
+                            placeholder, request.productOptions());
+            optionGroupCommand =
+                    legacyOptionCommandApiMapper.toUpdateSellerOptionGroupsCommand(
+                            placeholder, updateProductsCommand);
+            productEntries = legacyOptionCommandApiMapper.toProductEntries(updateProductsCommand);
+        } else {
+            optionGroupCommand = null;
+            productEntries = List.of();
+        }
 
         UpdateProductGroupDescriptionCommand descriptionCommand =
                 updateStatus != null && updateStatus.descriptionStatus()
-                        ? toDescriptionCommand(placeholder, request.detailDescription())
+                        ? legacyImageCommandApiMapper.toDescriptionCommand(
+                                placeholder, request.detailDescription())
                         : null;
 
         UpdateProductNoticeCommand noticeCommand =
                 updateStatus != null && updateStatus.noticeStatus()
                         ? toNoticeCommand(placeholder, request.productNotice())
                         : null;
-
-        List<ProductDiffUpdateEntry> productEntries =
-                updateStatus != null && updateStatus.stockOptionStatus()
-                        ? toProductEntries(request.productOptions())
-                        : List.of();
 
         return new ProductGroupUpdateBundle(
                 basicInfoUpdateData,
@@ -117,18 +132,34 @@ public class LegacyProductCommandApiMapper {
                 productEntries);
     }
 
-    /** LegacyCreateProductNoticeRequest → UpdateProductNoticeCommand. */
+    /**
+     * LegacyCreateProductNoticeRequest → UpdateProductNoticeCommand.
+     *
+     * <p>productGroupId가 0(placeholder)이면 noticeCategoryId도 0으로 두며, LegacyProductCommandFacade의
+     * replaceProductGroupId에서 실제 productGroupId 기반으로 resolver가 해석하여 대체합니다.
+     */
     public UpdateProductNoticeCommand toNoticeCommand(
             long productGroupId, LegacyCreateProductNoticeRequest request) {
-        if (request == null) {
-            return new UpdateProductNoticeCommand(
-                    productGroupId, CLOTHING_NOTICE_CATEGORY_ID, List.of());
+        long noticeCategoryId;
+        NoticeCategory noticeCategory;
+        if (productGroupId == 0L) {
+            noticeCategoryId = 0L;
+            noticeCategory = null;
+        } else {
+            noticeCategory = legacyNoticeCategoryResolver.resolveByProductGroupId(productGroupId);
+            noticeCategoryId = noticeCategory.id().value();
         }
 
-        NoticeCategory clothing =
-                noticeCategoryReadManager.getById(NoticeCategoryId.of(CLOTHING_NOTICE_CATEGORY_ID));
+        if (request == null) {
+            return new UpdateProductNoticeCommand(productGroupId, noticeCategoryId, List.of());
+        }
+
+        if (noticeCategory == null) {
+            return new UpdateProductNoticeCommand(productGroupId, noticeCategoryId, List.of());
+        }
+
         Map<String, Long> fieldCodeToId =
-                clothing.fields().stream()
+                noticeCategory.fields().stream()
                         .collect(
                                 Collectors.toMap(
                                         NoticeField::fieldCodeValue, NoticeField::idValue));
@@ -143,58 +174,32 @@ public class LegacyProductCommandApiMapper {
         addNoticeEntry(entries, fieldCodeToId, "release_date", request.yearMonth());
         addNoticeEntry(entries, fieldCodeToId, "quality_assurance", request.assuranceStandard());
 
-        return new UpdateProductNoticeCommand(productGroupId, CLOTHING_NOTICE_CATEGORY_ID, entries);
+        return new UpdateProductNoticeCommand(productGroupId, noticeCategoryId, entries);
     }
 
-    /** List<LegacyCreateProductImageRequest> → UpdateProductGroupImagesCommand. */
-    public UpdateProductGroupImagesCommand toImagesCommand(
-            long productGroupId, List<LegacyCreateProductImageRequest> request) {
-        if (request == null || request.isEmpty()) {
-            return new UpdateProductGroupImagesCommand(productGroupId, List.of());
-        }
-
-        List<UpdateProductGroupImagesCommand.ImageCommand> images =
-                IntStream.range(0, request.size())
-                        .mapToObj(
-                                i -> {
-                                    var img = request.get(i);
-                                    return new UpdateProductGroupImagesCommand.ImageCommand(
-                                            img.type(), img.originUrl(), i + 1);
-                                })
-                        .toList();
-
-        return new UpdateProductGroupImagesCommand(productGroupId, images);
+    /** LegacyCreatePriceRequest → LegacyUpdatePriceCommand. */
+    public LegacyUpdatePriceCommand toPriceCommand(
+            long productGroupId, LegacyCreatePriceRequest request) {
+        return new LegacyUpdatePriceCommand(
+                productGroupId, (int) request.regularPrice(), (int) request.currentPrice());
     }
 
-    /** LegacyUpdateProductDescriptionRequest → UpdateProductGroupDescriptionCommand. */
-    public UpdateProductGroupDescriptionCommand toDescriptionCommand(
-            long productGroupId, LegacyUpdateProductDescriptionRequest request) {
-        String content = request != null ? request.detailDescription() : "";
-        return new UpdateProductGroupDescriptionCommand(productGroupId, content);
+    /** LegacyUpdateDisplayYnRequest → LegacyUpdateDisplayStatusCommand. */
+    public LegacyUpdateDisplayStatusCommand toDisplayStatusCommand(
+            long productGroupId, LegacyUpdateDisplayYnRequest request) {
+        return new LegacyUpdateDisplayStatusCommand(productGroupId, request.displayYn());
     }
 
-    /**
-     * List<LegacyCreateOptionRequest> → LegacyOptionConversionResult.
-     *
-     * <p>옵션 그룹/값 구조와 상품(SKU) 정보를 분리하여 변환합니다.
-     */
-    public LegacyOptionConversionResult toOptionCommands(
-            long productGroupId, List<LegacyCreateOptionRequest> request) {
-        if (request == null || request.isEmpty()) {
-            return new LegacyOptionConversionResult(
-                    new UpdateSellerOptionGroupsCommand(productGroupId, List.of()),
-                    List.of(),
-                    List.of());
-        }
+    /** setofProductGroupId + Request → LegacyUpdateStockCommand. */
+    public LegacyUpdateStockCommand toLegacyUpdateStockCommand(
+            long setofProductGroupId, List<LegacyUpdateProductStockRequest> request) {
+        List<UpdateProductStockCommand> commands = toStockCommands(request);
+        return new LegacyUpdateStockCommand(setofProductGroupId, commands);
+    }
 
-        UpdateSellerOptionGroupsCommand optionGroupCommand =
-                toOptionGroupsCommand(productGroupId, request);
-        List<ProductDiffUpdateEntry> productEntries = toProductEntries(request);
-        List<UpdateProductsCommand.OptionGroupData> optionGroupData =
-                toOptionGroupData(optionGroupCommand);
-
-        return new LegacyOptionConversionResult(
-                optionGroupCommand, productEntries, optionGroupData);
+    /** setofProductGroupId → LegacyMarkOutOfStockCommand. */
+    public LegacyMarkOutOfStockCommand toLegacyMarkOutOfStockCommand(long setofProductGroupId) {
+        return new LegacyMarkOutOfStockCommand(setofProductGroupId);
     }
 
     /** List<LegacyUpdateProductStockRequest> → List<UpdateProductStockCommand>. */
@@ -210,96 +215,6 @@ public class LegacyProductCommandApiMapper {
 
     // ===== Private helpers =====
 
-    private UpdateSellerOptionGroupsCommand toOptionGroupsCommand(
-            long productGroupId, List<LegacyCreateOptionRequest> options) {
-        // 옵션 그룹 구조 추출: optionName → optionValue 매핑
-        Map<String, Map<String, LegacyCreateOptionDetailRequest>> groupMap = new LinkedHashMap<>();
-        for (LegacyCreateOptionRequest option : options) {
-            if (option.options() == null) {
-                continue;
-            }
-            for (LegacyCreateOptionDetailRequest detail : option.options()) {
-                groupMap.computeIfAbsent(detail.optionName(), k -> new LinkedHashMap<>())
-                        .putIfAbsent(detail.optionValue(), detail);
-            }
-        }
-
-        List<UpdateSellerOptionGroupsCommand.OptionGroupCommand> optionGroups = new ArrayList<>();
-        for (var entry : groupMap.entrySet()) {
-            String groupName = entry.getKey();
-            Map<String, LegacyCreateOptionDetailRequest> values = entry.getValue();
-
-            List<UpdateSellerOptionGroupsCommand.OptionValueCommand> valueCommands =
-                    new ArrayList<>();
-            int valueSortOrder = 0;
-            for (var valueEntry : values.entrySet()) {
-                LegacyCreateOptionDetailRequest detail = valueEntry.getValue();
-                valueCommands.add(
-                        new UpdateSellerOptionGroupsCommand.OptionValueCommand(
-                                detail.optionDetailId(),
-                                detail.optionValue(),
-                                null,
-                                ++valueSortOrder));
-            }
-
-            optionGroups.add(
-                    new UpdateSellerOptionGroupsCommand.OptionGroupCommand(
-                            null, groupName, null, "PREDEFINED", valueCommands));
-        }
-
-        return new UpdateSellerOptionGroupsCommand(productGroupId, optionGroups);
-    }
-
-    private List<ProductDiffUpdateEntry> toProductEntries(List<LegacyCreateOptionRequest> options) {
-        List<ProductDiffUpdateEntry> entries = new ArrayList<>();
-        int sortOrder = 0;
-        for (LegacyCreateOptionRequest option : options) {
-            List<SelectedOption> selectedOptions =
-                    option.options() != null
-                            ? option.options().stream()
-                                    .map(d -> new SelectedOption(d.optionName(), d.optionValue()))
-                                    .toList()
-                            : List.of();
-
-            int additionalPrice =
-                    option.additionalPrice() != null ? option.additionalPrice().intValue() : 0;
-
-            entries.add(
-                    new ProductDiffUpdateEntry(
-                            option.productId(),
-                            null,
-                            additionalPrice,
-                            additionalPrice,
-                            option.quantity() != null ? option.quantity() : 0,
-                            ++sortOrder,
-                            selectedOptions));
-        }
-        return entries;
-    }
-
-    private List<UpdateProductsCommand.OptionGroupData> toOptionGroupData(
-            UpdateSellerOptionGroupsCommand optionGroupCommand) {
-        return optionGroupCommand.optionGroups().stream()
-                .map(
-                        g ->
-                                new UpdateProductsCommand.OptionGroupData(
-                                        g.sellerOptionGroupId(),
-                                        g.optionGroupName(),
-                                        g.canonicalOptionGroupId(),
-                                        g.inputType(),
-                                        g.optionValues().stream()
-                                                .map(
-                                                        v ->
-                                                                new UpdateProductsCommand
-                                                                        .OptionValueData(
-                                                                        v.sellerOptionValueId(),
-                                                                        v.optionValueName(),
-                                                                        v.canonicalOptionValueId(),
-                                                                        v.sortOrder()))
-                                                .toList()))
-                .toList();
-    }
-
     private void addNoticeEntry(
             List<UpdateProductNoticeCommand.NoticeEntryCommand> entries,
             Map<String, Long> fieldCodeToId,
@@ -309,6 +224,29 @@ public class LegacyProductCommandApiMapper {
         if (fieldId != null && fieldValue != null && !fieldValue.isBlank()) {
             entries.add(new UpdateProductNoticeCommand.NoticeEntryCommand(fieldId, fieldValue));
         }
+    }
+
+    /**
+     * LegacyProductRegistrationResult → LegacyCreateProductGroupResponse.
+     *
+     * <p>상품 등록 후 조회 결과(상품 그룹 + 상품 목록)를 세토프 호환 응답으로 변환합니다.
+     *
+     * <p>result만으로 판단하며, productGroup이 null(변환 대기)일 때는 productGroupId 0, 빈 상품 목록을 반환합니다.
+     */
+    public LegacyCreateProductGroupResponse toCreateResponse(
+            LegacyProductRegistrationResult result, long sellerId) {
+        if (result.productGroup() == null) {
+            return new LegacyCreateProductGroupResponse(0L, sellerId, Set.of());
+        }
+        List<ProductDetailResult> productDetails =
+                productGroupAssembler.toProductDetailResults(
+                        result.productGroup(), result.products());
+        Set<LegacyProductFetchResponse> products =
+                productDetails.stream()
+                        .map(this::toProductFetchResponse)
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+        return new LegacyCreateProductGroupResponse(
+                result.productGroup().idValue(), sellerId, products);
     }
 
     /**
@@ -383,10 +321,4 @@ public class LegacyProductCommandApiMapper {
                                         o.optionValueName()))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-
-    /** 옵션 변환 결과 (옵션 그룹 Command + 상품 엔트리 + 옵션 그룹 데이터). */
-    public record LegacyOptionConversionResult(
-            UpdateSellerOptionGroupsCommand optionGroupCommand,
-            List<ProductDiffUpdateEntry> productEntries,
-            List<UpdateProductsCommand.OptionGroupData> optionGroupData) {}
 }
