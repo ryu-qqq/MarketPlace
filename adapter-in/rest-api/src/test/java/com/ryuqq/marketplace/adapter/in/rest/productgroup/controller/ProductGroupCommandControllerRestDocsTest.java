@@ -236,12 +236,13 @@ class ProductGroupCommandControllerRestDocsTest {
 
             List<BatchItemResult<Long>> itemResults =
                     List.of(
-                            new BatchItemResult<>(1L, true, null, null),
-                            new BatchItemResult<>(2L, true, null, null));
+                            new BatchItemResult<>(1L, "테스트 상품 그룹 1", true, null, null),
+                            new BatchItemResult<>(2L, "테스트 상품 그룹 2", true, null, null));
             BatchProcessingResult<Long> batchResult =
                     new BatchProcessingResult<>(2, 2, 0, itemResults);
 
-            given(mapper.toCommands(any(BatchRegisterProductGroupApiRequest.class)))
+            given(accessChecker.resolveCurrentSellerId()).willReturn(1L);
+            given(mapper.toCommands(anyLong(), any(BatchRegisterProductGroupApiRequest.class)))
                     .willReturn(List.of());
             given(batchRegisterUseCase.execute(any())).willReturn(batchResult);
 
@@ -264,21 +265,12 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath("items")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("등록할 상품 그룹 목록 (최대 100건)"),
-                                            fieldWithPath("items[].sellerId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("셀러 ID"),
                                             fieldWithPath("items[].brandId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("브랜드 ID"),
                                             fieldWithPath("items[].categoryId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("카테고리 ID"),
-                                            fieldWithPath("items[].shippingPolicyId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("배송 정책 ID"),
-                                            fieldWithPath("items[].refundPolicyId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("환불 정책 ID"),
                                             fieldWithPath("items[].productGroupName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("상품 그룹명"),
@@ -403,6 +395,10 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath("results[].productGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("생성된 상품 그룹 ID (실패 시 null)")
+                                                    .optional(),
+                                            fieldWithPath("results[].productGroupName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청한 상품 그룹명 (실패 항목 식별용)")
                                                     .optional(),
                                             fieldWithPath("results[].success")
                                                     .type(JsonFieldType.BOOLEAN)

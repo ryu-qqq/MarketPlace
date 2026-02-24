@@ -35,4 +35,15 @@ public class InboundProductQueryAdapter implements InboundProductQueryPort {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<InboundProduct> findByStatusAndRetryCountLessThan(
+            InboundProductStatus status, int maxRetryCount, int limit) {
+        return repository
+                .findTop50ByStatusAndRetryCountLessThanOrderByCreatedAtAsc(
+                        status.name(), maxRetryCount)
+                .stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }

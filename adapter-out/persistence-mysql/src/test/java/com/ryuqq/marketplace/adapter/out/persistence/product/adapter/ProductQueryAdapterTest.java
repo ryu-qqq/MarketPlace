@@ -191,4 +191,73 @@ class ProductQueryAdapterTest {
             assertThat(result).isEmpty();
         }
     }
+
+    // ========================================================================
+    // 4. findByProductGroupIdIn 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByProductGroupIdIn 메서드 테스트")
+    class FindByProductGroupIdInTest {
+
+        @Test
+        @DisplayName("여러 ProductGroupId로 상품 목록을 배치 조회합니다")
+        void findByProductGroupIdIn_WithValidIds_ReturnsDomainList() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupId.of(1L), ProductGroupId.of(2L));
+            ProductJpaEntity entity1 = ProductJpaEntityFixtures.activeEntity(1L, 1L);
+            ProductJpaEntity entity2 = ProductJpaEntityFixtures.activeEntity(2L, 2L);
+            List<ProductOptionMappingJpaEntity> mappings =
+                    ProductJpaEntityFixtures.emptyOptionMappings();
+            Product domain1 = ProductFixtures.activeProduct(1L);
+            Product domain2 = ProductFixtures.activeProduct(2L);
+
+            given(queryDslRepository.findByProductGroupIdIn(List.of(1L, 2L)))
+                    .willReturn(List.of(entity1, entity2));
+            given(queryDslRepository.findOptionMappingsByProductIds(List.of(1L, 2L)))
+                    .willReturn(mappings);
+            given(mapper.toDomain(entity1, List.of())).willReturn(domain1);
+            given(mapper.toDomain(entity2, List.of())).willReturn(domain2);
+
+            // when
+            List<Product> result = queryAdapter.findByProductGroupIdIn(productGroupIds);
+
+            // then
+            assertThat(result).hasSize(2);
+            then(queryDslRepository).should().findByProductGroupIdIn(List.of(1L, 2L));
+        }
+
+        @Test
+        @DisplayName("빈 ProductGroupId 목록 입력 시 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithEmptyIds_ReturnsEmptyList() {
+            // given
+            List<ProductGroupId> productGroupIds = List.of();
+            given(queryDslRepository.findByProductGroupIdIn(List.of())).willReturn(List.of());
+
+            // when
+            List<Product> result = queryAdapter.findByProductGroupIdIn(productGroupIds);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("해당하는 상품이 없으면 빈 리스트를 반환합니다")
+        void findByProductGroupIdIn_WithNoMatchingProducts_ReturnsEmptyList() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupId.of(999L), ProductGroupId.of(1000L));
+            given(queryDslRepository.findByProductGroupIdIn(List.of(999L, 1000L)))
+                    .willReturn(List.of());
+
+            // when
+            List<Product> result = queryAdapter.findByProductGroupIdIn(productGroupIds);
+
+            // then
+            assertThat(result).isEmpty();
+            then(queryDslRepository).should().findByProductGroupIdIn(List.of(999L, 1000L));
+            then(queryDslRepository).shouldHaveNoMoreInteractions();
+        }
+    }
 }

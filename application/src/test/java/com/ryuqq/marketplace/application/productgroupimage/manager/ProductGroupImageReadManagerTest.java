@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.productgroupimage.manager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.productgroupimage.port.out.query.ProductGroupImageQueryPort;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
@@ -99,6 +100,57 @@ class ProductGroupImageReadManagerTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.toList()).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("findByProductGroupIds() - 여러 ProductGroupId로 이미지 배치 조회")
+    class FindByProductGroupIdsTest {
+
+        @Test
+        @DisplayName("여러 ProductGroupId로 이미지 목록을 배치 조회한다")
+        void findByProductGroupIds_ValidIds_ReturnsImages() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupFixtures.defaultProductGroupId(), ProductGroupId.of(2L));
+            ProductGroupImage image1 = ProductGroupFixtures.thumbnailImage();
+            ProductGroupImage image2 = ProductGroupFixtures.detailImage(1);
+
+            given(queryPort.findByProductGroupIdIn(productGroupIds))
+                    .willReturn(List.of(image1, image2));
+
+            // when
+            List<ProductGroupImage> result = sut.findByProductGroupIds(productGroupIds);
+
+            // then
+            assertThat(result).hasSize(2);
+        }
+
+        @Test
+        @DisplayName("빈 productGroupIds 목록이면 쿼리를 실행하지 않고 빈 목록을 반환한다")
+        void findByProductGroupIds_EmptyIds_ReturnsEmptyWithoutQuery() {
+            // when
+            List<ProductGroupImage> result = sut.findByProductGroupIds(List.of());
+
+            // then
+            assertThat(result).isEmpty();
+            then(queryPort).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("결과가 없으면 빈 목록을 반환한다")
+        void findByProductGroupIds_NoImages_ReturnsEmptyList() {
+            // given
+            List<ProductGroupId> productGroupIds =
+                    List.of(ProductGroupFixtures.defaultProductGroupId());
+
+            given(queryPort.findByProductGroupIdIn(productGroupIds)).willReturn(List.of());
+
+            // when
+            List<ProductGroupImage> result = sut.findByProductGroupIds(productGroupIds);
+
+            // then
+            assertThat(result).isEmpty();
         }
     }
 }

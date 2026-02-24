@@ -1,11 +1,14 @@
 package com.ryuqq.marketplace.application.productgroup.assembler;
 
 import com.ryuqq.marketplace.application.product.dto.response.ProductDetailResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.dto.response.ResolvedProductOptionResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
@@ -44,6 +47,39 @@ public class ProductGroupAssembler {
                 enrichComposites(bundle.baseComposites(), bundle.enrichments());
 
         return ProductGroupPageResult.of(enrichedComposites, page, size, bundle.totalElements());
+    }
+
+    /**
+     * 엑셀 번들 → ExcelCompositeResult 목록 조립.
+     *
+     * <p>기본 Composite에 enrichment를 적용한 뒤, 번들의 Map 데이터를 조합하여 풍부한 엑셀용 결과를 생성합니다.
+     */
+    public List<ProductGroupExcelCompositeResult> toExcelResults(ProductGroupExcelBundle bundle) {
+        if (bundle.baseComposites().isEmpty()) {
+            return List.of();
+        }
+
+        List<ProductGroupListCompositeResult> enrichedComposites =
+                enrichComposites(bundle.baseComposites(), bundle.enrichments());
+
+        return enrichedComposites.stream()
+                .map(
+                        base -> {
+                            List<ProductGroupImageResult> images =
+                                    bundle.imagesByProductGroupId()
+                                            .getOrDefault(base.id(), List.of());
+                            List<ProductResult> products =
+                                    bundle.productsByProductGroupId()
+                                            .getOrDefault(base.id(), List.of());
+                            String cdnUrl =
+                                    bundle.descriptionCdnUrlByProductGroupId().get(base.id());
+                            ProductNoticeResult notice =
+                                    bundle.noticeByProductGroupId().get(base.id());
+
+                            return new ProductGroupExcelCompositeResult(
+                                    base, images, products, cdnUrl, notice);
+                        })
+                .toList();
     }
 
     /** 상세 번들 → DetailCompositeResult 조립. */
@@ -110,6 +146,17 @@ public class ProductGroupAssembler {
                                     enrichment.optionGroups());
                         })
                 .toList();
+    }
+
+    /**
+     * ProductGroup + Products → ProductDetailResult 목록.
+     *
+     * <p>옵션 매핑을 resolved하여 각 Product를 ProductDetailResult로 변환합니다.
+     */
+    public List<ProductDetailResult> toProductDetailResults(
+            ProductGroup group, List<Product> products) {
+        Map<Long, ResolvedProductOptionResult> optionValueMap = buildOptionValueMap(group);
+        return toProductDetailResults(products, optionValueMap);
     }
 
     private ProductOptionMatrixResult buildOptionProductMatrix(

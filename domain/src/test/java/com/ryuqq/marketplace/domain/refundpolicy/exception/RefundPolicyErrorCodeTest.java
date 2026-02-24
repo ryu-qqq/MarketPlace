@@ -145,7 +145,8 @@ class RefundPolicyErrorCodeTest {
                             RefundPolicyErrorCode.CANNOT_DEACTIVATE_DEFAULT_POLICY,
                             RefundPolicyErrorCode.INACTIVE_POLICY_CANNOT_BE_DEFAULT,
                             RefundPolicyErrorCode.CANNOT_UNMARK_ONLY_DEFAULT_POLICY,
-                            RefundPolicyErrorCode.LAST_ACTIVE_POLICY_CANNOT_BE_DEACTIVATED);
+                            RefundPolicyErrorCode.LAST_ACTIVE_POLICY_CANNOT_BE_DEACTIVATED,
+                            RefundPolicyErrorCode.DEFAULT_REFUND_POLICY_NOT_FOUND);
         }
     }
 }

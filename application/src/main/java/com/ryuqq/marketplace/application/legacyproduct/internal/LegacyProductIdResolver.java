@@ -2,8 +2,7 @@ package com.ryuqq.marketplace.application.legacyproduct.internal;
 
 import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductReadManager;
 import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
-import com.ryuqq.marketplace.domain.inboundproduct.exception.InboundProductErrorCode;
-import com.ryuqq.marketplace.domain.inboundproduct.exception.InboundProductException;
+import com.ryuqq.marketplace.domain.inboundproduct.exception.InboundProductNotConvertedException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,9 +36,7 @@ public class LegacyProductIdResolver {
 
         Long internalId = inbound.internalProductGroupId();
         if (internalId == null) {
-            throw new InboundProductException(
-                    InboundProductErrorCode.INBOUND_PRODUCT_CONVERSION_FAILED,
-                    "세토프 상품이 아직 내부 상품으로 변환되지 않았습니다. setofProductGroupId=" + setofProductGroupId);
+            throw new InboundProductNotConvertedException(setofProductGroupId);
         }
         return new ResolvedLegacyProductId(internalId, inbound.sellerId());
     }

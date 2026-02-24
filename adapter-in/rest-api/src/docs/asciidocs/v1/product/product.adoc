@@ -52,6 +52,21 @@ include::{snippets}/product/batch-change-status/request-fields.adoc[]
 include::{snippets}/product/batch-change-status/http-response.adoc[]
 
 
+[[product-batch-update]]
+=== 상품 배치 가격/재고 수정
+
+인증 필요 | 필요 권한: `product:write`
+
+==== HTTP Request
+include::{snippets}/product/batch-update/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/product/batch-update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product/batch-update/http-response.adoc[]
+
+
 [[product-update-products]]
 === 상품 일괄 수정
 

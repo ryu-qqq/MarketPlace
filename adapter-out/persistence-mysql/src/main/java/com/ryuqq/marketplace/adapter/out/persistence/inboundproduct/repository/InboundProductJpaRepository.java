@@ -11,4 +11,7 @@ public interface InboundProductJpaRepository extends JpaRepository<InboundProduc
             Long inboundSourceId, String externalProductCode);
 
     List<InboundProductJpaEntity> findTop100ByStatusOrderByCreatedAtAsc(String status);
+
+    List<InboundProductJpaEntity> findTop50ByStatusAndRetryCountLessThanOrderByCreatedAtAsc(
+            String status, int maxRetryCount);
 }

@@ -16,11 +16,19 @@ import com.ryuqq.marketplace.application.productgroup.internal.FullProductGroupR
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.RegisterProductGroupDescriptionCommand;
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
 import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
+import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadManager;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
+import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyReadManager;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupNotFoundException;
+import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
+import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
+import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,11 +49,19 @@ class BatchRegisterProductGroupFullServiceTest {
 
     @Mock private ProductGroupBundleFactory bundleFactory;
     @Mock private FullProductGroupRegistrationCoordinator coordinator;
+    @Mock private ShippingPolicyReadManager shippingPolicyReadManager;
+    @Mock private RefundPolicyReadManager refundPolicyReadManager;
 
     @BeforeEach
     void setUp() {
         ExecutorService directExecutor = Executors.newSingleThreadExecutor();
-        sut = new BatchRegisterProductGroupFullService(bundleFactory, coordinator, directExecutor);
+        sut =
+                new BatchRegisterProductGroupFullService(
+                        bundleFactory,
+                        coordinator,
+                        shippingPolicyReadManager,
+                        refundPolicyReadManager,
+                        directExecutor);
     }
 
     @Nested
@@ -101,6 +117,7 @@ class BatchRegisterProductGroupFullServiceTest {
             BatchItemResult<Long> itemResult = result.results().get(0);
             assertThat(itemResult.success()).isTrue();
             assertThat(itemResult.id()).isEqualTo(expectedId);
+            assertThat(itemResult.itemName()).isNotBlank();
         }
 
         @Test
@@ -169,6 +186,8 @@ class BatchRegisterProductGroupFullServiceTest {
 
             BatchItemResult<Long> itemResult = result.results().get(0);
             assertThat(itemResult.success()).isFalse();
+            assertThat(itemResult.id()).isNull();
+            assertThat(itemResult.itemName()).isNotBlank();
             assertThat(itemResult.errorCode()).isEqualTo(domainException.code());
             assertThat(itemResult.errorMessage()).isNotBlank();
         }
@@ -193,11 +212,12 @@ class BatchRegisterProductGroupFullServiceTest {
             BatchItemResult<Long> itemResult = result.results().get(0);
             assertThat(itemResult.success()).isFalse();
             assertThat(itemResult.errorCode()).isEqualTo("INTERNAL_ERROR");
+            assertThat(itemResult.itemName()).isNotBlank();
         }
 
         @Test
-        @DisplayName("일반 Exception 발생 시 id는 null로 기록된다")
-        void execute_UnexpectedException_RecordsNullId() {
+        @DisplayName("일반 Exception 발생 시 id는 null이고 itemName은 유지된다")
+        void execute_UnexpectedException_RecordsNullIdButKeepsItemName() {
             // given
             List<RegisterProductGroupCommand> commands =
                     ProductGroupCommandFixtures.batchRegisterCommands(1);
@@ -211,6 +231,7 @@ class BatchRegisterProductGroupFullServiceTest {
             // then
             BatchItemResult<Long> itemResult = result.results().get(0);
             assertThat(itemResult.id()).isNull();
+            assertThat(itemResult.itemName()).isNotBlank();
         }
 
         @Test
@@ -274,6 +295,118 @@ class BatchRegisterProductGroupFullServiceTest {
             assertThat(result.totalCount()).isEqualTo(2);
             assertThat(result.successCount()).isEqualTo(2);
             assertThat(result.failureCount()).isZero();
+        }
+
+        @Test
+        @DisplayName("미해결 정책 ID(0)인 경우 셀러 기본 정책으로 보정 후 등록한다")
+        void execute_UnresolvedPolicyIds_ResolvesDefaultPolicies() {
+            // given
+            RegisterProductGroupCommand unresolvedCommand =
+                    new RegisterProductGroupCommand(
+                            ProductGroupCommandFixtures.DEFAULT_SELLER_ID,
+                            ProductGroupCommandFixtures.DEFAULT_BRAND_ID,
+                            ProductGroupCommandFixtures.DEFAULT_CATEGORY_ID,
+                            0L,
+                            0L,
+                            ProductGroupCommandFixtures.DEFAULT_PRODUCT_GROUP_NAME,
+                            ProductGroupCommandFixtures.DEFAULT_OPTION_TYPE,
+                            ProductGroupCommandFixtures.defaultImageCommands(),
+                            ProductGroupCommandFixtures.defaultOptionGroupCommands(),
+                            ProductGroupCommandFixtures.defaultProductCommands(),
+                            ProductGroupCommandFixtures.defaultDescriptionCommand(),
+                            ProductGroupCommandFixtures.defaultNoticeCommand());
+            List<RegisterProductGroupCommand> commands = List.of(unresolvedCommand);
+
+            ShippingPolicy shippingPolicy = org.mockito.Mockito.mock(ShippingPolicy.class);
+            given(shippingPolicy.id()).willReturn(ShippingPolicyId.of(11L));
+            RefundPolicy refundPolicy = org.mockito.Mockito.mock(RefundPolicy.class);
+            given(refundPolicy.id()).willReturn(RefundPolicyId.of(22L));
+            given(shippingPolicyReadManager.findDefaultBySellerId(SellerId.of(1L)))
+                    .willReturn(Optional.of(shippingPolicy));
+            given(refundPolicyReadManager.findDefaultBySellerId(SellerId.of(1L)))
+                    .willReturn(Optional.of(refundPolicy));
+
+            ProductGroupRegistrationBundle bundle = createRegistrationBundle();
+            given(bundleFactory.createProductGroupBundle(any())).willReturn(bundle);
+            given(coordinator.register(bundle)).willReturn(100L);
+
+            // when
+            BatchProcessingResult<Long> result = sut.execute(commands);
+
+            // then
+            assertThat(result.successCount()).isEqualTo(1);
+            then(shippingPolicyReadManager).should().findDefaultBySellerId(SellerId.of(1L));
+            then(refundPolicyReadManager).should().findDefaultBySellerId(SellerId.of(1L));
+        }
+
+        @Test
+        @DisplayName("기본 배송 정책이 없으면 SHP-015 에러로 실패 처리된다")
+        void execute_DefaultShippingPolicyMissing_ReturnsSpecificError() {
+            // given
+            RegisterProductGroupCommand unresolvedCommand =
+                    new RegisterProductGroupCommand(
+                            ProductGroupCommandFixtures.DEFAULT_SELLER_ID,
+                            ProductGroupCommandFixtures.DEFAULT_BRAND_ID,
+                            ProductGroupCommandFixtures.DEFAULT_CATEGORY_ID,
+                            0L,
+                            0L,
+                            ProductGroupCommandFixtures.DEFAULT_PRODUCT_GROUP_NAME,
+                            ProductGroupCommandFixtures.DEFAULT_OPTION_TYPE,
+                            ProductGroupCommandFixtures.defaultImageCommands(),
+                            ProductGroupCommandFixtures.defaultOptionGroupCommands(),
+                            ProductGroupCommandFixtures.defaultProductCommands(),
+                            ProductGroupCommandFixtures.defaultDescriptionCommand(),
+                            ProductGroupCommandFixtures.defaultNoticeCommand());
+
+            given(shippingPolicyReadManager.findDefaultBySellerId(SellerId.of(1L)))
+                    .willReturn(Optional.empty());
+
+            // when
+            BatchProcessingResult<Long> result = sut.execute(List.of(unresolvedCommand));
+
+            // then
+            BatchItemResult<Long> itemResult = result.results().get(0);
+            assertThat(itemResult.success()).isFalse();
+            assertThat(itemResult.errorCode()).isEqualTo("SHP-015");
+            assertThat(itemResult.errorMessage()).contains("기본 배송 정책이 없습니다");
+            assertThat(itemResult.itemName()).isNotBlank();
+        }
+
+        @Test
+        @DisplayName("기본 환불 정책이 없으면 RFP-015 에러로 실패 처리된다")
+        void execute_DefaultRefundPolicyMissing_ReturnsSpecificError() {
+            // given
+            RegisterProductGroupCommand unresolvedCommand =
+                    new RegisterProductGroupCommand(
+                            ProductGroupCommandFixtures.DEFAULT_SELLER_ID,
+                            ProductGroupCommandFixtures.DEFAULT_BRAND_ID,
+                            ProductGroupCommandFixtures.DEFAULT_CATEGORY_ID,
+                            0L,
+                            0L,
+                            ProductGroupCommandFixtures.DEFAULT_PRODUCT_GROUP_NAME,
+                            ProductGroupCommandFixtures.DEFAULT_OPTION_TYPE,
+                            ProductGroupCommandFixtures.defaultImageCommands(),
+                            ProductGroupCommandFixtures.defaultOptionGroupCommands(),
+                            ProductGroupCommandFixtures.defaultProductCommands(),
+                            ProductGroupCommandFixtures.defaultDescriptionCommand(),
+                            ProductGroupCommandFixtures.defaultNoticeCommand());
+
+            ShippingPolicy shippingPolicy = org.mockito.Mockito.mock(ShippingPolicy.class);
+            given(shippingPolicy.id()).willReturn(ShippingPolicyId.of(11L));
+            given(shippingPolicyReadManager.findDefaultBySellerId(SellerId.of(1L)))
+                    .willReturn(Optional.of(shippingPolicy));
+            given(refundPolicyReadManager.findDefaultBySellerId(SellerId.of(1L)))
+                    .willReturn(Optional.empty());
+
+            // when
+            BatchProcessingResult<Long> result = sut.execute(List.of(unresolvedCommand));
+
+            // then
+            BatchItemResult<Long> itemResult = result.results().get(0);
+            assertThat(itemResult.success()).isFalse();
+            assertThat(itemResult.errorCode()).isEqualTo("RFP-015");
+            assertThat(itemResult.errorMessage()).contains("기본 환불 정책이 없습니다");
+            assertThat(itemResult.itemName()).isNotBlank();
         }
     }
 

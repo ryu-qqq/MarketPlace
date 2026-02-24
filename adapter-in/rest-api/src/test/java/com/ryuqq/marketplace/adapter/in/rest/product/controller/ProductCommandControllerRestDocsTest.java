@@ -20,11 +20,13 @@ import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker
 import com.ryuqq.marketplace.adapter.in.rest.product.ProductAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.product.ProductApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchChangeProductStatusApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.BatchUpdateProductApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductPriceApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductStockApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.dto.command.UpdateProductsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.product.mapper.ProductCommandApiMapper;
 import com.ryuqq.marketplace.application.product.port.in.command.BatchChangeProductStatusUseCase;
+import com.ryuqq.marketplace.application.product.port.in.command.BatchUpdateProductUseCase;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductPriceUseCase;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductStockUseCase;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductsUseCase;
@@ -59,6 +61,7 @@ class ProductCommandControllerRestDocsTest {
     @MockitoBean private UpdateProductPriceUseCase updatePriceUseCase;
     @MockitoBean private UpdateProductStockUseCase updateStockUseCase;
     @MockitoBean private BatchChangeProductStatusUseCase batchChangeStatusUseCase;
+    @MockitoBean private BatchUpdateProductUseCase batchUpdateProductUseCase;
     @MockitoBean private UpdateProductsUseCase updateProductsUseCase;
     @MockitoBean private ProductCommandApiMapper mapper;
     @MockitoBean private MarketAccessChecker accessChecker;
@@ -191,6 +194,53 @@ class ProductCommandControllerRestDocsTest {
                                                     .description(
                                                             "변경할 상태 (ACTIVE, INACTIVE,"
                                                                     + " SOLDOUT)"))));
+        }
+    }
+
+    @Nested
+    @DisplayName("상품 배치 가격/재고 수정 API")
+    class BatchUpdateProductsTest {
+
+        @Test
+        @DisplayName("유효한 요청이면 204를 반환한다")
+        void batchUpdateProducts_ValidRequest_Returns204() throws Exception {
+            // given
+            BatchUpdateProductApiRequest request = ProductApiFixtures.batchUpdateRequest();
+
+            given(accessChecker.resolveCurrentSellerId())
+                    .willReturn(ProductApiFixtures.DEFAULT_SELLER_ID);
+            given(mapper.toCommand(anyLong(), any(BatchUpdateProductApiRequest.class)))
+                    .willReturn(null);
+            doNothing().when(batchUpdateProductUseCase).execute(any());
+
+            // when & then
+            mockMvc.perform(
+                            RestDocumentationRequestBuilders.patch(
+                                            BASE_URL + ProductAdminEndpoints.BATCH)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isNoContent())
+                    .andDo(
+                            document(
+                                    "product/batch-update",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestFields(
+                                            fieldWithPath("items")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("수정할 상품 항목 목록 (최대 100건)"),
+                                            fieldWithPath("items[].productId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품 ID"),
+                                            fieldWithPath("items[].regularPrice")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("정가"),
+                                            fieldWithPath("items[].currentPrice")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("판매가 (정가 이하)"),
+                                            fieldWithPath("items[].stockQuantity")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("재고 수량 (0 이상)"))));
         }
     }
 
