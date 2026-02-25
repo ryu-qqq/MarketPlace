@@ -84,7 +84,16 @@ public class LegacyProductCommandEntityMapper {
 
     public LegacyProductEntity toEntity(LegacyProduct data) {
         return LegacyProductEntity.create(
-                data.productGroupIdValue(), data.soldOutYn(), data.displayYn());
+                data.idValue(),
+                data.productGroupIdValue(),
+                data.soldOutYn(),
+                data.displayYn(),
+                data.isDeleted() ? "Y" : "N");
+    }
+
+    public LegacyProductStockEntity toStockEntity(LegacyProduct data) {
+        return LegacyProductStockEntity.create(
+                data.idValue(), data.stockQuantity(), data.isDeleted() ? "Y" : "N");
     }
 
     public LegacyProductStockEntity toEntity(LegacyProductId productId, int stockQuantity) {
@@ -93,10 +102,40 @@ public class LegacyProductCommandEntityMapper {
 
     public LegacyProductOptionEntity toEntity(LegacyProductOption data) {
         return LegacyProductOptionEntity.create(
+                data.id(),
                 data.productId().value(),
                 data.optionGroupId().value(),
                 data.optionDetailId().value(),
-                data.additionalPrice());
+                data.additionalPrice(),
+                data.isDeleted() ? "Y" : "N");
+    }
+
+    /** LegacyProductEntity → LegacyProduct 도메인 복원. */
+    public LegacyProduct toProductDomain(
+            LegacyProductEntity entity,
+            int stockQuantity,
+            java.util.List<LegacyProductOption> options) {
+        return LegacyProduct.reconstitute(
+                entity.getId(),
+                entity.getProductGroupId(),
+                entity.getSoldOutYn(),
+                entity.getDisplayYn(),
+                stockQuantity,
+                options,
+                DeletionStatus.active());
+    }
+
+    /** LegacyProductOptionEntity → LegacyProductOption 도메인 복원. */
+    public LegacyProductOption toOptionDomain(LegacyProductOptionEntity entity) {
+        return LegacyProductOption.reconstitute(
+                entity.getId(),
+                LegacyProductId.of(entity.getProductId()),
+                com.ryuqq.marketplace.domain.legacy.optiongroup.id.LegacyOptionGroupId.of(
+                        entity.getOptionGroupId()),
+                com.ryuqq.marketplace.domain.legacy.optiondetail.id.LegacyOptionDetailId.of(
+                        entity.getOptionDetailId()),
+                entity.getAdditionalPrice(),
+                DeletionStatus.active());
     }
 
     public LegacyProductNoticeEntity toEntity(

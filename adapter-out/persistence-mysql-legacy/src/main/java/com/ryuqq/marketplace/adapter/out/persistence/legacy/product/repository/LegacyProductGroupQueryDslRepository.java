@@ -57,7 +57,9 @@ public class LegacyProductGroupQueryDslRepository {
     public List<LegacyProductEntity> findProductsByProductGroupId(long productGroupId) {
         return queryFactory
                 .selectFrom(legacyProductEntity)
-                .where(legacyProductEntity.productGroupId.eq(productGroupId))
+                .where(
+                        legacyProductEntity.productGroupId.eq(productGroupId),
+                        legacyProductEntity.deleteYn.eq("N"))
                 .fetch();
     }
 
@@ -67,7 +69,9 @@ public class LegacyProductGroupQueryDslRepository {
         }
         return queryFactory
                 .selectFrom(legacyProductOptionEntity)
-                .where(legacyProductOptionEntity.productId.in(productIds))
+                .where(
+                        legacyProductOptionEntity.productId.in(productIds),
+                        legacyProductOptionEntity.deleteYn.eq("N"))
                 .fetch();
     }
 
@@ -77,7 +81,9 @@ public class LegacyProductGroupQueryDslRepository {
         }
         return queryFactory
                 .selectFrom(legacyProductStockEntity)
-                .where(legacyProductStockEntity.productId.in(productIds))
+                .where(
+                        legacyProductStockEntity.productId.in(productIds),
+                        legacyProductStockEntity.deleteYn.eq("N"))
                 .fetch();
     }
 
