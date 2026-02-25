@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
         prefix = "sqs.consumer.intelligence-aggregation",
         name = "enabled",
         havingValue = "true",
-        matchIfMissing = true)
+        matchIfMissing = false)
 public class AggregationListener {
 
     private static final Logger log = LoggerFactory.getLogger(AggregationListener.class);

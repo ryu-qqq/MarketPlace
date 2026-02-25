@@ -14,18 +14,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class LegacyImageCommandApiMapper {
 
-    /** setofProductGroupId + Request → LegacyUpdateImagesCommand. */
+    /** productGroupId + Request → LegacyUpdateImagesCommand. */
     public LegacyUpdateImagesCommand toLegacyUpdateImagesCommand(
-            long setofProductGroupId, List<LegacyCreateProductImageRequest> request) {
-        UpdateProductGroupImagesCommand command = toImagesCommand(0L, request);
-        return new LegacyUpdateImagesCommand(setofProductGroupId, command);
+            long productGroupId, List<LegacyCreateProductImageRequest> request) {
+        List<LegacyUpdateImagesCommand.ImageEntry> entries =
+                request.stream()
+                        .map(
+                                img ->
+                                        new LegacyUpdateImagesCommand.ImageEntry(
+                                                img.type(), img.productImageUrl(), img.originUrl()))
+                        .toList();
+        return new LegacyUpdateImagesCommand(productGroupId, entries);
     }
 
-    /** setofProductGroupId + Request → LegacyUpdateDescriptionCommand. */
+    /** productGroupId + Request → LegacyUpdateDescriptionCommand. */
     public LegacyUpdateDescriptionCommand toLegacyUpdateDescriptionCommand(
-            long setofProductGroupId, LegacyUpdateProductDescriptionRequest request) {
-        UpdateProductGroupDescriptionCommand command = toDescriptionCommand(0L, request);
-        return new LegacyUpdateDescriptionCommand(setofProductGroupId, command);
+            long productGroupId, LegacyUpdateProductDescriptionRequest request) {
+        return new LegacyUpdateDescriptionCommand(productGroupId, request.detailDescription());
     }
 
     /** List&lt;LegacyCreateProductImageRequest&gt; → UpdateProductGroupImagesCommand. */

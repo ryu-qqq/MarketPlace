@@ -2,18 +2,20 @@ package com.ryuqq.marketplace.application.productgroup.factory;
 
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
-import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.ImageEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData.NoticeEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry.OptionValueEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.ProductEntry;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
-import com.ryuqq.marketplace.application.productgroupdescription.dto.command.RegisterProductGroupDescriptionCommand;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
-import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand;
-import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
 import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
-import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
@@ -36,6 +38,7 @@ import org.springframework.stereotype.Component;
  *
  * <p>APP-TIM-001: TimeProvider는 Factory에서만 사용합니다.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 @Component
 public class ProductGroupBundleFactory {
 
@@ -48,8 +51,8 @@ public class ProductGroupBundleFactory {
     /**
      * 상품 그룹 등록 번들 생성.
      *
-     * <p>ProductGroup + per-package 등록 Command를 포함하는 번들을 생성합니다. Description, Notice는 Coordinator에서
-     * per-package Factory + Coordinator를 통해 처리됩니다.
+     * <p>ProductGroup + per-package 등록 데이터를 포함하는 번들을 생성합니다. 도메인 객체 생성은 번들의 {@code bindAll()} 호출 시
+     * 수행됩니다.
      *
      * <p>APP-TIM-001: TimeProvider는 Factory에서만 사용합니다.
      *
@@ -71,43 +74,32 @@ public class ProductGroupBundleFactory {
                         OptionType.valueOf(command.optionType()),
                         now);
 
-        RegisterProductGroupImagesCommand imageCommand =
-                new RegisterProductGroupImagesCommand(0L, toImageCommands(command.images()));
+        List<ImageEntry> images = toImageEntries(command.images());
 
-        RegisterSellerOptionGroupsCommand optionGroupCommand =
-                new RegisterSellerOptionGroupsCommand(
-                        0L,
-                        command.optionType(),
+        OptionRegistrationData optionData =
+                new OptionRegistrationData(
+                        OptionType.valueOf(command.optionType()),
                         command.optionGroups() != null
-                                ? toOptionGroupCommands(command.optionGroups())
+                                ? toOptionGroupEntries(command.optionGroups())
                                 : List.of());
 
-        RegisterProductGroupDescriptionCommand descriptionCommand =
-                new RegisterProductGroupDescriptionCommand(0L, command.description().content());
+        String descriptionContent = command.description().content();
 
-        RegisterProductNoticeCommand noticeCommand =
-                new RegisterProductNoticeCommand(
-                        0L,
+        NoticeRegistrationData noticeData =
+                new NoticeRegistrationData(
                         command.notice().noticeCategoryId(),
-                        toNoticeEntryCommands(command.notice().entries()));
+                        toNoticeEntries(command.notice().entries()));
 
-        RegisterProductsCommand productCommand =
-                new RegisterProductsCommand(0L, toProductDataCommands(command.products()));
+        List<ProductEntry> products = toProductEntries(command.products());
 
         return new ProductGroupRegistrationBundle(
-                productGroup,
-                imageCommand,
-                optionGroupCommand,
-                descriptionCommand,
-                noticeCommand,
-                productCommand,
-                now);
+                productGroup, images, optionData, descriptionContent, noticeData, products, now);
     }
 
     /**
      * 상품 그룹 수정 번들 생성.
      *
-     * <p>UpdateProductGroupFullCommand → 도메인별 Update Command 매핑.
+     * <p>UpdateProductGroupFullCommand -> 도메인별 Update Command 매핑.
      *
      * @param command 수정 Command
      * @return 수정 번들
@@ -158,32 +150,28 @@ public class ProductGroupBundleFactory {
                 productEntries);
     }
 
-    // === Registration: per-package Command 변환 ===
+    // === Registration: Preparation Record 변환 ===
 
-    private static List<RegisterProductGroupImagesCommand.ImageCommand> toImageCommands(
+    private static List<ImageEntry> toImageEntries(
             List<RegisterProductGroupCommand.ImageCommand> images) {
         return images.stream()
-                .map(
-                        img ->
-                                new RegisterProductGroupImagesCommand.ImageCommand(
-                                        img.imageType(), img.originUrl(), img.sortOrder()))
+                .map(img -> new ImageEntry(img.imageType(), img.originUrl(), img.sortOrder()))
                 .toList();
     }
 
-    private static List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> toOptionGroupCommands(
+    private static List<OptionGroupEntry> toOptionGroupEntries(
             List<RegisterProductGroupCommand.OptionGroupCommand> optionGroups) {
         return optionGroups.stream()
                 .map(
                         g ->
-                                new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
+                                new OptionGroupEntry(
                                         g.optionGroupName(),
                                         g.canonicalOptionGroupId(),
                                         g.inputType(),
                                         g.optionValues().stream()
                                                 .map(
                                                         v ->
-                                                                new RegisterSellerOptionGroupsCommand
-                                                                        .OptionValueCommand(
+                                                                new OptionValueEntry(
                                                                         v.optionValueName(),
                                                                         v.canonicalOptionValueId(),
                                                                         v.sortOrder()))
@@ -191,22 +179,19 @@ public class ProductGroupBundleFactory {
                 .toList();
     }
 
-    private static List<RegisterProductNoticeCommand.NoticeEntryCommand> toNoticeEntryCommands(
+    private static List<NoticeEntry> toNoticeEntries(
             List<RegisterProductGroupCommand.NoticeEntryCommand> entries) {
         return entries.stream()
-                .map(
-                        e ->
-                                new RegisterProductNoticeCommand.NoticeEntryCommand(
-                                        e.noticeFieldId(), e.fieldValue()))
+                .map(e -> new NoticeEntry(e.noticeFieldId(), e.fieldValue()))
                 .toList();
     }
 
-    private static List<RegisterProductsCommand.ProductData> toProductDataCommands(
+    private static List<ProductEntry> toProductEntries(
             List<RegisterProductGroupCommand.ProductCommand> products) {
         return products.stream()
                 .map(
                         p ->
-                                new RegisterProductsCommand.ProductData(
+                                new ProductEntry(
                                         p.skuCode(),
                                         p.regularPrice(),
                                         p.currentPrice(),

@@ -27,6 +27,8 @@ spring:
       - classpath:rest-api.yml
       - classpath:persistence.yml
       - classpath:persistence-local.yml
+      - optional:classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-local.yml
       - classpath:redis.yml
       - classpath:redis-local.yml
       - classpath:authhub.yml

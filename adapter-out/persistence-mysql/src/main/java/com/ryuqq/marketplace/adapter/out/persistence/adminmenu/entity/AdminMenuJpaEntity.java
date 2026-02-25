@@ -37,7 +37,7 @@ public class AdminMenuJpaEntity extends BaseAuditEntity {
     @Column(name = "url", length = 200)
     private String url;
 
-    @Column(name = "icon_name", nullable = false, length = 50)
+    @Column(name = "icon_name", length = 50)
     private String iconName;
 
     @Column(name = "display_order", nullable = false)

@@ -129,6 +129,13 @@ data "aws_ssm_parameter" "authhub_service_token" {
 }
 
 # ========================================
+# Sentry Configuration
+# ========================================
+data "aws_ssm_parameter" "sentry_dsn" {
+  name = "/${var.project_name}/sentry/dsn"
+}
+
+# ========================================
 # Naver Commerce Configuration
 # ========================================
 data "aws_ssm_parameter" "naver_commerce_client_id" {
@@ -161,4 +168,7 @@ locals {
   # AMP Configuration
   amp_workspace_arn    = data.aws_ssm_parameter.amp_workspace_arn.value
   amp_remote_write_url = data.aws_ssm_parameter.amp_remote_write_url.value
+
+  # Sentry Configuration
+  sentry_dsn = data.aws_ssm_parameter.sentry_dsn.value
 }

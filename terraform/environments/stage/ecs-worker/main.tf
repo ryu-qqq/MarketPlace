@@ -404,7 +404,9 @@ module "ecs_service" {
     # SQS Queue URLs
     { name = "SQS_INSPECTION_SCORING_URL", value = local.sqs_scoring_queue_url },
     { name = "SQS_INSPECTION_ENHANCEMENT_URL", value = local.sqs_enhancement_queue_url },
-    { name = "SQS_INSPECTION_VERIFICATION_URL", value = local.sqs_verification_queue_url }
+    { name = "SQS_INSPECTION_VERIFICATION_URL", value = local.sqs_verification_queue_url },
+    # Sentry
+    { name = "SENTRY_DSN", value = local.sentry_dsn }
   ]
 
   # Container Secrets

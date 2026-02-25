@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.application.inboundproduct.service.command;
 
-import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductConversionCoordinator;
 import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductCommandManager;
 import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductReadManager;
 import com.ryuqq.marketplace.application.inboundproduct.port.in.command.RetryConvertFailedUseCase;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 /**
  * CONVERT_FAILED 상태 인바운드 상품 변환 재시도 서비스.
  *
- * <p>최대 3회까지 변환을 재시도하며, 초과 시 해당 상품은 조회 대상에서 제외됩니다.
+ * <p>최대 3회까지 재시도하며, PENDING_CONVERSION으로 상태를 전이합니다. 실제 변환은 InboundConversionScheduler가 비동기로 수행합니다.
  */
 @Service
 public class RetryConvertFailedService implements RetryConvertFailedUseCase {
@@ -24,15 +23,11 @@ public class RetryConvertFailedService implements RetryConvertFailedUseCase {
     private static final int RETRY_BATCH_SIZE = 50;
 
     private final InboundProductReadManager readManager;
-    private final InboundProductConversionCoordinator conversionCoordinator;
     private final InboundProductCommandManager commandManager;
 
     public RetryConvertFailedService(
-            InboundProductReadManager readManager,
-            InboundProductConversionCoordinator conversionCoordinator,
-            InboundProductCommandManager commandManager) {
+            InboundProductReadManager readManager, InboundProductCommandManager commandManager) {
         this.readManager = readManager;
-        this.conversionCoordinator = conversionCoordinator;
         this.commandManager = commandManager;
     }
 
@@ -50,10 +45,9 @@ public class RetryConvertFailedService implements RetryConvertFailedUseCase {
         int successCount = 0;
         for (InboundProduct product : failedProducts) {
             try {
-                retryConversion(product);
-                if (product.status().isConverted()) {
-                    successCount++;
-                }
+                product.markPendingConversion(Instant.now());
+                commandManager.persist(product);
+                successCount++;
             } catch (Exception e) {
                 log.warn("CONVERT_FAILED 재처리 실패: inboundProductId={}", product.idValue(), e);
             }
@@ -62,11 +56,5 @@ public class RetryConvertFailedService implements RetryConvertFailedUseCase {
         log.info(
                 "CONVERT_FAILED 재처리 완료: total={}, success={}", failedProducts.size(), successCount);
         return successCount;
-    }
-
-    private void retryConversion(InboundProduct product) {
-        Instant now = Instant.now();
-        conversionCoordinator.convert(product, now);
-        commandManager.persist(product);
     }
 }

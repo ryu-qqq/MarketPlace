@@ -1,0 +1,19 @@
+# ============================================================
+# Persistence Legacy Layer 공통 설정
+# ============================================================
+# 레거시 DB(luxurydb) 접근을 위한 별도 DataSource 설정
+# Strangler Fig 패턴의 전환기에서 사용
+#
+# 환경별 설정은 persistence-legacy-{profile}.yml 참조
+# - persistence-legacy-local.yml: 로컬 개발 환경
+# - persistence-legacy-stage.yml: 스테이징 환경
+# - persistence-legacy-prod.yml: 운영 환경
+#
+# 활성화: persistence.legacy.enabled=true
+# ============================================================
+
+persistence:
+  legacy:
+    enabled: ${LEGACY_DB_ENABLED:false}
+    datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver

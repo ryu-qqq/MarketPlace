@@ -1,13 +1,20 @@
 package com.ryuqq.marketplace.application.legacyproduct.service.command;
 
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateStockCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyStockUpdateCoordinator;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateStockUseCase;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.query.LegacyProductQueryUseCase;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
+import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
-/** 레거시 상품 재고 수정 Service. */
+/**
+ * 레거시 상품 재고 수정 Service.
+ *
+ * <p>재고 커맨드를 productId → stockQuantity 맵으로 변환 후 LegacyStockUpdateCoordinator에 위임합니다.
+ */
 @Service
 public class LegacyProductUpdateStockService implements LegacyProductUpdateStockUseCase {
 
@@ -22,8 +29,17 @@ public class LegacyProductUpdateStockService implements LegacyProductUpdateStock
     }
 
     @Override
-    public ProductGroupDetailCompositeResult execute(LegacyUpdateStockCommand command) {
-        stockUpdateCoordinator.execute(command.commands());
-        return legacyProductQueryUseCase.execute(command.setofProductGroupId());
+    public LegacyProductGroupDetailResult execute(LegacyUpdateStockCommand command) {
+        LegacyProductGroupId groupId = LegacyProductGroupId.of(command.productGroupId());
+
+        Map<Long, Integer> stockUpdates =
+                command.stockEntries().stream()
+                        .collect(
+                                Collectors.toMap(
+                                        LegacyUpdateStockCommand.StockEntry::productId,
+                                        LegacyUpdateStockCommand.StockEntry::stockQuantity));
+
+        stockUpdateCoordinator.execute(groupId, stockUpdates);
+        return legacyProductQueryUseCase.execute(command.productGroupId());
     }
 }
