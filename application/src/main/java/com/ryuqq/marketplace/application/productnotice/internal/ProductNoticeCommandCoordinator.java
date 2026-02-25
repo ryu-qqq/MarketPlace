@@ -53,8 +53,19 @@ public class ProductNoticeCommandCoordinator {
     @Transactional
     public Long register(RegisterProductNoticeCommand command) {
         ProductNotice notice = noticeCommandFactory.create(command);
-        noticeEntriesValidator.validate(notice);
-        return persist(notice);
+        return register(notice);
+    }
+
+    /**
+     * 도메인 객체로 Notice 검증 + 저장.
+     *
+     * @param productNotice ProductNotice 도메인 객체
+     * @return 저장된 noticeId
+     */
+    @Transactional
+    public Long register(ProductNotice productNotice) {
+        noticeEntriesValidator.validate(productNotice);
+        return persist(productNotice);
     }
 
     /**

@@ -1,7 +1,8 @@
 # InboundProduct 파이프라인 리팩토링 설계서
 
 > 작성일: 2026-02-23
-> 상태: Draft
+> 최종 수정: 2026-02-25
+> 상태: Draft → **Updated** (분리 아웃박스 + InboundProduct 크롤링 전용 결정 반영)
 > 상위 문서: [product-integration-migration-plan.md](./product-integration-migration-plan.md)
 > 관련 브랜치: feature/product-integration
 
@@ -34,12 +35,27 @@ public class ReceiveInboundProductService implements ReceiveInboundProductUseCas
 ### 1.2 등록 흐름 (InboundProductRegisterCoordinator)
 
 ```
+[현재 - 동기 변환]
 RegisterCoordinator.register(command)
   ① factory.create(command)                     → InboundProduct 도메인 생성
   ② mappingResolver.resolveMappingAndApply()     → 브랜드/카테고리 매핑
-  ③ conversionCoordinator.convert()              → 내부 ProductGroup 전체 등록 (동기)
+  ③ conversionCoordinator.convert()              → 내부 ProductGroup 전체 등록 (동기) ← 변경 대상
   ④ commandManager.persist(newProduct)           → InboundProduct 저장
   ⑤ return ConversionResult                     → PK 반환
+
+[변경 후 - 비동기 변환 (2026-02-25 결정)]
+RegisterCoordinator.register(command)
+  ① factory.create(command)                     → InboundProduct 도메인 생성
+  ② mappingResolver.resolveMappingAndApply()     → 브랜드/카테고리 매핑
+  ③ markPendingConversion()                     → 상태 = PENDING_CONVERSION (변환 대기)
+  ④ commandManager.persist(newProduct)           → InboundProduct 저장
+  ⑤ return ConversionResult(pendingConversion)  → 변환 대기 응답
+
+InboundConversionScheduler (비동기):
+  ① PENDING_CONVERSION 상태 InboundProduct 폴링
+  ② conversionCoordinator.convert()              → 내부 상품 생성
+  ③ markConverted(productGroupId)               → CONVERTED
+  ④ persist
 ```
 
 ### 1.3 변환 흐름 (InboundProductConversionCoordinator → FullProductGroupRegistrationCoordinator)
@@ -709,6 +725,8 @@ RetryPendingMappingService
 | 3 | InboundProductUpdateCoordinator → InboundProduct 전용으로 정리 | application 레이어 |
 | 4 | LegacyProductCommandController → 내부 Coordinator 직접 호출로 전환 | adapter-in 레이어 |
 | 5 | LegacyProductCommandUseCase/Service → 제거 | application + adapter-in 레이어 |
+| **6** | **InboundProduct 비동기 변환 전환** (PENDING_CONVERSION 상태 + 스케줄러) | domain + application 레이어 |
+| **7** | **LegacyConversionOutbox 구현** (도메인 + Persistence + 스케줄러) | 전 레이어 |
 
 ### 작업 간 의존관계
 
@@ -718,4 +736,121 @@ RetryPendingMappingService
 작업 3 (InboundProductUpdateCoordinator) ← 작업 1 선행 필요
 작업 4 (LegacyProductCommandController) ← 독립 (작업 5와 동시 진행 가능)
 작업 5 (LegacyProductCommandUseCase 제거) ← 작업 4 선행 필요
+작업 6 (InboundProduct 비동기 변환) ← 작업 1 선행 필요
+작업 7 (LegacyConversionOutbox) ← 독립 (Legacy 등록 파이프라인 구현 완료 전제)
 ```
+
+---
+
+## 9. 분리 아웃박스 결정 (2026-02-25 추가)
+
+### 9.1 결정 요약
+
+내부 MarketPlace 상품 변환을 위한 아웃박스를 **분리 방식**으로 구현한다.
+
+- **InboundProduct 경로**: `PENDING_CONVERSION` 상태 추가 → `InboundConversionScheduler` 폴링
+- **Legacy 경로**: `LegacyConversionOutbox` 테이블 신규 → `LegacyConversionScheduler` 폴링
+
+두 경로 모두 최종적으로 `FullProductGroupRegistrationCoordinator.register()`를 호출한다.
+
+### 9.2 InboundProduct 변경사항
+
+**상태 머신 확장:**
+```
+RECEIVED → PENDING_MAPPING → MAPPED → PENDING_CONVERSION → CONVERTED
+                                            ↑
+                                    비동기 변환 대기 (신규)
+```
+
+**코드 변경:**
+- `InboundProductStatus`: `PENDING_CONVERSION` 추가 + 전이 메서드
+- `InboundProduct`: `markPendingConversion(Instant now)` 메서드 추가
+- `InboundProductRegisterCoordinator`: `conversionCoordinator.convert()` 직접 호출 제거 → `markPendingConversion()`
+- `InboundConversionScheduler` (신규): `PENDING_CONVERSION` 폴링 → 변환 → `markConverted()`
+
+### 9.3 Legacy 변환 아웃박스 (Reference-based)
+
+**도메인:**
+- `LegacyConversionOutbox` aggregate (legacyProductGroupId, sellerId, status, retryCount, internalProductGroupId)
+- `LegacyConversionStatus` enum (PENDING, PROCESSING, COMPLETED, FAILED)
+- **Reference-based**: payload를 저장하지 않고 `legacy_product_group_id`만 참조
+
+**등록 흐름:**
+```
+LegacyProductRegistrationCoordinator.register(bundle)
+  → luxurydb INSERT (기존)
+  → LegacyConversionOutbox 생성 (PENDING, reference=legacy_product_group_id)
+  → return setof PKs
+
+LegacyConversionScheduler:
+  → PENDING 폴링
+  → legacy_product_group_id로 luxurydb에서 최신 데이터 조회
+  → ProductGroupRegistrationBundle 변환
+  → FullProductGroupRegistrationCoordinator.register()
+  → 성공: COMPLETED + legacy_product_id_mapping 레코드 생성 (SKU별)
+  → 실패: retry or FAILED
+```
+
+**Reference-based 채택 이유:**
+- 등록 후 변환 전에 수정이 들어와도 luxurydb가 갱신됨
+- 변환 스케줄러가 실행 시점에 최신 데이터를 읽음 (stale 데이터 방지)
+- payload 직렬화/역직렬화 불필요 → 구현 단순화
+- 상세 비교는 상위 문서 §2.2 참조
+
+### 9.4 업데이트 플로우 (2026-02-25 결정)
+
+등록 후 수정 요청이 들어올 때, 변환 상태에 따라 처리 경로가 달라진다.
+
+#### Legacy 업데이트 라우팅
+
+```
+Case A: 미변환 (LegacyConversionOutbox = PENDING)
+  → luxurydb UPDATE만 수행
+  → 아웃박스는 PENDING 유지 (별도 처리 불필요)
+  → Reference-based이므로 변환 시 최신 데이터 자동 반영
+
+Case B: 변환 완료 (COMPLETED)
+  → outbox.internalProductGroupId로 내부 상품 식별
+  → SKU: legacy_product_id_mapping으로 productId 변환
+  → MarketPlace 내부 상품 수정
+  → OutboundSyncOutbox 발행 → luxurydb + 기타 채널 동기화
+```
+
+#### InboundProduct 업데이트 라우팅
+
+```
+Case A: 변환 대기 (PENDING_CONVERSION)
+  → InboundProduct 데이터만 갱신
+  → InboundConversionScheduler 실행 시 갱신된 데이터 기반 변환
+
+Case B: 변환 완료 (CONVERTED)
+  → InboundProduct 갱신 + 내부 상품 동기 수정
+  → OutboundSyncOutbox 발행 → 채널 동기화
+```
+
+#### 공통 원칙
+
+- **미변환**: 소스 데이터(luxurydb / InboundProduct)만 수정, 변환 스케줄러가 최신 데이터 기반 변환
+- **변환 완료**: MarketPlace 내부 상품이 SOT, 내부 수정 후 OutboundSync로 외부 동기화
+
+### 9.5 InboundProduct = 크롤링 전용 (2026-02-25 결정)
+
+> **InboundProduct는 레거시(세토프) 상품 매핑에 사용하지 않는다.**
+
+| 경로 | 그룹 매핑 | SKU 매핑 |
+|------|----------|---------|
+| **크롤링** | InboundProduct (`external_product_code` ↔ `internal_product_group_id`) | (별도 매핑 불필요 — InboundProduct 내 추적) |
+| **레거시** | LegacyConversionOutbox (`legacy_product_group_id` ↔ `internal_product_group_id`) | legacy_product_id_mapping (`legacy_product_id` ↔ `internal_product_id`) |
+
+**변경 영향:**
+- InboundProductItem: 크롤링 경로에서만 활용. 레거시 경로의 SKU 매핑 책임 없음
+- LegacyProductIdResolver: InboundProduct 조회 → outbox 조회로 전환 필요
+- LegacyProductItemIdResolver: InboundProductItem 조회 → legacy_product_id_mapping 조회로 전환 필요
+- InboundProductStatus.LEGACY_IMPORTED: 더 이상 레거시 벌크 적재에 사용하지 않음
+
+### 9.6 왜 공유하지 않는가
+
+상세 비교는 상위 문서 [product-integration-migration-plan.md](./product-integration-migration-plan.md) §2.2 참조.
+
+핵심: **생명주기가 다르다** (InboundProduct=영구, Legacy=임시).
+세토프 마이그레이션 완료 시 Legacy 테이블+코드만 삭제하면 된다.

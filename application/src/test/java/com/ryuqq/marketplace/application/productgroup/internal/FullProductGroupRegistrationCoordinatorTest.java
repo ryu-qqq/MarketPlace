@@ -5,23 +5,30 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
-import com.ryuqq.marketplace.application.productgroupdescription.dto.command.RegisterProductGroupDescriptionCommand;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.ImageEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData.NoticeEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry.OptionValueEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.ProductEntry;
 import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
-import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
 import com.ryuqq.marketplace.application.productintelligence.manager.IntelligenceOutboxCommandManager;
-import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
 import com.ryuqq.marketplace.application.productnotice.internal.ProductNoticeCommandCoordinator;
-import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.internal.SellerOptionCommandCoordinator;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
+import com.ryuqq.marketplace.domain.productgroup.vo.SellerOptionGroups;
+import com.ryuqq.marketplace.domain.productgroupimage.vo.ProductGroupImages;
+import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -64,7 +71,7 @@ class FullProductGroupRegistrationCoordinatorTest {
                     .willReturn(expectedProductGroupId);
             given(
                             sellerOptionCommandCoordinator.register(
-                                    any(RegisterSellerOptionGroupsCommand.class)))
+                                    any(SellerOptionGroups.class), any(OptionType.class)))
                     .willReturn(optionValueIds);
 
             // when
@@ -86,7 +93,7 @@ class FullProductGroupRegistrationCoordinatorTest {
                     .willReturn(productGroupId);
             given(
                             sellerOptionCommandCoordinator.register(
-                                    any(RegisterSellerOptionGroupsCommand.class)))
+                                    any(SellerOptionGroups.class), any(OptionType.class)))
                     .willReturn(optionValueIds);
 
             // when
@@ -108,16 +115,14 @@ class FullProductGroupRegistrationCoordinatorTest {
                     .willReturn(productGroupId);
             given(
                             sellerOptionCommandCoordinator.register(
-                                    any(RegisterSellerOptionGroupsCommand.class)))
+                                    any(SellerOptionGroups.class), any(OptionType.class)))
                     .willReturn(optionValueIds);
 
             // when
             sut.register(bundle);
 
             // then
-            then(imageCommandCoordinator)
-                    .should()
-                    .register(any(RegisterProductGroupImagesCommand.class));
+            then(imageCommandCoordinator).should().register(any(ProductGroupImages.class));
         }
 
         @Test
@@ -132,7 +137,7 @@ class FullProductGroupRegistrationCoordinatorTest {
                     .willReturn(productGroupId);
             given(
                             sellerOptionCommandCoordinator.register(
-                                    any(RegisterSellerOptionGroupsCommand.class)))
+                                    any(SellerOptionGroups.class), any(OptionType.class)))
                     .willReturn(optionValueIds);
 
             // when
@@ -141,7 +146,7 @@ class FullProductGroupRegistrationCoordinatorTest {
             // then
             then(sellerOptionCommandCoordinator)
                     .should()
-                    .register(any(RegisterSellerOptionGroupsCommand.class));
+                    .register(any(SellerOptionGroups.class), any(OptionType.class));
         }
 
         @Test
@@ -156,7 +161,7 @@ class FullProductGroupRegistrationCoordinatorTest {
                     .willReturn(productGroupId);
             given(
                             sellerOptionCommandCoordinator.register(
-                                    any(RegisterSellerOptionGroupsCommand.class)))
+                                    any(SellerOptionGroups.class), any(OptionType.class)))
                     .willReturn(optionValueIds);
 
             // when
@@ -165,7 +170,7 @@ class FullProductGroupRegistrationCoordinatorTest {
             // then
             then(descriptionCommandCoordinator)
                     .should()
-                    .register(any(RegisterProductGroupDescriptionCommand.class));
+                    .persist(any(ProductGroupDescription.class));
         }
 
         @Test
@@ -180,16 +185,14 @@ class FullProductGroupRegistrationCoordinatorTest {
                     .willReturn(productGroupId);
             given(
                             sellerOptionCommandCoordinator.register(
-                                    any(RegisterSellerOptionGroupsCommand.class)))
+                                    any(SellerOptionGroups.class), any(OptionType.class)))
                     .willReturn(optionValueIds);
 
             // when
             sut.register(bundle);
 
             // then
-            then(noticeCommandCoordinator)
-                    .should()
-                    .register(any(RegisterProductNoticeCommand.class));
+            then(noticeCommandCoordinator).should().register(any(ProductNotice.class));
         }
 
         @Test
@@ -204,7 +207,7 @@ class FullProductGroupRegistrationCoordinatorTest {
                     .willReturn(productGroupId);
             given(
                             sellerOptionCommandCoordinator.register(
-                                    any(RegisterSellerOptionGroupsCommand.class)))
+                                    any(SellerOptionGroups.class), any(OptionType.class)))
                     .willReturn(optionValueIds);
 
             // when
@@ -220,54 +223,41 @@ class FullProductGroupRegistrationCoordinatorTest {
     private ProductGroupRegistrationBundle createBundle() {
         ProductGroup productGroup = ProductGroupFixtures.newProductGroup();
 
-        RegisterProductGroupImagesCommand imageCommand =
-                new RegisterProductGroupImagesCommand(
-                        0L,
-                        List.of(
-                                new RegisterProductGroupImagesCommand.ImageCommand(
-                                        "THUMBNAIL", "https://example.com/image.jpg", 0)));
+        List<ImageEntry> images =
+                List.of(new ImageEntry("THUMBNAIL", "https://example.com/image.jpg", 0));
 
-        RegisterSellerOptionGroupsCommand optionGroupCommand =
-                new RegisterSellerOptionGroupsCommand(
-                        0L,
-                        "SINGLE",
+        OptionRegistrationData optionData =
+                new OptionRegistrationData(
+                        OptionType.SINGLE,
                         List.of(
-                                new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
+                                new OptionGroupEntry(
                                         "색상",
                                         null,
                                         null,
-                                        List.of(
-                                                new RegisterSellerOptionGroupsCommand
-                                                        .OptionValueCommand("검정", null, 0)))));
+                                        List.of(new OptionValueEntry("검정", null, 0)))));
 
-        RegisterProductGroupDescriptionCommand descriptionCommand =
-                new RegisterProductGroupDescriptionCommand(0L, "<p>상품 상세설명</p>");
+        String descriptionContent = "<p>상품 상세설명</p>";
 
-        RegisterProductNoticeCommand noticeCommand =
-                new RegisterProductNoticeCommand(
-                        0L,
-                        10L,
-                        List.of(new RegisterProductNoticeCommand.NoticeEntryCommand(1L, "100% 면")));
+        NoticeRegistrationData noticeData =
+                new NoticeRegistrationData(10L, List.of(new NoticeEntry(1L, "100% 면")));
 
-        RegisterProductsCommand productCommand =
-                new RegisterProductsCommand(
-                        0L,
-                        List.of(
-                                new RegisterProductsCommand.ProductData(
-                                        "SKU-001",
-                                        10000,
-                                        9000,
-                                        100,
-                                        0,
-                                        List.of(new SelectedOption("색상", "검정")))));
+        List<ProductEntry> products =
+                List.of(
+                        new ProductEntry(
+                                "SKU-001",
+                                10000,
+                                9000,
+                                100,
+                                0,
+                                List.of(new SelectedOption("색상", "검정"))));
 
         return new ProductGroupRegistrationBundle(
                 productGroup,
-                imageCommand,
-                optionGroupCommand,
-                descriptionCommand,
-                noticeCommand,
-                productCommand,
+                images,
+                optionData,
+                descriptionContent,
+                noticeData,
+                products,
                 CommonVoFixtures.now());
     }
 }

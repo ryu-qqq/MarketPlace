@@ -118,6 +118,16 @@ public class SecurityConfig {
                                                 "/api/v1/market/auth/refresh")
                                         .permitAll()
 
+                                        // 셀러 공개 프로필 조회
+                                        .requestMatchers(
+                                                HttpMethod.GET, "/api/v1/market/sellers/*/profile")
+                                        .permitAll()
+
+                                        // 공통 코드 조회 (퍼블릭)
+                                        .requestMatchers(
+                                                HttpMethod.GET, "/api/v1/market/common-codes")
+                                        .permitAll()
+
                                         // Actuator
                                         .requestMatchers("/actuator/**")
                                         .permitAll()

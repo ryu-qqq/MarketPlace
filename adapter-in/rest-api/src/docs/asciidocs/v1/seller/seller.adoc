@@ -86,3 +86,23 @@ include::{snippets}/seller/search/http-response.adoc[]
 
 ==== Response Fields
 include::{snippets}/seller/search/response-fields.adoc[]
+
+
+[[seller-public-profile]]
+=== 셀러 공개 프로필 조회
+
+Public | 인증 불필요
+
+셀러의 간소화된 공개 프로필(셀러명, 표시명, 회사명, 대표자명)을 조회합니다.
+
+==== HTTP Request
+include::{snippets}/seller/public-profile/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller/public-profile/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/public-profile/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller/public-profile/response-fields.adoc[]

@@ -7,17 +7,14 @@ import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.common.dto.result.BatchItemResult;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
-import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
 import com.ryuqq.marketplace.application.productgroup.ProductGroupCommandFixtures;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupBundleFactory;
 import com.ryuqq.marketplace.application.productgroup.internal.FullProductGroupRegistrationCoordinator;
-import com.ryuqq.marketplace.application.productgroupdescription.dto.command.RegisterProductGroupDescriptionCommand;
-import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
-import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
 import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadManager;
-import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyReadManager;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
@@ -415,22 +412,24 @@ class BatchRegisterProductGroupFullServiceTest {
     private ProductGroupRegistrationBundle createRegistrationBundle() {
         return new ProductGroupRegistrationBundle(
                 ProductGroupFixtures.newProductGroup(),
-                new RegisterProductGroupImagesCommand(0L, List.of()),
-                new RegisterSellerOptionGroupsCommand(0L, "SINGLE", List.of()),
-                new RegisterProductGroupDescriptionCommand(0L, "<p>상세설명</p>"),
-                new RegisterProductNoticeCommand(0L, 10L, List.of()),
-                new RegisterProductsCommand(0L, List.of()),
+                List.of(),
+                new OptionRegistrationData(
+                        com.ryuqq.marketplace.domain.productgroup.vo.OptionType.SINGLE, List.of()),
+                "<p>상세설명</p>",
+                new NoticeRegistrationData(10L, List.of()),
+                List.of(),
                 CommonVoFixtures.now());
     }
 
     private ProductGroupRegistrationBundle createRegistrationBundleNoOption() {
         return new ProductGroupRegistrationBundle(
                 ProductGroupFixtures.newProductGroup(),
-                new RegisterProductGroupImagesCommand(0L, List.of()),
-                new RegisterSellerOptionGroupsCommand(0L, "NONE", List.of()),
-                new RegisterProductGroupDescriptionCommand(0L, "<p>상세설명</p>"),
-                new RegisterProductNoticeCommand(0L, 10L, List.of()),
-                new RegisterProductsCommand(0L, List.of()),
+                List.of(),
+                new OptionRegistrationData(
+                        com.ryuqq.marketplace.domain.productgroup.vo.OptionType.NONE, List.of()),
+                "<p>상세설명</p>",
+                new NoticeRegistrationData(10L, List.of()),
+                List.of(),
                 CommonVoFixtures.now());
     }
 }
