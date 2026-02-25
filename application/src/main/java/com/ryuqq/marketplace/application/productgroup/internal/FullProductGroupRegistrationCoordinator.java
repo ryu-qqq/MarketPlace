@@ -1,15 +1,14 @@
 package com.ryuqq.marketplace.application.productgroup.internal;
 
-import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.BoundCommands;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.BoundDomainObjects;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
 import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
 import com.ryuqq.marketplace.application.productintelligence.manager.IntelligenceOutboxCommandManager;
 import com.ryuqq.marketplace.application.productnotice.internal.ProductNoticeCommandCoordinator;
-import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.internal.SellerOptionCommandCoordinator;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
@@ -28,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 상품 그룹 전체 Aggregate 등록 Coordinator.
  *
- * <p>ProductGroup 기본 정보 → per-package Coordinator 위임 순서로 전체 등록을 조율합니다.
+ * <p>ProductGroup 기본 정보 -> per-package Coordinator 위임 순서로 전체 등록을 조율합니다.
  *
  * <p>ProductGroup 기본 정보는 {@link ProductGroupCommandCoordinator}에 위임합니다.
  *
@@ -65,60 +64,57 @@ public class FullProductGroupRegistrationCoordinator {
     /**
      * 상품 그룹 전체 등록을 조율합니다.
      *
-     * <p>번들에 포함된 per-package Command를 사용하여 각 도메인을 독립적으로 persist합니다.
+     * <p>번들에 포함된 등록 데이터를 사용하여 도메인 객체를 생성하고 각 per-package Coordinator에 위임합니다.
      *
-     * @param bundle 등록 번들 (ProductGroup + per-package Commands + ProductCreations)
+     * @param bundle 등록 번들 (ProductGroup + per-package 등록 데이터)
      * @return 생성된 상품 그룹 ID
      */
     @Transactional
     public Long register(ProductGroupRegistrationBundle bundle) {
-        // 1. ProductGroup 기본 정보 (검증 + persist) → Coordinator
+        // 1. ProductGroup 기본 정보 (검증 + persist) -> Coordinator
         Long productGroupId = productGroupCommandCoordinator.register(bundle.productGroup());
-
-        // 2. per-package Command에 productGroupId 바인딩
-        BoundCommands bound = bundle.bindAll(productGroupId);
-
-        // 3. Images → Coordinator (Factory + persist + outbox)
-        imageCommandCoordinator.register(bound.imageCommand());
-
-        // 4. OptionGroups → Coordinator (Factory + Validator + persist)
-        List<SellerOptionValueId> allOptionValueIds =
-                sellerOptionCommandCoordinator.register(bound.optionGroupCommand());
-
-        // 5. Description → Coordinator (Factory + persist + outbox)
-        descriptionCommandCoordinator.register(bound.descriptionCommand());
-
-        // 6. Notice → Coordinator (Factory + Validator + persist)
-        noticeCommandCoordinator.register(bound.noticeCommand());
-
-        // 7. Products → 이름 기반 resolve 후 등록
-        Map<String, Map<String, SellerOptionValueId>> nameMap =
-                buildRegistrationOptionNameMap(
-                        bound.optionGroupCommand().optionGroups(), allOptionValueIds);
-
-        RegisterProductsCommand productCommand = bundle.bindProductCommand(productGroupId);
         ProductGroupId pgId = ProductGroupId.of(productGroupId);
-        Instant now = bundle.createdAt();
 
+        // 2. per-package 도메인 객체 생성 (productGroupId 바인딩)
+        BoundDomainObjects bound = bundle.bindAll(pgId);
+
+        // 3. Images -> Coordinator (persist + outbox)
+        imageCommandCoordinator.register(bound.images());
+
+        // 4. OptionGroups -> Coordinator (Validator + persist)
+        List<SellerOptionValueId> allOptionValueIds =
+                sellerOptionCommandCoordinator.register(bound.optionGroups(), bound.optionType());
+
+        // 5. Description -> Coordinator (persist + outbox)
+        descriptionCommandCoordinator.persist(bound.description());
+
+        // 6. Notice -> Coordinator (Validator + persist)
+        noticeCommandCoordinator.register(bound.notice());
+
+        // 7. Products -> 이름 기반 resolve 후 등록
+        Map<String, Map<String, SellerOptionValueId>> nameMap =
+                buildRegistrationOptionNameMap(bundle.optionData().groups(), allOptionValueIds);
+
+        Instant now = bundle.createdAt();
         List<Product> products =
-                productCommand.products().stream()
+                bundle.products().stream()
                         .map(
-                                data -> {
+                                entry -> {
                                     List<SellerOptionValueId> resolvedIds =
-                                            resolveOptionIds(data.selectedOptions(), nameMap);
+                                            resolveOptionIds(entry.selectedOptions(), nameMap);
                                     return new ProductCreationData(
-                                                    SkuCode.of(data.skuCode()),
-                                                    Money.of(data.regularPrice()),
-                                                    Money.of(data.currentPrice()),
-                                                    data.stockQuantity(),
-                                                    data.sortOrder(),
+                                                    SkuCode.of(entry.skuCode()),
+                                                    Money.of(entry.regularPrice()),
+                                                    Money.of(entry.currentPrice()),
+                                                    entry.stockQuantity(),
+                                                    entry.sortOrder(),
                                                     resolvedIds)
                                             .toProduct(pgId, now);
                                 })
                         .toList();
         productCommandCoordinator.register(products);
 
-        // 8. Intelligence Outbox 저장 (PENDING) — 스케줄러가 비동기로 분석 파이프라인 실행
+        // 8. Intelligence Outbox 저장 (PENDING) -- 스케줄러가 비동기로 분석 파이프라인 실행
         IntelligenceOutbox intelligenceOutbox =
                 IntelligenceOutbox.forNew(productGroupId, bundle.createdAt());
         intelligenceOutboxCommandManager.persist(intelligenceOutbox);
@@ -129,17 +125,16 @@ public class FullProductGroupRegistrationCoordinator {
     /**
      * 등록용 옵션 이름 맵 생성.
      *
-     * <p>RegisterSellerOptionGroupsCommand의 그룹/값 이름 순서와 resolve된 ID 순서가 일치하는 전제하에 매핑합니다. 모든 옵션
-     * 그룹(PREDEFINED, FREE_INPUT)이 selectedOptions 매칭에 참여합니다.
+     * <p>OptionGroupEntry의 그룹/값 이름 순서와 resolve된 ID 순서가 일치하는 전제하에 매핑합니다.
      */
     private Map<String, Map<String, SellerOptionValueId>> buildRegistrationOptionNameMap(
-            List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> optionGroups,
+            List<OptionRegistrationData.OptionGroupEntry> optionGroups,
             List<SellerOptionValueId> allOptionValueIds) {
         Map<String, Map<String, SellerOptionValueId>> nameMap = new LinkedHashMap<>();
         int index = 0;
-        for (RegisterSellerOptionGroupsCommand.OptionGroupCommand group : optionGroups) {
+        for (OptionRegistrationData.OptionGroupEntry group : optionGroups) {
             Map<String, SellerOptionValueId> valueMap = new LinkedHashMap<>();
-            for (RegisterSellerOptionGroupsCommand.OptionValueCommand value :
+            for (OptionRegistrationData.OptionGroupEntry.OptionValueEntry value :
                     group.optionValues()) {
                 valueMap.put(value.optionValueName(), allOptionValueIds.get(index++));
             }
@@ -148,7 +143,7 @@ public class FullProductGroupRegistrationCoordinator {
         return nameMap;
     }
 
-    /** selectedOptions + 옵션 이름 맵 → List&lt;SellerOptionValueId&gt; 변환. */
+    /** selectedOptions + 옵션 이름 맵 -> List&lt;SellerOptionValueId&gt; 변환. */
     private List<SellerOptionValueId> resolveOptionIds(
             List<SelectedOption> selectedOptions,
             Map<String, Map<String, SellerOptionValueId>> optionNameMap) {

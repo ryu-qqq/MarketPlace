@@ -38,8 +38,9 @@ public class LegacyProductIdResolver {
         if (internalId == null) {
             throw new InboundProductNotConvertedException(setofProductGroupId);
         }
-        return new ResolvedLegacyProductId(internalId, inbound.sellerId());
+        return new ResolvedLegacyProductId(internalId, inbound.sellerId(), inbound.id().value());
     }
 
-    public record ResolvedLegacyProductId(long internalProductGroupId, long sellerId) {}
+    public record ResolvedLegacyProductId(
+            long internalProductGroupId, long sellerId, long inboundProductId) {}
 }

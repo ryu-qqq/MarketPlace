@@ -29,11 +29,14 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyNoticeC
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyOptionCommandApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyProductCommandApiMapper;
 import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInboundProductCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateNoticeCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductsCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.response.LegacyProductRegistrationResult;
+import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult;
+import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductGroupFullRegisterUseCase;
+import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductGroupFullUpdateUseCase;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductMarkOutOfStockUseCase;
-import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductRegistrationUseCase;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateDescriptionUseCase;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateDisplayStatusUseCase;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateImagesUseCase;
@@ -41,11 +44,10 @@ import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyPro
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateOptionsUseCase;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdatePriceUseCase;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateStockUseCase;
-import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateUseCase;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -71,8 +73,8 @@ public class LegacyProductCommandController {
 
     private static final long LEGACY_EXTERNAL_SOURCE_ID = 1L;
 
-    private final LegacyProductRegistrationUseCase legacyProductRegistrationUseCase;
-    private final LegacyProductUpdateUseCase legacyProductUpdateUseCase;
+    private final LegacyProductGroupFullRegisterUseCase legacyProductGroupFullRegisterUseCase;
+    private final LegacyProductGroupFullUpdateUseCase legacyProductGroupFullUpdateUseCase;
     private final LegacyProductUpdateImagesUseCase legacyProductUpdateImagesUseCase;
     private final LegacyProductUpdateDescriptionUseCase legacyProductUpdateDescriptionUseCase;
     private final LegacyProductUpdatePriceUseCase legacyProductUpdatePriceUseCase;
@@ -88,8 +90,8 @@ public class LegacyProductCommandController {
     private final LegacyOptionCommandApiMapper legacyOptionCommandApiMapper;
 
     public LegacyProductCommandController(
-            LegacyProductRegistrationUseCase legacyProductRegistrationUseCase,
-            LegacyProductUpdateUseCase legacyProductUpdateUseCase,
+            LegacyProductGroupFullRegisterUseCase legacyProductGroupFullRegisterUseCase,
+            LegacyProductGroupFullUpdateUseCase legacyProductGroupFullUpdateUseCase,
             LegacyProductUpdateImagesUseCase legacyProductUpdateImagesUseCase,
             LegacyProductUpdateDescriptionUseCase legacyProductUpdateDescriptionUseCase,
             LegacyProductUpdatePriceUseCase legacyProductUpdatePriceUseCase,
@@ -103,8 +105,8 @@ public class LegacyProductCommandController {
             LegacyNoticeCommandApiMapper legacyNoticeCommandApiMapper,
             LegacyImageCommandApiMapper legacyImageCommandApiMapper,
             LegacyOptionCommandApiMapper legacyOptionCommandApiMapper) {
-        this.legacyProductRegistrationUseCase = legacyProductRegistrationUseCase;
-        this.legacyProductUpdateUseCase = legacyProductUpdateUseCase;
+        this.legacyProductGroupFullRegisterUseCase = legacyProductGroupFullRegisterUseCase;
+        this.legacyProductGroupFullUpdateUseCase = legacyProductGroupFullUpdateUseCase;
         this.legacyProductUpdateImagesUseCase = legacyProductUpdateImagesUseCase;
         this.legacyProductUpdateDescriptionUseCase = legacyProductUpdateDescriptionUseCase;
         this.legacyProductUpdatePriceUseCase = legacyProductUpdatePriceUseCase;
@@ -123,13 +125,13 @@ public class LegacyProductCommandController {
     // ===== 등록 =====
 
     @PostMapping(PRODUCT_GROUP)
-    public ResponseEntity<LegacyApiResponse<LegacyCreateProductGroupResponse>> registerProductGroup(
-            @Valid @RequestBody LegacyCreateProductGroupRequest request) {
-        ReceiveInboundProductCommand command =
-                legacyInboundApiMapper.toCommand(request, LEGACY_EXTERNAL_SOURCE_ID);
-        LegacyProductRegistrationResult result = legacyProductRegistrationUseCase.execute(command);
+    public ResponseEntity<LegacyApiResponse<LegacyCreateProductGroupResponse>>
+            registerProductGroupFull(@Valid @RequestBody LegacyCreateProductGroupRequest request) {
+        LegacyRegisterProductGroupCommand command = legacyInboundApiMapper.toCommand(request);
+        LegacyProductRegistrationResult result =
+                legacyProductGroupFullRegisterUseCase.execute(command);
         LegacyCreateProductGroupResponse response =
-                legacyProductCommandApiMapper.toCreateResponse(result, request.sellerId());
+                legacyProductCommandApiMapper.toCreateResponse(result);
 
         return ResponseEntity.ok(LegacyApiResponse.of(response));
     }
@@ -137,13 +139,13 @@ public class LegacyProductCommandController {
     // ===== 수정 =====
 
     @PutMapping(PRODUCT_GROUP_ID)
-    public ResponseEntity<LegacyApiResponse<Long>> updateProductGroup(
+    public ResponseEntity<LegacyApiResponse<Long>> updateProductGroupFull(
             @PathVariable long productGroupId,
             @Valid @RequestBody LegacyUpdateProductGroupRequest request) {
         ReceiveInboundProductCommand command =
                 legacyInboundApiMapper.toUpdateCommand(
                         request, LEGACY_EXTERNAL_SOURCE_ID, productGroupId);
-        legacyProductUpdateUseCase.execute(command);
+        legacyProductGroupFullUpdateUseCase.execute(command);
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 
@@ -182,11 +184,10 @@ public class LegacyProductCommandController {
             @Valid @RequestBody List<LegacyCreateOptionRequest> request) {
         LegacyUpdateProductsCommand command =
                 legacyOptionCommandApiMapper.toLegacyUpdateProductsCommand(productGroupId, request);
-        ProductGroupDetailCompositeResult detail =
-                legacyProductUpdateOptionsUseCase.execute(command);
+        LegacyProductGroupDetailResult result = legacyProductUpdateOptionsUseCase.execute(command);
 
         Set<LegacyProductFetchResponse> products =
-                legacyProductCommandApiMapper.toProductFetchResponses(detail);
+                legacyProductCommandApiMapper.toProductFetchResponses(result, Map.of());
         return ResponseEntity.ok(LegacyApiResponse.of(products));
     }
 
@@ -211,12 +212,12 @@ public class LegacyProductCommandController {
     @PatchMapping(OUT_STOCK)
     public ResponseEntity<LegacyApiResponse<Set<LegacyProductFetchResponse>>> outOfStock(
             @PathVariable long productGroupId) {
-        ProductGroupDetailCompositeResult detail =
+        LegacyProductGroupDetailResult result =
                 legacyProductMarkOutOfStockUseCase.execute(
                         legacyProductCommandApiMapper.toLegacyMarkOutOfStockCommand(
                                 productGroupId));
         Set<LegacyProductFetchResponse> products =
-                legacyProductCommandApiMapper.toProductFetchResponses(detail);
+                legacyProductCommandApiMapper.toProductFetchResponses(result, Map.of());
         return ResponseEntity.ok(LegacyApiResponse.of(products));
     }
 
@@ -224,12 +225,12 @@ public class LegacyProductCommandController {
     public ResponseEntity<LegacyApiResponse<Set<LegacyProductFetchResponse>>> updateGroupStock(
             @PathVariable long productGroupId,
             @RequestBody List<LegacyUpdateProductStockRequest> request) {
-        ProductGroupDetailCompositeResult detail =
+        LegacyProductGroupDetailResult result =
                 legacyProductUpdateStockUseCase.execute(
                         legacyProductCommandApiMapper.toLegacyUpdateStockCommand(
                                 productGroupId, request));
         Set<LegacyProductFetchResponse> products =
-                legacyProductCommandApiMapper.toProductFetchResponses(detail);
+                legacyProductCommandApiMapper.toProductFetchResponses(result, Map.of());
         return ResponseEntity.ok(LegacyApiResponse.of(products));
     }
 }

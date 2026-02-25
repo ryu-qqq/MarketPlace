@@ -1,18 +1,18 @@
 package com.ryuqq.marketplace.adapter.out.persistence.inboundsource.mapper;
 
 import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.entity.InboundSourceJpaEntity;
-import com.ryuqq.marketplace.domain.externalsource.aggregate.ExternalSource;
-import com.ryuqq.marketplace.domain.externalsource.id.ExternalSourceId;
-import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceCode;
-import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceStatus;
-import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceType;
+import com.ryuqq.marketplace.domain.inboundsource.aggregate.InboundSource;
+import com.ryuqq.marketplace.domain.inboundsource.id.InboundSourceId;
+import com.ryuqq.marketplace.domain.inboundsource.vo.InboundSourceCode;
+import com.ryuqq.marketplace.domain.inboundsource.vo.InboundSourceStatus;
+import com.ryuqq.marketplace.domain.inboundsource.vo.InboundSourceType;
 import org.springframework.stereotype.Component;
 
-/** InboundSource JPA Entity ↔ ExternalSource Domain Mapper. */
+/** InboundSource JPA Entity <-> InboundSource Domain Mapper. */
 @Component
 public class InboundSourceJpaEntityMapper {
 
-    public InboundSourceJpaEntity toEntity(ExternalSource source) {
+    public InboundSourceJpaEntity toEntity(InboundSource source) {
         return InboundSourceJpaEntity.create(
                 source.idValue(),
                 source.codeValue(),
@@ -24,17 +24,17 @@ public class InboundSourceJpaEntityMapper {
                 source.updatedAt());
     }
 
-    public ExternalSource toDomain(InboundSourceJpaEntity entity) {
+    public InboundSource toDomain(InboundSourceJpaEntity entity) {
         if (entity.getId() == null) {
             throw new IllegalStateException("영속화된 엔티티의 ID는 null일 수 없습니다");
         }
-        var id = ExternalSourceId.of(entity.getId());
-        return ExternalSource.reconstitute(
+        var id = InboundSourceId.of(entity.getId());
+        return InboundSource.reconstitute(
                 id,
-                ExternalSourceCode.of(entity.getCode()),
+                InboundSourceCode.of(entity.getCode()),
                 entity.getName(),
-                ExternalSourceType.fromString(entity.getType()),
-                ExternalSourceStatus.fromString(entity.getStatus()),
+                InboundSourceType.fromString(entity.getType()),
+                InboundSourceStatus.fromString(entity.getStatus()),
                 entity.getDescription(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());

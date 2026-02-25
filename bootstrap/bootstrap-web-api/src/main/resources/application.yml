@@ -64,6 +64,7 @@ spring:
     import:
       - classpath:rest-api.yml
       - classpath:persistence.yml
+      - optional:classpath:persistence-legacy.yml
       - classpath:redis.yml
       - classpath:authhub.yml
       - classpath:fileflow.yml

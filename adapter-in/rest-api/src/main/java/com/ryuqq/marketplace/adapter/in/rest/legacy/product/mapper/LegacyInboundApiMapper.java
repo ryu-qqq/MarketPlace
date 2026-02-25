@@ -2,16 +2,26 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateDeliveryNoticeRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateOptionRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateProductGroupRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateProductImageRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateProductNoticeRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateRefundNoticeRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyUpdateProductGroupRequest;
 import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInboundProductCommand;
-import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
-import java.util.UUID;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.DeliveryCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.ImageCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.NoticeCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.OptionCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.OptionDetailCommand;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-/** 레거시 세토프 요청을 InboundProduct 수신 커맨드로 변환하는 매퍼. */
+/** 레거시 세토프 등록/수정 요청을 Command로 변환하는 매퍼. */
 @Component
 public class LegacyInboundApiMapper {
 
@@ -23,38 +33,104 @@ public class LegacyInboundApiMapper {
         this.objectMapper = objectMapper;
     }
 
-    public ReceiveInboundProductCommand toCommand(
-            LegacyCreateProductGroupRequest request, long inboundSourceId) {
+    public LegacyRegisterProductGroupCommand toCommand(LegacyCreateProductGroupRequest request) {
+        String optionType = request.optionType().trim().toUpperCase();
+        validateOptionDetails(optionType, request.productOptions());
 
-        int regularPrice = (int) request.price().regularPrice();
-        int currentPrice = (int) request.price().currentPrice();
-
-        if (regularPrice < currentPrice) {
-            throw new IllegalArgumentException("정상가는 판매가보다 작을 수 없습니다.");
-        }
-
-        String rawPayloadJson = serializeToJson(request, "레거시 상품 등록 요청");
-        OptionType internalOptionType = mapLegacyOptionTypeToInternal(request.optionType());
-
-        return new ReceiveInboundProductCommand(
-                inboundSourceId,
-                UUID.randomUUID().toString(),
-                request.productGroupName(),
-                String.valueOf(request.brandId()),
-                String.valueOf(request.categoryId()),
+        return new LegacyRegisterProductGroupCommand(
                 request.sellerId(),
-                regularPrice,
-                currentPrice,
-                internalOptionType.name(),
+                request.brandId(),
+                request.categoryId(),
+                request.productGroupName(),
+                optionType,
+                request.managementType(),
+                request.price().regularPrice(),
+                request.price().currentPrice(),
+                request.productStatus().soldOutYn(),
+                request.productStatus().displayYn(),
+                request.clothesDetailInfo().productCondition(),
+                request.clothesDetailInfo().origin(),
+                request.clothesDetailInfo().styleCode(),
+                toNoticeCommand(request.productNotice()),
+                toDeliveryCommand(request.deliveryNotice(), request.refundNotice()),
+                toImageCommands(request.productImageList()),
                 request.detailDescription(),
-                rawPayloadJson);
+                toOptionCommands(request.productOptions()));
     }
 
-    /**
-     * 레거시 상품 수정 요청을 InboundProduct 업데이트 커맨드로 변환합니다.
-     *
-     * <p>수정 요청에 없는 필수 필드는 서비스에서 기존 InboundProduct 값으로 병합합니다.
-     */
+    private void validateOptionDetails(
+            String optionType, List<LegacyCreateOptionRequest> productOptions) {
+        int expectedSize =
+                switch (optionType) {
+                    case "SINGLE" -> 0;
+                    case "OPTION_ONE" -> 1;
+                    case "OPTION_TWO" -> 2;
+                    default ->
+                            throw new IllegalArgumentException("지원하지 않는 옵션 타입입니다: " + optionType);
+                };
+
+        for (LegacyCreateOptionRequest option : productOptions) {
+            if (option.options().size() != expectedSize) {
+                throw new IllegalArgumentException(
+                        "옵션 타입 %s에 대한 옵션 항목 수가 올바르지 않습니다. 기대: %d, 실제: %d"
+                                .formatted(optionType, expectedSize, option.options().size()));
+            }
+        }
+    }
+
+    private NoticeCommand toNoticeCommand(LegacyCreateProductNoticeRequest notice) {
+        return new NoticeCommand(
+                notice.material(),
+                notice.color(),
+                notice.size(),
+                notice.maker(),
+                notice.origin(),
+                notice.washingMethod(),
+                notice.yearMonth(),
+                notice.assuranceStandard(),
+                notice.asPhone());
+    }
+
+    private DeliveryCommand toDeliveryCommand(
+            LegacyCreateDeliveryNoticeRequest delivery, LegacyCreateRefundNoticeRequest refund) {
+        return new DeliveryCommand(
+                delivery.deliveryArea(),
+                delivery.deliveryFee(),
+                delivery.deliveryPeriodAverage(),
+                refund.returnMethodDomestic(),
+                refund.returnCourierDomestic(),
+                refund.returnChargeDomestic(),
+                refund.returnExchangeAreaDomestic());
+    }
+
+    private List<ImageCommand> toImageCommands(List<LegacyCreateProductImageRequest> images) {
+        return images.stream()
+                .map(img -> new ImageCommand(img.type(), img.productImageUrl(), img.originUrl()))
+                .toList();
+    }
+
+    private List<OptionCommand> toOptionCommands(List<LegacyCreateOptionRequest> options) {
+        return options.stream()
+                .map(
+                        opt ->
+                                new OptionCommand(
+                                        opt.quantity(),
+                                        opt.additionalPrice() != null
+                                                ? opt.additionalPrice().longValue()
+                                                : 0L,
+                                        opt.options().stream()
+                                                .map(
+                                                        d ->
+                                                                new OptionDetailCommand(
+                                                                        d.optionName(),
+                                                                        d.optionValue()))
+                                                .toList()))
+                .toList();
+    }
+
+    // ===== 수정(기존 InboundProduct 파이프라인 유지) =====
+
+    /** 레거시 상품 수정 요청을 ReceiveInboundProductCommand로 변환합니다. */
     public ReceiveInboundProductCommand toUpdateCommand(
             LegacyUpdateProductGroupRequest request,
             long inboundSourceId,
@@ -76,16 +152,6 @@ public class LegacyInboundApiMapper {
                 null,
                 descriptionHtml,
                 serializeToJson(request, "레거시 상품 수정 요청"));
-    }
-
-    /** 레거시(SINGLE, OPTION_ONE, OPTION_TWO) → 내부(NONE, SINGLE, COMBINATION) 매핑. */
-    private OptionType mapLegacyOptionTypeToInternal(String legacyOptionType) {
-        return switch (legacyOptionType.trim().toUpperCase()) {
-            case "SINGLE" -> OptionType.NONE;
-            case "OPTION_ONE" -> OptionType.SINGLE;
-            case "OPTION_TWO" -> OptionType.COMBINATION;
-            default -> OptionType.NONE;
-        };
     }
 
     private String serializeToJson(Object request, String requestLabel) {
