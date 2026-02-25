@@ -10,6 +10,12 @@ import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateD
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateImagesCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateNoticeCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdatePriceCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductsCommand;
+import com.ryuqq.marketplace.domain.legacy.optiondetail.id.LegacyOptionDetailId;
+import com.ryuqq.marketplace.domain.legacy.optiongroup.id.LegacyOptionGroupId;
+import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
+import com.ryuqq.marketplace.domain.legacy.product.id.LegacyProductId;
+import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductOption;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
@@ -111,6 +117,50 @@ public class LegacyProductGroupCommandFactory {
                                     entry.imageUrl(),
                                     entry.originUrl(),
                                     i + 1);
+                        })
+                .toList();
+    }
+
+    /**
+     * 옵션 수정용 상품 도메인 객체 목록 생성.
+     *
+     * <p>SkuEntry에 productId가 있으면 기존 상품 수정, 없으면 신규 상품으로 처리합니다.
+     */
+    public List<LegacyProduct> createProductsForOptionUpdate(
+            LegacyProductGroupId groupId, List<LegacyUpdateProductsCommand.SkuEntry> skuEntries) {
+        return skuEntries.stream()
+                .map(
+                        sku -> {
+                            List<LegacyProductOption> options =
+                                    sku.options().stream()
+                                            .map(
+                                                    opt ->
+                                                            LegacyProductOption.forNew(
+                                                                    sku.productId() != null
+                                                                            ? LegacyProductId.of(
+                                                                                    sku.productId())
+                                                                            : LegacyProductId
+                                                                                    .forNew(),
+                                                                    LegacyOptionGroupId.of(
+                                                                            opt.optionGroupId()),
+                                                                    LegacyOptionDetailId.of(
+                                                                            opt.optionDetailId()),
+                                                                    sku.additionalPrice()))
+                                            .toList();
+
+                            if (sku.productId() != null) {
+                                return LegacyProduct.reconstitute(
+                                        sku.productId(),
+                                        groupId.value(),
+                                        "N",
+                                        "Y",
+                                        sku.stockQuantity(),
+                                        options,
+                                        com.ryuqq.marketplace.domain.common.vo.DeletionStatus
+                                                .active());
+                            }
+                            return LegacyProduct.forNew(
+                                    groupId, "N", "Y", sku.stockQuantity(), options);
                         })
                 .toList();
     }

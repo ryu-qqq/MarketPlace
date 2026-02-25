@@ -36,8 +36,19 @@ public class LegacyProductStockEntity extends LegacyBaseEntity {
         this.deleteYn = "N";
     }
 
+    private LegacyProductStockEntity(Long productId, Integer stockQuantity, String deleteYn) {
+        this.productId = productId;
+        this.stockQuantity = stockQuantity;
+        this.deleteYn = deleteYn;
+    }
+
     public static LegacyProductStockEntity create(long productId, int stockQuantity) {
         return new LegacyProductStockEntity(productId, stockQuantity);
+    }
+
+    public static LegacyProductStockEntity create(
+            long productId, int stockQuantity, String deleteYn) {
+        return new LegacyProductStockEntity(productId, stockQuantity, deleteYn);
     }
 
     public Long getProductId() {

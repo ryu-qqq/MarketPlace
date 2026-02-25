@@ -38,8 +38,7 @@ public class LegacyProductRegistrationFacade {
 
         for (LegacyProductOption option : product.options()) {
             LegacyProductOption bound =
-                    new LegacyProductOption(
-                            null,
+                    LegacyProductOption.forNew(
                             pId,
                             option.optionGroupId(),
                             option.optionDetailId(),

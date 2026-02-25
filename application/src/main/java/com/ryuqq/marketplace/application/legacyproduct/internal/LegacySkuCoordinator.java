@@ -62,8 +62,7 @@ public class LegacySkuCoordinator {
                             Long optionGroupIdVal = resolved.optionGroupId(entry.optionName());
                             Long optionDetailIdVal =
                                     resolved.optionDetailId(optionGroupIdVal, entry.optionValue());
-                            return new LegacyProductOption(
-                                    null,
+                            return LegacyProductOption.forNew(
                                     LegacyProductId.forNew(),
                                     LegacyOptionGroupId.of(optionGroupIdVal),
                                     LegacyOptionDetailId.of(optionDetailIdVal),

@@ -46,9 +46,23 @@ public class LegacyProductEntity extends LegacyBaseEntity {
         this.deleteYn = "N";
     }
 
+    private LegacyProductEntity(
+            Long id, Long productGroupId, String soldOutYn, String displayYn, String deleteYn) {
+        this.id = id;
+        this.productGroupId = productGroupId;
+        this.soldOutYn = soldOutYn;
+        this.displayYn = displayYn;
+        this.deleteYn = deleteYn;
+    }
+
     public static LegacyProductEntity create(
             long productGroupId, String soldOutYn, String displayYn) {
         return new LegacyProductEntity(productGroupId, soldOutYn, displayYn);
+    }
+
+    public static LegacyProductEntity create(
+            Long id, long productGroupId, String soldOutYn, String displayYn, String deleteYn) {
+        return new LegacyProductEntity(id, productGroupId, soldOutYn, displayYn, deleteYn);
     }
 
     public Long getId() {

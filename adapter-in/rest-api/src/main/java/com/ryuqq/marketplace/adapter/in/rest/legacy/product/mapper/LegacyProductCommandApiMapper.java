@@ -19,7 +19,6 @@ import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductG
 import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult.LegacyProductResult;
 import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyNoticeCategoryResolver;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
-import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
@@ -188,25 +187,22 @@ public class LegacyProductCommandApiMapper {
 
     /** setofProductGroupId + Request → LegacyUpdateStockCommand. */
     public LegacyUpdateStockCommand toLegacyUpdateStockCommand(
-            long setofProductGroupId, List<LegacyUpdateProductStockRequest> request) {
-        List<UpdateProductStockCommand> commands = toStockCommands(request);
-        return new LegacyUpdateStockCommand(setofProductGroupId, commands);
+            long productGroupId, List<LegacyUpdateProductStockRequest> request) {
+        List<LegacyUpdateStockCommand.StockEntry> entries =
+                request == null || request.isEmpty()
+                        ? List.of()
+                        : request.stream()
+                                .map(
+                                        r ->
+                                                new LegacyUpdateStockCommand.StockEntry(
+                                                        r.productId(), r.productStockQuantity()))
+                                .toList();
+        return new LegacyUpdateStockCommand(productGroupId, entries);
     }
 
     /** productGroupId → LegacyMarkOutOfStockCommand. */
     public LegacyMarkOutOfStockCommand toLegacyMarkOutOfStockCommand(long productGroupId) {
         return new LegacyMarkOutOfStockCommand(productGroupId);
-    }
-
-    /** List<LegacyUpdateProductStockRequest> → List<UpdateProductStockCommand>. */
-    public List<UpdateProductStockCommand> toStockCommands(
-            List<LegacyUpdateProductStockRequest> request) {
-        if (request == null || request.isEmpty()) {
-            return List.of();
-        }
-        return request.stream()
-                .map(r -> new UpdateProductStockCommand(r.productId(), r.productStockQuantity()))
-                .toList();
     }
 
     // ===== Private helpers =====

@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.legacyproduct.manager;
 
 import com.ryuqq.marketplace.application.legacyproduct.port.out.command.LegacyProductCommandPort;
 import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,5 +19,10 @@ public class LegacyProductCommandManager {
     @Transactional
     public Long persist(LegacyProduct product) {
         return commandPort.persist(product);
+    }
+
+    @Transactional
+    public void persistAll(List<LegacyProduct> products) {
+        commandPort.persistAll(products);
     }
 }
