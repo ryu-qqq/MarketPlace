@@ -22,7 +22,6 @@ public class ReceiveInboundProductService implements ReceiveInboundProductUseCas
 
     @Override
     public InboundProductConversionResult execute(ReceiveInboundProductCommand command) {
-
         return registerCoordinator.register(command);
     }
 }

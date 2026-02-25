@@ -53,8 +53,20 @@ public class SellerOptionCommandCoordinator {
 
         SellerOptionGroups optionGroups =
                 optionGroupFactory.createFromRegistration(pgId, command.optionGroups());
-        validator.validate(optionGroups, optionType);
+        return register(optionGroups, optionType);
+    }
 
+    /**
+     * 도메인 객체로 OptionGroups 검증 + 저장.
+     *
+     * @param optionGroups 생성된 SellerOptionGroups 도메인 객체
+     * @param optionType 옵션 타입
+     * @return 생성된 SellerOptionValueId 목록
+     */
+    @Transactional
+    public List<SellerOptionValueId> register(
+            SellerOptionGroups optionGroups, OptionType optionType) {
+        validator.validate(optionGroups, optionType);
         return persistFacade.persistAll(optionGroups.groups());
     }
 

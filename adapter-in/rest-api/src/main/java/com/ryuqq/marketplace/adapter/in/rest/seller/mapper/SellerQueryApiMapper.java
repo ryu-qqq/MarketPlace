@@ -5,11 +5,13 @@ import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.query.SearchSellersApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerPublicProfileApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.composite.SellerFullCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.query.SellerSearchParams;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerPageResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPublicProfileResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerResult;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -212,5 +214,20 @@ public class SellerQueryApiMapper {
                 DateTimeFormatUtils.formatIso8601(settlement.verifiedAt()),
                 DateTimeFormatUtils.formatIso8601(settlement.createdAt()),
                 DateTimeFormatUtils.formatIso8601(settlement.updatedAt()));
+    }
+
+    /**
+     * SellerPublicProfileResult -> SellerPublicProfileApiResponse 변환.
+     *
+     * @param result SellerPublicProfileResult
+     * @return SellerPublicProfileApiResponse
+     */
+    public SellerPublicProfileApiResponse toPublicProfileResponse(
+            SellerPublicProfileResult result) {
+        return new SellerPublicProfileApiResponse(
+                result.sellerName(),
+                result.displayName(),
+                result.companyName(),
+                result.representative());
     }
 }

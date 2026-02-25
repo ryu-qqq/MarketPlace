@@ -41,6 +41,11 @@ public class InboundProductReadManager {
     }
 
     @Transactional(readOnly = true)
+    public List<InboundProduct> findPendingConversionProducts(int limit) {
+        return queryPort.findByStatus(InboundProductStatus.PENDING_CONVERSION, limit);
+    }
+
+    @Transactional(readOnly = true)
     public List<InboundProduct> findConvertFailedProducts(int maxRetryCount, int limit) {
         return queryPort.findByStatusAndRetryCountLessThan(
                 InboundProductStatus.CONVERT_FAILED, maxRetryCount, limit);

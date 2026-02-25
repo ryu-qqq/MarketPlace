@@ -4,9 +4,7 @@ import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInbou
 import com.ryuqq.marketplace.application.inboundproduct.dto.response.InboundProductConversionResult;
 import com.ryuqq.marketplace.application.inboundproduct.factory.InboundProductCommandFactory;
 import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductCommandManager;
-import com.ryuqq.marketplace.domain.externalsource.vo.ExternalSourceType;
 import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.ExternalProductCode;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +19,14 @@ public class InboundProductRegisterCoordinator {
     private final InboundProductCommandFactory factory;
     private final InboundProductCommandManager commandManager;
     private final InboundProductMappingResolver mappingResolver;
-    private final InboundProductConversionCoordinator conversionCoordinator;
 
     public InboundProductRegisterCoordinator(
             InboundProductCommandFactory factory,
             InboundProductCommandManager commandManager,
-            InboundProductMappingResolver mappingResolver,
-            InboundProductConversionCoordinator conversionCoordinator) {
+            InboundProductMappingResolver mappingResolver) {
         this.factory = factory;
         this.commandManager = commandManager;
         this.mappingResolver = mappingResolver;
-        this.conversionCoordinator = conversionCoordinator;
     }
 
     public InboundProductConversionResult register(ReceiveInboundProductCommand command) {
@@ -41,13 +36,7 @@ public class InboundProductRegisterCoordinator {
                 mappingResolver.resolveMappingAndApply(newProduct, now);
 
         if (mapping.isFullyMapped()) {
-            ExternalSourceType sourceType = conversionCoordinator.convert(newProduct, now);
-
-            if (newProduct.status().isConverted() && sourceType == ExternalSourceType.LEGACY) {
-                newProduct.assignExternalProductCode(
-                        ExternalProductCode.of(String.valueOf(newProduct.internalProductGroupId())),
-                        now);
-            }
+            newProduct.markPendingConversion(now);
         }
 
         commandManager.persist(newProduct);
@@ -57,12 +46,8 @@ public class InboundProductRegisterCoordinator {
                 command.externalProductCode(),
                 newProduct.status());
 
-        if (newProduct.status().isConverted()) {
-            return InboundProductConversionResult.created(
-                    newProduct.idValue(), newProduct.internalProductGroupId());
-        }
-        if (newProduct.status().isConvertFailed()) {
-            return InboundProductConversionResult.convertFailed(newProduct.idValue());
+        if (newProduct.isPendingConversion()) {
+            return InboundProductConversionResult.pendingConversion(newProduct.idValue());
         }
         return InboundProductConversionResult.pendingMapping(newProduct.idValue());
     }

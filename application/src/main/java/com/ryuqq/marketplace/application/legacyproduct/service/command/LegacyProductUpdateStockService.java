@@ -1,10 +1,10 @@
 package com.ryuqq.marketplace.application.legacyproduct.service.command;
 
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateStockCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyStockUpdateCoordinator;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateStockUseCase;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.query.LegacyProductQueryUseCase;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
 import org.springframework.stereotype.Service;
 
 /** 레거시 상품 재고 수정 Service. */
@@ -22,8 +22,8 @@ public class LegacyProductUpdateStockService implements LegacyProductUpdateStock
     }
 
     @Override
-    public ProductGroupDetailCompositeResult execute(LegacyUpdateStockCommand command) {
-        stockUpdateCoordinator.execute(command.commands());
+    public LegacyProductGroupDetailResult execute(LegacyUpdateStockCommand command) {
+        stockUpdateCoordinator.execute(command);
         return legacyProductQueryUseCase.execute(command.setofProductGroupId());
     }
 }

@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.inboundproduct.dto.response;
 
+import com.ryuqq.marketplace.domain.inboundproduct.vo.ConversionAction;
 import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductStatus;
 
 public record InboundProductConversionResult(
@@ -7,14 +8,6 @@ public record InboundProductConversionResult(
         Long internalProductGroupId,
         InboundProductStatus status,
         ConversionAction action) {
-
-    public enum ConversionAction {
-        CREATED,
-        UPDATED,
-        NO_CHANGE,
-        PENDING_MAPPING,
-        CONVERT_FAILED
-    }
 
     public static InboundProductConversionResult created(
             Long inboundProductId, Long productGroupId) {
@@ -41,6 +34,14 @@ public record InboundProductConversionResult(
                 productGroupId,
                 InboundProductStatus.CONVERTED,
                 ConversionAction.NO_CHANGE);
+    }
+
+    public static InboundProductConversionResult pendingConversion(Long inboundProductId) {
+        return new InboundProductConversionResult(
+                inboundProductId,
+                null,
+                InboundProductStatus.PENDING_CONVERSION,
+                ConversionAction.PENDING_CONVERSION);
     }
 
     public static InboundProductConversionResult pendingMapping(Long inboundProductId) {

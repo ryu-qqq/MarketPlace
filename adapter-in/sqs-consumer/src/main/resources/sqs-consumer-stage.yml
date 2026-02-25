@@ -8,3 +8,19 @@ spring:
         static: ap-northeast-2
       sqs:
         enabled: true
+
+# ============================================================
+# Intelligence Pipeline Consumer 활성화
+# ============================================================
+sqs:
+  consumer:
+    intelligence-orchestration:
+      enabled: true
+    intelligence-description-analysis:
+      enabled: true
+    intelligence-option-analysis:
+      enabled: true
+    intelligence-notice-analysis:
+      enabled: true
+    intelligence-aggregation:
+      enabled: true

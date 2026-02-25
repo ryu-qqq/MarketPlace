@@ -55,8 +55,8 @@ class ProductGroupBundleFactoryTest {
         }
 
         @Test
-        @DisplayName("이미지 Command가 번들 이미지 Command에 매핑된다")
-        void createProductGroupBundle_MapsImageCommands() {
+        @DisplayName("이미지 데이터가 번들에 매핑된다")
+        void createProductGroupBundle_MapsImageEntries() {
             // given
             RegisterProductGroupCommand command = ProductGroupCommandFixtures.registerCommand();
             Instant now = CommonVoFixtures.now();
@@ -66,14 +66,13 @@ class ProductGroupBundleFactoryTest {
             ProductGroupRegistrationBundle result = sut.createProductGroupBundle(command);
 
             // then
-            assertThat(result.imageCommand()).isNotNull();
-            assertThat(result.imageCommand().productGroupId()).isEqualTo(0L);
-            assertThat(result.imageCommand().images()).hasSize(command.images().size());
+            assertThat(result.images()).isNotNull();
+            assertThat(result.images()).hasSize(command.images().size());
         }
 
         @Test
-        @DisplayName("옵션 그룹 Command가 번들 옵션 Command에 매핑된다")
-        void createProductGroupBundle_MapsOptionGroupCommands() {
+        @DisplayName("옵션 그룹 데이터가 번들에 매핑된다")
+        void createProductGroupBundle_MapsOptionGroupEntries() {
             // given
             RegisterProductGroupCommand command = ProductGroupCommandFixtures.registerCommand();
             Instant now = CommonVoFixtures.now();
@@ -83,15 +82,14 @@ class ProductGroupBundleFactoryTest {
             ProductGroupRegistrationBundle result = sut.createProductGroupBundle(command);
 
             // then
-            assertThat(result.optionGroupCommand()).isNotNull();
-            assertThat(result.optionGroupCommand().optionType()).isEqualTo(command.optionType());
-            assertThat(result.optionGroupCommand().optionGroups())
-                    .hasSize(command.optionGroups().size());
+            assertThat(result.optionData()).isNotNull();
+            assertThat(result.optionData().optionType().name()).isEqualTo(command.optionType());
+            assertThat(result.optionData().groups()).hasSize(command.optionGroups().size());
         }
 
         @Test
-        @DisplayName("상세설명 Command가 번들 상세설명 Command에 매핑된다")
-        void createProductGroupBundle_MapsDescriptionCommand() {
+        @DisplayName("상세설명이 번들에 매핑된다")
+        void createProductGroupBundle_MapsDescriptionContent() {
             // given
             RegisterProductGroupCommand command = ProductGroupCommandFixtures.registerCommand();
             Instant now = CommonVoFixtures.now();
@@ -101,14 +99,13 @@ class ProductGroupBundleFactoryTest {
             ProductGroupRegistrationBundle result = sut.createProductGroupBundle(command);
 
             // then
-            assertThat(result.descriptionCommand()).isNotNull();
-            assertThat(result.descriptionCommand().content())
-                    .isEqualTo(command.description().content());
+            assertThat(result.descriptionContent()).isNotNull();
+            assertThat(result.descriptionContent()).isEqualTo(command.description().content());
         }
 
         @Test
-        @DisplayName("고시정보 Command가 번들 고시정보 Command에 매핑된다")
-        void createProductGroupBundle_MapsNoticeCommand() {
+        @DisplayName("고시정보가 번들에 매핑된다")
+        void createProductGroupBundle_MapsNoticeData() {
             // given
             RegisterProductGroupCommand command = ProductGroupCommandFixtures.registerCommand();
             Instant now = CommonVoFixtures.now();
@@ -118,10 +115,10 @@ class ProductGroupBundleFactoryTest {
             ProductGroupRegistrationBundle result = sut.createProductGroupBundle(command);
 
             // then
-            assertThat(result.noticeCommand()).isNotNull();
-            assertThat(result.noticeCommand().noticeCategoryId())
+            assertThat(result.noticeData()).isNotNull();
+            assertThat(result.noticeData().noticeCategoryId())
                     .isEqualTo(command.notice().noticeCategoryId());
-            assertThat(result.noticeCommand().entries()).hasSize(command.notice().entries().size());
+            assertThat(result.noticeData().entries()).hasSize(command.notice().entries().size());
         }
 
         @Test
@@ -153,8 +150,8 @@ class ProductGroupBundleFactoryTest {
 
             // then
             assertThat(result).isNotNull();
-            assertThat(result.optionGroupCommand().optionType()).isEqualTo("NONE");
-            assertThat(result.optionGroupCommand().optionGroups()).isEmpty();
+            assertThat(result.optionData().optionType().name()).isEqualTo("NONE");
+            assertThat(result.optionData().groups()).isEmpty();
         }
     }
 

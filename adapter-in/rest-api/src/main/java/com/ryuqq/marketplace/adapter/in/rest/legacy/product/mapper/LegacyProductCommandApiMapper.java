@@ -14,15 +14,14 @@ import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateD
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdatePriceCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateStockCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.response.LegacyProductRegistrationResult;
+import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult;
+import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult.LegacyOptionMappingResult;
+import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult.LegacyProductResult;
 import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyNoticeCategoryResolver;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
-import com.ryuqq.marketplace.application.product.dto.response.ProductDetailResult;
-import com.ryuqq.marketplace.application.product.dto.response.ResolvedProductOptionResult;
-import com.ryuqq.marketplace.application.productgroup.assembler.ProductGroupAssembler;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand;
 import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
@@ -56,17 +55,14 @@ import org.springframework.stereotype.Component;
 public class LegacyProductCommandApiMapper {
 
     private final LegacyNoticeCategoryResolver legacyNoticeCategoryResolver;
-    private final ProductGroupAssembler productGroupAssembler;
     private final LegacyImageCommandApiMapper legacyImageCommandApiMapper;
     private final LegacyOptionCommandApiMapper legacyOptionCommandApiMapper;
 
     public LegacyProductCommandApiMapper(
             LegacyNoticeCategoryResolver legacyNoticeCategoryResolver,
-            ProductGroupAssembler productGroupAssembler,
             LegacyImageCommandApiMapper legacyImageCommandApiMapper,
             LegacyOptionCommandApiMapper legacyOptionCommandApiMapper) {
         this.legacyNoticeCategoryResolver = legacyNoticeCategoryResolver;
-        this.productGroupAssembler = productGroupAssembler;
         this.legacyImageCommandApiMapper = legacyImageCommandApiMapper;
         this.legacyOptionCommandApiMapper = legacyOptionCommandApiMapper;
     }
@@ -181,7 +177,7 @@ public class LegacyProductCommandApiMapper {
     public LegacyUpdatePriceCommand toPriceCommand(
             long productGroupId, LegacyCreatePriceRequest request) {
         return new LegacyUpdatePriceCommand(
-                productGroupId, (int) request.regularPrice(), (int) request.currentPrice());
+                productGroupId, request.regularPrice(), request.currentPrice());
     }
 
     /** LegacyUpdateDisplayYnRequest → LegacyUpdateDisplayStatusCommand. */
@@ -197,9 +193,9 @@ public class LegacyProductCommandApiMapper {
         return new LegacyUpdateStockCommand(setofProductGroupId, commands);
     }
 
-    /** setofProductGroupId → LegacyMarkOutOfStockCommand. */
-    public LegacyMarkOutOfStockCommand toLegacyMarkOutOfStockCommand(long setofProductGroupId) {
-        return new LegacyMarkOutOfStockCommand(setofProductGroupId);
+    /** productGroupId → LegacyMarkOutOfStockCommand. */
+    public LegacyMarkOutOfStockCommand toLegacyMarkOutOfStockCommand(long productGroupId) {
+        return new LegacyMarkOutOfStockCommand(productGroupId);
     }
 
     /** List<LegacyUpdateProductStockRequest> → List<UpdateProductStockCommand>. */
@@ -229,96 +225,73 @@ public class LegacyProductCommandApiMapper {
     /**
      * LegacyProductRegistrationResult → LegacyCreateProductGroupResponse.
      *
-     * <p>상품 등록 후 조회 결과(상품 그룹 + 상품 목록)를 세토프 호환 응답으로 변환합니다.
-     *
-     * <p>result만으로 판단하며, productGroup이 null(변환 대기)일 때는 productGroupId 0, 빈 상품 목록을 반환합니다.
+     * <p>luxurydb에 저장된 결과를 세토프 호환 응답으로 변환합니다.
      */
     public LegacyCreateProductGroupResponse toCreateResponse(
-            LegacyProductRegistrationResult result, long sellerId) {
-        if (result.productGroup() == null) {
-            return new LegacyCreateProductGroupResponse(0L, sellerId, Set.of());
-        }
-        List<ProductDetailResult> productDetails =
-                productGroupAssembler.toProductDetailResults(
-                        result.productGroup(), result.products());
-        Set<LegacyProductFetchResponse> products =
-                productDetails.stream()
-                        .map(this::toProductFetchResponse)
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
+            LegacyProductRegistrationResult result) {
         return new LegacyCreateProductGroupResponse(
-                result.productGroup().idValue(), sellerId, products);
+                result.productGroupId(), result.sellerId(), result.productIds());
     }
 
     /**
-     * ProductGroupDetailCompositeResult → LegacyCreateProductGroupResponse.
+     * LegacyProductGroupDetailResult → Set<LegacyProductFetchResponse> (productId 역매핑 포함).
      *
-     * <p>상품 등록 후 조회 결과를 세토프 호환 응답으로 변환합니다.
-     */
-    public LegacyCreateProductGroupResponse toCreateResponse(
-            ProductGroupDetailCompositeResult result, long sellerId) {
-        Set<LegacyProductFetchResponse> products = toProductFetchResponses(result);
-        return new LegacyCreateProductGroupResponse(result.id(), sellerId, products);
-    }
-
-    /**
-     * ProductGroupDetailCompositeResult → Set<LegacyProductFetchResponse>.
+     * <p>레거시 상세 조회 결과를 세토프 호환 응답으로 변환합니다. 내부 productId를 외부 productId로 역변환합니다.
      *
-     * <p>옵션/재고 수정 후 반환되는 상품 목록을 세토프 호환 응답으로 변환합니다.
+     * @param result 레거시 상품그룹 상세 결과
+     * @param internalToExternalMap internal → external productId 매핑
      */
     public Set<LegacyProductFetchResponse> toProductFetchResponses(
-            ProductGroupDetailCompositeResult result) {
-        if (result.optionProductMatrix() == null
-                || result.optionProductMatrix().products() == null) {
+            LegacyProductGroupDetailResult result, Map<Long, Long> internalToExternalMap) {
+        if (result.products() == null || result.products().isEmpty()) {
             return Set.of();
         }
-        return result.optionProductMatrix().products().stream()
-                .map(this::toProductFetchResponse)
+        return result.products().stream()
+                .map(p -> toLegacyProductFetchResponse(p, internalToExternalMap))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private LegacyProductFetchResponse toProductFetchResponse(ProductDetailResult product) {
-        boolean soldOut = "SOLD_OUT".equals(product.status()) || product.stockQuantity() <= 0;
-        boolean display = "ON_SALE".equals(product.status()) || "ACTIVE".equals(product.status());
+    private LegacyProductFetchResponse toLegacyProductFetchResponse(
+            LegacyProductResult product, Map<Long, Long> internalToExternalMap) {
         LegacyProductStatusResponse productStatus =
-                LegacyProductStatusResponse.of(soldOut, display);
+                LegacyProductStatusResponse.of(product.soldOut(), !product.soldOut());
 
-        String optionString = buildOptionString(product.options());
-        Set<LegacyOptionDto> options = buildOptionDtos(product.options());
+        String optionString = buildLegacyOptionString(product.options());
+        Set<LegacyOptionDto> options = buildLegacyOptionDtos(product.options());
 
-        int additionalPrice = product.currentPrice() - product.regularPrice();
-        BigDecimal additionalPriceBd =
-                additionalPrice != 0 ? BigDecimal.valueOf(additionalPrice) : BigDecimal.ZERO;
+        long responseProductId =
+                internalToExternalMap.getOrDefault(product.productId(), product.productId());
 
         return new LegacyProductFetchResponse(
-                product.id(),
+                responseProductId,
                 product.stockQuantity(),
                 productStatus,
                 optionString,
                 options,
-                additionalPriceBd);
+                BigDecimal.ZERO);
     }
 
-    private String buildOptionString(List<ResolvedProductOptionResult> options) {
-        if (options == null || options.isEmpty()) {
+    private String buildLegacyOptionString(List<LegacyOptionMappingResult> mappings) {
+        if (mappings == null || mappings.isEmpty()) {
             return "";
         }
-        return options.stream()
-                .map(o -> o.optionGroupName() + o.optionValueName())
+        return mappings.stream()
+                .map(m -> m.optionGroupName() + m.optionValue())
                 .collect(Collectors.joining(" "));
     }
 
-    private Set<LegacyOptionDto> buildOptionDtos(List<ResolvedProductOptionResult> options) {
-        if (options == null || options.isEmpty()) {
+    private Set<LegacyOptionDto> buildLegacyOptionDtos(List<LegacyOptionMappingResult> mappings) {
+        if (mappings == null || mappings.isEmpty()) {
             return Set.of();
         }
-        return options.stream()
+        return mappings.stream()
                 .map(
-                        o ->
+                        m ->
                                 new LegacyOptionDto(
-                                        o.sellerOptionGroupId(),
-                                        o.sellerOptionValueId(),
-                                        o.optionGroupName(),
-                                        o.optionValueName()))
+                                        m.optionGroupId(),
+                                        m.optionDetailId(),
+                                        m.optionGroupName(),
+                                        m.optionValue()))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

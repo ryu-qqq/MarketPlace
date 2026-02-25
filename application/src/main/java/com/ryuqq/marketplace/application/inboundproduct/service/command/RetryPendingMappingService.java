@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.application.inboundproduct.service.command;
 
-import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductConversionCoordinator;
 import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductMappingResolver;
 import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductMappingResult;
 import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductCommandManager;
@@ -16,7 +15,8 @@ import org.springframework.stereotype.Service;
 /**
  * PENDING_MAPPING 상태 인바운드 상품 재처리 서비스.
  *
- * <p>MappingResolver + ConversionCoordinator를 직접 호출하여 매핑 재시도 → 변환을 수행합니다.
+ * <p>MappingResolver를 호출하여 매핑 재시도 후, 성공 시 PENDING_CONVERSION으로 전이합니다. 실제 변환은
+ * InboundConversionScheduler가 비동기로 수행합니다.
  */
 @Service
 public class RetryPendingMappingService implements RetryPendingMappingUseCase {
@@ -26,17 +26,14 @@ public class RetryPendingMappingService implements RetryPendingMappingUseCase {
 
     private final InboundProductReadManager readManager;
     private final InboundProductMappingResolver mappingResolver;
-    private final InboundProductConversionCoordinator conversionCoordinator;
     private final InboundProductCommandManager commandManager;
 
     public RetryPendingMappingService(
             InboundProductReadManager readManager,
             InboundProductMappingResolver mappingResolver,
-            InboundProductConversionCoordinator conversionCoordinator,
             InboundProductCommandManager commandManager) {
         this.readManager = readManager;
         this.mappingResolver = mappingResolver;
-        this.conversionCoordinator = conversionCoordinator;
         this.commandManager = commandManager;
     }
 
@@ -73,7 +70,7 @@ public class RetryPendingMappingService implements RetryPendingMappingUseCase {
         InboundProductMappingResult mapping = mappingResolver.resolveMappingAndApply(product, now);
 
         if (mapping.isFullyMapped()) {
-            conversionCoordinator.convert(product, now);
+            product.markPendingConversion(now);
         }
 
         commandManager.persist(product);

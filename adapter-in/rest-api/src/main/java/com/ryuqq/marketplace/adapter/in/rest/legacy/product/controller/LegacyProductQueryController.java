@@ -4,15 +4,10 @@ import static com.ryuqq.marketplace.adapter.in.rest.legacy.product.LegacyProduct
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyProductQueryApiMapper;
+import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.query.LegacyProductQueryUseCase;
-import com.ryuqq.marketplace.application.notice.manager.NoticeCategoryReadManager;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
-import com.ryuqq.marketplace.domain.notice.id.NoticeCategoryId;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,33 +27,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LegacyProductQueryController {
 
-    private static final long CLOTHING_NOTICE_CATEGORY_ID = 1L;
-
     private final LegacyProductQueryUseCase legacyProductQueryUseCase;
-    private final NoticeCategoryReadManager noticeCategoryReadManager;
+    private final LegacyProductQueryApiMapper legacyProductQueryApiMapper;
 
     public LegacyProductQueryController(
             LegacyProductQueryUseCase legacyProductQueryUseCase,
-            NoticeCategoryReadManager noticeCategoryReadManager) {
+            LegacyProductQueryApiMapper legacyProductQueryApiMapper) {
         this.legacyProductQueryUseCase = legacyProductQueryUseCase;
-        this.noticeCategoryReadManager = noticeCategoryReadManager;
+        this.legacyProductQueryApiMapper = legacyProductQueryApiMapper;
     }
 
     @GetMapping(PRODUCT_GROUP_ID)
     public ResponseEntity<LegacyApiResponse<LegacyProductDetailApiResponse>> fetchProductGroup(
             @PathVariable long productGroupId) {
-        ProductGroupDetailCompositeResult result =
-                legacyProductQueryUseCase.execute(productGroupId);
-        Map<Long, String> noticeFieldIdToCode = loadNoticeFieldIdToCodeMap();
-        LegacyProductDetailApiResponse response =
-                LegacyProductDetailApiResponse.from(result, productGroupId, noticeFieldIdToCode);
+        LegacyProductGroupDetailResult result = legacyProductQueryUseCase.execute(productGroupId);
+        LegacyProductDetailApiResponse response = legacyProductQueryApiMapper.toResponse(result);
         return ResponseEntity.ok(LegacyApiResponse.of(response));
-    }
-
-    private Map<Long, String> loadNoticeFieldIdToCodeMap() {
-        NoticeCategory clothing =
-                noticeCategoryReadManager.getById(NoticeCategoryId.of(CLOTHING_NOTICE_CATEGORY_ID));
-        return clothing.fields().stream()
-                .collect(Collectors.toMap(NoticeField::idValue, NoticeField::fieldCodeValue));
     }
 }

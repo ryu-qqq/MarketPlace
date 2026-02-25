@@ -6,10 +6,12 @@ import com.ryuqq.marketplace.adapter.in.rest.seller.dto.command.UpdateSellerFull
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.query.SearchSellersApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerPublicProfileApiResponse;
 import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.composite.SellerFullCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.composite.SellerPolicyCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerPageResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPublicProfileResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerResult;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -368,5 +370,19 @@ public final class SellerApiFixtures {
                 "2025-01-23T10:30:00+09:00",
                 "2025-01-23T10:30:00+09:00",
                 "2025-01-23T10:30:00+09:00");
+    }
+
+    // ===== SellerPublicProfileResult (Application) =====
+
+    public static SellerPublicProfileResult publicProfileResult() {
+        return new SellerPublicProfileResult(
+                DEFAULT_SELLER_NAME, DEFAULT_DISPLAY_NAME, "테스트컴퍼니", "홍길동");
+    }
+
+    // ===== SellerPublicProfileApiResponse =====
+
+    public static SellerPublicProfileApiResponse publicProfileApiResponse() {
+        return new SellerPublicProfileApiResponse(
+                DEFAULT_SELLER_NAME, DEFAULT_DISPLAY_NAME, "테스트컴퍼니", "홍길동");
     }
 }
