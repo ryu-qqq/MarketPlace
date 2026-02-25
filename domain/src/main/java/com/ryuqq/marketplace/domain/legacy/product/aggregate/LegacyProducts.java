@@ -1,5 +1,7 @@
 package com.ryuqq.marketplace.domain.legacy.product.aggregate;
 
+import com.ryuqq.marketplace.domain.legacy.optiondetail.id.LegacyOptionDetailId;
+import com.ryuqq.marketplace.domain.legacy.optiongroup.id.LegacyOptionGroupId;
 import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductOption;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -129,7 +131,9 @@ public class LegacyProducts {
     }
 
     private String optionKey(LegacyProductOption option) {
-        return option.optionGroupId().value() + ":" + option.optionDetailId().value();
+        LegacyOptionGroupId groupId = option.optionGroupId();
+        LegacyOptionDetailId detailId = option.optionDetailId();
+        return groupId.value() + ":" + detailId.value();
     }
 
     public List<LegacyProduct> products() {

@@ -12,9 +12,18 @@ import java.util.List;
  */
 public record LegacyUpdateProductsCommand(long productGroupId, List<SkuEntry> skus) {
 
+    public LegacyUpdateProductsCommand {
+        skus = List.copyOf(skus);
+    }
+
     /** 하나의 SKU(상품) 엔트리. */
     public record SkuEntry(
-            Long productId, int stockQuantity, long additionalPrice, List<OptionEntry> options) {}
+            Long productId, int stockQuantity, long additionalPrice, List<OptionEntry> options) {
+
+        public SkuEntry {
+            options = List.copyOf(options);
+        }
+    }
 
     /** 하나의 옵션 엔트리. */
     public record OptionEntry(
