@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.condition.InboundSourceConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.entity.InboundSourceJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.entity.QInboundSourceJpaEntity;
-import com.ryuqq.marketplace.domain.externalsource.query.ExternalSourceSearchCriteria;
+import com.ryuqq.marketplace.domain.inboundsource.query.InboundSourceSearchCriteria;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -40,7 +40,7 @@ public class InboundSourceQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public List<InboundSourceJpaEntity> findByCriteria(ExternalSourceSearchCriteria criteria) {
+    public List<InboundSourceJpaEntity> findByCriteria(InboundSourceSearchCriteria criteria) {
         return queryFactory
                 .selectFrom(inboundSource)
                 .where(
@@ -53,7 +53,7 @@ public class InboundSourceQueryDslRepository {
                 .fetch();
     }
 
-    public long countByCriteria(ExternalSourceSearchCriteria criteria) {
+    public long countByCriteria(InboundSourceSearchCriteria criteria) {
         Long count =
                 queryFactory
                         .select(inboundSource.count())

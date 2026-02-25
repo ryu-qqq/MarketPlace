@@ -4,6 +4,9 @@ import static com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.LegacyShipme
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.dto.response.LegacyShipmentCompanyCodeResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.mapper.LegacyShipmentQueryApiMapper;
+import com.ryuqq.marketplace.application.legacyshipment.dto.response.LegacyShipmentCompanyCodeResult;
+import com.ryuqq.marketplace.application.legacyshipment.port.in.LegacyGetShipmentCompanyCodesUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +26,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LegacyShipmentController {
 
+    private final LegacyGetShipmentCompanyCodesUseCase legacyGetShipmentCompanyCodesUseCase;
+    private final LegacyShipmentQueryApiMapper legacyShipmentQueryApiMapper;
+
+    public LegacyShipmentController(
+            LegacyGetShipmentCompanyCodesUseCase legacyGetShipmentCompanyCodesUseCase,
+            LegacyShipmentQueryApiMapper legacyShipmentQueryApiMapper) {
+        this.legacyGetShipmentCompanyCodesUseCase = legacyGetShipmentCompanyCodesUseCase;
+        this.legacyShipmentQueryApiMapper = legacyShipmentQueryApiMapper;
+    }
+
     @GetMapping(COMPANY_CODES)
     public ResponseEntity<LegacyApiResponse<List<LegacyShipmentCompanyCodeResponse>>>
             getCompanyCodes() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        List<LegacyShipmentCompanyCodeResult> results =
+                legacyGetShipmentCompanyCodesUseCase.execute();
+        return ResponseEntity.ok(
+                LegacyApiResponse.success(
+                        legacyShipmentQueryApiMapper.toCompanyCodeResponses(results)));
     }
 }

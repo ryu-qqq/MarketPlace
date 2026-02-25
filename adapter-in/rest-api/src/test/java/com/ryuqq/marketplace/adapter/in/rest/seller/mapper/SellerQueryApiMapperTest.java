@@ -7,9 +7,11 @@ import com.ryuqq.marketplace.adapter.in.rest.seller.SellerApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.query.SearchSellersApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerPublicProfileApiResponse;
 import com.ryuqq.marketplace.application.seller.dto.composite.SellerFullCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.query.SellerSearchParams;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerPageResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPublicProfileResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerResult;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -241,6 +243,27 @@ class SellerQueryApiMapperTest {
             assertThat(response.seller().createdAt()).contains("+09:00");
             assertThat(response.seller().updatedAt()).contains("T");
             assertThat(response.seller().updatedAt()).contains("+09:00");
+        }
+    }
+
+    @Nested
+    @DisplayName("toPublicProfileResponse() - 공개 프로필 응답 변환")
+    class ToPublicProfileResponseTest {
+
+        @Test
+        @DisplayName("SellerPublicProfileResult를 SellerPublicProfileApiResponse로 변환한다")
+        void toPublicProfileResponse_ConvertsResult_ReturnsApiResponse() {
+            // given
+            SellerPublicProfileResult result = SellerApiFixtures.publicProfileResult();
+
+            // when
+            SellerPublicProfileApiResponse response = mapper.toPublicProfileResponse(result);
+
+            // then
+            assertThat(response.sellerName()).isEqualTo("테스트셀러");
+            assertThat(response.displayName()).isEqualTo("테스트 브랜드");
+            assertThat(response.companyName()).isEqualTo("테스트컴퍼니");
+            assertThat(response.representative()).isEqualTo("홍길동");
         }
     }
 }

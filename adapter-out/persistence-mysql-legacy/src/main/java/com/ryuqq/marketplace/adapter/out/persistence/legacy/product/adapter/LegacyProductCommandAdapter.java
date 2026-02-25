@@ -1,0 +1,33 @@
+package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.adapter;
+
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.repository.LegacyProductJpaRepository;
+import com.ryuqq.marketplace.application.legacyproduct.port.out.command.LegacyProductCommandPort;
+import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
+import org.springframework.stereotype.Component;
+
+/**
+ * 세토프 DB product INSERT Adapter.
+ *
+ * <p>PER-ADP-001: CommandAdapter는 JpaRepository만 사용.
+ */
+@Component
+public class LegacyProductCommandAdapter implements LegacyProductCommandPort {
+
+    private final LegacyProductJpaRepository repository;
+    private final LegacyProductCommandEntityMapper mapper;
+
+    public LegacyProductCommandAdapter(
+            LegacyProductJpaRepository repository, LegacyProductCommandEntityMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
+
+    @Override
+    public Long persist(LegacyProduct product) {
+        LegacyProductEntity entity = mapper.toEntity(product);
+        LegacyProductEntity saved = repository.save(entity);
+        return saved.getId();
+    }
+}

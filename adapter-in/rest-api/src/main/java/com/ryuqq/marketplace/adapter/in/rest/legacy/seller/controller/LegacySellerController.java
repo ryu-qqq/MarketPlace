@@ -4,6 +4,9 @@ import static com.ryuqq.marketplace.adapter.in.rest.legacy.seller.LegacySellerEn
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.dto.response.LegacySellerResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.mapper.LegacySellerQueryApiMapper;
+import com.ryuqq.marketplace.application.legacyseller.dto.response.LegacySellerResult;
+import com.ryuqq.marketplace.application.legacyseller.port.in.LegacyGetCurrentSellerUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +24,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LegacySellerController {
 
+    private final LegacyGetCurrentSellerUseCase legacyGetCurrentSellerUseCase;
+    private final LegacySellerQueryApiMapper legacySellerQueryApiMapper;
+
+    public LegacySellerController(
+            LegacyGetCurrentSellerUseCase legacyGetCurrentSellerUseCase,
+            LegacySellerQueryApiMapper legacySellerQueryApiMapper) {
+        this.legacyGetCurrentSellerUseCase = legacyGetCurrentSellerUseCase;
+        this.legacySellerQueryApiMapper = legacySellerQueryApiMapper;
+    }
+
     @GetMapping(SELLER)
     public ResponseEntity<LegacyApiResponse<LegacySellerResponse>> getCurrentSeller() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        LegacySellerResult result = legacyGetCurrentSellerUseCase.execute();
+        return ResponseEntity.ok(
+                LegacyApiResponse.success(legacySellerQueryApiMapper.toSellerResponse(result)));
     }
 }

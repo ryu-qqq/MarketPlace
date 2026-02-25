@@ -447,7 +447,9 @@ module "ecs_service" {
     # AuthHub
     { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local:8080" },
     # FileFlow
-    { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-prod.connectly.local:8080" }
+    { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-prod.connectly.local:8080" },
+    # Sentry
+    { name = "SENTRY_DSN", value = local.sentry_dsn }
   ]
 
   # Container Secrets

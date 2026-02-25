@@ -1,0 +1,31 @@
+# ============================================================
+# Persistence Legacy Layer 운영 환경 설정
+# ============================================================
+# 활성화: spring.profiles.active=prod
+# ⚠️ 모든 민감 정보는 환경 변수로 관리
+# ============================================================
+
+persistence:
+  legacy:
+    datasource:
+      jdbc-url: jdbc:mysql://${LEGACY_DB_HOST}:${LEGACY_DB_PORT:3306}/${LEGACY_DB_NAME}?useSSL=true&requireSSL=true&serverTimezone=Asia/Seoul
+      username: ${LEGACY_DB_USER}
+      password: ${LEGACY_DB_PASSWORD}
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+      pool-name: HikariPool-Legacy-Prod
+      connection-init-sql: SELECT 1
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        rewriteBatchedStatements: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false

@@ -174,6 +174,21 @@ public class InboundProduct {
         this.updatedAt = now;
     }
 
+    /** 비동기 변환 대기 상태로 전이. MAPPED 또는 CONVERT_FAILED 상태에서만 가능. */
+    public void markPendingConversion(Instant now) {
+        if (!status.canMarkPendingConversion()) {
+            throw new IllegalStateException(
+                    "PENDING_CONVERSION 전이는 MAPPED 또는 CONVERT_FAILED 상태에서만 가능합니다. 현재 상태: "
+                            + status);
+        }
+        boolean isRetry = status.isConvertFailed();
+        this.status = InboundProductStatus.PENDING_CONVERSION;
+        if (!isRetry) {
+            this.retryCount = 0;
+        }
+        this.updatedAt = now;
+    }
+
     /** 외부 상품 코드 할당. 레거시 등록 시 변환 완료 후 productGroupId로 교체할 때 사용. */
     public void assignExternalProductCode(ExternalProductCode code, Instant now) {
         this.externalProductCode = code;
@@ -184,6 +199,12 @@ public class InboundProduct {
     public void markConverted(Long internalProductGroupId, Instant now) {
         this.internalProductGroupId = internalProductGroupId;
         this.status = InboundProductStatus.CONVERTED;
+        this.updatedAt = now;
+    }
+
+    /** 복구 불가능한 페이로드 오류로 영구 실패 처리. 재시도 대상에서 제외됩니다. */
+    public void markPermanentlyFailed(Instant now) {
+        this.status = InboundProductStatus.PERMANENTLY_FAILED;
         this.updatedAt = now;
     }
 
@@ -226,6 +247,14 @@ public class InboundProduct {
 
     public boolean isMapped() {
         return status.isMapped();
+    }
+
+    public boolean isPendingConversion() {
+        return status.isPendingConversion();
+    }
+
+    public boolean isConverted() {
+        return status.isConverted();
     }
 
     public boolean isReadyForConversion() {

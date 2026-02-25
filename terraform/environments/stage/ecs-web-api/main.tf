@@ -450,7 +450,9 @@ module "ecs_service" {
     # FileFlow
     { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-prod.connectly.local:8080" },
     # Naver Commerce
-    { name = "NAVER_COMMERCE_CLIENT_ID", value = data.aws_ssm_parameter.naver_commerce_client_id.value }
+    { name = "NAVER_COMMERCE_CLIENT_ID", value = data.aws_ssm_parameter.naver_commerce_client_id.value },
+    # Sentry
+    { name = "SENTRY_DSN", value = local.sentry_dsn }
   ]
 
   # Container Secrets

@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.legacyproduct.internal;
 
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductsCommand;
+import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyProductIdResolver.ResolvedLegacyProductId;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductsUseCase;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,9 @@ public class LegacyOptionUpdateCoordinator extends LegacyProductUpdateCoordinato
 
     @Transactional
     public void execute(LegacyUpdateProductsCommand command) {
-        long internalId = resolveInternalId(command.setofProductGroupId());
+        ResolvedLegacyProductId resolved = idResolver.resolve(command.setofProductGroupId());
+        long internalId = resolved.internalProductGroupId();
+
         UpdateProductsCommand inner = command.command();
         UpdateProductsCommand resolvedCommand =
                 new UpdateProductsCommand(internalId, inner.optionGroups(), inner.products());

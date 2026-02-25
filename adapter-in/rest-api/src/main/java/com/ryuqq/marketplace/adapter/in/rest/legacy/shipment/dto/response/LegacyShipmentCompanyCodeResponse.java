@@ -5,4 +5,5 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.dto.response;
  *
  * <p>GET /shipment/company-codes - 택배사 코드 목록 조회
  */
-public record LegacyShipmentCompanyCodeResponse(String code, String name) {}
+public record LegacyShipmentCompanyCodeResponse(
+        String shipmentCompanyName, String shipmentCompanyCode) {}

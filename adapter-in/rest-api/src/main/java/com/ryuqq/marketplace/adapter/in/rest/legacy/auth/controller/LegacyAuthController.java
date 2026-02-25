@@ -4,8 +4,12 @@ import static com.ryuqq.marketplace.adapter.in.rest.legacy.auth.LegacyAuthEndpoi
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.auth.dto.request.LegacyCreateAuthTokenRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.auth.dto.response.LegacyAuthTokenResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.auth.mapper.LegacyAuthCommandApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
+import com.ryuqq.marketplace.application.legacyauth.dto.command.LegacyLoginCommand;
+import com.ryuqq.marketplace.application.legacyauth.port.in.LegacyLoginUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,9 +27,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LegacyAuthController {
 
+    private final LegacyLoginUseCase legacyLoginUseCase;
+    private final LegacyAuthCommandApiMapper legacyAuthCommandApiMapper;
+
+    public LegacyAuthController(
+            LegacyLoginUseCase legacyLoginUseCase,
+            LegacyAuthCommandApiMapper legacyAuthCommandApiMapper) {
+        this.legacyLoginUseCase = legacyLoginUseCase;
+        this.legacyAuthCommandApiMapper = legacyAuthCommandApiMapper;
+    }
+
     @PostMapping(AUTH_AUTHENTICATION)
     public ResponseEntity<LegacyApiResponse<LegacyAuthTokenResponse>> getAccessToken(
-            @RequestBody LegacyCreateAuthTokenRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+            @Valid @RequestBody LegacyCreateAuthTokenRequest request) {
+        LegacyLoginCommand command = legacyAuthCommandApiMapper.toLoginCommand(request);
+        String token = legacyLoginUseCase.execute(command);
+        return ResponseEntity.ok(
+                LegacyApiResponse.success(legacyAuthCommandApiMapper.toAuthTokenResponse(token)));
     }
 }
