@@ -14,8 +14,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  *
  * <p>헥사고날 아키텍처 기반 커머스 플랫폼.
  *
- * <p>Legacy 모듈(세토프 DB)은 persistence.legacy.enabled=true 조건으로만 활성화됩니다. 기본 ComponentScan에서 모든
- * legacy 패키지를 제외하고, {@link LegacyModuleConfig}에서 조건부로 스캔합니다.
+ * <p>Legacy 모듈(세토프 DB)은 persistence.legacy.enabled=true 조건으로만 활성화됩니다. 기본 ComponentScan에서 모든 legacy
+ * 패키지를 제외하고, {@link LegacyModuleConfig}에서 조건부로 스캔합니다.
  */
 @SpringBootApplication
 @ComponentScan(
@@ -42,7 +42,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         excludeFilters =
                 @ComponentScan.Filter(
                         type = FilterType.REGEX,
-                        pattern = "com\\.ryuqq\\.marketplace\\.adapter\\.out\\.persistence\\.legacy\\..*"))
+                        pattern =
+                                "com\\.ryuqq\\.marketplace\\.adapter\\.out\\.persistence\\.legacy\\..*"))
 @EntityScan(basePackages = "com.ryuqq.marketplace.adapter.out.persistence")
 public class MarketPlaceApplication {
 

@@ -11,6 +11,7 @@ import java.time.Instant;
  *
  * <p>product_option 테이블에 대응하며, DeletionStatus로 soft-delete를 관리합니다.
  */
+@SuppressWarnings("PMD.DomainTooManyMethods")
 public class LegacyProductOption {
 
     private final Long id;
