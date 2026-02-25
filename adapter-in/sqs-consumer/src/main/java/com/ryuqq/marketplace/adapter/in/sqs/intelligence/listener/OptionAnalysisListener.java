@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
         prefix = "sqs.consumer.intelligence-option-analysis",
         name = "enabled",
         havingValue = "true",
-        matchIfMissing = true)
+        matchIfMissing = false)
 public class OptionAnalysisListener {
 
     private static final Logger log = LoggerFactory.getLogger(OptionAnalysisListener.class);

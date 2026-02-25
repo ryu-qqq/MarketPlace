@@ -108,7 +108,8 @@ public class MarketAccessChecker extends BaseAccessChecker {
         AdminRole highest = AdminRole.VIEWER;
         for (String roleName : roles) {
             try {
-                AdminRole role = AdminRole.fromName(roleName);
+                String normalized = roleName.startsWith("ROLE_") ? roleName.substring(5) : roleName;
+                AdminRole role = AdminRole.fromName(normalized);
                 if (role.level() > highest.level()) {
                     highest = role;
                 }

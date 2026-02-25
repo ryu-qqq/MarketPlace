@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.adapter.in.rest.commoncode.controller;
 
-import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.commoncode.CommonCodeAdminEndpoints;
@@ -75,7 +74,6 @@ public class CommonCodeQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
-    @RequirePermission(value = "common-code:read", description = "공통 코드 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<CommonCodeApiResponse>>> search(
             @Valid SearchCommonCodesPageApiRequest request) {

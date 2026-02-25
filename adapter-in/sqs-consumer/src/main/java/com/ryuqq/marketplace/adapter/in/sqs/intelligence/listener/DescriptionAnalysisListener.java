@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
         prefix = "sqs.consumer.intelligence-description-analysis",
         name = "enabled",
         havingValue = "true",
-        matchIfMissing = true)
+        matchIfMissing = false)
 public class DescriptionAnalysisListener {
 
     private static final Logger log = LoggerFactory.getLogger(DescriptionAnalysisListener.class);

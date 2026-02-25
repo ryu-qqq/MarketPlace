@@ -16,12 +16,14 @@ public record LegacyCreateProductGroupRequest(
         @NotBlank(message = "관리 타입은 필수입니다.") String managementType,
         @Positive(message = "카테고리 ID는 0보다 커야 합니다.") long categoryId,
         @Positive(message = "브랜드 ID는 0보다 커야 합니다.") long brandId,
-        @Valid LegacyCreateProductStatusRequest productStatus,
+        @Valid @NotNull(message = "상품 상태 정보는 필수입니다.")
+                LegacyCreateProductStatusRequest productStatus,
         @Valid @NotNull(message = "가격 정보는 필수입니다.") LegacyCreatePriceRequest price,
-        @Valid LegacyCreateProductNoticeRequest productNotice,
-        @Valid LegacyCreateClothesDetailRequest clothesDetailInfo,
-        @Valid LegacyCreateDeliveryNoticeRequest deliveryNotice,
-        @Valid LegacyCreateRefundNoticeRequest refundNotice,
+        @Valid @NotNull(message = "상품 고시정보는 필수입니다.") LegacyCreateProductNoticeRequest productNotice,
+        @Valid @NotNull(message = "의류 상세정보는 필수입니다.")
+                LegacyCreateClothesDetailRequest clothesDetailInfo,
+        @Valid @NotNull(message = "배송 정보는 필수입니다.") LegacyCreateDeliveryNoticeRequest deliveryNotice,
+        @Valid @NotNull(message = "반품 정보는 필수입니다.") LegacyCreateRefundNoticeRequest refundNotice,
         @Valid @Size(min = 1, max = 10, message = "상품 이미지는 1개 이상 10개 이하로 입력해야 합니다.")
                 List<LegacyCreateProductImageRequest> productImageList,
         @NotNull(message = "상세 설명은 필수입니다.") String detailDescription,

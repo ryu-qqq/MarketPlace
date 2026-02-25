@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.inboundsource.condition;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ryuqq.marketplace.adapter.out.persistence.inboundsource.entity.QInboundSourceJpaEntity;
-import com.ryuqq.marketplace.domain.externalsource.query.ExternalSourceSearchField;
+import com.ryuqq.marketplace.domain.inboundsource.query.InboundSourceSearchField;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +29,7 @@ public class InboundSourceConditionBuilder {
 
     /** 검색 필드별 검색 조건. searchField가 null이면 전체 필드 검색. */
     public BooleanExpression searchCondition(
-            ExternalSourceSearchField searchField, String searchWord) {
+            InboundSourceSearchField searchField, String searchWord) {
         if (searchWord == null || searchWord.isBlank()) {
             return null;
         }
