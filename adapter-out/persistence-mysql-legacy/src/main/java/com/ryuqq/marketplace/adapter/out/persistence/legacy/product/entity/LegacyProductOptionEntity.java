@@ -51,10 +51,36 @@ public class LegacyProductOptionEntity extends LegacyBaseEntity {
         this.deleteYn = "N";
     }
 
+    private LegacyProductOptionEntity(
+            Long id,
+            Long productId,
+            Long optionGroupId,
+            Long optionDetailId,
+            Long additionalPrice,
+            String deleteYn) {
+        this.id = id;
+        this.productId = productId;
+        this.optionGroupId = optionGroupId;
+        this.optionDetailId = optionDetailId;
+        this.additionalPrice = additionalPrice;
+        this.deleteYn = deleteYn;
+    }
+
     public static LegacyProductOptionEntity create(
             long productId, long optionGroupId, long optionDetailId, long additionalPrice) {
         return new LegacyProductOptionEntity(
                 productId, optionGroupId, optionDetailId, additionalPrice);
+    }
+
+    public static LegacyProductOptionEntity create(
+            Long id,
+            long productId,
+            long optionGroupId,
+            long optionDetailId,
+            long additionalPrice,
+            String deleteYn) {
+        return new LegacyProductOptionEntity(
+                id, productId, optionGroupId, optionDetailId, additionalPrice, deleteYn);
     }
 
     public Long getId() {

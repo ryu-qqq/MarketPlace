@@ -13,28 +13,64 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 /**
- * 레거시 상품 옵션 Request → UpdateProductsCommand 변환 매퍼.
+ * 레거시 상품 옵션 Request → Command 변환 매퍼.
  *
- * <p>LegacyCreateOptionRequest를 ProductCommandController.updateProducts와 동일한 UpdateProductsCommand
- * 형태로 변환합니다. optionGroupId/optionDetailId는 있으면 수정, 없으면 신규로 매핑됩니다.
+ * <p>LegacyCreateOptionRequest를 레거시 직접 write용 LegacyUpdateProductsCommand와 내부 시스템용
+ * UpdateProductsCommand 양쪽으로 변환합니다.
  */
 @Component
 public class LegacyOptionCommandApiMapper {
 
     /**
-     * List&lt;LegacyCreateOptionRequest&gt; → LegacyUpdateProductsCommand.
+     * List&lt;LegacyCreateOptionRequest&gt; → LegacyUpdateProductsCommand (레거시 직접 write용).
      *
-     * <p>레거시 productGroupId와 변환된 UpdateProductsCommand를 함께 전달합니다. null 또는 empty 리스트인 경우 {@link
-     * IllegalArgumentException}을 던집니다.
+     * <p>flat 구조의 Command로 변환합니다. null 또는 empty 리스트인 경우 {@link IllegalArgumentException}을 던집니다.
      */
     public LegacyUpdateProductsCommand toLegacyUpdateProductsCommand(
-            long setofProductGroupId, List<LegacyCreateOptionRequest> request) {
-        UpdateProductsCommand command = toUpdateProductsCommand(0L, request);
-        return new LegacyUpdateProductsCommand(setofProductGroupId, command);
+            long productGroupId, List<LegacyCreateOptionRequest> request) {
+        if (request == null || request.isEmpty()) {
+            throw new IllegalArgumentException("옵션 목록은 비어있을 수 없습니다");
+        }
+
+        List<LegacyUpdateProductsCommand.SkuEntry> skuEntries =
+                request.stream()
+                        .map(
+                                option -> {
+                                    List<LegacyUpdateProductsCommand.OptionEntry> optionEntries =
+                                            option.options() != null
+                                                    ? option.options().stream()
+                                                            .map(
+                                                                    d ->
+                                                                            new LegacyUpdateProductsCommand
+                                                                                    .OptionEntry(
+                                                                                    d
+                                                                                            .optionGroupId(),
+                                                                                    d
+                                                                                            .optionDetailId(),
+                                                                                    d.optionName(),
+                                                                                    d
+                                                                                            .optionValue()))
+                                                            .toList()
+                                                    : List.of();
+
+                                    long additionalPrice =
+                                            option.additionalPrice() != null
+                                                    ? option.additionalPrice().longValue()
+                                                    : 0L;
+
+                                    return new LegacyUpdateProductsCommand.SkuEntry(
+                                            option.productId(),
+                                            option.quantity() != null ? option.quantity() : 0,
+                                            additionalPrice,
+                                            optionEntries);
+                                })
+                        .toList();
+
+        return new LegacyUpdateProductsCommand(productGroupId, skuEntries);
     }
 
     /**
-     * List&lt;LegacyCreateOptionRequest&gt; → UpdateProductsCommand.
+     * List&lt;LegacyCreateOptionRequest&gt; → UpdateProductsCommand (내부 시스템용).
      *
      * <p>null 또는 empty 리스트인 경우 {@link IllegalArgumentException}을 던집니다.
      */
@@ -52,7 +88,6 @@ public class LegacyOptionCommandApiMapper {
 
     private List<UpdateProductsCommand.OptionGroupData> toOptionGroups(
             List<LegacyCreateOptionRequest> options) {
-        // optionName → (optionValue → detail) : 그룹별 값 추출, optionDetailId 보존
         Map<String, Map<String, LegacyCreateOptionRequest.OptionDetail>> groupMap =
                 new LinkedHashMap<>();
         Map<String, Long> groupIdByOptionName = new LinkedHashMap<>();
