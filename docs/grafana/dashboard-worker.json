@@ -462,8 +462,8 @@
       },
       "targets": [
         {
-          "alias": "description-analysis",
-          "dimensions": { "QueueName": ["intelligence-description-analysis"] },
+          "alias": "scoring",
+          "dimensions": { "QueueName": ["$environment-marketplace-inspection-scoring"] },
           "matchExact": true,
           "metricEditorMode": 0,
           "metricName": "ApproximateNumberOfMessagesVisible",
@@ -474,8 +474,8 @@
           "statistic": "Maximum"
         },
         {
-          "alias": "notice-analysis",
-          "dimensions": { "QueueName": ["intelligence-notice-analysis"] },
+          "alias": "enhancement",
+          "dimensions": { "QueueName": ["$environment-marketplace-inspection-enhancement"] },
           "matchExact": true,
           "metricEditorMode": 0,
           "metricName": "ApproximateNumberOfMessagesVisible",
@@ -486,26 +486,14 @@
           "statistic": "Maximum"
         },
         {
-          "alias": "option-analysis",
-          "dimensions": { "QueueName": ["intelligence-option-analysis"] },
+          "alias": "verification",
+          "dimensions": { "QueueName": ["$environment-marketplace-inspection-verification"] },
           "matchExact": true,
           "metricEditorMode": 0,
           "metricName": "ApproximateNumberOfMessagesVisible",
           "namespace": "AWS/SQS",
           "period": "60",
           "refId": "C",
-          "region": "default",
-          "statistic": "Maximum"
-        },
-        {
-          "alias": "aggregation",
-          "dimensions": { "QueueName": ["intelligence-aggregation"] },
-          "matchExact": true,
-          "metricEditorMode": 0,
-          "metricName": "ApproximateNumberOfMessagesVisible",
-          "namespace": "AWS/SQS",
-          "period": "60",
-          "refId": "D",
           "region": "default",
           "statistic": "Maximum"
         }
@@ -560,8 +548,8 @@
       },
       "targets": [
         {
-          "alias": "description-analysis",
-          "dimensions": { "QueueName": ["intelligence-description-analysis"] },
+          "alias": "scoring",
+          "dimensions": { "QueueName": ["$environment-marketplace-inspection-scoring"] },
           "matchExact": true,
           "metricEditorMode": 0,
           "metricName": "ApproximateAgeOfOldestMessage",
@@ -572,8 +560,8 @@
           "statistic": "Maximum"
         },
         {
-          "alias": "notice-analysis",
-          "dimensions": { "QueueName": ["intelligence-notice-analysis"] },
+          "alias": "enhancement",
+          "dimensions": { "QueueName": ["$environment-marketplace-inspection-enhancement"] },
           "matchExact": true,
           "metricEditorMode": 0,
           "metricName": "ApproximateAgeOfOldestMessage",
@@ -584,26 +572,14 @@
           "statistic": "Maximum"
         },
         {
-          "alias": "option-analysis",
-          "dimensions": { "QueueName": ["intelligence-option-analysis"] },
+          "alias": "verification",
+          "dimensions": { "QueueName": ["$environment-marketplace-inspection-verification"] },
           "matchExact": true,
           "metricEditorMode": 0,
           "metricName": "ApproximateAgeOfOldestMessage",
           "namespace": "AWS/SQS",
           "period": "60",
           "refId": "C",
-          "region": "default",
-          "statistic": "Maximum"
-        },
-        {
-          "alias": "aggregation",
-          "dimensions": { "QueueName": ["intelligence-aggregation"] },
-          "matchExact": true,
-          "metricEditorMode": 0,
-          "metricName": "ApproximateAgeOfOldestMessage",
-          "namespace": "AWS/SQS",
-          "period": "60",
-          "refId": "D",
           "region": "default",
           "statistic": "Maximum"
         }
@@ -872,7 +848,7 @@
       "targets": [
         {
           "alias": "CPU Utilization",
-          "dimensions": { "ServiceName": ["marketplace-worker"] },
+          "dimensions": { "ServiceName": ["marketplace-worker-$environment"] },
           "matchExact": false,
           "metricEditorMode": 0,
           "metricName": "CPUUtilization",
@@ -922,7 +898,7 @@
       "targets": [
         {
           "alias": "Memory Utilization",
-          "dimensions": { "ServiceName": ["marketplace-worker"] },
+          "dimensions": { "ServiceName": ["marketplace-worker-$environment"] },
           "matchExact": false,
           "metricEditorMode": 0,
           "metricName": "MemoryUtilization",
@@ -945,7 +921,7 @@
       {
         "current": { "selected": true, "text": "All", "value": "$__all" },
         "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
-        "definition": "label_values(up, environment)",
+        "definition": "label_values(up{job=\"$job\"}, environment)",
         "hide": 0,
         "includeAll": true,
         "multi": false,
@@ -953,7 +929,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(up, environment)",
+          "query": "label_values(up{job=\"$job\"}, environment)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
