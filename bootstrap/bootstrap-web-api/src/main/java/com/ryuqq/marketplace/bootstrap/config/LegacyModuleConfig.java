@@ -20,6 +20,8 @@ import org.springframework.context.annotation.Configuration;
             "com.ryuqq.marketplace.adapter.out.persistence.legacy",
             "com.ryuqq.marketplace.application.legacy",
             "com.ryuqq.marketplace.application.legacyauth",
+            "com.ryuqq.marketplace.application.legacycommoncode",
+            "com.ryuqq.marketplace.application.legacyconversion",
             "com.ryuqq.marketplace.application.legacyseller",
             "com.ryuqq.marketplace.application.legacyshipment",
             "com.ryuqq.marketplace.adapter.in.rest.legacy"
