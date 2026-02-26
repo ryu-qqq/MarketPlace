@@ -25,6 +25,7 @@ public class OutboundSyncOutboxCommandAdapter implements OutboundSyncOutboxComma
     public Long persist(OutboundSyncOutbox outbox) {
         OutboundSyncOutboxJpaEntity entity = mapper.toEntity(outbox);
         OutboundSyncOutboxJpaEntity saved = repository.save(entity);
+        outbox.refreshVersion(saved.getVersion());
         return saved.getId();
     }
 
@@ -32,6 +33,9 @@ public class OutboundSyncOutboxCommandAdapter implements OutboundSyncOutboxComma
     public void persistAll(List<OutboundSyncOutbox> outboxes) {
         List<OutboundSyncOutboxJpaEntity> entities =
                 outboxes.stream().map(mapper::toEntity).toList();
-        repository.saveAll(entities);
+        List<OutboundSyncOutboxJpaEntity> savedEntities = repository.saveAll(entities);
+        for (int i = 0; i < outboxes.size(); i++) {
+            outboxes.get(i).refreshVersion(savedEntities.get(i).getVersion());
+        }
     }
 }
