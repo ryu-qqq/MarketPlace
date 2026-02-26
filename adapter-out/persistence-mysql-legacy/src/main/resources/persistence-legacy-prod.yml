@@ -7,6 +7,7 @@
 
 persistence:
   legacy:
+    enabled: true
     datasource:
       jdbc-url: jdbc:mysql://${LEGACY_DB_HOST}:${LEGACY_DB_PORT:3306}/${LEGACY_DB_NAME}?useSSL=true&requireSSL=true&serverTimezone=Asia/Seoul
       username: ${LEGACY_DB_USER}
