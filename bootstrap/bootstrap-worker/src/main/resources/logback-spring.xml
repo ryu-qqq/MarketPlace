@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Logback Configuration - MarketPlace Web API
+    Logback Configuration - MarketPlace Worker
 
     Features:
     - Development: Human-readable console output with colors
@@ -12,7 +12,6 @@
     - traceId: Distributed tracing ID (OpenTelemetry/X-Ray)
     - spanId: Current span ID
     - requestId: Unique request identifier
-    - userId: Authenticated user ID
     - errorCode: Domain error code (for Metric Filter)
 -->
 <configuration scan="true" scanPeriod="30 seconds">
@@ -20,7 +19,7 @@
     <!-- ============================================ -->
     <!-- Application Properties (from application.yml) -->
     <!-- ============================================ -->
-    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="marketplace-api"/>
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="marketplace-worker"/>
     <springProperty scope="context" name="APP_ENV" source="spring.profiles.active" defaultValue="local"/>
 
     <!-- ============================================ -->
@@ -45,12 +44,14 @@
             <appender-ref ref="CONSOLE"/>
         </root>
 
-        <!-- Application packages - adjust to your package name -->
+        <!-- Application packages -->
         <logger name="com.ryuqq" level="DEBUG"/>
 
         <!-- Spring Framework -->
         <logger name="org.springframework.web" level="INFO"/>
-        <logger name="org.springframework.security" level="INFO"/>
+
+        <!-- SQS Consumer -->
+        <logger name="io.awspring.cloud.sqs" level="DEBUG"/>
 
         <!-- Hibernate SQL (Development only) -->
         <logger name="org.hibernate.SQL" level="DEBUG"/>
@@ -70,7 +71,6 @@
                 <includeMdcKeyName>traceId</includeMdcKeyName>
                 <includeMdcKeyName>spanId</includeMdcKeyName>
                 <includeMdcKeyName>requestId</includeMdcKeyName>
-                <includeMdcKeyName>userId</includeMdcKeyName>
                 <includeMdcKeyName>errorCode</includeMdcKeyName>
 
                 <!-- ================================ -->
@@ -114,7 +114,7 @@
             <appender-ref ref="JSON_CONSOLE"/>
         </root>
 
-        <!-- Application packages - adjust to your package name -->
+        <!-- Application packages -->
         <logger name="com.ryuqq" level="INFO"/>
 
         <!-- Reduce Framework verbosity -->
