@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Logback Configuration - Spring Boot Template Project
+    Logback Configuration - MarketPlace Web API
 
     Features:
     - Development: Human-readable console output with colors
@@ -20,7 +20,7 @@
     <!-- ============================================ -->
     <!-- Application Properties (from application.yml) -->
     <!-- ============================================ -->
-    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="template-api"/>
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="marketplace-api"/>
     <springProperty scope="context" name="APP_ENV" source="spring.profiles.active" defaultValue="local"/>
 
     <!-- ============================================ -->

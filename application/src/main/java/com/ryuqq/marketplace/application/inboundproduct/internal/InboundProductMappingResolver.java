@@ -56,13 +56,17 @@ public class InboundProductMappingResolver {
                 product.externalCategoryCode());
     }
 
+    /**
+     * 매핑 해석 후 InboundProduct에 적용.
+     *
+     * <p>매핑 실패 시 PENDING_MAPPING 상태로 전이하지 않고, 결과만 반환합니다. 호출자(Coordinator)가 결과에 따라 상태 처리를 결정합니다.
+     */
     public InboundProductMappingResult resolveMappingAndApply(InboundProduct product, Instant now) {
         InboundProductMappingResult mapping = resolveMapping(product);
 
         if (mapping.isFullyMapped()) {
             product.applyMapping(mapping.internalBrandId(), mapping.internalCategoryId(), now);
         } else {
-            product.markMappingFailed(now);
             log.warn(
                     "인바운드 상품 매핑 실패: inboundSourceId={}, code={}, brandId={}, categoryId={}",
                     product.inboundSourceId(),

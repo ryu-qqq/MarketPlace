@@ -51,7 +51,7 @@ server:
 # ===============================================
 spring:
   application:
-    name: spring-standards-api
+    name: marketplace-api
 
   # Profile 설정
   profiles:
@@ -65,6 +65,7 @@ spring:
       - classpath:rest-api.yml
       - classpath:persistence.yml
       - optional:classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-${spring.profiles.active:local}.yml
       - classpath:redis.yml
       - classpath:authhub.yml
       - classpath:fileflow.yml
