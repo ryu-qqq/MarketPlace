@@ -1,16 +1,13 @@
 package com.ryuqq.marketplace.application.inboundproduct.internal;
 
+import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInboundProductCommand;
 import com.ryuqq.marketplace.application.notice.resolver.CategoryNoticeResolver;
 import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadManager;
 import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyReadManager;
-import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload.InboundNoticeEntry;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -18,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * 수신 시점에 배송/환불/고시정보를 해석하여 InboundProduct에 적용하는 리졸버.
+ * 인바운드 상품의 배송/환불/고시정보를 해석하는 리졸버.
  *
- * <p>매핑 완료(MAPPED) 상태의 InboundProduct에 대해 셀러 배송/환불 정책을 검증하고, 카테고리 고시정보 필드를 해석하여 누락 필드에 기본값을 채웁니다.
+ * <p>InboundProduct이 아닌 Command 데이터를 기반으로 해석하며, 결과를 {@link ResolvedPolicies}로 반환합니다.
  */
 @Component
 public class InboundProductRegistrationResolver {
@@ -42,32 +39,48 @@ public class InboundProductRegistrationResolver {
         this.categoryNoticeResolver = categoryNoticeResolver;
     }
 
-    /** 매핑 완료된 InboundProduct의 배송/환불/고시정보를 해석하고 적용한다. */
-    public void resolveAndApply(InboundProduct product, Instant now) {
+    /**
+     * InboundProduct에서 직접 정책을 해석하고 적용한다.
+     *
+     * <p>매핑 완료된 InboundProduct를 기반으로 배송/환불 정책 및 고시정보를 해석하여 적용합니다.
+     *
+     * @param product 매핑 완료된 인바운드 상품
+     * @param now 현재 시각
+     */
+    public void resolveAndApply(
+            com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct product,
+            java.time.Instant now) {
         SellerId sellerId = SellerId.of(product.sellerId());
+        Long shippingPolicyId = resolveShippingPolicyId(sellerId);
+        Long refundPolicyId = resolveRefundPolicyId(sellerId);
+
+        Optional<NoticeCategory> noticeCategoryOpt =
+                categoryNoticeResolver.resolve(product.internalCategoryId());
+        Long noticeCategoryId = noticeCategoryOpt.map(NoticeCategory::idValue).orElse(null);
+
+        product.applyResolution(shippingPolicyId, refundPolicyId, noticeCategoryId, now);
+    }
+
+    /**
+     * 셀러의 기본 정책과 카테고리 고시정보를 해석한다.
+     *
+     * @param sellerId 셀러 ID
+     * @param internalCategoryId 내부 카테고리 ID (매핑 완료 후)
+     * @param command 수신 커맨드 (고시정보 엔트리 추출용)
+     * @return 해석된 정책 정보
+     */
+    public ResolvedPolicies resolve(
+            SellerId sellerId, Long internalCategoryId, ReceiveInboundProductCommand command) {
 
         Long shippingPolicyId = resolveShippingPolicyId(sellerId);
         Long refundPolicyId = resolveRefundPolicyId(sellerId);
-        NoticeResolutionResult noticeResult =
-                resolveNotice(product.payload(), product.internalCategoryId());
+        NoticeResolution noticeResolution = resolveNotice(internalCategoryId, command.notice());
 
-        InboundProductPayload resolvedPayload =
-                rebuildPayloadWithResolvedNotice(product.payload(), noticeResult.resolvedEntries());
-
-        product.applyResolution(
+        return new ResolvedPolicies(
                 shippingPolicyId,
                 refundPolicyId,
-                noticeResult.noticeCategoryId(),
-                resolvedPayload,
-                now);
-
-        log.info(
-                "인바운드 상품 해석 완료: inboundProductId={}, shippingPolicyId={}, "
-                        + "refundPolicyId={}, noticeCategoryId={}",
-                product.idValue(),
-                shippingPolicyId,
-                refundPolicyId,
-                noticeResult.noticeCategoryId());
+                noticeResolution.noticeCategoryId(),
+                noticeResolution.resolvedEntries());
     }
 
     private Long resolveShippingPolicyId(SellerId sellerId) {
@@ -92,55 +105,45 @@ public class InboundProductRegistrationResolver {
                 .value();
     }
 
-    private NoticeResolutionResult resolveNotice(
-            InboundProductPayload payload, Long internalCategoryId) {
+    private NoticeResolution resolveNotice(
+            Long internalCategoryId, ReceiveInboundProductCommand.NoticeCommand notice) {
         Optional<NoticeCategory> noticeCategoryOpt =
                 categoryNoticeResolver.resolve(internalCategoryId);
 
         if (noticeCategoryOpt.isEmpty()) {
             log.warn("카테고리 ID {}에 해당하는 고시정보 카테고리 없음", internalCategoryId);
-            return new NoticeResolutionResult(null, payload.noticeEntries());
+            return new NoticeResolution(null, List.of());
         }
 
         NoticeCategory noticeCategory = noticeCategoryOpt.get();
-        List<InboundNoticeEntry> resolvedEntries =
-                resolveNoticeEntries(payload.noticeEntries(), noticeCategory);
-        return new NoticeResolutionResult(noticeCategory.idValue(), resolvedEntries);
-    }
+        List<ReceiveInboundProductCommand.NoticeEntryCommand> inboundEntries =
+                notice != null && notice.entries() != null ? notice.entries() : List.of();
 
-    /** 카테고리 고시정보 필드 기준으로 인바운드 엔트리를 매핑하고 누락 필드에 기본값을 채운다. */
-    private List<InboundNoticeEntry> resolveNoticeEntries(
-            List<InboundNoticeEntry> inboundEntries, NoticeCategory noticeCategory) {
-        return noticeCategory.fields().stream()
-                .map(
-                        field -> {
-                            String value =
-                                    findValueByFieldCode(inboundEntries, field.fieldCodeValue())
-                                            .orElse(DEFAULT_NOTICE_VALUE);
-                            return InboundNoticeEntry.ofResolved(
-                                    field.fieldCodeValue(), value, field.idValue());
-                        })
-                .toList();
+        List<ResolvedPolicies.ResolvedNoticeEntry> resolvedEntries =
+                noticeCategory.fields().stream()
+                        .map(
+                                field -> {
+                                    String value =
+                                            findValueByFieldCode(
+                                                            inboundEntries, field.fieldCodeValue())
+                                                    .orElse(DEFAULT_NOTICE_VALUE);
+                                    return new ResolvedPolicies.ResolvedNoticeEntry(
+                                            field.idValue(), value);
+                                })
+                        .toList();
+
+        return new NoticeResolution(noticeCategory.idValue(), resolvedEntries);
     }
 
     private Optional<String> findValueByFieldCode(
-            List<InboundNoticeEntry> entries, String fieldCode) {
-        if (entries == null || entries.isEmpty()) {
-            return Optional.empty();
-        }
+            List<ReceiveInboundProductCommand.NoticeEntryCommand> entries, String fieldCode) {
         return entries.stream()
                 .filter(e -> fieldCode.equals(e.fieldCode()))
-                .map(InboundNoticeEntry::fieldValue)
+                .map(ReceiveInboundProductCommand.NoticeEntryCommand::fieldValue)
                 .filter(v -> v != null && !v.isBlank())
                 .findFirst();
     }
 
-    private InboundProductPayload rebuildPayloadWithResolvedNotice(
-            InboundProductPayload original, List<InboundNoticeEntry> resolvedEntries) {
-        return new InboundProductPayload(
-                original.images(), original.optionGroups(), original.products(), resolvedEntries);
-    }
-
-    private record NoticeResolutionResult(
-            Long noticeCategoryId, List<InboundNoticeEntry> resolvedEntries) {}
+    private record NoticeResolution(
+            Long noticeCategoryId, List<ResolvedPolicies.ResolvedNoticeEntry> resolvedEntries) {}
 }
