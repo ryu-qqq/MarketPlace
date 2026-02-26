@@ -1,0 +1,16 @@
+[[category-search]]
+=== 카테고리 검색 조회
+
+인증 필요 | 필요 권한: `category:read`
+
+==== HTTP Request
+include::{snippets}/category/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/category/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/category/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/category/search/response-fields.adoc[]

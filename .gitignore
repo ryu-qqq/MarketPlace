@@ -61,3 +61,14 @@ langfuse/tests/__pycache__/
 .pipeline-metrics/metrics.jsonl
 .pipeline-metrics/report.md
 .env
+local-dev/.env.aws
+local-dev/.env.aws.stage
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+
+tfplan
+*.tfplan

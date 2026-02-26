@@ -1,0 +1,97 @@
+# ===============================================
+# Setof Commerce Web API - Test Configuration
+# ===============================================
+
+spring:
+  application:
+    name: setof-commerce-api
+
+  profiles:
+    active: test
+
+  # DataSource Configuration (H2 for tests)
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  # Security (test에서는 기본 비활성화)
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: test-client-id
+            client-secret: test-client-secret
+
+  # Redis (embedded for tests - if needed)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+server:
+  port: 0
+  shutdown: graceful
+
+# JWT Configuration (test values)
+jwt:
+  secret: test-jwt-secret-key-for-testing-purposes-only-must-be-at-least-256-bits
+  access-token-expiry: 3600
+  refresh-token-expiry: 604800
+
+# Security Configuration
+security:
+  public-endpoints:
+    - method: POST
+      pattern: /api/v1/members
+    - method: POST
+      pattern: /api/v1/auth/login
+    - pattern: /oauth2/**
+    - pattern: /login/oauth2/**
+    - pattern: /h2-console/**
+    - pattern: /actuator/**
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+    allowed-headers:
+      - "*"
+  cookie:
+    domain: localhost
+    secure: false
+    same-site: lax
+
+logging:
+  level:
+    root: INFO
+    com.ryuqq.setof: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always

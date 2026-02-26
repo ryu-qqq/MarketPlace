@@ -1,0 +1,88 @@
+[[category-preset-register]]
+=== 카테고리 프리셋 등록
+
+인증 필요 | 필요 권한: `category-preset:write`
+
+==== HTTP Request
+include::{snippets}/category-preset/register/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/category-preset/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/category-preset/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/category-preset/register/response-fields.adoc[]
+
+
+[[category-preset-update]]
+=== 카테고리 프리셋 수정
+
+인증 필요 | 필요 권한: `category-preset:write`
+
+==== HTTP Request
+include::{snippets}/category-preset/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/category-preset/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/category-preset/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/category-preset/update/http-response.adoc[]
+
+
+[[category-preset-delete]]
+=== 카테고리 프리셋 벌크 삭제
+
+인증 필요 | 필요 권한: `category-preset:write`
+
+==== HTTP Request
+include::{snippets}/category-preset/delete/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/category-preset/delete/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/category-preset/delete/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/category-preset/delete/response-fields.adoc[]
+
+
+[[category-preset-search]]
+=== 카테고리 프리셋 검색 조회
+
+인증 필요 | 필요 권한: `category-preset:read`
+
+==== HTTP Request
+include::{snippets}/category-preset/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/category-preset/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/category-preset/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/category-preset/search/response-fields.adoc[]
+
+
+[[category-preset-get-detail]]
+=== 카테고리 프리셋 상세 조회
+
+인증 필요 | 필요 권한: `category-preset:read`
+
+==== HTTP Request
+include::{snippets}/category-preset/get-detail/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/category-preset/get-detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/category-preset/get-detail/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/category-preset/get-detail/response-fields.adoc[]

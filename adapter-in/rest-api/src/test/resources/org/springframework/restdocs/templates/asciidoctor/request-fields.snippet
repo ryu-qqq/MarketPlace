@@ -1,0 +1,11 @@
+|===
+|Path|Type|필수 여부|Description
+
+{{#fields}}
+|{{#tableCellContent}}`+{{path}}+`{{/tableCellContent}}
+|{{#tableCellContent}}`+{{type}}+`{{/tableCellContent}}
+|{{#tableCellContent}}{{#optional}}선택{{/optional}}{{^optional}}필수{{/optional}}{{/tableCellContent}}
+|{{#tableCellContent}}{{description}}{{/tableCellContent}}
+
+{{/fields}}
+|===

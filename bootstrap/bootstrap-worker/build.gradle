@@ -1,0 +1,66 @@
+// ============================================================
+// MarketPlace - Worker Module
+// ============================================================
+// SQS-based intelligence pipeline worker:
+// - Intelligence Orchestration Consumer
+// - Intelligence Analysis Consumers (Description, Option, Notice)
+// - Intelligence Aggregation Consumer
+// ============================================================
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    // ========================================
+    // Spring Boot
+    // ========================================
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.data.jpa
+    implementation libs.spring.boot.starter.actuator
+
+    // ========================================
+    // Internal Modules
+    // ========================================
+    implementation project(':adapter-in:sqs-consumer')
+    implementation project(':application')
+    implementation project(':domain')
+    implementation project(':adapter-out:persistence-mysql')
+    implementation project(':adapter-out:persistence-mysql-legacy')
+    implementation project(':adapter-out:persistence-redis')
+    implementation project(':adapter-out:client:sqs-client')
+    implementation project(':adapter-out:client:spring-ai-client')
+    implementation project(':adapter-out:client:fileflow-client')
+    implementation project(':adapter-out:client:authhub-client')
+
+    // AuthHub SDK Spring Boot Starter (TokenResolver auto-configuration)
+    implementation libs.authhub.sdk.spring.boot.starter
+
+    // ========================================
+    // Observability
+    // ========================================
+    implementation libs.observability.adapter
+    implementation libs.sentry.spring.boot
+    implementation libs.micrometer.prometheus
+    implementation libs.logstash.logback.encoder
+
+    // ========================================
+    // Database
+    // ========================================
+    runtimeOnly libs.mysql.connector
+
+    // ========================================
+    // Test
+    // ========================================
+    testImplementation libs.spring.boot.starter.test
+}
+
+bootJar {
+    enabled = true
+    archiveBaseName = 'bootstrap-worker'
+}
+
+jar {
+    enabled = false
+}

@@ -1,0 +1,36 @@
+# ===============================================
+# Application Configuration - Local Environment
+# ===============================================
+# 로컬 개발 환경 전용 설정
+# 공통 설정은 application.yml 참조
+#
+# @since 1.0.0
+# ===============================================
+
+server:
+  tomcat:
+    threads:
+      max: 50  # 로컬에서는 스레드 수 제한
+
+# ===============================================
+# Sentry Configuration (Disabled for Local)
+# ===============================================
+sentry:
+  dsn: ""  # Empty DSN disables Sentry
+
+# ===============================================
+# Config Import Override (환경별 설정 로드)
+# ===============================================
+spring:
+  config:
+    import:
+      - classpath:rest-api.yml
+      - classpath:persistence.yml
+      - classpath:persistence-local.yml
+      - optional:classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-local.yml
+      - classpath:redis.yml
+      - classpath:redis-local.yml
+      - classpath:authhub.yml
+      - classpath:fileflow.yml
+      - classpath:naver-commerce.yml

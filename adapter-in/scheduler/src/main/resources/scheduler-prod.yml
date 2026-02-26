@@ -1,0 +1,97 @@
+# ============================================================
+# Scheduler Adapter 운영 환경 설정
+# ============================================================
+# 활성화: spring.profiles.active=prod
+# ============================================================
+
+scheduler:
+  jobs:
+    seller-auth-outbox:
+      process-pending:
+        # Prod: 5분마다 (기본값)
+        cron: "0 */5 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        # Prod: 10분마다 (기본값)
+        cron: "0 */10 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 300
+
+    image-upload-outbox:
+      process-pending:
+        # Prod: 3분마다
+        cron: "0 */3 * * * *"
+        # Prod: 큰 배치
+        batch-size: 50
+        # Prod: 안전한 지연
+        delay-seconds: 30
+
+      recover-timeout:
+        # Prod: 10분마다
+        cron: "0 */10 * * * *"
+        # Prod: 큰 배치
+        batch-size: 50
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 300
+
+    seller-admin-auth-outbox:
+      process-pending:
+        # Prod: 5분마다 (기본값)
+        cron: "0 */5 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        # Prod: 10분마다 (기본값)
+        cron: "0 */10 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 300
+
+    image-transform-outbox:
+      process-pending:
+        # Prod: 3분마다
+        cron: "0 */3 * * * *"
+        # Prod: 큰 배치
+        batch-size: 30
+        # Prod: 안전한 지연
+        delay-seconds: 10
+
+      poll-processing:
+        # Prod: 2분마다
+        cron: "0 */2 * * * *"
+        # Prod: 큰 배치
+        batch-size: 30
+
+      recover-timeout:
+        # Prod: 10분마다
+        cron: "0 */10 * * * *"
+        # Prod: 큰 배치
+        batch-size: 30
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 600
+
+    intelligence-pipeline:
+      recover-stuck-aggregation:
+        # Prod: 10분마다
+        cron: "0 */10 * * * *"
+        # Prod: 큰 배치
+        batch-size: 20
+        # Prod: 안전한 stuck 기준
+        stuck-seconds: 300
+
+    description-publish:
+      # Prod: 5분마다
+      cron: "0 */5 * * * *"
+      timezone: "Asia/Seoul"
+      # Prod: 큰 배치
+      batch-size: 50

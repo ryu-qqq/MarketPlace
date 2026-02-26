@@ -1,0 +1,92 @@
+# ============================================================
+# Scheduler Application 공통 설정
+# ============================================================
+server:
+  port: 8083
+
+intelligence:
+  pipeline:
+    enabled: true
+
+spring:
+  application:
+    name: marketplace-scheduler
+
+  # ========================================
+  # Config Import (Adapter Layer Settings)
+  # ========================================
+  config:
+    import:
+      - classpath:persistence.yml
+      - optional:classpath:persistence-${spring.profiles.active:local}.yml
+      - classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-${spring.profiles.active:local}.yml
+      - classpath:redis.yml
+      - optional:classpath:redis-${spring.profiles.active:local}.yml
+      - classpath:scheduler.yml
+      - optional:classpath:scheduler-${spring.profiles.active:local}.yml
+      - classpath:authhub.yml
+      - optional:classpath:authhub-${spring.profiles.active:local}.yml
+      - classpath:fileflow.yml
+      - optional:classpath:fileflow-${spring.profiles.active:local}.yml
+      - classpath:ses.yml
+      - optional:classpath:ses-${spring.profiles.active:local}.yml
+      - classpath:sqs-client.yml
+      - optional:classpath:sqs-client-${spring.profiles.active:local}.yml
+      - classpath:spring-ai-client.yml
+      - optional:classpath:spring-ai-client-${spring.profiles.active:local}.yml
+
+# ========================================
+# Management & Actuator
+# ========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+
+  endpoint:
+    health:
+      show-details: when-authorized
+    prometheus:
+      enabled: true
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active:local}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.95,0.99
+    export:
+      prometheus:
+        enabled: true
+
+# ========================================
+# Observability (TraceId + MDC Context Propagation)
+# ========================================
+observability:
+  http:
+    enabled: true
+    log-request-body: false
+    log-response-body: false
+    exclude-paths:
+      - /actuator/**
+
+# ========================================
+# Sentry Configuration (Error Tracking)
+# ========================================
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: ${spring.profiles.active:local}
+  release: ${APP_VERSION:unknown}
+  traces-sample-rate: 1.0
+  enable-tracing: true
+
+# ========================================
+# Logging
+# ========================================
+# logback-spring.xml에서 프로파일별 설정 관리

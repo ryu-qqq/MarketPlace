@@ -1,0 +1,44 @@
+# ===============================================
+# Application Configuration - Stage Environment
+# ===============================================
+# 스테이징 환경 전용 설정
+# 공통 설정은 application.yml 참조
+#
+# @since 1.0.0
+# ===============================================
+
+server:
+  tomcat:
+    threads:
+      max: 150
+
+# ===============================================
+# Sentry Configuration (Disabled for Stage)
+# ===============================================
+sentry:
+  dsn: ""  # Empty DSN disables Sentry
+
+# ===============================================
+# Config Import Override (환경별 설정 로드)
+# ===============================================
+spring:
+  config:
+    import:
+      - classpath:rest-api.yml
+      - classpath:persistence.yml
+      - classpath:persistence-stage.yml
+      - optional:classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-stage.yml
+      - classpath:redis.yml
+      - classpath:redis-stage.yml
+      - classpath:authhub.yml
+      - classpath:authhub-stage.yml
+      - classpath:fileflow.yml
+      - classpath:fileflow-stage.yml
+      - classpath:naver-commerce.yml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus

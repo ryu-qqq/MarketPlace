@@ -1,0 +1,70 @@
+// ============================================================
+// SetOf Commerce - Scheduler Module
+// ============================================================
+// Outbox 패턴 기반 스케줄러:
+// - SellerAuthOutbox 처리 (Identity 서비스 연동)
+// - 타임아웃 Outbox 복구
+// ============================================================
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    // ========================================
+    // Spring Boot
+    // ========================================
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.data.jpa
+    implementation libs.spring.boot.starter.actuator
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // ========================================
+    // Internal Modules
+    // ========================================
+    implementation project(':adapter-in:scheduler')
+    implementation project(':application')
+    implementation project(':domain')
+    implementation project(':adapter-out:persistence-mysql')
+    implementation project(':adapter-out:persistence-mysql-legacy')
+    implementation project(':adapter-out:persistence-redis')
+    implementation project(':adapter-out:client:authhub-client')
+    implementation project(':adapter-out:client:fileflow-client')
+    implementation project(':adapter-out:client:ses-client')
+    implementation project(':adapter-out:client:sqs-client')
+    implementation project(':adapter-out:client:spring-ai-client')
+
+    // AuthHub SDK (Auto-configuration for TokenResolver, AuthHubClient, AuthApi, OnboardingApi)
+    implementation libs.authhub.sdk.spring.boot.starter
+
+    // FileFlow SDK (Auto-configuration for DownloadTaskApi, SingleUploadSessionApi, AssetApi)
+    implementation libs.fileflow.sdk.spring.boot.starter
+
+    // ========================================
+    // Observability
+    // ========================================
+    implementation libs.observability.adapter
+    implementation libs.sentry.spring.boot
+    implementation libs.micrometer.prometheus
+    implementation libs.logstash.logback.encoder
+
+    // ========================================
+    // Database
+    // ========================================
+    runtimeOnly libs.mysql.connector
+
+    // ========================================
+    // Test
+    // ========================================
+    testImplementation libs.spring.boot.starter.test
+}
+
+bootJar {
+    enabled = true
+    archiveBaseName = 'bootstrap-scheduler'
+}
+
+jar {
+    enabled = false
+}

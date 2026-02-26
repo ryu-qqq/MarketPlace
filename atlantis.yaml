@@ -1,0 +1,127 @@
+# ============================================================================
+# MarketPlace - Atlantis Configuration
+# ============================================================================
+# PR-based Terraform automation for MarketPlace infrastructure
+# Environment-separated: prod / stage
+# ============================================================================
+
+version: 3
+
+automerge: false
+delete_source_branch_on_merge: false
+# Disable parallel plan to prevent plugin cache conflicts
+parallel_plan: false
+parallel_apply: false
+
+projects:
+  # ============================================================================
+  # PRODUCTION
+  # ============================================================================
+
+  # ECR repositories for web-api, scheduler
+  - name: marketplace-ecr-prod
+    dir: terraform/environments/prod/ecr
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
+  # ECS Cluster (dedicated for marketplace)
+  - name: marketplace-ecs-cluster-prod
+    dir: terraform/environments/prod/ecs-cluster
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
+  # ElastiCache (Redis for Redisson Lock + Cache)
+  - name: marketplace-elasticache-prod
+    dir: terraform/environments/prod/elasticache
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
+  # ECS Service for web-api (Auto Scaling)
+  - name: marketplace-ecs-web-api-prod
+    dir: terraform/environments/prod/ecs-web-api
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
+  # ECS Service for scheduler (No ALB, desired=1)
+  - name: marketplace-ecs-scheduler-prod
+    dir: terraform/environments/prod/ecs-scheduler
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
+  # SQS Queues for inspection pipeline
+  - name: marketplace-sqs-prod
+    dir: terraform/environments/prod/sqs
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
+  # ECS Service for worker (SQS consumer, No ALB)
+  - name: marketplace-ecs-worker-prod
+    dir: terraform/environments/prod/ecs-worker
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
+  # ============================================================================
+  # STAGE
+  # ============================================================================
+
+  # ECR repositories for web-api, scheduler (stage)
+  - name: marketplace-ecr-stage
+    dir: terraform/environments/stage/ecr
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars"]
+      enabled: true
+
+  # ECS Cluster (dedicated for marketplace stage)
+  - name: marketplace-ecs-cluster-stage
+    dir: terraform/environments/stage/ecs-cluster
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars"]
+      enabled: true
+
+  # ECS Service for web-api (stage, no auto scaling)
+  - name: marketplace-ecs-web-api-stage
+    dir: terraform/environments/stage/ecs-web-api
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars"]
+      enabled: true
+
+  # ECS Service for scheduler (stage, singleton)
+  - name: marketplace-ecs-scheduler-stage
+    dir: terraform/environments/stage/ecs-scheduler
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars"]
+      enabled: true
+
+  # SQS Queues for inspection pipeline (stage)
+  - name: marketplace-sqs-stage
+    dir: terraform/environments/stage/sqs
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars"]
+      enabled: true
+
+  # ECS Service for worker (stage, SQS consumer)
+  - name: marketplace-ecs-worker-stage
+    dir: terraform/environments/stage/ecs-worker
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars"]
+      enabled: true
