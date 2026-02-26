@@ -1,0 +1,97 @@
+# ============================================================
+# Scheduler Adapter 로컬 개발 환경 설정
+# ============================================================
+# 활성화: spring.profiles.active=local
+# ============================================================
+
+scheduler:
+  jobs:
+    seller-auth-outbox:
+      process-pending:
+        # 로컬: 1분마다 (빠른 테스트)
+        cron: "0 */1 * * * *"
+        # 로컬: 작은 배치
+        batch-size: 10
+        # 로컬: 짧은 지연
+        delay-seconds: 10
+
+      recover-timeout:
+        # 로컬: 2분마다
+        cron: "0 */2 * * * *"
+        # 로컬: 작은 배치
+        batch-size: 10
+        # 로컬: 짧은 타임아웃
+        timeout-seconds: 60
+
+    image-upload-outbox:
+      process-pending:
+        # 로컬: 1분마다 (빠른 테스트)
+        cron: "0 */1 * * * *"
+        # 로컬: 작은 배치
+        batch-size: 10
+        # 로컬: 짧은 지연
+        delay-seconds: 10
+
+      recover-timeout:
+        # 로컬: 2분마다
+        cron: "0 */2 * * * *"
+        # 로컬: 작은 배치
+        batch-size: 10
+        # 로컬: 짧은 타임아웃
+        timeout-seconds: 60
+
+    seller-admin-auth-outbox:
+      process-pending:
+        # 로컬: 1분마다 (빠른 테스트)
+        cron: "0 */1 * * * *"
+        # 로컬: 작은 배치
+        batch-size: 10
+        # 로컬: 짧은 지연
+        delay-seconds: 10
+
+      recover-timeout:
+        # 로컬: 2분마다
+        cron: "0 */2 * * * *"
+        # 로컬: 작은 배치
+        batch-size: 10
+        # 로컬: 짧은 타임아웃
+        timeout-seconds: 60
+
+    image-transform-outbox:
+      process-pending:
+        # 로컬: 30초마다 (빠른 테스트)
+        cron: "*/30 * * * * *"
+        # 로컬: 작은 배치
+        batch-size: 5
+        # 로컬: 짧은 지연
+        delay-seconds: 5
+
+      poll-processing:
+        # 로컬: 20초마다 (빠른 테스트)
+        cron: "*/20 * * * * *"
+        # 로컬: 작은 배치
+        batch-size: 5
+
+      recover-timeout:
+        # 로컬: 5분마다
+        cron: "0 */5 * * * *"
+        # 로컬: 작은 배치
+        batch-size: 5
+        # 로컬: 짧은 타임아웃
+        timeout-seconds: 300
+
+    intelligence-pipeline:
+      recover-stuck-aggregation:
+        # 로컬: 2분마다 (빠른 테스트)
+        cron: "0 */2 * * * *"
+        # 로컬: 작은 배치
+        batch-size: 10
+        # 로컬: 짧은 stuck 기준
+        stuck-seconds: 60
+
+    description-publish:
+      # 로컬: 1분마다 (빠른 테스트)
+      cron: "0 */1 * * * *"
+      timezone: "Asia/Seoul"
+      # 로컬: 작은 배치
+      batch-size: 10

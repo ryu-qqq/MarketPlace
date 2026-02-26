@@ -1,0 +1,21 @@
+# ============================================================
+# AuthHub SDK 공통 설정
+# ============================================================
+# 환경변수로 제어:
+#   - AUTHHUB_BASE_URL: AuthHub 서버 URL (필수)
+#   - AUTHHUB_SERVICE_TOKEN: 서비스 인증 토큰 (필수)
+# ============================================================
+
+authhub:
+  base-url: ${AUTHHUB_BASE_URL:}
+  service-token: ${AUTHHUB_SERVICE_TOKEN:}
+  service-code: SVC_MARKETPLACE
+  timeout:
+    connect: 5s
+    read: 30s
+  retry:
+    enabled: true
+    max-attempts: 3
+    delay: 1s
+  sync:
+    enabled: false

@@ -1,0 +1,115 @@
+# ===============================================
+# Integration Test Application Configuration
+# ===============================================
+# Bootstrap의 application.yml을 완전히 오버라이드합니다.
+# 외부 서비스(Redis, AuthHub, PortOne) 의존성을 제거하고
+# H2 In-Memory Database를 사용합니다.
+# ===============================================
+
+spring:
+  application:
+    name: marketplace-integration-test
+
+  profiles:
+    active: test
+
+  # Bootstrap의 config.import 오버라이드 (외부 서비스 yml 비활성화)
+  config:
+    import:
+      - optional:classpath:rest-api.yml
+
+  # H2 In-Memory Database
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+
+  # JPA 설정
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+
+  # Flyway 비활성화
+  flyway:
+    enabled: false
+
+  # 외부 서비스 자동설정 비활성화
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - org.redisson.spring.starter.RedissonAutoConfigurationV2
+      - com.ryuqq.authhub.sdk.autoconfigure.AuthHubAutoConfiguration
+      - com.ryuqq.fileflow.sdk.autoconfigure.FileFlowAutoConfiguration
+
+  # Jackson
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss
+    time-zone: Asia/Seoul
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+      FAIL_ON_EMPTY_BEANS: false
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+    default-property-inclusion: non_null
+
+# AuthHub 테스트용 더미 설정
+# LoginService 등 Application 빈도 @ConditionalOnProperty(authhub.base-url) 게이트이므로
+# base-url 설정 필수. TokenResolver는 StubExternalClientConfig에서 Stub 제공.
+authhub:
+  base-url: http://localhost:19999
+  service-token: test-service-token
+  service-code: SVC_MARKETPLACE_TEST
+  timeout:
+    connect: 1s
+    read: 1s
+
+# FileFlow 테스트용 설정
+# FileFlowAutoConfiguration은 exclude, fileflow.base-url 미설정으로
+# FileFlowStorageAdapter(@ConditionalOnProperty) 비활성화.
+# FileStorageClient는 StubExternalClientConfig에서 Stub 제공.
+
+# Server 설정
+server:
+  port: 0
+  shutdown: graceful
+
+# Logging
+logging:
+  level:
+    root: WARN
+    com.ryuqq.marketplace: INFO
+    org.springframework.security: DEBUG
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+# Persistence Legacy Migration Toggle
+# @ConditionalOnProperty로 게이트된 QueryAdapter 활성화
+persistence:
+  legacy:
+    common-code:
+      enabled: false
+    common-code-type:
+      enabled: false
+    seller:
+      enabled: false
+    seller-business-info:
+      enabled: false
+
+# Error Response
+api:
+  error:
+    base-url: about:blank
+    use-about-blank: true

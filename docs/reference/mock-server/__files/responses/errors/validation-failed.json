@@ -1,0 +1,13 @@
+{
+  "type": "about:blank",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "Validation failed for request",
+  "instance": "/api/v1/products",
+  "timestamp": "2025-12-22T10:30:00.000Z",
+  "code": "VALIDATION_FAILED",
+  "errors": {
+    "productName": "상품명은 필수입니다",
+    "price": "가격은 0보다 커야 합니다"
+  }
+}

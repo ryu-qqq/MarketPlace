@@ -1,0 +1,17 @@
+# ============================================================
+# FileFlow SDK 공통 설정
+# ============================================================
+# 환경변수로 제어:
+#   - FILEFLOW_BASE_URL: FileFlow 서버 URL (필수)
+#   - FILEFLOW_SERVICE_TOKEN: 서비스 인증 토큰 (필수)
+# ============================================================
+
+fileflow:
+  base-url: ${FILEFLOW_BASE_URL:}
+  cdn-domain: ${FILEFLOW_CDN_DOMAIN:cdn.set-of.com}
+  bucket: ${FILEFLOW_BUCKET:}
+  service-name: SVC_MARKETPLACE
+  service-token: ${FILEFLOW_SERVICE_TOKEN:}
+  timeout:
+    connect: 5s
+    read: 60s

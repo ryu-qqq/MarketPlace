@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/api/oms/sync-history/[0-9]+/retry"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "responses/sync-history-retry.json",
+    "headers": {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    }
+  }
+}

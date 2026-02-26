@@ -1,0 +1,158 @@
+// ========================================
+// Adapter-Out: Persistence MySQL Legacy
+// ========================================
+// Legacy database adapter for Strangler Fig migration
+// Reads from legacy DB (luxurydb) and converts to new domain model
+// Technology: Spring Data JPA + QueryDSL + MySQL
+// NO Lombok allowed
+// ========================================
+
+plugins {
+    id 'java-library'
+    id 'java-test-fixtures'
+}
+
+dependencies {
+    // ========================================
+    // Core Dependencies
+    // ========================================
+    api project(':application')
+    api project(':domain')
+
+    // Spring Data JPA
+    implementation libs.spring.boot.starter.data.jpa
+
+    // QueryDSL
+    implementation(libs.querydsl.jpa) {
+        artifact {
+            classifier = 'jakarta'
+        }
+    }
+    annotationProcessor(libs.querydsl.apt) {
+        artifact {
+            classifier = 'jakarta'
+        }
+    }
+    annotationProcessor libs.jakarta.persistence.api
+
+    // Database Drivers (Runtime)
+    runtimeOnly libs.mysql.connector
+    testRuntimeOnly libs.h2 // For testing (embedded DB)
+
+    // Flyway (Legacy DB migration)
+    implementation libs.flyway.core
+    runtimeOnly libs.flyway.mysql
+
+    // Connection Pooling
+    implementation libs.hikaricp
+
+    // ========================================
+    // Test Dependencies
+    // ========================================
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.testcontainers.mysql
+    testImplementation libs.testcontainers.junit
+
+    // ArchUnit for architecture validation
+    testImplementation libs.archunit.junit5
+
+    // Domain/Application testFixtures
+    testImplementation testFixtures(project(':domain'))
+    testImplementation testFixtures(project(':application'))
+
+    // ========================================
+    // Test Fixtures Dependencies
+    // ========================================
+    testFixturesApi project(':domain')
+    testFixturesApi project(':application')
+    testFixturesApi testFixtures(project(':domain'))
+    testFixturesApi testFixtures(project(':application'))
+    testFixturesImplementation libs.spring.boot.starter.data.jpa
+}
+
+// ========================================
+// QueryDSL Configuration
+// ========================================
+def generatedSourcesDir = file('build/generated/sources/annotationProcessor/java/main')
+
+sourceSets {
+    main {
+        java {
+            srcDir generatedSourcesDir
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.generatedSourceOutputDirectory.set(generatedSourcesDir)
+}
+
+// ========================================
+// Test Coverage (Legacy module: minimal)
+// ========================================
+tasks.jacocoTestReport {
+    classDirectories.setFrom(
+        files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/orders/entity/**',   // Order snapshot entities - read-only legacy data
+                '**/qna/entity/**',      // QNA entities - read-only legacy data
+                '**/brand/entity/**',    // Brand entity - read-only reference data
+                '**/category/entity/**', // Category entity - read-only reference data
+                '**/seller/entity/**',   // Seller entity - read-only reference data
+                '**/common/entity/**',   // Base entity classes
+                '**/config/**',          // Spring configuration classes
+                '**/Q*.class'            // QueryDSL generated classes
+            ])
+        })
+    )
+}
+
+tasks.jacocoTestCoverageVerification {
+    classDirectories.setFrom(
+        files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/orders/entity/**',
+                '**/qna/entity/**',
+                '**/brand/entity/**',
+                '**/category/entity/**',
+                '**/seller/entity/**',
+                '**/common/entity/**',
+                '**/config/**',
+                '**/Q*.class'
+            ])
+        })
+    )
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.0
+            }
+        }
+        rule {
+            element = 'CLASS'
+            excludes = [
+                '*.entity.*',
+                '*.Q*',
+                '*.config.*'
+            ]
+            limit {
+                minimum = 0.0
+            }
+        }
+    }
+}
+
+tasks.test {
+    doFirst {
+        file("$buildDir/jacoco").mkdirs()
+        file("$buildDir/test-results/test/binary").mkdirs()
+    }
+    finalizedBy tasks.jacocoTestCoverageVerification
+}
+
+// ========================================
+// Clean Generated Sources
+// ========================================
+tasks.clean {
+    delete generatedSourcesDir
+}

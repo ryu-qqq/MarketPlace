@@ -4,7 +4,12 @@
 # Spring Boot 3.5.x + Java 21 기준
 # Bootstrap 모듈 - 실행 가능한 애플리케이션 설정
 #
-# @author windsurf
+# 설정 분리 원칙:
+# - application.yml: 공통 인프라 설정 (Server, Jackson, Actuator)
+# - rest-api.yml: REST API 레이어 설정 (Security, OpenAPI)
+# - persistence.yml: 영속성 레이어 설정 (DataSource, JPA, Flyway)
+# - logback-spring.xml: 로깅 설정 (Profile별 JSON/패턴 분리)
+#
 # @since 1.0.0
 # ===============================================
 
@@ -13,6 +18,10 @@
 # ===============================================
 server:
   port: 8080
+
+  # Proxy 헤더 처리 (ngrok, 로드밸런서 등)
+  # X-Forwarded-* 헤더를 신뢰하여 원본 URL 인식
+  forward-headers-strategy: framework
 
   # Tomcat 서블릿 컨테이너 설정
   tomcat:
@@ -42,11 +51,25 @@ server:
 # ===============================================
 spring:
   application:
-    name: spring-standards-rest-api
+    name: marketplace-api
 
   # Profile 설정
   profiles:
-    active: local  # local, dev, stage, prod
+    active: local  # local, dev, staging, prod
+
+  # ===============================================
+  # Config Import (각 모듈의 설정 파일 로드)
+  # ===============================================
+  config:
+    import:
+      - classpath:rest-api.yml
+      - classpath:persistence.yml
+      - optional:classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-${spring.profiles.active:local}.yml
+      - classpath:redis.yml
+      - classpath:authhub.yml
+      - classpath:fileflow.yml
+      - classpath:naver-commerce.yml
 
   # ===============================================
   # MessageSource (i18n)
@@ -63,7 +86,7 @@ spring:
   # Jackson (JSON 직렬화/역직렬화)
   # ===============================================
   jackson:
-    # 날짜/시간 포맷
+    # 날짜/시간 포맷 (ISO 8601)
     date-format: yyyy-MM-dd'T'HH:mm:ss
     time-zone: Asia/Seoul
 
@@ -73,34 +96,19 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
       # 빈 객체 직렬화 허용
       FAIL_ON_EMPTY_BEANS: false
-      # 들여쓰기 (개발 환경에서만)
-      INDENT_OUTPUT: false
 
     # Deserialization 설정
     deserialization:
       # 알 수 없는 필드 무시 (API 버전 호환성)
       FAIL_ON_UNKNOWN_PROPERTIES: false
-      # 빈 문자열을 null로 처리
-      ACCEPT_EMPTY_STRING_AS_NULL_OBJECT: true
 
     # Default Property Inclusion
     default-property-inclusion: non_null  # null 필드 제외
-
-    # Locale 설정
-    locale: ko_KR
-
-  # ===============================================
-  # Validation
-  # ===============================================
-  validation:
-    # Fail Fast 모드 (첫 번째 에러에서 중단)
-    fail-fast: false  # 모든 에러 수집
 
   # ===============================================
   # Web Configuration
   # ===============================================
   web:
-    # Locale 설정
     locale: ko_KR
     locale-resolver: fixed  # 고정 로케일
 
@@ -110,94 +118,13 @@ spring:
   mvc:
     # Content Negotiation
     contentnegotiation:
-      favor-parameter: false  # URL 파라미터로 Content-Type 결정 비활성화
-      favor-path-extension: false  # 확장자로 Content-Type 결정 비활성화
+      favor-parameter: false
+      favor-path-extension: false
 
-    # PathMatch 설정
-    pathmatch:
-      matching-strategy: ant_path_matcher  # Ant 스타일 패턴 매칭
-
-    # Throw Exception if No Handler Found
-    throw-exception-if-no-handler-found: true
-
-  # ===============================================
-  # Config Import (각 모듈의 설정 파일 로드)
-  # ===============================================
-  config:
-    import:
-      - classpath:rest-api.yml
-      - classpath:persistence.yml
-
-  # ===============================================
-  # Flyway Migration
-  # ===============================================
-  flyway:
-    # Flyway 활성화
-    enabled: true
-
-    # 마이그레이션 스크립트 위치
-    # classpath: 리소스 디렉토리 내 경로
-    # filesystem: 파일 시스템 절대 경로
-    locations: classpath:db/migration
-
-    # 베이스라인 설정
-    # baseline-on-migrate: 기존 DB에 Flyway 적용 시 true
-    # baseline-version: 베이스라인 버전 (기존 스키마의 버전)
-    baseline-on-migrate: true
-    baseline-version: 0
-
-    # 마이그레이션 검증
-    # validate-on-migrate: 마이그레이션 전 검증 수행 (임시로 비활성화 - checksum 불일치 해결 후 다시 활성화)
-    validate-on-migrate: false
-
-    # Out of Order 마이그레이션 허용
-    # out-of-order: 순서가 맞지 않는 마이그레이션 허용 (개발 환경)
-    out-of-order: false
-
-    # 스키마 설정
-    # default-schema: 기본 스키마 (미지정 시 DB 기본값)
-    # schemas: 관리할 스키마 목록
-    # default-schema: spring_standards
-
-    # 테이블 설정
-    # table: Flyway 메타데이터 테이블명 (기본: flyway_schema_history)
-    table: flyway_schema_history
-
-    # SQL 마이그레이션 설정
-    # sql-migration-prefix: SQL 파일 접두사 (기본: V)
-    # sql-migration-separator: 버전과 설명 구분자 (기본: __)
-    # sql-migration-suffixes: SQL 파일 확장자 (기본: .sql)
-    sql-migration-prefix: V
-    sql-migration-separator: __
-    sql-migration-suffixes: .sql
-
-    # Placeholder 설정
-    # placeholder-replacement: SQL 내 플레이스홀더 치환 활성화
-    # placeholders: 플레이스홀더 값 정의
-    placeholder-replacement: true
-    placeholders:
-      database: spring_standards
-      charset: utf8mb4
-      collation: utf8mb4_unicode_ci
-
-    # 클린 설정 (주의: 프로덕션에서는 절대 사용 금지)
-    # clean-disabled: clean 명령 비활성화 (프로덕션 필수)
-    clean-disabled: true
-
-    # 마이그레이션 실패 시 동작
-    # fail-on-missing-locations: 마이그레이션 위치 없을 시 실패
-    fail-on-missing-locations: true
-
-# ===============================================
-# API Endpoint Configuration
-# ===============================================
-api:
-  endpoints:
-    base-v1: /api/v1
-    seller:
-      base: /sellers
-      by-id: /{id}
-      status: /{id}/status
+    # PathPatternParser is the default matcher in Spring Framework 6.1+.
+    # Deprecated matching-strategy property is removed (ant_path_matcher no longer supported).
+    # DispatcherServlet now raises NoResourceFoundException for 404s by default,
+    # so throw-exception-if-no-handler-found is no longer configurable.
 
 # ===============================================
 # Management & Actuator (모니터링)
@@ -206,52 +133,64 @@ management:
   endpoints:
     web:
       exposure:
-        # Actuator 엔드포인트 노출 (프로덕션에서는 제한 필요)
-        include: health,info,metrics,prometheus
+        # Actuator 엔드포인트 노출
+        include: health,info,metrics,prometheus,loggers
       base-path: /actuator
 
   endpoint:
     health:
       show-details: when-authorized  # 인증된 사용자에게만 상세 정보 노출
+    loggers:
+      enabled: true  # 런타임 로그 레벨 변경 지원
 
   metrics:
     export:
       prometheus:
-        enabled: true  # Prometheus 메트릭 노출
+        enabled: true  # Prometheus 메트릭 노출 (ADOT Collector가 scrape)
+
+    # ===============================================
+    # Metrics Tags (ADOT/Prometheus 필수)
+    # ===============================================
+    # ADOT Sidecar가 scrape할 때 서비스 구분용
+    # Amazon Managed Prometheus에서 쿼리 시 필수
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active:local}
+
+    # 히스토그램 분포 설정 (percentiles)
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.95,0.99
+      slo:
+        http.server.requests: 100ms,500ms,1s,5s
+
+  # Health Indicator 설정
+  health:
+    db:
+      enabled: true
+    diskspace:
+      enabled: true
 
 # ===============================================
-# Logging Configuration
+# Sentry Configuration (Error Tracking)
 # ===============================================
-logging:
-  level:
-    # Root 로거
-    root: INFO
-
-    # Application 로거
-    com.ryuqq: DEBUG
-
-    # Spring Framework
-    org.springframework.web: INFO
-    org.springframework.security: INFO
-
-    # Hibernate (JPA)
-    org.hibernate.SQL: DEBUG  # SQL 쿼리 로깅
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # 바인딩 파라미터 로깅
-
-    # Tomcat
-    org.apache.tomcat: INFO
-    org.apache.catalina: INFO
-
-  # 로그 패턴
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-
-  # 로그 파일 설정 (프로덕션)
-  file:
-    name: logs/application.log
-    max-size: 10MB  # 파일 최대 크기
-    max-history: 30  # 보관 일수
+# DSN은 환경변수로 주입 (ECS Task Definition)
+# local/dev: 비워두면 Sentry 비활성화
+# prod: SENTRY_DSN 환경변수로 주입
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: ${spring.profiles.active:local}
+  release: ${APP_VERSION:unknown}
+  # TraceId 연동 (OpenTelemetry 연계)
+  traces-sample-rate: 1.0
+  # 성능 모니터링
+  enable-tracing: true
+  # 예외 필터링
+  ignored-exceptions-for-type:
+    - org.springframework.web.servlet.resource.NoResourceFoundException
+    - org.springframework.security.access.AccessDeniedException
 
 # ===============================================
 # Profile-Specific Configurations
@@ -262,11 +201,6 @@ spring:
   config:
     activate:
       on-profile: local
-
-logging:
-  level:
-    root: DEBUG
-    com.ryuqq: TRACE
 
 server:
   tomcat:
@@ -280,15 +214,46 @@ spring:
     activate:
       on-profile: dev
 
-logging:
-  level:
-    root: DEBUG
-    com.ryuqq: DEBUG
-
 server:
   tomcat:
     threads:
       max: 100
+
+---
+# Stage 환경 (ECS Stage)
+spring:
+  config:
+    activate:
+      on-profile: stage
+
+server:
+  tomcat:
+    threads:
+      max: 150
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+---
+# Staging 환경
+spring:
+  config:
+    activate:
+      on-profile: staging
+
+server:
+  tomcat:
+    threads:
+      max: 150
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
 
 ---
 # Production 환경
@@ -297,23 +262,27 @@ spring:
     activate:
       on-profile: prod
 
-logging:
-  level:
-    root: WARN
-    com.ryuqq: INFO
-    org.hibernate.SQL: WARN
-
 server:
   tomcat:
     threads:
       max: 200
 
   # Graceful Shutdown Timeout
-  graceful-shutdown-timeout: 30s
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 
 management:
   endpoints:
     web:
       exposure:
-        # 프로덕션: health, metrics, prometheus 노출
+        # 프로덕션: health, metrics, prometheus만 노출
         include: health,metrics,prometheus
+
+# Sentry (Production)
+# DSN은 ECS Task Definition 환경변수로 주입
+sentry:
+  send-default-pii: true
+  attach-stacktrace: true
+  logging:
+    minimum-event-level: error
+    minimum-breadcrumb-level: info
