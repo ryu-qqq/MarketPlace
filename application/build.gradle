@@ -35,7 +35,7 @@ dependencies {
     // ========================================
     // Observability (Metrics & AOP)
     // ========================================
-    implementation libs.micrometer.core
+    api libs.micrometer.core
     implementation libs.spring.boot.starter.aop
 
     // ========================================

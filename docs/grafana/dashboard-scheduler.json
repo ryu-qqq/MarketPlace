@@ -23,63 +23,35 @@
   "panels": [
     {
       "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
       "id": 100,
       "title": "\ud83d\udcca Overview",
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 1
-              },
-              {
-                "color": "green",
-                "value": 2
-              }
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "green", "value": 2 }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 0,
-        "y": 1
-      },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
       "id": 1,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
+        "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
         "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
@@ -87,10 +59,6 @@
       "pluginVersion": "10.4.1",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "sum(up{job=\"$job\",environment=~\"$environment\"})",
           "legendFormat": "UP",
           "refId": "A"
@@ -100,10 +68,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
           "decimals": 1,
@@ -111,43 +76,23 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 100
-              },
-              {
-                "color": "red",
-                "value": 500
-              }
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 100 },
+              { "color": "red", "value": 500 }
             ]
           },
           "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 1
-      },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
       "id": 2,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
+        "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
         "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
@@ -155,11 +100,7 @@
       "pluginVersion": "10.4.1",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
-          "expr": "sum(rate(crawlinghub_scheduler_job_duration_seconds_count{job=\"$job\",environment=~\"$environment\"}[1m])) * 60",
+          "expr": "sum(rate(scheduler_job_duration_seconds_count{job=\"$job\",environment=~\"$environment\"}[1m])) * 60",
           "legendFormat": "Exec/min",
           "refId": "A"
         }
@@ -168,56 +109,31 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
-          "decimals": 2,
+          "decimals": 1,
           "mappings": [],
-          "max": 100,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 95
-              },
-              {
-                "color": "green",
-                "value": 99
-              }
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 100 },
+              { "color": "red", "value": 1000 }
             ]
           },
-          "unit": "percent"
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 1
-      },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
       "id": 3,
       "options": {
-        "colorMode": "background",
+        "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
+        "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
         "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
@@ -225,23 +141,16 @@
       "pluginVersion": "10.4.1",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
-          "expr": "sum(rate(crawlinghub_scheduler_job_batch_items_total{job=\"$job\",environment=~\"$environment\",result=\"success\"}[5m])) / (sum(rate(crawlinghub_scheduler_job_batch_items_total{job=\"$job\",environment=~\"$environment\",result=\"success\"}[5m])) + sum(rate(crawlinghub_scheduler_job_batch_items_total{job=\"$job\",environment=~\"$environment\",result=\"failed\"}[5m]))) * 100 or vector(100)",
-          "legendFormat": "Success %",
+          "expr": "sum(rate(scheduler_job_items_total{job=\"$job\",environment=~\"$environment\"}[1m])) * 60",
+          "legendFormat": "Items/min",
           "refId": "A"
         }
       ],
-      "title": "Scheduler Success %",
+      "title": "Items Processed/min",
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
           "decimals": 1,
@@ -251,43 +160,23 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 85 }
             ]
           },
           "unit": "percent"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 18,
-        "y": 1
-      },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
       "id": 6,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
+        "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
         "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
@@ -295,10 +184,6 @@
       "pluginVersion": "10.4.1",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "avg(jvm_memory_used_bytes{job=\"$job\",environment=~\"$environment\",area=\"heap\"} / jvm_memory_max_bytes{job=\"$job\",environment=~\"$environment\",area=\"heap\"}) * 100",
           "legendFormat": "Heap %",
           "refId": "A"
@@ -309,248 +194,273 @@
     },
     {
       "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 5
-      },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
       "id": 600,
       "title": "\ud83d\udcc5 Scheduler Jobs",
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps"
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          },
+          "unit": "ops"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 6
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
       "id": 50,
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right"
-        }
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "right", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
-          "expr": "sum by (job_name) (rate(crawlinghub_scheduler_job_duration_seconds_count{job=\"$job\",environment=~\"$environment\"}[5m]))",
+          "expr": "sum by (job_name) (rate(scheduler_job_duration_seconds_count{job=\"$job\",environment=~\"$environment\"}[5m]))",
           "legendFormat": "{{job_name}}",
           "refId": "A"
         }
       ],
-      "title": "Scheduler Job Executions",
+      "title": "Job Execution Rate by Job",
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          },
           "unit": "s"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 6
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
       "id": 51,
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right"
-        }
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "right", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
-          "expr": "histogram_quantile(0.95, sum by (le, job_name) (rate(crawlinghub_scheduler_job_duration_seconds_bucket{job=\"$job\",environment=~\"$environment\"}[5m])))",
-          "legendFormat": "{{job_name}} P95",
+          "expr": "histogram_quantile(0.50, sum by (le, job_name) (rate(scheduler_job_duration_seconds_bucket{job=\"$job\",environment=~\"$environment\"}[5m])))",
+          "legendFormat": "{{job_name}} P50",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, job_name) (rate(scheduler_job_duration_seconds_bucket{job=\"$job\",environment=~\"$environment\"}[5m])))",
+          "legendFormat": "{{job_name}} P95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, job_name) (rate(scheduler_job_duration_seconds_bucket{job=\"$job\",environment=~\"$environment\"}[5m])))",
+          "legendFormat": "{{job_name}} P99",
+          "refId": "C"
         }
       ],
-      "title": "Scheduler Job Duration",
+      "title": "Job Duration P50/P95/P99",
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
       },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+      "id": 53,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "right", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "expr": "sum by (job_name, result) (rate(scheduler_job_items_total{job=\"$job\",environment=~\"$environment\"}[5m]))",
+          "legendFormat": "{{job_name}} [{{result}}]",
+          "refId": "A"
+        }
+      ],
+      "title": "Items Processed by Job",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
           "decimals": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "red"
-              },
-              {
-                "color": "yellow",
-                "value": 95
-              },
-              {
-                "color": "green",
-                "value": 99
-              }
+              { "color": "red" },
+              { "color": "yellow", "value": 95 },
+              { "color": "green", "value": 99 }
             ]
           },
           "unit": "percent"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 12,
-        "x": 0,
-        "y": 14
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
       "id": 52,
       "options": {
         "colorMode": "background",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ]
-        }
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "10.4.1",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
-          "expr": "sum(rate(crawlinghub_scheduler_job_batch_items_total{job=\"$job\",environment=~\"$environment\",result=\"success\"}[5m])) / (sum(rate(crawlinghub_scheduler_job_batch_items_total{job=\"$job\",environment=~\"$environment\",result=\"success\"}[5m])) + sum(rate(crawlinghub_scheduler_job_batch_items_total{job=\"$job\",environment=~\"$environment\",result=\"failed\"}[5m]))) * 100 or vector(100)",
+          "expr": "sum(rate(scheduler_job_items_total{job=\"$job\",environment=~\"$environment\",result=\"success\"}[5m])) / (sum(rate(scheduler_job_items_total{job=\"$job\",environment=~\"$environment\",result=\"success\"}[5m])) + sum(rate(scheduler_job_items_total{job=\"$job\",environment=~\"$environment\",result=\"failed\"}[5m]))) * 100 or vector(100)",
           "legendFormat": "Success %",
           "refId": "A"
         }
       ],
-      "title": "Scheduler Success Rate",
+      "title": "Job Success Rate",
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 12,
-        "x": 12,
-        "y": 14
-      },
-      "id": 53,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
-          "expr": "sum by (job_name, result) (rate(crawlinghub_scheduler_job_batch_items_total{job=\"$job\",environment=~\"$environment\"}[5m]))",
-          "legendFormat": "{{job_name}} {{result}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Scheduler Items Processed",
-      "type": "timeseries"
-    },
-    {
       "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 18
-      },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
       "id": 500,
       "title": "\ud83d\uddc4\ufe0f Database (HikariCP)",
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          },
           "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 0,
-        "y": 19
-      },
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 23 },
       "id": 40,
+      "options": {
+        "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
       "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
-          "expr": "hikaricp_connections_active{job=\"$job\",environment=~\"$environment\"}",
-          "legendFormat": "Active",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
-          "expr": "hikaricp_connections_idle{job=\"$job\",environment=~\"$environment\"}",
-          "legendFormat": "Idle",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
-          "expr": "hikaricp_connections_pending{job=\"$job\",environment=~\"$environment\"}",
-          "legendFormat": "Pending",
-          "refId": "C"
-        }
+        { "expr": "hikaricp_connections_active{job=\"$job\",environment=~\"$environment\"}", "legendFormat": "Active", "refId": "A" },
+        { "expr": "hikaricp_connections_idle{job=\"$job\",environment=~\"$environment\"}", "legendFormat": "Idle", "refId": "B" },
+        { "expr": "hikaricp_connections_pending{job=\"$job\",environment=~\"$environment\"}", "legendFormat": "Pending", "refId": "C" },
+        { "expr": "hikaricp_connections_max{job=\"$job\",environment=~\"$environment\"}", "legendFormat": "Max", "refId": "D" }
       ],
       "title": "Connection Pool Usage",
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
           "max": 100,
@@ -558,43 +468,20 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "yellow",
-                "value": 60
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
+              { "color": "green" },
+              { "color": "yellow", "value": 60 },
+              { "color": "red", "value": 80 }
             ]
           },
           "unit": "percent"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 8,
-        "y": 19
-      },
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 23 },
       "id": 41,
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ]
-        }
-      },
+      "options": { "reduceOptions": { "calcs": ["last"] } },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "avg(hikaricp_connections_active{job=\"$job\",environment=~\"$environment\"} / hikaricp_connections_max{job=\"$job\",environment=~\"$environment\"}) * 100",
           "legendFormat": "Usage %",
           "refId": "A"
@@ -604,29 +491,48 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          },
           "unit": "s"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 16,
-        "y": 19
-      },
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 23 },
       "id": 42,
+      "options": {
+        "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "rate(hikaricp_connections_acquire_seconds_sum{job=\"$job\",environment=~\"$environment\"}[1m]) / rate(hikaricp_connections_acquire_seconds_count{job=\"$job\",environment=~\"$environment\"}[1m])",
           "legendFormat": "Avg Acquire Time",
           "refId": "A"
@@ -637,43 +543,18 @@
     },
     {
       "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 25
-      },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 29 },
       "id": 700,
       "title": "\u2615 JVM Metrics",
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 0,
-        "y": 26
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "unit": "bytes" }, "overrides": [] },
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 30 },
       "id": 60,
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "sum by (aws_ecs_task_id) (jvm_memory_used_bytes{job=\"$job\",environment=~\"$environment\",area=\"heap\",aws_ecs_task_id=~\"$task_id\"})",
           "legendFormat": "{{aws_ecs_task_id}}",
           "refId": "A"
@@ -683,45 +564,25 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
       "fieldConfig": {
         "defaults": {
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "yellow",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
+              { "color": "green" },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 85 }
             ]
           },
           "unit": "percent"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 26
-      },
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 30 },
       "id": 61,
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "sum by (aws_ecs_task_id) (jvm_memory_used_bytes{job=\"$job\",environment=~\"$environment\",area=\"heap\",aws_ecs_task_id=~\"$task_id\"}) / sum by (aws_ecs_task_id) (jvm_memory_max_bytes{job=\"$job\",environment=~\"$environment\",area=\"heap\",aws_ecs_task_id=~\"$task_id\"}) * 100",
           "legendFormat": "{{aws_ecs_task_id}}",
           "refId": "A"
@@ -731,32 +592,12 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 12,
-        "y": 26
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "unit": "bytes" }, "overrides": [] },
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 30 },
       "id": 62,
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "sum by (aws_ecs_task_id) (jvm_memory_used_bytes{job=\"$job\",environment=~\"$environment\",area=\"nonheap\",aws_ecs_task_id=~\"$task_id\"})",
           "legendFormat": "{{aws_ecs_task_id}}",
           "refId": "A"
@@ -766,32 +607,12 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 26
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 30 },
       "id": 63,
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "jvm_threads_live_threads{job=\"$job\",environment=~\"$environment\",aws_ecs_task_id=~\"$task_id\"}",
           "legendFormat": "{{aws_ecs_task_id}}",
           "refId": "A"
@@ -801,32 +622,12 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 32
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 36 },
       "id": 64,
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "sum by (aws_ecs_task_id) (rate(jvm_gc_pause_seconds_sum{job=\"$job\",environment=~\"$environment\",aws_ecs_task_id=~\"$task_id\"}[5m]))",
           "legendFormat": "{{aws_ecs_task_id}}",
           "refId": "A"
@@ -836,32 +637,12 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef4r3izgbak8wb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 32
-      },
+      "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 36 },
       "id": 65,
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef4r3izgbak8wb"
-          },
           "expr": "sum by (aws_ecs_task_id) (rate(jvm_gc_pause_seconds_count{job=\"$job\",environment=~\"$environment\",aws_ecs_task_id=~\"$task_id\"}[1m])) * 60",
           "legendFormat": "{{aws_ecs_task_id}}",
           "refId": "A"
@@ -873,22 +654,12 @@
   ],
   "refresh": "10s",
   "schemaVersion": 39,
-  "tags": [
-    "crawlinghub",
-    "scheduler"
-  ],
+  "tags": ["marketplace", "scheduler"],
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": true,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "ef4r3izgbak8wb"
-        },
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
         "definition": "label_values(up, environment)",
         "hide": 0,
         "includeAll": true,
@@ -907,42 +678,27 @@
         "type": "query"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "crawlinghub-scheduler-metrics",
-          "value": "crawlinghub-scheduler-metrics"
-        },
+        "current": { "selected": false, "text": "marketplace-scheduler-metrics", "value": "marketplace-scheduler-metrics" },
         "hide": 2,
         "name": "job",
         "options": [
-          {
-            "selected": true,
-            "text": "crawlinghub-scheduler-metrics",
-            "value": "crawlinghub-scheduler-metrics"
-          }
+          { "selected": true, "text": "marketplace-scheduler-metrics", "value": "marketplace-scheduler-metrics" }
         ],
-        "query": "crawlinghub-scheduler-metrics",
+        "query": "marketplace-scheduler-metrics",
         "skipUrlSync": false,
         "type": "constant"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "ef4r3izgbak8wb"
-        },
-        "definition": "",
+        "current": { "selected": false, "text": "All", "value": "$__all" },
+        "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
+        "definition": "label_values(up{job=\"$job\",environment=~\"$environment\"}, aws_ecs_task_id)",
         "hide": 0,
         "includeAll": true,
         "label": "ECS Task ID",
         "multi": true,
         "name": "task_id",
         "options": [],
-        "query": "label_values(up{job=\"$job\"}, aws_ecs_task_id)",
+        "query": "label_values(up{job=\"$job\",environment=~\"$environment\"}, aws_ecs_task_id)",
         "refresh": 2,
         "regex": "/.+/",
         "skipUrlSync": false,
@@ -951,14 +707,11 @@
       }
     ]
   },
-  "time": {
-    "from": "now-6h",
-    "to": "now"
-  },
+  "time": { "from": "now-6h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
-  "title": "CrawlingHub - Scheduler Metrics",
-  "uid": "crawlinghub-scheduler-metrics",
+  "title": "MarketPlace - Scheduler Metrics",
+  "uid": "marketplace-scheduler-metrics",
   "version": 1,
   "weekStart": ""
 }
