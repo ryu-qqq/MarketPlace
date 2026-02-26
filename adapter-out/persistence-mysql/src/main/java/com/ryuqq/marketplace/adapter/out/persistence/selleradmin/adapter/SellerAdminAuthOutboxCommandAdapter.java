@@ -35,6 +35,7 @@ public class SellerAdminAuthOutboxCommandAdapter implements SellerAdminAuthOutbo
     public Long persist(SellerAdminAuthOutbox outbox) {
         SellerAdminAuthOutboxJpaEntity entity = mapper.toEntity(outbox);
         SellerAdminAuthOutboxJpaEntity saved = repository.save(entity);
+        outbox.refreshVersion(saved.getVersion());
         return saved.getId();
     }
 }

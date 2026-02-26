@@ -364,6 +364,15 @@ public class OutboundSyncOutbox {
         return version;
     }
 
+    /**
+     * 영속화 후 JPA가 증가시킨 버전을 도메인 객체에 반영합니다.
+     *
+     * @param version 저장 후 갱신된 버전
+     */
+    public void refreshVersion(long version) {
+        this.version = version;
+    }
+
     public SyncOutboxIdempotencyKey idempotencyKey() {
         return idempotencyKey;
     }
