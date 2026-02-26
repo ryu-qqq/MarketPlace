@@ -29,6 +29,7 @@ spring:
       - optional:classpath:sqs-consumer-${spring.profiles.active:local}.yml
       - classpath:fileflow.yml
       - optional:classpath:fileflow-${spring.profiles.active:local}.yml
+      - classpath:authhub.yml
       - classpath:spring-ai-client.yml
       - optional:classpath:spring-ai-client-${spring.profiles.active:local}.yml
 
