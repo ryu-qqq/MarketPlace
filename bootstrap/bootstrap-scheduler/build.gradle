@@ -27,6 +27,7 @@ dependencies {
     implementation project(':application')
     implementation project(':domain')
     implementation project(':adapter-out:persistence-mysql')
+    implementation project(':adapter-out:persistence-mysql-legacy')
     implementation project(':adapter-out:persistence-redis')
     implementation project(':adapter-out:client:authhub-client')
     implementation project(':adapter-out:client:fileflow-client')

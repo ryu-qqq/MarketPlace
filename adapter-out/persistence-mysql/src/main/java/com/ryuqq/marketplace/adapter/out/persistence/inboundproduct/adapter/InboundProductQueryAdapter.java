@@ -4,8 +4,6 @@ import com.ryuqq.marketplace.adapter.out.persistence.inboundproduct.mapper.Inbou
 import com.ryuqq.marketplace.adapter.out.persistence.inboundproduct.repository.InboundProductJpaRepository;
 import com.ryuqq.marketplace.application.inboundproduct.port.out.query.InboundProductQueryPort;
 import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductStatus;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -27,23 +25,5 @@ public class InboundProductQueryAdapter implements InboundProductQueryPort {
         return repository
                 .findByInboundSourceIdAndExternalProductCode(inboundSourceId, externalProductCode)
                 .map(mapper::toDomain);
-    }
-
-    @Override
-    public List<InboundProduct> findByStatus(InboundProductStatus status, int limit) {
-        return repository.findTop100ByStatusOrderByCreatedAtAsc(status.name()).stream()
-                .map(mapper::toDomain)
-                .toList();
-    }
-
-    @Override
-    public List<InboundProduct> findByStatusAndRetryCountLessThan(
-            InboundProductStatus status, int maxRetryCount, int limit) {
-        return repository
-                .findTop50ByStatusAndRetryCountLessThanOrderByCreatedAtAsc(
-                        status.name(), maxRetryCount)
-                .stream()
-                .map(mapper::toDomain)
-                .toList();
     }
 }

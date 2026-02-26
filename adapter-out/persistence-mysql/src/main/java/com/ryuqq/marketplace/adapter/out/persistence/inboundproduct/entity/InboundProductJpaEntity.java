@@ -6,7 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.time.Instant;
 
@@ -23,9 +22,6 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
 
     @Column(name = "external_product_code", nullable = false, length = 255)
     private String externalProductCode;
-
-    @Column(name = "product_name", nullable = false, length = 500)
-    private String productName;
 
     @Column(name = "external_brand_code", length = 255)
     private String externalBrandCode;
@@ -45,24 +41,8 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
     @Column(name = "seller_id", nullable = false)
     private Long sellerId;
 
-    @Column(name = "regular_price", nullable = false)
-    private int regularPrice;
-
-    @Column(name = "current_price", nullable = false)
-    private int currentPrice;
-
-    @Column(name = "option_type", nullable = false, length = 50)
-    private String optionType;
-
     @Column(name = "status", nullable = false, length = 50)
     private String status;
-
-    @Lob
-    @Column(name = "description_html", columnDefinition = "LONGTEXT")
-    private String descriptionHtml;
-
-    @Column(name = "raw_payload", columnDefinition = "JSON")
-    private String rawPayloadJson;
 
     @Column(name = "resolved_shipping_policy_id")
     private Long resolvedShippingPolicyId;
@@ -73,9 +53,6 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
     @Column(name = "resolved_notice_category_id")
     private Long resolvedNoticeCategoryId;
 
-    @Column(name = "retry_count", nullable = false)
-    private int retryCount;
-
     protected InboundProductJpaEntity() {
         super();
     }
@@ -85,46 +62,32 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
             Long id,
             Long inboundSourceId,
             String externalProductCode,
-            String productName,
             String externalBrandCode,
             String externalCategoryCode,
             Long internalBrandId,
             Long internalCategoryId,
             Long internalProductGroupId,
             Long sellerId,
-            int regularPrice,
-            int currentPrice,
-            String optionType,
             String status,
-            String descriptionHtml,
-            String rawPayloadJson,
             Long resolvedShippingPolicyId,
             Long resolvedRefundPolicyId,
             Long resolvedNoticeCategoryId,
-            int retryCount,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
         this.id = id;
         this.inboundSourceId = inboundSourceId;
         this.externalProductCode = externalProductCode;
-        this.productName = productName;
         this.externalBrandCode = externalBrandCode;
         this.externalCategoryCode = externalCategoryCode;
         this.internalBrandId = internalBrandId;
         this.internalCategoryId = internalCategoryId;
         this.internalProductGroupId = internalProductGroupId;
         this.sellerId = sellerId;
-        this.regularPrice = regularPrice;
-        this.currentPrice = currentPrice;
-        this.optionType = optionType;
         this.status = status;
-        this.descriptionHtml = descriptionHtml;
-        this.rawPayloadJson = rawPayloadJson;
         this.resolvedShippingPolicyId = resolvedShippingPolicyId;
         this.resolvedRefundPolicyId = resolvedRefundPolicyId;
         this.resolvedNoticeCategoryId = resolvedNoticeCategoryId;
-        this.retryCount = retryCount;
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -132,46 +95,32 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
             Long id,
             Long inboundSourceId,
             String externalProductCode,
-            String productName,
             String externalBrandCode,
             String externalCategoryCode,
             Long internalBrandId,
             Long internalCategoryId,
             Long internalProductGroupId,
             Long sellerId,
-            int regularPrice,
-            int currentPrice,
-            String optionType,
             String status,
-            String descriptionHtml,
-            String rawPayloadJson,
             Long resolvedShippingPolicyId,
             Long resolvedRefundPolicyId,
             Long resolvedNoticeCategoryId,
-            int retryCount,
             Instant createdAt,
             Instant updatedAt) {
         return new InboundProductJpaEntity(
                 id,
                 inboundSourceId,
                 externalProductCode,
-                productName,
                 externalBrandCode,
                 externalCategoryCode,
                 internalBrandId,
                 internalCategoryId,
                 internalProductGroupId,
                 sellerId,
-                regularPrice,
-                currentPrice,
-                optionType,
                 status,
-                descriptionHtml,
-                rawPayloadJson,
                 resolvedShippingPolicyId,
                 resolvedRefundPolicyId,
                 resolvedNoticeCategoryId,
-                retryCount,
                 createdAt,
                 updatedAt);
     }
@@ -186,10 +135,6 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
 
     public String getExternalProductCode() {
         return externalProductCode;
-    }
-
-    public String getProductName() {
-        return productName;
     }
 
     public String getExternalBrandCode() {
@@ -216,28 +161,8 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
         return sellerId;
     }
 
-    public int getRegularPrice() {
-        return regularPrice;
-    }
-
-    public int getCurrentPrice() {
-        return currentPrice;
-    }
-
-    public String getOptionType() {
-        return optionType;
-    }
-
     public String getStatus() {
         return status;
-    }
-
-    public String getDescriptionHtml() {
-        return descriptionHtml;
-    }
-
-    public String getRawPayloadJson() {
-        return rawPayloadJson;
     }
 
     public Long getResolvedShippingPolicyId() {
@@ -250,9 +175,5 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
 
     public Long getResolvedNoticeCategoryId() {
         return resolvedNoticeCategoryId;
-    }
-
-    public int getRetryCount() {
-        return retryCount;
     }
 }
