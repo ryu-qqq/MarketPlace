@@ -32,6 +32,10 @@ dependencies {
     implementation project(':adapter-out:client:sqs-client')
     implementation project(':adapter-out:client:spring-ai-client')
     implementation project(':adapter-out:client:fileflow-client')
+    implementation project(':adapter-out:client:authhub-client')
+
+    // AuthHub SDK Spring Boot Starter (TokenResolver auto-configuration)
+    implementation libs.authhub.sdk.spring.boot.starter
 
     // ========================================
     // Observability
