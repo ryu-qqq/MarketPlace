@@ -1,11 +1,13 @@
 package com.ryuqq.marketplace.application.legacyproduct.service.command;
 
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateImagesCommand;
 import com.ryuqq.marketplace.application.legacyproduct.factory.LegacyProductGroupCommandFactory;
 import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyImageCoordinator;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateImagesUseCase;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +21,15 @@ public class LegacyProductUpdateImagesService implements LegacyProductUpdateImag
 
     private final LegacyProductGroupCommandFactory commandFactory;
     private final LegacyImageCoordinator imageCoordinator;
+    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
 
     public LegacyProductUpdateImagesService(
             LegacyProductGroupCommandFactory commandFactory,
-            LegacyImageCoordinator imageCoordinator) {
+            LegacyImageCoordinator imageCoordinator,
+            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.imageCoordinator = imageCoordinator;
+        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
     }
 
     @Override
@@ -33,5 +38,6 @@ public class LegacyProductUpdateImagesService implements LegacyProductUpdateImag
         List<LegacyProductImage> newImages =
                 commandFactory.createImagesForUpdate(groupId, command.images());
         imageCoordinator.updateImages(groupId, newImages);
+        conversionOutboxCommandManager.createIfNoPending(command.productGroupId(), Instant.now());
     }
 }

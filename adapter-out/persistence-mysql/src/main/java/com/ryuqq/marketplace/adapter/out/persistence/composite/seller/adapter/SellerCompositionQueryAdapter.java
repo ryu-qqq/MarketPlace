@@ -51,6 +51,14 @@ public class SellerCompositionQueryAdapter implements SellerCompositionQueryPort
     }
 
     @Override
+    public Optional<SellerAdminCompositeResult> findAdminCompositeByAuthTenantId(
+            String authTenantId) {
+        return compositeRepository
+                .findAdminCompositeByAuthTenantId(authTenantId)
+                .map(compositeMapper::toAdminResult);
+    }
+
+    @Override
     public Optional<SellerPolicyCompositeResult> findPolicyCompositeById(Long sellerId) {
         return policyCompositeRepository.findBySellerId(sellerId).map(this::toResult);
     }

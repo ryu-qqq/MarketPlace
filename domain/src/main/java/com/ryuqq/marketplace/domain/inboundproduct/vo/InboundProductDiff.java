@@ -8,7 +8,7 @@ public record InboundProductDiff(
         boolean priceChanged,
         boolean brandCodeChanged,
         boolean categoryCodeChanged,
-        boolean rawPayloadChanged) {
+        boolean payloadChanged) {
 
     /** 변경 사항이 하나라도 있는지 확인. */
     public boolean hasAnyChange() {
@@ -16,7 +16,7 @@ public record InboundProductDiff(
                 || priceChanged
                 || brandCodeChanged
                 || categoryCodeChanged
-                || rawPayloadChanged;
+                || payloadChanged;
     }
 
     /** 브랜드/카테고리 코드 변경 시 재매핑 필요 여부. */

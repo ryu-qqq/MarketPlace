@@ -30,7 +30,7 @@ public class InboundProductCommandFactory {
                 command.currentPrice(),
                 command.optionType(),
                 command.descriptionHtml(),
-                command.rawPayloadJson(),
+                command.payload(),
                 now);
     }
 
@@ -43,6 +43,6 @@ public class InboundProductCommandFactory {
                 command.currentPrice(),
                 command.optionType(),
                 command.descriptionHtml(),
-                command.rawPayloadJson());
+                command.payload());
     }
 }

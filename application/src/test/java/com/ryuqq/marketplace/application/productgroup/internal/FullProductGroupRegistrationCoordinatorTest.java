@@ -15,6 +15,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupReg
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry.OptionValueEntry;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.ProductEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.result.ProductGroupRegistrationResult;
 import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
 import com.ryuqq.marketplace.application.productintelligence.manager.IntelligenceOutboxCommandManager;
@@ -75,10 +76,10 @@ class FullProductGroupRegistrationCoordinatorTest {
                     .willReturn(optionValueIds);
 
             // when
-            Long result = sut.register(bundle);
+            ProductGroupRegistrationResult result = sut.register(bundle);
 
             // then
-            assertThat(result).isEqualTo(expectedProductGroupId);
+            assertThat(result.productGroupId()).isEqualTo(expectedProductGroupId);
         }
 
         @Test

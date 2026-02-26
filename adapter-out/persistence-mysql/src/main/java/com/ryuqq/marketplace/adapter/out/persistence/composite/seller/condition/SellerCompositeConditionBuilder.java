@@ -32,6 +32,10 @@ public class SellerCompositeConditionBuilder {
         return sellerIds != null && !sellerIds.isEmpty() ? sellerJpaEntity.id.in(sellerIds) : null;
     }
 
+    public BooleanExpression authTenantIdEq(String authTenantId) {
+        return authTenantId != null ? sellerJpaEntity.authTenantId.eq(authTenantId) : null;
+    }
+
     public BooleanExpression sellerNotDeleted() {
         return sellerJpaEntity.deletedAt.isNull();
     }

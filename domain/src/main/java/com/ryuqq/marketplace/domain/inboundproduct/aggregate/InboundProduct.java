@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.domain.inboundproduct.aggregate;
 import com.ryuqq.marketplace.domain.inboundproduct.id.InboundProductId;
 import com.ryuqq.marketplace.domain.inboundproduct.vo.ExternalProductCode;
 import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductDiff;
+import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload;
 import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductStatus;
 import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductUpdateData;
 import java.time.Instant;
@@ -12,7 +13,7 @@ import java.time.Instant;
  *
  * <p>외부 소스(레거시 세토프, 크롤링)에서 수신한 상품 데이터를 관리합니다. 수신 → 매핑 → 변환(ProductGroup) 파이프라인의 시작점입니다.
  *
- * <p>이미지/옵션 등 상세 데이터는 {@code rawPayloadJson}에 JSON으로 저장하며, 변경 감지에 필요한 핵심 필드만 컬럼으로 관리합니다.
+ * <p>이미지/옵션/상품/고시정보 등 상세 데이터는 정형화된 {@link InboundProductPayload} VO로 관리합니다.
  */
 public class InboundProduct {
 
@@ -31,7 +32,7 @@ public class InboundProduct {
     private String optionType;
     private InboundProductStatus status;
     private String descriptionHtml;
-    private String rawPayloadJson;
+    private InboundProductPayload payload;
     private int retryCount;
     private final Instant createdAt;
     private Instant updatedAt;
@@ -52,7 +53,7 @@ public class InboundProduct {
             String optionType,
             InboundProductStatus status,
             String descriptionHtml,
-            String rawPayloadJson,
+            InboundProductPayload payload,
             int retryCount,
             Instant createdAt,
             Instant updatedAt) {
@@ -71,7 +72,7 @@ public class InboundProduct {
         this.optionType = optionType;
         this.status = status;
         this.descriptionHtml = descriptionHtml;
-        this.rawPayloadJson = rawPayloadJson;
+        this.payload = payload;
         this.retryCount = retryCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -89,7 +90,7 @@ public class InboundProduct {
             int currentPrice,
             String optionType,
             String descriptionHtml,
-            String rawPayloadJson,
+            InboundProductPayload payload,
             Instant now) {
         return new InboundProduct(
                 InboundProductId.forNew(),
@@ -107,7 +108,7 @@ public class InboundProduct {
                 optionType,
                 InboundProductStatus.RECEIVED,
                 descriptionHtml,
-                rawPayloadJson,
+                payload,
                 0,
                 now,
                 now);
@@ -130,7 +131,7 @@ public class InboundProduct {
             String optionType,
             InboundProductStatus status,
             String descriptionHtml,
-            String rawPayloadJson,
+            InboundProductPayload payload,
             int retryCount,
             Instant createdAt,
             Instant updatedAt) {
@@ -150,7 +151,7 @@ public class InboundProduct {
                 optionType,
                 status,
                 descriptionHtml,
-                rawPayloadJson,
+                payload,
                 retryCount,
                 createdAt,
                 updatedAt);
@@ -229,7 +230,7 @@ public class InboundProduct {
                 InboundProductDiff.changed(this.externalBrandCode, newData.externalBrandCode()),
                 InboundProductDiff.changed(
                         this.externalCategoryCode, newData.externalCategoryCode()),
-                InboundProductDiff.changed(this.rawPayloadJson, newData.rawPayloadJson()));
+                InboundProductDiff.changed(this.payload, newData.payload()));
     }
 
     /** 재수신 데이터 반영. */
@@ -241,7 +242,7 @@ public class InboundProduct {
         this.currentPrice = newData.currentPrice();
         this.optionType = newData.optionType();
         this.descriptionHtml = newData.descriptionHtml();
-        this.rawPayloadJson = newData.rawPayloadJson();
+        this.payload = newData.payload();
         this.updatedAt = now;
     }
 
@@ -335,8 +336,8 @@ public class InboundProduct {
         return descriptionHtml;
     }
 
-    public String rawPayloadJson() {
-        return rawPayloadJson;
+    public InboundProductPayload payload() {
+        return payload;
     }
 
     public int retryCount() {

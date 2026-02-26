@@ -16,6 +16,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  *
  * <p>Legacy 모듈(세토프 DB)은 persistence.legacy.enabled=true 조건으로만 활성화됩니다. 기본 ComponentScan에서 모든 legacy
  * 패키지를 제외하고, {@link LegacyModuleConfig}에서 조건부로 스캔합니다.
+ *
+ * <p>{@code @EnableJpaRepositories}와 {@code @EntityScan}은 메인 persistence 모듈 범위를 설정합니다. Legacy 모듈은
+ * {@code LegacyJpaConfig}에서 별도의 EntityManagerFactory로 관리됩니다.
  */
 @SpringBootApplication
 @ComponentScan(

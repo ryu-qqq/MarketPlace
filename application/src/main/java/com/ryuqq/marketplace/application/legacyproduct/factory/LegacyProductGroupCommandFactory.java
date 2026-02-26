@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateD
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateImagesCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateNoticeCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdatePriceCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductGroupCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductsCommand;
 import com.ryuqq.marketplace.domain.legacy.optiondetail.id.LegacyOptionDetailId;
 import com.ryuqq.marketplace.domain.legacy.optiongroup.id.LegacyOptionGroupId;
@@ -104,6 +105,20 @@ public class LegacyProductGroupCommandFactory {
                 .toList();
     }
 
+    /** 전체 수정 Command의 이미지를 도메인 객체 목록으로 변환. */
+    public List<LegacyProductImage> createImagesFromFullUpdate(
+            LegacyProductGroupId groupId,
+            List<LegacyUpdateProductGroupCommand.ImageCommand> commands) {
+        List<LegacyUpdateImagesCommand.ImageEntry> entries =
+                commands.stream()
+                        .map(
+                                cmd ->
+                                        new LegacyUpdateImagesCommand.ImageEntry(
+                                                cmd.imageType(), cmd.imageUrl(), cmd.originUrl()))
+                        .toList();
+        return createImagesForUpdate(groupId, entries);
+    }
+
     /** 이미지 등록용 도메인 객체 목록 생성. */
     public List<LegacyProductImage> createImagesForRegistration(
             LegacyProductGroupId groupId, List<ImageEntry> entries) {
@@ -119,6 +134,32 @@ public class LegacyProductGroupCommandFactory {
                                     i + 1);
                         })
                 .toList();
+    }
+
+    /** 전체 수정 Command의 옵션을 도메인 객체 목록으로 변환. */
+    public List<LegacyProduct> createProductsFromFullUpdate(
+            LegacyProductGroupId groupId,
+            List<LegacyUpdateProductGroupCommand.OptionCommand> commands) {
+        List<LegacyUpdateProductsCommand.SkuEntry> skuEntries =
+                commands.stream()
+                        .map(
+                                cmd ->
+                                        new LegacyUpdateProductsCommand.SkuEntry(
+                                                cmd.productId(),
+                                                cmd.quantity(),
+                                                cmd.additionalPrice(),
+                                                cmd.optionDetails().stream()
+                                                        .map(
+                                                                d ->
+                                                                        new LegacyUpdateProductsCommand
+                                                                                .OptionEntry(
+                                                                                d.optionGroupId(),
+                                                                                d.optionDetailId(),
+                                                                                d.optionName(),
+                                                                                d.optionValue()))
+                                                        .toList()))
+                        .toList();
+        return createProductsForOptionUpdate(groupId, skuEntries);
     }
 
     /**

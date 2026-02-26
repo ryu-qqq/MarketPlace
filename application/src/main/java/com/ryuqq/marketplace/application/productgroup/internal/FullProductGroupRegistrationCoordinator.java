@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordina
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.BoundDomainObjects;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
+import com.ryuqq.marketplace.application.productgroup.dto.result.ProductGroupRegistrationResult;
 import com.ryuqq.marketplace.application.productgroupdescription.internal.DescriptionCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroupimage.internal.ImageCommandCoordinator;
 import com.ryuqq.marketplace.application.productintelligence.manager.IntelligenceOutboxCommandManager;
@@ -67,10 +68,10 @@ public class FullProductGroupRegistrationCoordinator {
      * <p>번들에 포함된 등록 데이터를 사용하여 도메인 객체를 생성하고 각 per-package Coordinator에 위임합니다.
      *
      * @param bundle 등록 번들 (ProductGroup + per-package 등록 데이터)
-     * @return 생성된 상품 그룹 ID
+     * @return 생성된 상품 그룹 ID + 상품 ID 목록
      */
     @Transactional
-    public Long register(ProductGroupRegistrationBundle bundle) {
+    public ProductGroupRegistrationResult register(ProductGroupRegistrationBundle bundle) {
         // 1. ProductGroup 기본 정보 (검증 + persist) -> Coordinator
         Long productGroupId = productGroupCommandCoordinator.register(bundle.productGroup());
         ProductGroupId pgId = ProductGroupId.of(productGroupId);
@@ -112,14 +113,14 @@ public class FullProductGroupRegistrationCoordinator {
                                             .toProduct(pgId, now);
                                 })
                         .toList();
-        productCommandCoordinator.register(products);
+        List<Long> productIds = productCommandCoordinator.register(products);
 
         // 8. Intelligence Outbox 저장 (PENDING) -- 스케줄러가 비동기로 분석 파이프라인 실행
         IntelligenceOutbox intelligenceOutbox =
                 IntelligenceOutbox.forNew(productGroupId, bundle.createdAt());
         intelligenceOutboxCommandManager.persist(intelligenceOutbox);
 
-        return productGroupId;
+        return new ProductGroupRegistrationResult(productGroupId, productIds);
     }
 
     /**
