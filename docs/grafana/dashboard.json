@@ -925,7 +925,7 @@
       {
         "current": { "selected": true, "text": "All", "value": "$__all" },
         "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
-        "definition": "label_values(up, environment)",
+        "definition": "label_values(up{job=~\"marketplace-.*\"}, environment)",
         "hide": 0,
         "includeAll": true,
         "multi": false,
@@ -933,7 +933,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(up, environment)",
+          "query": "label_values(up{job=~\"marketplace-.*\"}, environment)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -945,7 +945,7 @@
       {
         "current": { "selected": true, "text": "All", "value": "$__all" },
         "datasource": { "type": "prometheus", "uid": "ef4r3izgbak8wb" },
-        "definition": "label_values(up, job)",
+        "definition": "label_values(up{job=~\"marketplace-.*\"}, job)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
@@ -953,7 +953,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(up, job)",
+          "query": "label_values(up{job=~\"marketplace-.*\"}, job)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
