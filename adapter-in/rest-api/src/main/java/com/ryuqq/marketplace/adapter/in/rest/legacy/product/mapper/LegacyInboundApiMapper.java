@@ -1,37 +1,27 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateDeliveryNoticeRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateOptionRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateProductGroupRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateProductImageRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateProductNoticeRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateRefundNoticeRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyProductGroupDetailsRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyUpdateProductGroupRequest;
-import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInboundProductCommand;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyUpdateStatusRequest;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.DeliveryCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.ImageCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.NoticeCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.OptionCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand.OptionDetailCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductGroupCommand;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /** 레거시 세토프 등록/수정 요청을 Command로 변환하는 매퍼. */
 @Component
 public class LegacyInboundApiMapper {
-
-    private static final Logger log = LoggerFactory.getLogger(LegacyInboundApiMapper.class);
-
-    private final ObjectMapper objectMapper;
-
-    public LegacyInboundApiMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     public LegacyRegisterProductGroupCommand toCommand(LegacyCreateProductGroupRequest request) {
         String optionType = request.optionType().trim().toUpperCase();
@@ -128,38 +118,118 @@ public class LegacyInboundApiMapper {
                 .toList();
     }
 
-    // ===== 수정(기존 InboundProduct 파이프라인 유지) =====
+    // ===== 수정 =====
 
-    /** 레거시 상품 수정 요청을 ReceiveInboundProductCommand로 변환합니다. */
-    public ReceiveInboundProductCommand toUpdateCommand(
-            LegacyUpdateProductGroupRequest request,
-            long inboundSourceId,
-            long setofProductGroupId) {
-        String descriptionHtml =
+    /** 레거시 상품 수정 요청을 LegacyUpdateProductGroupCommand로 변환합니다. */
+    public LegacyUpdateProductGroupCommand toUpdateCommand(
+            LegacyUpdateProductGroupRequest request, long productGroupId) {
+        return new LegacyUpdateProductGroupCommand(
+                productGroupId,
+                toProductGroupDetailsCommand(request.productGroupDetails()),
+                request.productNotice() != null
+                        ? toUpdateNoticeCommand(request.productNotice())
+                        : null,
+                request.deliveryNotice() != null && request.refundNotice() != null
+                        ? toUpdateDeliveryCommand(request.deliveryNotice(), request.refundNotice())
+                        : null,
                 request.detailDescription() != null
                         ? request.detailDescription().detailDescription()
-                        : null;
-
-        return new ReceiveInboundProductCommand(
-                inboundSourceId,
-                String.valueOf(setofProductGroupId),
-                null,
-                null,
-                null,
-                -1L,
-                -1,
-                -1,
-                null,
-                descriptionHtml,
-                serializeToJson(request, "레거시 상품 수정 요청"));
+                        : null,
+                toUpdateImageCommands(request.productImageList()),
+                toUpdateOptionCommands(request.productOptions()),
+                toUpdateStatusCommand(request.updateStatus()));
     }
 
-    private String serializeToJson(Object request, String requestLabel) {
-        try {
-            return objectMapper.writeValueAsString(request);
-        } catch (JsonProcessingException e) {
-            log.error("{} 직렬화 실패", requestLabel, e);
-            throw new IllegalStateException("레거시 요청 직렬화에 실패했습니다.", e);
+    private LegacyUpdateProductGroupCommand.ProductGroupDetailsCommand toProductGroupDetailsCommand(
+            LegacyProductGroupDetailsRequest details) {
+        if (details == null) {
+            return null;
         }
+        return new LegacyUpdateProductGroupCommand.ProductGroupDetailsCommand(
+                details.productGroupName(),
+                details.optionType(),
+                details.managementType(),
+                details.price().regularPrice(),
+                details.price().currentPrice(),
+                details.productStatus().soldOutYn(),
+                details.productStatus().displayYn(),
+                details.clothesDetailInfo().productCondition(),
+                details.clothesDetailInfo().origin(),
+                details.clothesDetailInfo().styleCode(),
+                details.sellerId(),
+                details.categoryId(),
+                details.brandId());
+    }
+
+    private LegacyUpdateProductGroupCommand.NoticeCommand toUpdateNoticeCommand(
+            LegacyCreateProductNoticeRequest notice) {
+        return new LegacyUpdateProductGroupCommand.NoticeCommand(
+                notice.material(),
+                notice.color(),
+                notice.size(),
+                notice.maker(),
+                notice.origin(),
+                notice.washingMethod(),
+                notice.yearMonth(),
+                notice.assuranceStandard(),
+                notice.asPhone());
+    }
+
+    private LegacyUpdateProductGroupCommand.DeliveryCommand toUpdateDeliveryCommand(
+            LegacyCreateDeliveryNoticeRequest delivery, LegacyCreateRefundNoticeRequest refund) {
+        return new LegacyUpdateProductGroupCommand.DeliveryCommand(
+                delivery.deliveryArea(),
+                delivery.deliveryFee(),
+                delivery.deliveryPeriodAverage(),
+                refund.returnMethodDomestic(),
+                refund.returnCourierDomestic(),
+                refund.returnChargeDomestic(),
+                refund.returnExchangeAreaDomestic());
+    }
+
+    private List<LegacyUpdateProductGroupCommand.ImageCommand> toUpdateImageCommands(
+            List<LegacyCreateProductImageRequest> images) {
+        return images.stream()
+                .map(
+                        img ->
+                                new LegacyUpdateProductGroupCommand.ImageCommand(
+                                        img.type(), img.productImageUrl(), img.originUrl()))
+                .toList();
+    }
+
+    private List<LegacyUpdateProductGroupCommand.OptionCommand> toUpdateOptionCommands(
+            List<LegacyCreateOptionRequest> options) {
+        return options.stream()
+                .map(
+                        opt ->
+                                new LegacyUpdateProductGroupCommand.OptionCommand(
+                                        opt.productId(),
+                                        opt.quantity(),
+                                        opt.additionalPrice() != null
+                                                ? opt.additionalPrice().longValue()
+                                                : 0L,
+                                        opt.options().stream()
+                                                .map(
+                                                        d ->
+                                                                new LegacyUpdateProductGroupCommand
+                                                                        .OptionDetailCommand(
+                                                                        d.optionGroupId(),
+                                                                        d.optionDetailId(),
+                                                                        d.optionName(),
+                                                                        d.optionValue()))
+                                                .toList()))
+                .toList();
+    }
+
+    private LegacyUpdateProductGroupCommand.UpdateStatusCommand toUpdateStatusCommand(
+            LegacyUpdateStatusRequest status) {
+        return new LegacyUpdateProductGroupCommand.UpdateStatusCommand(
+                status.productStatus(),
+                status.noticeStatus(),
+                status.imageStatus(),
+                status.descriptionStatus(),
+                status.stockOptionStatus(),
+                status.deliveryStatus(),
+                status.refundStatus());
     }
 }

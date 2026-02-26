@@ -1,11 +1,13 @@
 package com.ryuqq.marketplace.application.legacyproduct.service.command;
 
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateStockCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyStockUpdateCoordinator;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductUpdateStockUseCase;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.query.LegacyProductQueryUseCase;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
+import java.time.Instant;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,15 @@ public class LegacyProductUpdateStockService implements LegacyProductUpdateStock
 
     private final LegacyStockUpdateCoordinator stockUpdateCoordinator;
     private final LegacyProductQueryUseCase legacyProductQueryUseCase;
+    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
 
     public LegacyProductUpdateStockService(
             LegacyStockUpdateCoordinator stockUpdateCoordinator,
-            LegacyProductQueryUseCase legacyProductQueryUseCase) {
+            LegacyProductQueryUseCase legacyProductQueryUseCase,
+            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
         this.stockUpdateCoordinator = stockUpdateCoordinator;
         this.legacyProductQueryUseCase = legacyProductQueryUseCase;
+        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
     }
 
     @Override
@@ -40,6 +45,7 @@ public class LegacyProductUpdateStockService implements LegacyProductUpdateStock
                                         LegacyUpdateStockCommand.StockEntry::stockQuantity));
 
         stockUpdateCoordinator.execute(groupId, stockUpdates);
+        conversionOutboxCommandManager.createIfNoPending(command.productGroupId(), Instant.now());
         return legacyProductQueryUseCase.execute(command.productGroupId());
     }
 }

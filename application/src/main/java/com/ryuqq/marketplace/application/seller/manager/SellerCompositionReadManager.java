@@ -48,6 +48,19 @@ public class SellerCompositionReadManager {
                 .orElseThrow(() -> new SellerNotFoundException(sellerId));
     }
 
+    /**
+     * authTenantId로 Admin용 셀러 Composite 조회.
+     *
+     * @param authTenantId 인증 테넌트 ID
+     * @return Admin용 셀러 Composite 결과
+     */
+    @Transactional(readOnly = true)
+    public SellerAdminCompositeResult getAdminCompositeByAuthTenantId(String authTenantId) {
+        return compositionQueryPort
+                .findAdminCompositeByAuthTenantId(authTenantId)
+                .orElseThrow(() -> new SellerNotFoundException(authTenantId));
+    }
+
     @Transactional(readOnly = true)
     public SellerPolicyCompositeResult getPolicyComposite(Long sellerId) {
         return compositionQueryPort

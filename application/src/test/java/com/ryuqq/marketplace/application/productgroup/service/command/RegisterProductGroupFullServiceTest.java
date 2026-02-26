@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupReg
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
+import com.ryuqq.marketplace.application.productgroup.dto.result.ProductGroupRegistrationResult;
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupBundleFactory;
 import com.ryuqq.marketplace.application.productgroup.internal.FullProductGroupRegistrationCoordinator;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
@@ -47,7 +48,8 @@ class RegisterProductGroupFullServiceTest {
             Long expectedId = 1L;
 
             given(bundleFactory.createProductGroupBundle(command)).willReturn(bundle);
-            given(coordinator.register(bundle)).willReturn(expectedId);
+            given(coordinator.register(bundle))
+                    .willReturn(new ProductGroupRegistrationResult(expectedId, List.of()));
 
             // when
             Long result = sut.execute(command);
@@ -68,7 +70,8 @@ class RegisterProductGroupFullServiceTest {
             Long expectedId = 2L;
 
             given(bundleFactory.createProductGroupBundle(command)).willReturn(bundle);
-            given(coordinator.register(bundle)).willReturn(expectedId);
+            given(coordinator.register(bundle))
+                    .willReturn(new ProductGroupRegistrationResult(expectedId, List.of()));
 
             // when
             Long result = sut.execute(command);

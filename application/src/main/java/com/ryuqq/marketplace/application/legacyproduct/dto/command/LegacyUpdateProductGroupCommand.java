@@ -3,29 +3,51 @@ package com.ryuqq.marketplace.application.legacyproduct.dto.command;
 import java.util.List;
 
 /**
- * 레거시 상품그룹 수정 Command.
+ * 레거시 상품그룹 전체 수정 Command.
  *
- * <p>productGroupId로 기존 엔티티를 조회한 뒤, 각 필드를 반영하고 Hibernate 더티체킹으로 변경분만 UPDATE합니다.
+ * <p>updateStatus 플래그에 따라 변경된 섹션만 선택적으로 업데이트합니다.
  *
  * <ul>
- *   <li>1:1 (notice, delivery, description): productGroupId로 조회 → 더티체킹
- *   <li>1:N images: originUrl 매칭 (신규 INSERT / 변경 UPDATE / 미포함 soft delete)
- *   <li>1:N options: productId 매칭 → 더티체킹
+ *   <li>productStatus → productGroupDetails (상품명, 가격, 상태, 의류상세 등)
+ *   <li>noticeStatus → notice (고시정보)
+ *   <li>deliveryStatus / refundStatus → delivery (배송/반품정보)
+ *   <li>descriptionStatus → detailDescription (상세설명)
+ *   <li>imageStatus → images (이미지)
+ *   <li>stockOptionStatus → options (옵션/재고)
  * </ul>
  */
 public record LegacyUpdateProductGroupCommand(
         long productGroupId,
+        ProductGroupDetailsCommand productGroupDetails,
         NoticeCommand notice,
         DeliveryCommand delivery,
         String detailDescription,
         List<ImageCommand> images,
-        List<OptionCommand> options) {
+        List<OptionCommand> options,
+        UpdateStatusCommand updateStatus) {
 
     public LegacyUpdateProductGroupCommand {
         images = images == null ? List.of() : List.copyOf(images);
         options = options == null ? List.of() : List.copyOf(options);
     }
 
+    /** 상품그룹 기본정보 (productGroupDetails). */
+    public record ProductGroupDetailsCommand(
+            String productGroupName,
+            String optionType,
+            String managementType,
+            long regularPrice,
+            long currentPrice,
+            String soldOutYn,
+            String displayYn,
+            String productCondition,
+            String origin,
+            String styleCode,
+            long sellerId,
+            long categoryId,
+            long brandId) {}
+
+    /** 고시정보. */
     public record NoticeCommand(
             String material,
             String color,
@@ -37,6 +59,7 @@ public record LegacyUpdateProductGroupCommand(
             String assuranceStandard,
             String asPhone) {}
 
+    /** 배송/반품정보. */
     public record DeliveryCommand(
             String deliveryArea,
             long deliveryFee,
@@ -46,8 +69,10 @@ public record LegacyUpdateProductGroupCommand(
             int returnChargeDomestic,
             String returnExchangeAreaDomestic) {}
 
+    /** 이미지. */
     public record ImageCommand(String imageType, String imageUrl, String originUrl) {}
 
+    /** 옵션/상품 (SKU 단위). */
     public record OptionCommand(
             Long productId,
             int quantity,
@@ -59,6 +84,17 @@ public record LegacyUpdateProductGroupCommand(
         }
     }
 
+    /** 옵션 상세. */
     public record OptionDetailCommand(
             Long optionGroupId, Long optionDetailId, String optionName, String optionValue) {}
+
+    /** 수정 대상 플래그. */
+    public record UpdateStatusCommand(
+            boolean productStatus,
+            boolean noticeStatus,
+            boolean imageStatus,
+            boolean descriptionStatus,
+            boolean stockOptionStatus,
+            boolean deliveryStatus,
+            boolean refundStatus) {}
 }

@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.legacyproduct.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyMarkOutOfStockCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacyproduct.factory.LegacyProductGroupCommandFactory;
@@ -10,6 +11,7 @@ import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyPro
 import com.ryuqq.marketplace.application.legacyproduct.port.in.query.LegacyProductQueryUseCase;
 import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroup;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
+import java.time.Instant;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,16 +26,19 @@ public class LegacyProductMarkOutOfStockService implements LegacyProductMarkOutO
     private final LegacyProductGroupReadManager readManager;
     private final LegacyProductGroupCommandManager commandManager;
     private final LegacyProductQueryUseCase legacyProductQueryUseCase;
+    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
 
     public LegacyProductMarkOutOfStockService(
             LegacyProductGroupCommandFactory commandFactory,
             LegacyProductGroupReadManager readManager,
             LegacyProductGroupCommandManager commandManager,
-            LegacyProductQueryUseCase legacyProductQueryUseCase) {
+            LegacyProductQueryUseCase legacyProductQueryUseCase,
+            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.readManager = readManager;
         this.commandManager = commandManager;
         this.legacyProductQueryUseCase = legacyProductQueryUseCase;
+        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
     }
 
     @Override
@@ -45,6 +50,7 @@ public class LegacyProductMarkOutOfStockService implements LegacyProductMarkOutO
         productGroup.markSoldOut(context.changedAt());
 
         commandManager.persist(productGroup);
+        conversionOutboxCommandManager.createIfNoPending(command.productGroupId(), Instant.now());
         return legacyProductQueryUseCase.execute(command.productGroupId());
     }
 }

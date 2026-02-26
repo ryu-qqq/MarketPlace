@@ -38,6 +38,6 @@ public class RegisterProductGroupFullService implements RegisterProductGroupFull
     @Override
     public Long execute(RegisterProductGroupCommand command) {
         ProductGroupRegistrationBundle bundle = bundleFactory.createProductGroupBundle(command);
-        return coordinator.register(bundle);
+        return coordinator.register(bundle).productGroupId();
     }
 }

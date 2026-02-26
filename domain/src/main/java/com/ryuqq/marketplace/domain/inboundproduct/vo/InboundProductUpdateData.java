@@ -9,7 +9,7 @@ public record InboundProductUpdateData(
         int currentPrice,
         String optionType,
         String descriptionHtml,
-        String rawPayloadJson) {
+        InboundProductPayload payload) {
 
     public static InboundProductUpdateData of(
             String productName,
@@ -19,7 +19,7 @@ public record InboundProductUpdateData(
             int currentPrice,
             String optionType,
             String descriptionHtml,
-            String rawPayloadJson) {
+            InboundProductPayload payload) {
         return new InboundProductUpdateData(
                 productName,
                 externalBrandCode,
@@ -28,6 +28,6 @@ public record InboundProductUpdateData(
                 currentPrice,
                 optionType,
                 descriptionHtml,
-                rawPayloadJson);
+                payload);
     }
 }
