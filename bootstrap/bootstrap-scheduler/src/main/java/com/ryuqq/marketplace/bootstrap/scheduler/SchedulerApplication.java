@@ -27,6 +27,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         })
 @EnableJpaRepositories(
         basePackages = "com.ryuqq.marketplace.adapter.out.persistence",
+        entityManagerFactoryRef = "entityManagerFactory",
+        transactionManagerRef = "transactionManager",
         excludeFilters =
                 @ComponentScan.Filter(
                         type = FilterType.REGEX,
