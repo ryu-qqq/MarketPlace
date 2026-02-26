@@ -19,6 +19,8 @@ spring:
     import:
       - classpath:persistence.yml
       - optional:classpath:persistence-${spring.profiles.active:local}.yml
+      - classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-${spring.profiles.active:local}.yml
       - classpath:redis.yml
       - optional:classpath:redis-${spring.profiles.active:local}.yml
       - classpath:scheduler.yml
