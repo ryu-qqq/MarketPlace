@@ -3,6 +3,8 @@ package com.ryuqq.marketplace.bootstrap.worker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
@@ -23,7 +25,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
             "com.ryuqq.marketplace.application",
             "com.ryuqq.marketplace.adapter.out"
         })
-@EnableJpaRepositories(basePackages = "com.ryuqq.marketplace.adapter.out.persistence")
+@EnableJpaRepositories(
+        basePackages = "com.ryuqq.marketplace.adapter.out.persistence",
+        excludeFilters =
+                @ComponentScan.Filter(
+                        type = FilterType.REGEX,
+                        pattern =
+                                "com\\.ryuqq\\.marketplace\\.adapter\\.out\\.persistence\\.legacy\\..*"))
 @ConfigurationPropertiesScan(
         basePackages = {
             "com.ryuqq.marketplace.bootstrap.worker",

@@ -22,7 +22,7 @@ import org.springframework.orm.jpa.persistenceunit.PersistenceManagedTypesScanne
 public class MainPersistenceEntityConfig {
 
     private static final String BASE_PACKAGE = "com.ryuqq.marketplace.adapter.out.persistence";
-    private static final String LEGACY_PACKAGE_SEGMENT = ".persistence.legacy.";
+    private static final String LEGACY_PACKAGE_PREFIX = BASE_PACKAGE + ".legacy.";
 
     @Bean
     PersistenceManagedTypes persistenceManagedTypes(ResourceLoader resourceLoader) {
@@ -31,7 +31,7 @@ public class MainPersistenceEntityConfig {
 
         List<String> filtered =
                 scanned.getManagedClassNames().stream()
-                        .filter(name -> !name.contains(LEGACY_PACKAGE_SEGMENT))
+                        .filter(name -> !name.startsWith(LEGACY_PACKAGE_PREFIX))
                         .toList();
 
         return PersistenceManagedTypes.of(filtered.toArray(String[]::new));
