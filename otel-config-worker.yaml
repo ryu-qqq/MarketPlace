@@ -1,6 +1,5 @@
 # AWS Distro for OpenTelemetry (ADOT) Collector Configuration
-# Service: marketplace-web-api (port 8080)
-# Fixed for ADOT v0.46.0 - added resourcedetection for unique instance identification
+# Service: marketplace-worker (port 8082)
 
 receivers:
   otlp:
@@ -17,19 +16,15 @@ receivers:
         scrape_timeout: 10s
 
       scrape_configs:
-        - job_name: 'marketplace-web-api-metrics'
+        - job_name: 'marketplace-worker-metrics'
           scrape_interval: 30s
           static_configs:
-            - targets: ['localhost:8080']
+            - targets: ['localhost:8082']
           metrics_path: /actuator/prometheus
           metric_relabel_configs:
             - source_labels: [__name__]
-              regex: '(http_.*|jvm_.*|process_.*|system_.*|application_.*|business_.*|spring_.*|hikaricp_.*|marketplace_.*)'
+              regex: '(http_.*|jvm_.*|process_.*|system_.*|application_.*|business_.*|spring_.*|hikaricp_.*|marketplace_.*|sqs_.*)'
               action: keep
-
-        # REMOVED: otel-collector self-scrape job
-        # This was causing "out of order sample" errors in AMP when multiple
-        # ECS tasks send metrics with identical service_instance_id=localhost:8888
 
   awsecscontainermetrics:
     collection_interval: 30s
@@ -44,7 +39,6 @@ processors:
     limit_mib: 410
     spike_limit_mib: 128
 
-  # ECS 태스크 메타데이터 자동 감지 - 각 태스크별 고유 식별자 부여
   resourcedetection:
     detectors: [env, ecs]
     timeout: 5s
@@ -69,7 +63,7 @@ processors:
         value: ${CLUSTER_NAME}
         action: upsert
       - key: service_name
-        value: web-api
+        value: worker
         action: upsert
 
   metricstransform:
