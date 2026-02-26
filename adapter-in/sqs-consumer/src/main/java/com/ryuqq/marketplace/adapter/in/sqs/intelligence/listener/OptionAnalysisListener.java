@@ -68,8 +68,7 @@ public class OptionAnalysisListener {
                     message.productGroupId());
 
             useCase.execute(
-                    ExecuteOptionAnalysisCommand.of(
-                            message.profileId(), message.productGroupId()));
+                    ExecuteOptionAnalysisCommand.of(message.profileId(), message.productGroupId()));
 
             sample.stop(durationTimer);
             successCounter.increment();

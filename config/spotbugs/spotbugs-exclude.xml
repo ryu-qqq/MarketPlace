@@ -127,6 +127,9 @@
             <Class name="~.*Consumer"/>
             <Class name="~.*Mapper"/>
             <Class name="~.*Coordinator"/>
+            <Class name="~.*Listener"/>
+            <Class name="~.*Aspect"/>
+            <Class name="~.*Metrics"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
