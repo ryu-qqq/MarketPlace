@@ -9,8 +9,8 @@ persistence:
   legacy:
     enabled: true
     datasource:
-      jdbc-url: jdbc:mysql://${LEGACY_DB_HOST}:${LEGACY_DB_PORT:3306}/${LEGACY_DB_NAME}?useSSL=true&requireSSL=true&serverTimezone=Asia/Seoul
-      username: ${LEGACY_DB_USER}
+      jdbc-url: jdbc:mysql://${DB_HOST}:${DB_PORT:3306}/${LEGACY_DB_NAME}?useSSL=true&requireSSL=true&serverTimezone=Asia/Seoul
+      username: ${LEGACY_DB_USERNAME}
       password: ${LEGACY_DB_PASSWORD}
       maximum-pool-size: 10
       minimum-idle: 5
