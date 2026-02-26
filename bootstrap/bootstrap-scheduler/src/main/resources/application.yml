@@ -10,7 +10,7 @@ intelligence:
 
 spring:
   application:
-    name: bootstrap-scheduler
+    name: marketplace-scheduler
 
   # ========================================
   # Config Import (Adapter Layer Settings)
@@ -19,6 +19,8 @@ spring:
     import:
       - classpath:persistence.yml
       - optional:classpath:persistence-${spring.profiles.active:local}.yml
+      - classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-${spring.profiles.active:local}.yml
       - classpath:redis.yml
       - optional:classpath:redis-${spring.profiles.active:local}.yml
       - classpath:scheduler.yml
@@ -87,8 +89,4 @@ sentry:
 # ========================================
 # Logging
 # ========================================
-logging:
-  level:
-    root: INFO
-    com.ryuqq.setof: DEBUG
-    com.ryuqq.setof.adapter.in.scheduler: DEBUG
+# logback-spring.xml에서 프로파일별 설정 관리
