@@ -1,0 +1,108 @@
+[[seller-register]]
+=== 셀러 등록
+
+SUPER_ADMIN 전용 | 필요 권한: `seller:write`
+
+==== HTTP Request
+include::{snippets}/seller/register/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/seller/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller/register/response-fields.adoc[]
+
+
+[[seller-update-full]]
+=== 셀러 전체 수정
+
+SUPER_ADMIN 전용 | 필요 권한: `seller:write`
+
+==== HTTP Request
+include::{snippets}/seller/update-full/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller/update-full/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/seller/update-full/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/update-full/http-response.adoc[]
+
+
+[[seller-update]]
+=== 셀러 부분 수정
+
+셀러 소유자 또는 `seller:write` 권한
+
+==== HTTP Request
+include::{snippets}/seller/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/seller/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/update/http-response.adoc[]
+
+
+[[seller-get]]
+=== 셀러 상세 조회
+
+셀러 소유자 또는 `seller:read` 권한
+
+==== HTTP Request
+include::{snippets}/seller/get/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller/get/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/get/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller/get/response-fields.adoc[]
+
+
+[[seller-search]]
+=== 셀러 검색 조회
+
+SUPER_ADMIN 전용 | 필요 권한: `seller:read`
+
+==== HTTP Request
+include::{snippets}/seller/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/seller/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller/search/response-fields.adoc[]
+
+
+[[seller-public-profile]]
+=== 셀러 공개 프로필 조회
+
+Public | 인증 불필요
+
+셀러의 간소화된 공개 프로필(셀러명, 표시명, 회사명, 대표자명)을 조회합니다.
+
+==== HTTP Request
+include::{snippets}/seller/public-profile/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/seller/public-profile/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/seller/public-profile/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/seller/public-profile/response-fields.adoc[]

@@ -1,0 +1,76 @@
+[[shipping-policy-register]]
+=== 배송 정책 등록
+
+셀러 소유자 또는 `shipping-policy:write` 권한
+
+==== HTTP Request
+include::{snippets}/shipping-policy/register/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/shipping-policy/register/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/shipping-policy/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipping-policy/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shipping-policy/register/response-fields.adoc[]
+
+
+[[shipping-policy-update]]
+=== 배송 정책 수정
+
+셀러 소유자 또는 `shipping-policy:write` 권한
+
+==== HTTP Request
+include::{snippets}/shipping-policy/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/shipping-policy/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/shipping-policy/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipping-policy/update/http-response.adoc[]
+
+
+[[shipping-policy-change-status]]
+=== 배송 정책 상태 변경
+
+셀러 소유자 또는 `shipping-policy:write` 권한
+
+==== HTTP Request
+include::{snippets}/shipping-policy/change-status/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/shipping-policy/change-status/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/shipping-policy/change-status/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipping-policy/change-status/http-response.adoc[]
+
+
+[[shipping-policy-search]]
+=== 배송 정책 조회
+
+셀러 소유자 또는 `shipping-policy:read` 권한
+
+==== HTTP Request
+include::{snippets}/shipping-policy/search/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/shipping-policy/search/path-parameters.adoc[]
+
+==== Query Parameters
+include::{snippets}/shipping-policy/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/shipping-policy/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/shipping-policy/search/response-fields.adoc[]

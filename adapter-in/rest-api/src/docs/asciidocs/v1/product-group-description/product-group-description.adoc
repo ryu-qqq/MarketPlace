@@ -1,0 +1,34 @@
+[[product-group-description-get-publish-status]]
+=== 상품 그룹 상세설명 발행 상태 조회
+
+인증 필요 | 필요 권한: `product-group:read`
+
+==== HTTP Request
+include::{snippets}/product-group-description/get-publish-status/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product-group-description/get-publish-status/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group-description/get-publish-status/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/product-group-description/get-publish-status/response-fields.adoc[]
+
+
+[[product-group-description-update]]
+=== 상품 그룹 상세설명 수정
+
+인증 필요 | 필요 권한: `product-group:write`
+
+==== HTTP Request
+include::{snippets}/product-group-description/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/product-group-description/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/product-group-description/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/product-group-description/update/http-response.adoc[]

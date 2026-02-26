@@ -1,0 +1,52 @@
+[[sales-channel-register]]
+=== 판매채널 등록
+
+인증 필요 | 필요 권한: `sales-channel:write`
+
+==== HTTP Request
+include::{snippets}/sales-channel/register/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/sales-channel/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/sales-channel/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/sales-channel/register/response-fields.adoc[]
+
+
+[[sales-channel-update]]
+=== 판매채널 수정
+
+인증 필요 | 필요 권한: `sales-channel:write`
+
+==== HTTP Request
+include::{snippets}/sales-channel/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/sales-channel/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/sales-channel/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/sales-channel/update/http-response.adoc[]
+
+
+[[sales-channel-search]]
+=== 판매채널 검색 조회
+
+인증 필요 | 필요 권한: `sales-channel:read`
+
+==== HTTP Request
+include::{snippets}/sales-channel/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/sales-channel/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/sales-channel/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/sales-channel/search/response-fields.adoc[]

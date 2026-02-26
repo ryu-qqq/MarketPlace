@@ -1,0 +1,9 @@
+# ============================================================
+# AuthHub SDK Production 환경 설정
+# ============================================================
+
+authhub:
+  base-url: ${AUTHHUB_BASE_URL:http://authhub-web-api-prod.connectly.local}
+  service-token: ${AUTHHUB_SERVICE_TOKEN:}
+  sync:
+    enabled: true

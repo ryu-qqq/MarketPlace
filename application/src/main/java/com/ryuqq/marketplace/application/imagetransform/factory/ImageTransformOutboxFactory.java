@@ -1,0 +1,59 @@
+package com.ryuqq.marketplace.application.imagetransform.factory;
+
+import com.ryuqq.marketplace.domain.imagetransform.aggregate.ImageTransformOutbox;
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
+import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Component;
+
+/**
+ * 이미지 변환 Outbox Factory.
+ *
+ * <p>소스 이미지 ID와 업로드된 URL로 모든 Variant 타입에 대한 Outbox 목록을 생성합니다.
+ */
+@Component
+public class ImageTransformOutboxFactory {
+
+    /**
+     * 모든 Variant 타입에 대한 Outbox 목록을 생성합니다.
+     *
+     * @param sourceImageId 소스 이미지 ID
+     * @param sourceType 이미지 소스 타입
+     * @param uploadedUrl 업로드된 CDN URL
+     * @return 생성된 Outbox 목록 (Variant 타입별 1개씩)
+     */
+    public List<ImageTransformOutbox> createOutboxes(
+            Long sourceImageId, ImageSourceType sourceType, ImageUrl uploadedUrl) {
+        return createOutboxes(
+                sourceImageId, sourceType, uploadedUrl, List.of(ImageVariantType.values()));
+    }
+
+    /**
+     * 지정된 Variant 타입에 대한 Outbox 목록을 생성합니다.
+     *
+     * @param sourceImageId 소스 이미지 ID
+     * @param sourceType 이미지 소스 타입
+     * @param uploadedUrl 업로드된 CDN URL
+     * @param variantTypes 변환 대상 Variant 타입 목록
+     * @return 생성된 Outbox 목록
+     */
+    public List<ImageTransformOutbox> createOutboxes(
+            Long sourceImageId,
+            ImageSourceType sourceType,
+            ImageUrl uploadedUrl,
+            List<ImageVariantType> variantTypes) {
+        Instant now = Instant.now();
+        List<ImageTransformOutbox> outboxes = new ArrayList<>();
+
+        for (ImageVariantType variantType : variantTypes) {
+            outboxes.add(
+                    ImageTransformOutbox.forNew(
+                            sourceImageId, sourceType, uploadedUrl, variantType, now));
+        }
+
+        return outboxes;
+    }
+}

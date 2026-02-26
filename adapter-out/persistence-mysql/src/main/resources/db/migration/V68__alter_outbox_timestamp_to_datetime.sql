@@ -1,0 +1,7 @@
+-- external_product_sync_outboxes: TIMESTAMP → DATETIME 변환
+-- TIMESTAMP는 2038년 오버플로우 위험이 있으므로 DATETIME으로 변경합니다.
+
+ALTER TABLE external_product_sync_outboxes
+    MODIFY COLUMN created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '생성일시',
+    MODIFY COLUMN updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '수정일시',
+    MODIFY COLUMN processed_at DATETIME(6) NULL DEFAULT NULL COMMENT '처리일시';

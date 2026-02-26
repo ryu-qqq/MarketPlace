@@ -1,0 +1,11 @@
+# ============================================================
+# AWS SQS Client Stage 환경 설정
+# ============================================================
+sqs:
+  region: ap-northeast-2
+  queues:
+    intelligence-orchestration: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-orchestration
+    intelligence-description-analysis: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-description-analysis
+    intelligence-option-analysis: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-option-analysis
+    intelligence-notice-analysis: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-notice-analysis
+    intelligence-aggregation: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-aggregation

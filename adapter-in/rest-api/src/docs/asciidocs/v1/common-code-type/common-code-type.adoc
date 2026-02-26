@@ -1,0 +1,73 @@
+[[common-code-type-register]]
+=== 공통코드 유형 등록
+
+SUPER_ADMIN 전용 | 필요 권한: `common-code-type:write`
+
+==== HTTP Request
+include::{snippets}/common-code-type/register/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/common-code-type/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/common-code-type/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/common-code-type/register/response-fields.adoc[]
+
+
+[[common-code-type-update]]
+=== 공통코드 유형 수정
+
+SUPER_ADMIN 전용 | 필요 권한: `common-code-type:write`
+
+==== HTTP Request
+include::{snippets}/common-code-type/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/common-code-type/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/common-code-type/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/common-code-type/update/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/common-code-type/update/response-fields.adoc[]
+
+
+[[common-code-type-change-active-status]]
+=== 공통코드 유형 상태 변경
+
+SUPER_ADMIN 전용 | 필요 권한: `common-code-type:write`
+
+==== HTTP Request
+include::{snippets}/common-code-type/change-active-status/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/common-code-type/change-active-status/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/common-code-type/change-active-status/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/common-code-type/change-active-status/response-fields.adoc[]
+
+
+[[common-code-type-search]]
+=== 공통코드 유형 조회
+
+인증 필요 | 필요 권한: `common-code-type:read`
+
+==== HTTP Request
+include::{snippets}/common-code-type/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/common-code-type/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/common-code-type/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/common-code-type/search/response-fields.adoc[]

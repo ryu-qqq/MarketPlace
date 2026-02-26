@@ -1,0 +1,11 @@
+# ============================================================
+# Spring AI Client Stage 환경 설정
+# ============================================================
+# API 키는 SSM Parameter Store에서 ECS Task Definition으로 주입됩니다.
+# /marketplace/stage/OPENAI_API_KEY
+# /marketplace/stage/ANTHROPIC_API_KEY
+# ============================================================
+spring-ai:
+  model: gpt-4o-mini
+  temperature: 0.3
+  max-tokens: 4096

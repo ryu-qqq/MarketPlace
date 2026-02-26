@@ -1,0 +1,15 @@
+# ============================================================
+# Naver Commerce API 설정
+# ============================================================
+# 환경변수로 제어:
+#   - NAVER_COMMERCE_CLIENT_ID: 네이버 커머스 클라이언트 ID (필수)
+#   - NAVER_COMMERCE_CLIENT_SECRET: 네이버 커머스 클라이언트 시크릿 (필수)
+# ============================================================
+
+naver-commerce:
+  base-url: https://api.commerce.naver.com/external
+  client-id: ${NAVER_COMMERCE_CLIENT_ID:}
+  client-secret: ${NAVER_COMMERCE_CLIENT_SECRET:}
+  timeout:
+    connect: 5s
+    read: 30s

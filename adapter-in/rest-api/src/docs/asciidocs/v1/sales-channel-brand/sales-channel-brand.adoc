@@ -1,0 +1,40 @@
+[[sales-channel-brand-register]]
+=== 외부채널 브랜드 등록
+
+인증 필요 | 필요 권한: `sales-channel-brand:write`
+
+==== HTTP Request
+include::{snippets}/sales-channel-brand/register/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/sales-channel-brand/register/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/sales-channel-brand/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/sales-channel-brand/register/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/sales-channel-brand/register/response-fields.adoc[]
+
+
+[[sales-channel-brand-search]]
+=== 외부채널 브랜드 검색 조회
+
+인증 필요 | 필요 권한: `sales-channel-brand:read`
+
+==== HTTP Request
+include::{snippets}/sales-channel-brand/search/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/sales-channel-brand/search/path-parameters.adoc[]
+
+==== Query Parameters
+include::{snippets}/sales-channel-brand/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/sales-channel-brand/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/sales-channel-brand/search/response-fields.adoc[]

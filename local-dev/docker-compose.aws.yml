@@ -1,0 +1,185 @@
+version: '3.8'
+name: marketplace-aws
+
+# ===============================================
+# Stage AWS 리소스 연결용 로컬 개발 환경
+# ===============================================
+# 사용법:
+# 1. ./scripts/aws-port-forward-stage.sh 실행 (Stage RDS -> localhost:13308)
+# 2. docker-compose -f docker-compose.aws.yml --env-file .env.aws.stage up -d
+# ===============================================
+
+services:
+  # ===============================================
+  # Local Infrastructure (AWS 미배포 리소스)
+  # ===============================================
+
+  redis:
+    image: redis:7-alpine
+    container_name: marketplace-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  # ===============================================
+  # Application Services (Stage AWS 리소스 연결)
+  # ===============================================
+
+  web-api:
+    build:
+      context: ..
+      dockerfile: bootstrap/bootstrap-web-api/Dockerfile
+    container_name: marketplace-web-api
+    env_file:
+      - .env.aws.stage
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SERVER_PORT: 8080
+
+      # Database (Stage RDS via SSM Port Forwarding - localhost:13308)
+      DB_HOST: host.docker.internal
+      DB_PORT: 13308
+      # DB_NAME, DB_USERNAME, DB_PASSWORD -> .env.aws.stage
+
+      # Legacy Database (same RDS, different schema)
+      LEGACY_DB_NAME: "${LEGACY_DB_NAME}"
+      LEGACY_DB_USERNAME: "${LEGACY_DB_USERNAME}"
+      LEGACY_DB_PASSWORD: "${LEGACY_DB_PASSWORD}"
+
+      # Redis (local container)
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      REDIS_SSL_ENABLED: "false"
+
+      # AuthHub Client
+      AUTHHUB_BASE_URL: "http://authhub-web-api-stage.connectly.local"
+      AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+      SECURITY_SERVICE_TOKEN_SECRET: "${AUTHHUB_SERVICE_TOKEN}"
+
+      # FileFlow Client
+      FILEFLOW_BASE_URL: "http://fileflow-web-api-prod.connectly.local"
+      FILEFLOW_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+
+      # OpenTelemetry disabled (local)
+      OTEL_JAVAAGENT_ENABLED: "false"
+
+      # Flyway disabled (stage DB schema already up-to-date)
+      SPRING_FLYWAY_ENABLED: "false"
+
+    ports:
+      - "9090:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  scheduler:
+    build:
+      context: ..
+      dockerfile: bootstrap/bootstrap-scheduler/Dockerfile
+    container_name: marketplace-scheduler
+    env_file:
+      - .env.aws.stage
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SERVER_PORT: 8081
+
+      # Database (Stage RDS via SSM Port Forwarding - localhost:13308)
+      DB_HOST: host.docker.internal
+      DB_PORT: 13308
+      # DB_NAME, DB_USERNAME, DB_PASSWORD -> .env.aws.stage
+
+      # Legacy Database (same RDS, different schema)
+      LEGACY_DB_NAME: "${LEGACY_DB_NAME}"
+      LEGACY_DB_USERNAME: "${LEGACY_DB_USERNAME}"
+      LEGACY_DB_PASSWORD: "${LEGACY_DB_PASSWORD}"
+
+      # Redis (local container)
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      REDIS_SSL_ENABLED: "false"
+
+      # AuthHub Client
+      AUTHHUB_BASE_URL: "http://authhub-web-api-stage.connectly.local"
+      AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+
+      # FileFlow Client
+      FILEFLOW_BASE_URL: "http://fileflow-web-api-prod.connectly.local"
+      FILEFLOW_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+
+      # OpenTelemetry disabled (local)
+      OTEL_JAVAAGENT_ENABLED: "false"
+
+      # Flyway disabled (stage DB schema already up-to-date)
+      SPRING_FLYWAY_ENABLED: "false"
+
+    ports:
+      - "9081:8081"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ..
+      dockerfile: bootstrap/bootstrap-worker/Dockerfile
+    container_name: marketplace-worker
+    env_file:
+      - .env.aws.stage
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SERVER_PORT: 8082
+
+      # Database (Stage RDS via SSM Port Forwarding - localhost:13308)
+      DB_HOST: host.docker.internal
+      DB_PORT: 13308
+      # DB_NAME, DB_USERNAME, DB_PASSWORD -> .env.aws.stage
+
+      # Legacy Database (same RDS, different schema)
+      LEGACY_DB_NAME: "${LEGACY_DB_NAME}"
+      LEGACY_DB_USERNAME: "${LEGACY_DB_USERNAME}"
+      LEGACY_DB_PASSWORD: "${LEGACY_DB_PASSWORD}"
+
+      # Redis (local container)
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      REDIS_SSL_ENABLED: "false"
+
+      # AuthHub Client
+      AUTHHUB_BASE_URL: "http://authhub-web-api-stage.connectly.local"
+      AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+
+      # FileFlow Client
+      FILEFLOW_BASE_URL: "http://fileflow-web-api-prod.connectly.local"
+      FILEFLOW_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+
+      # SQS Queue URLs (dummy for local - no SQS in local)
+      SQS_INSPECTION_SCORING_URL: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-scoring"
+      SQS_INSPECTION_ENHANCEMENT_URL: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-enhancement"
+      SQS_INSPECTION_VERIFICATION_URL: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-verification"
+
+      # OpenTelemetry disabled (local)
+      OTEL_JAVAAGENT_ENABLED: "false"
+
+      # Flyway disabled (stage DB schema already up-to-date)
+      SPRING_FLYWAY_ENABLED: "false"
+
+    ports:
+      - "9082:8082"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  redis-data:

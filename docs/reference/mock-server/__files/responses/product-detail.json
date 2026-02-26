@@ -1,0 +1,167 @@
+{
+  "data": {
+    "productGroup": {
+      "productGroupId": 125694305,
+      "productGroupName": "나이키 에어포스 1 '07 화이트",
+      "sellerId": 1001,
+      "sellerName": "나이키코리아",
+      "categoryId": 200101001,
+      "optionType": "OPTION_ONE",
+      "managementType": "STOCK",
+      "brand": {
+        "brandId": 501,
+        "brandName": "Nike",
+        "brandNameKo": "나이키"
+      },
+      "price": {
+        "regularPrice": 159000,
+        "currentPrice": 129000,
+        "salePrice": 129000,
+        "directDiscountPrice": 0,
+        "directDiscountRate": 0,
+        "discountRate": 19
+      },
+      "productGroupMainImageUrl": "https://via.placeholder.com/400",
+      "categoryFullName": "여성패션 > 아우터 > 패딩 > 롱패딩",
+      "productStatus": {
+        "soldOutYn": "N",
+        "displayYn": "Y"
+      },
+      "insertDate": "2025-12-15 10:30:00",
+      "updateDate": "2025-12-16 14:30:00",
+      "insertOperator": "admin",
+      "updateOperator": "admin"
+    },
+    "products": [
+      {
+        "productId": 1001,
+        "stockQuantity": 10,
+        "productStatus": {
+          "soldOutYn": "N",
+          "displayYn": "Y"
+        },
+        "option": "250 / 화이트",
+        "options": [
+          {
+            "optionGroupId": 1,
+            "optionDetailId": 101,
+            "optionName": "SIZE",
+            "optionValue": "250"
+          },
+          {
+            "optionGroupId": 2,
+            "optionDetailId": 201,
+            "optionName": "COLOR",
+            "optionValue": "화이트"
+          }
+        ],
+        "additionalPrice": 0
+      },
+      {
+        "productId": 1002,
+        "stockQuantity": 8,
+        "productStatus": {
+          "soldOutYn": "N",
+          "displayYn": "Y"
+        },
+        "option": "255 / 화이트",
+        "options": [
+          {
+            "optionGroupId": 1,
+            "optionDetailId": 102,
+            "optionName": "SIZE",
+            "optionValue": "255"
+          },
+          {
+            "optionGroupId": 2,
+            "optionDetailId": 201,
+            "optionName": "COLOR",
+            "optionValue": "화이트"
+          }
+        ],
+        "additionalPrice": 0
+      },
+      {
+        "productId": 1003,
+        "stockQuantity": 0,
+        "productStatus": {
+          "soldOutYn": "Y",
+          "displayYn": "N"
+        },
+        "option": "260 / 화이트",
+        "options": [
+          {
+            "optionGroupId": 1,
+            "optionDetailId": 103,
+            "optionName": "SIZE",
+            "optionValue": "260"
+          },
+          {
+            "optionGroupId": 2,
+            "optionDetailId": 201,
+            "optionName": "COLOR",
+            "optionValue": "화이트"
+          }
+        ],
+        "additionalPrice": 0
+      },
+      {
+        "productId": 1004,
+        "stockQuantity": 15,
+        "productStatus": {
+          "soldOutYn": "N",
+          "displayYn": "Y"
+        },
+        "option": "250 / 블랙",
+        "options": [
+          {
+            "optionGroupId": 1,
+            "optionDetailId": 101,
+            "optionName": "SIZE",
+            "optionValue": "250"
+          },
+          {
+            "optionGroupId": 2,
+            "optionDetailId": 202,
+            "optionName": "COLOR",
+            "optionValue": "블랙"
+          }
+        ],
+        "additionalPrice": 5000
+      },
+      {
+        "productId": 1005,
+        "stockQuantity": 12,
+        "productStatus": {
+          "soldOutYn": "N",
+          "displayYn": "Y"
+        },
+        "option": "265 / 블랙",
+        "options": [
+          {
+            "optionGroupId": 1,
+            "optionDetailId": 104,
+            "optionName": "SIZE",
+            "optionValue": "265"
+          },
+          {
+            "optionGroupId": 2,
+            "optionDetailId": 202,
+            "optionName": "COLOR",
+            "optionValue": "블랙"
+          }
+        ],
+        "additionalPrice": 5000
+      }
+    ],
+    "syncSummary": {
+      "totalSyncCount": 5,
+      "successCount": 3,
+      "failCount": 1,
+      "pendingCount": 1,
+      "lastSyncAt": "2025-12-16 14:30:00"
+    }
+  },
+  "timestamp": "2025-12-22T10:30:00",
+  "requestId": "req-mock-002"
+}
