@@ -4,6 +4,9 @@ import com.ryuqq.marketplace.adapter.in.sqs.intelligence.dto.IntelligenceSqsMess
 import com.ryuqq.marketplace.application.productintelligence.dto.command.ExecuteDescriptionAnalysisCommand;
 import com.ryuqq.marketplace.application.productintelligence.port.in.command.ExecuteDescriptionAnalysisUseCase;
 import io.awspring.cloud.sqs.annotation.SqsListener;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,27 +30,64 @@ import org.springframework.stereotype.Component;
 public class DescriptionAnalysisListener {
 
     private static final Logger log = LoggerFactory.getLogger(DescriptionAnalysisListener.class);
+    private static final String QUEUE_TAG = "description-analysis";
 
     private final ExecuteDescriptionAnalysisUseCase useCase;
+    private final MeterRegistry meterRegistry;
+    private final Timer durationTimer;
+    private final Counter successCounter;
+    private final Counter errorCounter;
 
-    public DescriptionAnalysisListener(ExecuteDescriptionAnalysisUseCase useCase) {
+    public DescriptionAnalysisListener(
+            ExecuteDescriptionAnalysisUseCase useCase, MeterRegistry meterRegistry) {
         this.useCase = useCase;
+        this.meterRegistry = meterRegistry;
+        this.durationTimer =
+                Timer.builder("sqs.consumer.duration")
+                        .tag("queue", QUEUE_TAG)
+                        .publishPercentileHistogram()
+                        .register(meterRegistry);
+        this.successCounter =
+                Counter.builder("sqs.consumer.messages")
+                        .tag("queue", QUEUE_TAG)
+                        .tag("result", "success")
+                        .register(meterRegistry);
+        this.errorCounter =
+                Counter.builder("sqs.consumer.messages")
+                        .tag("queue", QUEUE_TAG)
+                        .tag("result", "error")
+                        .register(meterRegistry);
     }
 
     @SqsListener("${sqs.queues.intelligence-description-analysis}")
     public void onMessage(IntelligenceSqsMessage message) {
-        log.debug(
-                "Description 분석 메시지 수신: profileId={}, productGroupId={}",
-                message.profileId(),
-                message.productGroupId());
+        Timer.Sample sample = Timer.start(meterRegistry);
+        try {
+            log.debug(
+                    "Description 분석 메시지 수신: profileId={}, productGroupId={}",
+                    message.profileId(),
+                    message.productGroupId());
 
-        useCase.execute(
-                ExecuteDescriptionAnalysisCommand.of(
-                        message.profileId(), message.productGroupId()));
+            useCase.execute(
+                    ExecuteDescriptionAnalysisCommand.of(
+                            message.profileId(), message.productGroupId()));
 
-        log.info(
-                "Description 분석 메시지 처리 완료: profileId={}, productGroupId={}",
-                message.profileId(),
-                message.productGroupId());
+            sample.stop(durationTimer);
+            successCounter.increment();
+
+            log.info(
+                    "Description 분석 메시지 처리 완료: profileId={}, productGroupId={}",
+                    message.profileId(),
+                    message.productGroupId());
+        } catch (Exception e) {
+            sample.stop(durationTimer);
+            errorCounter.increment();
+            log.error(
+                    "Description 분석 메시지 처리 실패: profileId={}, productGroupId={}",
+                    message.profileId(),
+                    message.productGroupId(),
+                    e);
+            throw e;
+        }
     }
 }
