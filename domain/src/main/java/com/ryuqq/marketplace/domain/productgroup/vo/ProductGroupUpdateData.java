@@ -19,6 +19,7 @@ public record ProductGroupUpdateData(
         CategoryId categoryId,
         ShippingPolicyId shippingPolicyId,
         RefundPolicyId refundPolicyId,
+        OptionType optionType,
         Instant updatedAt) {
 
     public static ProductGroupUpdateData of(
@@ -28,6 +29,7 @@ public record ProductGroupUpdateData(
             CategoryId categoryId,
             ShippingPolicyId shippingPolicyId,
             RefundPolicyId refundPolicyId,
+            OptionType optionType,
             Instant updatedAt) {
         return new ProductGroupUpdateData(
                 productGroupId,
@@ -36,6 +38,7 @@ public record ProductGroupUpdateData(
                 categoryId,
                 shippingPolicyId,
                 refundPolicyId,
+                optionType,
                 updatedAt);
     }
 }

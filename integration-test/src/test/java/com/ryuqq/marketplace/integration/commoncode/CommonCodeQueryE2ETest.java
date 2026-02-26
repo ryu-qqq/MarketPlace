@@ -68,8 +68,8 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
         @Test
         @Tag("P0")
         @Tag("auth")
-        @DisplayName("[Q1-AUTH-1] 인증 없이 조회 시도 → 401")
-        void searchCommonCodes_Unauthenticated_Returns401() {
+        @DisplayName("[Q1-AUTH-1] 인증 없이 조회 시도 → 200 (public endpoint)")
+        void searchCommonCodes_Unauthenticated_Returns200() {
             // given: CommonCodeType 1개 + CommonCode 3개
             commonCodeRepository.save(
                     CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
@@ -81,13 +81,15 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
                     CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
                             defaultCommonCodeTypeId, "BANK_TRANSFER", "계좌이체"));
 
-            // when & then: 토큰 없이 요청
+            // when & then: 공통 코드 조회는 public endpoint (permitAll)
             given().spec(givenUnauthenticated())
                     .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
                     .when()
                     .get(BASE_URL)
                     .then()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value());
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.content", hasSize(3))
+                    .body("data.totalElements", equalTo(3));
         }
 
         @Test

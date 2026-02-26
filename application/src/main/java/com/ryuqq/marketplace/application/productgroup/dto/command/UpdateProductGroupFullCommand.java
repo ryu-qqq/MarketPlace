@@ -17,6 +17,7 @@ public record UpdateProductGroupFullCommand(
         long categoryId,
         long shippingPolicyId,
         long refundPolicyId,
+        String optionType,
         List<ImageCommand> images,
         List<OptionGroupCommand> optionGroups,
         List<ProductCommand> products,

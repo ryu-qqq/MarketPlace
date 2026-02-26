@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.manager.ProductReadManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBaseBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
@@ -16,18 +18,17 @@ import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadMa
 import com.ryuqq.marketplace.application.productgroupdescription.manager.ProductGroupDescriptionReadManager;
 import com.ryuqq.marketplace.application.productgroupimage.manager.ProductGroupImageReadManager;
 import com.ryuqq.marketplace.application.productnotice.manager.ProductNoticeReadManager;
-import com.ryuqq.marketplace.domain.product.ProductFixtures;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchCriteria;
-import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import com.ryuqq.marketplace.domain.productnotice.ProductNoticeFixtures;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -226,35 +227,26 @@ class ProductGroupReadFacadeTest {
     class GetExcelBundleTest {
 
         @Test
-        @DisplayName("검색 조건으로 baseComposites + enrichments + 배치 조회 데이터를 포함한 번들을 반환한다")
+        @DisplayName("검색 조건으로 baseComposites + 배치 조회 데이터를 포함한 번들을 반환한다")
         void getExcelBundle_ValidCriteria_ReturnsExcelBundle() {
             // given
             ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
-            List<ProductGroupListCompositeResult> baseComposites =
+            List<ProductGroupListCompositeResult> composites =
                     List.of(createListCompositeResult(1L), createListCompositeResult(2L));
             long totalElements = 2L;
+            ProductGroupExcelBaseBundle baseBundle =
+                    new ProductGroupExcelBaseBundle(composites, Map.of(), totalElements);
             List<Long> ids = List.of(1L, 2L);
             List<ProductGroupId> productGroupIds =
                     List.of(ProductGroupId.of(1L), ProductGroupId.of(2L));
-            List<ProductGroupEnrichmentResult> enrichments =
-                    List.of(
-                            new ProductGroupEnrichmentResult(1L, 10000, 20000, 10, List.of()),
-                            new ProductGroupEnrichmentResult(2L, 15000, 25000, 15, List.of()));
-            List<ProductGroupImage> images = List.of();
-            List<Product> products = List.of();
-            List<ProductGroupDescription> descriptions = List.of();
-            List<ProductNotice> notices = List.of();
 
-            given(compositionReadManager.findCompositeByCriteria(criteria))
-                    .willReturn(baseComposites);
-            given(compositionReadManager.countByCriteria(criteria)).willReturn(totalElements);
-            given(compositionReadManager.findEnrichments(ids)).willReturn(enrichments);
-            given(imageReadManager.findByProductGroupIds(productGroupIds)).willReturn(images);
-            given(productReadManager.findByProductGroupIds(productGroupIds)).willReturn(products);
-            given(descriptionReadManager.findByProductGroupIds(productGroupIds))
-                    .willReturn(descriptions);
+            given(compositionReadManager.findExcelBaseBundleByCriteria(criteria))
+                    .willReturn(baseBundle);
+            given(imageReadManager.findByProductGroupIds(productGroupIds)).willReturn(List.of());
+            given(compositionReadManager.findProductsWithOptionNamesByProductGroupIds(ids))
+                    .willReturn(Map.of());
             given(productNoticeReadManager.findByProductGroupIds(productGroupIds))
-                    .willReturn(notices);
+                    .willReturn(List.of());
 
             // when
             ProductGroupExcelBundle result = sut.getExcelBundle(criteria);
@@ -262,7 +254,6 @@ class ProductGroupReadFacadeTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.baseComposites()).hasSize(2);
-            assertThat(result.enrichments()).hasSize(2);
             assertThat(result.totalElements()).isEqualTo(totalElements);
         }
 
@@ -271,9 +262,11 @@ class ProductGroupReadFacadeTest {
         void getExcelBundle_EmptyResult_ReturnsEmptyBundleWithoutBatchQueries() {
             // given
             ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
+            ProductGroupExcelBaseBundle emptyBundle =
+                    new ProductGroupExcelBaseBundle(List.of(), Map.of(), 0);
 
-            given(compositionReadManager.findCompositeByCriteria(criteria)).willReturn(List.of());
-            given(compositionReadManager.countByCriteria(criteria)).willReturn(0L);
+            given(compositionReadManager.findExcelBaseBundleByCriteria(criteria))
+                    .willReturn(emptyBundle);
 
             // when
             ProductGroupExcelBundle result = sut.getExcelBundle(criteria);
@@ -286,12 +279,8 @@ class ProductGroupReadFacadeTest {
             assertThat(result.descriptionCdnUrlByProductGroupId()).isEmpty();
             assertThat(result.noticeByProductGroupId()).isEmpty();
             assertThat(result.totalElements()).isZero();
-            then(compositionReadManager).should().findCompositeByCriteria(criteria);
-            then(compositionReadManager).should().countByCriteria(criteria);
-            then(compositionReadManager).shouldHaveNoMoreInteractions();
+            then(compositionReadManager).should().findExcelBaseBundleByCriteria(criteria);
             then(imageReadManager).shouldHaveNoInteractions();
-            then(productReadManager).shouldHaveNoInteractions();
-            then(descriptionReadManager).shouldHaveNoInteractions();
             then(productNoticeReadManager).shouldHaveNoInteractions();
         }
 
@@ -300,19 +289,18 @@ class ProductGroupReadFacadeTest {
         void getExcelBundle_WithBaseComposites_DelegatesToAllReadManagers() {
             // given
             ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
-            List<ProductGroupListCompositeResult> baseComposites =
+            List<ProductGroupListCompositeResult> composites =
                     List.of(createListCompositeResult(1L));
+            ProductGroupExcelBaseBundle baseBundle =
+                    new ProductGroupExcelBaseBundle(composites, Map.of(), 1L);
             List<ProductGroupId> productGroupIds = List.of(ProductGroupId.of(1L));
             List<Long> ids = List.of(1L);
 
-            given(compositionReadManager.findCompositeByCriteria(criteria))
-                    .willReturn(baseComposites);
-            given(compositionReadManager.countByCriteria(criteria)).willReturn(1L);
-            given(compositionReadManager.findEnrichments(ids)).willReturn(List.of());
+            given(compositionReadManager.findExcelBaseBundleByCriteria(criteria))
+                    .willReturn(baseBundle);
             given(imageReadManager.findByProductGroupIds(productGroupIds)).willReturn(List.of());
-            given(productReadManager.findByProductGroupIds(productGroupIds)).willReturn(List.of());
-            given(descriptionReadManager.findByProductGroupIds(productGroupIds))
-                    .willReturn(List.of());
+            given(compositionReadManager.findProductsWithOptionNamesByProductGroupIds(ids))
+                    .willReturn(Map.of());
             given(productNoticeReadManager.findByProductGroupIds(productGroupIds))
                     .willReturn(List.of());
 
@@ -320,10 +308,9 @@ class ProductGroupReadFacadeTest {
             sut.getExcelBundle(criteria);
 
             // then
-            then(compositionReadManager).should().findEnrichments(ids);
+            then(compositionReadManager).should().findExcelBaseBundleByCriteria(criteria);
             then(imageReadManager).should().findByProductGroupIds(productGroupIds);
-            then(productReadManager).should().findByProductGroupIds(productGroupIds);
-            then(descriptionReadManager).should().findByProductGroupIds(productGroupIds);
+            then(compositionReadManager).should().findProductsWithOptionNamesByProductGroupIds(ids);
             then(productNoticeReadManager).should().findByProductGroupIds(productGroupIds);
         }
 
@@ -333,23 +320,37 @@ class ProductGroupReadFacadeTest {
             // given
             ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
             Long productGroupId = 1L;
-            List<ProductGroupListCompositeResult> baseComposites =
+            List<ProductGroupListCompositeResult> composites =
                     List.of(createListCompositeResult(productGroupId));
+            ProductGroupExcelBaseBundle baseBundle =
+                    new ProductGroupExcelBaseBundle(composites, Map.of(), 1L);
             List<ProductGroupId> productGroupIds = List.of(ProductGroupId.of(productGroupId));
             List<Long> ids = List.of(productGroupId);
 
-            Product product = ProductFixtures.activeProduct();
             ProductNotice notice = ProductNoticeFixtures.existingProductNotice(productGroupId);
+            ProductResult productResult =
+                    new ProductResult(
+                            1L,
+                            productGroupId,
+                            "SKU-001",
+                            30000,
+                            25000,
+                            null,
+                            16,
+                            100,
+                            "ACTIVE",
+                            0,
+                            List.of(),
+                            Instant.now(),
+                            Instant.now());
+            Map<Long, List<ProductResult>> productMap =
+                    Map.of(productGroupId, List.of(productResult));
 
-            given(compositionReadManager.findCompositeByCriteria(criteria))
-                    .willReturn(baseComposites);
-            given(compositionReadManager.countByCriteria(criteria)).willReturn(1L);
-            given(compositionReadManager.findEnrichments(ids)).willReturn(List.of());
+            given(compositionReadManager.findExcelBaseBundleByCriteria(criteria))
+                    .willReturn(baseBundle);
             given(imageReadManager.findByProductGroupIds(productGroupIds)).willReturn(List.of());
-            given(productReadManager.findByProductGroupIds(productGroupIds))
-                    .willReturn(List.of(product));
-            given(descriptionReadManager.findByProductGroupIds(productGroupIds))
-                    .willReturn(List.of());
+            given(compositionReadManager.findProductsWithOptionNamesByProductGroupIds(ids))
+                    .willReturn(productMap);
             given(productNoticeReadManager.findByProductGroupIds(productGroupIds))
                     .willReturn(List.of(notice));
 
@@ -358,8 +359,7 @@ class ProductGroupReadFacadeTest {
 
             // then
             assertThat(result).isNotNull();
-            assertThat(result.productsByProductGroupId())
-                    .containsKey(ProductFixtures.DEFAULT_PRODUCT_GROUP_ID);
+            assertThat(result.productsByProductGroupId()).containsKey(productGroupId);
             assertThat(result.noticeByProductGroupId()).containsKey(productGroupId);
         }
     }

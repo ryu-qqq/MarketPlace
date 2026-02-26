@@ -49,6 +49,12 @@ public record UpdateProductGroupFullApiRequest(
                 @NotNull(message = "환불 정책 ID는 필수입니다")
                 @Min(value = 1, message = "환불 정책 ID는 1 이상이어야 합니다")
                 Long refundPolicyId,
+        @Schema(
+                        description = "옵션 타입 (COMBINATION, SINGLE, NONE)",
+                        example = "COMBINATION",
+                        requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotBlank(message = "옵션 타입은 필수입니다")
+                String optionType,
         @Schema(description = "이미지 목록", requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotEmpty(message = "이미지는 최소 1개 이상 필요합니다")
                 @Valid
@@ -58,8 +64,14 @@ public record UpdateProductGroupFullApiRequest(
                 @NotEmpty(message = "상품은 최소 1개 이상 필요합니다")
                 @Valid
                 List<ProductApiRequest> products,
-        @Schema(description = "상세 설명") @Valid DescriptionApiRequest description,
-        @Schema(description = "고시정보") @Valid NoticeApiRequest notice) {
+        @Schema(description = "상세 설명", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull(message = "상세 설명은 필수입니다")
+                @Valid
+                DescriptionApiRequest description,
+        @Schema(description = "고시정보", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull(message = "고시정보는 필수입니다")
+                @Valid
+                NoticeApiRequest notice) {
 
     /** 이미지 API Request. */
     @Schema(description = "이미지 데이터")
@@ -104,7 +116,10 @@ public record UpdateProductGroupFullApiRequest(
                             example = "PREDEFINED",
                             nullable = true)
                     String inputType,
-            @Schema(description = "옵션 값 목록") @Valid List<OptionValueApiRequest> optionValues) {}
+            @Schema(description = "옵션 값 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+                    @NotEmpty(message = "옵션 값은 최소 1개 이상 필요합니다")
+                    @Valid
+                    List<OptionValueApiRequest> optionValues) {}
 
     /** 옵션 값 API Request. */
     @Schema(description = "옵션 값 데이터")

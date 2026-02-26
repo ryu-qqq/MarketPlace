@@ -2,7 +2,9 @@ package com.ryuqq.marketplace.domain.legacy.product.aggregate;
 
 import com.ryuqq.marketplace.domain.legacy.optiondetail.id.LegacyOptionDetailId;
 import com.ryuqq.marketplace.domain.legacy.optiongroup.id.LegacyOptionGroupId;
+import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductDiff;
 import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductOption;
+import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductOptionDiff;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,7 +14,8 @@ import java.util.Map;
 /**
  * 레거시 상품 컬렉션 래퍼.
  *
- * <p>기존 상품 목록을 감싸며, 새로운 상품 목록과의 diff 계산을 제공합니다. productId 기준으로 매칭하여 변경/추가/삭제를 판단합니다.
+ * <p>기존 상품 목록을 감싸며, 새로운 상품 목록과의 diff 계산을 제공합니다. productId 기준으로 매칭하여 추가/삭제/유지를 판단합니다. 유지 대상 상품의 옵션은
+ * optionGroupId:optionDetailId 기준으로 nested diff를 수행합니다.
  */
 public class LegacyProducts {
 
@@ -41,21 +44,21 @@ public class LegacyProducts {
     }
 
     /**
-     * 옵션/상품 diff: 새로운 상품 목록과 비교하여 persist할 대상을 계산합니다.
+     * 상품/옵션 수정: 새로운 상품 목록과 비교하여 추가/삭제/유지를 판단하고 상태를 갱신합니다.
      *
      * <p>productId 기준 매칭:
      *
      * <ul>
-     *   <li>기존에만 있는 productId → soft-delete (product + options)
-     *   <li>새 요청에만 있는 productId(null) → insert (product + options)
-     *   <li>양쪽 모두 있는 productId → 옵션 비교 후 변경분만 persist
+     *   <li>새 요청에만 있는 productId(null) → added (신규 INSERT)
+     *   <li>양쪽 모두 있는 productId → retained (재고 갱신 + 옵션 nested diff)
+     *   <li>기존에만 있는 productId → removed (soft-delete)
      * </ul>
      *
      * @param newProducts 새로운 상품 목록
      * @param changedAt 변경 시각
-     * @return diff 결과
+     * @return diff 결과 (added/removed/retained + 옵션 diff)
      */
-    public ProductDiffResult diff(List<LegacyProduct> newProducts, Instant changedAt) {
+    public LegacyProductDiff update(List<LegacyProduct> newProducts, Instant changedAt) {
         Map<Long, LegacyProduct> existingById = new LinkedHashMap<>();
         for (LegacyProduct product : products) {
             if (product.idValue() != null) {
@@ -63,71 +66,89 @@ public class LegacyProducts {
             }
         }
 
-        List<LegacyProduct> productsToPersist = new ArrayList<>();
-        List<LegacyProductOption> optionsToPersist = new ArrayList<>();
+        List<LegacyProduct> added = new ArrayList<>();
+        List<LegacyProduct> retained = new ArrayList<>();
+
+        List<LegacyProductOption> allAddedOptions = new ArrayList<>();
+        List<LegacyProductOption> allRemovedOptions = new ArrayList<>();
+        List<LegacyProductOption> allRetainedOptions = new ArrayList<>();
 
         for (LegacyProduct newProduct : newProducts) {
             Long productId = newProduct.idValue();
             if (productId == null) {
-                // 신규 상품
-                productsToPersist.add(newProduct);
-                optionsToPersist.addAll(newProduct.options());
+                added.add(newProduct);
+                allAddedOptions.addAll(newProduct.options());
             } else {
                 LegacyProduct existing = existingById.remove(productId);
                 if (existing != null) {
-                    // 기존 상품 → 재고 변경 + 옵션 diff
                     if (existing.stockQuantity() != newProduct.stockQuantity()) {
                         existing.updateStock(newProduct.stockQuantity());
-                        productsToPersist.add(existing);
                     }
-                    List<LegacyProductOption> optionDiff =
-                            diffOptions(existing.options(), newProduct.options(), changedAt);
-                    optionsToPersist.addAll(optionDiff);
+                    retained.add(existing);
+
+                    diffOptions(
+                            existing.options(),
+                            newProduct.options(),
+                            changedAt,
+                            allAddedOptions,
+                            allRemovedOptions,
+                            allRetainedOptions);
                 }
             }
         }
 
-        // 기존에만 있는 상품 → soft-delete
+        List<LegacyProduct> removed = new ArrayList<>();
         for (LegacyProduct remaining : existingById.values()) {
             remaining.delete(changedAt);
-            productsToPersist.add(remaining);
+            removed.add(remaining);
             for (LegacyProductOption option : remaining.options()) {
                 option.delete(changedAt);
-                optionsToPersist.add(option);
+                allRemovedOptions.add(option);
             }
         }
 
-        return new ProductDiffResult(productsToPersist, optionsToPersist);
+        LegacyProductOptionDiff optionDiff =
+                LegacyProductOptionDiff.of(
+                        allAddedOptions, allRemovedOptions, allRetainedOptions, changedAt);
+
+        return LegacyProductDiff.of(added, removed, retained, optionDiff, changedAt);
     }
 
-    private List<LegacyProductOption> diffOptions(
+    /**
+     * 옵션 nested diff: optionGroupId:optionDetailId 기준으로 비교합니다.
+     *
+     * <p>유지 대상 옵션은 additionalPrice가 변경되었으면 in-place 갱신합니다.
+     */
+    private void diffOptions(
             List<LegacyProductOption> existingOptions,
             List<LegacyProductOption> newOptions,
-            Instant changedAt) {
+            Instant changedAt,
+            List<LegacyProductOption> addedAccumulator,
+            List<LegacyProductOption> removedAccumulator,
+            List<LegacyProductOption> retainedAccumulator) {
+
         Map<String, LegacyProductOption> existingByKey = new LinkedHashMap<>();
         for (LegacyProductOption option : existingOptions) {
             existingByKey.put(optionKey(option), option);
         }
 
-        List<LegacyProductOption> toPersist = new ArrayList<>();
-
         for (LegacyProductOption newOption : newOptions) {
             String key = optionKey(newOption);
             LegacyProductOption existing = existingByKey.remove(key);
-            if (existing == null) {
-                // 신규 옵션
-                toPersist.add(newOption);
+            if (existing != null) {
+                if (existing.additionalPrice() != newOption.additionalPrice()) {
+                    existing.updateAdditionalPrice(newOption.additionalPrice());
+                }
+                retainedAccumulator.add(existing);
+            } else {
+                addedAccumulator.add(newOption);
             }
-            // 동일한 key의 옵션은 변경 없음 → skip
         }
 
-        // 기존에만 있는 옵션 → soft-delete
         for (LegacyProductOption remaining : existingByKey.values()) {
             remaining.delete(changedAt);
-            toPersist.add(remaining);
+            removedAccumulator.add(remaining);
         }
-
-        return toPersist;
     }
 
     private String optionKey(LegacyProductOption option) {
@@ -142,14 +163,5 @@ public class LegacyProducts {
 
     public boolean isEmpty() {
         return products.isEmpty();
-    }
-
-    /** 상품/옵션 diff 결과. */
-    public record ProductDiffResult(
-            List<LegacyProduct> productsToPersist, List<LegacyProductOption> optionsToPersist) {
-
-        public boolean hasChanges() {
-            return !productsToPersist.isEmpty() || !optionsToPersist.isEmpty();
-        }
     }
 }

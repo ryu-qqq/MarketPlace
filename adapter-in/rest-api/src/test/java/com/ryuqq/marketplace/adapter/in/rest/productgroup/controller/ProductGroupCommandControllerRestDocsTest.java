@@ -462,6 +462,11 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath("refundPolicyId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("환불 정책 ID"),
+                                            fieldWithPath("optionType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description(
+                                                            "옵션 타입 (COMBINATION, SINGLE,"
+                                                                    + " NONE)"),
                                             fieldWithPath("images")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("이미지 목록 (최소 1개)"),

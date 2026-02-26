@@ -1,10 +1,13 @@
 package com.ryuqq.marketplace.application.productgroup.port.out.query;
 
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBaseBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchCriteria;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,4 +41,19 @@ public interface ProductGroupCompositionQueryPort {
      * 데이터를 한 번에 조회합니다.
      */
     Optional<ProductGroupDetailCompositeQueryResult> findDetailCompositeById(Long productGroupId);
+
+    /**
+     * 엑셀용 통합 Composite 조회 (base + 가격 enrichment + description cdnUrl).
+     *
+     * <p>기존 findCompositeByCriteria + findEnrichments + description 조회를 통합합니다.
+     */
+    ProductGroupExcelBaseBundle findExcelBaseBundleByCriteria(ProductGroupSearchCriteria criteria);
+
+    /**
+     * 상품 + 옵션 매핑 + 옵션 이름 해석 배치 조회.
+     *
+     * <p>product -> product_option_mappings -> seller_option_values -> seller_option_groups JOIN.
+     */
+    Map<Long, List<ProductResult>> findProductsWithOptionNamesByProductGroupIds(
+            List<Long> productGroupIds);
 }

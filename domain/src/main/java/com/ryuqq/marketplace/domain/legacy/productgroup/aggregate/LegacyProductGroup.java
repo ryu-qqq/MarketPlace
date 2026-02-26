@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.domain.legacy.productgroup.aggregate;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDelivery;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
+import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductGroupUpdateData;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ManagementType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType;
@@ -191,6 +192,31 @@ public class LegacyProductGroup {
     /** 상세설명 수정. */
     public void updateDescription(LegacyProductDescription description, Instant changedAt) {
         this.description = description;
+        this.updatedAt = changedAt;
+    }
+
+    /** 배송/반품정보 수정. */
+    public void updateDelivery(LegacyProductDelivery delivery, Instant changedAt) {
+        this.delivery = delivery;
+        this.updatedAt = changedAt;
+    }
+
+    /** 상품그룹 기본정보 수정 (UpdateData 패턴). */
+    public void updateProductGroupDetails(
+            LegacyProductGroupUpdateData updateData, Instant changedAt) {
+        this.productGroupName = updateData.productGroupName();
+        this.sellerId = updateData.sellerId();
+        this.brandId = updateData.brandId();
+        this.categoryId = updateData.categoryId();
+        this.optionType = updateData.optionType();
+        this.managementType = updateData.managementType();
+        this.regularPrice = updateData.regularPrice();
+        this.currentPrice = updateData.currentPrice();
+        this.soldOutYn = updateData.soldOutYn();
+        this.displayYn = updateData.displayYn();
+        this.productCondition = updateData.productCondition();
+        this.origin = updateData.origin();
+        this.styleCode = updateData.styleCode();
         this.updatedAt = changedAt;
     }
 

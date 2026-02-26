@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -39,13 +40,21 @@ public record RegisterProductGroupExcelApiRequest(
                         requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotBlank(message = "옵션 타입은 필수입니다")
                 String optionType,
-        @Schema(description = "이미지 목록") @Valid
+        @Schema(description = "이미지 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotEmpty(message = "이미지는 최소 1개 이상 필요합니다")
+                @Valid
                 List<RegisterProductGroupApiRequest.ImageApiRequest> images,
         @Schema(description = "옵션 그룹 목록") @Valid
                 List<RegisterProductGroupApiRequest.OptionGroupApiRequest> optionGroups,
-        @Schema(description = "상품 목록") @Valid
+        @Schema(description = "상품 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotEmpty(message = "상품은 최소 1개 이상 필요합니다")
+                @Valid
                 List<RegisterProductGroupApiRequest.ProductApiRequest> products,
-        @Schema(description = "상세 설명") @Valid
+        @Schema(description = "상세 설명", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull(message = "상세 설명은 필수입니다")
+                @Valid
                 RegisterProductGroupApiRequest.DescriptionApiRequest description,
-        @Schema(description = "고시정보") @Valid
+        @Schema(description = "고시정보", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull(message = "고시정보는 필수입니다")
+                @Valid
                 RegisterProductGroupApiRequest.NoticeApiRequest notice) {}
