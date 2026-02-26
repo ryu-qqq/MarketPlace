@@ -13,7 +13,8 @@ import java.lang.annotation.Target;
  * <ul>
  *   <li>{@code marketplace.{value}_duration_seconds} — 실행 시간 (Timer)
  *   <li>{@code marketplace.{value}_total} — 실행 횟수 (Counter)
- *   <li>{@code marketplace.{value}_items_total} — 배치 항목 수 (Counter, SchedulerBatchProcessingResult 반환 시)
+ *   <li>{@code marketplace.{value}_items_total} — 배치 항목 수 (Counter, SchedulerBatchProcessingResult
+ *       반환 시)
  *   <li>{@code marketplace.{value}_errors_total} — 에러 횟수 (Counter)
  * </ul>
  */

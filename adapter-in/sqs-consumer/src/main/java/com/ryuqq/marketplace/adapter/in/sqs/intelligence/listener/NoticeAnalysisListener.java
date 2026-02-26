@@ -68,8 +68,7 @@ public class NoticeAnalysisListener {
                     message.productGroupId());
 
             useCase.execute(
-                    ExecuteNoticeAnalysisCommand.of(
-                            message.profileId(), message.productGroupId()));
+                    ExecuteNoticeAnalysisCommand.of(message.profileId(), message.productGroupId()));
 
             sample.stop(durationTimer);
             successCounter.increment();
