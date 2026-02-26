@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.mapper;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.dto.LegacyProductOptionQueryDto;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductCompositeResult;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductCompositeResult.OptionMapping;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductCompositeResult;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductCompositeResult.OptionMapping;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

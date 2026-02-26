@@ -942,6 +942,16 @@ class ProductGroupQueryControllerRestDocsTest {
                                                             "data[].products[].optionMappings[].sellerOptionValueId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("셀러 옵션값 ID"),
+                                            fieldWithPath(
+                                                            "data[].products[].optionMappings[].optionGroupName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("옵션 그룹명")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data[].products[].optionMappings[].optionValueName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("옵션 값명")
+                                                    .optional(),
                                             fieldWithPath("data[].products[].createdAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("상품 등록일시"),

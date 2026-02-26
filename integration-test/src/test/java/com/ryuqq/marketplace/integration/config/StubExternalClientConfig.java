@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
 import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
 import com.ryuqq.marketplace.application.imagetransform.port.out.client.ImageTransformClient;
+import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.AggregationPublishClient;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.DescriptionAnalysisAiClient;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.DescriptionAnalysisPublishClient;
@@ -261,6 +262,14 @@ public class StubExternalClientConfig {
                 return "stub-message-id";
             }
         };
+    }
+
+    // ===== 레거시 모듈 Stubs (persistence-mysql-legacy 제외 시 필요) =====
+
+    @Bean
+    @Primary
+    public ResolveLegacyProductGroupSellerIdUseCase stubResolveLegacyProductGroupSellerIdUseCase() {
+        return productGroupId -> Optional.empty();
     }
 
     // ===== 미구현 포트 Stubs =====

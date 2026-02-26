@@ -1,12 +1,15 @@
 package com.ryuqq.marketplace.application.productgroup.manager;
 
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBaseBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.port.out.query.ProductGroupCompositionQueryPort;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupNotFoundException;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchCriteria;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,5 +60,22 @@ public class ProductGroupCompositionReadManager {
             return List.of();
         }
         return compositionQueryPort.findEnrichmentsByProductGroupIds(productGroupIds);
+    }
+
+    /** 엑셀용 통합 Composite 조회 (base + 가격 enrichment + description cdnUrl). */
+    @Transactional(readOnly = true)
+    public ProductGroupExcelBaseBundle findExcelBaseBundleByCriteria(
+            ProductGroupSearchCriteria criteria) {
+        return compositionQueryPort.findExcelBaseBundleByCriteria(criteria);
+    }
+
+    /** 상품 + 옵션 매핑(이름 해석 포함) 배치 조회. */
+    @Transactional(readOnly = true)
+    public Map<Long, List<ProductResult>> findProductsWithOptionNamesByProductGroupIds(
+            List<Long> productGroupIds) {
+        if (productGroupIds == null || productGroupIds.isEmpty()) {
+            return Map.of();
+        }
+        return compositionQueryPort.findProductsWithOptionNamesByProductGroupIds(productGroupIds);
     }
 }

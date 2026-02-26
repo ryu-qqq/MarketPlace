@@ -216,7 +216,11 @@ public class ProductGroupQueryApiMapper {
     private ProductOptionMappingApiResponse toOptionMappingResponse(
             ProductOptionMappingResult result) {
         return new ProductOptionMappingApiResponse(
-                result.id(), result.productId(), result.sellerOptionValueId());
+                result.id(),
+                result.productId(),
+                result.sellerOptionValueId(),
+                result.optionGroupName(),
+                result.optionValueName());
     }
 
     // ==================== 상세 변환 ====================

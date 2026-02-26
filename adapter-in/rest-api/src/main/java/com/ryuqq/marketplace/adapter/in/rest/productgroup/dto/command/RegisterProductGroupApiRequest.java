@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -57,11 +58,23 @@ public record RegisterProductGroupApiRequest(
                         requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotBlank(message = "옵션 타입은 필수입니다")
                 String optionType,
-        @Schema(description = "이미지 목록") @Valid List<ImageApiRequest> images,
+        @Schema(description = "이미지 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotEmpty(message = "이미지는 최소 1개 이상 필요합니다")
+                @Valid
+                List<ImageApiRequest> images,
         @Schema(description = "옵션 그룹 목록") @Valid List<OptionGroupApiRequest> optionGroups,
-        @Schema(description = "상품 목록") @Valid List<ProductApiRequest> products,
-        @Schema(description = "상세 설명") @Valid DescriptionApiRequest description,
-        @Schema(description = "고시정보") @Valid NoticeApiRequest notice) {
+        @Schema(description = "상품 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotEmpty(message = "상품은 최소 1개 이상 필요합니다")
+                @Valid
+                List<ProductApiRequest> products,
+        @Schema(description = "상세 설명", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull(message = "상세 설명은 필수입니다")
+                @Valid
+                DescriptionApiRequest description,
+        @Schema(description = "고시정보", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull(message = "고시정보는 필수입니다")
+                @Valid
+                NoticeApiRequest notice) {
 
     @Schema(description = "이미지 데이터")
     public record ImageApiRequest(
@@ -99,7 +112,10 @@ public record RegisterProductGroupApiRequest(
                             example = "PREDEFINED",
                             nullable = true)
                     String inputType,
-            @Schema(description = "옵션 값 목록") @Valid List<OptionValueApiRequest> optionValues) {}
+            @Schema(description = "옵션 값 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+                    @NotEmpty(message = "옵션 값은 최소 1개 이상 필요합니다")
+                    @Valid
+                    List<OptionValueApiRequest> optionValues) {}
 
     @Schema(description = "옵션 값 데이터")
     public record OptionValueApiRequest(
@@ -172,7 +188,11 @@ public record RegisterProductGroupApiRequest(
 
     @Schema(description = "상세 설명 데이터")
     public record DescriptionApiRequest(
-            @Schema(description = "상세 설명 내용 (HTML)", example = "<p>상품 상세 설명입니다.</p>")
+            @Schema(
+                            description = "상세 설명 내용 (HTML)",
+                            example = "<p>상품 상세 설명입니다.</p>",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
+                    @NotBlank(message = "상세설명 내용은 필수입니다")
                     String content) {}
 
     @Schema(description = "고시정보 데이터")

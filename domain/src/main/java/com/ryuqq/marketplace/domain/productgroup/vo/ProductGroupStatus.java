@@ -46,23 +46,36 @@ public enum ProductGroupStatus {
         return this == DRAFT;
     }
 
-    /** ACTIVE로 전환 가능한지 확인. DRAFT, PROCESSING, PENDING_REVIEW, INACTIVE, SOLDOUT에서 가능. */
+    /**
+     * ACTIVE로 전환 가능한지 확인.
+     *
+     * <p>ACTIVE 포함: 이미 활성화된 상품이 재검수 통과(AUTO_APPROVED) 시 멱등 전환을 허용합니다.
+     */
     public boolean canActivate() {
         return this == DRAFT
                 || this == PROCESSING
                 || this == PENDING_REVIEW
+                || this == ACTIVE
                 || this == INACTIVE
                 || this == SOLDOUT;
     }
 
-    /** 검수대기(PENDING_REVIEW)로 전환 가능 여부. PROCESSING에서만 가능. */
+    /**
+     * 검수대기(PENDING_REVIEW)로 전환 가능 여부.
+     *
+     * <p>ACTIVE 포함: 이미 활성화된 상품이 재검수에서 HUMAN_REVIEW 판정 시 전환을 허용합니다.
+     */
     public boolean canPendingReview() {
-        return this == PROCESSING;
+        return this == PROCESSING || this == ACTIVE;
     }
 
-    /** 반려 가능 여부. PROCESSING 또는 PENDING_REVIEW에서 가능. */
+    /**
+     * 반려 가능 여부.
+     *
+     * <p>ACTIVE 포함: 이미 활성화된 상품이 재검수에서 AUTO_REJECTED 판정 시 전환을 허용합니다.
+     */
     public boolean canReject() {
-        return this == PROCESSING || this == PENDING_REVIEW;
+        return this == PROCESSING || this == PENDING_REVIEW || this == ACTIVE;
     }
 
     /** 삭제 가능한지 확인. 이미 삭제된 상태가 아니면 가능. */

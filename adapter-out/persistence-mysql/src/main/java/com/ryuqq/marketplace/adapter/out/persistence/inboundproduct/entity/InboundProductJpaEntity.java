@@ -64,6 +64,15 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
     @Column(name = "raw_payload", columnDefinition = "JSON")
     private String rawPayloadJson;
 
+    @Column(name = "resolved_shipping_policy_id")
+    private Long resolvedShippingPolicyId;
+
+    @Column(name = "resolved_refund_policy_id")
+    private Long resolvedRefundPolicyId;
+
+    @Column(name = "resolved_notice_category_id")
+    private Long resolvedNoticeCategoryId;
+
     @Column(name = "retry_count", nullable = false)
     private int retryCount;
 
@@ -71,6 +80,7 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
         super();
     }
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     private InboundProductJpaEntity(
             Long id,
             Long inboundSourceId,
@@ -88,6 +98,9 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
             String status,
             String descriptionHtml,
             String rawPayloadJson,
+            Long resolvedShippingPolicyId,
+            Long resolvedRefundPolicyId,
+            Long resolvedNoticeCategoryId,
             int retryCount,
             Instant createdAt,
             Instant updatedAt) {
@@ -108,9 +121,13 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
         this.status = status;
         this.descriptionHtml = descriptionHtml;
         this.rawPayloadJson = rawPayloadJson;
+        this.resolvedShippingPolicyId = resolvedShippingPolicyId;
+        this.resolvedRefundPolicyId = resolvedRefundPolicyId;
+        this.resolvedNoticeCategoryId = resolvedNoticeCategoryId;
         this.retryCount = retryCount;
     }
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public static InboundProductJpaEntity create(
             Long id,
             Long inboundSourceId,
@@ -128,6 +145,9 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
             String status,
             String descriptionHtml,
             String rawPayloadJson,
+            Long resolvedShippingPolicyId,
+            Long resolvedRefundPolicyId,
+            Long resolvedNoticeCategoryId,
             int retryCount,
             Instant createdAt,
             Instant updatedAt) {
@@ -148,6 +168,9 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
                 status,
                 descriptionHtml,
                 rawPayloadJson,
+                resolvedShippingPolicyId,
+                resolvedRefundPolicyId,
+                resolvedNoticeCategoryId,
                 retryCount,
                 createdAt,
                 updatedAt);
@@ -215,6 +238,18 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
 
     public String getRawPayloadJson() {
         return rawPayloadJson;
+    }
+
+    public Long getResolvedShippingPolicyId() {
+        return resolvedShippingPolicyId;
+    }
+
+    public Long getResolvedRefundPolicyId() {
+        return resolvedRefundPolicyId;
+    }
+
+    public Long getResolvedNoticeCategoryId() {
+        return resolvedNoticeCategoryId;
     }
 
     public int getRetryCount() {

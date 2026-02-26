@@ -7,9 +7,11 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.dto.response.Legacy
 import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.mapper.LegacyShipmentQueryApiMapper;
 import com.ryuqq.marketplace.application.legacyshipment.dto.response.LegacyShipmentCompanyCodeResult;
 import com.ryuqq.marketplace.application.legacyshipment.port.in.LegacyGetShipmentCompanyCodesUseCase;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +38,10 @@ public class LegacyShipmentController {
         this.legacyShipmentQueryApiMapper = legacyShipmentQueryApiMapper;
     }
 
+    @Operation(
+            summary = "택배사 코드 목록 조회",
+            description = "세토프 어드민 호환 택배사 코드 목록을 조회합니다. OMS(사방넷) 연동에 사용됩니다.")
+    @PreAuthorize("@access.authenticated()")
     @GetMapping(COMPANY_CODES)
     public ResponseEntity<LegacyApiResponse<List<LegacyShipmentCompanyCodeResponse>>>
             getCompanyCodes() {

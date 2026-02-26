@@ -3,7 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.option.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.LegacyOptionGroupEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.mapper.LegacyOptionCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.repository.LegacyOptionGroupJpaRepository;
-import com.ryuqq.marketplace.application.legacyproduct.port.out.command.LegacyOptionGroupCommandPort;
+import com.ryuqq.marketplace.application.legacy.product.port.out.command.LegacyOptionGroupCommandPort;
 import com.ryuqq.marketplace.domain.legacy.optiongroup.aggregate.LegacyOptionGroup;
 import org.springframework.stereotype.Component;
 

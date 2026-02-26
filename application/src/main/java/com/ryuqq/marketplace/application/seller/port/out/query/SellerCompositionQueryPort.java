@@ -28,5 +28,13 @@ public interface SellerCompositionQueryPort {
      */
     Optional<SellerAdminCompositeResult> findAdminCompositeById(Long sellerId);
 
+    /**
+     * authTenantId로 Admin용 셀러 Composite 조회.
+     *
+     * @param authTenantId 인증 테넌트 ID
+     * @return Admin용 셀러 Composite 결과
+     */
+    Optional<SellerAdminCompositeResult> findAdminCompositeByAuthTenantId(String authTenantId);
+
     Optional<SellerPolicyCompositeResult> findPolicyCompositeById(Long sellerId);
 }

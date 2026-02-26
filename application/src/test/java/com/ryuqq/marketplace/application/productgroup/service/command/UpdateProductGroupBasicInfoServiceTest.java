@@ -7,8 +7,11 @@ import com.ryuqq.marketplace.application.productgroup.ProductGroupCommandFixture
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupCommandFactory;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupCommandCoordinator;
+import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
 import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +32,7 @@ class UpdateProductGroupBasicInfoServiceTest {
 
     @Mock private ProductGroupCommandFactory commandFactory;
     @Mock private ProductGroupCommandCoordinator coordinator;
+    @Mock private ProductGroupReadManager productGroupReadManager;
 
     @Nested
     @DisplayName("execute() - 상품 그룹 기본 정보 수정")
@@ -41,15 +45,20 @@ class UpdateProductGroupBasicInfoServiceTest {
             long productGroupId = 1L;
             UpdateProductGroupBasicInfoCommand command =
                     ProductGroupCommandFixtures.updateBasicInfoCommand(productGroupId);
+            ProductGroup productGroup = ProductGroupFixtures.newProductGroup();
             ProductGroupUpdateData updateData = createUpdateData(productGroupId);
 
-            given(commandFactory.createUpdateData(command)).willReturn(updateData);
+            given(productGroupReadManager.getById(ProductGroupId.of(productGroupId)))
+                    .willReturn(productGroup);
+            given(commandFactory.createUpdateData(command, productGroup.optionType()))
+                    .willReturn(updateData);
 
             // when
             sut.execute(command);
 
             // then
-            then(commandFactory).should().createUpdateData(command);
+            then(productGroupReadManager).should().getById(ProductGroupId.of(productGroupId));
+            then(commandFactory).should().createUpdateData(command, productGroup.optionType());
             then(coordinator).should().update(updateData);
         }
 
@@ -60,15 +69,20 @@ class UpdateProductGroupBasicInfoServiceTest {
             long productGroupId = 2L;
             UpdateProductGroupBasicInfoCommand command =
                     ProductGroupCommandFixtures.updateBasicInfoCommand(productGroupId, "수정된 상품명");
+            ProductGroup productGroup = ProductGroupFixtures.newProductGroup();
             ProductGroupUpdateData updateData = createUpdateData(productGroupId);
 
-            given(commandFactory.createUpdateData(command)).willReturn(updateData);
+            given(productGroupReadManager.getById(ProductGroupId.of(productGroupId)))
+                    .willReturn(productGroup);
+            given(commandFactory.createUpdateData(command, productGroup.optionType()))
+                    .willReturn(updateData);
 
             // when
             sut.execute(command);
 
             // then
-            then(commandFactory).should().createUpdateData(command);
+            then(productGroupReadManager).should().getById(ProductGroupId.of(productGroupId));
+            then(commandFactory).should().createUpdateData(command, productGroup.optionType());
             then(coordinator).should().update(updateData);
         }
     }
@@ -85,6 +99,7 @@ class UpdateProductGroupBasicInfoServiceTest {
                         ProductGroupFixtures.DEFAULT_SHIPPING_POLICY_ID),
                 com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId.of(
                         ProductGroupFixtures.DEFAULT_REFUND_POLICY_ID),
+                OptionType.SINGLE,
                 Instant.now());
     }
 }

@@ -89,9 +89,9 @@ class ProductGroupStatusTest {
         }
 
         @Test
-        @DisplayName("ACTIVE는 활성화 불가능하다")
-        void activeCannotActivate() {
-            assertThat(ProductGroupStatus.ACTIVE.canActivate()).isFalse();
+        @DisplayName("ACTIVE는 재검수 통과 시 멱등 활성화를 허용한다")
+        void activeCanActivate() {
+            assertThat(ProductGroupStatus.ACTIVE.canActivate()).isTrue();
         }
 
         @Test

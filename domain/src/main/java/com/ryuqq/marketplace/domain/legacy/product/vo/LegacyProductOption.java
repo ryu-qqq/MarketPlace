@@ -18,7 +18,7 @@ public class LegacyProductOption {
     private final LegacyProductId productId;
     private final LegacyOptionGroupId optionGroupId;
     private final LegacyOptionDetailId optionDetailId;
-    private final long additionalPrice;
+    private long additionalPrice;
     private DeletionStatus deletionStatus;
 
     private LegacyProductOption(
@@ -61,6 +61,11 @@ public class LegacyProductOption {
             DeletionStatus deletionStatus) {
         return new LegacyProductOption(
                 id, productId, optionGroupId, optionDetailId, additionalPrice, deletionStatus);
+    }
+
+    /** 추가금액 갱신 (유지 대상 옵션의 가격 변경 시). */
+    public void updateAdditionalPrice(long additionalPrice) {
+        this.additionalPrice = additionalPrice;
     }
 
     /** 옵션 삭제 (soft delete). */
