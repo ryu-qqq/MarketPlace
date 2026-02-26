@@ -61,8 +61,8 @@ services:
       SECURITY_SERVICE_TOKEN_SECRET: "${AUTHHUB_SERVICE_TOKEN}"
 
       # FileFlow Client
-      FILEFLOW_BASE_URL: "http://fileflow-web-api-prod.connectly.local"
-      FILEFLOW_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+      FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
+      FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
 
       # OpenTelemetry disabled (local)
       OTEL_JAVAAGENT_ENABLED: "false"
@@ -110,8 +110,8 @@ services:
       AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
 
       # FileFlow Client
-      FILEFLOW_BASE_URL: "http://fileflow-web-api-prod.connectly.local"
-      FILEFLOW_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+      FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
+      FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
 
       # OpenTelemetry disabled (local)
       OTEL_JAVAAGENT_ENABLED: "false"
@@ -159,8 +159,8 @@ services:
       AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
 
       # FileFlow Client
-      FILEFLOW_BASE_URL: "http://fileflow-web-api-prod.connectly.local"
-      FILEFLOW_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+      FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
+      FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
 
       # SQS Queue URLs (dummy for local - no SQS in local)
       SQS_INSPECTION_SCORING_URL: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-scoring"
