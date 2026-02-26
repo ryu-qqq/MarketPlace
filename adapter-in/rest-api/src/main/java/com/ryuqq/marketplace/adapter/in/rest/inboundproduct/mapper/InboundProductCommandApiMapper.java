@@ -26,8 +26,11 @@ public class InboundProductCommandApiMapper {
                 request.regularPrice(),
                 request.currentPrice(),
                 request.optionType(),
-                request.descriptionHtml(),
-                request.rawPayloadJson());
+                mapImages(request.images()),
+                mapOptionGroups(request.optionGroups()),
+                mapProducts(request.products()),
+                mapDescription(request.description()),
+                mapNotice(request.notice()));
     }
 
     public List<UpdateProductStockCommand> toStockCommands(
@@ -55,5 +58,99 @@ public class InboundProductCommandApiMapper {
                 result.internalProductGroupId(),
                 result.status().name(),
                 result.action().name());
+    }
+
+    private List<ReceiveInboundProductCommand.ImageCommand> mapImages(
+            List<ReceiveInboundProductApiRequest.ImageRequest> images) {
+        if (images == null) {
+            return List.of();
+        }
+        return images.stream()
+                .map(
+                        i ->
+                                new ReceiveInboundProductCommand.ImageCommand(
+                                        i.imageType(), i.originUrl(), i.sortOrder()))
+                .toList();
+    }
+
+    private List<ReceiveInboundProductCommand.OptionGroupCommand> mapOptionGroups(
+            List<ReceiveInboundProductApiRequest.OptionGroupRequest> optionGroups) {
+        if (optionGroups == null) {
+            return List.of();
+        }
+        return optionGroups.stream()
+                .map(
+                        og -> {
+                            List<ReceiveInboundProductCommand.OptionValueCommand> values =
+                                    og.optionValues() != null
+                                            ? og.optionValues().stream()
+                                                    .map(
+                                                            ov ->
+                                                                    new ReceiveInboundProductCommand
+                                                                            .OptionValueCommand(
+                                                                            ov.optionValueName(),
+                                                                            ov.sortOrder()))
+                                                    .toList()
+                                            : List.of();
+                            return new ReceiveInboundProductCommand.OptionGroupCommand(
+                                    og.optionGroupName(), og.inputType(), values);
+                        })
+                .toList();
+    }
+
+    private List<ReceiveInboundProductCommand.ProductCommand> mapProducts(
+            List<ReceiveInboundProductApiRequest.ProductRequest> products) {
+        if (products == null) {
+            return List.of();
+        }
+        return products.stream()
+                .map(
+                        p -> {
+                            List<ReceiveInboundProductCommand.SelectedOptionCommand>
+                                    selectedOptions =
+                                            p.selectedOptions() != null
+                                                    ? p.selectedOptions().stream()
+                                                            .map(
+                                                                    so ->
+                                                                            new ReceiveInboundProductCommand
+                                                                                    .SelectedOptionCommand(
+                                                                                    so
+                                                                                            .optionGroupName(),
+                                                                                    so
+                                                                                            .optionValueName()))
+                                                            .toList()
+                                                    : List.of();
+                            return new ReceiveInboundProductCommand.ProductCommand(
+                                    p.skuCode(),
+                                    p.regularPrice(),
+                                    p.currentPrice(),
+                                    p.stockQuantity(),
+                                    p.sortOrder(),
+                                    selectedOptions);
+                        })
+                .toList();
+    }
+
+    private ReceiveInboundProductCommand.DescriptionCommand mapDescription(
+            ReceiveInboundProductApiRequest.DescriptionRequest description) {
+        if (description == null) {
+            return new ReceiveInboundProductCommand.DescriptionCommand(null);
+        }
+        return new ReceiveInboundProductCommand.DescriptionCommand(description.content());
+    }
+
+    private ReceiveInboundProductCommand.NoticeCommand mapNotice(
+            ReceiveInboundProductApiRequest.NoticeRequest notice) {
+        if (notice == null || notice.entries() == null) {
+            return new ReceiveInboundProductCommand.NoticeCommand(List.of());
+        }
+        List<ReceiveInboundProductCommand.NoticeEntryCommand> entries =
+                notice.entries().stream()
+                        .map(
+                                e ->
+                                        new ReceiveInboundProductCommand.NoticeEntryCommand(
+                                                e.fieldCode(), e.fieldValue()))
+                        .toList();
+        return new ReceiveInboundProductCommand.NoticeCommand(entries);
     }
 }

@@ -6,9 +6,10 @@ import com.ryuqq.marketplace.application.legacyseller.dto.response.LegacySellerR
 public interface LegacyGetCurrentSellerUseCase {
 
     /**
-     * 현재 인증된 셀러 정보를 조회합니다.
+     * 인증 테넌트 ID로 셀러 정보를 조회합니다.
      *
+     * @param authTenantId 인증 테넌트 ID
      * @return 셀러 정보
      */
-    LegacySellerResult execute();
+    LegacySellerResult execute(String authTenantId);
 }

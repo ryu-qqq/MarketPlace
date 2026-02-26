@@ -19,14 +19,17 @@ public class InboundProductRegisterCoordinator {
     private final InboundProductCommandFactory factory;
     private final InboundProductCommandManager commandManager;
     private final InboundProductMappingResolver mappingResolver;
+    private final InboundProductRegistrationResolver registrationResolver;
 
     public InboundProductRegisterCoordinator(
             InboundProductCommandFactory factory,
             InboundProductCommandManager commandManager,
-            InboundProductMappingResolver mappingResolver) {
+            InboundProductMappingResolver mappingResolver,
+            InboundProductRegistrationResolver registrationResolver) {
         this.factory = factory;
         this.commandManager = commandManager;
         this.mappingResolver = mappingResolver;
+        this.registrationResolver = registrationResolver;
     }
 
     public InboundProductConversionResult register(ReceiveInboundProductCommand command) {
@@ -36,7 +39,16 @@ public class InboundProductRegisterCoordinator {
                 mappingResolver.resolveMappingAndApply(newProduct, now);
 
         if (mapping.isFullyMapped()) {
-            newProduct.markPendingConversion(now);
+            try {
+                registrationResolver.resolveAndApply(newProduct, now);
+                newProduct.markPendingConversion(now);
+            } catch (Exception e) {
+                log.warn(
+                        "인바운드 상품 해석 실패 (매핑은 완료): inboundSourceId={}, code={}, reason={}",
+                        command.inboundSourceId(),
+                        command.externalProductCode(),
+                        e.getMessage());
+            }
         }
 
         commandManager.persist(newProduct);

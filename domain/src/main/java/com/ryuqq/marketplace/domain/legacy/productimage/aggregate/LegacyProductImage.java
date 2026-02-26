@@ -74,6 +74,11 @@ public class LegacyProductImage {
                 deletionStatus);
     }
 
+    /** displayOrder 갱신 (유지 대상 이미지의 순서 변경 시). */
+    public void updateDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
+    }
+
     /** soft-delete 처리. */
     public void delete(Instant occurredAt) {
         this.deletionStatus = DeletionStatus.deletedAt(occurredAt);
@@ -97,6 +102,10 @@ public class LegacyProductImage {
 
     public ProductGroupImageType imageType() {
         return imageType;
+    }
+
+    public String imageTypeName() {
+        return imageType.name();
     }
 
     public String imageUrl() {

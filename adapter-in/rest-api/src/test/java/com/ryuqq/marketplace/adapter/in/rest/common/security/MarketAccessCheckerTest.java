@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
 import com.ryuqq.marketplace.application.seller.port.in.query.ResolveSellerIdByOrganizationUseCase;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +20,17 @@ import org.springframework.security.access.AccessDeniedException;
 class MarketAccessCheckerTest {
 
     private ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase;
+    private ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase;
     private MarketAccessChecker sut;
 
     @BeforeEach
     void setUp() {
         resolveSellerIdUseCase = mock(ResolveSellerIdByOrganizationUseCase.class);
-        sut = new TestableMarketAccessChecker(resolveSellerIdUseCase);
+        resolveLegacyProductGroupSellerIdUseCase =
+                mock(ResolveLegacyProductGroupSellerIdUseCase.class);
+        sut =
+                new TestableMarketAccessChecker(
+                        resolveSellerIdUseCase, resolveLegacyProductGroupSellerIdUseCase);
     }
 
     @Nested
@@ -35,7 +41,13 @@ class MarketAccessCheckerTest {
         @DisplayName("SUPER_ADMIN이면 true를 반환한다")
         void superAdmin_ReturnsTrue() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, true, false, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            true,
+                            false,
+                            "org1");
 
             // when
             boolean result = sut.isSellerOwnerOr(1L, "seller:write");
@@ -48,7 +60,13 @@ class MarketAccessCheckerTest {
         @DisplayName("organizationId로 조회한 sellerId가 일치하면 true를 반환한다")
         void ownerMatch_ReturnsTrue() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, false, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            false,
+                            "org1");
             when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.of(100L));
 
             // when
@@ -62,7 +80,13 @@ class MarketAccessCheckerTest {
         @DisplayName("소유자가 아니고 권한이 있으면 true를 반환한다")
         void notOwnerButHasPermission_ReturnsTrue() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, true, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            true,
+                            "org1");
             when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.of(200L));
 
             // when
@@ -76,7 +100,13 @@ class MarketAccessCheckerTest {
         @DisplayName("소유자가 아니고 권한도 없으면 false를 반환한다")
         void notOwnerNoPermission_ReturnsFalse() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, false, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            false,
+                            "org1");
             when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.of(200L));
 
             // when
@@ -90,7 +120,13 @@ class MarketAccessCheckerTest {
         @DisplayName("organizationId가 null이면 권한으로 fallback한다")
         void nullOrganizationId_FallbackToPermission() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, true, null);
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            true,
+                            null);
 
             // when
             boolean result = sut.isSellerOwnerOr(100L, "seller:write");
@@ -103,7 +139,13 @@ class MarketAccessCheckerTest {
         @DisplayName("organizationId가 blank이면 권한으로 fallback한다")
         void blankOrganizationId_FallbackToPermission() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, false, "  ");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            false,
+                            "  ");
 
             // when
             boolean result = sut.isSellerOwnerOr(100L, "seller:write");
@@ -116,7 +158,13 @@ class MarketAccessCheckerTest {
         @DisplayName("sellerId 조회 결과가 empty이면 권한으로 fallback한다")
         void emptyResolvedSellerId_FallbackToPermission() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, true, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            true,
+                            "org1");
             when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.empty());
 
             // when
@@ -135,7 +183,13 @@ class MarketAccessCheckerTest {
         @DisplayName("sellerId가 존재하면 반환한다")
         void exists_ReturnsSellerId() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, false, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            false,
+                            "org1");
             when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.of(42L));
 
             // when
@@ -149,7 +203,13 @@ class MarketAccessCheckerTest {
         @DisplayName("sellerId가 없으면 AccessDeniedException을 발생시킨다")
         void notExists_ThrowsAccessDenied() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, false, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            false,
+                            "org1");
             when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.empty());
 
             // when & then
@@ -166,7 +226,13 @@ class MarketAccessCheckerTest {
         @DisplayName("seller:write 권한이 있으면 canManageSeller는 true를 반환한다")
         void canManageSeller_WithPermission_ReturnsTrue() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, true, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            true,
+                            "org1");
 
             // when & then
             assertThat(sut.canManageSeller()).isTrue();
@@ -176,7 +242,13 @@ class MarketAccessCheckerTest {
         @DisplayName("product:write 권한이 있으면 canManageProduct는 true를 반환한다")
         void canManageProduct_WithPermission_ReturnsTrue() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, true, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            true,
+                            "org1");
 
             // when & then
             assertThat(sut.canManageProduct()).isTrue();
@@ -186,7 +258,13 @@ class MarketAccessCheckerTest {
         @DisplayName("권한이 없으면 canManageSeller는 false를 반환한다")
         void canManageSeller_WithoutPermission_ReturnsFalse() {
             // given
-            sut = new TestableMarketAccessChecker(resolveSellerIdUseCase, false, false, "org1");
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            false,
+                            false,
+                            "org1");
 
             // when & then
             assertThat(sut.canManageSeller()).isFalse();
@@ -203,16 +281,24 @@ class MarketAccessCheckerTest {
         private final boolean hasAnyPermission;
         private final String organizationId;
 
-        TestableMarketAccessChecker(ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase) {
-            this(resolveSellerIdUseCase, false, false, null);
+        TestableMarketAccessChecker(
+                ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase,
+                ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase) {
+            this(
+                    resolveSellerIdUseCase,
+                    resolveLegacyProductGroupSellerIdUseCase,
+                    false,
+                    false,
+                    null);
         }
 
         TestableMarketAccessChecker(
                 ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase,
+                ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase,
                 boolean isSuperAdmin,
                 boolean hasAnyPermission,
                 String organizationId) {
-            super(resolveSellerIdUseCase);
+            super(resolveSellerIdUseCase, resolveLegacyProductGroupSellerIdUseCase);
             this.isSuperAdmin = isSuperAdmin;
             this.hasAnyPermission = hasAnyPermission;
             this.organizationId = organizationId;

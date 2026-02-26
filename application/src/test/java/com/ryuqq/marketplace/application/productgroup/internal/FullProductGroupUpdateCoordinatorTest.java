@@ -4,9 +4,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
+import com.ryuqq.marketplace.application.product.factory.ProductCommandFactory;
 import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
@@ -20,10 +22,12 @@ import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOp
 import com.ryuqq.marketplace.application.selleroption.dto.result.SellerOptionUpdateResult;
 import com.ryuqq.marketplace.application.selleroption.internal.SellerOptionCommandCoordinator;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
+import com.ryuqq.marketplace.domain.product.vo.ProductUpdateData;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
+import com.ryuqq.marketplace.domain.productintelligence.aggregate.IntelligenceOutbox;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -47,6 +51,7 @@ class FullProductGroupUpdateCoordinatorTest {
     @Mock private SellerOptionCommandCoordinator sellerOptionCommandCoordinator;
     @Mock private DescriptionCommandCoordinator descriptionCommandCoordinator;
     @Mock private ProductNoticeCommandCoordinator noticeCommandCoordinator;
+    @Mock private ProductCommandFactory productCommandFactory;
     @Mock private ProductCommandCoordinator productCommandCoordinator;
     @Mock private IntelligenceOutboxCommandManager intelligenceOutboxCommandManager;
 
@@ -60,12 +65,9 @@ class FullProductGroupUpdateCoordinatorTest {
             // given
             long productGroupId = 1L;
             ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
-            SellerOptionUpdateResult optionResult =
-                    new SellerOptionUpdateResult(
-                            List.of(SellerOptionValueId.of(10L)), CommonVoFixtures.now());
-
-            given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
-                    .willReturn(optionResult);
+            stubCoordinatorsWithChanges(true);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(createDummyUpdateData(productGroupId));
 
             // when
             sut.update(bundle);
@@ -90,12 +92,9 @@ class FullProductGroupUpdateCoordinatorTest {
             // given
             long productGroupId = 1L;
             ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
-            SellerOptionUpdateResult optionResult =
-                    new SellerOptionUpdateResult(
-                            List.of(SellerOptionValueId.of(10L)), CommonVoFixtures.now());
-
-            given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
-                    .willReturn(optionResult);
+            stubCoordinatorsWithChanges(false);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(createDummyUpdateData(productGroupId));
 
             // when
             sut.update(bundle);
@@ -110,12 +109,9 @@ class FullProductGroupUpdateCoordinatorTest {
             // given
             long productGroupId = 1L;
             ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
-            SellerOptionUpdateResult optionResult =
-                    new SellerOptionUpdateResult(
-                            List.of(SellerOptionValueId.of(10L)), CommonVoFixtures.now());
-
-            given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
-                    .willReturn(optionResult);
+            stubCoordinatorsWithChanges(false);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(createDummyUpdateData(productGroupId));
 
             // when
             sut.update(bundle);
@@ -127,7 +123,7 @@ class FullProductGroupUpdateCoordinatorTest {
         }
 
         @Test
-        @DisplayName("옵션 그룹 수정을 SellerOptionCommandCoordinator에 위임하고 결과를 Product 수정에 활용한다")
+        @DisplayName("옵션 그룹 수정 결과를 Factory에 전달하여 ProductUpdateData를 생성한다")
         void update_DelegatesOptionGroupUpdateToSellerOptionCommandCoordinatorAndUsesResult() {
             // given
             long productGroupId = 1L;
@@ -136,10 +132,13 @@ class FullProductGroupUpdateCoordinatorTest {
                     List.of(SellerOptionValueId.of(10L), SellerOptionValueId.of(11L));
             Instant occurredAt = CommonVoFixtures.now();
             SellerOptionUpdateResult optionResult =
-                    new SellerOptionUpdateResult(resolvedIds, occurredAt);
+                    new SellerOptionUpdateResult(resolvedIds, occurredAt, true);
 
             given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
                     .willReturn(optionResult);
+            ProductUpdateData dummyUpdateData = createDummyUpdateData(productGroupId);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(dummyUpdateData);
 
             // when
             sut.update(bundle);
@@ -148,13 +147,17 @@ class FullProductGroupUpdateCoordinatorTest {
             then(sellerOptionCommandCoordinator)
                     .should()
                     .update(any(UpdateSellerOptionGroupsCommand.class));
-            then(productCommandCoordinator)
+            then(productCommandFactory)
                     .should()
-                    .updateWithDiff(
+                    .toUpdateData(
                             eq(bundle.basicInfoUpdateData().productGroupId()),
                             eq(bundle.productEntries()),
-                            eq(optionResult),
-                            any());
+                            eq(bundle.optionGroupCommand().optionGroups()),
+                            eq(resolvedIds),
+                            eq(occurredAt));
+            then(productCommandCoordinator)
+                    .should()
+                    .update(eq(bundle.basicInfoUpdateData().productGroupId()), eq(dummyUpdateData));
         }
 
         @Test
@@ -163,12 +166,9 @@ class FullProductGroupUpdateCoordinatorTest {
             // given
             long productGroupId = 1L;
             ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
-            SellerOptionUpdateResult optionResult =
-                    new SellerOptionUpdateResult(
-                            List.of(SellerOptionValueId.of(10L)), CommonVoFixtures.now());
-
-            given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
-                    .willReturn(optionResult);
+            stubCoordinatorsWithChanges(false);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(createDummyUpdateData(productGroupId));
 
             // when
             sut.update(bundle);
@@ -185,12 +185,9 @@ class FullProductGroupUpdateCoordinatorTest {
             // given
             long productGroupId = 1L;
             ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
-            SellerOptionUpdateResult optionResult =
-                    new SellerOptionUpdateResult(
-                            List.of(SellerOptionValueId.of(10L)), CommonVoFixtures.now());
-
-            given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
-                    .willReturn(optionResult);
+            stubCoordinatorsWithChanges(false);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(createDummyUpdateData(productGroupId));
 
             // when
             sut.update(bundle);
@@ -200,33 +197,144 @@ class FullProductGroupUpdateCoordinatorTest {
         }
 
         @Test
-        @DisplayName("상품 수정을 ProductCommandCoordinator.updateWithDiff에 위임한다")
-        void update_DelegatesProductUpdateToProductCommandCoordinator() {
+        @DisplayName("상품 수정을 Factory(resolve) + Coordinator(도메인 diff)에 위임한다")
+        void update_DelegatesProductUpdateToFactoryAndCoordinator() {
             // given
             long productGroupId = 1L;
             ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
-            SellerOptionUpdateResult optionResult =
-                    new SellerOptionUpdateResult(
-                            List.of(SellerOptionValueId.of(10L)), CommonVoFixtures.now());
-
-            given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
-                    .willReturn(optionResult);
+            stubCoordinatorsWithChanges(false);
+            ProductUpdateData dummyUpdateData = createDummyUpdateData(productGroupId);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(dummyUpdateData);
 
             // when
             sut.update(bundle);
 
             // then
+            then(productCommandFactory).should().toUpdateData(any(), any(), any(), any(), any());
             then(productCommandCoordinator)
                     .should()
-                    .updateWithDiff(
-                            eq(bundle.basicInfoUpdateData().productGroupId()),
-                            eq(bundle.productEntries()),
-                            eq(optionResult),
-                            any());
+                    .update(eq(bundle.basicInfoUpdateData().productGroupId()), eq(dummyUpdateData));
+        }
+    }
+
+    @Nested
+    @DisplayName("update() - 조건부 IntelligenceOutbox 생성")
+    class ConditionalIntelligenceOutboxTest {
+
+        @Test
+        @DisplayName("AI 분석 대상 필드(상품명/옵션/설명/고시정보) 변경 시 IntelligenceOutbox를 생성한다")
+        void update_AiRelevantFieldsChanged_CreatesIntelligenceOutbox() {
+            // given
+            long productGroupId = 1L;
+            ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
+            stubCoordinatorsWithChanges(true);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(createDummyUpdateData(productGroupId));
+
+            // when
+            sut.update(bundle);
+
+            // then
+            then(intelligenceOutboxCommandManager).should().persist(any(IntelligenceOutbox.class));
+        }
+
+        @Test
+        @DisplayName("AI 분석 대상 필드 미변경 시 IntelligenceOutbox를 생성하지 않는다")
+        void update_NoAiRelevantFieldsChanged_SkipsIntelligenceOutbox() {
+            // given
+            long productGroupId = 1L;
+            ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
+            stubCoordinatorsWithChanges(false);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(createDummyUpdateData(productGroupId));
+
+            // when
+            sut.update(bundle);
+
+            // then
+            then(intelligenceOutboxCommandManager)
+                    .should(never())
+                    .persist(any(IntelligenceOutbox.class));
+        }
+
+        @Test
+        @DisplayName("상품명만 변경되어도 IntelligenceOutbox를 생성한다")
+        void update_OnlyNameChanged_CreatesIntelligenceOutbox() {
+            // given
+            long productGroupId = 1L;
+            ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
+            SellerOptionUpdateResult noChange =
+                    new SellerOptionUpdateResult(
+                            List.of(SellerOptionValueId.of(10L)), CommonVoFixtures.now(), false);
+
+            given(productGroupCommandCoordinator.update(any(ProductGroupUpdateData.class)))
+                    .willReturn(true);
+            given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
+                    .willReturn(noChange);
+            given(
+                            descriptionCommandCoordinator.update(
+                                    any(UpdateProductGroupDescriptionCommand.class)))
+                    .willReturn(false);
+            given(noticeCommandCoordinator.update(any(UpdateProductNoticeCommand.class)))
+                    .willReturn(false);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(createDummyUpdateData(productGroupId));
+
+            // when
+            sut.update(bundle);
+
+            // then
+            then(intelligenceOutboxCommandManager).should().persist(any(IntelligenceOutbox.class));
+        }
+
+        @Test
+        @DisplayName("옵션만 변경되어도 IntelligenceOutbox를 생성한다")
+        void update_OnlyOptionsChanged_CreatesIntelligenceOutbox() {
+            // given
+            long productGroupId = 1L;
+            ProductGroupUpdateBundle bundle = createUpdateBundle(productGroupId);
+            SellerOptionUpdateResult optionChanged =
+                    new SellerOptionUpdateResult(
+                            List.of(SellerOptionValueId.of(10L)), CommonVoFixtures.now(), true);
+
+            given(productGroupCommandCoordinator.update(any(ProductGroupUpdateData.class)))
+                    .willReturn(false);
+            given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
+                    .willReturn(optionChanged);
+            given(
+                            descriptionCommandCoordinator.update(
+                                    any(UpdateProductGroupDescriptionCommand.class)))
+                    .willReturn(false);
+            given(noticeCommandCoordinator.update(any(UpdateProductNoticeCommand.class)))
+                    .willReturn(false);
+            given(productCommandFactory.toUpdateData(any(), any(), any(), any(), any()))
+                    .willReturn(createDummyUpdateData(productGroupId));
+
+            // when
+            sut.update(bundle);
+
+            // then
+            then(intelligenceOutboxCommandManager).should().persist(any(IntelligenceOutbox.class));
         }
     }
 
     // ===== 헬퍼 메서드 =====
+
+    private void stubCoordinatorsWithChanges(boolean hasChanges) {
+        SellerOptionUpdateResult optionResult =
+                new SellerOptionUpdateResult(
+                        List.of(SellerOptionValueId.of(10L)), CommonVoFixtures.now(), hasChanges);
+
+        given(productGroupCommandCoordinator.update(any(ProductGroupUpdateData.class)))
+                .willReturn(hasChanges);
+        given(sellerOptionCommandCoordinator.update(any(UpdateSellerOptionGroupsCommand.class)))
+                .willReturn(optionResult);
+        given(descriptionCommandCoordinator.update(any(UpdateProductGroupDescriptionCommand.class)))
+                .willReturn(hasChanges);
+        given(noticeCommandCoordinator.update(any(UpdateProductNoticeCommand.class)))
+                .willReturn(hasChanges);
+    }
 
     private ProductGroupUpdateBundle createUpdateBundle(long productGroupId) {
         ProductGroupUpdateData basicInfoUpdateData =
@@ -241,6 +349,7 @@ class FullProductGroupUpdateCoordinatorTest {
                                 ProductGroupFixtures.DEFAULT_SHIPPING_POLICY_ID),
                         com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId.of(
                                 ProductGroupFixtures.DEFAULT_REFUND_POLICY_ID),
+                        com.ryuqq.marketplace.domain.productgroup.vo.OptionType.SINGLE,
                         Instant.now());
 
         UpdateProductGroupImagesCommand imageCommand =
@@ -290,5 +399,10 @@ class FullProductGroupUpdateCoordinatorTest {
                 descriptionCommand,
                 noticeCommand,
                 productEntries);
+    }
+
+    private ProductUpdateData createDummyUpdateData(long productGroupId) {
+        return new ProductUpdateData(
+                ProductGroupId.of(productGroupId), List.of(), CommonVoFixtures.now());
     }
 }

@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateOptionRequest;
-import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductsCommand;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
@@ -20,54 +19,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LegacyOptionCommandApiMapper {
-
-    /**
-     * List&lt;LegacyCreateOptionRequest&gt; → LegacyUpdateProductsCommand (레거시 직접 write용).
-     *
-     * <p>flat 구조의 Command로 변환합니다. null 또는 empty 리스트인 경우 {@link IllegalArgumentException}을 던집니다.
-     */
-    public LegacyUpdateProductsCommand toLegacyUpdateProductsCommand(
-            long productGroupId, List<LegacyCreateOptionRequest> request) {
-        if (request == null || request.isEmpty()) {
-            throw new IllegalArgumentException("옵션 목록은 비어있을 수 없습니다");
-        }
-
-        List<LegacyUpdateProductsCommand.SkuEntry> skuEntries =
-                request.stream()
-                        .map(
-                                option -> {
-                                    List<LegacyUpdateProductsCommand.OptionEntry> optionEntries =
-                                            option.options() != null
-                                                    ? option.options().stream()
-                                                            .map(
-                                                                    d ->
-                                                                            new LegacyUpdateProductsCommand
-                                                                                    .OptionEntry(
-                                                                                    d
-                                                                                            .optionGroupId(),
-                                                                                    d
-                                                                                            .optionDetailId(),
-                                                                                    d.optionName(),
-                                                                                    d
-                                                                                            .optionValue()))
-                                                            .toList()
-                                                    : List.of();
-
-                                    long additionalPrice =
-                                            option.additionalPrice() != null
-                                                    ? option.additionalPrice().longValue()
-                                                    : 0L;
-
-                                    return new LegacyUpdateProductsCommand.SkuEntry(
-                                            option.productId(),
-                                            option.quantity() != null ? option.quantity() : 0,
-                                            additionalPrice,
-                                            optionEntries);
-                                })
-                        .toList();
-
-        return new LegacyUpdateProductsCommand(productGroupId, skuEntries);
-    }
 
     /**
      * List&lt;LegacyCreateOptionRequest&gt; → UpdateProductsCommand (내부 시스템용).

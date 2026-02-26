@@ -2,7 +2,8 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.adapter;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.repository.LegacyProductGroupDetailDescriptionJpaRepository;
-import com.ryuqq.marketplace.application.legacyproduct.port.out.command.LegacyProductDescriptionCommandPort;
+import com.ryuqq.marketplace.application.legacy.description.port.out.command.LegacyProductDescriptionCommandPort;
+import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroupDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
 import org.springframework.stereotype.Component;
@@ -28,5 +29,10 @@ public class LegacyProductDescriptionCommandAdapter implements LegacyProductDesc
     @Override
     public void persist(LegacyProductGroupId productGroupId, LegacyProductDescription description) {
         repository.save(mapper.toEntity(productGroupId, description));
+    }
+
+    @Override
+    public void persistDescription(LegacyProductGroupDescription description) {
+        repository.save(mapper.toDescriptionEntity(description));
     }
 }

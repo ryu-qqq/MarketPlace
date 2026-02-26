@@ -49,16 +49,12 @@ public class ProductGroupCommandApiMapper {
                 request.refundPolicyId(),
                 request.productGroupName(),
                 request.optionType(),
-                request.images() != null
-                        ? request.images().stream()
-                                .map(
-                                        img ->
-                                                new RegisterProductGroupCommand.ImageCommand(
-                                                        img.imageType(),
-                                                        img.originUrl(),
-                                                        img.sortOrder()))
-                                .toList()
-                        : null,
+                request.images().stream()
+                        .map(
+                                img ->
+                                        new RegisterProductGroupCommand.ImageCommand(
+                                                img.imageType(), img.originUrl(), img.sortOrder()))
+                        .toList(),
                 request.optionGroups() != null
                         ? request.optionGroups().stream()
                                 .map(
@@ -67,59 +63,49 @@ public class ProductGroupCommandApiMapper {
                                                         group.optionGroupName(),
                                                         group.canonicalOptionGroupId(),
                                                         group.inputType(),
-                                                        group.optionValues() != null
-                                                                ? group.optionValues().stream()
-                                                                        .map(
-                                                                                value ->
-                                                                                        new RegisterProductGroupCommand
-                                                                                                .OptionValueCommand(
-                                                                                                value
-                                                                                                        .optionValueName(),
-                                                                                                value
-                                                                                                        .canonicalOptionValueId(),
-                                                                                                value
-                                                                                                        .sortOrder()))
-                                                                        .toList()
-                                                                : List.of()))
-                                .toList()
-                        : null,
-                request.products() != null
-                        ? request.products().stream()
-                                .map(
-                                        product ->
-                                                new RegisterProductGroupCommand.ProductCommand(
-                                                        product.skuCode(),
-                                                        product.regularPrice(),
-                                                        product.currentPrice(),
-                                                        product.stockQuantity(),
-                                                        product.sortOrder(),
-                                                        product.selectedOptions().stream()
+                                                        group.optionValues().stream()
                                                                 .map(
-                                                                        so ->
-                                                                                new SelectedOption(
-                                                                                        so
-                                                                                                .optionGroupName(),
-                                                                                        so
-                                                                                                .optionValueName()))
+                                                                        value ->
+                                                                                new RegisterProductGroupCommand
+                                                                                        .OptionValueCommand(
+                                                                                        value
+                                                                                                .optionValueName(),
+                                                                                        value
+                                                                                                .canonicalOptionValueId(),
+                                                                                        value
+                                                                                                .sortOrder()))
                                                                 .toList()))
                                 .toList()
                         : null,
-                request.description() != null
-                        ? new RegisterProductGroupCommand.DescriptionCommand(
-                                request.description().content(), List.of())
-                        : null,
-                request.notice() != null
-                        ? new RegisterProductGroupCommand.NoticeCommand(
-                                request.notice().noticeCategoryId(),
-                                request.notice().entries().stream()
-                                        .map(
-                                                entry ->
-                                                        new RegisterProductGroupCommand
-                                                                .NoticeEntryCommand(
-                                                                entry.noticeFieldId(),
-                                                                entry.fieldValue()))
-                                        .toList())
-                        : null);
+                request.products().stream()
+                        .map(
+                                product ->
+                                        new RegisterProductGroupCommand.ProductCommand(
+                                                product.skuCode(),
+                                                product.regularPrice(),
+                                                product.currentPrice(),
+                                                product.stockQuantity(),
+                                                product.sortOrder(),
+                                                product.selectedOptions().stream()
+                                                        .map(
+                                                                so ->
+                                                                        new SelectedOption(
+                                                                                so
+                                                                                        .optionGroupName(),
+                                                                                so
+                                                                                        .optionValueName()))
+                                                        .toList()))
+                        .toList(),
+                new RegisterProductGroupCommand.DescriptionCommand(
+                        request.description().content(), List.of()),
+                new RegisterProductGroupCommand.NoticeCommand(
+                        request.notice().noticeCategoryId(),
+                        request.notice().entries().stream()
+                                .map(
+                                        entry ->
+                                                new RegisterProductGroupCommand.NoticeEntryCommand(
+                                                        entry.noticeFieldId(), entry.fieldValue()))
+                                .toList()));
     }
 
     /**
@@ -141,16 +127,12 @@ public class ProductGroupCommandApiMapper {
                 UNRESOLVED_POLICY_ID,
                 request.productGroupName(),
                 request.optionType(),
-                request.images() != null
-                        ? request.images().stream()
-                                .map(
-                                        img ->
-                                                new RegisterProductGroupCommand.ImageCommand(
-                                                        img.imageType(),
-                                                        img.originUrl(),
-                                                        img.sortOrder()))
-                                .toList()
-                        : null,
+                request.images().stream()
+                        .map(
+                                img ->
+                                        new RegisterProductGroupCommand.ImageCommand(
+                                                img.imageType(), img.originUrl(), img.sortOrder()))
+                        .toList(),
                 request.optionGroups() != null
                         ? request.optionGroups().stream()
                                 .map(
@@ -159,59 +141,49 @@ public class ProductGroupCommandApiMapper {
                                                         group.optionGroupName(),
                                                         group.canonicalOptionGroupId(),
                                                         group.inputType(),
-                                                        group.optionValues() != null
-                                                                ? group.optionValues().stream()
-                                                                        .map(
-                                                                                value ->
-                                                                                        new RegisterProductGroupCommand
-                                                                                                .OptionValueCommand(
-                                                                                                value
-                                                                                                        .optionValueName(),
-                                                                                                value
-                                                                                                        .canonicalOptionValueId(),
-                                                                                                value
-                                                                                                        .sortOrder()))
-                                                                        .toList()
-                                                                : List.of()))
-                                .toList()
-                        : null,
-                request.products() != null
-                        ? request.products().stream()
-                                .map(
-                                        product ->
-                                                new RegisterProductGroupCommand.ProductCommand(
-                                                        product.skuCode(),
-                                                        product.regularPrice(),
-                                                        product.currentPrice(),
-                                                        product.stockQuantity(),
-                                                        product.sortOrder(),
-                                                        product.selectedOptions().stream()
+                                                        group.optionValues().stream()
                                                                 .map(
-                                                                        so ->
-                                                                                new SelectedOption(
-                                                                                        so
-                                                                                                .optionGroupName(),
-                                                                                        so
-                                                                                                .optionValueName()))
+                                                                        value ->
+                                                                                new RegisterProductGroupCommand
+                                                                                        .OptionValueCommand(
+                                                                                        value
+                                                                                                .optionValueName(),
+                                                                                        value
+                                                                                                .canonicalOptionValueId(),
+                                                                                        value
+                                                                                                .sortOrder()))
                                                                 .toList()))
                                 .toList()
                         : null,
-                request.description() != null
-                        ? new RegisterProductGroupCommand.DescriptionCommand(
-                                request.description().content(), List.of())
-                        : null,
-                request.notice() != null
-                        ? new RegisterProductGroupCommand.NoticeCommand(
-                                request.notice().noticeCategoryId(),
-                                request.notice().entries().stream()
-                                        .map(
-                                                entry ->
-                                                        new RegisterProductGroupCommand
-                                                                .NoticeEntryCommand(
-                                                                entry.noticeFieldId(),
-                                                                entry.fieldValue()))
-                                        .toList())
-                        : null);
+                request.products().stream()
+                        .map(
+                                product ->
+                                        new RegisterProductGroupCommand.ProductCommand(
+                                                product.skuCode(),
+                                                product.regularPrice(),
+                                                product.currentPrice(),
+                                                product.stockQuantity(),
+                                                product.sortOrder(),
+                                                product.selectedOptions().stream()
+                                                        .map(
+                                                                so ->
+                                                                        new SelectedOption(
+                                                                                so
+                                                                                        .optionGroupName(),
+                                                                                so
+                                                                                        .optionValueName()))
+                                                        .toList()))
+                        .toList(),
+                new RegisterProductGroupCommand.DescriptionCommand(
+                        request.description().content(), List.of()),
+                new RegisterProductGroupCommand.NoticeCommand(
+                        request.notice().noticeCategoryId(),
+                        request.notice().entries().stream()
+                                .map(
+                                        entry ->
+                                                new RegisterProductGroupCommand.NoticeEntryCommand(
+                                                        entry.noticeFieldId(), entry.fieldValue()))
+                                .toList()));
     }
 
     /**
@@ -230,16 +202,13 @@ public class ProductGroupCommandApiMapper {
                 request.categoryId(),
                 request.shippingPolicyId(),
                 request.refundPolicyId(),
-                request.images() != null
-                        ? request.images().stream()
-                                .map(
-                                        img ->
-                                                new UpdateProductGroupFullCommand.ImageCommand(
-                                                        img.imageType(),
-                                                        img.originUrl(),
-                                                        img.sortOrder()))
-                                .toList()
-                        : null,
+                request.optionType(),
+                request.images().stream()
+                        .map(
+                                img ->
+                                        new UpdateProductGroupFullCommand.ImageCommand(
+                                                img.imageType(), img.originUrl(), img.sortOrder()))
+                        .toList(),
                 request.optionGroups() != null
                         ? request.optionGroups().stream()
                                 .map(
@@ -250,62 +219,53 @@ public class ProductGroupCommandApiMapper {
                                                         group.optionGroupName(),
                                                         group.canonicalOptionGroupId(),
                                                         group.inputType(),
-                                                        group.optionValues() != null
-                                                                ? group.optionValues().stream()
-                                                                        .map(
-                                                                                value ->
-                                                                                        new UpdateProductGroupFullCommand
-                                                                                                .OptionValueCommand(
-                                                                                                value
-                                                                                                        .sellerOptionValueId(),
-                                                                                                value
-                                                                                                        .optionValueName(),
-                                                                                                value
-                                                                                                        .canonicalOptionValueId(),
-                                                                                                value
-                                                                                                        .sortOrder()))
-                                                                        .toList()
-                                                                : List.of()))
-                                .toList()
-                        : null,
-                request.products() != null
-                        ? request.products().stream()
-                                .map(
-                                        product ->
-                                                new UpdateProductGroupFullCommand.ProductCommand(
-                                                        product.productId(),
-                                                        product.skuCode(),
-                                                        product.regularPrice(),
-                                                        product.currentPrice(),
-                                                        product.stockQuantity(),
-                                                        product.sortOrder(),
-                                                        product.selectedOptions().stream()
+                                                        group.optionValues().stream()
                                                                 .map(
-                                                                        so ->
-                                                                                new SelectedOption(
-                                                                                        so
-                                                                                                .optionGroupName(),
-                                                                                        so
-                                                                                                .optionValueName()))
+                                                                        value ->
+                                                                                new UpdateProductGroupFullCommand
+                                                                                        .OptionValueCommand(
+                                                                                        value
+                                                                                                .sellerOptionValueId(),
+                                                                                        value
+                                                                                                .optionValueName(),
+                                                                                        value
+                                                                                                .canonicalOptionValueId(),
+                                                                                        value
+                                                                                                .sortOrder()))
                                                                 .toList()))
                                 .toList()
                         : null,
-                request.description() != null
-                        ? new UpdateProductGroupFullCommand.DescriptionCommand(
-                                request.description().content(), List.of())
-                        : null,
-                request.notice() != null
-                        ? new UpdateProductGroupFullCommand.NoticeCommand(
-                                request.notice().noticeCategoryId(),
-                                request.notice().entries().stream()
-                                        .map(
-                                                entry ->
-                                                        new UpdateProductGroupFullCommand
-                                                                .NoticeEntryCommand(
-                                                                entry.noticeFieldId(),
-                                                                entry.fieldValue()))
-                                        .toList())
-                        : null);
+                request.products().stream()
+                        .map(
+                                product ->
+                                        new UpdateProductGroupFullCommand.ProductCommand(
+                                                product.productId(),
+                                                product.skuCode(),
+                                                product.regularPrice(),
+                                                product.currentPrice(),
+                                                product.stockQuantity(),
+                                                product.sortOrder(),
+                                                product.selectedOptions().stream()
+                                                        .map(
+                                                                so ->
+                                                                        new SelectedOption(
+                                                                                so
+                                                                                        .optionGroupName(),
+                                                                                so
+                                                                                        .optionValueName()))
+                                                        .toList()))
+                        .toList(),
+                new UpdateProductGroupFullCommand.DescriptionCommand(
+                        request.description().content(), List.of()),
+                new UpdateProductGroupFullCommand.NoticeCommand(
+                        request.notice().noticeCategoryId(),
+                        request.notice().entries().stream()
+                                .map(
+                                        entry ->
+                                                new UpdateProductGroupFullCommand
+                                                        .NoticeEntryCommand(
+                                                        entry.noticeFieldId(), entry.fieldValue()))
+                                .toList()));
     }
 
     /**
