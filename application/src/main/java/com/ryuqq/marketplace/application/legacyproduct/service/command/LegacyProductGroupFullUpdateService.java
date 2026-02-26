@@ -1,62 +1,33 @@
 package com.ryuqq.marketplace.application.legacyproduct.service.command;
 
-import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInboundProductCommand;
-import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductUpdateCoordinator;
-import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductReadManager;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductGroupCommand;
+import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyProductGroupFullUpdateCoordinator;
 import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyProductGroupFullUpdateUseCase;
-import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
+import java.time.Instant;
 import org.springframework.stereotype.Service;
 
 /**
- * 레거시 상품 수정 서비스.
+ * 레거시 상품그룹 전체 수정 서비스.
  *
- * <p>레거시 수정 요청을 InboundProduct 기준으로 반영합니다. 수정 요청에 없는 필드는 기존 InboundProduct 값을 유지합니다.
+ * <p>updateStatus 플래그 기반으로 변경된 섹션만 레거시 DB에 직접 반영합니다.
  */
 @Service
 public class LegacyProductGroupFullUpdateService implements LegacyProductGroupFullUpdateUseCase {
 
-    private final InboundProductReadManager inboundProductReadManager;
-    private final InboundProductUpdateCoordinator inboundProductUpdateCoordinator;
+    private final LegacyProductGroupFullUpdateCoordinator fullUpdateCoordinator;
+    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
 
     public LegacyProductGroupFullUpdateService(
-            InboundProductReadManager inboundProductReadManager,
-            InboundProductUpdateCoordinator inboundProductUpdateCoordinator) {
-        this.inboundProductReadManager = inboundProductReadManager;
-        this.inboundProductUpdateCoordinator = inboundProductUpdateCoordinator;
+            LegacyProductGroupFullUpdateCoordinator fullUpdateCoordinator,
+            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
+        this.fullUpdateCoordinator = fullUpdateCoordinator;
+        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
     }
 
     @Override
-    public void execute(ReceiveInboundProductCommand command) {
-        InboundProduct existing =
-                inboundProductReadManager.findByInboundSourceIdAndProductCodeOrThrow(
-                        command.inboundSourceId(), command.externalProductCode());
-
-        ReceiveInboundProductCommand mergedCommand = mergeWithExisting(command, existing);
-        inboundProductUpdateCoordinator.update(existing, mergedCommand);
-    }
-
-    private ReceiveInboundProductCommand mergeWithExisting(
-            ReceiveInboundProductCommand command, InboundProduct existing) {
-        String descriptionHtml =
-                command.descriptionHtml() != null
-                        ? command.descriptionHtml()
-                        : existing.descriptionHtml();
-        String rawPayloadJson =
-                command.rawPayloadJson() != null
-                        ? command.rawPayloadJson()
-                        : existing.rawPayloadJson();
-
-        return new ReceiveInboundProductCommand(
-                command.inboundSourceId(),
-                command.externalProductCode(),
-                existing.productName(),
-                existing.externalBrandCode(),
-                existing.externalCategoryCode(),
-                existing.sellerId(),
-                existing.regularPrice(),
-                existing.currentPrice(),
-                existing.optionType(),
-                descriptionHtml,
-                rawPayloadJson);
+    public void execute(LegacyUpdateProductGroupCommand command) {
+        fullUpdateCoordinator.execute(command);
+        conversionOutboxCommandManager.createIfNoPending(command.productGroupId(), Instant.now());
     }
 }

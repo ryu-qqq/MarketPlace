@@ -28,9 +28,9 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyInbound
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyNoticeCommandApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyOptionCommandApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyProductCommandApiMapper;
-import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInboundProductCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyRegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateNoticeCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductGroupCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductsCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.response.LegacyProductRegistrationResult;
 import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult;
@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,8 +71,6 @@ import org.springframework.web.bind.annotation.RestController;
                 "세토프 어드민용 레거시 엔드포인트. 기존 세토프 연동 호환을 위해 제공되며, 신규 개발 시에는 동일 기능의 일반 API 사용을 권장합니다.")
 @RestController
 public class LegacyProductCommandController {
-
-    private static final long LEGACY_EXTERNAL_SOURCE_ID = 1L;
 
     private final LegacyProductGroupFullRegisterUseCase legacyProductGroupFullRegisterUseCase;
     private final LegacyProductGroupFullUpdateUseCase legacyProductGroupFullUpdateUseCase;
@@ -124,6 +123,7 @@ public class LegacyProductCommandController {
 
     // ===== 등록 =====
 
+    @PreAuthorize("@access.authenticated()")
     @PostMapping(PRODUCT_GROUP)
     public ResponseEntity<LegacyApiResponse<LegacyCreateProductGroupResponse>>
             registerProductGroupFull(@Valid @RequestBody LegacyCreateProductGroupRequest request) {
@@ -138,17 +138,18 @@ public class LegacyProductCommandController {
 
     // ===== 수정 =====
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @PutMapping(PRODUCT_GROUP_ID)
     public ResponseEntity<LegacyApiResponse<Long>> updateProductGroupFull(
             @PathVariable long productGroupId,
             @Valid @RequestBody LegacyUpdateProductGroupRequest request) {
-        ReceiveInboundProductCommand command =
-                legacyInboundApiMapper.toUpdateCommand(
-                        request, LEGACY_EXTERNAL_SOURCE_ID, productGroupId);
+        LegacyUpdateProductGroupCommand command =
+                legacyInboundApiMapper.toUpdateCommand(request, productGroupId);
         legacyProductGroupFullUpdateUseCase.execute(command);
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @PutMapping(NOTICE)
     public ResponseEntity<LegacyApiResponse<Long>> updateProductNotice(
             @PathVariable long productGroupId,
@@ -159,6 +160,7 @@ public class LegacyProductCommandController {
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @PutMapping(IMAGES)
     public ResponseEntity<LegacyApiResponse<Long>> updateProductImages(
             @PathVariable long productGroupId,
@@ -168,6 +170,7 @@ public class LegacyProductCommandController {
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @PutMapping(DETAIL_DESCRIPTION)
     public ResponseEntity<LegacyApiResponse<Long>> updateDetailDescription(
             @PathVariable long productGroupId,
@@ -178,6 +181,7 @@ public class LegacyProductCommandController {
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @PutMapping(OPTION)
     public ResponseEntity<LegacyApiResponse<Set<LegacyProductFetchResponse>>> updateProductOption(
             @PathVariable long productGroupId,
@@ -191,6 +195,7 @@ public class LegacyProductCommandController {
         return ResponseEntity.ok(LegacyApiResponse.of(products));
     }
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @PatchMapping(PRICE)
     public ResponseEntity<LegacyApiResponse<Long>> updatePrice(
             @PathVariable long productGroupId,
@@ -200,6 +205,7 @@ public class LegacyProductCommandController {
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @PatchMapping(GROUP_DISPLAY_YN)
     public ResponseEntity<LegacyApiResponse<Long>> updateGroupDisplayYn(
             @PathVariable long productGroupId,
@@ -209,6 +215,7 @@ public class LegacyProductCommandController {
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @PatchMapping(OUT_STOCK)
     public ResponseEntity<LegacyApiResponse<Set<LegacyProductFetchResponse>>> outOfStock(
             @PathVariable long productGroupId) {
@@ -221,6 +228,7 @@ public class LegacyProductCommandController {
         return ResponseEntity.ok(LegacyApiResponse.of(products));
     }
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @PatchMapping(GROUP_STOCK)
     public ResponseEntity<LegacyApiResponse<Set<LegacyProductFetchResponse>>> updateGroupStock(
             @PathVariable long productGroupId,

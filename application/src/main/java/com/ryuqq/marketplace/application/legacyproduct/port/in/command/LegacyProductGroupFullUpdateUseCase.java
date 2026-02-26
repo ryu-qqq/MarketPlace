@@ -1,14 +1,14 @@
 package com.ryuqq.marketplace.application.legacyproduct.port.in.command;
 
-import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInboundProductCommand;
+import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductGroupCommand;
 
-/** 레거시 상품 수정 UseCase. */
+/** 레거시 상품그룹 전체 수정 UseCase. */
 public interface LegacyProductGroupFullUpdateUseCase {
 
     /**
-     * 레거시 상품(세토프) 수정 요청을 InboundProduct 기준으로 반영합니다.
+     * updateStatus 플래그에 따라 변경된 섹션만 선택적으로 레거시 DB에 직접 반영합니다.
      *
-     * @param command 레거시 수정 요청을 변환한 인바운드 커맨드
+     * @param command 상품그룹 전체 수정 커맨드
      */
-    void execute(ReceiveInboundProductCommand command);
+    void execute(LegacyUpdateProductGroupCommand command);
 }

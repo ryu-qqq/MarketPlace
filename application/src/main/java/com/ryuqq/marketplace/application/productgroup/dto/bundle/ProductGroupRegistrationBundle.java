@@ -132,7 +132,7 @@ public record ProductGroupRegistrationBundle(
                 createOptionGroups(productGroupId),
                 optionData.optionType(),
                 createDescription(productGroupId),
-                createNotice(productGroupId));
+                noticeData != null ? createNotice(productGroupId) : null);
     }
 
     // === Private Domain Creation Methods ===

@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductG
 import com.ryuqq.marketplace.application.legacyproduct.port.in.query.LegacyProductQueryUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,7 @@ public class LegacyProductQueryController {
         this.legacyProductQueryApiMapper = legacyProductQueryApiMapper;
     }
 
+    @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
     @GetMapping(PRODUCT_GROUP_ID)
     public ResponseEntity<LegacyApiResponse<LegacyProductDetailApiResponse>> fetchProductGroup(
             @PathVariable long productGroupId) {

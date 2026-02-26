@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.legacyproduct.service.command;
 
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
 import com.ryuqq.marketplace.application.legacyproduct.dto.command.LegacyUpdateProductsCommand;
 import com.ryuqq.marketplace.application.legacyproduct.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacyproduct.factory.LegacyProductGroupCommandFactory;
@@ -8,6 +9,7 @@ import com.ryuqq.marketplace.application.legacyproduct.port.in.command.LegacyPro
 import com.ryuqq.marketplace.application.legacyproduct.port.in.query.LegacyProductQueryUseCase;
 import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -22,14 +24,17 @@ public class LegacyProductUpdateOptionsService implements LegacyProductUpdateOpt
     private final LegacyProductGroupCommandFactory commandFactory;
     private final LegacyOptionUpdateCoordinator optionUpdateCoordinator;
     private final LegacyProductQueryUseCase legacyProductQueryUseCase;
+    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
 
     public LegacyProductUpdateOptionsService(
             LegacyProductGroupCommandFactory commandFactory,
             LegacyOptionUpdateCoordinator optionUpdateCoordinator,
-            LegacyProductQueryUseCase legacyProductQueryUseCase) {
+            LegacyProductQueryUseCase legacyProductQueryUseCase,
+            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.optionUpdateCoordinator = optionUpdateCoordinator;
         this.legacyProductQueryUseCase = legacyProductQueryUseCase;
+        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
     }
 
     @Override
@@ -38,6 +43,7 @@ public class LegacyProductUpdateOptionsService implements LegacyProductUpdateOpt
         List<LegacyProduct> newProducts =
                 commandFactory.createProductsForOptionUpdate(groupId, command.skus());
         optionUpdateCoordinator.execute(groupId, newProducts);
+        conversionOutboxCommandManager.createIfNoPending(command.productGroupId(), Instant.now());
         return legacyProductQueryUseCase.execute(command.productGroupId());
     }
 }

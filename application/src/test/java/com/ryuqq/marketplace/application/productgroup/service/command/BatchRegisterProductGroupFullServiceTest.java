@@ -12,6 +12,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupReg
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
+import com.ryuqq.marketplace.application.productgroup.dto.result.ProductGroupRegistrationResult;
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupBundleFactory;
 import com.ryuqq.marketplace.application.productgroup.internal.FullProductGroupRegistrationCoordinator;
 import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadManager;
@@ -77,7 +78,11 @@ class BatchRegisterProductGroupFullServiceTest {
             given(bundleFactory.createProductGroupBundle(commands.get(0))).willReturn(bundle);
             given(bundleFactory.createProductGroupBundle(commands.get(1))).willReturn(bundle);
             given(bundleFactory.createProductGroupBundle(commands.get(2))).willReturn(bundle);
-            given(coordinator.register(bundle)).willReturn(1L, 2L, 3L);
+            given(coordinator.register(bundle))
+                    .willReturn(
+                            new ProductGroupRegistrationResult(1L, List.of()),
+                            new ProductGroupRegistrationResult(2L, List.of()),
+                            new ProductGroupRegistrationResult(3L, List.of()));
 
             // when
             BatchProcessingResult<Long> result = sut.execute(commands);
@@ -101,7 +106,8 @@ class BatchRegisterProductGroupFullServiceTest {
             Long expectedId = 100L;
 
             given(bundleFactory.createProductGroupBundle(commands.get(0))).willReturn(bundle);
-            given(coordinator.register(bundle)).willReturn(expectedId);
+            given(coordinator.register(bundle))
+                    .willReturn(new ProductGroupRegistrationResult(expectedId, List.of()));
 
             // when
             BatchProcessingResult<Long> result = sut.execute(commands);
@@ -149,7 +155,10 @@ class BatchRegisterProductGroupFullServiceTest {
             given(bundleFactory.createProductGroupBundle(commands.get(1)))
                     .willThrow(new ProductGroupNotFoundException(99L));
             given(bundleFactory.createProductGroupBundle(commands.get(2))).willReturn(bundle);
-            given(coordinator.register(bundle)).willReturn(1L, 3L);
+            given(coordinator.register(bundle))
+                    .willReturn(
+                            new ProductGroupRegistrationResult(1L, List.of()),
+                            new ProductGroupRegistrationResult(3L, List.of()));
 
             // when
             BatchProcessingResult<Long> result = sut.execute(commands);
@@ -261,7 +270,8 @@ class BatchRegisterProductGroupFullServiceTest {
             ProductGroupRegistrationBundle bundle = createRegistrationBundle();
 
             given(bundleFactory.createProductGroupBundle(any())).willReturn(bundle);
-            given(coordinator.register(any())).willReturn(1L);
+            given(coordinator.register(any()))
+                    .willReturn(new ProductGroupRegistrationResult(1L, List.of()));
 
             // when
             sut.execute(commands);
@@ -283,7 +293,10 @@ class BatchRegisterProductGroupFullServiceTest {
 
             given(bundleFactory.createProductGroupBundle(commands.get(0))).willReturn(bundle);
             given(bundleFactory.createProductGroupBundle(commands.get(1))).willReturn(bundle);
-            given(coordinator.register(bundle)).willReturn(10L, 11L);
+            given(coordinator.register(bundle))
+                    .willReturn(
+                            new ProductGroupRegistrationResult(10L, List.of()),
+                            new ProductGroupRegistrationResult(11L, List.of()));
 
             // when
             BatchProcessingResult<Long> result = sut.execute(commands);
@@ -325,7 +338,8 @@ class BatchRegisterProductGroupFullServiceTest {
 
             ProductGroupRegistrationBundle bundle = createRegistrationBundle();
             given(bundleFactory.createProductGroupBundle(any())).willReturn(bundle);
-            given(coordinator.register(bundle)).willReturn(100L);
+            given(coordinator.register(bundle))
+                    .willReturn(new ProductGroupRegistrationResult(100L, List.of()));
 
             // when
             BatchProcessingResult<Long> result = sut.execute(commands);

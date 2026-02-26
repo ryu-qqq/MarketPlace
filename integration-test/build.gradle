@@ -24,8 +24,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // Bootstrap 모듈
-    testImplementation project(':bootstrap:bootstrap-web-api')
+    // Bootstrap 모듈 (legacy 영속성 모듈 제외 — 별도 DataSource/EntityManager 사용)
+    testImplementation(project(':bootstrap:bootstrap-web-api')) {
+        exclude group: 'com.ryuqq.marketplace', module: 'persistence-mysql-legacy'
+    }
 
     // Domain & Application
     testImplementation project(':domain')

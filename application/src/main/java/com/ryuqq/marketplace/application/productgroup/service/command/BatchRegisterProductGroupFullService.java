@@ -97,7 +97,7 @@ public class BatchRegisterProductGroupFullService implements BatchRegisterProduc
             RegisterProductGroupCommand resolvedCommand = resolvePoliciesIfNeeded(command);
             ProductGroupRegistrationBundle bundle =
                     bundleFactory.createProductGroupBundle(resolvedCommand);
-            Long productGroupId = coordinator.register(bundle);
+            Long productGroupId = coordinator.register(bundle).productGroupId();
             return BatchItemResult.success(productGroupId, itemName);
         } catch (DomainException e) {
             log.warn(
