@@ -1,0 +1,252 @@
+package com.ryuqq.marketplace.integration.outboundsync;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.OutboundSyncOutboxJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.OutboundSyncOutboxJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.repository.OutboundSyncOutboxJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.repository.OutboundSyncOutboxQueryDslRepository;
+import com.ryuqq.marketplace.integration.E2ETestBase;
+import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+/**
+ * OutboundSyncOutbox QueryDSL Repository 통합 테스트.
+ *
+ * <p>OutboundSyncOutboxQueryDslRepository의 쿼리 동작을 검증합니다.
+ *
+ * <p>테스트 대상:
+ *
+ * <ul>
+ *   <li>findPendingByProductGroupId - 상품그룹 ID로 PENDING 상태 Outbox 목록 조회
+ * </ul>
+ *
+ * @author ryu-qqq
+ * @since 1.0.0
+ */
+@Tag("e2e")
+@Tag("outboundsync")
+@DisplayName("OutboundSyncOutbox QueryDSL Repository 통합 테스트")
+class OutboundSyncOutboxQueryDslRepositoryE2ETest extends E2ETestBase {
+
+    @Autowired private OutboundSyncOutboxQueryDslRepository queryDslRepository;
+    @Autowired private OutboundSyncOutboxJpaRepository jpaRepository;
+
+    @BeforeEach
+    void setUp() {
+        jpaRepository.deleteAll();
+    }
+
+    @AfterEach
+    void tearDown() {
+        jpaRepository.deleteAll();
+    }
+
+    // ========================================================================
+    // 1. findPendingByProductGroupId 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findPendingByProductGroupId 쿼리 테스트")
+    class FindPendingByProductGroupIdTest {
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q1-S01] 상품그룹 ID로 PENDING 상태 Outbox 목록을 조회합니다")
+        void findPendingByProductGroupId_ExistingRecord_ReturnsEntities() {
+            // given
+            Long targetProductGroupId = 500L;
+            jpaRepository.saveAll(
+                    List.of(
+                            OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(
+                                    targetProductGroupId, 10L),
+                            OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(
+                                    targetProductGroupId, 20L)));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupId(targetProductGroupId);
+
+            // then
+            assertThat(result).hasSize(2);
+            assertThat(result).allMatch(e -> e.getProductGroupId().equals(targetProductGroupId));
+            assertThat(result)
+                    .allMatch(
+                            e -> e.getStatus().equals(OutboundSyncOutboxJpaEntity.Status.PENDING));
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q1-F01] 존재하지 않는 상품그룹 ID로 조회 시 빈 리스트를 반환합니다")
+        void findPendingByProductGroupId_NonExistingId_ReturnsEmpty() {
+            // given - 데이터 없음
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupId(99999L);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q1-F02] PENDING이 아닌 상태의 Outbox는 조회되지 않습니다")
+        void findPendingByProductGroupId_NonPendingStatus_NotReturned() {
+            // given
+            Long targetProductGroupId = 600L;
+            jpaRepository.saveAll(
+                    List.of(
+                            OutboundSyncOutboxJpaEntityFixtures.newProcessingEntity(),
+                            OutboundSyncOutboxJpaEntityFixtures.newCompletedEntity(),
+                            OutboundSyncOutboxJpaEntityFixtures.newFailedEntity()));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupId(targetProductGroupId);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q1-F03] 다른 상품그룹 ID의 PENDING Outbox는 조회되지 않습니다")
+        void findPendingByProductGroupId_DifferentProductGroupId_NotReturned() {
+            // given
+            jpaRepository.save(OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(700L, 10L));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupId(800L);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q1-S02] PENDING과 비PENDING 혼합 데이터에서 PENDING만 조회됩니다")
+        void findPendingByProductGroupId_MixedStatus_ReturnsPendingOnly() {
+            // given
+            Long targetProductGroupId = 900L;
+            OutboundSyncOutboxJpaEntity pendingEntity1 =
+                    OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(
+                            targetProductGroupId, 10L);
+            OutboundSyncOutboxJpaEntity pendingEntity2 =
+                    OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(
+                            targetProductGroupId, 20L);
+            OutboundSyncOutboxJpaEntity processingEntity =
+                    OutboundSyncOutboxJpaEntityFixtures.newProcessingEntity();
+            OutboundSyncOutboxJpaEntity completedEntity =
+                    OutboundSyncOutboxJpaEntityFixtures.newCompletedEntity();
+
+            jpaRepository.saveAll(
+                    List.of(pendingEntity1, pendingEntity2, processingEntity, completedEntity));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupId(targetProductGroupId);
+
+            // then
+            assertThat(result).hasSize(2);
+            assertThat(result)
+                    .allMatch(
+                            e -> e.getStatus().equals(OutboundSyncOutboxJpaEntity.Status.PENDING));
+            assertThat(result).allMatch(e -> e.getProductGroupId().equals(targetProductGroupId));
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q1-S03] CREATE/UPDATE/DELETE 혼합 SyncType의 PENDING Outbox를 모두 조회합니다")
+        void findPendingByProductGroupId_MixedSyncType_ReturnsAll() {
+            // given
+            Long targetProductGroupId = 1000L;
+            jpaRepository.saveAll(
+                    List.of(
+                            OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(
+                                    targetProductGroupId, 10L),
+                            buildPendingEntityWithSyncType(
+                                    targetProductGroupId,
+                                    11L,
+                                    OutboundSyncOutboxJpaEntity.SyncType.UPDATE),
+                            buildPendingEntityWithSyncType(
+                                    targetProductGroupId,
+                                    12L,
+                                    OutboundSyncOutboxJpaEntity.SyncType.DELETE)));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupId(targetProductGroupId);
+
+            // then
+            assertThat(result).hasSize(3);
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q1-S04] 최대 1000건 제한이 적용됩니다")
+        void findPendingByProductGroupId_LargeDataset_ReturnsUpTo1000() {
+            // given
+            Long targetProductGroupId = 1100L;
+            List<OutboundSyncOutboxJpaEntity> entities = new java.util.ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                entities.add(
+                        OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(
+                                targetProductGroupId, (long) (i + 100)));
+            }
+            jpaRepository.saveAll(entities);
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupId(targetProductGroupId);
+
+            // then
+            assertThat(result).hasSize(10);
+            assertThat(result.size()).isLessThanOrEqualTo(1000);
+        }
+    }
+
+    // ========================================================================
+    // 유틸리티 메서드
+    // ========================================================================
+
+    private OutboundSyncOutboxJpaEntity buildPendingEntityWithSyncType(
+            Long productGroupId,
+            Long salesChannelId,
+            OutboundSyncOutboxJpaEntity.SyncType syncType) {
+        java.time.Instant now = java.time.Instant.now();
+        long seqVal = java.util.concurrent.ThreadLocalRandom.current().nextLong(10000, 99999);
+        String idempotencyKey =
+                "EPSO:"
+                        + productGroupId
+                        + ":"
+                        + salesChannelId
+                        + ":"
+                        + syncType.name()
+                        + ":"
+                        + seqVal;
+        return OutboundSyncOutboxJpaEntity.of(
+                null,
+                productGroupId,
+                salesChannelId,
+                OutboundSyncOutboxJpaEntityFixtures.DEFAULT_SELLER_ID,
+                syncType,
+                OutboundSyncOutboxJpaEntity.Status.PENDING,
+                OutboundSyncOutboxJpaEntityFixtures.DEFAULT_PAYLOAD,
+                OutboundSyncOutboxJpaEntityFixtures.DEFAULT_RETRY_COUNT,
+                OutboundSyncOutboxJpaEntityFixtures.DEFAULT_MAX_RETRY,
+                now,
+                now,
+                null,
+                null,
+                OutboundSyncOutboxJpaEntityFixtures.DEFAULT_VERSION,
+                idempotencyKey);
+    }
+}
