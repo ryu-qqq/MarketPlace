@@ -3,8 +3,8 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.a
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.dto.LegacyProductOptionQueryDto;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.mapper.LegacyProductCompositeMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.repository.LegacyProductCompositeQueryDslRepository;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductCompositeResult;
-import com.ryuqq.marketplace.application.legacyproduct.port.out.query.LegacyProductCompositionQueryPort;
+import com.ryuqq.marketplace.application.legacy.product.port.out.query.LegacyProductCompositionQueryPort;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductCompositeResult;
 import java.util.List;
 import org.springframework.stereotype.Component;
 

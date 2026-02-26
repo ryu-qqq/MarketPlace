@@ -6,15 +6,12 @@ import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.productgroup.ProductGroupCommandFixtures;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.result.ProductGroupRegistrationResult;
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupBundleFactory;
 import com.ryuqq.marketplace.application.productgroup.internal.FullProductGroupRegistrationCoordinator;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
-import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -87,9 +84,11 @@ class RegisterProductGroupFullServiceTest {
         return new ProductGroupRegistrationBundle(
                 ProductGroupFixtures.newProductGroup(),
                 List.of(),
-                new OptionRegistrationData(OptionType.SINGLE, List.of()),
+                "SINGLE",
+                List.of(),
                 "<p>상세설명</p>",
-                new NoticeRegistrationData(10L, List.of()),
+                10L,
+                List.of(),
                 List.of(),
                 CommonVoFixtures.now());
     }
@@ -98,9 +97,11 @@ class RegisterProductGroupFullServiceTest {
         return new ProductGroupRegistrationBundle(
                 ProductGroupFixtures.newProductGroup(),
                 List.of(),
-                new OptionRegistrationData(OptionType.NONE, List.of()),
+                "NONE",
+                List.of(),
                 "<p>상세설명</p>",
-                new NoticeRegistrationData(10L, List.of()),
+                10L,
+                List.of(),
                 List.of(),
                 CommonVoFixtures.now());
     }

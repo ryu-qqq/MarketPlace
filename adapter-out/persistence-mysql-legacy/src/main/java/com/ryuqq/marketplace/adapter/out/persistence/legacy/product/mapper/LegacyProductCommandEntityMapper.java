@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper;
 
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyDescriptionImageEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductDeliveryEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductGroupDetailDescriptionEntity;
@@ -12,7 +13,9 @@ import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
 import com.ryuqq.marketplace.domain.legacy.product.id.LegacyProductId;
 import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductOption;
+import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyDescriptionImage;
 import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroup;
+import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroupDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDelivery;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
@@ -23,6 +26,7 @@ import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ProductCondition;
 import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
 import com.ryuqq.marketplace.domain.legacy.productimage.vo.ProductGroupImageType;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionPublishStatus;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -192,5 +196,60 @@ public class LegacyProductCommandEntityMapper {
             LegacyProductGroupId productGroupId, LegacyProductDescription data) {
         return LegacyProductGroupDetailDescriptionEntity.create(
                 productGroupId.value(), data.detailDescription());
+    }
+
+    /** LegacyProductGroupDescription → JPA Entity 변환 (content, cdnPath, publishStatus 포함). */
+    public LegacyProductGroupDetailDescriptionEntity toDescriptionEntity(
+            LegacyProductGroupDescription description) {
+        return LegacyProductGroupDetailDescriptionEntity.createFull(
+                description.productGroupId(),
+                description.content(),
+                description.cdnPath(),
+                description.publishStatus().name());
+    }
+
+    /** LegacyDescriptionImage → JPA Entity 변환. */
+    public LegacyDescriptionImageEntity toImageEntity(LegacyDescriptionImage image) {
+        return LegacyDescriptionImageEntity.create(
+                image.id(),
+                image.productGroupId(),
+                image.originUrl(),
+                image.uploadedUrl(),
+                image.sortOrder(),
+                image.isDeleted(),
+                image.deletionStatus().deletedAt());
+    }
+
+    /** JPA Entity → LegacyDescriptionImage 도메인 복원. */
+    public LegacyDescriptionImage toImageDomain(LegacyDescriptionImageEntity entity) {
+        return LegacyDescriptionImage.reconstitute(
+                entity.getId(),
+                entity.getProductGroupId(),
+                entity.getOriginUrl(),
+                entity.getUploadedUrl(),
+                entity.getSortOrder(),
+                DeletionStatus.reconstitute(entity.isDeleted(), entity.getDeletedAt()));
+    }
+
+    /** JPA Entity + Image Entities → LegacyProductGroupDescription 도메인 복원. */
+    public LegacyProductGroupDescription toDescriptionDomain(
+            LegacyProductGroupDetailDescriptionEntity descEntity,
+            java.util.List<LegacyDescriptionImageEntity> imageEntities) {
+        String content =
+                descEntity.getContent() != null
+                        ? descEntity.getContent()
+                        : descEntity.getImageUrl();
+        DescriptionPublishStatus publishStatus =
+                descEntity.getPublishStatus() != null
+                        ? DescriptionPublishStatus.valueOf(descEntity.getPublishStatus())
+                        : DescriptionPublishStatus.PENDING;
+        java.util.List<LegacyDescriptionImage> images =
+                imageEntities.stream().map(this::toImageDomain).toList();
+        return LegacyProductGroupDescription.reconstitute(
+                descEntity.getProductGroupId(),
+                content,
+                descEntity.getCdnPath(),
+                publishStatus,
+                images);
     }
 }

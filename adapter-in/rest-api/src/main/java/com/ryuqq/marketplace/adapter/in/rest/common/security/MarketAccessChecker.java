@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.common.security;
 
 import com.ryuqq.authhub.sdk.access.BaseAccessChecker;
 import com.ryuqq.authhub.sdk.context.UserContextHolder;
-import com.ryuqq.marketplace.application.legacyproduct.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
+import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
 import com.ryuqq.marketplace.application.seller.port.in.query.ResolveSellerIdByOrganizationUseCase;
 import com.ryuqq.marketplace.domain.adminmenu.vo.AdminRole;
 import java.util.Optional;

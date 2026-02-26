@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.productgroup.ProductGroupCommandFixtures;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
 import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +43,7 @@ class ProductGroupCommandFactoryTest {
             given(timeProvider.now()).willReturn(now);
 
             // when
-            ProductGroupUpdateData result = sut.createUpdateData(command);
+            ProductGroupUpdateData result = sut.createUpdateData(command, OptionType.SINGLE);
 
             // then
             assertThat(result).isNotNull();
@@ -52,6 +53,7 @@ class ProductGroupCommandFactoryTest {
             assertThat(result.categoryId().value()).isEqualTo(command.categoryId());
             assertThat(result.shippingPolicyId().value()).isEqualTo(command.shippingPolicyId());
             assertThat(result.refundPolicyId().value()).isEqualTo(command.refundPolicyId());
+            assertThat(result.optionType()).isEqualTo(OptionType.SINGLE);
         }
 
         @Test
@@ -66,7 +68,7 @@ class ProductGroupCommandFactoryTest {
             given(timeProvider.now()).willReturn(now);
 
             // when
-            ProductGroupUpdateData result = sut.createUpdateData(command);
+            ProductGroupUpdateData result = sut.createUpdateData(command, OptionType.SINGLE);
 
             // then
             assertThat(result.productGroupId().value()).isEqualTo(productGroupId);
@@ -74,7 +76,7 @@ class ProductGroupCommandFactoryTest {
         }
 
         @Test
-        @DisplayName("TimeProvider가 제공하는 시간이 UpdateData changedAt에 반영된다")
+        @DisplayName("TimeProvider가 제공하는 시간이 UpdateData updatedAt에 반영된다")
         void createUpdateData_UsesTimeProvider() {
             // given
             long productGroupId = 1L;
@@ -84,10 +86,11 @@ class ProductGroupCommandFactoryTest {
             given(timeProvider.now()).willReturn(specificTime);
 
             // when
-            ProductGroupUpdateData result = sut.createUpdateData(command);
+            ProductGroupUpdateData result = sut.createUpdateData(command, OptionType.SINGLE);
 
             // then
             assertThat(result).isNotNull();
+            assertThat(result.updatedAt()).isEqualTo(specificTime);
         }
     }
 }

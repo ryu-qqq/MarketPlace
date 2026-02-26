@@ -1,15 +1,13 @@
 package com.ryuqq.marketplace.application.legacyconversion.factory;
 
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductCompositeResult;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductGroupCompositeResult;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductCompositeResult;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.ImageEntry;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry.OptionValueEntry;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.ProductEntry;
+import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
+import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
@@ -54,25 +52,29 @@ public class LegacyToInternalBundleFactory {
             Instant now) {
 
         LegacyProductGroupCompositeResult composite = legacyBundle.composite();
+        OptionType optionType = mapOptionType(composite.optionType());
 
         ProductGroup productGroup =
-                createProductGroup(composite, shippingPolicyId, refundPolicyId, now);
-        List<ImageEntry> images = convertImages(composite.images());
-        OptionRegistrationData optionData = convertOptions(composite, legacyBundle.products());
-        String descriptionContent = composite.detailDescription();
-        List<ProductEntry> products = convertProducts(legacyBundle.products(), composite);
+                createProductGroup(composite, shippingPolicyId, refundPolicyId, optionType, now);
 
         return new ProductGroupRegistrationBundle(
-                productGroup, images, optionData, descriptionContent, null, products, now);
+                productGroup,
+                convertImages(composite.images()),
+                optionType.name(),
+                convertOptionGroups(composite, legacyBundle.products(), optionType),
+                composite.detailDescription(),
+                0L,
+                List.of(),
+                convertProducts(legacyBundle.products(), composite),
+                now);
     }
 
     private ProductGroup createProductGroup(
             LegacyProductGroupCompositeResult composite,
             ShippingPolicyId shippingPolicyId,
             RefundPolicyId refundPolicyId,
+            OptionType optionType,
             Instant now) {
-        OptionType optionType = mapOptionType(composite.optionType());
-
         return ProductGroup.forNew(
                 SellerId.of(composite.sellerId()),
                 BrandId.of(composite.brandId()),
@@ -84,26 +86,28 @@ public class LegacyToInternalBundleFactory {
                 now);
     }
 
-    private List<ImageEntry> convertImages(
+    private List<RegisterProductGroupImagesCommand.ImageCommand> convertImages(
             List<LegacyProductGroupCompositeResult.ImageInfo> images) {
         if (images == null || images.isEmpty()) {
             return List.of();
         }
-        List<ImageEntry> entries = new ArrayList<>();
+        List<RegisterProductGroupImagesCommand.ImageCommand> commands = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
             LegacyProductGroupCompositeResult.ImageInfo img = images.get(i);
-            entries.add(new ImageEntry(img.imageType(), img.imageUrl(), i + 1));
+            commands.add(
+                    new RegisterProductGroupImagesCommand.ImageCommand(
+                            img.imageType(), img.imageUrl(), i + 1));
         }
-        return entries;
+        return commands;
     }
 
-    private OptionRegistrationData convertOptions(
+    private List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> convertOptionGroups(
             LegacyProductGroupCompositeResult composite,
-            List<LegacyProductCompositeResult> products) {
-        OptionType optionType = mapOptionType(composite.optionType());
+            List<LegacyProductCompositeResult> products,
+            OptionType optionType) {
 
         if (!optionType.requiresOptionGroup() || products.isEmpty()) {
-            return new OptionRegistrationData(optionType, List.of());
+            return List.of();
         }
 
         Map<String, Set<String>> groupValueMap = new LinkedHashMap<>();
@@ -115,27 +119,33 @@ public class LegacyToInternalBundleFactory {
             }
         }
 
-        List<OptionGroupEntry> groups = new ArrayList<>();
+        List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> groups = new ArrayList<>();
         for (Map.Entry<String, Set<String>> entry : groupValueMap.entrySet()) {
             AtomicInteger sortOrder = new AtomicInteger(0);
-            List<OptionValueEntry> values =
+            List<RegisterSellerOptionGroupsCommand.OptionValueCommand> values =
                     entry.getValue().stream()
-                            .map(v -> new OptionValueEntry(v, null, sortOrder.getAndIncrement()))
+                            .map(
+                                    v ->
+                                            new RegisterSellerOptionGroupsCommand
+                                                    .OptionValueCommand(
+                                                    v, null, sortOrder.getAndIncrement()))
                             .toList();
-            groups.add(new OptionGroupEntry(entry.getKey(), null, "PREDEFINED", values));
+            groups.add(
+                    new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
+                            entry.getKey(), null, "PREDEFINED", values));
         }
 
-        return new OptionRegistrationData(optionType, groups);
+        return groups;
     }
 
-    private List<ProductEntry> convertProducts(
+    private List<RegisterProductsCommand.ProductData> convertProducts(
             List<LegacyProductCompositeResult> products,
             LegacyProductGroupCompositeResult composite) {
         if (products.isEmpty()) {
             return List.of();
         }
 
-        List<ProductEntry> entries = new ArrayList<>();
+        List<RegisterProductsCommand.ProductData> entries = new ArrayList<>();
         for (int i = 0; i < products.size(); i++) {
             LegacyProductCompositeResult product = products.get(i);
             List<SelectedOption> selectedOptions =
@@ -144,7 +154,7 @@ public class LegacyToInternalBundleFactory {
                             .toList();
 
             entries.add(
-                    new ProductEntry(
+                    new RegisterProductsCommand.ProductData(
                             null,
                             (int) composite.regularPrice(),
                             (int) composite.currentPrice(),

@@ -1,0 +1,19 @@
+[[legacy-description-update]]
+=== 레거시 상세설명 수정
+
+인증 필요 | 셀러 소유자 또는 슈퍼어드민 | 세토프 어드민 호환 상품 상세설명 수정 API
+
+==== HTTP Request
+include::{snippets}/legacy-description/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/legacy-description/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/legacy-description/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/legacy-description/update/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/legacy-description/update/response-fields.adoc[]

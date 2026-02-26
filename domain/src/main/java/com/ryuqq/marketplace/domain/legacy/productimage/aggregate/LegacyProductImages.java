@@ -1,15 +1,18 @@
 package com.ryuqq.marketplace.domain.legacy.productimage.aggregate;
 
+import com.ryuqq.marketplace.domain.legacy.productimage.vo.LegacyImageDiff;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 레거시 상품 이미지 컬렉션 래퍼.
  *
- * <p>기존 이미지 목록을 감싸며, 새로운 이미지 목록과의 diff 계산을 제공합니다. displayOrder + originUrl 기준으로 변경/추가/삭제를 판단합니다.
+ * <p>기존 이미지 목록을 감싸며, 새로운 이미지 목록과의 diff 계산을 제공합니다. originUrl + imageType 기준으로 추가/삭제/유지를 판단합니다.
  */
 public class LegacyProductImages {
 
@@ -20,43 +23,44 @@ public class LegacyProductImages {
     }
 
     /**
-     * 새로운 이미지 목록과 비교하여 persist할 이미지 목록을 반환합니다.
+     * 새로운 이미지 목록과 비교하여 추가/삭제/유지를 판단하고 상태를 갱신합니다.
+     *
+     * <p>originUrl + imageType 조합을 키로 비교합니다. 유지 대상은 displayOrder를 갱신하고, 삭제 대상은 soft delete 처리합니다.
      *
      * @param newImages 새로운 이미지 목록
      * @param changedAt 변경 시각 (soft-delete 시각)
-     * @return persist 대상 이미지 목록 (soft-delete 대상 + 신규 insert 대상)
+     * @return 변경 비교 결과 (added/removed/retained)
      */
-    public ImageDiffResult diff(List<LegacyProductImage> newImages, Instant changedAt) {
-        Map<Integer, LegacyProductImage> existingByOrder = new LinkedHashMap<>();
-        for (LegacyProductImage image : images) {
-            existingByOrder.put(image.displayOrder(), image);
-        }
+    public LegacyImageDiff update(List<LegacyProductImage> newImages, Instant changedAt) {
+        Map<String, LegacyProductImage> existingByKey =
+                images.stream()
+                        .collect(Collectors.toMap(LegacyProductImages::imageKey, img -> img));
 
-        List<LegacyProductImage> toPersist = new ArrayList<>();
+        List<LegacyProductImage> added = new ArrayList<>();
+        List<LegacyProductImage> retained = new ArrayList<>();
+        Set<String> newKeys = new HashSet<>();
 
         for (LegacyProductImage newImage : newImages) {
-            int order = newImage.displayOrder();
-            LegacyProductImage existing = existingByOrder.remove(order);
+            String key = imageKey(newImage);
+            newKeys.add(key);
 
-            if (existing == null) {
-                toPersist.add(newImage);
+            LegacyProductImage existing = existingByKey.get(key);
+            if (existing != null) {
+                existing.updateDisplayOrder(newImage.displayOrder());
+                retained.add(existing);
             } else {
-                String existingUrl = existing.originUrl();
-                String newUrl = newImage.originUrl();
-                if (!existingUrl.equals(newUrl)) {
-                    existing.delete(changedAt);
-                    toPersist.add(existing);
-                    toPersist.add(newImage);
-                }
+                added.add(newImage);
             }
         }
 
-        for (LegacyProductImage remaining : existingByOrder.values()) {
-            remaining.delete(changedAt);
-            toPersist.add(remaining);
+        List<LegacyProductImage> removed =
+                images.stream().filter(img -> !newKeys.contains(imageKey(img))).toList();
+
+        for (LegacyProductImage image : removed) {
+            image.delete(changedAt);
         }
 
-        return new ImageDiffResult(toPersist);
+        return LegacyImageDiff.of(added, removed, retained, changedAt);
     }
 
     public List<LegacyProductImage> images() {
@@ -67,11 +71,7 @@ public class LegacyProductImages {
         return images.isEmpty();
     }
 
-    /** 이미지 diff 결과. */
-    public record ImageDiffResult(List<LegacyProductImage> toPersist) {
-
-        public boolean hasChanges() {
-            return !toPersist.isEmpty();
-        }
+    private static String imageKey(LegacyProductImage image) {
+        return image.originUrl() + "::" + image.imageTypeName();
     }
 }

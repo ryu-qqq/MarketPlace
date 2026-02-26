@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductG
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
@@ -28,7 +29,8 @@ public class ProductGroupCommandFactory {
     }
 
     /** 기본 정보 수정 UpdateData 생성. */
-    public ProductGroupUpdateData createUpdateData(UpdateProductGroupBasicInfoCommand command) {
+    public ProductGroupUpdateData createUpdateData(
+            UpdateProductGroupBasicInfoCommand command, OptionType optionType) {
         return ProductGroupUpdateData.of(
                 ProductGroupId.of(command.productGroupId()),
                 ProductGroupName.of(command.productGroupName()),
@@ -36,6 +38,7 @@ public class ProductGroupCommandFactory {
                 CategoryId.of(command.categoryId()),
                 ShippingPolicyId.of(command.shippingPolicyId()),
                 RefundPolicyId.of(command.refundPolicyId()),
+                optionType,
                 timeProvider.now());
     }
 }

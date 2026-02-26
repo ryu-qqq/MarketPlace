@@ -2,10 +2,10 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.m
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.dto.LegacyProductGroupBasicQueryDto;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.dto.LegacyProductGroupImageQueryDto;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductGroupCompositeResult;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductGroupCompositeResult.DeliveryInfo;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductGroupCompositeResult.ImageInfo;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductGroupCompositeResult.NoticeInfo;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult.DeliveryInfo;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult.ImageInfo;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult.NoticeInfo;
 import java.util.List;
 import org.springframework.stereotype.Component;
 

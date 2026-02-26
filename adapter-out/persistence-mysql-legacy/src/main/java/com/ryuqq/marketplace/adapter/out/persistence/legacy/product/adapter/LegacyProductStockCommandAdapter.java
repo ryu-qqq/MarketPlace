@@ -3,7 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductStockEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.repository.LegacyProductStockJpaRepository;
-import com.ryuqq.marketplace.application.legacyproduct.port.out.command.LegacyProductStockCommandPort;
+import com.ryuqq.marketplace.application.legacy.product.port.out.command.LegacyProductStockCommandPort;
 import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
 import com.ryuqq.marketplace.domain.legacy.product.id.LegacyProductId;
 import java.util.List;
