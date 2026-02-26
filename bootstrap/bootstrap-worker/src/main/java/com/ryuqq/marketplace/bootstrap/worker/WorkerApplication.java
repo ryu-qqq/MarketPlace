@@ -2,7 +2,6 @@ package com.ryuqq.marketplace.bootstrap.worker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -24,7 +23,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
             "com.ryuqq.marketplace.application",
             "com.ryuqq.marketplace.adapter.out"
         })
-@EntityScan(basePackages = "com.ryuqq.marketplace.adapter.out.persistence")
 @EnableJpaRepositories(basePackages = "com.ryuqq.marketplace.adapter.out.persistence")
 @ConfigurationPropertiesScan(
         basePackages = {
