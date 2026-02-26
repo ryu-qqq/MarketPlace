@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.bootstrap;
 import com.ryuqq.marketplace.bootstrap.config.LegacyModuleConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
@@ -47,7 +46,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
                         type = FilterType.REGEX,
                         pattern =
                                 "com\\.ryuqq\\.marketplace\\.adapter\\.out\\.persistence\\.legacy\\..*"))
-@EntityScan(basePackages = "com.ryuqq.marketplace.adapter.out.persistence")
 public class MarketPlaceApplication {
 
     public static void main(String[] args) {
