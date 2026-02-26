@@ -92,6 +92,6 @@ public class SellerOptionCommandCoordinator {
         SellerOptionGroupDiff diff = existing.update(updateData);
 
         List<SellerOptionValueId> resolvedIds = persistFacade.persistDiff(diff);
-        return new SellerOptionUpdateResult(resolvedIds, diff.occurredAt());
+        return new SellerOptionUpdateResult(resolvedIds, diff.occurredAt(), !diff.hasNoChanges());
     }
 }

@@ -1,0 +1,19 @@
+[[legacy-image-update]]
+=== 레거시 상품 이미지 수정
+
+인증 필요 | 셀러 소유자 또는 슈퍼어드민 | 세토프 어드민 호환 상품 이미지 수정 API
+
+==== HTTP Request
+include::{snippets}/legacy-image/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/legacy-image/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/legacy-image/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/legacy-image/update/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/legacy-image/update/response-fields.adoc[]

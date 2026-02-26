@@ -3,7 +3,10 @@ package com.ryuqq.marketplace.application.productgroup.service.command;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupCommandFactory;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupCommandCoordinator;
+import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
 import com.ryuqq.marketplace.application.productgroup.port.in.command.UpdateProductGroupBasicInfoUseCase;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +24,23 @@ public class UpdateProductGroupBasicInfoService implements UpdateProductGroupBas
 
     private final ProductGroupCommandFactory commandFactory;
     private final ProductGroupCommandCoordinator coordinator;
+    private final ProductGroupReadManager productGroupReadManager;
 
     public UpdateProductGroupBasicInfoService(
-            ProductGroupCommandFactory commandFactory, ProductGroupCommandCoordinator coordinator) {
+            ProductGroupCommandFactory commandFactory,
+            ProductGroupCommandCoordinator coordinator,
+            ProductGroupReadManager productGroupReadManager) {
         this.commandFactory = commandFactory;
         this.coordinator = coordinator;
+        this.productGroupReadManager = productGroupReadManager;
     }
 
     @Override
     public void execute(UpdateProductGroupBasicInfoCommand command) {
-        ProductGroupUpdateData updateData = commandFactory.createUpdateData(command);
+        ProductGroup productGroup =
+                productGroupReadManager.getById(ProductGroupId.of(command.productGroupId()));
+        ProductGroupUpdateData updateData =
+                commandFactory.createUpdateData(command, productGroup.optionType());
         coordinator.update(updateData);
     }
 }

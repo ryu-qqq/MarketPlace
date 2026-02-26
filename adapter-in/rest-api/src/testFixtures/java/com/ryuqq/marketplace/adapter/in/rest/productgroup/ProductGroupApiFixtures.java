@@ -175,6 +175,7 @@ public final class ProductGroupApiFixtures {
                 DEFAULT_CATEGORY_ID,
                 1L,
                 1L,
+                DEFAULT_OPTION_TYPE,
                 images,
                 optionGroups,
                 products,
@@ -596,7 +597,9 @@ public final class ProductGroupApiFixtures {
         Instant now = Instant.parse("2025-02-10T01:30:00Z");
 
         List<ProductOptionMappingResult> mappings =
-                List.of(new ProductOptionMappingResult(productId * 10, productId, 100L));
+                List.of(
+                        new ProductOptionMappingResult(
+                                productId * 10, productId, 100L, "색상", "블랙"));
 
         return new ProductResult(
                 productId,
@@ -617,7 +620,9 @@ public final class ProductGroupApiFixtures {
     private static ProductExcelApiResponse createProductExcelApiResponse(
             Long productId, Long productGroupId) {
         List<ProductOptionMappingApiResponse> mappings =
-                List.of(new ProductOptionMappingApiResponse(productId * 10, productId, 100L));
+                List.of(
+                        new ProductOptionMappingApiResponse(
+                                productId * 10, productId, 100L, "색상", "블랙"));
 
         return new ProductExcelApiResponse(
                 productId,

@@ -1,47 +1,14 @@
 package com.ryuqq.marketplace.application.inboundproduct.factory;
 
-import com.ryuqq.marketplace.application.notice.resolver.CategoryNoticeResolver;
-import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.ImageEntry;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.NoticeRegistrationData.NoticeEntry;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.OptionRegistrationData.OptionGroupEntry.OptionValueEntry;
-import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle.ProductEntry;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
-import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
-import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand;
-import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand.ImageCommand;
-import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
-import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand.NoticeEntryCommand;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadManager;
-import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand;
-import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand.OptionGroupCommand;
-import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand.OptionValueCommand;
-import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyReadManager;
-import com.ryuqq.marketplace.domain.brand.id.BrandId;
-import com.ryuqq.marketplace.domain.category.id.CategoryId;
+import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
+import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
+import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupBundleFactory;
 import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
 import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload;
 import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload.InboundNoticeEntry;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
-import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
-import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
-import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
-import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
-import com.ryuqq.marketplace.domain.refundpolicy.exception.DefaultRefundPolicyNotFoundException;
-import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
-import com.ryuqq.marketplace.domain.seller.id.SellerId;
-import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
-import com.ryuqq.marketplace.domain.shippingpolicy.exception.DefaultShippingPolicyNotFoundException;
-import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -50,273 +17,240 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * InboundProduct payload를 등록/수정 번들로 변환하는 팩토리.
+ * InboundProduct를 내부 상품 등록/수정 Command로 변환하는 팩토리.
  *
- * <p>기존 소스별 파서(MustitPayloadParser 등)를 대체합니다. InboundProductPayload VO에서 직접 번들 컴포넌트를 조립하므로 JSON 파싱이
- * 불필요합니다.
+ * <p>InboundProduct의 pre-resolved 데이터를 {@link RegisterProductGroupCommand} 또는 {@link
+ * UpdateProductGroupFullCommand}로 변환하고, 번들 생성은 {@link ProductGroupBundleFactory}에 위임합니다.
  */
-@SuppressWarnings("PMD.ExcessiveImports")
 @Component
 public class InboundProductBundleFactory {
 
     private static final Logger log = LoggerFactory.getLogger(InboundProductBundleFactory.class);
-    private static final String DEFAULT_NOTICE_VALUE = "상세설명 참고";
 
-    private final CategoryNoticeResolver categoryNoticeResolver;
-    private final ShippingPolicyReadManager shippingPolicyReadManager;
-    private final RefundPolicyReadManager refundPolicyReadManager;
+    private final ProductGroupBundleFactory productGroupBundleFactory;
 
-    @SuppressFBWarnings(
-            value = "EI_EXPOSE_REP2",
-            justification = "Spring-managed bean injected via constructor")
-    public InboundProductBundleFactory(
-            CategoryNoticeResolver categoryNoticeResolver,
-            ShippingPolicyReadManager shippingPolicyReadManager,
-            RefundPolicyReadManager refundPolicyReadManager) {
-        this.categoryNoticeResolver = categoryNoticeResolver;
-        this.shippingPolicyReadManager = shippingPolicyReadManager;
-        this.refundPolicyReadManager = refundPolicyReadManager;
+    public InboundProductBundleFactory(ProductGroupBundleFactory productGroupBundleFactory) {
+        this.productGroupBundleFactory = productGroupBundleFactory;
     }
 
-    /** InboundProduct를 신규 등록 번들로 변환한다. */
+    /** InboundProduct → RegisterProductGroupCommand → 등록 번들. */
     public ProductGroupRegistrationBundle toRegistrationBundle(InboundProduct product) {
-        Instant now = product.createdAt();
-        InboundProductPayload payload = product.payload();
-        SellerId sellerId = SellerId.of(product.sellerId());
-        OptionType optionType = resolveOptionType(product.optionType());
-
-        ProductGroup productGroup =
-                ProductGroup.forNew(
-                        sellerId,
-                        BrandId.of(product.internalBrandId()),
-                        CategoryId.of(product.internalCategoryId()),
-                        resolveShippingPolicyId(sellerId),
-                        resolveRefundPolicyId(sellerId),
-                        ProductGroupName.of(product.productName()),
-                        optionType,
-                        now);
-
-        return new ProductGroupRegistrationBundle(
-                productGroup,
-                resolveImages(payload),
-                resolveOptions(payload, optionType),
-                product.descriptionHtml(),
-                resolveNotice(payload, product.internalCategoryId()),
-                resolveProducts(payload),
-                now);
+        RegisterProductGroupCommand command = toRegisterCommand(product);
+        return productGroupBundleFactory.createProductGroupBundle(command);
     }
 
-    /** InboundProduct를 수정 번들로 변환한다. */
+    /** InboundProduct → UpdateProductGroupFullCommand → 수정 번들. */
     public Optional<ProductGroupUpdateBundle> toUpdateBundle(InboundProduct product) {
         Long productGroupIdValue = product.internalProductGroupId();
         if (productGroupIdValue == null) {
             return Optional.empty();
         }
+        UpdateProductGroupFullCommand command = toUpdateCommand(product, productGroupIdValue);
+        return Optional.of(productGroupBundleFactory.createUpdateBundle(command));
+    }
 
+    // === InboundProduct → RegisterProductGroupCommand 변환 ===
+
+    private RegisterProductGroupCommand toRegisterCommand(InboundProduct product) {
         InboundProductPayload payload = product.payload();
-        long pgId = productGroupIdValue;
-        SellerId sellerId = SellerId.of(product.sellerId());
-        OptionType optionType = resolveOptionType(product.optionType());
-        Instant now = Instant.now();
+        String optionType = resolveOptionType(product.optionType());
 
-        ProductGroupUpdateData basicInfo =
-                ProductGroupUpdateData.of(
-                        ProductGroupId.of(pgId),
-                        ProductGroupName.of(product.productName()),
-                        BrandId.of(product.internalBrandId()),
-                        CategoryId.of(product.internalCategoryId()),
-                        resolveShippingPolicyId(sellerId),
-                        resolveRefundPolicyId(sellerId),
-                        now);
+        long noticeCategoryId =
+                product.resolvedNoticeCategoryId() != null
+                        ? product.resolvedNoticeCategoryId()
+                        : 0L;
 
-        return Optional.of(
-                new ProductGroupUpdateBundle(
-                        basicInfo,
-                        toImageCommand(pgId, resolveImages(payload)),
-                        toOptionCommand(pgId, resolveOptions(payload, optionType)),
-                        new UpdateProductGroupDescriptionCommand(pgId, product.descriptionHtml()),
-                        toNoticeCommand(pgId, resolveNotice(payload, product.internalCategoryId())),
-                        toProductDiffEntries(resolveProducts(payload))));
+        return new RegisterProductGroupCommand(
+                product.sellerId(),
+                product.internalBrandId(),
+                product.internalCategoryId(),
+                product.resolvedShippingPolicyId(),
+                product.resolvedRefundPolicyId(),
+                product.productName(),
+                optionType,
+                toRegisterImages(payload),
+                toRegisterOptionGroups(payload),
+                toRegisterProducts(payload),
+                new RegisterProductGroupCommand.DescriptionCommand(
+                        product.descriptionHtml(), List.of()),
+                new RegisterProductGroupCommand.NoticeCommand(
+                        noticeCategoryId, toRegisterNoticeEntries(payload.noticeEntries())));
     }
 
-    private List<ImageEntry> resolveImages(InboundProductPayload payload) {
+    private List<RegisterProductGroupCommand.ImageCommand> toRegisterImages(
+            InboundProductPayload payload) {
         return payload.images().stream()
-                .map(img -> new ImageEntry(img.imageType(), img.originUrl(), img.sortOrder()))
+                .map(
+                        img ->
+                                new RegisterProductGroupCommand.ImageCommand(
+                                        img.imageType(), img.originUrl(), img.sortOrder()))
                 .toList();
     }
 
-    private OptionRegistrationData resolveOptions(
-            InboundProductPayload payload, OptionType optionType) {
-        List<OptionGroupEntry> groups =
-                payload.optionGroups().stream()
-                        .map(
-                                og -> {
-                                    List<OptionValueEntry> values =
-                                            og.optionValues().stream()
-                                                    .map(
-                                                            ov ->
-                                                                    new OptionValueEntry(
-                                                                            ov.optionValueName(),
-                                                                            null,
-                                                                            ov.sortOrder()))
-                                                    .toList();
-                                    return new OptionGroupEntry(
-                                            og.optionGroupName(), null, og.inputType(), values);
-                                })
-                        .toList();
-        return new OptionRegistrationData(optionType, groups);
-    }
-
-    private NoticeRegistrationData resolveNotice(
-            InboundProductPayload payload, long internalCategoryId) {
-        return categoryNoticeResolver
-                .resolve(internalCategoryId)
+    private List<RegisterProductGroupCommand.OptionGroupCommand> toRegisterOptionGroups(
+            InboundProductPayload payload) {
+        return payload.optionGroups().stream()
                 .map(
-                        noticeCategory -> {
-                            List<NoticeEntry> entries =
-                                    mapNoticeEntries(payload.noticeEntries(), noticeCategory);
-                            return new NoticeRegistrationData(noticeCategory.idValue(), entries);
-                        })
-                .orElseGet(
-                        () -> {
-                            log.warn(
-                                    "카테고리 ID {}에 해당하는 고시정보 카테고리 없음, 빈 고시정보 생성", internalCategoryId);
-                            return new NoticeRegistrationData(0L, List.of());
-                        });
-    }
-
-    private List<NoticeEntry> mapNoticeEntries(
-            List<InboundNoticeEntry> inboundEntries, NoticeCategory noticeCategory) {
-        return noticeCategory.fields().stream()
-                .map(
-                        field -> {
-                            String value =
-                                    findByFieldCode(inboundEntries, field.fieldCodeValue())
-                                            .orElse(DEFAULT_NOTICE_VALUE);
-                            return new NoticeEntry(field.idValue(), value);
+                        og -> {
+                            List<RegisterProductGroupCommand.OptionValueCommand> values =
+                                    og.optionValues().stream()
+                                            .map(
+                                                    ov ->
+                                                            new RegisterProductGroupCommand
+                                                                    .OptionValueCommand(
+                                                                    ov.optionValueName(),
+                                                                    null,
+                                                                    ov.sortOrder()))
+                                            .toList();
+                            return new RegisterProductGroupCommand.OptionGroupCommand(
+                                    og.optionGroupName(), null, og.inputType(), values);
                         })
                 .toList();
     }
 
-    private Optional<String> findByFieldCode(List<InboundNoticeEntry> entries, String fieldCode) {
-        if (entries == null || entries.isEmpty()) {
-            return Optional.empty();
-        }
-        return entries.stream()
-                .filter(e -> e.fieldCode().equals(fieldCode))
-                .map(InboundNoticeEntry::fieldValue)
-                .filter(v -> v != null && !v.isBlank())
-                .findFirst();
-    }
-
-    private List<ProductEntry> resolveProducts(InboundProductPayload payload) {
+    private List<RegisterProductGroupCommand.ProductCommand> toRegisterProducts(
+            InboundProductPayload payload) {
         return payload.products().stream()
                 .map(
-                        p -> {
-                            List<SelectedOption> selectedOptions =
-                                    p.selectedOptions().stream()
+                        p ->
+                                new RegisterProductGroupCommand.ProductCommand(
+                                        p.skuCode(),
+                                        p.regularPrice(),
+                                        p.currentPrice(),
+                                        p.stockQuantity(),
+                                        p.sortOrder(),
+                                        toSelectedOptions(p.selectedOptions())))
+                .toList();
+    }
+
+    private List<RegisterProductGroupCommand.NoticeEntryCommand> toRegisterNoticeEntries(
+            List<InboundNoticeEntry> entries) {
+        if (entries == null || entries.isEmpty()) {
+            return List.of();
+        }
+        return entries.stream()
+                .filter(InboundNoticeEntry::isResolved)
+                .map(
+                        e ->
+                                new RegisterProductGroupCommand.NoticeEntryCommand(
+                                        e.resolvedFieldId(), e.fieldValue()))
+                .toList();
+    }
+
+    // === InboundProduct → UpdateProductGroupFullCommand 변환 ===
+
+    private UpdateProductGroupFullCommand toUpdateCommand(
+            InboundProduct product, long productGroupId) {
+        InboundProductPayload payload = product.payload();
+        String optionType = resolveOptionType(product.optionType());
+
+        long noticeCategoryId =
+                product.resolvedNoticeCategoryId() != null
+                        ? product.resolvedNoticeCategoryId()
+                        : 0L;
+
+        return new UpdateProductGroupFullCommand(
+                productGroupId,
+                product.productName(),
+                product.internalBrandId(),
+                product.internalCategoryId(),
+                product.resolvedShippingPolicyId(),
+                product.resolvedRefundPolicyId(),
+                optionType,
+                toUpdateImages(payload),
+                toUpdateOptionGroups(payload),
+                toUpdateProducts(payload),
+                new UpdateProductGroupFullCommand.DescriptionCommand(
+                        product.descriptionHtml(), List.of()),
+                new UpdateProductGroupFullCommand.NoticeCommand(
+                        noticeCategoryId, toUpdateNoticeEntries(payload.noticeEntries())));
+    }
+
+    private List<UpdateProductGroupFullCommand.ImageCommand> toUpdateImages(
+            InboundProductPayload payload) {
+        return payload.images().stream()
+                .map(
+                        img ->
+                                new UpdateProductGroupFullCommand.ImageCommand(
+                                        img.imageType(), img.originUrl(), img.sortOrder()))
+                .toList();
+    }
+
+    private List<UpdateProductGroupFullCommand.OptionGroupCommand> toUpdateOptionGroups(
+            InboundProductPayload payload) {
+        return payload.optionGroups().stream()
+                .map(
+                        og -> {
+                            List<UpdateProductGroupFullCommand.OptionValueCommand> values =
+                                    og.optionValues().stream()
                                             .map(
-                                                    so ->
-                                                            new SelectedOption(
-                                                                    so.optionGroupName(),
-                                                                    so.optionValueName()))
+                                                    ov ->
+                                                            new UpdateProductGroupFullCommand
+                                                                    .OptionValueCommand(
+                                                                    null,
+                                                                    ov.optionValueName(),
+                                                                    null,
+                                                                    ov.sortOrder()))
                                             .toList();
-                            return new ProductEntry(
-                                    p.skuCode(),
-                                    p.regularPrice(),
-                                    p.currentPrice(),
-                                    p.stockQuantity(),
-                                    p.sortOrder(),
-                                    selectedOptions);
+                            return new UpdateProductGroupFullCommand.OptionGroupCommand(
+                                    null, og.optionGroupName(), null, og.inputType(), values);
                         })
                 .toList();
     }
 
-    private OptionType resolveOptionType(String optionTypeStr) {
-        if (optionTypeStr == null || optionTypeStr.isBlank()) {
-            return OptionType.NONE;
-        }
-        try {
-            return OptionType.valueOf(optionTypeStr.toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException e) {
-            log.warn("알 수 없는 OptionType '{}', NONE으로 설정", optionTypeStr);
-            return OptionType.NONE;
-        }
-    }
-
-    private ShippingPolicyId resolveShippingPolicyId(SellerId sellerId) {
-        return shippingPolicyReadManager
-                .findDefaultBySellerId(sellerId)
-                .map(ShippingPolicy::id)
-                .orElseThrow(() -> new DefaultShippingPolicyNotFoundException(sellerId.value()));
-    }
-
-    private RefundPolicyId resolveRefundPolicyId(SellerId sellerId) {
-        return refundPolicyReadManager
-                .findDefaultBySellerId(sellerId)
-                .map(RefundPolicy::id)
-                .orElseThrow(() -> new DefaultRefundPolicyNotFoundException(sellerId.value()));
-    }
-
-    private UpdateProductGroupImagesCommand toImageCommand(
-            long productGroupId, List<ImageEntry> images) {
-        List<ImageCommand> commands =
-                images.stream()
-                        .map(e -> new ImageCommand(e.imageType(), e.originUrl(), e.sortOrder()))
-                        .toList();
-        return new UpdateProductGroupImagesCommand(productGroupId, commands);
-    }
-
-    private UpdateSellerOptionGroupsCommand toOptionCommand(
-            long productGroupId, OptionRegistrationData optionData) {
-        List<OptionGroupCommand> commands =
-                optionData.groups().stream()
-                        .map(
-                                g -> {
-                                    List<OptionValueCommand> values =
-                                            g.optionValues().stream()
-                                                    .map(
-                                                            v ->
-                                                                    new OptionValueCommand(
-                                                                            null,
-                                                                            v.optionValueName(),
-                                                                            v
-                                                                                    .canonicalOptionValueId(),
-                                                                            v.sortOrder()))
-                                                    .toList();
-                                    return new OptionGroupCommand(
-                                            null,
-                                            g.optionGroupName(),
-                                            g.canonicalOptionGroupId(),
-                                            g.inputType(),
-                                            values);
-                                })
-                        .toList();
-        return new UpdateSellerOptionGroupsCommand(productGroupId, commands);
-    }
-
-    private UpdateProductNoticeCommand toNoticeCommand(
-            long productGroupId, NoticeRegistrationData noticeData) {
-        List<NoticeEntryCommand> commands =
-                noticeData.entries().stream()
-                        .map(e -> new NoticeEntryCommand(e.noticeFieldId(), e.fieldValue()))
-                        .toList();
-        return new UpdateProductNoticeCommand(
-                productGroupId, noticeData.noticeCategoryId(), commands);
-    }
-
-    private List<ProductDiffUpdateEntry> toProductDiffEntries(List<ProductEntry> products) {
-        return products.stream()
+    private List<UpdateProductGroupFullCommand.ProductCommand> toUpdateProducts(
+            InboundProductPayload payload) {
+        return payload.products().stream()
                 .map(
                         p ->
-                                new ProductDiffUpdateEntry(
+                                new UpdateProductGroupFullCommand.ProductCommand(
                                         null,
                                         p.skuCode(),
                                         p.regularPrice(),
                                         p.currentPrice(),
                                         p.stockQuantity(),
                                         p.sortOrder(),
-                                        p.selectedOptions()))
+                                        toSelectedOptions(p.selectedOptions())))
                 .toList();
+    }
+
+    private List<UpdateProductGroupFullCommand.NoticeEntryCommand> toUpdateNoticeEntries(
+            List<InboundNoticeEntry> entries) {
+        if (entries == null || entries.isEmpty()) {
+            return List.of();
+        }
+        return entries.stream()
+                .filter(InboundNoticeEntry::isResolved)
+                .map(
+                        e ->
+                                new UpdateProductGroupFullCommand.NoticeEntryCommand(
+                                        e.resolvedFieldId(), e.fieldValue()))
+                .toList();
+    }
+
+    // === 공통 유틸 ===
+
+    private List<SelectedOption> toSelectedOptions(
+            List<InboundProductPayload.InboundProductData.InboundSelectedOption> options) {
+        if (options == null || options.isEmpty()) {
+            return List.of();
+        }
+        return options.stream()
+                .map(so -> new SelectedOption(so.optionGroupName(), so.optionValueName()))
+                .toList();
+    }
+
+    private String resolveOptionType(String optionTypeStr) {
+        if (optionTypeStr == null || optionTypeStr.isBlank()) {
+            return "NONE";
+        }
+        try {
+            return com.ryuqq.marketplace.domain.productgroup.vo.OptionType.valueOf(
+                            optionTypeStr.toUpperCase(Locale.ROOT))
+                    .name();
+        } catch (IllegalArgumentException e) {
+            log.warn("알 수 없는 OptionType '{}', NONE으로 설정", optionTypeStr);
+            return "NONE";
+        }
     }
 }

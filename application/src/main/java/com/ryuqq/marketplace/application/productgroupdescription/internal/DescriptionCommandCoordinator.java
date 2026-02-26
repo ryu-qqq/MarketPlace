@@ -56,15 +56,20 @@ public class DescriptionCommandCoordinator {
      * 수정 Command 기반: 기존 Description 조회 → 수정 → 저장 + 아웃박스 생성.
      *
      * @param command 상세 설명 수정 Command
+     * @return 텍스트 콘텐츠가 실제 변경되었으면 true (AI 재검수 판단용)
      */
     @Transactional
-    public void update(UpdateProductGroupDescriptionCommand command) {
+    public boolean update(UpdateProductGroupDescriptionCommand command) {
         ProductGroupId pgId = ProductGroupId.of(command.productGroupId());
         ProductGroupDescription existing = descriptionReadManager.getByProductGroupId(pgId);
+
+        boolean contentChanged = !existing.contentValue().equals(command.content());
 
         DescriptionUpdateData updateData = descriptionCommandFactory.createUpdateData(command);
         DescriptionImageDiff diff = existing.update(updateData);
         update(existing, diff);
+
+        return contentChanged;
     }
 
     /**

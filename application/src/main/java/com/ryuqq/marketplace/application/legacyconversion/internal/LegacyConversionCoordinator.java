@@ -1,13 +1,13 @@
 package com.ryuqq.marketplace.application.legacyconversion.internal;
 
+import com.ryuqq.marketplace.application.legacy.productgroup.internal.LegacyProductGroupReadFacade;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductCompositeResult;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.legacyconversion.factory.LegacyToInternalBundleFactory;
 import com.ryuqq.marketplace.application.legacyconversion.factory.LegacyToInternalUpdateBundleFactory;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyProductIdMappingCommandManager;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyProductIdMappingReadManager;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductCompositeResult;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductGroupDetailBundle;
-import com.ryuqq.marketplace.application.legacyproduct.internal.LegacyProductGroupReadFacade;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.result.ProductGroupRegistrationResult;
@@ -43,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
  * </ul>
  */
 @Component
+@SuppressWarnings("PMD.ExcessiveImports")
 public class LegacyConversionCoordinator {
 
     private static final Logger log = LoggerFactory.getLogger(LegacyConversionCoordinator.class);

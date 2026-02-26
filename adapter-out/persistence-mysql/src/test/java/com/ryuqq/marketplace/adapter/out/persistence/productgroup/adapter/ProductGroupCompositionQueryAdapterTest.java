@@ -5,13 +5,16 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.repository.ProductGroupCompositionQueryDslRepository;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.OptionGroupSummaryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBaseBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchCriteria;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -298,6 +301,112 @@ class ProductGroupCompositionQueryAdapterTest {
             // then
             assertThat(result).isEmpty();
             then(compositionRepository).should().findDetailCompositeById(productGroupId);
+        }
+    }
+
+    // ========================================================================
+    // 6. findExcelBaseBundleByCriteria 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findExcelBaseBundleByCriteria 메서드 테스트")
+    class FindExcelBaseBundleByCriteriaTest {
+
+        @Test
+        @DisplayName("검색 조건으로 엑셀 기본 번들을 조회합니다")
+        void findExcelBaseBundleByCriteria_WithValidCriteria_ReturnsBundle() {
+            // given
+            ProductGroupExcelBaseBundle expected =
+                    new ProductGroupExcelBaseBundle(
+                            List.of(buildListCompositeResult(1L)),
+                            Map.of(1L, "https://cdn.example.com/desc"),
+                            1L);
+
+            given(compositionRepository.findExcelBaseBundleByCriteria(criteria))
+                    .willReturn(expected);
+
+            // when
+            ProductGroupExcelBaseBundle result =
+                    queryAdapter.findExcelBaseBundleByCriteria(criteria);
+
+            // then
+            assertThat(result.composites()).hasSize(1);
+            assertThat(result.descriptionCdnUrlByProductGroupId()).containsKey(1L);
+            assertThat(result.totalElements()).isEqualTo(1L);
+            then(compositionRepository).should().findExcelBaseBundleByCriteria(criteria);
+        }
+
+        @Test
+        @DisplayName("결과가 없으면 빈 번들을 반환합니다")
+        void findExcelBaseBundleByCriteria_WithNoResults_ReturnsEmptyBundle() {
+            // given
+            ProductGroupExcelBaseBundle expected =
+                    new ProductGroupExcelBaseBundle(List.of(), Map.of(), 0);
+
+            given(compositionRepository.findExcelBaseBundleByCriteria(criteria))
+                    .willReturn(expected);
+
+            // when
+            ProductGroupExcelBaseBundle result =
+                    queryAdapter.findExcelBaseBundleByCriteria(criteria);
+
+            // then
+            assertThat(result.composites()).isEmpty();
+            assertThat(result.totalElements()).isZero();
+        }
+    }
+
+    // ========================================================================
+    // 7. findProductsWithOptionNamesByProductGroupIds 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findProductsWithOptionNamesByProductGroupIds 메서드 테스트")
+    class FindProductsWithOptionNamesByProductGroupIdsTest {
+
+        @Test
+        @DisplayName("ID 목록으로 옵션 이름이 포함된 상품 데이터를 배치 조회합니다")
+        void findProductsWithOptionNames_WithValidIds_ReturnsMap() {
+            // given
+            List<Long> productGroupIds = List.of(1L, 2L);
+            Instant now = Instant.now();
+            ProductResult productResult =
+                    new ProductResult(
+                            10L, 1L, "SKU-001", 30000, 25000, null, 16, 100, "ACTIVE", 1, List.of(),
+                            now, now);
+            Map<Long, List<ProductResult>> expected = Map.of(1L, List.of(productResult));
+
+            given(
+                            compositionRepository.findProductsWithOptionNamesByProductGroupIds(
+                                    productGroupIds))
+                    .willReturn(expected);
+
+            // when
+            Map<Long, List<ProductResult>> result =
+                    queryAdapter.findProductsWithOptionNamesByProductGroupIds(productGroupIds);
+
+            // then
+            assertThat(result).containsKey(1L);
+            assertThat(result.get(1L)).hasSize(1);
+            then(compositionRepository)
+                    .should()
+                    .findProductsWithOptionNamesByProductGroupIds(productGroupIds);
+        }
+
+        @Test
+        @DisplayName("빈 ID 목록으로 조회하면 빈 Map을 반환합니다")
+        void findProductsWithOptionNames_WithEmptyIds_ReturnsEmptyMap() {
+            // given
+            List<Long> emptyIds = List.of();
+            given(compositionRepository.findProductsWithOptionNamesByProductGroupIds(emptyIds))
+                    .willReturn(Map.of());
+
+            // when
+            Map<Long, List<ProductResult>> result =
+                    queryAdapter.findProductsWithOptionNamesByProductGroupIds(emptyIds);
+
+            // then
+            assertThat(result).isEmpty();
         }
     }
 

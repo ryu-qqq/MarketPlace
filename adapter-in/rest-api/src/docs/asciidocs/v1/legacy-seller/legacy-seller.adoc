@@ -1,0 +1,13 @@
+[[legacy-seller-get-info]]
+=== 레거시 셀러 정보 조회
+
+인증 필요 | 세토프 어드민 호환 셀러 정보를 조회합니다.
+
+==== HTTP Request
+include::{snippets}/legacy-seller/get-info/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/legacy-seller/get-info/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/legacy-seller/get-info/response-fields.adoc[]

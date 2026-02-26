@@ -82,9 +82,9 @@ class ProductGroupBundleFactoryTest {
             ProductGroupRegistrationBundle result = sut.createProductGroupBundle(command);
 
             // then
-            assertThat(result.optionData()).isNotNull();
-            assertThat(result.optionData().optionType().name()).isEqualTo(command.optionType());
-            assertThat(result.optionData().groups()).hasSize(command.optionGroups().size());
+            assertThat(result.optionType()).isNotNull();
+            assertThat(result.optionType()).isEqualTo(command.optionType());
+            assertThat(result.optionGroups()).hasSize(command.optionGroups().size());
         }
 
         @Test
@@ -115,10 +115,8 @@ class ProductGroupBundleFactoryTest {
             ProductGroupRegistrationBundle result = sut.createProductGroupBundle(command);
 
             // then
-            assertThat(result.noticeData()).isNotNull();
-            assertThat(result.noticeData().noticeCategoryId())
-                    .isEqualTo(command.notice().noticeCategoryId());
-            assertThat(result.noticeData().entries()).hasSize(command.notice().entries().size());
+            assertThat(result.noticeCategoryId()).isEqualTo(command.notice().noticeCategoryId());
+            assertThat(result.noticeEntries()).hasSize(command.notice().entries().size());
         }
 
         @Test
@@ -150,8 +148,8 @@ class ProductGroupBundleFactoryTest {
 
             // then
             assertThat(result).isNotNull();
-            assertThat(result.optionData().optionType().name()).isEqualTo("NONE");
-            assertThat(result.optionData().groups()).isEmpty();
+            assertThat(result.optionType()).isEqualTo("NONE");
+            assertThat(result.optionGroups()).isEmpty();
         }
     }
 

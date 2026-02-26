@@ -5,6 +5,7 @@ import static com.ryuqq.marketplace.adapter.in.rest.legacy.qna.LegacyQnAEndpoint
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyCustomPageable;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyQnAListResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LegacyQnAController {
 
+    @Operation(summary = "QnA 목록 조회", description = "페이징 기반으로 문의(QnA) 목록을 조회합니다.")
     @GetMapping(QNAS)
     public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyQnAListResponse>>> getQnas(
             Pageable pageable) {

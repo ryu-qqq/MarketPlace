@@ -34,7 +34,7 @@ public class ProductGroup {
     private ShippingPolicyId shippingPolicyId;
     private RefundPolicyId refundPolicyId;
     private ProductGroupName productGroupName;
-    private final OptionType optionType;
+    private OptionType optionType;
     private ProductGroupStatus status;
     private ProductGroupImages productGroupImages;
     private SellerOptionGroups sellerOptionGroups;
@@ -222,6 +222,7 @@ public class ProductGroup {
         this.categoryId = updateData.categoryId();
         this.shippingPolicyId = updateData.shippingPolicyId();
         this.refundPolicyId = updateData.refundPolicyId();
+        this.optionType = updateData.optionType();
         this.updatedAt = updateData.updatedAt();
     }
 

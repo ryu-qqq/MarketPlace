@@ -43,6 +43,16 @@ public class LegacyProductGroupDetailDescriptionEntity extends LegacyBaseEntity 
     @Column(name = "origin_url")
     private String originUrl;
 
+    @Lob
+    @Column(name = "content", columnDefinition = "mediumtext")
+    private String content;
+
+    @Column(name = "cdn_path", length = 500)
+    private String cdnPath;
+
+    @Column(name = "publish_status", length = 20)
+    private String publishStatus;
+
     protected LegacyProductGroupDetailDescriptionEntity() {}
 
     private LegacyProductGroupDetailDescriptionEntity(Long productGroupId, String imageUrl) {
@@ -51,9 +61,26 @@ public class LegacyProductGroupDetailDescriptionEntity extends LegacyBaseEntity 
         this.deleteYn = "N";
     }
 
+    private LegacyProductGroupDetailDescriptionEntity(
+            Long productGroupId, String content, String cdnPath, String publishStatus) {
+        this.productGroupId = productGroupId;
+        this.content = content;
+        this.imageUrl = content;
+        this.cdnPath = cdnPath;
+        this.publishStatus = publishStatus;
+        this.deleteYn = "N";
+    }
+
     public static LegacyProductGroupDetailDescriptionEntity create(
             long productGroupId, String detailDescription) {
         return new LegacyProductGroupDetailDescriptionEntity(productGroupId, detailDescription);
+    }
+
+    /** content/cdnPath/publishStatus를 포함한 전체 필드 생성. */
+    public static LegacyProductGroupDetailDescriptionEntity createFull(
+            long productGroupId, String content, String cdnPath, String publishStatus) {
+        return new LegacyProductGroupDetailDescriptionEntity(
+                productGroupId, content, cdnPath, publishStatus);
     }
 
     public Long getProductGroupId() {
@@ -82,5 +109,17 @@ public class LegacyProductGroupDetailDescriptionEntity extends LegacyBaseEntity 
 
     public String getOriginUrl() {
         return originUrl;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getCdnPath() {
+        return cdnPath;
+    }
+
+    public String getPublishStatus() {
+        return publishStatus;
     }
 }
