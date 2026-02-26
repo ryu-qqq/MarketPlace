@@ -33,6 +33,7 @@ public class LegacyConversionOutboxCommandAdapter implements LegacyConversionOut
     public Long persist(LegacyConversionOutbox outbox) {
         LegacyConversionOutboxJpaEntity entity = mapper.toEntity(outbox);
         LegacyConversionOutboxJpaEntity saved = repository.save(entity);
+        outbox.refreshVersion(saved.getVersion());
         return saved.getId();
     }
 }

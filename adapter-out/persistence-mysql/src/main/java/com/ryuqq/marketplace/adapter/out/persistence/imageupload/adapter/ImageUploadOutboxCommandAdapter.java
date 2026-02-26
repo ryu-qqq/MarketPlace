@@ -34,6 +34,7 @@ public class ImageUploadOutboxCommandAdapter implements ImageUploadOutboxCommand
     public Long persist(ImageUploadOutbox outbox) {
         ImageUploadOutboxJpaEntity entity = mapper.toEntity(outbox);
         ImageUploadOutboxJpaEntity saved = repository.save(entity);
+        outbox.refreshVersion(saved.getVersion());
         return saved.getId();
     }
 }

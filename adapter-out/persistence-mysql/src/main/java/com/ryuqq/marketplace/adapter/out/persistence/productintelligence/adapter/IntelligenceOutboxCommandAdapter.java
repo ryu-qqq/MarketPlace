@@ -32,6 +32,7 @@ public class IntelligenceOutboxCommandAdapter implements IntelligenceOutboxComma
     public Long persist(IntelligenceOutbox outbox) {
         IntelligenceOutboxJpaEntity entity = mapper.toEntity(outbox);
         IntelligenceOutboxJpaEntity saved = repository.save(entity);
+        outbox.refreshVersion(saved.getVersion());
         return saved.getId();
     }
 }
