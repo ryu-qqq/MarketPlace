@@ -18,12 +18,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 /**
  * 메인 JPA 인프라 설정.
  *
- * <p>Legacy 모듈({@code LegacyJpaConfig})이 별도의 {@code DataSource}와
- * {@code LocalContainerEntityManagerFactoryBean}을 정의하면 Spring Boot 자동 설정의
+ * <p>Legacy 모듈({@code LegacyJpaConfig})이 별도의 {@code DataSource}와 {@code
+ * LocalContainerEntityManagerFactoryBean}을 정의하면 Spring Boot 자동 설정의
  * {@code @ConditionalOnMissingBean} 조건으로 인해 메인 빈이 생성되지 않습니다.
  *
- * <p>이 설정 클래스는 메인 DataSource, EntityManagerFactory, TransactionManager를
- * {@code @Primary}로 명시적으로 정의하여 Legacy 모듈과 공존할 수 있도록 합니다.
+ * <p>이 설정 클래스는 메인 DataSource, EntityManagerFactory, TransactionManager를 {@code @Primary}로 명시적으로
+ * 정의하여 Legacy 모듈과 공존할 수 있도록 합니다.
  *
  * @author ryu-qqq
  * @since 1.1.0
@@ -35,9 +35,7 @@ public class MainJpaConfig {
     @Primary
     @ConfigurationProperties("spring.datasource.hikari")
     public HikariDataSource dataSource(DataSourceProperties properties) {
-        return properties.initializeDataSourceBuilder()
-                .type(HikariDataSource.class)
-                .build();
+        return properties.initializeDataSourceBuilder().type(HikariDataSource.class).build();
     }
 
     @Bean
@@ -46,8 +44,7 @@ public class MainJpaConfig {
             @Qualifier("dataSource") DataSource dataSource,
             EntityManagerFactoryBuilder builder,
             PersistenceManagedTypes persistenceManagedTypes) {
-        return builder
-                .dataSource(dataSource)
+        return builder.dataSource(dataSource)
                 .managedTypes(persistenceManagedTypes)
                 .persistenceUnit("main")
                 .build();
