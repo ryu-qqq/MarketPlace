@@ -51,7 +51,7 @@ server:
 # ===============================================
 spring:
   application:
-    name: spring-standards-api
+    name: marketplace-api
 
   # Profile 설정
   profiles:

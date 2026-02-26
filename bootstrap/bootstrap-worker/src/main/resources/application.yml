@@ -10,7 +10,7 @@ intelligence:
 
 spring:
   application:
-    name: bootstrap-worker
+    name: marketplace-worker
 
   # ========================================
   # Config Import (Adapter Layer Settings)
@@ -83,8 +83,4 @@ sentry:
 # ========================================
 # Logging
 # ========================================
-logging:
-  level:
-    root: INFO
-    com.ryuqq.marketplace: DEBUG
-    com.ryuqq.marketplace.adapter.in.sqs: DEBUG
+# logback-spring.xml에서 프로파일별 설정 관리
