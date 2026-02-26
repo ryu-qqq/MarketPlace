@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.Map;
 import javax.sql.DataSource;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -43,10 +44,25 @@ public class LegacyJpaConfig {
         return DataSourceBuilder.create().type(HikariDataSource.class).build();
     }
 
+    @Bean(initMethod = "migrate")
+    public Flyway legacyFlyway(@Qualifier("legacyDataSource") DataSource dataSource) {
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:db/legacy-migration")
+                .table("flyway_schema_history_legacy")
+                .baselineOnMigrate(true)
+                .validateOnMigrate(true)
+                .outOfOrder(false)
+                .cleanDisabled(true)
+                .load();
+    }
+
     @Bean
+    @SuppressWarnings("unused")
     public LocalContainerEntityManagerFactoryBean legacyEntityManagerFactory(
             @Qualifier("legacyDataSource") DataSource dataSource,
-            EntityManagerFactoryBuilder builder) {
+            EntityManagerFactoryBuilder builder,
+            @Qualifier("legacyFlyway") Flyway legacyFlyway) {
         return builder.dataSource(dataSource)
                 .packages("com.ryuqq.marketplace.adapter.out.persistence.legacy")
                 .persistenceUnit("legacy")

@@ -42,6 +42,33 @@ public class LegacyCommonCodeEntity extends LegacyBaseEntity {
 
     protected LegacyCommonCodeEntity() {}
 
+    private LegacyCommonCodeEntity(
+            Long id,
+            Long codeGroupId,
+            String codeDetail,
+            String codeDetailDisplayName,
+            Integer displayOrder,
+            String deleteYn) {
+        this.id = id;
+        this.codeGroupId = codeGroupId;
+        this.codeDetail = codeDetail;
+        this.codeDetailDisplayName = codeDetailDisplayName;
+        this.displayOrder = displayOrder;
+        this.deleteYn = deleteYn;
+    }
+
+    /** 테스트 및 Mapper에서 Entity 생성 시 사용하는 팩토리 메서드. */
+    public static LegacyCommonCodeEntity create(
+            Long id,
+            Long codeGroupId,
+            String codeDetail,
+            String codeDetailDisplayName,
+            Integer displayOrder,
+            String deleteYn) {
+        return new LegacyCommonCodeEntity(
+                id, codeGroupId, codeDetail, codeDetailDisplayName, displayOrder, deleteYn);
+    }
+
     public Long getId() {
         return id;
     }

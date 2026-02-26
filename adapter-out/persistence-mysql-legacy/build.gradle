@@ -37,6 +37,11 @@ dependencies {
 
     // Database Drivers (Runtime)
     runtimeOnly libs.mysql.connector
+    testRuntimeOnly libs.h2 // For testing (embedded DB)
+
+    // Flyway (Legacy DB migration)
+    implementation libs.flyway.core
+    runtimeOnly libs.flyway.mysql
 
     // Connection Pooling
     implementation libs.hikaricp
@@ -85,7 +90,38 @@ tasks.withType(JavaCompile) {
 // ========================================
 // Test Coverage (Legacy module: minimal)
 // ========================================
+tasks.jacocoTestReport {
+    classDirectories.setFrom(
+        files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/orders/entity/**',   // Order snapshot entities - read-only legacy data
+                '**/qna/entity/**',      // QNA entities - read-only legacy data
+                '**/brand/entity/**',    // Brand entity - read-only reference data
+                '**/category/entity/**', // Category entity - read-only reference data
+                '**/seller/entity/**',   // Seller entity - read-only reference data
+                '**/common/entity/**',   // Base entity classes
+                '**/config/**',          // Spring configuration classes
+                '**/Q*.class'            // QueryDSL generated classes
+            ])
+        })
+    )
+}
+
 tasks.jacocoTestCoverageVerification {
+    classDirectories.setFrom(
+        files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/orders/entity/**',
+                '**/qna/entity/**',
+                '**/brand/entity/**',
+                '**/category/entity/**',
+                '**/seller/entity/**',
+                '**/common/entity/**',
+                '**/config/**',
+                '**/Q*.class'
+            ])
+        })
+    )
     violationRules {
         rule {
             limit {
