@@ -63,6 +63,10 @@ data "aws_ssm_parameter" "ses_secret_access_key" {
   name = "/${var.project_name}/ses/secret-access-key"
 }
 
+data "aws_ssm_parameter" "legacy_db_password" {
+  name = "/${var.project_name}/stage/legacy-db-password"
+}
+
 # VPC data source for internal communication
 data "aws_vpc" "main" {
   id = local.vpc_id
@@ -452,7 +456,10 @@ module "ecs_service" {
     # Naver Commerce
     { name = "NAVER_COMMERCE_CLIENT_ID", value = data.aws_ssm_parameter.naver_commerce_client_id.value },
     # Sentry
-    { name = "SENTRY_DSN", value = local.sentry_dsn }
+    { name = "SENTRY_DSN", value = local.sentry_dsn },
+    # Legacy DB (same host, different schema)
+    { name = "LEGACY_DB_NAME", value = "luxurydb" },
+    { name = "LEGACY_DB_USERNAME", value = "admin" }
   ]
 
   # Container Secrets
@@ -463,7 +470,8 @@ module "ecs_service" {
     { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     { name = "AWS_ACCESS_KEY_ID", valueFrom = data.aws_ssm_parameter.ses_access_key_id.arn },
     { name = "AWS_SECRET_ACCESS_KEY", valueFrom = data.aws_ssm_parameter.ses_secret_access_key.arn },
-    { name = "NAVER_COMMERCE_CLIENT_SECRET", valueFrom = data.aws_ssm_parameter.naver_commerce_client_secret.arn }
+    { name = "NAVER_COMMERCE_CLIENT_SECRET", valueFrom = data.aws_ssm_parameter.naver_commerce_client_secret.arn },
+    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
   ]
 
   # Health Check
