@@ -1,0 +1,124 @@
+[[inbound-product-receive]]
+=== 인바운드 상품 수신
+
+인증 필요 | 외부 소스에서 상품 데이터를 수신하여 인바운드 상품으로 등록합니다.
+
+==== HTTP Request
+include::{snippets}/inbound-product/receive/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/inbound-product/receive/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/inbound-product/receive/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/inbound-product/receive/response-fields.adoc[]
+
+
+[[inbound-product-get-detail]]
+=== 인바운드 상품 상세 조회
+
+인증 필요 | 인바운드 소스 ID와 외부 상품 코드로 상세 정보를 조회합니다.
+
+==== HTTP Request
+include::{snippets}/inbound-product/get-detail/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/inbound-product/get-detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/inbound-product/get-detail/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/inbound-product/get-detail/response-fields.adoc[]
+
+
+[[inbound-product-update-price]]
+=== 인바운드 상품 가격 수정
+
+인증 필요 | 인바운드 상품의 대표 가격(정상가/판매가)을 수정합니다.
+
+==== HTTP Request
+include::{snippets}/inbound-product/update-price/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/inbound-product/update-price/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/inbound-product/update-price/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/inbound-product/update-price/http-response.adoc[]
+
+
+[[inbound-product-update-stock]]
+=== 인바운드 상품 재고 수정
+
+인증 필요 | 인바운드 상품의 SKU별 재고를 수정합니다.
+
+==== HTTP Request
+include::{snippets}/inbound-product/update-stock/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/inbound-product/update-stock/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/inbound-product/update-stock/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/inbound-product/update-stock/http-response.adoc[]
+
+
+[[inbound-product-update-images]]
+=== 인바운드 상품 이미지 수정
+
+인증 필요 | 인바운드 상품의 이미지 목록을 교체합니다.
+
+==== HTTP Request
+include::{snippets}/inbound-product/update-images/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/inbound-product/update-images/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/inbound-product/update-images/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/inbound-product/update-images/http-response.adoc[]
+
+
+[[inbound-product-update-description]]
+=== 인바운드 상품 상세설명 수정
+
+인증 필요 | 인바운드 상품의 상세설명(HTML)을 수정합니다.
+
+==== HTTP Request
+include::{snippets}/inbound-product/update-description/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/inbound-product/update-description/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/inbound-product/update-description/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/inbound-product/update-description/http-response.adoc[]
+
+
+[[inbound-product-update-products]]
+=== 인바운드 상품 옵션/SKU 일괄 수정
+
+인증 필요 | 인바운드 상품의 옵션 그룹 및 SKU 정보를 일괄 수정합니다.
+
+==== HTTP Request
+include::{snippets}/inbound-product/update-products/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/inbound-product/update-products/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/inbound-product/update-products/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/inbound-product/update-products/http-response.adoc[]

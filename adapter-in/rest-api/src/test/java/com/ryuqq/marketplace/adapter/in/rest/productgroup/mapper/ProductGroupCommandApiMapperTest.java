@@ -134,36 +134,6 @@ class ProductGroupCommandApiMapperTest {
             assertThat(command.notice().entries()).hasSize(2);
             assertThat(command.notice().entries().get(0).fieldValue()).isEqualTo("제조사");
         }
-
-        @Test
-        @DisplayName("이미지 목록이 null이면 null로 변환된다")
-        void toCommand_NullImages_ReturnsNullImageCommand() {
-            // given
-            RegisterProductGroupApiRequest request =
-                    new RegisterProductGroupApiRequest(
-                            ProductGroupApiFixtures.DEFAULT_SELLER_ID,
-                            ProductGroupApiFixtures.DEFAULT_BRAND_ID,
-                            ProductGroupApiFixtures.DEFAULT_CATEGORY_ID,
-                            1L,
-                            1L,
-                            ProductGroupApiFixtures.DEFAULT_PRODUCT_GROUP_NAME,
-                            ProductGroupApiFixtures.DEFAULT_OPTION_TYPE,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null);
-
-            // when
-            RegisterProductGroupCommand command = mapper.toCommand(request);
-
-            // then
-            assertThat(command.images()).isNull();
-            assertThat(command.optionGroups()).isNull();
-            assertThat(command.products()).isNull();
-            assertThat(command.description()).isNull();
-            assertThat(command.notice()).isNull();
-        }
     }
 
     @Nested

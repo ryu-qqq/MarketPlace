@@ -37,6 +37,9 @@ public class InboundProductJpaEntityMapper {
                 product.status().name(),
                 product.descriptionHtml(),
                 serializePayload(product.payload()),
+                product.resolvedShippingPolicyId(),
+                product.resolvedRefundPolicyId(),
+                product.resolvedNoticeCategoryId(),
                 product.retryCount(),
                 product.createdAt(),
                 product.updatedAt());
@@ -63,6 +66,9 @@ public class InboundProductJpaEntityMapper {
                 InboundProductStatus.fromString(entity.getStatus()),
                 entity.getDescriptionHtml(),
                 deserializePayload(entity.getRawPayloadJson()),
+                entity.getResolvedShippingPolicyId(),
+                entity.getResolvedRefundPolicyId(),
+                entity.getResolvedNoticeCategoryId(),
                 entity.getRetryCount(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());

@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(
         basePackages = {
             "com.ryuqq.marketplace.adapter.out.persistence.legacy",
-            "com.ryuqq.marketplace.application.legacyproduct",
+            "com.ryuqq.marketplace.application.legacy",
             "com.ryuqq.marketplace.application.legacyauth",
             "com.ryuqq.marketplace.application.legacyseller",
             "com.ryuqq.marketplace.application.legacyshipment",

@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.auth.mapper.LegacyAuthComman
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.application.legacyauth.dto.command.LegacyLoginCommand;
 import com.ryuqq.marketplace.application.legacyauth.port.in.LegacyLoginUseCase;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,9 @@ public class LegacyAuthController {
         this.legacyAuthCommandApiMapper = legacyAuthCommandApiMapper;
     }
 
+    @Operation(
+            summary = "레거시 인증 토큰 발급",
+            description = "세토프 어드민 호환 인증 토큰을 발급합니다. OMS(사방넷, 셀릭) 연동에 사용됩니다.")
     @PostMapping(AUTH_AUTHENTICATION)
     public ResponseEntity<LegacyApiResponse<LegacyAuthTokenResponse>> getAccessToken(
             @Valid @RequestBody LegacyCreateAuthTokenRequest request) {

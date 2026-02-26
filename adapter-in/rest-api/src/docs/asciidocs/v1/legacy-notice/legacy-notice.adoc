@@ -1,0 +1,19 @@
+[[legacy-notice-update]]
+=== 레거시 고시정보 수정
+
+인증 필요 | 셀러 소유자 또는 슈퍼어드민 | 세토프 어드민 호환 고시정보 수정 API
+
+==== HTTP Request
+include::{snippets}/legacy-notice/update/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/legacy-notice/update/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/legacy-notice/update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/legacy-notice/update/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/legacy-notice/update/response-fields.adoc[]

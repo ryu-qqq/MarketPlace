@@ -5,6 +5,7 @@ package com.ryuqq.marketplace.domain.legacyconversion.vo;
  *
  * <p>레거시 상품 → 내부 상품 변환 요청의 처리 상태를 나타냅니다.
  */
+@SuppressWarnings("PMD.DataClass")
 public enum LegacyConversionOutboxStatus {
 
     /** 대기 중. 아직 처리되지 않은 상태. */

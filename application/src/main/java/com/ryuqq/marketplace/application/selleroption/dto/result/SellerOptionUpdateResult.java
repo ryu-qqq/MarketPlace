@@ -11,6 +11,7 @@ import java.util.List;
  *
  * @param resolvedActiveValueIds persist 후 null ID가 실제 생성 ID로 치환된 활성 값 목록
  * @param occurredAt diff 발생 시각
+ * @param hasChanges 옵션 그룹/값에 실제 변경이 있었는지 여부
  */
 public record SellerOptionUpdateResult(
-        List<SellerOptionValueId> resolvedActiveValueIds, Instant occurredAt) {}
+        List<SellerOptionValueId> resolvedActiveValueIds, Instant occurredAt, boolean hasChanges) {}

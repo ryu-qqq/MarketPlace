@@ -33,10 +33,14 @@ public class InboundProduct {
     private InboundProductStatus status;
     private String descriptionHtml;
     private InboundProductPayload payload;
+    private Long resolvedShippingPolicyId;
+    private Long resolvedRefundPolicyId;
+    private Long resolvedNoticeCategoryId;
     private int retryCount;
     private final Instant createdAt;
     private Instant updatedAt;
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     private InboundProduct(
             InboundProductId id,
             Long inboundSourceId,
@@ -54,6 +58,9 @@ public class InboundProduct {
             InboundProductStatus status,
             String descriptionHtml,
             InboundProductPayload payload,
+            Long resolvedShippingPolicyId,
+            Long resolvedRefundPolicyId,
+            Long resolvedNoticeCategoryId,
             int retryCount,
             Instant createdAt,
             Instant updatedAt) {
@@ -73,6 +80,9 @@ public class InboundProduct {
         this.status = status;
         this.descriptionHtml = descriptionHtml;
         this.payload = payload;
+        this.resolvedShippingPolicyId = resolvedShippingPolicyId;
+        this.resolvedRefundPolicyId = resolvedRefundPolicyId;
+        this.resolvedNoticeCategoryId = resolvedNoticeCategoryId;
         this.retryCount = retryCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -109,12 +119,16 @@ public class InboundProduct {
                 InboundProductStatus.RECEIVED,
                 descriptionHtml,
                 payload,
+                null,
+                null,
+                null,
                 0,
                 now,
                 now);
     }
 
     /** 영속성에서 복원 시 사용. */
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public static InboundProduct reconstitute(
             InboundProductId id,
             Long inboundSourceId,
@@ -132,6 +146,9 @@ public class InboundProduct {
             InboundProductStatus status,
             String descriptionHtml,
             InboundProductPayload payload,
+            Long resolvedShippingPolicyId,
+            Long resolvedRefundPolicyId,
+            Long resolvedNoticeCategoryId,
             int retryCount,
             Instant createdAt,
             Instant updatedAt) {
@@ -152,6 +169,9 @@ public class InboundProduct {
                 status,
                 descriptionHtml,
                 payload,
+                resolvedShippingPolicyId,
+                resolvedRefundPolicyId,
+                resolvedNoticeCategoryId,
                 retryCount,
                 createdAt,
                 updatedAt);
@@ -243,6 +263,23 @@ public class InboundProduct {
         this.optionType = newData.optionType();
         this.descriptionHtml = newData.descriptionHtml();
         this.payload = newData.payload();
+        this.updatedAt = now;
+    }
+
+    /** 수신 시점에 배송/환불/고시정보 해석 결과를 적용. MAPPED 상태에서만 가능. */
+    public void applyResolution(
+            Long shippingPolicyId,
+            Long refundPolicyId,
+            Long noticeCategoryId,
+            InboundProductPayload resolvedPayload,
+            Instant now) {
+        if (!status.isMapped()) {
+            throw new IllegalStateException("해석 적용은 MAPPED 상태에서만 가능합니다. 현재 상태: " + status);
+        }
+        this.resolvedShippingPolicyId = shippingPolicyId;
+        this.resolvedRefundPolicyId = refundPolicyId;
+        this.resolvedNoticeCategoryId = noticeCategoryId;
+        this.payload = resolvedPayload;
         this.updatedAt = now;
     }
 
@@ -338,6 +375,18 @@ public class InboundProduct {
 
     public InboundProductPayload payload() {
         return payload;
+    }
+
+    public Long resolvedShippingPolicyId() {
+        return resolvedShippingPolicyId;
+    }
+
+    public Long resolvedRefundPolicyId() {
+        return resolvedRefundPolicyId;
+    }
+
+    public Long resolvedNoticeCategoryId() {
+        return resolvedNoticeCategoryId;
     }
 
     public int retryCount() {

@@ -182,6 +182,7 @@ public final class ProductGroupCommandFixtures {
                 DEFAULT_CATEGORY_ID,
                 DEFAULT_SHIPPING_POLICY_ID,
                 DEFAULT_REFUND_POLICY_ID,
+                DEFAULT_OPTION_TYPE,
                 defaultUpdateImageCommands(),
                 defaultUpdateOptionGroupCommands(),
                 defaultUpdateProductCommands(),

@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.legacyconversion.factory;
 
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductCompositeResult;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductGroupCompositeResult;
-import com.ryuqq.marketplace.application.legacyproduct.dto.composite.LegacyProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductCompositeResult;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult;
+import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
@@ -17,6 +17,7 @@ import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
@@ -98,6 +99,7 @@ public class LegacyToInternalUpdateBundleFactory {
                 CategoryId.of(composite.categoryId()),
                 shippingPolicyId,
                 refundPolicyId,
+                OptionType.valueOf(composite.optionType()),
                 now);
     }
 

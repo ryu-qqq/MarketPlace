@@ -148,6 +148,7 @@ class ProductGroupCommandCoordinatorTest {
                         ProductGroupFixtures.DEFAULT_SHIPPING_POLICY_ID),
                 com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId.of(
                         ProductGroupFixtures.DEFAULT_REFUND_POLICY_ID),
+                com.ryuqq.marketplace.domain.productgroup.vo.OptionType.SINGLE,
                 Instant.now());
     }
 }

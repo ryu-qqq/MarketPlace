@@ -6,17 +6,22 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.brand.entity.QBrandJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.category.entity.QCategoryJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.product.entity.QProductJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.product.entity.QProductOptionMappingJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.condition.ProductGroupConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QProductGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QSellerOptionGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QSellerOptionValueJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroupdescription.entity.QProductGroupDescriptionJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.QProductGroupImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.refundpolicy.entity.QRefundPolicyJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.seller.entity.QSellerJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.shippingpolicy.entity.QShippingPolicyJpaEntity;
+import com.ryuqq.marketplace.application.product.dto.response.ProductOptionMappingResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.OptionGroupSummaryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBaseBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.refundpolicy.dto.response.RefundPolicyResult;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
@@ -28,9 +33,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 /** ProductGroup Composition QueryDSL Repository. 크로스 도메인 JOIN 조회용. */
+@SuppressWarnings("PMD.ExcessiveImports")
 @Repository
 public class ProductGroupCompositionQueryDslRepository {
 
@@ -49,6 +56,10 @@ public class ProductGroupCompositionQueryDslRepository {
             QShippingPolicyJpaEntity.shippingPolicyJpaEntity;
     private static final QRefundPolicyJpaEntity refundPolicy =
             QRefundPolicyJpaEntity.refundPolicyJpaEntity;
+    private static final QProductOptionMappingJpaEntity optionMapping =
+            QProductOptionMappingJpaEntity.productOptionMappingJpaEntity;
+    private static final QProductGroupDescriptionJpaEntity description =
+            QProductGroupDescriptionJpaEntity.productGroupDescriptionJpaEntity;
 
     private final JPAQueryFactory queryFactory;
     private final ProductGroupConditionBuilder conditionBuilder;
@@ -329,6 +340,185 @@ public class ProductGroupCompositionQueryDslRepository {
                         row.get(pg.updatedAt),
                         shippingResult,
                         refundResult));
+    }
+
+    /** 엑셀용 통합 Composite: base + 가격 enrichment + description cdnUrl + count. */
+    public ProductGroupExcelBaseBundle findExcelBaseBundleByCriteria(
+            ProductGroupSearchCriteria criteria) {
+
+        List<ProductGroupListCompositeResult> baseComposites = findCompositeByCriteria(criteria);
+        long totalElements = countByCriteria(criteria);
+
+        if (baseComposites.isEmpty()) {
+            return new ProductGroupExcelBaseBundle(List.of(), Map.of(), 0);
+        }
+
+        List<Long> pgIds =
+                baseComposites.stream().map(ProductGroupListCompositeResult::id).toList();
+
+        // 가격 enrichment
+        List<Tuple> priceTuples =
+                queryFactory
+                        .select(
+                                product.productGroupId,
+                                product.currentPrice.min(),
+                                product.currentPrice.max(),
+                                product.discountRate.max())
+                        .from(product)
+                        .where(product.productGroupId.in(pgIds))
+                        .groupBy(product.productGroupId)
+                        .fetch();
+
+        Map<Long, int[]> priceMap = new LinkedHashMap<>();
+        for (Tuple t : priceTuples) {
+            Long pgId = t.get(product.productGroupId);
+            priceMap.put(
+                    pgId,
+                    new int[] {
+                        safeInt(t.get(product.currentPrice.min())),
+                        safeInt(t.get(product.currentPrice.max())),
+                        safeInt(t.get(product.discountRate.max()))
+                    });
+        }
+
+        // 옵션 요약
+        Map<Long, List<OptionGroupSummaryResult>> optionMap =
+                findOptionSummariesByProductGroupIds(pgIds);
+
+        // enrichment 적용
+        List<ProductGroupListCompositeResult> enriched =
+                baseComposites.stream()
+                        .map(
+                                base -> {
+                                    int[] prices =
+                                            priceMap.getOrDefault(base.id(), new int[] {0, 0, 0});
+                                    List<OptionGroupSummaryResult> options =
+                                            optionMap.getOrDefault(base.id(), List.of());
+                                    return base.withEnrichment(
+                                            prices[0], prices[1], prices[2], options);
+                                })
+                        .toList();
+
+        // description cdnUrl
+        Map<Long, String> cdnUrlMap =
+                queryFactory
+                        .select(description.productGroupId, description.cdnPath)
+                        .from(description)
+                        .where(description.productGroupId.in(pgIds))
+                        .fetch()
+                        .stream()
+                        .collect(
+                                Collectors.toMap(
+                                        t -> t.get(description.productGroupId),
+                                        t ->
+                                                t.get(description.cdnPath) != null
+                                                        ? t.get(description.cdnPath)
+                                                        : "",
+                                        (a, b) -> a));
+
+        return new ProductGroupExcelBaseBundle(enriched, cdnUrlMap, totalElements);
+    }
+
+    /**
+     * 상품 + 옵션 매핑(이름 해석 포함) 배치 조회.
+     *
+     * <p>products LEFT JOIN product_option_mappings LEFT JOIN seller_option_values LEFT JOIN
+     * seller_option_groups.
+     */
+    public Map<Long, List<ProductResult>> findProductsWithOptionNamesByProductGroupIds(
+            List<Long> productGroupIds) {
+        if (productGroupIds == null || productGroupIds.isEmpty()) {
+            return Map.of();
+        }
+
+        // 상품 조회
+        List<Tuple> productTuples =
+                queryFactory
+                        .select(
+                                product.id,
+                                product.productGroupId,
+                                product.skuCode,
+                                product.regularPrice,
+                                product.currentPrice,
+                                product.salePrice,
+                                product.discountRate,
+                                product.stockQuantity,
+                                product.status,
+                                product.sortOrder,
+                                product.createdAt,
+                                product.updatedAt)
+                        .from(product)
+                        .where(product.productGroupId.in(productGroupIds))
+                        .orderBy(product.sortOrder.asc())
+                        .fetch();
+
+        if (productTuples.isEmpty()) {
+            return Map.of();
+        }
+
+        List<Long> productIds = productTuples.stream().map(t -> t.get(product.id)).toList();
+
+        // 옵션 매핑 + 이름 해석
+        List<Tuple> mappingTuples =
+                queryFactory
+                        .select(
+                                optionMapping.id,
+                                optionMapping.productId,
+                                optionMapping.sellerOptionValueId,
+                                optionGroup.optionGroupName,
+                                optionValue.optionValueName)
+                        .from(optionMapping)
+                        .leftJoin(optionValue)
+                        .on(optionMapping.sellerOptionValueId.eq(optionValue.id))
+                        .leftJoin(optionGroup)
+                        .on(optionValue.sellerOptionGroupId.eq(optionGroup.id))
+                        .where(optionMapping.productId.in(productIds))
+                        .fetch();
+
+        // productId별 매핑 그룹핑
+        Map<Long, List<ProductOptionMappingResult>> mappingsByProductId = new LinkedHashMap<>();
+        for (Tuple t : mappingTuples) {
+            Long prodId = t.get(optionMapping.productId);
+            mappingsByProductId
+                    .computeIfAbsent(prodId, k -> new ArrayList<>())
+                    .add(
+                            ProductOptionMappingResult.withOptionNames(
+                                    t.get(optionMapping.id),
+                                    prodId,
+                                    t.get(optionMapping.sellerOptionValueId),
+                                    t.get(optionGroup.optionGroupName),
+                                    t.get(optionValue.optionValueName)));
+        }
+
+        // ProductResult 생성 및 productGroupId별 그룹핑
+        Map<Long, List<ProductResult>> result = new LinkedHashMap<>();
+        for (Tuple t : productTuples) {
+            Long prodId = t.get(product.id);
+            Long pgId = t.get(product.productGroupId);
+            List<ProductOptionMappingResult> mappings =
+                    mappingsByProductId.getOrDefault(prodId, List.of());
+
+            Integer salePriceRaw = t.get(product.salePrice);
+            ProductResult productResult =
+                    new ProductResult(
+                            prodId,
+                            pgId,
+                            t.get(product.skuCode),
+                            safeInt(t.get(product.regularPrice)),
+                            safeInt(t.get(product.currentPrice)),
+                            salePriceRaw,
+                            safeInt(t.get(product.discountRate)),
+                            safeInt(t.get(product.stockQuantity)),
+                            t.get(product.status),
+                            safeInt(t.get(product.sortOrder)),
+                            mappings,
+                            t.get(product.createdAt),
+                            t.get(product.updatedAt));
+
+            result.computeIfAbsent(pgId, k -> new ArrayList<>()).add(productResult);
+        }
+
+        return result;
     }
 
     // ── Private 헬퍼 ──

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.ryuqq.marketplace.application.legacyproduct.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
+import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
 import com.ryuqq.marketplace.application.seller.port.in.query.ResolveSellerIdByOrganizationUseCase;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,10 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.inboundproduct.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.inboundproduct.dto.command.ReceiveInboundProductApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.inboundproduct.dto.command.ReceiveInboundProductApiRequest.ImageRequest;
-import com.ryuqq.marketplace.adapter.in.rest.inboundproduct.dto.command.ReceiveInboundProductApiRequest.NoticeEntryRequest;
-import com.ryuqq.marketplace.adapter.in.rest.inboundproduct.dto.command.ReceiveInboundProductApiRequest.OptionGroupRequest;
-import com.ryuqq.marketplace.adapter.in.rest.inboundproduct.dto.command.ReceiveInboundProductApiRequest.ProductRequest;
 import com.ryuqq.marketplace.adapter.in.rest.inboundproduct.dto.command.UpdateInboundProductImagesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.inboundproduct.dto.command.UpdateInboundProductStockApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.inboundproduct.dto.response.InboundProductConversionApiResponse;
@@ -12,13 +8,6 @@ import com.ryuqq.marketplace.application.inboundproduct.dto.command.ReceiveInbou
 import com.ryuqq.marketplace.application.inboundproduct.dto.response.InboundProductConversionResult;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload.InboundImageData;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload.InboundNoticeEntry;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload.InboundOptionGroupData;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload.InboundOptionGroupData.InboundOptionValueData;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload.InboundProductData;
-import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductPayload.InboundProductData.InboundSelectedOption;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +16,6 @@ import org.springframework.stereotype.Component;
 public class InboundProductCommandApiMapper {
 
     public ReceiveInboundProductCommand toCommand(ReceiveInboundProductApiRequest request) {
-        InboundProductPayload payload = toPayload(request);
         return new ReceiveInboundProductCommand(
                 request.inboundSourceId(),
                 request.externalProductCode(),
@@ -38,8 +26,11 @@ public class InboundProductCommandApiMapper {
                 request.regularPrice(),
                 request.currentPrice(),
                 request.optionType(),
-                request.descriptionHtml(),
-                payload);
+                mapImages(request.images()),
+                mapOptionGroups(request.optionGroups()),
+                mapProducts(request.products()),
+                mapDescription(request.description()),
+                mapNotice(request.notice()));
     }
 
     public List<UpdateProductStockCommand> toStockCommands(
@@ -69,64 +60,67 @@ public class InboundProductCommandApiMapper {
                 result.action().name());
     }
 
-    private InboundProductPayload toPayload(ReceiveInboundProductApiRequest request) {
-        List<InboundImageData> images = mapImages(request.images());
-        List<InboundOptionGroupData> optionGroups = mapOptionGroups(request.optionGroups());
-        List<InboundProductData> products = mapProducts(request.products());
-        List<InboundNoticeEntry> noticeEntries = mapNoticeEntries(request.noticeEntries());
-        return new InboundProductPayload(images, optionGroups, products, noticeEntries);
-    }
-
-    private List<InboundImageData> mapImages(List<ImageRequest> images) {
+    private List<ReceiveInboundProductCommand.ImageCommand> mapImages(
+            List<ReceiveInboundProductApiRequest.ImageRequest> images) {
         if (images == null) {
             return List.of();
         }
         return images.stream()
-                .map(i -> new InboundImageData(i.imageType(), i.originUrl(), i.sortOrder()))
+                .map(
+                        i ->
+                                new ReceiveInboundProductCommand.ImageCommand(
+                                        i.imageType(), i.originUrl(), i.sortOrder()))
                 .toList();
     }
 
-    private List<InboundOptionGroupData> mapOptionGroups(List<OptionGroupRequest> optionGroups) {
+    private List<ReceiveInboundProductCommand.OptionGroupCommand> mapOptionGroups(
+            List<ReceiveInboundProductApiRequest.OptionGroupRequest> optionGroups) {
         if (optionGroups == null) {
             return List.of();
         }
         return optionGroups.stream()
                 .map(
                         og -> {
-                            List<InboundOptionValueData> values =
+                            List<ReceiveInboundProductCommand.OptionValueCommand> values =
                                     og.optionValues() != null
                                             ? og.optionValues().stream()
                                                     .map(
                                                             ov ->
-                                                                    new InboundOptionValueData(
+                                                                    new ReceiveInboundProductCommand
+                                                                            .OptionValueCommand(
                                                                             ov.optionValueName(),
                                                                             ov.sortOrder()))
                                                     .toList()
                                             : List.of();
-                            return new InboundOptionGroupData(
+                            return new ReceiveInboundProductCommand.OptionGroupCommand(
                                     og.optionGroupName(), og.inputType(), values);
                         })
                 .toList();
     }
 
-    private List<InboundProductData> mapProducts(List<ProductRequest> products) {
+    private List<ReceiveInboundProductCommand.ProductCommand> mapProducts(
+            List<ReceiveInboundProductApiRequest.ProductRequest> products) {
         if (products == null) {
             return List.of();
         }
         return products.stream()
                 .map(
                         p -> {
-                            List<InboundSelectedOption> selectedOptions =
-                                    p.selectedOptions() != null
-                                            ? p.selectedOptions().stream()
-                                                    .map(
-                                                            so ->
-                                                                    new InboundSelectedOption(
-                                                                            so.optionGroupName(),
-                                                                            so.optionValueName()))
-                                                    .toList()
-                                            : List.of();
-                            return new InboundProductData(
+                            List<ReceiveInboundProductCommand.SelectedOptionCommand>
+                                    selectedOptions =
+                                            p.selectedOptions() != null
+                                                    ? p.selectedOptions().stream()
+                                                            .map(
+                                                                    so ->
+                                                                            new ReceiveInboundProductCommand
+                                                                                    .SelectedOptionCommand(
+                                                                                    so
+                                                                                            .optionGroupName(),
+                                                                                    so
+                                                                                            .optionValueName()))
+                                                            .toList()
+                                                    : List.of();
+                            return new ReceiveInboundProductCommand.ProductCommand(
                                     p.skuCode(),
                                     p.regularPrice(),
                                     p.currentPrice(),
@@ -137,12 +131,26 @@ public class InboundProductCommandApiMapper {
                 .toList();
     }
 
-    private List<InboundNoticeEntry> mapNoticeEntries(List<NoticeEntryRequest> noticeEntries) {
-        if (noticeEntries == null) {
-            return List.of();
+    private ReceiveInboundProductCommand.DescriptionCommand mapDescription(
+            ReceiveInboundProductApiRequest.DescriptionRequest description) {
+        if (description == null) {
+            return new ReceiveInboundProductCommand.DescriptionCommand(null);
         }
-        return noticeEntries.stream()
-                .map(e -> new InboundNoticeEntry(e.fieldCode(), e.fieldValue()))
-                .toList();
+        return new ReceiveInboundProductCommand.DescriptionCommand(description.content());
+    }
+
+    private ReceiveInboundProductCommand.NoticeCommand mapNotice(
+            ReceiveInboundProductApiRequest.NoticeRequest notice) {
+        if (notice == null || notice.entries() == null) {
+            return new ReceiveInboundProductCommand.NoticeCommand(List.of());
+        }
+        List<ReceiveInboundProductCommand.NoticeEntryCommand> entries =
+                notice.entries().stream()
+                        .map(
+                                e ->
+                                        new ReceiveInboundProductCommand.NoticeEntryCommand(
+                                                e.fieldCode(), e.fieldValue()))
+                        .toList();
+        return new ReceiveInboundProductCommand.NoticeCommand(entries);
     }
 }

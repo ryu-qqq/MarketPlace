@@ -51,14 +51,18 @@ public class ProductGroupCommandCoordinator {
      * 상품 그룹 기본 정보 수정: 외부 FK 검증 + 조회 + update + persist.
      *
      * @param updateData 수정 데이터 (도메인 VO)
+     * @return 상품명이 실제 변경되었으면 true (AI 재검수 판단용)
      */
     @Transactional
-    public void update(ProductGroupUpdateData updateData) {
+    public boolean update(ProductGroupUpdateData updateData) {
         productGroupValidator.validateForUpdate(updateData);
 
         ProductGroup productGroup = productGroupReadManager.getById(updateData.productGroupId());
+        boolean nameChanged =
+                !productGroup.productGroupName().equals(updateData.productGroupName());
         productGroup.update(updateData);
 
         productGroupCommandManager.persist(productGroup);
+        return nameChanged;
     }
 }

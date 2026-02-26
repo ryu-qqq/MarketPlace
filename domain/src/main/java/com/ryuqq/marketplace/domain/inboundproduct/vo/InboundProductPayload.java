@@ -48,5 +48,28 @@ public record InboundProductPayload(
         public record InboundSelectedOption(String optionGroupName, String optionValueName) {}
     }
 
-    public record InboundNoticeEntry(String fieldCode, String fieldValue) {}
+    /**
+     * 고시정보 항목.
+     *
+     * @param fieldCode 외부 필드 코드 (크롤링 소스 기준)
+     * @param fieldValue 필드 값 (미제공 시 "상세설명 참고" 디폴트)
+     * @param resolvedFieldId 내부 NoticeField ID (매핑 후 해석된 값, 미해석 시 null)
+     */
+    public record InboundNoticeEntry(String fieldCode, String fieldValue, Long resolvedFieldId) {
+
+        /** 해석 전 생성용 팩토리. */
+        public static InboundNoticeEntry ofRaw(String fieldCode, String fieldValue) {
+            return new InboundNoticeEntry(fieldCode, fieldValue, null);
+        }
+
+        /** 해석 완료 생성용 팩토리. */
+        public static InboundNoticeEntry ofResolved(
+                String fieldCode, String fieldValue, long resolvedFieldId) {
+            return new InboundNoticeEntry(fieldCode, fieldValue, resolvedFieldId);
+        }
+
+        public boolean isResolved() {
+            return resolvedFieldId != null;
+        }
+    }
 }

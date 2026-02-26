@@ -287,6 +287,8 @@ class ProductGroupTest {
             RefundPolicyId newRefundPolicyId = RefundPolicyId.of(2L);
             Instant now = CommonVoFixtures.now();
 
+            OptionType newOptionType = OptionType.COMBINATION;
+
             ProductGroupUpdateData updateData =
                     ProductGroupUpdateData.of(
                             productGroup.id(),
@@ -295,6 +297,7 @@ class ProductGroupTest {
                             newCategoryId,
                             newShippingPolicyId,
                             newRefundPolicyId,
+                            newOptionType,
                             now);
 
             // when
@@ -306,6 +309,7 @@ class ProductGroupTest {
             assertThat(productGroup.categoryId()).isEqualTo(newCategoryId);
             assertThat(productGroup.shippingPolicyId()).isEqualTo(newShippingPolicyId);
             assertThat(productGroup.refundPolicyId()).isEqualTo(newRefundPolicyId);
+            assertThat(productGroup.optionType()).isEqualTo(newOptionType);
             assertThat(productGroup.updatedAt()).isEqualTo(now);
         }
     }

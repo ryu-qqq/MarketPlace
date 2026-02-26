@@ -77,17 +77,27 @@ public class InboundProductCommandController {
     }
 
     @PostMapping(INBOUND_PRODUCTS)
+    @Operation(
+            summary = "인바운드 상품 수신",
+            description =
+                    "크롤링 등 외부 소스에서 수신한 상품을 인바운드로 등록하고 내부 상품으로 변환을 시도합니다."
+                            + " 브랜드/카테고리 매핑이 완료된 경우 즉시 변환됩니다.")
     public ResponseEntity<ApiResponse<InboundProductConversionApiResponse>> receiveInboundProduct(
-            @RequestBody ReceiveInboundProductApiRequest request) {
+            @Valid @RequestBody ReceiveInboundProductApiRequest request) {
         ReceiveInboundProductCommand command = apiMapper.toCommand(request);
         InboundProductConversionResult result = receiveUseCase.execute(command);
         return ResponseEntity.ok(ApiResponse.of(apiMapper.toResponse(result)));
     }
 
     @PatchMapping(PRICE)
+    @Operation(
+            summary = "인바운드 상품 가격 수정",
+            description = "외부 소스 ID와 상품 코드로 인바운드 상품의 정가 및 판매가를 수정합니다.")
     public ResponseEntity<Void> updatePrice(
-            @PathVariable(PATH_EXTERNAL_SOURCE_ID) long inboundSourceId,
-            @PathVariable(PATH_EXTERNAL_PRODUCT_CODE) String externalProductCode,
+            @Parameter(description = "인바운드 소스 ID") @PathVariable(PATH_EXTERNAL_SOURCE_ID)
+                    long inboundSourceId,
+            @Parameter(description = "외부 상품 코드") @PathVariable(PATH_EXTERNAL_PRODUCT_CODE)
+                    String externalProductCode,
             @Valid @RequestBody UpdateInboundProductPriceApiRequest request) {
         updatePriceUseCase.execute(
                 inboundSourceId,
@@ -98,9 +108,14 @@ public class InboundProductCommandController {
     }
 
     @PatchMapping(STOCK)
+    @Operation(
+            summary = "인바운드 상품 재고 수정",
+            description = "외부 소스 ID와 상품 코드로 인바운드 상품의 개별 SKU 재고를 일괄 수정합니다.")
     public ResponseEntity<Void> updateStock(
-            @PathVariable(PATH_EXTERNAL_SOURCE_ID) long inboundSourceId,
-            @PathVariable(PATH_EXTERNAL_PRODUCT_CODE) String externalProductCode,
+            @Parameter(description = "인바운드 소스 ID") @PathVariable(PATH_EXTERNAL_SOURCE_ID)
+                    long inboundSourceId,
+            @Parameter(description = "외부 상품 코드") @PathVariable(PATH_EXTERNAL_PRODUCT_CODE)
+                    String externalProductCode,
             @Valid @RequestBody UpdateInboundProductStockApiRequest request) {
         updateStockUseCase.execute(
                 inboundSourceId, externalProductCode, apiMapper.toStockCommands(request));
@@ -108,9 +123,12 @@ public class InboundProductCommandController {
     }
 
     @PatchMapping(IMAGES)
+    @Operation(summary = "인바운드 상품 이미지 수정", description = "외부 소스 ID와 상품 코드로 인바운드 상품의 이미지 목록을 수정합니다.")
     public ResponseEntity<Void> updateImages(
-            @PathVariable(PATH_EXTERNAL_SOURCE_ID) long inboundSourceId,
-            @PathVariable(PATH_EXTERNAL_PRODUCT_CODE) String externalProductCode,
+            @Parameter(description = "인바운드 소스 ID") @PathVariable(PATH_EXTERNAL_SOURCE_ID)
+                    long inboundSourceId,
+            @Parameter(description = "외부 상품 코드") @PathVariable(PATH_EXTERNAL_PRODUCT_CODE)
+                    String externalProductCode,
             @Valid @RequestBody UpdateInboundProductImagesApiRequest request) {
         updateImagesUseCase.execute(
                 inboundSourceId, externalProductCode, apiMapper.toImagesCommand(request));
@@ -118,9 +136,14 @@ public class InboundProductCommandController {
     }
 
     @PatchMapping(DESCRIPTION)
+    @Operation(
+            summary = "인바운드 상품 상세설명 수정",
+            description = "외부 소스 ID와 상품 코드로 인바운드 상품의 HTML 상세설명을 수정합니다.")
     public ResponseEntity<Void> updateDescription(
-            @PathVariable(PATH_EXTERNAL_SOURCE_ID) long inboundSourceId,
-            @PathVariable(PATH_EXTERNAL_PRODUCT_CODE) String externalProductCode,
+            @Parameter(description = "인바운드 소스 ID") @PathVariable(PATH_EXTERNAL_SOURCE_ID)
+                    long inboundSourceId,
+            @Parameter(description = "외부 상품 코드") @PathVariable(PATH_EXTERNAL_PRODUCT_CODE)
+                    String externalProductCode,
             @Valid @RequestBody UpdateInboundProductDescriptionApiRequest request) {
         updateDescriptionUseCase.execute(inboundSourceId, externalProductCode, request.content());
         return ResponseEntity.ok().build();

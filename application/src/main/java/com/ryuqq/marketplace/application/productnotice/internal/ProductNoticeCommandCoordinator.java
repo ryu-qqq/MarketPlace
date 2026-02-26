@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.application.productnotice.manager.ProductNoticeRead
 import com.ryuqq.marketplace.application.productnotice.validator.NoticeEntriesValidator;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
+import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNoticeEntry;
 import com.ryuqq.marketplace.domain.productnotice.id.ProductNoticeId;
 import com.ryuqq.marketplace.domain.productnotice.vo.ProductNoticeUpdateData;
 import org.springframework.stereotype.Component;
@@ -72,11 +73,14 @@ public class ProductNoticeCommandCoordinator {
      * 수정 Command 기반: 기존 Notice 조회 → 검증 → 수정 → 저장.
      *
      * @param command 고시정보 수정 Command
+     * @return 고시정보 항목이 실제 변경되었으면 true (AI 재검수 판단용)
      */
     @Transactional
-    public void update(UpdateProductNoticeCommand command) {
+    public boolean update(UpdateProductNoticeCommand command) {
         ProductGroupId pgId = ProductGroupId.of(command.productGroupId());
         ProductNotice existing = noticeReadManager.getByProductGroupId(pgId);
+
+        boolean entriesChanged = hasEntryChanges(existing, command);
 
         ProductNoticeUpdateData updateData = noticeCommandFactory.createUpdateData(command);
         noticeEntriesValidator.validate(updateData);
@@ -84,6 +88,23 @@ public class ProductNoticeCommandCoordinator {
         entryCommandManager.deleteByNoticeId(existing.idValue());
         existing.update(updateData);
         noticeCommandFacade.persist(existing);
+
+        return entriesChanged;
+    }
+
+    private boolean hasEntryChanges(ProductNotice existing, UpdateProductNoticeCommand command) {
+        if (existing.entries().size() != command.entries().size()) {
+            return true;
+        }
+        for (int i = 0; i < existing.entries().size(); i++) {
+            ProductNoticeEntry oldEntry = existing.entries().get(i);
+            UpdateProductNoticeCommand.NoticeEntryCommand newEntry = command.entries().get(i);
+            if (!oldEntry.noticeFieldIdValue().equals(newEntry.noticeFieldId())
+                    || !oldEntry.fieldValueValue().equals(newEntry.fieldValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
