@@ -24,8 +24,7 @@ public class OutboundClientMetricAspect {
     }
 
     @Around("@annotation(outboundClientMetric)")
-    public Object around(
-            ProceedingJoinPoint joinPoint, OutboundClientMetric outboundClientMetric)
+    public Object around(ProceedingJoinPoint joinPoint, OutboundClientMetric outboundClientMetric)
             throws Throwable {
         String system = outboundClientMetric.system();
         String operation = outboundClientMetric.operation();
