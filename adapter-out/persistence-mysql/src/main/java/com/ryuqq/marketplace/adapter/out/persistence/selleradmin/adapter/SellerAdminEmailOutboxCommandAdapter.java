@@ -41,6 +41,7 @@ public class SellerAdminEmailOutboxCommandAdapter implements SellerAdminEmailOut
     public Long persist(SellerAdminEmailOutbox outbox) {
         SellerAdminEmailOutboxJpaEntity entity = mapper.toEntity(outbox);
         SellerAdminEmailOutboxJpaEntity saved = repository.save(entity);
+        outbox.refreshVersion(saved.getVersion());
         return saved.getId();
     }
 }

@@ -35,6 +35,7 @@ public class ImageTransformOutboxCommandAdapter implements ImageTransformOutboxC
     public Long persist(ImageTransformOutbox outbox) {
         ImageTransformOutboxJpaEntity entity = mapper.toEntity(outbox);
         ImageTransformOutboxJpaEntity saved = repository.save(entity);
+        outbox.refreshVersion(saved.getVersion());
         return saved.getId();
     }
 }
