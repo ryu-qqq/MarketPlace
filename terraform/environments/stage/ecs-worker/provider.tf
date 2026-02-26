@@ -158,6 +158,13 @@ data "aws_ssm_parameter" "openai_api_key" {
 }
 
 # ========================================
+# Legacy DB Configuration
+# ========================================
+data "aws_ssm_parameter" "legacy_db_password" {
+  name = "/${var.project_name}/stage/legacy-db-password"
+}
+
+# ========================================
 # Locals
 # ========================================
 locals {

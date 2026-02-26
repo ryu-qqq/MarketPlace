@@ -45,6 +45,10 @@ data "aws_ssm_parameter" "service_discovery_namespace_id" {
   name = "/shared/service-discovery/namespace-id"
 }
 
+data "aws_ssm_parameter" "legacy_db_password" {
+  name = "/${var.project_name}/stage/legacy-db-password"
+}
+
 # VPC data source for internal communication
 data "aws_vpc" "main" {
   id = local.vpc_id
@@ -449,7 +453,10 @@ module "ecs_service" {
     # FileFlow
     { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-prod.connectly.local:8080" },
     # Sentry
-    { name = "SENTRY_DSN", value = local.sentry_dsn }
+    { name = "SENTRY_DSN", value = local.sentry_dsn },
+    # Legacy DB (same host, different schema)
+    { name = "LEGACY_DB_NAME", value = "luxurydb" },
+    { name = "LEGACY_DB_USERNAME", value = "admin" }
   ]
 
   # Container Secrets
@@ -457,7 +464,8 @@ module "ecs_service" {
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
-    { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn }
+    { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn },
+    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
   ]
 
   # Health Check
