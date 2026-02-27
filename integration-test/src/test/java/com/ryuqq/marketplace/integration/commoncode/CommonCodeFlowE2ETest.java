@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 class CommonCodeFlowE2ETest extends E2ETestBase {
 
     private static final String BASE_URL = "/common-codes";
+    private static final String QUERY_URL = "/public/common-codes";
 
     @Autowired private CommonCodeJpaRepository commonCodeRepository;
     @Autowired private CommonCodeTypeJpaRepository commonCodeTypeRepository;
@@ -88,7 +89,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
             given().spec(givenAdmin())
                     .queryParam("commonCodeTypeId", typeId)
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))
@@ -109,7 +110,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
             given().spec(givenAdmin())
                     .queryParam("commonCodeTypeId", typeId)
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))
@@ -132,7 +133,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
                     .queryParam("commonCodeTypeId", typeId)
                     .queryParam("active", false)
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))
@@ -176,7 +177,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
             given().spec(givenAdmin())
                     .queryParam("commonCodeTypeId", typeId)
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1));
@@ -239,7 +240,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
             given().spec(givenAdmin())
                     .queryParam("commonCodeTypeId", paymentTypeId)
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))
@@ -248,7 +249,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
             given().spec(givenAdmin())
                     .queryParam("commonCodeTypeId", deliveryTypeId)
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))

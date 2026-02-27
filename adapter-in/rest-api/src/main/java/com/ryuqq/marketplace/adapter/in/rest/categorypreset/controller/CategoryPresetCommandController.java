@@ -62,7 +62,7 @@ public class CategoryPresetCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('category-preset:write')")
     @RequirePermission(value = "category-preset:write", description = "카테고리 프리셋 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<CategoryPresetIdApiResponse>> registerCategoryPreset(
@@ -84,7 +84,7 @@ public class CategoryPresetCommandController {
                 responseCode = "404",
                 description = "프리셋을 찾을 수 없음")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('category-preset:write')")
     @RequirePermission(value = "category-preset:write", description = "카테고리 프리셋 수정")
     @PutMapping(CategoryPresetAdminEndpoints.CATEGORY_PRESET_ID)
     public ResponseEntity<Void> updateCategoryPreset(
@@ -105,7 +105,7 @@ public class CategoryPresetCommandController {
                 responseCode = "200",
                 description = "삭제 성공")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('category-preset:write')")
     @RequirePermission(value = "category-preset:write", description = "카테고리 프리셋 삭제")
     @DeleteMapping
     public ResponseEntity<ApiResponse<DeleteCategoryPresetsApiResponse>> deleteCategoryPresets(

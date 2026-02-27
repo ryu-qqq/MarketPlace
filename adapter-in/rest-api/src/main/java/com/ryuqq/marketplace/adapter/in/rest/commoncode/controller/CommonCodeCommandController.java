@@ -72,7 +72,7 @@ public class CommonCodeCommandController {
      * @return 생성된 공통 코드 ID
      */
     @Operation(summary = "공통 코드 등록", description = "새로운 공통 코드를 등록합니다.")
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('common-code:write')")
     @RequirePermission(value = "common-code:write", description = "공통 코드 등록")
     @PostMapping(REGISTER)
     @ResponseStatus(HttpStatus.CREATED)
@@ -92,7 +92,7 @@ public class CommonCodeCommandController {
      * @return 빈 응답
      */
     @Operation(summary = "공통 코드 수정", description = "공통 코드의 표시명과 순서를 수정합니다.")
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('common-code:write')")
     @RequirePermission(value = "common-code:write", description = "공통 코드 수정")
     @PutMapping(UPDATE)
     public ApiResponse<Void> update(
@@ -113,7 +113,7 @@ public class CommonCodeCommandController {
      * @return 빈 응답
      */
     @Operation(summary = "공통 코드 활성화 상태 변경", description = "공통 코드의 활성화 상태를 일괄 변경합니다.")
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('common-code:write')")
     @RequirePermission(value = "common-code:write", description = "공통 코드 활성화 상태 변경")
     @PatchMapping(CHANGE_ACTIVE_STATUS)
     public ApiResponse<Void> changeActiveStatus(

@@ -33,6 +33,7 @@ import org.springframework.http.HttpStatus;
 class AuthFlowE2ETest extends E2ETestBase {
 
     private static final String BASE_URL = "/auth";
+    private static final String PUBLIC_AUTH_URL = "/public/auth";
 
     @BeforeEach
     void setUp() {
@@ -57,7 +58,7 @@ class AuthFlowE2ETest extends E2ETestBase {
                     given().spec(givenAdminJson())
                             .body(loginRequest)
                             .when()
-                            .post(BASE_URL + "/login");
+                            .post(PUBLIC_AUTH_URL + "/login");
 
             // 로그인 검증
             loginResponse
@@ -99,7 +100,7 @@ class AuthFlowE2ETest extends E2ETestBase {
                     given().spec(givenAdmin())
                             .header("Authorization", "Bearer " + accessToken)
                             .when()
-                            .post(BASE_URL + "/logout");
+                            .post(PUBLIC_AUTH_URL + "/logout");
 
             // 로그아웃 검증
             logoutResponse.then().statusCode(HttpStatus.OK.value()).body("data", nullValue());
@@ -129,7 +130,7 @@ class AuthFlowE2ETest extends E2ETestBase {
                     given().spec(givenAdminJson())
                             .body(failedLoginRequest)
                             .when()
-                            .post(BASE_URL + "/login");
+                            .post(PUBLIC_AUTH_URL + "/login");
 
             // 실패 검증 (AuthCommandApiMapper에서 IllegalArgumentException → 400)
             failedLoginResponse.then().statusCode(HttpStatus.BAD_REQUEST.value());
@@ -144,7 +145,7 @@ class AuthFlowE2ETest extends E2ETestBase {
                     given().spec(givenAdminJson())
                             .body(successLoginRequest)
                             .when()
-                            .post(BASE_URL + "/login");
+                            .post(PUBLIC_AUTH_URL + "/login");
 
             // 성공 검증
             successLoginResponse
@@ -183,7 +184,7 @@ class AuthFlowE2ETest extends E2ETestBase {
                     given().spec(givenAdminJson())
                             .body(loginRequest)
                             .when()
-                            .post(BASE_URL + "/login");
+                            .post(PUBLIC_AUTH_URL + "/login");
 
             firstLoginResponse.then().statusCode(HttpStatus.OK.value());
             String firstAccessToken = firstLoginResponse.jsonPath().getString("data.accessToken");
@@ -193,7 +194,7 @@ class AuthFlowE2ETest extends E2ETestBase {
                     given().spec(givenAdminJson())
                             .body(loginRequest)
                             .when()
-                            .post(BASE_URL + "/login");
+                            .post(PUBLIC_AUTH_URL + "/login");
 
             secondLoginResponse.then().statusCode(HttpStatus.OK.value());
             String secondAccessToken = secondLoginResponse.jsonPath().getString("data.accessToken");
@@ -221,7 +222,7 @@ class AuthFlowE2ETest extends E2ETestBase {
             given().spec(givenAdmin())
                     .header("Authorization", "Bearer " + firstAccessToken)
                     .when()
-                    .post(BASE_URL + "/logout")
+                    .post(PUBLIC_AUTH_URL + "/logout")
                     .then()
                     .statusCode(HttpStatus.OK.value());
 

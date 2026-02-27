@@ -36,7 +36,7 @@ public class ShopQueryController {
     }
 
     @Operation(summary = "외부몰 목록 조회", description = "외부몰 목록을 복합 조건으로 조회합니다.")
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('shop:read')")
     @RequirePermission(value = "shop:read", description = "외부몰 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<ShopApiResponse>>> searchShops(

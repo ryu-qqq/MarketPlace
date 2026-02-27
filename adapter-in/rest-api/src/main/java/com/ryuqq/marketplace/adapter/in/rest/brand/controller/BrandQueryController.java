@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,7 @@ public class BrandQueryController {
     }
 
     @Operation(summary = "브랜드 목록 조회", description = "브랜드 목록을 조회합니다.")
+    @PreAuthorize("@access.hasPermission('brand:read')")
     @RequirePermission(value = "brand:read", description = "브랜드 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<BrandApiResponse>>> searchBrandsByOffset(
