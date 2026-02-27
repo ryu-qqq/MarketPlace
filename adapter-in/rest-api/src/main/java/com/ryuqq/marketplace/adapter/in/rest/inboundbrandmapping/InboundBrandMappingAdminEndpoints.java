@@ -9,7 +9,7 @@ public final class InboundBrandMappingAdminEndpoints {
 
     public static final String BASE = "/api/v1/market";
 
-    public static final String BRAND_MAPPINGS = BASE + "/inbound/brand-mappings";
+    public static final String BRAND_MAPPINGS = BASE + "/internal/inbound/brand-mappings";
 
     public static final String BRAND_MAPPING_ID = "/{id}";
 

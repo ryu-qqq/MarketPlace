@@ -461,7 +461,7 @@ class SellerAddressQueryE2ETest extends E2ETestBase {
         }
 
         @Test
-        @DisplayName("다른 셀러의 주소 조회 시도 - 403 Forbidden")
+        @DisplayName("다른 셀러의 주소 조회 시도 - 403 Forbidden (권한 없음)")
         void shouldReturn403WhenAccessingOtherSeller() {
             // given
             SellerJpaEntity sellerA =
@@ -478,8 +478,8 @@ class SellerAddressQueryE2ETest extends E2ETestBase {
             sellerAddressRepository.save(
                     SellerAddressJpaEntityFixtures.defaultShippingEntity(sellerIdA));
 
-            // when & then - Seller B 인증으로 Seller A 주소 조회 시도
-            given().spec(givenSellerUser("org-200", "seller-address:read"))
+            // when & then - 권한 없이 요청 시 403
+            given().spec(givenSellerUser("org-200"))
                     .queryParam("sellerIds", sellerIdA)
                     .when()
                     .get(QUERY_PATH)
@@ -488,7 +488,7 @@ class SellerAddressQueryE2ETest extends E2ETestBase {
         }
 
         @Test
-        @DisplayName("본인 셀러 주소 조회 - 403 Forbidden (superAdmin 전용 엔드포인트)")
+        @DisplayName("본인 셀러 주소 조회 - 403 Forbidden (권한 없음)")
         void shouldReturn403WhenSellerUserAccessesSearchEndpoint() {
             // given
             SellerJpaEntity seller =
@@ -499,8 +499,8 @@ class SellerAddressQueryE2ETest extends E2ETestBase {
             sellerAddressRepository.save(
                     SellerAddressJpaEntityFixtures.defaultShippingEntity(sellerId));
 
-            // when & then - search endpoint는 @access.superAdmin() 전용
-            given().spec(givenSellerUser("org-100", "seller-address:read"))
+            // when & then - seller-address:read 권한 없이 요청 시 403
+            given().spec(givenSellerUser("org-100"))
                     .queryParam("sellerIds", sellerId)
                     .when()
                     .get(QUERY_PATH)

@@ -539,13 +539,13 @@ class SellerQueryE2ETest extends E2ETestBase {
         @Test
         @Tag("P0")
         @Tag("auth")
-        @DisplayName("[TC-Q2-A03] 일반 사용자 접근 시 403 (seller:read 권한 있어도)")
-        void searchSellers_AuthenticatedUserWithPermission_Returns403() {
+        @DisplayName("[TC-Q2-A03] 권한 없는 사용자 접근 시 403")
+        void searchSellers_AuthenticatedUserWithoutPermission_Returns403() {
             // given
             sellerRepository.save(SellerJpaEntityFixtures.activeEntity());
 
-            // when & then - seller:read 권한으로도 목록 조회 불가
-            given().spec(givenSellerUser("org-user-1", "seller:read"))
+            // when & then - seller:read 권한 없이 목록 조회 불가
+            given().spec(givenSellerUser("org-user-1"))
                     .when()
                     .get(BASE_URL)
                     .then()

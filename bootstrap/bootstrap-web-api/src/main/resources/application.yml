@@ -127,6 +127,13 @@ spring:
     # so throw-exception-if-no-handler-found is no longer configurable.
 
 # ===============================================
+# Internal Service Token (서비스 간 통신 인증)
+# ===============================================
+marketplace:
+  internal:
+    service-token: ${AUTHHUB_SERVICE_TOKEN:local-dev-token}
+
+# ===============================================
 # Management & Actuator (모니터링)
 # ===============================================
 management:

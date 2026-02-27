@@ -37,7 +37,7 @@ public class SalesChannelQueryController {
     }
 
     @Operation(summary = "판매채널 목록 조회", description = "판매채널 목록을 복합 조건으로 조회합니다.")
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('sales-channel:read')")
     @RequirePermission(value = "sales-channel:read", description = "판매채널 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<SalesChannelApiResponse>>>

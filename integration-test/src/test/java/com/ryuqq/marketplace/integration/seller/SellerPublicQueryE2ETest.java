@@ -32,7 +32,7 @@ import org.springframework.http.HttpStatus;
 @DisplayName("Seller Public Profile API E2E 테스트")
 class SellerPublicQueryE2ETest extends E2ETestBase {
 
-    private static final String PROFILE_URL = "/sellers/{sellerId}/profile";
+    private static final String PROFILE_URL = "/public/sellers/{sellerId}/profile";
 
     @Autowired private SellerJpaRepository sellerRepository;
     @Autowired private SellerBusinessInfoJpaRepository businessInfoRepository;

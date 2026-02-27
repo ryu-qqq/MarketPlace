@@ -87,7 +87,7 @@ public class SellerAdminApplicationQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller-admin:read')")
     @RequirePermission(value = "seller-admin:read", description = "셀러 관리자 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<SellerAdminApplicationPageApiResponse>> search(
