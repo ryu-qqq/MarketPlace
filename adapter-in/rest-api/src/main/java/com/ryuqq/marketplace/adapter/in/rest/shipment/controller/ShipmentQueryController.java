@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.shipment.controller;
 
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.ShipmentEndpoints;
@@ -48,6 +49,7 @@ public class ShipmentQueryController {
     }
 
     @Operation(summary = "배송 상태별 요약 조회", description = "배송 상태별 건수를 요약 조회합니다.")
+    @PreAuthorize("@access.hasPermission('shipment:read')")
     @RequirePermission(value = "shipment:read", description = "배송 요약 조회")
     @GetMapping(ShipmentEndpoints.SUMMARY)
     public ResponseEntity<ApiResponse<ShipmentSummaryApiResponse>> getSummary() {
@@ -56,6 +58,7 @@ public class ShipmentQueryController {
     }
 
     @Operation(summary = "배송 목록 조회", description = "배송 목록을 검색 조건에 따라 조회합니다.")
+    @PreAuthorize("@access.hasPermission('shipment:read')")
     @RequirePermission(value = "shipment:read", description = "배송 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<ShipmentListApiResponse>>> searchShipments(
@@ -66,6 +69,7 @@ public class ShipmentQueryController {
     }
 
     @Operation(summary = "배송 상세 조회", description = "배송 상세 정보를 조회합니다.")
+    @PreAuthorize("@access.hasPermission('shipment:read')")
     @RequirePermission(value = "shipment:read", description = "배송 상세 조회")
     @GetMapping(ShipmentEndpoints.SHIPMENT_ID)
     public ResponseEntity<ApiResponse<ShipmentDetailApiResponse>> getShipment(

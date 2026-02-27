@@ -122,7 +122,7 @@ public class SellerQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller:read')")
     @RequirePermission(value = "seller:read", description = "셀러 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<SellerApiResponse>>> searchSellersByOffset(

@@ -1,7 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.auth.controller;
 
 import com.ryuqq.authhub.sdk.context.UserContextHolder;
-import com.ryuqq.marketplace.adapter.in.rest.auth.AuthAdminEndpoints;
+import com.ryuqq.marketplace.adapter.in.rest.auth.AuthPublicEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.auth.config.AuthCookieProperties;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.command.LoginApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.command.RefreshApiRequest;
@@ -24,7 +24,6 @@ import java.time.Duration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +56,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "인증", description = "로그인/로그아웃 API")
 @RestController
-@RequestMapping(AuthAdminEndpoints.BASE)
+@RequestMapping(AuthPublicEndpoints.BASE)
 public class AuthCommandController {
 
     private final LoginUseCase loginUseCase;
@@ -99,7 +98,7 @@ public class AuthCommandController {
                 responseCode = "401",
                 description = "인증 실패")
     })
-    @PostMapping(AuthAdminEndpoints.LOGIN)
+    @PostMapping(AuthPublicEndpoints.LOGIN)
     public ResponseEntity<ApiResponse<LoginApiResponse>> login(
             @Valid @RequestBody LoginApiRequest request) {
 
@@ -136,8 +135,7 @@ public class AuthCommandController {
                 responseCode = "401",
                 description = "인증되지 않은 요청")
     })
-    @PreAuthorize("@access.authenticated()")
-    @PostMapping(AuthAdminEndpoints.LOGOUT)
+    @PostMapping(AuthPublicEndpoints.LOGOUT)
     public ResponseEntity<ApiResponse<Void>> logout() {
 
         String userId = UserContextHolder.getCurrentUserId();
@@ -166,7 +164,7 @@ public class AuthCommandController {
                 responseCode = "401",
                 description = "유효하지 않은 리프레시 토큰")
     })
-    @PostMapping(AuthAdminEndpoints.REFRESH)
+    @PostMapping(AuthPublicEndpoints.REFRESH)
     public ResponseEntity<ApiResponse<RefreshApiResponse>> refresh(
             @Valid @RequestBody RefreshApiRequest request) {
 

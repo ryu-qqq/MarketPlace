@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.brand.controller;
 
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.ryuqq.marketplace.adapter.in.rest.brand.BrandAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.brand.dto.query.SearchBrandsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.brand.dto.response.BrandApiResponse;
@@ -34,6 +35,7 @@ public class BrandQueryController {
     }
 
     @Operation(summary = "브랜드 목록 조회", description = "브랜드 목록을 조회합니다.")
+    @PreAuthorize("@access.hasPermission('brand:read')")
     @RequirePermission(value = "brand:read", description = "브랜드 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<BrandApiResponse>>> searchBrandsByOffset(

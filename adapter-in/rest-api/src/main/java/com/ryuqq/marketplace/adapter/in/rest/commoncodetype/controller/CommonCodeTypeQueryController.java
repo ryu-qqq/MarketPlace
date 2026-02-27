@@ -1,9 +1,8 @@
 package com.ryuqq.marketplace.adapter.in.rest.commoncodetype.controller;
 
-import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.CommonCodeTypeAdminEndpoints;
+import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.CommonCodeTypePublicEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.dto.query.SearchCommonCodeTypesPageApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.dto.response.CommonCodeTypeApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.mapper.CommonCodeTypeQueryApiMapper;
@@ -39,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "공통 코드 타입 조회", description = "공통 코드 타입 조회 API")
 @RestController
-@RequestMapping(CommonCodeTypeAdminEndpoints.COMMON_CODE_TYPES)
+@RequestMapping(CommonCodeTypePublicEndpoints.COMMON_CODE_TYPES)
 public class CommonCodeTypeQueryController {
 
     private final SearchCommonCodeTypeUseCase searchCommonCodeTypeUseCase;
@@ -76,7 +75,6 @@ public class CommonCodeTypeQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
-    @RequirePermission(value = "common-code-type:read", description = "공통 코드 타입 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<CommonCodeTypeApiResponse>>> search(
             @Valid SearchCommonCodeTypesPageApiRequest request) {

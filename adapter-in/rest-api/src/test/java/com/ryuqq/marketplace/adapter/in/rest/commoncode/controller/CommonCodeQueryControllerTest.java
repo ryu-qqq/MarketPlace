@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("CommonCodeQueryController 단위 테스트")
 class CommonCodeQueryControllerTest {
 
-    private static final String BASE_URL = "/api/v1/market/common-codes";
+    private static final String BASE_URL = "/api/v1/market/public/common-codes";
 
     @Autowired private MockMvc mockMvc;
 
@@ -42,7 +42,7 @@ class CommonCodeQueryControllerTest {
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @Nested
-    @DisplayName("GET /api/v1/market/common-codes - 공통 코드 조회")
+    @DisplayName("GET /api/v1/market/public/common-codes - 공통 코드 조회")
     class SearchTest {
 
         @Test

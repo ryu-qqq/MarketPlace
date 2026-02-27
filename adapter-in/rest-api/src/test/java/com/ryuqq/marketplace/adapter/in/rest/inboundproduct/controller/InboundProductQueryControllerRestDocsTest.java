@@ -41,7 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class InboundProductQueryControllerRestDocsTest {
 
     private static final String BASE_URL =
-            "/api/v1/market/inbound/products/{inboundSourceId}/{externalProductCode}";
+            "/api/v1/market/internal/inbound/products/{inboundSourceId}/{externalProductCode}";
 
     private static final long INBOUND_SOURCE_ID =
             InboundProductApiFixtures.DEFAULT_INBOUND_SOURCE_ID;
