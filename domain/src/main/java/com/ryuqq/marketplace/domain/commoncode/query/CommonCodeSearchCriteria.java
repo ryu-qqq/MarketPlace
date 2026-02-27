@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.domain.commoncode.query;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * CommonCode 검색 조건 Criteria.
@@ -94,7 +95,7 @@ public record CommonCodeSearchCriteria(
 
     /** 공통 코드 타입 ID 원시값 반환 (편의 메서드) */
     public Long commonCodeTypeIdValue() {
-        return commonCodeTypeId != null ? commonCodeTypeId.value() : null;
+        return Optional.ofNullable(commonCodeTypeId).map(CommonCodeTypeId::value).orElse(null);
     }
 
     /** 코드 검색 조건이 있는지 확인 */

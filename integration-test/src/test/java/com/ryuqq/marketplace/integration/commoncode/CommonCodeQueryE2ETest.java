@@ -178,12 +178,27 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[Q1-3] commonCodeTypeId 없으면 전체 조회로 200")
         void searchCommonCodes_MissingTypeId_Returns200() {
+            // given: 서로 다른 타입의 코드 2건
+            var secondType =
+                    commonCodeTypeRepository.save(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "DELIVERY_TYPE", "배송유형"));
+
+            commonCodeRepository.save(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            defaultCommonCodeTypeId, "CREDIT_CARD", "신용카드"));
+            commonCodeRepository.save(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            secondType.getId(), "FAST_DELIVERY", "빠른배송"));
+
             // when & then: commonCodeTypeId 누락 시 전체 조회
             given().spec(givenAdmin())
                     .when()
                     .get(BASE_URL)
                     .then()
-                    .statusCode(HttpStatus.OK.value());
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.content", hasSize(2))
+                    .body("data.totalElements", equalTo(2));
         }
 
         @Test
