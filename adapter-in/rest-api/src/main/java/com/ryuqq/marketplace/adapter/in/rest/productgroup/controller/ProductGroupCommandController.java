@@ -126,7 +126,8 @@ public class ProductGroupCommandController {
     public ResponseEntity<ProductGroupIdApiResponse> registerProductGroup(
             @Valid @RequestBody RegisterProductGroupApiRequest request) {
 
-        RegisterProductGroupCommand command = mapper.toCommand(request);
+        long sellerId = resolveSellerIdForRegistration(request.sellerId());
+        RegisterProductGroupCommand command = mapper.toCommand(sellerId, request);
         Long productGroupId = registerUseCase.execute(command);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -272,5 +273,15 @@ public class ProductGroupCommandController {
         batchChangeStatusUseCase.execute(command);
 
         return ResponseEntity.noContent().build();
+    }
+
+    private long resolveSellerIdForRegistration(Long requestedSellerId) {
+        if (accessChecker.superAdmin()) {
+            if (requestedSellerId == null) {
+                throw new IllegalArgumentException("SUPER_ADMIN은 sellerId를 명시해야 합니다");
+            }
+            return requestedSellerId;
+        }
+        return accessChecker.resolveCurrentSellerId();
     }
 }

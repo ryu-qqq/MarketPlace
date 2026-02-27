@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.productgroup.controller;
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.query.SearchProductGroupsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupDetailApiResponse;
@@ -23,6 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,16 +55,19 @@ public class ProductGroupQueryController {
     private final SearchProductGroupForExcelUseCase searchProductGroupForExcelUseCase;
     private final GetProductGroupUseCase getProductGroupUseCase;
     private final ProductGroupQueryApiMapper mapper;
+    private final MarketAccessChecker accessChecker;
 
     public ProductGroupQueryController(
             SearchProductGroupByOffsetUseCase searchProductGroupByOffsetUseCase,
             SearchProductGroupForExcelUseCase searchProductGroupForExcelUseCase,
             GetProductGroupUseCase getProductGroupUseCase,
-            ProductGroupQueryApiMapper mapper) {
+            ProductGroupQueryApiMapper mapper,
+            MarketAccessChecker accessChecker) {
         this.searchProductGroupByOffsetUseCase = searchProductGroupByOffsetUseCase;
         this.searchProductGroupForExcelUseCase = searchProductGroupForExcelUseCase;
         this.getProductGroupUseCase = getProductGroupUseCase;
         this.mapper = mapper;
+        this.accessChecker = accessChecker;
     }
 
     @Operation(summary = "상품 그룹 목록 조회", description = "상품 그룹 목록을 페이지 기반으로 조회합니다.")
@@ -77,7 +82,8 @@ public class ProductGroupQueryController {
     public ResponseEntity<ApiResponse<PageApiResponse<ProductGroupListApiResponse>>> search(
             @Valid SearchProductGroupsApiRequest request) {
 
-        ProductGroupSearchParams searchParams = mapper.toSearchParams(request);
+        List<Long> effectiveSellerIds = resolveEffectiveSellerIds(request.sellerIds());
+        ProductGroupSearchParams searchParams = mapper.toSearchParams(request, effectiveSellerIds);
         ProductGroupPageResult pageResult = searchProductGroupByOffsetUseCase.execute(searchParams);
         PageApiResponse<ProductGroupListApiResponse> response = mapper.toPageResponse(pageResult);
 
@@ -98,7 +104,8 @@ public class ProductGroupQueryController {
     public ResponseEntity<ApiResponse<List<ProductGroupExcelApiResponse>>> searchForExcel(
             @Valid SearchProductGroupsApiRequest request) {
 
-        ProductGroupSearchParams searchParams = mapper.toSearchParams(request);
+        List<Long> effectiveSellerIds = resolveEffectiveSellerIds(request.sellerIds());
+        ProductGroupSearchParams searchParams = mapper.toSearchParams(request, effectiveSellerIds);
         List<ProductGroupExcelCompositeResult> results =
                 searchProductGroupForExcelUseCase.execute(searchParams);
         List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
@@ -124,8 +131,27 @@ public class ProductGroupQueryController {
                     Long productGroupId) {
 
         ProductGroupDetailCompositeResult result = getProductGroupUseCase.execute(productGroupId);
+        verifySellerOwnership(result.sellerId());
         ProductGroupDetailApiResponse response = mapper.toDetailResponse(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));
+    }
+
+    private List<Long> resolveEffectiveSellerIds(List<Long> requestedSellerIds) {
+        if (accessChecker.superAdmin()) {
+            return requestedSellerIds;
+        }
+        long currentSellerId = accessChecker.resolveCurrentSellerId();
+        return List.of(currentSellerId);
+    }
+
+    private void verifySellerOwnership(long resourceSellerId) {
+        if (accessChecker.superAdmin()) {
+            return;
+        }
+        long currentSellerId = accessChecker.resolveCurrentSellerId();
+        if (currentSellerId != resourceSellerId) {
+            throw new AccessDeniedException("해당 상품 그룹에 접근 권한이 없습니다");
+        }
     }
 }
