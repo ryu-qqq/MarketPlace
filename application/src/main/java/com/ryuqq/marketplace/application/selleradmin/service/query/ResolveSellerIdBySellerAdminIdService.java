@@ -45,8 +45,16 @@ public class ResolveSellerIdBySellerAdminIdService
             return Optional.empty();
         }
 
-        List<SellerAdminId> ids =
-                sellerAdminIds.stream().map(SellerAdminId::of).collect(Collectors.toList());
+        if (sellerAdminIds.stream().anyMatch(id -> id == null || id.isBlank())) {
+            return Optional.empty();
+        }
+
+        final List<SellerAdminId> ids;
+        try {
+            ids = sellerAdminIds.stream().map(SellerAdminId::of).collect(Collectors.toList());
+        } catch (IllegalArgumentException ex) {
+            return Optional.empty();
+        }
 
         List<SellerAdmin> admins = sellerAdminQueryPort.findAllByIds(ids);
         if (admins.size() != sellerAdminIds.size()) {
@@ -60,6 +68,6 @@ public class ResolveSellerIdBySellerAdminIdService
             return Optional.empty();
         }
 
-        return Optional.of(sellerIds.iterator().next());
+        return Optional.ofNullable(sellerIds.iterator().next());
     }
 }
