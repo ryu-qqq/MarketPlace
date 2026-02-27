@@ -9,19 +9,18 @@ import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
  *
  * <p>APP-DTO-002: Command/Query 인스턴스 메서드 금지.
  *
- * @param commonCodeTypeId 공통 코드 타입 ID (필수)
+ * @param commonCodeTypeCode 공통 코드 타입 코드 (정확 일치, null이면 전체 조회)
  * @param active 활성화 여부 필터
- * @param code 코드 검색 (부분 일치)
  * @param searchParams 공통 검색 파라미터 (정렬, 페이징 등)
  * @author ryu-qqq
  * @since 1.0.0
  */
 public record CommonCodeSearchParams(
-        Long commonCodeTypeId, Boolean active, String code, CommonSearchParams searchParams) {
+        String commonCodeTypeCode, Boolean active, CommonSearchParams searchParams) {
 
     public static CommonCodeSearchParams of(
-            Long commonCodeTypeId, Boolean active, String code, CommonSearchParams searchParams) {
-        return new CommonCodeSearchParams(commonCodeTypeId, active, code, searchParams);
+            String commonCodeTypeCode, Boolean active, CommonSearchParams searchParams) {
+        return new CommonCodeSearchParams(commonCodeTypeCode, active, searchParams);
     }
 
     // Delegate methods for convenience

@@ -7,6 +7,8 @@ import static org.mockito.Mockito.when;
 
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
 import com.ryuqq.marketplace.application.seller.port.in.query.ResolveSellerIdByOrganizationUseCase;
+import com.ryuqq.marketplace.application.selleradmin.port.in.query.ResolveSellerIdBySellerAdminIdUseCase;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +23,7 @@ class MarketAccessCheckerTest {
 
     private ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase;
     private ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase;
+    private ResolveSellerIdBySellerAdminIdUseCase resolveSellerIdBySellerAdminIdUseCase;
     private MarketAccessChecker sut;
 
     @BeforeEach
@@ -28,9 +31,12 @@ class MarketAccessCheckerTest {
         resolveSellerIdUseCase = mock(ResolveSellerIdByOrganizationUseCase.class);
         resolveLegacyProductGroupSellerIdUseCase =
                 mock(ResolveLegacyProductGroupSellerIdUseCase.class);
+        resolveSellerIdBySellerAdminIdUseCase = mock(ResolveSellerIdBySellerAdminIdUseCase.class);
         sut =
                 new TestableMarketAccessChecker(
-                        resolveSellerIdUseCase, resolveLegacyProductGroupSellerIdUseCase);
+                        resolveSellerIdUseCase,
+                        resolveLegacyProductGroupSellerIdUseCase,
+                        resolveSellerIdBySellerAdminIdUseCase);
     }
 
     @Nested
@@ -45,6 +51,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             true,
                             false,
                             "org1");
@@ -64,6 +71,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             false,
                             "org1");
@@ -84,6 +92,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             true,
                             "org1");
@@ -104,6 +113,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             false,
                             "org1");
@@ -124,6 +134,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             true,
                             null);
@@ -143,6 +154,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             false,
                             "  ");
@@ -162,6 +174,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             true,
                             "org1");
@@ -187,6 +200,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             false,
                             "org1");
@@ -207,6 +221,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             false,
                             "org1");
@@ -230,6 +245,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             true,
                             "org1");
@@ -246,6 +262,7 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             true,
                             "org1");
@@ -262,12 +279,158 @@ class MarketAccessCheckerTest {
                     new TestableMarketAccessChecker(
                             resolveSellerIdUseCase,
                             resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
                             false,
                             false,
                             "org1");
 
             // when & then
             assertThat(sut.canManageSeller()).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("isSellerAdminOwnerOrSuperAdmin() - 셀러 관리자 소속 검증 (단건)")
+    class IsSellerAdminOwnerOrSuperAdminTest {
+
+        @Test
+        @DisplayName("SUPER_ADMIN이면 true를 반환한다")
+        void superAdmin_ReturnsTrue() {
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
+                            true,
+                            false,
+                            "org1");
+
+            assertThat(sut.isSellerAdminOwnerOrSuperAdmin("admin-1")).isTrue();
+        }
+
+        @Test
+        @DisplayName("같은 셀러 소속이면 true를 반환한다")
+        void sameSeller_ReturnsTrue() {
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
+                            false,
+                            false,
+                            "org1");
+            when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.of(100L));
+            when(resolveSellerIdBySellerAdminIdUseCase.execute("admin-1"))
+                    .thenReturn(Optional.of(100L));
+
+            assertThat(sut.isSellerAdminOwnerOrSuperAdmin("admin-1")).isTrue();
+        }
+
+        @Test
+        @DisplayName("다른 셀러 소속이면 false를 반환한다")
+        void differentSeller_ReturnsFalse() {
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
+                            false,
+                            false,
+                            "org1");
+            when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.of(100L));
+            when(resolveSellerIdBySellerAdminIdUseCase.execute("admin-1"))
+                    .thenReturn(Optional.of(200L));
+
+            assertThat(sut.isSellerAdminOwnerOrSuperAdmin("admin-1")).isFalse();
+        }
+
+        @Test
+        @DisplayName("organizationId가 없으면 false를 반환한다")
+        void noOrganization_ReturnsFalse() {
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
+                            false,
+                            false,
+                            null);
+
+            assertThat(sut.isSellerAdminOwnerOrSuperAdmin("admin-1")).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("isSellerAdminBulkOwnerOrSuperAdmin() - 셀러 관리자 소속 검증 (일괄)")
+    class IsSellerAdminBulkOwnerOrSuperAdminTest {
+
+        @Test
+        @DisplayName("SUPER_ADMIN이면 true를 반환한다")
+        void superAdmin_ReturnsTrue() {
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
+                            true,
+                            false,
+                            "org1");
+
+            assertThat(sut.isSellerAdminBulkOwnerOrSuperAdmin(List.of("a1", "a2"))).isTrue();
+        }
+
+        @Test
+        @DisplayName("모두 같은 셀러 소속이면 true를 반환한다")
+        void allSameSeller_ReturnsTrue() {
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
+                            false,
+                            false,
+                            "org1");
+            when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.of(100L));
+            when(resolveSellerIdBySellerAdminIdUseCase.resolveIfAllSameSeller(List.of("a1", "a2")))
+                    .thenReturn(Optional.of(100L));
+
+            assertThat(sut.isSellerAdminBulkOwnerOrSuperAdmin(List.of("a1", "a2"))).isTrue();
+        }
+
+        @Test
+        @DisplayName("서로 다른 셀러 소속이면 false를 반환한다")
+        void mixedSellers_ReturnsFalse() {
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
+                            false,
+                            false,
+                            "org1");
+            when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.of(100L));
+            when(resolveSellerIdBySellerAdminIdUseCase.resolveIfAllSameSeller(List.of("a1", "a2")))
+                    .thenReturn(Optional.empty());
+
+            assertThat(sut.isSellerAdminBulkOwnerOrSuperAdmin(List.of("a1", "a2"))).isFalse();
+        }
+
+        @Test
+        @DisplayName("대상 셀러와 내 셀러가 다르면 false를 반환한다")
+        void differentFromMySeller_ReturnsFalse() {
+            sut =
+                    new TestableMarketAccessChecker(
+                            resolveSellerIdUseCase,
+                            resolveLegacyProductGroupSellerIdUseCase,
+                            resolveSellerIdBySellerAdminIdUseCase,
+                            false,
+                            false,
+                            "org1");
+            when(resolveSellerIdUseCase.execute("org1")).thenReturn(Optional.of(100L));
+            when(resolveSellerIdBySellerAdminIdUseCase.resolveIfAllSameSeller(List.of("a1", "a2")))
+                    .thenReturn(Optional.of(200L));
+
+            assertThat(sut.isSellerAdminBulkOwnerOrSuperAdmin(List.of("a1", "a2"))).isFalse();
         }
     }
 
@@ -283,10 +446,12 @@ class MarketAccessCheckerTest {
 
         TestableMarketAccessChecker(
                 ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase,
-                ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase) {
+                ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase,
+                ResolveSellerIdBySellerAdminIdUseCase resolveSellerIdBySellerAdminIdUseCase) {
             this(
                     resolveSellerIdUseCase,
                     resolveLegacyProductGroupSellerIdUseCase,
+                    resolveSellerIdBySellerAdminIdUseCase,
                     false,
                     false,
                     null);
@@ -295,10 +460,14 @@ class MarketAccessCheckerTest {
         TestableMarketAccessChecker(
                 ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase,
                 ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase,
+                ResolveSellerIdBySellerAdminIdUseCase resolveSellerIdBySellerAdminIdUseCase,
                 boolean isSuperAdmin,
                 boolean hasAnyPermission,
                 String organizationId) {
-            super(resolveSellerIdUseCase, resolveLegacyProductGroupSellerIdUseCase);
+            super(
+                    resolveSellerIdUseCase,
+                    resolveLegacyProductGroupSellerIdUseCase,
+                    resolveSellerIdBySellerAdminIdUseCase);
             this.isSuperAdmin = isSuperAdmin;
             this.hasAnyPermission = hasAnyPermission;
             this.organizationId = organizationId;

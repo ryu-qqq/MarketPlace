@@ -181,41 +181,41 @@ class CommonCodeConditionBuilderTest {
     }
 
     // ========================================================================
-    // 5. codeContains 테스트
+    // 5. commonCodeTypeCodeEq 테스트
     // ========================================================================
 
     @Nested
-    @DisplayName("codeContains 메서드 테스트")
-    class CodeContainsTest {
+    @DisplayName("commonCodeTypeCodeEq 메서드 테스트")
+    class CommonCodeTypeCodeEqTest {
 
         @Test
-        @DisplayName("유효한 코드 입력 시 BooleanExpression을 반환합니다")
-        void codeContains_WithValidCode_ReturnsBooleanExpression() {
+        @DisplayName("유효한 타입 코드 입력 시 BooleanExpression을 반환합니다")
+        void commonCodeTypeCodeEq_WithValidCode_ReturnsBooleanExpression() {
             // given
-            String code = "CARD";
+            String code = "PAYMENT_METHOD";
 
             // when
-            BooleanExpression result = conditionBuilder.codeContains(code);
+            BooleanExpression result = conditionBuilder.commonCodeTypeCodeEq(code);
 
             // then
             assertThat(result).isNotNull();
         }
 
         @Test
-        @DisplayName("null 코드 입력 시 null을 반환합니다")
-        void codeContains_WithNullCode_ReturnsNull() {
+        @DisplayName("null 타입 코드 입력 시 null을 반환합니다")
+        void commonCodeTypeCodeEq_WithNullCode_ReturnsNull() {
             // when
-            BooleanExpression result = conditionBuilder.codeContains(null);
+            BooleanExpression result = conditionBuilder.commonCodeTypeCodeEq(null);
 
             // then
             assertThat(result).isNull();
         }
 
         @Test
-        @DisplayName("빈 코드 입력 시 null을 반환합니다")
-        void codeContains_WithBlankCode_ReturnsNull() {
+        @DisplayName("빈 타입 코드 입력 시 null을 반환합니다")
+        void commonCodeTypeCodeEq_WithBlankCode_ReturnsNull() {
             // when
-            BooleanExpression result = conditionBuilder.codeContains("   ");
+            BooleanExpression result = conditionBuilder.commonCodeTypeCodeEq("   ");
 
             // then
             assertThat(result).isNull();
