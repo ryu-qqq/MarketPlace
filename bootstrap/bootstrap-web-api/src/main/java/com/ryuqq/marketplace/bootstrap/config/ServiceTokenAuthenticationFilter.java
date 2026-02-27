@@ -14,8 +14,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * 내부 서비스 간 통신용 X-Service-Token 인증 필터.
  *
- * <p>{@code /api/v1/market/internal/**} 경로에 대해 X-Service-Token 헤더를 검증합니다.
- * 토큰이 유효하면 {@code ROLE_INTERNAL_SERVICE} 권한으로 SecurityContext를 설정합니다.
+ * <p>{@code /api/v1/market/internal/**} 경로에 대해 X-Service-Token 헤더를 검증합니다. 토큰이 유효하면 {@code
+ * ROLE_INTERNAL_SERVICE} 권한으로 SecurityContext를 설정합니다.
  *
  * @author ryu-qqq
  * @since 1.1.0

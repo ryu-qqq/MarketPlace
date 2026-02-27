@@ -15,8 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
-import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.CommonCodeTypePublicEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.CommonCodeTypeApiFixtures;
+import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.CommonCodeTypePublicEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.dto.response.CommonCodeTypeApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.mapper.CommonCodeTypeQueryApiMapper;
 import com.ryuqq.marketplace.application.commoncodetype.dto.response.CommonCodeTypePageResult;
