@@ -25,15 +25,16 @@ class CommonCodeQueryFactoryTest {
         @DisplayName("CommonCodeSearchParams로부터 CommonCodeSearchCriteria를 생성한다")
         void createCriteria_CreatesCriteria() {
             // given
-            Long commonCodeTypeId = 1L;
-            CommonCodeSearchParams params = CommonCodeQueryFixtures.searchParams(commonCodeTypeId);
+            String commonCodeTypeCode = "PAYMENT_METHOD";
+            CommonCodeSearchParams params =
+                    CommonCodeQueryFixtures.searchParams(commonCodeTypeCode);
 
             // when
             CommonCodeSearchCriteria result = sut.createCriteria(params);
 
             // then
             assertThat(result).isNotNull();
-            assertThat(result.commonCodeTypeId().value()).isEqualTo(commonCodeTypeId);
+            assertThat(result.commonCodeTypeCode()).isEqualTo(commonCodeTypeCode);
             assertThat(result.queryContext()).isNotNull();
         }
 
@@ -41,29 +42,28 @@ class CommonCodeQueryFactoryTest {
         @DisplayName("필터 조건이 포함된 Criteria를 생성한다")
         void createCriteria_WithFilters_CreatesCriteriaWithFilters() {
             // given
-            Long commonCodeTypeId = 1L;
+            String commonCodeTypeCode = "PAYMENT_METHOD";
             Boolean active = true;
-            String code = "CREDIT";
             CommonCodeSearchParams params =
-                    CommonCodeQueryFixtures.searchParams(commonCodeTypeId, active, code);
+                    CommonCodeQueryFixtures.searchParams(commonCodeTypeCode, active);
 
             // when
             CommonCodeSearchCriteria result = sut.createCriteria(params);
 
             // then
             assertThat(result.active()).isEqualTo(active);
-            assertThat(result.code()).isEqualTo(code);
+            assertThat(result.commonCodeTypeCode()).isEqualTo(commonCodeTypeCode);
         }
 
         @Test
         @DisplayName("페이징 정보가 포함된 Criteria를 생성한다")
         void createCriteria_WithPaging_CreatesCriteriaWithPaging() {
             // given
-            Long commonCodeTypeId = 1L;
+            String commonCodeTypeCode = "PAYMENT_METHOD";
             int page = 2;
             int size = 10;
             CommonCodeSearchParams params =
-                    CommonCodeQueryFixtures.searchParams(commonCodeTypeId, page, size);
+                    CommonCodeQueryFixtures.searchParams(commonCodeTypeCode, page, size);
 
             // when
             CommonCodeSearchCriteria result = sut.createCriteria(params);
