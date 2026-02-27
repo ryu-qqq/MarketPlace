@@ -22,7 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * @author ryu-qqq
  * @since 1.1.0
  */
-public class ServiceTokenAuthenticationFilter extends OncePerRequestFilter {
+public final class ServiceTokenAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String HEADER_SERVICE_TOKEN = "X-Service-Token";
     private static final String INTERNAL_PATH_PREFIX = "/api/v1/market/internal/";
