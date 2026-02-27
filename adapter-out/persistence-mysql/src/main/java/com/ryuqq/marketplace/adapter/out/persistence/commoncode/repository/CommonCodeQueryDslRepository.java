@@ -1,8 +1,10 @@
 package com.ryuqq.marketplace.adapter.out.persistence.commoncode.repository;
 
 import static com.ryuqq.marketplace.adapter.out.persistence.commoncode.entity.QCommonCodeJpaEntity.commonCodeJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.commoncodetype.entity.QCommonCodeTypeJpaEntity.commonCodeTypeJpaEntity;
 
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.commoncode.condition.CommonCodeConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.commoncode.entity.CommonCodeJpaEntity;
@@ -112,12 +114,13 @@ public class CommonCodeQueryDslRepository {
     public List<CommonCodeJpaEntity> findByCriteria(CommonCodeSearchCriteria criteria) {
         QueryContext<CommonCodeSortKey> qc = criteria.queryContext();
 
-        return queryFactory
-                .selectFrom(commonCodeJpaEntity)
-                .where(
-                        conditionBuilder.commonCodeTypeIdEq(criteria.commonCodeTypeIdValue()),
+        JPAQuery<CommonCodeJpaEntity> query = queryFactory.selectFrom(commonCodeJpaEntity);
+
+        applyCommonCodeTypeJoin(query, criteria.commonCodeTypeCode());
+
+        return query.where(
+                        conditionBuilder.commonCodeTypeCodeEq(criteria.commonCodeTypeCode()),
                         conditionBuilder.activeEq(criteria.active()),
-                        conditionBuilder.codeContains(criteria.code()),
                         conditionBuilder.notDeleted())
                 .orderBy(createOrderSpecifier(qc.sortKey(), qc.sortDirection()))
                 .offset(criteria.offset())
@@ -132,18 +135,30 @@ public class CommonCodeQueryDslRepository {
      * @return 공통 코드 개수
      */
     public long countByCriteria(CommonCodeSearchCriteria criteria) {
+        JPAQuery<Long> query =
+                queryFactory.select(commonCodeJpaEntity.count()).from(commonCodeJpaEntity);
+
+        applyCommonCodeTypeJoin(query, criteria.commonCodeTypeCode());
+
         Long count =
-                queryFactory
-                        .select(commonCodeJpaEntity.count())
-                        .from(commonCodeJpaEntity)
-                        .where(
-                                conditionBuilder.commonCodeTypeIdEq(
-                                        criteria.commonCodeTypeIdValue()),
+                query.where(
+                                conditionBuilder.commonCodeTypeCodeEq(
+                                        criteria.commonCodeTypeCode()),
                                 conditionBuilder.activeEq(criteria.active()),
-                                conditionBuilder.codeContains(criteria.code()),
                                 conditionBuilder.notDeleted())
                         .fetchOne();
         return count != null ? count : 0L;
+    }
+
+    private void applyCommonCodeTypeJoin(JPAQuery<?> query, String commonCodeTypeCode) {
+        if (commonCodeTypeCode != null && !commonCodeTypeCode.isBlank()) {
+            query.join(commonCodeTypeJpaEntity)
+                    .on(
+                            commonCodeJpaEntity
+                                    .commonCodeTypeId
+                                    .eq(commonCodeTypeJpaEntity.id)
+                                    .and(conditionBuilder.commonCodeTypeNotDeleted()));
+        }
     }
 
     private OrderSpecifier<?> createOrderSpecifier(
