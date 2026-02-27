@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.selleradmin.controller;
 
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.selleradmin.SellerAdminApplicationEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.selleradmin.dto.query.SearchSellerAdminApplicationsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.selleradmin.dto.response.SellerAdminApplicationApiResponse;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,6 +56,7 @@ public class SellerAdminApplicationQueryController {
     private final SearchSellerAdminApplicationsUseCase searchUseCase;
     private final GetSellerAdminApplicationUseCase getUseCase;
     private final SellerAdminApplicationQueryApiMapper mapper;
+    private final MarketAccessChecker accessChecker;
 
     /**
      * SellerAdminApplicationQueryController 생성자.
@@ -61,14 +64,17 @@ public class SellerAdminApplicationQueryController {
      * @param searchUseCase 목록 조회 UseCase
      * @param getUseCase 상세 조회 UseCase
      * @param mapper Query API 매퍼
+     * @param accessChecker 접근 권한 검사기
      */
     public SellerAdminApplicationQueryController(
             SearchSellerAdminApplicationsUseCase searchUseCase,
             GetSellerAdminApplicationUseCase getUseCase,
-            SellerAdminApplicationQueryApiMapper mapper) {
+            SellerAdminApplicationQueryApiMapper mapper,
+            MarketAccessChecker accessChecker) {
         this.searchUseCase = searchUseCase;
         this.getUseCase = getUseCase;
         this.mapper = mapper;
+        this.accessChecker = accessChecker;
     }
 
     /**
@@ -93,11 +99,21 @@ public class SellerAdminApplicationQueryController {
     public ResponseEntity<ApiResponse<SellerAdminApplicationPageApiResponse>> search(
             @Valid @ParameterObject SearchSellerAdminApplicationsApiRequest request) {
 
-        SellerAdminApplicationSearchParams params = mapper.toSearchParams(request);
+        List<Long> effectiveSellerIds = resolveEffectiveSellerIds(request.sellerIds());
+        SellerAdminApplicationSearchParams params =
+                mapper.toSearchParams(request, effectiveSellerIds);
         SellerAdminApplicationPageResult result = searchUseCase.execute(params);
 
         return ResponseEntity.ok(
                 ApiResponse.of(SellerAdminApplicationPageApiResponse.from(result)));
+    }
+
+    private List<Long> resolveEffectiveSellerIds(List<Long> requestedSellerIds) {
+        if (accessChecker.superAdmin()) {
+            return requestedSellerIds;
+        }
+        long currentSellerId = accessChecker.resolveCurrentSellerId();
+        return List.of(currentSellerId);
     }
 
     /**
