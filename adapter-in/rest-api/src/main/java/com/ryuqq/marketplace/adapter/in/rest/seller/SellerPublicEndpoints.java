@@ -23,7 +23,7 @@ public final class SellerPublicEndpoints {
     }
 
     /** 기본 경로 */
-    public static final String BASE = "/api/v1/market";
+    public static final String BASE = "/api/v1/market/public";
 
     /** 셀러 공개 프로필 조회 경로 */
     public static final String SELLER_PROFILE = BASE + "/sellers/{sellerId}/profile";

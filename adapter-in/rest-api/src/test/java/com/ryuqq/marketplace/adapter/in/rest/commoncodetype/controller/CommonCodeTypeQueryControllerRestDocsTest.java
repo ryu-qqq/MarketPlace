@@ -15,8 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
-import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.CommonCodeTypeAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.CommonCodeTypeApiFixtures;
+import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.CommonCodeTypePublicEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.dto.response.CommonCodeTypeApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.commoncodetype.mapper.CommonCodeTypeQueryApiMapper;
 import com.ryuqq.marketplace.application.commoncodetype.dto.response.CommonCodeTypePageResult;
@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("CommonCodeTypeQueryController REST Docs 테스트")
 class CommonCodeTypeQueryControllerRestDocsTest {
 
-    private static final String BASE_URL = CommonCodeTypeAdminEndpoints.COMMON_CODE_TYPES;
+    private static final String BASE_URL = CommonCodeTypePublicEndpoints.COMMON_CODE_TYPES;
 
     @Autowired private MockMvc mockMvc;
 

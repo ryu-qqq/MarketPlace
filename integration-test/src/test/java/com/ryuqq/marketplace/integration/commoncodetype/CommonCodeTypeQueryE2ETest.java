@@ -35,7 +35,7 @@ import org.springframework.http.HttpStatus;
 @DisplayName("CommonCodeType Query API E2E 테스트")
 class CommonCodeTypeQueryE2ETest extends E2ETestBase {
 
-    private static final String BASE_PATH = "/common-code-types";
+    private static final String BASE_PATH = "/public/common-code-types";
 
     @Autowired private CommonCodeTypeJpaRepository commonCodeTypeRepository;
 
@@ -423,18 +423,19 @@ class CommonCodeTypeQueryE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[TC-A1-01] 비인증 요청 - 401 Unauthorized")
-        void searchCommonCodeTypes_Unauthenticated_Returns401() {
+        @DisplayName("[TC-A1-01] 비인증 요청 - 200 OK (public endpoint)")
+        void searchCommonCodeTypes_Unauthenticated_Returns200() {
             // given: 데이터 1건 생성
             commonCodeTypeRepository.save(
                     CommonCodeTypeJpaEntityFixtures.newEntityWithCode("PAYMENT_METHOD", "결제수단"));
 
-            // when & then
+            // when & then: 공통 코드 타입 조회는 public endpoint (permitAll)
             given().spec(givenUnauthenticated())
                     .when()
                     .get(BASE_PATH)
                     .then()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value());
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.content.size()", equalTo(1));
         }
 
         @Test

@@ -32,7 +32,7 @@ import org.springframework.http.HttpStatus;
 @DisplayName("Auth Command API E2E 테스트")
 class AuthCommandE2ETest extends E2ETestBase {
 
-    private static final String BASE_URL = "/auth";
+    private static final String BASE_URL = "/public/auth";
 
     // AuthHub SDK Mock (실제 구현 시 추가)
     // @MockBean private AuthApi authApi;
@@ -209,31 +209,31 @@ class AuthCommandE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[TC-AUTH-020] 인증되지 않은 세션으로 로그아웃 시도 시 401")
-        void logout_UnauthenticatedSession_Returns401() {
+        @DisplayName("[TC-AUTH-020] 인증되지 않은 세션으로 로그아웃 시도 시 400 (public endpoint, userId 없음)")
+        void logout_UnauthenticatedSession_Returns400() {
             // given: 인증 헤더 없이 요청
-            // when & then: @PreAuthorize("@access.authenticated()") 검증 실패
+            // when & then: public endpoint이므로 컨트롤러 진입 후 userId null로 인한 400
             given().spec(givenUnauthenticated())
                     .when()
                     .post(BASE_URL + "/logout")
                     .then()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value());
+                    .statusCode(HttpStatus.BAD_REQUEST.value());
         }
 
         @Test
         @Tag("P0")
-        @DisplayName("[TC-AUTH-021] 만료된 토큰으로 로그아웃 시도 시 401")
-        void logout_ExpiredToken_Returns401() {
+        @DisplayName("[TC-AUTH-021] 만료된 토큰으로 로그아웃 시도 시 400 (public endpoint, userId 없음)")
+        void logout_ExpiredToken_Returns400() {
             // given: 만료된 토큰
             String expiredToken = "eyJhbGciOiJIUzI1NiJ9.expired.token";
 
-            // when & then: @PreAuthorize("@access.authenticated()") 검증 실패
+            // when & then: public endpoint이므로 컨트롤러 진입 후 userId null로 인한 400
             given().spec(givenUnauthenticated())
                     .header("Authorization", "Bearer " + expiredToken)
                     .when()
                     .post(BASE_URL + "/logout")
                     .then()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value());
+                    .statusCode(HttpStatus.BAD_REQUEST.value());
         }
     }
 

@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("CommonCodeQueryController REST Docs 테스트")
 class CommonCodeQueryControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/market/common-codes";
+    private static final String BASE_URL = "/api/v1/market/public/common-codes";
 
     @Autowired private MockMvc mockMvc;
 

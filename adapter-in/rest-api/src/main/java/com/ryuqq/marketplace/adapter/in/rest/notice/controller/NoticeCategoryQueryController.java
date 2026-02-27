@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,7 @@ public class NoticeCategoryQueryController {
     }
 
     @Operation(summary = "카테고리 표준 고시정보 목록 조회", description = "카테고리 표준 고시정보 목록을 조회합니다.")
+    @PreAuthorize("@access.hasPermission('notice-category:read')")
     @RequirePermission(value = "notice-category:read", description = "카테고리 표준 고시정보 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<NoticeCategoryApiResponse>>>
@@ -53,6 +55,7 @@ public class NoticeCategoryQueryController {
     }
 
     @Operation(summary = "카테고리 그룹별 표준 고시정보 조회", description = "카테고리 그룹별 표준 고시정보를 조회합니다.")
+    @PreAuthorize("@access.hasPermission('notice-category:read')")
     @RequirePermission(value = "notice-category:read", description = "카테고리 그룹별 표준 고시정보 조회")
     @GetMapping(NoticeAdminEndpoints.CATEGORY_GROUP)
     public ResponseEntity<ApiResponse<NoticeCategoryApiResponse>> getNoticeCategoryByCategoryGroup(
