@@ -81,7 +81,9 @@ class ProductGroupCommandControllerRestDocsTest {
             // given
             RegisterProductGroupApiRequest request = ProductGroupApiFixtures.registerRequest();
 
-            given(mapper.toCommand(any(RegisterProductGroupApiRequest.class))).willReturn(null);
+            given(accessChecker.superAdmin()).willReturn(true);
+            given(mapper.toCommand(anyLong(), any(RegisterProductGroupApiRequest.class)))
+                    .willReturn(null);
             given(registerUseCase.execute(any())).willReturn(PRODUCT_GROUP_ID);
 
             // when & then
