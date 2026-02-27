@@ -151,7 +151,8 @@ public class SecurityConfig {
                                         .anyRequest()
                                         .authenticated())
 
-                // ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal 경로 전용)
+                // ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal 경로
+                // 전용)
                 .addFilterBefore(
                         serviceTokenAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
