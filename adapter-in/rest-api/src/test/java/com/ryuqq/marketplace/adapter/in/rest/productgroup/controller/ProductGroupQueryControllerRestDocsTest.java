@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupDetailApiResponse;
@@ -57,6 +58,7 @@ class ProductGroupQueryControllerRestDocsTest {
     @MockitoBean private SearchProductGroupForExcelUseCase searchProductGroupForExcelUseCase;
     @MockitoBean private GetProductGroupUseCase getProductGroupUseCase;
     @MockitoBean private ProductGroupQueryApiMapper mapper;
+    @MockitoBean private MarketAccessChecker accessChecker;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @Nested
@@ -78,7 +80,7 @@ class ProductGroupQueryControllerRestDocsTest {
                             20,
                             3);
 
-            given(mapper.toSearchParams(any())).willReturn(null);
+            given(mapper.toSearchParams(any(), any())).willReturn(null);
             given(searchProductGroupByOffsetUseCase.execute(any())).willReturn(pageResult);
             given(mapper.toPageResponse(any(ProductGroupPageResult.class)))
                     .willReturn(pageResponse);
@@ -263,7 +265,7 @@ class ProductGroupQueryControllerRestDocsTest {
             PageApiResponse<ProductGroupListApiResponse> emptyResponse =
                     PageApiResponse.of(List.of(), 0, 20, 0);
 
-            given(mapper.toSearchParams(any())).willReturn(null);
+            given(mapper.toSearchParams(any(), any())).willReturn(null);
             given(searchProductGroupByOffsetUseCase.execute(any())).willReturn(emptyResult);
             given(mapper.toPageResponse(any(ProductGroupPageResult.class)))
                     .willReturn(emptyResponse);
@@ -290,6 +292,7 @@ class ProductGroupQueryControllerRestDocsTest {
             ProductGroupDetailApiResponse detailResponse =
                     ProductGroupApiFixtures.productGroupDetailApiResponse(productGroupId);
 
+            given(accessChecker.superAdmin()).willReturn(true);
             given(getProductGroupUseCase.execute(productGroupId)).willReturn(detailResult);
             given(mapper.toDetailResponse(any(ProductGroupDetailCompositeResult.class)))
                     .willReturn(detailResponse);
@@ -733,7 +736,7 @@ class ProductGroupQueryControllerRestDocsTest {
                             ProductGroupApiFixtures.productGroupExcelApiResponse(1L),
                             ProductGroupApiFixtures.productGroupExcelApiResponse(2L));
 
-            given(mapper.toSearchParams(any())).willReturn(null);
+            given(mapper.toSearchParams(any(), any())).willReturn(null);
             given(searchProductGroupForExcelUseCase.execute(any())).willReturn(excelResults);
             given(mapper.toExcelResponses(any())).willReturn(excelResponses);
 
@@ -1000,7 +1003,7 @@ class ProductGroupQueryControllerRestDocsTest {
         @DisplayName("빈 결과이면 200과 빈 목록을 반환한다")
         void searchForExcel_EmptyResult_Returns200WithEmptyList() throws Exception {
             // given
-            given(mapper.toSearchParams(any())).willReturn(null);
+            given(mapper.toSearchParams(any(), any())).willReturn(null);
             given(searchProductGroupForExcelUseCase.execute(any())).willReturn(List.of());
             given(mapper.toExcelResponses(any())).willReturn(List.of());
 
