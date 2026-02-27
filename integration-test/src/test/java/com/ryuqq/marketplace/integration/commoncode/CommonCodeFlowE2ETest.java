@@ -87,7 +87,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 3: 목록 조회 (1개 확인)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", typeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
                     .get(QUERY_URL)
                     .then()
@@ -108,7 +108,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 5: 목록 조회 (displayName 변경 확인)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", typeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
                     .get(QUERY_URL)
                     .then()
@@ -130,7 +130,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 7: 목록 조회 (active=false 필터)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", typeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .queryParam("active", false)
                     .when()
                     .get(QUERY_URL)
@@ -175,7 +175,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 4: CommonCode 조회 (타입 상태와 무관하게 조회 가능)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", typeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
                     .get(QUERY_URL)
                     .then()
@@ -238,7 +238,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 4: 각 타입별 조회 (각각 1개씩 조회됨)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", paymentTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
                     .get(QUERY_URL)
                     .then()
@@ -247,7 +247,7 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
                     .body("data.content[0].code", equalTo("CREDIT_CARD"));
 
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", deliveryTypeId)
+                    .queryParam("code", "DELIVERY_COMPANY")
                     .when()
                     .get(QUERY_URL)
                     .then()

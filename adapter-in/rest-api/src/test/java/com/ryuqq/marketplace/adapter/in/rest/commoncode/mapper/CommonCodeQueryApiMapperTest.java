@@ -30,15 +30,14 @@ class CommonCodeQueryApiMapperTest {
         void toSearchParams_ConvertsRequest_ReturnsSearchParams() {
             // given
             SearchCommonCodesPageApiRequest request =
-                    CommonCodeApiFixtures.searchRequest(1L, true, "CARD", 0, 20);
+                    CommonCodeApiFixtures.searchRequest("PAYMENT_METHOD", true, 0, 20);
 
             // when
             CommonCodeSearchParams result = sut.toSearchParams(request);
 
             // then
-            assertThat(result.commonCodeTypeId()).isEqualTo(1L);
+            assertThat(result.commonCodeTypeCode()).isEqualTo("PAYMENT_METHOD");
             assertThat(result.active()).isTrue();
-            assertThat(result.code()).isEqualTo("CARD");
             assertThat(result.page()).isZero();
             assertThat(result.size()).isEqualTo(20);
         }
@@ -48,7 +47,8 @@ class CommonCodeQueryApiMapperTest {
         void toSearchParams_NullPageSize_UsesDefaults() {
             // given
             SearchCommonCodesPageApiRequest request =
-                    new SearchCommonCodesPageApiRequest(1L, null, null, null, null, null, null);
+                    new SearchCommonCodesPageApiRequest(
+                            "PAYMENT_METHOD", null, null, null, null, null);
 
             // when
             CommonCodeSearchParams result = sut.toSearchParams(request);

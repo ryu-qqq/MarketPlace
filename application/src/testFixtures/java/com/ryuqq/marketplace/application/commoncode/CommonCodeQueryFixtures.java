@@ -12,18 +12,17 @@ public final class CommonCodeQueryFixtures {
 
     private CommonCodeQueryFixtures() {}
 
-    public static CommonCodeSearchParams searchParams(Long commonCodeTypeId) {
-        return CommonCodeSearchParams.of(commonCodeTypeId, null, null, commonSearchParams(0, 20));
-    }
-
-    public static CommonCodeSearchParams searchParams(Long commonCodeTypeId, int page, int size) {
-        return CommonCodeSearchParams.of(
-                commonCodeTypeId, null, null, commonSearchParams(page, size));
+    public static CommonCodeSearchParams searchParams(String commonCodeTypeCode) {
+        return CommonCodeSearchParams.of(commonCodeTypeCode, null, commonSearchParams(0, 20));
     }
 
     public static CommonCodeSearchParams searchParams(
-            Long commonCodeTypeId, Boolean active, String code) {
-        return CommonCodeSearchParams.of(commonCodeTypeId, active, code, commonSearchParams(0, 20));
+            String commonCodeTypeCode, int page, int size) {
+        return CommonCodeSearchParams.of(commonCodeTypeCode, null, commonSearchParams(page, size));
+    }
+
+    public static CommonCodeSearchParams searchParams(String commonCodeTypeCode, Boolean active) {
+        return CommonCodeSearchParams.of(commonCodeTypeCode, active, commonSearchParams(0, 20));
     }
 
     public static CommonSearchParams commonSearchParams(int page, int size) {
