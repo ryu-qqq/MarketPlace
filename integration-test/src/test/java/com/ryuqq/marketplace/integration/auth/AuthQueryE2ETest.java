@@ -33,6 +33,7 @@ import org.springframework.http.HttpStatus;
 class AuthQueryE2ETest extends E2ETestBase {
 
     private static final String BASE_URL = "/auth";
+    private static final String PUBLIC_AUTH_URL = "/public/auth";
 
     @BeforeEach
     void setUp() {
@@ -59,7 +60,7 @@ class AuthQueryE2ETest extends E2ETestBase {
                     given().spec(givenSuperAdmin())
                             .body(loginRequest)
                             .when()
-                            .post(BASE_URL + "/login");
+                            .post(PUBLIC_AUTH_URL + "/login");
 
             String accessToken = loginResponse.jsonPath().getString("data.accessToken");
 

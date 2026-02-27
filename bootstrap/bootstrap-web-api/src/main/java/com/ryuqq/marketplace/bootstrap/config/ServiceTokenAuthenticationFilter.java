@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,11 +26,15 @@ public class ServiceTokenAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String HEADER_SERVICE_TOKEN = "X-Service-Token";
     private static final String INTERNAL_PATH_PREFIX = "/api/v1/market/internal/";
+    private static final String ROLE_INTERNAL_SERVICE = "ROLE_INTERNAL_SERVICE";
     private static final String INTERNAL_SERVICE_PRINCIPAL = "INTERNAL_SERVICE";
 
     private final String expectedToken;
 
     public ServiceTokenAuthenticationFilter(String expectedToken) {
+        if (expectedToken == null || expectedToken.isBlank()) {
+            throw new IllegalArgumentException("Service token must not be null or blank");
+        }
         this.expectedToken = expectedToken;
     }
 
@@ -44,12 +50,15 @@ public class ServiceTokenAuthenticationFilter extends OncePerRequestFilter {
 
         String token = request.getHeader(HEADER_SERVICE_TOKEN);
 
-        if (token != null && token.equals(expectedToken)) {
+        if (token != null
+                && MessageDigest.isEqual(
+                        token.getBytes(StandardCharsets.UTF_8),
+                        expectedToken.getBytes(StandardCharsets.UTF_8))) {
             PreAuthenticatedAuthenticationToken authentication =
                     new PreAuthenticatedAuthenticationToken(
                             INTERNAL_SERVICE_PRINCIPAL,
                             null,
-                            List.of(new SimpleGrantedAuthority("ROLE_INTERNAL_SERVICE")));
+                            List.of(new SimpleGrantedAuthority(ROLE_INTERNAL_SERVICE)));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
