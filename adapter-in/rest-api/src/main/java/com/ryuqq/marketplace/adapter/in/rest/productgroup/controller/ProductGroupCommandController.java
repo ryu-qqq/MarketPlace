@@ -277,6 +277,9 @@ public class ProductGroupCommandController {
 
     private long resolveSellerIdForRegistration(Long requestedSellerId) {
         if (accessChecker.superAdmin()) {
+            if (requestedSellerId == null) {
+                throw new IllegalArgumentException("SUPER_ADMIN은 sellerId를 명시해야 합니다");
+            }
             return requestedSellerId;
         }
         return accessChecker.resolveCurrentSellerId();
