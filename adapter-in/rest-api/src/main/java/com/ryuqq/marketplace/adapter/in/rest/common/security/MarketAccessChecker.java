@@ -150,9 +150,10 @@ public class MarketAccessChecker extends BaseAccessChecker {
             return false;
         }
 
-        Optional<Long> targetSellerId =
-                resolveSellerIdBySellerAdminIdUseCase.resolveIfAllSameSeller(sellerAdminIds);
-        return targetSellerId.isPresent() && targetSellerId.get().equals(currentSellerId.get());
+        return resolveSellerIdBySellerAdminIdUseCase
+                .resolveIfAllSameSeller(sellerAdminIds)
+                .map(targetSellerId -> targetSellerId.equals(currentSellerId.get()))
+                .orElse(false);
     }
 
     private boolean isSameSellerAsAdmin(String sellerAdminId) {
@@ -161,9 +162,10 @@ public class MarketAccessChecker extends BaseAccessChecker {
             return false;
         }
 
-        Optional<Long> targetSellerId =
-                resolveSellerIdBySellerAdminIdUseCase.execute(sellerAdminId);
-        return targetSellerId.isPresent() && targetSellerId.get().equals(currentSellerId.get());
+        return resolveSellerIdBySellerAdminIdUseCase
+                .execute(sellerAdminId)
+                .map(targetSellerId -> targetSellerId.equals(currentSellerId.get()))
+                .orElse(false);
     }
 
     private Optional<Long> resolveCurrentSellerIdOptional() {
