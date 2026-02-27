@@ -39,10 +39,26 @@ public class ProductGroupCommandApiMapper {
      *
      * @param request API 요청 DTO
      * @return Application Command DTO
+     * @deprecated sellerId 서버 검증을 위해 {@link #toCommand(long, RegisterProductGroupApiRequest)} 사용
      */
+    @Deprecated
     public RegisterProductGroupCommand toCommand(RegisterProductGroupApiRequest request) {
+        return toCommand(request.sellerId(), request);
+    }
+
+    /**
+     * RegisterProductGroupApiRequest -> RegisterProductGroupCommand 변환 (sellerId 서버 주입).
+     *
+     * <p>SUPER_ADMIN은 요청된 sellerId를 사용하고, 일반 사용자는 서버에서 해석된 sellerId를 사용합니다.
+     *
+     * @param sellerId 서버에서 해석된 셀러 ID
+     * @param request API 요청 DTO
+     * @return Application Command DTO
+     */
+    public RegisterProductGroupCommand toCommand(
+            long sellerId, RegisterProductGroupApiRequest request) {
         return new RegisterProductGroupCommand(
-                request.sellerId(),
+                sellerId,
                 request.brandId(),
                 request.categoryId(),
                 request.shippingPolicyId(),
