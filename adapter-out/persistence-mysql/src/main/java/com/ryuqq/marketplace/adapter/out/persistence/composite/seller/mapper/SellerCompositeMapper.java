@@ -74,8 +74,10 @@ public class SellerCompositeMapper {
                         dto.csPhone(),
                         dto.csMobile(),
                         dto.csEmail(),
-                        dto.operatingStartTime().toString(),
-                        dto.operatingEndTime().toString(),
+                        dto.operatingStartTime() != null
+                                ? dto.operatingStartTime().toString()
+                                : null,
+                        dto.operatingEndTime() != null ? dto.operatingEndTime().toString() : null,
                         dto.operatingDays(),
                         dto.kakaoChannelUrl()),
                 new SellerAdminCompositeResult.ContractInfo(
