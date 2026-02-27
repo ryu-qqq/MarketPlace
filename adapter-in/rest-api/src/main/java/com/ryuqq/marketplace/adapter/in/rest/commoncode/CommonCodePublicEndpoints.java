@@ -10,7 +10,9 @@ package com.ryuqq.marketplace.adapter.in.rest.commoncode;
  */
 public final class CommonCodePublicEndpoints {
 
-    private CommonCodePublicEndpoints() {}
+    private CommonCodePublicEndpoints() {
+        throw new UnsupportedOperationException("Utility class cannot be instantiated");
+    }
 
     /** 기본 경로 */
     public static final String BASE = "/api/v1/market/public/common-codes";

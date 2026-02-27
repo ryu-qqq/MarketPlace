@@ -3,6 +3,8 @@ package com.ryuqq.marketplace.adapter.in.rest.inboundproduct.controller;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -72,7 +74,8 @@ class InboundProductQueryControllerRestDocsTest {
             // when & then
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(
-                                    BASE_URL, INBOUND_SOURCE_ID, EXTERNAL_PRODUCT_CODE))
+                                            BASE_URL, INBOUND_SOURCE_ID, EXTERNAL_PRODUCT_CODE)
+                                    .header("X-Service-Token", "test-token"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.status").value("CONVERTED"))
                     .andExpect(jsonPath("$.data.externalProductCode").value(EXTERNAL_PRODUCT_CODE))
@@ -88,6 +91,9 @@ class InboundProductQueryControllerRestDocsTest {
                                     "inbound-product/get-detail",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName("X-Service-Token")
+                                                    .description("내부 서비스 인증 토큰")),
                                     pathParameters(
                                             parameterWithName("inboundSourceId")
                                                     .description("인바운드 소스 ID"),
@@ -163,7 +169,8 @@ class InboundProductQueryControllerRestDocsTest {
             // when & then
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(
-                                    BASE_URL, INBOUND_SOURCE_ID, EXTERNAL_PRODUCT_CODE))
+                                            BASE_URL, INBOUND_SOURCE_ID, EXTERNAL_PRODUCT_CODE)
+                                    .header("X-Service-Token", "test-token"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.status").value("PENDING_MAPPING"))
                     .andExpect(jsonPath("$.data.products").isArray())
@@ -173,6 +180,9 @@ class InboundProductQueryControllerRestDocsTest {
                                     "inbound-product/get-detail-pending",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName("X-Service-Token")
+                                                    .description("내부 서비스 인증 토큰")),
                                     pathParameters(
                                             parameterWithName("inboundSourceId")
                                                     .description("인바운드 소스 ID"),

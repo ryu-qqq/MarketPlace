@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -102,6 +104,7 @@ class InboundProductCommandControllerRestDocsTest {
             // when & then
             mockMvc.perform(
                             RestDocumentationRequestBuilders.post(INBOUND_PRODUCTS_URL)
+                                    .header("X-Service-Token", "test-token")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -120,6 +123,9 @@ class InboundProductCommandControllerRestDocsTest {
                                     "inbound-product/receive",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName("X-Service-Token")
+                                                    .description("내부 서비스 인증 토큰")),
                                     requestFields(
                                             fieldWithPath("inboundSourceId")
                                                     .type(JsonFieldType.NUMBER)
@@ -284,6 +290,7 @@ class InboundProductCommandControllerRestDocsTest {
                                             INBOUND_PRODUCT_ID_URL + "/price",
                                             INBOUND_SOURCE_ID,
                                             EXTERNAL_PRODUCT_CODE)
+                                    .header("X-Service-Token", "test-token")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -292,6 +299,9 @@ class InboundProductCommandControllerRestDocsTest {
                                     "inbound-product/update-price",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName("X-Service-Token")
+                                                    .description("내부 서비스 인증 토큰")),
                                     pathParameters(
                                             parameterWithName("inboundSourceId")
                                                     .description("인바운드 소스 ID"),
@@ -328,6 +338,7 @@ class InboundProductCommandControllerRestDocsTest {
                                             INBOUND_PRODUCT_ID_URL + "/stock",
                                             INBOUND_SOURCE_ID,
                                             EXTERNAL_PRODUCT_CODE)
+                                    .header("X-Service-Token", "test-token")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -336,6 +347,9 @@ class InboundProductCommandControllerRestDocsTest {
                                     "inbound-product/update-stock",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName("X-Service-Token")
+                                                    .description("내부 서비스 인증 토큰")),
                                     pathParameters(
                                             parameterWithName("inboundSourceId")
                                                     .description("인바운드 소스 ID"),
@@ -375,6 +389,7 @@ class InboundProductCommandControllerRestDocsTest {
                                             INBOUND_PRODUCT_ID_URL + "/images",
                                             INBOUND_SOURCE_ID,
                                             EXTERNAL_PRODUCT_CODE)
+                                    .header("X-Service-Token", "test-token")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -383,6 +398,9 @@ class InboundProductCommandControllerRestDocsTest {
                                     "inbound-product/update-images",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName("X-Service-Token")
+                                                    .description("내부 서비스 인증 토큰")),
                                     pathParameters(
                                             parameterWithName("inboundSourceId")
                                                     .description("인바운드 소스 ID"),
@@ -423,6 +441,7 @@ class InboundProductCommandControllerRestDocsTest {
                                             INBOUND_PRODUCT_ID_URL + "/description",
                                             INBOUND_SOURCE_ID,
                                             EXTERNAL_PRODUCT_CODE)
+                                    .header("X-Service-Token", "test-token")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -431,6 +450,9 @@ class InboundProductCommandControllerRestDocsTest {
                                     "inbound-product/update-description",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName("X-Service-Token")
+                                                    .description("내부 서비스 인증 토큰")),
                                     pathParameters(
                                             parameterWithName("inboundSourceId")
                                                     .description("인바운드 소스 ID"),
@@ -496,6 +518,7 @@ class InboundProductCommandControllerRestDocsTest {
                                             INBOUND_PRODUCT_ID_URL + "/products",
                                             INBOUND_SOURCE_ID,
                                             EXTERNAL_PRODUCT_CODE)
+                                    .header("X-Service-Token", "test-token")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isNoContent())
@@ -504,6 +527,9 @@ class InboundProductCommandControllerRestDocsTest {
                                     "inbound-product/update-products",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName("X-Service-Token")
+                                                    .description("내부 서비스 인증 토큰")),
                                     pathParameters(
                                             parameterWithName("inboundSourceId")
                                                     .description("인바운드 소스 ID"),

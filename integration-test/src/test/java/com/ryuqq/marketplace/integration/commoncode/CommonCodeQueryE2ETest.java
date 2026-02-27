@@ -30,7 +30,7 @@ import org.springframework.http.HttpStatus;
 @DisplayName("CommonCode Query API E2E 테스트")
 class CommonCodeQueryE2ETest extends E2ETestBase {
 
-    private static final String BASE_URL = "/common-codes";
+    private static final String BASE_URL = "/public/common-codes";
 
     @Autowired private CommonCodeJpaRepository commonCodeRepository;
     @Autowired private CommonCodeTypeJpaRepository commonCodeTypeRepository;

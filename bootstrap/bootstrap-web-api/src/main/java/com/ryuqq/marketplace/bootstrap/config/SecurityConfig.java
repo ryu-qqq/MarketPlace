@@ -131,7 +131,7 @@ public class SecurityConfig {
 
                                         // 내부 서비스 간 통신 (X-Service-Token 인증)
                                         .requestMatchers("/api/v1/market/internal/**")
-                                        .authenticated()
+                                        .hasAuthority("ROLE_INTERNAL_SERVICE")
 
                                         // Actuator
                                         .requestMatchers("/actuator/**")
