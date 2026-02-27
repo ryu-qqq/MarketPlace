@@ -114,10 +114,30 @@ class CommonCodeQueryControllerTest {
         }
 
         @Test
-        @DisplayName("commonCodeTypeId가 없으면 400을 반환한다")
-        void search_MissingTypeId_Returns400() throws Exception {
+        @DisplayName("commonCodeTypeId가 없으면 전체 조회로 200을 반환한다")
+        void search_MissingTypeId_Returns200() throws Exception {
+            // given
+            CommonCodeSearchParams searchParams =
+                    CommonCodeSearchParams.of(
+                            null,
+                            null,
+                            null,
+                            CommonSearchParams.of(null, null, null, null, null, 0, 20));
+            CommonCodePageResult emptyResult = CommonCodeApiFixtures.emptyPageResult();
+            PageApiResponse<CommonCodeApiResponse> emptyResponse =
+                    PageApiResponse.of(List.of(), 0, 20, 0);
+
+            given(mapper.toSearchParams(any(SearchCommonCodesPageApiRequest.class)))
+                    .willReturn(searchParams);
+            given(searchCommonCodeUseCase.execute(any(CommonCodeSearchParams.class)))
+                    .willReturn(emptyResult);
+            given(mapper.toPageResponse(any(CommonCodePageResult.class))).willReturn(emptyResponse);
+
             // when & then
-            mockMvc.perform(get(BASE_URL)).andExpect(status().isBadRequest());
+            mockMvc.perform(get(BASE_URL))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.content").isEmpty())
+                    .andExpect(jsonPath("$.data.totalElements").value(0));
         }
 
         @Test
