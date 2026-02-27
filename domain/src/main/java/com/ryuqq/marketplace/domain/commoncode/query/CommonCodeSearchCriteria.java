@@ -21,7 +21,7 @@ import java.util.Locale;
  * );
  * }</pre>
  *
- * @param commonCodeTypeId 공통 코드 타입 ID (필수)
+ * @param commonCodeTypeId 공통 코드 타입 ID (null이면 전체 조회)
  * @param active 활성화 상태 필터 (null이면 전체)
  * @param code 코드 검색 (null이면 전체)
  * @param queryContext 정렬 및 페이징 정보
@@ -36,9 +36,6 @@ public record CommonCodeSearchCriteria(
 
     /** Compact Constructor - null 방어 */
     public CommonCodeSearchCriteria {
-        if (commonCodeTypeId == null) {
-            throw new IllegalArgumentException("공통 코드 타입 ID는 필수입니다");
-        }
         if (queryContext == null) {
             queryContext = QueryContext.defaultOf(CommonCodeSortKey.defaultKey());
         }
@@ -97,7 +94,7 @@ public record CommonCodeSearchCriteria(
 
     /** 공통 코드 타입 ID 원시값 반환 (편의 메서드) */
     public Long commonCodeTypeIdValue() {
-        return commonCodeTypeId.value();
+        return commonCodeTypeId != null ? commonCodeTypeId.value() : null;
     }
 
     /** 코드 검색 조건이 있는지 확인 */

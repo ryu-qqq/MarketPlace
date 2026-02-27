@@ -45,11 +45,13 @@ public class CommonCodeQueryFactory {
                         pageRequest,
                         params.searchParams().includeDeleted());
 
+        CommonCodeTypeId commonCodeTypeId =
+                params.commonCodeTypeId() != null
+                        ? CommonCodeTypeId.of(params.commonCodeTypeId())
+                        : null;
+
         return new CommonCodeSearchCriteria(
-                CommonCodeTypeId.of(params.commonCodeTypeId()),
-                params.active(),
-                params.code(),
-                queryContext);
+                commonCodeTypeId, params.active(), params.code(), queryContext);
     }
 
     private CommonCodeSortKey resolveSortKey(String sortKeyString) {
