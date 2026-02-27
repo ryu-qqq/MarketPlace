@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.domain.commoncode.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
@@ -73,18 +72,21 @@ class CommonCodeSearchCriteriaTest {
     class ValidationTest {
 
         @Test
-        @DisplayName("commonCodeTypeId가 null이면 예외를 발생시킨다")
-        void nullTypeIdThrowsException() {
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    CommonCodeSearchCriteria.of(
-                                            null,
-                                            true,
-                                            "CODE",
-                                            QueryContext.defaultOf(CommonCodeSortKey.CREATED_AT)))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("필수");
+        @DisplayName("commonCodeTypeId가 null이면 전체 조회 조건으로 생성된다")
+        void nullTypeIdCreatesWithoutTypeFilter() {
+            // when
+            CommonCodeSearchCriteria criteria =
+                    CommonCodeSearchCriteria.of(
+                            null,
+                            true,
+                            "CODE",
+                            QueryContext.defaultOf(CommonCodeSortKey.CREATED_AT));
+
+            // then
+            assertThat(criteria.commonCodeTypeId()).isNull();
+            assertThat(criteria.commonCodeTypeIdValue()).isNull();
+            assertThat(criteria.active()).isTrue();
+            assertThat(criteria.code()).isEqualTo("CODE");
         }
 
         @Test
