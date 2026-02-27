@@ -164,7 +164,7 @@ public class SellerAdminApplicationCommandController {
                 responseCode = "409",
                 description = "이미 처리된 신청")
     })
-    @PreAuthorize("@access.hasPermission('seller-admin:approve')")
+    @PreAuthorize("@access.isSellerAdminOwnerOrSuperAdmin(#sellerAdminId)")
     @RequirePermission(value = "seller-admin:approve", description = "셀러 관리자 가입 승인")
     @PostMapping(SellerAdminApplicationEndpoints.APPROVE)
     public ResponseEntity<ApiResponse<ApproveSellerAdminApiResponse>> approve(
@@ -202,7 +202,7 @@ public class SellerAdminApplicationCommandController {
                 responseCode = "409",
                 description = "이미 처리된 신청")
     })
-    @PreAuthorize("@access.hasPermission('seller-admin:reject')")
+    @PreAuthorize("@access.isSellerAdminOwnerOrSuperAdmin(#sellerAdminId)")
     @RequirePermission(value = "seller-admin:reject", description = "셀러 관리자 가입 거절")
     @PostMapping(SellerAdminApplicationEndpoints.REJECT)
     public ResponseEntity<Void> reject(
@@ -233,7 +233,7 @@ public class SellerAdminApplicationCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.hasPermission('seller-admin:approve')")
+    @PreAuthorize("@access.isSellerAdminBulkOwnerOrSuperAdmin(#request.sellerAdminIds())")
     @RequirePermission(value = "seller-admin:approve", description = "셀러 관리자 일괄 승인")
     @PostMapping(SellerAdminApplicationEndpoints.BULK_APPROVE)
     public ResponseEntity<ApiResponse<BulkApproveSellerAdminApiResponse>> bulkApprove(
@@ -262,7 +262,7 @@ public class SellerAdminApplicationCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.hasPermission('seller-admin:reject')")
+    @PreAuthorize("@access.isSellerAdminBulkOwnerOrSuperAdmin(#request.sellerAdminIds())")
     @RequirePermission(value = "seller-admin:reject", description = "셀러 관리자 일괄 거절")
     @PostMapping(SellerAdminApplicationEndpoints.BULK_REJECT)
     public ResponseEntity<Void> bulkReject(
@@ -294,7 +294,7 @@ public class SellerAdminApplicationCommandController {
                 responseCode = "404",
                 description = "셀러 관리자를 찾을 수 없음")
     })
-    @PreAuthorize("@access.hasPermission('seller-admin:manage')")
+    @PreAuthorize("@access.isSellerAdminOwnerOrSuperAdmin(#sellerAdminId)")
     @RequirePermission(value = "seller-admin:manage", description = "셀러 관리자 비밀번호 초기화")
     @PostMapping(SellerAdminApplicationEndpoints.RESET_PASSWORD)
     public ResponseEntity<Void> resetPassword(
