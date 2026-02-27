@@ -62,14 +62,14 @@ public final class CommonCodeApiFixtures {
 
     // ===== SearchCommonCodesPageApiRequest =====
 
-    public static SearchCommonCodesPageApiRequest searchRequest(Long commonCodeTypeId) {
-        return new SearchCommonCodesPageApiRequest(commonCodeTypeId, null, null, null, null, 0, 20);
+    public static SearchCommonCodesPageApiRequest searchRequest(String commonCodeTypeCode) {
+        return new SearchCommonCodesPageApiRequest(commonCodeTypeCode, null, null, null, 0, 20);
     }
 
     public static SearchCommonCodesPageApiRequest searchRequest(
-            Long commonCodeTypeId, Boolean active, String code, int page, int size) {
+            String commonCodeTypeCode, Boolean active, int page, int size) {
         return new SearchCommonCodesPageApiRequest(
-                commonCodeTypeId, active, code, null, null, page, size);
+                commonCodeTypeCode, active, null, null, page, size);
     }
 
     // ===== CommonCodeResult (Application) =====

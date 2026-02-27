@@ -16,7 +16,6 @@ import com.ryuqq.marketplace.domain.commoncode.aggregate.CommonCode;
 import com.ryuqq.marketplace.domain.commoncode.id.CommonCodeId;
 import com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria;
 import com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSortKey;
-import com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -247,7 +246,7 @@ class CommonCodeQueryAdapterTest {
                             SortDirection.ASC,
                             PageRequest.of(0, 20));
             CommonCodeSearchCriteria criteria =
-                    CommonCodeSearchCriteria.of(CommonCodeTypeId.of(1L), true, null, queryContext);
+                    CommonCodeSearchCriteria.of("PAYMENT_METHOD", true, queryContext);
 
             CommonCodeJpaEntity entity = CommonCodeJpaEntityFixtures.activeEntity();
             CommonCode domain = CommonCodeFixtures.activeCommonCode();
@@ -273,8 +272,7 @@ class CommonCodeQueryAdapterTest {
                             SortDirection.ASC,
                             PageRequest.of(0, 20));
             CommonCodeSearchCriteria criteria =
-                    CommonCodeSearchCriteria.of(
-                            CommonCodeTypeId.of(999L), null, null, queryContext);
+                    CommonCodeSearchCriteria.of("NON_EXISTING_TYPE", null, queryContext);
 
             given(queryDslRepository.findByCriteria(criteria)).willReturn(Collections.emptyList());
 
@@ -304,7 +302,7 @@ class CommonCodeQueryAdapterTest {
                             SortDirection.ASC,
                             PageRequest.of(0, 20));
             CommonCodeSearchCriteria criteria =
-                    CommonCodeSearchCriteria.of(CommonCodeTypeId.of(1L), true, null, queryContext);
+                    CommonCodeSearchCriteria.of("PAYMENT_METHOD", true, queryContext);
 
             given(queryDslRepository.countByCriteria(criteria)).willReturn(5L);
 
@@ -325,8 +323,7 @@ class CommonCodeQueryAdapterTest {
                             SortDirection.ASC,
                             PageRequest.of(0, 20));
             CommonCodeSearchCriteria criteria =
-                    CommonCodeSearchCriteria.of(
-                            CommonCodeTypeId.of(999L), null, null, queryContext);
+                    CommonCodeSearchCriteria.of("NON_EXISTING_TYPE", null, queryContext);
 
             given(queryDslRepository.countByCriteria(criteria)).willReturn(0L);
 
