@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 
 /**
  * SearchCommonCodesPageApiRequest - 공통 코드 페이지 조회 API Request.
@@ -19,7 +18,7 @@ import jakarta.validation.constraints.NotNull;
  *
  * <p>기본값 처리는 Mapper에서 수행합니다. Request DTO에서는 기본값 설정 금지.
  *
- * @param commonCodeTypeId 공통 코드 타입 ID (필수)
+ * @param commonCodeTypeId 공통 코드 타입 ID (null이면 전체 조회)
  * @param active 활성화 여부 필터 (null이면 전체 조회)
  * @param code 코드 검색 (부분 일치)
  * @param sortKey 정렬 키 (CREATED_AT, DISPLAY_ORDER, CODE)
@@ -32,8 +31,8 @@ import jakarta.validation.constraints.NotNull;
 @Schema(description = "공통 코드 페이지 조회 요청")
 public record SearchCommonCodesPageApiRequest(
         @Parameter(description = "공통 코드 타입 ID", example = "1")
-                @Schema(description = "공통 코드 타입 ID", requiredMode = Schema.RequiredMode.REQUIRED)
-                @NotNull(message = "공통 코드 타입 ID는 필수입니다")
+                @Schema(description = "공통 코드 타입 ID", nullable = true)
+                @Min(value = 1, message = "공통 코드 타입 ID는 1 이상이어야 합니다")
                 Long commonCodeTypeId,
         @Parameter(description = "활성화 여부 필터", example = "true")
                 @Schema(description = "활성화 여부 필터", nullable = true)
