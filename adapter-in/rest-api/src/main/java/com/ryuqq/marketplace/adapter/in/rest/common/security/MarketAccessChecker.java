@@ -4,7 +4,9 @@ import com.ryuqq.authhub.sdk.access.BaseAccessChecker;
 import com.ryuqq.authhub.sdk.context.UserContextHolder;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
 import com.ryuqq.marketplace.application.seller.port.in.query.ResolveSellerIdByOrganizationUseCase;
+import com.ryuqq.marketplace.application.selleradmin.port.in.query.ResolveSellerIdBySellerAdminIdUseCase;
 import com.ryuqq.marketplace.domain.adminmenu.vo.AdminRole;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Component;
  * @PreAuthorize("@access.hasPermission('brand:read')")
  * @PreAuthorize("@access.authenticated()")
  * @PreAuthorize("@access.isSellerOwnerOr(#sellerId, 'seller:write')")
+ * @PreAuthorize("@access.isSellerAdminOwnerOrSuperAdmin(#sellerAdminId)")
+ * @PreAuthorize("@access.isSellerAdminBulkOwnerOrSuperAdmin(#request.sellerAdminIds())")
  * }</pre>
  *
  * @author ryu-qqq
@@ -31,12 +35,15 @@ public class MarketAccessChecker extends BaseAccessChecker {
 
     private final ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase;
     private final ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase;
+    private final ResolveSellerIdBySellerAdminIdUseCase resolveSellerIdBySellerAdminIdUseCase;
 
     public MarketAccessChecker(
             ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase,
-            ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase) {
+            ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase,
+            ResolveSellerIdBySellerAdminIdUseCase resolveSellerIdBySellerAdminIdUseCase) {
         this.resolveSellerIdUseCase = resolveSellerIdUseCase;
         this.resolveLegacyProductGroupSellerIdUseCase = resolveLegacyProductGroupSellerIdUseCase;
+        this.resolveSellerIdBySellerAdminIdUseCase = resolveSellerIdBySellerAdminIdUseCase;
     }
 
     /**
@@ -108,6 +115,63 @@ public class MarketAccessChecker extends BaseAccessChecker {
         Optional<Long> productSellerId =
                 resolveLegacyProductGroupSellerIdUseCase.execute(productGroupId);
         return productSellerId.isPresent() && productSellerId.get().equals(currentSellerId.get());
+    }
+
+    /**
+     * 셀러 관리자 소속 검증 (단건).
+     *
+     * <p>SUPER_ADMIN이거나, 대상 sellerAdminId의 소속 셀러가 현재 사용자의 셀러와 같으면 통과합니다.
+     *
+     * @param sellerAdminId 대상 셀러 관리자 ID
+     * @return SUPER_ADMIN이거나 같은 셀러 소속이면 true
+     */
+    public boolean isSellerAdminOwnerOrSuperAdmin(String sellerAdminId) {
+        if (superAdmin()) {
+            return true;
+        }
+        return isSameSellerAsAdmin(sellerAdminId);
+    }
+
+    /**
+     * 셀러 관리자 소속 검증 (일괄).
+     *
+     * <p>SUPER_ADMIN이거나, 대상 sellerAdminId 목록이 모두 현재 사용자와 같은 셀러 소속이면 통과합니다.
+     *
+     * @param sellerAdminIds 대상 셀러 관리자 ID 목록
+     * @return SUPER_ADMIN이거나 전부 같은 셀러 소속이면 true
+     */
+    public boolean isSellerAdminBulkOwnerOrSuperAdmin(List<String> sellerAdminIds) {
+        if (superAdmin()) {
+            return true;
+        }
+
+        Optional<Long> currentSellerId = resolveCurrentSellerIdOptional();
+        if (currentSellerId.isEmpty()) {
+            return false;
+        }
+
+        Optional<Long> targetSellerId =
+                resolveSellerIdBySellerAdminIdUseCase.resolveIfAllSameSeller(sellerAdminIds);
+        return targetSellerId.isPresent() && targetSellerId.get().equals(currentSellerId.get());
+    }
+
+    private boolean isSameSellerAsAdmin(String sellerAdminId) {
+        Optional<Long> currentSellerId = resolveCurrentSellerIdOptional();
+        if (currentSellerId.isEmpty()) {
+            return false;
+        }
+
+        Optional<Long> targetSellerId =
+                resolveSellerIdBySellerAdminIdUseCase.execute(sellerAdminId);
+        return targetSellerId.isPresent() && targetSellerId.get().equals(currentSellerId.get());
+    }
+
+    private Optional<Long> resolveCurrentSellerIdOptional() {
+        String organizationId = getCurrentOrganizationId();
+        if (organizationId == null || organizationId.isBlank()) {
+            return Optional.empty();
+        }
+        return resolveSellerIdUseCase.execute(organizationId);
     }
 
     /**
