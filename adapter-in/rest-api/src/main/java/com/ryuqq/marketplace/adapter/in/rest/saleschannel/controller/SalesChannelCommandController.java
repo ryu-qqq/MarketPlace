@@ -54,7 +54,7 @@ public class SalesChannelCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('sales-channel:write')")
     @RequirePermission(value = "sales-channel:write", description = "판매채널 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<SalesChannelIdApiResponse>> registerSalesChannel(
@@ -79,7 +79,7 @@ public class SalesChannelCommandController {
                 responseCode = "404",
                 description = "판매채널을 찾을 수 없음")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('sales-channel:write')")
     @RequirePermission(value = "sales-channel:write", description = "판매채널 수정")
     @PutMapping(SalesChannelAdminEndpoints.SALES_CHANNEL_ID)
     public ResponseEntity<Void> updateSalesChannel(

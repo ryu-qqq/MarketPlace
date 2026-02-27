@@ -82,7 +82,7 @@ public class SellerApplicationQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller-application:read')")
     @RequirePermission(value = "seller-application:read", description = "셀러 입점 신청 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<SellerApplicationApiResponse>>> search(
@@ -112,7 +112,7 @@ public class SellerApplicationQueryController {
                 responseCode = "404",
                 description = "신청을 찾을 수 없음")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller-application:read')")
     @RequirePermission(value = "seller-application:read", description = "셀러 입점 신청 조회")
     @GetMapping(SellerApplicationAdminEndpoints.ID)
     public ResponseEntity<ApiResponse<SellerApplicationApiResponse>> get(

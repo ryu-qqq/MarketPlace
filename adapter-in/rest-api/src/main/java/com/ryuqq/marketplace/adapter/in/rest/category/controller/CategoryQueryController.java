@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.category.controller;
 
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.ryuqq.marketplace.adapter.in.rest.category.CategoryAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.category.dto.query.SearchCategoriesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.category.dto.response.CategoryApiResponse;
@@ -35,6 +36,7 @@ public class CategoryQueryController {
     }
 
     @Operation(summary = "카테고리 목록 조회", description = "카테고리 목록을 조회합니다.")
+    @PreAuthorize("@access.hasPermission('category:read')")
     @RequirePermission(value = "category:read", description = "카테고리 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<CategoryApiResponse>>>

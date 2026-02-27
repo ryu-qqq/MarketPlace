@@ -6,9 +6,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -45,6 +45,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *   <li>Spring Security URL 기반 접근 제어와 AuthHub SDK 메서드 기반 접근 제어 연동
  * </ul>
  *
+ * <p>ServiceTokenAuthenticationFilter:
+ *
+ * <ul>
+ *   <li>{@code /api/v1/market/internal/**} 경로에 대해 X-Service-Token 헤더 검증
+ *   <li>내부 서비스 간 통신 (CrawlingHub 등) 전용 인증
+ * </ul>
+ *
  * @author ryu-qqq
  * @since 1.0.0
  */
@@ -64,10 +71,17 @@ public class SecurityConfig {
     }
 
     @Bean
+    public ServiceTokenAuthenticationFilter serviceTokenAuthenticationFilter(
+            @Value("${marketplace.internal.service-token}") String serviceToken) {
+        return new ServiceTokenAuthenticationFilter(serviceToken);
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             GatewayAuthenticationFilter gatewayAuthenticationFilter,
             GatewaySecurityBridgeFilter gatewaySecurityBridgeFilter,
+            ServiceTokenAuthenticationFilter serviceTokenAuthenticationFilter,
             ObjectMapper objectMapper)
             throws Exception {
         http
@@ -111,22 +125,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         auth ->
                                 auth
-                                        // 인증 API (로그인)은 누구나 접근 가능
-                                        .requestMatchers(
-                                                HttpMethod.POST,
-                                                "/api/v1/market/auth/login",
-                                                "/api/v1/market/auth/refresh")
+                                        // 공개 API (/public/** → Gateway에서도 인증/인가 미수행)
+                                        .requestMatchers("/api/v1/market/public/**")
                                         .permitAll()
 
-                                        // 셀러 공개 프로필 조회
-                                        .requestMatchers(
-                                                HttpMethod.GET, "/api/v1/market/sellers/*/profile")
-                                        .permitAll()
-
-                                        // 공통 코드 조회 (퍼블릭)
-                                        .requestMatchers(
-                                                HttpMethod.GET, "/api/v1/market/common-codes")
-                                        .permitAll()
+                                        // 내부 서비스 간 통신 (X-Service-Token 인증)
+                                        .requestMatchers("/api/v1/market/internal/**")
+                                        .authenticated()
 
                                         // Actuator
                                         .requestMatchers("/actuator/**")
@@ -146,6 +151,10 @@ public class SecurityConfig {
                                         .anyRequest()
                                         .authenticated())
 
+                // ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal 경로 전용)
+                .addFilterBefore(
+                        serviceTokenAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class)
                 // GatewayAuthenticationFilter: X-User-* 헤더 → UserContext (ThreadLocal)
                 .addFilterBefore(
                         gatewayAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
