@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.commoncode.condition;
 
 import static com.ryuqq.marketplace.adapter.out.persistence.commoncode.entity.QCommonCodeJpaEntity.commonCodeJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.commoncodetype.entity.QCommonCodeTypeJpaEntity.commonCodeTypeJpaEntity;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.List;
@@ -43,10 +44,10 @@ public class CommonCodeConditionBuilder {
         return code != null && !code.isBlank() ? commonCodeJpaEntity.code.eq(code) : null;
     }
 
-    /** 코드 포함 조건 (대소문자 무시) */
-    public BooleanExpression codeContains(String code) {
-        return code != null && !code.isBlank()
-                ? commonCodeJpaEntity.code.containsIgnoreCase(code)
+    /** 공통 코드 타입 코드 정확 일치 조건 (common_code_types JOIN 기반) */
+    public BooleanExpression commonCodeTypeCodeEq(String commonCodeTypeCode) {
+        return commonCodeTypeCode != null && !commonCodeTypeCode.isBlank()
+                ? commonCodeTypeJpaEntity.code.eq(commonCodeTypeCode)
                 : null;
     }
 
@@ -58,5 +59,10 @@ public class CommonCodeConditionBuilder {
     /** 삭제되지 않은 조건 */
     public BooleanExpression notDeleted() {
         return commonCodeJpaEntity.deletedAt.isNull();
+    }
+
+    /** 공통 코드 타입 삭제되지 않은 조건 */
+    public BooleanExpression commonCodeTypeNotDeleted() {
+        return commonCodeTypeJpaEntity.deletedAt.isNull();
     }
 }
