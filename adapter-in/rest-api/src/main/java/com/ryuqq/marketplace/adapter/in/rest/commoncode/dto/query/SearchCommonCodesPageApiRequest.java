@@ -32,6 +32,7 @@ import jakarta.validation.constraints.Min;
 public record SearchCommonCodesPageApiRequest(
         @Parameter(description = "공통 코드 타입 ID", example = "1")
                 @Schema(description = "공통 코드 타입 ID", nullable = true)
+                @Min(value = 1, message = "공통 코드 타입 ID는 1 이상이어야 합니다")
                 Long commonCodeTypeId,
         @Parameter(description = "활성화 여부 필터", example = "true")
                 @Schema(description = "활성화 여부 필터", nullable = true)
