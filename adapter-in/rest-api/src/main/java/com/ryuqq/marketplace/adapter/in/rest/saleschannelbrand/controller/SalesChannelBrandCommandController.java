@@ -47,7 +47,7 @@ public class SalesChannelBrandCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('sales-channel-brand:write')")
     @RequirePermission(value = "sales-channel-brand:write", description = "외부채널 브랜드 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<SalesChannelBrandIdApiResponse>> registerBrand(

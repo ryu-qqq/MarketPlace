@@ -59,7 +59,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("InboundProductCommandController REST Docs 테스트")
 class InboundProductCommandControllerRestDocsTest {
 
-    private static final String INBOUND_PRODUCTS_URL = "/api/v1/market/inbound/products";
+    private static final String INBOUND_PRODUCTS_URL = "/api/v1/market/internal/inbound/products";
     private static final String INBOUND_PRODUCT_ID_URL =
             INBOUND_PRODUCTS_URL + "/{inboundSourceId}/{externalProductCode}";
 

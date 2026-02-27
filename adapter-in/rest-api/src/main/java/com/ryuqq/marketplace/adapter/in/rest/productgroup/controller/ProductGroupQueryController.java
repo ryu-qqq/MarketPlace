@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.productgroup.controller;
 
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupAdminEndpoints;
@@ -70,6 +71,7 @@ public class ProductGroupQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
+    @PreAuthorize("@access.hasPermission('product-group:read')")
     @RequirePermission(value = "product-group:read", description = "상품 그룹 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<ProductGroupListApiResponse>>> search(
@@ -90,6 +92,7 @@ public class ProductGroupQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
+    @PreAuthorize("@access.hasPermission('product-group:read')")
     @RequirePermission(value = "product-group:read", description = "상품 그룹 엑셀 다운로드 조회")
     @GetMapping(ProductGroupAdminEndpoints.EXCEL)
     public ResponseEntity<ApiResponse<List<ProductGroupExcelApiResponse>>> searchForExcel(
@@ -112,6 +115,7 @@ public class ProductGroupQueryController {
                 responseCode = "404",
                 description = "상품 그룹을 찾을 수 없음")
     })
+    @PreAuthorize("@access.hasPermission('product-group:read')")
     @RequirePermission(value = "product-group:read", description = "상품 그룹 상세 조회")
     @GetMapping(ProductGroupAdminEndpoints.ID)
     public ResponseEntity<ApiResponse<ProductGroupDetailApiResponse>> getById(

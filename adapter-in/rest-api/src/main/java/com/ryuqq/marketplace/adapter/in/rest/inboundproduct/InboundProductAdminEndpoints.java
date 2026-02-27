@@ -9,7 +9,7 @@ public final class InboundProductAdminEndpoints {
 
     public static final String BASE = "/api/v1/market";
 
-    public static final String INBOUND_PRODUCTS = BASE + "/inbound/products";
+    public static final String INBOUND_PRODUCTS = BASE + "/internal/inbound/products";
 
     public static final String PATH_EXTERNAL_SOURCE_ID = "inboundSourceId";
     public static final String PATH_EXTERNAL_PRODUCT_CODE = "externalProductCode";

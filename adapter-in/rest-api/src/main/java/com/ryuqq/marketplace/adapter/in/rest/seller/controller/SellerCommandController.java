@@ -104,7 +104,7 @@ public class SellerCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller:write')")
     @RequirePermission(value = "seller:write", description = "셀러 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<SellerIdApiResponse>> registerSeller(
@@ -146,7 +146,7 @@ public class SellerCommandController {
                 responseCode = "404",
                 description = "셀러를 찾을 수 없음")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller:write')")
     @RequirePermission(value = "seller:write", description = "셀러 전체정보 수정")
     @PutMapping(SellerAdminEndpoints.SELLER_ID)
     public ResponseEntity<Void> updateSellerFull(

@@ -102,7 +102,7 @@ public class CommonCodeTypeCommandController {
                 responseCode = "409",
                 description = "중복된 코드")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('common-code-type:write')")
     @RequirePermission(value = "common-code-type:write", description = "공통 코드 타입 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> register(
@@ -135,7 +135,7 @@ public class CommonCodeTypeCommandController {
                 responseCode = "404",
                 description = "공통 코드 타입을 찾을 수 없음")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('common-code-type:write')")
     @RequirePermission(value = "common-code-type:write", description = "공통 코드 타입 수정")
     @PutMapping(CommonCodeTypeAdminEndpoints.ID)
     public ResponseEntity<ApiResponse<Void>> update(
@@ -167,7 +167,7 @@ public class CommonCodeTypeCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('common-code-type:write')")
     @RequirePermission(value = "common-code-type:write", description = "공통 코드 타입 활성화 상태 변경")
     @PatchMapping(CommonCodeTypeAdminEndpoints.ACTIVE_STATUS)
     public ResponseEntity<ApiResponse<Void>> changeActiveStatus(

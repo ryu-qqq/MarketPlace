@@ -9,7 +9,7 @@ public final class InboundCategoryMappingAdminEndpoints {
 
     public static final String BASE = "/api/v1/market";
 
-    public static final String CATEGORY_MAPPINGS = BASE + "/inbound/category-mappings";
+    public static final String CATEGORY_MAPPINGS = BASE + "/internal/inbound/category-mappings";
 
     public static final String CATEGORY_MAPPING_ID = "/{id}";
 
