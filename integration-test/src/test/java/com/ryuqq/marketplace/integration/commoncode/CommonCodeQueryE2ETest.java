@@ -176,14 +176,14 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[Q1-3] 필수 필드 누락 - commonCodeTypeId 없으면 400")
-        void searchCommonCodes_MissingTypeId_Returns400() {
-            // when & then: commonCodeTypeId 누락
+        @DisplayName("[Q1-3] commonCodeTypeId 없으면 전체 조회로 200")
+        void searchCommonCodes_MissingTypeId_Returns200() {
+            // when & then: commonCodeTypeId 누락 시 전체 조회
             given().spec(givenAdmin())
                     .when()
                     .get(BASE_URL)
                     .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value());
+                    .statusCode(HttpStatus.OK.value());
         }
 
         @Test
