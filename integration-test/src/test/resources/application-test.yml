@@ -44,3 +44,8 @@ logging:
 # Server 설정 (랜덤 포트)
 server:
   port: 0
+
+# MarketPlace 설정
+marketplace:
+  internal:
+    service-token: test-service-token

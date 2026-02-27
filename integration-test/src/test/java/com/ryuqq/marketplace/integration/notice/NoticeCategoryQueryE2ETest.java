@@ -79,9 +79,7 @@ class NoticeCategoryQueryE2ETest extends E2ETestBase {
             noticeCategoryRepository.save(newCategory("NC_Q1_2", "BAGS", true));
 
             // when & then
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "notice-category:read"))
+            given().spec(givenWithPermission("notice-category:read"))
                     .queryParam("page", 0)
                     .queryParam("size", 10)
                     .when()
@@ -99,9 +97,7 @@ class NoticeCategoryQueryE2ETest extends E2ETestBase {
         @DisplayName("[Q1-2] 데이터 없을 때 빈 목록")
         void searchNoticeCategories_noData_returnsEmptyList() {
             // when & then
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "notice-category:read"))
+            given().spec(givenWithPermission("notice-category:read"))
                     .queryParam("page", 0)
                     .queryParam("size", 10)
                     .when()
@@ -122,9 +118,7 @@ class NoticeCategoryQueryE2ETest extends E2ETestBase {
             noticeCategoryRepository.save(newCategory("NC_INACTIVE_1", "BAGS", false));
 
             // when & then: 활성만 필터
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "notice-category:read"))
+            given().spec(givenWithPermission("notice-category:read"))
                     .queryParam("page", 0)
                     .queryParam("size", 10)
                     .queryParam("active", true)
@@ -148,9 +142,7 @@ class NoticeCategoryQueryE2ETest extends E2ETestBase {
                     NoticeFieldJpaEntityFixtures.fieldEntityWithCategoryId(category.getId()));
 
             // when & then
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "notice-category:read"))
+            given().spec(givenWithPermission("notice-category:read"))
                     .queryParam("page", 0)
                     .queryParam("size", 10)
                     .when()
@@ -190,9 +182,7 @@ class NoticeCategoryQueryE2ETest extends E2ETestBase {
             noticeCategoryRepository.save(newCategory("NC_GROUP_TEST", "CLOTHING", true));
 
             // when & then
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "notice-category:read"))
+            given().spec(givenWithPermission("notice-category:read"))
                     .when()
                     .get(BASE_URL + "/category-group/{categoryGroup}", "CLOTHING")
                     .then()
@@ -215,9 +205,7 @@ class NoticeCategoryQueryE2ETest extends E2ETestBase {
                     NoticeFieldJpaEntityFixtures.fieldEntityWithCategoryId(category.getId()));
 
             // when & then
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "notice-category:read"))
+            given().spec(givenWithPermission("notice-category:read"))
                     .when()
                     .get(BASE_URL + "/category-group/{categoryGroup}", "SHOES")
                     .then()
@@ -231,9 +219,7 @@ class NoticeCategoryQueryE2ETest extends E2ETestBase {
         @DisplayName("[Q2-3] 존재하지 않는 카테고리 그룹 → 404")
         void getNoticeCategoryByCategoryGroup_nonExisting_returns404() {
             // when & then: JEWELRY 그룹에 데이터 없음
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "notice-category:read"))
+            given().spec(givenWithPermission("notice-category:read"))
                     .when()
                     .get(BASE_URL + "/category-group/{categoryGroup}", "JEWELRY")
                     .then()
@@ -268,9 +254,7 @@ class NoticeCategoryQueryE2ETest extends E2ETestBase {
             noticeCategoryRepository.save(newCategory("NC_FLOW_2", "SHOES", true));
 
             // Step 2: 목록 조회 → 2건 확인
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "notice-category:read"))
+            given().spec(givenWithPermission("notice-category:read"))
                     .queryParam("page", 0)
                     .queryParam("size", 10)
                     .when()
@@ -280,9 +264,7 @@ class NoticeCategoryQueryE2ETest extends E2ETestBase {
                     .body("data.totalElements", greaterThanOrEqualTo(2));
 
             // Step 3: 카테고리 그룹별 상세 조회
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "notice-category:read"))
+            given().spec(givenWithPermission("notice-category:read"))
                     .when()
                     .get(BASE_URL + "/category-group/{categoryGroup}", "CLOTHING")
                     .then()

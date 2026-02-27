@@ -10,7 +10,9 @@ package com.ryuqq.marketplace.adapter.in.rest.auth;
  */
 public final class AuthPublicEndpoints {
 
-    private AuthPublicEndpoints() {}
+    private AuthPublicEndpoints() {
+        throw new UnsupportedOperationException("Utility class cannot be instantiated");
+    }
 
     /** 공개 인증 API 기본 경로. */
     public static final String BASE = "/api/v1/market/public/auth";
