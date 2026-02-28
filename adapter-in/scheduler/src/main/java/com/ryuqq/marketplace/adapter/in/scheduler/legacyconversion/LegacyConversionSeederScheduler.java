@@ -37,6 +37,10 @@ public class LegacyConversionSeederScheduler {
     private final LegacyConversionSeederLockManager lockManager;
     private final SchedulerProperties.LegacyConversionSeeder config;
 
+    /**
+     * 인스턴스 내 커서 상태. 인스턴스 재시작 시 0으로 리셋되어 전체 스캔이 재시작됩니다. 시딩 로직이 멱등(이미 등록된 ID는 건너뜀)이므로 중복 작업만 발생하며 데이터
+     * 정합성에는 영향 없습니다.
+     */
     private volatile long lastCursor = 0;
 
     public LegacyConversionSeederScheduler(

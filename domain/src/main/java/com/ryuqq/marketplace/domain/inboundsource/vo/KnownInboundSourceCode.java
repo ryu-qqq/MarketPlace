@@ -8,7 +8,8 @@ import java.util.Locale;
  * <p>하드코딩 방지를 위해 알려진 소스 코드를 enum으로 관리합니다.
  */
 public enum KnownInboundSourceCode {
-    MUSTIT("MUSTIT");
+    MUSTIT("MUSTIT"),
+    SETOF("SETOF");
 
     private final String code;
 
