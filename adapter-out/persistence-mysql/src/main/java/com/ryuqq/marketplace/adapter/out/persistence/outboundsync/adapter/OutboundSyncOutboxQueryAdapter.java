@@ -1,10 +1,12 @@
 package com.ryuqq.marketplace.adapter.out.persistence.outboundsync.adapter;
 
+import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.OutboundSyncOutboxJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.mapper.OutboundSyncOutboxJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.repository.OutboundSyncOutboxQueryDslRepository;
 import com.ryuqq.marketplace.application.outboundsync.port.out.query.OutboundSyncOutboxQueryPort;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -27,5 +29,29 @@ public class OutboundSyncOutboxQueryAdapter implements OutboundSyncOutboxQueryPo
         return queryDslRepository.findPendingByProductGroupId(productGroupId.value()).stream()
                 .map(mapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<OutboundSyncOutbox> findPendingOutboxes(Instant beforeTime, int batchSize) {
+        return queryDslRepository.findPendingOutboxes(beforeTime, batchSize).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<OutboundSyncOutbox> findProcessingTimeoutOutboxes(
+            Instant timeoutBefore, int batchSize) {
+        return queryDslRepository.findProcessingTimeoutOutboxes(timeoutBefore, batchSize).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public OutboundSyncOutbox getById(Long outboxId) {
+        OutboundSyncOutboxJpaEntity entity = queryDslRepository.findById(outboxId);
+        if (entity == null) {
+            throw new IllegalStateException("OutboundSyncOutbox를 찾을 수 없습니다. outboxId=" + outboxId);
+        }
+        return mapper.toDomain(entity);
     }
 }

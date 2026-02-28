@@ -38,10 +38,7 @@ public class SellerOptionGroupFactory {
         for (var group : optionGroups) {
             SellerOptionGroupId tempGroupId = SellerOptionGroupId.forNew();
             OptionGroupName groupName = OptionGroupName.of(group.optionGroupName());
-            OptionInputType inputType =
-                    group.inputType() != null
-                            ? OptionInputType.valueOf(group.inputType())
-                            : OptionInputType.PREDEFINED;
+            OptionInputType inputType = OptionInputType.fromNameOrDefault(group.inputType());
 
             List<SellerOptionValue> optionValues =
                     group.optionValues().stream()
@@ -94,10 +91,7 @@ public class SellerOptionGroupFactory {
         List<SellerOptionGroupUpdateData.GroupEntry> entries = new ArrayList<>();
 
         for (var group : optionGroups) {
-            OptionInputType inputType =
-                    group.inputType() != null
-                            ? OptionInputType.valueOf(group.inputType())
-                            : OptionInputType.PREDEFINED;
+            OptionInputType inputType = OptionInputType.fromNameOrDefault(group.inputType());
 
             List<SellerOptionGroupUpdateData.ValueEntry> valueEntries =
                     group.optionValues().stream()

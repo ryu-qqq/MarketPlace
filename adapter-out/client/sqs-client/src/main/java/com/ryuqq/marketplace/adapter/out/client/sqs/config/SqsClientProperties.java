@@ -47,6 +47,9 @@ public class SqsClientProperties {
         private String intelligenceNoticeAnalysis;
         private String intelligenceAggregation;
 
+        // OutboundSync queue
+        private String outboundSync;
+
         public String getIntelligenceOrchestration() {
             return intelligenceOrchestration;
         }
@@ -85,6 +88,14 @@ public class SqsClientProperties {
 
         public void setIntelligenceAggregation(String intelligenceAggregation) {
             this.intelligenceAggregation = intelligenceAggregation;
+        }
+
+        public String getOutboundSync() {
+            return outboundSync;
+        }
+
+        public void setOutboundSync(String outboundSync) {
+            this.outboundSync = outboundSync;
         }
     }
 }
