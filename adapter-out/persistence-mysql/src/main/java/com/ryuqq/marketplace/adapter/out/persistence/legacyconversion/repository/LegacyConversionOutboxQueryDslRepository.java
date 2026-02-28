@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.condition.
 import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.entity.LegacyConversionOutboxJpaEntity;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -96,6 +97,9 @@ public class LegacyConversionOutboxQueryDslRepository {
      * @return 이미 존재하는 레거시 상품그룹 ID 집합
      */
     public Set<Long> findExistingLegacyProductGroupIds(Collection<Long> legacyProductGroupIds) {
+        if (legacyProductGroupIds == null || legacyProductGroupIds.isEmpty()) {
+            return Collections.emptySet();
+        }
         List<Long> ids =
                 queryFactory
                         .select(legacyConversionOutboxJpaEntity.legacyProductGroupId)
