@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.domain.product.aggregate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.product.ProductFixtures;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
 import com.ryuqq.marketplace.domain.product.id.ProductOptionMappingId;
@@ -51,7 +52,8 @@ class ProductOptionMappingTest {
 
             // when
             ProductOptionMapping mapping =
-                    ProductOptionMapping.reconstitute(id, productId, sellerOptionValueId);
+                    ProductOptionMapping.reconstitute(
+                            id, productId, sellerOptionValueId, DeletionStatus.active());
 
             // then
             assertThat(mapping.id()).isEqualTo(id);
@@ -60,6 +62,7 @@ class ProductOptionMappingTest {
             assertThat(mapping.productIdValue()).isEqualTo(10L);
             assertThat(mapping.sellerOptionValueId()).isEqualTo(sellerOptionValueId);
             assertThat(mapping.sellerOptionValueIdValue()).isEqualTo(100L);
+            assertThat(mapping.isDeleted()).isFalse();
         }
     }
 
@@ -75,7 +78,8 @@ class ProductOptionMappingTest {
                     ProductOptionMapping.reconstitute(
                             ProductOptionMappingId.of(123L),
                             ProductId.of(1L),
-                            SellerOptionValueId.of(100L));
+                            SellerOptionValueId.of(100L),
+                            DeletionStatus.active());
 
             // when & then
             assertThat(mapping.idValue()).isEqualTo(123L);
