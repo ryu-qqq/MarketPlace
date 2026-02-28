@@ -70,6 +70,9 @@ public class OutboundSyncOutboxScheduler {
     @SchedulerJob("OutboundSyncOutbox-RecoverTimeout")
     public SchedulerBatchProcessingResult recoverTimeout() {
         SchedulerProperties.RecoverTimeout recoverTimeout = config.recoverTimeout();
+        if (!recoverTimeout.enabled()) {
+            return SchedulerBatchProcessingResult.of(0, 0, 0);
+        }
         RecoverTimeoutOutboundSyncCommand command =
                 RecoverTimeoutOutboundSyncCommand.of(
                         recoverTimeout.batchSize(), recoverTimeout.timeoutSeconds());

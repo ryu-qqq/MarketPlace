@@ -40,8 +40,8 @@ public class LegacyConversionSeederLockManager {
      * @return 작업 결과 또는 fallback 값
      */
     public <T> T executeWithLock(Supplier<T> action, T fallback) {
-        LockKey lockKey = new SeederLockKey();
-        boolean acquired = lockPort.tryLock(lockKey, WAIT_SECONDS, LEASE_SECONDS, TimeUnit.SECONDS);
+        boolean acquired =
+                lockPort.tryLock(SEEDER_LOCK_KEY, WAIT_SECONDS, LEASE_SECONDS, TimeUnit.SECONDS);
 
         if (!acquired) {
             log.warn("레거시 시딩 분산 락 획득 실패 - 다른 인스턴스가 실행 중. 이번 주기 스킵");
@@ -51,9 +51,11 @@ public class LegacyConversionSeederLockManager {
         try {
             return action.get();
         } finally {
-            lockPort.unlock(lockKey);
+            lockPort.unlock(SEEDER_LOCK_KEY);
         }
     }
+
+    private static final LockKey SEEDER_LOCK_KEY = new SeederLockKey();
 
     private record SeederLockKey() implements LockKey {
         private static final String KEY = "lock:legacy-conversion:seeder";
