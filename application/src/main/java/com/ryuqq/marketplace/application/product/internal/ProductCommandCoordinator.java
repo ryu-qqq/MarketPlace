@@ -111,6 +111,9 @@ public class ProductCommandCoordinator {
                 Products.reconstitute(pgId, productReadManager.findByProductGroupId(pgId));
         ProductDiff diff = existing.update(updateData);
         productCommandManager.persistAll(diff.allDirtyProducts());
+        for (Product removed : diff.removed()) {
+            optionMappingCommandManager.persistAll(removed.optionMappings());
+        }
         register(diff.added());
     }
 }

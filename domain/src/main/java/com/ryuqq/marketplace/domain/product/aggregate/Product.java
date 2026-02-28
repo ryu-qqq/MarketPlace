@@ -161,13 +161,14 @@ public class Product {
         this.updatedAt = now;
     }
 
-    /** 소프트 삭제. */
+    /** 소프트 삭제. 옵션 매핑도 함께 삭제한다. */
     public void delete(Instant now) {
         if (!status.canDelete()) {
             throw new ProductInvalidStatusTransitionException(status, ProductStatus.DELETED);
         }
         this.status = ProductStatus.DELETED;
         this.updatedAt = now;
+        optionMappings.forEach(m -> m.delete(now));
     }
 
     /**

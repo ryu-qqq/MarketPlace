@@ -51,6 +51,41 @@ class ProductGroupDescriptionCommandFactoryTest {
             // then
             assertThat(result).isNotNull();
         }
+
+        @Test
+        @DisplayName("HTML에 img 태그가 포함되면 이미지를 추출하여 Description에 포함한다")
+        void create_HtmlWithImages_ExtractsImages() {
+            // given
+            String htmlWithImages =
+                    "<img src=\"https://example.com/img1.jpg\"><p>설명</p>"
+                            + "<img src=\"https://example.com/img2.jpg\">";
+            RegisterProductGroupDescriptionCommand command =
+                    new RegisterProductGroupDescriptionCommand(1L, htmlWithImages);
+            given(timeProvider.now()).willReturn(CommonVoFixtures.now());
+
+            // when
+            ProductGroupDescription result = sut.create(command);
+
+            // then
+            assertThat(result.images()).hasSize(2);
+            assertThat(result.isAllImagesUploaded()).isFalse();
+        }
+
+        @Test
+        @DisplayName("HTML에 img 태그가 없으면 빈 이미지 목록으로 생성한다")
+        void create_HtmlWithoutImages_EmptyImages() {
+            // given
+            RegisterProductGroupDescriptionCommand command =
+                    new RegisterProductGroupDescriptionCommand(1L, "<p>텍스트만</p>");
+            given(timeProvider.now()).willReturn(CommonVoFixtures.now());
+
+            // when
+            ProductGroupDescription result = sut.create(command);
+
+            // then
+            assertThat(result.images()).isEmpty();
+            assertThat(result.isAllImagesUploaded()).isTrue();
+        }
     }
 
     @Nested

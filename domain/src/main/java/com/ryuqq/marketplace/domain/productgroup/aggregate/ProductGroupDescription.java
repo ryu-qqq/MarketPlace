@@ -65,6 +65,23 @@ public class ProductGroupDescription {
                 now);
     }
 
+    /** 신규 상세설명 생성 (이미지 포함). */
+    public static ProductGroupDescription forNew(
+            ProductGroupId productGroupId,
+            DescriptionHtml content,
+            List<DescriptionImage> images,
+            Instant now) {
+        return new ProductGroupDescription(
+                ProductGroupDescriptionId.forNew(),
+                productGroupId,
+                content,
+                null,
+                DescriptionPublishStatus.PENDING,
+                images,
+                now,
+                now);
+    }
+
     /** 영속성에서 복원 시 사용. */
     public static ProductGroupDescription reconstitute(
             ProductGroupDescriptionId id,
