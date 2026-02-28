@@ -10,6 +10,16 @@ import java.time.Instant;
  */
 public record RecoverTimeoutOutboundSyncCommand(int batchSize, long timeoutSeconds) {
 
+    public RecoverTimeoutOutboundSyncCommand {
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException("batchSize must be positive, got: " + batchSize);
+        }
+        if (timeoutSeconds <= 0) {
+            throw new IllegalArgumentException(
+                    "timeoutSeconds must be positive, got: " + timeoutSeconds);
+        }
+    }
+
     public static RecoverTimeoutOutboundSyncCommand of(int batchSize, long timeoutSeconds) {
         return new RecoverTimeoutOutboundSyncCommand(batchSize, timeoutSeconds);
     }

@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 외부 채널 연동 실행 서비스 (스텁).
+ * 외부 채널 연동 실행 서비스.
  *
- * <p>현재는 Outbox 상태만 COMPLETED로 변경하는 스텁입니다. 향후 외부 채널별 클라이언트(네이버커머스 등) 연동 시 확장합니다.
+ * <p>SQS 컨슈머에서 수신한 메시지를 처리하여 Outbox 상태를 COMPLETED로 전환합니다.
+ *
+ * <p>향후 외부 채널별 클라이언트(네이버커머스 등) 연동 시, 외부 API 호출은 반드시 이 트랜잭션 밖에서 수행해야 합니다 (이벤트 발행 또는 별도 서비스 분리).
  */
 @Service
 public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
@@ -38,18 +40,11 @@ public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
         Instant now = Instant.now();
 
         try {
-            if (outbox.isPending()) {
-                outbox.startProcessing(now);
-                outboxCommandManager.persist(outbox);
-            }
-
-            // TODO: 향후 외부 채널별 클라이언트 연동 구현
-            // 현재는 스텁으로 바로 COMPLETED 처리
-            outbox.complete(Instant.now());
+            outbox.complete(now);
             outboxCommandManager.persist(outbox);
 
             log.info(
-                    "OutboundSync 완료 (스텁): outboxId={}, productGroupId={}, salesChannelId={},"
+                    "OutboundSync 완료: outboxId={}, productGroupId={}, salesChannelId={},"
                             + " syncType={}",
                     command.outboxId(),
                     command.productGroupId(),
@@ -63,6 +58,8 @@ public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
                     e);
             outbox.recordFailure(true, "실행 실패: " + e.getMessage(), Instant.now());
             outboxCommandManager.persist(outbox);
+            throw new IllegalStateException(
+                    "OutboundSync 실행 실패: outboxId=" + command.outboxId(), e);
         }
     }
 }

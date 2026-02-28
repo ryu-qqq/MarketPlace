@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.sqs.outboundsync.listener;
 import com.ryuqq.marketplace.adapter.in.sqs.outboundsync.dto.OutboundSyncSqsMessage;
 import com.ryuqq.marketplace.application.outboundsync.dto.command.ExecuteOutboundSyncCommand;
 import com.ryuqq.marketplace.application.outboundsync.port.in.command.ExecuteOutboundSyncUseCase;
+import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -61,7 +62,7 @@ public class OutboundSyncListener {
                             message.outboxId(),
                             message.productGroupId(),
                             message.salesChannelId(),
-                            message.syncType()));
+                            SyncType.valueOf(message.syncType())));
             sample.stop(durationTimer);
             successCounter.increment();
         } catch (Exception e) {

@@ -37,6 +37,9 @@ public class OutboundSyncRelayProcessor {
     /**
      * 단건 Outbox를 SQS로 발행합니다.
      *
+     * <p>PROCESSING 전환 + SQS 발행만 수행합니다. COMPLETED 전환은 SQS 컨슈머(ExecuteOutboundSyncService)에서 실제 작업
+     * 완료 후 수행합니다.
+     *
      * @param outbox 처리 대상 Outbox
      * @return 성공 여부
      */
@@ -49,8 +52,10 @@ public class OutboundSyncRelayProcessor {
             String messageBody = buildMessageBody(outbox);
             publishClient.publish(messageBody);
 
-            outbox.complete(Instant.now());
-            outboxCommandManager.persist(outbox);
+            log.info(
+                    "OutboundSync Outbox SQS 발행 성공: outboxId={}, productGroupId={}",
+                    outbox.idValue(),
+                    outbox.productGroupIdValue());
 
             return true;
         } catch (Exception e) {

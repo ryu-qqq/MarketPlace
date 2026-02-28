@@ -56,13 +56,17 @@ public class OutboundSyncOutboxQueryDslRepository {
      */
     public List<OutboundSyncOutboxJpaEntity> findPendingOutboxes(
             java.time.Instant beforeTime, int batchSize) {
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException("batchSize must be positive");
+        }
+        long safeBatchSize = Math.min(batchSize, MAX_PENDING_FETCH_SIZE);
         return queryFactory
                 .selectFrom(outboundSyncOutboxJpaEntity)
                 .where(
                         conditionBuilder.statusPending(),
                         conditionBuilder.createdAtBefore(beforeTime))
                 .orderBy(outboundSyncOutboxJpaEntity.createdAt.asc())
-                .limit(batchSize)
+                .limit(safeBatchSize)
                 .fetch();
     }
 
@@ -75,13 +79,17 @@ public class OutboundSyncOutboxQueryDslRepository {
      */
     public List<OutboundSyncOutboxJpaEntity> findProcessingTimeoutOutboxes(
             java.time.Instant timeoutBefore, int batchSize) {
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException("batchSize must be positive");
+        }
+        long safeBatchSize = Math.min(batchSize, MAX_PENDING_FETCH_SIZE);
         return queryFactory
                 .selectFrom(outboundSyncOutboxJpaEntity)
                 .where(
                         conditionBuilder.statusProcessing(),
                         conditionBuilder.updatedAtBefore(timeoutBefore))
                 .orderBy(outboundSyncOutboxJpaEntity.updatedAt.asc())
-                .limit(batchSize)
+                .limit(safeBatchSize)
                 .fetch();
     }
 

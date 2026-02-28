@@ -10,6 +10,16 @@ import java.time.Instant;
  */
 public record ProcessPendingOutboundSyncCommand(int batchSize, int delaySeconds) {
 
+    public ProcessPendingOutboundSyncCommand {
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException("batchSize must be positive, got: " + batchSize);
+        }
+        if (delaySeconds < 0) {
+            throw new IllegalArgumentException(
+                    "delaySeconds must be non-negative, got: " + delaySeconds);
+        }
+    }
+
     public static ProcessPendingOutboundSyncCommand of(int batchSize, int delaySeconds) {
         return new ProcessPendingOutboundSyncCommand(batchSize, delaySeconds);
     }
