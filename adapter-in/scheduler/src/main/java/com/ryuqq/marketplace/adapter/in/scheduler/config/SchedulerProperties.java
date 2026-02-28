@@ -22,7 +22,12 @@ public record SchedulerProperties(Jobs jobs) {
             ImageTransformOutbox imageTransformOutbox,
             DescriptionPublish descriptionPublish,
             IntelligencePipeline intelligencePipeline,
-            InboundProductRetry inboundProductRetry) {}
+            InboundProductRetry inboundProductRetry,
+            OutboundSyncOutbox outboundSyncOutbox,
+            LegacyConversionSeeder legacyConversionSeeder) {}
+
+    public record OutboundSyncOutbox(
+            ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
     public record IntelligencePipeline(
             ProcessPending processPending,
@@ -59,4 +64,7 @@ public record SchedulerProperties(Jobs jobs) {
             boolean enabled, String cron, String timezone, int batchSize, long timeoutSeconds) {}
 
     public record InboundProductRetry(boolean enabled, String cron, String timezone) {}
+
+    public record LegacyConversionSeeder(
+            boolean enabled, String cron, String timezone, int batchSize, int maxTotal) {}
 }

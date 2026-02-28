@@ -46,4 +46,55 @@ public class OutboundSyncOutboxQueryDslRepository {
                 .limit(MAX_PENDING_FETCH_SIZE)
                 .fetch();
     }
+
+    /**
+     * PENDING 상태이고 beforeTime 이전에 생성된 Outbox 목록 조회.
+     *
+     * @param beforeTime 생성일시 기준
+     * @param batchSize 최대 조회 건수
+     * @return PENDING 상태의 Outbox 엔티티 목록
+     */
+    public List<OutboundSyncOutboxJpaEntity> findPendingOutboxes(
+            java.time.Instant beforeTime, int batchSize) {
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(
+                        conditionBuilder.statusPending(),
+                        conditionBuilder.createdAtBefore(beforeTime))
+                .orderBy(outboundSyncOutboxJpaEntity.createdAt.asc())
+                .limit(batchSize)
+                .fetch();
+    }
+
+    /**
+     * PROCESSING 상태에서 타임아웃된 Outbox 목록 조회.
+     *
+     * @param timeoutBefore updatedAt 기준 타임아웃 시각
+     * @param batchSize 최대 조회 건수
+     * @return 타임아웃된 PROCESSING 상태의 Outbox 엔티티 목록
+     */
+    public List<OutboundSyncOutboxJpaEntity> findProcessingTimeoutOutboxes(
+            java.time.Instant timeoutBefore, int batchSize) {
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(
+                        conditionBuilder.statusProcessing(),
+                        conditionBuilder.updatedAtBefore(timeoutBefore))
+                .orderBy(outboundSyncOutboxJpaEntity.updatedAt.asc())
+                .limit(batchSize)
+                .fetch();
+    }
+
+    /**
+     * ID로 Outbox 엔티티 조회.
+     *
+     * @param outboxId Outbox ID
+     * @return Outbox 엔티티 (없으면 null)
+     */
+    public OutboundSyncOutboxJpaEntity findById(Long outboxId) {
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(outboundSyncOutboxJpaEntity.id.eq(outboxId))
+                .fetchOne();
+    }
 }

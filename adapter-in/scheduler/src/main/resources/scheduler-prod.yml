@@ -89,6 +89,16 @@ scheduler:
         # Prod: 안전한 stuck 기준
         stuck-seconds: 300
 
+    legacy-conversion-seeder:
+      # Prod: 활성화 (전체 마이그레이션)
+      enabled: true
+      # Prod: 30분마다
+      cron: "0 */30 * * * *"
+      # Prod: 큰 배치
+      batch-size: 200
+      # Prod: 무제한
+      max-total: 0
+
     description-publish:
       # Prod: 5분마다
       cron: "0 */5 * * * *"

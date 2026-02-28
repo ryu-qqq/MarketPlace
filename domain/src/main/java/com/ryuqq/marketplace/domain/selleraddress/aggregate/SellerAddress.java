@@ -145,6 +145,10 @@ public class SellerAddress {
         this.updatedAt = now;
     }
 
+    public boolean hasSameAddressType(SellerAddress other) {
+        return this.addressType == other.addressType;
+    }
+
     public boolean isShippingAddress() {
         return addressType == AddressType.SHIPPING;
     }

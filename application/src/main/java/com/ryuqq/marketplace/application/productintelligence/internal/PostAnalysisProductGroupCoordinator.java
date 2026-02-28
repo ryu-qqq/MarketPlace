@@ -1,20 +1,12 @@
 package com.ryuqq.marketplace.application.productintelligence.internal;
 
-import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductCommandManager;
-import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
-import com.ryuqq.marketplace.application.outboundsync.factory.OutboundSyncCommandFactory;
-import com.ryuqq.marketplace.application.outboundsync.manager.OutboundSyncOutboxCommandManager;
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupActivationOutboxCoordinator;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
-import com.ryuqq.marketplace.application.sellersaleschannel.manager.SellerSalesChannelReadManager;
-import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
-import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productintelligence.vo.InspectionDecision;
-import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.time.Instant;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -40,27 +32,15 @@ public class PostAnalysisProductGroupCoordinator {
 
     private final ProductGroupReadManager productGroupReadManager;
     private final ProductGroupCommandManager productGroupCommandManager;
-    private final SellerSalesChannelReadManager sellerSalesChannelReadManager;
-    private final OutboundSyncCommandFactory outboundSyncCommandFactory;
-    private final OutboundSyncOutboxCommandManager outboxCommandManager;
-    private final OutboundProductCommandManager outboundProductCommandManager;
-    private final OutboundProductReadManager outboundProductReadManager;
+    private final ProductGroupActivationOutboxCoordinator activationOutboxCoordinator;
 
     public PostAnalysisProductGroupCoordinator(
             ProductGroupReadManager productGroupReadManager,
             ProductGroupCommandManager productGroupCommandManager,
-            SellerSalesChannelReadManager sellerSalesChannelReadManager,
-            OutboundSyncCommandFactory outboundSyncCommandFactory,
-            OutboundSyncOutboxCommandManager outboxCommandManager,
-            OutboundProductCommandManager outboundProductCommandManager,
-            OutboundProductReadManager outboundProductReadManager) {
+            ProductGroupActivationOutboxCoordinator activationOutboxCoordinator) {
         this.productGroupReadManager = productGroupReadManager;
         this.productGroupCommandManager = productGroupCommandManager;
-        this.sellerSalesChannelReadManager = sellerSalesChannelReadManager;
-        this.outboundSyncCommandFactory = outboundSyncCommandFactory;
-        this.outboxCommandManager = outboxCommandManager;
-        this.outboundProductCommandManager = outboundProductCommandManager;
-        this.outboundProductReadManager = outboundProductReadManager;
+        this.activationOutboxCoordinator = activationOutboxCoordinator;
     }
 
     /** 분석 판정 결과에 따른 상품그룹 상태 전이 + 외부 연동 Outbox 생성. */
@@ -85,43 +65,8 @@ public class PostAnalysisProductGroupCoordinator {
         productGroup.activate(now);
         productGroupCommandManager.persist(productGroup);
 
-        List<SellerSalesChannel> connectedChannels =
-                sellerSalesChannelReadManager.findConnectedBySellerId(productGroup.sellerId());
+        activationOutboxCoordinator.createOutboxAndProducts(productGroup);
 
-        if (connectedChannels.isEmpty()) {
-            log.info(
-                    "CONNECTED 판매채널 없음, 외부 연동 Outbox 생략: sellerId={}",
-                    productGroup.sellerIdValue());
-            return;
-        }
-
-        List<OutboundSyncOutbox> outboxes =
-                outboundSyncCommandFactory.createOutboxes(
-                        productGroup.id(), productGroup.sellerId(), connectedChannels);
-        outboxCommandManager.persistAll(outboxes);
-
-        List<SellerSalesChannel> channelsWithoutProduct =
-                connectedChannels.stream()
-                        .filter(
-                                channel ->
-                                        !outboundProductReadManager
-                                                .existsByProductGroupIdAndSalesChannelId(
-                                                        productGroup.idValue(),
-                                                        channel.salesChannelId().value()))
-                        .toList();
-
-        if (!channelsWithoutProduct.isEmpty()) {
-            List<OutboundProduct> outboundProducts =
-                    outboundSyncCommandFactory.createOutboundProducts(
-                            productGroup.id(), channelsWithoutProduct);
-            outboundProductCommandManager.persistAll(outboundProducts);
-        }
-
-        log.info(
-                "상품그룹 활성화 + 외부 연동 Outbox 생성 완료: productGroupId={}, outboxCount={},"
-                        + " newOutboundProductCount={}",
-                productGroup.idValue(),
-                outboxes.size(),
-                channelsWithoutProduct.size());
+        log.info("상품그룹 활성화 완료: productGroupId={}", productGroup.idValue());
     }
 }
