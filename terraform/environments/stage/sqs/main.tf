@@ -31,6 +31,9 @@ locals {
     verification = "${var.environment}-${var.project_name}-inspection-verification"
   }
 
+  # OutboundSync queue
+  outbound_sync_queue_name = "${var.environment}-${var.project_name}-outbound-sync"
+
   # New Intelligence Pipeline queues
   intelligence_queue_names = {
     orchestration       = "${var.environment}-${var.project_name}-intelligence-orchestration"
@@ -192,6 +195,41 @@ resource "aws_sqs_queue" "inspection_verification" {
   tags = merge(local.common_tags, {
     Name    = local.queue_names.verification
     Purpose = "Final quality verification"
+  })
+}
+
+# ========================================
+# OutboundSync Queue (DLQ)
+# ========================================
+resource "aws_sqs_queue" "outbound_sync_dlq" {
+  name                      = "${local.outbound_sync_queue_name}-dlq"
+  message_retention_seconds = 1209600 # 14 days
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.outbound_sync_queue_name}-dlq"
+    Purpose = "Dead letter queue for outbound sync"
+  })
+}
+
+# ========================================
+# OutboundSync Queue
+# ========================================
+resource "aws_sqs_queue" "outbound_sync" {
+  name                       = local.outbound_sync_queue_name
+  visibility_timeout_seconds = 300    # 5 minutes
+  message_retention_seconds  = 345600 # 4 days
+  receive_wait_time_seconds  = 20     # Long polling
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.outbound_sync_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.outbound_sync_queue_name
+    Purpose = "Outbound sync message relay to external channels"
   })
 }
 
@@ -384,6 +422,9 @@ resource "aws_iam_policy" "sqs_access" {
           aws_sqs_queue.inspection_enhancement_dlq.arn,
           aws_sqs_queue.inspection_verification.arn,
           aws_sqs_queue.inspection_verification_dlq.arn,
+          # OutboundSync queue
+          aws_sqs_queue.outbound_sync.arn,
+          aws_sqs_queue.outbound_sync_dlq.arn,
           # Intelligence pipeline queues
           aws_sqs_queue.intelligence_orchestration.arn,
           aws_sqs_queue.intelligence_orchestration_dlq.arn,
@@ -492,6 +533,28 @@ resource "aws_ssm_parameter" "sqs_access_policy_arn" {
   tags  = local.common_tags
 }
 
+# OutboundSync Queue
+resource "aws_ssm_parameter" "outbound_sync_queue_url" {
+  name  = "/${var.project_name}/sqs/outbound-sync-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.outbound_sync.url
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "outbound_sync_queue_arn" {
+  name  = "/${var.project_name}/sqs/outbound-sync-queue-arn"
+  type  = "String"
+  value = aws_sqs_queue.outbound_sync.arn
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "outbound_sync_dlq_url" {
+  name  = "/${var.project_name}/sqs/outbound-sync-dlq-url"
+  type  = "String"
+  value = aws_sqs_queue.outbound_sync_dlq.url
+  tags  = local.common_tags
+}
+
 # ========================================
 # SSM Parameters: Intelligence Pipeline
 # ========================================
@@ -595,6 +658,26 @@ resource "aws_cloudwatch_metric_alarm" "verification_dlq_messages" {
 
   dimensions = {
     QueueName = aws_sqs_queue.inspection_verification_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
+# OutboundSync DLQ Alarm
+resource "aws_cloudwatch_metric_alarm" "outbound_sync_dlq_messages" {
+  alarm_name          = "${var.project_name}-outbound-sync-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in outbound sync DLQ (stage)"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.outbound_sync_dlq.name
   }
 
   tags = local.common_tags
@@ -740,6 +823,16 @@ output "sqs_access_policy_arn" {
 output "sqs_kms_key_arn" {
   description = "KMS key ARN for SQS encryption"
   value       = aws_kms_key.sqs.arn
+}
+
+output "outbound_sync_queue_url" {
+  description = "OutboundSync queue URL"
+  value       = aws_sqs_queue.outbound_sync.url
+}
+
+output "outbound_sync_queue_arn" {
+  description = "OutboundSync queue ARN"
+  value       = aws_sqs_queue.outbound_sync.arn
 }
 
 # Intelligence Pipeline Outputs

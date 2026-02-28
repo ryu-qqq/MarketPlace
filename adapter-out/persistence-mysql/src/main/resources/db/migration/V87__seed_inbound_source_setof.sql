@@ -2,12 +2,12 @@
 -- 기존 SETOF(id=1) 삭제 후 MUSTIT이 id=1로 이전됨에 따라 SETOF를 id=2로 재등록
 
 -- 1. inbound_source 시드
-INSERT INTO inbound_source (id, code, name, type, status, description) VALUES
+INSERT IGNORE INTO inbound_source (id, code, name, type, status, description) VALUES
 (2, 'SETOF', '세토프', 'LEGACY', 'ACTIVE', '레거시 ERP 시스템 (luxurydb)');
 
 -- 2. inbound_brand_mapping 시드 (SETOF 1612건, inbound_source_id=2)
 -- Total brand mappings: 1612
-INSERT INTO inbound_brand_mapping (inbound_source_id, external_brand_code, external_brand_name, internal_brand_id, status) VALUES
+INSERT IGNORE INTO inbound_brand_mapping (inbound_source_id, external_brand_code, external_brand_name, internal_brand_id, status) VALUES
 (2, '3863', '아카이아', 1, 'ACTIVE'),
 (2, '3864', '애픽스', 2, 'ACTIVE'),
 (2, '3865', '에이커츠', 3, 'ACTIVE'),
@@ -509,7 +509,7 @@ INSERT INTO inbound_brand_mapping (inbound_source_id, external_brand_code, exter
 (2, '4362', '엔자코스타', 499, 'ACTIVE'),
 (2, '4363', '에트로', 500, 'ACTIVE');
 
-INSERT INTO inbound_brand_mapping (inbound_source_id, external_brand_code, external_brand_name, internal_brand_id, status) VALUES
+INSERT IGNORE INTO inbound_brand_mapping (inbound_source_id, external_brand_code, external_brand_name, internal_brand_id, status) VALUES
 (2, '4364', '페이스커넥션', 501, 'ACTIVE'),
 (2, '4365', '피엘라벤', 502, 'ACTIVE'),
 (2, '4366', '플로우', 503, 'ACTIVE'),
@@ -1011,7 +1011,7 @@ INSERT INTO inbound_brand_mapping (inbound_source_id, external_brand_code, exter
 (2, '4862', '모로칸오일', 999, 'ACTIVE'),
 (2, '4863', '미리엄섀퍼', 1000, 'ACTIVE');
 
-INSERT INTO inbound_brand_mapping (inbound_source_id, external_brand_code, external_brand_name, internal_brand_id, status) VALUES
+INSERT IGNORE INTO inbound_brand_mapping (inbound_source_id, external_brand_code, external_brand_name, internal_brand_id, status) VALUES
 (2, '4864', '나나미카', 1001, 'ACTIVE'),
 (2, '4865', '모이에토이', 1002, 'ACTIVE'),
 (2, '4866', '모스키노', 1003, 'ACTIVE'),
@@ -1513,7 +1513,7 @@ INSERT INTO inbound_brand_mapping (inbound_source_id, external_brand_code, exter
 (2, '5363', '비비 베네치아', 1500, 'ACTIVE'),
 (2, '5364', '빅토리아슈즈', 1501, 'ACTIVE');
 
-INSERT INTO inbound_brand_mapping (inbound_source_id, external_brand_code, external_brand_name, internal_brand_id, status) VALUES
+INSERT IGNORE INTO inbound_brand_mapping (inbound_source_id, external_brand_code, external_brand_name, internal_brand_id, status) VALUES
 (2, '5365', '비베타', 1502, 'ACTIVE'),
 (2, '5366', '베리스', 1503, 'ACTIVE'),
 (2, '5367', '빅터앤롤프', 1504, 'ACTIVE'),
@@ -1629,7 +1629,7 @@ INSERT INTO inbound_brand_mapping (inbound_source_id, external_brand_code, exter
 
 -- 3. inbound_category_mapping 시드 (SETOF 430건, inbound_source_id=2)
 -- Total category mappings: 430
-INSERT INTO inbound_category_mapping (inbound_source_id, external_category_code, external_category_name, internal_category_id, status) VALUES
+INSERT IGNORE INTO inbound_category_mapping (inbound_source_id, external_category_code, external_category_name, internal_category_id, status) VALUES
 (2, '1216', '여성', 12, 'ACTIVE'),
 (2, '1217', '의류', 12, 'ACTIVE'),
 (2, '1218', '탑', 12, 'ACTIVE'),
