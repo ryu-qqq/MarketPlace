@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSeller
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
@@ -52,7 +53,10 @@ public class LegacyToInternalBundleFactory {
             Instant now) {
 
         LegacyProductGroupCompositeResult composite = legacyBundle.composite();
-        OptionType optionType = mapOptionType(composite.optionType());
+        OptionType optionType =
+                com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType.valueOf(
+                                composite.optionType())
+                        .toInternalOptionType();
 
         ProductGroup productGroup =
                 createProductGroup(composite, shippingPolicyId, refundPolicyId, optionType, now);
@@ -132,7 +136,7 @@ public class LegacyToInternalBundleFactory {
                             .toList();
             groups.add(
                     new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
-                            entry.getKey(), null, "PREDEFINED", values));
+                            entry.getKey(), null, OptionInputType.PREDEFINED.name(), values));
         }
 
         return groups;
@@ -163,20 +167,5 @@ public class LegacyToInternalBundleFactory {
                             selectedOptions));
         }
         return entries;
-    }
-
-    /**
-     * 레거시 옵션 타입을 내부 옵션 타입으로 매핑합니다.
-     *
-     * <p>Legacy SINGLE → Internal NONE (옵션 없음), Legacy OPTION_ONE → Internal SINGLE, Legacy
-     * OPTION_TWO → Internal COMBINATION.
-     */
-    private OptionType mapOptionType(String legacyOptionType) {
-        return switch (legacyOptionType) {
-            case "SINGLE" -> OptionType.NONE;
-            case "OPTION_ONE" -> OptionType.SINGLE;
-            case "OPTION_TWO" -> OptionType.COMBINATION;
-            default -> throw new IllegalArgumentException("지원하지 않는 레거시 옵션 타입: " + legacyOptionType);
-        };
     }
 }

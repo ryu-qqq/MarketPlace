@@ -17,6 +17,7 @@ import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
@@ -144,7 +145,9 @@ public class LegacyToInternalUpdateBundleFactory {
                                             new OptionValueCommand(
                                                     null, v, null, sortOrder.getAndIncrement()))
                             .toList();
-            groups.add(new OptionGroupCommand(null, entry.getKey(), null, "PREDEFINED", values));
+            groups.add(
+                    new OptionGroupCommand(
+                            null, entry.getKey(), null, OptionInputType.PREDEFINED.name(), values));
         }
 
         return new UpdateSellerOptionGroupsCommand(internalProductGroupId, groups);

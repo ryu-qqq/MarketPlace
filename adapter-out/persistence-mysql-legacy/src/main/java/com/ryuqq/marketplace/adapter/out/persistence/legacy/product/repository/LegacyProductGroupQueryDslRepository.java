@@ -145,4 +145,23 @@ public class LegacyProductGroupQueryDslRepository {
                 .where(legacyOptionDetailEntity.id.in(optionDetailIds))
                 .fetch();
     }
+
+    /**
+     * 활성 상품그룹 ID를 커서 기반으로 조회합니다.
+     *
+     * @param afterId 이 ID 이후부터 조회 (exclusive)
+     * @param limit 최대 조회 개수
+     * @return 활성 상품그룹 ID 목록 (오름차순)
+     */
+    public List<Long> findActiveProductGroupIds(long afterId, int limit) {
+        return queryFactory
+                .select(legacyProductGroupEntity.id)
+                .from(legacyProductGroupEntity)
+                .where(
+                        legacyProductGroupEntity.id.gt(afterId),
+                        legacyProductGroupEntity.deleteYn.eq("N"))
+                .orderBy(legacyProductGroupEntity.id.asc())
+                .limit(limit)
+                .fetch();
+    }
 }

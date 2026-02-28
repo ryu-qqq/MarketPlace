@@ -89,6 +89,16 @@ scheduler:
         # 로컬: 짧은 stuck 기준
         stuck-seconds: 60
 
+    legacy-conversion-seeder:
+      # 로컬: 비활성화 (수동 테스트)
+      enabled: false
+      # 로컬: 5분마다
+      cron: "0 */5 * * * *"
+      # 로컬: 작은 배치
+      batch-size: 10
+      # 로컬: 소량 제한
+      max-total: 50
+
     description-publish:
       # 로컬: 1분마다 (빠른 테스트)
       cron: "0 */1 * * * *"
