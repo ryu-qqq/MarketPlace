@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.sqs.outboundsync.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.sqs.config.SqsClientProperties;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.OutboundSyncPublishClient;
+import java.util.Objects;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -19,7 +20,10 @@ public class OutboundSyncPublishAdapter implements OutboundSyncPublishClient {
 
     public OutboundSyncPublishAdapter(SqsClient sqsClient, SqsClientProperties properties) {
         this.sqsClient = sqsClient;
-        this.queueUrl = properties.getQueues().getOutboundSync();
+        this.queueUrl =
+                Objects.requireNonNull(
+                        properties.getQueues().getOutboundSync(),
+                        "sqs.queues.outbound-sync must be configured");
     }
 
     @Override

@@ -37,7 +37,7 @@ public class ProductGroupImageCompletionStrategy implements ImageUploadCompletio
 
     @Override
     public boolean supports(ImageSourceType sourceType) {
-        return sourceType.isProductGroupImage();
+        return sourceType != null && sourceType.isProductGroupImage();
     }
 
     @Override

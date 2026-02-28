@@ -118,6 +118,7 @@ class BatchChangeProductGroupStatusServiceTest {
                     .isInstanceOf(ProductGroupOwnershipViolationException.class);
 
             then(commandManager).shouldHaveNoInteractions();
+            then(activationOutboxCoordinator).shouldHaveNoInteractions();
         }
     }
 }

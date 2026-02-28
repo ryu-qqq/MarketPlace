@@ -57,6 +57,6 @@ public record ImageTransformResponse(
     }
 
     public boolean isTerminal() {
-        return status.isTerminal();
+        return status != null && status.isTerminal();
     }
 }
