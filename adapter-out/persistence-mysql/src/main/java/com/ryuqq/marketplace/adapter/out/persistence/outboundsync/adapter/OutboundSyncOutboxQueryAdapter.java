@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.stereotype.Component;
 
 /** 외부 상품 연동 Outbox 조회 어댑터. */
@@ -48,6 +49,7 @@ public class OutboundSyncOutboxQueryAdapter implements OutboundSyncOutboxQueryPo
 
     @Override
     public OutboundSyncOutbox getById(Long outboxId) {
+        Objects.requireNonNull(outboxId, "outboxId must not be null");
         OutboundSyncOutboxJpaEntity entity = queryDslRepository.findById(outboxId);
         if (entity == null) {
             throw new IllegalStateException("OutboundSyncOutbox를 찾을 수 없습니다. outboxId=" + outboxId);
