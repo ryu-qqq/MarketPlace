@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.application.outboundsync.manager.OutboundSyncOutbox
 import com.ryuqq.marketplace.application.outboundsync.port.in.command.ProcessPendingOutboundSyncUseCase;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import java.util.List;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
  * <p>Intelligence Pipeline의 ProcessPendingIntelligenceService 패턴과 동일합니다.
  */
 @Service
+@ConditionalOnProperty(prefix = "sqs.queues", name = "outbound-sync")
 public class ProcessPendingOutboundSyncService implements ProcessPendingOutboundSyncUseCase {
 
     private final OutboundSyncOutboxReadManager outboxReadManager;
