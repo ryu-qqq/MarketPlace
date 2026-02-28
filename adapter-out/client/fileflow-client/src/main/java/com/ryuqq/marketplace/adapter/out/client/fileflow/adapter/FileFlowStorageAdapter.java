@@ -196,11 +196,19 @@ public class FileFlowStorageAdapter implements FileStorageClient {
             HttpRequest putRequest =
                     HttpRequest.newBuilder()
                             .uri(URI.create(session.presignedUrl()))
-                            .header("Content-Type", "text/html; charset=utf-8")
+                            .header("Content-Type", "text/html")
                             .PUT(HttpRequest.BodyPublishers.ofByteArray(contentBytes))
                             .build();
             HttpResponse<String> putResponse =
                     httpClient.send(putRequest, HttpResponse.BodyHandlers.ofString());
+
+            if (putResponse.statusCode() < 200 || putResponse.statusCode() >= 300) {
+                throw new RuntimeException(
+                        "S3 presigned URL PUT 실패: statusCode="
+                                + putResponse.statusCode()
+                                + ", body="
+                                + putResponse.body());
+            }
 
             String etag = putResponse.headers().firstValue("ETag").orElse(null);
 

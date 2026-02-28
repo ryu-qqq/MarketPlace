@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.product.mapper;
 
 import com.ryuqq.marketplace.adapter.out.persistence.product.entity.ProductJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.product.entity.ProductOptionMappingJpaEntity;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
@@ -40,13 +41,21 @@ public class ProductJpaEntityMapper {
 
     public ProductOptionMappingJpaEntity toMappingEntity(ProductOptionMapping mapping) {
         return ProductOptionMappingJpaEntity.create(
-                mapping.idValue(), mapping.productIdValue(), mapping.sellerOptionValueIdValue());
+                mapping.idValue(),
+                mapping.productIdValue(),
+                mapping.sellerOptionValueIdValue(),
+                mapping.isDeleted(),
+                mapping.deletionStatus().deletedAt());
     }
 
     public ProductOptionMappingJpaEntity toMappingEntity(
             ProductOptionMapping mapping, Long productId) {
         return ProductOptionMappingJpaEntity.create(
-                mapping.idValue(), productId, mapping.sellerOptionValueIdValue());
+                mapping.idValue(),
+                productId,
+                mapping.sellerOptionValueIdValue(),
+                mapping.isDeleted(),
+                mapping.deletionStatus().deletedAt());
     }
 
     public Product toDomain(ProductJpaEntity entity, List<ProductOptionMappingJpaEntity> mappings) {
@@ -73,6 +82,7 @@ public class ProductJpaEntityMapper {
         return ProductOptionMapping.reconstitute(
                 ProductOptionMappingId.of(entity.getId()),
                 ProductId.of(entity.getProductId()),
-                SellerOptionValueId.of(entity.getSellerOptionValueId()));
+                SellerOptionValueId.of(entity.getSellerOptionValueId()),
+                DeletionStatus.reconstitute(entity.isDeleted(), entity.getDeletedAt()));
     }
 }

@@ -243,19 +243,21 @@ public final class ProductJpaEntityFixtures {
 
     /** 기본 ProductOptionMappingJpaEntity 생성. */
     public static ProductOptionMappingJpaEntity defaultOptionMappingEntity() {
-        return ProductOptionMappingJpaEntity.create(null, DEFAULT_ID, 100L);
+        return ProductOptionMappingJpaEntity.create(null, DEFAULT_ID, 100L, false, null);
     }
 
     /** 특정 productId를 가진 ProductOptionMappingJpaEntity 생성. */
     public static ProductOptionMappingJpaEntity optionMappingEntity(
             Long productId, Long sellerOptionValueId) {
-        return ProductOptionMappingJpaEntity.create(null, productId, sellerOptionValueId);
+        return ProductOptionMappingJpaEntity.create(
+                null, productId, sellerOptionValueId, false, null);
     }
 
     /** ID가 있는 ProductOptionMappingJpaEntity 생성 (toDomain 테스트용). */
     public static ProductOptionMappingJpaEntity savedOptionMappingEntity(
             Long id, Long productId, Long sellerOptionValueId) {
-        return ProductOptionMappingJpaEntity.create(id, productId, sellerOptionValueId);
+        return ProductOptionMappingJpaEntity.create(
+                id, productId, sellerOptionValueId, false, null);
     }
 
     /** 빈 옵션 매핑 목록. */

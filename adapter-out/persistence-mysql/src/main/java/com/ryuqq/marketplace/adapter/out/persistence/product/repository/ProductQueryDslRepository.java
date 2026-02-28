@@ -75,7 +75,7 @@ public class ProductQueryDslRepository {
     public List<ProductOptionMappingJpaEntity> findOptionMappingsByProductId(Long productId) {
         return queryFactory
                 .selectFrom(optionMapping)
-                .where(optionMapping.productId.eq(productId))
+                .where(optionMapping.productId.eq(productId), optionMapping.deleted.isFalse())
                 .fetch();
     }
 
@@ -83,7 +83,7 @@ public class ProductQueryDslRepository {
             List<Long> productIds) {
         return queryFactory
                 .selectFrom(optionMapping)
-                .where(optionMapping.productId.in(productIds))
+                .where(optionMapping.productId.in(productIds), optionMapping.deleted.isFalse())
                 .fetch();
     }
 }
