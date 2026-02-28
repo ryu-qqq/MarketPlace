@@ -5,7 +5,9 @@ import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.repository
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyConversionOutboxQueryPort;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyConversionOutbox;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Component;
 
 /**
@@ -50,5 +52,15 @@ public class LegacyConversionOutboxQueryAdapter implements LegacyConversionOutbo
         return queryDslRepository
                 .findPendingByLegacyProductGroupId(legacyProductGroupId)
                 .isPresent();
+    }
+
+    @Override
+    public Set<Long> findExistingLegacyProductGroupIds(Collection<Long> legacyProductGroupIds) {
+        return queryDslRepository.findExistingLegacyProductGroupIds(legacyProductGroupIds);
+    }
+
+    @Override
+    public long countDistinctLegacyProductGroupIds() {
+        return queryDslRepository.countDistinctLegacyProductGroupIds();
     }
 }

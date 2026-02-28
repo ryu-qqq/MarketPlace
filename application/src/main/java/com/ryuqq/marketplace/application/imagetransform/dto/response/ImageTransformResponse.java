@@ -4,7 +4,7 @@ package com.ryuqq.marketplace.application.imagetransform.dto.response;
  * 이미지 변환 응답 DTO.
  *
  * @param transformRequestId FileFlow 변환 요청 ID
- * @param status 변환 상태 (PENDING, PROCESSING, COMPLETED, FAILED)
+ * @param status 변환 상태
  * @param resultAssetId 변환 완료 시 결과 에셋 ID (미완료 시 null)
  * @param resultCdnUrl 변환 완료 시 CDN URL (미완료 시 null)
  * @param width 변환 결과 너비 (미완료 시 null)
@@ -12,18 +12,20 @@ package com.ryuqq.marketplace.application.imagetransform.dto.response;
  */
 public record ImageTransformResponse(
         String transformRequestId,
-        String status,
+        ImageTransformStatus status,
         String resultAssetId,
         String resultCdnUrl,
         Integer width,
         Integer height) {
 
     public static ImageTransformResponse pending(String transformRequestId) {
-        return new ImageTransformResponse(transformRequestId, "PENDING", null, null, null, null);
+        return new ImageTransformResponse(
+                transformRequestId, ImageTransformStatus.PENDING, null, null, null, null);
     }
 
     public static ImageTransformResponse processing(String transformRequestId) {
-        return new ImageTransformResponse(transformRequestId, "PROCESSING", null, null, null, null);
+        return new ImageTransformResponse(
+                transformRequestId, ImageTransformStatus.PROCESSING, null, null, null, null);
     }
 
     public static ImageTransformResponse completed(
@@ -33,22 +35,28 @@ public record ImageTransformResponse(
             Integer width,
             Integer height) {
         return new ImageTransformResponse(
-                transformRequestId, "COMPLETED", resultAssetId, resultCdnUrl, width, height);
+                transformRequestId,
+                ImageTransformStatus.COMPLETED,
+                resultAssetId,
+                resultCdnUrl,
+                width,
+                height);
     }
 
     public static ImageTransformResponse failed(String transformRequestId) {
-        return new ImageTransformResponse(transformRequestId, "FAILED", null, null, null, null);
+        return new ImageTransformResponse(
+                transformRequestId, ImageTransformStatus.FAILED, null, null, null, null);
     }
 
     public boolean isCompleted() {
-        return "COMPLETED".equals(status);
+        return status == ImageTransformStatus.COMPLETED;
     }
 
     public boolean isFailed() {
-        return "FAILED".equals(status);
+        return status == ImageTransformStatus.FAILED;
     }
 
     public boolean isTerminal() {
-        return isCompleted() || isFailed();
+        return status.isTerminal();
     }
 }

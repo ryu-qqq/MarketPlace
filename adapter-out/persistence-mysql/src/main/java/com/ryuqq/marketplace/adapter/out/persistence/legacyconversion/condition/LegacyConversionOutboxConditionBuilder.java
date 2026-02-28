@@ -5,6 +5,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.ent
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.entity.LegacyConversionOutboxJpaEntity;
 import java.time.Instant;
+import java.util.Collection;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,5 +43,11 @@ public class LegacyConversionOutboxConditionBuilder {
 
     public BooleanExpression updatedAtBefore(Instant beforeTime) {
         return beforeTime != null ? legacyConversionOutboxJpaEntity.updatedAt.lt(beforeTime) : null;
+    }
+
+    public BooleanExpression legacyProductGroupIdIn(Collection<Long> ids) {
+        return (ids != null && !ids.isEmpty())
+                ? legacyConversionOutboxJpaEntity.legacyProductGroupId.in(ids)
+                : null;
     }
 }

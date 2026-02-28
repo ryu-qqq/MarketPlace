@@ -36,7 +36,7 @@ public class DescriptionImageCompletionStrategy implements ImageUploadCompletion
 
     @Override
     public boolean supports(ImageSourceType sourceType) {
-        return sourceType == ImageSourceType.DESCRIPTION_IMAGE;
+        return sourceType.isDescriptionImage();
     }
 
     @Override
