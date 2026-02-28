@@ -22,4 +22,12 @@ public enum ImageSourceType {
     public String description() {
         return description;
     }
+
+    public boolean isProductGroupImage() {
+        return this == PRODUCT_GROUP_IMAGE;
+    }
+
+    public boolean isDescriptionImage() {
+        return this == DESCRIPTION_IMAGE;
+    }
 }

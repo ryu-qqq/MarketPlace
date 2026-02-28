@@ -14,6 +14,14 @@ import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClien
 import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
 import com.ryuqq.marketplace.application.imagetransform.port.out.client.ImageTransformClient;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
+import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyConversionOutboxCommandPort;
+import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyProductIdMappingCommandPort;
+import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyConversionOutboxQueryPort;
+import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyProductGroupIdScanPort;
+import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyProductIdMappingQueryPort;
+import com.ryuqq.marketplace.application.outboundsync.port.out.client.OutboundSyncPublishClient;
+import com.ryuqq.marketplace.application.outboundsync.port.out.command.OutboundSyncOutboxCommandPort;
+import com.ryuqq.marketplace.application.outboundsync.port.out.query.OutboundSyncOutboxQueryPort;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.AggregationPublishClient;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.DescriptionAnalysisAiClient;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.DescriptionAnalysisPublishClient;
@@ -27,15 +35,21 @@ import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdmin
 import com.ryuqq.marketplace.application.selleradmin.port.out.command.SellerAdminAuthOutboxCommandPort;
 import com.ryuqq.marketplace.application.selleradmin.port.out.query.SellerAdminAuthOutboxQueryPort;
 import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
+import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyConversionOutbox;
+import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
+import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productintelligence.vo.ExtractedAttribute;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdminAuthOutbox;
 import com.ryuqq.marketplace.domain.selleradmin.id.SellerAdminId;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -260,6 +274,145 @@ public class StubExternalClientConfig {
             @Override
             public String publish(String messageBody) {
                 return "stub-message-id";
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public OutboundSyncPublishClient stubOutboundSyncPublishClient() {
+        return messageBody -> "stub-message-id";
+    }
+
+    @Bean
+    @Primary
+    public OutboundSyncOutboxCommandPort stubOutboundSyncOutboxCommandPort() {
+        final AtomicLong sequence = new AtomicLong(1);
+        return new OutboundSyncOutboxCommandPort() {
+            @Override
+            public Long persist(OutboundSyncOutbox outbox) {
+                return sequence.getAndIncrement();
+            }
+
+            @Override
+            public void persistAll(List<OutboundSyncOutbox> outboxes) {
+                // stub: no-op
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public OutboundSyncOutboxQueryPort stubOutboundSyncOutboxQueryPort() {
+        return new OutboundSyncOutboxQueryPort() {
+            @Override
+            public List<OutboundSyncOutbox> findPendingByProductGroupId(
+                    ProductGroupId productGroupId) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<OutboundSyncOutbox> findPendingOutboxes(Instant beforeTime, int batchSize) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<OutboundSyncOutbox> findProcessingTimeoutOutboxes(
+                    Instant timeoutBefore, int batchSize) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public OutboundSyncOutbox getById(Long outboxId) {
+                throw new IllegalArgumentException("Stub: OutboundSyncOutbox not found");
+            }
+        };
+    }
+
+    // ===== LegacyConversion 포트 Stubs =====
+
+    @Bean
+    @Primary
+    public LegacyConversionOutboxCommandPort stubLegacyConversionOutboxCommandPort() {
+        final AtomicLong sequence = new AtomicLong(1);
+        return outbox -> sequence.getAndIncrement();
+    }
+
+    @Bean
+    @Primary
+    public LegacyConversionOutboxQueryPort stubLegacyConversionOutboxQueryPort() {
+        return new LegacyConversionOutboxQueryPort() {
+            @Override
+            public List<LegacyConversionOutbox> findPendingOutboxes(Instant beforeTime, int limit) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<LegacyConversionOutbox> findProcessingTimeoutOutboxes(
+                    Instant timeoutThreshold, int limit) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public boolean existsPendingByLegacyProductGroupId(long legacyProductGroupId) {
+                return false;
+            }
+
+            @Override
+            public Set<Long> findExistingLegacyProductGroupIds(
+                    Collection<Long> legacyProductGroupIds) {
+                return Collections.emptySet();
+            }
+
+            @Override
+            public long countDistinctLegacyProductGroupIds() {
+                return 0L;
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public LegacyProductGroupIdScanPort stubLegacyProductGroupIdScanPort() {
+        return (afterId, limit) -> Collections.emptyList();
+    }
+
+    @Bean
+    @Primary
+    public LegacyProductIdMappingCommandPort stubLegacyProductIdMappingCommandPort() {
+        final AtomicLong sequence = new AtomicLong(1);
+        return new LegacyProductIdMappingCommandPort() {
+            @Override
+            public Long persist(LegacyProductIdMapping mapping) {
+                return sequence.getAndIncrement();
+            }
+
+            @Override
+            public void persistAll(List<LegacyProductIdMapping> mappings) {
+                // stub: no-op
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public LegacyProductIdMappingQueryPort stubLegacyProductIdMappingQueryPort() {
+        return new LegacyProductIdMappingQueryPort() {
+            @Override
+            public Optional<LegacyProductIdMapping> findByLegacyProductId(long legacyProductId) {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<LegacyProductIdMapping> findByInternalProductId(
+                    long internalProductId) {
+                return Optional.empty();
+            }
+
+            @Override
+            public List<LegacyProductIdMapping> findByLegacyProductGroupId(
+                    long legacyProductGroupId) {
+                return Collections.emptyList();
             }
         };
     }

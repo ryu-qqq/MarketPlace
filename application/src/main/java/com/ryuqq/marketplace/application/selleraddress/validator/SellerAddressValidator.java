@@ -49,10 +49,7 @@ public class SellerAddressValidator {
         }
         List<SellerAddress> sameTypeOthers =
                 readManager.findAllBySellerId(address.sellerId()).stream()
-                        .filter(
-                                a ->
-                                        a.addressType() == address.addressType()
-                                                && !a.id().equals(address.id()))
+                        .filter(a -> a.hasSameAddressType(address) && !a.id().equals(address.id()))
                         .toList();
         if (!sameTypeOthers.isEmpty()) {
             throw new CannotDeleteDefaultAddressException();
