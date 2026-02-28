@@ -89,6 +89,29 @@ scheduler:
         # Prod: 안전한 stuck 기준
         stuck-seconds: 300
 
+    outbound-sync-outbox:
+      process-pending:
+        # Prod: 활성화
+        enabled: true
+        # Prod: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        # Prod: 활성화
+        enabled: true
+        # Prod: 10분마다
+        cron: "0 */10 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 300
+
     legacy-conversion-seeder:
       # Prod: 활성화 (전체 마이그레이션)
       enabled: true

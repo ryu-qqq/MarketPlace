@@ -87,6 +87,29 @@ scheduler:
         # Stage: 중간 stuck 기준
         stuck-seconds: 180
 
+    outbound-sync-outbox:
+      process-pending:
+        # Stage: 활성화
+        enabled: true
+        # Stage: 3분마다
+        cron: "0 */3 * * * *"
+        timezone: "Asia/Seoul"
+        # Stage: 중간 배치
+        batch-size: 50
+        # Stage: 중간 지연
+        delay-seconds: 30
+
+      recover-timeout:
+        # Stage: 활성화
+        enabled: true
+        # Stage: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: "Asia/Seoul"
+        # Stage: 중간 배치
+        batch-size: 50
+        # Stage: 중간 타임아웃
+        timeout-seconds: 180
+
     legacy-conversion-seeder:
       # Stage: 활성화 (부분 테스트)
       enabled: true
