@@ -86,6 +86,7 @@ public class InboundProductRegisterCoordinator {
                 mappingResolver.resolveMappingAndApply(newProduct, now);
 
         if (!mapping.isFullyMapped()) {
+            newProduct.markPendingMapping(now);
             commandManager.persist(newProduct);
             log.info(
                     "인바운드 상품 매핑 대기: inboundSourceId={}, code={}",
@@ -103,11 +104,15 @@ public class InboundProductRegisterCoordinator {
         Instant now = timeProvider.now();
 
         if (!existingProduct.isConverted()) {
-            InboundProductMappingResult mapping =
-                    mappingResolver.resolveMappingAndApply(existingProduct, now);
-            if (!mapping.isFullyMapped()) {
-                commandManager.persist(existingProduct);
-                return InboundProductConversionResult.pendingMapping(existingProduct.idValue());
+            if (!existingProduct.isMapped()) {
+                InboundProductMappingResult mapping =
+                        mappingResolver.resolveMappingAndApply(existingProduct, now);
+                if (!mapping.isFullyMapped()) {
+                    existingProduct.markPendingMapping(now);
+                    commandManager.persist(existingProduct);
+                    return InboundProductConversionResult.pendingMapping(
+                            existingProduct.idValue());
+                }
             }
             return convertAndPersist(existingProduct, command, now);
         }

@@ -187,6 +187,8 @@ scheduler:
       # Cron: 10분마다
       cron: "0 */10 * * * *"
       timezone: Asia/Seoul
+      # 배치 크기
+      batch-size: 50
 
     # OutboundSyncOutbox 처리 스케줄러
     outbound-sync-outbox:

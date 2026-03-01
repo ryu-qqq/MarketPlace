@@ -150,6 +150,12 @@ scheduler:
       # Stage: 200건 제한
       max-total: 200
 
+    inbound-product-retry:
+      # Stage: 5분마다
+      cron: "0 */5 * * * *"
+      # Stage: 중간 배치
+      batch-size: 30
+
     description-publish:
       # Stage: 5분마다
       cron: "0 */5 * * * *"

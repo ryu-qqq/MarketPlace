@@ -74,7 +74,7 @@ public record SchedulerProperties(Jobs jobs) {
     public record RecoverTimeout(
             boolean enabled, String cron, String timezone, int batchSize, long timeoutSeconds) {}
 
-    public record InboundProductRetry(boolean enabled, String cron, String timezone) {}
+    public record InboundProductRetry(boolean enabled, String cron, String timezone, int batchSize) {}
 
     public record LegacyConversionSeeder(
             boolean enabled, String cron, String timezone, int batchSize, int maxTotal) {}
