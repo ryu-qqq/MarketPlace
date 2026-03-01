@@ -48,7 +48,7 @@ public class ProductGroupImageCompletionStrategy implements ImageUploadCompletio
 
         List<ImageTransformOutbox> outboxes =
                 transformOutboxFactory.createOutboxes(
-                        sourceId, ImageSourceType.PRODUCT_GROUP_IMAGE, uploadedUrl);
+                        sourceId, ImageSourceType.PRODUCT_GROUP_IMAGE, uploadedUrl, fileAssetId);
         transformOutboxCommandManager.persistAll(outboxes);
     }
 }

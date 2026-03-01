@@ -61,7 +61,7 @@ public class ImageTransformOutboxProcessor {
 
             ImageTransformResponse response =
                     transformManager.createTransformRequest(
-                            outbox.uploadedUrlValue(), outbox.variantType());
+                            outbox.uploadedUrlValue(), outbox.variantType(), outbox.fileAssetId());
 
             return handleSuccess(outbox, response);
 
