@@ -31,23 +31,27 @@ class ImageTransformManagerTest {
     class CreateTransformRequestTest {
 
         @Test
-        @DisplayName("업로드 URL과 Variant 타입으로 변환 요청을 생성하고 응답을 반환한다")
+        @DisplayName("업로드 URL과 Variant 타입, fileAssetId로 변환 요청을 생성하고 응답을 반환한다")
         void createTransformRequest_ValidParams_ReturnsResponse() {
             // given
             String uploadedUrl = "https://cdn.example.com/uploaded/image.jpg";
             ImageVariantType variantType = ImageVariantType.SMALL_WEBP;
+            String fileAssetId = "asset-abc-123";
             ImageTransformResponse expectedResponse =
                     ImageTransformResponseFixtures.processingResponse();
 
-            given(transformClient.createTransformRequest(uploadedUrl, variantType))
+            given(transformClient.createTransformRequest(uploadedUrl, variantType, fileAssetId))
                     .willReturn(expectedResponse);
 
             // when
-            ImageTransformResponse result = sut.createTransformRequest(uploadedUrl, variantType);
+            ImageTransformResponse result =
+                    sut.createTransformRequest(uploadedUrl, variantType, fileAssetId);
 
             // then
             assertThat(result).isEqualTo(expectedResponse);
-            then(transformClient).should().createTransformRequest(uploadedUrl, variantType);
+            then(transformClient)
+                    .should()
+                    .createTransformRequest(uploadedUrl, variantType, fileAssetId);
         }
     }
 

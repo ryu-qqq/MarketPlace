@@ -47,7 +47,9 @@ class ImageTransformOutboxProcessorTest {
             given(outboxCommandManager.persist(any())).willReturn(1L);
             given(
                             transformManager.createTransformRequest(
-                                    outbox.uploadedUrlValue(), outbox.variantType()))
+                                    outbox.uploadedUrlValue(),
+                                    outbox.variantType(),
+                                    outbox.fileAssetId()))
                     .willReturn(processingResponse);
 
             // when
@@ -66,7 +68,9 @@ class ImageTransformOutboxProcessorTest {
             ImageTransformOutbox outbox = ImageTransformFixtures.pendingOutbox();
 
             given(outboxCommandManager.persist(any())).willReturn(1L);
-            given(transformManager.createTransformRequest(anyString(), any(ImageVariantType.class)))
+            given(
+                            transformManager.createTransformRequest(
+                                    anyString(), any(ImageVariantType.class), anyString()))
                     .willThrow(new RuntimeException("외부 API 호출 실패"));
 
             // when
@@ -88,7 +92,9 @@ class ImageTransformOutboxProcessorTest {
             given(outboxCommandManager.persist(any())).willReturn(1L);
             given(
                             transformManager.createTransformRequest(
-                                    outbox.uploadedUrlValue(), outbox.variantType()))
+                                    outbox.uploadedUrlValue(),
+                                    outbox.variantType(),
+                                    outbox.fileAssetId()))
                     .willReturn(processingResponse);
 
             // when

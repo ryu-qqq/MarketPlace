@@ -85,7 +85,8 @@ class ProductGroupImageCompletionStrategyTest {
                             transformOutboxFactory.createOutboxes(
                                     eq(sourceId),
                                     eq(ImageSourceType.PRODUCT_GROUP_IMAGE),
-                                    eq(uploadedUrl)))
+                                    eq(uploadedUrl),
+                                    eq(fileAssetId)))
                     .willReturn(transformOutboxes);
 
             // when
@@ -96,7 +97,7 @@ class ProductGroupImageCompletionStrategyTest {
             then(productGroupImageCommandManager).should().persist(image);
             then(transformOutboxFactory)
                     .should()
-                    .createOutboxes(sourceId, ImageSourceType.PRODUCT_GROUP_IMAGE, uploadedUrl);
+                    .createOutboxes(sourceId, ImageSourceType.PRODUCT_GROUP_IMAGE, uploadedUrl, fileAssetId);
             then(transformOutboxCommandManager).should().persistAll(transformOutboxes);
         }
 
@@ -117,7 +118,8 @@ class ProductGroupImageCompletionStrategyTest {
                             transformOutboxFactory.createOutboxes(
                                     any(Long.class),
                                     any(ImageSourceType.class),
-                                    any(ImageUrl.class)))
+                                    any(ImageUrl.class),
+                                    any(String.class)))
                     .willReturn(transformOutboxes);
 
             // when

@@ -20,8 +20,8 @@ public class ImageTransformManager {
     }
 
     public ImageTransformResponse createTransformRequest(
-            String uploadedUrl, ImageVariantType variantType) {
-        return transformClient.createTransformRequest(uploadedUrl, variantType);
+            String uploadedUrl, ImageVariantType variantType, String fileAssetId) {
+        return transformClient.createTransformRequest(uploadedUrl, variantType, fileAssetId);
     }
 
     public ImageTransformResponse getTransformRequest(String transformRequestId) {
