@@ -97,7 +97,11 @@ class ProductGroupImageCompletionStrategyTest {
             then(productGroupImageCommandManager).should().persist(image);
             then(transformOutboxFactory)
                     .should()
-                    .createOutboxes(sourceId, ImageSourceType.PRODUCT_GROUP_IMAGE, uploadedUrl, fileAssetId);
+                    .createOutboxes(
+                            sourceId,
+                            ImageSourceType.PRODUCT_GROUP_IMAGE,
+                            uploadedUrl,
+                            fileAssetId);
             then(transformOutboxCommandManager).should().persistAll(transformOutboxes);
         }
 
