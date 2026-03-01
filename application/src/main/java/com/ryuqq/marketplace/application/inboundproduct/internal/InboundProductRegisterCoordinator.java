@@ -110,8 +110,7 @@ public class InboundProductRegisterCoordinator {
                 if (!mapping.isFullyMapped()) {
                     existingProduct.markPendingMapping(now);
                     commandManager.persist(existingProduct);
-                    return InboundProductConversionResult.pendingMapping(
-                            existingProduct.idValue());
+                    return InboundProductConversionResult.pendingMapping(existingProduct.idValue());
                 }
             }
             return convertAndPersist(existingProduct, command, now);
