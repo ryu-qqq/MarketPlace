@@ -94,27 +94,24 @@ scheduler:
 
     intelligence-pipeline:
       process-pending:
-        # Stage: 3분마다
+        # Stage: 일시정지 (OpenAI 크레딧 소진)
+        enabled: false
         cron: "0 */3 * * * *"
-        # Stage: 중간 배치
         batch-size: 15
-        # Stage: 중간 지연
         delay-seconds: 30
 
       recover-timeout:
-        # Stage: 5분마다
+        # Stage: 일시정지 (OpenAI 크레딧 소진)
+        enabled: false
         cron: "0 */5 * * * *"
-        # Stage: 중간 배치
         batch-size: 15
-        # Stage: 중간 타임아웃
         timeout-seconds: 300
 
       recover-stuck-aggregation:
-        # Stage: 5분마다
+        # Stage: 일시정지 (OpenAI 크레딧 소진)
+        enabled: false
         cron: "0 */5 * * * *"
-        # Stage: 중간 배치
         batch-size: 15
-        # Stage: 중간 stuck 기준
         stuck-seconds: 180
 
     outbound-sync-outbox:
