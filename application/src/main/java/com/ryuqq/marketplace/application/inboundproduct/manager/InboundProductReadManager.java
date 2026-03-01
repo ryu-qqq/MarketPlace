@@ -3,6 +3,8 @@ package com.ryuqq.marketplace.application.inboundproduct.manager;
 import com.ryuqq.marketplace.application.inboundproduct.port.out.query.InboundProductQueryPort;
 import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
 import com.ryuqq.marketplace.domain.inboundproduct.exception.InboundProductNotFoundException;
+import com.ryuqq.marketplace.domain.inboundproduct.vo.InboundProductStatus;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,5 +33,10 @@ public class InboundProductReadManager {
                         () ->
                                 new InboundProductNotFoundException(
                                         inboundSourceId, externalProductCode));
+    }
+
+    @Transactional(readOnly = true)
+    public List<InboundProduct> findPendingMapping(int limit) {
+        return queryPort.findByStatus(InboundProductStatus.PENDING_MAPPING, limit);
     }
 }
