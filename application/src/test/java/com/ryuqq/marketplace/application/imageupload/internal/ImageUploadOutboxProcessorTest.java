@@ -54,8 +54,7 @@ class ImageUploadOutboxProcessorTest {
 
             given(bundleFactory.create(any(ImageUploadOutbox.class), any(Instant.class)))
                     .willReturn(bundle);
-            given(fileStorageManager.createDownloadTask(downloadRequest))
-                    .willReturn("dtask-12345");
+            given(fileStorageManager.createDownloadTask(downloadRequest)).willReturn("dtask-12345");
             given(outboxCommandManager.persist(outbox)).willReturn(1L);
 
             // when
