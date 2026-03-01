@@ -23,6 +23,13 @@ import java.util.Locale;
  *   <li>updatedAt: PROCESSING 좀비 상태 감지를 위한 갱신 시각
  *   <li>idempotencyKey: 중복 업로드 방지
  * </ul>
+ *
+ * <p><strong>2-스케줄러 패턴</strong>:
+ *
+ * <ul>
+ *   <li>process-pending: FileFlow 다운로드 태스크 생성 (논블로킹)
+ *   <li>poll-processing: 다운로드 태스크 완료 여부 확인 (논블로킹)
+ * </ul>
  */
 public class ImageUploadOutbox {
 
@@ -41,6 +48,7 @@ public class ImageUploadOutbox {
     private String errorMessage;
     private long version;
     private final ImageUploadOutboxIdempotencyKey idempotencyKey;
+    private String downloadTaskId;
 
     private ImageUploadOutbox(
             ImageUploadOutboxId id,
@@ -55,7 +63,8 @@ public class ImageUploadOutbox {
             Instant processedAt,
             String errorMessage,
             long version,
-            ImageUploadOutboxIdempotencyKey idempotencyKey) {
+            ImageUploadOutboxIdempotencyKey idempotencyKey,
+            String downloadTaskId) {
         this.id = id;
         this.sourceId = sourceId;
         this.sourceType = sourceType;
@@ -69,6 +78,7 @@ public class ImageUploadOutbox {
         this.errorMessage = errorMessage;
         this.version = version;
         this.idempotencyKey = idempotencyKey;
+        this.downloadTaskId = downloadTaskId;
     }
 
     /**
@@ -97,7 +107,8 @@ public class ImageUploadOutbox {
                 null,
                 null,
                 0L,
-                idempotencyKey);
+                idempotencyKey,
+                null);
     }
 
     /**
@@ -116,6 +127,7 @@ public class ImageUploadOutbox {
      * @param errorMessage 에러 메시지
      * @param version 낙관적 락 버전
      * @param idempotencyKey 멱등키 (String)
+     * @param downloadTaskId FileFlow 다운로드 태스크 ID (null 가능)
      * @return 재구성된 ImageUploadOutbox 인스턴스
      */
     public static ImageUploadOutbox reconstitute(
@@ -131,7 +143,8 @@ public class ImageUploadOutbox {
             Instant processedAt,
             String errorMessage,
             long version,
-            String idempotencyKey) {
+            String idempotencyKey,
+            String downloadTaskId) {
         return new ImageUploadOutbox(
                 id,
                 sourceId,
@@ -145,7 +158,8 @@ public class ImageUploadOutbox {
                 processedAt,
                 errorMessage,
                 version,
-                ImageUploadOutboxIdempotencyKey.of(idempotencyKey));
+                ImageUploadOutboxIdempotencyKey.of(idempotencyKey),
+                downloadTaskId);
     }
 
     public boolean isNew() {
@@ -153,18 +167,20 @@ public class ImageUploadOutbox {
     }
 
     /**
-     * 처리 시작.
+     * 처리 시작 (다운로드 태스크 생성 후 호출).
      *
      * <p>PENDING 또는 PROCESSING 상태에서만 호출 가능합니다.
      *
      * @param now 현재 시각 (updatedAt 갱신용)
+     * @param downloadTaskId FileFlow 다운로드 태스크 ID
      */
-    public void startProcessing(Instant now) {
+    public void startProcessing(Instant now, String downloadTaskId) {
         if (!status.canProcess()) {
             throw new IllegalStateException("처리할 수 없는 상태입니다. 현재 상태: " + status);
         }
         this.status = ImageUploadOutboxStatus.PROCESSING;
         this.updatedAt = now;
+        this.downloadTaskId = downloadTaskId;
     }
 
     /**
@@ -245,6 +261,55 @@ public class ImageUploadOutbox {
         this.status = ImageUploadOutboxStatus.PENDING;
         this.updatedAt = now;
         this.errorMessage = "타임아웃으로 인한 복구";
+    }
+
+    /**
+     * 외부 서비스 장애 시 retry 보호를 위한 지연 복귀.
+     *
+     * <p>retryCount를 증가시키지 않고 PENDING으로 복귀합니다. 알려진 장애 상황에서 retry 횟수 소진을 방지합니다.
+     *
+     * @param now 현재 시각
+     */
+    public void deferRetry(Instant now) {
+        this.status = ImageUploadOutboxStatus.PENDING;
+        this.updatedAt = now;
+        this.downloadTaskId = null;
+    }
+
+    /**
+     * FAILED 상태에서 복구를 위해 초기화합니다.
+     *
+     * <p>FAILED → PENDING 전이, retryCount=0, downloadTaskId=null로 초기화합니다.
+     *
+     * @param now 현재 시각
+     */
+    public void resetForRetry(Instant now) {
+        if (this.status != ImageUploadOutboxStatus.FAILED) {
+            throw new IllegalStateException("복구는 FAILED 상태에서만 가능합니다. 현재 상태: " + status);
+        }
+        this.status = ImageUploadOutboxStatus.PENDING;
+        this.retryCount = 0;
+        this.updatedAt = now;
+        this.processedAt = null;
+        this.errorMessage = null;
+        this.downloadTaskId = null;
+    }
+
+    /**
+     * 복구 가능한 실패인지 판단합니다.
+     *
+     * <p>잘못된 요청(BadRequest) 에러는 재시도해도 동일하게 실패하므로 복구 불가로 판단합니다.
+     *
+     * @return 복구 가능 여부
+     */
+    public boolean isRecoverableFailure() {
+        if (this.status != ImageUploadOutboxStatus.FAILED) {
+            return false;
+        }
+        if (this.errorMessage == null) {
+            return true;
+        }
+        return !this.errorMessage.contains("잘못된 요청");
     }
 
     /**
@@ -359,6 +424,10 @@ public class ImageUploadOutbox {
 
     public String idempotencyKeyValue() {
         return idempotencyKey.value();
+    }
+
+    public String downloadTaskId() {
+        return downloadTaskId;
     }
 
     public boolean isPending() {

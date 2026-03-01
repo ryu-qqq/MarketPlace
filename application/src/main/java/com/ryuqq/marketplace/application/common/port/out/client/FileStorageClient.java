@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.common.port.out.client;
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
+import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadStatusResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import java.util.List;
 
@@ -33,6 +34,22 @@ public interface FileStorageClient {
     ExternalDownloadResponse downloadFromExternalUrl(ExternalDownloadRequest request);
 
     List<ExternalDownloadResponse> downloadFromExternalUrls(List<ExternalDownloadRequest> requests);
+
+    /**
+     * FileFlow 다운로드 태스크를 생성합니다 (논블로킹).
+     *
+     * @param request 외부 다운로드 요청
+     * @return 생성된 다운로드 태스크 ID
+     */
+    String createDownloadTask(ExternalDownloadRequest request);
+
+    /**
+     * FileFlow 다운로드 태스크의 상태를 조회합니다 (논블로킹).
+     *
+     * @param downloadTaskId 다운로드 태스크 ID
+     * @return 다운로드 태스크 상태 응답
+     */
+    ExternalDownloadStatusResponse getDownloadTaskStatus(String downloadTaskId);
 
     /**
      * 업로드 세션 완료 처리를 합니다.

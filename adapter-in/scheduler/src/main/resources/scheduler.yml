@@ -73,6 +73,15 @@ scheduler:
         # 처리 지연 (생성 후 N초 경과한 건만 처리)
         delay-seconds: 30
 
+      # PROCESSING 폴링
+      poll-processing:
+        enabled: true
+        # Cron: 2분마다
+        cron: "0 */2 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 50
+
       # 타임아웃 복구
       recover-timeout:
         enabled: true
@@ -83,6 +92,17 @@ scheduler:
         batch-size: 50
         # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
         timeout-seconds: 300
+
+      # FAILED 복구
+      recover-failed:
+        enabled: true
+        # Cron: 30분마다
+        cron: "0 */30 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 50
+        # FAILED 후 최소 대기 시간 (초)
+        failed-after-seconds: 3600
 
     # ImageTransformOutbox 처리 스케줄러
     image-transform-outbox:

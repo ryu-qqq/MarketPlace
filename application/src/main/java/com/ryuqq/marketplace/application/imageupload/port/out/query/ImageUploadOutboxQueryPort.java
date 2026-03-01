@@ -56,4 +56,36 @@ public interface ImageUploadOutboxQueryPort {
      */
     List<ImageUploadOutbox> findBySourceIdsAndSourceType(
             List<Long> sourceIds, ImageSourceType sourceType);
+
+    /**
+     * PROCESSING 상태의 Outbox 목록 조회 (폴링 스케줄러용).
+     *
+     * <p>조건:
+     *
+     * <ul>
+     *   <li>status = PROCESSING
+     *   <li>download_task_id IS NOT NULL
+     * </ul>
+     *
+     * @param limit 최대 조회 개수
+     * @return Outbox 목록
+     */
+    List<ImageUploadOutbox> findProcessingOutboxes(int limit);
+
+    /**
+     * 복구 가능한 FAILED Outbox 목록 조회.
+     *
+     * <p>조건:
+     *
+     * <ul>
+     *   <li>status = FAILED
+     *   <li>processed_at < failedBefore (일정 시간 경과)
+     *   <li>error_message NOT LIKE '%잘못된 요청%' (복구 불가 제외)
+     * </ul>
+     *
+     * @param failedBefore 이 시간 이전에 FAILED된 것만 조회
+     * @param limit 최대 조회 개수
+     * @return Outbox 목록
+     */
+    List<ImageUploadOutbox> findRecoverableFailedOutboxes(Instant failedBefore, int limit);
 }

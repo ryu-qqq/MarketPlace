@@ -69,6 +69,9 @@ public class ImageUploadOutboxJpaEntity {
     @Column(name = "idempotency_key", nullable = false, length = 100, unique = true)
     private String idempotencyKey;
 
+    @Column(name = "download_task_id", length = 100)
+    private String downloadTaskId;
+
     protected ImageUploadOutboxJpaEntity() {}
 
     private ImageUploadOutboxJpaEntity(
@@ -84,7 +87,8 @@ public class ImageUploadOutboxJpaEntity {
             Instant processedAt,
             String errorMessage,
             long version,
-            String idempotencyKey) {
+            String idempotencyKey,
+            String downloadTaskId) {
         this.id = id;
         this.sourceId = sourceId;
         this.sourceType = sourceType;
@@ -98,6 +102,7 @@ public class ImageUploadOutboxJpaEntity {
         this.errorMessage = errorMessage;
         this.version = version;
         this.idempotencyKey = idempotencyKey;
+        this.downloadTaskId = downloadTaskId;
     }
 
     public static ImageUploadOutboxJpaEntity create(
@@ -113,7 +118,8 @@ public class ImageUploadOutboxJpaEntity {
             Instant processedAt,
             String errorMessage,
             long version,
-            String idempotencyKey) {
+            String idempotencyKey,
+            String downloadTaskId) {
         return new ImageUploadOutboxJpaEntity(
                 id,
                 sourceId,
@@ -127,7 +133,8 @@ public class ImageUploadOutboxJpaEntity {
                 processedAt,
                 errorMessage,
                 version,
-                idempotencyKey);
+                idempotencyKey,
+                downloadTaskId);
     }
 
     public Long getId() {
@@ -180,5 +187,9 @@ public class ImageUploadOutboxJpaEntity {
 
     public String getIdempotencyKey() {
         return idempotencyKey;
+    }
+
+    public String getDownloadTaskId() {
+        return downloadTaskId;
     }
 }

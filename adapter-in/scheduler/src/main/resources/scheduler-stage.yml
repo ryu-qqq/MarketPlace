@@ -32,6 +32,12 @@ scheduler:
         # Stage: 중간 지연
         delay-seconds: 20
 
+      poll-processing:
+        # Stage: 2분마다
+        cron: "0 */2 * * * *"
+        # Stage: 중간 배치
+        batch-size: 30
+
       recover-timeout:
         # Stage: 5분마다
         cron: "0 */5 * * * *"
@@ -39,6 +45,14 @@ scheduler:
         batch-size: 30
         # Stage: 중간 타임아웃
         timeout-seconds: 180
+
+      recover-failed:
+        # Stage: 30분마다
+        cron: "0 */30 * * * *"
+        # Stage: 중간 배치
+        batch-size: 50
+        # Stage: 1시간 후 복구
+        failed-after-seconds: 3600
 
     seller-admin-auth-outbox:
       process-pending:
