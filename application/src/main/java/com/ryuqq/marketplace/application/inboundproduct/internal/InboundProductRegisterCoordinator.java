@@ -103,20 +103,21 @@ public class InboundProductRegisterCoordinator {
             InboundProduct existingProduct, ReceiveInboundProductCommand command) {
         Instant now = timeProvider.now();
 
-        if (!existingProduct.isConverted()) {
-            if (!existingProduct.isMapped()) {
-                InboundProductMappingResult mapping =
-                        mappingResolver.resolveMappingAndApply(existingProduct, now);
-                if (!mapping.isFullyMapped()) {
-                    existingProduct.markPendingMapping(now);
-                    commandManager.persist(existingProduct);
-                    return InboundProductConversionResult.pendingMapping(existingProduct.idValue());
-                }
-            }
-            return convertAndPersist(existingProduct, command, now);
+        if (existingProduct.isConverted()) {
+            return updateExisting(existingProduct, command, now);
         }
 
-        return updateExisting(existingProduct, command, now);
+        if (!existingProduct.isMapped()) {
+            InboundProductMappingResult mapping =
+                    mappingResolver.resolveMappingAndApply(existingProduct, now);
+            if (!mapping.isFullyMapped()) {
+                existingProduct.markPendingMapping(now);
+                commandManager.persist(existingProduct);
+                return InboundProductConversionResult.pendingMapping(existingProduct.idValue());
+            }
+        }
+
+        return convertAndPersist(existingProduct, command, now);
     }
 
     /** 매핑 완료 후 동기 변환 (신규 등록). */
