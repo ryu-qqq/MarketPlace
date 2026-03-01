@@ -277,7 +277,7 @@ module "scheduler_task_role" {
               "sqs:GetQueueUrl",
               "sqs:GetQueueAttributes"
             ]
-            Resource = "arn:aws:sqs:${var.aws_region}:*:${var.project_name}-*"
+            Resource = "arn:aws:sqs:${var.aws_region}:*:${var.environment}-${var.project_name}-*"
           }
         ]
       })
@@ -469,7 +469,7 @@ module "ecs_service" {
   container_secrets = [
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
-    { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
+    { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
     { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn },
     { name = "ANTHROPIC_API_KEY", valueFrom = data.aws_ssm_parameter.anthropic_api_key.arn },
     { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }

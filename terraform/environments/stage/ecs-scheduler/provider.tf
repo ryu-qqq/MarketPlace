@@ -143,6 +143,13 @@ data "aws_ssm_parameter" "authhub_service_token" {
 }
 
 # ========================================
+# FileFlow Configuration (Shared Service Token)
+# ========================================
+data "aws_ssm_parameter" "fileflow_service_token" {
+  name = "/shared/security/service-token-secret"
+}
+
+# ========================================
 # OpenAI Configuration
 # ========================================
 data "aws_ssm_parameter" "openai_api_key" {

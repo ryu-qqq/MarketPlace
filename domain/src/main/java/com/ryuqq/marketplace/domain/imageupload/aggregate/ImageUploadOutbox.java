@@ -261,6 +261,7 @@ public class ImageUploadOutbox {
         this.status = ImageUploadOutboxStatus.PENDING;
         this.updatedAt = now;
         this.errorMessage = "타임아웃으로 인한 복구";
+        this.downloadTaskId = null;
     }
 
     /**
