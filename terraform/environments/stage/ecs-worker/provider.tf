@@ -188,6 +188,13 @@ data "aws_ssm_parameter" "anthropic_api_key" {
 }
 
 # ========================================
+# FileFlow Configuration (Shared Service Token)
+# ========================================
+data "aws_ssm_parameter" "fileflow_service_token" {
+  name = "/shared/security/service-token-secret"
+}
+
+# ========================================
 # Legacy DB Configuration
 # ========================================
 data "aws_ssm_parameter" "legacy_db_password" {
