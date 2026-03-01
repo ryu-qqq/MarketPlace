@@ -72,7 +72,8 @@ class ProductGroupImageCompositeQueryDslRepositoryTest {
                 null,
                 null,
                 0L,
-                key);
+                key,
+                null);
     }
 
     // ========================================================================

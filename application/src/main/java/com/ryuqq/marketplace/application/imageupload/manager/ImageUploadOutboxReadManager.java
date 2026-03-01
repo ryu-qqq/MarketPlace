@@ -41,4 +41,14 @@ public class ImageUploadOutboxReadManager {
         }
         return queryPort.findBySourceIdsAndSourceType(sourceIds, sourceType);
     }
+
+    @Transactional(readOnly = true)
+    public List<ImageUploadOutbox> findProcessingOutboxes(int limit) {
+        return queryPort.findProcessingOutboxes(limit);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ImageUploadOutbox> findRecoverableFailedOutboxes(Instant failedBefore, int limit) {
+        return queryPort.findRecoverableFailedOutboxes(failedBefore, limit);
+    }
 }

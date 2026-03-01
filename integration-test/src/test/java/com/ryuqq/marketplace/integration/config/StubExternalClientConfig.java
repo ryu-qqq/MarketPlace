@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.application.auth.port.out.client.AuthClient;
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
+import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadStatusResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
@@ -479,6 +480,19 @@ public class StubExternalClientConfig {
             @Override
             public String uploadHtmlContent(String htmlContent, String category, String filename) {
                 return "https://stub-cdn.example.com/" + category + "/" + filename;
+            }
+
+            @Override
+            public String createDownloadTask(ExternalDownloadRequest request) {
+                return "stub-download-task-" + request.filename();
+            }
+
+            @Override
+            public ExternalDownloadStatusResponse getDownloadTaskStatus(String downloadTaskId) {
+                return ExternalDownloadStatusResponse.completed(
+                        downloadTaskId,
+                        "https://stub-cdn.example.com/" + downloadTaskId,
+                        "stub-asset-" + downloadTaskId);
             }
         };
     }

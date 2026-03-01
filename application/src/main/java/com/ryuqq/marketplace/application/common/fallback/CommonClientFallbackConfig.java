@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.common.fallback;
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
+import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadStatusResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
 import java.time.Clock;
@@ -77,6 +78,16 @@ public class CommonClientFallbackConfig {
 
             @Override
             public String uploadHtmlContent(String htmlContent, String category, String filename) {
+                throw new UnsupportedOperationException("FileStorageClient not available");
+            }
+
+            @Override
+            public String createDownloadTask(ExternalDownloadRequest request) {
+                throw new UnsupportedOperationException("FileStorageClient not available");
+            }
+
+            @Override
+            public ExternalDownloadStatusResponse getDownloadTaskStatus(String downloadTaskId) {
                 throw new UnsupportedOperationException("FileStorageClient not available");
             }
         };

@@ -18,8 +18,12 @@ import com.ryuqq.marketplace.adapter.out.client.fileflow.mapper.FileFlowStorageM
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
+import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadStatusResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
+import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -45,7 +49,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnProperty(prefix = "fileflow", name = "base-url")
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.GodClass"})
 public class FileFlowStorageAdapter implements FileStorageClient {
 
     private static final Logger log = LoggerFactory.getLogger(FileFlowStorageAdapter.class);
@@ -60,6 +64,7 @@ public class FileFlowStorageAdapter implements FileStorageClient {
     private final AssetApi assetApi;
     private final FileFlowStorageMapper mapper;
     private final FileFlowClientProperties properties;
+    private final CircuitBreaker circuitBreaker;
     private final HttpClient httpClient;
 
     public FileFlowStorageAdapter(
@@ -67,12 +72,14 @@ public class FileFlowStorageAdapter implements FileStorageClient {
             DownloadTaskApi downloadTaskApi,
             AssetApi assetApi,
             FileFlowStorageMapper mapper,
-            FileFlowClientProperties properties) {
+            FileFlowClientProperties properties,
+            CircuitBreaker fileFlowCircuitBreaker) {
         this.singleUploadSessionApi = singleUploadSessionApi;
         this.downloadTaskApi = downloadTaskApi;
         this.assetApi = assetApi;
         this.mapper = mapper;
         this.properties = properties;
+        this.circuitBreaker = fileFlowCircuitBreaker;
         this.httpClient = HttpClient.newHttpClient();
     }
 
@@ -178,6 +185,56 @@ public class FileFlowStorageAdapter implements FileStorageClient {
             futures.add(CompletableFuture.supplyAsync(() -> downloadFromExternalUrl(request)));
         }
         return futures.stream().map(CompletableFuture::join).toList();
+    }
+
+    @Override
+    public String createDownloadTask(ExternalDownloadRequest request) {
+        try {
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        CreateDownloadTaskRequest sdkRequest =
+                                mapper.toCreateDownloadTaskRequest(request);
+                        ApiResponse<DownloadTaskResponse> createResponse =
+                                downloadTaskApi.create(sdkRequest);
+                        return createResponse.data().downloadTaskId();
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "FileFlow 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
+    }
+
+    @Override
+    public ExternalDownloadStatusResponse getDownloadTaskStatus(String downloadTaskId) {
+        try {
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        ApiResponse<DownloadTaskResponse> response =
+                                downloadTaskApi.get(downloadTaskId);
+                        DownloadTaskResponse task = response.data();
+
+                        if (COMPLETED.equals(task.status())) {
+                            String newCdnUrl = buildCdnUrl(task.s3Key());
+                            return ExternalDownloadStatusResponse.completed(
+                                    downloadTaskId, newCdnUrl, task.downloadTaskId());
+                        } else if (FAILED.equals(task.status())) {
+                            return ExternalDownloadStatusResponse.failed(
+                                    downloadTaskId, task.lastError());
+                        }
+
+                        return ExternalDownloadStatusResponse.processing(downloadTaskId);
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "FileFlow 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
+    }
+
+    private String buildCdnUrl(String s3Key) {
+        if (s3Key == null) {
+            return null;
+        }
+        return "https://" + properties.cdnDomain() + "/" + s3Key;
     }
 
     @Override
