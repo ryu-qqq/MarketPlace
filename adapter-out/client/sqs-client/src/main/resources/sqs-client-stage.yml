@@ -5,8 +5,8 @@ sqs:
   region: ap-northeast-2
   queues:
     outbound-sync: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-outbound-sync
-    intelligence-orchestration: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-orchestration
-    intelligence-description-analysis: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-description-analysis
-    intelligence-option-analysis: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-option-analysis
-    intelligence-notice-analysis: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-notice-analysis
-    intelligence-aggregation: https://sqs.ap-northeast-2.amazonaws.com/646886795421/stage-marketplace-intelligence-aggregation
+    intelligence-orchestration: ${SQS_INTELLIGENCE_ORCHESTRATION_URL}
+    intelligence-description-analysis: ${SQS_INTELLIGENCE_DESCRIPTION_ANALYSIS_URL}
+    intelligence-option-analysis: ${SQS_INTELLIGENCE_OPTION_ANALYSIS_URL}
+    intelligence-notice-analysis: ${SQS_INTELLIGENCE_NOTICE_ANALYSIS_URL}
+    intelligence-aggregation: ${SQS_INTELLIGENCE_AGGREGATION_URL}
