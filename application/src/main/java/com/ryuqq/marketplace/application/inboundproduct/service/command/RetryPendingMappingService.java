@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * PENDING_MAPPING 상태의 인바운드 상품을 재처리하는 서비스.
  *
- * <p>매핑 테이블을 재조회하여 브랜드/카테고리 매핑이 추가된 상품을 MAPPED 상태로 전이합니다. 변환(CONVERTED)은 크롤러 재수신
- * 시 {@code reReceive()}에서 처리됩니다.
+ * <p>매핑 테이블을 재조회하여 브랜드/카테고리 매핑이 추가된 상품을 MAPPED 상태로 전이합니다. 변환(CONVERTED)은 크롤러 재수신 시 {@code
+ * reReceive()}에서 처리됩니다.
  */
 @Service
 public class RetryPendingMappingService implements RetryPendingMappingUseCase {
