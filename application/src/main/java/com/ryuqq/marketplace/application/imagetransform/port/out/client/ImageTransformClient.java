@@ -15,9 +15,11 @@ public interface ImageTransformClient {
      *
      * @param uploadedUrl 업로드된 CDN URL
      * @param variantType 변환 대상 Variant 타입
+     * @param fileAssetId FileFlow 에셋 ID (다운로드 완료 시 획득)
      * @return 변환 요청 응답
      */
-    ImageTransformResponse createTransformRequest(String uploadedUrl, ImageVariantType variantType);
+    ImageTransformResponse createTransformRequest(
+            String uploadedUrl, ImageVariantType variantType, String fileAssetId);
 
     /**
      * 이미지 변환 요청 상태를 조회합니다.

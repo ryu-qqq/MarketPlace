@@ -30,12 +30,13 @@ class ImageTransformOutboxTest {
             ImageSourceType sourceType = ImageSourceType.PRODUCT_GROUP_IMAGE;
             ImageUrl uploadedUrl = ImageUrl.of("https://cdn.example.com/image.jpg");
             ImageVariantType variantType = ImageVariantType.SMALL_WEBP;
+            String fileAssetId = "asset-abc-123";
             Instant now = CommonVoFixtures.now();
 
             // when
             ImageTransformOutbox outbox =
                     ImageTransformOutbox.forNew(
-                            sourceImageId, sourceType, uploadedUrl, variantType, now);
+                            sourceImageId, sourceType, uploadedUrl, variantType, fileAssetId, now);
 
             // then
             assertThat(outbox.isNew()).isTrue();
@@ -43,6 +44,7 @@ class ImageTransformOutboxTest {
             assertThat(outbox.sourceType()).isEqualTo(sourceType);
             assertThat(outbox.uploadedUrlValue()).isEqualTo("https://cdn.example.com/image.jpg");
             assertThat(outbox.variantType()).isEqualTo(variantType);
+            assertThat(outbox.fileAssetId()).isEqualTo(fileAssetId);
             assertThat(outbox.transformRequestId()).isNull();
             assertThat(outbox.status()).isEqualTo(ImageTransformOutboxStatus.PENDING);
             assertThat(outbox.retryCount()).isZero();
@@ -67,6 +69,7 @@ class ImageTransformOutboxTest {
                             ImageSourceType.DESCRIPTION_IMAGE,
                             ImageUrl.of("https://cdn.example.com/desc.jpg"),
                             ImageVariantType.ORIGINAL_WEBP,
+                            "asset-xyz-456",
                             now);
 
             // then
