@@ -125,6 +125,17 @@ public class InboundProduct {
                 updatedAt);
     }
 
+    /** 매핑 실패 시 PENDING_MAPPING 상태로 전이. RECEIVED 또는 PENDING_MAPPING 상태에서만 가능. */
+    public void markPendingMapping(Instant now) {
+        if (!status.canApplyMapping()) {
+            throw new IllegalStateException(
+                    "PENDING_MAPPING 전이는 RECEIVED 또는 PENDING_MAPPING 상태에서만 가능합니다. 현재 상태: "
+                            + status);
+        }
+        this.status = InboundProductStatus.PENDING_MAPPING;
+        this.updatedAt = now;
+    }
+
     /** 브랜드/카테고리 매핑 적용. RECEIVED 또는 PENDING_MAPPING 상태에서만 가능. */
     public void applyMapping(Long internalBrandId, Long internalCategoryId, Instant now) {
         if (!status.canApplyMapping()) {
@@ -161,6 +172,10 @@ public class InboundProduct {
     public void assignExternalProductCode(ExternalProductCode code, Instant now) {
         this.externalProductCode = code;
         this.updatedAt = now;
+    }
+
+    public boolean isMapped() {
+        return status.isMapped();
     }
 
     public boolean isConverted() {

@@ -113,6 +113,12 @@ scheduler:
       # 로컬: 소량 제한
       max-total: 50
 
+    inbound-product-retry:
+      # 로컬: 2분마다 (빠른 테스트)
+      cron: "0 */2 * * * *"
+      # 로컬: 작은 배치
+      batch-size: 10
+
     description-publish:
       # 로컬: 1분마다 (빠른 테스트)
       cron: "0 */1 * * * *"
