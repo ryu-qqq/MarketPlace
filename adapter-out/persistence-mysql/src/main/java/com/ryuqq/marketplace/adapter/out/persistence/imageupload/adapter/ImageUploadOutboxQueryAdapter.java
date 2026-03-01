@@ -55,4 +55,18 @@ public class ImageUploadOutboxQueryAdapter implements ImageUploadOutboxQueryPort
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<ImageUploadOutbox> findProcessingOutboxes(int limit) {
+        return queryDslRepository.findProcessingOutboxes(limit).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<ImageUploadOutbox> findRecoverableFailedOutboxes(Instant failedBefore, int limit) {
+        return queryDslRepository.findRecoverableFailedOutboxes(failedBefore, limit).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }

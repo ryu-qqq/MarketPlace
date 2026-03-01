@@ -32,6 +32,12 @@ scheduler:
         # Prod: 안전한 지연
         delay-seconds: 30
 
+      poll-processing:
+        # Prod: 2분마다
+        cron: "0 */2 * * * *"
+        # Prod: 큰 배치
+        batch-size: 50
+
       recover-timeout:
         # Prod: 10분마다
         cron: "0 */10 * * * *"
@@ -39,6 +45,14 @@ scheduler:
         batch-size: 50
         # Prod: 안전한 타임아웃
         timeout-seconds: 300
+
+      recover-failed:
+        # Prod: 30분마다
+        cron: "0 */30 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 1시간 후 복구
+        failed-after-seconds: 3600
 
     seller-admin-auth-outbox:
       process-pending:

@@ -35,6 +35,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 
     // ========================================
+    // Resilience (Circuit Breaker)
+    // ========================================
+    implementation libs.resilience4j.circuitbreaker
+
+    // ========================================
     // Logging
     // ========================================
     implementation 'org.slf4j:slf4j-api'

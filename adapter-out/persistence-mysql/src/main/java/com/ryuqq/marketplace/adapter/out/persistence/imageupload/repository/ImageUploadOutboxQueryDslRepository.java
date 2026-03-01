@@ -87,4 +87,41 @@ public class ImageUploadOutboxQueryDslRepository {
                         imageUploadOutboxJpaEntity.createdAt.desc())
                 .fetch();
     }
+
+    /**
+     * PROCESSING 상태의 Outbox 목록 조회 (폴링 스케줄러용).
+     *
+     * @param limit 최대 조회 개수
+     * @return Outbox 목록
+     */
+    public List<ImageUploadOutboxJpaEntity> findProcessingOutboxes(int limit) {
+        return queryFactory
+                .selectFrom(imageUploadOutboxJpaEntity)
+                .where(
+                        imageUploadOutboxJpaEntity.status.eq(ImageUploadOutboxStatus.PROCESSING),
+                        imageUploadOutboxJpaEntity.downloadTaskId.isNotNull())
+                .orderBy(imageUploadOutboxJpaEntity.updatedAt.asc())
+                .limit(limit)
+                .fetch();
+    }
+
+    /**
+     * 복구 가능한 FAILED Outbox 목록 조회.
+     *
+     * @param failedBefore 이 시간 이전에 FAILED된 것만 조회
+     * @param limit 최대 조회 개수
+     * @return Outbox 목록
+     */
+    public List<ImageUploadOutboxJpaEntity> findRecoverableFailedOutboxes(
+            Instant failedBefore, int limit) {
+        return queryFactory
+                .selectFrom(imageUploadOutboxJpaEntity)
+                .where(
+                        imageUploadOutboxJpaEntity.status.eq(ImageUploadOutboxStatus.FAILED),
+                        imageUploadOutboxJpaEntity.processedAt.lt(failedBefore),
+                        imageUploadOutboxJpaEntity.errorMessage.notLike("%잘못된 요청%"))
+                .orderBy(imageUploadOutboxJpaEntity.processedAt.asc())
+                .limit(limit)
+                .fetch();
+    }
 }

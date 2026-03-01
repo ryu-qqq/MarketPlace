@@ -45,7 +45,18 @@ public record SchedulerProperties(Jobs jobs) {
     public record SellerAdminEmailOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
-    public record ImageUploadOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+    public record ImageUploadOutbox(
+            ProcessPending processPending,
+            PollProcessing pollProcessing,
+            RecoverTimeout recoverTimeout,
+            RecoverFailed recoverFailed) {}
+
+    public record RecoverFailed(
+            boolean enabled,
+            String cron,
+            String timezone,
+            int batchSize,
+            long failedAfterSeconds) {}
 
     public record ImageTransformOutbox(
             ProcessPending processPending,

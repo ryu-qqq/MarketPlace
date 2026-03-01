@@ -40,6 +40,8 @@ public final class ImageUploadFixtures {
                 DEFAULT_SOURCE_ID, sourceType, DEFAULT_ORIGIN_URL, CommonVoFixtures.now());
     }
 
+    public static final String DEFAULT_DOWNLOAD_TASK_ID = "dtask-test-12345";
+
     /** PENDING 상태의 reconstituted Outbox. */
     public static ImageUploadOutbox pendingOutbox() {
         return pendingOutbox(1L);
@@ -61,10 +63,11 @@ public final class ImageUploadFixtures {
                 null,
                 null,
                 0L,
-                "IUO:PRODUCT_GROUP_IMAGE:" + DEFAULT_SOURCE_ID + ":" + now.toEpochMilli());
+                "IUO:PRODUCT_GROUP_IMAGE:" + DEFAULT_SOURCE_ID + ":" + now.toEpochMilli(),
+                null);
     }
 
-    /** PROCESSING 상태 Outbox. */
+    /** PROCESSING 상태 Outbox (downloadTaskId 포함). */
     public static ImageUploadOutbox processingOutbox() {
         Instant now = CommonVoFixtures.now();
         return ImageUploadOutbox.reconstitute(
@@ -80,7 +83,8 @@ public final class ImageUploadFixtures {
                 null,
                 null,
                 1L,
-                "IUO:PRODUCT_GROUP_IMAGE:" + DEFAULT_SOURCE_ID + ":" + now.toEpochMilli());
+                "IUO:PRODUCT_GROUP_IMAGE:" + DEFAULT_SOURCE_ID + ":" + now.toEpochMilli(),
+                DEFAULT_DOWNLOAD_TASK_ID);
     }
 
     /** COMPLETED 상태 Outbox. */
@@ -99,10 +103,11 @@ public final class ImageUploadFixtures {
                 now,
                 null,
                 2L,
-                "IUO:PRODUCT_GROUP_IMAGE:" + DEFAULT_SOURCE_ID + ":" + now.toEpochMilli());
+                "IUO:PRODUCT_GROUP_IMAGE:" + DEFAULT_SOURCE_ID + ":" + now.toEpochMilli(),
+                null);
     }
 
-    /** FAILED 상태 Outbox. */
+    /** FAILED 상태 Outbox (복구 가능). */
     public static ImageUploadOutbox failedOutbox() {
         Instant now = CommonVoFixtures.now();
         return ImageUploadOutbox.reconstitute(
@@ -118,7 +123,28 @@ public final class ImageUploadFixtures {
                 now,
                 "최대 재시도 횟수 초과",
                 3L,
-                "IUO:PRODUCT_GROUP_IMAGE:" + DEFAULT_SOURCE_ID + ":" + now.toEpochMilli());
+                "IUO:PRODUCT_GROUP_IMAGE:" + DEFAULT_SOURCE_ID + ":" + now.toEpochMilli(),
+                null);
+    }
+
+    /** FAILED 상태 Outbox (복구 불가 - 잘못된 요청). */
+    public static ImageUploadOutbox unrecoverableFailedOutbox() {
+        Instant now = CommonVoFixtures.now();
+        return ImageUploadOutbox.reconstitute(
+                ImageUploadOutboxId.of(2L),
+                DEFAULT_SOURCE_ID,
+                DEFAULT_SOURCE_TYPE,
+                DEFAULT_ORIGIN_URL,
+                ImageUploadOutboxStatus.FAILED,
+                3,
+                3,
+                now,
+                now,
+                now,
+                "잘못된 요청: 유효하지 않은 URL",
+                3L,
+                "IUO:PRODUCT_GROUP_IMAGE:" + DEFAULT_SOURCE_ID + ":" + (now.toEpochMilli() + 1),
+                null);
     }
 
     // ===== VO Fixtures =====
