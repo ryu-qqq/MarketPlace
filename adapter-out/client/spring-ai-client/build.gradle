@@ -21,9 +21,9 @@ dependencies {
     api project(':domain')
 
     // ========================================
-    // Spring AI - Anthropic (Claude)
+    // Spring AI - OpenAI (GPT)
     // ========================================
-    implementation libs.spring.ai.anthropic
+    implementation libs.spring.ai.openai
 
     // ========================================
     // Spring Boot (for @Component, @ConfigurationProperties)
