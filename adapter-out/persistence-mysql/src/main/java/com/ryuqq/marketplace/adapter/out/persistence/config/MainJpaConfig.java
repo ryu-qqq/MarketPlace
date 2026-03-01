@@ -3,13 +3,16 @@ package com.ryuqq.marketplace.adapter.out.persistence.config;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.persistenceunit.PersistenceManagedTypes;
@@ -25,6 +28,9 @@ import org.springframework.transaction.PlatformTransactionManager;
  * <p>이 설정 클래스는 메인 DataSource, EntityManagerFactory, TransactionManager를 {@code @Primary}로 명시적으로
  * 정의하여 Legacy 모듈과 공존할 수 있도록 합니다.
  *
+ * <p>Flyway 마이그레이션도 명시적으로 설정합니다. Spring Boot 자동 설정의 Flyway는 커스텀 DataSource 사용 시 동작하지 않으므로, {@code
+ * spring.flyway.enabled=true}일 때 직접 Flyway 빈을 생성합니다.
+ *
  * @author ryu-qqq
  * @since 1.1.0
  */
@@ -38,12 +44,33 @@ public class MainJpaConfig {
         return properties.initializeDataSourceBuilder().type(HikariDataSource.class).build();
     }
 
+    @Bean(initMethod = "migrate")
+    @Primary
+    @ConditionalOnProperty(
+            name = "spring.flyway.enabled",
+            havingValue = "true",
+            matchIfMissing = true)
+    public Flyway mainFlyway(@Qualifier("dataSource") DataSource dataSource) {
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:db/migration")
+                .table("flyway_schema_history")
+                .baselineOnMigrate(true)
+                .baselineVersion("87")
+                .validateOnMigrate(true)
+                .outOfOrder(false)
+                .cleanDisabled(true)
+                .load();
+    }
+
     @Bean
     @Primary
+    @SuppressWarnings("unused")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             @Qualifier("dataSource") DataSource dataSource,
             EntityManagerFactoryBuilder builder,
-            PersistenceManagedTypes persistenceManagedTypes) {
+            PersistenceManagedTypes persistenceManagedTypes,
+            @Nullable Flyway mainFlyway) {
         return builder.dataSource(dataSource)
                 .managedTypes(persistenceManagedTypes)
                 .persistenceUnit("main")

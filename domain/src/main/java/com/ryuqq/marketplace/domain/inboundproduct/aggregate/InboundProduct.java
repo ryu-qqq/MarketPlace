@@ -137,11 +137,12 @@ public class InboundProduct {
         this.updatedAt = now;
     }
 
-    /** 정책 해석 결과 적용. MAPPED 상태에서만 가능. */
+    /** 정책 해석 결과 적용. MAPPED 또는 CONVERTED 상태에서 가능 (재수신 갱신 포함). */
     public void applyResolution(
             Long shippingPolicyId, Long refundPolicyId, Long noticeCategoryId, Instant now) {
-        if (!status.isMapped()) {
-            throw new IllegalStateException("해석 적용은 MAPPED 상태에서만 가능합니다. 현재 상태: " + status);
+        if (!status.isMapped() && !status.isConverted()) {
+            throw new IllegalStateException(
+                    "해석 적용은 MAPPED 또는 CONVERTED 상태에서만 가능합니다. 현재 상태: " + status);
         }
         this.resolvedShippingPolicyId = shippingPolicyId;
         this.resolvedRefundPolicyId = refundPolicyId;
