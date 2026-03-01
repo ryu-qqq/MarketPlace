@@ -150,6 +150,36 @@ data "aws_ssm_parameter" "openai_api_key" {
 }
 
 # ========================================
+# Anthropic Configuration
+# ========================================
+data "aws_ssm_parameter" "anthropic_api_key" {
+  name = "/${var.project_name}/anthropic/api-key"
+}
+
+# ========================================
+# Intelligence SQS Queue References (from SQS module)
+# ========================================
+data "aws_ssm_parameter" "sqs_intelligence_orchestration_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-orchestration-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_description_analysis_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-description-analysis-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_option_analysis_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-option-analysis-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_notice_analysis_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-notice-analysis-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_aggregation_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-aggregation-queue-url"
+}
+
+# ========================================
 # Locals
 # ========================================
 locals {
@@ -177,4 +207,11 @@ locals {
 
   # Sentry Configuration
   sentry_dsn = data.aws_ssm_parameter.sentry_dsn.value
+
+  # Intelligence SQS Queue URLs
+  sqs_intelligence_orchestration_queue_url          = data.aws_ssm_parameter.sqs_intelligence_orchestration_queue_url.value
+  sqs_intelligence_description_analysis_queue_url   = data.aws_ssm_parameter.sqs_intelligence_description_analysis_queue_url.value
+  sqs_intelligence_option_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_option_analysis_queue_url.value
+  sqs_intelligence_notice_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_notice_analysis_queue_url.value
+  sqs_intelligence_aggregation_queue_url            = data.aws_ssm_parameter.sqs_intelligence_aggregation_queue_url.value
 }
