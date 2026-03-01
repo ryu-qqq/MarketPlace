@@ -451,7 +451,7 @@ module "ecs_service" {
     # AuthHub
     { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local:8080" },
     # FileFlow
-    { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-prod.connectly.local:8080" },
+    { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-stage.connectly.local:8080" },
     # Intelligence SQS Queue URLs
     { name = "SQS_INTELLIGENCE_ORCHESTRATION_URL", value = local.sqs_intelligence_orchestration_queue_url },
     { name = "SQS_INTELLIGENCE_DESCRIPTION_ANALYSIS_URL", value = local.sqs_intelligence_description_analysis_queue_url },
