@@ -56,7 +56,8 @@ public class ImageTransformOutboxQueryDslRepository {
                 .selectFrom(imageTransformOutboxJpaEntity)
                 .where(
                         imageTransformOutboxJpaEntity.status.eq(
-                                ImageTransformOutboxStatus.PROCESSING))
+                                ImageTransformOutboxStatus.PROCESSING),
+                        imageTransformOutboxJpaEntity.transformRequestId.isNotNull())
                 .orderBy(imageTransformOutboxJpaEntity.updatedAt.asc())
                 .limit(limit)
                 .fetch();
