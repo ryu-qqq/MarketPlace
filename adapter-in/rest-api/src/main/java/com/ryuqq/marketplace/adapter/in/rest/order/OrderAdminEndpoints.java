@@ -1,11 +1,13 @@
 package com.ryuqq.marketplace.adapter.in.rest.order;
 
-/** Order API 엔드포인트 상수. */
+/** Order Admin API 엔드포인트 상수. */
 public final class OrderAdminEndpoints {
 
-    private OrderAdminEndpoints() {
-        throw new UnsupportedOperationException("Utility class cannot be instantiated");
-    }
+    private OrderAdminEndpoints() {}
 
-    public static final String ORDERS = "/api/v1/market/orders";
+    private static final String BASE = "/api/v1/market";
+    public static final String ORDERS = BASE + "/orders";
+    public static final String ORDER_ID = "/{orderId}";
+    public static final String PATH_ORDER_ID = "orderId";
+    public static final String SUMMARY = "/summary";
 }

@@ -18,8 +18,18 @@ public class SellerSalesChannelConditionBuilder {
         return sellerId != null ? sellerSalesChannelJpaEntity.sellerId.eq(sellerId) : null;
     }
 
+    public BooleanExpression salesChannelIdEq(Long salesChannelId) {
+        return salesChannelId != null
+                ? sellerSalesChannelJpaEntity.salesChannelId.eq(salesChannelId)
+                : null;
+    }
+
     public BooleanExpression connectionStatusConnected() {
         return sellerSalesChannelJpaEntity.connectionStatus.eq(
                 SellerSalesChannelJpaEntity.ConnectionStatus.CONNECTED);
+    }
+
+    public BooleanExpression channelCodeEq(String channelCode) {
+        return channelCode != null ? sellerSalesChannelJpaEntity.channelCode.eq(channelCode) : null;
     }
 }

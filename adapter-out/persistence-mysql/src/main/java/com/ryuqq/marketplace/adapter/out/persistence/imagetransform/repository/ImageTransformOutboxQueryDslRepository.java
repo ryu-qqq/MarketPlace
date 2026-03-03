@@ -26,6 +26,19 @@ public class ImageTransformOutboxQueryDslRepository {
     }
 
     /**
+     * ID로 Outbox 단건 조회.
+     *
+     * @param outboxId Outbox ID
+     * @return Outbox 엔티티 (없으면 null)
+     */
+    public ImageTransformOutboxJpaEntity findById(Long outboxId) {
+        return queryFactory
+                .selectFrom(imageTransformOutboxJpaEntity)
+                .where(imageTransformOutboxJpaEntity.id.eq(outboxId))
+                .fetchOne();
+    }
+
+    /**
      * PENDING 상태의 Outbox 목록 조회 (스케줄러용).
      *
      * @param beforeTime 이 시간 이전에 생성된 것만 조회

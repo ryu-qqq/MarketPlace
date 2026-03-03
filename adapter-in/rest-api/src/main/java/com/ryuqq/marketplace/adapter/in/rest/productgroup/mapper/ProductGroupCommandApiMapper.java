@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangePro
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -64,7 +65,7 @@ public class ProductGroupCommandApiMapper {
                 request.shippingPolicyId(),
                 request.refundPolicyId(),
                 request.productGroupName(),
-                request.optionType(),
+                resolveOptionType(request.optionType(), request.optionGroups()),
                 request.images().stream()
                         .map(
                                 img ->
@@ -142,7 +143,7 @@ public class ProductGroupCommandApiMapper {
                 UNRESOLVED_POLICY_ID,
                 UNRESOLVED_POLICY_ID,
                 request.productGroupName(),
-                request.optionType(),
+                resolveOptionType(request.optionType(), request.optionGroups()),
                 request.images().stream()
                         .map(
                                 img ->
@@ -218,7 +219,7 @@ public class ProductGroupCommandApiMapper {
                 request.categoryId(),
                 request.shippingPolicyId(),
                 request.refundPolicyId(),
-                request.optionType(),
+                resolveOptionType(request.optionType(), request.optionGroups()),
                 request.images().stream()
                         .map(
                                 img ->
@@ -324,5 +325,25 @@ public class ProductGroupCommandApiMapper {
     public List<RegisterProductGroupCommand> toCommands(
             long sellerId, BatchRegisterProductGroupApiRequest request) {
         return request.items().stream().map(item -> toCommand(sellerId, item)).toList();
+    }
+
+    /**
+     * optionType을 결정합니다. 명시적으로 전달된 값이 있으면 그대로 사용하고, 없으면 optionGroups 수로 추론합니다.
+     *
+     * @param optionType 클라이언트 전달 값 (nullable)
+     * @param optionGroups 옵션 그룹 목록 (nullable)
+     * @return 결정된 optionType 문자열
+     */
+    private String resolveOptionType(String optionType, List<?> optionGroups) {
+        if (optionType != null && !optionType.isBlank()) {
+            return optionType;
+        }
+        if (optionGroups == null || optionGroups.isEmpty()) {
+            return OptionType.NONE.name();
+        }
+        if (optionGroups.size() == 1) {
+            return OptionType.SINGLE.name();
+        }
+        return OptionType.COMBINATION.name();
     }
 }

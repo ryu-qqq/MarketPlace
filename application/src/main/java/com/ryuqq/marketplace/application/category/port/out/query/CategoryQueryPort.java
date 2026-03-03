@@ -17,4 +17,6 @@ public interface CategoryQueryPort {
     boolean existsByCode(String code);
 
     List<Category> findAllByIds(List<Long> ids);
+
+    List<Long> findDescendantIds(List<Long> ancestorCategoryIds);
 }

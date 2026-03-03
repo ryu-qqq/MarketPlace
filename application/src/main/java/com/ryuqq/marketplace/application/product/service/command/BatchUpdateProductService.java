@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.product.service.command;
 
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.product.dto.command.BatchUpdateProductCommand;
 import com.ryuqq.marketplace.application.product.manager.ProductCommandManager;
 import com.ryuqq.marketplace.application.product.port.in.command.BatchUpdateProductUseCase;
@@ -7,9 +8,12 @@ import com.ryuqq.marketplace.application.product.validator.ProductOwnershipValid
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -24,11 +28,15 @@ public class BatchUpdateProductService implements BatchUpdateProductUseCase {
 
     private final ProductOwnershipValidator ownershipValidator;
     private final ProductCommandManager commandManager;
+    private final ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
 
     public BatchUpdateProductService(
-            ProductOwnershipValidator ownershipValidator, ProductCommandManager commandManager) {
+            ProductOwnershipValidator ownershipValidator,
+            ProductCommandManager commandManager,
+            ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator) {
         this.ownershipValidator = ownershipValidator;
         this.commandManager = commandManager;
+        this.updateOutboxCoordinator = updateOutboxCoordinator;
     }
 
     @Override
@@ -55,5 +63,13 @@ public class BatchUpdateProductService implements BatchUpdateProductUseCase {
         }
 
         commandManager.persistAll(products);
+
+        Set<Long> processedGroupIds = new HashSet<>();
+        for (Product product : products) {
+            if (processedGroupIds.add(product.productGroupIdValue())) {
+                updateOutboxCoordinator.createUpdateOutboxesIfNeeded(
+                        ProductGroupId.of(product.productGroupIdValue()));
+            }
+        }
     }
 }

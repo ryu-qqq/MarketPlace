@@ -79,6 +79,16 @@ public class CategoryQueryDslRepository {
                 .fetch();
     }
 
+    public List<Long> findDescendantIds(List<String> pathPrefixes) {
+        return queryFactory
+                .select(category.id)
+                .from(category)
+                .where(
+                        conditionBuilder.pathStartsWithAny(pathPrefixes),
+                        conditionBuilder.notDeleted())
+                .fetch();
+    }
+
     public boolean existsByCode(String code) {
         Integer result =
                 queryFactory

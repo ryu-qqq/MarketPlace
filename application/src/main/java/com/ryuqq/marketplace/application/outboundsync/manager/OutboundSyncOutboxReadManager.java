@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.outboundsync.manager;
 
 import com.ryuqq.marketplace.application.outboundsync.port.out.query.OutboundSyncOutboxQueryPort;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
+import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.time.Instant;
 import java.util.List;
@@ -37,5 +38,11 @@ public class OutboundSyncOutboxReadManager {
     @Transactional(readOnly = true)
     public OutboundSyncOutbox getById(Long outboxId) {
         return queryPort.getById(outboxId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OutboundSyncOutbox> findActiveByProductGroupIdAndSyncType(
+            ProductGroupId productGroupId, SyncType syncType) {
+        return queryPort.findActiveByProductGroupIdAndSyncType(productGroupId, syncType);
     }
 }

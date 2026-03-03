@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.product.dto.command.BatchUpdateProductCommand;
 import com.ryuqq.marketplace.application.product.manager.ProductCommandManager;
 import com.ryuqq.marketplace.application.product.validator.ProductOwnershipValidator;
@@ -29,6 +30,7 @@ class BatchUpdateProductServiceTest {
 
     @Mock private ProductOwnershipValidator ownershipValidator;
     @Mock private ProductCommandManager commandManager;
+    @Mock private ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
 
     @Nested
     @DisplayName("execute() - 상품 배치 가격/재고 수정")

@@ -24,6 +24,11 @@ public class SellerAdminAuthOutboxReadManager {
     }
 
     @Transactional(readOnly = true)
+    public SellerAdminAuthOutbox getById(Long outboxId) {
+        return queryPort.getById(outboxId);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<SellerAdminAuthOutbox> findPendingBySellerAdminId(SellerAdminId sellerAdminId) {
         return queryPort.findPendingBySellerAdminId(sellerAdminId);
     }

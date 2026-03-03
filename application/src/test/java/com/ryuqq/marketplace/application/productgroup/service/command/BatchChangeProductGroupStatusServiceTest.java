@@ -5,6 +5,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupActivationOutboxCoordinator;
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupDeactivationOutboxCoordinator;
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.productgroup.ProductGroupCommandFixtures;
 import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangeProductGroupStatusCommand;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
@@ -33,6 +35,8 @@ class BatchChangeProductGroupStatusServiceTest {
     @Mock private ProductGroupReadManager readManager;
     @Mock private ProductGroupCommandManager commandManager;
     @Mock private ProductGroupActivationOutboxCoordinator activationOutboxCoordinator;
+    @Mock private ProductGroupDeactivationOutboxCoordinator deactivationOutboxCoordinator;
+    @Mock private ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
 
     @Nested
     @DisplayName("execute() - 상품 그룹 배치 상태 변경")

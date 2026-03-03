@@ -60,6 +60,11 @@ public final class ProductGroupQueryFixtures {
                 defaultCommonSearchParams());
     }
 
+    public static ProductGroupSearchParams searchParamsWithCategoryIds(List<Long> categoryIds) {
+        return ProductGroupSearchParams.of(
+                null, null, null, categoryIds, null, null, null, defaultCommonSearchParams());
+    }
+
     public static ProductGroupSearchParams searchParamsWithProductGroupIds(
             List<Long> productGroupIds) {
         return ProductGroupSearchParams.of(

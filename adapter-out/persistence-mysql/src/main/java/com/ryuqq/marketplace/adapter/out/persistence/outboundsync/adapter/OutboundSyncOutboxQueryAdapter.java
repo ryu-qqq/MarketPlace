@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.mapper.Outboun
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.repository.OutboundSyncOutboxQueryDslRepository;
 import com.ryuqq.marketplace.application.outboundsync.port.out.query.OutboundSyncOutboxQueryPort;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
+import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.time.Instant;
 import java.util.List;
@@ -55,5 +56,15 @@ public class OutboundSyncOutboxQueryAdapter implements OutboundSyncOutboxQueryPo
             throw new IllegalStateException("OutboundSyncOutbox를 찾을 수 없습니다. outboxId=" + outboxId);
         }
         return mapper.toDomain(entity);
+    }
+
+    @Override
+    public List<OutboundSyncOutbox> findActiveByProductGroupIdAndSyncType(
+            ProductGroupId productGroupId, SyncType syncType) {
+        return queryDslRepository
+                .findActiveByProductGroupIdAndSyncType(productGroupId.value(), syncType.name())
+                .stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 }

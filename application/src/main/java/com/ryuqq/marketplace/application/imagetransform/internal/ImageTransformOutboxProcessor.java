@@ -14,20 +14,11 @@ import org.springframework.stereotype.Component;
  *
  * <p>PENDING 상태의 Outbox를 처리하여 PROCESSING 상태로 변경합니다.
  *
- * <p><strong>트랜잭션 전략</strong>:
- *
- * <ul>
- *   <li>PROCESSING 상태 변경: 별도 트랜잭션 (외부 API 호출 전 커밋 필요)
- *   <li>실패 시 상태 변경: 별도 트랜잭션 (실패 상태 즉시 커밋 필요)
- *   <li>성공 시 transformRequestId 갱신: 별도 트랜잭션
- * </ul>
- *
  * <p><strong>처리 흐름</strong>:
  *
  * <ol>
- *   <li>PROCESSING 상태로 변경 (다른 프로세스와 충돌 방지)
- *   <li>TransformManager를 통해 변환 요청 생성
- *   <li>성공 시: transformRequestId 설정 후 persist
+ *   <li>TransformManager를 통해 변환 요청 생성 (외부 API 호출)
+ *   <li>성공 시: PROCESSING 상태 + transformRequestId 설정 후 1회 persist
  *   <li>실패 시: 재시도 가능하면 PENDING, 아니면 FAILED
  * </ol>
  */
@@ -49,21 +40,28 @@ public class ImageTransformOutboxProcessor {
     /**
      * 단일 Outbox를 처리합니다 (PENDING → PROCESSING).
      *
+     * <p>API 호출 후 1회만 persist하는 단순 패턴. API 실패 시 DB는 원래 PENDING 상태를 유지하므로 좀비 레코드가 생기지 않습니다.
+     *
      * @param outbox 처리할 Outbox
      * @return 처리 성공 여부
      */
     public boolean processOutbox(ImageTransformOutbox outbox) {
-        Instant now = Instant.now();
-
         try {
-            outbox.startProcessing(now, null);
-            outboxCommandManager.persist(outbox);
-
             ImageTransformResponse response =
                     transformManager.createTransformRequest(
                             outbox.uploadedUrlValue(), outbox.variantType(), outbox.fileAssetId());
 
-            return handleSuccess(outbox, response);
+            log.info(
+                    "이미지 변환 요청 생성 성공: sourceType={}, sourceImageId={}, variantType={},"
+                            + " transformRequestId={}",
+                    outbox.sourceType(),
+                    outbox.sourceImageId(),
+                    outbox.variantType(),
+                    response.transformRequestId());
+
+            outbox.startProcessing(Instant.now(), response.transformRequestId());
+            outboxCommandManager.persist(outbox);
+            return true;
 
         } catch (Exception e) {
             log.error(
@@ -76,23 +74,20 @@ public class ImageTransformOutboxProcessor {
                     e.getMessage(),
                     e);
 
-            outbox.recordFailure(true, e.getMessage(), Instant.now());
-            outboxCommandManager.persist(outbox);
+            persistFailure(outbox, e.getMessage());
             return false;
         }
     }
 
-    private boolean handleSuccess(ImageTransformOutbox outbox, ImageTransformResponse response) {
-        log.info(
-                "이미지 변환 요청 생성 성공: sourceType={}, sourceImageId={}, variantType={},"
-                        + " transformRequestId={}",
-                outbox.sourceType(),
-                outbox.sourceImageId(),
-                outbox.variantType(),
-                response.transformRequestId());
-
-        outbox.startProcessing(Instant.now(), response.transformRequestId());
-        outboxCommandManager.persist(outbox);
-        return true;
+    private void persistFailure(ImageTransformOutbox outbox, String errorMessage) {
+        try {
+            outbox.recordFailure(true, errorMessage, Instant.now());
+            outboxCommandManager.persist(outbox);
+        } catch (Exception persistEx) {
+            log.warn(
+                    "Outbox 실패 상태 저장 실패: outboxId={}, error={}",
+                    outbox.idValue(),
+                    persistEx.getMessage());
+        }
     }
 }

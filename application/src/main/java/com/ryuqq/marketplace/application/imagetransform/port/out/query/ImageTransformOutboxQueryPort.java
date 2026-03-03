@@ -15,6 +15,15 @@ import java.util.Set;
 public interface ImageTransformOutboxQueryPort {
 
     /**
+     * ID로 Outbox 조회.
+     *
+     * @param outboxId Outbox ID
+     * @return Outbox
+     * @throws IllegalStateException 존재하지 않는 경우
+     */
+    ImageTransformOutbox getById(Long outboxId);
+
+    /**
      * PENDING 상태의 Outbox 목록 조회 (스케줄러용).
      *
      * @param beforeTime 이 시간 이전에 생성된 것만 조회

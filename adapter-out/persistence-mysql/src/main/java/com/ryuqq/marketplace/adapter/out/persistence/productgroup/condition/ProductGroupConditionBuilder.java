@@ -72,6 +72,15 @@ public class ProductGroupConditionBuilder {
                 : null;
     }
 
+    private BooleanExpression parseIdCondition(String searchWord) {
+        try {
+            long id = Long.parseLong(searchWord.trim());
+            return productGroup.id.eq(id);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     public BooleanExpression searchCondition(ProductGroupSearchCriteria criteria) {
         if (!criteria.hasSearchCondition()) {
             return null;
@@ -80,8 +89,9 @@ public class ProductGroupConditionBuilder {
             return productGroup.productGroupName.containsIgnoreCase(criteria.searchWord());
         }
         return switch (criteria.searchField()) {
-            case NAME -> productGroup.productGroupName.containsIgnoreCase(criteria.searchWord());
-            case CATEGORY_NAME, BRAND_NAME -> null;
+            case PRODUCT_GROUP_ID -> parseIdCondition(criteria.searchWord());
+            case PRODUCT_GROUP_NAME ->
+                    productGroup.productGroupName.containsIgnoreCase(criteria.searchWord());
         };
     }
 }

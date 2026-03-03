@@ -45,4 +45,39 @@ public class SellerSalesChannelQueryDslRepository {
                         conditionBuilder.connectionStatusConnected())
                 .fetch();
     }
+
+    /**
+     * 셀러 ID + 판매채널 ID로 단건 조회.
+     *
+     * @param sellerId 셀러 ID
+     * @param salesChannelId 판매채널 ID
+     * @return 일치하는 엔티티 (없으면 null)
+     */
+    public SellerSalesChannelJpaEntity findBySellerIdAndSalesChannelId(
+            Long sellerId, Long salesChannelId) {
+        return queryFactory
+                .selectFrom(sellerSalesChannelJpaEntity)
+                .where(
+                        conditionBuilder.sellerIdEq(sellerId),
+                        conditionBuilder.salesChannelIdEq(salesChannelId))
+                .fetchOne();
+    }
+
+    /**
+     * 채널 코드 기준 CONNECTED 상태 판매채널 목록 조회.
+     *
+     * @param channelCode 채널 코드
+     * @return CONNECTED 상태의 판매채널 엔티티 목록
+     */
+    public List<SellerSalesChannelJpaEntity> findConnectedByChannelCode(String channelCode) {
+        if (channelCode == null) {
+            return Collections.emptyList();
+        }
+        return queryFactory
+                .selectFrom(sellerSalesChannelJpaEntity)
+                .where(
+                        conditionBuilder.channelCodeEq(channelCode),
+                        conditionBuilder.connectionStatusConnected())
+                .fetch();
+    }
 }

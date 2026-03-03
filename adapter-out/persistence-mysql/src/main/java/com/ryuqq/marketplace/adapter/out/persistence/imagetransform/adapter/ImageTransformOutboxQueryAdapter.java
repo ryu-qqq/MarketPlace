@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.imagetransform.adapter;
 import static com.ryuqq.marketplace.adapter.out.persistence.imagetransform.entity.QImageTransformOutboxJpaEntity.imageTransformOutboxJpaEntity;
 
 import com.querydsl.core.Tuple;
+import com.ryuqq.marketplace.adapter.out.persistence.imagetransform.entity.ImageTransformOutboxJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.imagetransform.mapper.ImageTransformOutboxJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.imagetransform.repository.ImageTransformOutboxQueryDslRepository;
 import com.ryuqq.marketplace.application.imagetransform.port.out.query.ImageTransformOutboxQueryPort;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +40,17 @@ public class ImageTransformOutboxQueryAdapter implements ImageTransformOutboxQue
             ImageTransformOutboxJpaEntityMapper mapper) {
         this.queryDslRepository = queryDslRepository;
         this.mapper = mapper;
+    }
+
+    @Override
+    public ImageTransformOutbox getById(Long outboxId) {
+        Objects.requireNonNull(outboxId, "outboxId must not be null");
+        ImageTransformOutboxJpaEntity entity = queryDslRepository.findById(outboxId);
+        if (entity == null) {
+            throw new IllegalStateException(
+                    "ImageTransformOutbox를 찾을 수 없습니다. outboxId=" + outboxId);
+        }
+        return mapper.toDomain(entity);
     }
 
     @Override
