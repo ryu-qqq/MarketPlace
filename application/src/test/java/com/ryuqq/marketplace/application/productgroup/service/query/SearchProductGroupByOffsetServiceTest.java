@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.category.manager.CategoryReadManager;
 import com.ryuqq.marketplace.application.productgroup.ProductGroupQueryFixtures;
 import com.ryuqq.marketplace.application.productgroup.assembler.ProductGroupAssembler;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListBundle;
@@ -32,6 +33,7 @@ class SearchProductGroupByOffsetServiceTest {
     @Mock private ProductGroupReadFacade readFacade;
     @Mock private ProductGroupQueryFactory queryFactory;
     @Mock private ProductGroupAssembler assembler;
+    @Mock private CategoryReadManager categoryReadManager;
 
     @Nested
     @DisplayName("execute() - 상품 그룹 목록 검색 (Offset 페이징)")
@@ -107,6 +109,56 @@ class SearchProductGroupByOffsetServiceTest {
             // then
             assertThat(result).isNotNull();
             then(queryFactory).should().createCriteria(params);
+        }
+
+        @Test
+        @DisplayName("카테고리 ID 필터가 있으면 하위 카테고리까지 확장하여 검색한다")
+        void execute_WithCategoryFilter_ExpandsDescendantCategories() {
+            // given
+            List<Long> originalCategoryIds = List.of(1L);
+            List<Long> expandedCategoryIds = List.of(1L, 10L, 20L, 30L);
+            ProductGroupSearchParams params =
+                    ProductGroupQueryFixtures.searchParamsWithCategoryIds(originalCategoryIds);
+            ProductGroupSearchParams expandedParams = params.withCategoryIds(expandedCategoryIds);
+            ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
+            ProductGroupListBundle bundle = new ProductGroupListBundle(List.of(), List.of(), 0L);
+            ProductGroupPageResult expected = ProductGroupPageResult.empty(20);
+
+            given(categoryReadManager.expandWithDescendants(originalCategoryIds))
+                    .willReturn(expandedCategoryIds);
+            given(queryFactory.createCriteria(expandedParams)).willReturn(criteria);
+            given(readFacade.getListBundle(criteria)).willReturn(bundle);
+            given(assembler.toPageResult(bundle, criteria.page(), criteria.size()))
+                    .willReturn(expected);
+
+            // when
+            ProductGroupPageResult result = sut.execute(params);
+
+            // then
+            assertThat(result).isEqualTo(expected);
+            then(categoryReadManager).should().expandWithDescendants(originalCategoryIds);
+            then(queryFactory).should().createCriteria(expandedParams);
+        }
+
+        @Test
+        @DisplayName("카테고리 ID가 없으면 확장 없이 그대로 검색한다")
+        void execute_WithoutCategoryFilter_SkipsExpansion() {
+            // given
+            ProductGroupSearchParams params = ProductGroupQueryFixtures.searchParams();
+            ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
+            ProductGroupListBundle bundle = new ProductGroupListBundle(List.of(), List.of(), 0L);
+            ProductGroupPageResult expected = ProductGroupPageResult.empty(20);
+
+            given(queryFactory.createCriteria(params)).willReturn(criteria);
+            given(readFacade.getListBundle(criteria)).willReturn(bundle);
+            given(assembler.toPageResult(bundle, criteria.page(), criteria.size()))
+                    .willReturn(expected);
+
+            // when
+            sut.execute(params);
+
+            // then
+            then(categoryReadManager).shouldHaveNoInteractions();
         }
     }
 }

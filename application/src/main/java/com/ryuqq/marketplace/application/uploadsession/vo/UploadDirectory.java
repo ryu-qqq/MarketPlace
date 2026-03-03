@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 public enum UploadDirectory {
     PRODUCT_IMAGES("product-images"),
     DESCRIPTION("description"),
+    CONTENTS("contents"),
+    QNAS("qnas"),
     SELLER_LOGOS("seller-logos"),
     SELLER_DOCUMENTS("seller-documents"),
     ;

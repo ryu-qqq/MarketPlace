@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.selleradmin.adapter;
 
+import com.ryuqq.marketplace.adapter.out.persistence.selleradmin.entity.SellerAdminAuthOutboxJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.selleradmin.mapper.SellerAdminAuthOutboxJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.selleradmin.repository.SellerAdminAuthOutboxQueryDslRepository;
 import com.ryuqq.marketplace.application.selleradmin.port.out.query.SellerAdminAuthOutboxQueryPort;
@@ -7,6 +8,7 @@ import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdminAuthOutbox;
 import com.ryuqq.marketplace.domain.selleradmin.id.SellerAdminId;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +34,17 @@ public class SellerAdminAuthOutboxQueryAdapter implements SellerAdminAuthOutboxQ
             SellerAdminAuthOutboxJpaEntityMapper mapper) {
         this.queryDslRepository = queryDslRepository;
         this.mapper = mapper;
+    }
+
+    @Override
+    public SellerAdminAuthOutbox getById(Long outboxId) {
+        Objects.requireNonNull(outboxId, "outboxId must not be null");
+        SellerAdminAuthOutboxJpaEntity entity = queryDslRepository.findById(outboxId);
+        if (entity == null) {
+            throw new IllegalStateException(
+                    "SellerAdminAuthOutbox를 찾을 수 없습니다. outboxId=" + outboxId);
+        }
+        return mapper.toDomain(entity);
     }
 
     @Override

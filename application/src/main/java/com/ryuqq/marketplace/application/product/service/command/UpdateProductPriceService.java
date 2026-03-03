@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.product.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductPriceCommand;
 import com.ryuqq.marketplace.application.product.factory.ProductCommandFactory;
 import com.ryuqq.marketplace.application.product.manager.ProductCommandManager;
@@ -22,14 +23,17 @@ public class UpdateProductPriceService implements UpdateProductPriceUseCase {
     private final ProductCommandFactory commandFactory;
     private final ProductReadManager readManager;
     private final ProductCommandManager commandManager;
+    private final ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
 
     public UpdateProductPriceService(
             ProductCommandFactory commandFactory,
             ProductReadManager readManager,
-            ProductCommandManager commandManager) {
+            ProductCommandManager commandManager,
+            ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator) {
         this.commandFactory = commandFactory;
         this.readManager = readManager;
         this.commandManager = commandManager;
+        this.updateOutboxCoordinator = updateOutboxCoordinator;
     }
 
     @Override
@@ -43,5 +47,7 @@ public class UpdateProductPriceService implements UpdateProductPriceUseCase {
                 context.changedAt());
 
         commandManager.persist(product);
+
+        updateOutboxCoordinator.createUpdateOutboxesIfNeeded(product.productGroupId());
     }
 }

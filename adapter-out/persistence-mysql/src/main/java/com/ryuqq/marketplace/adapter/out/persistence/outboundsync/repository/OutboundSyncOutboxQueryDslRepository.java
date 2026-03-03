@@ -94,6 +94,27 @@ public class OutboundSyncOutboxQueryDslRepository {
     }
 
     /**
+     * 상품그룹 ID + syncType으로 PENDING/PROCESSING 상태의 Outbox 목록 조회.
+     *
+     * <p>UPDATE 중복 방지를 위해 활성(PENDING 또는 PROCESSING) 상태의 Outbox를 조회합니다.
+     *
+     * @param productGroupId 상품그룹 ID
+     * @param syncType 연동 타입 (예: "UPDATE")
+     * @return 활성 상태의 Outbox 엔티티 목록
+     */
+    public List<OutboundSyncOutboxJpaEntity> findActiveByProductGroupIdAndSyncType(
+            Long productGroupId, String syncType) {
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(
+                        conditionBuilder.productGroupIdEq(productGroupId),
+                        conditionBuilder.syncTypeEq(syncType),
+                        conditionBuilder.statusPendingOrProcessing())
+                .limit(MAX_PENDING_FETCH_SIZE)
+                .fetch();
+    }
+
+    /**
      * ID로 Outbox 엔티티 조회.
      *
      * @param outboxId Outbox ID

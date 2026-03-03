@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.outboundsync.internal;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.application.outboundsync.manager.OutboundSyncOutboxCommandManager;
+import com.ryuqq.marketplace.application.outboundsync.manager.OutboundSyncOutboxReadManager;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.OutboundSyncPublishClient;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import java.time.Instant;
@@ -24,14 +25,17 @@ public class OutboundSyncRelayProcessor {
     private static final Logger log = LoggerFactory.getLogger(OutboundSyncRelayProcessor.class);
 
     private final OutboundSyncOutboxCommandManager outboxCommandManager;
+    private final OutboundSyncOutboxReadManager outboxReadManager;
     private final OutboundSyncPublishClient publishClient;
     private final ObjectMapper objectMapper;
 
     public OutboundSyncRelayProcessor(
             OutboundSyncOutboxCommandManager outboxCommandManager,
+            OutboundSyncOutboxReadManager outboxReadManager,
             OutboundSyncPublishClient publishClient,
             ObjectMapper objectMapper) {
         this.outboxCommandManager = outboxCommandManager;
+        this.outboxReadManager = outboxReadManager;
         this.publishClient = publishClient;
         this.objectMapper = objectMapper;
     }
@@ -67,8 +71,16 @@ public class OutboundSyncRelayProcessor {
                     outbox.productGroupIdValue(),
                     e.getMessage(),
                     e);
-            outbox.recordFailure(true, "Relay 실패: " + e.getMessage(), Instant.now());
-            outboxCommandManager.persist(outbox);
+            try {
+                OutboundSyncOutbox freshOutbox = outboxReadManager.getById(outbox.idValue());
+                freshOutbox.recordFailure(true, "Relay 실패: " + e.getMessage(), Instant.now());
+                outboxCommandManager.persist(freshOutbox);
+            } catch (Exception reReadEx) {
+                log.warn(
+                        "Outbox re-read 실패, 상태 변경 건너뜀: outboxId={}, error={}",
+                        outbox.idValue(),
+                        reReadEx.getMessage());
+            }
             return false;
         }
     }

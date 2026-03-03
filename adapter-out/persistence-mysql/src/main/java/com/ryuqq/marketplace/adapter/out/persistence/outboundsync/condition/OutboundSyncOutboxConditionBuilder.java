@@ -44,4 +44,18 @@ public class OutboundSyncOutboxConditionBuilder {
     public BooleanExpression updatedAtBefore(Instant beforeTime) {
         return beforeTime != null ? outboundSyncOutboxJpaEntity.updatedAt.lt(beforeTime) : null;
     }
+
+    public BooleanExpression syncTypeEq(String syncType) {
+        if (syncType == null) {
+            return null;
+        }
+        return outboundSyncOutboxJpaEntity.syncType.eq(
+                OutboundSyncOutboxJpaEntity.SyncType.valueOf(syncType));
+    }
+
+    public BooleanExpression statusPendingOrProcessing() {
+        return outboundSyncOutboxJpaEntity.status.in(
+                OutboundSyncOutboxJpaEntity.Status.PENDING,
+                OutboundSyncOutboxJpaEntity.Status.PROCESSING);
+    }
 }
