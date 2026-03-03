@@ -9,6 +9,7 @@ import java.time.Instant;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -127,6 +128,12 @@ public class SecurityConfig {
                                 auth
                                         // 공개 API (/public/** → Gateway에서도 인증/인가 미수행)
                                         .requestMatchers("/api/v1/market/public/**")
+                                        .permitAll()
+
+                                        // 셀러 입점 신청 (인증 없이 누구나 가능)
+                                        .requestMatchers(
+                                                HttpMethod.POST,
+                                                "/api/v1/market/seller-applications")
                                         .permitAll()
 
                                         // 내부 서비스 간 통신 (X-Service-Token 인증)
