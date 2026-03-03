@@ -143,7 +143,7 @@ public record ApplySellerApplicationApiRequest(
     @Schema(description = "정산 정보")
     public record SettlementInfo(
             @Schema(description = "은행 코드", example = "088")
-                    @Size(max = 10, message = "은행 코드는 10자 이하여야 합니다.")
+                    @Size(max = 15, message = "은행 코드는 15자 이하여야 합니다.")
                     String bankCode,
             @Schema(
                             description = "은행명",
