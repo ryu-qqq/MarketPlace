@@ -121,8 +121,7 @@ public class OutboundProduct {
     /** 외부 채널 삭제 성공 시. externalProductId는 보존 (재등록 참조용). REGISTERED에서만 가능. */
     public void deregister(Instant now) {
         if (!status.isRegistered()) {
-            throw new IllegalStateException(
-                    "REGISTERED 상태에서만 등록 해제할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("REGISTERED 상태에서만 등록 해제할 수 있습니다. 현재 상태: " + status);
         }
         this.status = OutboundProductStatus.DEREGISTERED;
         this.updatedAt = now;
@@ -131,8 +130,7 @@ public class OutboundProduct {
     /** 재활성화 시 재등록 대기 상태로 전환. DEREGISTERED에서만 가능. */
     public void prepareReregistration(Instant now) {
         if (!status.isDeregistered()) {
-            throw new IllegalStateException(
-                    "DEREGISTERED 상태에서만 재등록 준비할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("DEREGISTERED 상태에서만 재등록 준비할 수 있습니다. 현재 상태: " + status);
         }
         this.status = OutboundProductStatus.PENDING_REGISTRATION;
         this.updatedAt = now;

@@ -48,5 +48,4 @@ public class CategoryReadManager {
     public List<Long> expandWithDescendants(List<Long> categoryIds) {
         return queryPort.findDescendantIds(categoryIds);
     }
-
 }

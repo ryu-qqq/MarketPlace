@@ -53,7 +53,8 @@ public record RegisterProductGroupApiRequest(
                 @Size(max = 200, message = "상품 그룹명은 200자 이하여야 합니다")
                 String productGroupName,
         @Schema(
-                        description = "옵션 타입 (COMBINATION, SINGLE, NONE). 미입력 시 optionGroups 수로 자동 결정",
+                        description =
+                                "옵션 타입 (COMBINATION, SINGLE, NONE). 미입력 시 optionGroups 수로 자동 결정",
                         example = "COMBINATION",
                         nullable = true)
                 String optionType,
@@ -150,8 +151,7 @@ public record RegisterProductGroupApiRequest(
 
     @Schema(description = "상품 데이터")
     public record ProductApiRequest(
-            @Schema(description = "SKU 코드", example = "SKU-001", nullable = true)
-                    String skuCode,
+            @Schema(description = "SKU 코드", example = "SKU-001", nullable = true) String skuCode,
             @Schema(
                             description = "정가",
                             example = "100000",

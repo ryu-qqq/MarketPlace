@@ -47,7 +47,8 @@ class LegacySessionCommandApiMapperTest {
         @DisplayName("fileSize가 null인 경우에도 정상 변환된다")
         void toCommand_WithNullFileSize_ReturnsCommandWithNullFileSize() {
             // given
-            LegacyPresignedUrlApiRequest request = LegacySessionApiFixtures.requestWithoutFileSize();
+            LegacyPresignedUrlApiRequest request =
+                    LegacySessionApiFixtures.requestWithoutFileSize();
 
             // when
             LegacyGetPresignedUrlCommand command = mapper.toCommand(request);
@@ -89,12 +90,10 @@ class LegacySessionCommandApiMapperTest {
             LegacyPresignedUrlApiResponse response = mapper.toApiResponse(result);
 
             // then
-            assertThat(response.sessionId())
-                    .isEqualTo(LegacySessionApiFixtures.DEFAULT_SESSION_ID);
+            assertThat(response.sessionId()).isEqualTo(LegacySessionApiFixtures.DEFAULT_SESSION_ID);
             assertThat(response.preSignedUrl())
                     .isEqualTo(LegacySessionApiFixtures.DEFAULT_PRESIGNED_URL);
-            assertThat(response.objectKey())
-                    .isEqualTo(LegacySessionApiFixtures.DEFAULT_OBJECT_KEY);
+            assertThat(response.objectKey()).isEqualTo(LegacySessionApiFixtures.DEFAULT_OBJECT_KEY);
         }
 
         @Test
