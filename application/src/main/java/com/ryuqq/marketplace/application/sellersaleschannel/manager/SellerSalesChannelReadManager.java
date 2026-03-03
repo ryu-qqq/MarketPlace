@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,11 @@ public class SellerSalesChannelReadManager {
     @Transactional(readOnly = true)
     public List<SellerSalesChannel> findConnectedBySellerId(SellerId sellerId) {
         return queryPort.findConnectedBySellerId(sellerId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SellerSalesChannel> findConnectedBySellerIds(Set<SellerId> sellerIds) {
+        return queryPort.findConnectedBySellerIds(sellerIds);
     }
 
     @Transactional(readOnly = true)

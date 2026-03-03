@@ -181,6 +181,23 @@ scheduler:
         # Stuck 기준 (ANALYZING + allCompleted 상태에서 N초 경과 시 복구)
         stuck-seconds: 300
 
+    # InboundOrder 외부 주문 폴링 스케줄러 (SalesChannel별)
+    inbound-order-polling:
+      enabled: true
+      entries:
+        - sales-channel-id: 1
+          enabled: true
+          cron: "0 */5 * * * *"
+          timezone: Asia/Seoul
+          batch-size: 500
+
+    # InboundOrder PENDING_MAPPING 재시도 스케줄러
+    inbound-order-retry:
+      enabled: true
+      cron: "0 */10 * * * *"
+      timezone: Asia/Seoul
+      batch-size: 100
+
     # InboundProduct PENDING_MAPPING 재처리 스케줄러
     inbound-product-retry:
       enabled: true

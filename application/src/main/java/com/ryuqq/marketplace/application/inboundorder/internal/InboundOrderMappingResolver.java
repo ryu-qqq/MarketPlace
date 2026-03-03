@@ -1,9 +1,12 @@
 package com.ryuqq.marketplace.application.inboundorder.internal;
 
 import com.ryuqq.marketplace.application.outboundproduct.port.out.query.OutboundProductQueryPort;
+import com.ryuqq.marketplace.application.productgroup.port.out.query.ProductGroupQueryPort;
 import com.ryuqq.marketplace.domain.inboundorder.aggregate.InboundOrder;
 import com.ryuqq.marketplace.domain.inboundorder.aggregate.InboundOrderItem;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.time.Instant;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -11,15 +14,19 @@ import org.springframework.stereotype.Component;
 /**
  * InboundOrder 상품 매핑 해석기.
  *
- * <p>OutboundProduct 역조회를 통해 외부 상품 ID → 내부 상품 매핑을 수행합니다.
+ * <p>OutboundProduct 역조회를 통해 외부 상품 ID → 내부 상품 매핑을 수행합니다. ProductGroup에서 sellerId를 역추적합니다.
  */
 @Component
 public class InboundOrderMappingResolver {
 
     private final OutboundProductQueryPort outboundProductQueryPort;
+    private final ProductGroupQueryPort productGroupQueryPort;
 
-    public InboundOrderMappingResolver(OutboundProductQueryPort outboundProductQueryPort) {
+    public InboundOrderMappingResolver(
+            OutboundProductQueryPort outboundProductQueryPort,
+            ProductGroupQueryPort productGroupQueryPort) {
         this.outboundProductQueryPort = outboundProductQueryPort;
+        this.productGroupQueryPort = productGroupQueryPort;
     }
 
     /**
@@ -47,7 +54,8 @@ public class InboundOrderMappingResolver {
             }
 
             long productGroupId = outbound.get().productGroupIdValue();
-            item.applyMapping(productGroupId, 0L, order.sellerId(), 0L, null);
+            long sellerId = resolveSellerIdFromProductGroup(productGroupId);
+            item.applyMapping(productGroupId, 0L, sellerId, 0L, null);
         }
 
         if (allMapped) {
@@ -56,5 +64,12 @@ public class InboundOrderMappingResolver {
             order.markPendingMapping(now);
         }
         return allMapped;
+    }
+
+    private long resolveSellerIdFromProductGroup(long productGroupId) {
+        return productGroupQueryPort
+                .findById(new ProductGroupId(productGroupId))
+                .map(ProductGroup::sellerIdValue)
+                .orElse(0L);
     }
 }

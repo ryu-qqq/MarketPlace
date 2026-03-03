@@ -44,6 +44,11 @@ public class OutboundProductReadManager {
     }
 
     @Transactional(readOnly = true)
+    public List<OutboundProduct> findByProductGroupIds(List<Long> productGroupIds) {
+        return queryPort.findByProductGroupIds(productGroupIds);
+    }
+
+    @Transactional(readOnly = true)
     public List<OutboundProduct> findRegisteredByProductGroupId(Long productGroupId) {
         return queryPort.findRegisteredByProductGroupId(productGroupId);
     }

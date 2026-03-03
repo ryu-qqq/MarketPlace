@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.scheduler.config;
 
+import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -82,8 +83,10 @@ public record SchedulerProperties(Jobs jobs) {
     public record LegacyConversionSeeder(
             boolean enabled, String cron, String timezone, int batchSize, int maxTotal) {}
 
-    public record InboundOrderPolling(
-            boolean enabled, String cron, String timezone, int batchSize, String channelCode) {}
+    public record InboundOrderPolling(boolean enabled, List<InboundOrderPollingEntry> entries) {}
+
+    public record InboundOrderPollingEntry(
+            long salesChannelId, boolean enabled, String cron, String timezone, int batchSize) {}
 
     public record InboundOrderRetry(boolean enabled, String cron, String timezone, int batchSize) {}
 }

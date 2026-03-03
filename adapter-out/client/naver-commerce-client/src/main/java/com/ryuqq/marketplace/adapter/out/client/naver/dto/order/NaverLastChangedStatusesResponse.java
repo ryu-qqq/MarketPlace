@@ -15,9 +15,10 @@ public record NaverLastChangedStatusesResponse(Data data) {
      * 응답 데이터.
      *
      * @param lastChangeStatuses 변경 상태 목록
-     * @param more 페이지네이션 정보
+     * @param count 조회 결과 건수
+     * @param more 페이지네이션 정보 (다음 페이지 없으면 null)
      */
-    public record Data(List<NaverLastChangedStatus> lastChangeStatuses, More more) {
+    public record Data(List<NaverLastChangedStatus> lastChangeStatuses, Integer count, More more) {
 
         public Data {
             lastChangeStatuses =
@@ -28,7 +29,8 @@ public record NaverLastChangedStatusesResponse(Data data) {
     /**
      * 페이지네이션 커서.
      *
-     * @param moreSequence 다음 페이지 시퀀스 (null이면 마지막 페이지)
+     * @param moreFrom 다음 조회 시작 일시
+     * @param moreSequence 다음 페이지 시퀀스
      */
-    public record More(Long moreSequence) {}
+    public record More(String moreFrom, String moreSequence) {}
 }

@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.notice.controller;
 
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.notice.LegacyNoticeEndpoints.NOTICE;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.notice.dto.request.LegacyCreateProductNoticeRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.notice.mapper.LegacyNoticeCommandApiMapper;
@@ -33,6 +34,7 @@ public class LegacyNoticeCommandController {
 
     @Operation(summary = "레거시 고시정보 수정", description = "세토프 어드민용 레거시 상품그룹의 고시정보를 수정합니다.")
     @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
+    @RequirePermission(value = "legacy:product-group:write", description = "레거시 고시정보 수정")
     @PutMapping(NOTICE)
     public ResponseEntity<LegacyApiResponse<Long>> updateProductNotice(
             @PathVariable long productGroupId,

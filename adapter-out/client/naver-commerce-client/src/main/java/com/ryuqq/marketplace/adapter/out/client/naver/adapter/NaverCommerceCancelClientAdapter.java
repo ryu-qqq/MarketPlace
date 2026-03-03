@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.client.naver.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.naver.auth.NaverCommerceTokenManager;
-import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverCancelApproveRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverCancelRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -44,17 +43,14 @@ public class NaverCommerceCancelClientAdapter {
                 .body(NaverClaimResponse.class);
     }
 
-    /** 취소를 승인합니다. */
-    public NaverClaimResponse approveCancel(
-            String productOrderId, NaverCancelApproveRequest request) {
+    /** 취소 요청을 승인합니다. (Request Body 없음) */
+    public NaverClaimResponse approveCancel(String productOrderId) {
         String token = tokenManager.getAccessToken();
 
         return restClient
                 .post()
                 .uri(CLAIM_CANCEL_BASE + "/approve", productOrderId)
-                .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
-                .body(request)
                 .retrieve()
                 .body(NaverClaimResponse.class);
     }

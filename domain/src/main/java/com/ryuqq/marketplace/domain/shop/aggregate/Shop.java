@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.domain.shop.aggregate;
 import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.shop.id.ShopId;
 import com.ryuqq.marketplace.domain.shop.vo.AccountId;
+import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import com.ryuqq.marketplace.domain.shop.vo.ShopName;
 import com.ryuqq.marketplace.domain.shop.vo.ShopStatus;
 import java.time.Instant;
@@ -16,9 +17,15 @@ public class Shop {
     private AccountId accountId;
     private ShopStatus status;
     private DeletionStatus deletionStatus;
+    private final String channelCode;
+    private final String apiKey;
+    private final String apiSecret;
+    private final String accessToken;
+    private final String vendorId;
     private final Instant createdAt;
     private Instant updatedAt;
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     private Shop(
             ShopId id,
             Long salesChannelId,
@@ -26,6 +33,11 @@ public class Shop {
             AccountId accountId,
             ShopStatus status,
             DeletionStatus deletionStatus,
+            String channelCode,
+            String apiKey,
+            String apiSecret,
+            String accessToken,
+            String vendorId,
             Instant createdAt,
             Instant updatedAt) {
         this.id = id;
@@ -34,6 +46,11 @@ public class Shop {
         this.accountId = accountId;
         this.status = status;
         this.deletionStatus = deletionStatus;
+        this.channelCode = channelCode;
+        this.apiKey = apiKey;
+        this.apiSecret = apiSecret;
+        this.accessToken = accessToken;
+        this.vendorId = vendorId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -47,11 +64,17 @@ public class Shop {
                 AccountId.of(accountId),
                 ShopStatus.ACTIVE,
                 DeletionStatus.active(),
+                null,
+                null,
+                null,
+                null,
+                null,
                 now,
                 now);
     }
 
     /** 영속성에서 복원 시 사용. */
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public static Shop reconstitute(
             ShopId id,
             Long salesChannelId,
@@ -59,6 +82,11 @@ public class Shop {
             String accountId,
             ShopStatus status,
             Instant deletedAt,
+            String channelCode,
+            String apiKey,
+            String apiSecret,
+            String accessToken,
+            String vendorId,
             Instant createdAt,
             Instant updatedAt) {
         return new Shop(
@@ -68,6 +96,11 @@ public class Shop {
                 AccountId.of(accountId),
                 status,
                 DeletionStatus.reconstitute(deletedAt != null, deletedAt),
+                channelCode,
+                apiKey,
+                apiSecret,
+                accessToken,
+                vendorId,
                 createdAt,
                 updatedAt);
     }
@@ -136,6 +169,31 @@ public class Shop {
 
     public Instant deletedAt() {
         return deletionStatus.deletedAt();
+    }
+
+    public String channelCode() {
+        return channelCode;
+    }
+
+    public String apiKey() {
+        return apiKey;
+    }
+
+    public String apiSecret() {
+        return apiSecret;
+    }
+
+    public String accessToken() {
+        return accessToken;
+    }
+
+    public String vendorId() {
+        return vendorId;
+    }
+
+    /** Shop의 API 자격증명을 ShopCredentials VO로 반환. */
+    public ShopCredentials toCredentials() {
+        return ShopCredentials.of(channelCode, apiKey, apiSecret, accessToken, vendorId);
     }
 
     public Instant createdAt() {

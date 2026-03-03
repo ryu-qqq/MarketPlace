@@ -136,6 +136,15 @@ scheduler:
       # Prod: 초기 마이그레이션 상한 (안전 장치)
       max-total: 50000
 
+    inbound-order-polling:
+      entries:
+        - sales-channel-id: 1
+          enabled: true
+          # Prod: 5분마다
+          cron: "0 */5 * * * *"
+          timezone: Asia/Seoul
+          batch-size: 500
+
     description-publish:
       # Prod: 5분마다
       cron: "0 */5 * * * *"

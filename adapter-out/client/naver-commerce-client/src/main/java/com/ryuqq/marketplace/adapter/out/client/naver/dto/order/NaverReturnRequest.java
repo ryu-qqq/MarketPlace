@@ -7,16 +7,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  *
  * <p>POST .../{productOrderId}/claim/return/request 요청 본문.
  *
- * @param returnReason 반품 사유
- * @param returnReasonType 반품 사유 유형
- * @param collectDeliveryMethod 회수 배송 방법
- * @param collectDeliveryCompanyCode 회수 택배사 코드
- * @param collectTrackingNumber 회수 운송장번호
+ * @param returnReason 반품 사유 (INTENT_CHANGED, BROKEN, WRONG_DELIVERY 등)
+ * @param collectDeliveryMethod 수거 배송방법 (DELIVERY, RETURN_INDIVIDUAL 등)
+ * @param collectDeliveryCompany 수거 택배사 코드 (CJGLS, HANJIN 등)
+ * @param collectTrackingNumber 수거 운송장번호
+ * @param returnQuantity 반품 수량 (미입력 시 전체 수량 반품)
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record NaverReturnRequest(
         String returnReason,
-        String returnReasonType,
         String collectDeliveryMethod,
-        String collectDeliveryCompanyCode,
-        String collectTrackingNumber) {}
+        String collectDeliveryCompany,
+        String collectTrackingNumber,
+        Integer returnQuantity) {}

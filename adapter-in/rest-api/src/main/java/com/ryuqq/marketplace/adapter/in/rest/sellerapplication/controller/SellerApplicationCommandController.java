@@ -96,8 +96,6 @@ public class SellerApplicationCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.authenticated()")
-    @RequirePermission(value = "seller-application:write", description = "셀러 입점 신청")
     @PostMapping
     public ResponseEntity<ApiResponse<ApplySellerApplicationApiResponse>> apply(
             @Valid @RequestBody ApplySellerApplicationApiRequest request) {

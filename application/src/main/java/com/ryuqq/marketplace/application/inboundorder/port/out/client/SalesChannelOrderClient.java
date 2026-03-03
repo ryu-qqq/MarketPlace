@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.inboundorder.port.out.client;
 
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
+import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import java.time.Instant;
 import java.util.List;
 
@@ -9,14 +10,10 @@ public interface SalesChannelOrderClient {
 
     boolean supports(String channelCode);
 
-    @SuppressWarnings("PMD.ExcessiveParameterList")
     List<ExternalOrderPayload> fetchNewOrders(
             long salesChannelId,
             long shopId,
-            long sellerId,
-            String channelCode,
-            String apiKey,
-            String apiSecret,
+            ShopCredentials credentials,
             Instant fromTime,
             Instant toTime);
 }

@@ -92,7 +92,7 @@ class ProductGroupCommandControllerRestDocsTest {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.productGroupId").value(PRODUCT_GROUP_ID))
+                    .andExpect(jsonPath("$.data.productGroupId").value(PRODUCT_GROUP_ID))
                     .andDo(
                             document(
                                     "product-group/register",
@@ -219,9 +219,15 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("고시 필드 값")),
                                     responseFields(
-                                            fieldWithPath("productGroupId")
+                                            fieldWithPath("data.productGroupId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("생성된 상품 그룹 ID"))));
+                                                    .description("생성된 상품 그룹 ID"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -255,9 +261,9 @@ class ProductGroupCommandControllerRestDocsTest {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.totalCount").value(2))
-                    .andExpect(jsonPath("$.successCount").value(2))
-                    .andExpect(jsonPath("$.failureCount").value(0))
+                    .andExpect(jsonPath("$.data.totalCount").value(2))
+                    .andExpect(jsonPath("$.data.successCount").value(2))
+                    .andExpect(jsonPath("$.data.failureCount").value(0))
                     .andDo(
                             document(
                                     "product-group/batch-register",
@@ -379,40 +385,46 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("고시 필드 값")),
                                     responseFields(
-                                            fieldWithPath("totalCount")
+                                            fieldWithPath("data.totalCount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("총 처리 건수"),
-                                            fieldWithPath("successCount")
+                                            fieldWithPath("data.successCount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("성공 건수"),
-                                            fieldWithPath("failureCount")
+                                            fieldWithPath("data.failureCount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("실패 건수"),
-                                            fieldWithPath("results")
+                                            fieldWithPath("data.results")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("항목별 결과"),
-                                            fieldWithPath("results[].index")
+                                            fieldWithPath("data.results[].index")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("요청 인덱스 (0-based)"),
-                                            fieldWithPath("results[].productGroupId")
+                                            fieldWithPath("data.results[].productGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("생성된 상품 그룹 ID (실패 시 null)")
                                                     .optional(),
-                                            fieldWithPath("results[].productGroupName")
+                                            fieldWithPath("data.results[].productGroupName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("요청한 상품 그룹명 (실패 항목 식별용)")
                                                     .optional(),
-                                            fieldWithPath("results[].success")
+                                            fieldWithPath("data.results[].success")
                                                     .type(JsonFieldType.BOOLEAN)
                                                     .description("성공 여부"),
-                                            fieldWithPath("results[].errorCode")
+                                            fieldWithPath("data.results[].errorCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("에러 코드 (성공 시 null)")
                                                     .optional(),
-                                            fieldWithPath("results[].errorMessage")
+                                            fieldWithPath("data.results[].errorMessage")
                                                     .type(JsonFieldType.STRING)
                                                     .description("에러 메시지 (성공 시 null)")
-                                                    .optional())));
+                                                    .optional(),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 

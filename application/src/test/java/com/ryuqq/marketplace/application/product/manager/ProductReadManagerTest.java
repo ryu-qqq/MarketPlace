@@ -130,7 +130,7 @@ class ProductReadManagerTest {
         }
 
         @Test
-        @DisplayName("빈 productGroupIds 목록이면 쿼리를 실행하지 않고 빈 목록을 반환한다")
+        @DisplayName("빈 productIds 목록이면 쿼리를 실행하지 않고 빈 목록을 반환한다")
         void findByProductGroupIds_EmptyIds_ReturnsEmptyWithoutQuery() {
             // when
             List<Product> result = sut.findByProductGroupIds(List.of());

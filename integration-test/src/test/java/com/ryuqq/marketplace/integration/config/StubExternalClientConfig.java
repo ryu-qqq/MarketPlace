@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.integration.config;
 
 import com.ryuqq.authhub.sdk.auth.TokenResolver;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.adapter.OutboundSyncOutboxCommandAdapter;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.adapter.OutboundSyncOutboxQueryAdapter;
 import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
 import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
@@ -47,9 +49,7 @@ import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
-import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
-import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productintelligence.vo.ExtractedAttribute;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdminAuthOutbox;
@@ -352,56 +352,29 @@ public class StubExternalClientConfig {
         return messageBody -> "stub-message-id";
     }
 
+    /**
+     * OutboundSyncOutboxCommandPort를 실제 DB 어댑터로 등록합니다.
+     *
+     * <p>E2E 테스트에서 retrySyncHistory 등 실제 DB 쓰기가 필요한 커맨드 API를 검증하기 위해 실제 어댑터를 사용합니다.
+     */
     @Bean
     @Primary
-    public OutboundSyncOutboxCommandPort stubOutboundSyncOutboxCommandPort() {
-        final AtomicLong sequence = new AtomicLong(1);
-        return new OutboundSyncOutboxCommandPort() {
-            @Override
-            public Long persist(OutboundSyncOutbox outbox) {
-                return sequence.getAndIncrement();
-            }
-
-            @Override
-            public void persistAll(List<OutboundSyncOutbox> outboxes) {
-                // stub: no-op
-            }
-        };
+    public OutboundSyncOutboxCommandPort stubOutboundSyncOutboxCommandPort(
+            OutboundSyncOutboxCommandAdapter realAdapter) {
+        return realAdapter;
     }
 
+    /**
+     * OutboundSyncOutboxQueryPort를 실제 DB 어댑터로 등록합니다.
+     *
+     * <p>E2E 테스트에서 retrySyncHistory 등 실제 DB 조회가 필요한 API를 검증하기 위해 실제 어댑터를 사용합니다.
+     * OmsProductQueryE2ETest의 sync-history 조회도 실제 DB 결과를 반환합니다.
+     */
     @Bean
     @Primary
-    public OutboundSyncOutboxQueryPort stubOutboundSyncOutboxQueryPort() {
-        return new OutboundSyncOutboxQueryPort() {
-            @Override
-            public List<OutboundSyncOutbox> findPendingByProductGroupId(
-                    ProductGroupId productGroupId) {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public List<OutboundSyncOutbox> findPendingOutboxes(Instant beforeTime, int batchSize) {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public List<OutboundSyncOutbox> findProcessingTimeoutOutboxes(
-                    Instant timeoutBefore, int batchSize) {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public OutboundSyncOutbox getById(Long outboxId) {
-                throw new IllegalArgumentException("Stub: OutboundSyncOutbox not found");
-            }
-
-            @Override
-            public List<OutboundSyncOutbox> findActiveByProductGroupIdAndSyncType(
-                    ProductGroupId productGroupId,
-                    com.ryuqq.marketplace.domain.outboundsync.vo.SyncType syncType) {
-                return Collections.emptyList();
-            }
-        };
+    public OutboundSyncOutboxQueryPort stubOutboundSyncOutboxQueryPort(
+            OutboundSyncOutboxQueryAdapter realAdapter) {
+        return realAdapter;
     }
 
     // ===== LegacyConversion 포트 Stubs =====
@@ -667,10 +640,7 @@ public class StubExternalClientConfig {
             public List<ExternalOrderPayload> fetchNewOrders(
                     long salesChannelId,
                     long shopId,
-                    long sellerId,
-                    String channelCode,
-                    String apiKey,
-                    String apiSecret,
+                    com.ryuqq.marketplace.domain.shop.vo.ShopCredentials credentials,
                     Instant fromTime,
                     Instant toTime) {
                 return Collections.emptyList();

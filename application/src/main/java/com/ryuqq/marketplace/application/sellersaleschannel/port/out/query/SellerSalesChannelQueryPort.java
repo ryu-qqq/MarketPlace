@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /** 셀러 판매채널 조회 포트. */
 public interface SellerSalesChannelQueryPort {
@@ -16,6 +17,9 @@ public interface SellerSalesChannelQueryPort {
      * @return CONNECTED 상태의 판매채널 목록
      */
     List<SellerSalesChannel> findConnectedBySellerId(SellerId sellerId);
+
+    /** 여러 셀러의 CONNECTED 상태 판매채널 일괄 조회. */
+    List<SellerSalesChannel> findConnectedBySellerIds(Set<SellerId> sellerIds);
 
     /**
      * 셀러 ID + 판매채널 ID로 단건 조회.

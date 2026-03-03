@@ -158,7 +158,7 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
         Response response =
                 given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
         response.then().statusCode(HttpStatus.CREATED.value());
-        return response.jsonPath().getLong("productGroupId");
+        return response.jsonPath().getLong("data.productGroupId");
     }
 
     private Map<String, Object> createRegisterRequest() {
@@ -450,14 +450,14 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                     .post(BATCH)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("totalCount", equalTo(2))
-                    .body("successCount", equalTo(2))
-                    .body("failureCount", equalTo(0))
-                    .body("results.size()", equalTo(2))
-                    .body("results[0].success", equalTo(true))
-                    .body("results[0].productGroupId", notNullValue())
-                    .body("results[1].success", equalTo(true))
-                    .body("results[1].productGroupId", notNullValue());
+                    .body("data.totalCount", equalTo(2))
+                    .body("data.successCount", equalTo(2))
+                    .body("data.failureCount", equalTo(0))
+                    .body("data.results.size()", equalTo(2))
+                    .body("data.results[0].success", equalTo(true))
+                    .body("data.results[0].productGroupId", notNullValue())
+                    .body("data.results[1].success", equalTo(true))
+                    .body("data.results[1].productGroupId", notNullValue());
         }
 
         @Test
@@ -477,12 +477,12 @@ class ProductGroupSubDomainE2ETest extends E2ETestBase {
                     .post(BATCH)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("totalCount", equalTo(2))
-                    .body("successCount", equalTo(1))
-                    .body("failureCount", equalTo(1))
-                    .body("results.find { it.index == 0 }.success", equalTo(true))
-                    .body("results.find { it.index == 1 }.success", equalTo(false))
-                    .body("results.find { it.index == 1 }.errorMessage", notNullValue());
+                    .body("data.totalCount", equalTo(2))
+                    .body("data.successCount", equalTo(1))
+                    .body("data.failureCount", equalTo(1))
+                    .body("data.results.find { it.index == 0 }.success", equalTo(true))
+                    .body("data.results.find { it.index == 1 }.success", equalTo(false))
+                    .body("data.results.find { it.index == 1 }.errorMessage", notNullValue());
         }
 
         @Test

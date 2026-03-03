@@ -7,6 +7,9 @@ import java.util.Optional;
 public interface OutboundProductQueryPort {
     boolean existsByProductGroupIdAndSalesChannelId(Long productGroupId, Long salesChannelId);
 
+    /** 여러 상품그룹 ID로 OutboundProduct 일괄 조회. */
+    List<OutboundProduct> findByProductGroupIds(List<Long> productGroupIds);
+
     Optional<OutboundProduct> findByProductGroupIdAndSalesChannelId(
             Long productGroupId, Long salesChannelId);
 

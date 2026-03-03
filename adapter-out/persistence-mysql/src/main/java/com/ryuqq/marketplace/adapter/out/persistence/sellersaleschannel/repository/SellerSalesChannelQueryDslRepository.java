@@ -5,6 +5,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.e
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.condition.SellerSalesChannelConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.entity.SellerSalesChannelJpaEntity;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Repository;
@@ -42,6 +43,24 @@ public class SellerSalesChannelQueryDslRepository {
                 .selectFrom(sellerSalesChannelJpaEntity)
                 .where(
                         conditionBuilder.sellerIdEq(sellerId),
+                        conditionBuilder.connectionStatusConnected())
+                .fetch();
+    }
+
+    /**
+     * 여러 셀러의 CONNECTED 상태 판매채널 목록 일괄 조회.
+     *
+     * @param sellerIds 셀러 ID 목록
+     * @return CONNECTED 상태의 판매채널 엔티티 목록
+     */
+    public List<SellerSalesChannelJpaEntity> findConnectedBySellerIds(Collection<Long> sellerIds) {
+        if (sellerIds == null || sellerIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return queryFactory
+                .selectFrom(sellerSalesChannelJpaEntity)
+                .where(
+                        conditionBuilder.sellerIdIn(sellerIds),
                         conditionBuilder.connectionStatusConnected())
                 .fetch();
     }

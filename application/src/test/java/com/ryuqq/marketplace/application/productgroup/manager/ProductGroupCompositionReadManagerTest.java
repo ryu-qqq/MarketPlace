@@ -189,7 +189,7 @@ class ProductGroupCompositionReadManagerTest {
     class FindEnrichmentsTest {
 
         @Test
-        @DisplayName("productGroupIds 목록으로 enrichment 결과를 반환한다")
+        @DisplayName("productIds 목록으로 enrichment 결과를 반환한다")
         void findEnrichments_ValidIds_ReturnsEnrichments() {
             // given
             List<Long> productGroupIds = List.of(1L, 2L, 3L);
@@ -212,7 +212,7 @@ class ProductGroupCompositionReadManagerTest {
         }
 
         @Test
-        @DisplayName("빈 productGroupIds 목록이면 쿼리를 실행하지 않고 빈 목록을 반환한다")
+        @DisplayName("빈 productIds 목록이면 쿼리를 실행하지 않고 빈 목록을 반환한다")
         void findEnrichments_EmptyIds_ReturnsEmptyWithoutQuery() {
             // given
             List<Long> emptyIds = List.of();
