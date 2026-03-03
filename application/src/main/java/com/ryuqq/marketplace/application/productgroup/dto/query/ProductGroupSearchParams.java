@@ -60,7 +60,13 @@ public record ProductGroupSearchParams(
 
     public ProductGroupSearchParams withCategoryIds(List<Long> expandedCategoryIds) {
         return new ProductGroupSearchParams(
-                statuses, sellerIds, brandIds, expandedCategoryIds,
-                productGroupIds, searchField, searchWord, searchParams);
+                statuses,
+                sellerIds,
+                brandIds,
+                expandedCategoryIds,
+                productGroupIds,
+                searchField,
+                searchWord,
+                searchParams);
     }
 }

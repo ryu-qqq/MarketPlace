@@ -100,14 +100,13 @@ class LegacySessionControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description(
                                                             "이미지 경로 구분 (PRODUCT, DESCRIPTION,"
-                                                                + " QNA, CONTENT,"
-                                                                + " IMAGE_COMPONENT, BANNER)"),
+                                                                    + " QNA, CONTENT,"
+                                                                    + " IMAGE_COMPONENT, BANNER)"),
                                             fieldWithPath("fileSize")
                                                     .type(JsonFieldType.NUMBER)
                                                     .optional()
                                                     .description(
-                                                            "파일 크기 (bytes), 미입력 시 기본값"
-                                                                    + " 10MB")),
+                                                            "파일 크기 (bytes), 미입력 시 기본값" + " 10MB")),
                                     responseFields(
                                             fieldWithPath("data.sessionId")
                                                     .type(JsonFieldType.STRING)
@@ -132,7 +131,8 @@ class LegacySessionControllerRestDocsTest {
             // given
             LegacyPresignedUrlApiRequest request =
                     LegacySessionApiFixtures.requestWithoutFileSize();
-            LegacyGetPresignedUrlCommand command = LegacySessionApiFixtures.commandWithoutFileSize();
+            LegacyGetPresignedUrlCommand command =
+                    LegacySessionApiFixtures.commandWithoutFileSize();
             LegacyPresignedUrlResult result = LegacySessionApiFixtures.result();
             LegacyPresignedUrlApiResponse apiResponse = LegacySessionApiFixtures.apiResponse();
 

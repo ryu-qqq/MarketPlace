@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * <p>세토프 어드민의 ImageController.getContent와 호환되는 Presigned URL 발급 엔드포인트를 제공합니다.
  */
-@Tag(
-        name = "세토프 어드민용 레거시 - 이미지 업로드",
-        description = "세토프 어드민 호환 Presigned URL 발급 엔드포인트.")
+@Tag(name = "세토프 어드민용 레거시 - 이미지 업로드", description = "세토프 어드민 호환 Presigned URL 발급 엔드포인트.")
 @RestController
 public class LegacySessionController {
 

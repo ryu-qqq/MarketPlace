@@ -25,16 +25,16 @@ scheduler:
 
     image-upload-outbox:
       process-pending:
-        # Prod: 3분마다
-        cron: "0 */3 * * * *"
+        # Prod: 1분마다
+        cron: "0 */1 * * * *"
         # Prod: 큰 배치
         batch-size: 50
         # Prod: 안전한 지연
         delay-seconds: 30
 
       poll-processing:
-        # Prod: 2분마다
-        cron: "0 */2 * * * *"
+        # Prod: 1분마다
+        cron: "0 */1 * * * *"
         # Prod: 큰 배치
         batch-size: 50
 
