@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.category.manager.CategoryReadManager;
 import com.ryuqq.marketplace.application.productgroup.ProductGroupQueryFixtures;
 import com.ryuqq.marketplace.application.productgroup.assembler.ProductGroupAssembler;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBundle;
@@ -33,6 +34,7 @@ class SearchProductGroupForExcelServiceTest {
     @Mock private ProductGroupReadFacade readFacade;
     @Mock private ProductGroupQueryFactory queryFactory;
     @Mock private ProductGroupAssembler assembler;
+    @Mock private CategoryReadManager categoryReadManager;
 
     @Nested
     @DisplayName("execute() - 엑셀 다운로드용 상품 그룹 검색")
@@ -111,6 +113,58 @@ class SearchProductGroupForExcelServiceTest {
             // then
             assertThat(result).isNotNull();
             then(queryFactory).should().createCriteria(params);
+        }
+
+        @Test
+        @DisplayName("카테고리 ID 필터가 있으면 하위 카테고리까지 확장하여 검색한다")
+        void execute_WithCategoryFilter_ExpandsDescendantCategories() {
+            // given
+            List<Long> originalCategoryIds = List.of(1L);
+            List<Long> expandedCategoryIds = List.of(1L, 10L, 20L, 30L);
+            ProductGroupSearchParams params =
+                    ProductGroupQueryFixtures.searchParamsWithCategoryIds(originalCategoryIds);
+            ProductGroupSearchParams expandedParams = params.withCategoryIds(expandedCategoryIds);
+            ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
+            ProductGroupExcelBundle bundle =
+                    new ProductGroupExcelBundle(
+                            List.of(), List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 0L);
+            List<ProductGroupExcelCompositeResult> expected = List.of();
+
+            given(categoryReadManager.expandWithDescendants(originalCategoryIds))
+                    .willReturn(expandedCategoryIds);
+            given(queryFactory.createCriteria(expandedParams)).willReturn(criteria);
+            given(readFacade.getExcelBundle(criteria)).willReturn(bundle);
+            given(assembler.toExcelResults(bundle)).willReturn(expected);
+
+            // when
+            List<ProductGroupExcelCompositeResult> result = sut.execute(params);
+
+            // then
+            assertThat(result).isEqualTo(expected);
+            then(categoryReadManager).should().expandWithDescendants(originalCategoryIds);
+            then(queryFactory).should().createCriteria(expandedParams);
+        }
+
+        @Test
+        @DisplayName("카테고리 ID가 없으면 확장 없이 그대로 검색한다")
+        void execute_WithoutCategoryFilter_SkipsExpansion() {
+            // given
+            ProductGroupSearchParams params = ProductGroupQueryFixtures.searchParams();
+            ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
+            ProductGroupExcelBundle bundle =
+                    new ProductGroupExcelBundle(
+                            List.of(), List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 0L);
+            List<ProductGroupExcelCompositeResult> expected = List.of();
+
+            given(queryFactory.createCriteria(params)).willReturn(criteria);
+            given(readFacade.getExcelBundle(criteria)).willReturn(bundle);
+            given(assembler.toExcelResults(bundle)).willReturn(expected);
+
+            // when
+            sut.execute(params);
+
+            // then
+            then(categoryReadManager).shouldHaveNoInteractions();
         }
     }
 }

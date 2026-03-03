@@ -14,6 +14,9 @@ import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
 import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
 import com.ryuqq.marketplace.application.imagetransform.port.out.client.ImageTransformClient;
+import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
+import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
+import com.ryuqq.marketplace.application.order.port.out.query.OrderQueryPort;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyConversionOutboxCommandPort;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyProductIdMappingCommandPort;
@@ -21,7 +24,9 @@ import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyC
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyProductGroupIdScanPort;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyProductIdMappingQueryPort;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.OutboundSyncPublishClient;
+import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.outboundsync.port.out.command.OutboundSyncOutboxCommandPort;
+import com.ryuqq.marketplace.application.outboundsync.port.out.query.OutboundMappingQueryPort;
 import com.ryuqq.marketplace.application.outboundsync.port.out.query.OutboundSyncOutboxQueryPort;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.AggregationPublishClient;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.DescriptionAnalysisAiClient;
@@ -35,6 +40,10 @@ import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdmin
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminIdentityClient;
 import com.ryuqq.marketplace.application.selleradmin.port.out.command.SellerAdminAuthOutboxCommandPort;
 import com.ryuqq.marketplace.application.selleradmin.port.out.query.SellerAdminAuthOutboxQueryPort;
+import com.ryuqq.marketplace.domain.order.aggregate.Order;
+import com.ryuqq.marketplace.domain.order.id.OrderId;
+import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
+import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyConversionOutbox;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
@@ -49,6 +58,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -281,6 +291,63 @@ public class StubExternalClientConfig {
 
     @Bean
     @Primary
+    public SalesChannelProductClient stubSalesChannelProductClient() {
+        return new SalesChannelProductClient() {
+            @Override
+            public String registerProduct(
+                    com.ryuqq.marketplace.application.productgroup.dto.composite
+                                    .ProductGroupDetailBundle
+                            bundle,
+                    Long externalCategoryId,
+                    Long externalBrandId,
+                    com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel
+                            channel) {
+                return "stub-external-product-" + bundle.group().idValue();
+            }
+
+            @Override
+            public void updateProduct(
+                    com.ryuqq.marketplace.application.productgroup.dto.composite
+                                    .ProductGroupDetailBundle
+                            bundle,
+                    Long externalCategoryId,
+                    Long externalBrandId,
+                    String externalProductId,
+                    com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel
+                            channel) {
+                // stub: no-op
+            }
+
+            @Override
+            public void deleteProduct(
+                    String externalProductId,
+                    com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel
+                            channel) {
+                // stub: no-op
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public OutboundMappingQueryPort stubOutboundMappingQueryPort() {
+        return new OutboundMappingQueryPort() {
+            @Override
+            public Optional<Long> findSalesChannelCategoryId(
+                    Long salesChannelId, Long internalCategoryId) {
+                return Optional.of(internalCategoryId);
+            }
+
+            @Override
+            public Optional<Long> findSalesChannelBrandId(
+                    Long salesChannelId, Long internalBrandId) {
+                return Optional.of(internalBrandId);
+            }
+        };
+    }
+
+    @Bean
+    @Primary
     public OutboundSyncPublishClient stubOutboundSyncPublishClient() {
         return messageBody -> "stub-message-id";
     }
@@ -326,6 +393,13 @@ public class StubExternalClientConfig {
             @Override
             public OutboundSyncOutbox getById(Long outboxId) {
                 throw new IllegalArgumentException("Stub: OutboundSyncOutbox not found");
+            }
+
+            @Override
+            public List<OutboundSyncOutbox> findActiveByProductGroupIdAndSyncType(
+                    ProductGroupId productGroupId,
+                    com.ryuqq.marketplace.domain.outboundsync.vo.SyncType syncType) {
+                return Collections.emptyList();
             }
         };
     }
@@ -515,6 +589,12 @@ public class StubExternalClientConfig {
     public SellerAdminAuthOutboxQueryPort stubSellerAdminAuthOutboxQueryPort() {
         return new SellerAdminAuthOutboxQueryPort() {
             @Override
+            public SellerAdminAuthOutbox getById(Long outboxId) {
+                throw new IllegalStateException(
+                        "Stub: SellerAdminAuthOutbox를 찾을 수 없습니다. outboxId=" + outboxId);
+            }
+
+            @Override
             public Optional<SellerAdminAuthOutbox> findPendingBySellerAdminId(
                     SellerAdminId sellerAdminId) {
                 return Optional.empty();
@@ -529,6 +609,70 @@ public class StubExternalClientConfig {
             @Override
             public List<SellerAdminAuthOutbox> findProcessingTimeoutOutboxes(
                     Instant timeoutThreshold, int limit) {
+                return Collections.emptyList();
+            }
+        };
+    }
+
+    // ===== Order 포트 Stubs =====
+
+    @Bean
+    @Primary
+    public OrderQueryPort stubOrderQueryPort() {
+        return new OrderQueryPort() {
+            @Override
+            public Optional<Order> findById(OrderId id) {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<Order> findByOrderNumber(String orderNumber) {
+                return Optional.empty();
+            }
+
+            @Override
+            public boolean existsByExternalOrderNo(long salesChannelId, String externalOrderNo) {
+                return false;
+            }
+
+            @Override
+            public List<Order> findByCriteria(OrderSearchCriteria criteria) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public long countByCriteria(OrderSearchCriteria criteria) {
+                return 0L;
+            }
+
+            @Override
+            public Map<OrderStatus, Long> countByStatus() {
+                return Collections.emptyMap();
+            }
+        };
+    }
+
+    // ===== InboundOrder 외부 채널 클라이언트 Stub =====
+
+    @Bean
+    @Primary
+    public SalesChannelOrderClient stubSalesChannelOrderClient() {
+        return new SalesChannelOrderClient() {
+            @Override
+            public boolean supports(String channelCode) {
+                return true;
+            }
+
+            @Override
+            public List<ExternalOrderPayload> fetchNewOrders(
+                    long salesChannelId,
+                    long shopId,
+                    long sellerId,
+                    String channelCode,
+                    String apiKey,
+                    String apiSecret,
+                    Instant fromTime,
+                    Instant toTime) {
                 return Collections.emptyList();
             }
         };

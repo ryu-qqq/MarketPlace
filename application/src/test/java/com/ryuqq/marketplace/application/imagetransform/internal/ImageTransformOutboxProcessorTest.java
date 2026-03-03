@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
 import com.ryuqq.marketplace.application.imagetransform.ImageTransformResponseFixtures;
 import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
@@ -58,7 +59,7 @@ class ImageTransformOutboxProcessorTest {
             // then
             assertThat(result).isTrue();
             assertThat(outbox.isProcessing()).isTrue();
-            then(outboxCommandManager).should(org.mockito.Mockito.atLeast(1)).persist(any());
+            then(outboxCommandManager).should(times(1)).persist(any());
         }
 
         @Test
@@ -78,7 +79,7 @@ class ImageTransformOutboxProcessorTest {
 
             // then
             assertThat(result).isFalse();
-            then(outboxCommandManager).should(org.mockito.Mockito.atLeast(2)).persist(any());
+            then(outboxCommandManager).should(times(1)).persist(any());
         }
 
         @Test
@@ -104,6 +105,48 @@ class ImageTransformOutboxProcessorTest {
             assertThat(result).isTrue();
             assertThat(outbox.transformRequestId())
                     .isEqualTo(ImageTransformResponseFixtures.DEFAULT_TRANSFORM_REQUEST_ID);
+        }
+
+        @Test
+        @DisplayName("API 호출 실패 시 persist가 실패해도 예외가 전파되지 않는다")
+        void processOutbox_PersistFailureAfterApiFailure_DoesNotThrow() {
+            // given
+            ImageTransformOutbox outbox = ImageTransformFixtures.pendingOutbox();
+
+            given(
+                            transformManager.createTransformRequest(
+                                    anyString(), any(ImageVariantType.class), anyString()))
+                    .willThrow(new RuntimeException("외부 API 호출 실패"));
+            given(outboxCommandManager.persist(any())).willThrow(new RuntimeException("DB 저장 실패"));
+
+            // when
+            boolean result = sut.processOutbox(outbox);
+
+            // then
+            assertThat(result).isFalse();
+        }
+
+        @Test
+        @DisplayName("API 호출 성공 시 persist는 정확히 1회 호출된다")
+        void processOutbox_SuccessfulRequest_PersistsExactlyOnce() {
+            // given
+            ImageTransformOutbox outbox = ImageTransformFixtures.pendingOutbox();
+            ImageTransformResponse processingResponse =
+                    ImageTransformResponseFixtures.processingResponse();
+
+            given(outboxCommandManager.persist(any())).willReturn(1L);
+            given(
+                            transformManager.createTransformRequest(
+                                    outbox.uploadedUrlValue(),
+                                    outbox.variantType(),
+                                    outbox.fileAssetId()))
+                    .willReturn(processingResponse);
+
+            // when
+            sut.processOutbox(outbox);
+
+            // then
+            then(outboxCommandManager).should(times(1)).persist(outbox);
         }
     }
 }

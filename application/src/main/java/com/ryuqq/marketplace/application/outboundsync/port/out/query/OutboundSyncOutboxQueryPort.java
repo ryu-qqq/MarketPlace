@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.outboundsync.port.out.query;
 
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
+import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.time.Instant;
 import java.util.List;
@@ -42,4 +43,14 @@ public interface OutboundSyncOutboxQueryPort {
      * @throws IllegalStateException 존재하지 않는 경우
      */
     OutboundSyncOutbox getById(Long outboxId);
+
+    /**
+     * 상품그룹 ID + syncType으로 PENDING/PROCESSING 상태의 Outbox 목록 조회.
+     *
+     * @param productGroupId 상품그룹 ID
+     * @param syncType 연동 타입
+     * @return 활성 상태의 Outbox 목록
+     */
+    List<OutboundSyncOutbox> findActiveByProductGroupIdAndSyncType(
+            ProductGroupId productGroupId, SyncType syncType);
 }

@@ -3,16 +3,15 @@ package com.ryuqq.marketplace.domain.order.vo;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 
 /**
- * 외부몰이 제공한 주문 상품 가격 정보. 외부몰 쿠폰, 적립금 등이 반영된 실제 거래 금액입니다.
+ * 외부몰이 제공한 주문 상품 가격 정보. 외부몰 쿠폰 등이 반영된 실제 거래 금액입니다.
  *
- * <p>paymentAmount = totalAmount - discountAmount - mileageUsed
+ * <p>paymentAmount = totalAmount - discountAmount
  */
 public record ExternalOrderItemPrice(
         Money unitPrice,
         int quantity,
         Money totalAmount,
         Money discountAmount,
-        Money mileageUsed,
         Money paymentAmount) {
 
     public ExternalOrderItemPrice {
@@ -31,9 +30,6 @@ public record ExternalOrderItemPrice(
         if (discountAmount == null) {
             discountAmount = Money.zero();
         }
-        if (mileageUsed == null) {
-            mileageUsed = Money.zero();
-        }
     }
 
     public static ExternalOrderItemPrice of(
@@ -41,9 +37,8 @@ public record ExternalOrderItemPrice(
             int quantity,
             Money totalAmount,
             Money discountAmount,
-            Money mileageUsed,
             Money paymentAmount) {
         return new ExternalOrderItemPrice(
-                unitPrice, quantity, totalAmount, discountAmount, mileageUsed, paymentAmount);
+                unitPrice, quantity, totalAmount, discountAmount, paymentAmount);
     }
 }

@@ -21,6 +21,11 @@ public class ImageTransformOutboxReadManager {
     }
 
     @Transactional(readOnly = true)
+    public ImageTransformOutbox getById(Long outboxId) {
+        return queryPort.getById(outboxId);
+    }
+
+    @Transactional(readOnly = true)
     public List<ImageTransformOutbox> findPendingOutboxes(Instant beforeTime, int limit) {
         return queryPort.findPendingOutboxes(beforeTime, limit);
     }

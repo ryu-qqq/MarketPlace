@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.productgroup.service.query;
 
+import com.ryuqq.marketplace.application.category.manager.CategoryReadManager;
 import com.ryuqq.marketplace.application.productgroup.assembler.ProductGroupAssembler;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
@@ -18,20 +19,32 @@ public class SearchProductGroupForExcelService implements SearchProductGroupForE
     private final ProductGroupReadFacade readFacade;
     private final ProductGroupQueryFactory queryFactory;
     private final ProductGroupAssembler assembler;
+    private final CategoryReadManager categoryReadManager;
 
     public SearchProductGroupForExcelService(
             ProductGroupReadFacade readFacade,
             ProductGroupQueryFactory queryFactory,
-            ProductGroupAssembler assembler) {
+            ProductGroupAssembler assembler,
+            CategoryReadManager categoryReadManager) {
         this.readFacade = readFacade;
         this.queryFactory = queryFactory;
         this.assembler = assembler;
+        this.categoryReadManager = categoryReadManager;
     }
 
     @Override
     public List<ProductGroupExcelCompositeResult> execute(ProductGroupSearchParams params) {
-        ProductGroupSearchCriteria criteria = queryFactory.createCriteria(params);
+        ProductGroupSearchParams expandedParams = expandCategoryIds(params);
+        ProductGroupSearchCriteria criteria = queryFactory.createCriteria(expandedParams);
         ProductGroupExcelBundle bundle = readFacade.getExcelBundle(criteria);
         return assembler.toExcelResults(bundle);
+    }
+
+    private ProductGroupSearchParams expandCategoryIds(ProductGroupSearchParams params) {
+        if (params.categoryIds() == null || params.categoryIds().isEmpty()) {
+            return params;
+        }
+        List<Long> expandedIds = categoryReadManager.expandWithDescendants(params.categoryIds());
+        return params.withCategoryIds(expandedIds);
     }
 }

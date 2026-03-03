@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.application.productgroup.service.command;
 
 import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupActivationOutboxCoordinator;
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupDeactivationOutboxCoordinator;
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangeProductGroupStatusCommand;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
@@ -24,14 +26,20 @@ public class BatchChangeProductGroupStatusService implements BatchChangeProductG
     private final ProductGroupReadManager readManager;
     private final ProductGroupCommandManager commandManager;
     private final ProductGroupActivationOutboxCoordinator activationOutboxCoordinator;
+    private final ProductGroupDeactivationOutboxCoordinator deactivationOutboxCoordinator;
+    private final ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
 
     public BatchChangeProductGroupStatusService(
             ProductGroupReadManager readManager,
             ProductGroupCommandManager commandManager,
-            ProductGroupActivationOutboxCoordinator activationOutboxCoordinator) {
+            ProductGroupActivationOutboxCoordinator activationOutboxCoordinator,
+            ProductGroupDeactivationOutboxCoordinator deactivationOutboxCoordinator,
+            ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator) {
         this.readManager = readManager;
         this.commandManager = commandManager;
         this.activationOutboxCoordinator = activationOutboxCoordinator;
+        this.deactivationOutboxCoordinator = deactivationOutboxCoordinator;
+        this.updateOutboxCoordinator = updateOutboxCoordinator;
     }
 
     @Override
@@ -50,6 +58,10 @@ public class BatchChangeProductGroupStatusService implements BatchChangeProductG
 
             if (targetStatus.isActive()) {
                 activationOutboxCoordinator.createOutboxAndProducts(productGroup);
+            } else if (targetStatus.requiresExternalDeregistration()) {
+                deactivationOutboxCoordinator.createDeleteOutboxesIfNeeded(productGroup.id());
+            } else if (targetStatus.isSoldout()) {
+                updateOutboxCoordinator.createUpdateOutboxesIfNeeded(productGroup.id());
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.seller.internal;
 
 import com.ryuqq.marketplace.application.seller.manager.SellerAuthOutboxCommandManager;
+import com.ryuqq.marketplace.application.seller.manager.SellerAuthOutboxReadManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerCommandManager;
 import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminEmailOutboxCommandManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerAuthOutbox;
@@ -25,14 +26,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class SellerAuthCompletionFacade {
 
     private final SellerAuthOutboxCommandManager outboxCommandManager;
+    private final SellerAuthOutboxReadManager outboxReadManager;
     private final SellerCommandManager sellerCommandManager;
     private final SellerAdminEmailOutboxCommandManager emailOutboxCommandManager;
 
     public SellerAuthCompletionFacade(
             SellerAuthOutboxCommandManager outboxCommandManager,
+            SellerAuthOutboxReadManager outboxReadManager,
             SellerCommandManager sellerCommandManager,
             SellerAdminEmailOutboxCommandManager emailOutboxCommandManager) {
         this.outboxCommandManager = outboxCommandManager;
+        this.outboxReadManager = outboxReadManager;
         this.sellerCommandManager = sellerCommandManager;
         this.emailOutboxCommandManager = emailOutboxCommandManager;
     }
@@ -61,12 +65,13 @@ public class SellerAuthCompletionFacade {
             String organizationId,
             String emailPayload,
             Instant now) {
-        outbox.complete(now);
-        outboxCommandManager.persist(outbox);
-        sellerCommandManager.updateAuthInfo(outbox.sellerId(), tenantId, organizationId);
+        SellerAuthOutbox freshOutbox = outboxReadManager.getById(outbox.idValue());
+        freshOutbox.complete(now);
+        outboxCommandManager.persist(freshOutbox);
+        sellerCommandManager.updateAuthInfo(freshOutbox.sellerId(), tenantId, organizationId);
 
         SellerAdminEmailOutbox emailOutbox =
-                SellerAdminEmailOutbox.forNew(outbox.sellerId(), emailPayload, now);
+                SellerAdminEmailOutbox.forNew(freshOutbox.sellerId(), emailPayload, now);
         emailOutboxCommandManager.persist(emailOutbox);
     }
 }

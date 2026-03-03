@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.productgroup.internal;
 
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.product.factory.ProductCommandFactory;
 import com.ryuqq.marketplace.application.product.internal.ProductCommandCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
@@ -34,6 +35,7 @@ public class FullProductGroupUpdateCoordinator {
     private final ProductCommandFactory productCommandFactory;
     private final ProductCommandCoordinator productCommandCoordinator;
     private final IntelligenceOutboxCommandManager intelligenceOutboxCommandManager;
+    private final ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
 
     public FullProductGroupUpdateCoordinator(
             ProductGroupCommandCoordinator productGroupCommandCoordinator,
@@ -43,7 +45,8 @@ public class FullProductGroupUpdateCoordinator {
             ProductNoticeCommandCoordinator noticeCommandCoordinator,
             ProductCommandFactory productCommandFactory,
             ProductCommandCoordinator productCommandCoordinator,
-            IntelligenceOutboxCommandManager intelligenceOutboxCommandManager) {
+            IntelligenceOutboxCommandManager intelligenceOutboxCommandManager,
+            ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator) {
         this.productGroupCommandCoordinator = productGroupCommandCoordinator;
         this.imageCommandCoordinator = imageCommandCoordinator;
         this.sellerOptionCommandCoordinator = sellerOptionCommandCoordinator;
@@ -52,6 +55,7 @@ public class FullProductGroupUpdateCoordinator {
         this.productCommandFactory = productCommandFactory;
         this.productCommandCoordinator = productCommandCoordinator;
         this.intelligenceOutboxCommandManager = intelligenceOutboxCommandManager;
+        this.updateOutboxCoordinator = updateOutboxCoordinator;
     }
 
     /**
@@ -101,5 +105,8 @@ public class FullProductGroupUpdateCoordinator {
                     IntelligenceOutbox.forNew(pgId.value(), Instant.now());
             intelligenceOutboxCommandManager.persist(intelligenceOutbox);
         }
+
+        // 8. 외부 채널 UPDATE Outbox 생성
+        updateOutboxCoordinator.createUpdateOutboxesIfNeeded(pgId);
     }
 }

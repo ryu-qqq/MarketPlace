@@ -287,7 +287,7 @@ class ProductGroupConditionBuilderTest {
             given(criteria.searchField())
                     .willReturn(
                             com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchField
-                                    .NAME);
+                                    .PRODUCT_GROUP_NAME);
             given(criteria.searchWord()).willReturn("테스트");
 
             // when
@@ -310,6 +310,44 @@ class ProductGroupConditionBuilderTest {
 
             // then
             assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("PRODUCT_GROUP_ID 필드로 검색 시 ID 조건을 반환합니다")
+        void searchCondition_WithProductGroupIdField_ReturnsBooleanExpression() {
+            // given
+            given(criteria.hasSearchCondition()).willReturn(true);
+            given(criteria.hasSearchField()).willReturn(true);
+            given(criteria.searchField())
+                    .willReturn(
+                            com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchField
+                                    .PRODUCT_GROUP_ID);
+            given(criteria.searchWord()).willReturn("123");
+
+            // when
+            BooleanExpression result = conditionBuilder.searchCondition(criteria);
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("PRODUCT_GROUP_ID 필드에 숫자가 아닌 값 입력 시 null을 반환합니다")
+        void searchCondition_WithInvalidProductGroupId_ReturnsNull() {
+            // given
+            given(criteria.hasSearchCondition()).willReturn(true);
+            given(criteria.hasSearchField()).willReturn(true);
+            given(criteria.searchField())
+                    .willReturn(
+                            com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchField
+                                    .PRODUCT_GROUP_ID);
+            given(criteria.searchWord()).willReturn("abc");
+
+            // when
+            BooleanExpression result = conditionBuilder.searchCondition(criteria);
+
+            // then
+            assertThat(result).isNull();
         }
 
         @Test

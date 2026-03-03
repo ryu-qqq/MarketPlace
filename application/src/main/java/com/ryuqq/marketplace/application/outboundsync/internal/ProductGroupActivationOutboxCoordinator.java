@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -111,12 +112,25 @@ public class ProductGroupActivationOutboxCoordinator {
             outboundProductCommandManager.persistAll(outboundProducts);
         }
 
+        List<OutboundProduct> deregisteredProducts =
+                outboundProductReadManager.findDeregisteredByProductGroupId(
+                        productGroup.idValue());
+
+        if (!deregisteredProducts.isEmpty()) {
+            Instant now = Instant.now();
+            for (OutboundProduct product : deregisteredProducts) {
+                product.prepareReregistration(now);
+                outboundProductCommandManager.persist(product);
+            }
+        }
+
         log.info(
                 "외부 연동 Outbox 생성 완료: productGroupId={}, newOutboxCount={}, skippedOutboxCount={},"
-                        + " newProductCount={}",
+                        + " newProductCount={}, reregistrationCount={}",
                 productGroup.idValue(),
                 channelsNeedingOutbox.size(),
                 channelsWithPendingOutbox.size(),
-                channelsWithoutProduct.size());
+                channelsWithoutProduct.size(),
+                deregisteredProducts.size());
     }
 }

@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.category.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.category.mapper.CategoryJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.category.repository.CategoryQueryDslRepository;
 import com.ryuqq.marketplace.application.category.port.out.query.CategoryQueryPort;
+import com.ryuqq.marketplace.adapter.out.persistence.category.entity.CategoryJpaEntity;
 import com.ryuqq.marketplace.domain.category.aggregate.Category;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.category.query.CategorySearchCriteria;
@@ -46,5 +47,20 @@ public class CategoryQueryAdapter implements CategoryQueryPort {
     @Override
     public List<Category> findAllByIds(List<Long> ids) {
         return repository.findAllByIds(ids).stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
+    public List<Long> findDescendantIds(List<Long> ancestorCategoryIds) {
+        List<CategoryJpaEntity> ancestors = repository.findAllByIds(ancestorCategoryIds);
+
+        List<String> pathPrefixes = ancestors.stream()
+                .map(CategoryJpaEntity::getPath)
+                .toList();
+
+        if (pathPrefixes.isEmpty()) {
+            return ancestorCategoryIds;
+        }
+
+        return repository.findDescendantIds(pathPrefixes);
     }
 }

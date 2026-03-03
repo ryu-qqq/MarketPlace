@@ -24,7 +24,9 @@ public record SchedulerProperties(Jobs jobs) {
             IntelligencePipeline intelligencePipeline,
             InboundProductRetry inboundProductRetry,
             OutboundSyncOutbox outboundSyncOutbox,
-            LegacyConversionSeeder legacyConversionSeeder) {}
+            LegacyConversionSeeder legacyConversionSeeder,
+            InboundOrderPolling inboundOrderPolling,
+            InboundOrderRetry inboundOrderRetry) {}
 
     public record OutboundSyncOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
@@ -79,4 +81,9 @@ public record SchedulerProperties(Jobs jobs) {
 
     public record LegacyConversionSeeder(
             boolean enabled, String cron, String timezone, int batchSize, int maxTotal) {}
+
+    public record InboundOrderPolling(
+            boolean enabled, String cron, String timezone, int batchSize, String channelCode) {}
+
+    public record InboundOrderRetry(boolean enabled, String cron, String timezone, int batchSize) {}
 }

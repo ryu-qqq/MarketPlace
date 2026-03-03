@@ -36,9 +36,14 @@ public record SearchProductGroupsApiRequest(
                 @Schema(description = "상품 그룹 ID 필터", nullable = true)
                 List<Long> productGroupIds,
         @Parameter(
-                        description = "검색 필드 (NAME, CATEGORY_NAME, BRAND_NAME)",
-                        example = "NAME",
-                        schema = @Schema(allowableValues = {"NAME", "CATEGORY_NAME", "BRAND_NAME"}))
+                        description = "검색 필드 (PRODUCT_GROUP_NAME, PRODUCT_GROUP_ID)",
+                        example = "PRODUCT_GROUP_NAME",
+                        schema =
+                                @Schema(
+                                        allowableValues = {
+                                            "PRODUCT_GROUP_NAME",
+                                            "PRODUCT_GROUP_ID"
+                                        }))
                 @Schema(description = "검색 필드", nullable = true)
                 String searchField,
         @Parameter(description = "검색어", example = "나이키")

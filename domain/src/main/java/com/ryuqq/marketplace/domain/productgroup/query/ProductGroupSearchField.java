@@ -11,14 +11,11 @@ import com.ryuqq.marketplace.domain.common.vo.SearchField;
  */
 public enum ProductGroupSearchField implements SearchField {
 
+    /** 상품 그룹 ID */
+    PRODUCT_GROUP_ID("productGroupId"),
+
     /** 상품 그룹명 */
-    NAME("productGroupName"),
-
-    /** 카테고리명 */
-    CATEGORY_NAME("categoryName"),
-
-    /** 브랜드명 */
-    BRAND_NAME("brandName");
+    PRODUCT_GROUP_NAME("productGroupName");
 
     private final String fieldName;
 

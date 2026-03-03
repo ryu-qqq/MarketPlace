@@ -9,6 +9,8 @@ import java.util.List;
  * Shipment 검색 조건 Criteria.
  *
  * @param statuses 배송 상태 필터 (empty이면 전체)
+ * @param sellerIds 셀러 ID 필터 (empty이면 전체)
+ * @param shopOrderNos 외부 주문번호 필터 (empty이면 전체)
  * @param searchField 검색 필드 (null이면 전체 필드 검색)
  * @param searchWord 검색어 (null이면 전체)
  * @param dateRange 날짜 범위 (null이면 제한 없음)
@@ -17,6 +19,8 @@ import java.util.List;
  */
 public record ShipmentSearchCriteria(
         List<ShipmentStatus> statuses,
+        List<Long> sellerIds,
+        List<String> shopOrderNos,
         ShipmentSearchField searchField,
         String searchWord,
         DateRange dateRange,
@@ -25,21 +29,34 @@ public record ShipmentSearchCriteria(
 
     public ShipmentSearchCriteria {
         statuses = statuses != null ? List.copyOf(statuses) : List.of();
+        sellerIds = sellerIds != null ? List.copyOf(sellerIds) : List.of();
+        shopOrderNos = shopOrderNos != null ? List.copyOf(shopOrderNos) : List.of();
     }
 
     public static ShipmentSearchCriteria of(
             List<ShipmentStatus> statuses,
+            List<Long> sellerIds,
+            List<String> shopOrderNos,
             ShipmentSearchField searchField,
             String searchWord,
             DateRange dateRange,
             ShipmentDateField dateField,
             QueryContext<ShipmentSortKey> queryContext) {
         return new ShipmentSearchCriteria(
-                statuses, searchField, searchWord, dateRange, dateField, queryContext);
+                statuses,
+                sellerIds,
+                shopOrderNos,
+                searchField,
+                searchWord,
+                dateRange,
+                dateField,
+                queryContext);
     }
 
     public static ShipmentSearchCriteria defaultCriteria() {
         return new ShipmentSearchCriteria(
+                List.of(),
+                List.of(),
                 List.of(),
                 null,
                 null,
@@ -51,6 +68,16 @@ public record ShipmentSearchCriteria(
     /** 상태 필터가 있는지 확인. */
     public boolean hasStatusFilter() {
         return !statuses.isEmpty();
+    }
+
+    /** 셀러 ID 필터가 있는지 확인. */
+    public boolean hasSellerFilter() {
+        return !sellerIds.isEmpty();
+    }
+
+    /** 외부 주문번호 필터가 있는지 확인. */
+    public boolean hasShopOrderNoFilter() {
+        return !shopOrderNos.isEmpty();
     }
 
     /** 검색 조건이 있는지 확인. */

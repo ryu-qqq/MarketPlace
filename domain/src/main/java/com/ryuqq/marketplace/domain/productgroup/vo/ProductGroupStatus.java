@@ -82,4 +82,13 @@ public enum ProductGroupStatus {
     public boolean canDelete() {
         return this != DELETED;
     }
+
+    /** 외부 채널 삭제가 필요한 상태 (INACTIVE, DELETED). */
+    public boolean requiresExternalDeregistration() {
+        return this == INACTIVE || this == DELETED;
+    }
+
+    public boolean isSoldout() {
+        return this == SOLDOUT;
+    }
 }
