@@ -32,7 +32,10 @@ public record ApplySellerApplicationApiRequest(
                 @NotNull
                 @Valid
                 CsContactInfo csContact,
-        @Schema(description = "담당자 연락처") @Valid ContactInfo contactInfo,
+        @Schema(description = "담당자 연락처", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull
+                @Valid
+                ContactInfo contactInfo,
         @Schema(description = "정산 정보", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid
                 SettlementInfo settlementInfo) {
 
