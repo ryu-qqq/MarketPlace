@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.product.entity.ProductJpaEn
 import com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.ProductGroupImageJpaEntity;
 import jakarta.persistence.EntityManager;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -362,7 +363,7 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
         @DisplayName("COMPLETED 상태 outbox가 있으면 연동상태를 반환합니다")
         void fetchLatestSyncInfo_WithCompletedOutbox_ReturnsSyncInfo() {
             // given
-            Instant processedAt = Instant.now().minusSeconds(3600);
+            Instant processedAt = Instant.now().minusSeconds(3600).truncatedTo(ChronoUnit.MICROS);
             persist(
                     createOutbox(
                             PG_ID_1,
@@ -384,8 +385,8 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
         @DisplayName("여러 outbox가 있으면 processedAt이 가장 최신인 것을 반환합니다")
         void fetchLatestSyncInfo_WithMultipleOutboxes_ReturnsLatestOne() {
             // given
-            Instant older = Instant.now().minusSeconds(7200);
-            Instant newer = Instant.now().minusSeconds(3600);
+            Instant older = Instant.now().minusSeconds(7200).truncatedTo(ChronoUnit.MICROS);
+            Instant newer = Instant.now().minusSeconds(3600).truncatedTo(ChronoUnit.MICROS);
             persist(
                     createOutbox(
                             PG_ID_1,
