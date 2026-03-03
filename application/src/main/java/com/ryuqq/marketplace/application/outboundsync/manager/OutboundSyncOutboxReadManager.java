@@ -2,9 +2,11 @@ package com.ryuqq.marketplace.application.outboundsync.manager;
 
 import com.ryuqq.marketplace.application.outboundsync.port.out.query.OutboundSyncOutboxQueryPort;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
+import com.ryuqq.marketplace.domain.outboundsync.vo.SyncStatusSummary;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,12 @@ public class OutboundSyncOutboxReadManager {
     @Transactional(readOnly = true)
     public List<OutboundSyncOutbox> findPendingByProductGroupId(ProductGroupId productGroupId) {
         return queryPort.findPendingByProductGroupId(productGroupId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OutboundSyncOutbox> findPendingByProductGroupIds(
+            Collection<ProductGroupId> productGroupIds) {
+        return queryPort.findPendingByProductGroupIds(productGroupIds);
     }
 
     @Transactional(readOnly = true)
@@ -44,5 +52,10 @@ public class OutboundSyncOutboxReadManager {
     public List<OutboundSyncOutbox> findActiveByProductGroupIdAndSyncType(
             ProductGroupId productGroupId, SyncType syncType) {
         return queryPort.findActiveByProductGroupIdAndSyncType(productGroupId, syncType);
+    }
+
+    @Transactional(readOnly = true)
+    public SyncStatusSummary getSyncSummary(Long productGroupId) {
+        return queryPort.getSyncSummary(productGroupId);
     }
 }

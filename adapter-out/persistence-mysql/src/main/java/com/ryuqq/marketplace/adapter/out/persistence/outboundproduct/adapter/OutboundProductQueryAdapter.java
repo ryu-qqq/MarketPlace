@@ -36,6 +36,13 @@ public class OutboundProductQueryAdapter implements OutboundProductQueryPort {
     }
 
     @Override
+    public List<OutboundProduct> findByProductGroupIds(List<Long> productGroupIds) {
+        return repository.findByProductGroupIdIn(productGroupIds).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<OutboundProduct> findRegisteredByProductGroupId(Long productGroupId) {
         return repository
                 .findByProductGroupIdAndStatus(

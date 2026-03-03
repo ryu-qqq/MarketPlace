@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.session.controller;
 
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.session.LegacySessionEndpoints.IMAGE_PRESIGNED;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.session.dto.request.LegacyPresignedUrlApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.session.dto.response.LegacyPresignedUrlApiResponse;
@@ -41,8 +42,9 @@ public class LegacySessionController {
             summary = "레거시 Presigned URL 발급",
             description = "세토프 어드민 호환 Presigned URL을 발급합니다. 클라이언트가 직접 S3에 업로드할 수 있습니다.")
     @PreAuthorize("@access.authenticated()")
+    @RequirePermission(value = "legacy:image:write", description = "레거시 Presigned URL 발급")
     @PostMapping(IMAGE_PRESIGNED)
-    public ResponseEntity<LegacyApiResponse<LegacyPresignedUrlApiResponse>> getContent(
+    public ResponseEntity<LegacyApiResponse<LegacyPresignedUrlApiResponse>> getPresignedUrl(
             @Valid @RequestBody LegacyPresignedUrlApiRequest request) {
         LegacyGetPresignedUrlCommand command = mapper.toCommand(request);
         LegacyPresignedUrlResult result = legacyGetPresignedUrlUseCase.execute(command);

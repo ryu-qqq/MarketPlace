@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.productgroup.controller;
 
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
@@ -123,7 +124,7 @@ public class ProductGroupCommandController {
     @PreAuthorize("@access.hasPermission('product-group:write')")
     @RequirePermission(value = "product-group:write", description = "상품 그룹 등록")
     @PostMapping
-    public ResponseEntity<ProductGroupIdApiResponse> registerProductGroup(
+    public ResponseEntity<ApiResponse<ProductGroupIdApiResponse>> registerProductGroup(
             @Valid @RequestBody RegisterProductGroupApiRequest request) {
 
         long sellerId = resolveSellerIdForRegistration(request.sellerId());
@@ -131,7 +132,7 @@ public class ProductGroupCommandController {
         Long productGroupId = registerUseCase.execute(command);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ProductGroupIdApiResponse.of(productGroupId));
+                .body(ApiResponse.of(ProductGroupIdApiResponse.of(productGroupId)));
     }
 
     /**
@@ -156,14 +157,15 @@ public class ProductGroupCommandController {
     @PreAuthorize("@access.hasPermission('product-group:write')")
     @RequirePermission(value = "product-group:write", description = "상품 그룹 배치 등록")
     @PostMapping(ProductGroupAdminEndpoints.BATCH)
-    public ResponseEntity<BatchProductGroupResultApiResponse> batchRegisterProductGroups(
-            @Valid @RequestBody BatchRegisterProductGroupApiRequest request) {
+    public ResponseEntity<ApiResponse<BatchProductGroupResultApiResponse>>
+            batchRegisterProductGroups(
+                    @Valid @RequestBody BatchRegisterProductGroupApiRequest request) {
 
         long sellerId = accessChecker.resolveCurrentSellerId();
         List<RegisterProductGroupCommand> commands = mapper.toCommands(sellerId, request);
         BatchProcessingResult<Long> result = batchRegisterUseCase.execute(commands);
 
-        return ResponseEntity.ok(BatchProductGroupResultApiResponse.from(result));
+        return ResponseEntity.ok(ApiResponse.of(BatchProductGroupResultApiResponse.from(result)));
     }
 
     /**

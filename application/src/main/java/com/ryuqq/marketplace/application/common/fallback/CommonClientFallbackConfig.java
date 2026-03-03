@@ -16,6 +16,7 @@ import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
@@ -155,10 +156,7 @@ public class CommonClientFallbackConfig {
             public List<ExternalOrderPayload> fetchNewOrders(
                     long salesChannelId,
                     long shopId,
-                    long sellerId,
-                    String channelCode,
-                    String apiKey,
-                    String apiSecret,
+                    ShopCredentials credentials,
                     Instant fromTime,
                     Instant toTime) {
                 return List.of();

@@ -1,9 +1,8 @@
 package com.ryuqq.marketplace.adapter.out.client.naver.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.naver.auth.NaverCommerceTokenManager;
-import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimRejectRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse;
-import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverReturnApproveRequest;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverReturnRejectRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverReturnRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -13,7 +12,7 @@ import org.springframework.web.client.RestClient;
 /**
  * 네이버 커머스 반품 처리 클라이언트 어댑터.
  *
- * <p>반품 요청/승인/거절/보류/보류해제 API 5개 엔드포인트를 제공합니다.
+ * <p>반품 요청/승인/거부/보류/보류해제 API 5개 엔드포인트를 제공합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
@@ -45,23 +44,21 @@ public class NaverCommerceReturnClientAdapter {
                 .body(NaverClaimResponse.class);
     }
 
-    /** 반품을 승인합니다. */
-    public NaverClaimResponse approveReturn(
-            String productOrderId, NaverReturnApproveRequest request) {
+    /** 반품 요청을 승인합니다. (Request Body 없음) */
+    public NaverClaimResponse approveReturn(String productOrderId) {
         String token = tokenManager.getAccessToken();
 
         return restClient
                 .post()
                 .uri(CLAIM_RETURN_BASE + "/approve", productOrderId)
-                .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
-                .body(request)
                 .retrieve()
                 .body(NaverClaimResponse.class);
     }
 
-    /** 반품을 거절합니다. */
-    public NaverClaimResponse rejectReturn(String productOrderId, NaverClaimRejectRequest request) {
+    /** 반품 요청을 거부(철회)합니다. */
+    public NaverClaimResponse rejectReturn(
+            String productOrderId, NaverReturnRejectRequest request) {
         String token = tokenManager.getAccessToken();
 
         return restClient

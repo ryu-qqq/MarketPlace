@@ -61,10 +61,14 @@ public class SellerSalesChannelJpaEntity extends BaseAuditEntity {
     @Column(name = "display_name", length = 200)
     private String displayName;
 
+    @Column(name = "shop_id", nullable = false)
+    private long shopId;
+
     protected SellerSalesChannelJpaEntity() {
         super();
     }
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     private SellerSalesChannelJpaEntity(
             Long id,
             Long sellerId,
@@ -76,6 +80,7 @@ public class SellerSalesChannelJpaEntity extends BaseAuditEntity {
             String accessToken,
             String vendorId,
             String displayName,
+            long shopId,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
@@ -89,8 +94,10 @@ public class SellerSalesChannelJpaEntity extends BaseAuditEntity {
         this.accessToken = accessToken;
         this.vendorId = vendorId;
         this.displayName = displayName;
+        this.shopId = shopId;
     }
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public static SellerSalesChannelJpaEntity create(
             Long id,
             Long sellerId,
@@ -102,6 +109,7 @@ public class SellerSalesChannelJpaEntity extends BaseAuditEntity {
             String accessToken,
             String vendorId,
             String displayName,
+            long shopId,
             Instant createdAt,
             Instant updatedAt) {
         return new SellerSalesChannelJpaEntity(
@@ -115,6 +123,7 @@ public class SellerSalesChannelJpaEntity extends BaseAuditEntity {
                 accessToken,
                 vendorId,
                 displayName,
+                shopId,
                 createdAt,
                 updatedAt);
     }
@@ -157,6 +166,10 @@ public class SellerSalesChannelJpaEntity extends BaseAuditEntity {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public long getShopId() {
+        return shopId;
     }
 
     /** 연동 상태. */

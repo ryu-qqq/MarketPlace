@@ -85,6 +85,63 @@ class ShopQueryDslRepositoryTest {
     }
 
     @Nested
+    @DisplayName("findByIds")
+    class FindByIdsTest {
+
+        @Test
+        @DisplayName("여러 ID로 미삭제 Entity 목록을 조회합니다")
+        void findByIds_WithValidIds_ReturnsEntities() {
+            ShopJpaEntity saved1 = persist(ShopJpaEntityFixtures.newEntity());
+            ShopJpaEntity saved2 = persist(ShopJpaEntityFixtures.newEntity());
+
+            List<ShopJpaEntity> result =
+                    repository().findByIds(List.of(saved1.getId(), saved2.getId()));
+
+            assertThat(result).hasSize(2);
+            assertThat(result)
+                    .extracting(ShopJpaEntity::getId)
+                    .containsExactlyInAnyOrder(saved1.getId(), saved2.getId());
+        }
+
+        @Test
+        @DisplayName("삭제된 Entity는 findByIds 결과에서 제외됩니다")
+        void findByIds_WithDeletedEntity_ExcludesDeleted() {
+            ShopJpaEntity active = persist(ShopJpaEntityFixtures.newEntity());
+            ShopJpaEntity deleted = persist(ShopJpaEntityFixtures.newDeletedEntity());
+
+            List<ShopJpaEntity> result =
+                    repository().findByIds(List.of(active.getId(), deleted.getId()));
+
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst().getId()).isEqualTo(active.getId());
+        }
+
+        @Test
+        @DisplayName("빈 ID 목록으로 조회 시 빈 결과를 반환합니다")
+        void findByIds_WithEmptyIds_ReturnsEmpty() {
+            List<ShopJpaEntity> result = repository().findByIds(List.of());
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("null ID 목록으로 조회 시 빈 결과를 반환합니다")
+        void findByIds_WithNullIds_ReturnsEmpty() {
+            List<ShopJpaEntity> result = repository().findByIds(null);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 ID로 조회 시 빈 결과를 반환합니다")
+        void findByIds_WithNonExistentIds_ReturnsEmpty() {
+            List<ShopJpaEntity> result = repository().findByIds(List.of(999L, 998L));
+
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
     @DisplayName("existsBySalesChannelIdAndAccountId")
     class ExistsBySalesChannelIdAndAccountIdTest {
 

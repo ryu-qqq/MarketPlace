@@ -33,6 +33,17 @@ public class SellerSalesChannelQueryAdapter implements SellerSalesChannelQueryPo
     }
 
     @Override
+    public List<SellerSalesChannel> findConnectedBySellerIds(java.util.Set<SellerId> sellerIds) {
+        java.util.Set<Long> rawIds =
+                sellerIds.stream()
+                        .map(SellerId::value)
+                        .collect(java.util.stream.Collectors.toSet());
+        return queryDslRepository.findConnectedBySellerIds(rawIds).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public Optional<SellerSalesChannel> findBySellerIdAndSalesChannelId(
             SellerId sellerId, SalesChannelId salesChannelId) {
         SellerSalesChannelJpaEntity entity =

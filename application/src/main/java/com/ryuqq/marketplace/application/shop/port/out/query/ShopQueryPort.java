@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface ShopQueryPort {
     Optional<Shop> findById(ShopId id);
 
+    List<Shop> findByIds(List<ShopId> ids);
+
     List<Shop> findByCriteria(ShopSearchCriteria criteria);
 
     long countByCriteria(ShopSearchCriteria criteria);
@@ -18,4 +20,6 @@ public interface ShopQueryPort {
 
     boolean existsBySalesChannelIdAndAccountIdExcluding(
             Long salesChannelId, String accountId, ShopId excludeId);
+
+    List<Shop> findActiveBySalesChannelId(Long salesChannelId);
 }

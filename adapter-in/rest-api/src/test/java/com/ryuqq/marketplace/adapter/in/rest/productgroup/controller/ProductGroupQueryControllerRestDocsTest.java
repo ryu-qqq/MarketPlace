@@ -116,7 +116,7 @@ class ProductGroupQueryControllerRestDocsTest {
                                             parameterWithName("categoryIds")
                                                     .description("카테고리 ID 목록")
                                                     .optional(),
-                                            parameterWithName("productGroupIds")
+                                            parameterWithName("productIds")
                                                     .description("상품 그룹 ID 목록")
                                                     .optional(),
                                             parameterWithName("searchField")
@@ -771,7 +771,7 @@ class ProductGroupQueryControllerRestDocsTest {
                                             parameterWithName("categoryIds")
                                                     .description("카테고리 ID 목록")
                                                     .optional(),
-                                            parameterWithName("productGroupIds")
+                                            parameterWithName("productIds")
                                                     .description("상품 그룹 ID 목록")
                                                     .optional(),
                                             parameterWithName("searchField")

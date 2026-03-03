@@ -18,4 +18,6 @@ public interface OutboundProductJpaRepository
 
     Optional<OutboundProductJpaEntity> findByExternalProductIdAndSalesChannelId(
             String externalProductId, Long salesChannelId);
+
+    List<OutboundProductJpaEntity> findByProductGroupIdIn(List<Long> productGroupIds);
 }

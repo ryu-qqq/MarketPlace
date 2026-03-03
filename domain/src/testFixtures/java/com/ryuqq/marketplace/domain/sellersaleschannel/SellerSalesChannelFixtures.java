@@ -30,6 +30,8 @@ public final class SellerSalesChannelFixtures {
 
     // ===== SellerSalesChannel Aggregate Fixtures =====
 
+    public static final long DEFAULT_SHOP_ID = 0L;
+
     /** 새 셀러 판매채널 생성 (CONNECTED 상태, ID 없음). */
     public static SellerSalesChannel newSellerSalesChannel() {
         return SellerSalesChannel.forNew(
@@ -41,6 +43,7 @@ public final class SellerSalesChannelFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 CommonVoFixtures.now());
     }
 
@@ -55,6 +58,7 @@ public final class SellerSalesChannelFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 CommonVoFixtures.now());
     }
 
@@ -72,6 +76,7 @@ public final class SellerSalesChannelFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 yesterday,
                 yesterday);
     }
@@ -90,6 +95,7 @@ public final class SellerSalesChannelFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 yesterday,
                 yesterday);
     }
@@ -108,6 +114,7 @@ public final class SellerSalesChannelFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 yesterday,
                 yesterday);
     }
@@ -126,6 +133,7 @@ public final class SellerSalesChannelFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 yesterday,
                 yesterday);
     }
