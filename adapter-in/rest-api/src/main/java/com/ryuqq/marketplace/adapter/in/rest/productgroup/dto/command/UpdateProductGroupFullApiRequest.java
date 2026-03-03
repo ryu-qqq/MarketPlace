@@ -50,7 +50,8 @@ public record UpdateProductGroupFullApiRequest(
                 @Min(value = 1, message = "환불 정책 ID는 1 이상이어야 합니다")
                 Long refundPolicyId,
         @Schema(
-                        description = "옵션 타입 (COMBINATION, SINGLE, NONE). 미입력 시 optionGroups 수로 자동 결정",
+                        description =
+                                "옵션 타입 (COMBINATION, SINGLE, NONE). 미입력 시 optionGroups 수로 자동 결정",
                         example = "COMBINATION",
                         nullable = true)
                 String optionType,

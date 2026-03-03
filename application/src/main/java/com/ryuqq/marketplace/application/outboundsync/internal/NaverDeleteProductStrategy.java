@@ -63,10 +63,7 @@ public class NaverDeleteProductStrategy implements OutboundSyncExecutionStrategy
 
         } catch (Exception e) {
             log.error(
-                    "네이버 상품 삭제 실패: productGroupId={}, error={}",
-                    productGroupId,
-                    e.getMessage(),
-                    e);
+                    "네이버 상품 삭제 실패: productGroupId={}, error={}", productGroupId, e.getMessage(), e);
             return OutboundSyncExecutionResult.failure(e.getMessage(), true);
         }
     }

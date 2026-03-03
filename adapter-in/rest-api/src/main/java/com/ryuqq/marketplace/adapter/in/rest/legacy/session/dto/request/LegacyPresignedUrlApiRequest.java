@@ -22,6 +22,7 @@ public record LegacyPresignedUrlApiRequest(
                             "PRODUCT", "DESCRIPTION", "QNA",
                             "CONTENT", "IMAGE_COMPONENT", "BANNER"
                         })
-                @NotBlank String imagePath,
+                @NotBlank
+                String imagePath,
         @Schema(description = "파일 크기 (bytes), 미입력 시 기본값 10MB", example = "1048576")
                 Long fileSize) {}

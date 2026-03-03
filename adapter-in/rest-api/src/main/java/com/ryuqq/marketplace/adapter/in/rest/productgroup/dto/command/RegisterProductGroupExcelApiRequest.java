@@ -35,7 +35,8 @@ public record RegisterProductGroupExcelApiRequest(
                 @Size(max = 200, message = "상품 그룹명은 200자 이하여야 합니다")
                 String productGroupName,
         @Schema(
-                        description = "옵션 타입 (COMBINATION, SINGLE, NONE). 미입력 시 optionGroups 수로 자동 결정",
+                        description =
+                                "옵션 타입 (COMBINATION, SINGLE, NONE). 미입력 시 optionGroups 수로 자동 결정",
                         example = "COMBINATION",
                         nullable = true)
                 String optionType,

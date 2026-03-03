@@ -113,8 +113,7 @@ public class ProductGroupActivationOutboxCoordinator {
         }
 
         List<OutboundProduct> deregisteredProducts =
-                outboundProductReadManager.findDeregisteredByProductGroupId(
-                        productGroup.idValue());
+                outboundProductReadManager.findDeregisteredByProductGroupId(productGroup.idValue());
 
         if (!deregisteredProducts.isEmpty()) {
             Instant now = Instant.now();
