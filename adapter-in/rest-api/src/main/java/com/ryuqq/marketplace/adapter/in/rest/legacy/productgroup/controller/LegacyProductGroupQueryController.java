@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.controller;
 
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.LegacyProductGroupEndpoints.PRODUCT_GROUP_ID;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.mapper.LegacyProductGroupQueryApiMapper;
@@ -37,6 +38,7 @@ public class LegacyProductGroupQueryController {
 
     @Operation(summary = "레거시 상품그룹 상세 조회", description = "세토프 어드민 호환 형식으로 상품그룹 상세를 조회합니다.")
     @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
+    @RequirePermission(value = "legacy:product-group:read", description = "레거시 상품그룹 상세 조회")
     @GetMapping(PRODUCT_GROUP_ID)
     public ResponseEntity<LegacyApiResponse<LegacyProductDetailApiResponse>> fetchProductGroup(
             @Parameter(description = "조회할 상품그룹 ID") @PathVariable long productGroupId) {

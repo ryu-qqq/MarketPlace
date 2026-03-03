@@ -14,6 +14,7 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverWishedDeliv
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceOrderMapper;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
+import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -63,14 +64,10 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
     }
 
     @Override
-    @SuppressWarnings("PMD.ExcessiveParameterList")
     public List<ExternalOrderPayload> fetchNewOrders(
             long salesChannelId,
             long shopId,
-            long sellerId,
-            String channelCode,
-            String apiKey,
-            String apiSecret,
+            ShopCredentials credentials,
             Instant fromTime,
             Instant toTime) {
 
@@ -138,7 +135,7 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
 
     /** 변경 상품주문 내역을 조회합니다 (폴링용). */
     public NaverLastChangedStatusesResponse getLastChangedStatuses(
-            Instant fromTime, Instant toTime, Long moreSequence) {
+            Instant fromTime, Instant toTime, String moreSequence) {
         String token = tokenManager.getAccessToken();
 
         Map<String, Object> params = new LinkedHashMap<>();
@@ -203,7 +200,7 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
         log.info("네이버 발주 확인 완료: {}건", productOrderIds.size());
     }
 
-    /** 발송을 처리합니다. */
+    /** 발송을 처리합니다 (최대 30건). */
     public void dispatchOrders(NaverOrderDispatchRequest request) {
         String token = tokenManager.getAccessToken();
 
@@ -220,12 +217,12 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
     }
 
     /** 발송 지연을 처리합니다. */
-    public void delayDispatch(NaverOrderDelayRequest request) {
+    public void delayDispatch(String productOrderId, NaverOrderDelayRequest request) {
         String token = tokenManager.getAccessToken();
 
         restClient
                 .post()
-                .uri("/v1/pay-order/seller/product-orders/delay")
+                .uri("/v1/pay-order/seller/product-orders/{productOrderId}/delay", productOrderId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .body(request)
@@ -234,12 +231,14 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
     }
 
     /** 배송 희망일을 변경합니다. */
-    public void changeWishedDeliveryDate(NaverWishedDeliveryDateRequest request) {
+    public void changeHopeDelivery(String productOrderId, NaverWishedDeliveryDateRequest request) {
         String token = tokenManager.getAccessToken();
 
         restClient
                 .post()
-                .uri("/v1/pay-order/seller/product-orders/wished-delivery-date")
+                .uri(
+                        "/v1/pay-order/seller/product-orders/{productOrderId}/hope-delivery/change",
+                        productOrderId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .body(request)
@@ -251,7 +250,7 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
 
     private List<String> pollChangedProductOrderIds(Instant fromTime, Instant toTime) {
         List<String> allProductOrderIds = new ArrayList<>();
-        Long moreSequence = null;
+        String moreSequence = null;
 
         do {
             NaverLastChangedStatusesResponse response =

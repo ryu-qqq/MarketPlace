@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildescripti
 
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildescription.LegacyProductGroupDescriptionEndpoints.DETAIL_DESCRIPTION;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildescription.dto.request.LegacyUpdateProductDescriptionRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildescription.mapper.LegacyDescriptionCommandApiMapper;
@@ -33,6 +34,7 @@ public class LegacyProductGroupDescriptionCommandController {
 
     @Operation(summary = "레거시 상품그룹 상세설명 수정", description = "세토프 어드민용 레거시 상품그룹의 상세설명을 수정합니다.")
     @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
+    @RequirePermission(value = "legacy:product-group:write", description = "레거시 상품그룹 상세설명 수정")
     @PutMapping(DETAIL_DESCRIPTION)
     public ResponseEntity<LegacyApiResponse<Long>> updateDetailDescription(
             @PathVariable long productGroupId,

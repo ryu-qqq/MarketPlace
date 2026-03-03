@@ -25,9 +25,11 @@ public class SellerSalesChannel {
     private final String accessToken;
     private final String vendorId;
     private final String displayName;
+    private final long shopId;
     private final Instant createdAt;
     private Instant updatedAt;
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     private SellerSalesChannel(
             SellerSalesChannelId id,
             SellerId sellerId,
@@ -39,6 +41,7 @@ public class SellerSalesChannel {
             String accessToken,
             String vendorId,
             String displayName,
+            long shopId,
             Instant createdAt,
             Instant updatedAt) {
         this.id = id;
@@ -51,6 +54,7 @@ public class SellerSalesChannel {
         this.accessToken = accessToken;
         this.vendorId = vendorId;
         this.displayName = displayName;
+        this.shopId = shopId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -69,6 +73,7 @@ public class SellerSalesChannel {
      * @param now 현재 시각
      * @return 새 SellerSalesChannel 인스턴스
      */
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public static SellerSalesChannel forNew(
             SellerId sellerId,
             SalesChannelId salesChannelId,
@@ -78,6 +83,7 @@ public class SellerSalesChannel {
             String accessToken,
             String vendorId,
             String displayName,
+            long shopId,
             Instant now) {
         return new SellerSalesChannel(
                 SellerSalesChannelId.forNew(),
@@ -90,6 +96,7 @@ public class SellerSalesChannel {
                 accessToken,
                 vendorId,
                 displayName,
+                shopId,
                 now,
                 now);
     }
@@ -111,6 +118,7 @@ public class SellerSalesChannel {
      * @param updatedAt 수정일시
      * @return 재구성된 SellerSalesChannel 인스턴스
      */
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public static SellerSalesChannel reconstitute(
             SellerSalesChannelId id,
             SellerId sellerId,
@@ -122,6 +130,7 @@ public class SellerSalesChannel {
             String accessToken,
             String vendorId,
             String displayName,
+            long shopId,
             Instant createdAt,
             Instant updatedAt) {
         return new SellerSalesChannel(
@@ -135,6 +144,7 @@ public class SellerSalesChannel {
                 accessToken,
                 vendorId,
                 displayName,
+                shopId,
                 createdAt,
                 updatedAt);
     }
@@ -212,6 +222,10 @@ public class SellerSalesChannel {
 
     public String displayName() {
         return displayName;
+    }
+
+    public long shopId() {
+        return shopId;
     }
 
     public Instant createdAt() {

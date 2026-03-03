@@ -64,74 +64,32 @@ public class ProductGroupQueryAdapter implements ProductGroupQueryPort {
     }
 
     @Override
+    public List<ProductGroup> findByIds(List<ProductGroupId> ids) {
+        List<Long> rawIds = ids.stream().map(ProductGroupId::value).toList();
+        List<ProductGroupJpaEntity> parentEntities = queryDslRepository.findByIds(rawIds);
+        return assembleProductGroups(parentEntities);
+    }
+
+    @Override
     public List<ProductGroup> findByIdsAndSellerId(List<ProductGroupId> ids, long sellerId) {
         List<Long> rawIds = ids.stream().map(ProductGroupId::value).toList();
         List<ProductGroupJpaEntity> parentEntities =
                 queryDslRepository.findByIdsAndSellerId(rawIds, sellerId);
-
-        if (parentEntities.isEmpty()) {
-            return List.of();
-        }
-
-        List<Long> productGroupIds =
-                parentEntities.stream().map(ProductGroupJpaEntity::getId).toList();
-
-        List<ProductGroupImageJpaEntity> allImages =
-                queryDslRepository.findImagesByProductGroupIds(productGroupIds);
-
-        List<SellerOptionGroupJpaEntity> allGroups =
-                queryDslRepository.findOptionGroupsByProductGroupIds(productGroupIds);
-
-        List<Long> allGroupIds = allGroups.stream().map(SellerOptionGroupJpaEntity::getId).toList();
-
-        List<SellerOptionValueJpaEntity> allValues =
-                queryDslRepository.findOptionValuesByOptionGroupIds(allGroupIds);
-
-        Map<Long, List<ProductGroupImageJpaEntity>> imagesByProductGroupId =
-                allImages.stream()
-                        .collect(
-                                Collectors.groupingBy(
-                                        ProductGroupImageJpaEntity::getProductGroupId));
-
-        Map<Long, List<SellerOptionGroupJpaEntity>> groupsByProductGroupId =
-                allGroups.stream()
-                        .collect(
-                                Collectors.groupingBy(
-                                        SellerOptionGroupJpaEntity::getProductGroupId));
-
-        Map<Long, List<SellerOptionValueJpaEntity>> valuesByGroupId =
-                allValues.stream()
-                        .collect(
-                                Collectors.groupingBy(
-                                        SellerOptionValueJpaEntity::getSellerOptionGroupId));
-
-        List<ProductGroup> results = new ArrayList<>();
-        for (ProductGroupJpaEntity parentEntity : parentEntities) {
-            Long pgId = parentEntity.getId();
-
-            List<ProductGroupImageJpaEntity> images =
-                    imagesByProductGroupId.getOrDefault(pgId, List.of());
-
-            List<SellerOptionGroupJpaEntity> groups =
-                    groupsByProductGroupId.getOrDefault(pgId, List.of());
-
-            List<Long> groupIds = groups.stream().map(SellerOptionGroupJpaEntity::getId).toList();
-
-            List<SellerOptionValueJpaEntity> values = new ArrayList<>();
-            for (Long groupId : groupIds) {
-                values.addAll(valuesByGroupId.getOrDefault(groupId, List.of()));
-            }
-
-            results.add(mapper.toDomain(parentEntity, images, groups, values));
-        }
-
-        return results;
+        return assembleProductGroups(parentEntities);
     }
 
     @Override
     public List<ProductGroup> findByCriteria(ProductGroupSearchCriteria criteria) {
         List<ProductGroupJpaEntity> parentEntities = queryDslRepository.findByCriteria(criteria);
+        return assembleProductGroups(parentEntities);
+    }
 
+    @Override
+    public long countByCriteria(ProductGroupSearchCriteria criteria) {
+        return queryDslRepository.countByCriteria(criteria);
+    }
+
+    private List<ProductGroup> assembleProductGroups(List<ProductGroupJpaEntity> parentEntities) {
         if (parentEntities.isEmpty()) {
             return List.of();
         }
@@ -189,10 +147,5 @@ public class ProductGroupQueryAdapter implements ProductGroupQueryPort {
         }
 
         return results;
-    }
-
-    @Override
-    public long countByCriteria(ProductGroupSearchCriteria criteria) {
-        return queryDslRepository.countByCriteria(criteria);
     }
 }

@@ -1,9 +1,9 @@
 package com.ryuqq.marketplace.adapter.out.client.naver.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.naver.auth.NaverCommerceTokenManager;
-import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimRejectRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverExchangeReDeliveryRequest;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverExchangeRejectRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.web.client.RestClient;
 /**
  * 네이버 커머스 교환 처리 클라이언트 어댑터.
  *
- * <p>교환 수거완료 승인/재배송/거절/보류/보류해제 API 5개 엔드포인트를 제공합니다.
+ * <p>교환 수거완료 승인/재배송/거부/보류/보류해제 API 5개 엔드포인트를 제공합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
@@ -49,7 +49,7 @@ public class NaverCommerceExchangeClientAdapter {
 
         return restClient
                 .post()
-                .uri(CLAIM_EXCHANGE_BASE + "/re-delivery", productOrderId)
+                .uri(CLAIM_EXCHANGE_BASE + "/dispatch", productOrderId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .body(request)
@@ -57,9 +57,9 @@ public class NaverCommerceExchangeClientAdapter {
                 .body(NaverClaimResponse.class);
     }
 
-    /** 교환을 거절합니다. */
+    /** 교환 요청을 거부(철회)합니다. */
     public NaverClaimResponse rejectExchange(
-            String productOrderId, NaverClaimRejectRequest request) {
+            String productOrderId, NaverExchangeRejectRequest request) {
         String token = tokenManager.getAccessToken();
 
         return restClient

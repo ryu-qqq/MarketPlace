@@ -147,6 +147,15 @@ scheduler:
       # Stage: 200건 제한
       max-total: 200
 
+    inbound-order-polling:
+      entries:
+        - sales-channel-id: 1
+          enabled: true
+          # Stage: 5분마다
+          cron: "0 */5 * * * *"
+          timezone: Asia/Seoul
+          batch-size: 300
+
     inbound-product-retry:
       # Stage: 5분마다
       cron: "0 */5 * * * *"

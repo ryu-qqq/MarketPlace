@@ -168,7 +168,19 @@ class ShopAssemblerTest {
     private Shop createShop(Long shopId, String shopName, String accountId) {
         Instant now = Instant.now();
         return Shop.reconstitute(
-                ShopId.of(shopId), 1L, shopName, accountId, ShopStatus.ACTIVE, null, now, now);
+                ShopId.of(shopId),
+                1L,
+                shopName,
+                accountId,
+                ShopStatus.ACTIVE,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                now,
+                now);
     }
 
     private Shop createInactiveShop(Long shopId) {
@@ -179,6 +191,11 @@ class ShopAssemblerTest {
                 "비활성 외부몰",
                 "inactive-account",
                 ShopStatus.INACTIVE,
+                null,
+                null,
+                null,
+                null,
+                null,
                 null,
                 now,
                 now);

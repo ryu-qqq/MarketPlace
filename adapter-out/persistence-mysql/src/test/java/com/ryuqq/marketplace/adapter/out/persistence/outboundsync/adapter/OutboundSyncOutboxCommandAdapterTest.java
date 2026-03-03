@@ -10,6 +10,8 @@ import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.mapper.Outboun
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.repository.OutboundSyncOutboxJpaRepository;
 import com.ryuqq.marketplace.domain.outboundsync.OutboundSyncOutboxFixtures;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
+import com.ryuqq.marketplace.domain.outboundsync.vo.SyncStatus;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -224,6 +226,117 @@ class OutboundSyncOutboxCommandAdapterTest {
             // then
             then(mapper).should().toEntity(domain);
             then(repository).should().saveAll(List.of(entity));
+        }
+    }
+
+    // ========================================================================
+    // 3. retrySyncHistory 흐름 - version 갱신 검증
+    // ========================================================================
+
+    @Nested
+    @DisplayName("persist() - retrySyncHistory 시나리오: version 갱신 검증")
+    class PersistVersionRefreshTest {
+
+        @Test
+        @DisplayName("persist 호출 후 저장된 Entity의 version이 Domain에 반영됩니다")
+        void persist_AfterSave_RefreshesVersionOnDomain() {
+            // given
+            OutboundSyncOutbox domain = OutboundSyncOutboxFixtures.pendingOutbox();
+            OutboundSyncOutboxJpaEntity entity =
+                    OutboundSyncOutboxJpaEntityFixtures.pendingEntity();
+
+            long versionBeforeSave = domain.version();
+
+            // JPA @Version 자동 증가를 시뮬레이션: version 1 반환
+            OutboundSyncOutboxJpaEntity savedEntity =
+                    OutboundSyncOutboxJpaEntity.of(
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_ID,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_PRODUCT_GROUP_ID,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_SELLER_ID,
+                            OutboundSyncOutboxJpaEntity.SyncType.CREATE,
+                            OutboundSyncOutboxJpaEntity.Status.PENDING,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_PAYLOAD,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_RETRY_COUNT,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_MAX_RETRY,
+                            Instant.now(),
+                            Instant.now(),
+                            null,
+                            null,
+                            1L,
+                            entity.getIdempotencyKey());
+
+            given(mapper.toEntity(domain)).willReturn(entity);
+            given(repository.save(entity)).willReturn(savedEntity);
+
+            // when
+            sut.persist(domain);
+
+            // then
+            assertThat(domain.version()).isNotEqualTo(versionBeforeSave).isEqualTo(1L);
+        }
+
+        @Test
+        @DisplayName("retry 후 PENDING 전이된 Domain을 persist하면 version이 갱신됩니다")
+        void persist_AfterRetry_RefreshesVersion() {
+            // given
+            OutboundSyncOutbox failedDomain = OutboundSyncOutboxFixtures.failedOutbox();
+            failedDomain.retry(Instant.now());
+
+            assertThat(failedDomain.status()).isEqualTo(SyncStatus.PENDING);
+
+            OutboundSyncOutboxJpaEntity entity =
+                    OutboundSyncOutboxJpaEntityFixtures.pendingEntity();
+
+            OutboundSyncOutboxJpaEntity savedEntity =
+                    OutboundSyncOutboxJpaEntity.of(
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_ID,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_PRODUCT_GROUP_ID,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_SELLER_ID,
+                            OutboundSyncOutboxJpaEntity.SyncType.CREATE,
+                            OutboundSyncOutboxJpaEntity.Status.PENDING,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_PAYLOAD,
+                            0,
+                            OutboundSyncOutboxJpaEntityFixtures.DEFAULT_MAX_RETRY,
+                            Instant.now(),
+                            Instant.now(),
+                            null,
+                            null,
+                            2L,
+                            entity.getIdempotencyKey());
+
+            given(mapper.toEntity(failedDomain)).willReturn(entity);
+            given(repository.save(entity)).willReturn(savedEntity);
+
+            // when
+            Long savedId = sut.persist(failedDomain);
+
+            // then
+            assertThat(savedId).isEqualTo(OutboundSyncOutboxJpaEntityFixtures.DEFAULT_ID);
+            assertThat(failedDomain.version()).isEqualTo(2L);
+            then(mapper).should().toEntity(failedDomain);
+            then(repository).should().save(entity);
+        }
+
+        @Test
+        @DisplayName("persist 호출 시 mapper.toEntity와 repository.save가 순서대로 호출됩니다")
+        void persist_CallsMapperThenRepository() {
+            // given
+            OutboundSyncOutbox domain = OutboundSyncOutboxFixtures.pendingOutbox();
+            OutboundSyncOutboxJpaEntity entity =
+                    OutboundSyncOutboxJpaEntityFixtures.pendingEntity();
+
+            given(mapper.toEntity(domain)).willReturn(entity);
+            given(repository.save(entity)).willReturn(entity);
+
+            // when
+            sut.persist(domain);
+
+            // then
+            org.mockito.InOrder inOrder = Mockito.inOrder(mapper, repository);
+            inOrder.verify(mapper).toEntity(domain);
+            inOrder.verify(repository).save(entity);
         }
     }
 }

@@ -24,6 +24,7 @@ public class SellerSalesChannelJpaEntityMapper {
                 domain.accessToken(),
                 domain.vendorId(),
                 domain.displayName(),
+                domain.shopId(),
                 domain.createdAt(),
                 domain.updatedAt());
     }
@@ -45,6 +46,7 @@ public class SellerSalesChannelJpaEntityMapper {
                 entity.getAccessToken(),
                 entity.getVendorId(),
                 entity.getDisplayName(),
+                entity.getShopId(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());
     }

@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.naver.mapper;
 
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderDetail;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderOrder;
-import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderShipping;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverShippingAddress;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderItemPayload;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import java.time.Instant;
@@ -50,7 +50,7 @@ public class NaverCommerceOrderMapper {
                 orderId,
                 parseInstant(order.orderDate()),
                 order.ordererName(),
-                order.ordererEmail(),
+                null,
                 order.ordererTel(),
                 order.payLocationType(),
                 totalPayment,
@@ -60,25 +60,25 @@ public class NaverCommerceOrderMapper {
 
     private ExternalOrderItemPayload toItemPayload(NaverProductOrderDetail detail) {
         NaverProductOrderDetail.ProductOrderInfo po = detail.productOrder();
-        NaverProductOrderShipping ship = detail.delivery();
+        NaverShippingAddress addr = po.shippingAddress();
 
         return new ExternalOrderItemPayload(
                 po.productId(),
                 po.optionCode(),
                 po.productName(),
                 po.productOption(),
-                po.imageUrl(),
+                null,
                 po.unitPrice(),
                 po.quantity(),
                 po.totalProductAmount(),
                 po.productDiscountAmount(),
                 po.totalPaymentAmount(),
-                ship != null ? ship.recipientName() : null,
-                ship != null ? ship.recipientTelNo1() : null,
-                ship != null ? ship.zipCode() : null,
-                ship != null ? ship.baseAddress() : null,
-                ship != null ? ship.detailedAddress() : null,
-                ship != null ? ship.deliveryMemo() : null);
+                addr != null ? addr.name() : null,
+                addr != null ? addr.tel1() : null,
+                addr != null ? addr.zipCode() : null,
+                addr != null ? addr.baseAddress() : null,
+                addr != null ? addr.detailedAddress() : null,
+                po.shippingMemo());
     }
 
     private Instant parseInstant(String dateStr) {

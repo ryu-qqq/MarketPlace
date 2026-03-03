@@ -91,6 +91,11 @@ class RegisterShopServiceTest {
                     "test-account-123",
                     com.ryuqq.marketplace.domain.shop.vo.ShopStatus.ACTIVE,
                     null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
                     now,
                     now);
         }

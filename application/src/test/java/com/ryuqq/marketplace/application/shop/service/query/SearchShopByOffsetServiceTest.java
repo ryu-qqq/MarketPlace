@@ -170,6 +170,11 @@ class SearchShopByOffsetServiceTest {
                     "test-account-" + shopId,
                     ShopStatus.ACTIVE,
                     null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
                     now,
                     now);
         }

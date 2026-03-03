@@ -69,7 +69,7 @@ public record SearchProductGroupsApiRequest(
                 @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다")
                 Integer page,
         @Parameter(description = "페이지 크기. 기본값: 20", example = "20")
-                @Schema(description = "페이지 크기", minimum = "1", maximum = "100")
+                @Schema(description = "페이지 크기", minimum = "1", maximum = "2000")
                 @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다")
-                @Max(value = 100, message = "페이지 크기는 100 이하여야 합니다")
+                @Max(value = 2000, message = "페이지 크기는 2000 이하여야 합니다")
                 Integer size) {}

@@ -4,6 +4,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.e
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.entity.SellerSalesChannelJpaEntity;
+import java.util.Collection;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,6 +17,12 @@ public class SellerSalesChannelConditionBuilder {
 
     public BooleanExpression sellerIdEq(Long sellerId) {
         return sellerId != null ? sellerSalesChannelJpaEntity.sellerId.eq(sellerId) : null;
+    }
+
+    public BooleanExpression sellerIdIn(Collection<Long> sellerIds) {
+        return sellerIds != null && !sellerIds.isEmpty()
+                ? sellerSalesChannelJpaEntity.sellerId.in(sellerIds)
+                : null;
     }
 
     public BooleanExpression salesChannelIdEq(Long salesChannelId) {

@@ -159,7 +159,7 @@ class ProductCommandE2ETest extends E2ETestBase {
                 given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
 
         response.then().statusCode(HttpStatus.CREATED.value());
-        productGroupId = response.jsonPath().getLong("productGroupId");
+        productGroupId = response.jsonPath().getLong("data.productGroupId");
 
         // 상품 ID 조회
         Response detail =
