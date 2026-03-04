@@ -13,4 +13,12 @@ public class CategoryMappingNotFoundException extends CategoryMappingException {
     public CategoryMappingNotFoundException(Long categoryMappingId) {
         super(ERROR_CODE, String.format("카테고리 매핑을 찾을 수 없습니다 (id: %d)", categoryMappingId));
     }
+
+    public CategoryMappingNotFoundException(Long salesChannelId, Long internalCategoryId) {
+        super(
+                ERROR_CODE,
+                String.format(
+                        "카테고리 매핑을 찾을 수 없습니다 (salesChannelId: %d, internalCategoryId: %d)",
+                        salesChannelId, internalCategoryId));
+    }
 }

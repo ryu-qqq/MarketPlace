@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.application.outboundsync.internal;
 
-import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
@@ -9,7 +8,6 @@ import com.ryuqq.marketplace.application.outboundsync.port.out.strategy.Outbound
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
-import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,28 +15,25 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
- * 네이버 커머스 상품 수정(UPDATE) 전략.
+ * 세토프 커머스 상품 등록(CREATE) 전략.
  *
- * <p>OutboundProduct에서 externalProductId 조회 → 최신 상품 데이터 조회 → 매핑 역조회 → PUT API 호출.
+ * <p>ProductGroupReadFacade로 상품 데이터 조회 → 매핑 역조회 → SalesChannelProductClient로 API 호출.
  */
 @Component
-@ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
-public class NaverUpdateProductStrategy implements OutboundSyncExecutionStrategy {
+@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+public class SetofCreateProductStrategy implements OutboundSyncExecutionStrategy {
 
-    private static final Logger log = LoggerFactory.getLogger(NaverUpdateProductStrategy.class);
-    private static final String NAVER_CHANNEL_CODE = "NAVER";
+    private static final Logger log = LoggerFactory.getLogger(SetofCreateProductStrategy.class);
+    private static final String SETOF_CHANNEL_CODE = "SETOF";
 
-    private final OutboundProductReadManager outboundProductReadManager;
     private final ProductGroupReadFacade productGroupReadFacade;
     private final OutboundMappingResolver mappingResolver;
     private final SalesChannelProductClientManager productClientManager;
 
-    public NaverUpdateProductStrategy(
-            OutboundProductReadManager outboundProductReadManager,
+    public SetofCreateProductStrategy(
             ProductGroupReadFacade productGroupReadFacade,
             OutboundMappingResolver mappingResolver,
             SalesChannelProductClientManager productClientManager) {
-        this.outboundProductReadManager = outboundProductReadManager;
         this.productGroupReadFacade = productGroupReadFacade;
         this.mappingResolver = mappingResolver;
         this.productClientManager = productClientManager;
@@ -46,7 +41,7 @@ public class NaverUpdateProductStrategy implements OutboundSyncExecutionStrategy
 
     @Override
     public boolean supports(String channelCode, SyncType syncType) {
-        return NAVER_CHANNEL_CODE.equals(channelCode) && syncType == SyncType.UPDATE;
+        return SETOF_CHANNEL_CODE.equals(channelCode) && syncType == SyncType.CREATE;
     }
 
     @Override
@@ -55,14 +50,6 @@ public class NaverUpdateProductStrategy implements OutboundSyncExecutionStrategy
         Long productGroupId = context.productGroupId();
 
         try {
-            OutboundProduct outboundProduct =
-                    outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            productGroupId, salesChannelId);
-
-            if (!outboundProduct.isRegistered() || outboundProduct.externalProductId() == null) {
-                return OutboundSyncExecutionResult.failure("외부 상품 미등록 상태", false);
-            }
-
             ProductGroupDetailBundle bundle =
                     productGroupReadFacade.getDetailBundle(productGroupId);
 
@@ -72,20 +59,20 @@ public class NaverUpdateProductStrategy implements OutboundSyncExecutionStrategy
                             bundle.queryResult().categoryId(),
                             bundle.queryResult().brandId());
 
-            productClientManager.updateProduct(
-                    NAVER_CHANNEL_CODE,
-                    bundle,
-                    mapping.categoryId(),
-                    mapping.brandId(),
-                    outboundProduct.externalProductId(),
-                    context.sellerSalesChannel());
+            String externalProductId =
+                    productClientManager.registerProduct(
+                            SETOF_CHANNEL_CODE,
+                            bundle,
+                            mapping.categoryId(),
+                            mapping.brandId(),
+                            context.sellerSalesChannel());
 
             log.info(
-                    "네이버 상품 수정 성공: productGroupId={}, externalProductId={}",
+                    "세토프 상품 등록 성공: productGroupId={}, externalProductId={}",
                     productGroupId,
-                    outboundProduct.externalProductId());
+                    externalProductId);
 
-            return OutboundSyncExecutionResult.success(outboundProduct.externalProductId());
+            return OutboundSyncExecutionResult.success(externalProductId);
 
         } catch (DomainException e) {
             log.warn(

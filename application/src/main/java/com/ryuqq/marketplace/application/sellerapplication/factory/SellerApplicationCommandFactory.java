@@ -152,10 +152,7 @@ public class SellerApplicationCommandFactory {
      */
     private String buildAuthOutboxPayload(SellerApplication application) {
         return String.format(
-                "{\"sellerName\":\"%s\",\"companyName\":\"%s\",\"registrationNumber\":\"%s\",\"contactEmail\":\"%s\"}",
-                application.sellerNameValue(),
-                application.companyNameValue(),
-                application.registrationNumberValue(),
-                application.contactInfoEmail());
+                "{\"tenantName\":\"%s\",\"organizationName\":\"%s\"}",
+                application.sellerNameValue(), application.companyNameValue());
     }
 }

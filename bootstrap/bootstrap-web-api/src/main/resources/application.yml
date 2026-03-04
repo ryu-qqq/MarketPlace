@@ -70,6 +70,7 @@ spring:
       - classpath:authhub.yml
       - classpath:fileflow.yml
       - classpath:naver-commerce.yml
+      - classpath:setof-commerce.yml
 
   # ===============================================
   # MessageSource (i18n)

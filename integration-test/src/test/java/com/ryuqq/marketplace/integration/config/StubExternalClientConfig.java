@@ -7,6 +7,8 @@ import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
 import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
 import com.ryuqq.marketplace.application.auth.port.out.client.AuthClient;
+import com.ryuqq.marketplace.application.brandmapping.port.out.query.BrandMappingQueryPort;
+import com.ryuqq.marketplace.application.categorymapping.port.out.query.CategoryMappingQueryPort;
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
@@ -28,7 +30,6 @@ import com.ryuqq.marketplace.application.order.port.out.query.OrderQueryPort;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.OutboundSyncPublishClient;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.outboundsync.port.out.command.OutboundSyncOutboxCommandPort;
-import com.ryuqq.marketplace.application.outboundsync.port.out.query.OutboundMappingQueryPort;
 import com.ryuqq.marketplace.application.outboundsync.port.out.query.OutboundSyncOutboxQueryPort;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.AggregationPublishClient;
 import com.ryuqq.marketplace.application.productintelligence.port.out.client.DescriptionAnalysisAiClient;
@@ -294,6 +295,11 @@ public class StubExternalClientConfig {
     public SalesChannelProductClient stubSalesChannelProductClient() {
         return new SalesChannelProductClient() {
             @Override
+            public String channelCode() {
+                return "STUB";
+            }
+
+            @Override
             public String registerProduct(
                     com.ryuqq.marketplace.application.productgroup.dto.composite
                                     .ProductGroupDetailBundle
@@ -330,20 +336,14 @@ public class StubExternalClientConfig {
 
     @Bean
     @Primary
-    public OutboundMappingQueryPort stubOutboundMappingQueryPort() {
-        return new OutboundMappingQueryPort() {
-            @Override
-            public Optional<Long> findSalesChannelCategoryId(
-                    Long salesChannelId, Long internalCategoryId) {
-                return Optional.of(internalCategoryId);
-            }
+    public CategoryMappingQueryPort stubCategoryMappingQueryPort() {
+        return (salesChannelId, internalCategoryId) -> Optional.of(internalCategoryId);
+    }
 
-            @Override
-            public Optional<Long> findSalesChannelBrandId(
-                    Long salesChannelId, Long internalBrandId) {
-                return Optional.of(internalBrandId);
-            }
-        };
+    @Bean
+    @Primary
+    public BrandMappingQueryPort stubBrandMappingQueryPort() {
+        return (salesChannelId, internalBrandId) -> Optional.of(internalBrandId);
     }
 
     @Bean

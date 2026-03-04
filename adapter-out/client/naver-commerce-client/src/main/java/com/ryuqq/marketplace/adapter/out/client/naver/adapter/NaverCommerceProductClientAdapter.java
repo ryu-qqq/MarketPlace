@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import org.springframework.web.client.RestClient;
  * <p>ProductGroupDetailBundle → NaverProductRegistrationRequest 변환 후 POST/PUT API 호출.
  */
 @Component
+@Qualifier("naverProductClient")
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
 public class NaverCommerceProductClientAdapter implements SalesChannelProductClient {
 
@@ -37,6 +39,11 @@ public class NaverCommerceProductClientAdapter implements SalesChannelProductCli
         this.restClient = naverCommerceRestClient;
         this.tokenManager = tokenManager;
         this.mapper = mapper;
+    }
+
+    @Override
+    public String channelCode() {
+        return "NAVER";
     }
 
     @Override

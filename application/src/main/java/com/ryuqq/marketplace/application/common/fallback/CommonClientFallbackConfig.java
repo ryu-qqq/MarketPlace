@@ -169,6 +169,11 @@ public class CommonClientFallbackConfig {
     SalesChannelProductClient noOpSalesChannelProductClient() {
         return new SalesChannelProductClient() {
             @Override
+            public String channelCode() {
+                return "NOOP";
+            }
+
+            @Override
             public String registerProduct(
                     ProductGroupDetailBundle bundle,
                     Long externalCategoryId,
