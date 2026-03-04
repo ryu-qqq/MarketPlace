@@ -14,21 +14,22 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
- * 네이버 커머스 상품 삭제(DELETE) 전략.
+ * 세토프 커머스 상품 삭제(DELETE) 전략.
  *
- * <p>OutboundProduct에서 externalProductId 조회 → DELETE API 호출. CREATE/UPDATE와 달리 상품 데이터 조회 불필요.
+ * <p>OutboundProduct에서 externalProductId 조회 → PUT API로 상태를 DISCONTINUED로 변경. 세토프 커머스는 DELETE API가
+ * 없으므로 상태 변경으로 대체합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
-public class NaverDeleteProductStrategy implements OutboundSyncExecutionStrategy {
+@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+public class SetofDeleteProductStrategy implements OutboundSyncExecutionStrategy {
 
-    private static final Logger log = LoggerFactory.getLogger(NaverDeleteProductStrategy.class);
-    private static final String NAVER_CHANNEL_CODE = "NAVER";
+    private static final Logger log = LoggerFactory.getLogger(SetofDeleteProductStrategy.class);
+    private static final String SETOF_CHANNEL_CODE = "SETOF";
 
     private final OutboundProductReadManager outboundProductReadManager;
     private final SalesChannelProductClientManager productClientManager;
 
-    public NaverDeleteProductStrategy(
+    public SetofDeleteProductStrategy(
             OutboundProductReadManager outboundProductReadManager,
             SalesChannelProductClientManager productClientManager) {
         this.outboundProductReadManager = outboundProductReadManager;
@@ -37,7 +38,7 @@ public class NaverDeleteProductStrategy implements OutboundSyncExecutionStrategy
 
     @Override
     public boolean supports(String channelCode, SyncType syncType) {
-        return NAVER_CHANNEL_CODE.equals(channelCode) && syncType == SyncType.DELETE;
+        return SETOF_CHANNEL_CODE.equals(channelCode) && syncType == SyncType.DELETE;
     }
 
     @Override
@@ -55,12 +56,12 @@ public class NaverDeleteProductStrategy implements OutboundSyncExecutionStrategy
             }
 
             productClientManager.deleteProduct(
-                    NAVER_CHANNEL_CODE,
+                    SETOF_CHANNEL_CODE,
                     outboundProduct.externalProductId(),
                     context.sellerSalesChannel());
 
             log.info(
-                    "네이버 상품 삭제 성공: productGroupId={}, externalProductId={}",
+                    "세토프 상품 삭제(판매중지) 성공: productGroupId={}, externalProductId={}",
                     productGroupId,
                     outboundProduct.externalProductId());
 

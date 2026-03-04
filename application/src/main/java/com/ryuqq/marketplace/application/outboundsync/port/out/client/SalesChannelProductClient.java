@@ -10,6 +10,9 @@ import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChan
  */
 public interface SalesChannelProductClient {
 
+    /** 이 클라이언트가 담당하는 판매채널 코드. */
+    String channelCode();
+
     /**
      * 외부 채널에 상품을 등록합니다.
      *
