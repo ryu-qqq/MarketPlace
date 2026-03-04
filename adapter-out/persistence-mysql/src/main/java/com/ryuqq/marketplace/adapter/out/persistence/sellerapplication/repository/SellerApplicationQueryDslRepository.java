@@ -85,6 +85,21 @@ public class SellerApplicationQueryDslRepository {
     }
 
     /**
+     * 승인된 셀러 ID로 입점 신청 조회.
+     *
+     * @param approvedSellerId 승인된 셀러 ID
+     * @return 입점 신청 Optional
+     */
+    public Optional<SellerApplicationJpaEntity> findByApprovedSellerId(Long approvedSellerId) {
+        SellerApplicationJpaEntity entity =
+                queryFactory
+                        .selectFrom(sellerApplicationJpaEntity)
+                        .where(conditionBuilder.approvedSellerIdEq(approvedSellerId))
+                        .fetchOne();
+        return Optional.ofNullable(entity);
+    }
+
+    /**
      * 검색 조건으로 입점 신청 목록 조회.
      *
      * @param criteria 검색 조건

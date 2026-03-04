@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.sellerapplication.manager;
 
 import com.ryuqq.marketplace.application.sellerapplication.port.out.query.SellerApplicationQueryPort;
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellerapplication.aggregate.SellerApplication;
 import com.ryuqq.marketplace.domain.sellerapplication.exception.SellerApplicationNotFoundException;
 import com.ryuqq.marketplace.domain.sellerapplication.id.SellerApplicationId;
@@ -81,5 +82,19 @@ public class SellerApplicationReadManager {
     @Transactional(readOnly = true)
     public long countByCriteria(SellerApplicationSearchCriteria criteria) {
         return queryPort.countByCriteria(criteria);
+    }
+
+    /**
+     * 승인된 셀러 ID로 입점 신청을 조회합니다.
+     *
+     * @param sellerId 승인된 셀러 ID
+     * @return 입점 신청
+     * @throws SellerApplicationNotFoundException 신청이 존재하지 않는 경우
+     */
+    @Transactional(readOnly = true)
+    public SellerApplication getByApprovedSellerId(SellerId sellerId) {
+        return queryPort
+                .findByApprovedSellerId(sellerId)
+                .orElseThrow(() -> new SellerApplicationNotFoundException(sellerId.value()));
     }
 }

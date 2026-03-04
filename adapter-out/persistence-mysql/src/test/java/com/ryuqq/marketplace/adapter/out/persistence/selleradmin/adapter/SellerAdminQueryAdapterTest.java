@@ -335,7 +335,71 @@ class SellerAdminQueryAdapterTest {
     }
 
     // ========================================================================
-    // 7. existsByLoginId 테스트
+    // 7. findByNameAndPhoneNumber 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByNameAndPhoneNumber 메서드 테스트")
+    class FindByNameAndPhoneNumberTest {
+
+        @Test
+        @DisplayName("이름과 핸드폰 번호로 조회 시 Domain을 반환합니다")
+        void findByNameAndPhoneNumber_WithValidParams_ReturnsDomain() {
+            // given
+            String name = "홍길동";
+            String phoneNumber = "010-1234-5678";
+            SellerAdminJpaEntity entity = SellerAdminJpaEntityFixtures.activeEntity();
+            SellerAdmin domain = SellerFixtures.activeSellerAdmin();
+
+            given(queryDslRepository.findByNameAndPhoneNumber(name, phoneNumber))
+                    .willReturn(Optional.of(entity));
+            given(mapper.toDomain(entity)).willReturn(domain);
+
+            // when
+            Optional<SellerAdmin> result = queryAdapter.findByNameAndPhoneNumber(name, phoneNumber);
+
+            // then
+            assertThat(result).isPresent();
+            assertThat(result.get()).isEqualTo(domain);
+        }
+
+        @Test
+        @DisplayName("일치하는 관리자가 없으면 빈 Optional을 반환합니다")
+        void findByNameAndPhoneNumber_WithNoMatch_ReturnsEmpty() {
+            // given
+            String name = "없는이름";
+            String phoneNumber = "010-0000-0000";
+
+            given(queryDslRepository.findByNameAndPhoneNumber(name, phoneNumber))
+                    .willReturn(Optional.empty());
+
+            // when
+            Optional<SellerAdmin> result = queryAdapter.findByNameAndPhoneNumber(name, phoneNumber);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("repository에 이름과 핸드폰 번호를 그대로 전달합니다")
+        void findByNameAndPhoneNumber_DelegatesToRepository() {
+            // given
+            String name = "테스트이름";
+            String phoneNumber = "010-9999-8888";
+
+            given(queryDslRepository.findByNameAndPhoneNumber(name, phoneNumber))
+                    .willReturn(Optional.empty());
+
+            // when
+            queryAdapter.findByNameAndPhoneNumber(name, phoneNumber);
+
+            // then
+            then(queryDslRepository).should().findByNameAndPhoneNumber(name, phoneNumber);
+        }
+    }
+
+    // ========================================================================
+    // 8. existsByLoginId 테스트
     // ========================================================================
 
     @Nested
