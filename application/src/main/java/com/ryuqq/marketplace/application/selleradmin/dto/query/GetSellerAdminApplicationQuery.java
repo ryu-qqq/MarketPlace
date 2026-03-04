@@ -1,8 +1,5 @@
 package com.ryuqq.marketplace.application.selleradmin.dto.query;
 
-import com.ryuqq.marketplace.domain.selleradmin.vo.SellerAdminStatus;
-import java.util.List;
-
 /**
  * 셀러 관리자 가입 신청 상세 조회 Query.
  *
@@ -14,14 +11,7 @@ import java.util.List;
  */
 public record GetSellerAdminApplicationQuery(String sellerAdminId) {
 
-    private static final List<SellerAdminStatus> APPLICATION_STATUSES =
-            List.of(SellerAdminStatus.PENDING_APPROVAL, SellerAdminStatus.REJECTED);
-
     public static GetSellerAdminApplicationQuery of(String sellerAdminId) {
         return new GetSellerAdminApplicationQuery(sellerAdminId);
-    }
-
-    public List<SellerAdminStatus> statuses() {
-        return APPLICATION_STATUSES;
     }
 }

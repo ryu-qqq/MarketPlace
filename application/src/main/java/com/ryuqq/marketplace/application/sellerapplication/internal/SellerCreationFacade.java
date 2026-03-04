@@ -6,12 +6,9 @@ import com.ryuqq.marketplace.application.seller.manager.SellerCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerContractCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerCsCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerSettlementCommandManager;
-import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminEmailOutboxCommandManager;
 import com.ryuqq.marketplace.application.sellerapplication.dto.bundle.SellerCreationBundle;
 import com.ryuqq.marketplace.application.sellerapplication.manager.SellerApplicationCommandManager;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
-import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdminEmailOutbox;
-import com.ryuqq.marketplace.domain.selleradmin.vo.SellerAdminEmailType;
 import com.ryuqq.marketplace.domain.sellerapplication.aggregate.SellerApplication;
 import java.time.Instant;
 import org.springframework.stereotype.Component;
@@ -34,7 +31,6 @@ public class SellerCreationFacade {
     private final SellerSettlementCommandManager settlementCommandManager;
     private final SellerAuthOutboxCommandManager authOutboxCommandManager;
     private final SellerApplicationCommandManager applicationCommandManager;
-    private final SellerAdminEmailOutboxCommandManager emailOutboxCommandManager;
 
     public SellerCreationFacade(
             SellerCommandManager sellerCommandManager,
@@ -43,8 +39,7 @@ public class SellerCreationFacade {
             SellerContractCommandManager contractCommandManager,
             SellerSettlementCommandManager settlementCommandManager,
             SellerAuthOutboxCommandManager authOutboxCommandManager,
-            SellerApplicationCommandManager applicationCommandManager,
-            SellerAdminEmailOutboxCommandManager emailOutboxCommandManager) {
+            SellerApplicationCommandManager applicationCommandManager) {
         this.sellerCommandManager = sellerCommandManager;
         this.businessInfoCommandManager = businessInfoCommandManager;
         this.csCommandManager = csCommandManager;
@@ -52,7 +47,6 @@ public class SellerCreationFacade {
         this.settlementCommandManager = settlementCommandManager;
         this.authOutboxCommandManager = authOutboxCommandManager;
         this.applicationCommandManager = applicationCommandManager;
-        this.emailOutboxCommandManager = emailOutboxCommandManager;
     }
 
     /**
@@ -73,24 +67,6 @@ public class SellerCreationFacade {
         SellerId sid = SellerId.of(sellerId);
         application.approve(sid, processedBy, now);
         applicationCommandManager.persist(application);
-
-        String emailPayload = buildApprovalEmailPayload(sellerId, application);
-        SellerAdminEmailOutbox emailOutbox = SellerAdminEmailOutbox.forNew(sid, emailPayload, now);
-        emailOutboxCommandManager.persist(emailOutbox);
-    }
-
-    private String buildApprovalEmailPayload(Long sellerId, SellerApplication application) {
-        String sellerName = application.sellerNameValue();
-        String contactEmail = application.contactInfoEmail();
-        return "{\"emailType\":\""
-                + SellerAdminEmailType.SELLER_APPROVAL_INVITE.name()
-                + "\",\"sellerId\":"
-                + sellerId
-                + ",\"sellerName\":\""
-                + sellerName
-                + "\",\"contactEmail\":\""
-                + contactEmail
-                + "\"}";
     }
 
     /**

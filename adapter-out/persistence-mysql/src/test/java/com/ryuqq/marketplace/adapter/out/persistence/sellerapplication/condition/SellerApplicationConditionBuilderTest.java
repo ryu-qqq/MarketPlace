@@ -329,7 +329,39 @@ class SellerApplicationConditionBuilderTest {
     }
 
     // ========================================================================
-    // 8. searchCondition 테스트
+    // 8. approvedSellerIdEq 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("approvedSellerIdEq 메서드 테스트")
+    class ApprovedSellerIdEqTest {
+
+        @Test
+        @DisplayName("유효한 승인 셀러 ID 입력 시 BooleanExpression을 반환합니다")
+        void approvedSellerIdEq_WithValidId_ReturnsBooleanExpression() {
+            // given
+            Long approvedSellerId = 1L;
+
+            // when
+            BooleanExpression result = sut.approvedSellerIdEq(approvedSellerId);
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("null 승인 셀러 ID 입력 시 null을 반환합니다")
+        void approvedSellerIdEq_WithNullId_ReturnsNull() {
+            // when
+            BooleanExpression result = sut.approvedSellerIdEq(null);
+
+            // then
+            assertThat(result).isNull();
+        }
+    }
+
+    // ========================================================================
+    // 10. searchCondition 테스트
     // ========================================================================
 
     @Nested
@@ -366,7 +398,7 @@ class SellerApplicationConditionBuilderTest {
     }
 
     // ========================================================================
-    // 9. statusCondition 테스트
+    // 11. statusCondition 테스트
     // ========================================================================
 
     @Nested

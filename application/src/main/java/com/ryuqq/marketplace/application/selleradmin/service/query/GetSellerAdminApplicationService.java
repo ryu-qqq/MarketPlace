@@ -33,7 +33,7 @@ public class GetSellerAdminApplicationService implements GetSellerAdminApplicati
     public SellerAdminApplicationResult execute(GetSellerAdminApplicationQuery query) {
         SellerAdminId sellerAdminId = SellerAdminId.of(query.sellerAdminId());
 
-        SellerAdmin sellerAdmin = readManager.getByIdAndStatuses(sellerAdminId, query.statuses());
+        SellerAdmin sellerAdmin = readManager.getById(sellerAdminId);
 
         return assembler.toResult(sellerAdmin);
     }

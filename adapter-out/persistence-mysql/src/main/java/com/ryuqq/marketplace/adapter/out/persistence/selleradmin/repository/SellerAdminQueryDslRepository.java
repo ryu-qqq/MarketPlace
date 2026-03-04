@@ -185,6 +185,26 @@ public class SellerAdminQueryDslRepository {
     }
 
     /**
+     * 이름과 핸드폰 번호로 셀러 관리자 조회.
+     *
+     * @param name 관리자 이름
+     * @param phoneNumber 핸드폰 번호
+     * @return 셀러 관리자 Optional
+     */
+    public Optional<SellerAdminJpaEntity> findByNameAndPhoneNumber(
+            String name, String phoneNumber) {
+        SellerAdminJpaEntity entity =
+                queryFactory
+                        .selectFrom(sellerAdminJpaEntity)
+                        .where(
+                                conditionBuilder.nameEq(name),
+                                conditionBuilder.phoneNumberEq(phoneNumber),
+                                conditionBuilder.notDeleted())
+                        .fetchFirst();
+        return Optional.ofNullable(entity);
+    }
+
+    /**
      * 로그인 ID 존재 여부 확인.
      *
      * @param loginId 로그인 ID
