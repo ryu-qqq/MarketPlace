@@ -17,33 +17,24 @@ public final class SellerAdminQueryFixtures {
 
     // ===== 공통 상수 =====
     public static final String DEFAULT_NAME = "홍길동";
+    public static final String DEFAULT_LOGIN_ID = "seller01";
+    public static final String DEFAULT_SELLER_ADMIN_ID = "01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f60";
+    public static final String DEFAULT_STATUS = "ACTIVE";
     public static final String DEFAULT_PHONE_NUMBER = "010-1234-5678";
 
     // ===== VerifySellerAdminQuery Fixtures =====
 
     public static VerifySellerAdminQuery verifyQuery() {
-        return VerifySellerAdminQuery.of(DEFAULT_NAME, DEFAULT_PHONE_NUMBER);
+        return VerifySellerAdminQuery.of(DEFAULT_NAME, DEFAULT_LOGIN_ID);
     }
 
-    public static VerifySellerAdminQuery verifyQuery(String name, String phoneNumber) {
-        return VerifySellerAdminQuery.of(name, phoneNumber);
+    public static VerifySellerAdminQuery verifyQuery(String name, String loginId) {
+        return VerifySellerAdminQuery.of(name, loginId);
     }
 
     // ===== VerifySellerAdminResult Fixtures =====
 
-    public static VerifySellerAdminResult foundResult(String status) {
-        return VerifySellerAdminResult.found(status);
-    }
-
-    public static VerifySellerAdminResult activeFoundResult() {
-        return VerifySellerAdminResult.found("ACTIVE");
-    }
-
-    public static VerifySellerAdminResult pendingFoundResult() {
-        return VerifySellerAdminResult.found("PENDING_APPROVAL");
-    }
-
-    public static VerifySellerAdminResult notFoundResult() {
-        return VerifySellerAdminResult.notFound();
+    public static VerifySellerAdminResult foundResult() {
+        return VerifySellerAdminResult.of(DEFAULT_STATUS, DEFAULT_SELLER_ADMIN_ID, DEFAULT_PHONE_NUMBER);
     }
 }

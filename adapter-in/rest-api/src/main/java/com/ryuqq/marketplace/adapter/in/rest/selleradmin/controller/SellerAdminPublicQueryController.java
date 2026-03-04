@@ -49,12 +49,14 @@ public class SellerAdminPublicQueryController {
     /**
      * 셀러 관리자 본인 확인 API.
      *
-     * <p>이름과 핸드폰 번호로 셀러 관리자 존재 여부 및 상태를 확인합니다. 비밀번호 찾기 전 본인 확인 용도.
+     * <p>이름과 로그인 ID로 셀러 관리자 존재 여부를 확인하고 마스킹된 핸드폰 번호를 반환합니다. 비밀번호 찾기 전 본인 확인 용도.
      *
-     * @param request 이름, 핸드폰 번호
-     * @return 존재 여부 및 상태
+     * @param request 이름, 로그인 ID
+     * @return 존재 여부 및 마스킹된 핸드폰 번호
      */
-    @Operation(summary = "셀러 관리자 본인 확인", description = "이름과 핸드폰 번호로 셀러 관리자 존재 여부 및 승인 상태를 확인합니다.")
+    @Operation(
+            summary = "셀러 관리자 본인 확인",
+            description = "이름과 로그인 ID로 셀러 관리자 존재 여부를 확인하고 마스킹된 핸드폰 번호를 반환합니다.")
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "200",
@@ -64,8 +66,7 @@ public class SellerAdminPublicQueryController {
     public ResponseEntity<ApiResponse<VerifySellerAdminApiResponse>> verify(
             @Valid @ParameterObject VerifySellerAdminApiRequest request) {
 
-        VerifySellerAdminQuery query =
-                VerifySellerAdminQuery.of(request.name(), request.phoneNumber());
+        VerifySellerAdminQuery query = VerifySellerAdminQuery.of(request.name(), request.loginId());
         VerifySellerAdminResult result = verifyUseCase.execute(query);
 
         return ResponseEntity.ok(ApiResponse.of(VerifySellerAdminApiResponse.from(result)));

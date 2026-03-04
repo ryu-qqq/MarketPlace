@@ -154,14 +154,14 @@ public class SellerAdminQueryAdapter implements SellerAdminQueryPort {
     }
 
     /**
-     * 이름과 핸드폰 번호로 셀러 관리자 조회.
+     * 이름과 로그인 ID로 셀러 관리자 조회.
      *
      * @param name 관리자 이름
-     * @param phoneNumber 핸드폰 번호
+     * @param loginId 로그인 ID
      * @return 셀러 관리자 Optional
      */
     @Override
-    public Optional<SellerAdmin> findByNameAndPhoneNumber(String name, String phoneNumber) {
-        return queryDslRepository.findByNameAndPhoneNumber(name, phoneNumber).map(mapper::toDomain);
+    public Optional<SellerAdmin> findByNameAndLoginId(String name, String loginId) {
+        return queryDslRepository.findByNameAndLoginId(name, loginId).map(mapper::toDomain);
     }
 }

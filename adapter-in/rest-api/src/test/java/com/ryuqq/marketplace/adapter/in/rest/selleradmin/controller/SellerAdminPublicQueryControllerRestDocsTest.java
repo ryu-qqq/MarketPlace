@@ -50,11 +50,10 @@ class SellerAdminPublicQueryControllerRestDocsTest {
     class VerifySellerAdminTest {
 
         @Test
-        @DisplayName("셀러 관리자 본인 확인 성공 - 존재하는 관리자")
+        @DisplayName("셀러 관리자 본인 확인 성공")
         void verify_ExistingAdmin_Success() throws Exception {
             // given
             VerifySellerAdminResult result = SellerAdminPublicApiFixtures.foundResult();
-
             given(verifyUseCase.execute(any())).willReturn(result);
 
             // when & then
@@ -62,61 +61,37 @@ class SellerAdminPublicQueryControllerRestDocsTest {
                             RestDocumentationRequestBuilders.get(
                                             BASE_URL + SellerAdminPublicEndpoints.VERIFY)
                                     .param("name", SellerAdminPublicApiFixtures.DEFAULT_NAME)
-                                    .param(
-                                            "phoneNumber",
-                                            SellerAdminPublicApiFixtures.DEFAULT_PHONE_NUMBER))
+                                    .param("loginId", SellerAdminPublicApiFixtures.DEFAULT_LOGIN_ID))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.exists").value(true))
-                    .andExpect(
-                            jsonPath("$.data.status")
-                                    .value(SellerAdminPublicApiFixtures.DEFAULT_STATUS_ACTIVE))
+                    .andExpect(jsonPath("$.data.status").value(SellerAdminPublicApiFixtures.DEFAULT_STATUS))
                     .andDo(
                             document(
                                     "seller-admin-public/verify",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     queryParameters(
-                                            parameterWithName("name")
-                                                    .description("관리자 이름"),
-                                            parameterWithName("phoneNumber")
-                                                    .description("핸드폰 번호")),
+                                            parameterWithName("name").description("관리자 이름"),
+                                            parameterWithName("loginId").description("로그인 ID")),
                                     responseFields(
                                             fieldWithPath("data.exists")
                                                     .type(JsonFieldType.BOOLEAN)
-                                                    .description("셀러 관리자 존재 여부"),
+                                                    .description("존재 여부"),
                                             fieldWithPath("data.status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description(
-                                                            "셀러 관리자 상태"
-                                                                    + " (PENDING_APPROVAL, ACTIVE,"
-                                                                    + " INACTIVE, SUSPENDED,"
-                                                                    + " REJECTED). 존재하지 않으면 null")
-                                                    .optional(),
+                                                    .description("셀러 관리자 상태"),
+                                            fieldWithPath("data.sellerAdminId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("셀러 관리자 ID"),
+                                            fieldWithPath("data.phoneNumber")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("핸드폰 번호"),
                                             fieldWithPath("timestamp")
                                                     .type(JsonFieldType.STRING)
                                                     .description("응답 시각"),
                                             fieldWithPath("requestId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("요청 ID"))));
-        }
-
-        @Test
-        @DisplayName("셀러 관리자 본인 확인 성공 - 존재하지 않는 관리자")
-        void verify_NotExistingAdmin_Success() throws Exception {
-            // given
-            VerifySellerAdminResult result = SellerAdminPublicApiFixtures.notFoundResult();
-
-            given(verifyUseCase.execute(any())).willReturn(result);
-
-            // when & then
-            mockMvc.perform(
-                            RestDocumentationRequestBuilders.get(
-                                            BASE_URL + SellerAdminPublicEndpoints.VERIFY)
-                                    .param("name", "없는이름")
-                                    .param("phoneNumber", "01099999999"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.exists").value(false))
-                    .andExpect(jsonPath("$.data.status").doesNotExist());
         }
     }
 }

@@ -264,8 +264,7 @@ class SellerApplicationQueryAdapterTest {
                     SellerApplicationJpaEntityFixtures.approvedEntity(1L);
             SellerApplication domain = createPendingApplication(1L);
 
-            given(queryDslRepository.findByApprovedSellerId(1L))
-                    .willReturn(Optional.of(entity));
+            given(queryDslRepository.findByApprovedSellerId(1L)).willReturn(Optional.of(entity));
             given(mapper.toDomain(entity)).willReturn(domain);
 
             // when

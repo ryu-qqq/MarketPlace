@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.selleradmin.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -10,6 +11,7 @@ import com.ryuqq.marketplace.application.selleradmin.dto.response.VerifySellerAd
 import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminReadManager;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdmin;
+import com.ryuqq.marketplace.domain.selleradmin.exception.SellerAdminNotFoundException;
 import com.ryuqq.marketplace.domain.selleradmin.id.SellerAdminId;
 import com.ryuqq.marketplace.domain.selleradmin.vo.AdminName;
 import com.ryuqq.marketplace.domain.selleradmin.vo.LoginId;
@@ -54,13 +56,13 @@ class VerifySellerAdminServiceTest {
     class ExecuteTest {
 
         @Test
-        @DisplayName("이름과 핸드폰 번호로 셀러 관리자가 존재하면 exists=true와 상태를 반환한다")
-        void execute_ExistingAdmin_ReturnsFoundResult() {
+        @DisplayName("이름과 로그인 ID로 셀러 관리자가 존재하면 전체 정보를 반환한다")
+        void execute_ExistingAdmin_ReturnsFullResult() {
             // given
             VerifySellerAdminQuery query = SellerAdminQueryFixtures.verifyQuery();
             SellerAdmin sellerAdmin = activeSellerAdmin();
 
-            given(readManager.findByNameAndPhoneNumber(query.name(), query.phoneNumber()))
+            given(readManager.findByNameAndLoginId(query.name(), query.loginId()))
                     .willReturn(Optional.of(sellerAdmin));
 
             // when
@@ -69,25 +71,24 @@ class VerifySellerAdminServiceTest {
             // then
             assertThat(result.exists()).isTrue();
             assertThat(result.status()).isEqualTo("ACTIVE");
-            then(readManager).should().findByNameAndPhoneNumber(query.name(), query.phoneNumber());
+            assertThat(result.sellerAdminId()).isEqualTo(SELLER_ADMIN_ID);
+            assertThat(result.phoneNumber()).isEqualTo("010-1234-5678");
+            then(readManager).should().findByNameAndLoginId(query.name(), query.loginId());
         }
 
         @Test
-        @DisplayName("이름과 핸드폰 번호로 셀러 관리자가 존재하지 않으면 exists=false와 status=null을 반환한다")
-        void execute_NonExistingAdmin_ReturnsNotFoundResult() {
+        @DisplayName("이름과 로그인 ID로 셀러 관리자가 존재하지 않으면 SellerAdminNotFoundException을 던진다")
+        void execute_NonExistingAdmin_ThrowsException() {
             // given
-            VerifySellerAdminQuery query = SellerAdminQueryFixtures.verifyQuery("없는사람", "010-9999-9999");
+            VerifySellerAdminQuery query = SellerAdminQueryFixtures.verifyQuery("없는사람", "unknown");
 
-            given(readManager.findByNameAndPhoneNumber(query.name(), query.phoneNumber()))
+            given(readManager.findByNameAndLoginId(query.name(), query.loginId()))
                     .willReturn(Optional.empty());
 
-            // when
-            VerifySellerAdminResult result = sut.execute(query);
-
-            // then
-            assertThat(result.exists()).isFalse();
-            assertThat(result.status()).isNull();
-            then(readManager).should().findByNameAndPhoneNumber(query.name(), query.phoneNumber());
+            // when & then
+            assertThatThrownBy(() -> sut.execute(query))
+                    .isInstanceOf(SellerAdminNotFoundException.class);
+            then(readManager).should().findByNameAndLoginId(query.name(), query.loginId());
         }
     }
 }
