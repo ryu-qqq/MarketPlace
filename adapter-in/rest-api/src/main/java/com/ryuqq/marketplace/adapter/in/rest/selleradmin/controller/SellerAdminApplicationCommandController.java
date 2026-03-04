@@ -128,8 +128,6 @@ public class SellerAdminApplicationCommandController {
                 responseCode = "404",
                 description = "셀러를 찾을 수 없음")
     })
-    @PreAuthorize("@access.authenticated()")
-    @RequirePermission(value = "seller-admin:write", description = "셀러 관리자 가입 신청")
     @PostMapping
     public ResponseEntity<ApiResponse<ApplySellerAdminApiResponse>> apply(
             @Valid @RequestBody ApplySellerAdminApiRequest request) {

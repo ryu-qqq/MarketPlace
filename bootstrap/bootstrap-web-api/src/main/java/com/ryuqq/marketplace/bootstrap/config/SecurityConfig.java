@@ -130,10 +130,11 @@ public class SecurityConfig {
                                         .requestMatchers("/api/v1/market/public/**")
                                         .permitAll()
 
-                                        // 셀러 입점 신청 (인증 없이 누구나 가능)
+                                        // 셀러 입점 신청 / 관리자 가입 신청 (인증 없이 누구나 가능)
                                         .requestMatchers(
                                                 HttpMethod.POST,
-                                                "/api/v1/market/seller-applications")
+                                                "/api/v1/market/seller-applications",
+                                                "/api/v1/market/seller-admin-applications")
                                         .permitAll()
 
                                         // 내부 서비스 간 통신 (X-Service-Token 인증)
