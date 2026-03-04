@@ -3,8 +3,11 @@ package com.ryuqq.marketplace.application.outboundsync.internal;
 import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
+import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.outboundsync.port.out.strategy.OutboundSyncExecutionStrategy;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
@@ -14,30 +17,36 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
- * 네이버 커머스 상품 삭제(DELETE) 전략.
+ * 세토프 커머스 상품 수정(UPDATE) 전략.
  *
- * <p>OutboundProduct에서 externalProductId 조회 → DELETE API 호출. CREATE/UPDATE와 달리 상품 데이터 조회 불필요.
+ * <p>OutboundProduct에서 externalProductId 조회 → 최신 상품 데이터 조회 → 매핑 역조회 → PUT API 호출.
  */
 @Component
-@ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
-public class NaverDeleteProductStrategy implements OutboundSyncExecutionStrategy {
+@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+public class SetofUpdateProductStrategy implements OutboundSyncExecutionStrategy {
 
-    private static final Logger log = LoggerFactory.getLogger(NaverDeleteProductStrategy.class);
-    private static final String NAVER_CHANNEL_CODE = "NAVER";
+    private static final Logger log = LoggerFactory.getLogger(SetofUpdateProductStrategy.class);
+    private static final String SETOF_CHANNEL_CODE = "SETOF";
 
     private final OutboundProductReadManager outboundProductReadManager;
+    private final ProductGroupReadFacade productGroupReadFacade;
+    private final OutboundMappingResolver mappingResolver;
     private final SalesChannelProductClientManager productClientManager;
 
-    public NaverDeleteProductStrategy(
+    public SetofUpdateProductStrategy(
             OutboundProductReadManager outboundProductReadManager,
+            ProductGroupReadFacade productGroupReadFacade,
+            OutboundMappingResolver mappingResolver,
             SalesChannelProductClientManager productClientManager) {
         this.outboundProductReadManager = outboundProductReadManager;
+        this.productGroupReadFacade = productGroupReadFacade;
+        this.mappingResolver = mappingResolver;
         this.productClientManager = productClientManager;
     }
 
     @Override
     public boolean supports(String channelCode, SyncType syncType) {
-        return NAVER_CHANNEL_CODE.equals(channelCode) && syncType == SyncType.DELETE;
+        return SETOF_CHANNEL_CODE.equals(channelCode) && syncType == SyncType.UPDATE;
     }
 
     @Override
@@ -54,13 +63,25 @@ public class NaverDeleteProductStrategy implements OutboundSyncExecutionStrategy
                 return OutboundSyncExecutionResult.failure("외부 상품 미등록 상태", false);
             }
 
-            productClientManager.deleteProduct(
-                    NAVER_CHANNEL_CODE,
+            ProductGroupDetailBundle bundle =
+                    productGroupReadFacade.getDetailBundle(productGroupId);
+
+            SalesChannelMappingResult mapping =
+                    mappingResolver.resolve(
+                            salesChannelId,
+                            bundle.queryResult().categoryId(),
+                            bundle.queryResult().brandId());
+
+            productClientManager.updateProduct(
+                    SETOF_CHANNEL_CODE,
+                    bundle,
+                    mapping.categoryId(),
+                    mapping.brandId(),
                     outboundProduct.externalProductId(),
                     context.sellerSalesChannel());
 
             log.info(
-                    "네이버 상품 삭제 성공: productGroupId={}, externalProductId={}",
+                    "세토프 상품 수정 성공: productGroupId={}, externalProductId={}",
                     productGroupId,
                     outboundProduct.externalProductId());
 

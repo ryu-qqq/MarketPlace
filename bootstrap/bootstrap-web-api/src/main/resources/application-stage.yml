@@ -36,6 +36,7 @@ spring:
       - classpath:fileflow.yml
       - classpath:fileflow-stage.yml
       - classpath:naver-commerce.yml
+      - classpath:setof-commerce.yml
 
 management:
   endpoints:
