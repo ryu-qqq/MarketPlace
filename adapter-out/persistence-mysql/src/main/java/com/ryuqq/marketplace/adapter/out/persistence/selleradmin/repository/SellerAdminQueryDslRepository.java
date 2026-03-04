@@ -185,20 +185,19 @@ public class SellerAdminQueryDslRepository {
     }
 
     /**
-     * 이름과 핸드폰 번호로 셀러 관리자 조회.
+     * 이름과 로그인 ID로 셀러 관리자 조회.
      *
      * @param name 관리자 이름
-     * @param phoneNumber 핸드폰 번호
+     * @param loginId 로그인 ID
      * @return 셀러 관리자 Optional
      */
-    public Optional<SellerAdminJpaEntity> findByNameAndPhoneNumber(
-            String name, String phoneNumber) {
+    public Optional<SellerAdminJpaEntity> findByNameAndLoginId(String name, String loginId) {
         SellerAdminJpaEntity entity =
                 queryFactory
                         .selectFrom(sellerAdminJpaEntity)
                         .where(
                                 conditionBuilder.nameEq(name),
-                                conditionBuilder.phoneNumberEq(phoneNumber),
+                                conditionBuilder.loginIdEq(loginId),
                                 conditionBuilder.notDeleted())
                         .fetchFirst();
         return Optional.ofNullable(entity);
