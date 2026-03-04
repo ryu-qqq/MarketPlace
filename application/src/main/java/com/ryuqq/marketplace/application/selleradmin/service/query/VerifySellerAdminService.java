@@ -5,13 +5,13 @@ import com.ryuqq.marketplace.application.selleradmin.dto.response.VerifySellerAd
 import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminReadManager;
 import com.ryuqq.marketplace.application.selleradmin.port.in.query.VerifySellerAdminUseCase;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdmin;
-import java.util.Optional;
+import com.ryuqq.marketplace.domain.selleradmin.exception.SellerAdminNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
  * VerifySellerAdminService - 셀러 관리자 본인 확인 Service.
  *
- * <p>이름과 핸드폰 번호로 셀러 관리자 존재 여부 및 상태를 확인합니다.
+ * <p>이름과 로그인 ID로 셀러 관리자를 확인하고 핸드폰 번호를 반환합니다.
  *
  * @author ryu-qqq
  * @since 1.1.0
@@ -27,11 +27,20 @@ public class VerifySellerAdminService implements VerifySellerAdminUseCase {
 
     @Override
     public VerifySellerAdminResult execute(VerifySellerAdminQuery query) {
-        Optional<SellerAdmin> sellerAdmin =
-                readManager.findByNameAndPhoneNumber(query.name(), query.phoneNumber());
+        SellerAdmin sellerAdmin =
+                readManager
+                        .findByNameAndLoginId(query.name(), query.loginId())
+                        .orElseThrow(
+                                () ->
+                                        SellerAdminNotFoundException.withMessage(
+                                                "일치하는 셀러 관리자를 찾을 수 없습니다. name="
+                                                        + query.name()
+                                                        + ", loginId="
+                                                        + query.loginId()));
 
-        return sellerAdmin
-                .map(admin -> VerifySellerAdminResult.found(admin.status().name()))
-                .orElseGet(VerifySellerAdminResult::notFound);
+        return VerifySellerAdminResult.of(
+                sellerAdmin.status().name(),
+                sellerAdmin.idValue(),
+                sellerAdmin.phoneNumberValue());
     }
 }

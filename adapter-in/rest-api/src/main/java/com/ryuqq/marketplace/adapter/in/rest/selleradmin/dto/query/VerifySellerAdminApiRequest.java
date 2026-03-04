@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 /**
  * 셀러 관리자 본인 확인 API 요청.
  *
- * <p>이름과 핸드폰번호로 셀러 관리자 존재 여부 및 상태를 확인합니다.
+ * <p>이름과 로그인 ID로 셀러 관리자를 확인하고 핸드폰 번호를 반환합니다.
  *
  * @param name 관리자 이름
- * @param phoneNumber 핸드폰 번호
+ * @param loginId 로그인 ID
  * @author ryu-qqq
  * @since 1.1.0
  */
@@ -17,6 +17,6 @@ public record VerifySellerAdminApiRequest(
         @Parameter(description = "관리자 이름", required = true, example = "홍길동")
                 @NotBlank(message = "이름은 필수입니다")
                 String name,
-        @Parameter(description = "핸드폰 번호", required = true, example = "01012345678")
-                @NotBlank(message = "핸드폰 번호는 필수입니다")
-                String phoneNumber) {}
+        @Parameter(description = "로그인 ID", required = true, example = "seller01")
+                @NotBlank(message = "로그인 ID는 필수입니다")
+                String loginId) {}

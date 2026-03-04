@@ -18,45 +18,27 @@ public final class SellerAdminPublicApiFixtures {
 
     // ===== 상수 =====
     public static final String DEFAULT_NAME = "홍길동";
-    public static final String DEFAULT_PHONE_NUMBER = "01012345678";
-    public static final String DEFAULT_STATUS_ACTIVE = "ACTIVE";
-    public static final String DEFAULT_STATUS_PENDING = "PENDING_APPROVAL";
+    public static final String DEFAULT_LOGIN_ID = "seller01";
+    public static final String DEFAULT_SELLER_ADMIN_ID = "01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f60";
+    public static final String DEFAULT_STATUS = "ACTIVE";
+    public static final String DEFAULT_PHONE_NUMBER = "010-1234-5678";
 
     // ===== VerifySellerAdminApiRequest =====
 
     public static VerifySellerAdminApiRequest verifyRequest() {
-        return new VerifySellerAdminApiRequest(DEFAULT_NAME, DEFAULT_PHONE_NUMBER);
-    }
-
-    public static VerifySellerAdminApiRequest verifyRequest(String name, String phoneNumber) {
-        return new VerifySellerAdminApiRequest(name, phoneNumber);
+        return new VerifySellerAdminApiRequest(DEFAULT_NAME, DEFAULT_LOGIN_ID);
     }
 
     // ===== VerifySellerAdminResult (Application) =====
 
     public static VerifySellerAdminResult foundResult() {
-        return VerifySellerAdminResult.found(DEFAULT_STATUS_ACTIVE);
-    }
-
-    public static VerifySellerAdminResult foundResult(String status) {
-        return VerifySellerAdminResult.found(status);
-    }
-
-    public static VerifySellerAdminResult notFoundResult() {
-        return VerifySellerAdminResult.notFound();
+        return VerifySellerAdminResult.of(DEFAULT_STATUS, DEFAULT_SELLER_ADMIN_ID, DEFAULT_PHONE_NUMBER);
     }
 
     // ===== VerifySellerAdminApiResponse (API) =====
 
     public static VerifySellerAdminApiResponse verifyFoundResponse() {
-        return new VerifySellerAdminApiResponse(true, DEFAULT_STATUS_ACTIVE);
-    }
-
-    public static VerifySellerAdminApiResponse verifyFoundResponse(String status) {
-        return new VerifySellerAdminApiResponse(true, status);
-    }
-
-    public static VerifySellerAdminApiResponse verifyNotFoundResponse() {
-        return new VerifySellerAdminApiResponse(false, null);
+        return new VerifySellerAdminApiResponse(
+                true, DEFAULT_STATUS, DEFAULT_SELLER_ADMIN_ID, DEFAULT_PHONE_NUMBER);
     }
 }
