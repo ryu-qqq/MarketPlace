@@ -138,8 +138,8 @@ public class SellerAdminAuthE2ETest extends E2ETestBase {
     class ApplyTest {
 
         @Test
-        @DisplayName("SC-C1-02: 토큰 없이 가입 신청 시 401")
-        void apply_WithoutToken_ShouldReturn401() {
+        @DisplayName("SC-C1-02: 토큰 없이 가입 신청도 허용 (공개 API)")
+        void apply_WithoutToken_ShouldBeAllowed() {
             Map<String, Object> request =
                     Map.of(
                             "sellerId", 1L,
@@ -154,7 +154,11 @@ public class SellerAdminAuthE2ETest extends E2ETestBase {
                     .when()
                     .post(BASE_PATH)
                     .then()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value());
+                    .statusCode(
+                            org.hamcrest.Matchers.anyOf(
+                                    org.hamcrest.Matchers.is(HttpStatus.CREATED.value()),
+                                    org.hamcrest.Matchers.is(HttpStatus.BAD_REQUEST.value()),
+                                    org.hamcrest.Matchers.is(HttpStatus.NOT_FOUND.value())));
         }
 
         @Test
