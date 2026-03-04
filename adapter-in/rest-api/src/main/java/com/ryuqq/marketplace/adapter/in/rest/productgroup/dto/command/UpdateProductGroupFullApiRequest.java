@@ -166,12 +166,7 @@ public record UpdateProductGroupFullApiRequest(
             @Schema(description = "상품 ID (수정 시 식별용, 신규 시 null)", example = "1", nullable = true)
                     @JsonProperty("productId")
                     Long productId,
-            @Schema(
-                            description = "SKU 코드",
-                            example = "SKU-001",
-                            requiredMode = Schema.RequiredMode.REQUIRED)
-                    @NotBlank(message = "SKU 코드는 필수입니다")
-                    String skuCode,
+            @Schema(description = "SKU 코드", example = "SKU-001", nullable = true) String skuCode,
             @Schema(
                             description = "정상가",
                             example = "100000",
