@@ -56,15 +56,15 @@ scheduler:
 
     seller-admin-auth-outbox:
       process-pending:
-        # Stage: 비활성화 (SellerAdminIdentityClient 미구현)
-        enabled: false
+        # Stage: 3분마다 처리
+        enabled: true
         cron: "0 */3 * * * *"
         batch-size: 50
         delay-seconds: 30
 
       recover-timeout:
-        # Stage: 비활성화 (SellerAdminIdentityClient 미구현)
-        enabled: false
+        # Stage: 5분마다 타임아웃 복구
+        enabled: true
         cron: "0 */5 * * * *"
         batch-size: 50
         timeout-seconds: 180
