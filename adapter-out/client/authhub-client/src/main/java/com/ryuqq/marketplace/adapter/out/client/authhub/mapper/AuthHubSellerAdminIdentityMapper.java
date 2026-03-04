@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.authhub.sdk.model.user.CreateUserWithRolesRequest;
 import com.ryuqq.authhub.sdk.model.user.CreateUserWithRolesResponse;
+import com.ryuqq.marketplace.adapter.out.client.authhub.config.AuthHubProperties;
 import com.ryuqq.marketplace.application.selleradmin.dto.response.SellerAdminIdentityProvisioningResult;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
@@ -21,16 +22,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthHubSellerAdminIdentityMapper {
 
-    private static final String DEFAULT_SERVICE_CODE = "SVC_STORE";
-    private static final List<String> DEFAULT_ROLES = List.of("SELLER_ADMIN");
+    private static final List<String> DEFAULT_ROLES = List.of("ADMIN");
 
     private final ObjectMapper objectMapper;
+    private final String serviceCode;
 
     @SuppressFBWarnings(
             value = "EI_EXPOSE_REP2",
             justification = "Spring-managed singleton bean, immutable after injection")
-    public AuthHubSellerAdminIdentityMapper(ObjectMapper objectMapper) {
+    public AuthHubSellerAdminIdentityMapper(
+            ObjectMapper objectMapper, AuthHubProperties authHubProperties) {
         this.objectMapper = objectMapper;
+        this.serviceCode = authHubProperties.getServiceCode();
     }
 
     /**
@@ -51,12 +54,7 @@ public class AuthHubSellerAdminIdentityMapper {
             String phoneNumber = node.has("phoneNumber") ? node.get("phoneNumber").asText() : null;
 
             return new CreateUserWithRolesRequest(
-                    organizationId,
-                    loginId,
-                    phoneNumber,
-                    tempPassword,
-                    DEFAULT_SERVICE_CODE,
-                    DEFAULT_ROLES);
+                    organizationId, loginId, phoneNumber, tempPassword, serviceCode, DEFAULT_ROLES);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException(
                     "Failed to parse outbox payload: " + e.getMessage(), e);
