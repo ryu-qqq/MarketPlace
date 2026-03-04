@@ -152,4 +152,16 @@ public class SellerAdminQueryAdapter implements SellerAdminQueryPort {
     public boolean existsByLoginId(String loginId) {
         return queryDslRepository.existsByLoginId(loginId);
     }
+
+    /**
+     * 이름과 핸드폰 번호로 셀러 관리자 조회.
+     *
+     * @param name 관리자 이름
+     * @param phoneNumber 핸드폰 번호
+     * @return 셀러 관리자 Optional
+     */
+    @Override
+    public Optional<SellerAdmin> findByNameAndPhoneNumber(String name, String phoneNumber) {
+        return queryDslRepository.findByNameAndPhoneNumber(name, phoneNumber).map(mapper::toDomain);
+    }
 }

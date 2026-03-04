@@ -4,8 +4,10 @@ import com.ryuqq.marketplace.application.seller.dto.response.SellerIdentityProvi
 import com.ryuqq.marketplace.application.seller.manager.SellerAuthOutboxCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerAuthOutboxReadManager;
 import com.ryuqq.marketplace.application.seller.port.out.client.IdentityClient;
+import com.ryuqq.marketplace.application.sellerapplication.manager.SellerApplicationReadManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerAuthOutbox;
 import com.ryuqq.marketplace.domain.selleradmin.vo.SellerAdminEmailType;
+import com.ryuqq.marketplace.domain.sellerapplication.aggregate.SellerApplication;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,16 +45,19 @@ public class SellerAuthOutboxProcessor {
     private final SellerAuthOutboxCommandManager outboxCommandManager;
     private final SellerAuthOutboxReadManager outboxReadManager;
     private final SellerAuthCompletionFacade authCompletionFacade;
+    private final SellerApplicationReadManager sellerApplicationReadManager;
     private final IdentityClient identityClient;
 
     public SellerAuthOutboxProcessor(
             SellerAuthOutboxCommandManager outboxCommandManager,
             SellerAuthOutboxReadManager outboxReadManager,
             SellerAuthCompletionFacade authCompletionFacade,
+            SellerApplicationReadManager sellerApplicationReadManager,
             IdentityClient identityClient) {
         this.outboxCommandManager = outboxCommandManager;
         this.outboxReadManager = outboxReadManager;
         this.authCompletionFacade = authCompletionFacade;
+        this.sellerApplicationReadManager = sellerApplicationReadManager;
         this.identityClient = identityClient;
     }
 
@@ -102,26 +107,26 @@ public class SellerAuthOutboxProcessor {
                 result.tenantId(),
                 result.organizationId());
 
-        String emailPayload = buildEmailPayload(outbox, result);
+        String emailPayload = buildEmailPayload(outbox);
         authCompletionFacade.completeAuthOutbox(
                 outbox, result.tenantId(), result.organizationId(), emailPayload, now);
 
         return true;
     }
 
-    private String buildEmailPayload(
-            SellerAuthOutbox outbox, SellerIdentityProvisioningResult result) {
-        String authPayload = outbox.payload().trim();
-        String authFields = authPayload.substring(1, authPayload.length() - 1);
+    private String buildEmailPayload(SellerAuthOutbox outbox) {
+        SellerApplication application =
+                sellerApplicationReadManager.getByApprovedSellerId(outbox.sellerId());
 
         return "{\"emailType\":\""
                 + SellerAdminEmailType.SELLER_APPROVAL_INVITE.name()
-                + "\""
-                + ",\"sellerId\":"
+                + "\",\"sellerId\":"
                 + outbox.sellerIdValue()
-                + ","
-                + authFields
-                + "}";
+                + ",\"sellerName\":\""
+                + application.sellerNameValue()
+                + "\",\"contactEmail\":\""
+                + application.contactInfoEmail()
+                + "\"}";
     }
 
     private boolean handleFailure(

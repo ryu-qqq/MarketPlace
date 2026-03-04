@@ -95,4 +95,13 @@ public interface SellerAdminQueryPort {
      * @return 존재 여부
      */
     boolean existsByLoginId(String loginId);
+
+    /**
+     * 이름과 핸드폰 번호로 셀러 관리자를 조회합니다.
+     *
+     * @param name 관리자 이름
+     * @param phoneNumber 핸드폰 번호
+     * @return 셀러 관리자 (Optional)
+     */
+    Optional<SellerAdmin> findByNameAndPhoneNumber(String name, String phoneNumber);
 }

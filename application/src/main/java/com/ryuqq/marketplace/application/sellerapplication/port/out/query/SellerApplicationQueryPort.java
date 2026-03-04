@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.sellerapplication.port.out.query;
 
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellerapplication.aggregate.SellerApplication;
 import com.ryuqq.marketplace.domain.sellerapplication.id.SellerApplicationId;
 import com.ryuqq.marketplace.domain.sellerapplication.query.SellerApplicationSearchCriteria;
@@ -54,4 +55,12 @@ public interface SellerApplicationQueryPort {
      * @return 전체 개수
      */
     long countByCriteria(SellerApplicationSearchCriteria criteria);
+
+    /**
+     * 승인된 셀러 ID로 입점 신청을 조회합니다.
+     *
+     * @param sellerId 승인된 셀러 ID
+     * @return 입점 신청 Optional
+     */
+    Optional<SellerApplication> findByApprovedSellerId(SellerId sellerId);
 }
