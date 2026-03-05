@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.domain.imageupload.vo.ImageUploadOutboxStatus;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -123,5 +124,23 @@ public class ImageUploadOutboxQueryDslRepository {
                 .orderBy(imageUploadOutboxJpaEntity.processedAt.asc())
                 .limit(limit)
                 .fetch();
+    }
+
+    /**
+     * downloadTaskId로 PROCESSING 상태의 Outbox 조회 (콜백용).
+     *
+     * @param downloadTaskId FileFlow 다운로드 태스크 ID
+     * @return Outbox (Optional)
+     */
+    public Optional<ImageUploadOutboxJpaEntity> findProcessingByDownloadTaskId(
+            String downloadTaskId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .selectFrom(imageUploadOutboxJpaEntity)
+                        .where(
+                                imageUploadOutboxJpaEntity.downloadTaskId.eq(downloadTaskId),
+                                imageUploadOutboxJpaEntity.status.eq(
+                                        ImageUploadOutboxStatus.PROCESSING))
+                        .fetchOne());
     }
 }

@@ -6,4 +6,5 @@ fileflow:
   base-url: ${FILEFLOW_BASE_URL:http://fileflow-web-api-stage.connectly.local}
   cdn-domain: ${FILEFLOW_CDN_DOMAIN:stage-cdn.set-of.com}
   bucket: ${FILEFLOW_BUCKET:fileflow-uploads-stage}
+  callback-base-url: ${FILEFLOW_CALLBACK_BASE_URL:http://marketplace-api-stage.connectly.local:8080}
   service-token: ${FILEFLOW_SERVICE_TOKEN:}

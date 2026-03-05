@@ -82,7 +82,7 @@ public class FileFlowStorageMapper {
                 ACCESS_TYPE_PUBLIC,
                 request.category(),
                 SOURCE,
-                null);
+                request.callbackUrl());
     }
 
     /**

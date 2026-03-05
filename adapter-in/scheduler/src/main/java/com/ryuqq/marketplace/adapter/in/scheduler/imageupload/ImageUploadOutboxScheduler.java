@@ -74,9 +74,9 @@ public class ImageUploadOutboxScheduler {
     }
 
     /**
-     * PROCESSING 상태의 이미지 업로드 Outbox를 폴링합니다.
+     * PROCESSING 상태의 이미지 업로드 Outbox를 폴링합니다 (콜백 fallback용).
      *
-     * <p>FileFlow 다운로드 태스크 완료 여부를 확인합니다 (논블로킹).
+     * <p>콜백 방식으로 전환되어 기본 비활성화. enabled=true 시에만 동작합니다.
      */
     @Scheduled(
             cron = "${scheduler.jobs.image-upload-outbox.poll-processing.cron}",
@@ -84,6 +84,9 @@ public class ImageUploadOutboxScheduler {
     @SchedulerJob("ImageUploadOutbox-PollProcessing")
     public SchedulerBatchProcessingResult pollProcessingOutboxes() {
         SchedulerProperties.PollProcessing pollProcessing = config.pollProcessing();
+        if (!pollProcessing.enabled()) {
+            return SchedulerBatchProcessingResult.of(0, 0, 0);
+        }
         PollProcessingImageUploadCommand command =
                 PollProcessingImageUploadCommand.of(pollProcessing.batchSize());
         return pollProcessingUseCase.execute(command);

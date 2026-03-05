@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,5 +51,10 @@ public class ImageUploadOutboxReadManager {
     @Transactional(readOnly = true)
     public List<ImageUploadOutbox> findRecoverableFailedOutboxes(Instant failedBefore, int limit) {
         return queryPort.findRecoverableFailedOutboxes(failedBefore, limit);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ImageUploadOutbox> findProcessingByDownloadTaskId(String downloadTaskId) {
+        return queryPort.findProcessingByDownloadTaskId(downloadTaskId);
     }
 }
