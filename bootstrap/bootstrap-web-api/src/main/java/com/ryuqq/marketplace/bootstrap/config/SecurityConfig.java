@@ -137,6 +137,12 @@ public class SecurityConfig {
                                                 "/api/v1/market/seller-admin-applications")
                                         .permitAll()
 
+                                        // 비밀번호 찾기 플로우 (휴대폰 인증 후 비밀번호 변경)
+                                        .requestMatchers(
+                                                HttpMethod.PATCH,
+                                                "/api/v1/market/seller-admin-applications/*/change-password")
+                                        .permitAll()
+
                                         // 내부 서비스 간 통신 (X-Service-Token 인증)
                                         .requestMatchers("/api/v1/market/internal/**")
                                         .hasAuthority("ROLE_INTERNAL_SERVICE")
