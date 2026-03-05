@@ -32,7 +32,8 @@ public final class SellerAdminPublicApiFixtures {
     // ===== VerifySellerAdminResult (Application) =====
 
     public static VerifySellerAdminResult foundResult() {
-        return VerifySellerAdminResult.of(DEFAULT_STATUS, DEFAULT_SELLER_ADMIN_ID, DEFAULT_PHONE_NUMBER);
+        return VerifySellerAdminResult.of(
+                DEFAULT_STATUS, DEFAULT_SELLER_ADMIN_ID, DEFAULT_PHONE_NUMBER);
     }
 
     // ===== VerifySellerAdminApiResponse (API) =====

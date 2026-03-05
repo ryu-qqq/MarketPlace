@@ -145,6 +145,23 @@ scheduler:
           timezone: Asia/Seoul
           batch-size: 500
 
+    setof-sync-outbox:
+      process-pending:
+        # Prod: 5분마다 (기본값)
+        cron: "0 */5 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        # Prod: 10분마다 (기본값)
+        cron: "0 */10 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 300
+
     description-publish:
       # Prod: 5분마다
       cron: "0 */5 * * * *"

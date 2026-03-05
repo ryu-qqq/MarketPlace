@@ -8,8 +8,8 @@ import com.ryuqq.marketplace.application.category.manager.CategoryReadManager;
 import com.ryuqq.marketplace.application.productgroup.ProductGroupQueryFixtures;
 import com.ryuqq.marketplace.application.productgroup.assembler.ProductGroupAssembler;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupExcelPageResult;
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupQueryFactory;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchCriteria;
@@ -41,29 +41,30 @@ class SearchProductGroupForExcelServiceTest {
     class ExecuteTest {
 
         @Test
-        @DisplayName("검색 파라미터로 엑셀 번들을 조회하고 결과 목록을 반환한다")
-        void execute_ValidSearchParams_ReturnsExcelResults() {
+        @DisplayName("검색 파라미터로 엑셀 번들을 조회하고 페이지 결과를 반환한다")
+        void execute_ValidSearchParams_ReturnsExcelPageResult() {
             // given
             ProductGroupSearchParams params = ProductGroupQueryFixtures.searchParams();
             ProductGroupSearchCriteria criteria = ProductGroupSearchCriteria.defaultCriteria();
             ProductGroupExcelBundle bundle =
                     new ProductGroupExcelBundle(
                             List.of(), List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 0L);
-            List<ProductGroupExcelCompositeResult> expected = List.of();
+            ProductGroupExcelPageResult expected = ProductGroupExcelPageResult.empty(20);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readFacade.getExcelBundle(criteria)).willReturn(bundle);
-            given(assembler.toExcelResults(bundle)).willReturn(expected);
+            given(assembler.toExcelPageResult(bundle, criteria.page(), criteria.size()))
+                    .willReturn(expected);
 
             // when
-            List<ProductGroupExcelCompositeResult> result = sut.execute(params);
+            ProductGroupExcelPageResult result = sut.execute(params);
 
             // then
             assertThat(result).isNotNull();
             assertThat(result).isEqualTo(expected);
             then(queryFactory).should().createCriteria(params);
             then(readFacade).should().getExcelBundle(criteria);
-            then(assembler).should().toExcelResults(bundle);
+            then(assembler).should().toExcelPageResult(bundle, criteria.page(), criteria.size());
         }
 
         @Test
@@ -76,14 +77,15 @@ class SearchProductGroupForExcelServiceTest {
             ProductGroupExcelBundle bundle =
                     new ProductGroupExcelBundle(
                             List.of(), List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 0L);
-            List<ProductGroupExcelCompositeResult> expected = List.of();
+            ProductGroupExcelPageResult expected = ProductGroupExcelPageResult.empty(20);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readFacade.getExcelBundle(criteria)).willReturn(bundle);
-            given(assembler.toExcelResults(bundle)).willReturn(expected);
+            given(assembler.toExcelPageResult(bundle, criteria.page(), criteria.size()))
+                    .willReturn(expected);
 
             // when
-            List<ProductGroupExcelCompositeResult> result = sut.execute(params);
+            ProductGroupExcelPageResult result = sut.execute(params);
 
             // then
             assertThat(result).isNotNull();
@@ -101,14 +103,15 @@ class SearchProductGroupForExcelServiceTest {
             ProductGroupExcelBundle bundle =
                     new ProductGroupExcelBundle(
                             List.of(), List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 0L);
-            List<ProductGroupExcelCompositeResult> expected = List.of();
+            ProductGroupExcelPageResult expected = ProductGroupExcelPageResult.empty(20);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readFacade.getExcelBundle(criteria)).willReturn(bundle);
-            given(assembler.toExcelResults(bundle)).willReturn(expected);
+            given(assembler.toExcelPageResult(bundle, criteria.page(), criteria.size()))
+                    .willReturn(expected);
 
             // when
-            List<ProductGroupExcelCompositeResult> result = sut.execute(params);
+            ProductGroupExcelPageResult result = sut.execute(params);
 
             // then
             assertThat(result).isNotNull();
@@ -128,16 +131,17 @@ class SearchProductGroupForExcelServiceTest {
             ProductGroupExcelBundle bundle =
                     new ProductGroupExcelBundle(
                             List.of(), List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 0L);
-            List<ProductGroupExcelCompositeResult> expected = List.of();
+            ProductGroupExcelPageResult expected = ProductGroupExcelPageResult.empty(20);
 
             given(categoryReadManager.expandWithDescendants(originalCategoryIds))
                     .willReturn(expandedCategoryIds);
             given(queryFactory.createCriteria(expandedParams)).willReturn(criteria);
             given(readFacade.getExcelBundle(criteria)).willReturn(bundle);
-            given(assembler.toExcelResults(bundle)).willReturn(expected);
+            given(assembler.toExcelPageResult(bundle, criteria.page(), criteria.size()))
+                    .willReturn(expected);
 
             // when
-            List<ProductGroupExcelCompositeResult> result = sut.execute(params);
+            ProductGroupExcelPageResult result = sut.execute(params);
 
             // then
             assertThat(result).isEqualTo(expected);
@@ -154,11 +158,12 @@ class SearchProductGroupForExcelServiceTest {
             ProductGroupExcelBundle bundle =
                     new ProductGroupExcelBundle(
                             List.of(), List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 0L);
-            List<ProductGroupExcelCompositeResult> expected = List.of();
+            ProductGroupExcelPageResult expected = ProductGroupExcelPageResult.empty(20);
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readFacade.getExcelBundle(criteria)).willReturn(bundle);
-            given(assembler.toExcelResults(bundle)).willReturn(expected);
+            given(assembler.toExcelPageResult(bundle, criteria.page(), criteria.size()))
+                    .willReturn(expected);
 
             // when
             sut.execute(params);

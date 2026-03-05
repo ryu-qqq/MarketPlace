@@ -162,6 +162,23 @@ scheduler:
       # Stage: 중간 배치
       batch-size: 30
 
+    setof-sync-outbox:
+      process-pending:
+        # Stage: 3분마다
+        cron: "0 */3 * * * *"
+        # Stage: 중간 배치
+        batch-size: 50
+        # Stage: 중간 지연
+        delay-seconds: 30
+
+      recover-timeout:
+        # Stage: 5분마다
+        cron: "0 */5 * * * *"
+        # Stage: 중간 배치
+        batch-size: 50
+        # Stage: 중간 타임아웃
+        timeout-seconds: 180
+
     description-publish:
       # Stage: 5분마다
       cron: "0 */5 * * * *"

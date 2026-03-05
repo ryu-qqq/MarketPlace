@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.application.seller.manager.SellerCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerContractCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerCsCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerSettlementCommandManager;
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerBusinessInfo;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerContract;
@@ -14,6 +15,10 @@ import com.ryuqq.marketplace.domain.seller.aggregate.SellerCs;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerCsUpdateData;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerSettlement;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
+import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
+import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,18 +37,21 @@ public class SellerCommandFacade {
     private final SellerCsCommandManager csCommandManager;
     private final SellerContractCommandManager contractCommandManager;
     private final SellerSettlementCommandManager settlementCommandManager;
+    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     public SellerCommandFacade(
             SellerCommandManager sellerCommandManager,
             SellerBusinessInfoCommandManager businessInfoCommandManager,
             SellerCsCommandManager csCommandManager,
             SellerContractCommandManager contractCommandManager,
-            SellerSettlementCommandManager settlementCommandManager) {
+            SellerSettlementCommandManager settlementCommandManager,
+            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
         this.sellerCommandManager = sellerCommandManager;
         this.businessInfoCommandManager = businessInfoCommandManager;
         this.csCommandManager = csCommandManager;
         this.contractCommandManager = contractCommandManager;
         this.settlementCommandManager = settlementCommandManager;
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
     }
 
     /**
@@ -60,6 +68,12 @@ public class SellerCommandFacade {
         bundle.withSellerId(SellerId.of(sellerId));
 
         businessInfoCommandManager.persist(bundle.businessInfo());
+        createSetofSyncOutbox(
+                SellerId.of(sellerId),
+                sellerId,
+                SetofSyncEntityType.SELLER,
+                SetofSyncOperationType.CREATE,
+                bundle.seller().createdAt());
 
         return sellerId;
     }
@@ -99,5 +113,24 @@ public class SellerCommandFacade {
         csCommandManager.persist(sellerCs);
         contractCommandManager.persist(sellerContract);
         settlementCommandManager.persist(sellerSettlement);
+        createSetofSyncOutbox(
+                seller.id(),
+                seller.idValue(),
+                SetofSyncEntityType.SELLER,
+                SetofSyncOperationType.UPDATE,
+                bundle.changedAt());
+    }
+
+    private void createSetofSyncOutbox(
+            SellerId sellerId,
+            Long entityId,
+            SetofSyncEntityType entityType,
+            SetofSyncOperationType operationType,
+            java.time.Instant now) {
+        if (setofSyncOutboxCommandManager != null) {
+            SetofSyncOutbox outbox =
+                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+            setofSyncOutboxCommandManager.persist(outbox);
+        }
     }
 }

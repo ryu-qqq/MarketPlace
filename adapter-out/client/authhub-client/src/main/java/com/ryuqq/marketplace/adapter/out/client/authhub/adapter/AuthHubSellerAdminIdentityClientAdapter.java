@@ -68,10 +68,6 @@ public class AuthHubSellerAdminIdentityClientAdapter implements SellerAdminIdent
             return mapper.toRetryableFailure("SERVER_ERROR", e.getMessage());
 
         } catch (AuthHubException e) {
-            boolean retryable = e instanceof AuthHubServerException;
-            if (retryable) {
-                return mapper.toRetryableFailure("AUTHHUB_ERROR", e.getMessage());
-            }
             return mapper.toPermanentFailure("AUTHHUB_ERROR", e.getMessage());
         }
     }

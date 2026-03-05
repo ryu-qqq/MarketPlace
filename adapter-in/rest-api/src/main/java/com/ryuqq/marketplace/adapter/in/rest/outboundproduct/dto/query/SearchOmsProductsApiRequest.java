@@ -9,7 +9,7 @@ public record SearchOmsProductsApiRequest(
                 String dateType,
         @Parameter(description = "조회 시작일 (yyyy-MM-dd)", example = "2026-01-01") String startDate,
         @Parameter(description = "조회 종료일 (yyyy-MM-dd)", example = "2026-03-03") String endDate,
-        @Parameter(description = "상품 상태 필터 (ACTIVE/INACTIVE/SOLDOUT)", example = "ACTIVE")
+        @Parameter(description = "상품 상태 필터 (ACTIVE/INACTIVE/SOLD_OUT)", example = "ACTIVE")
                 List<String> statuses,
         @Parameter(description = "연동 상태 필터 (SUCCESS/FAILED/PENDING)", example = "FAILED")
                 List<String> syncStatuses,

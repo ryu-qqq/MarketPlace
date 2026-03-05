@@ -8,7 +8,7 @@ import java.util.List;
  * @param sellerId 셀러 ID (소유권 검증용)
  * @param entries 수정할 상품 항목 목록
  */
-public record BatchUpdateProductCommand(long sellerId, List<Entry> entries) {
+public record BatchUpdateProductCommand(Long sellerId, List<Entry> entries) {
 
     /**
      * 개별 상품 수정 항목.

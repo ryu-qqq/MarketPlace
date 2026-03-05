@@ -7,9 +7,9 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupEnrichmentResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupExcelPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
@@ -70,27 +70,28 @@ class ProductGroupAssemblerTest {
     }
 
     @Nested
-    @DisplayName("toExcelResults() - 엑셀 번들 → ExcelCompositeResult 목록 조립")
-    class ToExcelResultsTest {
+    @DisplayName("toExcelPageResult() - 엑셀 번들 → ExcelPageResult 조립")
+    class ToExcelPageResultTest {
 
         @Test
-        @DisplayName("빈 번들로 빈 목록을 반환한다")
-        void toExcelResults_EmptyBundle_ReturnsEmptyList() {
+        @DisplayName("빈 번들로 빈 PageResult를 반환한다")
+        void toExcelPageResult_EmptyBundle_ReturnsEmptyPageResult() {
             // given
             ProductGroupExcelBundle bundle =
                     new ProductGroupExcelBundle(
                             List.of(), List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 0L);
 
             // when
-            List<ProductGroupExcelCompositeResult> result = sut.toExcelResults(bundle);
+            ProductGroupExcelPageResult result = sut.toExcelPageResult(bundle, 0, 20);
 
             // then
-            assertThat(result).isEmpty();
+            assertThat(result.results()).isEmpty();
+            assertThat(result.pageMeta().totalElements()).isZero();
         }
 
         @Test
-        @DisplayName("baseComposites가 있으면 각 항목에 대해 ExcelCompositeResult를 생성한다")
-        void toExcelResults_WithBaseComposites_ReturnsExcelResults() {
+        @DisplayName("baseComposites가 있으면 각 항목에 대해 ExcelCompositeResult를 포함한 PageResult를 생성한다")
+        void toExcelPageResult_WithBaseComposites_ReturnsExcelPageResult() {
             // given
             Instant now = Instant.now();
             ProductGroupListCompositeResult base = createListCompositeResult(1L, now);
@@ -107,20 +108,21 @@ class ProductGroupAssemblerTest {
                             1L);
 
             // when
-            List<ProductGroupExcelCompositeResult> result = sut.toExcelResults(bundle);
+            ProductGroupExcelPageResult result = sut.toExcelPageResult(bundle, 0, 20);
 
             // then
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).base()).isNotNull();
-            assertThat(result.get(0).images()).isEmpty();
-            assertThat(result.get(0).products()).isEmpty();
-            assertThat(result.get(0).descriptionCdnUrl()).isNull();
-            assertThat(result.get(0).notice()).isNull();
+            assertThat(result.results()).hasSize(1);
+            assertThat(result.results().get(0).base()).isNotNull();
+            assertThat(result.results().get(0).images()).isEmpty();
+            assertThat(result.results().get(0).products()).isEmpty();
+            assertThat(result.results().get(0).descriptionCdnUrl()).isNull();
+            assertThat(result.results().get(0).notice()).isNull();
+            assertThat(result.pageMeta().totalElements()).isEqualTo(1L);
         }
 
         @Test
-        @DisplayName("여러 baseComposites가 있으면 동일한 수의 ExcelCompositeResult를 반환한다")
-        void toExcelResults_WithMultipleBaseComposites_ReturnsAllResults() {
+        @DisplayName("여러 baseComposites가 있으면 동일한 수의 결과를 포함한 PageResult를 반환한다")
+        void toExcelPageResult_WithMultipleBaseComposites_ReturnsAllResults() {
             // given
             Instant now = Instant.now();
             List<ProductGroupListCompositeResult> baseComposites =
@@ -133,15 +135,16 @@ class ProductGroupAssemblerTest {
                             baseComposites, List.of(), Map.of(), Map.of(), Map.of(), Map.of(), 3L);
 
             // when
-            List<ProductGroupExcelCompositeResult> result = sut.toExcelResults(bundle);
+            ProductGroupExcelPageResult result = sut.toExcelPageResult(bundle, 0, 20);
 
             // then
-            assertThat(result).hasSize(3);
+            assertThat(result.results()).hasSize(3);
+            assertThat(result.pageMeta().totalElements()).isEqualTo(3L);
         }
 
         @Test
-        @DisplayName("descriptionCdnUrl이 있으면 ExcelCompositeResult에 포함된다")
-        void toExcelResults_WithDescriptionCdnUrl_IncludesCdnUrlInResult() {
+        @DisplayName("descriptionCdnUrl이 있으면 결과에 포함된다")
+        void toExcelPageResult_WithDescriptionCdnUrl_IncludesCdnUrlInResult() {
             // given
             Instant now = Instant.now();
             Long productGroupId = 1L;
@@ -158,11 +161,11 @@ class ProductGroupAssemblerTest {
                             1L);
 
             // when
-            List<ProductGroupExcelCompositeResult> result = sut.toExcelResults(bundle);
+            ProductGroupExcelPageResult result = sut.toExcelPageResult(bundle, 0, 20);
 
             // then
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).descriptionCdnUrl()).isEqualTo(cdnUrl);
+            assertThat(result.results()).hasSize(1);
+            assertThat(result.results().get(0).descriptionCdnUrl()).isEqualTo(cdnUrl);
         }
     }
 

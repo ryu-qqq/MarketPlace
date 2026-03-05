@@ -103,6 +103,35 @@ class BatchChangeProductGroupStatusServiceTest {
         }
 
         @Test
+        @DisplayName("SUPER_ADMIN(sellerId=null)은 소유권 검증 없이 상태를 변경한다")
+        void execute_SuperAdmin_SkipsOwnershipCheck() {
+            // given
+            List<Long> productGroupIds = List.of(1L, 2L);
+            BatchChangeProductGroupStatusCommand command =
+                    ProductGroupCommandFixtures.batchChangeStatusCommand(
+                            null, productGroupIds, "ACTIVE");
+
+            List<ProductGroupId> ids = productGroupIds.stream().map(ProductGroupId::of).toList();
+
+            ProductGroup group1 = ProductGroupFixtures.draftProductGroup(1L);
+            ProductGroup group2 = ProductGroupFixtures.draftProductGroup(2L);
+            List<ProductGroup> groups = List.of(group1, group2);
+
+            given(readManager.findByIds(ids)).willReturn(groups);
+
+            // when
+            sut.execute(command);
+
+            // then
+            then(readManager).should().findByIds(ids);
+            then(readManager).shouldHaveNoMoreInteractions();
+            then(commandManager).should().persist(group1);
+            then(commandManager).should().persist(group2);
+            then(activationOutboxCoordinator).should().createOutboxAndProducts(group1);
+            then(activationOutboxCoordinator).should().createOutboxAndProducts(group2);
+        }
+
+        @Test
         @DisplayName("소유권 위반 시 예외가 발생하고 상태 변경이 수행되지 않는다")
         void execute_OwnershipViolation_ThrowsException() {
             // given

@@ -66,7 +66,7 @@ public class ProductCommandApiMapper {
      * @return Application Command DTO
      */
     public BatchChangeProductStatusCommand toCommand(
-            long sellerId, Long productGroupId, BatchChangeProductStatusApiRequest request) {
+            Long sellerId, Long productGroupId, BatchChangeProductStatusApiRequest request) {
         return new BatchChangeProductStatusCommand(
                 sellerId, productGroupId, request.productIds(), request.targetStatus());
     }
@@ -79,7 +79,7 @@ public class ProductCommandApiMapper {
      * @return Application Command DTO
      */
     public BatchUpdateProductCommand toCommand(
-            long sellerId, BatchUpdateProductApiRequest request) {
+            Long sellerId, BatchUpdateProductApiRequest request) {
         return new BatchUpdateProductCommand(
                 sellerId,
                 request.items().stream()

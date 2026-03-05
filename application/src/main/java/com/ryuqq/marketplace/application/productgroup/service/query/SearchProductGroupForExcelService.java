@@ -3,8 +3,8 @@ package com.ryuqq.marketplace.application.productgroup.service.query;
 import com.ryuqq.marketplace.application.category.manager.CategoryReadManager;
 import com.ryuqq.marketplace.application.productgroup.assembler.ProductGroupAssembler;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupExcelPageResult;
 import com.ryuqq.marketplace.application.productgroup.factory.ProductGroupQueryFactory;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupForExcelUseCase;
@@ -33,11 +33,11 @@ public class SearchProductGroupForExcelService implements SearchProductGroupForE
     }
 
     @Override
-    public List<ProductGroupExcelCompositeResult> execute(ProductGroupSearchParams params) {
+    public ProductGroupExcelPageResult execute(ProductGroupSearchParams params) {
         ProductGroupSearchParams expandedParams = expandCategoryIds(params);
         ProductGroupSearchCriteria criteria = queryFactory.createCriteria(expandedParams);
         ProductGroupExcelBundle bundle = readFacade.getExcelBundle(criteria);
-        return assembler.toExcelResults(bundle);
+        return assembler.toExcelPageResult(bundle, criteria.page(), criteria.size());
     }
 
     private ProductGroupSearchParams expandCategoryIds(ProductGroupSearchParams params) {
