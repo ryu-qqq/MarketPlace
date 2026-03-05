@@ -74,11 +74,8 @@ public class FileFlowStorageMapper {
      * @return SDK CreateDownloadTaskRequest
      */
     public CreateDownloadTaskRequest toCreateDownloadTaskRequest(ExternalDownloadRequest request) {
-        String s3Key = request.category() + "/" + request.filename();
         return new CreateDownloadTaskRequest(
                 request.sourceUrl(),
-                s3Key,
-                properties.bucket(),
                 ACCESS_TYPE_PUBLIC,
                 request.category(),
                 SOURCE,

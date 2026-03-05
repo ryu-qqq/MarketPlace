@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Component;
 
@@ -73,6 +74,14 @@ public class ImageTransformOutboxQueryAdapter implements ImageTransformOutboxQue
         return queryDslRepository.findProcessingTimeoutOutboxes(timeoutThreshold, limit).stream()
                 .map(mapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Optional<ImageTransformOutbox> findProcessingByTransformRequestId(
+            String transformRequestId) {
+        return queryDslRepository
+                .findProcessingByTransformRequestId(transformRequestId)
+                .map(mapper::toDomain);
     }
 
     @Override

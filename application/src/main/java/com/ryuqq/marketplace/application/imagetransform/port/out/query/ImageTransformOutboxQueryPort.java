@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -59,4 +60,12 @@ public interface ImageTransformOutboxQueryPort {
      */
     Map<Long, Set<ImageVariantType>> findActiveVariantTypesBySourceImageIds(
             List<Long> sourceImageIds, List<ImageVariantType> variantTypes);
+
+    /**
+     * PROCESSING 상태의 Outbox를 transformRequestId로 조회합니다 (콜백용).
+     *
+     * @param transformRequestId FileFlow 변환 요청 ID
+     * @return Outbox (없으면 empty)
+     */
+    Optional<ImageTransformOutbox> findProcessingByTransformRequestId(String transformRequestId);
 }

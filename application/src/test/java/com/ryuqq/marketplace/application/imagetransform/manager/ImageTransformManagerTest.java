@@ -40,18 +40,20 @@ class ImageTransformManagerTest {
             ImageTransformResponse expectedResponse =
                     ImageTransformResponseFixtures.processingResponse();
 
-            given(transformClient.createTransformRequest(uploadedUrl, variantType, fileAssetId))
+            given(
+                            transformClient.createTransformRequest(
+                                    uploadedUrl, variantType, fileAssetId, null))
                     .willReturn(expectedResponse);
 
             // when
             ImageTransformResponse result =
-                    sut.createTransformRequest(uploadedUrl, variantType, fileAssetId);
+                    sut.createTransformRequest(uploadedUrl, variantType, fileAssetId, null);
 
             // then
             assertThat(result).isEqualTo(expectedResponse);
             then(transformClient)
                     .should()
-                    .createTransformRequest(uploadedUrl, variantType, fileAssetId);
+                    .createTransformRequest(uploadedUrl, variantType, fileAssetId, null);
         }
     }
 

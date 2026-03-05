@@ -73,26 +73,26 @@ scheduler:
 
     image-transform-outbox:
       process-pending:
-        # Prod: 3분마다
-        cron: "0 */3 * * * *"
+        # Prod: 5초마다
+        cron: "*/5 * * * * *"
         # Prod: 큰 배치
-        batch-size: 30
+        batch-size: 50
         # Prod: 안전한 지연
-        delay-seconds: 10
+        delay-seconds: 5
 
       poll-processing:
-        # Prod: 2분마다
+        # Prod: 비활성화 (콜백 방식으로 전환)
+        enabled: false
         cron: "0 */2 * * * *"
-        # Prod: 큰 배치
-        batch-size: 30
+        batch-size: 50
 
       recover-timeout:
-        # Prod: 10분마다
-        cron: "0 */10 * * * *"
+        # Prod: 1분마다
+        cron: "0 */1 * * * *"
         # Prod: 큰 배치
-        batch-size: 30
-        # Prod: 안전한 타임아웃
-        timeout-seconds: 600
+        batch-size: 50
+        # Prod: 1분 타임아웃
+        timeout-seconds: 60
 
     intelligence-pipeline:
       recover-stuck-aggregation:

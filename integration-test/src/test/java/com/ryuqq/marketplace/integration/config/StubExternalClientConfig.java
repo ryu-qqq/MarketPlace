@@ -185,7 +185,10 @@ public class StubExternalClientConfig {
         return new ImageTransformClient() {
             @Override
             public ImageTransformResponse createTransformRequest(
-                    String uploadedUrl, ImageVariantType variantType, String fileAssetId) {
+                    String uploadedUrl,
+                    ImageVariantType variantType,
+                    String fileAssetId,
+                    String callbackUrl) {
                 return ImageTransformResponse.pending("stub-transform-" + UUID.randomUUID());
             }
 
