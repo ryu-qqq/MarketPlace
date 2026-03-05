@@ -99,7 +99,8 @@ public class SellerAdminApplicationQueryController {
     public ResponseEntity<ApiResponse<SellerAdminApplicationPageApiResponse>> search(
             @Valid @ParameterObject SearchSellerAdminApplicationsApiRequest request) {
 
-        List<Long> effectiveSellerIds = accessChecker.resolveEffectiveSellerIds(request.sellerIds());
+        List<Long> effectiveSellerIds =
+                accessChecker.resolveEffectiveSellerIds(request.sellerIds());
         SellerAdminApplicationSearchParams params =
                 mapper.toSearchParams(request, effectiveSellerIds);
         SellerAdminApplicationPageResult result = searchUseCase.execute(params);

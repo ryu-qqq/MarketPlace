@@ -41,9 +41,7 @@ public class ImageUploadPublicCommandController {
         this.completeCallbackUseCase = completeCallbackUseCase;
     }
 
-    @Operation(
-            summary = "이미지 업로드 콜백",
-            description = "FileFlow 다운로드 태스크 완료 시 콜백으로 호출됩니다.")
+    @Operation(summary = "이미지 업로드 콜백", description = "FileFlow 다운로드 태스크 완료 시 콜백으로 호출됩니다.")
     @PostMapping(ImageUploadPublicEndpoints.CALLBACK)
     public ResponseEntity<ApiResponse<Void>> handleCallback(
             @RequestBody ImageUploadCallbackApiRequest request) {

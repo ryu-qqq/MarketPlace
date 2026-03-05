@@ -216,8 +216,8 @@ public class MarketAccessChecker extends BaseAccessChecker {
     /**
      * 조회 필터용 셀러 ID 목록 해석.
      *
-     * <p>SUPER_ADMIN은 요청된 sellerIds를 그대로 사용합니다 (null이면 빈 리스트). 일반 사용자는 자신의 셀러 ID만 포함된 단건
-     * 리스트를 반환합니다.
+     * <p>SUPER_ADMIN은 요청된 sellerIds를 그대로 사용합니다 (null이면 빈 리스트). 일반 사용자는 자신의 셀러 ID만 포함된 단건 리스트를
+     * 반환합니다.
      *
      * @param requestedSellerIds 요청에 포함된 셀러 ID 목록 (nullable)
      * @return 유효한 셀러 ID 목록
