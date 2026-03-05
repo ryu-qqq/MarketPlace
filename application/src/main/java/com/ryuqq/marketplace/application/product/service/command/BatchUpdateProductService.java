@@ -44,7 +44,10 @@ public class BatchUpdateProductService implements BatchUpdateProductUseCase {
         List<ProductId> productIds =
                 command.entries().stream().map(e -> ProductId.of(e.productId())).toList();
 
-        List<Product> products = ownershipValidator.validateAndGet(productIds, command.sellerId());
+        List<Product> products =
+                command.sellerId() != null
+                        ? ownershipValidator.validateAndGet(productIds, command.sellerId())
+                        : ownershipValidator.getWithoutOwnershipCheck(productIds);
 
         Map<Long, BatchUpdateProductCommand.Entry> entryMap =
                 command.entries().stream()

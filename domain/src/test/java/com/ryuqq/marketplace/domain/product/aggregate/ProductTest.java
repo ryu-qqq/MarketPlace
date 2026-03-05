@@ -141,7 +141,7 @@ class ProductTest {
             Product product = ProductFixtures.soldOutProduct();
 
             // then
-            assertThat(product.status()).isEqualTo(ProductStatus.SOLDOUT);
+            assertThat(product.status()).isEqualTo(ProductStatus.SOLD_OUT);
             assertThat(product.stockQuantity()).isZero();
         }
     }
@@ -166,7 +166,7 @@ class ProductTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT 상태에서 ACTIVE로 전환한다")
+        @DisplayName("SOLD_OUT 상태에서 ACTIVE로 전환한다")
         void activateFromSoldOut() {
             // given
             Product product = ProductFixtures.soldOutProduct();
@@ -239,7 +239,7 @@ class ProductTest {
     class MarkSoldOutTest {
 
         @Test
-        @DisplayName("ACTIVE 상태에서 SOLDOUT로 전환한다")
+        @DisplayName("ACTIVE 상태에서 SOLD_OUT로 전환한다")
         void markSoldOutFromActive() {
             // given
             Product product = ProductFixtures.activeProduct();
@@ -249,7 +249,7 @@ class ProductTest {
             product.markSoldOut(now);
 
             // then
-            assertThat(product.status()).isEqualTo(ProductStatus.SOLDOUT);
+            assertThat(product.status()).isEqualTo(ProductStatus.SOLD_OUT);
             assertThat(product.updatedAt()).isEqualTo(now);
         }
 

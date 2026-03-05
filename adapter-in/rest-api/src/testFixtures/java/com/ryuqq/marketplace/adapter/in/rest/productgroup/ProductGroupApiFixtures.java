@@ -200,6 +200,7 @@ public final class ProductGroupApiFixtures {
     public static RegisterProductGroupExcelApiRequest registerExcelRequest() {
         RegisterProductGroupApiRequest request = registerRequest();
         return new RegisterProductGroupExcelApiRequest(
+                DEFAULT_SELLER_ID,
                 request.brandId(),
                 request.categoryId(),
                 request.productGroupName(),
@@ -322,6 +323,15 @@ public final class ProductGroupApiFixtures {
 
     public static ProductGroupPageResult emptyPageResult() {
         return ProductGroupPageResult.of(List.of(), 0, 20, 0L);
+    }
+
+    public static ProductGroupExcelPageResult excelPageResult(int count, int page, int size) {
+        List<ProductGroupExcelCompositeResult> results = productGroupExcelResults(count);
+        return ProductGroupExcelPageResult.of(results, page, size, (long) count);
+    }
+
+    public static ProductGroupExcelPageResult emptyExcelPageResult() {
+        return ProductGroupExcelPageResult.of(List.of(), 0, 20, 0L);
     }
 
     // ===== ProductGroupListApiResponse =====

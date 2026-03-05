@@ -128,13 +128,13 @@ public class Product {
         switch (targetStatus) {
             case ACTIVE -> activate(now);
             case INACTIVE -> deactivate(now);
-            case SOLDOUT -> markSoldOut(now);
+            case SOLD_OUT -> markSoldOut(now);
             case DELETED -> delete(now);
             default -> throw new IllegalArgumentException("지원하지 않는 상태 변경입니다: " + targetStatus);
         }
     }
 
-    /** 판매 재개. INACTIVE, SOLDOUT에서만 가능. */
+    /** 판매 재개. INACTIVE, SOLD_OUT에서만 가능. */
     public void activate(Instant now) {
         if (!status.canActivate()) {
             throw new ProductInvalidStatusTransitionException(status, ProductStatus.ACTIVE);
@@ -155,9 +155,9 @@ public class Product {
     /** 품절 처리. */
     public void markSoldOut(Instant now) {
         if (!status.isActive()) {
-            throw new ProductInvalidStatusTransitionException(status, ProductStatus.SOLDOUT);
+            throw new ProductInvalidStatusTransitionException(status, ProductStatus.SOLD_OUT);
         }
-        this.status = ProductStatus.SOLDOUT;
+        this.status = ProductStatus.SOLD_OUT;
         this.updatedAt = now;
     }
 

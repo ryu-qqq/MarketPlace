@@ -11,8 +11,8 @@ import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGr
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper.ProductGroupQueryApiMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupExcelPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.GetProductGroupUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupByOffsetUseCase;
@@ -101,16 +101,17 @@ public class ProductGroupQueryController {
     @PreAuthorize("@access.hasPermission('product-group:read')")
     @RequirePermission(value = "product-group:read", description = "상품 그룹 엑셀 다운로드 조회")
     @GetMapping(ProductGroupAdminEndpoints.EXCEL)
-    public ResponseEntity<ApiResponse<List<ProductGroupExcelApiResponse>>> searchForExcel(
-            @Valid SearchProductGroupsApiRequest request) {
+    public ResponseEntity<ApiResponse<PageApiResponse<ProductGroupExcelApiResponse>>>
+            searchForExcel(@Valid SearchProductGroupsApiRequest request) {
 
         List<Long> effectiveSellerIds = resolveEffectiveSellerIds(request.sellerIds());
         ProductGroupSearchParams searchParams = mapper.toSearchParams(request, effectiveSellerIds);
-        List<ProductGroupExcelCompositeResult> results =
+        ProductGroupExcelPageResult pageResult =
                 searchProductGroupForExcelUseCase.execute(searchParams);
-        List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+        PageApiResponse<ProductGroupExcelApiResponse> response =
+                mapper.toExcelPageResponse(pageResult);
 
-        return ResponseEntity.ok(ApiResponse.of(responses));
+        return ResponseEntity.ok(ApiResponse.of(response));
     }
 
     @Operation(summary = "상품 그룹 상세 조회", description = "상품 그룹 상세 정보를 조회합니다.")

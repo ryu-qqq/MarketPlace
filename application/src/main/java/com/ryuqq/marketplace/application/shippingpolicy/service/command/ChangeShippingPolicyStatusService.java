@@ -1,16 +1,21 @@
 package com.ryuqq.marketplace.application.shippingpolicy.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.ChangeShippingPolicyStatusCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
 import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyCommandManager;
 import com.ryuqq.marketplace.application.shippingpolicy.port.in.command.ChangeShippingPolicyStatusUseCase;
 import com.ryuqq.marketplace.application.shippingpolicy.validator.ShippingPolicyValidator;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
+import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
+import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,14 +36,17 @@ public class ChangeShippingPolicyStatusService implements ChangeShippingPolicySt
     private final ShippingPolicyCommandFactory commandFactory;
     private final ShippingPolicyCommandManager commandManager;
     private final ShippingPolicyValidator validator;
+    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     public ChangeShippingPolicyStatusService(
             ShippingPolicyCommandFactory commandFactory,
             ShippingPolicyCommandManager commandManager,
-            ShippingPolicyValidator validator) {
+            ShippingPolicyValidator validator,
+            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
         this.validator = validator;
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
     }
 
     @Override
@@ -59,6 +67,28 @@ public class ChangeShippingPolicyStatusService implements ChangeShippingPolicySt
         }
 
         commandManager.persistAll(shippingPolicies);
+
+        for (ShippingPolicy policy : shippingPolicies) {
+            createSetofSyncOutbox(
+                    SellerId.of(command.sellerId()),
+                    policy.idValue(),
+                    SetofSyncEntityType.SHIPPING_POLICY,
+                    SetofSyncOperationType.UPDATE,
+                    changedAt);
+        }
+    }
+
+    private void createSetofSyncOutbox(
+            SellerId sellerId,
+            Long entityId,
+            SetofSyncEntityType entityType,
+            SetofSyncOperationType operationType,
+            java.time.Instant now) {
+        if (setofSyncOutboxCommandManager != null) {
+            SetofSyncOutbox outbox =
+                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+            setofSyncOutboxCommandManager.persist(outbox);
+        }
     }
 
     private void activateAll(List<ShippingPolicy> policies, Instant changedAt) {

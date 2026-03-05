@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
  * @author ryu-qqq
  * @since 1.0.0
  */
+@SuppressWarnings("PMD.TooManyMethods")
 @Component("access")
 public class MarketAccessChecker extends BaseAccessChecker {
 
@@ -87,6 +88,41 @@ public class MarketAccessChecker extends BaseAccessChecker {
         return resolveSellerIdUseCase
                 .execute(organizationId)
                 .orElseThrow(() -> new AccessDeniedException("현재 사용자의 셀러 정보를 찾을 수 없습니다"));
+    }
+
+    /**
+     * 등록 요청에서 sellerId를 해석합니다.
+     *
+     * <p>SUPER_ADMIN은 요청에 포함된 sellerId를 사용하며, 누락 시 예외를 발생시킵니다. 일반 사용자는 인증 컨텍스트에서 셀러 ID를 해석합니다.
+     *
+     * @param requestedSellerId 요청에 포함된 sellerId (nullable)
+     * @return 해석된 sellerId
+     * @throws IllegalArgumentException SUPER_ADMIN이 sellerId를 누락한 경우
+     * @throws AccessDeniedException 셀러 정보를 찾을 수 없는 경우
+     */
+    public long resolveSellerIdForRegistration(Long requestedSellerId) {
+        if (superAdmin()) {
+            if (requestedSellerId == null) {
+                throw new IllegalArgumentException("SUPER_ADMIN은 sellerId를 명시해야 합니다");
+            }
+            return requestedSellerId;
+        }
+        return resolveCurrentSellerId();
+    }
+
+    /**
+     * SUPER_ADMIN이면 null, 일반 사용자이면 sellerId를 반환합니다.
+     *
+     * <p>배치 상태 변경 등 소유권 검증이 선택적인 엔드포인트에서 사용합니다. null이면 서비스 레이어에서 소유권 검증을 건너뜁니다.
+     *
+     * @return 셀러 ID (SUPER_ADMIN이면 null)
+     * @throws AccessDeniedException 셀러 정보를 찾을 수 없는 경우
+     */
+    public Long resolveSellerIdOrNull() {
+        if (superAdmin()) {
+            return null;
+        }
+        return resolveCurrentSellerId();
     }
 
     /**

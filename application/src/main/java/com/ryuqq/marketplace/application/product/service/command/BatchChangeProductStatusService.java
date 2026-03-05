@@ -46,7 +46,10 @@ public class BatchChangeProductStatusService implements BatchChangeProductStatus
     public void execute(BatchChangeProductStatusCommand command) {
         ProductGroupId productGroupId = ProductGroupId.of(command.productGroupId());
 
-        productGroupReadManager.getByIdsAndSellerId(List.of(productGroupId), command.sellerId());
+        if (command.sellerId() != null) {
+            productGroupReadManager.getByIdsAndSellerId(
+                    List.of(productGroupId), command.sellerId());
+        }
 
         List<ProductId> productIds = command.productIds().stream().map(ProductId::of).toList();
 

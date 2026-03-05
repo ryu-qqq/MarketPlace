@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupExcelApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
@@ -311,20 +310,9 @@ public class ProductGroupCommandApiMapper {
      * @return Application Command DTO
      */
     public BatchChangeProductGroupStatusCommand toCommand(
-            long sellerId, BatchChangeProductGroupStatusApiRequest request) {
+            Long sellerId, BatchChangeProductGroupStatusApiRequest request) {
         return new BatchChangeProductGroupStatusCommand(
                 sellerId, request.productGroupIds(), request.targetStatus());
-    }
-
-    /**
-     * BatchRegisterProductGroupApiRequest -> List&lt;RegisterProductGroupCommand&gt; 변환.
-     *
-     * @param request 배치 등록 API 요청 DTO
-     * @return Application Command 목록
-     */
-    public List<RegisterProductGroupCommand> toCommands(
-            long sellerId, BatchRegisterProductGroupApiRequest request) {
-        return request.items().stream().map(item -> toCommand(sellerId, item)).toList();
     }
 
     /**

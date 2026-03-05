@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupExcelPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductOptionMatrixResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionGroupResult;
@@ -50,36 +51,41 @@ public class ProductGroupAssembler {
     }
 
     /**
-     * 엑셀 번들 → ExcelCompositeResult 목록 조립.
+     * 엑셀 번들 → ExcelPageResult 조립.
      *
      * <p>기본 Composite에 enrichment를 적용한 뒤, 번들의 Map 데이터를 조합하여 풍부한 엑셀용 결과를 생성합니다.
      */
-    public List<ProductGroupExcelCompositeResult> toExcelResults(ProductGroupExcelBundle bundle) {
+    public ProductGroupExcelPageResult toExcelPageResult(
+            ProductGroupExcelBundle bundle, int page, int size) {
         if (bundle.baseComposites().isEmpty()) {
-            return List.of();
+            return ProductGroupExcelPageResult.empty(size);
         }
 
         List<ProductGroupListCompositeResult> enrichedComposites =
                 enrichComposites(bundle.baseComposites(), bundle.enrichments());
 
-        return enrichedComposites.stream()
-                .map(
-                        base -> {
-                            List<ProductGroupImageResult> images =
-                                    bundle.imagesByProductGroupId()
-                                            .getOrDefault(base.id(), List.of());
-                            List<ProductResult> products =
-                                    bundle.productsByProductGroupId()
-                                            .getOrDefault(base.id(), List.of());
-                            String cdnUrl =
-                                    bundle.descriptionCdnUrlByProductGroupId().get(base.id());
-                            ProductNoticeResult notice =
-                                    bundle.noticeByProductGroupId().get(base.id());
+        List<ProductGroupExcelCompositeResult> results =
+                enrichedComposites.stream()
+                        .map(
+                                base -> {
+                                    List<ProductGroupImageResult> images =
+                                            bundle.imagesByProductGroupId()
+                                                    .getOrDefault(base.id(), List.of());
+                                    List<ProductResult> products =
+                                            bundle.productsByProductGroupId()
+                                                    .getOrDefault(base.id(), List.of());
+                                    String cdnUrl =
+                                            bundle.descriptionCdnUrlByProductGroupId()
+                                                    .get(base.id());
+                                    ProductNoticeResult notice =
+                                            bundle.noticeByProductGroupId().get(base.id());
 
-                            return new ProductGroupExcelCompositeResult(
-                                    base, images, products, cdnUrl, notice);
-                        })
-                .toList();
+                                    return new ProductGroupExcelCompositeResult(
+                                            base, images, products, cdnUrl, notice);
+                                })
+                        .toList();
+
+        return ProductGroupExcelPageResult.of(results, page, size, bundle.totalElements());
     }
 
     /** 상세 번들 → DetailCompositeResult 조립. */

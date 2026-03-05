@@ -376,7 +376,7 @@ public final class ProductGroupFixtures {
                 CommonVoFixtures.yesterday());
     }
 
-    /** SOLDOUT 상태의 ProductGroup */
+    /** SOLD_OUT 상태의 ProductGroup */
     public static ProductGroup soldoutProductGroup() {
         return ProductGroup.reconstitute(
                 defaultProductGroupId(),
@@ -387,7 +387,7 @@ public final class ProductGroupFixtures {
                 RefundPolicyId.of(DEFAULT_REFUND_POLICY_ID),
                 defaultProductGroupName(),
                 OptionType.NONE,
-                ProductGroupStatus.SOLDOUT,
+                ProductGroupStatus.SOLD_OUT,
                 List.of(uploadedImage()),
                 List.of(),
                 CommonVoFixtures.yesterday(),

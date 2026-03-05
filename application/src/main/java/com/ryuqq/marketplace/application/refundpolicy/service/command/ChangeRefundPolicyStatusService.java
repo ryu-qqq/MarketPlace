@@ -6,11 +6,16 @@ import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyComman
 import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
 import com.ryuqq.marketplace.application.refundpolicy.port.in.command.ChangeRefundPolicyStatusUseCase;
 import com.ryuqq.marketplace.application.refundpolicy.validator.RefundPolicyValidator;
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
+import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
+import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,14 +36,17 @@ public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatus
     private final RefundPolicyCommandFactory commandFactory;
     private final RefundPolicyCommandManager commandManager;
     private final RefundPolicyValidator validator;
+    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     public ChangeRefundPolicyStatusService(
             RefundPolicyCommandFactory commandFactory,
             RefundPolicyCommandManager commandManager,
-            RefundPolicyValidator validator) {
+            RefundPolicyValidator validator,
+            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
         this.validator = validator;
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
     }
 
     @Override
@@ -59,6 +67,14 @@ public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatus
         }
 
         commandManager.persistAll(refundPolicies);
+        for (RefundPolicy policy : refundPolicies) {
+            createSetofSyncOutbox(
+                    SellerId.of(command.sellerId()),
+                    policy.idValue(),
+                    SetofSyncEntityType.REFUND_POLICY,
+                    SetofSyncOperationType.UPDATE,
+                    changedAt);
+        }
     }
 
     private void activateAll(List<RefundPolicy> policies, Instant changedAt) {
@@ -74,6 +90,19 @@ public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatus
         for (RefundPolicy policy : policies) {
             // POL-DEACT-001: 기본 정책 비활성화 검증은 Domain에서 처리
             policy.deactivate(changedAt);
+        }
+    }
+
+    private void createSetofSyncOutbox(
+            SellerId sellerId,
+            Long entityId,
+            SetofSyncEntityType entityType,
+            SetofSyncOperationType operationType,
+            java.time.Instant now) {
+        if (setofSyncOutboxCommandManager != null) {
+            SetofSyncOutbox outbox =
+                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+            setofSyncOutboxCommandManager.persist(outbox);
         }
     }
 }

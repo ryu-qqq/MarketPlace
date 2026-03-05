@@ -63,6 +63,32 @@ class BatchUpdateProductServiceTest {
         }
 
         @Test
+        @DisplayName("SUPER_ADMIN(sellerId=null)은 소유권 검증 없이 상품을 수정한다")
+        void execute_SuperAdmin_SkipsOwnershipCheck() {
+            // given
+            Product product1 = ProductFixtures.activeProduct(1L);
+            Product product2 = ProductFixtures.activeProduct(2L);
+            List<Product> products = List.of(product1, product2);
+
+            BatchUpdateProductCommand command =
+                    new BatchUpdateProductCommand(
+                            null,
+                            List.of(
+                                    new BatchUpdateProductCommand.Entry(1L, 50000, 45000, 100),
+                                    new BatchUpdateProductCommand.Entry(2L, 60000, 55000, 200)));
+
+            given(ownershipValidator.getWithoutOwnershipCheck(anyList())).willReturn(products);
+
+            // when
+            sut.execute(command);
+
+            // then
+            then(ownershipValidator).should().getWithoutOwnershipCheck(anyList());
+            then(ownershipValidator).shouldHaveNoMoreInteractions();
+            then(commandManager).should().persistAll(products);
+        }
+
+        @Test
         @DisplayName("단일 상품 수정도 정상적으로 처리된다")
         void execute_SingleEntry_UpdatesAndPersists() {
             // given

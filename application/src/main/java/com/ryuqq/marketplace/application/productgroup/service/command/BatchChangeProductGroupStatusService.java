@@ -47,7 +47,10 @@ public class BatchChangeProductGroupStatusService implements BatchChangeProductG
         List<ProductGroupId> ids =
                 command.productGroupIds().stream().map(ProductGroupId::of).toList();
 
-        List<ProductGroup> productGroups = readManager.getByIdsAndSellerId(ids, command.sellerId());
+        List<ProductGroup> productGroups =
+                command.sellerId() != null
+                        ? readManager.getByIdsAndSellerId(ids, command.sellerId())
+                        : readManager.findByIds(ids);
 
         ProductGroupStatus targetStatus = ProductGroupStatus.valueOf(command.targetStatus());
         Instant changedAt = Instant.now();

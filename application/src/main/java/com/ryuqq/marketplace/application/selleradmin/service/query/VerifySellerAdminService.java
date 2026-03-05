@@ -39,8 +39,6 @@ public class VerifySellerAdminService implements VerifySellerAdminUseCase {
                                                         + query.loginId()));
 
         return VerifySellerAdminResult.of(
-                sellerAdmin.status().name(),
-                sellerAdmin.idValue(),
-                sellerAdmin.phoneNumberValue());
+                sellerAdmin.status().name(), sellerAdmin.idValue(), sellerAdmin.phoneNumberValue());
     }
 }

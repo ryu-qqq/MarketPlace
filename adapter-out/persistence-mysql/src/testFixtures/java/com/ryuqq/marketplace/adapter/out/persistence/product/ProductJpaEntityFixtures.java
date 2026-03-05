@@ -107,7 +107,7 @@ public final class ProductJpaEntityFixtures {
                 now);
     }
 
-    /** SOLDOUT 상태의 Product Entity 생성. */
+    /** SOLD_OUT 상태의 Product Entity 생성. */
     public static ProductJpaEntity soldOutEntity() {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
@@ -120,13 +120,13 @@ public final class ProductJpaEntityFixtures {
                 DEFAULT_SALE_PRICE,
                 DEFAULT_DISCOUNT_RATE,
                 0,
-                "SOLDOUT",
+                "SOLD_OUT",
                 DEFAULT_SORT_ORDER,
                 now,
                 now);
     }
 
-    /** ID를 지정한 SOLDOUT 상태의 Product Entity 생성. */
+    /** ID를 지정한 SOLD_OUT 상태의 Product Entity 생성. */
     public static ProductJpaEntity soldOutEntity(Long id) {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
@@ -139,7 +139,7 @@ public final class ProductJpaEntityFixtures {
                 DEFAULT_SALE_PRICE,
                 DEFAULT_DISCOUNT_RATE,
                 0,
-                "SOLDOUT",
+                "SOLD_OUT",
                 DEFAULT_SORT_ORDER,
                 now,
                 now);

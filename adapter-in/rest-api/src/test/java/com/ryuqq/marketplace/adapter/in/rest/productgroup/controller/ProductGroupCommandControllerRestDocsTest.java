@@ -24,6 +24,7 @@ import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupApiFixture
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupExcelApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupFullApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper.ProductGroupCommandApiMapper;
@@ -81,7 +82,8 @@ class ProductGroupCommandControllerRestDocsTest {
             // given
             RegisterProductGroupApiRequest request = ProductGroupApiFixtures.registerRequest();
 
-            given(accessChecker.superAdmin()).willReturn(true);
+            given(accessChecker.resolveSellerIdForRegistration(any()))
+                    .willReturn(ProductGroupApiFixtures.DEFAULT_SELLER_ID);
             given(mapper.toCommand(anyLong(), any(RegisterProductGroupApiRequest.class)))
                     .willReturn(null);
             given(registerUseCase.execute(any())).willReturn(PRODUCT_GROUP_ID);
@@ -249,9 +251,10 @@ class ProductGroupCommandControllerRestDocsTest {
             BatchProcessingResult<Long> batchResult =
                     new BatchProcessingResult<>(2, 2, 0, itemResults);
 
-            given(accessChecker.resolveCurrentSellerId()).willReturn(1L);
-            given(mapper.toCommands(anyLong(), any(BatchRegisterProductGroupApiRequest.class)))
-                    .willReturn(List.of());
+            given(accessChecker.resolveSellerIdForRegistration(any()))
+                    .willReturn(ProductGroupApiFixtures.DEFAULT_SELLER_ID);
+            given(mapper.toCommand(anyLong(), any(RegisterProductGroupExcelApiRequest.class)))
+                    .willReturn(null);
             given(batchRegisterUseCase.execute(any())).willReturn(batchResult);
 
             // when & then
@@ -273,6 +276,12 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath("items")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("등록할 상품 그룹 목록 (최대 100건)"),
+                                            fieldWithPath("items[].sellerId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description(
+                                                            "셀러 ID (SUPER_ADMIN 필수, 셀러는 미입력 시"
+                                                                    + " 자동 해석)")
+                                                    .optional(),
                                             fieldWithPath("items[].brandId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("브랜드 ID"),
@@ -660,8 +669,8 @@ class ProductGroupCommandControllerRestDocsTest {
             BatchChangeProductGroupStatusApiRequest request =
                     ProductGroupApiFixtures.batchChangeStatusRequest();
 
-            given(accessChecker.resolveCurrentSellerId()).willReturn(1L);
-            given(mapper.toCommand(anyLong(), any(BatchChangeProductGroupStatusApiRequest.class)))
+            given(accessChecker.resolveSellerIdOrNull()).willReturn(1L);
+            given(mapper.toCommand(any(), any(BatchChangeProductGroupStatusApiRequest.class)))
                     .willReturn(null);
             doNothing().when(batchChangeStatusUseCase).execute(any());
 
@@ -684,7 +693,7 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath("targetStatus")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
-                                                            "변경할 상태 (ACTIVE, INACTIVE, SOLDOUT,"
+                                                            "변경할 상태 (ACTIVE, INACTIVE, SOLD_OUT,"
                                                                     + " DELETED)"))));
         }
     }
