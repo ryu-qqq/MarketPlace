@@ -1,11 +1,5 @@
 package com.ryuqq.marketplace.adapter.in.rest.productgroup.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
@@ -23,9 +17,12 @@ import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupP
 import com.ryuqq.marketplace.application.productgroup.port.in.query.GetProductGroupUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupByOffsetUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupForExcelUseCase;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,7 +81,8 @@ public class ProductGroupQueryController {
     public ResponseEntity<ApiResponse<PageApiResponse<ProductGroupListApiResponse>>> search(
             @Valid SearchProductGroupsApiRequest request) {
 
-        List<Long> effectiveSellerIds = accessChecker.resolveEffectiveSellerIds(request.sellerIds());
+        List<Long> effectiveSellerIds =
+                accessChecker.resolveEffectiveSellerIds(request.sellerIds());
         ProductGroupSearchParams searchParams = mapper.toSearchParams(request, effectiveSellerIds);
         ProductGroupPageResult pageResult = searchProductGroupByOffsetUseCase.execute(searchParams);
         PageApiResponse<ProductGroupListApiResponse> response = mapper.toPageResponse(pageResult);
@@ -106,7 +104,8 @@ public class ProductGroupQueryController {
     public ResponseEntity<ApiResponse<PageApiResponse<ProductGroupExcelApiResponse>>>
             searchForExcel(@Valid SearchProductGroupsApiRequest request) {
 
-        List<Long> effectiveSellerIds = accessChecker.resolveEffectiveSellerIds(request.sellerIds());
+        List<Long> effectiveSellerIds =
+                accessChecker.resolveEffectiveSellerIds(request.sellerIds());
         ProductGroupSearchParams searchParams = mapper.toSearchParams(request, effectiveSellerIds);
         ProductGroupExcelPageResult pageResult =
                 searchProductGroupForExcelUseCase.execute(searchParams);
@@ -139,5 +138,4 @@ public class ProductGroupQueryController {
 
         return ResponseEntity.ok(ApiResponse.of(response));
     }
-
 }
