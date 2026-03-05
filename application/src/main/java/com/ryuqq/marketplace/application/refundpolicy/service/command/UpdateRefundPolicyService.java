@@ -15,7 +15,6 @@ import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,12 +48,12 @@ public class UpdateRefundPolicyService implements UpdateRefundPolicyUseCase {
             RefundPolicyCommandManager commandManager,
             RefundPolicyValidator validator,
             DefaultRefundPolicyResolver defaultPolicyResolver,
-            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
+            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
         this.validator = validator;
         this.defaultPolicyResolver = defaultPolicyResolver;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
     }
 
     @Override
@@ -88,10 +87,8 @@ public class UpdateRefundPolicyService implements UpdateRefundPolicyUseCase {
             SetofSyncEntityType entityType,
             SetofSyncOperationType operationType,
             java.time.Instant now) {
-        if (setofSyncOutboxCommandManager != null) {
-            SetofSyncOutbox outbox =
-                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-            setofSyncOutboxCommandManager.persist(outbox);
-        }
+        SetofSyncOutbox outbox =
+                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+        setofSyncOutboxCommandManager.persist(outbox);
     }
 }

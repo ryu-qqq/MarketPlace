@@ -12,6 +12,7 @@ import com.ryuqq.marketplace.application.seller.dto.command.UpdateSellerCommand;
 import com.ryuqq.marketplace.application.seller.factory.SellerCommandFactory;
 import com.ryuqq.marketplace.application.seller.manager.SellerCommandManager;
 import com.ryuqq.marketplace.application.seller.validator.SellerValidator;
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.domain.seller.SellerFixtures;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerUpdateData;
@@ -37,6 +38,7 @@ class UpdateSellerServiceTest {
     @Mock private SellerCommandFactory commandFactory;
     @Mock private SellerCommandManager commandManager;
     @Mock private SellerValidator validator;
+    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     @Nested
     @DisplayName("execute() - 셀러 기본정보 수정")
