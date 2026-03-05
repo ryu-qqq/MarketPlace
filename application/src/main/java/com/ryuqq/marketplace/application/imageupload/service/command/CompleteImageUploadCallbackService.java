@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 /**
  * 이미지 업로드 콜백 완료 서비스.
  *
- * <p>FileFlow에서 다운로드 완료 시 콜백으로 호출됩니다.
- * downloadTaskId로 Outbox를 조회하여 완료/실패 처리합니다.
+ * <p>FileFlow에서 다운로드 완료 시 콜백으로 호출됩니다. downloadTaskId로 Outbox를 조회하여 완료/실패 처리합니다.
  */
 @Service
 public class CompleteImageUploadCallbackService implements CompleteImageUploadCallbackUseCase {
@@ -85,8 +84,8 @@ public class CompleteImageUploadCallbackService implements CompleteImageUploadCa
     /**
      * 재시도 가능한 에러인지 판단합니다.
      *
-     * <p>4xx 클라이언트 에러(400, 403, 404, 410)는 재시도해도 동일하게 실패하므로 즉시 FAILED 처리합니다.
-     * 5xx 서버 에러, 타임아웃 등은 재시도 가능합니다.
+     * <p>4xx 클라이언트 에러(400, 403, 404, 410)는 재시도해도 동일하게 실패하므로 즉시 FAILED 처리합니다. 5xx 서버 에러, 타임아웃 등은 재시도
+     * 가능합니다.
      */
     private boolean isRetryableError(String errorMessage) {
         if (errorMessage == null) {
