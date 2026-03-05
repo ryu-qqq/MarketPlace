@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.Resol
 import com.ryuqq.marketplace.application.seller.port.in.query.ResolveSellerIdByOrganizationUseCase;
 import com.ryuqq.marketplace.application.selleradmin.port.in.query.ResolveSellerIdBySellerAdminIdUseCase;
 import com.ryuqq.marketplace.domain.adminmenu.vo.AdminRole;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -194,13 +195,13 @@ public class MarketAccessChecker extends BaseAccessChecker {
 
     private boolean isSameSellerAsAdmin(String sellerAdminId) {
         Optional<Long> currentSellerId = resolveCurrentSellerIdOptional();
-        if (currentSellerId.isEmpty()) {
-            return false;
-        }
-
-        return resolveSellerIdBySellerAdminIdUseCase
-                .execute(sellerAdminId)
-                .map(targetSellerId -> targetSellerId.equals(currentSellerId.get()))
+        return currentSellerId
+                .map(
+                        aLong ->
+                                resolveSellerIdBySellerAdminIdUseCase
+                                        .execute(sellerAdminId)
+                                        .map(targetSellerId -> targetSellerId.equals(aLong))
+                                        .orElse(false))
                 .orElse(false);
     }
 
@@ -210,6 +211,41 @@ public class MarketAccessChecker extends BaseAccessChecker {
             return Optional.empty();
         }
         return resolveSellerIdUseCase.execute(organizationId);
+    }
+
+    /**
+     * 조회 필터용 셀러 ID 목록 해석.
+     *
+     * <p>SUPER_ADMIN은 요청된 sellerIds를 그대로 사용합니다 (null이면 빈 리스트). 일반 사용자는 자신의 셀러 ID만 포함된 단건
+     * 리스트를 반환합니다.
+     *
+     * @param requestedSellerIds 요청에 포함된 셀러 ID 목록 (nullable)
+     * @return 유효한 셀러 ID 목록
+     * @throws AccessDeniedException 셀러 정보를 찾을 수 없는 경우
+     */
+    public List<Long> resolveEffectiveSellerIds(List<Long> requestedSellerIds) {
+        if (superAdmin()) {
+            return requestedSellerIds != null ? requestedSellerIds : Collections.emptyList();
+        }
+        return List.of(resolveCurrentSellerId());
+    }
+
+    /**
+     * 리소스 소유권 검증.
+     *
+     * <p>SUPER_ADMIN은 자동 통과합니다. 일반 사용자는 현재 셀러 ID와 리소스의 셀러 ID가 일치해야 합니다.
+     *
+     * @param resourceSellerId 리소스의 셀러 ID
+     * @throws AccessDeniedException 소유권이 없는 경우
+     */
+    public void verifySellerOwnership(long resourceSellerId) {
+        if (superAdmin()) {
+            return;
+        }
+        long currentSellerId = resolveCurrentSellerId();
+        if (currentSellerId != resourceSellerId) {
+            throw new AccessDeniedException("해당 리소스에 접근 권한이 없습니다");
+        }
     }
 
     /**

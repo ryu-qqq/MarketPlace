@@ -1,5 +1,11 @@
 package com.ryuqq.marketplace.adapter.in.rest.productgroup.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
@@ -17,14 +23,10 @@ import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupP
 import com.ryuqq.marketplace.application.productgroup.port.in.query.GetProductGroupUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupByOffsetUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupForExcelUseCase;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+
 import java.util.List;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -82,7 +84,7 @@ public class ProductGroupQueryController {
     public ResponseEntity<ApiResponse<PageApiResponse<ProductGroupListApiResponse>>> search(
             @Valid SearchProductGroupsApiRequest request) {
 
-        List<Long> effectiveSellerIds = resolveEffectiveSellerIds(request.sellerIds());
+        List<Long> effectiveSellerIds = accessChecker.resolveEffectiveSellerIds(request.sellerIds());
         ProductGroupSearchParams searchParams = mapper.toSearchParams(request, effectiveSellerIds);
         ProductGroupPageResult pageResult = searchProductGroupByOffsetUseCase.execute(searchParams);
         PageApiResponse<ProductGroupListApiResponse> response = mapper.toPageResponse(pageResult);
@@ -104,7 +106,7 @@ public class ProductGroupQueryController {
     public ResponseEntity<ApiResponse<PageApiResponse<ProductGroupExcelApiResponse>>>
             searchForExcel(@Valid SearchProductGroupsApiRequest request) {
 
-        List<Long> effectiveSellerIds = resolveEffectiveSellerIds(request.sellerIds());
+        List<Long> effectiveSellerIds = accessChecker.resolveEffectiveSellerIds(request.sellerIds());
         ProductGroupSearchParams searchParams = mapper.toSearchParams(request, effectiveSellerIds);
         ProductGroupExcelPageResult pageResult =
                 searchProductGroupForExcelUseCase.execute(searchParams);
@@ -132,27 +134,10 @@ public class ProductGroupQueryController {
                     Long productGroupId) {
 
         ProductGroupDetailCompositeResult result = getProductGroupUseCase.execute(productGroupId);
-        verifySellerOwnership(result.sellerId());
+        accessChecker.verifySellerOwnership(result.sellerId());
         ProductGroupDetailApiResponse response = mapper.toDetailResponse(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));
     }
 
-    private List<Long> resolveEffectiveSellerIds(List<Long> requestedSellerIds) {
-        if (accessChecker.superAdmin()) {
-            return requestedSellerIds;
-        }
-        long currentSellerId = accessChecker.resolveCurrentSellerId();
-        return List.of(currentSellerId);
-    }
-
-    private void verifySellerOwnership(long resourceSellerId) {
-        if (accessChecker.superAdmin()) {
-            return;
-        }
-        long currentSellerId = accessChecker.resolveCurrentSellerId();
-        if (currentSellerId != resourceSellerId) {
-            throw new AccessDeniedException("해당 상품 그룹에 접근 권한이 없습니다");
-        }
-    }
 }

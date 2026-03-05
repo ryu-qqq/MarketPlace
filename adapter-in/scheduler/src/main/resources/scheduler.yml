@@ -242,8 +242,8 @@ scheduler:
       # 최대 총 시딩 수 (0 = 무제한)
       max-total: 0
 
-    # SetofSyncOutbox 처리 스케줄러 (Setof Commerce 셀러 동기화)
-    setof-sync-outbox:
+    # OutboundSellerOutbox 처리 스케줄러 (외부 셀러 동기화)
+    outbound-seller-outbox:
       # PENDING 처리
       process-pending:
         enabled: true

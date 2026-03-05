@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @see com.ryuqq.marketplace.adapter.in.scheduler.seller.SellerAuthOutboxScheduler
  * @see com.ryuqq.marketplace.adapter.in.scheduler.selleradmin.SellerAdminAuthOutboxScheduler
  * @see com.ryuqq.marketplace.adapter.in.scheduler.selleradmin.SellerAdminEmailOutboxScheduler
- * @see com.ryuqq.marketplace.adapter.in.scheduler.setofsync.SetofSyncOutboxScheduler
+ * @see com.ryuqq.marketplace.adapter.in.scheduler.outboundseller.OutboundSellerOutboxScheduler
  */
 @ConfigurationProperties(prefix = "scheduler")
 public record SchedulerProperties(Jobs jobs) {
@@ -26,7 +26,7 @@ public record SchedulerProperties(Jobs jobs) {
             IntelligencePipeline intelligencePipeline,
             InboundProductRetry inboundProductRetry,
             OutboundSyncOutbox outboundSyncOutbox,
-            SetofSyncOutbox setofSyncOutbox,
+            OutboundSellerOutbox outboundSellerOutbox,
             LegacyConversionSeeder legacyConversionSeeder,
             InboundOrderPolling inboundOrderPolling,
             InboundOrderRetry inboundOrderRetry) {}
@@ -34,7 +34,8 @@ public record SchedulerProperties(Jobs jobs) {
     public record OutboundSyncOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
-    public record SetofSyncOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+    public record OutboundSellerOutbox(
+            ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
     public record IntelligencePipeline(
             ProcessPending processPending,

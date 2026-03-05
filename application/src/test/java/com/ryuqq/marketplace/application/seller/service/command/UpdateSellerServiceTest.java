@@ -10,9 +10,13 @@ import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.seller.SellerCommandFixtures;
 import com.ryuqq.marketplace.application.seller.dto.command.UpdateSellerCommand;
 import com.ryuqq.marketplace.application.seller.factory.SellerCommandFactory;
-import com.ryuqq.marketplace.application.seller.manager.SellerCommandManager;
+import com.ryuqq.marketplace.application.seller.internal.SellerCommandFacade;
+import com.ryuqq.marketplace.application.seller.manager.SellerBusinessInfoCommandManager;
+import com.ryuqq.marketplace.application.seller.manager.SellerBusinessInfoReadManager;
+import com.ryuqq.marketplace.application.seller.manager.SellerCsCommandManager;
+import com.ryuqq.marketplace.application.seller.manager.SellerCsReadManager;
 import com.ryuqq.marketplace.application.seller.validator.SellerValidator;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.SellerFixtures;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerUpdateData;
@@ -36,9 +40,12 @@ class UpdateSellerServiceTest {
     @InjectMocks private UpdateSellerService sut;
 
     @Mock private SellerCommandFactory commandFactory;
-    @Mock private SellerCommandManager commandManager;
+    @Mock private SellerCommandFacade sellerCommandFacade;
     @Mock private SellerValidator validator;
-    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    @Mock private SellerCsReadManager csReadManager;
+    @Mock private SellerCsCommandManager csCommandManager;
+    @Mock private SellerBusinessInfoReadManager businessInfoReadManager;
+    @Mock private SellerBusinessInfoCommandManager businessInfoCommandManager;
 
     @Nested
     @DisplayName("execute() - 셀러 기본정보 수정")
@@ -69,7 +76,10 @@ class UpdateSellerServiceTest {
             // then
             then(commandFactory).should().createUpdateContext(command);
             then(validator).should().findExistingOrThrow(context.id());
-            then(commandManager).should().persist(existingSeller);
+            then(sellerCommandFacade)
+                    .should()
+                    .persistSellerWithSync(
+                            existingSeller, OutboundSellerOperationType.UPDATE, changedAt);
         }
 
         @Test
@@ -92,7 +102,7 @@ class UpdateSellerServiceTest {
             assertThatThrownBy(() -> sut.execute(command))
                     .isInstanceOf(SellerNotFoundException.class);
 
-            then(commandManager).should(never()).persist(any(Seller.class));
+            then(sellerCommandFacade).should(never()).persistSellerWithSync(any(), any(), any());
         }
     }
 }

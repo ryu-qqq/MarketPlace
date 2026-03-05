@@ -1,16 +1,13 @@
 package com.ryuqq.marketplace.application.shippingpolicy.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.ChangeShippingPolicyStatusCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
-import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyCommandManager;
+import com.ryuqq.marketplace.application.shippingpolicy.internal.ShippingPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.shippingpolicy.port.in.command.ChangeShippingPolicyStatusUseCase;
 import com.ryuqq.marketplace.application.shippingpolicy.validator.ShippingPolicyValidator;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
-import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.time.Instant;
@@ -33,19 +30,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChangeShippingPolicyStatusService implements ChangeShippingPolicyStatusUseCase {
 
     private final ShippingPolicyCommandFactory commandFactory;
-    private final ShippingPolicyCommandManager commandManager;
     private final ShippingPolicyValidator validator;
-    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    private final ShippingPolicyOutboundFacade outboundFacade;
 
     public ChangeShippingPolicyStatusService(
             ShippingPolicyCommandFactory commandFactory,
-            ShippingPolicyCommandManager commandManager,
             ShippingPolicyValidator validator,
-            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
+            ShippingPolicyOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
         this.validator = validator;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
+        this.outboundFacade = outboundFacade;
     }
 
     @Override
@@ -65,27 +59,11 @@ public class ChangeShippingPolicyStatusService implements ChangeShippingPolicySt
             deactivateAll(command.sellerId(), shippingPolicies, changedAt);
         }
 
-        commandManager.persistAll(shippingPolicies);
-
-        for (ShippingPolicy policy : shippingPolicies) {
-            createSetofSyncOutbox(
-                    SellerId.of(command.sellerId()),
-                    policy.idValue(),
-                    SetofSyncEntityType.SHIPPING_POLICY,
-                    SetofSyncOperationType.UPDATE,
-                    changedAt);
-        }
-    }
-
-    private void createSetofSyncOutbox(
-            SellerId sellerId,
-            Long entityId,
-            SetofSyncEntityType entityType,
-            SetofSyncOperationType operationType,
-            java.time.Instant now) {
-        SetofSyncOutbox outbox =
-                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-        setofSyncOutboxCommandManager.persist(outbox);
+        outboundFacade.persistAllWithSync(
+                SellerId.of(command.sellerId()),
+                shippingPolicies,
+                OutboundSellerOperationType.UPDATE,
+                changedAt);
     }
 
     private void activateAll(List<ShippingPolicy> policies, Instant changedAt) {

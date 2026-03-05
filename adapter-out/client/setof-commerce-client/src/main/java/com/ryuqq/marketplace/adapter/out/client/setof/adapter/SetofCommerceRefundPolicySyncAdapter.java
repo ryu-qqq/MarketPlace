@@ -2,9 +2,9 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofRefundPolicySyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
+import com.ryuqq.marketplace.application.outboundseller.dto.response.OutboundSellerSyncResult;
+import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundRefundPolicySyncClient;
 import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadManager;
-import com.ryuqq.marketplace.application.setofsync.dto.response.SetofSyncResult;
-import com.ryuqq.marketplace.application.setofsync.port.out.client.SetofRefundPolicySyncClient;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestClientException;
 
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
-public class SetofCommerceRefundPolicySyncAdapter implements SetofRefundPolicySyncClient {
+public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolicySyncClient {
 
     private static final Logger log =
             LoggerFactory.getLogger(SetofCommerceRefundPolicySyncAdapter.class);
@@ -37,7 +37,7 @@ public class SetofCommerceRefundPolicySyncAdapter implements SetofRefundPolicySy
     }
 
     @Override
-    public SetofSyncResult createRefundPolicy(Long sellerId, Long policyId) {
+    public OutboundSellerSyncResult createRefundPolicy(Long sellerId, Long policyId) {
         try {
             RefundPolicy policy =
                     policyReadManager.getBySellerIdAndId(
@@ -54,15 +54,15 @@ public class SetofCommerceRefundPolicySyncAdapter implements SetofRefundPolicySy
                     .retrieve()
                     .toBodilessEntity();
 
-            return SetofSyncResult.ofSuccess();
+            return OutboundSellerSyncResult.ofSuccess();
         } catch (RestClientException e) {
             log.error("세토프 커머스 환불정책 등록 실패: sellerId={}, policyId={}", sellerId, policyId, e);
-            return SetofSyncResult.retryableFailure("REST_ERROR", e.getMessage());
+            return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
     }
 
     @Override
-    public SetofSyncResult updateRefundPolicy(Long sellerId, Long policyId) {
+    public OutboundSellerSyncResult updateRefundPolicy(Long sellerId, Long policyId) {
         try {
             RefundPolicy policy =
                     policyReadManager.getBySellerIdAndId(
@@ -82,10 +82,10 @@ public class SetofCommerceRefundPolicySyncAdapter implements SetofRefundPolicySy
                     .retrieve()
                     .toBodilessEntity();
 
-            return SetofSyncResult.ofSuccess();
+            return OutboundSellerSyncResult.ofSuccess();
         } catch (RestClientException e) {
             log.error("세토프 커머스 환불정책 수정 실패: sellerId={}, policyId={}", sellerId, policyId, e);
-            return SetofSyncResult.retryableFailure("REST_ERROR", e.getMessage());
+            return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
     }
 }
