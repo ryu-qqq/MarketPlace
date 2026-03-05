@@ -20,7 +20,7 @@ class ImageUploadProcessBundleFactoryTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ImageUploadProcessBundleFactory();
+        sut = new ImageUploadProcessBundleFactory("http://localhost:8080");
     }
 
     @Nested

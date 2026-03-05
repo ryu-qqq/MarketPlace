@@ -25,34 +25,34 @@ scheduler:
 
     image-upload-outbox:
       process-pending:
-        # Stage: 1분마다
-        cron: "0 */1 * * * *"
+        # Stage: 5초마다
+        cron: "*/5 * * * * *"
         # Stage: 중간 배치
         batch-size: 30
         # Stage: 중간 지연
-        delay-seconds: 20
+        delay-seconds: 5
 
       poll-processing:
+        # Stage: 비활성화 (콜백 방식으로 전환)
+        enabled: false
+        cron: "0 */1 * * * *"
+        batch-size: 30
+
+      recover-timeout:
         # Stage: 1분마다
         cron: "0 */1 * * * *"
         # Stage: 중간 배치
         batch-size: 30
+        # Stage: 1분 타임아웃
+        timeout-seconds: 60
 
-      recover-timeout:
+      recover-failed:
         # Stage: 5분마다
         cron: "0 */5 * * * *"
         # Stage: 중간 배치
-        batch-size: 30
-        # Stage: 중간 타임아웃
-        timeout-seconds: 180
-
-      recover-failed:
-        # Stage: 30분마다
-        cron: "0 */30 * * * *"
-        # Stage: 중간 배치
         batch-size: 50
-        # Stage: 1시간 후 복구
-        failed-after-seconds: 3600
+        # Stage: 5분 후 복구
+        failed-after-seconds: 300
 
     seller-admin-auth-outbox:
       process-pending:

@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * ImageUploadOutbox Query Port.
@@ -88,4 +89,12 @@ public interface ImageUploadOutboxQueryPort {
      * @return Outbox 목록
      */
     List<ImageUploadOutbox> findRecoverableFailedOutboxes(Instant failedBefore, int limit);
+
+    /**
+     * downloadTaskId로 PROCESSING 상태의 Outbox를 조회합니다 (콜백용).
+     *
+     * @param downloadTaskId FileFlow 다운로드 태스크 ID
+     * @return Outbox (Optional)
+     */
+    Optional<ImageUploadOutbox> findProcessingByDownloadTaskId(String downloadTaskId);
 }
