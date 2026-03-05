@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.application.product.port.in.command.BatchUpdateProd
 import com.ryuqq.marketplace.application.product.validator.ProductOwnershipValidator;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
+import com.ryuqq.marketplace.domain.product.exception.DuplicateProductIdException;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.time.Instant;
@@ -41,6 +42,8 @@ public class BatchUpdateProductService implements BatchUpdateProductUseCase {
 
     @Override
     public void execute(BatchUpdateProductCommand command) {
+        validateNoDuplicateProductIds(command.entries());
+
         List<ProductId> productIds =
                 command.entries().stream().map(e -> ProductId.of(e.productId())).toList();
 
@@ -73,6 +76,20 @@ public class BatchUpdateProductService implements BatchUpdateProductUseCase {
                 updateOutboxCoordinator.createUpdateOutboxesIfNeeded(
                         ProductGroupId.of(product.productGroupIdValue()));
             }
+        }
+    }
+
+    private void validateNoDuplicateProductIds(List<BatchUpdateProductCommand.Entry> entries) {
+        Set<Long> seen = new HashSet<>();
+        List<Long> duplicates =
+                entries.stream()
+                        .map(BatchUpdateProductCommand.Entry::productId)
+                        .filter(id -> !seen.add(id))
+                        .distinct()
+                        .toList();
+
+        if (!duplicates.isEmpty()) {
+            throw new DuplicateProductIdException(duplicates);
         }
     }
 }
