@@ -329,8 +329,6 @@ public class SellerAdminApplicationCommandController {
                 responseCode = "404",
                 description = "셀러 관리자를 찾을 수 없음")
     })
-    @PreAuthorize("@access.myselfOr(#sellerAdminId, 'seller-admin:manage')")
-    @RequirePermission(value = "seller-admin:manage", description = "셀러 관리자 비밀번호 변경")
     @PatchMapping(SellerAdminApplicationEndpoints.CHANGE_PASSWORD)
     public ResponseEntity<Void> changePassword(
             @Parameter(description = "셀러 관리자 ID", required = true)
