@@ -5,8 +5,8 @@ import com.ryuqq.authhub.sdk.api.UserApi;
 import com.ryuqq.authhub.sdk.exception.AuthHubBadRequestException;
 import com.ryuqq.authhub.sdk.exception.AuthHubException;
 import com.ryuqq.authhub.sdk.exception.AuthHubServerException;
-import com.ryuqq.authhub.sdk.model.auth.ChangePasswordRequest;
 import com.ryuqq.authhub.sdk.model.common.ApiResponse;
+import com.ryuqq.authhub.sdk.model.internal.ForceChangePasswordRequest;
 import com.ryuqq.authhub.sdk.model.user.CreateUserWithRolesRequest;
 import com.ryuqq.authhub.sdk.model.user.CreateUserWithRolesResponse;
 import com.ryuqq.marketplace.adapter.out.client.authhub.mapper.AuthHubSellerAdminIdentityMapper;
@@ -75,12 +75,12 @@ public class AuthHubSellerAdminIdentityClientAdapter implements SellerAdminIdent
     @Override
     public void resetSellerAdminPassword(String authUserId) {
         String tempPassword = generateTempPassword();
-        internalApi.changePassword(authUserId, new ChangePasswordRequest(null, tempPassword));
+        internalApi.changePassword(authUserId, new ForceChangePasswordRequest(tempPassword));
     }
 
     @Override
     public void changeSellerAdminPassword(String authUserId, String newPassword) {
-        internalApi.changePassword(authUserId, new ChangePasswordRequest(null, newPassword));
+        internalApi.changePassword(authUserId, new ForceChangePasswordRequest(newPassword));
     }
 
     private String generateTempPassword() {
