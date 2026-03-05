@@ -106,7 +106,7 @@ class OmsProductQueryControllerRestDocsTest {
                                                     .optional(),
                                             parameterWithName("statuses")
                                                     .description(
-                                                            "상품 상태 필터 (ACTIVE/INACTIVE/SOLDOUT)")
+                                                            "상품 상태 필터 (ACTIVE/INACTIVE/SOLD_OUT)")
                                                     .optional(),
                                             parameterWithName("syncStatuses")
                                                     .description(

@@ -51,10 +51,14 @@ class SellerAdminPublicQueryControllerTest {
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(VERIFY_URL)
                                     .param("name", SellerAdminPublicApiFixtures.DEFAULT_NAME)
-                                    .param("loginId", SellerAdminPublicApiFixtures.DEFAULT_LOGIN_ID))
+                                    .param(
+                                            "loginId",
+                                            SellerAdminPublicApiFixtures.DEFAULT_LOGIN_ID))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.exists").value(true))
-                    .andExpect(jsonPath("$.data.status").value(SellerAdminPublicApiFixtures.DEFAULT_STATUS))
+                    .andExpect(
+                            jsonPath("$.data.status")
+                                    .value(SellerAdminPublicApiFixtures.DEFAULT_STATUS))
                     .andExpect(
                             jsonPath("$.data.sellerAdminId")
                                     .value(SellerAdminPublicApiFixtures.DEFAULT_SELLER_ADMIN_ID))
@@ -68,7 +72,9 @@ class SellerAdminPublicQueryControllerTest {
         void verify_MissingName_Returns400() throws Exception {
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(VERIFY_URL)
-                                    .param("loginId", SellerAdminPublicApiFixtures.DEFAULT_LOGIN_ID))
+                                    .param(
+                                            "loginId",
+                                            SellerAdminPublicApiFixtures.DEFAULT_LOGIN_ID))
                     .andExpect(status().isBadRequest());
         }
 
@@ -87,7 +93,9 @@ class SellerAdminPublicQueryControllerTest {
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(VERIFY_URL)
                                     .param("name", "")
-                                    .param("loginId", SellerAdminPublicApiFixtures.DEFAULT_LOGIN_ID))
+                                    .param(
+                                            "loginId",
+                                            SellerAdminPublicApiFixtures.DEFAULT_LOGIN_ID))
                     .andExpect(status().isBadRequest());
         }
 

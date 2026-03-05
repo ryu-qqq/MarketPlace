@@ -98,7 +98,7 @@ public final class ProductFixtures {
                 CommonVoFixtures.yesterday());
     }
 
-    /** 품절 상태의 Product (reconstitute, SOLDOUT). */
+    /** 품절 상태의 Product (reconstitute, SOLD_OUT). */
     public static Product soldOutProduct() {
         return Product.reconstitute(
                 ProductId.of(3L),
@@ -109,7 +109,7 @@ public final class ProductFixtures {
                 CommonVoFixtures.money(DEFAULT_SALE_PRICE),
                 DEFAULT_DISCOUNT_RATE,
                 0, // 품절이므로 재고 0
-                ProductStatus.SOLDOUT,
+                ProductStatus.SOLD_OUT,
                 DEFAULT_SORT_ORDER,
                 Collections.emptyList(),
                 CommonVoFixtures.yesterday(),

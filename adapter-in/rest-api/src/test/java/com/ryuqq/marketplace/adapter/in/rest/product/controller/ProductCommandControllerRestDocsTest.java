@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.product.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -157,11 +156,11 @@ class ProductCommandControllerRestDocsTest {
             BatchChangeProductStatusApiRequest request =
                     ProductApiFixtures.batchChangeStatusRequest();
 
-            given(accessChecker.resolveCurrentSellerId())
+            given(accessChecker.resolveSellerIdOrNull())
                     .willReturn(ProductApiFixtures.DEFAULT_SELLER_ID);
             given(
                             mapper.toCommand(
-                                    anyLong(),
+                                    any(),
                                     any(Long.class),
                                     any(BatchChangeProductStatusApiRequest.class)))
                     .willReturn(null);
@@ -193,7 +192,7 @@ class ProductCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description(
                                                             "변경할 상태 (ACTIVE, INACTIVE,"
-                                                                    + " SOLDOUT)"))));
+                                                                    + " SOLD_OUT)"))));
         }
     }
 
@@ -207,9 +206,9 @@ class ProductCommandControllerRestDocsTest {
             // given
             BatchUpdateProductApiRequest request = ProductApiFixtures.batchUpdateRequest();
 
-            given(accessChecker.resolveCurrentSellerId())
+            given(accessChecker.resolveSellerIdOrNull())
                     .willReturn(ProductApiFixtures.DEFAULT_SELLER_ID);
-            given(mapper.toCommand(anyLong(), any(BatchUpdateProductApiRequest.class)))
+            given(mapper.toCommand(any(), any(BatchUpdateProductApiRequest.class)))
                     .willReturn(null);
             doNothing().when(batchUpdateProductUseCase).execute(any());
 

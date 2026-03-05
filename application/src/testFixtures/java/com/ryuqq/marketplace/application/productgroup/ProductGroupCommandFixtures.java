@@ -250,21 +250,21 @@ public final class ProductGroupCommandFixtures {
     // ===== BatchChangeProductGroupStatusCommand =====
 
     public static BatchChangeProductGroupStatusCommand batchChangeStatusCommand(
-            long sellerId, String targetStatus) {
+            Long sellerId, String targetStatus) {
         return new BatchChangeProductGroupStatusCommand(
                 sellerId, List.of(1L, 2L, 3L), targetStatus);
     }
 
-    public static BatchChangeProductGroupStatusCommand batchChangeToActiveCommand(long sellerId) {
+    public static BatchChangeProductGroupStatusCommand batchChangeToActiveCommand(Long sellerId) {
         return batchChangeStatusCommand(sellerId, "ACTIVE");
     }
 
-    public static BatchChangeProductGroupStatusCommand batchChangeToInactiveCommand(long sellerId) {
+    public static BatchChangeProductGroupStatusCommand batchChangeToInactiveCommand(Long sellerId) {
         return batchChangeStatusCommand(sellerId, "INACTIVE");
     }
 
     public static BatchChangeProductGroupStatusCommand batchChangeStatusCommand(
-            long sellerId, List<Long> productGroupIds, String targetStatus) {
+            Long sellerId, List<Long> productGroupIds, String targetStatus) {
         return new BatchChangeProductGroupStatusCommand(sellerId, productGroupIds, targetStatus);
     }
 

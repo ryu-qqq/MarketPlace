@@ -509,7 +509,13 @@ class InboundProductCommandControllerRestDocsTest {
                                                                     "색상", "블랙")))));
 
             given(idResolver.resolve(anyLong(), anyString())).willReturn(ProductGroupId.of(200L));
-            given(productCommandApiMapper.toCommand(anyLong(), any())).willReturn(null);
+            given(
+                            productCommandApiMapper.toCommand(
+                                    any(Long.class),
+                                    any(
+                                            com.ryuqq.marketplace.adapter.in.rest.product.dto
+                                                    .command.UpdateProductsApiRequest.class)))
+                    .willReturn(null);
             doNothing().when(updateProductsUseCase).execute(any());
 
             // when & then

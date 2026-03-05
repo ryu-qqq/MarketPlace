@@ -32,6 +32,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupExcelPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductOptionMatrixResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionGroupResult;
@@ -157,7 +158,17 @@ public class ProductGroupQueryApiMapper {
 
     // ==================== 엑셀 변환 ====================
 
-    public List<ProductGroupExcelApiResponse> toExcelResponses(
+    public PageApiResponse<ProductGroupExcelApiResponse> toExcelPageResponse(
+            ProductGroupExcelPageResult pageResult) {
+        List<ProductGroupExcelApiResponse> responses = toExcelResponses(pageResult.results());
+        return PageApiResponse.of(
+                responses,
+                pageResult.pageMeta().page(),
+                pageResult.pageMeta().size(),
+                pageResult.pageMeta().totalElements());
+    }
+
+    private List<ProductGroupExcelApiResponse> toExcelResponses(
             List<ProductGroupExcelCompositeResult> results) {
         return results.stream().map(this::toExcelResponse).toList();
     }

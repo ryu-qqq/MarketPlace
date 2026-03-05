@@ -19,7 +19,7 @@ import java.util.List;
 @Schema(description = "상품 그룹 페이지 조회 요청")
 public record SearchProductGroupsApiRequest(
         @Parameter(
-                        description = "상태 필터 (DRAFT, ACTIVE, INACTIVE, SOLDOUT, DELETED)",
+                        description = "상태 필터 (DRAFT, ACTIVE, INACTIVE, SOLD_OUT, DELETED)",
                         example = "ACTIVE")
                 @Schema(description = "상태 필터", nullable = true)
                 List<String> statuses,

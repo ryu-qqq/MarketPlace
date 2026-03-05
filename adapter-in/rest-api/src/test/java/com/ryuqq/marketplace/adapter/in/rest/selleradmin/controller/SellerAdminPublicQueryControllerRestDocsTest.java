@@ -61,10 +61,14 @@ class SellerAdminPublicQueryControllerRestDocsTest {
                             RestDocumentationRequestBuilders.get(
                                             BASE_URL + SellerAdminPublicEndpoints.VERIFY)
                                     .param("name", SellerAdminPublicApiFixtures.DEFAULT_NAME)
-                                    .param("loginId", SellerAdminPublicApiFixtures.DEFAULT_LOGIN_ID))
+                                    .param(
+                                            "loginId",
+                                            SellerAdminPublicApiFixtures.DEFAULT_LOGIN_ID))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.exists").value(true))
-                    .andExpect(jsonPath("$.data.status").value(SellerAdminPublicApiFixtures.DEFAULT_STATUS))
+                    .andExpect(
+                            jsonPath("$.data.status")
+                                    .value(SellerAdminPublicApiFixtures.DEFAULT_STATUS))
                     .andDo(
                             document(
                                     "seller-admin-public/verify",

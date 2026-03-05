@@ -127,7 +127,7 @@ public class ProductGroupCommandController {
     public ResponseEntity<ApiResponse<ProductGroupIdApiResponse>> registerProductGroup(
             @Valid @RequestBody RegisterProductGroupApiRequest request) {
 
-        long sellerId = resolveSellerIdForRegistration(request.sellerId());
+        long sellerId = accessChecker.resolveSellerIdForRegistration(request.sellerId());
         RegisterProductGroupCommand command = mapper.toCommand(sellerId, request);
         Long productGroupId = registerUseCase.execute(command);
 
@@ -161,8 +161,16 @@ public class ProductGroupCommandController {
             batchRegisterProductGroups(
                     @Valid @RequestBody BatchRegisterProductGroupApiRequest request) {
 
-        long sellerId = accessChecker.resolveCurrentSellerId();
-        List<RegisterProductGroupCommand> commands = mapper.toCommands(sellerId, request);
+        List<RegisterProductGroupCommand> commands =
+                request.items().stream()
+                        .map(
+                                item -> {
+                                    long sellerId =
+                                            accessChecker.resolveSellerIdForRegistration(
+                                                    item.sellerId());
+                                    return mapper.toCommand(sellerId, item);
+                                })
+                        .toList();
         BatchProcessingResult<Long> result = batchRegisterUseCase.execute(commands);
 
         return ResponseEntity.ok(ApiResponse.of(BatchProductGroupResultApiResponse.from(result)));
@@ -270,20 +278,10 @@ public class ProductGroupCommandController {
     public ResponseEntity<Void> batchChangeStatus(
             @Valid @RequestBody BatchChangeProductGroupStatusApiRequest request) {
 
-        long sellerId = accessChecker.resolveCurrentSellerId();
+        Long sellerId = accessChecker.resolveSellerIdOrNull();
         BatchChangeProductGroupStatusCommand command = mapper.toCommand(sellerId, request);
         batchChangeStatusUseCase.execute(command);
 
         return ResponseEntity.noContent().build();
-    }
-
-    private long resolveSellerIdForRegistration(Long requestedSellerId) {
-        if (accessChecker.superAdmin()) {
-            if (requestedSellerId == null) {
-                throw new IllegalArgumentException("SUPER_ADMIN은 sellerId를 명시해야 합니다");
-            }
-            return requestedSellerId;
-        }
-        return accessChecker.resolveCurrentSellerId();
     }
 }

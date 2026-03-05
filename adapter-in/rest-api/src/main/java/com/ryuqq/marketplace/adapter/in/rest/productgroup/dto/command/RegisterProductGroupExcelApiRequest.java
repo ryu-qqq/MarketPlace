@@ -16,6 +16,11 @@ import java.util.List;
  */
 @Schema(description = "상품 그룹 엑셀 배치 등록 항목")
 public record RegisterProductGroupExcelApiRequest(
+        @Schema(
+                        description = "셀러 ID (SUPER_ADMIN 필수, 셀러는 미입력 시 자동 해석)",
+                        example = "1",
+                        nullable = true)
+                Long sellerId,
         @Schema(description = "브랜드 ID", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotNull(message = "브랜드 ID는 필수입니다")
                 @Min(value = 1, message = "브랜드 ID는 1 이상이어야 합니다")

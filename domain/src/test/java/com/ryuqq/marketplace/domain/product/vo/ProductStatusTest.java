@@ -28,9 +28,9 @@ class ProductStatusTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT의 표시 이름은 '품절'이다")
+        @DisplayName("SOLD_OUT의 표시 이름은 '품절'이다")
         void soldOutDisplayName() {
-            assertThat(ProductStatus.SOLDOUT.displayName()).isEqualTo("품절");
+            assertThat(ProductStatus.SOLD_OUT.displayName()).isEqualTo("품절");
         }
 
         @Test
@@ -57,9 +57,9 @@ class ProductStatusTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT는 isActive()가 false이다")
+        @DisplayName("SOLD_OUT는 isActive()가 false이다")
         void soldOutIsNotActive() {
-            assertThat(ProductStatus.SOLDOUT.isActive()).isFalse();
+            assertThat(ProductStatus.SOLD_OUT.isActive()).isFalse();
         }
 
         @Test
@@ -92,9 +92,9 @@ class ProductStatusTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT는 isDeleted()가 false이다")
+        @DisplayName("SOLD_OUT는 isDeleted()가 false이다")
         void soldOutIsNotDeleted() {
-            assertThat(ProductStatus.SOLDOUT.isDeleted()).isFalse();
+            assertThat(ProductStatus.SOLD_OUT.isDeleted()).isFalse();
         }
     }
 
@@ -109,9 +109,9 @@ class ProductStatusTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT는 활성화 가능하다")
+        @DisplayName("SOLD_OUT는 활성화 가능하다")
         void soldOutCanActivate() {
-            assertThat(ProductStatus.SOLDOUT.canActivate()).isTrue();
+            assertThat(ProductStatus.SOLD_OUT.canActivate()).isTrue();
         }
 
         @Test
@@ -144,9 +144,9 @@ class ProductStatusTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT는 삭제 가능하다")
+        @DisplayName("SOLD_OUT는 삭제 가능하다")
         void soldOutCanDelete() {
-            assertThat(ProductStatus.SOLDOUT.canDelete()).isTrue();
+            assertThat(ProductStatus.SOLD_OUT.canDelete()).isTrue();
         }
 
         @Test
@@ -169,7 +169,7 @@ class ProductStatusTest {
                     .containsExactlyInAnyOrder(
                             ProductStatus.ACTIVE,
                             ProductStatus.INACTIVE,
-                            ProductStatus.SOLDOUT,
+                            ProductStatus.SOLD_OUT,
                             ProductStatus.DELETED);
         }
     }

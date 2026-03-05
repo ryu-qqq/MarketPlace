@@ -168,7 +168,7 @@ public class OmsProductQueryApiMapper {
     }
 
     private ProductStatusResponse resolveProductStatus(String status) {
-        boolean soldOut = "SOLDOUT".equalsIgnoreCase(status);
+        boolean soldOut = "SOLD_OUT".equalsIgnoreCase(status);
         boolean display = "ACTIVE".equalsIgnoreCase(status);
         return new ProductStatusResponse(soldOut ? "Y" : "N", display ? "Y" : "N");
     }

@@ -242,6 +242,30 @@ scheduler:
       # 최대 총 시딩 수 (0 = 무제한)
       max-total: 0
 
+    # SetofSyncOutbox 처리 스케줄러 (Setof Commerce 셀러 동기화)
+    setof-sync-outbox:
+      # PENDING 처리
+      process-pending:
+        enabled: true
+        # Cron: 5분마다 (환경별 오버라이드 가능)
+        cron: "0 */5 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 100
+        # 처리 지연 (생성 후 N초 경과한 건만 처리)
+        delay-seconds: 60
+
+      # 타임아웃 복구
+      recover-timeout:
+        enabled: true
+        # Cron: 10분마다 (환경별 오버라이드 가능)
+        cron: "0 */10 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 100
+        # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
+        timeout-seconds: 300
+
     # SellerAdminEmailOutbox 처리 스케줄러
     seller-admin-email-outbox:
       # PENDING 처리

@@ -90,8 +90,6 @@ public class SellerCommandController {
      *
      * <p><b>권한 요구사항:</b> 최고 마스터 권한 필요 (SUPER_ADMIN)
      *
-     * <p>TODO: 권한 체크 구현 필요 - Gateway에서 처리 또는 @PreAuthorize 적용
-     *
      * @param request 등록 요청 DTO
      * @return 생성된 셀러 ID
      */
@@ -123,10 +121,6 @@ public class SellerCommandController {
      * <p>셀러의 기본정보, 사업자정보, CS정보, 주소를 한번에 수정합니다.
      *
      * <p><b>권한 요구사항:</b> 최고 마스터 권한 필요 (SUPER_ADMIN)
-     *
-     * <p>TODO: 권한 체크 구현 필요 - Gateway에서 처리 또는 @PreAuthorize 적용
-     *
-     * <p>TODO: 계약정보(ContractInfo), 정산정보(SettlementInfo) 추가 예정 - UseCase 구현 후
      *
      * @param sellerId 셀러 ID
      * @param request 전체 수정 요청 DTO

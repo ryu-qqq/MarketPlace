@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.application.seller.manager.SellerCsCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerCsReadManager;
 import com.ryuqq.marketplace.application.seller.port.in.command.UpdateSellerUseCase;
 import com.ryuqq.marketplace.application.seller.validator.SellerValidator;
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerBusinessInfo;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerBusinessInfoUpdateData;
@@ -17,8 +18,13 @@ import com.ryuqq.marketplace.domain.seller.aggregate.SellerCs;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerCsUpdateData;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerUpdateData;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
+import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
+import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import java.time.Instant;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * UpdateSellerService - 셀러 정보 수정 Service.
@@ -41,6 +47,7 @@ public class UpdateSellerService implements UpdateSellerUseCase {
     private final SellerCsCommandManager csCommandManager;
     private final SellerBusinessInfoReadManager businessInfoReadManager;
     private final SellerBusinessInfoCommandManager businessInfoCommandManager;
+    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     public UpdateSellerService(
             SellerCommandFactory commandFactory,
@@ -49,7 +56,8 @@ public class UpdateSellerService implements UpdateSellerUseCase {
             SellerCsReadManager csReadManager,
             SellerCsCommandManager csCommandManager,
             SellerBusinessInfoReadManager businessInfoReadManager,
-            SellerBusinessInfoCommandManager businessInfoCommandManager) {
+            SellerBusinessInfoCommandManager businessInfoCommandManager,
+            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
         this.validator = validator;
@@ -57,9 +65,11 @@ public class UpdateSellerService implements UpdateSellerUseCase {
         this.csCommandManager = csCommandManager;
         this.businessInfoReadManager = businessInfoReadManager;
         this.businessInfoCommandManager = businessInfoCommandManager;
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
     }
 
     @Override
+    @Transactional
     public void execute(UpdateSellerCommand command) {
         UpdateContext<SellerId, SellerUpdateData> context =
                 commandFactory.createUpdateContext(command);
@@ -72,6 +82,12 @@ public class UpdateSellerService implements UpdateSellerUseCase {
 
         updateCsIfPresent(command, sellerId, changedAt);
         updateBusinessInfoIfPresent(command, sellerId, changedAt);
+        createSetofSyncOutbox(
+                sellerId,
+                sellerId.value(),
+                SetofSyncEntityType.SELLER,
+                SetofSyncOperationType.UPDATE,
+                changedAt);
     }
 
     private void updateCsIfPresent(
@@ -100,5 +116,18 @@ public class UpdateSellerService implements UpdateSellerUseCase {
         SellerBusinessInfo businessInfo = businessInfoReadManager.getBySellerId(sellerId);
         businessInfo.update(businessInfoUpdateData, changedAt);
         businessInfoCommandManager.persist(businessInfo);
+    }
+
+    private void createSetofSyncOutbox(
+            SellerId sellerId,
+            Long entityId,
+            SetofSyncEntityType entityType,
+            SetofSyncOperationType operationType,
+            Instant now) {
+        if (setofSyncOutboxCommandManager != null) {
+            SetofSyncOutbox outbox =
+                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+            setofSyncOutboxCommandManager.persist(outbox);
+        }
     }
 }
