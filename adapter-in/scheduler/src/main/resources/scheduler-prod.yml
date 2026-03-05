@@ -145,7 +145,7 @@ scheduler:
           timezone: Asia/Seoul
           batch-size: 500
 
-    setof-sync-outbox:
+    outbound-seller-outbox:
       process-pending:
         # Prod: 5분마다 (기본값)
         cron: "0 */5 * * * *"

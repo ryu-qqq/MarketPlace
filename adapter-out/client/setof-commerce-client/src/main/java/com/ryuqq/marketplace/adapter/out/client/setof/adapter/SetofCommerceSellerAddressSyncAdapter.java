@@ -2,9 +2,9 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerAddressSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
+import com.ryuqq.marketplace.application.outboundseller.dto.response.OutboundSellerSyncResult;
+import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundSellerAddressSyncClient;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressReadManager;
-import com.ryuqq.marketplace.application.setofsync.dto.response.SetofSyncResult;
-import com.ryuqq.marketplace.application.setofsync.port.out.client.SetofSellerAddressSyncClient;
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddress;
 import com.ryuqq.marketplace.domain.selleraddress.id.SellerAddressId;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ import org.springframework.web.client.RestClientException;
 
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
-public class SetofCommerceSellerAddressSyncAdapter implements SetofSellerAddressSyncClient {
+public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddressSyncClient {
 
     private static final Logger log =
             LoggerFactory.getLogger(SetofCommerceSellerAddressSyncAdapter.class);
@@ -36,7 +36,7 @@ public class SetofCommerceSellerAddressSyncAdapter implements SetofSellerAddress
     }
 
     @Override
-    public SetofSyncResult createSellerAddress(Long sellerId, Long addressId) {
+    public OutboundSellerSyncResult createSellerAddress(Long sellerId, Long addressId) {
         try {
             SellerAddress address = addressReadManager.getById(SellerAddressId.of(addressId));
             SetofSellerAddressSyncRequest request = mapper.toSellerAddressRequest(address);
@@ -51,15 +51,15 @@ public class SetofCommerceSellerAddressSyncAdapter implements SetofSellerAddress
                     .retrieve()
                     .toBodilessEntity();
 
-            return SetofSyncResult.ofSuccess();
+            return OutboundSellerSyncResult.ofSuccess();
         } catch (RestClientException e) {
             log.error("세토프 커머스 셀러주소 등록 실패: sellerId={}, addressId={}", sellerId, addressId, e);
-            return SetofSyncResult.retryableFailure("REST_ERROR", e.getMessage());
+            return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
     }
 
     @Override
-    public SetofSyncResult updateSellerAddress(Long sellerId, Long addressId) {
+    public OutboundSellerSyncResult updateSellerAddress(Long sellerId, Long addressId) {
         try {
             SellerAddress address = addressReadManager.getById(SellerAddressId.of(addressId));
             SetofSellerAddressSyncRequest request = mapper.toSellerAddressRequest(address);
@@ -77,15 +77,15 @@ public class SetofCommerceSellerAddressSyncAdapter implements SetofSellerAddress
                     .retrieve()
                     .toBodilessEntity();
 
-            return SetofSyncResult.ofSuccess();
+            return OutboundSellerSyncResult.ofSuccess();
         } catch (RestClientException e) {
             log.error("세토프 커머스 셀러주소 수정 실패: sellerId={}, addressId={}", sellerId, addressId, e);
-            return SetofSyncResult.retryableFailure("REST_ERROR", e.getMessage());
+            return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
     }
 
     @Override
-    public SetofSyncResult deleteSellerAddress(Long sellerId, Long addressId) {
+    public OutboundSellerSyncResult deleteSellerAddress(Long sellerId, Long addressId) {
         try {
             log.info("세토프 커머스 셀러주소 삭제 요청: sellerId={}, addressId={}", sellerId, addressId);
 
@@ -98,10 +98,10 @@ public class SetofCommerceSellerAddressSyncAdapter implements SetofSellerAddress
                     .retrieve()
                     .toBodilessEntity();
 
-            return SetofSyncResult.ofSuccess();
+            return OutboundSellerSyncResult.ofSuccess();
         } catch (RestClientException e) {
             log.error("세토프 커머스 셀러주소 삭제 실패: sellerId={}, addressId={}", sellerId, addressId, e);
-            return SetofSyncResult.retryableFailure("REST_ERROR", e.getMessage());
+            return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
     }
 }

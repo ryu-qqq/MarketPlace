@@ -58,7 +58,6 @@ class OmsSyncHistoryCompositionQueryDslRepositoryTest {
     private static final Long SELLER_ID = 1L;
 
     private ShopJpaEntity shop;
-    private SellerSalesChannelJpaEntity sellerSalesChannel;
 
     @BeforeEach
     void setUp() {
@@ -70,10 +69,7 @@ class OmsSyncHistoryCompositionQueryDslRepositoryTest {
         Instant now = Instant.now();
 
         shop = persist(createShop(null, SALES_CHANNEL_ID, "테스트 외부몰", "test-account-001", now));
-        sellerSalesChannel =
-                persist(
-                        createSellerSalesChannel(
-                                null, SELLER_ID, SALES_CHANNEL_ID, shop.getId(), now));
+        persist(createSellerSalesChannel(null, SELLER_ID, SALES_CHANNEL_ID, shop.getId(), now));
     }
 
     private <T> T persist(T entity) {

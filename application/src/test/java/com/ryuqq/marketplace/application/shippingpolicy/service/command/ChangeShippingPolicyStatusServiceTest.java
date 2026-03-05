@@ -5,12 +5,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.application.shippingpolicy.ShippingPolicyCommandFixtures;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.ChangeShippingPolicyStatusCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
-import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyCommandManager;
+import com.ryuqq.marketplace.application.shippingpolicy.internal.ShippingPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.shippingpolicy.validator.ShippingPolicyValidator;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.ShippingPolicyFixtures;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
@@ -34,9 +34,8 @@ class ChangeShippingPolicyStatusServiceTest {
     @InjectMocks private ChangeShippingPolicyStatusService sut;
 
     @Mock private ShippingPolicyCommandFactory commandFactory;
-    @Mock private ShippingPolicyCommandManager commandManager;
     @Mock private ShippingPolicyValidator validator;
-    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    @Mock private ShippingPolicyOutboundFacade outboundFacade;
 
     @Nested
     @DisplayName("execute() - 배송 정책 상태 변경")
@@ -68,7 +67,13 @@ class ChangeShippingPolicyStatusServiceTest {
             // then
             then(commandFactory).should().createStatusChangeContexts(command);
             then(validator).should().findAllExistingOrThrow(List.of(ShippingPolicyId.of(policyId)));
-            then(commandManager).should().persistAll(policies);
+            then(outboundFacade)
+                    .should()
+                    .persistAllWithSync(
+                            eq(SellerId.of(sellerId)),
+                            eq(policies),
+                            eq(OutboundSellerOperationType.UPDATE),
+                            eq(changedAt));
         }
 
         @Test
@@ -100,7 +105,13 @@ class ChangeShippingPolicyStatusServiceTest {
             then(validator)
                     .should()
                     .validateNotLastActivePolicy(eq(SellerId.of(sellerId)), eq(policies));
-            then(commandManager).should().persistAll(policies);
+            then(outboundFacade)
+                    .should()
+                    .persistAllWithSync(
+                            eq(SellerId.of(sellerId)),
+                            eq(policies),
+                            eq(OutboundSellerOperationType.UPDATE),
+                            eq(changedAt));
         }
     }
 }
