@@ -82,7 +82,8 @@ class ProductErrorCodeTest {
             // then
             assertThat(errorCodes)
                     .extracting(ProductErrorCode::getCode)
-                    .containsExactlyInAnyOrder("PRD-001", "PRD-002", "PRD-003", "PRD-004", "PRD-005");
+                    .containsExactlyInAnyOrder(
+                            "PRD-001", "PRD-002", "PRD-003", "PRD-004", "PRD-005");
         }
     }
 }
