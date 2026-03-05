@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.brand.BrandJpaEntityFixture
 import com.ryuqq.marketplace.adapter.out.persistence.brand.entity.BrandJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.category.CategoryJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.category.entity.CategoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroup.condition.CompositionProductConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.condition.ProductGroupConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.seller.SellerJpaEntityFixtures;
@@ -51,7 +52,9 @@ class ProductGroupCompositionQueryDslRepositoryTest {
 
     private ProductGroupCompositionQueryDslRepository repository() {
         return new ProductGroupCompositionQueryDslRepository(
-                new JPAQueryFactory(entityManager), new ProductGroupConditionBuilder());
+                new JPAQueryFactory(entityManager),
+                new ProductGroupConditionBuilder(),
+                new CompositionProductConditionBuilder());
     }
 
     private <T> T persist(T entity) {
