@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.seller.manager.SellerCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerContractCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerCsCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerSettlementCommandManager;
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.domain.seller.SellerFixtures;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerBusinessInfo;
@@ -41,6 +42,7 @@ class SellerCommandFacadeTest {
     @Mock private SellerCsCommandManager csCommandManager;
     @Mock private SellerContractCommandManager contractCommandManager;
     @Mock private SellerSettlementCommandManager settlementCommandManager;
+    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     @Nested
     @DisplayName("registerSeller() - 셀러 등록")

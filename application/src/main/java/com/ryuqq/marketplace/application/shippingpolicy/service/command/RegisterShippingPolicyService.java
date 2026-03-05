@@ -11,7 +11,6 @@ import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,11 +40,11 @@ public class RegisterShippingPolicyService implements RegisterShippingPolicyUseC
             ShippingPolicyCommandFactory commandFactory,
             ShippingPolicyCommandManager commandManager,
             DefaultShippingPolicyResolver defaultPolicyResolver,
-            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
+            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
         this.defaultPolicyResolver = defaultPolicyResolver;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
     }
 
     @Override
@@ -72,10 +71,8 @@ public class RegisterShippingPolicyService implements RegisterShippingPolicyUseC
             SetofSyncEntityType entityType,
             SetofSyncOperationType operationType,
             java.time.Instant now) {
-        if (setofSyncOutboxCommandManager != null) {
-            SetofSyncOutbox outbox =
-                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-            setofSyncOutboxCommandManager.persist(outbox);
-        }
+        SetofSyncOutbox outbox =
+                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+        setofSyncOutboxCommandManager.persist(outbox);
     }
 }

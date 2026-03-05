@@ -18,7 +18,6 @@ import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
-import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,13 +44,13 @@ public class SellerCommandFacade {
             SellerCsCommandManager csCommandManager,
             SellerContractCommandManager contractCommandManager,
             SellerSettlementCommandManager settlementCommandManager,
-            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
+            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
         this.sellerCommandManager = sellerCommandManager;
         this.businessInfoCommandManager = businessInfoCommandManager;
         this.csCommandManager = csCommandManager;
         this.contractCommandManager = contractCommandManager;
         this.settlementCommandManager = settlementCommandManager;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
     }
 
     /**
@@ -127,10 +126,8 @@ public class SellerCommandFacade {
             SetofSyncEntityType entityType,
             SetofSyncOperationType operationType,
             java.time.Instant now) {
-        if (setofSyncOutboxCommandManager != null) {
-            SetofSyncOutbox outbox =
-                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-            setofSyncOutboxCommandManager.persist(outbox);
-        }
+        SetofSyncOutbox outbox =
+                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+        setofSyncOutboxCommandManager.persist(outbox);
     }
 }

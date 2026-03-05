@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.application.shippingpolicy.ShippingPolicyCommandFixtures;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.RegisterShippingPolicyCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
@@ -30,6 +31,7 @@ class RegisterShippingPolicyServiceTest {
     @Mock private ShippingPolicyCommandFactory commandFactory;
     @Mock private ShippingPolicyCommandManager commandManager;
     @Mock private DefaultShippingPolicyResolver defaultPolicyResolver;
+    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     @Nested
     @DisplayName("execute() - 배송 정책 등록")

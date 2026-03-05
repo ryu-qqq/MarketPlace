@@ -15,7 +15,6 @@ import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +41,11 @@ public class ChangeShippingPolicyStatusService implements ChangeShippingPolicySt
             ShippingPolicyCommandFactory commandFactory,
             ShippingPolicyCommandManager commandManager,
             ShippingPolicyValidator validator,
-            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
+            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
         this.validator = validator;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
     }
 
     @Override
@@ -84,11 +83,9 @@ public class ChangeShippingPolicyStatusService implements ChangeShippingPolicySt
             SetofSyncEntityType entityType,
             SetofSyncOperationType operationType,
             java.time.Instant now) {
-        if (setofSyncOutboxCommandManager != null) {
-            SetofSyncOutbox outbox =
-                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-            setofSyncOutboxCommandManager.persist(outbox);
-        }
+        SetofSyncOutbox outbox =
+                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+        setofSyncOutboxCommandManager.persist(outbox);
     }
 
     private void activateAll(List<ShippingPolicy> policies, Instant changedAt) {
