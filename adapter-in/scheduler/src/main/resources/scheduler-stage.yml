@@ -71,26 +71,26 @@ scheduler:
 
     image-transform-outbox:
       process-pending:
-        # Stage: 3분마다
-        cron: "0 */3 * * * *"
+        # Stage: 5초마다
+        cron: "*/5 * * * * *"
         # Stage: 중간 배치
         batch-size: 30
         # Stage: 중간 지연
-        delay-seconds: 10
+        delay-seconds: 5
 
       poll-processing:
-        # Stage: 2분마다
+        # Stage: 비활성화 (콜백 방식으로 전환)
+        enabled: false
         cron: "0 */2 * * * *"
-        # Stage: 중간 배치
         batch-size: 30
 
       recover-timeout:
-        # Stage: 10분마다
-        cron: "0 */10 * * * *"
+        # Stage: 1분마다
+        cron: "0 */1 * * * *"
         # Stage: 중간 배치
         batch-size: 30
-        # Stage: 중간 타임아웃
-        timeout-seconds: 600
+        # Stage: 1분 타임아웃
+        timeout-seconds: 60
 
     intelligence-pipeline:
       process-pending:

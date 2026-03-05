@@ -19,7 +19,10 @@ public interface ImageTransformClient {
      * @return 변환 요청 응답
      */
     ImageTransformResponse createTransformRequest(
-            String uploadedUrl, ImageVariantType variantType, String fileAssetId);
+            String uploadedUrl,
+            ImageVariantType variantType,
+            String fileAssetId,
+            String callbackUrl);
 
     /**
      * 이미지 변환 요청 상태를 조회합니다.
