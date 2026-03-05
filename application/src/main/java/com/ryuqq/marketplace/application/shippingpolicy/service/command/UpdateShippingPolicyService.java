@@ -1,17 +1,14 @@
 package com.ryuqq.marketplace.application.shippingpolicy.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.UpdateShippingPolicyCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
 import com.ryuqq.marketplace.application.shippingpolicy.internal.DefaultShippingPolicyResolver;
-import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyCommandManager;
+import com.ryuqq.marketplace.application.shippingpolicy.internal.ShippingPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.shippingpolicy.port.in.command.UpdateShippingPolicyUseCase;
 import com.ryuqq.marketplace.application.shippingpolicy.validator.ShippingPolicyValidator;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
-import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicyUpdateData;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
@@ -38,22 +35,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateShippingPolicyService implements UpdateShippingPolicyUseCase {
 
     private final ShippingPolicyCommandFactory commandFactory;
-    private final ShippingPolicyCommandManager commandManager;
     private final ShippingPolicyValidator validator;
     private final DefaultShippingPolicyResolver defaultPolicyResolver;
-    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    private final ShippingPolicyOutboundFacade outboundFacade;
 
     public UpdateShippingPolicyService(
             ShippingPolicyCommandFactory commandFactory,
-            ShippingPolicyCommandManager commandManager,
             ShippingPolicyValidator validator,
             DefaultShippingPolicyResolver defaultPolicyResolver,
-            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
+            ShippingPolicyOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
         this.validator = validator;
         this.defaultPolicyResolver = defaultPolicyResolver;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
+        this.outboundFacade = outboundFacade;
     }
 
     @Override
@@ -73,23 +67,7 @@ public class UpdateShippingPolicyService implements UpdateShippingPolicyUseCase 
         // 정책 정보 업데이트
         shippingPolicy.update(context.updateData(), context.changedAt());
 
-        commandManager.persist(shippingPolicy);
-        createSetofSyncOutbox(
-                SellerId.of(command.sellerId()),
-                shippingPolicy.idValue(),
-                SetofSyncEntityType.SHIPPING_POLICY,
-                SetofSyncOperationType.UPDATE,
-                context.changedAt());
-    }
-
-    private void createSetofSyncOutbox(
-            SellerId sellerId,
-            Long entityId,
-            SetofSyncEntityType entityType,
-            SetofSyncOperationType operationType,
-            java.time.Instant now) {
-        SetofSyncOutbox outbox =
-                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-        setofSyncOutboxCommandManager.persist(outbox);
+        outboundFacade.persistWithSync(
+                shippingPolicy, OutboundSellerOperationType.UPDATE, context.changedAt());
     }
 }

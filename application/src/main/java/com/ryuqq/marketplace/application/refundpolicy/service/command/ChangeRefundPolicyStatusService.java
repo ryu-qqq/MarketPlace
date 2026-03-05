@@ -3,16 +3,13 @@ package com.ryuqq.marketplace.application.refundpolicy.service.command;
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.refundpolicy.dto.command.ChangeRefundPolicyStatusCommand;
 import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyCommandFactory;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
+import com.ryuqq.marketplace.application.refundpolicy.internal.RefundPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.refundpolicy.port.in.command.ChangeRefundPolicyStatusUseCase;
 import com.ryuqq.marketplace.application.refundpolicy.validator.RefundPolicyValidator;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
-import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -33,19 +30,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatusUseCase {
 
     private final RefundPolicyCommandFactory commandFactory;
-    private final RefundPolicyCommandManager commandManager;
     private final RefundPolicyValidator validator;
-    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    private final RefundPolicyOutboundFacade outboundFacade;
 
     public ChangeRefundPolicyStatusService(
             RefundPolicyCommandFactory commandFactory,
-            RefundPolicyCommandManager commandManager,
             RefundPolicyValidator validator,
-            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
+            RefundPolicyOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
         this.validator = validator;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
+        this.outboundFacade = outboundFacade;
     }
 
     @Override
@@ -57,7 +51,7 @@ public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatus
         List<RefundPolicyId> ids = contexts.stream().map(StatusChangeContext::id).toList();
         List<RefundPolicy> refundPolicies = validator.findAllExistingOrThrow(ids);
 
-        Instant changedAt = contexts.get(0).changedAt();
+        Instant changedAt = contexts.getFirst().changedAt();
 
         if (command.active()) {
             activateAll(refundPolicies, changedAt);
@@ -65,15 +59,11 @@ public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatus
             deactivateAll(command.sellerId(), refundPolicies, changedAt);
         }
 
-        commandManager.persistAll(refundPolicies);
-        for (RefundPolicy policy : refundPolicies) {
-            createSetofSyncOutbox(
-                    SellerId.of(command.sellerId()),
-                    policy.idValue(),
-                    SetofSyncEntityType.REFUND_POLICY,
-                    SetofSyncOperationType.UPDATE,
-                    changedAt);
-        }
+        outboundFacade.persistAllWithSync(
+                SellerId.of(command.sellerId()),
+                refundPolicies,
+                OutboundSellerOperationType.UPDATE,
+                changedAt);
     }
 
     private void activateAll(List<RefundPolicy> policies, Instant changedAt) {
@@ -90,16 +80,5 @@ public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatus
             // POL-DEACT-001: 기본 정책 비활성화 검증은 Domain에서 처리
             policy.deactivate(changedAt);
         }
-    }
-
-    private void createSetofSyncOutbox(
-            SellerId sellerId,
-            Long entityId,
-            SetofSyncEntityType entityType,
-            SetofSyncOperationType operationType,
-            java.time.Instant now) {
-        SetofSyncOutbox outbox =
-                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-        setofSyncOutboxCommandManager.persist(outbox);
     }
 }

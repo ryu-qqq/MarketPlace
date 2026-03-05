@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.seller.internal;
 
+import com.ryuqq.marketplace.application.outboundseller.manager.OutboundSellerOutboxCommandManager;
 import com.ryuqq.marketplace.application.seller.dto.bundle.SellerRegistrationBundle;
 import com.ryuqq.marketplace.application.seller.dto.bundle.SellerUpdateBundle;
 import com.ryuqq.marketplace.application.seller.manager.SellerBusinessInfoCommandManager;
@@ -7,7 +8,9 @@ import com.ryuqq.marketplace.application.seller.manager.SellerCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerContractCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerCsCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerSettlementCommandManager;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
+import com.ryuqq.marketplace.domain.outboundseller.aggregate.OutboundSellerOutbox;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerEntityType;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerBusinessInfo;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerContract;
@@ -15,9 +18,7 @@ import com.ryuqq.marketplace.domain.seller.aggregate.SellerCs;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerCsUpdateData;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerSettlement;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
-import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
+import java.time.Instant;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +37,7 @@ public class SellerCommandFacade {
     private final SellerCsCommandManager csCommandManager;
     private final SellerContractCommandManager contractCommandManager;
     private final SellerSettlementCommandManager settlementCommandManager;
-    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    private final OutboundSellerOutboxCommandManager outboundSellerOutboxCommandManager;
 
     public SellerCommandFacade(
             SellerCommandManager sellerCommandManager,
@@ -44,13 +45,13 @@ public class SellerCommandFacade {
             SellerCsCommandManager csCommandManager,
             SellerContractCommandManager contractCommandManager,
             SellerSettlementCommandManager settlementCommandManager,
-            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
+            OutboundSellerOutboxCommandManager outboundSellerOutboxCommandManager) {
         this.sellerCommandManager = sellerCommandManager;
         this.businessInfoCommandManager = businessInfoCommandManager;
         this.csCommandManager = csCommandManager;
         this.contractCommandManager = contractCommandManager;
         this.settlementCommandManager = settlementCommandManager;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
+        this.outboundSellerOutboxCommandManager = outboundSellerOutboxCommandManager;
     }
 
     /**
@@ -67,11 +68,11 @@ public class SellerCommandFacade {
         bundle.withSellerId(SellerId.of(sellerId));
 
         businessInfoCommandManager.persist(bundle.businessInfo());
-        createSetofSyncOutbox(
+        createOutboundSellerOutbox(
                 SellerId.of(sellerId),
                 sellerId,
-                SetofSyncEntityType.SELLER,
-                SetofSyncOperationType.CREATE,
+                OutboundSellerEntityType.SELLER,
+                OutboundSellerOperationType.CREATE,
                 bundle.seller().createdAt());
 
         return sellerId;
@@ -112,22 +113,35 @@ public class SellerCommandFacade {
         csCommandManager.persist(sellerCs);
         contractCommandManager.persist(sellerContract);
         settlementCommandManager.persist(sellerSettlement);
-        createSetofSyncOutbox(
+        createOutboundSellerOutbox(
                 seller.id(),
                 seller.idValue(),
-                SetofSyncEntityType.SELLER,
-                SetofSyncOperationType.UPDATE,
+                OutboundSellerEntityType.SELLER,
+                OutboundSellerOperationType.UPDATE,
                 bundle.changedAt());
     }
 
-    private void createSetofSyncOutbox(
+    /**
+     * 셀러를 영속화하고 OutboundSeller 동기화 Outbox를 생성합니다.
+     *
+     * @param seller 영속화할 셀러
+     * @param op 동기화 Operation 유형
+     * @param now 처리 시각
+     */
+    public void persistSellerWithSync(Seller seller, OutboundSellerOperationType op, Instant now) {
+        sellerCommandManager.persist(seller);
+        createOutboundSellerOutbox(
+                seller.id(), seller.idValue(), OutboundSellerEntityType.SELLER, op, now);
+    }
+
+    private void createOutboundSellerOutbox(
             SellerId sellerId,
             Long entityId,
-            SetofSyncEntityType entityType,
-            SetofSyncOperationType operationType,
-            java.time.Instant now) {
-        SetofSyncOutbox outbox =
-                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-        setofSyncOutboxCommandManager.persist(outbox);
+            OutboundSellerEntityType entityType,
+            OutboundSellerOperationType operationType,
+            Instant now) {
+        OutboundSellerOutbox outbox =
+                OutboundSellerOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+        outboundSellerOutboxCommandManager.persist(outbox);
     }
 }

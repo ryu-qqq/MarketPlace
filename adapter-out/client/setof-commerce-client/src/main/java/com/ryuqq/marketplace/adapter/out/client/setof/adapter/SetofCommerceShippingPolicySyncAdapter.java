@@ -2,8 +2,8 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofShippingPolicySyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
-import com.ryuqq.marketplace.application.setofsync.dto.response.SetofSyncResult;
-import com.ryuqq.marketplace.application.setofsync.port.out.client.SetofShippingPolicySyncClient;
+import com.ryuqq.marketplace.application.outboundseller.dto.response.OutboundSellerSyncResult;
+import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundShippingPolicySyncClient;
 import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyReadManager;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestClientException;
 
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
-public class SetofCommerceShippingPolicySyncAdapter implements SetofShippingPolicySyncClient {
+public class SetofCommerceShippingPolicySyncAdapter implements OutboundShippingPolicySyncClient {
 
     private static final Logger log =
             LoggerFactory.getLogger(SetofCommerceShippingPolicySyncAdapter.class);
@@ -37,7 +37,7 @@ public class SetofCommerceShippingPolicySyncAdapter implements SetofShippingPoli
     }
 
     @Override
-    public SetofSyncResult createShippingPolicy(Long sellerId, Long policyId) {
+    public OutboundSellerSyncResult createShippingPolicy(Long sellerId, Long policyId) {
         try {
             ShippingPolicy policy =
                     policyReadManager.getBySellerIdAndId(
@@ -54,15 +54,15 @@ public class SetofCommerceShippingPolicySyncAdapter implements SetofShippingPoli
                     .retrieve()
                     .toBodilessEntity();
 
-            return SetofSyncResult.ofSuccess();
+            return OutboundSellerSyncResult.ofSuccess();
         } catch (RestClientException e) {
             log.error("세토프 커머스 배송정책 등록 실패: sellerId={}, policyId={}", sellerId, policyId, e);
-            return SetofSyncResult.retryableFailure("REST_ERROR", e.getMessage());
+            return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
     }
 
     @Override
-    public SetofSyncResult updateShippingPolicy(Long sellerId, Long policyId) {
+    public OutboundSellerSyncResult updateShippingPolicy(Long sellerId, Long policyId) {
         try {
             ShippingPolicy policy =
                     policyReadManager.getBySellerIdAndId(
@@ -82,10 +82,10 @@ public class SetofCommerceShippingPolicySyncAdapter implements SetofShippingPoli
                     .retrieve()
                     .toBodilessEntity();
 
-            return SetofSyncResult.ofSuccess();
+            return OutboundSellerSyncResult.ofSuccess();
         } catch (RestClientException e) {
             log.error("세토프 커머스 배송정책 수정 실패: sellerId={}, policyId={}", sellerId, policyId, e);
-            return SetofSyncResult.retryableFailure("REST_ERROR", e.getMessage());
+            return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
     }
 }

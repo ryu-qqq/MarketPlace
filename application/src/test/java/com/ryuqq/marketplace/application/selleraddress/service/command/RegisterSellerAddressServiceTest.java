@@ -9,14 +9,16 @@ import com.ryuqq.marketplace.application.common.dto.command.RegisterContext;
 import com.ryuqq.marketplace.application.selleraddress.SellerAddressCommandFixtures;
 import com.ryuqq.marketplace.application.selleraddress.dto.command.RegisterSellerAddressCommand;
 import com.ryuqq.marketplace.application.selleraddress.factory.SellerAddressCommandFactory;
+import com.ryuqq.marketplace.application.selleraddress.internal.SellerAddressOutboundFacade;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressCommandManager;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressReadManager;
 import com.ryuqq.marketplace.application.selleraddress.validator.SellerAddressValidator;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.selleraddress.SellerAddressFixtures;
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddress;
 import com.ryuqq.marketplace.domain.selleraddress.vo.AddressType;
+import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -38,7 +40,7 @@ class RegisterSellerAddressServiceTest {
     @Mock private SellerAddressCommandManager commandManager;
     @Mock private SellerAddressReadManager readManager;
     @Mock private SellerAddressValidator validator;
-    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    @Mock private SellerAddressOutboundFacade outboundFacade;
 
     @Nested
     @DisplayName("execute() - 셀러 주소 등록")
@@ -59,7 +61,12 @@ class RegisterSellerAddressServiceTest {
             given(commandFactory.createRegisterContext(command)).willReturn(context);
             given(readManager.findDefaultBySellerId(any(SellerId.class), any(AddressType.class)))
                     .willReturn(Optional.empty());
-            given(commandManager.persist(newAddress)).willReturn(expectedAddressId);
+            given(
+                            outboundFacade.persistWithSync(
+                                    any(SellerAddress.class),
+                                    any(OutboundSellerOperationType.class),
+                                    any(Instant.class)))
+                    .willReturn(expectedAddressId);
 
             // when
             Long result = sut.execute(command);
@@ -68,7 +75,12 @@ class RegisterSellerAddressServiceTest {
             assertThat(result).isEqualTo(expectedAddressId);
             then(validator).should().validateNoDuplicateAddressName(any(), any(), any());
             then(commandFactory).should().createRegisterContext(command);
-            then(commandManager).should().persist(newAddress);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            any(SellerAddress.class),
+                            any(OutboundSellerOperationType.class),
+                            any(Instant.class));
         }
 
         @Test
@@ -87,14 +99,24 @@ class RegisterSellerAddressServiceTest {
             given(commandFactory.createRegisterContext(command)).willReturn(context);
             given(readManager.findDefaultBySellerId(any(SellerId.class), any(AddressType.class)))
                     .willReturn(Optional.of(existingDefault));
-            given(commandManager.persist(any(SellerAddress.class))).willReturn(1L);
+            given(
+                            outboundFacade.persistWithSync(
+                                    any(SellerAddress.class),
+                                    any(OutboundSellerOperationType.class),
+                                    any(Instant.class)))
+                    .willReturn(1L);
 
             // when
             sut.execute(command);
 
             // then
             then(commandManager).should().persist(existingDefault);
-            then(commandManager).should().persist(newAddress);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            any(SellerAddress.class),
+                            any(OutboundSellerOperationType.class),
+                            any(Instant.class));
         }
 
         @Test
@@ -109,14 +131,24 @@ class RegisterSellerAddressServiceTest {
                     new RegisterContext<>(newAddress, newAddress.createdAt());
 
             given(commandFactory.createRegisterContext(command)).willReturn(context);
-            given(commandManager.persist(newAddress)).willReturn(1L);
+            given(
+                            outboundFacade.persistWithSync(
+                                    any(SellerAddress.class),
+                                    any(OutboundSellerOperationType.class),
+                                    any(Instant.class)))
+                    .willReturn(1L);
 
             // when
             sut.execute(command);
 
             // then
             then(readManager).shouldHaveNoInteractions();
-            then(commandManager).should().persist(newAddress);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            any(SellerAddress.class),
+                            any(OutboundSellerOperationType.class),
+                            any(Instant.class));
         }
     }
 }

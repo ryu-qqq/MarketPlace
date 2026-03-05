@@ -8,11 +8,12 @@ import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.selleraddress.SellerAddressCommandFixtures;
 import com.ryuqq.marketplace.application.selleraddress.dto.command.UpdateSellerAddressCommand;
 import com.ryuqq.marketplace.application.selleraddress.factory.SellerAddressCommandFactory;
+import com.ryuqq.marketplace.application.selleraddress.internal.SellerAddressOutboundFacade;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressCommandManager;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressReadManager;
 import com.ryuqq.marketplace.application.selleraddress.validator.SellerAddressValidator;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.selleraddress.SellerAddressFixtures;
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddress;
@@ -41,7 +42,7 @@ class UpdateSellerAddressServiceTest {
     @Mock private SellerAddressCommandManager commandManager;
     @Mock private SellerAddressReadManager readManager;
     @Mock private SellerAddressValidator validator;
-    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    @Mock private SellerAddressOutboundFacade outboundFacade;
 
     @Nested
     @DisplayName("execute() - 셀러 주소 수정")
@@ -72,7 +73,12 @@ class UpdateSellerAddressServiceTest {
 
             // then
             then(validator).should().findExistingOrThrow(context.id());
-            then(commandManager).should().persist(address);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            any(SellerAddress.class),
+                            any(OutboundSellerOperationType.class),
+                            any(Instant.class));
         }
 
         @Test
@@ -104,7 +110,12 @@ class UpdateSellerAddressServiceTest {
 
             // then
             then(commandManager).should().persist(existingDefault);
-            then(commandManager).should().persist(address);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            any(SellerAddress.class),
+                            any(OutboundSellerOperationType.class),
+                            any(Instant.class));
         }
 
         @Test
@@ -133,7 +144,12 @@ class UpdateSellerAddressServiceTest {
             sut.execute(command);
 
             // then
-            then(commandManager).should().persist(address);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            any(SellerAddress.class),
+                            any(OutboundSellerOperationType.class),
+                            any(Instant.class));
         }
     }
 }

@@ -1,17 +1,19 @@
 package com.ryuqq.marketplace.application.shippingpolicy.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.application.shippingpolicy.ShippingPolicyCommandFixtures;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.RegisterShippingPolicyCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
 import com.ryuqq.marketplace.application.shippingpolicy.internal.DefaultShippingPolicyResolver;
-import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyCommandManager;
+import com.ryuqq.marketplace.application.shippingpolicy.internal.ShippingPolicyOutboundFacade;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.shippingpolicy.ShippingPolicyFixtures;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
+import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -29,9 +31,8 @@ class RegisterShippingPolicyServiceTest {
     @InjectMocks private RegisterShippingPolicyService sut;
 
     @Mock private ShippingPolicyCommandFactory commandFactory;
-    @Mock private ShippingPolicyCommandManager commandManager;
     @Mock private DefaultShippingPolicyResolver defaultPolicyResolver;
-    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    @Mock private ShippingPolicyOutboundFacade outboundFacade;
 
     @Nested
     @DisplayName("execute() - 배송 정책 등록")
@@ -48,7 +49,12 @@ class RegisterShippingPolicyServiceTest {
             ShippingPolicy shippingPolicy = ShippingPolicyFixtures.newFreeShippingPolicy();
 
             given(commandFactory.create(command)).willReturn(shippingPolicy);
-            given(commandManager.persist(shippingPolicy)).willReturn(expectedPolicyId);
+            given(
+                            outboundFacade.persistWithSync(
+                                    any(ShippingPolicy.class),
+                                    any(OutboundSellerOperationType.class),
+                                    any(Instant.class)))
+                    .willReturn(expectedPolicyId);
 
             // when
             Long result = sut.execute(command);
@@ -60,7 +66,12 @@ class RegisterShippingPolicyServiceTest {
                     .should()
                     .resolveForRegistration(
                             shippingPolicy.sellerId(), shippingPolicy, shippingPolicy.createdAt());
-            then(commandManager).should().persist(shippingPolicy);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            any(ShippingPolicy.class),
+                            any(OutboundSellerOperationType.class),
+                            any(Instant.class));
         }
 
         @Test
@@ -74,7 +85,12 @@ class RegisterShippingPolicyServiceTest {
             ShippingPolicy shippingPolicy = ShippingPolicyFixtures.newFreeShippingPolicy();
 
             given(commandFactory.create(command)).willReturn(shippingPolicy);
-            given(commandManager.persist(shippingPolicy)).willReturn(expectedPolicyId);
+            given(
+                            outboundFacade.persistWithSync(
+                                    any(ShippingPolicy.class),
+                                    any(OutboundSellerOperationType.class),
+                                    any(Instant.class)))
+                    .willReturn(expectedPolicyId);
 
             // when
             Long result = sut.execute(command);

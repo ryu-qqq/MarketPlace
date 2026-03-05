@@ -3,18 +3,16 @@ package com.ryuqq.marketplace.application.selleraddress.service.command;
 import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.selleraddress.dto.command.UpdateSellerAddressCommand;
 import com.ryuqq.marketplace.application.selleraddress.factory.SellerAddressCommandFactory;
+import com.ryuqq.marketplace.application.selleraddress.internal.SellerAddressOutboundFacade;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressCommandManager;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressReadManager;
 import com.ryuqq.marketplace.application.selleraddress.port.in.command.UpdateSellerAddressUseCase;
 import com.ryuqq.marketplace.application.selleraddress.validator.SellerAddressValidator;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddress;
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddressUpdateData;
 import com.ryuqq.marketplace.domain.selleraddress.id.SellerAddressId;
-import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import java.time.Instant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,19 +25,19 @@ public class UpdateSellerAddressService implements UpdateSellerAddressUseCase {
     private final SellerAddressCommandManager commandManager;
     private final SellerAddressReadManager readManager;
     private final SellerAddressValidator validator;
-    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    private final SellerAddressOutboundFacade outboundFacade;
 
     public UpdateSellerAddressService(
             SellerAddressCommandFactory commandFactory,
             SellerAddressCommandManager commandManager,
             SellerAddressReadManager readManager,
             SellerAddressValidator validator,
-            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
+            SellerAddressOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
         this.readManager = readManager;
         this.validator = validator;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
+        this.outboundFacade = outboundFacade;
     }
 
     @Transactional
@@ -55,24 +53,8 @@ public class UpdateSellerAddressService implements UpdateSellerAddressUseCase {
             unmarkExistingDefaultThenMarkThis(address.sellerId(), address, context.changedAt());
         }
 
-        commandManager.persist(address);
-        createSetofSyncOutbox(
-                address.sellerId(),
-                address.idValue(),
-                SetofSyncEntityType.SELLER_ADDRESS,
-                SetofSyncOperationType.UPDATE,
-                context.changedAt());
-    }
-
-    private void createSetofSyncOutbox(
-            SellerId sellerId,
-            Long entityId,
-            SetofSyncEntityType entityType,
-            SetofSyncOperationType operationType,
-            Instant now) {
-        SetofSyncOutbox outbox =
-                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-        setofSyncOutboxCommandManager.persist(outbox);
+        outboundFacade.persistWithSync(
+                address, OutboundSellerOperationType.UPDATE, context.changedAt());
     }
 
     private void unmarkExistingDefaultThenMarkThis(

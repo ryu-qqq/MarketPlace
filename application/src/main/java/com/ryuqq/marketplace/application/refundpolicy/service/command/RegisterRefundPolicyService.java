@@ -3,14 +3,10 @@ package com.ryuqq.marketplace.application.refundpolicy.service.command;
 import com.ryuqq.marketplace.application.refundpolicy.dto.command.RegisterRefundPolicyCommand;
 import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyCommandFactory;
 import com.ryuqq.marketplace.application.refundpolicy.internal.DefaultRefundPolicyResolver;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
+import com.ryuqq.marketplace.application.refundpolicy.internal.RefundPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.refundpolicy.port.in.command.RegisterRefundPolicyUseCase;
-import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
-import com.ryuqq.marketplace.domain.seller.id.SellerId;
-import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
-import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,19 +28,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegisterRefundPolicyService implements RegisterRefundPolicyUseCase {
 
     private final RefundPolicyCommandFactory commandFactory;
-    private final RefundPolicyCommandManager commandManager;
     private final DefaultRefundPolicyResolver defaultPolicyResolver;
-    private final SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
+    private final RefundPolicyOutboundFacade outboundFacade;
 
     public RegisterRefundPolicyService(
             RefundPolicyCommandFactory commandFactory,
-            RefundPolicyCommandManager commandManager,
             DefaultRefundPolicyResolver defaultPolicyResolver,
-            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
+            RefundPolicyOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
         this.defaultPolicyResolver = defaultPolicyResolver;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
+        this.outboundFacade = outboundFacade;
     }
 
     @Override
@@ -55,24 +48,7 @@ public class RegisterRefundPolicyService implements RegisterRefundPolicyUseCase 
         defaultPolicyResolver.resolveForRegistration(
                 refundPolicy.sellerId(), refundPolicy, refundPolicy.createdAt());
 
-        Long policyId = commandManager.persist(refundPolicy);
-        createSetofSyncOutbox(
-                refundPolicy.sellerId(),
-                policyId,
-                SetofSyncEntityType.REFUND_POLICY,
-                SetofSyncOperationType.CREATE,
-                refundPolicy.createdAt());
-        return policyId;
-    }
-
-    private void createSetofSyncOutbox(
-            SellerId sellerId,
-            Long entityId,
-            SetofSyncEntityType entityType,
-            SetofSyncOperationType operationType,
-            java.time.Instant now) {
-        SetofSyncOutbox outbox =
-                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-        setofSyncOutboxCommandManager.persist(outbox);
+        return outboundFacade.persistWithSync(
+                refundPolicy, OutboundSellerOperationType.CREATE, refundPolicy.createdAt());
     }
 }

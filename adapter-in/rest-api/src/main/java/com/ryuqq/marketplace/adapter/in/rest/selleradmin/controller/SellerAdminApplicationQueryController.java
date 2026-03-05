@@ -99,21 +99,13 @@ public class SellerAdminApplicationQueryController {
     public ResponseEntity<ApiResponse<SellerAdminApplicationPageApiResponse>> search(
             @Valid @ParameterObject SearchSellerAdminApplicationsApiRequest request) {
 
-        List<Long> effectiveSellerIds = resolveEffectiveSellerIds(request.sellerIds());
+        List<Long> effectiveSellerIds = accessChecker.resolveEffectiveSellerIds(request.sellerIds());
         SellerAdminApplicationSearchParams params =
                 mapper.toSearchParams(request, effectiveSellerIds);
         SellerAdminApplicationPageResult result = searchUseCase.execute(params);
 
         return ResponseEntity.ok(
                 ApiResponse.of(SellerAdminApplicationPageApiResponse.from(result)));
-    }
-
-    private List<Long> resolveEffectiveSellerIds(List<Long> requestedSellerIds) {
-        if (accessChecker.superAdmin()) {
-            return requestedSellerIds;
-        }
-        long currentSellerId = accessChecker.resolveCurrentSellerId();
-        return List.of(currentSellerId);
     }
 
     /**
