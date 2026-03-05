@@ -56,7 +56,10 @@ public class FileFlowTransformAdapter implements ImageTransformClient {
 
     @Override
     public ImageTransformResponse createTransformRequest(
-            String uploadedUrl, ImageVariantType variantType, String fileAssetId) {
+            String uploadedUrl,
+            ImageVariantType variantType,
+            String fileAssetId,
+            String callbackUrl) {
         try {
             ApiResponse<TransformRequestResponse> transformResponse =
                     transformRequestApi.create(
@@ -66,7 +69,8 @@ public class FileFlowTransformAdapter implements ImageTransformClient {
                                     variantType.width(),
                                     variantType.height(),
                                     variantType.quality(),
-                                    variantType.targetFormat().toUpperCase()));
+                                    variantType.targetFormat().toUpperCase(),
+                                    callbackUrl));
             String transformRequestId = transformResponse.data().transformRequestId();
 
             log.info(

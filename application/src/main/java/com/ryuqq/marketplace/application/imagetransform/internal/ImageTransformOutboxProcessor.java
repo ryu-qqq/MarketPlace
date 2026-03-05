@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.domain.imagetransform.aggregate.ImageTransformOutbo
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,14 +28,22 @@ public class ImageTransformOutboxProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(ImageTransformOutboxProcessor.class);
 
+    private static final String CALLBACK_PATH = "/api/v1/market/public/image-transform/callback";
+
     private final ImageTransformOutboxCommandManager outboxCommandManager;
     private final ImageTransformManager transformManager;
+    private final String callbackUrl;
 
     public ImageTransformOutboxProcessor(
             ImageTransformOutboxCommandManager outboxCommandManager,
-            ImageTransformManager transformManager) {
+            ImageTransformManager transformManager,
+            @Value("${fileflow.callback-base-url:}") String callbackBaseUrl) {
         this.outboxCommandManager = outboxCommandManager;
         this.transformManager = transformManager;
+        this.callbackUrl =
+                (callbackBaseUrl != null && !callbackBaseUrl.isBlank())
+                        ? callbackBaseUrl + CALLBACK_PATH
+                        : null;
     }
 
     /**
@@ -49,7 +58,10 @@ public class ImageTransformOutboxProcessor {
         try {
             ImageTransformResponse response =
                     transformManager.createTransformRequest(
-                            outbox.uploadedUrlValue(), outbox.variantType(), outbox.fileAssetId());
+                            outbox.uploadedUrlValue(),
+                            outbox.variantType(),
+                            outbox.fileAssetId(),
+                            callbackUrl);
 
             log.info(
                     "이미지 변환 요청 생성 성공: sourceType={}, sourceImageId={}, variantType={},"

@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.imagetransform.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -14,12 +15,12 @@ import com.ryuqq.marketplace.application.imagetransform.manager.ImageTransformOu
 import com.ryuqq.marketplace.domain.imagetransform.ImageTransformFixtures;
 import com.ryuqq.marketplace.domain.imagetransform.aggregate.ImageTransformOutbox;
 import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -28,10 +29,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("ImageTransformOutboxProcessor 단위 테스트")
 class ImageTransformOutboxProcessorTest {
 
-    @InjectMocks private ImageTransformOutboxProcessor sut;
+    private ImageTransformOutboxProcessor sut;
 
     @Mock private ImageTransformOutboxCommandManager outboxCommandManager;
     @Mock private ImageTransformManager transformManager;
+
+    @BeforeEach
+    void setUp() {
+        sut =
+                new ImageTransformOutboxProcessor(
+                        outboxCommandManager, transformManager, "http://localhost:8080");
+    }
 
     @Nested
     @DisplayName("processOutbox() - PENDING Outbox 처리")
@@ -48,9 +56,10 @@ class ImageTransformOutboxProcessorTest {
             given(outboxCommandManager.persist(any())).willReturn(1L);
             given(
                             transformManager.createTransformRequest(
-                                    outbox.uploadedUrlValue(),
-                                    outbox.variantType(),
-                                    outbox.fileAssetId()))
+                                    eq(outbox.uploadedUrlValue()),
+                                    eq(outbox.variantType()),
+                                    eq(outbox.fileAssetId()),
+                                    anyString()))
                     .willReturn(processingResponse);
 
             // when
@@ -71,7 +80,10 @@ class ImageTransformOutboxProcessorTest {
             given(outboxCommandManager.persist(any())).willReturn(1L);
             given(
                             transformManager.createTransformRequest(
-                                    anyString(), any(ImageVariantType.class), anyString()))
+                                    anyString(),
+                                    any(ImageVariantType.class),
+                                    anyString(),
+                                    anyString()))
                     .willThrow(new RuntimeException("외부 API 호출 실패"));
 
             // when
@@ -93,9 +105,10 @@ class ImageTransformOutboxProcessorTest {
             given(outboxCommandManager.persist(any())).willReturn(1L);
             given(
                             transformManager.createTransformRequest(
-                                    outbox.uploadedUrlValue(),
-                                    outbox.variantType(),
-                                    outbox.fileAssetId()))
+                                    eq(outbox.uploadedUrlValue()),
+                                    eq(outbox.variantType()),
+                                    eq(outbox.fileAssetId()),
+                                    anyString()))
                     .willReturn(processingResponse);
 
             // when
@@ -115,7 +128,10 @@ class ImageTransformOutboxProcessorTest {
 
             given(
                             transformManager.createTransformRequest(
-                                    anyString(), any(ImageVariantType.class), anyString()))
+                                    anyString(),
+                                    any(ImageVariantType.class),
+                                    anyString(),
+                                    anyString()))
                     .willThrow(new RuntimeException("외부 API 호출 실패"));
             given(outboxCommandManager.persist(any())).willThrow(new RuntimeException("DB 저장 실패"));
 
@@ -137,9 +153,10 @@ class ImageTransformOutboxProcessorTest {
             given(outboxCommandManager.persist(any())).willReturn(1L);
             given(
                             transformManager.createTransformRequest(
-                                    outbox.uploadedUrlValue(),
-                                    outbox.variantType(),
-                                    outbox.fileAssetId()))
+                                    eq(outbox.uploadedUrlValue()),
+                                    eq(outbox.variantType()),
+                                    eq(outbox.fileAssetId()),
+                                    anyString()))
                     .willReturn(processingResponse);
 
             // when
