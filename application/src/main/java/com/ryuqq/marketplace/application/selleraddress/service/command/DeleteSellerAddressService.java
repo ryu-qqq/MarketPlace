@@ -14,7 +14,6 @@ import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import java.time.Instant;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +30,11 @@ public class DeleteSellerAddressService implements DeleteSellerAddressUseCase {
             SellerAddressCommandFactory commandFactory,
             SellerAddressCommandManager commandManager,
             SellerAddressValidator validator,
-            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
+            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
         this.validator = validator;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
     }
 
     @Transactional
@@ -61,10 +60,8 @@ public class DeleteSellerAddressService implements DeleteSellerAddressUseCase {
             SetofSyncEntityType entityType,
             SetofSyncOperationType operationType,
             Instant now) {
-        if (setofSyncOutboxCommandManager != null) {
-            SetofSyncOutbox outbox =
-                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-            setofSyncOutboxCommandManager.persist(outbox);
-        }
+        SetofSyncOutbox outbox =
+                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+        setofSyncOutboxCommandManager.persist(outbox);
     }
 }

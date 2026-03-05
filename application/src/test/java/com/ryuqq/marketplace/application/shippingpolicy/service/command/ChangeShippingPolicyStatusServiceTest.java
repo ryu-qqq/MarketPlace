@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.application.shippingpolicy.ShippingPolicyCommandFixtures;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.ChangeShippingPolicyStatusCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
@@ -35,6 +36,7 @@ class ChangeShippingPolicyStatusServiceTest {
     @Mock private ShippingPolicyCommandFactory commandFactory;
     @Mock private ShippingPolicyCommandManager commandManager;
     @Mock private ShippingPolicyValidator validator;
+    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     @Nested
     @DisplayName("execute() - 배송 정책 상태 변경")

@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.selleraddress.factory.SellerAddressComm
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressCommandManager;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressReadManager;
 import com.ryuqq.marketplace.application.selleraddress.validator.SellerAddressValidator;
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.selleraddress.SellerAddressFixtures;
@@ -40,6 +41,7 @@ class UpdateSellerAddressServiceTest {
     @Mock private SellerAddressCommandManager commandManager;
     @Mock private SellerAddressReadManager readManager;
     @Mock private SellerAddressValidator validator;
+    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     @Nested
     @DisplayName("execute() - 셀러 주소 수정")

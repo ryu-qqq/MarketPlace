@@ -15,7 +15,6 @@ import com.ryuqq.marketplace.domain.setofsync.aggregate.SetofSyncOutbox;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncEntityType;
 import com.ryuqq.marketplace.domain.setofsync.vo.SetofSyncOperationType;
 import java.time.Instant;
-import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +45,7 @@ public class SellerCreationFacade {
             SellerSettlementCommandManager settlementCommandManager,
             SellerAuthOutboxCommandManager authOutboxCommandManager,
             SellerApplicationCommandManager applicationCommandManager,
-            Optional<SetofSyncOutboxCommandManager> setofSyncOutboxCommandManager) {
+            SetofSyncOutboxCommandManager setofSyncOutboxCommandManager) {
         this.sellerCommandManager = sellerCommandManager;
         this.businessInfoCommandManager = businessInfoCommandManager;
         this.csCommandManager = csCommandManager;
@@ -54,7 +53,7 @@ public class SellerCreationFacade {
         this.settlementCommandManager = settlementCommandManager;
         this.authOutboxCommandManager = authOutboxCommandManager;
         this.applicationCommandManager = applicationCommandManager;
-        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager.orElse(null);
+        this.setofSyncOutboxCommandManager = setofSyncOutboxCommandManager;
     }
 
     /**
@@ -108,10 +107,8 @@ public class SellerCreationFacade {
             SetofSyncEntityType entityType,
             SetofSyncOperationType operationType,
             java.time.Instant now) {
-        if (setofSyncOutboxCommandManager != null) {
-            SetofSyncOutbox outbox =
-                    SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
-            setofSyncOutboxCommandManager.persist(outbox);
-        }
+        SetofSyncOutbox outbox =
+                SetofSyncOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+        setofSyncOutboxCommandManager.persist(outbox);
     }
 }

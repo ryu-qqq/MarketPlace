@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyComman
 import com.ryuqq.marketplace.application.refundpolicy.internal.DefaultRefundPolicyResolver;
 import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
 import com.ryuqq.marketplace.application.refundpolicy.validator.RefundPolicyValidator;
+import com.ryuqq.marketplace.application.setofsync.manager.SetofSyncOutboxCommandManager;
 import com.ryuqq.marketplace.domain.refundpolicy.RefundPolicyFixtures;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicyUpdateData;
@@ -40,6 +41,7 @@ class UpdateRefundPolicyServiceTest {
     @Mock private RefundPolicyCommandManager commandManager;
     @Mock private RefundPolicyValidator validator;
     @Mock private DefaultRefundPolicyResolver defaultPolicyResolver;
+    @Mock private SetofSyncOutboxCommandManager setofSyncOutboxCommandManager;
 
     @Nested
     @DisplayName("execute() - 환불 정책 수정")
