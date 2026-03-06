@@ -105,7 +105,7 @@ data "aws_ssm_parameter" "rds_proxy_endpoint" {
 }
 
 data "aws_secretsmanager_secret" "rds" {
-  name = "marketplace/rds/credentials"
+  name = "/ryuqqq/market/prod/db-credentials"
 }
 
 data "aws_secretsmanager_secret_version" "rds" {
@@ -156,7 +156,7 @@ locals {
   rds_credentials = jsondecode(data.aws_secretsmanager_secret_version.rds.secret_string)
   rds_host        = data.aws_ssm_parameter.rds_proxy_endpoint.value
   rds_port        = "3306"
-  rds_dbname      = "marketplace"
+  rds_dbname      = "market"
   rds_username    = local.rds_credentials.username
 
   # AMP Configuration
