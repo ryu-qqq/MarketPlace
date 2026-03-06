@@ -73,9 +73,9 @@ scheduler:
         # 처리 지연 (생성 후 N초 경과한 건만 처리)
         delay-seconds: 30
 
-      # PROCESSING 폴링
+      # PROCESSING 폴링 (콜백 방식 전환으로 비활성화)
       poll-processing:
-        enabled: true
+        enabled: false
         # Cron: 2분마다
         cron: "0 */2 * * * *"
         timezone: Asia/Seoul

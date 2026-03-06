@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -60,24 +61,33 @@ public class CompleteImageUploadCallbackService implements CompleteImageUploadCa
         ImageUploadOutbox outbox = optionalOutbox.get();
         Instant now = Instant.now();
 
-        if (STATUS_COMPLETED.equals(command.status())) {
-            String newCdnUrl = buildCdnUrl(command.s3Key());
-            log.info(
-                    "이미지 업로드 콜백 완료: sourceType={}, sourceId={}, newCdnUrl={}",
-                    outbox.sourceType(),
-                    outbox.sourceId(),
-                    newCdnUrl);
-            completionCoordinator.complete(outbox, newCdnUrl, command.assetId(), now);
-        } else {
-            boolean canRetry = isRetryableError(command.lastError());
+        try {
+            if (STATUS_COMPLETED.equals(command.status())) {
+                String newCdnUrl = buildCdnUrl(command.s3Key());
+                log.info(
+                        "이미지 업로드 콜백 완료: sourceType={}, sourceId={}, newCdnUrl={}",
+                        outbox.sourceType(),
+                        outbox.sourceId(),
+                        newCdnUrl);
+                completionCoordinator.complete(outbox, newCdnUrl, command.assetId(), now);
+            } else {
+                boolean canRetry = isRetryableError(command.lastError());
+                log.warn(
+                        "이미지 업로드 콜백 실패: sourceType={}, sourceId={}, canRetry={}, error={}",
+                        outbox.sourceType(),
+                        outbox.sourceId(),
+                        canRetry,
+                        command.lastError());
+                outbox.recordFailure(canRetry, command.lastError(), now);
+                outboxCommandManager.persist(outbox);
+            }
+        } catch (OptimisticLockingFailureException e) {
             log.warn(
-                    "이미지 업로드 콜백 실패: sourceType={}, sourceId={}, canRetry={}, error={}",
+                    "콜백 처리 중 동시 수정 감지 (이미 처리된 것으로 간주): downloadTaskId={}, sourceType={},"
+                            + " sourceId={}",
+                    command.downloadTaskId(),
                     outbox.sourceType(),
-                    outbox.sourceId(),
-                    canRetry,
-                    command.lastError());
-            outbox.recordFailure(canRetry, command.lastError(), now);
-            outboxCommandManager.persist(outbox);
+                    outbox.sourceId());
         }
     }
 

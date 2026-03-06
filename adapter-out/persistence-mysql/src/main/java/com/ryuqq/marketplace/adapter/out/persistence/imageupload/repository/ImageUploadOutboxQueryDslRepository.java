@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.imageupload.entity.ImageUploadOutboxJpaEntity;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageUploadOutboxStatus;
+import jakarta.persistence.LockModeType;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class ImageUploadOutboxQueryDslRepository {
+
+    private static final int SKIP_LOCKED = -2;
 
     private final JPAQueryFactory queryFactory;
 
@@ -44,6 +47,8 @@ public class ImageUploadOutboxQueryDslRepository {
                         imageUploadOutboxJpaEntity.createdAt.lt(beforeTime))
                 .orderBy(imageUploadOutboxJpaEntity.createdAt.asc())
                 .limit(limit)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .setHint("jakarta.persistence.lock.timeout", SKIP_LOCKED)
                 .fetch();
     }
 
@@ -63,6 +68,8 @@ public class ImageUploadOutboxQueryDslRepository {
                         imageUploadOutboxJpaEntity.updatedAt.lt(timeoutThreshold))
                 .orderBy(imageUploadOutboxJpaEntity.updatedAt.asc())
                 .limit(limit)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .setHint("jakarta.persistence.lock.timeout", SKIP_LOCKED)
                 .fetch();
     }
 
@@ -103,6 +110,8 @@ public class ImageUploadOutboxQueryDslRepository {
                         imageUploadOutboxJpaEntity.downloadTaskId.isNotNull())
                 .orderBy(imageUploadOutboxJpaEntity.updatedAt.asc())
                 .limit(limit)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .setHint("jakarta.persistence.lock.timeout", SKIP_LOCKED)
                 .fetch();
     }
 
@@ -123,6 +132,8 @@ public class ImageUploadOutboxQueryDslRepository {
                         imageUploadOutboxJpaEntity.errorMessage.notLike("%잘못된 요청%"))
                 .orderBy(imageUploadOutboxJpaEntity.processedAt.asc())
                 .limit(limit)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .setHint("jakarta.persistence.lock.timeout", SKIP_LOCKED)
                 .fetch();
     }
 
