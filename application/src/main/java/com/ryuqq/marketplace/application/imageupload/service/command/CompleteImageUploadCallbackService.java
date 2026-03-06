@@ -67,7 +67,7 @@ public class CompleteImageUploadCallbackService implements CompleteImageUploadCa
                     outbox.sourceType(),
                     outbox.sourceId(),
                     newCdnUrl);
-            completionCoordinator.complete(outbox, newCdnUrl, command.downloadTaskId(), now);
+            completionCoordinator.complete(outbox, newCdnUrl, command.assetId(), now);
         } else {
             boolean canRetry = isRetryableError(command.lastError());
             log.warn(
