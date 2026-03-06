@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.inboundproduct.internal;
 
 import com.ryuqq.marketplace.application.inboundproduct.manager.InboundProductReadManager;
 import com.ryuqq.marketplace.domain.inboundproduct.aggregate.InboundProduct;
+import com.ryuqq.marketplace.domain.inboundproduct.exception.InboundProductNotConvertedException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import org.springframework.stereotype.Component;
 
@@ -26,14 +27,14 @@ public class InboundProductIdResolver {
      * @param inboundSourceId 외부 소스 ID
      * @param externalProductCode 외부 상품 코드
      * @return 내부 ProductGroupId
-     * @throws IllegalStateException 변환 완료되지 않은 인바운드 상품인 경우
+     * @throws InboundProductNotConvertedException 변환 완료되지 않은 인바운드 상품인 경우 (422)
      */
     public ProductGroupId resolve(long inboundSourceId, String externalProductCode) {
         InboundProduct inbound =
                 readManager.findByInboundSourceIdAndProductCodeOrThrow(
                         inboundSourceId, externalProductCode);
         if (!inbound.status().isConverted()) {
-            throw new IllegalStateException("변환 완료되지 않은 인바운드 상품: " + externalProductCode);
+            throw new InboundProductNotConvertedException(externalProductCode);
         }
         return ProductGroupId.of(inbound.internalProductGroupId());
     }
