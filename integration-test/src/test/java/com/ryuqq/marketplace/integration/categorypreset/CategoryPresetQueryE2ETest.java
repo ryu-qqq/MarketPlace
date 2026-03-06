@@ -68,6 +68,11 @@ class CategoryPresetQueryE2ETest extends E2ETestBase {
                                 "테스트 외부몰",
                                 "test-account",
                                 "ACTIVE",
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
                                 now,
                                 now,
                                 null));

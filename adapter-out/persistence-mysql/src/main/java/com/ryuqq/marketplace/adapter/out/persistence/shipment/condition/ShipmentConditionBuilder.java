@@ -73,6 +73,32 @@ public class ShipmentConditionBuilder {
         return condition;
     }
 
+    /**
+     * 셀러 ID 필터 조건.
+     *
+     * <p>Order Adapter-Out 구현 후 orders 테이블 JOIN으로 활성화 예정.
+     */
+    public BooleanExpression sellerIdsIn(ShipmentSearchCriteria criteria) {
+        if (!criteria.hasSellerFilter()) {
+            return null;
+        }
+        // TODO: Order JPA 엔티티 생성 후 서브쿼리 구현
+        return null;
+    }
+
+    /**
+     * 외부 주문번호 필터 조건.
+     *
+     * <p>Order Adapter-Out 구현 후 orders 테이블 JOIN으로 활성화 예정.
+     */
+    public BooleanExpression shopOrderNosIn(ShipmentSearchCriteria criteria) {
+        if (!criteria.hasShopOrderNoFilter()) {
+            return null;
+        }
+        // TODO: Order JPA 엔티티 생성 후 서브쿼리 구현
+        return null;
+    }
+
     public BooleanExpression notDeleted() {
         return shipment.deletedAt.isNull();
     }

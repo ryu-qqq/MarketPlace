@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.sellerapplication.entity.Se
 import com.ryuqq.marketplace.adapter.out.persistence.sellerapplication.mapper.SellerApplicationJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.sellerapplication.repository.SellerApplicationQueryDslRepository;
 import com.ryuqq.marketplace.application.sellerapplication.port.out.query.SellerApplicationQueryPort;
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellerapplication.aggregate.SellerApplication;
 import com.ryuqq.marketplace.domain.sellerapplication.id.SellerApplicationId;
 import com.ryuqq.marketplace.domain.sellerapplication.query.SellerApplicationSearchCriteria;
@@ -91,5 +92,16 @@ public class SellerApplicationQueryAdapter implements SellerApplicationQueryPort
     @Override
     public long countByCriteria(SellerApplicationSearchCriteria criteria) {
         return queryDslRepository.countByCriteria(criteria);
+    }
+
+    /**
+     * 승인된 셀러 ID로 입점 신청 조회.
+     *
+     * @param sellerId 승인된 셀러 ID
+     * @return 입점 신청 Optional
+     */
+    @Override
+    public Optional<SellerApplication> findByApprovedSellerId(SellerId sellerId) {
+        return queryDslRepository.findByApprovedSellerId(sellerId.value()).map(mapper::toDomain);
     }
 }

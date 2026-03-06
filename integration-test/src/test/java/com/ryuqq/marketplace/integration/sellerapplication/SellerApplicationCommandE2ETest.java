@@ -141,8 +141,8 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[C1-7] 권한 검증 - 비인증 사용자")
-        void applySellerApplication_unauthenticated_returns401() {
+        @DisplayName("[C1-7] 비인증 사용자도 입점 신청 가능")
+        void applySellerApplication_unauthenticated_returns201() {
             // given
             Map<String, Object> request = createApplyRequest();
 
@@ -152,7 +152,7 @@ class SellerApplicationCommandE2ETest extends E2ETestBase {
                     .when()
                     .post(BASE_URL)
                     .then()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value());
+                    .statusCode(HttpStatus.CREATED.value());
         }
 
         @Test

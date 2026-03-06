@@ -65,6 +65,23 @@ public class ProductGroupDescription {
                 now);
     }
 
+    /** 신규 상세설명 생성 (이미지 포함). */
+    public static ProductGroupDescription forNew(
+            ProductGroupId productGroupId,
+            DescriptionHtml content,
+            List<DescriptionImage> images,
+            Instant now) {
+        return new ProductGroupDescription(
+                ProductGroupDescriptionId.forNew(),
+                productGroupId,
+                content,
+                null,
+                DescriptionPublishStatus.PENDING,
+                images,
+                now,
+                now);
+    }
+
     /** 영속성에서 복원 시 사용. */
     public static ProductGroupDescription reconstitute(
             ProductGroupDescriptionId id,
@@ -112,7 +129,11 @@ public class ProductGroupDescription {
             List<DescriptionImage> newImages, Instant updatedAt) {
         Map<String, DescriptionImage> existingByUrl =
                 images.stream()
-                        .collect(Collectors.toMap(DescriptionImage::originUrlValue, img -> img));
+                        .collect(
+                                Collectors.toMap(
+                                        DescriptionImage::originUrlValue,
+                                        img -> img,
+                                        (existing, duplicate) -> existing));
 
         List<DescriptionImage> added = new ArrayList<>();
         List<DescriptionImage> retained = new ArrayList<>();

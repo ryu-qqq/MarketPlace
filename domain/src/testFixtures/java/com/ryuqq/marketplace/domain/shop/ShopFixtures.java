@@ -83,6 +83,11 @@ public final class ShopFixtures {
                 defaultAccountId(),
                 ShopStatus.ACTIVE,
                 null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.yesterday());
     }
@@ -94,6 +99,11 @@ public final class ShopFixtures {
                 defaultShopName(),
                 defaultAccountId(),
                 ShopStatus.ACTIVE,
+                null,
+                null,
+                null,
+                null,
+                null,
                 null,
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.yesterday());
@@ -107,6 +117,28 @@ public final class ShopFixtures {
                 accountId,
                 ShopStatus.ACTIVE,
                 null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                CommonVoFixtures.yesterday(),
+                CommonVoFixtures.yesterday());
+    }
+
+    public static Shop activeShopWithCredentials(Long id) {
+        return Shop.reconstitute(
+                ShopId.of(id),
+                DEFAULT_SALES_CHANNEL_ID,
+                defaultShopName(),
+                defaultAccountId(),
+                ShopStatus.ACTIVE,
+                null,
+                "NAVER",
+                "test-api-key",
+                "test-api-secret",
+                "test-access-token",
+                "vendor-001",
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.yesterday());
     }
@@ -118,6 +150,11 @@ public final class ShopFixtures {
                 defaultShopName(),
                 defaultAccountId(),
                 ShopStatus.INACTIVE,
+                null,
+                null,
+                null,
+                null,
+                null,
                 null,
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.yesterday());
@@ -132,6 +169,11 @@ public final class ShopFixtures {
                 defaultAccountId(),
                 ShopStatus.INACTIVE,
                 deletedAt,
+                null,
+                null,
+                null,
+                null,
+                null,
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.yesterday());
     }

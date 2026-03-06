@@ -27,6 +27,11 @@ public class ProductGroupReadManager {
                 .orElseThrow(() -> new ProductGroupNotFoundException(id.value()));
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductGroup> findByIds(List<ProductGroupId> ids) {
+        return queryPort.findByIds(ids);
+    }
+
     /**
      * 셀러 소유의 상품 그룹을 배치 조회합니다.
      *

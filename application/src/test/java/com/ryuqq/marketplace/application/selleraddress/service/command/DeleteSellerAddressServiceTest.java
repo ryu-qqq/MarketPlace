@@ -7,7 +7,7 @@ import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.selleraddress.SellerAddressCommandFixtures;
 import com.ryuqq.marketplace.application.selleraddress.dto.command.DeleteSellerAddressCommand;
 import com.ryuqq.marketplace.application.selleraddress.factory.SellerAddressCommandFactory;
-import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressCommandManager;
+import com.ryuqq.marketplace.application.selleraddress.internal.SellerAddressOutboundFacade;
 import com.ryuqq.marketplace.application.selleraddress.validator.SellerAddressValidator;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.selleraddress.SellerAddressFixtures;
@@ -31,8 +31,8 @@ class DeleteSellerAddressServiceTest {
     @InjectMocks private DeleteSellerAddressService sut;
 
     @Mock private SellerAddressCommandFactory commandFactory;
-    @Mock private SellerAddressCommandManager commandManager;
     @Mock private SellerAddressValidator validator;
+    @Mock private SellerAddressOutboundFacade outboundFacade;
 
     @Nested
     @DisplayName("execute() - 셀러 주소 삭제")
@@ -61,7 +61,9 @@ class DeleteSellerAddressServiceTest {
             // then
             then(validator).should().findExistingOrThrow(context.id());
             then(validator).should().validateNotDefaultAddress(address);
-            then(commandManager).should().persist(address);
+            then(outboundFacade)
+                    .should()
+                    .persistDeleteWithSync(address.sellerId(), address, context.changedAt());
         }
 
         @Test
@@ -86,7 +88,9 @@ class DeleteSellerAddressServiceTest {
 
             // then
             then(validator).should().validateNotDefaultAddress(address);
-            then(commandManager).should().persist(address);
+            then(outboundFacade)
+                    .should()
+                    .persistDeleteWithSync(address.sellerId(), address, context.changedAt());
         }
     }
 }

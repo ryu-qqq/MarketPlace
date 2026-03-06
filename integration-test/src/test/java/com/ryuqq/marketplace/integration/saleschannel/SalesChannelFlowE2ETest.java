@@ -220,7 +220,7 @@ class SalesChannelFlowE2ETest extends E2ETestBase {
             Map<String, Object> request = new HashMap<>();
             request.put("channelName", "셀러채널");
 
-            given().spec(givenSellerUser("org-100", "sales-channel:write"))
+            given().spec(givenSellerUser("org-100"))
                     .body(request)
                     .when()
                     .post("/sales-channels")

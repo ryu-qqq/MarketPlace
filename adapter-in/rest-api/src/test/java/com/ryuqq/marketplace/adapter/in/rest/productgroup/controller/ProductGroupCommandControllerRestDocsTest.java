@@ -24,6 +24,7 @@ import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupApiFixture
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupExcelApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupFullApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper.ProductGroupCommandApiMapper;
@@ -81,7 +82,10 @@ class ProductGroupCommandControllerRestDocsTest {
             // given
             RegisterProductGroupApiRequest request = ProductGroupApiFixtures.registerRequest();
 
-            given(mapper.toCommand(any(RegisterProductGroupApiRequest.class))).willReturn(null);
+            given(accessChecker.resolveSellerIdForRegistration(any()))
+                    .willReturn(ProductGroupApiFixtures.DEFAULT_SELLER_ID);
+            given(mapper.toCommand(anyLong(), any(RegisterProductGroupApiRequest.class)))
+                    .willReturn(null);
             given(registerUseCase.execute(any())).willReturn(PRODUCT_GROUP_ID);
 
             // when & then
@@ -90,7 +94,7 @@ class ProductGroupCommandControllerRestDocsTest {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.productGroupId").value(PRODUCT_GROUP_ID))
+                    .andExpect(jsonPath("$.data.productGroupId").value(PRODUCT_GROUP_ID))
                     .andDo(
                             document(
                                     "product-group/register",
@@ -217,9 +221,15 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("고시 필드 값")),
                                     responseFields(
-                                            fieldWithPath("productGroupId")
+                                            fieldWithPath("data.productGroupId")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("생성된 상품 그룹 ID"))));
+                                                    .description("생성된 상품 그룹 ID"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -241,9 +251,10 @@ class ProductGroupCommandControllerRestDocsTest {
             BatchProcessingResult<Long> batchResult =
                     new BatchProcessingResult<>(2, 2, 0, itemResults);
 
-            given(accessChecker.resolveCurrentSellerId()).willReturn(1L);
-            given(mapper.toCommands(anyLong(), any(BatchRegisterProductGroupApiRequest.class)))
-                    .willReturn(List.of());
+            given(accessChecker.resolveSellerIdForRegistration(any()))
+                    .willReturn(ProductGroupApiFixtures.DEFAULT_SELLER_ID);
+            given(mapper.toCommand(anyLong(), any(RegisterProductGroupExcelApiRequest.class)))
+                    .willReturn(null);
             given(batchRegisterUseCase.execute(any())).willReturn(batchResult);
 
             // when & then
@@ -253,9 +264,9 @@ class ProductGroupCommandControllerRestDocsTest {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.totalCount").value(2))
-                    .andExpect(jsonPath("$.successCount").value(2))
-                    .andExpect(jsonPath("$.failureCount").value(0))
+                    .andExpect(jsonPath("$.data.totalCount").value(2))
+                    .andExpect(jsonPath("$.data.successCount").value(2))
+                    .andExpect(jsonPath("$.data.failureCount").value(0))
                     .andDo(
                             document(
                                     "product-group/batch-register",
@@ -265,6 +276,12 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath("items")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("등록할 상품 그룹 목록 (최대 100건)"),
+                                            fieldWithPath("items[].sellerId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description(
+                                                            "셀러 ID (SUPER_ADMIN 필수, 셀러는 미입력 시"
+                                                                    + " 자동 해석)")
+                                                    .optional(),
                                             fieldWithPath("items[].brandId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("브랜드 ID"),
@@ -377,40 +394,46 @@ class ProductGroupCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("고시 필드 값")),
                                     responseFields(
-                                            fieldWithPath("totalCount")
+                                            fieldWithPath("data.totalCount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("총 처리 건수"),
-                                            fieldWithPath("successCount")
+                                            fieldWithPath("data.successCount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("성공 건수"),
-                                            fieldWithPath("failureCount")
+                                            fieldWithPath("data.failureCount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("실패 건수"),
-                                            fieldWithPath("results")
+                                            fieldWithPath("data.results")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("항목별 결과"),
-                                            fieldWithPath("results[].index")
+                                            fieldWithPath("data.results[].index")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("요청 인덱스 (0-based)"),
-                                            fieldWithPath("results[].productGroupId")
+                                            fieldWithPath("data.results[].productGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("생성된 상품 그룹 ID (실패 시 null)")
                                                     .optional(),
-                                            fieldWithPath("results[].productGroupName")
+                                            fieldWithPath("data.results[].productGroupName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("요청한 상품 그룹명 (실패 항목 식별용)")
                                                     .optional(),
-                                            fieldWithPath("results[].success")
+                                            fieldWithPath("data.results[].success")
                                                     .type(JsonFieldType.BOOLEAN)
                                                     .description("성공 여부"),
-                                            fieldWithPath("results[].errorCode")
+                                            fieldWithPath("data.results[].errorCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("에러 코드 (성공 시 null)")
                                                     .optional(),
-                                            fieldWithPath("results[].errorMessage")
+                                            fieldWithPath("data.results[].errorMessage")
                                                     .type(JsonFieldType.STRING)
                                                     .description("에러 메시지 (성공 시 null)")
-                                                    .optional())));
+                                                    .optional(),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
         }
     }
 
@@ -646,8 +669,8 @@ class ProductGroupCommandControllerRestDocsTest {
             BatchChangeProductGroupStatusApiRequest request =
                     ProductGroupApiFixtures.batchChangeStatusRequest();
 
-            given(accessChecker.resolveCurrentSellerId()).willReturn(1L);
-            given(mapper.toCommand(anyLong(), any(BatchChangeProductGroupStatusApiRequest.class)))
+            given(accessChecker.resolveSellerIdOrNull()).willReturn(1L);
+            given(mapper.toCommand(any(), any(BatchChangeProductGroupStatusApiRequest.class)))
                     .willReturn(null);
             doNothing().when(batchChangeStatusUseCase).execute(any());
 
@@ -670,7 +693,7 @@ class ProductGroupCommandControllerRestDocsTest {
                                             fieldWithPath("targetStatus")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
-                                                            "변경할 상태 (ACTIVE, INACTIVE, SOLDOUT,"
+                                                            "변경할 상태 (ACTIVE, INACTIVE, SOLD_OUT,"
                                                                     + " DELETED)"))));
         }
     }

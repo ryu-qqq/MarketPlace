@@ -335,7 +335,71 @@ class SellerAdminQueryAdapterTest {
     }
 
     // ========================================================================
-    // 7. existsByLoginId 테스트
+    // 7. findByNameAndLoginId 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByNameAndLoginId 메서드 테스트")
+    class FindByNameAndLoginIdTest {
+
+        @Test
+        @DisplayName("이름과 로그인 ID로 조회 시 Domain을 반환합니다")
+        void findByNameAndLoginId_WithValidParams_ReturnsDomain() {
+            // given
+            String name = "홍길동";
+            String loginId = "seller01";
+            SellerAdminJpaEntity entity = SellerAdminJpaEntityFixtures.activeEntity();
+            SellerAdmin domain = SellerFixtures.activeSellerAdmin();
+
+            given(queryDslRepository.findByNameAndLoginId(name, loginId))
+                    .willReturn(Optional.of(entity));
+            given(mapper.toDomain(entity)).willReturn(domain);
+
+            // when
+            Optional<SellerAdmin> result = queryAdapter.findByNameAndLoginId(name, loginId);
+
+            // then
+            assertThat(result).isPresent();
+            assertThat(result.get()).isEqualTo(domain);
+        }
+
+        @Test
+        @DisplayName("일치하는 관리자가 없으면 빈 Optional을 반환합니다")
+        void findByNameAndLoginId_WithNoMatch_ReturnsEmpty() {
+            // given
+            String name = "없는이름";
+            String loginId = "unknown";
+
+            given(queryDslRepository.findByNameAndLoginId(name, loginId))
+                    .willReturn(Optional.empty());
+
+            // when
+            Optional<SellerAdmin> result = queryAdapter.findByNameAndLoginId(name, loginId);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("repository에 이름과 로그인 ID를 그대로 전달합니다")
+        void findByNameAndLoginId_DelegatesToRepository() {
+            // given
+            String name = "테스트이름";
+            String loginId = "test-login";
+
+            given(queryDslRepository.findByNameAndLoginId(name, loginId))
+                    .willReturn(Optional.empty());
+
+            // when
+            queryAdapter.findByNameAndLoginId(name, loginId);
+
+            // then
+            then(queryDslRepository).should().findByNameAndLoginId(name, loginId);
+        }
+    }
+
+    // ========================================================================
+    // 8. existsByLoginId 테스트
     // ========================================================================
 
     @Nested

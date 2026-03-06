@@ -189,6 +189,47 @@ class SellerApplicationQueryDslRepositoryTest {
     }
 
     // ========================================================================
+    // findByApprovedSellerId 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByApprovedSellerId")
+    class FindByApprovedSellerIdTest {
+
+        @Test
+        @DisplayName("승인된 셀러 ID로 입점 신청을 조회합니다")
+        void findByApprovedSellerId_WithExistingId_ReturnsEntity() {
+            Long sellerId = 100L;
+            SellerApplicationJpaEntity saved =
+                    persist(SellerApplicationJpaEntityFixtures.approvedEntity(sellerId));
+
+            var result = repository().findByApprovedSellerId(sellerId);
+
+            assertThat(result).isPresent();
+            assertThat(result.get().getApprovedSellerId()).isEqualTo(sellerId);
+            assertThat(result.get().getStatus()).isEqualTo(ApplicationStatus.APPROVED);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 셀러 ID는 빈 Optional을 반환합니다")
+        void findByApprovedSellerId_WithNonExistingId_ReturnsEmpty() {
+            var result = repository().findByApprovedSellerId(99999L);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("다른 셀러 ID로 승인된 신청은 조회되지 않습니다")
+        void findByApprovedSellerId_WithDifferentSellerId_ReturnsEmpty() {
+            persist(SellerApplicationJpaEntityFixtures.approvedEntity(200L));
+
+            var result = repository().findByApprovedSellerId(999L);
+
+            assertThat(result).isEmpty();
+        }
+    }
+
+    // ========================================================================
     // findByCriteria 테스트
     // ========================================================================
 

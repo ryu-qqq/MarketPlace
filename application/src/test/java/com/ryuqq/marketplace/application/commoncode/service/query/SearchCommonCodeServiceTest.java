@@ -48,9 +48,9 @@ class SearchCommonCodeServiceTest {
         @DisplayName("검색 조건으로 공통 코드 목록을 페이징하여 반환한다")
         void execute_ReturnsPagedResult() {
             // given
-            Long commonCodeTypeId = 1L;
+            String commonCodeTypeCode = "PAYMENT_METHOD";
             CommonCodeSearchParams params =
-                    CommonCodeQueryFixtures.searchParams(commonCodeTypeId, 0, 20);
+                    CommonCodeQueryFixtures.searchParams(commonCodeTypeCode, 0, 20);
 
             QueryContext<CommonCodeSortKey> queryContext =
                     QueryContext.of(
@@ -58,8 +58,7 @@ class SearchCommonCodeServiceTest {
                             SortDirection.ASC,
                             PageRequest.of(0, 20));
             CommonCodeSearchCriteria criteria =
-                    new CommonCodeSearchCriteria(
-                            CommonCodeFixtures.defaultCommonCodeTypeId(), null, null, queryContext);
+                    new CommonCodeSearchCriteria(commonCodeTypeCode, null, queryContext);
 
             List<CommonCode> codes =
                     List.of(
@@ -95,8 +94,9 @@ class SearchCommonCodeServiceTest {
         @DisplayName("검색 결과가 없으면 빈 목록을 반환한다")
         void execute_NoResults_ReturnsEmptyPage() {
             // given
-            Long commonCodeTypeId = 1L;
-            CommonCodeSearchParams params = CommonCodeQueryFixtures.searchParams(commonCodeTypeId);
+            String commonCodeTypeCode = "PAYMENT_METHOD";
+            CommonCodeSearchParams params =
+                    CommonCodeQueryFixtures.searchParams(commonCodeTypeCode);
 
             QueryContext<CommonCodeSortKey> queryContext =
                     QueryContext.of(
@@ -104,8 +104,7 @@ class SearchCommonCodeServiceTest {
                             SortDirection.ASC,
                             PageRequest.of(0, 20));
             CommonCodeSearchCriteria criteria =
-                    new CommonCodeSearchCriteria(
-                            CommonCodeFixtures.defaultCommonCodeTypeId(), null, null, queryContext);
+                    new CommonCodeSearchCriteria(commonCodeTypeCode, null, queryContext);
 
             List<CommonCode> emptyCodes = Collections.emptyList();
             long totalElements = 0L;

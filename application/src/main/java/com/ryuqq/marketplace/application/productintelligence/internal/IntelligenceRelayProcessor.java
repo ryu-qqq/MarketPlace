@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
  *
  * <ol>
  *   <li>Orchestration: ProductProfile 생성 → profileId 획득
- *   <li>SENT 전환 + profileId 할당 + persist
+ *   <li>SENT 전환 + profileId 할당
  *   <li>3개 Analyzer 큐로 SQS 발행
- *   <li>COMPLETED 전환 + persist
+ *   <li>COMPLETED 전환 + 단일 persist
  * </ol>
  *
  * <p>실패 시 retry 카운트를 증가시키고 PENDING으로 복귀합니다 (maxRetry 초과 시 FAILED).
@@ -56,15 +56,12 @@ public class IntelligenceRelayProcessor {
             Long profileId =
                     profileOrchestrationManager.createAndStartAnalyzing(outbox.productGroupId());
             outbox.assignProfile(profileId);
-
-            // 2. SENT 전환 + persist (profileId 포함)
             outbox.markAsSent(now);
-            outboxCommandManager.persist(outbox);
 
-            // 3. SQS 3큐 발행
+            // 2. SQS 3큐 발행
             publishManager.publishToAllAnalyzers(profileId, outbox.productGroupId());
 
-            // 4. COMPLETED 전환 + persist
+            // 3. COMPLETED 전환 + 단일 persist
             outbox.complete(Instant.now());
             outboxCommandManager.persist(outbox);
 

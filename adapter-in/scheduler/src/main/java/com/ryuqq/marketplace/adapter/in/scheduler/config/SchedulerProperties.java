@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.scheduler.config;
 
+import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @see com.ryuqq.marketplace.adapter.in.scheduler.seller.SellerAuthOutboxScheduler
  * @see com.ryuqq.marketplace.adapter.in.scheduler.selleradmin.SellerAdminAuthOutboxScheduler
  * @see com.ryuqq.marketplace.adapter.in.scheduler.selleradmin.SellerAdminEmailOutboxScheduler
+ * @see com.ryuqq.marketplace.adapter.in.scheduler.outboundseller.OutboundSellerOutboxScheduler
  */
 @ConfigurationProperties(prefix = "scheduler")
 public record SchedulerProperties(Jobs jobs) {
@@ -22,7 +24,18 @@ public record SchedulerProperties(Jobs jobs) {
             ImageTransformOutbox imageTransformOutbox,
             DescriptionPublish descriptionPublish,
             IntelligencePipeline intelligencePipeline,
-            InboundProductRetry inboundProductRetry) {}
+            InboundProductRetry inboundProductRetry,
+            OutboundSyncOutbox outboundSyncOutbox,
+            OutboundSellerOutbox outboundSellerOutbox,
+            LegacyConversionSeeder legacyConversionSeeder,
+            InboundOrderPolling inboundOrderPolling,
+            InboundOrderRetry inboundOrderRetry) {}
+
+    public record OutboundSyncOutbox(
+            ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record OutboundSellerOutbox(
+            ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
     public record IntelligencePipeline(
             ProcessPending processPending,
@@ -40,7 +53,18 @@ public record SchedulerProperties(Jobs jobs) {
     public record SellerAdminEmailOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
-    public record ImageUploadOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+    public record ImageUploadOutbox(
+            ProcessPending processPending,
+            PollProcessing pollProcessing,
+            RecoverTimeout recoverTimeout,
+            RecoverFailed recoverFailed) {}
+
+    public record RecoverFailed(
+            boolean enabled,
+            String cron,
+            String timezone,
+            int batchSize,
+            long failedAfterSeconds) {}
 
     public record ImageTransformOutbox(
             ProcessPending processPending,
@@ -58,5 +82,16 @@ public record SchedulerProperties(Jobs jobs) {
     public record RecoverTimeout(
             boolean enabled, String cron, String timezone, int batchSize, long timeoutSeconds) {}
 
-    public record InboundProductRetry(boolean enabled, String cron, String timezone) {}
+    public record InboundProductRetry(
+            boolean enabled, String cron, String timezone, int batchSize) {}
+
+    public record LegacyConversionSeeder(
+            boolean enabled, String cron, String timezone, int batchSize, int maxTotal) {}
+
+    public record InboundOrderPolling(boolean enabled, List<InboundOrderPollingEntry> entries) {}
+
+    public record InboundOrderPollingEntry(
+            long salesChannelId, boolean enabled, String cron, String timezone, int batchSize) {}
+
+    public record InboundOrderRetry(boolean enabled, String cron, String timezone, int batchSize) {}
 }

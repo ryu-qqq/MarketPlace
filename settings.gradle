@@ -24,6 +24,7 @@ include 'adapter-out:client:fileflow-client'
 include 'adapter-out:client:sqs-client'
 include 'adapter-out:client:spring-ai-client'
 include 'adapter-out:client:naver-commerce-client'
+include 'adapter-out:client:setof-commerce-client'
 
 // ========================================
 // Bootstrap Modules (Runnable Applications)
@@ -55,6 +56,7 @@ project(':adapter-out:client:fileflow-client').projectDir = file('adapter-out/cl
 project(':adapter-out:client:sqs-client').projectDir = file('adapter-out/client/sqs-client')
 project(':adapter-out:client:spring-ai-client').projectDir = file('adapter-out/client/spring-ai-client')
 project(':adapter-out:client:naver-commerce-client').projectDir = file('adapter-out/client/naver-commerce-client')
+project(':adapter-out:client:setof-commerce-client').projectDir = file('adapter-out/client/setof-commerce-client')
 
 project(':bootstrap:bootstrap-web-api').projectDir = file('bootstrap/bootstrap-web-api')
 project(':bootstrap:bootstrap-scheduler').projectDir = file('bootstrap/bootstrap-scheduler')

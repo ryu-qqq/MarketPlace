@@ -1,13 +1,17 @@
 package com.ryuqq.marketplace.adapter.out.persistence.outboundsync.mapper;
 
+import com.querydsl.core.Tuple;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.OutboundSyncOutboxJpaEntity;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.outboundsync.id.OutboundSyncOutboxId;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncStatus;
+import com.ryuqq.marketplace.domain.outboundsync.vo.SyncStatusSummary;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import java.time.Instant;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /** OutboundSyncOutbox Domain ↔ JPA Entity 변환 매퍼. */
@@ -89,5 +93,32 @@ public class OutboundSyncOutboxJpaEntityMapper {
             case COMPLETED -> SyncStatus.COMPLETED;
             case FAILED -> SyncStatus.FAILED;
         };
+    }
+
+    /**
+     * 상태별 건수 Tuple 목록 + 마지막 연동일시를 SyncStatusSummary 도메인 VO로 변환.
+     *
+     * <p>PENDING + PROCESSING은 pendingCount로 합산한다.
+     */
+    public SyncStatusSummary toSyncStatusSummary(List<Tuple> tuples, Instant lastSyncAt) {
+        long completed = 0;
+        long failed = 0;
+        long pending = 0;
+
+        for (Tuple tuple : tuples) {
+            OutboundSyncOutboxJpaEntity.Status entityStatus =
+                    tuple.get(0, OutboundSyncOutboxJpaEntity.Status.class);
+            Long count = tuple.get(1, Long.class);
+            if (entityStatus == null || count == null) {
+                continue;
+            }
+            switch (entityStatus) {
+                case COMPLETED -> completed = count;
+                case FAILED -> failed = count;
+                case PENDING, PROCESSING -> pending += count;
+            }
+        }
+
+        return new SyncStatusSummary(completed, failed, pending, lastSyncAt);
     }
 }

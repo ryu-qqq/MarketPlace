@@ -25,71 +25,163 @@ scheduler:
 
     image-upload-outbox:
       process-pending:
-        # Stage: 3분마다
-        cron: "0 */3 * * * *"
+        # Stage: 5초마다
+        cron: "*/5 * * * * *"
         # Stage: 중간 배치
         batch-size: 30
         # Stage: 중간 지연
-        delay-seconds: 20
+        delay-seconds: 5
+
+      poll-processing:
+        # Stage: 비활성화 (콜백 방식으로 전환)
+        enabled: false
+        cron: "0 */1 * * * *"
+        batch-size: 30
 
       recover-timeout:
+        # Stage: 1분마다
+        cron: "0 */1 * * * *"
+        # Stage: 중간 배치
+        batch-size: 30
+        # Stage: 1분 타임아웃
+        timeout-seconds: 60
+
+      recover-failed:
         # Stage: 5분마다
         cron: "0 */5 * * * *"
         # Stage: 중간 배치
-        batch-size: 30
-        # Stage: 중간 타임아웃
-        timeout-seconds: 180
+        batch-size: 50
+        # Stage: 5분 후 복구
+        failed-after-seconds: 300
 
     seller-admin-auth-outbox:
       process-pending:
-        # Stage: 비활성화 (SellerAdminIdentityClient 미구현)
-        enabled: false
+        # Stage: 3분마다 처리
+        enabled: true
         cron: "0 */3 * * * *"
         batch-size: 50
         delay-seconds: 30
 
       recover-timeout:
-        # Stage: 비활성화 (SellerAdminIdentityClient 미구현)
-        enabled: false
+        # Stage: 5분마다 타임아웃 복구
+        enabled: true
         cron: "0 */5 * * * *"
         batch-size: 50
         timeout-seconds: 180
 
     image-transform-outbox:
       process-pending:
-        # Stage: 3분마다
-        cron: "0 */3 * * * *"
+        # Stage: 5초마다
+        cron: "*/5 * * * * *"
         # Stage: 중간 배치
         batch-size: 30
         # Stage: 중간 지연
-        delay-seconds: 10
+        delay-seconds: 5
 
       poll-processing:
-        # Stage: 2분마다
+        # Stage: 비활성화 (콜백 방식으로 전환)
+        enabled: false
         cron: "0 */2 * * * *"
-        # Stage: 중간 배치
         batch-size: 30
 
       recover-timeout:
-        # Stage: 10분마다
-        cron: "0 */10 * * * *"
+        # Stage: 1분마다
+        cron: "0 */1 * * * *"
         # Stage: 중간 배치
         batch-size: 30
-        # Stage: 중간 타임아웃
-        timeout-seconds: 600
+        # Stage: 1분 타임아웃
+        timeout-seconds: 60
 
     intelligence-pipeline:
+      process-pending:
+        # Stage: 일시정지 (OpenAI 크레딧 소진)
+        enabled: false
+        cron: "0 */3 * * * *"
+        batch-size: 15
+        delay-seconds: 30
+
+      recover-timeout:
+        # Stage: 일시정지 (OpenAI 크레딧 소진)
+        enabled: false
+        cron: "0 */5 * * * *"
+        batch-size: 15
+        timeout-seconds: 300
+
       recover-stuck-aggregation:
+        # Stage: 일시정지 (OpenAI 크레딧 소진)
+        enabled: false
+        cron: "0 */5 * * * *"
+        batch-size: 15
+        stuck-seconds: 180
+
+    outbound-sync-outbox:
+      process-pending:
+        # Stage: 활성화
+        enabled: true
+        # Stage: 3분마다
+        cron: "0 */3 * * * *"
+        timezone: "Asia/Seoul"
+        # Stage: 중간 배치
+        batch-size: 50
+        # Stage: 중간 지연
+        delay-seconds: 30
+
+      recover-timeout:
+        # Stage: 활성화
+        enabled: true
+        # Stage: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: "Asia/Seoul"
+        # Stage: 중간 배치
+        batch-size: 50
+        # Stage: 중간 타임아웃
+        timeout-seconds: 180
+
+    legacy-conversion-seeder:
+      # Stage: 활성화 (부분 테스트)
+      enabled: true
+      # Stage: 15분마다
+      cron: "0 */15 * * * *"
+      # Stage: 중간 배치
+      batch-size: 50
+      # Stage: 200건 제한
+      max-total: 200
+
+    inbound-order-polling:
+      entries:
+        - sales-channel-id: 1
+          enabled: true
+          # Stage: 5분마다
+          cron: "0 */5 * * * *"
+          timezone: Asia/Seoul
+          batch-size: 300
+
+    inbound-product-retry:
+      # Stage: 5분마다
+      cron: "0 */5 * * * *"
+      # Stage: 중간 배치
+      batch-size: 30
+
+    outbound-seller-outbox:
+      process-pending:
+        # Stage: 3분마다
+        cron: "0 */3 * * * *"
+        # Stage: 중간 배치
+        batch-size: 50
+        # Stage: 중간 지연
+        delay-seconds: 30
+
+      recover-timeout:
         # Stage: 5분마다
         cron: "0 */5 * * * *"
         # Stage: 중간 배치
-        batch-size: 15
-        # Stage: 중간 stuck 기준
-        stuck-seconds: 180
+        batch-size: 50
+        # Stage: 중간 타임아웃
+        timeout-seconds: 180
 
     description-publish:
-      # Stage: 5분마다
-      cron: "0 */5 * * * *"
+      # Stage: 5초마다
+      cron: "*/5 * * * * *"
       timezone: "Asia/Seoul"
       # Stage: 중간 배치
       batch-size: 30

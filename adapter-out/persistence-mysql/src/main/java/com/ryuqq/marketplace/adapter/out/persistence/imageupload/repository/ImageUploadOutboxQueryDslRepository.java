@@ -6,9 +6,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.imageupload.entity.ImageUploadOutboxJpaEntity;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageUploadOutboxStatus;
+import jakarta.persistence.LockModeType;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class ImageUploadOutboxQueryDslRepository {
+
+    private static final int SKIP_LOCKED = -2;
 
     private final JPAQueryFactory queryFactory;
 
@@ -43,6 +47,8 @@ public class ImageUploadOutboxQueryDslRepository {
                         imageUploadOutboxJpaEntity.createdAt.lt(beforeTime))
                 .orderBy(imageUploadOutboxJpaEntity.createdAt.asc())
                 .limit(limit)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .setHint("jakarta.persistence.lock.timeout", SKIP_LOCKED)
                 .fetch();
     }
 
@@ -62,6 +68,8 @@ public class ImageUploadOutboxQueryDslRepository {
                         imageUploadOutboxJpaEntity.updatedAt.lt(timeoutThreshold))
                 .orderBy(imageUploadOutboxJpaEntity.updatedAt.asc())
                 .limit(limit)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .setHint("jakarta.persistence.lock.timeout", SKIP_LOCKED)
                 .fetch();
     }
 
@@ -86,5 +94,64 @@ public class ImageUploadOutboxQueryDslRepository {
                         imageUploadOutboxJpaEntity.sourceId.asc(),
                         imageUploadOutboxJpaEntity.createdAt.desc())
                 .fetch();
+    }
+
+    /**
+     * PROCESSING 상태의 Outbox 목록 조회 (폴링 스케줄러용).
+     *
+     * @param limit 최대 조회 개수
+     * @return Outbox 목록
+     */
+    public List<ImageUploadOutboxJpaEntity> findProcessingOutboxes(int limit) {
+        return queryFactory
+                .selectFrom(imageUploadOutboxJpaEntity)
+                .where(
+                        imageUploadOutboxJpaEntity.status.eq(ImageUploadOutboxStatus.PROCESSING),
+                        imageUploadOutboxJpaEntity.downloadTaskId.isNotNull())
+                .orderBy(imageUploadOutboxJpaEntity.updatedAt.asc())
+                .limit(limit)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .setHint("jakarta.persistence.lock.timeout", SKIP_LOCKED)
+                .fetch();
+    }
+
+    /**
+     * 복구 가능한 FAILED Outbox 목록 조회.
+     *
+     * @param failedBefore 이 시간 이전에 FAILED된 것만 조회
+     * @param limit 최대 조회 개수
+     * @return Outbox 목록
+     */
+    public List<ImageUploadOutboxJpaEntity> findRecoverableFailedOutboxes(
+            Instant failedBefore, int limit) {
+        return queryFactory
+                .selectFrom(imageUploadOutboxJpaEntity)
+                .where(
+                        imageUploadOutboxJpaEntity.status.eq(ImageUploadOutboxStatus.FAILED),
+                        imageUploadOutboxJpaEntity.processedAt.lt(failedBefore),
+                        imageUploadOutboxJpaEntity.errorMessage.notLike("%잘못된 요청%"))
+                .orderBy(imageUploadOutboxJpaEntity.processedAt.asc())
+                .limit(limit)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .setHint("jakarta.persistence.lock.timeout", SKIP_LOCKED)
+                .fetch();
+    }
+
+    /**
+     * downloadTaskId로 PROCESSING 상태의 Outbox 조회 (콜백용).
+     *
+     * @param downloadTaskId FileFlow 다운로드 태스크 ID
+     * @return Outbox (Optional)
+     */
+    public Optional<ImageUploadOutboxJpaEntity> findProcessingByDownloadTaskId(
+            String downloadTaskId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .selectFrom(imageUploadOutboxJpaEntity)
+                        .where(
+                                imageUploadOutboxJpaEntity.downloadTaskId.eq(downloadTaskId),
+                                imageUploadOutboxJpaEntity.status.eq(
+                                        ImageUploadOutboxStatus.PROCESSING))
+                        .fetchOne());
     }
 }

@@ -1,0 +1,16 @@
+# ============================================================
+# Setof Commerce API 설정
+# ============================================================
+# 환경변수로 제어:
+#   - SETOF_COMMERCE_BASE_URL: 세토프 커머스 API 베이스 URL (필수)
+#   - SETOF_COMMERCE_SERVICE_NAME: 서비스 식별명 (필수)
+#   - SETOF_COMMERCE_SERVICE_TOKEN: 내부 서비스 토큰 (필수)
+# ============================================================
+
+setof-commerce:
+  base-url: ${SETOF_COMMERCE_BASE_URL:}
+  service-name: ${SETOF_COMMERCE_SERVICE_NAME:SVC_MARKETPLACE}
+  service-token: ${SETOF_COMMERCE_SERVICE_TOKEN:}
+  timeout:
+    connect: 5s
+    read: 30s

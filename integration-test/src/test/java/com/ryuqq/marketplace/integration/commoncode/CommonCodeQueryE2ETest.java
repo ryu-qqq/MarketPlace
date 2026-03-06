@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus;
 /**
  * CommonCode Query 엔드포인트 E2E 테스트.
  *
- * <p>테스트 대상: - GET /admin/common-codes - 공통 코드 목록 조회
+ * <p>테스트 대상: - GET /public/common-codes - 공통 코드 목록 조회
  *
  * <p>우선순위: - P0: 6개 시나리오 (필수 기능) - P1: 4개 시나리오 (중요 기능) - P2: 2개 시나리오 (엣지 케이스)
  *
@@ -30,7 +30,7 @@ import org.springframework.http.HttpStatus;
 @DisplayName("CommonCode Query API E2E 테스트")
 class CommonCodeQueryE2ETest extends E2ETestBase {
 
-    private static final String BASE_URL = "/common-codes";
+    private static final String BASE_URL = "/public/common-codes";
 
     @Autowired private CommonCodeJpaRepository commonCodeRepository;
     @Autowired private CommonCodeTypeJpaRepository commonCodeTypeRepository;
@@ -57,7 +57,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
         commonCodeTypeRepository.deleteAll();
     }
 
-    // ===== GET /admin/common-codes - 공통 코드 목록 조회 =====
+    // ===== GET /public/common-codes - 공통 코드 목록 조회 =====
 
     // ===== 인증/인가 테스트 =====
 
@@ -83,7 +83,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then: 공통 코드 조회는 public endpoint (permitAll)
             given().spec(givenUnauthenticated())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
                     .get(BASE_URL)
                     .then()
@@ -110,7 +110,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then: 일반 사용자 토큰으로 요청 (조회는 인증만 필요)
             given().spec(givenAuthenticatedUser())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
                     .get(BASE_URL)
                     .then()
@@ -121,7 +121,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
     }
 
     @Nested
-    @DisplayName("GET /admin/common-codes - 공통 코드 목록 조회")
+    @DisplayName("GET /public/common-codes - 공통 코드 목록 조회")
     class SearchCommonCodesTest {
 
         @Test
@@ -141,7 +141,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
                     .get(BASE_URL)
                     .then()
@@ -165,7 +165,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
                     .get(BASE_URL)
                     .then()
@@ -176,26 +176,43 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[Q1-3] 필수 필드 누락 - commonCodeTypeId 없으면 400")
-        void searchCommonCodes_MissingTypeId_Returns400() {
-            // when & then: commonCodeTypeId 누락
+        @DisplayName("[Q1-3] code 없으면 전체 조회로 200")
+        void searchCommonCodes_MissingCode_Returns200() {
+            // given: 서로 다른 타입의 코드 2건
+            var secondType =
+                    commonCodeTypeRepository.save(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "DELIVERY_TYPE", "배송유형"));
+
+            commonCodeRepository.save(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            defaultCommonCodeTypeId, "CREDIT_CARD", "신용카드"));
+            commonCodeRepository.save(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            secondType.getId(), "FAST_DELIVERY", "빠른배송"));
+
+            // when & then: code 누락 시 전체 조회
             given().spec(givenAdmin())
                     .when()
                     .get(BASE_URL)
                     .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value());
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.content", hasSize(2))
+                    .body("data.totalElements", equalTo(2));
         }
 
         @Test
         @Tag("P0")
-        @DisplayName("[Q1-4] 존재하지 않는 타입 - 없는 commonCodeTypeId 조회 시 빈 목록")
-        void searchCommonCodes_NonExistingTypeId_ReturnsEmptyList() {
-            // given: 존재하지 않는 타입 ID
-            Long nonExistingTypeId = 99999L;
+        @DisplayName("[Q1-4] 존재하지 않는 타입 코드 - 없는 code 조회 시 빈 목록")
+        void searchCommonCodes_NonExistingTypeCode_ReturnsEmptyList() {
+            // given: 존재하지 않는 타입 코드
+            commonCodeRepository.save(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            defaultCommonCodeTypeId, "CREDIT_CARD", "신용카드"));
 
             // when & then
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", nonExistingTypeId)
+                    .queryParam("code", "NON_EXISTING_TYPE")
                     .when()
                     .get(BASE_URL)
                     .then()
@@ -217,7 +234,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then: page=0, size=2
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .queryParam("page", 0)
                     .queryParam("size", 2)
                     .when()
@@ -258,7 +275,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then: 삭제된 코드는 조회되지 않음
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
                     .get(BASE_URL)
                     .then()
@@ -296,7 +313,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then: active=true 필터
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .queryParam("active", true)
                     .when()
                     .get(BASE_URL)
@@ -336,7 +353,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then: active=false 필터
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .queryParam("active", false)
                     .when()
                     .get(BASE_URL)
@@ -348,36 +365,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P1")
-        @DisplayName("[Q1-9] 코드 검색 - code 부분 일치 검색")
-        void searchCommonCodes_CodeFilter_ReturnsMatchingCodes() {
-            // given: CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER
-            commonCodeRepository.save(
-                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
-                            defaultCommonCodeTypeId, "CREDIT_CARD", "신용카드"));
-            commonCodeRepository.save(
-                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
-                            defaultCommonCodeTypeId, "DEBIT_CARD", "체크카드"));
-            commonCodeRepository.save(
-                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
-                            defaultCommonCodeTypeId, "BANK_TRANSFER", "계좌이체"));
-
-            // when & then: code=CARD 검색
-            given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
-                    .queryParam("code", "CARD")
-                    .when()
-                    .get(BASE_URL)
-                    .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("data.content", hasSize(2))
-                    .body(
-                            "data.content.code",
-                            hasItems(containsString("CARD"), containsString("CARD")));
-        }
-
-        @Test
-        @Tag("P1")
-        @DisplayName("[Q1-10] 정렬 동작 - sortKey, sortDirection 확인")
+        @DisplayName("[Q1-9] 정렬 동작 - sortKey, sortDirection 확인")
         void searchCommonCodes_Sorting_ReturnsSortedResults() {
             // given: displayOrder: 3, 1, 2
             Instant now = Instant.now();
@@ -417,7 +405,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then: sortKey=DISPLAY_ORDER, sortDirection=ASC
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .queryParam("sortKey", "DISPLAY_ORDER")
                     .queryParam("sortDirection", "ASC")
                     .when()
@@ -432,7 +420,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P2")
-        @DisplayName("[Q1-11] 페이지 범위 초과")
+        @DisplayName("[Q1-10] 페이지 범위 초과")
         void searchCommonCodes_PageOutOfRange_ReturnsEmptyList() {
             // given: CommonCodeType 1개 + CommonCode 3개
             for (int i = 1; i <= 3; i++) {
@@ -443,7 +431,7 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
             // when & then: page=10 (범위 초과)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .queryParam("page", 10)
                     .queryParam("size", 20)
                     .when()
@@ -456,11 +444,11 @@ class CommonCodeQueryE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P2")
-        @DisplayName("[Q1-12] 잘못된 size 값 - 101 이상")
+        @DisplayName("[Q1-11] 잘못된 size 값 - 101 이상")
         void searchCommonCodes_InvalidSize_Returns400() {
             // when & then: size=101 (최대값 초과)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", defaultCommonCodeTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .queryParam("size", 101)
                     .when()
                     .get(BASE_URL)

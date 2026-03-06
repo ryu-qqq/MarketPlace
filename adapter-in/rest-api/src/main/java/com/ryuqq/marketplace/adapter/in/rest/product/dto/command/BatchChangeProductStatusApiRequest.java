@@ -14,7 +14,7 @@ import java.util.List;
  * <p>API-DTO-003: Validation 어노테이션은 API Request에만 적용.
  *
  * @param productIds 상품 ID 목록
- * @param targetStatus 변경할 상태 ("ACTIVE", "INACTIVE", "SOLDOUT")
+ * @param targetStatus 변경할 상태 ("ACTIVE", "INACTIVE", "SOLD_OUT")
  * @author ryu-qqq
  * @since 1.0.0
  */
@@ -27,7 +27,7 @@ public record BatchChangeProductStatusApiRequest(
                 @NotEmpty(message = "상품 ID 목록은 필수입니다")
                 List<@NotNull Long> productIds,
         @Schema(
-                        description = "변경할 상태 (ACTIVE, INACTIVE, SOLDOUT)",
+                        description = "변경할 상태 (ACTIVE, INACTIVE, SOLD_OUT)",
                         example = "ACTIVE",
                         requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotBlank(message = "변경할 상태는 필수입니다")

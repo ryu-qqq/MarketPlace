@@ -37,7 +37,7 @@ public class ProductGroupImageCompletionStrategy implements ImageUploadCompletio
 
     @Override
     public boolean supports(ImageSourceType sourceType) {
-        return sourceType == ImageSourceType.PRODUCT_GROUP_IMAGE;
+        return sourceType != null && sourceType.isProductGroupImage();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class ProductGroupImageCompletionStrategy implements ImageUploadCompletio
 
         List<ImageTransformOutbox> outboxes =
                 transformOutboxFactory.createOutboxes(
-                        sourceId, ImageSourceType.PRODUCT_GROUP_IMAGE, uploadedUrl);
+                        sourceId, ImageSourceType.PRODUCT_GROUP_IMAGE, uploadedUrl, fileAssetId);
         transformOutboxCommandManager.persistAll(outboxes);
     }
 }

@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.legacyconversion.factory;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductCompositeResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.legacyconversion.internal.LegacyConversionResolvedContext;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
@@ -13,15 +14,12 @@ import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProduct
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand.OptionGroupCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand.OptionValueCommand;
-import com.ryuqq.marketplace.domain.brand.id.BrandId;
-import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
-import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
-import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -48,8 +46,7 @@ public class LegacyToInternalUpdateBundleFactory {
      * @param legacyBundle 레거시 상품 상세 번들 (최신 데이터)
      * @param internalProductGroupId 내부 상품그룹 ID
      * @param skuMappings 기존 SKU 매핑 목록
-     * @param shippingPolicyId 배송 정책 ID
-     * @param refundPolicyId 환불 정책 ID
+     * @param resolvedContext 사전 해소된 내부 ID 컨텍스트
      * @param now 현재 시각
      * @return 내부 상품 수정 번들
      */
@@ -57,15 +54,14 @@ public class LegacyToInternalUpdateBundleFactory {
             LegacyProductGroupDetailBundle legacyBundle,
             long internalProductGroupId,
             List<LegacyProductIdMapping> skuMappings,
-            ShippingPolicyId shippingPolicyId,
-            RefundPolicyId refundPolicyId,
+            LegacyConversionResolvedContext resolvedContext,
             Instant now) {
 
         LegacyProductGroupCompositeResult composite = legacyBundle.composite();
         ProductGroupId pgId = ProductGroupId.of(internalProductGroupId);
 
         ProductGroupUpdateData basicInfo =
-                createBasicInfoUpdateData(composite, pgId, shippingPolicyId, refundPolicyId, now);
+                createBasicInfoUpdateData(composite, pgId, resolvedContext, now);
         UpdateProductGroupImagesCommand imageCommand =
                 createImageCommand(internalProductGroupId, composite.images());
         UpdateSellerOptionGroupsCommand optionCommand =
@@ -89,16 +85,15 @@ public class LegacyToInternalUpdateBundleFactory {
     private ProductGroupUpdateData createBasicInfoUpdateData(
             LegacyProductGroupCompositeResult composite,
             ProductGroupId pgId,
-            ShippingPolicyId shippingPolicyId,
-            RefundPolicyId refundPolicyId,
+            LegacyConversionResolvedContext resolvedContext,
             Instant now) {
         return ProductGroupUpdateData.of(
                 pgId,
                 ProductGroupName.of(composite.productGroupName()),
-                BrandId.of(composite.brandId()),
-                CategoryId.of(composite.categoryId()),
-                shippingPolicyId,
-                refundPolicyId,
+                resolvedContext.brandId(),
+                resolvedContext.categoryId(),
+                resolvedContext.shippingPolicyId(),
+                resolvedContext.refundPolicyId(),
                 OptionType.valueOf(composite.optionType()),
                 now);
     }
@@ -144,7 +139,9 @@ public class LegacyToInternalUpdateBundleFactory {
                                             new OptionValueCommand(
                                                     null, v, null, sortOrder.getAndIncrement()))
                             .toList();
-            groups.add(new OptionGroupCommand(null, entry.getKey(), null, "PREDEFINED", values));
+            groups.add(
+                    new OptionGroupCommand(
+                            null, entry.getKey(), null, OptionInputType.PREDEFINED.name(), values));
         }
 
         return new UpdateSellerOptionGroupsCommand(internalProductGroupId, groups);

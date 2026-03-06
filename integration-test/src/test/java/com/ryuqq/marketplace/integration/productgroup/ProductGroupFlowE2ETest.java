@@ -756,7 +756,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
             assertThat(productGroupId).isNotNull().isGreaterThan(0);
 
             // ===== Step 2: GET - 상세 조회로 모든 서브 Aggregate 검증 =====
@@ -843,7 +843,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
 
             // ===== Step 2: GET - 기존 데이터 ID 조회 (diff 수정을 위해 ID 필요) =====
             Response detailResponse =
@@ -1085,7 +1085,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
 
             // ===== Step 2: PATCH - 상태 변경 (DRAFT → ACTIVE) =====
             Map<String, Object> statusRequest =
@@ -1118,7 +1118,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .when()
                             .post(PRODUCT_GROUPS);
 
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
 
             // Step 2: DRAFT → ACTIVE
             given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
@@ -1177,14 +1177,14 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .body(createRegisterRequest())
                             .when()
                             .post(PRODUCT_GROUPS);
-            Long id1 = first.jsonPath().getLong("productGroupId");
+            Long id1 = first.jsonPath().getLong("data.productGroupId");
 
             Response second =
                     given().spec(givenSuperAdmin())
                             .body(createRegisterRequest())
                             .when()
                             .post(PRODUCT_GROUPS);
-            Long id2 = second.jsonPath().getLong("productGroupId");
+            Long id2 = second.jsonPath().getLong("data.productGroupId");
 
             // 배치 상태 변경
             given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
@@ -1222,7 +1222,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .body(createRegisterRequest())
                             .when()
                             .post(PRODUCT_GROUPS);
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
 
             // Step 2: 기본 정보 수정
             Map<String, Object> basicInfoRequest = new HashMap<>();
@@ -1270,7 +1270,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
             assertThat(productGroupId).isNotNull().isGreaterThan(0);
 
             // ===== Step 2: GET - 상세 조회 검증 =====
@@ -1343,7 +1343,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
             assertThat(productGroupId).isNotNull().isGreaterThan(0);
 
             // ===== Step 2: GET - 상세 조회 검증 =====
@@ -1397,7 +1397,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
             assertThat(productGroupId).isNotNull().isGreaterThan(0);
 
             // ===== Step 2: GET - 상세 조회로 inputType별 그룹 검증 =====
@@ -1455,7 +1455,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                             .post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
 
             // Step 2: DRAFT → ACTIVE
             given().spec(givenSellerUser(sellerOrganizationId, "product-group:write"))
@@ -1494,7 +1494,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
             assertThat(productGroupId).isNotNull().isGreaterThan(0);
 
             given().spec(givenSuperAdmin())
@@ -1536,7 +1536,7 @@ class ProductGroupFlowE2ETest extends E2ETestBase {
                     given().spec(givenSuperAdmin()).body(request).when().post(PRODUCT_GROUPS);
 
             createResponse.then().statusCode(HttpStatus.CREATED.value());
-            Long productGroupId = createResponse.jsonPath().getLong("productGroupId");
+            Long productGroupId = createResponse.jsonPath().getLong("data.productGroupId");
             assertThat(productGroupId).isNotNull().isGreaterThan(0);
 
             given().spec(givenSuperAdmin())

@@ -75,7 +75,7 @@ public class SellerAddressQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller-address:read')")
     @RequirePermission(value = "seller-address:read", description = "셀러 주소 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<SellerAddressApiResponse>>> search(

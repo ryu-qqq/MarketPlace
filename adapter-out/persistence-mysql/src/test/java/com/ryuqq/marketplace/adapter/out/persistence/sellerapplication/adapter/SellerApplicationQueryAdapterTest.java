@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.sellerapplication.SellerApp
 import com.ryuqq.marketplace.adapter.out.persistence.sellerapplication.entity.SellerApplicationJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.sellerapplication.mapper.SellerApplicationJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.sellerapplication.repository.SellerApplicationQueryDslRepository;
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellerapplication.aggregate.SellerApplication;
 import com.ryuqq.marketplace.domain.sellerapplication.id.SellerApplicationId;
 import com.ryuqq.marketplace.domain.sellerapplication.query.SellerApplicationSearchCriteria;
@@ -243,6 +244,63 @@ class SellerApplicationQueryAdapterTest {
 
             // then
             assertThat(result).isZero();
+        }
+    }
+
+    // ========================================================================
+    // 6. findByApprovedSellerId 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByApprovedSellerId 메서드 테스트")
+    class FindByApprovedSellerIdTest {
+
+        @Test
+        @DisplayName("승인된 셀러 ID로 조회 시 Domain을 반환합니다")
+        void findByApprovedSellerId_WithExistingId_ReturnsDomain() {
+            // given
+            SellerId sellerId = SellerId.of(1L);
+            SellerApplicationJpaEntity entity =
+                    SellerApplicationJpaEntityFixtures.approvedEntity(1L);
+            SellerApplication domain = createPendingApplication(1L);
+
+            given(queryDslRepository.findByApprovedSellerId(1L)).willReturn(Optional.of(entity));
+            given(mapper.toDomain(entity)).willReturn(domain);
+
+            // when
+            Optional<SellerApplication> result = sut.findByApprovedSellerId(sellerId);
+
+            // then
+            assertThat(result).isPresent();
+            assertThat(result.get()).isEqualTo(domain);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 셀러 ID로 조회 시 빈 Optional을 반환합니다")
+        void findByApprovedSellerId_WithNonExistingId_ReturnsEmpty() {
+            // given
+            SellerId sellerId = SellerId.of(999L);
+            given(queryDslRepository.findByApprovedSellerId(999L)).willReturn(Optional.empty());
+
+            // when
+            Optional<SellerApplication> result = sut.findByApprovedSellerId(sellerId);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("repository에 sellerId의 value를 그대로 전달합니다")
+        void findByApprovedSellerId_DelegatesToRepository() {
+            // given
+            SellerId sellerId = SellerId.of(42L);
+            given(queryDslRepository.findByApprovedSellerId(42L)).willReturn(Optional.empty());
+
+            // when
+            sut.findByApprovedSellerId(sellerId);
+
+            // then
+            then(queryDslRepository).should().findByApprovedSellerId(42L);
         }
     }
 

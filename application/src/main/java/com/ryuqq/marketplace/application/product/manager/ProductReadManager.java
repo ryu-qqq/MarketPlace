@@ -7,6 +7,8 @@ import com.ryuqq.marketplace.domain.product.exception.ProductOwnershipViolationE
 import com.ryuqq.marketplace.domain.product.id.ProductId;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +51,14 @@ public class ProductReadManager {
     public List<Product> getByIds(List<ProductId> ids) {
         List<Product> products = queryPort.findByIdIn(ids);
         if (products.size() != ids.size()) {
-            throw new ProductNotFoundException(ids.getFirst().value());
+            Set<Long> foundIds =
+                    products.stream().map(Product::idValue).collect(Collectors.toSet());
+            List<Long> missingIds =
+                    ids.stream()
+                            .map(ProductId::value)
+                            .filter(id -> !foundIds.contains(id))
+                            .toList();
+            throw new ProductNotFoundException(missingIds);
         }
         return products;
     }

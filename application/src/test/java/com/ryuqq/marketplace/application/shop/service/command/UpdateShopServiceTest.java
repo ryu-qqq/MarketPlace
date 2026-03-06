@@ -130,6 +130,11 @@ class UpdateShopServiceTest {
                     "old-account-123",
                     ShopStatus.ACTIVE,
                     null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
                     now,
                     now);
         }

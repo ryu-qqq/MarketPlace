@@ -5,5 +5,5 @@ import java.util.List;
 public record DescriptionAnalysisAiResponse(List<ExtractedAttributeItem> attributes) {
 
     public record ExtractedAttributeItem(
-            String key, String value, double confidence, String sourceDetail) {}
+            String key, String value, double confidence, String source, String sourceDetail) {}
 }

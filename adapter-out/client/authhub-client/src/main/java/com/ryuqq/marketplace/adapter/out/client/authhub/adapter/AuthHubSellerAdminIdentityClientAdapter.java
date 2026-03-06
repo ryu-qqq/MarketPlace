@@ -1,12 +1,12 @@
 package com.ryuqq.marketplace.adapter.out.client.authhub.adapter;
 
-import com.ryuqq.authhub.sdk.api.AuthApi;
+import com.ryuqq.authhub.sdk.api.InternalApi;
 import com.ryuqq.authhub.sdk.api.UserApi;
 import com.ryuqq.authhub.sdk.exception.AuthHubBadRequestException;
 import com.ryuqq.authhub.sdk.exception.AuthHubException;
 import com.ryuqq.authhub.sdk.exception.AuthHubServerException;
-import com.ryuqq.authhub.sdk.model.auth.ChangePasswordRequest;
 import com.ryuqq.authhub.sdk.model.common.ApiResponse;
+import com.ryuqq.authhub.sdk.model.internal.ForceChangePasswordRequest;
 import com.ryuqq.authhub.sdk.model.user.CreateUserWithRolesRequest;
 import com.ryuqq.authhub.sdk.model.user.CreateUserWithRolesResponse;
 import com.ryuqq.marketplace.adapter.out.client.authhub.mapper.AuthHubSellerAdminIdentityMapper;
@@ -36,14 +36,14 @@ public class AuthHubSellerAdminIdentityClientAdapter implements SellerAdminIdent
     private static final int TEMP_PASSWORD_LENGTH = 16;
 
     private final UserApi userApi;
-    private final AuthApi authApi;
+    private final InternalApi internalApi;
     private final AuthHubSellerAdminIdentityMapper mapper;
     private final SecureRandom secureRandom;
 
     public AuthHubSellerAdminIdentityClientAdapter(
-            UserApi userApi, AuthApi authApi, AuthHubSellerAdminIdentityMapper mapper) {
+            UserApi userApi, InternalApi internalApi, AuthHubSellerAdminIdentityMapper mapper) {
         this.userApi = userApi;
-        this.authApi = authApi;
+        this.internalApi = internalApi;
         this.mapper = mapper;
         this.secureRandom = new SecureRandom();
     }
@@ -68,10 +68,6 @@ public class AuthHubSellerAdminIdentityClientAdapter implements SellerAdminIdent
             return mapper.toRetryableFailure("SERVER_ERROR", e.getMessage());
 
         } catch (AuthHubException e) {
-            boolean retryable = e instanceof AuthHubServerException;
-            if (retryable) {
-                return mapper.toRetryableFailure("AUTHHUB_ERROR", e.getMessage());
-            }
             return mapper.toPermanentFailure("AUTHHUB_ERROR", e.getMessage());
         }
     }
@@ -79,12 +75,12 @@ public class AuthHubSellerAdminIdentityClientAdapter implements SellerAdminIdent
     @Override
     public void resetSellerAdminPassword(String authUserId) {
         String tempPassword = generateTempPassword();
-        authApi.changePassword(authUserId, new ChangePasswordRequest(null, tempPassword));
+        internalApi.changePassword(authUserId, new ForceChangePasswordRequest(tempPassword));
     }
 
     @Override
     public void changeSellerAdminPassword(String authUserId, String newPassword) {
-        authApi.changePassword(authUserId, new ChangePasswordRequest(null, newPassword));
+        internalApi.changePassword(authUserId, new ForceChangePasswordRequest(newPassword));
     }
 
     private String generateTempPassword() {

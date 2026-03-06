@@ -14,6 +14,15 @@ import java.util.Optional;
 public interface SellerAdminAuthOutboxQueryPort {
 
     /**
+     * ID로 Outbox 조회.
+     *
+     * @param outboxId Outbox ID
+     * @return Outbox
+     * @throws IllegalStateException 존재하지 않는 경우
+     */
+    SellerAdminAuthOutbox getById(Long outboxId);
+
+    /**
      * SellerAdminId로 PENDING 상태의 Outbox 조회.
      *
      * @param sellerAdminId 셀러 관리자 ID

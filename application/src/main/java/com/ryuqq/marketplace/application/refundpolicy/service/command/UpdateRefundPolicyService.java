@@ -4,9 +4,10 @@ import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.refundpolicy.dto.command.UpdateRefundPolicyCommand;
 import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyCommandFactory;
 import com.ryuqq.marketplace.application.refundpolicy.internal.DefaultRefundPolicyResolver;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
+import com.ryuqq.marketplace.application.refundpolicy.internal.RefundPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.refundpolicy.port.in.command.UpdateRefundPolicyUseCase;
 import com.ryuqq.marketplace.application.refundpolicy.validator.RefundPolicyValidator;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicyUpdateData;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
@@ -34,19 +35,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateRefundPolicyService implements UpdateRefundPolicyUseCase {
 
     private final RefundPolicyCommandFactory commandFactory;
-    private final RefundPolicyCommandManager commandManager;
     private final RefundPolicyValidator validator;
     private final DefaultRefundPolicyResolver defaultPolicyResolver;
+    private final RefundPolicyOutboundFacade outboundFacade;
 
     public UpdateRefundPolicyService(
             RefundPolicyCommandFactory commandFactory,
-            RefundPolicyCommandManager commandManager,
             RefundPolicyValidator validator,
-            DefaultRefundPolicyResolver defaultPolicyResolver) {
+            DefaultRefundPolicyResolver defaultPolicyResolver,
+            RefundPolicyOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
         this.validator = validator;
         this.defaultPolicyResolver = defaultPolicyResolver;
+        this.outboundFacade = outboundFacade;
     }
 
     @Override
@@ -65,6 +66,7 @@ public class UpdateRefundPolicyService implements UpdateRefundPolicyUseCase {
         // 정책 정보 업데이트
         refundPolicy.update(context.updateData(), context.changedAt());
 
-        commandManager.persist(refundPolicy);
+        outboundFacade.persistWithSync(
+                refundPolicy, OutboundSellerOperationType.UPDATE, context.changedAt());
     }
 }

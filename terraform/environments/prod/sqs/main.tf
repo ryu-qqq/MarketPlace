@@ -26,6 +26,9 @@ locals {
     enhancement  = "${var.environment}-${var.project_name}-inspection-enhancement"
     verification = "${var.environment}-${var.project_name}-inspection-verification"
   }
+
+  # OutboundSync queue
+  outbound_sync_queue_name = "${var.environment}-${var.project_name}-outbound-sync"
 }
 
 data "aws_caller_identity" "current" {}
@@ -183,6 +186,41 @@ resource "aws_sqs_queue" "inspection_verification" {
 }
 
 # ========================================
+# OutboundSync Queue (DLQ)
+# ========================================
+resource "aws_sqs_queue" "outbound_sync_dlq" {
+  name                      = "${local.outbound_sync_queue_name}-dlq"
+  message_retention_seconds = 1209600 # 14 days
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.outbound_sync_queue_name}-dlq"
+    Purpose = "Dead letter queue for outbound sync"
+  })
+}
+
+# ========================================
+# OutboundSync Queue
+# ========================================
+resource "aws_sqs_queue" "outbound_sync" {
+  name                       = local.outbound_sync_queue_name
+  visibility_timeout_seconds = 300    # 5 minutes
+  message_retention_seconds  = 345600 # 4 days
+  receive_wait_time_seconds  = 20     # Long polling
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.outbound_sync_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.outbound_sync_queue_name
+    Purpose = "Outbound sync message relay to external channels"
+  })
+}
+
+# ========================================
 # IAM Policy: SQS Access for ECS Tasks
 # ========================================
 resource "aws_iam_policy" "sqs_access" {
@@ -209,7 +247,9 @@ resource "aws_iam_policy" "sqs_access" {
           aws_sqs_queue.inspection_enhancement.arn,
           aws_sqs_queue.inspection_enhancement_dlq.arn,
           aws_sqs_queue.inspection_verification.arn,
-          aws_sqs_queue.inspection_verification_dlq.arn
+          aws_sqs_queue.inspection_verification_dlq.arn,
+          aws_sqs_queue.outbound_sync.arn,
+          aws_sqs_queue.outbound_sync_dlq.arn
         ]
       },
       {
@@ -299,6 +339,28 @@ resource "aws_ssm_parameter" "inspection_verification_dlq_url" {
   tags  = local.common_tags
 }
 
+# OutboundSync Queue
+resource "aws_ssm_parameter" "outbound_sync_queue_url" {
+  name  = "/${var.project_name}/sqs/outbound-sync-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.outbound_sync.url
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "outbound_sync_queue_arn" {
+  name  = "/${var.project_name}/sqs/outbound-sync-queue-arn"
+  type  = "String"
+  value = aws_sqs_queue.outbound_sync.arn
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "outbound_sync_dlq_url" {
+  name  = "/${var.project_name}/sqs/outbound-sync-dlq-url"
+  type  = "String"
+  value = aws_sqs_queue.outbound_sync_dlq.url
+  tags  = local.common_tags
+}
+
 # SQS Access Policy ARN
 resource "aws_ssm_parameter" "sqs_access_policy_arn" {
   name  = "/${var.project_name}/sqs/access-policy-arn"
@@ -371,9 +433,39 @@ resource "aws_cloudwatch_metric_alarm" "verification_dlq_messages" {
   tags = local.common_tags
 }
 
+# OutboundSync DLQ Alarm
+resource "aws_cloudwatch_metric_alarm" "outbound_sync_dlq_messages" {
+  alarm_name          = "${var.project_name}-outbound-sync-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in outbound sync DLQ"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.outbound_sync_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
 # ========================================
 # Outputs
 # ========================================
+output "outbound_sync_queue_url" {
+  description = "OutboundSync queue URL"
+  value       = aws_sqs_queue.outbound_sync.url
+}
+
+output "outbound_sync_queue_arn" {
+  description = "OutboundSync queue ARN"
+  value       = aws_sqs_queue.outbound_sync.arn
+}
+
 output "inspection_scoring_queue_url" {
   description = "Inspection scoring queue URL"
   value       = aws_sqs_queue.inspection_scoring.url

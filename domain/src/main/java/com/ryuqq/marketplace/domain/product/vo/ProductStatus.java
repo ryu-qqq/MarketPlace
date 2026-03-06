@@ -4,7 +4,7 @@ package com.ryuqq.marketplace.domain.product.vo;
 public enum ProductStatus {
     ACTIVE("판매중"),
     INACTIVE("판매중지"),
-    SOLDOUT("품절"),
+    SOLD_OUT("품절"),
     DELETED("삭제");
 
     private final String displayName;
@@ -25,9 +25,9 @@ public enum ProductStatus {
         return this == DELETED;
     }
 
-    /** 활성화 가능 여부. INACTIVE, SOLDOUT에서만 가능. */
+    /** 활성화 가능 여부. INACTIVE, SOLD_OUT에서만 가능. */
     public boolean canActivate() {
-        return this == INACTIVE || this == SOLDOUT;
+        return this == INACTIVE || this == SOLD_OUT;
     }
 
     /** 삭제 가능 여부. 이미 삭제된 상태가 아니면 가능. */

@@ -268,6 +268,24 @@ public class OutboundSyncOutbox {
     }
 
     /**
+     * FAILED 상태에서 재처리 요청.
+     *
+     * <p>retryCount를 초기화하고 PENDING 상태로 전이한다.
+     *
+     * @param now 현재 시각
+     * @throws IllegalStateException FAILED 상태가 아닌 경우
+     */
+    public void retry(Instant now) {
+        if (!status.isFailed()) {
+            throw new IllegalStateException("FAILED 상태에서만 재처리할 수 있습니다. 현재 상태: " + status);
+        }
+        this.status = SyncStatus.PENDING;
+        this.retryCount = 0;
+        this.updatedAt = now;
+        this.errorMessage = null;
+    }
+
+    /**
      * PROCESSING 상태에서 타임아웃으로 복구.
      *
      * @param now 현재 시각

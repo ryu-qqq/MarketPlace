@@ -37,6 +37,7 @@ public class ImageTransformOutbox {
     private final ImageSourceType sourceType;
     private final ImageUrl uploadedUrl;
     private final ImageVariantType variantType;
+    private final String fileAssetId;
     private String transformRequestId;
     private ImageTransformOutboxStatus status;
     private int retryCount;
@@ -54,6 +55,7 @@ public class ImageTransformOutbox {
             ImageSourceType sourceType,
             ImageUrl uploadedUrl,
             ImageVariantType variantType,
+            String fileAssetId,
             String transformRequestId,
             ImageTransformOutboxStatus status,
             int retryCount,
@@ -69,6 +71,7 @@ public class ImageTransformOutbox {
         this.sourceType = sourceType;
         this.uploadedUrl = uploadedUrl;
         this.variantType = variantType;
+        this.fileAssetId = fileAssetId;
         this.transformRequestId = transformRequestId;
         this.status = status;
         this.retryCount = retryCount;
@@ -88,6 +91,7 @@ public class ImageTransformOutbox {
      * @param sourceType 이미지 소스 타입
      * @param uploadedUrl 업로드된 CDN URL
      * @param variantType 변환 대상 Variant 타입
+     * @param fileAssetId FileFlow 에셋 ID (다운로드 완료 시 획득)
      * @param now 현재 시각
      * @return 새 ImageTransformOutbox 인스턴스
      */
@@ -96,6 +100,7 @@ public class ImageTransformOutbox {
             ImageSourceType sourceType,
             ImageUrl uploadedUrl,
             ImageVariantType variantType,
+            String fileAssetId,
             Instant now) {
         ImageTransformOutboxIdempotencyKey idempotencyKey =
                 ImageTransformOutboxIdempotencyKey.generate(sourceImageId, variantType, now);
@@ -105,6 +110,7 @@ public class ImageTransformOutbox {
                 sourceType,
                 uploadedUrl,
                 variantType,
+                fileAssetId,
                 null,
                 ImageTransformOutboxStatus.PENDING,
                 0,
@@ -125,6 +131,7 @@ public class ImageTransformOutbox {
      * @param sourceType 이미지 소스 타입
      * @param uploadedUrl 업로드된 CDN URL
      * @param variantType Variant 타입
+     * @param fileAssetId FileFlow 에셋 ID
      * @param transformRequestId FileFlow 변환 요청 ID
      * @param status 상태
      * @param retryCount 재시도 횟수
@@ -143,6 +150,7 @@ public class ImageTransformOutbox {
             ImageSourceType sourceType,
             ImageUrl uploadedUrl,
             ImageVariantType variantType,
+            String fileAssetId,
             String transformRequestId,
             ImageTransformOutboxStatus status,
             int retryCount,
@@ -159,6 +167,7 @@ public class ImageTransformOutbox {
                 sourceType,
                 uploadedUrl,
                 variantType,
+                fileAssetId,
                 transformRequestId,
                 status,
                 retryCount,
@@ -318,6 +327,10 @@ public class ImageTransformOutbox {
 
     public ImageVariantType variantType() {
         return variantType;
+    }
+
+    public String fileAssetId() {
+        return fileAssetId;
     }
 
     public String transformRequestId() {

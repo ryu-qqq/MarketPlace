@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 class CommonCodeFlowE2ETest extends E2ETestBase {
 
     private static final String BASE_URL = "/common-codes";
+    private static final String QUERY_URL = "/public/common-codes";
 
     @Autowired private CommonCodeJpaRepository commonCodeRepository;
     @Autowired private CommonCodeTypeJpaRepository commonCodeTypeRepository;
@@ -86,9 +87,9 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 3: 목록 조회 (1개 확인)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", typeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))
@@ -107,9 +108,9 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 5: 목록 조회 (displayName 변경 확인)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", typeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))
@@ -129,10 +130,10 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 7: 목록 조회 (active=false 필터)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", typeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .queryParam("active", false)
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))
@@ -174,9 +175,9 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 4: CommonCode 조회 (타입 상태와 무관하게 조회 가능)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", typeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1));
@@ -237,18 +238,18 @@ class CommonCodeFlowE2ETest extends E2ETestBase {
 
             // Step 4: 각 타입별 조회 (각각 1개씩 조회됨)
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", paymentTypeId)
+                    .queryParam("code", "PAYMENT_METHOD")
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))
                     .body("data.content[0].code", equalTo("CREDIT_CARD"));
 
             given().spec(givenAdmin())
-                    .queryParam("commonCodeTypeId", deliveryTypeId)
+                    .queryParam("code", "DELIVERY_COMPANY")
                     .when()
-                    .get(BASE_URL)
+                    .get(QUERY_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content", hasSize(1))

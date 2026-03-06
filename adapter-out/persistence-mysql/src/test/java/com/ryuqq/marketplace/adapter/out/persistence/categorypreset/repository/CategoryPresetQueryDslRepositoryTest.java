@@ -116,6 +116,11 @@ class CategoryPresetQueryDslRepositoryTest {
                                 "테스트샵",
                                 "account123",
                                 "ACTIVE",
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
                                 now,
                                 now,
                                 null));
@@ -128,6 +133,11 @@ class CategoryPresetQueryDslRepositoryTest {
                                 "다른샵",
                                 "account456",
                                 "ACTIVE",
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
                                 now,
                                 now,
                                 null));

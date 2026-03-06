@@ -180,7 +180,7 @@ class ProductCommandApiMapperTest {
             long sellerId = ProductApiFixtures.DEFAULT_SELLER_ID;
             Long productGroupId = ProductApiFixtures.DEFAULT_PRODUCT_GROUP_ID;
             BatchChangeProductStatusApiRequest request =
-                    ProductApiFixtures.batchChangeStatusRequest(List.of(5L), "SOLDOUT");
+                    ProductApiFixtures.batchChangeStatusRequest(List.of(5L), "SOLD_OUT");
 
             // when
             BatchChangeProductStatusCommand command =
@@ -189,7 +189,7 @@ class ProductCommandApiMapperTest {
             // then
             assertThat(command.productIds()).hasSize(1);
             assertThat(command.productIds().get(0)).isEqualTo(5L);
-            assertThat(command.targetStatus()).isEqualTo("SOLDOUT");
+            assertThat(command.targetStatus()).isEqualTo("SOLD_OUT");
         }
     }
 

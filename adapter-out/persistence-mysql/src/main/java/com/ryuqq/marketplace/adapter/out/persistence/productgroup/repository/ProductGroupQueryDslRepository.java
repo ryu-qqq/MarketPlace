@@ -87,6 +87,13 @@ public class ProductGroupQueryDslRepository {
         return count != null ? count : 0L;
     }
 
+    public List<ProductGroupJpaEntity> findByIds(List<Long> ids) {
+        return queryFactory
+                .selectFrom(productGroup)
+                .where(conditionBuilder.idIn(ids), conditionBuilder.statusNotDeleted())
+                .fetch();
+    }
+
     public List<ProductGroupJpaEntity> findByIdsAndSellerId(List<Long> ids, Long sellerId) {
         return queryFactory
                 .selectFrom(productGroup)

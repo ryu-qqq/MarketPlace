@@ -52,6 +52,14 @@ public class SellerAdminConditionBuilder {
         return loginId != null ? sellerAdminJpaEntity.loginId.eq(loginId) : null;
     }
 
+    public BooleanExpression nameEq(String name) {
+        return name != null ? sellerAdminJpaEntity.name.eq(name) : null;
+    }
+
+    public BooleanExpression phoneNumberEq(String phoneNumber) {
+        return phoneNumber != null ? sellerAdminJpaEntity.phoneNumber.eq(phoneNumber) : null;
+    }
+
     public BooleanExpression statusIn(List<SellerAdminStatus> statuses) {
         if (statuses == null || statuses.isEmpty()) {
             return null;

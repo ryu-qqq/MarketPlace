@@ -6,8 +6,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.condition.LegacyConversionOutboxConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.entity.LegacyConversionOutboxJpaEntity;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -84,5 +88,41 @@ public class LegacyConversionOutboxQueryDslRepository {
                 .orderBy(legacyConversionOutboxJpaEntity.updatedAt.asc())
                 .limit(limit)
                 .fetch();
+    }
+
+    /**
+     * 주어진 레거시 상품그룹 ID 중 이미 Outbox에 존재하는 ID 집합 조회 (모든 상태 포함).
+     *
+     * @param legacyProductGroupIds 확인할 ID 목록
+     * @return 이미 존재하는 레거시 상품그룹 ID 집합
+     */
+    public Set<Long> findExistingLegacyProductGroupIds(Collection<Long> legacyProductGroupIds) {
+        if (legacyProductGroupIds == null || legacyProductGroupIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        List<Long> ids =
+                queryFactory
+                        .select(legacyConversionOutboxJpaEntity.legacyProductGroupId)
+                        .from(legacyConversionOutboxJpaEntity)
+                        .where(conditionBuilder.legacyProductGroupIdIn(legacyProductGroupIds))
+                        .distinct()
+                        .fetch();
+        return new HashSet<>(ids);
+    }
+
+    /**
+     * Outbox에 등록된 고유 레거시 상품그룹 ID 수를 반환합니다.
+     *
+     * @return 등록된 고유 레거시 상품그룹 ID 수
+     */
+    public long countDistinctLegacyProductGroupIds() {
+        Long count =
+                queryFactory
+                        .select(
+                                legacyConversionOutboxJpaEntity.legacyProductGroupId
+                                        .countDistinct())
+                        .from(legacyConversionOutboxJpaEntity)
+                        .fetchOne();
+        return count != null ? count : 0L;
     }
 }

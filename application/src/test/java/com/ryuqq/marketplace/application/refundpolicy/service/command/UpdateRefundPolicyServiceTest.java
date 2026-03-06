@@ -9,8 +9,9 @@ import com.ryuqq.marketplace.application.refundpolicy.RefundPolicyCommandFixture
 import com.ryuqq.marketplace.application.refundpolicy.dto.command.UpdateRefundPolicyCommand;
 import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyCommandFactory;
 import com.ryuqq.marketplace.application.refundpolicy.internal.DefaultRefundPolicyResolver;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
+import com.ryuqq.marketplace.application.refundpolicy.internal.RefundPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.refundpolicy.validator.RefundPolicyValidator;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.refundpolicy.RefundPolicyFixtures;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicyUpdateData;
@@ -37,9 +38,9 @@ class UpdateRefundPolicyServiceTest {
     @InjectMocks private UpdateRefundPolicyService sut;
 
     @Mock private RefundPolicyCommandFactory commandFactory;
-    @Mock private RefundPolicyCommandManager commandManager;
     @Mock private RefundPolicyValidator validator;
     @Mock private DefaultRefundPolicyResolver defaultPolicyResolver;
+    @Mock private RefundPolicyOutboundFacade outboundFacade;
 
     @Nested
     @DisplayName("execute() - 환불 정책 수정")
@@ -89,7 +90,12 @@ class UpdateRefundPolicyServiceTest {
                             eq(refundPolicy),
                             eq(command.defaultPolicy()),
                             eq(context.changedAt()));
-            then(commandManager).should().persist(refundPolicy);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            eq(refundPolicy),
+                            eq(OutboundSellerOperationType.UPDATE),
+                            eq(context.changedAt()));
         }
     }
 }

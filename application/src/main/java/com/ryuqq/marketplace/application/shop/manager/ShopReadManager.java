@@ -25,6 +25,11 @@ public class ShopReadManager {
     }
 
     @Transactional(readOnly = true)
+    public List<Shop> findByIds(List<ShopId> ids) {
+        return queryPort.findByIds(ids);
+    }
+
+    @Transactional(readOnly = true)
     public List<Shop> findByCriteria(ShopSearchCriteria criteria) {
         return queryPort.findByCriteria(criteria);
     }

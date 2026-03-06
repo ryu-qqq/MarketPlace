@@ -5,6 +5,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.OutboundSyncOutboxJpaEntity;
 import java.time.Instant;
+import java.util.Collection;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +19,12 @@ public class OutboundSyncOutboxConditionBuilder {
     public BooleanExpression productGroupIdEq(Long productGroupId) {
         return productGroupId != null
                 ? outboundSyncOutboxJpaEntity.productGroupId.eq(productGroupId)
+                : null;
+    }
+
+    public BooleanExpression productGroupIdIn(Collection<Long> productGroupIds) {
+        return productGroupIds != null && !productGroupIds.isEmpty()
+                ? outboundSyncOutboxJpaEntity.productGroupId.in(productGroupIds)
                 : null;
     }
 
@@ -43,5 +50,34 @@ public class OutboundSyncOutboxConditionBuilder {
 
     public BooleanExpression updatedAtBefore(Instant beforeTime) {
         return beforeTime != null ? outboundSyncOutboxJpaEntity.updatedAt.lt(beforeTime) : null;
+    }
+
+    public BooleanExpression syncTypeEq(String syncType) {
+        if (syncType == null) {
+            return null;
+        }
+        return outboundSyncOutboxJpaEntity.syncType.eq(
+                OutboundSyncOutboxJpaEntity.SyncType.valueOf(syncType));
+    }
+
+    public BooleanExpression statusPendingOrProcessing() {
+        return outboundSyncOutboxJpaEntity.status.in(
+                OutboundSyncOutboxJpaEntity.Status.PENDING,
+                OutboundSyncOutboxJpaEntity.Status.PROCESSING);
+    }
+
+    public BooleanExpression statusEq(String status) {
+        if (status == null || status.isBlank()) {
+            return null;
+        }
+        return outboundSyncOutboxJpaEntity.status.eq(
+                OutboundSyncOutboxJpaEntity.Status.valueOf(status));
+    }
+
+    public BooleanExpression statusEqEnum(OutboundSyncOutboxJpaEntity.Status status) {
+        if (status == null) {
+            return null;
+        }
+        return outboundSyncOutboxJpaEntity.status.eq(status);
     }
 }

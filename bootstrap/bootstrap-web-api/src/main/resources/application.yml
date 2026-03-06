@@ -70,6 +70,7 @@ spring:
       - classpath:authhub.yml
       - classpath:fileflow.yml
       - classpath:naver-commerce.yml
+      - classpath:setof-commerce.yml
 
   # ===============================================
   # MessageSource (i18n)
@@ -125,6 +126,13 @@ spring:
     # Deprecated matching-strategy property is removed (ant_path_matcher no longer supported).
     # DispatcherServlet now raises NoResourceFoundException for 404s by default,
     # so throw-exception-if-no-handler-found is no longer configurable.
+
+# ===============================================
+# Internal Service Token (서비스 간 통신 인증)
+# ===============================================
+marketplace:
+  internal:
+    service-token: ${AUTHHUB_SERVICE_TOKEN:local-dev-token}
 
 # ===============================================
 # Management & Actuator (모니터링)

@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.common.manager;
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
+import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadStatusResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
 import org.springframework.stereotype.Component;
@@ -35,5 +36,13 @@ public class FileStorageManager {
 
     public String uploadHtmlContent(String htmlContent, String category, String filename) {
         return fileStorageClient.uploadHtmlContent(htmlContent, category, filename);
+    }
+
+    public String createDownloadTask(ExternalDownloadRequest request) {
+        return fileStorageClient.createDownloadTask(request);
+    }
+
+    public ExternalDownloadStatusResponse getDownloadTaskStatus(String downloadTaskId) {
+        return fileStorageClient.getDownloadTaskStatus(downloadTaskId);
     }
 }

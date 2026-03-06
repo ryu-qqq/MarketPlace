@@ -25,20 +25,34 @@ scheduler:
 
     image-upload-outbox:
       process-pending:
-        # Prod: 3분마다
-        cron: "0 */3 * * * *"
+        # Prod: 5초마다
+        cron: "*/5 * * * * *"
         # Prod: 큰 배치
         batch-size: 50
         # Prod: 안전한 지연
-        delay-seconds: 30
+        delay-seconds: 5
+
+      poll-processing:
+        # Prod: 비활성화 (콜백 방식으로 전환)
+        enabled: false
+        cron: "0 */1 * * * *"
+        batch-size: 50
 
       recover-timeout:
-        # Prod: 10분마다
-        cron: "0 */10 * * * *"
+        # Prod: 1분마다
+        cron: "0 */1 * * * *"
         # Prod: 큰 배치
         batch-size: 50
-        # Prod: 안전한 타임아웃
-        timeout-seconds: 300
+        # Prod: 1분 타임아웃
+        timeout-seconds: 60
+
+      recover-failed:
+        # Prod: 5분마다
+        cron: "0 */5 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 5분 후 복구
+        failed-after-seconds: 300
 
     seller-admin-auth-outbox:
       process-pending:
@@ -59,26 +73,26 @@ scheduler:
 
     image-transform-outbox:
       process-pending:
-        # Prod: 3분마다
-        cron: "0 */3 * * * *"
+        # Prod: 5초마다
+        cron: "*/5 * * * * *"
         # Prod: 큰 배치
-        batch-size: 30
+        batch-size: 50
         # Prod: 안전한 지연
-        delay-seconds: 10
+        delay-seconds: 5
 
       poll-processing:
-        # Prod: 2분마다
+        # Prod: 비활성화 (콜백 방식으로 전환)
+        enabled: false
         cron: "0 */2 * * * *"
-        # Prod: 큰 배치
-        batch-size: 30
+        batch-size: 50
 
       recover-timeout:
-        # Prod: 10분마다
-        cron: "0 */10 * * * *"
+        # Prod: 1분마다
+        cron: "0 */1 * * * *"
         # Prod: 큰 배치
-        batch-size: 30
-        # Prod: 안전한 타임아웃
-        timeout-seconds: 600
+        batch-size: 50
+        # Prod: 1분 타임아웃
+        timeout-seconds: 60
 
     intelligence-pipeline:
       recover-stuck-aggregation:
@@ -88,6 +102,65 @@ scheduler:
         batch-size: 20
         # Prod: 안전한 stuck 기준
         stuck-seconds: 300
+
+    outbound-sync-outbox:
+      process-pending:
+        # Prod: 활성화
+        enabled: true
+        # Prod: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        # Prod: 활성화
+        enabled: true
+        # Prod: 10분마다
+        cron: "0 */10 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 300
+
+    legacy-conversion-seeder:
+      # Prod: 활성화 (전체 마이그레이션)
+      enabled: true
+      # Prod: 30분마다
+      cron: "0 */30 * * * *"
+      # Prod: 큰 배치
+      batch-size: 200
+      # Prod: 초기 마이그레이션 상한 (안전 장치)
+      max-total: 50000
+
+    inbound-order-polling:
+      entries:
+        - sales-channel-id: 1
+          enabled: true
+          # Prod: 5분마다
+          cron: "0 */5 * * * *"
+          timezone: Asia/Seoul
+          batch-size: 500
+
+    outbound-seller-outbox:
+      process-pending:
+        # Prod: 5분마다 (기본값)
+        cron: "0 */5 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        # Prod: 10분마다 (기본값)
+        cron: "0 */10 * * * *"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 300
 
     description-publish:
       # Prod: 5분마다

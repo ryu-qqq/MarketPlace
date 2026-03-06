@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.seller.controller;
 
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.seller.LegacySellerEndpoints.SELLER;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.authhub.sdk.context.UserContextHolder;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.dto.response.LegacySellerResponse;
@@ -39,6 +40,7 @@ public class LegacySellerController {
 
     @Operation(summary = "현재 셀러 정보 조회", description = "인증된 사용자의 셀러 정보를 세토프 어드민 호환 형식으로 조회합니다.")
     @PreAuthorize("@access.authenticated()")
+    @RequirePermission(value = "legacy:seller:read", description = "레거시 셀러 정보 조회")
     @GetMapping(SELLER)
     public ResponseEntity<LegacyApiResponse<LegacySellerResponse>> getCurrentSeller() {
         String tenantId = UserContextHolder.getCurrentTenantId();

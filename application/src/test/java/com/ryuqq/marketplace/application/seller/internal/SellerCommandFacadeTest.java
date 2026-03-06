@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.inOrder;
 
+import com.ryuqq.marketplace.application.outboundseller.manager.OutboundSellerOutboxCommandManager;
 import com.ryuqq.marketplace.application.seller.dto.bundle.SellerRegistrationBundle;
 import com.ryuqq.marketplace.application.seller.dto.bundle.SellerUpdateBundle;
 import com.ryuqq.marketplace.application.seller.manager.SellerBusinessInfoCommandManager;
@@ -41,6 +42,7 @@ class SellerCommandFacadeTest {
     @Mock private SellerCsCommandManager csCommandManager;
     @Mock private SellerContractCommandManager contractCommandManager;
     @Mock private SellerSettlementCommandManager settlementCommandManager;
+    @Mock private OutboundSellerOutboxCommandManager outboundSellerOutboxCommandManager;
 
     @Nested
     @DisplayName("registerSeller() - 셀러 등록")

@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.product.service.command;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.product.dto.command.BatchChangeProductStatusCommand;
 import com.ryuqq.marketplace.application.product.manager.ProductCommandManager;
+import com.ryuqq.marketplace.application.product.manager.ProductOptionMappingCommandManager;
 import com.ryuqq.marketplace.application.product.manager.ProductReadManager;
 import com.ryuqq.marketplace.application.product.port.in.command.BatchChangeProductStatusUseCase;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
@@ -26,23 +27,29 @@ public class BatchChangeProductStatusService implements BatchChangeProductStatus
     private final ProductGroupReadManager productGroupReadManager;
     private final ProductReadManager readManager;
     private final ProductCommandManager commandManager;
+    private final ProductOptionMappingCommandManager optionMappingCommandManager;
 
     public BatchChangeProductStatusService(
             TimeProvider timeProvider,
             ProductGroupReadManager productGroupReadManager,
             ProductReadManager readManager,
-            ProductCommandManager commandManager) {
+            ProductCommandManager commandManager,
+            ProductOptionMappingCommandManager optionMappingCommandManager) {
         this.timeProvider = timeProvider;
         this.productGroupReadManager = productGroupReadManager;
         this.readManager = readManager;
         this.commandManager = commandManager;
+        this.optionMappingCommandManager = optionMappingCommandManager;
     }
 
     @Override
     public void execute(BatchChangeProductStatusCommand command) {
         ProductGroupId productGroupId = ProductGroupId.of(command.productGroupId());
 
-        productGroupReadManager.getByIdsAndSellerId(List.of(productGroupId), command.sellerId());
+        if (command.sellerId() != null) {
+            productGroupReadManager.getByIdsAndSellerId(
+                    List.of(productGroupId), command.sellerId());
+        }
 
         List<ProductId> productIds = command.productIds().stream().map(ProductId::of).toList();
 
@@ -56,5 +63,11 @@ public class BatchChangeProductStatusService implements BatchChangeProductStatus
         }
 
         commandManager.persistAll(products);
+
+        if (targetStatus == ProductStatus.DELETED) {
+            for (Product product : products) {
+                optionMappingCommandManager.persistAll(product.optionMappings());
+            }
+        }
     }
 }

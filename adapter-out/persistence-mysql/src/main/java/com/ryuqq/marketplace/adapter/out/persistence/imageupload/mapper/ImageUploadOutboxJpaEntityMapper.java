@@ -33,7 +33,8 @@ public class ImageUploadOutboxJpaEntityMapper {
                 domain.processedAt(),
                 domain.errorMessage(),
                 domain.version(),
-                domain.idempotencyKeyValue());
+                domain.idempotencyKeyValue(),
+                domain.downloadTaskId());
     }
 
     public ImageUploadOutbox toDomain(ImageUploadOutboxJpaEntity entity) {
@@ -54,6 +55,7 @@ public class ImageUploadOutboxJpaEntityMapper {
                 entity.getProcessedAt(),
                 entity.getErrorMessage(),
                 entity.getVersion(),
-                entity.getIdempotencyKey());
+                entity.getIdempotencyKey(),
+                entity.getDownloadTaskId());
     }
 }

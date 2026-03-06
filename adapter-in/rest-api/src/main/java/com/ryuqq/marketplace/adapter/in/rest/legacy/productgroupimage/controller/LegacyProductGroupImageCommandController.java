@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.controlle
 
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.LegacyProductGroupImageEndpoints.IMAGES;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.dto.request.LegacyCreateProductImageRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.mapper.LegacyImageCommandApiMapper;
@@ -34,6 +35,7 @@ public class LegacyProductGroupImageCommandController {
 
     @Operation(summary = "레거시 상품그룹 이미지 수정", description = "세토프 어드민용 레거시 상품그룹의 이미지 목록을 수정합니다.")
     @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
+    @RequirePermission(value = "legacy:product-group:write", description = "레거시 상품그룹 이미지 수정")
     @PutMapping(IMAGES)
     public ResponseEntity<LegacyApiResponse<Long>> updateProductImages(
             @PathVariable long productGroupId,

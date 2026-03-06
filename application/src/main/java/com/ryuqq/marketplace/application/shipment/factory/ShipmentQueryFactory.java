@@ -55,7 +55,14 @@ public class ShipmentQueryFactory {
                         params.searchParams().startDate(), params.searchParams().endDate());
 
         return ShipmentSearchCriteria.of(
-                statuses, searchField, params.searchWord(), dateRange, dateField, queryContext);
+                statuses,
+                params.sellerIds(),
+                params.shopOrderNos(),
+                searchField,
+                params.searchWord(),
+                dateRange,
+                dateField,
+                queryContext);
     }
 
     private ShipmentSortKey resolveSortKey(String sortKeyString) {

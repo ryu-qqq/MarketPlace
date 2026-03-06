@@ -138,7 +138,7 @@ class ProductGroupJpaEntityMapperTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT 상태 ProductGroup을 Entity로 변환합니다")
+        @DisplayName("SOLD_OUT 상태 ProductGroup을 Entity로 변환합니다")
         void toEntity_WithSoldoutProductGroup_ConvertsStatus() {
             // given
             ProductGroup domain = ProductGroupFixtures.soldoutProductGroup();
@@ -147,7 +147,7 @@ class ProductGroupJpaEntityMapperTest {
             ProductGroupJpaEntity entity = mapper.toEntity(domain);
 
             // then
-            assertThat(entity.getStatus()).isEqualTo(ProductGroupStatus.SOLDOUT.name());
+            assertThat(entity.getStatus()).isEqualTo(ProductGroupStatus.SOLD_OUT.name());
         }
 
         @Test

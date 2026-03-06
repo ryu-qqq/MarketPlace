@@ -54,7 +54,7 @@ public class ShopCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('shop:write')")
     @RequirePermission(value = "shop:write", description = "외부몰 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<ShopIdApiResponse>> registerShop(
@@ -79,7 +79,7 @@ public class ShopCommandController {
                 responseCode = "404",
                 description = "외부몰을 찾을 수 없음")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('shop:write')")
     @RequirePermission(value = "shop:write", description = "외부몰 수정")
     @PutMapping(ShopAdminEndpoints.SHOP_ID)
     public ResponseEntity<Void> updateShop(

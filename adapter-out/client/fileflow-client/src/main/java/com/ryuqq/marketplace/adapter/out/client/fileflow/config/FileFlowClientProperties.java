@@ -12,4 +12,4 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 1.0.0
  */
 @ConfigurationProperties(prefix = "fileflow")
-public record FileFlowClientProperties(String cdnDomain, String bucket) {}
+public record FileFlowClientProperties(String cdnDomain, String bucket, String callbackBaseUrl) {}

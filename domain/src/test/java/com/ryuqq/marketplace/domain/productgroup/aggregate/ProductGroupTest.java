@@ -149,7 +149,7 @@ class ProductGroupTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT 상태의 ProductGroup을 활성화한다")
+        @DisplayName("SOLD_OUT 상태의 ProductGroup을 활성화한다")
         void activateSoldoutProductGroup() {
             // given
             ProductGroup productGroup = ProductGroupFixtures.soldoutProductGroup();
@@ -212,7 +212,7 @@ class ProductGroupTest {
             productGroup.markSoldOut(now);
 
             // then
-            assertThat(productGroup.status()).isEqualTo(ProductGroupStatus.SOLDOUT);
+            assertThat(productGroup.status()).isEqualTo(ProductGroupStatus.SOLD_OUT);
             assertThat(productGroup.updatedAt()).isEqualTo(now);
         }
 

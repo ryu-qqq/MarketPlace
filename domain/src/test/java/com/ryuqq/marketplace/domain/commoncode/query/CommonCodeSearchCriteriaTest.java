@@ -1,12 +1,10 @@
 package com.ryuqq.marketplace.domain.commoncode.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
-import com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +14,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("CommonCodeSearchCriteria 테스트")
 class CommonCodeSearchCriteriaTest {
 
-    private static final CommonCodeTypeId TYPE_ID = CommonCodeTypeId.of(1L);
+    private static final String TYPE_CODE = "PAYMENT_METHOD";
 
     @Nested
     @DisplayName("생성 테스트")
@@ -34,12 +32,11 @@ class CommonCodeSearchCriteriaTest {
 
             // when
             CommonCodeSearchCriteria criteria =
-                    CommonCodeSearchCriteria.of(TYPE_ID, true, "CARD", queryContext);
+                    CommonCodeSearchCriteria.of(TYPE_CODE, true, queryContext);
 
             // then
-            assertThat(criteria.commonCodeTypeId()).isEqualTo(TYPE_ID);
+            assertThat(criteria.commonCodeTypeCode()).isEqualTo(TYPE_CODE);
             assertThat(criteria.active()).isTrue();
-            assertThat(criteria.code()).isEqualTo("CARD");
             assertThat(criteria.queryContext()).isEqualTo(queryContext);
         }
 
@@ -47,12 +44,11 @@ class CommonCodeSearchCriteriaTest {
         @DisplayName("defaultOf()로 기본 검색 조건을 생성한다")
         void createDefaultOf() {
             // when
-            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.defaultOf(TYPE_ID);
+            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.defaultOf(TYPE_CODE);
 
             // then
-            assertThat(criteria.commonCodeTypeId()).isEqualTo(TYPE_ID);
+            assertThat(criteria.commonCodeTypeCode()).isEqualTo(TYPE_CODE);
             assertThat(criteria.active()).isNull();
-            assertThat(criteria.code()).isNull();
             assertThat(criteria.queryContext().sortKey()).isEqualTo(CommonCodeSortKey.CREATED_AT);
         }
 
@@ -60,11 +56,10 @@ class CommonCodeSearchCriteriaTest {
         @DisplayName("activeOnly()로 활성화된 항목만 조회하는 조건을 생성한다")
         void createActiveOnly() {
             // when
-            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.activeOnly(TYPE_ID);
+            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.activeOnly(TYPE_CODE);
 
             // then
             assertThat(criteria.active()).isTrue();
-            assertThat(criteria.code()).isNull();
         }
     }
 
@@ -73,26 +68,23 @@ class CommonCodeSearchCriteriaTest {
     class ValidationTest {
 
         @Test
-        @DisplayName("commonCodeTypeId가 null이면 예외를 발생시킨다")
-        void nullTypeIdThrowsException() {
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    CommonCodeSearchCriteria.of(
-                                            null,
-                                            true,
-                                            "CODE",
-                                            QueryContext.defaultOf(CommonCodeSortKey.CREATED_AT)))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("필수");
+        @DisplayName("commonCodeTypeCode가 null이면 전체 조회 조건으로 생성된다")
+        void nullTypeCodeCreatesWithoutTypeFilter() {
+            // when
+            CommonCodeSearchCriteria criteria =
+                    CommonCodeSearchCriteria.of(
+                            null, true, QueryContext.defaultOf(CommonCodeSortKey.CREATED_AT));
+
+            // then
+            assertThat(criteria.commonCodeTypeCode()).isNull();
+            assertThat(criteria.active()).isTrue();
         }
 
         @Test
         @DisplayName("null queryContext는 기본값으로 대체된다")
         void nullQueryContextDefaultsToDefault() {
             // when
-            CommonCodeSearchCriteria criteria =
-                    CommonCodeSearchCriteria.of(TYPE_ID, null, null, null);
+            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.of(TYPE_CODE, null, null);
 
             // then
             assertThat(criteria.queryContext()).isNotNull();
@@ -100,33 +92,29 @@ class CommonCodeSearchCriteriaTest {
         }
 
         @Test
-        @DisplayName("code는 대문자로 변환되고 trim된다")
+        @DisplayName("commonCodeTypeCode는 대문자로 변환되고 trim된다")
         void codeIsNormalizedToUpperCase() {
             // when
             CommonCodeSearchCriteria criteria =
                     CommonCodeSearchCriteria.of(
-                            TYPE_ID,
+                            "  payment_method  ",
                             null,
-                            "  card  ",
                             QueryContext.defaultOf(CommonCodeSortKey.CREATED_AT));
 
             // then
-            assertThat(criteria.code()).isEqualTo("CARD");
+            assertThat(criteria.commonCodeTypeCode()).isEqualTo("PAYMENT_METHOD");
         }
 
         @Test
-        @DisplayName("빈 문자열 code는 null로 변환된다")
+        @DisplayName("빈 문자열 commonCodeTypeCode는 null로 변환된다")
         void blankCodeBecomesNull() {
             // when
             CommonCodeSearchCriteria criteria =
                     CommonCodeSearchCriteria.of(
-                            TYPE_ID,
-                            null,
-                            "   ",
-                            QueryContext.defaultOf(CommonCodeSortKey.CREATED_AT));
+                            "   ", null, QueryContext.defaultOf(CommonCodeSortKey.CREATED_AT));
 
             // then
-            assertThat(criteria.code()).isNull();
+            assertThat(criteria.commonCodeTypeCode()).isNull();
         }
     }
 
@@ -135,45 +123,10 @@ class CommonCodeSearchCriteriaTest {
     class ConvenienceMethodTest {
 
         @Test
-        @DisplayName("commonCodeTypeIdValue()는 타입 ID 원시값을 반환한다")
-        void returnsTypeIdValue() {
-            // given
-            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.defaultOf(TYPE_ID);
-
-            // then
-            assertThat(criteria.commonCodeTypeIdValue()).isEqualTo(1L);
-        }
-
-        @Test
-        @DisplayName("hasCodeFilter()는 코드 필터가 있으면 true를 반환한다")
-        void hasCodeFilterReturnsTrueWhenCodeExists() {
-            // given
-            CommonCodeSearchCriteria criteria =
-                    CommonCodeSearchCriteria.of(
-                            TYPE_ID,
-                            null,
-                            "CARD",
-                            QueryContext.defaultOf(CommonCodeSortKey.CREATED_AT));
-
-            // then
-            assertThat(criteria.hasCodeFilter()).isTrue();
-        }
-
-        @Test
-        @DisplayName("hasCodeFilter()는 코드가 없으면 false를 반환한다")
-        void hasCodeFilterReturnsFalseWhenNoCode() {
-            // given
-            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.defaultOf(TYPE_ID);
-
-            // then
-            assertThat(criteria.hasCodeFilter()).isFalse();
-        }
-
-        @Test
         @DisplayName("hasActiveFilter()는 활성화 필터가 있으면 true를 반환한다")
         void hasActiveFilterReturnsTrueWhenActiveExists() {
             // given
-            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.activeOnly(TYPE_ID);
+            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.activeOnly(TYPE_CODE);
 
             // then
             assertThat(criteria.hasActiveFilter()).isTrue();
@@ -183,7 +136,7 @@ class CommonCodeSearchCriteriaTest {
         @DisplayName("hasActiveFilter()는 활성화 필터가 없으면 false를 반환한다")
         void hasActiveFilterReturnsFalseWhenNoActive() {
             // given
-            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.defaultOf(TYPE_ID);
+            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.defaultOf(TYPE_CODE);
 
             // then
             assertThat(criteria.hasActiveFilter()).isFalse();
@@ -193,7 +146,7 @@ class CommonCodeSearchCriteriaTest {
         @DisplayName("size()는 페이지 크기를 반환한다")
         void returnsSize() {
             // given
-            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.defaultOf(TYPE_ID);
+            CommonCodeSearchCriteria criteria = CommonCodeSearchCriteria.defaultOf(TYPE_CODE);
 
             // then
             assertThat(criteria.size()).isEqualTo(PageRequest.DEFAULT_SIZE);
@@ -209,7 +162,7 @@ class CommonCodeSearchCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(2, 20));
             CommonCodeSearchCriteria criteria =
-                    CommonCodeSearchCriteria.of(TYPE_ID, null, null, queryContext);
+                    CommonCodeSearchCriteria.of(TYPE_CODE, null, queryContext);
 
             // then
             assertThat(criteria.offset()).isEqualTo(40);
@@ -225,7 +178,7 @@ class CommonCodeSearchCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(3, 20));
             CommonCodeSearchCriteria criteria =
-                    CommonCodeSearchCriteria.of(TYPE_ID, null, null, queryContext);
+                    CommonCodeSearchCriteria.of(TYPE_CODE, null, queryContext);
 
             // then
             assertThat(criteria.page()).isEqualTo(3);

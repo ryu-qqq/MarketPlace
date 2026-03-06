@@ -3,19 +3,17 @@ package com.ryuqq.marketplace.application.legacyconversion.factory;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductCompositeResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.legacyconversion.internal.LegacyConversionResolvedContext;
 import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
-import com.ryuqq.marketplace.domain.brand.id.BrandId;
-import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
-import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
-import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,22 +38,22 @@ public class LegacyToInternalBundleFactory {
      * 레거시 상품 번들을 내부 등록 번들로 변환합니다.
      *
      * @param legacyBundle 레거시 상품 상세 번들
-     * @param shippingPolicyId 셀러의 배송 정책 ID
-     * @param refundPolicyId 셀러의 환불 정책 ID
+     * @param resolvedContext 사전 해소된 내부 ID 컨텍스트
      * @param now 현재 시각
      * @return 내부 상품 등록 번들
      */
     public ProductGroupRegistrationBundle create(
             LegacyProductGroupDetailBundle legacyBundle,
-            ShippingPolicyId shippingPolicyId,
-            RefundPolicyId refundPolicyId,
+            LegacyConversionResolvedContext resolvedContext,
             Instant now) {
 
         LegacyProductGroupCompositeResult composite = legacyBundle.composite();
-        OptionType optionType = mapOptionType(composite.optionType());
+        OptionType optionType =
+                com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType.valueOf(
+                                composite.optionType())
+                        .toInternalOptionType();
 
-        ProductGroup productGroup =
-                createProductGroup(composite, shippingPolicyId, refundPolicyId, optionType, now);
+        ProductGroup productGroup = createProductGroup(composite, resolvedContext, optionType, now);
 
         return new ProductGroupRegistrationBundle(
                 productGroup,
@@ -71,16 +69,15 @@ public class LegacyToInternalBundleFactory {
 
     private ProductGroup createProductGroup(
             LegacyProductGroupCompositeResult composite,
-            ShippingPolicyId shippingPolicyId,
-            RefundPolicyId refundPolicyId,
+            LegacyConversionResolvedContext resolvedContext,
             OptionType optionType,
             Instant now) {
         return ProductGroup.forNew(
                 SellerId.of(composite.sellerId()),
-                BrandId.of(composite.brandId()),
-                CategoryId.of(composite.categoryId()),
-                shippingPolicyId,
-                refundPolicyId,
+                resolvedContext.brandId(),
+                resolvedContext.categoryId(),
+                resolvedContext.shippingPolicyId(),
+                resolvedContext.refundPolicyId(),
                 ProductGroupName.of(composite.productGroupName()),
                 optionType,
                 now);
@@ -132,7 +129,7 @@ public class LegacyToInternalBundleFactory {
                             .toList();
             groups.add(
                     new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
-                            entry.getKey(), null, "PREDEFINED", values));
+                            entry.getKey(), null, OptionInputType.PREDEFINED.name(), values));
         }
 
         return groups;
@@ -163,20 +160,5 @@ public class LegacyToInternalBundleFactory {
                             selectedOptions));
         }
         return entries;
-    }
-
-    /**
-     * 레거시 옵션 타입을 내부 옵션 타입으로 매핑합니다.
-     *
-     * <p>Legacy SINGLE → Internal NONE (옵션 없음), Legacy OPTION_ONE → Internal SINGLE, Legacy
-     * OPTION_TWO → Internal COMBINATION.
-     */
-    private OptionType mapOptionType(String legacyOptionType) {
-        return switch (legacyOptionType) {
-            case "SINGLE" -> OptionType.NONE;
-            case "OPTION_ONE" -> OptionType.SINGLE;
-            case "OPTION_TWO" -> OptionType.COMBINATION;
-            default -> throw new IllegalArgumentException("지원하지 않는 레거시 옵션 타입: " + legacyOptionType);
-        };
     }
 }

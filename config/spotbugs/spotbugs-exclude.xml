@@ -127,6 +127,8 @@
             <Class name="~.*Consumer"/>
             <Class name="~.*Mapper"/>
             <Class name="~.*Coordinator"/>
+            <Class name="~.*Strategy"/>
+            <Class name="~.*Validator"/>
             <Class name="~.*Listener"/>
             <Class name="~.*Aspect"/>
             <Class name="~.*Metrics"/>
@@ -173,7 +175,7 @@
             <Class name="~.*CacheAdapter"/>
             <Class name="~.*Factory"/>
         </Or>
-        <Bug pattern="URF_UNREAD_FIELD"/>
+        <Bug pattern="URF_UNREAD_FIELD,EI_EXPOSE_REP2"/>
     </Match>
 
     <!-- ========================================
@@ -193,9 +195,10 @@
     <!-- ========================================
          Spring @ConfigurationProperties 클래스
          Setter/Getter는 Spring 바인딩에 필요
+         Inner record 포함 (Properties$Xxx 패턴)
          ======================================== -->
     <Match>
-        <Class name="~.*Properties"/>
+        <Class name="~.*Properties.*"/>
         <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
     </Match>
 
@@ -239,5 +242,20 @@
             <Class name="~.*SearchApiRequest"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- ========================================
+         Legacy/New DTO 네이밍 혼동 (의도된 공존)
+         레거시 API와 신규 API의 record 필드명 차이는
+         마이그레이션 과정에서의 의도된 공존
+         ======================================== -->
+    <Match>
+        <Or>
+            <Class name="~.*Response"/>
+            <Class name="~.*Request"/>
+            <Class name="~.*Command"/>
+            <Class name="~.*Result"/>
+        </Or>
+        <Bug pattern="NM_CONFUSING"/>
     </Match>
 </FindBugsFilter>

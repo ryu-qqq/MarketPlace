@@ -24,6 +24,7 @@ public final class ImageTransformFixtures {
     public static final ImageSourceType DEFAULT_SOURCE_TYPE = ImageSourceType.PRODUCT_GROUP_IMAGE;
     public static final String DEFAULT_UPLOADED_URL = "https://cdn.example.com/uploaded/image.jpg";
     public static final ImageVariantType DEFAULT_VARIANT_TYPE = ImageVariantType.SMALL_WEBP;
+    public static final String DEFAULT_FILE_ASSET_ID = "asset-abc-123";
     public static final String DEFAULT_TRANSFORM_REQUEST_ID = "tr-req-abc-123";
 
     // ===== ImageTransformOutbox Aggregate Fixtures =====
@@ -35,6 +36,7 @@ public final class ImageTransformFixtures {
                 DEFAULT_SOURCE_TYPE,
                 ImageUrl.of(DEFAULT_UPLOADED_URL),
                 DEFAULT_VARIANT_TYPE,
+                DEFAULT_FILE_ASSET_ID,
                 CommonVoFixtures.now());
     }
 
@@ -45,6 +47,7 @@ public final class ImageTransformFixtures {
                 DEFAULT_SOURCE_TYPE,
                 ImageUrl.of(DEFAULT_UPLOADED_URL),
                 variantType,
+                DEFAULT_FILE_ASSET_ID,
                 CommonVoFixtures.now());
     }
 
@@ -62,6 +65,7 @@ public final class ImageTransformFixtures {
                 DEFAULT_SOURCE_TYPE,
                 ImageUrl.of(DEFAULT_UPLOADED_URL),
                 DEFAULT_VARIANT_TYPE,
+                DEFAULT_FILE_ASSET_ID,
                 null,
                 ImageTransformOutboxStatus.PENDING,
                 0,
@@ -83,6 +87,7 @@ public final class ImageTransformFixtures {
                 DEFAULT_SOURCE_TYPE,
                 ImageUrl.of(DEFAULT_UPLOADED_URL),
                 DEFAULT_VARIANT_TYPE,
+                DEFAULT_FILE_ASSET_ID,
                 DEFAULT_TRANSFORM_REQUEST_ID,
                 ImageTransformOutboxStatus.PROCESSING,
                 0,
@@ -104,6 +109,7 @@ public final class ImageTransformFixtures {
                 DEFAULT_SOURCE_TYPE,
                 ImageUrl.of(DEFAULT_UPLOADED_URL),
                 DEFAULT_VARIANT_TYPE,
+                DEFAULT_FILE_ASSET_ID,
                 DEFAULT_TRANSFORM_REQUEST_ID,
                 ImageTransformOutboxStatus.COMPLETED,
                 0,
@@ -125,6 +131,7 @@ public final class ImageTransformFixtures {
                 DEFAULT_SOURCE_TYPE,
                 ImageUrl.of(DEFAULT_UPLOADED_URL),
                 DEFAULT_VARIANT_TYPE,
+                DEFAULT_FILE_ASSET_ID,
                 DEFAULT_TRANSFORM_REQUEST_ID,
                 ImageTransformOutboxStatus.FAILED,
                 3,

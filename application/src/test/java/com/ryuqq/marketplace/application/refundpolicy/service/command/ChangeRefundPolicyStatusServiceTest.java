@@ -8,8 +8,9 @@ import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.refundpolicy.RefundPolicyCommandFixtures;
 import com.ryuqq.marketplace.application.refundpolicy.dto.command.ChangeRefundPolicyStatusCommand;
 import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyCommandFactory;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
+import com.ryuqq.marketplace.application.refundpolicy.internal.RefundPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.refundpolicy.validator.RefundPolicyValidator;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.refundpolicy.RefundPolicyFixtures;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
@@ -33,8 +34,8 @@ class ChangeRefundPolicyStatusServiceTest {
     @InjectMocks private ChangeRefundPolicyStatusService sut;
 
     @Mock private RefundPolicyCommandFactory commandFactory;
-    @Mock private RefundPolicyCommandManager commandManager;
     @Mock private RefundPolicyValidator validator;
+    @Mock private RefundPolicyOutboundFacade outboundFacade;
 
     @Nested
     @DisplayName("execute() - 환불 정책 상태 변경")
@@ -66,7 +67,13 @@ class ChangeRefundPolicyStatusServiceTest {
             // then
             then(commandFactory).should().createStatusChangeContexts(command);
             then(validator).should().findAllExistingOrThrow(List.of(RefundPolicyId.of(policyId)));
-            then(commandManager).should().persistAll(policies);
+            then(outboundFacade)
+                    .should()
+                    .persistAllWithSync(
+                            eq(SellerId.of(sellerId)),
+                            eq(policies),
+                            eq(OutboundSellerOperationType.UPDATE),
+                            eq(changedAt));
         }
 
         @Test
@@ -98,7 +105,13 @@ class ChangeRefundPolicyStatusServiceTest {
             then(validator)
                     .should()
                     .validateNotLastActivePolicy(eq(SellerId.of(sellerId)), eq(policies));
-            then(commandManager).should().persistAll(policies);
+            then(outboundFacade)
+                    .should()
+                    .persistAllWithSync(
+                            eq(SellerId.of(sellerId)),
+                            eq(policies),
+                            eq(OutboundSellerOperationType.UPDATE),
+                            eq(changedAt));
         }
     }
 }

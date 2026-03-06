@@ -5,6 +5,7 @@ import static com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.LegacyPr
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.LegacyProductGroupEndpoints.PRODUCT_GROUP;
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.LegacyProductGroupEndpoints.PRODUCT_GROUP_ID;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductFetchResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyProductCommandApiMapper;
@@ -75,6 +76,7 @@ public class LegacyProductGroupCommandController {
             summary = "레거시 상품그룹 등록",
             description = "세토프 어드민 호환 상품그룹을 등록합니다. 상품, 옵션, 이미지, 고시정보를 포함한 전체 등록입니다.")
     @PreAuthorize("@access.authenticated()")
+    @RequirePermission(value = "legacy:product-group:write", description = "레거시 상품그룹 등록")
     @PostMapping(PRODUCT_GROUP)
     public ResponseEntity<LegacyApiResponse<LegacyCreateProductGroupResponse>>
             registerProductGroupFull(@Valid @RequestBody LegacyCreateProductGroupRequest request) {
@@ -89,6 +91,7 @@ public class LegacyProductGroupCommandController {
 
     @Operation(summary = "레거시 상품그룹 전체 수정", description = "세토프 어드민 호환 상품그룹을 전체 수정합니다.")
     @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
+    @RequirePermission(value = "legacy:product-group:write", description = "레거시 상품그룹 전체 수정")
     @PutMapping(PRODUCT_GROUP_ID)
     public ResponseEntity<LegacyApiResponse<Long>> updateProductGroupFull(
             @Parameter(description = "수정할 상품그룹 ID") @PathVariable long productGroupId,
@@ -101,6 +104,7 @@ public class LegacyProductGroupCommandController {
 
     @Operation(summary = "레거시 진열 상태 변경", description = "세토프 어드민 호환 상품그룹의 진열 상태(Y/N)를 변경합니다.")
     @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
+    @RequirePermission(value = "legacy:product-group:write", description = "레거시 진열 상태 변경")
     @PatchMapping(GROUP_DISPLAY_YN)
     public ResponseEntity<LegacyApiResponse<Long>> updateGroupDisplayYn(
             @Parameter(description = "상품그룹 ID") @PathVariable long productGroupId,
@@ -112,6 +116,7 @@ public class LegacyProductGroupCommandController {
 
     @Operation(summary = "레거시 품절 처리", description = "세토프 어드민 호환 상품그룹의 모든 SKU를 품절 처리합니다.")
     @PreAuthorize("@access.isLegacyProductOwnerOrSuperAdmin(#productGroupId)")
+    @RequirePermission(value = "legacy:product-group:write", description = "레거시 품절 처리")
     @PatchMapping(OUT_STOCK)
     public ResponseEntity<LegacyApiResponse<Set<LegacyProductFetchResponse>>> outOfStock(
             @Parameter(description = "품절 처리할 상품그룹 ID") @PathVariable long productGroupId) {
