@@ -31,4 +31,8 @@ public class ImageTransformManager {
     public ImageTransformResponse getTransformRequest(String transformRequestId) {
         return transformClient.getTransformRequest(transformRequestId);
     }
+
+    public String resolveAssetCdnUrl(String assetId) {
+        return transformClient.resolveAssetCdnUrl(assetId);
+    }
 }

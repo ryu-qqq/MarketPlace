@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.imagetransform.service.command;
 import com.ryuqq.marketplace.application.imagetransform.dto.command.CompleteImageTransformCallbackCommand;
 import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
 import com.ryuqq.marketplace.application.imagetransform.internal.ImageTransformCompletionCoordinator;
+import com.ryuqq.marketplace.application.imagetransform.manager.ImageTransformManager;
 import com.ryuqq.marketplace.application.imagetransform.manager.ImageTransformOutboxCommandManager;
 import com.ryuqq.marketplace.application.imagetransform.manager.ImageTransformOutboxReadManager;
 import com.ryuqq.marketplace.application.imagetransform.port.in.command.CompleteImageTransformCallbackUseCase;
@@ -33,14 +34,17 @@ public class CompleteImageTransformCallbackService
     private final ImageTransformOutboxReadManager outboxReadManager;
     private final ImageTransformOutboxCommandManager outboxCommandManager;
     private final ImageTransformCompletionCoordinator completionCoordinator;
+    private final ImageTransformManager transformManager;
 
     public CompleteImageTransformCallbackService(
             ImageTransformOutboxReadManager outboxReadManager,
             ImageTransformOutboxCommandManager outboxCommandManager,
-            ImageTransformCompletionCoordinator completionCoordinator) {
+            ImageTransformCompletionCoordinator completionCoordinator,
+            ImageTransformManager transformManager) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
         this.completionCoordinator = completionCoordinator;
+        this.transformManager = transformManager;
     }
 
     @Override
@@ -59,19 +63,21 @@ public class CompleteImageTransformCallbackService
         Instant now = Instant.now();
 
         if (STATUS_COMPLETED.equals(command.status())) {
+            String resultCdnUrl = transformManager.resolveAssetCdnUrl(command.resultAssetId());
+
             log.info(
                     "이미지 변환 콜백 완료: sourceType={}, sourceImageId={}, variantType={},"
                             + " resultCdnUrl={}",
                     outbox.sourceType(),
                     outbox.sourceImageId(),
                     outbox.variantType(),
-                    command.resultCdnUrl());
+                    resultCdnUrl);
 
             ImageTransformResponse response =
                     ImageTransformResponse.completed(
                             command.transformRequestId(),
                             command.resultAssetId(),
-                            command.resultCdnUrl(),
+                            resultCdnUrl,
                             command.width(),
                             command.height());
             completionCoordinator.complete(outbox, response, now);
