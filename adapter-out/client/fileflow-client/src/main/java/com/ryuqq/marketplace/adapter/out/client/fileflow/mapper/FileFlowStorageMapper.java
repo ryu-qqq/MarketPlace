@@ -92,7 +92,7 @@ public class FileFlowStorageMapper {
     public ExternalDownloadResponse toExternalDownloadResponse(
             DownloadTaskResponse response, String sourceUrl) {
         String newCdnUrl = buildAccessUrl(response.s3Key());
-        return ExternalDownloadResponse.success(sourceUrl, newCdnUrl, response.downloadTaskId());
+        return ExternalDownloadResponse.success(sourceUrl, newCdnUrl, response.assetId());
     }
 
     private String buildAccessUrl(String s3Key) {
