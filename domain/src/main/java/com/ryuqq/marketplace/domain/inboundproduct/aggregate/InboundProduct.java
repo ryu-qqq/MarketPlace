@@ -26,6 +26,7 @@ public class InboundProduct {
     private Long resolvedShippingPolicyId;
     private Long resolvedRefundPolicyId;
     private Long resolvedNoticeCategoryId;
+    private String rawPayload;
     private final Instant createdAt;
     private Instant updatedAt;
 
@@ -41,6 +42,7 @@ public class InboundProduct {
             Long internalProductGroupId,
             Long sellerId,
             InboundProductStatus status,
+            String rawPayload,
             Long resolvedShippingPolicyId,
             Long resolvedRefundPolicyId,
             Long resolvedNoticeCategoryId,
@@ -56,6 +58,7 @@ public class InboundProduct {
         this.internalProductGroupId = internalProductGroupId;
         this.sellerId = sellerId;
         this.status = status;
+        this.rawPayload = rawPayload;
         this.resolvedShippingPolicyId = resolvedShippingPolicyId;
         this.resolvedRefundPolicyId = resolvedRefundPolicyId;
         this.resolvedNoticeCategoryId = resolvedNoticeCategoryId;
@@ -70,6 +73,7 @@ public class InboundProduct {
             String externalBrandCode,
             String externalCategoryCode,
             Long sellerId,
+            String rawPayload,
             Instant now) {
         return new InboundProduct(
                 InboundProductId.forNew(),
@@ -82,6 +86,7 @@ public class InboundProduct {
                 null,
                 sellerId,
                 InboundProductStatus.RECEIVED,
+                rawPayload,
                 null,
                 null,
                 null,
@@ -102,6 +107,7 @@ public class InboundProduct {
             Long internalProductGroupId,
             Long sellerId,
             InboundProductStatus status,
+            String rawPayload,
             Long resolvedShippingPolicyId,
             Long resolvedRefundPolicyId,
             Long resolvedNoticeCategoryId,
@@ -118,6 +124,7 @@ public class InboundProduct {
                 internalProductGroupId,
                 sellerId,
                 status,
+                rawPayload,
                 resolvedShippingPolicyId,
                 resolvedRefundPolicyId,
                 resolvedNoticeCategoryId,
@@ -161,10 +168,17 @@ public class InboundProduct {
         this.updatedAt = now;
     }
 
-    /** 내부 ProductGroup 변환 완료 처리. */
+    /** 내부 ProductGroup 변환 완료 처리. 변환 완료 후 rawPayload는 제거합니다. */
     public void markConverted(Long internalProductGroupId, Instant now) {
         this.internalProductGroupId = internalProductGroupId;
         this.status = InboundProductStatus.CONVERTED;
+        this.rawPayload = null;
+        this.updatedAt = now;
+    }
+
+    /** 수신 payload 갱신 (재수신 시). */
+    public void updateRawPayload(String rawPayload, Instant now) {
+        this.rawPayload = rawPayload;
         this.updatedAt = now;
     }
 
@@ -234,6 +248,10 @@ public class InboundProduct {
 
     public InboundProductStatus status() {
         return status;
+    }
+
+    public String rawPayload() {
+        return rawPayload;
     }
 
     public Long resolvedShippingPolicyId() {
