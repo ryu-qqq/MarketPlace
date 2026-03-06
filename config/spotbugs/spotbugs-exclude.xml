@@ -175,7 +175,7 @@
             <Class name="~.*CacheAdapter"/>
             <Class name="~.*Factory"/>
         </Or>
-        <Bug pattern="URF_UNREAD_FIELD"/>
+        <Bug pattern="URF_UNREAD_FIELD,EI_EXPOSE_REP2"/>
     </Match>
 
     <!-- ========================================
