@@ -180,8 +180,8 @@ scheduler:
         timeout-seconds: 180
 
     description-publish:
-      # Stage: 5분마다
-      cron: "0 */5 * * * *"
+      # Stage: 5초마다
+      cron: "*/5 * * * * *"
       timezone: "Asia/Seoul"
       # Stage: 중간 배치
       batch-size: 30
