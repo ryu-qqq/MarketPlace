@@ -31,6 +31,13 @@ public final class InboundProductJpaEntityFixtures {
     public static final Long DEFAULT_RESOLVED_SHIPPING_POLICY_ID = 50L;
     public static final Long DEFAULT_RESOLVED_REFUND_POLICY_ID = 60L;
     public static final Long DEFAULT_RESOLVED_NOTICE_CATEGORY_ID = 70L;
+    public static final String DEFAULT_RAW_PAYLOAD =
+            "{\"inboundSourceId\":10,\"externalProductCode\":\"EXT-PROD-001\","
+                    + "\"productName\":\"테스트 상품\",\"externalBrandCode\":\"EXT-BRAND-001\","
+                    + "\"externalCategoryCode\":\"EXT-CAT-001\",\"sellerId\":1,"
+                    + "\"regularPrice\":10000,\"currentPrice\":9000,\"optionType\":\"NONE\","
+                    + "\"images\":[],\"optionGroups\":[],\"products\":[],"
+                    + "\"description\":null,\"notice\":null}";
 
     // ===== Entity Fixtures =====
 
@@ -49,6 +56,7 @@ public final class InboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_RECEIVED,
+                DEFAULT_RAW_PAYLOAD,
                 null,
                 null,
                 null,
@@ -70,6 +78,7 @@ public final class InboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_RECEIVED,
+                DEFAULT_RAW_PAYLOAD,
                 null,
                 null,
                 null,
@@ -92,6 +101,7 @@ public final class InboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_RECEIVED,
+                DEFAULT_RAW_PAYLOAD,
                 null,
                 null,
                 null,
@@ -114,6 +124,7 @@ public final class InboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_MAPPED,
+                DEFAULT_RAW_PAYLOAD,
                 null,
                 null,
                 null,
@@ -135,6 +146,7 @@ public final class InboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_MAPPED,
+                DEFAULT_RAW_PAYLOAD,
                 DEFAULT_RESOLVED_SHIPPING_POLICY_ID,
                 DEFAULT_RESOLVED_REFUND_POLICY_ID,
                 DEFAULT_RESOLVED_NOTICE_CATEGORY_ID,
@@ -157,6 +169,7 @@ public final class InboundProductJpaEntityFixtures {
                 DEFAULT_INTERNAL_PRODUCT_GROUP_ID,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_CONVERTED,
+                null,
                 DEFAULT_RESOLVED_SHIPPING_POLICY_ID,
                 DEFAULT_RESOLVED_REFUND_POLICY_ID,
                 DEFAULT_RESOLVED_NOTICE_CATEGORY_ID,
@@ -178,6 +191,7 @@ public final class InboundProductJpaEntityFixtures {
                 DEFAULT_INTERNAL_PRODUCT_GROUP_ID,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_CONVERTED,
+                null,
                 DEFAULT_RESOLVED_SHIPPING_POLICY_ID,
                 DEFAULT_RESOLVED_REFUND_POLICY_ID,
                 DEFAULT_RESOLVED_NOTICE_CATEGORY_ID,
@@ -200,6 +214,7 @@ public final class InboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_RECEIVED,
+                DEFAULT_RAW_PAYLOAD,
                 null,
                 null,
                 null,
@@ -222,6 +237,7 @@ public final class InboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_RECEIVED,
+                DEFAULT_RAW_PAYLOAD,
                 null,
                 null,
                 null,
@@ -243,6 +259,7 @@ public final class InboundProductJpaEntityFixtures {
                 DEFAULT_INTERNAL_PRODUCT_GROUP_ID,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_RECEIVED,
+                DEFAULT_RAW_PAYLOAD,
                 DEFAULT_RESOLVED_SHIPPING_POLICY_ID,
                 DEFAULT_RESOLVED_REFUND_POLICY_ID,
                 DEFAULT_RESOLVED_NOTICE_CATEGORY_ID,
@@ -264,6 +281,7 @@ public final class InboundProductJpaEntityFixtures {
                 DEFAULT_INTERNAL_PRODUCT_GROUP_ID,
                 DEFAULT_SELLER_ID,
                 DEFAULT_STATUS_RECEIVED,
+                DEFAULT_RAW_PAYLOAD,
                 DEFAULT_RESOLVED_SHIPPING_POLICY_ID,
                 DEFAULT_RESOLVED_REFUND_POLICY_ID,
                 DEFAULT_RESOLVED_NOTICE_CATEGORY_ID,
