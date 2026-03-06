@@ -90,8 +90,6 @@ public class SellerCommandController {
      *
      * <p><b>권한 요구사항:</b> 최고 마스터 권한 필요 (SUPER_ADMIN)
      *
-     * <p>TODO: 권한 체크 구현 필요 - Gateway에서 처리 또는 @PreAuthorize 적용
-     *
      * @param request 등록 요청 DTO
      * @return 생성된 셀러 ID
      */
@@ -104,7 +102,7 @@ public class SellerCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller:write')")
     @RequirePermission(value = "seller:write", description = "셀러 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<SellerIdApiResponse>> registerSeller(
@@ -124,10 +122,6 @@ public class SellerCommandController {
      *
      * <p><b>권한 요구사항:</b> 최고 마스터 권한 필요 (SUPER_ADMIN)
      *
-     * <p>TODO: 권한 체크 구현 필요 - Gateway에서 처리 또는 @PreAuthorize 적용
-     *
-     * <p>TODO: 계약정보(ContractInfo), 정산정보(SettlementInfo) 추가 예정 - UseCase 구현 후
-     *
      * @param sellerId 셀러 ID
      * @param request 전체 수정 요청 DTO
      * @return 빈 응답 (204 No Content)
@@ -146,7 +140,7 @@ public class SellerCommandController {
                 responseCode = "404",
                 description = "셀러를 찾을 수 없음")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller:write')")
     @RequirePermission(value = "seller:write", description = "셀러 전체정보 수정")
     @PutMapping(SellerAdminEndpoints.SELLER_ID)
     public ResponseEntity<Void> updateSellerFull(

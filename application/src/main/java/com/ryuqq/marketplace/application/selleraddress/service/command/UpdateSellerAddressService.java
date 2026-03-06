@@ -3,16 +3,19 @@ package com.ryuqq.marketplace.application.selleraddress.service.command;
 import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.selleraddress.dto.command.UpdateSellerAddressCommand;
 import com.ryuqq.marketplace.application.selleraddress.factory.SellerAddressCommandFactory;
+import com.ryuqq.marketplace.application.selleraddress.internal.SellerAddressOutboundFacade;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressCommandManager;
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressReadManager;
 import com.ryuqq.marketplace.application.selleraddress.port.in.command.UpdateSellerAddressUseCase;
 import com.ryuqq.marketplace.application.selleraddress.validator.SellerAddressValidator;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddress;
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddressUpdateData;
 import com.ryuqq.marketplace.domain.selleraddress.id.SellerAddressId;
 import java.time.Instant;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /** 셀러 주소 수정 Service. (기본 주소 전환 포함: defaultAddress=true 시 기존 기본 해제 후 해당 주소를 기본으로 설정) */
 @Service
@@ -22,18 +25,22 @@ public class UpdateSellerAddressService implements UpdateSellerAddressUseCase {
     private final SellerAddressCommandManager commandManager;
     private final SellerAddressReadManager readManager;
     private final SellerAddressValidator validator;
+    private final SellerAddressOutboundFacade outboundFacade;
 
     public UpdateSellerAddressService(
             SellerAddressCommandFactory commandFactory,
             SellerAddressCommandManager commandManager,
             SellerAddressReadManager readManager,
-            SellerAddressValidator validator) {
+            SellerAddressValidator validator,
+            SellerAddressOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
         this.readManager = readManager;
         this.validator = validator;
+        this.outboundFacade = outboundFacade;
     }
 
+    @Transactional
     @Override
     public void execute(UpdateSellerAddressCommand command) {
         UpdateContext<SellerAddressId, SellerAddressUpdateData> context =
@@ -46,7 +53,8 @@ public class UpdateSellerAddressService implements UpdateSellerAddressUseCase {
             unmarkExistingDefaultThenMarkThis(address.sellerId(), address, context.changedAt());
         }
 
-        commandManager.persist(address);
+        outboundFacade.persistWithSync(
+                address, OutboundSellerOperationType.UPDATE, context.changedAt());
     }
 
     private void unmarkExistingDefaultThenMarkThis(

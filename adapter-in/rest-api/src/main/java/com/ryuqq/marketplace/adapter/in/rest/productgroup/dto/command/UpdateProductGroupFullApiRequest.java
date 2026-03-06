@@ -50,10 +50,10 @@ public record UpdateProductGroupFullApiRequest(
                 @Min(value = 1, message = "환불 정책 ID는 1 이상이어야 합니다")
                 Long refundPolicyId,
         @Schema(
-                        description = "옵션 타입 (COMBINATION, SINGLE, NONE)",
+                        description =
+                                "옵션 타입 (COMBINATION, SINGLE, NONE). 미입력 시 optionGroups 수로 자동 결정",
                         example = "COMBINATION",
-                        requiredMode = Schema.RequiredMode.REQUIRED)
-                @NotBlank(message = "옵션 타입은 필수입니다")
+                        nullable = true)
                 String optionType,
         @Schema(description = "이미지 목록", requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotEmpty(message = "이미지는 최소 1개 이상 필요합니다")
@@ -166,12 +166,7 @@ public record UpdateProductGroupFullApiRequest(
             @Schema(description = "상품 ID (수정 시 식별용, 신규 시 null)", example = "1", nullable = true)
                     @JsonProperty("productId")
                     Long productId,
-            @Schema(
-                            description = "SKU 코드",
-                            example = "SKU-001",
-                            requiredMode = Schema.RequiredMode.REQUIRED)
-                    @NotBlank(message = "SKU 코드는 필수입니다")
-                    String skuCode,
+            @Schema(description = "SKU 코드", example = "SKU-001", nullable = true) String skuCode,
             @Schema(
                             description = "정상가",
                             example = "100000",

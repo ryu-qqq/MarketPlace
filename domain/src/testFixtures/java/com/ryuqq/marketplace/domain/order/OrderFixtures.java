@@ -120,10 +120,9 @@ public final class OrderFixtures {
         int quantity = 2;
         Money totalAmount = Money.of(20000);
         Money discountAmount = Money.of(0);
-        Money mileageUsed = Money.of(0);
         Money paymentAmount = Money.of(20000);
         return ExternalOrderItemPrice.of(
-                unitPrice, quantity, totalAmount, discountAmount, mileageUsed, paymentAmount);
+                unitPrice, quantity, totalAmount, discountAmount, paymentAmount);
     }
 
     // ===== OrderItem Fixtures =====

@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("CommonCodeQueryController REST Docs 테스트")
 class CommonCodeQueryControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/market/common-codes";
+    private static final String BASE_URL = "/api/v1/market/public/common-codes";
 
     @Autowired private MockMvc mockMvc;
 
@@ -77,7 +77,7 @@ class CommonCodeQueryControllerRestDocsTest {
             // when & then
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(BASE_URL)
-                                    .param("commonCodeTypeId", "1")
+                                    .param("code", "PAYMENT_METHOD")
                                     .param("page", "0")
                                     .param("size", "20"))
                     .andExpect(status().isOk())
@@ -92,13 +92,13 @@ class CommonCodeQueryControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     queryParameters(
-                                            parameterWithName("commonCodeTypeId")
-                                                    .description("공통 코드 타입 ID (필수)"),
+                                            parameterWithName("code")
+                                                    .description(
+                                                            "공통 코드 타입 코드 (정확 일치,"
+                                                                    + " 예: PAYMENT_METHOD)")
+                                                    .optional(),
                                             parameterWithName("active")
                                                     .description("활성화 여부 필터")
-                                                    .optional(),
-                                            parameterWithName("code")
-                                                    .description("코드 검색 (부분 일치)")
                                                     .optional(),
                                             parameterWithName("sortKey")
                                                     .description(

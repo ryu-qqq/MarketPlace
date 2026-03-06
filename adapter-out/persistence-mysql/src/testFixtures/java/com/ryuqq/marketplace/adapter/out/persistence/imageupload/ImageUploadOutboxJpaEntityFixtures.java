@@ -25,6 +25,7 @@ public final class ImageUploadOutboxJpaEntityFixtures {
     public static final int DEFAULT_RETRY_COUNT = 0;
     public static final int DEFAULT_MAX_RETRY = 3;
     public static final long DEFAULT_VERSION = 0L;
+    public static final String DEFAULT_DOWNLOAD_TASK_ID = "dtask-test-12345";
     private static final String IDEMPOTENCY_KEY_PREFIX = "IUO";
 
     private static String generateIdempotencyKey(
@@ -59,7 +60,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 null,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now),
+                null);
     }
 
     /** PROCESSING 상태의 Outbox Entity 생성 (단위 테스트용, DEFAULT_ID). */
@@ -78,7 +80,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 null,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now),
+                DEFAULT_DOWNLOAD_TASK_ID);
     }
 
     /** COMPLETED 상태의 Outbox Entity 생성 (단위 테스트용, DEFAULT_ID). */
@@ -97,7 +100,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 now,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now),
+                null);
     }
 
     /** FAILED 상태의 Outbox Entity 생성 (단위 테스트용, DEFAULT_ID). */
@@ -116,7 +120,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 now,
                 "연결 실패로 인한 최대 재시도 초과",
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now),
+                null);
     }
 
     // ===== Entity Fixtures (통합 테스트용 - ID null) =====
@@ -137,7 +142,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 null,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now),
+                null);
     }
 
     /** sourceId를 지정한 PENDING 상태 Entity 생성 (통합 테스트용, ID null). */
@@ -156,7 +162,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 null,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, sourceId, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, sourceId, now),
+                null);
     }
 
     /** sourceType을 지정한 PENDING 상태 Entity 생성 (통합 테스트용, ID null). */
@@ -176,7 +183,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 null,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(sourceType, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(sourceType, DEFAULT_SOURCE_ID, now),
+                null);
     }
 
     /** sourceId와 sourceType을 지정한 PENDING 상태 Entity 생성 (통합 테스트용, ID null). */
@@ -196,10 +204,11 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 null,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(sourceType, sourceId, now));
+                generateIdempotencyKey(sourceType, sourceId, now),
+                null);
     }
 
-    /** PROCESSING 상태의 Outbox Entity 생성 (통합 테스트용, ID null, updatedAt이 최신). */
+    /** PROCESSING 상태의 Outbox Entity 생성 (통합 테스트용, ID null, downloadTaskId 포함). */
     public static ImageUploadOutboxJpaEntity newProcessingEntity() {
         Instant now = Instant.now();
         return ImageUploadOutboxJpaEntity.create(
@@ -215,7 +224,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 null,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now),
+                DEFAULT_DOWNLOAD_TASK_ID);
     }
 
     /** COMPLETED 상태의 Outbox Entity 생성 (통합 테스트용, ID null). */
@@ -234,7 +244,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 now,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now),
+                null);
     }
 
     /** FAILED 상태의 Outbox Entity 생성 (통합 테스트용, ID null). */
@@ -253,7 +264,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 now,
                 "연결 실패로 인한 최대 재시도 초과",
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now),
+                null);
     }
 
     // ===== 특수 시나리오 Fixtures =====
@@ -278,7 +290,8 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 null,
                 "이전 시도 실패",
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, now),
+                null);
     }
 
     /**
@@ -302,6 +315,49 @@ public final class ImageUploadOutboxJpaEntityFixtures {
                 null,
                 null,
                 DEFAULT_VERSION,
-                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, pastTime));
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, pastTime),
+                DEFAULT_DOWNLOAD_TASK_ID);
+    }
+
+    /** 복구 가능한 FAILED Entity (통합 테스트용, processedAt이 과거). */
+    public static ImageUploadOutboxJpaEntity recoverableFailedEntity(long secondsAgo) {
+        Instant now = Instant.now();
+        Instant pastTime = now.minusSeconds(secondsAgo);
+        return ImageUploadOutboxJpaEntity.create(
+                null,
+                DEFAULT_SOURCE_ID,
+                DEFAULT_SOURCE_TYPE,
+                DEFAULT_ORIGIN_URL,
+                ImageUploadOutboxStatus.FAILED,
+                DEFAULT_MAX_RETRY,
+                DEFAULT_MAX_RETRY,
+                pastTime,
+                pastTime,
+                pastTime,
+                "연결 실패로 인한 최대 재시도 초과",
+                DEFAULT_VERSION,
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, pastTime),
+                null);
+    }
+
+    /** 복구 불가 FAILED Entity (잘못된 요청 에러, 통합 테스트용). */
+    public static ImageUploadOutboxJpaEntity unrecoverableFailedEntity(long secondsAgo) {
+        Instant now = Instant.now();
+        Instant pastTime = now.minusSeconds(secondsAgo);
+        return ImageUploadOutboxJpaEntity.create(
+                null,
+                DEFAULT_SOURCE_ID,
+                DEFAULT_SOURCE_TYPE,
+                DEFAULT_ORIGIN_URL,
+                ImageUploadOutboxStatus.FAILED,
+                DEFAULT_MAX_RETRY,
+                DEFAULT_MAX_RETRY,
+                pastTime,
+                pastTime,
+                pastTime,
+                "잘못된 요청: 유효하지 않은 URL",
+                DEFAULT_VERSION,
+                generateIdempotencyKey(DEFAULT_SOURCE_TYPE, DEFAULT_SOURCE_ID, pastTime),
+                null);
     }
 }

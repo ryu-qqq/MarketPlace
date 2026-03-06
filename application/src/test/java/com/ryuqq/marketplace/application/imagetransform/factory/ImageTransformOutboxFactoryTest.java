@@ -27,7 +27,8 @@ class ImageTransformOutboxFactoryTest {
 
     @Nested
     @DisplayName(
-            "createOutboxes(sourceImageId, sourceType, uploadedUrl) - 전체 Variant 타입으로 Outbox 생성")
+            "createOutboxes(sourceImageId, sourceType, uploadedUrl, fileAssetId) - 전체 Variant 타입으로"
+                    + " Outbox 생성")
     class CreateAllOutboxesTest {
 
         @Test
@@ -37,10 +38,11 @@ class ImageTransformOutboxFactoryTest {
             Long sourceImageId = ImageTransformFixtures.DEFAULT_SOURCE_IMAGE_ID;
             ImageSourceType sourceType = ImageTransformFixtures.DEFAULT_SOURCE_TYPE;
             ImageUrl uploadedUrl = ImageUrl.of(ImageTransformFixtures.DEFAULT_UPLOADED_URL);
+            String fileAssetId = ImageTransformFixtures.DEFAULT_FILE_ASSET_ID;
 
             // when
             List<ImageTransformOutbox> outboxes =
-                    sut.createOutboxes(sourceImageId, sourceType, uploadedUrl);
+                    sut.createOutboxes(sourceImageId, sourceType, uploadedUrl, fileAssetId);
 
             // then
             assertThat(outboxes).hasSize(ImageVariantType.values().length);
@@ -53,10 +55,11 @@ class ImageTransformOutboxFactoryTest {
             Long sourceImageId = ImageTransformFixtures.DEFAULT_SOURCE_IMAGE_ID;
             ImageSourceType sourceType = ImageTransformFixtures.DEFAULT_SOURCE_TYPE;
             ImageUrl uploadedUrl = ImageUrl.of(ImageTransformFixtures.DEFAULT_UPLOADED_URL);
+            String fileAssetId = ImageTransformFixtures.DEFAULT_FILE_ASSET_ID;
 
             // when
             List<ImageTransformOutbox> outboxes =
-                    sut.createOutboxes(sourceImageId, sourceType, uploadedUrl);
+                    sut.createOutboxes(sourceImageId, sourceType, uploadedUrl, fileAssetId);
 
             // then
             assertThat(outboxes).allMatch(ImageTransformOutbox::isPending);
@@ -69,10 +72,11 @@ class ImageTransformOutboxFactoryTest {
             Long sourceImageId = ImageTransformFixtures.DEFAULT_SOURCE_IMAGE_ID;
             ImageSourceType sourceType = ImageTransformFixtures.DEFAULT_SOURCE_TYPE;
             ImageUrl uploadedUrl = ImageUrl.of(ImageTransformFixtures.DEFAULT_UPLOADED_URL);
+            String fileAssetId = ImageTransformFixtures.DEFAULT_FILE_ASSET_ID;
 
             // when
             List<ImageTransformOutbox> outboxes =
-                    sut.createOutboxes(sourceImageId, sourceType, uploadedUrl);
+                    sut.createOutboxes(sourceImageId, sourceType, uploadedUrl, fileAssetId);
 
             // then
             List<ImageVariantType> variantTypes =
@@ -87,10 +91,11 @@ class ImageTransformOutboxFactoryTest {
             Long sourceImageId = 42L;
             ImageSourceType sourceType = ImageSourceType.PRODUCT_GROUP_IMAGE;
             ImageUrl uploadedUrl = ImageUrl.of(ImageTransformFixtures.DEFAULT_UPLOADED_URL);
+            String fileAssetId = ImageTransformFixtures.DEFAULT_FILE_ASSET_ID;
 
             // when
             List<ImageTransformOutbox> outboxes =
-                    sut.createOutboxes(sourceImageId, sourceType, uploadedUrl);
+                    sut.createOutboxes(sourceImageId, sourceType, uploadedUrl, fileAssetId);
 
             // then
             assertThat(outboxes).allMatch(o -> o.sourceImageId().equals(sourceImageId));

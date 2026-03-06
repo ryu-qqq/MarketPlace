@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.time.Instant;
@@ -41,6 +42,21 @@ public class OutboundSyncCommandFactory {
                                         SyncType.CREATE,
                                         "{}",
                                         now))
+                .toList();
+    }
+
+    /** 지정된 SyncType으로 채널별 OutboundSyncOutbox 생성. (UPDATE/DELETE 등 범용) */
+    public List<OutboundSyncOutbox> createOutboxesForSync(
+            ProductGroupId productGroupId,
+            SellerId sellerId,
+            List<SalesChannelId> salesChannelIds,
+            SyncType syncType) {
+        Instant now = timeProvider.now();
+        return salesChannelIds.stream()
+                .map(
+                        channelId ->
+                                OutboundSyncOutbox.forNew(
+                                        productGroupId, channelId, sellerId, syncType, "{}", now))
                 .toList();
     }
 

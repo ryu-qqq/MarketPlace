@@ -78,6 +78,18 @@ public class SellerApplicationConditionBuilder {
     }
 
     /**
+     * 승인된 셀러 ID 일치 조건.
+     *
+     * @param approvedSellerId 승인된 셀러 ID
+     * @return 일치 조건
+     */
+    public BooleanExpression approvedSellerIdEq(Long approvedSellerId) {
+        return approvedSellerId != null
+                ? sellerApplicationJpaEntity.approvedSellerId.eq(approvedSellerId)
+                : null;
+    }
+
+    /**
      * 회사명 LIKE 조건.
      *
      * @param companyName 회사명 검색어

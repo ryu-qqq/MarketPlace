@@ -53,6 +53,8 @@ public class ShipmentQueryDslRepository {
                 .selectFrom(shipment)
                 .where(
                         conditionBuilder.statusIn(criteria),
+                        conditionBuilder.sellerIdsIn(criteria),
+                        conditionBuilder.shopOrderNosIn(criteria),
                         conditionBuilder.searchCondition(criteria),
                         conditionBuilder.dateRange(criteria),
                         conditionBuilder.notDeleted())
@@ -69,6 +71,8 @@ public class ShipmentQueryDslRepository {
                         .from(shipment)
                         .where(
                                 conditionBuilder.statusIn(criteria),
+                                conditionBuilder.sellerIdsIn(criteria),
+                                conditionBuilder.shopOrderNosIn(criteria),
                                 conditionBuilder.searchCondition(criteria),
                                 conditionBuilder.dateRange(criteria),
                                 conditionBuilder.notDeleted())

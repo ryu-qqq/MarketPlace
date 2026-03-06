@@ -207,7 +207,7 @@ class ProductJpaEntityMapperTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT 상태 Entity를 Domain으로 변환합니다")
+        @DisplayName("SOLD_OUT 상태 Entity를 Domain으로 변환합니다")
         void toDomain_WithSoldOutEntity_ConvertsStatus() {
             // given
             ProductJpaEntity entity = ProductJpaEntityFixtures.soldOutEntity(3L);
@@ -218,7 +218,7 @@ class ProductJpaEntityMapperTest {
             Product domain = mapper.toDomain(entity, mappings);
 
             // then
-            assertThat(domain.status()).isEqualTo(ProductStatus.SOLDOUT);
+            assertThat(domain.status()).isEqualTo(ProductStatus.SOLD_OUT);
         }
     }
 

@@ -153,4 +153,16 @@ public class SellerAdminReadManager {
     public boolean existsByLoginId(String loginId) {
         return queryPort.existsByLoginId(loginId);
     }
+
+    /**
+     * 이름과 로그인 ID로 셀러 관리자를 조회합니다.
+     *
+     * @param name 관리자 이름
+     * @param loginId 로그인 ID
+     * @return 셀러 관리자 (Optional)
+     */
+    @Transactional(readOnly = true)
+    public Optional<SellerAdmin> findByNameAndLoginId(String name, String loginId) {
+        return queryPort.findByNameAndLoginId(name, loginId);
+    }
 }

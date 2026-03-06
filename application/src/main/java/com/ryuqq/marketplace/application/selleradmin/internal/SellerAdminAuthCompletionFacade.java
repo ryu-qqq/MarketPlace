@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.selleradmin.internal;
 
 import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminAuthOutboxCommandManager;
+import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminAuthOutboxReadManager;
 import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminCommandManager;
 import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminEmailOutboxCommandManager;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdmin;
@@ -26,14 +27,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class SellerAdminAuthCompletionFacade {
 
     private final SellerAdminAuthOutboxCommandManager outboxCommandManager;
+    private final SellerAdminAuthOutboxReadManager outboxReadManager;
     private final SellerAdminCommandManager sellerAdminCommandManager;
     private final SellerAdminEmailOutboxCommandManager emailOutboxCommandManager;
 
     public SellerAdminAuthCompletionFacade(
             SellerAdminAuthOutboxCommandManager outboxCommandManager,
+            SellerAdminAuthOutboxReadManager outboxReadManager,
             SellerAdminCommandManager sellerAdminCommandManager,
             SellerAdminEmailOutboxCommandManager emailOutboxCommandManager) {
         this.outboxCommandManager = outboxCommandManager;
+        this.outboxReadManager = outboxReadManager;
         this.sellerAdminCommandManager = sellerAdminCommandManager;
         this.emailOutboxCommandManager = emailOutboxCommandManager;
     }
@@ -62,8 +66,9 @@ public class SellerAdminAuthCompletionFacade {
             String authUserId,
             String emailPayload,
             Instant now) {
-        outbox.complete(now);
-        outboxCommandManager.persist(outbox);
+        SellerAdminAuthOutbox freshOutbox = outboxReadManager.getById(outbox.idValue());
+        freshOutbox.complete(now);
+        outboxCommandManager.persist(freshOutbox);
 
         sellerAdmin.updateAuthUserId(authUserId, now);
         sellerAdminCommandManager.persist(sellerAdmin);

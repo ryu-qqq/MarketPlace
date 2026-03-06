@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,11 @@ public class ImageTransformOutboxReadManager {
 
     public ImageTransformOutboxReadManager(ImageTransformOutboxQueryPort queryPort) {
         this.queryPort = queryPort;
+    }
+
+    @Transactional(readOnly = true)
+    public ImageTransformOutbox getById(Long outboxId) {
+        return queryPort.getById(outboxId);
     }
 
     @Transactional(readOnly = true)
@@ -40,5 +46,11 @@ public class ImageTransformOutboxReadManager {
     public Map<Long, Set<ImageVariantType>> findActiveVariantTypesBySourceImageIds(
             List<Long> sourceImageIds, List<ImageVariantType> variantTypes) {
         return queryPort.findActiveVariantTypesBySourceImageIds(sourceImageIds, variantTypes);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ImageTransformOutbox> findProcessingByTransformRequestId(
+            String transformRequestId) {
+        return queryPort.findProcessingByTransformRequestId(transformRequestId);
     }
 }

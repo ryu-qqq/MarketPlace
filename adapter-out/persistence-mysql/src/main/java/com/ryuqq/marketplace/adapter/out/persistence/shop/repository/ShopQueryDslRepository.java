@@ -8,6 +8,8 @@ import com.ryuqq.marketplace.adapter.out.persistence.shop.entity.ShopJpaEntity;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
 import com.ryuqq.marketplace.domain.shop.query.ShopSearchCriteria;
 import com.ryuqq.marketplace.domain.shop.query.ShopSortKey;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -34,6 +36,16 @@ public class ShopQueryDslRepository {
                         .where(conditionBuilder.idEq(id), conditionBuilder.notDeleted())
                         .fetchOne();
         return Optional.ofNullable(entity);
+    }
+
+    public List<ShopJpaEntity> findByIds(Collection<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return queryFactory
+                .selectFrom(shop)
+                .where(shop.id.in(ids), conditionBuilder.notDeleted())
+                .fetch();
     }
 
     public List<ShopJpaEntity> findByCriteria(ShopSearchCriteria criteria) {
@@ -88,6 +100,16 @@ public class ShopQueryDslRepository {
                                 conditionBuilder.notDeleted())
                         .fetchFirst();
         return count != null;
+    }
+
+    public List<ShopJpaEntity> findActiveBySalesChannelId(Long salesChannelId) {
+        return queryFactory
+                .selectFrom(shop)
+                .where(
+                        conditionBuilder.salesChannelIdEq(salesChannelId),
+                        shop.status.eq("ACTIVE"),
+                        conditionBuilder.notDeleted())
+                .fetch();
     }
 
     private OrderSpecifier<?> resolveOrderSpecifier(ShopSearchCriteria criteria) {

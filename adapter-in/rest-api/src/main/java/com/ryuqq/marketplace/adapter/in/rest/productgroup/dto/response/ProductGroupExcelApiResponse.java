@@ -29,7 +29,7 @@ public record ProductGroupExcelApiResponse(
         @Schema(description = "상품 그룹명", example = "나이키 에어맥스 90") String productGroupName,
         @Schema(description = "옵션 유형 (NONE, SINGLE, COMBINATION)", example = "COMBINATION")
                 String optionType,
-        @Schema(description = "상태 (DRAFT, ACTIVE, INACTIVE, SOLDOUT, DELETED)", example = "ACTIVE")
+        @Schema(description = "상태 (DRAFT, ACTIVE, INACTIVE, SOLD_OUT, DELETED)", example = "ACTIVE")
                 String status,
         @Schema(description = "썸네일 URL", example = "https://cdn.example.com/thumbnail.jpg")
                 String thumbnailUrl,

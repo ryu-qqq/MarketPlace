@@ -45,6 +45,9 @@ public class ImageTransformOutboxJpaEntity {
     @Column(name = "variant_type", nullable = false, length = 30)
     private ImageVariantType variantType;
 
+    @Column(name = "file_asset_id", length = 100)
+    private String fileAssetId;
+
     @Column(name = "transform_request_id", length = 100)
     private String transformRequestId;
 
@@ -85,6 +88,7 @@ public class ImageTransformOutboxJpaEntity {
             ImageSourceType sourceType,
             String uploadedUrl,
             ImageVariantType variantType,
+            String fileAssetId,
             String transformRequestId,
             ImageTransformOutboxStatus status,
             int retryCount,
@@ -100,6 +104,7 @@ public class ImageTransformOutboxJpaEntity {
         this.sourceType = sourceType;
         this.uploadedUrl = uploadedUrl;
         this.variantType = variantType;
+        this.fileAssetId = fileAssetId;
         this.transformRequestId = transformRequestId;
         this.status = status;
         this.retryCount = retryCount;
@@ -118,6 +123,7 @@ public class ImageTransformOutboxJpaEntity {
             ImageSourceType sourceType,
             String uploadedUrl,
             ImageVariantType variantType,
+            String fileAssetId,
             String transformRequestId,
             ImageTransformOutboxStatus status,
             int retryCount,
@@ -134,6 +140,7 @@ public class ImageTransformOutboxJpaEntity {
                 sourceType,
                 uploadedUrl,
                 variantType,
+                fileAssetId,
                 transformRequestId,
                 status,
                 retryCount,
@@ -164,6 +171,10 @@ public class ImageTransformOutboxJpaEntity {
 
     public ImageVariantType getVariantType() {
         return variantType;
+    }
+
+    public String getFileAssetId() {
+        return fileAssetId;
     }
 
     public String getTransformRequestId() {

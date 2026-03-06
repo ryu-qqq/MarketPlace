@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(prefix = "spring.ai.anthropic", name = "api-key")
+@ConditionalOnProperty(prefix = "spring.ai.openai", name = "api-key")
 public class NoticeAnalysisAiAdapter implements NoticeAnalysisAiClient {
 
     private static final Logger log = LoggerFactory.getLogger(NoticeAnalysisAiAdapter.class);

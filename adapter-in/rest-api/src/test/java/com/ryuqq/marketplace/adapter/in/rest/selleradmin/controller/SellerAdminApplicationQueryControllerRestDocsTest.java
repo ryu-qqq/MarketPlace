@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.selleradmin.SellerAdminApplicationApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.selleradmin.SellerAdminApplicationEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.selleradmin.mapper.SellerAdminApplicationQueryApiMapper;
@@ -51,6 +52,7 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
     @MockitoBean private GetSellerAdminApplicationUseCase getUseCase;
     @MockitoBean private SearchSellerAdminApplicationsUseCase searchUseCase;
     @MockitoBean private SellerAdminApplicationQueryApiMapper mapper;
+    @MockitoBean private MarketAccessChecker accessChecker;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @Nested
@@ -142,7 +144,7 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
             SellerAdminApplicationPageResult pageResult =
                     SellerAdminApplicationApiFixtures.pageResult(3, 0, 20);
 
-            given(mapper.toSearchParams(any())).willReturn(null);
+            given(mapper.toSearchParams(any(), any())).willReturn(null);
             given(searchUseCase.execute(any())).willReturn(pageResult);
 
             // when & then
@@ -257,7 +259,7 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
             SellerAdminApplicationPageResult pageResult =
                     SellerAdminApplicationApiFixtures.pageResult(1, 0, 20);
 
-            given(mapper.toSearchParams(any())).willReturn(null);
+            given(mapper.toSearchParams(any(), any())).willReturn(null);
             given(searchUseCase.execute(any())).willReturn(pageResult);
 
             // when & then
@@ -277,7 +279,7 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
             SellerAdminApplicationPageResult pageResult =
                     SellerAdminApplicationApiFixtures.pageResult(1, 0, 20);
 
-            given(mapper.toSearchParams(any())).willReturn(null);
+            given(mapper.toSearchParams(any(), any())).willReturn(null);
             given(searchUseCase.execute(any())).willReturn(pageResult);
 
             // when & then
@@ -299,7 +301,7 @@ class SellerAdminApplicationQueryControllerRestDocsTest {
             SellerAdminApplicationPageResult emptyResult =
                     SellerAdminApplicationApiFixtures.emptyPageResult();
 
-            given(mapper.toSearchParams(any())).willReturn(null);
+            given(mapper.toSearchParams(any(), any())).willReturn(null);
             given(searchUseCase.execute(any())).willReturn(emptyResult);
 
             // when & then

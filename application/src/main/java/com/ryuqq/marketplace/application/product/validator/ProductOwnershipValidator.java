@@ -48,4 +48,16 @@ public class ProductOwnershipValidator {
 
         return products;
     }
+
+    /**
+     * 소유권 검증 없이 상품 목록을 조회합니다 (SUPER_ADMIN 전용).
+     *
+     * @param productIds 상품 ID 목록
+     * @return 조회된 상품 목록
+     * @throws com.ryuqq.marketplace.domain.product.exception.ProductNotFoundException 상품을 찾을 수 없는
+     *     경우
+     */
+    public List<Product> getWithoutOwnershipCheck(List<ProductId> productIds) {
+        return productReadManager.getByIds(productIds);
+    }
 }

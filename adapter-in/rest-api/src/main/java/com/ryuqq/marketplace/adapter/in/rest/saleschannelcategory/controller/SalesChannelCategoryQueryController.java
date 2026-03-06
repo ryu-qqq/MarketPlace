@@ -40,7 +40,7 @@ public class SalesChannelCategoryQueryController {
     }
 
     @Operation(summary = "외부채널 카테고리 목록 조회", description = "외부채널 카테고리 목록을 복합 조건으로 조회합니다.")
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('sales-channel-category:read')")
     @RequirePermission(value = "sales-channel-category:read", description = "외부채널 카테고리 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<SalesChannelCategoryApiResponse>>>

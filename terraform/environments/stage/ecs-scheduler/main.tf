@@ -277,7 +277,7 @@ module "scheduler_task_role" {
               "sqs:GetQueueUrl",
               "sqs:GetQueueAttributes"
             ]
-            Resource = "arn:aws:sqs:${var.aws_region}:*:${var.project_name}-*"
+            Resource = "arn:aws:sqs:${var.aws_region}:*:${var.environment}-${var.project_name}-*"
           }
         ]
       })
@@ -451,7 +451,13 @@ module "ecs_service" {
     # AuthHub
     { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local:8080" },
     # FileFlow
-    { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-prod.connectly.local:8080" },
+    { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-stage.connectly.local:8080" },
+    # Intelligence SQS Queue URLs
+    { name = "SQS_INTELLIGENCE_ORCHESTRATION_URL", value = local.sqs_intelligence_orchestration_queue_url },
+    { name = "SQS_INTELLIGENCE_DESCRIPTION_ANALYSIS_URL", value = local.sqs_intelligence_description_analysis_queue_url },
+    { name = "SQS_INTELLIGENCE_OPTION_ANALYSIS_URL", value = local.sqs_intelligence_option_analysis_queue_url },
+    { name = "SQS_INTELLIGENCE_NOTICE_ANALYSIS_URL", value = local.sqs_intelligence_notice_analysis_queue_url },
+    { name = "SQS_INTELLIGENCE_AGGREGATION_URL", value = local.sqs_intelligence_aggregation_queue_url },
     # Sentry
     { name = "SENTRY_DSN", value = local.sentry_dsn },
     # Legacy DB (same host, different schema)
@@ -463,8 +469,9 @@ module "ecs_service" {
   container_secrets = [
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
-    { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
+    { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
     { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn },
+    { name = "ANTHROPIC_API_KEY", valueFrom = data.aws_ssm_parameter.anthropic_api_key.arn },
     { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
   ]
 

@@ -7,6 +7,13 @@ import com.ryuqq.marketplace.adapter.out.persistence.PersistenceMysqlTestApplica
 import com.ryuqq.marketplace.adapter.out.persistence.commoncode.CommonCodeJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.commoncode.condition.CommonCodeConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.commoncode.entity.CommonCodeJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.commoncodetype.CommonCodeTypeJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.commoncodetype.entity.CommonCodeTypeJpaEntity;
+import com.ryuqq.marketplace.domain.common.vo.PageRequest;
+import com.ryuqq.marketplace.domain.common.vo.QueryContext;
+import com.ryuqq.marketplace.domain.common.vo.SortDirection;
+import com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria;
+import com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSortKey;
 import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.util.List;
@@ -44,6 +51,13 @@ class CommonCodeQueryDslRepositoryTest {
     }
 
     private CommonCodeJpaEntity persist(CommonCodeJpaEntity entity) {
+        entityManager.persist(entity);
+        entityManager.flush();
+        entityManager.clear();
+        return entity;
+    }
+
+    private CommonCodeTypeJpaEntity persistType(CommonCodeTypeJpaEntity entity) {
         entityManager.persist(entity);
         entityManager.flush();
         entityManager.clear();
@@ -225,18 +239,29 @@ class CommonCodeQueryDslRepositoryTest {
     class FindByCriteriaTest {
 
         @Test
-        @DisplayName("기본 조건으로 특정 타입의 모든 코드를 조회합니다")
-        void findByCriteria_WithDefaultCondition_ReturnsAllCodes() {
-            Long typeId = 1L;
-            persist(CommonCodeJpaEntityFixtures.newEntityWithTypeId(typeId));
-            persist(CommonCodeJpaEntityFixtures.newInactiveEntity());
-            persist(CommonCodeJpaEntityFixtures.newEntityWithTypeId(2L));
+        @DisplayName("타입 코드로 해당 타입의 모든 코드를 조회합니다")
+        void findByCriteria_WithTypeCode_ReturnsMatchingCodes() {
+            // given: CommonCodeType persist
+            CommonCodeTypeJpaEntity type =
+                    persistType(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "PAYMENT_METHOD", "결제수단"));
+            CommonCodeTypeJpaEntity otherType =
+                    persistType(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "DELIVERY_TYPE", "배송유형"));
 
-            var criteria =
-                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria
-                            .defaultOf(
-                                    com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId
-                                            .of(typeId));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "CREDIT_CARD", "신용카드"));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "DEBIT_CARD", "체크카드"));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            otherType.getId(), "FAST_DELIVERY", "빠른배송"));
+
+            var criteria = CommonCodeSearchCriteria.defaultOf("PAYMENT_METHOD");
             var result = repository().findByCriteria(criteria);
 
             assertThat(result).hasSize(2);
@@ -245,15 +270,20 @@ class CommonCodeQueryDslRepositoryTest {
         @Test
         @DisplayName("활성화 필터로 활성 코드만 조회합니다")
         void findByCriteria_WithActiveFilter_ReturnsOnlyActive() {
-            Long typeId = 1L;
-            persist(CommonCodeJpaEntityFixtures.newEntityWithTypeId(typeId));
-            persist(CommonCodeJpaEntityFixtures.newInactiveEntity());
+            CommonCodeTypeJpaEntity type =
+                    persistType(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "PAYMENT_METHOD", "결제수단"));
 
-            var criteria =
-                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria
-                            .activeOnly(
-                                    com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId
-                                            .of(typeId));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "CREDIT_CARD", "신용카드"));
+            Instant now = Instant.now();
+            persist(
+                    CommonCodeJpaEntity.create(
+                            null, type.getId(), "MOBILE_PAY", "모바일페이", 1, false, now, now, null));
+
+            var criteria = CommonCodeSearchCriteria.activeOnly("PAYMENT_METHOD");
             var result = repository().findByCriteria(criteria);
 
             assertThat(result).hasSize(1);
@@ -261,50 +291,48 @@ class CommonCodeQueryDslRepositoryTest {
         }
 
         @Test
-        @DisplayName("코드 검색 조건으로 일치하는 코드를 조회합니다")
-        void findByCriteria_WithCodeFilter_ReturnsMatchingCodes() {
-            Long typeId = 1L;
-            persist(
-                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
-                            typeId, "CARD_TYPE", "카드"));
-            persist(
-                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
-                            typeId, "BANK_TYPE", "은행"));
+        @DisplayName("commonCodeTypeCode가 null이면 전체 조회합니다")
+        void findByCriteria_WithNullTypeCode_ReturnsAll() {
+            CommonCodeTypeJpaEntity type =
+                    persistType(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "PAYMENT_METHOD", "결제수단"));
 
-            var criteria =
-                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria.of(
-                            com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId.of(
-                                    typeId),
-                            null,
-                            "CARD",
-                            com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSortKey
-                                            .defaultKey()));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "CREDIT_CARD", "신용카드"));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "DEBIT_CARD", "체크카드"));
+
+            var criteria = CommonCodeSearchCriteria.defaultOf(null);
             var result = repository().findByCriteria(criteria);
 
-            assertThat(result).hasSize(1);
-            assertThat(result.getFirst().getCode()).contains("CARD");
+            assertThat(result).hasSize(2);
         }
 
         @Test
         @DisplayName("페이징이 적용됩니다")
         void findByCriteria_WithPaging_ReturnsPagedResults() {
-            Long typeId = 1L;
+            CommonCodeTypeJpaEntity type =
+                    persistType(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "PAYMENT_METHOD", "결제수단"));
+
             for (int i = 0; i < 5; i++) {
-                persist(CommonCodeJpaEntityFixtures.newEntityWithTypeId(typeId));
+                persist(
+                        CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                                type.getId(), "CODE_" + i, "코드_" + i));
             }
 
             var criteria =
-                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria.of(
-                            com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId.of(
-                                    typeId),
+                    CommonCodeSearchCriteria.of(
+                            "PAYMENT_METHOD",
                             null,
-                            null,
-                            com.ryuqq.marketplace.domain.common.vo.QueryContext.of(
-                                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSortKey
-                                            .defaultKey(),
-                                    com.ryuqq.marketplace.domain.common.vo.SortDirection.ASC,
-                                    com.ryuqq.marketplace.domain.common.vo.PageRequest.of(1, 2)));
+                            QueryContext.of(
+                                    CommonCodeSortKey.defaultKey(),
+                                    SortDirection.ASC,
+                                    PageRequest.of(1, 2)));
             var result = repository().findByCriteria(criteria);
 
             assertThat(result).hasSize(2);
@@ -316,18 +344,28 @@ class CommonCodeQueryDslRepositoryTest {
     class CountByCriteriaTest {
 
         @Test
-        @DisplayName("기본 조건으로 특정 타입의 코드 개수를 반환합니다")
-        void countByCriteria_WithDefaultCondition_ReturnsCount() {
-            Long typeId = 1L;
-            persist(CommonCodeJpaEntityFixtures.newEntityWithTypeId(typeId));
-            persist(CommonCodeJpaEntityFixtures.newInactiveEntity());
-            persist(CommonCodeJpaEntityFixtures.newEntityWithTypeId(2L));
+        @DisplayName("타입 코드로 해당 타입의 코드 개수를 반환합니다")
+        void countByCriteria_WithTypeCode_ReturnsCount() {
+            CommonCodeTypeJpaEntity type =
+                    persistType(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "PAYMENT_METHOD", "결제수단"));
+            CommonCodeTypeJpaEntity otherType =
+                    persistType(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "DELIVERY_TYPE", "배송유형"));
 
-            var criteria =
-                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria
-                            .defaultOf(
-                                    com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId
-                                            .of(typeId));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "CREDIT_CARD", "신용카드"));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "DEBIT_CARD", "체크카드"));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            otherType.getId(), "FAST_DELIVERY", "빠른배송"));
+
+            var criteria = CommonCodeSearchCriteria.defaultOf("PAYMENT_METHOD");
             long count = repository().countByCriteria(criteria);
 
             assertThat(count).isEqualTo(2);
@@ -336,43 +374,44 @@ class CommonCodeQueryDslRepositoryTest {
         @Test
         @DisplayName("활성화 필터로 활성 코드 개수만 반환합니다")
         void countByCriteria_WithActiveFilter_ReturnsActiveCount() {
-            Long typeId = 1L;
-            persist(CommonCodeJpaEntityFixtures.newEntityWithTypeId(typeId));
-            persist(CommonCodeJpaEntityFixtures.newInactiveEntity());
+            CommonCodeTypeJpaEntity type =
+                    persistType(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "PAYMENT_METHOD", "결제수단"));
 
-            var criteria =
-                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria
-                            .activeOnly(
-                                    com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId
-                                            .of(typeId));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "CREDIT_CARD", "신용카드"));
+            Instant now = Instant.now();
+            persist(
+                    CommonCodeJpaEntity.create(
+                            null, type.getId(), "MOBILE_PAY", "모바일페이", 1, false, now, now, null));
+
+            var criteria = CommonCodeSearchCriteria.activeOnly("PAYMENT_METHOD");
             long count = repository().countByCriteria(criteria);
 
             assertThat(count).isEqualTo(1);
         }
 
         @Test
-        @DisplayName("검색 조건에 맞는 개수를 반환합니다")
-        void countByCriteria_WithCodeFilter_ReturnsMatchingCount() {
-            Long typeId = 1L;
-            persist(
-                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
-                            typeId, "CARD_TYPE", "카드"));
-            persist(
-                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
-                            typeId, "BANK_TYPE", "은행"));
+        @DisplayName("commonCodeTypeCode가 null이면 전체 개수를 반환합니다")
+        void countByCriteria_WithNullTypeCode_ReturnsTotal() {
+            CommonCodeTypeJpaEntity type =
+                    persistType(
+                            CommonCodeTypeJpaEntityFixtures.newEntityWithCode(
+                                    "PAYMENT_METHOD", "결제수단"));
 
-            var criteria =
-                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria.of(
-                            com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId.of(
-                                    typeId),
-                            null,
-                            "CARD",
-                            com.ryuqq.marketplace.domain.common.vo.QueryContext.defaultOf(
-                                    com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSortKey
-                                            .defaultKey()));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "CREDIT_CARD", "신용카드"));
+            persist(
+                    CommonCodeJpaEntityFixtures.newEntityWithTypeIdAndCode(
+                            type.getId(), "DEBIT_CARD", "체크카드"));
+
+            var criteria = CommonCodeSearchCriteria.defaultOf(null);
             long count = repository().countByCriteria(criteria);
 
-            assertThat(count).isEqualTo(1);
+            assertThat(count).isEqualTo(2);
         }
     }
 }

@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupNoThumbnailException;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
 import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -73,11 +75,19 @@ class ProductGroupImagesTest {
         @Test
         @DisplayName("THUMBNAIL이 2개 이상이면 예외가 발생한다")
         void throwExceptionWhenMultipleThumbnails() {
-            // given
+            // given - 다른 URL의 THUMBNAIL 2개 (중복 제거 대상이 아님)
             List<ProductGroupImage> images =
                     List.of(
-                            ProductGroupFixtures.thumbnailImage(),
-                            ProductGroupFixtures.thumbnailImage());
+                            ProductGroupImage.forNew(
+                                    ProductGroupFixtures.newProductGroupId(),
+                                    ImageUrl.of("https://example.com/thumb1.jpg"),
+                                    ImageType.THUMBNAIL,
+                                    0),
+                            ProductGroupImage.forNew(
+                                    ProductGroupFixtures.newProductGroupId(),
+                                    ImageUrl.of("https://example.com/thumb2.jpg"),
+                                    ImageType.THUMBNAIL,
+                                    1));
 
             // when & then
             assertThatThrownBy(() -> ProductGroupImages.of(images))

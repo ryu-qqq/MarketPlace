@@ -107,7 +107,7 @@ public final class ProductJpaEntityFixtures {
                 now);
     }
 
-    /** SOLDOUT 상태의 Product Entity 생성. */
+    /** SOLD_OUT 상태의 Product Entity 생성. */
     public static ProductJpaEntity soldOutEntity() {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
@@ -120,13 +120,13 @@ public final class ProductJpaEntityFixtures {
                 DEFAULT_SALE_PRICE,
                 DEFAULT_DISCOUNT_RATE,
                 0,
-                "SOLDOUT",
+                "SOLD_OUT",
                 DEFAULT_SORT_ORDER,
                 now,
                 now);
     }
 
-    /** ID를 지정한 SOLDOUT 상태의 Product Entity 생성. */
+    /** ID를 지정한 SOLD_OUT 상태의 Product Entity 생성. */
     public static ProductJpaEntity soldOutEntity(Long id) {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
@@ -139,7 +139,7 @@ public final class ProductJpaEntityFixtures {
                 DEFAULT_SALE_PRICE,
                 DEFAULT_DISCOUNT_RATE,
                 0,
-                "SOLDOUT",
+                "SOLD_OUT",
                 DEFAULT_SORT_ORDER,
                 now,
                 now);
@@ -243,19 +243,21 @@ public final class ProductJpaEntityFixtures {
 
     /** 기본 ProductOptionMappingJpaEntity 생성. */
     public static ProductOptionMappingJpaEntity defaultOptionMappingEntity() {
-        return ProductOptionMappingJpaEntity.create(null, DEFAULT_ID, 100L);
+        return ProductOptionMappingJpaEntity.create(null, DEFAULT_ID, 100L, false, null);
     }
 
     /** 특정 productId를 가진 ProductOptionMappingJpaEntity 생성. */
     public static ProductOptionMappingJpaEntity optionMappingEntity(
             Long productId, Long sellerOptionValueId) {
-        return ProductOptionMappingJpaEntity.create(null, productId, sellerOptionValueId);
+        return ProductOptionMappingJpaEntity.create(
+                null, productId, sellerOptionValueId, false, null);
     }
 
     /** ID가 있는 ProductOptionMappingJpaEntity 생성 (toDomain 테스트용). */
     public static ProductOptionMappingJpaEntity savedOptionMappingEntity(
             Long id, Long productId, Long sellerOptionValueId) {
-        return ProductOptionMappingJpaEntity.create(id, productId, sellerOptionValueId);
+        return ProductOptionMappingJpaEntity.create(
+                id, productId, sellerOptionValueId, false, null);
     }
 
     /** 빈 옵션 매핑 목록. */

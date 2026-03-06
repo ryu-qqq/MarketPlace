@@ -87,7 +87,8 @@ public final class ShipmentApiFixtures {
     // ===== ShipmentSearchApiRequest =====
 
     public static ShipmentSearchApiRequest searchRequest() {
-        return new ShipmentSearchApiRequest(null, null, null, null, null, null, null, null);
+        return new ShipmentSearchApiRequest(
+                null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public static ShipmentSearchApiRequest searchRequest(
@@ -99,11 +100,23 @@ public final class ShipmentApiFixtures {
             Integer page,
             Integer size) {
         return new ShipmentSearchApiRequest(
-                statuses, searchField, searchWord, null, sortKey, sortDirection, page, size);
+                null,
+                null,
+                null,
+                statuses,
+                null,
+                null,
+                searchField,
+                searchWord,
+                sortKey,
+                sortDirection,
+                page,
+                size);
     }
 
     public static ShipmentSearchApiRequest searchRequestWithStatuses(List<String> statuses) {
-        return new ShipmentSearchApiRequest(statuses, null, null, null, "createdAt", "DESC", 0, 20);
+        return new ShipmentSearchApiRequest(
+                null, null, null, statuses, null, null, null, null, "createdAt", "DESC", 0, 20);
     }
 
     // ===== ShipmentSummaryResult (Application) =====

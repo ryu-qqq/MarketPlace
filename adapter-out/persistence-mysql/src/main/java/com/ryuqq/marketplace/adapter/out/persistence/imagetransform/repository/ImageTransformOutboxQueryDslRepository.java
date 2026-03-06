@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.domain.imagetransform.vo.ImageTransformOutboxStatus
 import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -23,6 +24,19 @@ public class ImageTransformOutboxQueryDslRepository {
 
     public ImageTransformOutboxQueryDslRepository(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
+    }
+
+    /**
+     * ID로 Outbox 단건 조회.
+     *
+     * @param outboxId Outbox ID
+     * @return Outbox 엔티티 (없으면 null)
+     */
+    public ImageTransformOutboxJpaEntity findById(Long outboxId) {
+        return queryFactory
+                .selectFrom(imageTransformOutboxJpaEntity)
+                .where(imageTransformOutboxJpaEntity.id.eq(outboxId))
+                .fetchOne();
     }
 
     /**
@@ -56,7 +70,8 @@ public class ImageTransformOutboxQueryDslRepository {
                 .selectFrom(imageTransformOutboxJpaEntity)
                 .where(
                         imageTransformOutboxJpaEntity.status.eq(
-                                ImageTransformOutboxStatus.PROCESSING))
+                                ImageTransformOutboxStatus.PROCESSING),
+                        imageTransformOutboxJpaEntity.transformRequestId.isNotNull())
                 .orderBy(imageTransformOutboxJpaEntity.updatedAt.asc())
                 .limit(limit)
                 .fetch();
@@ -90,6 +105,26 @@ public class ImageTransformOutboxQueryDslRepository {
      * @param variantTypes Variant 타입 목록
      * @return (sourceImageId, variantType) Tuple 목록
      */
+    /**
+     * PROCESSING 상태의 Outbox를 transformRequestId로 단건 조회 (콜백용).
+     *
+     * @param transformRequestId FileFlow 변환 요청 ID
+     * @return Outbox 엔티티 (Optional)
+     */
+    public Optional<ImageTransformOutboxJpaEntity> findProcessingByTransformRequestId(
+            String transformRequestId) {
+        ImageTransformOutboxJpaEntity entity =
+                queryFactory
+                        .selectFrom(imageTransformOutboxJpaEntity)
+                        .where(
+                                imageTransformOutboxJpaEntity.status.eq(
+                                        ImageTransformOutboxStatus.PROCESSING),
+                                imageTransformOutboxJpaEntity.transformRequestId.eq(
+                                        transformRequestId))
+                        .fetchOne();
+        return Optional.ofNullable(entity);
+    }
+
     public List<Tuple> findActiveOutboxPairs(
             List<Long> sourceImageIds, List<ImageVariantType> variantTypes) {
         return queryFactory

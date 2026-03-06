@@ -26,6 +26,7 @@ public class InboundProduct {
     private Long resolvedShippingPolicyId;
     private Long resolvedRefundPolicyId;
     private Long resolvedNoticeCategoryId;
+    private String rawPayload;
     private final Instant createdAt;
     private Instant updatedAt;
 
@@ -41,6 +42,7 @@ public class InboundProduct {
             Long internalProductGroupId,
             Long sellerId,
             InboundProductStatus status,
+            String rawPayload,
             Long resolvedShippingPolicyId,
             Long resolvedRefundPolicyId,
             Long resolvedNoticeCategoryId,
@@ -56,6 +58,7 @@ public class InboundProduct {
         this.internalProductGroupId = internalProductGroupId;
         this.sellerId = sellerId;
         this.status = status;
+        this.rawPayload = rawPayload;
         this.resolvedShippingPolicyId = resolvedShippingPolicyId;
         this.resolvedRefundPolicyId = resolvedRefundPolicyId;
         this.resolvedNoticeCategoryId = resolvedNoticeCategoryId;
@@ -70,6 +73,7 @@ public class InboundProduct {
             String externalBrandCode,
             String externalCategoryCode,
             Long sellerId,
+            String rawPayload,
             Instant now) {
         return new InboundProduct(
                 InboundProductId.forNew(),
@@ -82,6 +86,7 @@ public class InboundProduct {
                 null,
                 sellerId,
                 InboundProductStatus.RECEIVED,
+                rawPayload,
                 null,
                 null,
                 null,
@@ -102,6 +107,7 @@ public class InboundProduct {
             Long internalProductGroupId,
             Long sellerId,
             InboundProductStatus status,
+            String rawPayload,
             Long resolvedShippingPolicyId,
             Long resolvedRefundPolicyId,
             Long resolvedNoticeCategoryId,
@@ -118,11 +124,23 @@ public class InboundProduct {
                 internalProductGroupId,
                 sellerId,
                 status,
+                rawPayload,
                 resolvedShippingPolicyId,
                 resolvedRefundPolicyId,
                 resolvedNoticeCategoryId,
                 createdAt,
                 updatedAt);
+    }
+
+    /** 매핑 실패 시 PENDING_MAPPING 상태로 전이. RECEIVED 또는 PENDING_MAPPING 상태에서만 가능. */
+    public void markPendingMapping(Instant now) {
+        if (!status.canApplyMapping()) {
+            throw new IllegalStateException(
+                    "PENDING_MAPPING 전이는 RECEIVED 또는 PENDING_MAPPING 상태에서만 가능합니다. 현재 상태: "
+                            + status);
+        }
+        this.status = InboundProductStatus.PENDING_MAPPING;
+        this.updatedAt = now;
     }
 
     /** 브랜드/카테고리 매핑 적용. RECEIVED 또는 PENDING_MAPPING 상태에서만 가능. */
@@ -137,11 +155,12 @@ public class InboundProduct {
         this.updatedAt = now;
     }
 
-    /** 정책 해석 결과 적용. MAPPED 상태에서만 가능. */
+    /** 정책 해석 결과 적용. MAPPED 또는 CONVERTED 상태에서 가능 (재수신 갱신 포함). */
     public void applyResolution(
             Long shippingPolicyId, Long refundPolicyId, Long noticeCategoryId, Instant now) {
-        if (!status.isMapped()) {
-            throw new IllegalStateException("해석 적용은 MAPPED 상태에서만 가능합니다. 현재 상태: " + status);
+        if (!status.isMapped() && !status.isConverted()) {
+            throw new IllegalStateException(
+                    "해석 적용은 MAPPED 또는 CONVERTED 상태에서만 가능합니다. 현재 상태: " + status);
         }
         this.resolvedShippingPolicyId = shippingPolicyId;
         this.resolvedRefundPolicyId = refundPolicyId;
@@ -149,10 +168,17 @@ public class InboundProduct {
         this.updatedAt = now;
     }
 
-    /** 내부 ProductGroup 변환 완료 처리. */
+    /** 내부 ProductGroup 변환 완료 처리. 변환 완료 후 rawPayload는 제거합니다. */
     public void markConverted(Long internalProductGroupId, Instant now) {
         this.internalProductGroupId = internalProductGroupId;
         this.status = InboundProductStatus.CONVERTED;
+        this.rawPayload = null;
+        this.updatedAt = now;
+    }
+
+    /** 수신 payload 갱신 (재수신 시). */
+    public void updateRawPayload(String rawPayload, Instant now) {
+        this.rawPayload = rawPayload;
         this.updatedAt = now;
     }
 
@@ -160,6 +186,10 @@ public class InboundProduct {
     public void assignExternalProductCode(ExternalProductCode code, Instant now) {
         this.externalProductCode = code;
         this.updatedAt = now;
+    }
+
+    public boolean isMapped() {
+        return status.isMapped();
     }
 
     public boolean isConverted() {
@@ -218,6 +248,10 @@ public class InboundProduct {
 
     public InboundProductStatus status() {
         return status;
+    }
+
+    public String rawPayload() {
+        return rawPayload;
     }
 
     public Long resolvedShippingPolicyId() {

@@ -4,6 +4,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.e
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.entity.SellerSalesChannelJpaEntity;
+import java.util.Collection;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,8 +19,24 @@ public class SellerSalesChannelConditionBuilder {
         return sellerId != null ? sellerSalesChannelJpaEntity.sellerId.eq(sellerId) : null;
     }
 
+    public BooleanExpression sellerIdIn(Collection<Long> sellerIds) {
+        return sellerIds != null && !sellerIds.isEmpty()
+                ? sellerSalesChannelJpaEntity.sellerId.in(sellerIds)
+                : null;
+    }
+
+    public BooleanExpression salesChannelIdEq(Long salesChannelId) {
+        return salesChannelId != null
+                ? sellerSalesChannelJpaEntity.salesChannelId.eq(salesChannelId)
+                : null;
+    }
+
     public BooleanExpression connectionStatusConnected() {
         return sellerSalesChannelJpaEntity.connectionStatus.eq(
                 SellerSalesChannelJpaEntity.ConnectionStatus.CONNECTED);
+    }
+
+    public BooleanExpression channelCodeEq(String channelCode) {
+        return channelCode != null ? sellerSalesChannelJpaEntity.channelCode.eq(channelCode) : null;
     }
 }

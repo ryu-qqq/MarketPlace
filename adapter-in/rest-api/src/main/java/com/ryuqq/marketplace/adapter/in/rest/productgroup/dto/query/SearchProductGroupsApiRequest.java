@@ -19,7 +19,7 @@ import java.util.List;
 @Schema(description = "상품 그룹 페이지 조회 요청")
 public record SearchProductGroupsApiRequest(
         @Parameter(
-                        description = "상태 필터 (DRAFT, ACTIVE, INACTIVE, SOLDOUT, DELETED)",
+                        description = "상태 필터 (DRAFT, ACTIVE, INACTIVE, SOLD_OUT, DELETED)",
                         example = "ACTIVE")
                 @Schema(description = "상태 필터", nullable = true)
                 List<String> statuses,
@@ -36,9 +36,14 @@ public record SearchProductGroupsApiRequest(
                 @Schema(description = "상품 그룹 ID 필터", nullable = true)
                 List<Long> productGroupIds,
         @Parameter(
-                        description = "검색 필드 (NAME, CATEGORY_NAME, BRAND_NAME)",
-                        example = "NAME",
-                        schema = @Schema(allowableValues = {"NAME", "CATEGORY_NAME", "BRAND_NAME"}))
+                        description = "검색 필드 (PRODUCT_GROUP_NAME, PRODUCT_GROUP_ID)",
+                        example = "PRODUCT_GROUP_NAME",
+                        schema =
+                                @Schema(
+                                        allowableValues = {
+                                            "PRODUCT_GROUP_NAME",
+                                            "PRODUCT_GROUP_ID"
+                                        }))
                 @Schema(description = "검색 필드", nullable = true)
                 String searchField,
         @Parameter(description = "검색어", example = "나이키")
@@ -64,7 +69,7 @@ public record SearchProductGroupsApiRequest(
                 @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다")
                 Integer page,
         @Parameter(description = "페이지 크기. 기본값: 20", example = "20")
-                @Schema(description = "페이지 크기", minimum = "1", maximum = "100")
+                @Schema(description = "페이지 크기", minimum = "1", maximum = "2000")
                 @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다")
-                @Max(value = 100, message = "페이지 크기는 100 이하여야 합니다")
+                @Max(value = 2000, message = "페이지 크기는 2000 이하여야 합니다")
                 Integer size) {}

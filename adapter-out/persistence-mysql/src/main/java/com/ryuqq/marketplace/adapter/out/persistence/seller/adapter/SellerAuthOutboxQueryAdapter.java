@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.seller.adapter;
 
+import com.ryuqq.marketplace.adapter.out.persistence.seller.entity.SellerAuthOutboxJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.seller.mapper.SellerAuthOutboxJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.seller.repository.SellerAuthOutboxQueryDslRepository;
 import com.ryuqq.marketplace.application.seller.port.out.query.SellerAuthOutboxQueryPort;
@@ -7,6 +8,7 @@ import com.ryuqq.marketplace.domain.seller.aggregate.SellerAuthOutbox;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +34,16 @@ public class SellerAuthOutboxQueryAdapter implements SellerAuthOutboxQueryPort {
             SellerAuthOutboxJpaEntityMapper mapper) {
         this.queryDslRepository = queryDslRepository;
         this.mapper = mapper;
+    }
+
+    @Override
+    public SellerAuthOutbox getById(Long outboxId) {
+        Objects.requireNonNull(outboxId, "outboxId must not be null");
+        SellerAuthOutboxJpaEntity entity = queryDslRepository.findById(outboxId);
+        if (entity == null) {
+            throw new IllegalStateException("SellerAuthOutbox를 찾을 수 없습니다. outboxId=" + outboxId);
+        }
+        return mapper.toDomain(entity);
     }
 
     @Override

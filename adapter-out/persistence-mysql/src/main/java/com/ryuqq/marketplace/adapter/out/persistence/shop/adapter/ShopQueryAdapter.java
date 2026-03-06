@@ -28,6 +28,12 @@ public class ShopQueryAdapter implements ShopQueryPort {
     }
 
     @Override
+    public List<Shop> findByIds(List<ShopId> ids) {
+        List<Long> rawIds = ids.stream().map(ShopId::value).toList();
+        return repository.findByIds(rawIds).stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
     public List<Shop> findByCriteria(ShopSearchCriteria criteria) {
         return repository.findByCriteria(criteria).stream().map(mapper::toDomain).toList();
     }
@@ -47,5 +53,12 @@ public class ShopQueryAdapter implements ShopQueryPort {
             Long salesChannelId, String accountId, ShopId excludeId) {
         return repository.existsBySalesChannelIdAndAccountIdExcluding(
                 salesChannelId, accountId, excludeId.value());
+    }
+
+    @Override
+    public List<Shop> findActiveBySalesChannelId(Long salesChannelId) {
+        return repository.findActiveBySalesChannelId(salesChannelId).stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 }

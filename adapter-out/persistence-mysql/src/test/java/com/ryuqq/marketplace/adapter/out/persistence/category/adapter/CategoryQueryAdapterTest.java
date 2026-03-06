@@ -205,6 +205,50 @@ class CategoryQueryAdapterTest {
     }
 
     // ========================================================================
+    // 5. findDescendantIds 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findDescendantIds 메서드 테스트")
+    class FindDescendantIdsTest {
+
+        @Test
+        @DisplayName("조상 카테고리의 path로 모든 자손 ID를 반환합니다")
+        void findDescendantIds_WithAncestorIds_ReturnsDescendantIds() {
+            // given
+            List<Long> ancestorIds = List.of(1L);
+            CategoryJpaEntity ancestor = CategoryJpaEntityFixtures.activeRootEntity(1L);
+            List<Long> expectedDescendantIds = List.of(1L, 10L, 20L);
+
+            given(queryDslRepository.findAllByIds(ancestorIds)).willReturn(List.of(ancestor));
+            given(queryDslRepository.findDescendantIds(List.of(ancestor.getPath())))
+                    .willReturn(expectedDescendantIds);
+
+            // when
+            List<Long> result = queryAdapter.findDescendantIds(ancestorIds);
+
+            // then
+            assertThat(result).containsExactlyElementsOf(expectedDescendantIds);
+            then(queryDslRepository).should().findAllByIds(ancestorIds);
+            then(queryDslRepository).should().findDescendantIds(List.of(ancestor.getPath()));
+        }
+
+        @Test
+        @DisplayName("조상 카테고리가 존재하지 않으면 입력 ID를 그대로 반환합니다")
+        void findDescendantIds_WithNonExistingAncestors_ReturnsOriginalIds() {
+            // given
+            List<Long> ancestorIds = List.of(999L);
+            given(queryDslRepository.findAllByIds(ancestorIds)).willReturn(List.of());
+
+            // when
+            List<Long> result = queryAdapter.findDescendantIds(ancestorIds);
+
+            // then
+            assertThat(result).containsExactlyElementsOf(ancestorIds);
+        }
+    }
+
+    // ========================================================================
     // Helper Methods
     // ========================================================================
 

@@ -7,7 +7,6 @@ import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
 import com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria;
 import com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSortKey;
-import com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId;
 import org.springframework.stereotype.Component;
 
 /**
@@ -46,10 +45,7 @@ public class CommonCodeQueryFactory {
                         params.searchParams().includeDeleted());
 
         return new CommonCodeSearchCriteria(
-                CommonCodeTypeId.of(params.commonCodeTypeId()),
-                params.active(),
-                params.code(),
-                queryContext);
+                params.commonCodeTypeCode(), params.active(), queryContext);
     }
 
     private CommonCodeSortKey resolveSortKey(String sortKeyString) {

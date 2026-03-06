@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.adminmenu.controller;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.adminmenu.AdminMenuAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.adminmenu.dto.response.AdminMenuApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.adminmenu.mapper.AdminMenuQueryApiMapper;
@@ -70,6 +71,7 @@ public class AdminMenuQueryController {
                 description = "인증 필요")
     })
     @PreAuthorize("@access.authenticated()")
+    @RequirePermission(value = "admin-menu:read", description = "Admin 메뉴 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<AdminMenuApiResponse>> getAccessibleMenus() {
         AdminRole highestRole = accessChecker.resolveHighestRole();

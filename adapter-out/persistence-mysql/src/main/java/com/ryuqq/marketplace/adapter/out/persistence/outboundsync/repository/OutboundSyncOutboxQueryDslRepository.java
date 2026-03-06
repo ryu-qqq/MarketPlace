@@ -2,9 +2,12 @@ package com.ryuqq.marketplace.adapter.out.persistence.outboundsync.repository;
 
 import static com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.QOutboundSyncOutboxJpaEntity.outboundSyncOutboxJpaEntity;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.condition.OutboundSyncOutboxConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.OutboundSyncOutboxJpaEntity;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -44,6 +47,162 @@ public class OutboundSyncOutboxQueryDslRepository {
                         conditionBuilder.productGroupIdEq(productGroupId),
                         conditionBuilder.statusPending())
                 .limit(MAX_PENDING_FETCH_SIZE)
+                .fetch();
+    }
+
+    /**
+     * 여러 상품그룹 ID로 PENDING 상태의 Outbox 일괄 조회.
+     *
+     * @param productGroupIds 상품그룹 ID 목록
+     * @return PENDING 상태의 Outbox 엔티티 목록
+     */
+    public List<OutboundSyncOutboxJpaEntity> findPendingByProductGroupIds(
+            Collection<Long> productGroupIds) {
+        if (productGroupIds == null || productGroupIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(
+                        conditionBuilder.productGroupIdIn(productGroupIds),
+                        conditionBuilder.statusPending())
+                .limit(MAX_PENDING_FETCH_SIZE)
+                .fetch();
+    }
+
+    /**
+     * PENDING 상태이고 beforeTime 이전에 생성된 Outbox 목록 조회.
+     *
+     * @param beforeTime 생성일시 기준
+     * @param batchSize 최대 조회 건수
+     * @return PENDING 상태의 Outbox 엔티티 목록
+     */
+    public List<OutboundSyncOutboxJpaEntity> findPendingOutboxes(
+            java.time.Instant beforeTime, int batchSize) {
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException("batchSize must be positive");
+        }
+        long safeBatchSize = Math.min(batchSize, MAX_PENDING_FETCH_SIZE);
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(
+                        conditionBuilder.statusPending(),
+                        conditionBuilder.createdAtBefore(beforeTime))
+                .orderBy(outboundSyncOutboxJpaEntity.createdAt.asc())
+                .limit(safeBatchSize)
+                .fetch();
+    }
+
+    /**
+     * PROCESSING 상태에서 타임아웃된 Outbox 목록 조회.
+     *
+     * @param timeoutBefore updatedAt 기준 타임아웃 시각
+     * @param batchSize 최대 조회 건수
+     * @return 타임아웃된 PROCESSING 상태의 Outbox 엔티티 목록
+     */
+    public List<OutboundSyncOutboxJpaEntity> findProcessingTimeoutOutboxes(
+            java.time.Instant timeoutBefore, int batchSize) {
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException("batchSize must be positive");
+        }
+        long safeBatchSize = Math.min(batchSize, MAX_PENDING_FETCH_SIZE);
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(
+                        conditionBuilder.statusProcessing(),
+                        conditionBuilder.updatedAtBefore(timeoutBefore))
+                .orderBy(outboundSyncOutboxJpaEntity.updatedAt.asc())
+                .limit(safeBatchSize)
+                .fetch();
+    }
+
+    /**
+     * 상품그룹 ID + syncType으로 PENDING/PROCESSING 상태의 Outbox 목록 조회.
+     *
+     * <p>UPDATE 중복 방지를 위해 활성(PENDING 또는 PROCESSING) 상태의 Outbox를 조회합니다.
+     *
+     * @param productGroupId 상품그룹 ID
+     * @param syncType 연동 타입 (예: "UPDATE")
+     * @return 활성 상태의 Outbox 엔티티 목록
+     */
+    public List<OutboundSyncOutboxJpaEntity> findActiveByProductGroupIdAndSyncType(
+            Long productGroupId, String syncType) {
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(
+                        conditionBuilder.productGroupIdEq(productGroupId),
+                        conditionBuilder.syncTypeEq(syncType),
+                        conditionBuilder.statusPendingOrProcessing())
+                .limit(MAX_PENDING_FETCH_SIZE)
+                .fetch();
+    }
+
+    /**
+     * ID로 Outbox 엔티티 조회.
+     *
+     * @param outboxId Outbox ID
+     * @return Outbox 엔티티 (없으면 null)
+     */
+    public OutboundSyncOutboxJpaEntity findById(Long outboxId) {
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(outboundSyncOutboxJpaEntity.id.eq(outboxId))
+                .fetchOne();
+    }
+
+    /**
+     * 상품그룹 ID별 연동 이력 페이징 조회.
+     *
+     * @param productGroupId 상품그룹 ID
+     * @param status 상태 필터 (null이면 전체)
+     * @param offset 오프셋
+     * @param limit 조회 건수
+     * @return Outbox 엔티티 목록
+     */
+    public List<OutboundSyncOutboxJpaEntity> findPagedByProductGroupId(
+            Long productGroupId, String status, long offset, int limit) {
+        return queryFactory
+                .selectFrom(outboundSyncOutboxJpaEntity)
+                .where(
+                        conditionBuilder.productGroupIdEq(productGroupId),
+                        conditionBuilder.statusEq(status))
+                .orderBy(outboundSyncOutboxJpaEntity.createdAt.desc())
+                .offset(offset)
+                .limit(limit)
+                .fetch();
+    }
+
+    /**
+     * 상품그룹 ID별 연동 이력 건수.
+     *
+     * @param productGroupId 상품그룹 ID
+     * @param status 상태 필터 (null이면 전체)
+     * @return 건수
+     */
+    public long countByProductGroupIdAndStatus(Long productGroupId, String status) {
+        Long count =
+                queryFactory
+                        .select(outboundSyncOutboxJpaEntity.count())
+                        .from(outboundSyncOutboxJpaEntity)
+                        .where(
+                                conditionBuilder.productGroupIdEq(productGroupId),
+                                conditionBuilder.statusEq(status))
+                        .fetchOne();
+        return count != null ? count : 0L;
+    }
+
+    /**
+     * 상품그룹 ID별 상태별 건수 집계.
+     *
+     * @param productGroupId 상품그룹 ID
+     * @return 상태-건수 Tuple 목록
+     */
+    public List<Tuple> countGroupByStatusForProductGroupId(Long productGroupId) {
+        return queryFactory
+                .select(outboundSyncOutboxJpaEntity.status, outboundSyncOutboxJpaEntity.count())
+                .from(outboundSyncOutboxJpaEntity)
+                .where(conditionBuilder.productGroupIdEq(productGroupId))
+                .groupBy(outboundSyncOutboxJpaEntity.status)
                 .fetch();
     }
 }

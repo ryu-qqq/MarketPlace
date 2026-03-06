@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupExcelApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
@@ -11,6 +10,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangePro
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -39,16 +39,32 @@ public class ProductGroupCommandApiMapper {
      *
      * @param request API 요청 DTO
      * @return Application Command DTO
+     * @deprecated sellerId 서버 검증을 위해 {@link #toCommand(long, RegisterProductGroupApiRequest)} 사용
      */
+    @Deprecated
     public RegisterProductGroupCommand toCommand(RegisterProductGroupApiRequest request) {
+        return toCommand(request.sellerId(), request);
+    }
+
+    /**
+     * RegisterProductGroupApiRequest -> RegisterProductGroupCommand 변환 (sellerId 서버 주입).
+     *
+     * <p>SUPER_ADMIN은 요청된 sellerId를 사용하고, 일반 사용자는 서버에서 해석된 sellerId를 사용합니다.
+     *
+     * @param sellerId 서버에서 해석된 셀러 ID
+     * @param request API 요청 DTO
+     * @return Application Command DTO
+     */
+    public RegisterProductGroupCommand toCommand(
+            long sellerId, RegisterProductGroupApiRequest request) {
         return new RegisterProductGroupCommand(
-                request.sellerId(),
+                sellerId,
                 request.brandId(),
                 request.categoryId(),
                 request.shippingPolicyId(),
                 request.refundPolicyId(),
                 request.productGroupName(),
-                request.optionType(),
+                resolveOptionType(request.optionType(), request.optionGroups()),
                 request.images().stream()
                         .map(
                                 img ->
@@ -126,7 +142,7 @@ public class ProductGroupCommandApiMapper {
                 UNRESOLVED_POLICY_ID,
                 UNRESOLVED_POLICY_ID,
                 request.productGroupName(),
-                request.optionType(),
+                resolveOptionType(request.optionType(), request.optionGroups()),
                 request.images().stream()
                         .map(
                                 img ->
@@ -202,7 +218,7 @@ public class ProductGroupCommandApiMapper {
                 request.categoryId(),
                 request.shippingPolicyId(),
                 request.refundPolicyId(),
-                request.optionType(),
+                resolveOptionType(request.optionType(), request.optionGroups()),
                 request.images().stream()
                         .map(
                                 img ->
@@ -294,19 +310,28 @@ public class ProductGroupCommandApiMapper {
      * @return Application Command DTO
      */
     public BatchChangeProductGroupStatusCommand toCommand(
-            long sellerId, BatchChangeProductGroupStatusApiRequest request) {
+            Long sellerId, BatchChangeProductGroupStatusApiRequest request) {
         return new BatchChangeProductGroupStatusCommand(
                 sellerId, request.productGroupIds(), request.targetStatus());
     }
 
     /**
-     * BatchRegisterProductGroupApiRequest -> List&lt;RegisterProductGroupCommand&gt; 변환.
+     * optionType을 결정합니다. 명시적으로 전달된 값이 있으면 그대로 사용하고, 없으면 optionGroups 수로 추론합니다.
      *
-     * @param request 배치 등록 API 요청 DTO
-     * @return Application Command 목록
+     * @param optionType 클라이언트 전달 값 (nullable)
+     * @param optionGroups 옵션 그룹 목록 (nullable)
+     * @return 결정된 optionType 문자열
      */
-    public List<RegisterProductGroupCommand> toCommands(
-            long sellerId, BatchRegisterProductGroupApiRequest request) {
-        return request.items().stream().map(item -> toCommand(sellerId, item)).toList();
+    private String resolveOptionType(String optionType, List<?> optionGroups) {
+        if (optionType != null && !optionType.isBlank()) {
+            return optionType;
+        }
+        if (optionGroups == null || optionGroups.isEmpty()) {
+            return OptionType.NONE.name();
+        }
+        if (optionGroups.size() == 1) {
+            return OptionType.SINGLE.name();
+        }
+        return OptionType.COMBINATION.name();
     }
 }

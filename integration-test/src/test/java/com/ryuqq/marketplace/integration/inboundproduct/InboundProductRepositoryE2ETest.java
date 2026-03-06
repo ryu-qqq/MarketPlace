@@ -92,6 +92,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                             null,
                             null,
                             null,
+                            null,
                             Instant.now(),
                             Instant.now());
             inboundProductRepository.save(entity);
@@ -128,6 +129,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                             null,
                             null,
                             null,
+                            null,
                             Instant.now(),
                             Instant.now());
             inboundProductRepository.save(entity);
@@ -158,6 +160,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                             null,
                             InboundProductJpaEntityFixtures.DEFAULT_SELLER_ID,
                             "RECEIVED",
+                            null,
                             null,
                             null,
                             null,
@@ -196,6 +199,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                                     null,
                                     null,
                                     null,
+                                    null,
                                     now,
                                     now),
                             InboundProductJpaEntity.create(
@@ -212,6 +216,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                                     null,
                                     null,
                                     null,
+                                    null,
                                     now,
                                     now),
                             InboundProductJpaEntity.create(
@@ -225,6 +230,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                                     null,
                                     InboundProductJpaEntityFixtures.DEFAULT_SELLER_ID,
                                     "RECEIVED",
+                                    null,
                                     null,
                                     null,
                                     null,
@@ -271,6 +277,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                             null,
                             null,
                             null,
+                            null,
                             Instant.now(),
                             Instant.now());
 
@@ -304,6 +311,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                                     null,
                                     null,
                                     null,
+                                    null,
                                     now,
                                     now),
                             InboundProductJpaEntity.create(
@@ -320,6 +328,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                                     null,
                                     null,
                                     null,
+                                    null,
                                     now,
                                     now),
                             InboundProductJpaEntity.create(
@@ -333,6 +342,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                                     null,
                                     InboundProductJpaEntityFixtures.DEFAULT_SELLER_ID,
                                     "RECEIVED",
+                                    null,
                                     null,
                                     null,
                                     null,
@@ -366,6 +376,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                             null,
                             InboundProductJpaEntityFixtures.DEFAULT_SELLER_ID,
                             "MAPPED",
+                            null,
                             InboundProductJpaEntityFixtures.DEFAULT_RESOLVED_SHIPPING_POLICY_ID,
                             InboundProductJpaEntityFixtures.DEFAULT_RESOLVED_REFUND_POLICY_ID,
                             InboundProductJpaEntityFixtures.DEFAULT_RESOLVED_NOTICE_CATEGORY_ID,
@@ -406,6 +417,7 @@ class InboundProductRepositoryE2ETest extends E2ETestBase {
                             InboundProductJpaEntityFixtures.DEFAULT_INTERNAL_PRODUCT_GROUP_ID,
                             InboundProductJpaEntityFixtures.DEFAULT_SELLER_ID,
                             "CONVERTED",
+                            null,
                             InboundProductJpaEntityFixtures.DEFAULT_RESOLVED_SHIPPING_POLICY_ID,
                             InboundProductJpaEntityFixtures.DEFAULT_RESOLVED_REFUND_POLICY_ID,
                             InboundProductJpaEntityFixtures.DEFAULT_RESOLVED_NOTICE_CATEGORY_ID,

@@ -4,13 +4,12 @@ package com.ryuqq.marketplace.domain.inboundproduct.exception;
 public class InboundProductNotConvertedException extends InboundProductException {
 
     private static final InboundProductErrorCode ERROR_CODE =
-            InboundProductErrorCode.INBOUND_PRODUCT_CONVERSION_FAILED;
+            InboundProductErrorCode.INBOUND_PRODUCT_NOT_YET_CONVERTED;
 
-    public InboundProductNotConvertedException(long setofProductGroupId) {
+    public InboundProductNotConvertedException(String externalProductCode) {
         super(
                 ERROR_CODE,
                 String.format(
-                        "인바운드 상품이 아직 내부 상품으로 변환되지 않았습니다. setofProductGroupId=%d",
-                        setofProductGroupId));
+                        "인바운드 상품이 아직 변환되지 않았습니다. externalProductCode=%s", externalProductCode));
     }
 }

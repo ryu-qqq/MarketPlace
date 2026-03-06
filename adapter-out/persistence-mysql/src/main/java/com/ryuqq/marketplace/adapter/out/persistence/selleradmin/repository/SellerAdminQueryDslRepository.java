@@ -185,6 +185,25 @@ public class SellerAdminQueryDslRepository {
     }
 
     /**
+     * 이름과 로그인 ID로 셀러 관리자 조회.
+     *
+     * @param name 관리자 이름
+     * @param loginId 로그인 ID
+     * @return 셀러 관리자 Optional
+     */
+    public Optional<SellerAdminJpaEntity> findByNameAndLoginId(String name, String loginId) {
+        SellerAdminJpaEntity entity =
+                queryFactory
+                        .selectFrom(sellerAdminJpaEntity)
+                        .where(
+                                conditionBuilder.nameEq(name),
+                                conditionBuilder.loginIdEq(loginId),
+                                conditionBuilder.notDeleted())
+                        .fetchFirst();
+        return Optional.ofNullable(entity);
+    }
+
+    /**
      * 로그인 ID 존재 여부 확인.
      *
      * @param loginId 로그인 ID

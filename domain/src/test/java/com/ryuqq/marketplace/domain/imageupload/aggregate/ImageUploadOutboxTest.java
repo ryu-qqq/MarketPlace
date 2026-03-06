@@ -81,11 +81,12 @@ class ImageUploadOutboxTest {
             Instant now = CommonVoFixtures.now();
 
             // when
-            outbox.startProcessing(now);
+            outbox.startProcessing(now, "dtask-12345");
 
             // then
             assertThat(outbox.status()).isEqualTo(ImageUploadOutboxStatus.PROCESSING);
             assertThat(outbox.updatedAt()).isEqualTo(now);
+            assertThat(outbox.downloadTaskId()).isEqualTo("dtask-12345");
         }
 
         @Test
@@ -95,7 +96,7 @@ class ImageUploadOutboxTest {
             ImageUploadOutbox outbox = ImageUploadFixtures.completedOutbox();
 
             // when & then
-            assertThatThrownBy(() -> outbox.startProcessing(CommonVoFixtures.now()))
+            assertThatThrownBy(() -> outbox.startProcessing(CommonVoFixtures.now(), "dtask-test"))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("처리할 수 없는 상태");
         }
@@ -107,7 +108,7 @@ class ImageUploadOutboxTest {
             ImageUploadOutbox outbox = ImageUploadFixtures.failedOutbox();
 
             // when & then
-            assertThatThrownBy(() -> outbox.startProcessing(CommonVoFixtures.now()))
+            assertThatThrownBy(() -> outbox.startProcessing(CommonVoFixtures.now(), "dtask-test"))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("처리할 수 없는 상태");
         }

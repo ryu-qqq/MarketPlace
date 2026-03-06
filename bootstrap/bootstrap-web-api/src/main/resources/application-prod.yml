@@ -34,6 +34,7 @@ spring:
       - classpath:fileflow.yml
       - classpath:fileflow-prod.yml
       - classpath:naver-commerce.yml
+      - classpath:setof-commerce.yml
 
 # ===============================================
 # Sentry Configuration (Production Only)

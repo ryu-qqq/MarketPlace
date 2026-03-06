@@ -20,11 +20,19 @@ public class ImageTransformManager {
     }
 
     public ImageTransformResponse createTransformRequest(
-            String uploadedUrl, ImageVariantType variantType) {
-        return transformClient.createTransformRequest(uploadedUrl, variantType);
+            String uploadedUrl,
+            ImageVariantType variantType,
+            String fileAssetId,
+            String callbackUrl) {
+        return transformClient.createTransformRequest(
+                uploadedUrl, variantType, fileAssetId, callbackUrl);
     }
 
     public ImageTransformResponse getTransformRequest(String transformRequestId) {
         return transformClient.getTransformRequest(transformRequestId);
+    }
+
+    public String resolveAssetCdnUrl(String assetId) {
+        return transformClient.resolveAssetCdnUrl(assetId);
     }
 }

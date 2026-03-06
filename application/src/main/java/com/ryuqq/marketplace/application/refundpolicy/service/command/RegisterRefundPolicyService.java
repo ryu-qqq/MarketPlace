@@ -3,8 +3,9 @@ package com.ryuqq.marketplace.application.refundpolicy.service.command;
 import com.ryuqq.marketplace.application.refundpolicy.dto.command.RegisterRefundPolicyCommand;
 import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyCommandFactory;
 import com.ryuqq.marketplace.application.refundpolicy.internal.DefaultRefundPolicyResolver;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
+import com.ryuqq.marketplace.application.refundpolicy.internal.RefundPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.refundpolicy.port.in.command.RegisterRefundPolicyUseCase;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +28,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegisterRefundPolicyService implements RegisterRefundPolicyUseCase {
 
     private final RefundPolicyCommandFactory commandFactory;
-    private final RefundPolicyCommandManager commandManager;
     private final DefaultRefundPolicyResolver defaultPolicyResolver;
+    private final RefundPolicyOutboundFacade outboundFacade;
 
     public RegisterRefundPolicyService(
             RefundPolicyCommandFactory commandFactory,
-            RefundPolicyCommandManager commandManager,
-            DefaultRefundPolicyResolver defaultPolicyResolver) {
+            DefaultRefundPolicyResolver defaultPolicyResolver,
+            RefundPolicyOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
         this.defaultPolicyResolver = defaultPolicyResolver;
+        this.outboundFacade = outboundFacade;
     }
 
     @Override
@@ -47,6 +48,7 @@ public class RegisterRefundPolicyService implements RegisterRefundPolicyUseCase 
         defaultPolicyResolver.resolveForRegistration(
                 refundPolicy.sellerId(), refundPolicy, refundPolicy.createdAt());
 
-        return commandManager.persist(refundPolicy);
+        return outboundFacade.persistWithSync(
+                refundPolicy, OutboundSellerOperationType.CREATE, refundPolicy.createdAt());
     }
 }

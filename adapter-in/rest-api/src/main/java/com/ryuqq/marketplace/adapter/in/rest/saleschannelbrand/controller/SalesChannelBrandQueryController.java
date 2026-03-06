@@ -40,7 +40,7 @@ public class SalesChannelBrandQueryController {
     }
 
     @Operation(summary = "외부채널 브랜드 목록 조회", description = "외부채널 브랜드 목록을 복합 조건으로 조회합니다.")
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('sales-channel-brand:read')")
     @RequirePermission(value = "sales-channel-brand:read", description = "외부채널 브랜드 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<SalesChannelBrandApiResponse>>> searchBrands(

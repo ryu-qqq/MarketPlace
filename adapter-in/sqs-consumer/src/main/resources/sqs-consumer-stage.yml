@@ -10,17 +10,17 @@ spring:
         enabled: true
 
 # ============================================================
-# Intelligence Pipeline Consumer 활성화
+# Intelligence Pipeline Consumer 일시정지 (OpenAI 크레딧 소진)
 # ============================================================
 sqs:
   consumer:
     intelligence-orchestration:
-      enabled: true
+      enabled: false
     intelligence-description-analysis:
-      enabled: true
+      enabled: false
     intelligence-option-analysis:
-      enabled: true
+      enabled: false
     intelligence-notice-analysis:
-      enabled: true
+      enabled: false
     intelligence-aggregation:
-      enabled: true
+      enabled: false

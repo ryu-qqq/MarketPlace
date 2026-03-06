@@ -651,6 +651,103 @@ class SellerAdminQueryDslRepositoryTest {
     }
 
     @Nested
+    @DisplayName("findByNameAndLoginId")
+    class FindByNameAndLoginIdTest {
+
+        @Test
+        @DisplayName("이름과 로그인 ID로 미삭제 Entity를 조회합니다")
+        void findByNameAndLoginId_WithNotDeleted_ReturnsEntity() {
+            String name = "검색홍길동";
+            String loginId = "np-search@test.com";
+            persist(
+                    SellerAdminJpaEntityFixtures.customEntity(
+                            "admin-np-001",
+                            1L,
+                            "auth-np-001",
+                            loginId,
+                            name,
+                            "010-9876-5432",
+                            SellerAdminStatus.ACTIVE));
+
+            var result = repository().findByNameAndLoginId(name, loginId);
+
+            assertThat(result).isPresent();
+            assertThat(result.get().getName()).isEqualTo(name);
+            assertThat(result.get().getLoginId()).isEqualTo(loginId);
+        }
+
+        @Test
+        @DisplayName("이름이 일치하지 않으면 빈 Optional을 반환합니다")
+        void findByNameAndLoginId_WithWrongName_ReturnsEmpty() {
+            String loginId = "np-wrong-name@test.com";
+            persist(
+                    SellerAdminJpaEntityFixtures.customEntity(
+                            "admin-np-002",
+                            1L,
+                            "auth-np-002",
+                            loginId,
+                            "실제이름",
+                            "010-1111-2222",
+                            SellerAdminStatus.ACTIVE));
+
+            var result = repository().findByNameAndLoginId("다른이름", loginId);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("로그인 ID가 일치하지 않으면 빈 Optional을 반환합니다")
+        void findByNameAndLoginId_WithWrongLoginId_ReturnsEmpty() {
+            String name = "조회테스트";
+            persist(
+                    SellerAdminJpaEntityFixtures.customEntity(
+                            "admin-np-003",
+                            1L,
+                            "auth-np-003",
+                            "np-wrong-phone@test.com",
+                            name,
+                            "010-3333-4444",
+                            SellerAdminStatus.ACTIVE));
+
+            var result = repository().findByNameAndLoginId(name, "unknown@test.com");
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("삭제된 Entity는 이름/로그인 ID로 조회되지 않습니다")
+        void findByNameAndLoginId_WithDeletedEntity_ReturnsEmpty() {
+            String name = "삭제된관리자";
+            String loginId = "np-deleted@test.com";
+            Instant now = Instant.now();
+            persist(
+                    SellerAdminJpaEntity.create(
+                            "admin-np-del-001",
+                            1L,
+                            "auth-np-del-001",
+                            loginId,
+                            name,
+                            "010-5555-6666",
+                            SellerAdminStatus.ACTIVE,
+                            now,
+                            now,
+                            now));
+
+            var result = repository().findByNameAndLoginId(name, loginId);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 이름과 로그인 ID는 빈 Optional을 반환합니다")
+        void findByNameAndLoginId_WithNonExisting_ReturnsEmpty() {
+            var result = repository().findByNameAndLoginId("없는이름", "no-such-user");
+
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
     @DisplayName("countByCriteria")
     class CountByCriteriaTest {
 

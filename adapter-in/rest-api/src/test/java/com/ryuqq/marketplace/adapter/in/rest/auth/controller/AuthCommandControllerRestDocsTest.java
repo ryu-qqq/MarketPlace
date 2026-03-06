@@ -16,8 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.authhub.sdk.context.UserContext;
 import com.ryuqq.authhub.sdk.context.UserContextHolder;
-import com.ryuqq.marketplace.adapter.in.rest.auth.AuthAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.auth.AuthApiFixtures;
+import com.ryuqq.marketplace.adapter.in.rest.auth.AuthPublicEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.auth.config.AuthCookieConfig;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.command.LoginApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.auth.dto.command.RefreshApiRequest;
@@ -63,7 +63,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("AuthCommandController REST Docs 테스트")
 class AuthCommandControllerRestDocsTest {
 
-    private static final String BASE_URL = AuthAdminEndpoints.BASE;
+    private static final String BASE_URL = AuthPublicEndpoints.BASE;
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
@@ -93,7 +93,7 @@ class AuthCommandControllerRestDocsTest {
             // when & then
             mockMvc.perform(
                             RestDocumentationRequestBuilders.post(
-                                            BASE_URL + AuthAdminEndpoints.LOGIN)
+                                            BASE_URL + AuthPublicEndpoints.LOGIN)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -154,7 +154,7 @@ class AuthCommandControllerRestDocsTest {
                 // when & then
                 mockMvc.perform(
                                 RestDocumentationRequestBuilders.post(
-                                        BASE_URL + AuthAdminEndpoints.LOGOUT))
+                                        BASE_URL + AuthPublicEndpoints.LOGOUT))
                         .andExpect(status().isOk())
                         .andDo(
                                 document(
@@ -197,7 +197,7 @@ class AuthCommandControllerRestDocsTest {
             // when & then
             mockMvc.perform(
                             RestDocumentationRequestBuilders.post(
-                                            BASE_URL + AuthAdminEndpoints.REFRESH)
+                                            BASE_URL + AuthPublicEndpoints.REFRESH)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())

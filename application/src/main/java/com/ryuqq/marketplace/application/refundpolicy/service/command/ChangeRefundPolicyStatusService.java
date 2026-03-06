@@ -3,9 +3,10 @@ package com.ryuqq.marketplace.application.refundpolicy.service.command;
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.refundpolicy.dto.command.ChangeRefundPolicyStatusCommand;
 import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyCommandFactory;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
+import com.ryuqq.marketplace.application.refundpolicy.internal.RefundPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.refundpolicy.port.in.command.ChangeRefundPolicyStatusUseCase;
 import com.ryuqq.marketplace.application.refundpolicy.validator.RefundPolicyValidator;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
@@ -29,16 +30,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatusUseCase {
 
     private final RefundPolicyCommandFactory commandFactory;
-    private final RefundPolicyCommandManager commandManager;
     private final RefundPolicyValidator validator;
+    private final RefundPolicyOutboundFacade outboundFacade;
 
     public ChangeRefundPolicyStatusService(
             RefundPolicyCommandFactory commandFactory,
-            RefundPolicyCommandManager commandManager,
-            RefundPolicyValidator validator) {
+            RefundPolicyValidator validator,
+            RefundPolicyOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
         this.validator = validator;
+        this.outboundFacade = outboundFacade;
     }
 
     @Override
@@ -50,7 +51,7 @@ public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatus
         List<RefundPolicyId> ids = contexts.stream().map(StatusChangeContext::id).toList();
         List<RefundPolicy> refundPolicies = validator.findAllExistingOrThrow(ids);
 
-        Instant changedAt = contexts.get(0).changedAt();
+        Instant changedAt = contexts.getFirst().changedAt();
 
         if (command.active()) {
             activateAll(refundPolicies, changedAt);
@@ -58,7 +59,11 @@ public class ChangeRefundPolicyStatusService implements ChangeRefundPolicyStatus
             deactivateAll(command.sellerId(), refundPolicies, changedAt);
         }
 
-        commandManager.persistAll(refundPolicies);
+        outboundFacade.persistAllWithSync(
+                SellerId.of(command.sellerId()),
+                refundPolicies,
+                OutboundSellerOperationType.UPDATE,
+                changedAt);
     }
 
     private void activateAll(List<RefundPolicy> policies, Instant changedAt) {

@@ -43,6 +43,7 @@ bin/
 # Claude Code settings (local overrides)
 .claude/settings.local.json
 .claude/hooks/logs/
+.claude/commands/db.md
 .serena/
 
 # Claude Code documentation and specs (auto-generated)
@@ -72,3 +73,6 @@ local-dev/.env.aws.stage
 
 tfplan
 *.tfplan
+
+# Legacy seed data (contains test tokens)
+local-dev/data/legacy-seed/

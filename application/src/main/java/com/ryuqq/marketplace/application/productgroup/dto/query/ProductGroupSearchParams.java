@@ -57,4 +57,16 @@ public record ProductGroupSearchParams(
     public java.time.LocalDate endDate() {
         return searchParams.endDate();
     }
+
+    public ProductGroupSearchParams withCategoryIds(List<Long> expandedCategoryIds) {
+        return new ProductGroupSearchParams(
+                statuses,
+                sellerIds,
+                brandIds,
+                expandedCategoryIds,
+                productGroupIds,
+                searchField,
+                searchWord,
+                searchParams);
+    }
 }

@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup;
 
-import com.ryuqq.marketplace.adapter.in.rest.legacy.notice.dto.request.LegacyCreateProductNoticeRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreateOptionRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCreatePriceRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyOptionDto;
@@ -27,6 +26,7 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.Le
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyRefundNoticeResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildescription.dto.request.LegacyUpdateProductDescriptionRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.dto.request.LegacyCreateProductImageRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productnotice.dto.request.LegacyCreateProductNoticeRequest;
 import com.ryuqq.marketplace.application.legacy.shared.dto.response.LegacyProductRegistrationResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyDeliveryResult;

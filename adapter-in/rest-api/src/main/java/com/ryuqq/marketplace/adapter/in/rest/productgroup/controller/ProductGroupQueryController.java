@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.productgroup.controller;
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.query.SearchProductGroupsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupDetailApiResponse;
@@ -10,8 +11,8 @@ import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGr
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper.ProductGroupQueryApiMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupExcelPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.GetProductGroupUseCase;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupByOffsetUseCase;
@@ -23,6 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,16 +54,19 @@ public class ProductGroupQueryController {
     private final SearchProductGroupForExcelUseCase searchProductGroupForExcelUseCase;
     private final GetProductGroupUseCase getProductGroupUseCase;
     private final ProductGroupQueryApiMapper mapper;
+    private final MarketAccessChecker accessChecker;
 
     public ProductGroupQueryController(
             SearchProductGroupByOffsetUseCase searchProductGroupByOffsetUseCase,
             SearchProductGroupForExcelUseCase searchProductGroupForExcelUseCase,
             GetProductGroupUseCase getProductGroupUseCase,
-            ProductGroupQueryApiMapper mapper) {
+            ProductGroupQueryApiMapper mapper,
+            MarketAccessChecker accessChecker) {
         this.searchProductGroupByOffsetUseCase = searchProductGroupByOffsetUseCase;
         this.searchProductGroupForExcelUseCase = searchProductGroupForExcelUseCase;
         this.getProductGroupUseCase = getProductGroupUseCase;
         this.mapper = mapper;
+        this.accessChecker = accessChecker;
     }
 
     @Operation(summary = "상품 그룹 목록 조회", description = "상품 그룹 목록을 페이지 기반으로 조회합니다.")
@@ -70,12 +75,15 @@ public class ProductGroupQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
+    @PreAuthorize("@access.hasPermission('product-group:read')")
     @RequirePermission(value = "product-group:read", description = "상품 그룹 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<ProductGroupListApiResponse>>> search(
             @Valid SearchProductGroupsApiRequest request) {
 
-        ProductGroupSearchParams searchParams = mapper.toSearchParams(request);
+        List<Long> effectiveSellerIds =
+                accessChecker.resolveEffectiveSellerIds(request.sellerIds());
+        ProductGroupSearchParams searchParams = mapper.toSearchParams(request, effectiveSellerIds);
         ProductGroupPageResult pageResult = searchProductGroupByOffsetUseCase.execute(searchParams);
         PageApiResponse<ProductGroupListApiResponse> response = mapper.toPageResponse(pageResult);
 
@@ -90,17 +98,21 @@ public class ProductGroupQueryController {
                 responseCode = "200",
                 description = "조회 성공")
     })
+    @PreAuthorize("@access.hasPermission('product-group:read')")
     @RequirePermission(value = "product-group:read", description = "상품 그룹 엑셀 다운로드 조회")
     @GetMapping(ProductGroupAdminEndpoints.EXCEL)
-    public ResponseEntity<ApiResponse<List<ProductGroupExcelApiResponse>>> searchForExcel(
-            @Valid SearchProductGroupsApiRequest request) {
+    public ResponseEntity<ApiResponse<PageApiResponse<ProductGroupExcelApiResponse>>>
+            searchForExcel(@Valid SearchProductGroupsApiRequest request) {
 
-        ProductGroupSearchParams searchParams = mapper.toSearchParams(request);
-        List<ProductGroupExcelCompositeResult> results =
+        List<Long> effectiveSellerIds =
+                accessChecker.resolveEffectiveSellerIds(request.sellerIds());
+        ProductGroupSearchParams searchParams = mapper.toSearchParams(request, effectiveSellerIds);
+        ProductGroupExcelPageResult pageResult =
                 searchProductGroupForExcelUseCase.execute(searchParams);
-        List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+        PageApiResponse<ProductGroupExcelApiResponse> response =
+                mapper.toExcelPageResponse(pageResult);
 
-        return ResponseEntity.ok(ApiResponse.of(responses));
+        return ResponseEntity.ok(ApiResponse.of(response));
     }
 
     @Operation(summary = "상품 그룹 상세 조회", description = "상품 그룹 상세 정보를 조회합니다.")
@@ -112,6 +124,7 @@ public class ProductGroupQueryController {
                 responseCode = "404",
                 description = "상품 그룹을 찾을 수 없음")
     })
+    @PreAuthorize("@access.hasPermission('product-group:read')")
     @RequirePermission(value = "product-group:read", description = "상품 그룹 상세 조회")
     @GetMapping(ProductGroupAdminEndpoints.ID)
     public ResponseEntity<ApiResponse<ProductGroupDetailApiResponse>> getById(
@@ -120,6 +133,7 @@ public class ProductGroupQueryController {
                     Long productGroupId) {
 
         ProductGroupDetailCompositeResult result = getProductGroupUseCase.execute(productGroupId);
+        accessChecker.verifySellerOwnership(result.sellerId());
         ProductGroupDetailApiResponse response = mapper.toDetailResponse(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));

@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.controller;
 
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.LegacyShipmentEndpoints.COMPANY_CODES;
 
+import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.dto.response.LegacyShipmentCompanyCodeResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.mapper.LegacyShipmentQueryApiMapper;
@@ -42,6 +43,7 @@ public class LegacyShipmentController {
             summary = "택배사 코드 목록 조회",
             description = "세토프 어드민 호환 택배사 코드 목록을 조회합니다. OMS(사방넷) 연동에 사용됩니다.")
     @PreAuthorize("@access.authenticated()")
+    @RequirePermission(value = "legacy:shipment:read", description = "레거시 택배사 코드 조회")
     @GetMapping(COMPANY_CODES)
     public ResponseEntity<LegacyApiResponse<List<LegacyShipmentCompanyCodeResponse>>>
             getCompanyCodes() {

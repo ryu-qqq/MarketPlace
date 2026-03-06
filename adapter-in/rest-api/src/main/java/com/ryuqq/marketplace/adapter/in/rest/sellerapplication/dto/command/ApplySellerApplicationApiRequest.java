@@ -32,7 +32,10 @@ public record ApplySellerApplicationApiRequest(
                 @NotNull
                 @Valid
                 CsContactInfo csContact,
-        @Schema(description = "담당자 연락처") @Valid ContactInfo contactInfo,
+        @Schema(description = "담당자 연락처", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull
+                @Valid
+                ContactInfo contactInfo,
         @Schema(description = "정산 정보", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid
                 SettlementInfo settlementInfo) {
 
@@ -143,7 +146,7 @@ public record ApplySellerApplicationApiRequest(
     @Schema(description = "정산 정보")
     public record SettlementInfo(
             @Schema(description = "은행 코드", example = "088")
-                    @Size(max = 10, message = "은행 코드는 10자 이하여야 합니다.")
+                    @Size(max = 15, message = "은행 코드는 15자 이하여야 합니다.")
                     String bankCode,
             @Schema(
                             description = "은행명",

@@ -17,6 +17,11 @@ public class ShopJpaEntityMapper {
                 shop.shopName(),
                 shop.accountId(),
                 shop.status().name(),
+                shop.channelCode(),
+                shop.apiKey(),
+                shop.apiSecret(),
+                shop.accessToken(),
+                shop.vendorId(),
                 shop.createdAt(),
                 shop.updatedAt(),
                 shop.deletedAt());
@@ -34,6 +39,11 @@ public class ShopJpaEntityMapper {
                 entity.getAccountId(),
                 ShopStatus.fromString(entity.getStatus()),
                 entity.getDeletedAt(),
+                entity.getChannelCode(),
+                entity.getApiKey(),
+                entity.getApiSecret(),
+                entity.getAccessToken(),
+                entity.getVendorId(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());
     }

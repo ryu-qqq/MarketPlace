@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.domain.imageupload.aggregate.ImageUploadOutbox;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,5 +55,26 @@ public class ImageUploadOutboxQueryAdapter implements ImageUploadOutboxQueryPort
         return queryDslRepository.findBySourceIdsAndSourceType(sourceIds, sourceType).stream()
                 .map(mapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<ImageUploadOutbox> findProcessingOutboxes(int limit) {
+        return queryDslRepository.findProcessingOutboxes(limit).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<ImageUploadOutbox> findRecoverableFailedOutboxes(Instant failedBefore, int limit) {
+        return queryDslRepository.findRecoverableFailedOutboxes(failedBefore, limit).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public Optional<ImageUploadOutbox> findProcessingByDownloadTaskId(String downloadTaskId) {
+        return queryDslRepository
+                .findProcessingByDownloadTaskId(downloadTaskId)
+                .map(mapper::toDomain);
     }
 }

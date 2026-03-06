@@ -38,6 +38,7 @@ import org.springframework.http.HttpStatus;
 class CommonCodeTypeFlowE2ETest extends E2ETestBase {
 
     private static final String BASE_PATH = "/common-code-types";
+    private static final String QUERY_PATH = "/public/common-code-types";
 
     @Autowired private CommonCodeTypeJpaRepository commonCodeTypeRepository;
     @Autowired private CommonCodeJpaRepository commonCodeRepository;
@@ -83,7 +84,7 @@ class CommonCodeTypeFlowE2ETest extends E2ETestBase {
             given().spec(givenAdmin())
                     .queryParam("searchWord", "TEST_TYPE")
                     .when()
-                    .get(BASE_PATH)
+                    .get(QUERY_PATH)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content.size()", equalTo(1))
@@ -108,7 +109,7 @@ class CommonCodeTypeFlowE2ETest extends E2ETestBase {
             given().spec(givenAdmin())
                     .queryParam("searchWord", "TEST_TYPE")
                     .when()
-                    .get(BASE_PATH)
+                    .get(QUERY_PATH)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content[0].name", equalTo("테스트타입_수정"))
@@ -131,7 +132,7 @@ class CommonCodeTypeFlowE2ETest extends E2ETestBase {
                     .queryParam("active", false)
                     .queryParam("searchWord", "TEST_TYPE")
                     .when()
-                    .get(BASE_PATH)
+                    .get(QUERY_PATH)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content.size()", equalTo(1))
@@ -209,7 +210,7 @@ class CommonCodeTypeFlowE2ETest extends E2ETestBase {
             given().spec(givenAdmin())
                     .queryParam("active", false)
                     .when()
-                    .get(BASE_PATH)
+                    .get(QUERY_PATH)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.content.findAll { it.id == " + typeId + " }.size()", equalTo(1))

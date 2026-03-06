@@ -199,7 +199,7 @@ public class ProductCommandController {
                     Long productGroupId,
             @Valid @RequestBody BatchChangeProductStatusApiRequest request) {
 
-        long sellerId = accessChecker.resolveCurrentSellerId();
+        Long sellerId = accessChecker.resolveSellerIdOrNull();
         BatchChangeProductStatusCommand command =
                 mapper.toCommand(sellerId, productGroupId, request);
         batchChangeStatusUseCase.execute(command);
@@ -238,7 +238,7 @@ public class ProductCommandController {
     public ResponseEntity<Void> batchUpdateProducts(
             @Valid @RequestBody BatchUpdateProductApiRequest request) {
 
-        long sellerId = accessChecker.resolveCurrentSellerId();
+        Long sellerId = accessChecker.resolveSellerIdOrNull();
         BatchUpdateProductCommand command = mapper.toCommand(sellerId, request);
         batchUpdateProductUseCase.execute(command);
 

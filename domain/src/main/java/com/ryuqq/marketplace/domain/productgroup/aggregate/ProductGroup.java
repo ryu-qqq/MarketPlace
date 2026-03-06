@@ -136,7 +136,7 @@ public class ProductGroup {
             case PROCESSING -> startProcessing(now);
             case ACTIVE -> activate(now);
             case INACTIVE -> deactivate(now);
-            case SOLDOUT -> markSoldOut(now);
+            case SOLD_OUT -> markSoldOut(now);
             case PENDING_REVIEW -> pendingReview(now);
             case REJECTED -> reject(now);
             case DELETED -> delete(now);
@@ -199,9 +199,9 @@ public class ProductGroup {
     public void markSoldOut(Instant now) {
         if (!status.isActive()) {
             throw new ProductGroupInvalidStatusTransitionException(
-                    status, ProductGroupStatus.SOLDOUT);
+                    status, ProductGroupStatus.SOLD_OUT);
         }
-        this.status = ProductGroupStatus.SOLDOUT;
+        this.status = ProductGroupStatus.SOLD_OUT;
         this.updatedAt = now;
     }
 

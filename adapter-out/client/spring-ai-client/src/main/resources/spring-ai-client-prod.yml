@@ -6,6 +6,6 @@
 # /marketplace/prod/ANTHROPIC_API_KEY
 # ============================================================
 spring-ai:
-  model: gpt-4o-mini
+  model: gpt-4.1
   temperature: 0.2
   max-tokens: 4096

@@ -73,6 +73,15 @@ scheduler:
         # 처리 지연 (생성 후 N초 경과한 건만 처리)
         delay-seconds: 30
 
+      # PROCESSING 폴링 (콜백 방식 전환으로 비활성화)
+      poll-processing:
+        enabled: false
+        # Cron: 2분마다
+        cron: "0 */2 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 50
+
       # 타임아웃 복구
       recover-timeout:
         enabled: true
@@ -83,6 +92,17 @@ scheduler:
         batch-size: 50
         # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
         timeout-seconds: 300
+
+      # FAILED 복구
+      recover-failed:
+        enabled: true
+        # Cron: 30분마다
+        cron: "0 */30 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 50
+        # FAILED 후 최소 대기 시간 (초)
+        failed-after-seconds: 3600
 
     # ImageTransformOutbox 처리 스케줄러
     image-transform-outbox:
@@ -161,12 +181,90 @@ scheduler:
         # Stuck 기준 (ANALYZING + allCompleted 상태에서 N초 경과 시 복구)
         stuck-seconds: 300
 
+    # InboundOrder 외부 주문 폴링 스케줄러 (SalesChannel별)
+    inbound-order-polling:
+      enabled: true
+      entries:
+        - sales-channel-id: 1
+          enabled: true
+          cron: "0 */5 * * * *"
+          timezone: Asia/Seoul
+          batch-size: 500
+
+    # InboundOrder PENDING_MAPPING 재시도 스케줄러
+    inbound-order-retry:
+      enabled: true
+      cron: "0 */10 * * * *"
+      timezone: Asia/Seoul
+      batch-size: 100
+
     # InboundProduct PENDING_MAPPING 재처리 스케줄러
     inbound-product-retry:
       enabled: true
       # Cron: 10분마다
       cron: "0 */10 * * * *"
       timezone: Asia/Seoul
+      # 배치 크기
+      batch-size: 50
+
+    # OutboundSyncOutbox 처리 스케줄러
+    outbound-sync-outbox:
+      # PENDING 처리 (SQS 발행)
+      process-pending:
+        enabled: true
+        # Cron: 3분마다
+        cron: "0 */3 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 50
+        # 처리 지연 (생성 후 N초 경과한 건만 처리)
+        delay-seconds: 30
+
+      # 타임아웃 복구
+      recover-timeout:
+        enabled: true
+        # Cron: 10분마다
+        cron: "0 */10 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 50
+        # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
+        timeout-seconds: 300
+
+    # LegacyConversion 벌크 시딩 스케줄러
+    legacy-conversion-seeder:
+      enabled: false
+      # Cron: 30분마다
+      cron: "0 */30 * * * *"
+      timezone: Asia/Seoul
+      # 배치 크기 (한 번에 스캔할 ID 수)
+      batch-size: 100
+      # 최대 총 시딩 수 (0 = 무제한)
+      max-total: 0
+
+    # OutboundSellerOutbox 처리 스케줄러 (외부 셀러 동기화)
+    outbound-seller-outbox:
+      # PENDING 처리
+      process-pending:
+        enabled: true
+        # Cron: 5분마다 (환경별 오버라이드 가능)
+        cron: "0 */5 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 100
+        # 처리 지연 (생성 후 N초 경과한 건만 처리)
+        delay-seconds: 60
+
+      # 타임아웃 복구
+      recover-timeout:
+        enabled: true
+        # Cron: 10분마다 (환경별 오버라이드 가능)
+        cron: "0 */10 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 100
+        # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
+        timeout-seconds: 300
 
     # SellerAdminEmailOutbox 처리 스케줄러
     seller-admin-email-outbox:

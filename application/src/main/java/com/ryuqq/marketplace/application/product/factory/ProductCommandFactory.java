@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCom
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductPriceCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
+import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.domain.common.vo.Money;
@@ -201,6 +202,50 @@ public class ProductCommandFactory {
                             }
                             return valueId;
                         })
+                .toList();
+    }
+
+    /** UpdateProductsCommand → UpdateSellerOptionGroupsCommand 변환. */
+    public UpdateSellerOptionGroupsCommand toOptionCommand(UpdateProductsCommand command) {
+        List<UpdateSellerOptionGroupsCommand.OptionGroupCommand> groups =
+                command.optionGroups().stream()
+                        .map(
+                                g ->
+                                        new UpdateSellerOptionGroupsCommand.OptionGroupCommand(
+                                                g.sellerOptionGroupId(),
+                                                g.optionGroupName(),
+                                                g.canonicalOptionGroupId(),
+                                                g.inputType(),
+                                                g.optionValues().stream()
+                                                        .map(
+                                                                v ->
+                                                                        new UpdateSellerOptionGroupsCommand
+                                                                                .OptionValueCommand(
+                                                                                v
+                                                                                        .sellerOptionValueId(),
+                                                                                v.optionValueName(),
+                                                                                v
+                                                                                        .canonicalOptionValueId(),
+                                                                                v.sortOrder()))
+                                                        .toList()))
+                        .toList();
+        return new UpdateSellerOptionGroupsCommand(command.productGroupId(), groups);
+    }
+
+    /** UpdateProductsCommand.ProductData 목록 → ProductDiffUpdateEntry 목록 변환. */
+    public List<ProductDiffUpdateEntry> toEntries(
+            List<UpdateProductsCommand.ProductData> products) {
+        return products.stream()
+                .map(
+                        p ->
+                                new ProductDiffUpdateEntry(
+                                        p.productId(),
+                                        p.skuCode(),
+                                        p.regularPrice(),
+                                        p.currentPrice(),
+                                        p.stockQuantity(),
+                                        p.sortOrder(),
+                                        p.selectedOptions()))
                 .toList();
     }
 }
