@@ -394,6 +394,7 @@ module "ecs_service" {
     { name = "SQS_INSPECTION_SCORING_URL", value = local.sqs_scoring_queue_url },
     { name = "SQS_INSPECTION_ENHANCEMENT_URL", value = local.sqs_enhancement_queue_url },
     { name = "SQS_INSPECTION_VERIFICATION_URL", value = local.sqs_verification_queue_url },
+    { name = "SQS_OUTBOUND_SYNC_URL", value = local.sqs_outbound_sync_queue_url },
     # Intelligence Pipeline SQS Queue URLs
     { name = "SQS_INTELLIGENCE_ORCHESTRATION_URL", value = local.sqs_intelligence_orchestration_queue_url },
     { name = "SQS_INTELLIGENCE_DESCRIPTION_ANALYSIS_URL", value = local.sqs_intelligence_description_analysis_queue_url },

@@ -152,6 +152,13 @@ data "aws_ssm_parameter" "sentry_dsn" {
 }
 
 # ========================================
+# OutboundSync SQS Queue Reference
+# ========================================
+data "aws_ssm_parameter" "sqs_outbound_sync_queue_url" {
+  name = "/${var.project_name}/sqs/outbound-sync-queue-url"
+}
+
+# ========================================
 # Intelligence Pipeline SQS Queue References
 # ========================================
 data "aws_ssm_parameter" "sqs_intelligence_orchestration_queue_url" {
@@ -205,6 +212,9 @@ locals {
 
   # Sentry Configuration
   sentry_dsn = data.aws_ssm_parameter.sentry_dsn.value
+
+  # OutboundSync SQS Queue URL
+  sqs_outbound_sync_queue_url = data.aws_ssm_parameter.sqs_outbound_sync_queue_url.value
 
   # Intelligence Pipeline SQS Queue URLs
   sqs_intelligence_orchestration_queue_url          = data.aws_ssm_parameter.sqs_intelligence_orchestration_queue_url.value

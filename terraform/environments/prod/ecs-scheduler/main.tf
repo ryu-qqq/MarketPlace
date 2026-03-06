@@ -435,6 +435,8 @@ module "ecs_service" {
     { name = "DB_USERNAME", value = local.rds_username },
     { name = "REDIS_HOST", value = local.redis_host },
     { name = "REDIS_PORT", value = tostring(local.redis_port) },
+    # OutboundSync SQS Queue URL
+    { name = "SQS_OUTBOUND_SYNC_URL", value = local.sqs_outbound_sync_queue_url },
     # Intelligence Pipeline SQS Queue URLs
     { name = "SQS_INTELLIGENCE_ORCHESTRATION_URL", value = local.sqs_intelligence_orchestration_queue_url },
     { name = "SQS_INTELLIGENCE_DESCRIPTION_ANALYSIS_URL", value = local.sqs_intelligence_description_analysis_queue_url },
