@@ -444,7 +444,7 @@ module "ecs_service" {
     { name = "DB_HOST", value = local.rds_host },
     { name = "DB_PORT", value = local.rds_port },
     { name = "DB_NAME", value = local.rds_dbname },
-    { name = "DB_USERNAME", value = "admin" },
+    { name = "DB_USERNAME", value = local.rds_username },
     { name = "REDIS_HOST", value = local.redis_host },
     { name = "REDIS_PORT", value = tostring(local.redis_port) },
     # Service Token 인증 활성화 (서버 간 내부 통신용)
