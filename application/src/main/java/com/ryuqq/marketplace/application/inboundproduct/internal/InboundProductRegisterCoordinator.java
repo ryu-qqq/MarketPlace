@@ -102,6 +102,8 @@ public class InboundProductRegisterCoordinator {
     public InboundProductConversionResult reReceive(
             InboundProduct existingProduct, ReceiveInboundProductCommand command) {
         Instant now = timeProvider.now();
+        String rawPayload = factory.serializePayload(command);
+        existingProduct.updateRawPayload(rawPayload, now);
 
         if (existingProduct.isConverted()) {
             return updateExisting(existingProduct, command, now);

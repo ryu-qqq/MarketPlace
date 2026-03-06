@@ -24,7 +24,7 @@ import java.util.List;
 @Schema(description = "상품 + 옵션 일괄 수정 요청")
 public record UpdateProductsApiRequest(
         @Schema(description = "옵션 그룹 목록", requiredMode = Schema.RequiredMode.REQUIRED)
-                @NotEmpty(message = "옵션 그룹 목록은 필수입니다")
+                @NotNull(message = "옵션 그룹 목록은 필수입니다")
                 @Valid
                 List<OptionGroupApiRequest> optionGroups,
         @Schema(description = "수정할 상품 목록", requiredMode = Schema.RequiredMode.REQUIRED)
