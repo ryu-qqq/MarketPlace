@@ -216,7 +216,7 @@ public class FileFlowStorageAdapter implements FileStorageClient {
                         if (COMPLETED.equals(task.status())) {
                             String newCdnUrl = buildCdnUrl(task.s3Key());
                             return ExternalDownloadStatusResponse.completed(
-                                    downloadTaskId, newCdnUrl, task.downloadTaskId());
+                                    downloadTaskId, newCdnUrl, task.assetId());
                         } else if (FAILED.equals(task.status())) {
                             return ExternalDownloadStatusResponse.failed(
                                     downloadTaskId, task.lastError());

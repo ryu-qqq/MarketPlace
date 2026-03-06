@@ -48,6 +48,7 @@ public class ImageUploadPublicCommandController {
         CompleteImageUploadCallbackCommand command =
                 new CompleteImageUploadCallbackCommand(
                         request.downloadTaskId(),
+                        request.assetId(),
                         request.s3Key(),
                         request.status(),
                         request.errorMessage());
