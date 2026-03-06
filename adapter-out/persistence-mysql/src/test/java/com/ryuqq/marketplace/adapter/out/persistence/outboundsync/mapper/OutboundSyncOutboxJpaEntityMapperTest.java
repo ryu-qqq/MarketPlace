@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.domain.outboundsync.OutboundSyncOutboxFixtures;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncStatus;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
+import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -335,6 +336,94 @@ class OutboundSyncOutboxJpaEntityMapperTest {
             // then
             assertThat(converted.getErrorMessage()).isEqualTo(original.getErrorMessage());
             assertThat(converted.getRetryCount()).isEqualTo(original.getRetryCount());
+        }
+    }
+
+    // ========================================================================
+    // 4. retrySyncHistory 시나리오 - 상태 전이 후 변환 검증
+    // ========================================================================
+
+    @Nested
+    @DisplayName("retrySyncHistory 시나리오 변환 테스트")
+    class RetrySyncHistoryConversionTest {
+
+        @Test
+        @DisplayName("FAILED Entity → toDomain() → retry() → toEntity() 시 상태가 PENDING으로 변환됩니다")
+        void failedEntityToDomain_AfterRetry_ConvertsToPendingEntity() {
+            // given
+            OutboundSyncOutboxJpaEntity failedEntity =
+                    OutboundSyncOutboxJpaEntityFixtures.failedEntity();
+
+            // when: Entity → Domain 변환
+            OutboundSyncOutbox domain = sut.toDomain(failedEntity);
+            assertThat(domain.status()).isEqualTo(SyncStatus.FAILED);
+
+            // when: Domain에서 retry() 호출
+            domain.retry(Instant.now());
+            assertThat(domain.status()).isEqualTo(SyncStatus.PENDING);
+            assertThat(domain.retryCount()).isEqualTo(0);
+            assertThat(domain.errorMessage()).isNull();
+
+            // when: Domain → Entity 변환
+            OutboundSyncOutboxJpaEntity retryEntity = sut.toEntity(domain);
+
+            // then
+            assertThat(retryEntity.getStatus())
+                    .isEqualTo(OutboundSyncOutboxJpaEntity.Status.PENDING);
+            assertThat(retryEntity.getRetryCount()).isEqualTo(0);
+            assertThat(retryEntity.getErrorMessage()).isNull();
+        }
+
+        @Test
+        @DisplayName("FAILED Entity toDomain() 후 retry() 시 retryCount가 0으로 초기화됩니다")
+        void failedEntityToDomain_AfterRetry_ResetsRetryCount() {
+            // given: maxRetry(3)만큼 소진된 FAILED entity
+            OutboundSyncOutboxJpaEntity failedEntity =
+                    OutboundSyncOutboxJpaEntityFixtures.failedEntity();
+
+            // when
+            OutboundSyncOutbox domain = sut.toDomain(failedEntity);
+            int retryCountBeforeRetry = domain.retryCount();
+            domain.retry(Instant.now());
+
+            // then
+            assertThat(retryCountBeforeRetry)
+                    .isEqualTo(OutboundSyncOutboxFixtures.DEFAULT_MAX_RETRY);
+            assertThat(domain.retryCount()).isEqualTo(0);
+        }
+
+        @Test
+        @DisplayName("retry() 후 toEntity() 변환 시 processedAt이 null로 초기화되지 않습니다")
+        void failedEntityToDomain_AfterRetry_ProcessedAtPreservedInEntity() {
+            // given
+            OutboundSyncOutboxJpaEntity failedEntity =
+                    OutboundSyncOutboxJpaEntityFixtures.failedEntity();
+
+            // when
+            OutboundSyncOutbox domain = sut.toDomain(failedEntity);
+            domain.retry(Instant.now());
+            OutboundSyncOutboxJpaEntity retryEntity = sut.toEntity(domain);
+
+            // then: retry() 후 PENDING 전이 시 processedAt은 Domain에 보존됨 (null로 변경 안 됨)
+            // OutboundSyncOutbox.retry()는 processedAt을 변경하지 않음
+            assertThat(retryEntity.getStatus())
+                    .isEqualTo(OutboundSyncOutboxJpaEntity.Status.PENDING);
+        }
+
+        @Test
+        @DisplayName("FAILED 상태가 아닌 Entity(PENDING)에서 retry() 호출 시 IllegalStateException을 던집니다")
+        void pendingEntityToDomain_AfterRetry_ThrowsIllegalStateException() {
+            // given
+            OutboundSyncOutboxJpaEntity pendingEntity =
+                    OutboundSyncOutboxJpaEntityFixtures.pendingEntity();
+
+            // when
+            OutboundSyncOutbox domain = sut.toDomain(pendingEntity);
+
+            // then
+            assertThatThrownBy(() -> domain.retry(Instant.now()))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("FAILED 상태에서만 재처리할 수 있습니다");
         }
     }
 }

@@ -44,6 +44,9 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
     @Column(name = "status", nullable = false, length = 50)
     private String status;
 
+    @Column(name = "raw_payload", columnDefinition = "JSON")
+    private String rawPayload;
+
     @Column(name = "resolved_shipping_policy_id")
     private Long resolvedShippingPolicyId;
 
@@ -69,6 +72,7 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
             Long internalProductGroupId,
             Long sellerId,
             String status,
+            String rawPayload,
             Long resolvedShippingPolicyId,
             Long resolvedRefundPolicyId,
             Long resolvedNoticeCategoryId,
@@ -85,6 +89,7 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
         this.internalProductGroupId = internalProductGroupId;
         this.sellerId = sellerId;
         this.status = status;
+        this.rawPayload = rawPayload;
         this.resolvedShippingPolicyId = resolvedShippingPolicyId;
         this.resolvedRefundPolicyId = resolvedRefundPolicyId;
         this.resolvedNoticeCategoryId = resolvedNoticeCategoryId;
@@ -102,6 +107,7 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
             Long internalProductGroupId,
             Long sellerId,
             String status,
+            String rawPayload,
             Long resolvedShippingPolicyId,
             Long resolvedRefundPolicyId,
             Long resolvedNoticeCategoryId,
@@ -118,6 +124,7 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
                 internalProductGroupId,
                 sellerId,
                 status,
+                rawPayload,
                 resolvedShippingPolicyId,
                 resolvedRefundPolicyId,
                 resolvedNoticeCategoryId,
@@ -163,6 +170,10 @@ public class InboundProductJpaEntity extends BaseAuditEntity {
 
     public String getStatus() {
         return status;
+    }
+
+    public String getRawPayload() {
+        return rawPayload;
     }
 
     public Long getResolvedShippingPolicyId() {

@@ -74,15 +74,12 @@ public class FileFlowStorageMapper {
      * @return SDK CreateDownloadTaskRequest
      */
     public CreateDownloadTaskRequest toCreateDownloadTaskRequest(ExternalDownloadRequest request) {
-        String s3Key = request.category() + "/" + request.filename();
         return new CreateDownloadTaskRequest(
                 request.sourceUrl(),
-                s3Key,
-                properties.bucket(),
                 ACCESS_TYPE_PUBLIC,
                 request.category(),
                 SOURCE,
-                null);
+                request.callbackUrl());
     }
 
     /**
@@ -95,7 +92,7 @@ public class FileFlowStorageMapper {
     public ExternalDownloadResponse toExternalDownloadResponse(
             DownloadTaskResponse response, String sourceUrl) {
         String newCdnUrl = buildAccessUrl(response.s3Key());
-        return ExternalDownloadResponse.success(sourceUrl, newCdnUrl, response.downloadTaskId());
+        return ExternalDownloadResponse.success(sourceUrl, newCdnUrl, response.assetId());
     }
 
     private String buildAccessUrl(String s3Key) {

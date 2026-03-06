@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("CommonCodeQueryController 단위 테스트")
 class CommonCodeQueryControllerTest {
 
-    private static final String BASE_URL = "/api/v1/market/common-codes";
+    private static final String BASE_URL = "/api/v1/market/public/common-codes";
 
     @Autowired private MockMvc mockMvc;
 
@@ -42,7 +42,7 @@ class CommonCodeQueryControllerTest {
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @Nested
-    @DisplayName("GET /api/v1/market/common-codes - 공통 코드 조회")
+    @DisplayName("GET /api/v1/market/public/common-codes - 공통 코드 조회")
     class SearchTest {
 
         @Test
@@ -51,8 +51,7 @@ class CommonCodeQueryControllerTest {
             // given
             CommonCodeSearchParams searchParams =
                     CommonCodeSearchParams.of(
-                            1L,
-                            null,
+                            "PAYMENT_METHOD",
                             null,
                             CommonSearchParams.of(null, null, null, null, null, 0, 20));
             CommonCodePageResult pageResult = CommonCodeApiFixtures.pageResult(3, 0, 20);
@@ -75,7 +74,7 @@ class CommonCodeQueryControllerTest {
             // when & then
             mockMvc.perform(
                             get(BASE_URL)
-                                    .param("commonCodeTypeId", "1")
+                                    .param("code", "PAYMENT_METHOD")
                                     .param("page", "0")
                                     .param("size", "20"))
                     .andExpect(status().isOk())
@@ -92,8 +91,7 @@ class CommonCodeQueryControllerTest {
             // given
             CommonCodeSearchParams searchParams =
                     CommonCodeSearchParams.of(
-                            1L,
-                            null,
+                            "PAYMENT_METHOD",
                             null,
                             CommonSearchParams.of(null, null, null, null, null, 0, 20));
             CommonCodePageResult emptyResult = CommonCodeApiFixtures.emptyPageResult();
@@ -107,28 +105,44 @@ class CommonCodeQueryControllerTest {
             given(mapper.toPageResponse(any(CommonCodePageResult.class))).willReturn(emptyResponse);
 
             // when & then
-            mockMvc.perform(get(BASE_URL).param("commonCodeTypeId", "1"))
+            mockMvc.perform(get(BASE_URL).param("code", "PAYMENT_METHOD"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content").isEmpty())
                     .andExpect(jsonPath("$.data.totalElements").value(0));
         }
 
         @Test
-        @DisplayName("commonCodeTypeId가 없으면 400을 반환한다")
-        void search_MissingTypeId_Returns400() throws Exception {
+        @DisplayName("code가 없으면 전체 조회로 200을 반환한다")
+        void search_MissingCode_Returns200() throws Exception {
+            // given
+            CommonCodeSearchParams searchParams =
+                    CommonCodeSearchParams.of(
+                            null, null, CommonSearchParams.of(null, null, null, null, null, 0, 20));
+            CommonCodePageResult emptyResult = CommonCodeApiFixtures.emptyPageResult();
+            PageApiResponse<CommonCodeApiResponse> emptyResponse =
+                    PageApiResponse.of(List.of(), 0, 20, 0);
+
+            given(mapper.toSearchParams(any(SearchCommonCodesPageApiRequest.class)))
+                    .willReturn(searchParams);
+            given(searchCommonCodeUseCase.execute(any(CommonCodeSearchParams.class)))
+                    .willReturn(emptyResult);
+            given(mapper.toPageResponse(any(CommonCodePageResult.class))).willReturn(emptyResponse);
+
             // when & then
-            mockMvc.perform(get(BASE_URL)).andExpect(status().isBadRequest());
+            mockMvc.perform(get(BASE_URL))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.content").isEmpty())
+                    .andExpect(jsonPath("$.data.totalElements").value(0));
         }
 
         @Test
-        @DisplayName("활성화 여부 필터와 코드 검색을 함께 사용할 수 있다")
+        @DisplayName("활성화 여부 필터와 타입 코드를 함께 사용할 수 있다")
         void search_WithFilters_Returns200() throws Exception {
             // given
             CommonCodeSearchParams searchParams =
                     CommonCodeSearchParams.of(
-                            1L,
+                            "PAYMENT_METHOD",
                             true,
-                            "CARD",
                             CommonSearchParams.of(null, null, null, null, null, 0, 10));
             CommonCodePageResult pageResult = CommonCodeApiFixtures.pageResult(1, 0, 20);
             PageApiResponse<CommonCodeApiResponse> pageResponse =
@@ -143,9 +157,8 @@ class CommonCodeQueryControllerTest {
             // when & then
             mockMvc.perform(
                             get(BASE_URL)
-                                    .param("commonCodeTypeId", "1")
+                                    .param("code", "PAYMENT_METHOD")
                                     .param("active", "true")
-                                    .param("code", "CARD")
                                     .param("page", "0")
                                     .param("size", "10"))
                     .andExpect(status().isOk())

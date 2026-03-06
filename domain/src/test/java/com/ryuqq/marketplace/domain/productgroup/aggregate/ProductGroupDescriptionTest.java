@@ -43,6 +43,37 @@ class ProductGroupDescriptionTest {
             assertThat(description.images()).isEmpty();
             assertThat(description.isEmpty()).isFalse();
         }
+
+        @Test
+        @DisplayName("이미지가 포함된 HTML로 생성하면 이미지 목록이 포함된다")
+        void createNewProductGroupDescription_WithImages() {
+            // given
+            ProductGroupId productGroupId = ProductGroupFixtures.newProductGroupId();
+            DescriptionHtml content =
+                    DescriptionHtml.of(
+                            "<img src=\"https://example.com/img1.jpg\"><p>설명</p>"
+                                    + "<img src=\"https://example.com/img2.jpg\">");
+            List<DescriptionImage> images =
+                    List.of(
+                            DescriptionImage.forNew(
+                                    com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl.of(
+                                            "https://example.com/img1.jpg"),
+                                    0),
+                            DescriptionImage.forNew(
+                                    com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl.of(
+                                            "https://example.com/img2.jpg"),
+                                    1));
+
+            // when
+            ProductGroupDescription description =
+                    ProductGroupDescription.forNew(
+                            productGroupId, content, images, java.time.Instant.now());
+
+            // then
+            assertThat(description.images()).hasSize(2);
+            assertThat(description.isAllImagesUploaded()).isFalse();
+            assertThat(description.publishStatus()).isEqualTo(DescriptionPublishStatus.PENDING);
+        }
     }
 
     @Nested

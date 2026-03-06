@@ -9,8 +9,8 @@ import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGr
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupExcelApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.ProductGroupListApiResponse;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupExcelPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -326,154 +326,179 @@ class ProductGroupQueryApiMapperTest {
     }
 
     @Nested
-    @DisplayName("toExcelResponses() - 엑셀 다운로드 응답 변환")
-    class ToExcelResponsesTest {
+    @DisplayName("toExcelPageResponse() - 엑셀 다운로드 페이지 응답 변환")
+    class ToExcelPageResponseTest {
 
         @Test
-        @DisplayName("ProductGroupExcelCompositeResult 목록을 ExcelApiResponse 목록으로 변환한다")
-        void toExcelResponses_ConvertsResultsToExcelResponses() {
+        @DisplayName("ProductGroupExcelPageResult를 PageApiResponse로 변환한다")
+        void toExcelPageResponse_ConvertsPageResultToPageResponse() {
             // given
-            List<ProductGroupExcelCompositeResult> results =
-                    ProductGroupApiFixtures.productGroupExcelResults(2);
+            ProductGroupExcelPageResult pageResult =
+                    ProductGroupApiFixtures.excelPageResult(2, 0, 20);
 
             // when
-            List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+            PageApiResponse<ProductGroupExcelApiResponse> response =
+                    mapper.toExcelPageResponse(pageResult);
 
             // then
-            assertThat(responses).hasSize(2);
-            assertThat(responses.get(0).id()).isEqualTo(1L);
-            assertThat(responses.get(1).id()).isEqualTo(2L);
+            assertThat(response.content()).hasSize(2);
+            assertThat(response.content().get(0).id()).isEqualTo(1L);
+            assertThat(response.content().get(1).id()).isEqualTo(2L);
+            assertThat(response.page()).isZero();
+            assertThat(response.size()).isEqualTo(20);
+            assertThat(response.totalElements()).isEqualTo(2);
         }
 
         @Test
         @DisplayName("기본 목록 필드가 정확히 변환된다")
-        void toExcelResponses_BaseFieldsConverted() {
+        void toExcelPageResponse_BaseFieldsConverted() {
             // given
-            List<ProductGroupExcelCompositeResult> results =
-                    List.of(ProductGroupApiFixtures.productGroupExcelResult(1L));
+            ProductGroupExcelPageResult pageResult =
+                    ProductGroupApiFixtures.excelPageResult(1, 0, 20);
 
             // when
-            List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+            PageApiResponse<ProductGroupExcelApiResponse> response =
+                    mapper.toExcelPageResponse(pageResult);
 
             // then
-            ProductGroupExcelApiResponse response = responses.get(0);
-            assertThat(response.sellerId()).isEqualTo(ProductGroupApiFixtures.DEFAULT_SELLER_ID);
-            assertThat(response.sellerName())
+            ProductGroupExcelApiResponse excelResponse = response.content().get(0);
+            assertThat(excelResponse.sellerId())
+                    .isEqualTo(ProductGroupApiFixtures.DEFAULT_SELLER_ID);
+            assertThat(excelResponse.sellerName())
                     .isEqualTo(ProductGroupApiFixtures.DEFAULT_SELLER_NAME);
-            assertThat(response.brandId()).isEqualTo(ProductGroupApiFixtures.DEFAULT_BRAND_ID);
-            assertThat(response.brandName()).isEqualTo(ProductGroupApiFixtures.DEFAULT_BRAND_NAME);
-            assertThat(response.categoryId())
+            assertThat(excelResponse.brandId()).isEqualTo(ProductGroupApiFixtures.DEFAULT_BRAND_ID);
+            assertThat(excelResponse.brandName())
+                    .isEqualTo(ProductGroupApiFixtures.DEFAULT_BRAND_NAME);
+            assertThat(excelResponse.categoryId())
                     .isEqualTo(ProductGroupApiFixtures.DEFAULT_CATEGORY_ID);
-            assertThat(response.optionType())
+            assertThat(excelResponse.optionType())
                     .isEqualTo(ProductGroupApiFixtures.DEFAULT_OPTION_TYPE);
-            assertThat(response.status()).isEqualTo(ProductGroupApiFixtures.DEFAULT_STATUS);
+            assertThat(excelResponse.status()).isEqualTo(ProductGroupApiFixtures.DEFAULT_STATUS);
         }
 
         @Test
         @DisplayName("이미지 목록이 정확히 변환된다")
-        void toExcelResponses_ImagesConverted() {
+        void toExcelPageResponse_ImagesConverted() {
             // given
-            List<ProductGroupExcelCompositeResult> results =
-                    List.of(ProductGroupApiFixtures.productGroupExcelResult(1L));
+            ProductGroupExcelPageResult pageResult =
+                    ProductGroupApiFixtures.excelPageResult(1, 0, 20);
 
             // when
-            List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+            PageApiResponse<ProductGroupExcelApiResponse> response =
+                    mapper.toExcelPageResponse(pageResult);
 
             // then
-            assertThat(responses.get(0).images()).hasSize(2);
-            assertThat(responses.get(0).images().get(0).imageType()).isEqualTo("THUMBNAIL");
+            assertThat(response.content().get(0).images()).hasSize(2);
+            assertThat(response.content().get(0).images().get(0).imageType())
+                    .isEqualTo("THUMBNAIL");
         }
 
         @Test
         @DisplayName("상품(SKU) 목록이 정확히 변환된다")
-        void toExcelResponses_ProductsConverted() {
+        void toExcelPageResponse_ProductsConverted() {
             // given
-            List<ProductGroupExcelCompositeResult> results =
-                    List.of(ProductGroupApiFixtures.productGroupExcelResult(1L));
+            ProductGroupExcelPageResult pageResult =
+                    ProductGroupApiFixtures.excelPageResult(1, 0, 20);
 
             // when
-            List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+            PageApiResponse<ProductGroupExcelApiResponse> response =
+                    mapper.toExcelPageResponse(pageResult);
 
             // then
-            assertThat(responses.get(0).products()).hasSize(2);
-            assertThat(responses.get(0).products().get(0).skuCode()).isEqualTo("SKU-001");
-            assertThat(responses.get(0).products().get(0).optionMappings()).hasSize(1);
+            assertThat(response.content().get(0).products()).hasSize(2);
+            assertThat(response.content().get(0).products().get(0).skuCode()).isEqualTo("SKU-001");
+            assertThat(response.content().get(0).products().get(0).optionMappings()).hasSize(1);
         }
 
         @Test
         @DisplayName("상세설명 CDN URL이 변환된다")
-        void toExcelResponses_DescriptionCdnUrlConverted() {
+        void toExcelPageResponse_DescriptionCdnUrlConverted() {
             // given
-            List<ProductGroupExcelCompositeResult> results =
-                    List.of(ProductGroupApiFixtures.productGroupExcelResult(1L));
+            ProductGroupExcelPageResult pageResult =
+                    ProductGroupApiFixtures.excelPageResult(1, 0, 20);
 
             // when
-            List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+            PageApiResponse<ProductGroupExcelApiResponse> response =
+                    mapper.toExcelPageResponse(pageResult);
 
             // then
-            assertThat(responses.get(0).descriptionCdnUrl())
+            assertThat(response.content().get(0).descriptionCdnUrl())
                     .isEqualTo("https://cdn.example.com/description/");
         }
 
         @Test
         @DisplayName("고시정보가 정확히 변환된다")
-        void toExcelResponses_NoticeConverted() {
+        void toExcelPageResponse_NoticeConverted() {
             // given
-            List<ProductGroupExcelCompositeResult> results =
-                    List.of(ProductGroupApiFixtures.productGroupExcelResult(1L));
+            ProductGroupExcelPageResult pageResult =
+                    ProductGroupApiFixtures.excelPageResult(1, 0, 20);
 
             // when
-            List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+            PageApiResponse<ProductGroupExcelApiResponse> response =
+                    mapper.toExcelPageResponse(pageResult);
 
             // then
-            assertThat(responses.get(0).notice()).isNotNull();
-            assertThat(responses.get(0).notice().entries()).hasSize(2);
+            assertThat(response.content().get(0).notice()).isNotNull();
+            assertThat(response.content().get(0).notice().entries()).hasSize(2);
         }
 
         @Test
         @DisplayName("날짜 필드가 ISO 8601 포맷으로 변환된다")
-        void toExcelResponses_DateFieldsFormattedAsIso8601() {
+        void toExcelPageResponse_DateFieldsFormattedAsIso8601() {
             // given
-            List<ProductGroupExcelCompositeResult> results =
-                    List.of(ProductGroupApiFixtures.productGroupExcelResult(1L));
+            ProductGroupExcelPageResult pageResult =
+                    ProductGroupApiFixtures.excelPageResult(1, 0, 20);
 
             // when
-            List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+            PageApiResponse<ProductGroupExcelApiResponse> response =
+                    mapper.toExcelPageResponse(pageResult);
 
             // then
-            ProductGroupExcelApiResponse response = responses.get(0);
-            assertThat(response.createdAt()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
-            assertThat(response.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
-            assertThat(response.products().get(0).createdAt())
+            ProductGroupExcelApiResponse excelResponse = response.content().get(0);
+            assertThat(excelResponse.createdAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
+            assertThat(excelResponse.updatedAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
+            assertThat(excelResponse.products().get(0).createdAt())
                     .matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
         }
 
         @Test
         @DisplayName("이미지/상품/고시정보가 null이면 빈 목록 또는 null로 변환된다")
-        void toExcelResponses_MinimalResult_EmptyOrNullFields() {
+        void toExcelPageResponse_MinimalResult_EmptyOrNullFields() {
             // given
-            List<ProductGroupExcelCompositeResult> results =
-                    List.of(ProductGroupApiFixtures.productGroupExcelResultMinimal(1L));
+            ProductGroupExcelPageResult pageResult =
+                    ProductGroupExcelPageResult.of(
+                            List.of(ProductGroupApiFixtures.productGroupExcelResultMinimal(1L)),
+                            0,
+                            20,
+                            1L);
 
             // when
-            List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(results);
+            PageApiResponse<ProductGroupExcelApiResponse> response =
+                    mapper.toExcelPageResponse(pageResult);
 
             // then
-            ProductGroupExcelApiResponse response = responses.get(0);
-            assertThat(response.images()).isEmpty();
-            assertThat(response.products()).isEmpty();
-            assertThat(response.descriptionCdnUrl()).isNull();
-            assertThat(response.notice()).isNull();
+            ProductGroupExcelApiResponse excelResponse = response.content().get(0);
+            assertThat(excelResponse.images()).isEmpty();
+            assertThat(excelResponse.products()).isEmpty();
+            assertThat(excelResponse.descriptionCdnUrl()).isNull();
+            assertThat(excelResponse.notice()).isNull();
         }
 
         @Test
-        @DisplayName("빈 결과 목록이면 빈 응답 목록을 반환한다")
-        void toExcelResponses_EmptyResults_ReturnsEmptyList() {
+        @DisplayName("빈 결과이면 빈 content와 페이지 정보를 반환한다")
+        void toExcelPageResponse_EmptyResults_ReturnsEmptyPage() {
+            // given
+            ProductGroupExcelPageResult pageResult = ProductGroupApiFixtures.emptyExcelPageResult();
+
             // when
-            List<ProductGroupExcelApiResponse> responses = mapper.toExcelResponses(List.of());
+            PageApiResponse<ProductGroupExcelApiResponse> response =
+                    mapper.toExcelPageResponse(pageResult);
 
             // then
-            assertThat(responses).isEmpty();
+            assertThat(response.content()).isEmpty();
+            assertThat(response.totalElements()).isZero();
         }
     }
 }

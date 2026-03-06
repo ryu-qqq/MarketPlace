@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupActivationOutboxCoordinator;
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupDeactivationOutboxCoordinator;
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.productgroup.ProductGroupCommandFixtures;
 import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangeProductGroupStatusCommand;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
@@ -13,7 +15,6 @@ import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupOwnershipViolationException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,9 +32,11 @@ class BatchChangeProductGroupStatusServiceTest {
 
     @InjectMocks private BatchChangeProductGroupStatusService sut;
 
-    @Mock private TimeProvider timeProvider;
     @Mock private ProductGroupReadManager readManager;
     @Mock private ProductGroupCommandManager commandManager;
+    @Mock private ProductGroupActivationOutboxCoordinator activationOutboxCoordinator;
+    @Mock private ProductGroupDeactivationOutboxCoordinator deactivationOutboxCoordinator;
+    @Mock private ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
 
     @Nested
     @DisplayName("execute() - 상품 그룹 배치 상태 변경")
@@ -56,20 +59,19 @@ class BatchChangeProductGroupStatusServiceTest {
             ProductGroup group3 = ProductGroupFixtures.draftProductGroup(3L);
             List<ProductGroup> groups = List.of(group1, group2, group3);
 
-            Instant now = Instant.now();
-
             given(readManager.getByIdsAndSellerId(ids, sellerId)).willReturn(groups);
-            given(timeProvider.now()).willReturn(now);
 
             // when
             sut.execute(command);
 
             // then
             then(readManager).should().getByIdsAndSellerId(ids, sellerId);
-            then(timeProvider).should().now();
             then(commandManager).should().persist(group1);
             then(commandManager).should().persist(group2);
             then(commandManager).should().persist(group3);
+            then(activationOutboxCoordinator).should().createOutboxAndProducts(group1);
+            then(activationOutboxCoordinator).should().createOutboxAndProducts(group2);
+            then(activationOutboxCoordinator).should().createOutboxAndProducts(group3);
         }
 
         @Test
@@ -88,10 +90,7 @@ class BatchChangeProductGroupStatusServiceTest {
             ProductGroup group2 = ProductGroupFixtures.activeProductGroup();
             List<ProductGroup> groups = List.of(group1, group2);
 
-            Instant now = Instant.now();
-
             given(readManager.getByIdsAndSellerId(ids, sellerId)).willReturn(groups);
-            given(timeProvider.now()).willReturn(now);
 
             // when
             sut.execute(command);
@@ -100,6 +99,36 @@ class BatchChangeProductGroupStatusServiceTest {
             then(readManager).should().getByIdsAndSellerId(ids, sellerId);
             then(commandManager).should().persist(group1);
             then(commandManager).should().persist(group2);
+            then(activationOutboxCoordinator).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("SUPER_ADMIN(sellerId=null)은 소유권 검증 없이 상태를 변경한다")
+        void execute_SuperAdmin_SkipsOwnershipCheck() {
+            // given
+            List<Long> productGroupIds = List.of(1L, 2L);
+            BatchChangeProductGroupStatusCommand command =
+                    ProductGroupCommandFixtures.batchChangeStatusCommand(
+                            null, productGroupIds, "ACTIVE");
+
+            List<ProductGroupId> ids = productGroupIds.stream().map(ProductGroupId::of).toList();
+
+            ProductGroup group1 = ProductGroupFixtures.draftProductGroup(1L);
+            ProductGroup group2 = ProductGroupFixtures.draftProductGroup(2L);
+            List<ProductGroup> groups = List.of(group1, group2);
+
+            given(readManager.findByIds(ids)).willReturn(groups);
+
+            // when
+            sut.execute(command);
+
+            // then
+            then(readManager).should().findByIds(ids);
+            then(readManager).shouldHaveNoMoreInteractions();
+            then(commandManager).should().persist(group1);
+            then(commandManager).should().persist(group2);
+            then(activationOutboxCoordinator).should().createOutboxAndProducts(group1);
+            then(activationOutboxCoordinator).should().createOutboxAndProducts(group2);
         }
 
         @Test
@@ -122,6 +151,7 @@ class BatchChangeProductGroupStatusServiceTest {
                     .isInstanceOf(ProductGroupOwnershipViolationException.class);
 
             then(commandManager).shouldHaveNoInteractions();
+            then(activationOutboxCoordinator).shouldHaveNoInteractions();
         }
     }
 }

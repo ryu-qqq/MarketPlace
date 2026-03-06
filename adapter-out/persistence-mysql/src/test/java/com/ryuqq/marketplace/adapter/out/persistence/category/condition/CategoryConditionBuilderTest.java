@@ -384,7 +384,62 @@ class CategoryConditionBuilderTest {
     }
 
     // ========================================================================
-    // 8. notDeleted 테스트
+    // 8. pathStartsWithAny 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("pathStartsWithAny 메서드 테스트")
+    class PathStartsWithAnyTest {
+
+        @Test
+        @DisplayName("path prefix 목록이 있으면 BooleanExpression을 반환합니다")
+        void pathStartsWithAny_WithPrefixes_ReturnsBooleanExpression() {
+            // given
+            List<String> prefixes = List.of("1", "1/10");
+
+            // when
+            BooleanExpression result = conditionBuilder.pathStartsWithAny(prefixes);
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("단일 prefix로 BooleanExpression을 반환합니다")
+        void pathStartsWithAny_WithSinglePrefix_ReturnsBooleanExpression() {
+            // given
+            List<String> prefixes = List.of("1");
+
+            // when
+            BooleanExpression result = conditionBuilder.pathStartsWithAny(prefixes);
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("빈 목록이면 null을 반환합니다")
+        void pathStartsWithAny_WithEmptyList_ReturnsNull() {
+            // when
+            BooleanExpression result = conditionBuilder.pathStartsWithAny(List.of());
+
+            // then
+            assertThat(result).isNull();
+        }
+
+        @Test
+        @DisplayName("null이면 null을 반환합니다")
+        void pathStartsWithAny_WithNull_ReturnsNull() {
+            // when
+            BooleanExpression result = conditionBuilder.pathStartsWithAny(null);
+
+            // then
+            assertThat(result).isNull();
+        }
+    }
+
+    // ========================================================================
+    // 9. notDeleted 테스트
     // ========================================================================
 
     @Nested

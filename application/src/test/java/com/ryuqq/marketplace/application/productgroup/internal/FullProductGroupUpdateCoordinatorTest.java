@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.factory.ProductCommandFactory;
@@ -54,6 +55,7 @@ class FullProductGroupUpdateCoordinatorTest {
     @Mock private ProductCommandFactory productCommandFactory;
     @Mock private ProductCommandCoordinator productCommandCoordinator;
     @Mock private IntelligenceOutboxCommandManager intelligenceOutboxCommandManager;
+    @Mock private ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
 
     @Nested
     @DisplayName("update() - 상품 그룹 전체 수정 조율")

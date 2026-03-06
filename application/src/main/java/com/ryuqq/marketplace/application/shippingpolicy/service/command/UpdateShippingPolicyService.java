@@ -4,9 +4,10 @@ import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.UpdateShippingPolicyCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
 import com.ryuqq.marketplace.application.shippingpolicy.internal.DefaultShippingPolicyResolver;
-import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyCommandManager;
+import com.ryuqq.marketplace.application.shippingpolicy.internal.ShippingPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.shippingpolicy.port.in.command.UpdateShippingPolicyUseCase;
 import com.ryuqq.marketplace.application.shippingpolicy.validator.ShippingPolicyValidator;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicyUpdateData;
@@ -34,19 +35,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateShippingPolicyService implements UpdateShippingPolicyUseCase {
 
     private final ShippingPolicyCommandFactory commandFactory;
-    private final ShippingPolicyCommandManager commandManager;
     private final ShippingPolicyValidator validator;
     private final DefaultShippingPolicyResolver defaultPolicyResolver;
+    private final ShippingPolicyOutboundFacade outboundFacade;
 
     public UpdateShippingPolicyService(
             ShippingPolicyCommandFactory commandFactory,
-            ShippingPolicyCommandManager commandManager,
             ShippingPolicyValidator validator,
-            DefaultShippingPolicyResolver defaultPolicyResolver) {
+            DefaultShippingPolicyResolver defaultPolicyResolver,
+            ShippingPolicyOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
         this.validator = validator;
         this.defaultPolicyResolver = defaultPolicyResolver;
+        this.outboundFacade = outboundFacade;
     }
 
     @Override
@@ -66,6 +67,7 @@ public class UpdateShippingPolicyService implements UpdateShippingPolicyUseCase 
         // 정책 정보 업데이트
         shippingPolicy.update(context.updateData(), context.changedAt());
 
-        commandManager.persist(shippingPolicy);
+        outboundFacade.persistWithSync(
+                shippingPolicy, OutboundSellerOperationType.UPDATE, context.changedAt());
     }
 }

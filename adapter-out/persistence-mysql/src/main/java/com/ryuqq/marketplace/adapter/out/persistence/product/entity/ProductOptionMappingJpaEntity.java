@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.Instant;
 
 /** ProductOptionMapping JPA 엔티티. PER-ENT-001: JPA 관계 어노테이션 없이 Long FK 전략 사용. */
 @Entity
@@ -22,17 +23,27 @@ public class ProductOptionMappingJpaEntity {
     @Column(name = "seller_option_value_id", nullable = false)
     private Long sellerOptionValueId;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
     protected ProductOptionMappingJpaEntity() {}
 
-    private ProductOptionMappingJpaEntity(Long id, Long productId, Long sellerOptionValueId) {
+    private ProductOptionMappingJpaEntity(
+            Long id, Long productId, Long sellerOptionValueId, boolean deleted, Instant deletedAt) {
         this.id = id;
         this.productId = productId;
         this.sellerOptionValueId = sellerOptionValueId;
+        this.deleted = deleted;
+        this.deletedAt = deletedAt;
     }
 
     public static ProductOptionMappingJpaEntity create(
-            Long id, Long productId, Long sellerOptionValueId) {
-        return new ProductOptionMappingJpaEntity(id, productId, sellerOptionValueId);
+            Long id, Long productId, Long sellerOptionValueId, boolean deleted, Instant deletedAt) {
+        return new ProductOptionMappingJpaEntity(
+                id, productId, sellerOptionValueId, deleted, deletedAt);
     }
 
     public Long getId() {
@@ -45,5 +56,13 @@ public class ProductOptionMappingJpaEntity {
 
     public Long getSellerOptionValueId() {
         return sellerOptionValueId;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public Instant getDeletedAt() {
+        return deletedAt;
     }
 }

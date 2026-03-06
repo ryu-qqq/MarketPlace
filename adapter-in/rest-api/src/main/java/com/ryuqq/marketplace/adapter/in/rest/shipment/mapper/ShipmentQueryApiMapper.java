@@ -29,10 +29,18 @@ public class ShipmentQueryApiMapper {
 
         CommonSearchParams searchParams =
                 CommonSearchParams.of(
-                        null, null, null, request.sortKey(), request.sortDirection(), page, size);
+                        null,
+                        request.startDate(),
+                        request.endDate(),
+                        request.sortKey(),
+                        request.sortDirection(),
+                        page,
+                        size);
 
         return new ShipmentSearchParams(
                 request.statuses(),
+                request.sellerIds(),
+                request.shopOrderNos(),
                 request.searchField(),
                 request.searchWord(),
                 request.dateField(),

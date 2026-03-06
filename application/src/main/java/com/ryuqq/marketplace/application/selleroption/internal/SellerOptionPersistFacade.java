@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionValue;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import com.ryuqq.marketplace.domain.productgroup.vo.SellerOptionGroupDiff;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,21 +70,48 @@ public class SellerOptionPersistFacade {
      */
     @Transactional
     public List<SellerOptionValueId> persistDiff(SellerOptionGroupDiff diff) {
-        // 1. 모든 그룹 일괄 persist (saveAll)
-        groupCommandManager.persistAll(diff.allGroups());
+        // 1. 기존 그룹 (removed + retained) 일괄 persist — 이미 DB ID가 있음
+        List<SellerOptionGroup> existingGroups = new ArrayList<>();
+        existingGroups.addAll(diff.removedGroups());
+        diff.retainedGroups().forEach(r -> existingGroups.add(r.group()));
+        if (!existingGroups.isEmpty()) {
+            groupCommandManager.persistAll(existingGroups);
+        }
 
         // 2. 삭제 대상 값 일괄 persist (soft delete dirty check)
         valueCommandManager.persistAll(diff.allRemovedValues());
 
-        // 3. 신규 값 일괄 persist + 생성 ID 추적
-        List<SellerOptionValue> addedValues = diff.allAddedValues();
-        List<Long> addedIds = valueCommandManager.persistAll(addedValues);
-        Map<SellerOptionValueId, Long> generatedIdMap = buildGeneratedIdMap(addedValues, addedIds);
+        // 3. 신규 그룹: 개별 persist → 생성 ID 획득 → 해당 값을 persistAllForGroup
+        List<SellerOptionValue> allAddedValueInstances = new ArrayList<>();
+        List<Long> allAddedValueIds = new ArrayList<>();
 
-        // 4. 유지 값 일괄 persist (속성 변경 dirty check)
+        for (SellerOptionGroup addedGroup : diff.addedGroups()) {
+            Long groupId = groupCommandManager.persist(addedGroup);
+            List<Long> valueIds =
+                    valueCommandManager.persistAllForGroup(groupId, addedGroup.optionValues());
+            allAddedValueInstances.addAll(addedGroup.optionValues());
+            allAddedValueIds.addAll(valueIds);
+        }
+
+        // 4. 유지 그룹의 신규 값: 기존 그룹 ID를 사용하여 persistAllForGroup
+        for (SellerOptionGroupDiff.RetainedGroupDiff retained : diff.retainedGroups()) {
+            List<SellerOptionValue> addedInRetained = retained.addedValues();
+            if (!addedInRetained.isEmpty()) {
+                Long groupId = retained.group().idValue();
+                List<Long> valueIds =
+                        valueCommandManager.persistAllForGroup(groupId, addedInRetained);
+                allAddedValueInstances.addAll(addedInRetained);
+                allAddedValueIds.addAll(valueIds);
+            }
+        }
+
+        Map<SellerOptionValueId, Long> generatedIdMap =
+                buildGeneratedIdMap(allAddedValueInstances, allAddedValueIds);
+
+        // 5. 유지 값 일괄 persist (속성 변경 dirty check)
         valueCommandManager.persistAll(diff.allRetainedValues());
 
-        // 5. orderedActiveValueIds의 null ID를 실제 생성 ID로 치환
+        // 6. orderedActiveValueIds의 null ID를 실제 생성 ID로 치환
         return resolveActiveValueIds(diff.orderedActiveValueIds(), generatedIdMap);
     }
 

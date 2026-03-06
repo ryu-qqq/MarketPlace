@@ -52,6 +52,20 @@ public class SellerAdminApplicationQueryApiMapper {
      */
     public SellerAdminApplicationSearchParams toSearchParams(
             SearchSellerAdminApplicationsApiRequest request) {
+        return toSearchParams(request, request.sellerIds());
+    }
+
+    /**
+     * 목록 조회 API Request를 SearchParams로 변환합니다 (셀러 ID 오버라이드).
+     *
+     * <p>SUPER_ADMIN이 아닌 경우 서버에서 해석된 셀러 ID로 강제 적용합니다.
+     *
+     * @param request API Request
+     * @param effectiveSellerIds 서버에서 해석된 유효 셀러 ID 목록
+     * @return Application SearchParams
+     */
+    public SellerAdminApplicationSearchParams toSearchParams(
+            SearchSellerAdminApplicationsApiRequest request, List<Long> effectiveSellerIds) {
 
         CommonSearchParams commonParams =
                 CommonSearchParams.of(
@@ -67,7 +81,7 @@ public class SellerAdminApplicationQueryApiMapper {
         DateRange dateRange = parseDateRange(request.startDate(), request.endDate());
 
         return SellerAdminApplicationSearchParams.of(
-                request.sellerIds(),
+                effectiveSellerIds,
                 status,
                 request.searchField(),
                 request.searchWord(),

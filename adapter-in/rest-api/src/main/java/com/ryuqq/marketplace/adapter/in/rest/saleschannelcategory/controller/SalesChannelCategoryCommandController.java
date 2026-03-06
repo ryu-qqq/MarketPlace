@@ -47,7 +47,7 @@ public class SalesChannelCategoryCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('sales-channel-category:write')")
     @RequirePermission(value = "sales-channel-category:write", description = "외부채널 카테고리 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<SalesChannelCategoryIdApiResponse>> registerCategory(

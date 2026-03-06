@@ -5,6 +5,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.e
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.condition.SellerSalesChannelConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.entity.SellerSalesChannelJpaEntity;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Repository;
@@ -42,6 +43,59 @@ public class SellerSalesChannelQueryDslRepository {
                 .selectFrom(sellerSalesChannelJpaEntity)
                 .where(
                         conditionBuilder.sellerIdEq(sellerId),
+                        conditionBuilder.connectionStatusConnected())
+                .fetch();
+    }
+
+    /**
+     * 여러 셀러의 CONNECTED 상태 판매채널 목록 일괄 조회.
+     *
+     * @param sellerIds 셀러 ID 목록
+     * @return CONNECTED 상태의 판매채널 엔티티 목록
+     */
+    public List<SellerSalesChannelJpaEntity> findConnectedBySellerIds(Collection<Long> sellerIds) {
+        if (sellerIds == null || sellerIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return queryFactory
+                .selectFrom(sellerSalesChannelJpaEntity)
+                .where(
+                        conditionBuilder.sellerIdIn(sellerIds),
+                        conditionBuilder.connectionStatusConnected())
+                .fetch();
+    }
+
+    /**
+     * 셀러 ID + 판매채널 ID로 단건 조회.
+     *
+     * @param sellerId 셀러 ID
+     * @param salesChannelId 판매채널 ID
+     * @return 일치하는 엔티티 (없으면 null)
+     */
+    public SellerSalesChannelJpaEntity findBySellerIdAndSalesChannelId(
+            Long sellerId, Long salesChannelId) {
+        return queryFactory
+                .selectFrom(sellerSalesChannelJpaEntity)
+                .where(
+                        conditionBuilder.sellerIdEq(sellerId),
+                        conditionBuilder.salesChannelIdEq(salesChannelId))
+                .fetchOne();
+    }
+
+    /**
+     * 채널 코드 기준 CONNECTED 상태 판매채널 목록 조회.
+     *
+     * @param channelCode 채널 코드
+     * @return CONNECTED 상태의 판매채널 엔티티 목록
+     */
+    public List<SellerSalesChannelJpaEntity> findConnectedByChannelCode(String channelCode) {
+        if (channelCode == null) {
+            return Collections.emptyList();
+        }
+        return queryFactory
+                .selectFrom(sellerSalesChannelJpaEntity)
+                .where(
+                        conditionBuilder.channelCodeEq(channelCode),
                         conditionBuilder.connectionStatusConnected())
                 .fetch();
     }

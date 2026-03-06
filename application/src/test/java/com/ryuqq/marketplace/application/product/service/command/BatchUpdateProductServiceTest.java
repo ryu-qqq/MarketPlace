@@ -1,15 +1,19 @@
 package com.ryuqq.marketplace.application.product.service.command;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.product.dto.command.BatchUpdateProductCommand;
 import com.ryuqq.marketplace.application.product.manager.ProductCommandManager;
 import com.ryuqq.marketplace.application.product.validator.ProductOwnershipValidator;
 import com.ryuqq.marketplace.domain.product.ProductFixtures;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
+import com.ryuqq.marketplace.domain.product.exception.DuplicateProductIdException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,6 +33,7 @@ class BatchUpdateProductServiceTest {
 
     @Mock private ProductOwnershipValidator ownershipValidator;
     @Mock private ProductCommandManager commandManager;
+    @Mock private ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
 
     @Nested
     @DisplayName("execute() - 상품 배치 가격/재고 수정")
@@ -61,6 +66,32 @@ class BatchUpdateProductServiceTest {
         }
 
         @Test
+        @DisplayName("SUPER_ADMIN(sellerId=null)은 소유권 검증 없이 상품을 수정한다")
+        void execute_SuperAdmin_SkipsOwnershipCheck() {
+            // given
+            Product product1 = ProductFixtures.activeProduct(1L);
+            Product product2 = ProductFixtures.activeProduct(2L);
+            List<Product> products = List.of(product1, product2);
+
+            BatchUpdateProductCommand command =
+                    new BatchUpdateProductCommand(
+                            null,
+                            List.of(
+                                    new BatchUpdateProductCommand.Entry(1L, 50000, 45000, 100),
+                                    new BatchUpdateProductCommand.Entry(2L, 60000, 55000, 200)));
+
+            given(ownershipValidator.getWithoutOwnershipCheck(anyList())).willReturn(products);
+
+            // when
+            sut.execute(command);
+
+            // then
+            then(ownershipValidator).should().getWithoutOwnershipCheck(anyList());
+            then(ownershipValidator).shouldHaveNoMoreInteractions();
+            then(commandManager).should().persistAll(products);
+        }
+
+        @Test
         @DisplayName("단일 상품 수정도 정상적으로 처리된다")
         void execute_SingleEntry_UpdatesAndPersists() {
             // given
@@ -81,6 +112,58 @@ class BatchUpdateProductServiceTest {
             // then
             then(ownershipValidator).should().validateAndGet(anyList(), anyLong());
             then(commandManager).should().persistAll(products);
+        }
+
+        @Test
+        @DisplayName("중복된 상품 ID가 포함되면 DuplicateProductIdException이 발생한다")
+        void execute_DuplicateProductIds_ThrowsException() {
+            // given
+            long sellerId = 100L;
+            BatchUpdateProductCommand command =
+                    new BatchUpdateProductCommand(
+                            sellerId,
+                            List.of(
+                                    new BatchUpdateProductCommand.Entry(1L, 50000, 45000, 100),
+                                    new BatchUpdateProductCommand.Entry(1L, 60000, 55000, 200)));
+
+            // when & then
+            assertThatThrownBy(() -> sut.execute(command))
+                    .isInstanceOf(DuplicateProductIdException.class)
+                    .satisfies(
+                            ex -> {
+                                DuplicateProductIdException e = (DuplicateProductIdException) ex;
+                                assertThat(e.args().get("duplicateProductIds"))
+                                        .isEqualTo(List.of(1L));
+                            });
+
+            then(ownershipValidator).shouldHaveNoInteractions();
+            then(commandManager).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("여러 상품 ID가 중복되면 모든 중복 ID가 예외에 포함된다")
+        void execute_MultipleDuplicateProductIds_AllIncludedInException() {
+            // given
+            BatchUpdateProductCommand command =
+                    new BatchUpdateProductCommand(
+                            null,
+                            List.of(
+                                    new BatchUpdateProductCommand.Entry(1L, 50000, 45000, 100),
+                                    new BatchUpdateProductCommand.Entry(2L, 60000, 55000, 200),
+                                    new BatchUpdateProductCommand.Entry(1L, 70000, 65000, 300),
+                                    new BatchUpdateProductCommand.Entry(2L, 80000, 75000, 400)));
+
+            // when & then
+            assertThatThrownBy(() -> sut.execute(command))
+                    .isInstanceOf(DuplicateProductIdException.class)
+                    .satisfies(
+                            ex -> {
+                                DuplicateProductIdException e = (DuplicateProductIdException) ex;
+                                @SuppressWarnings("unchecked")
+                                List<Long> duplicates =
+                                        (List<Long>) e.args().get("duplicateProductIds");
+                                assertThat(duplicates).containsExactlyInAnyOrder(1L, 2L);
+                            });
         }
     }
 }

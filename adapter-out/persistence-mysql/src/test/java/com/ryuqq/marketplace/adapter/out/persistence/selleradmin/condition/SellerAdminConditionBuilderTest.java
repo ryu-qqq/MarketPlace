@@ -360,7 +360,71 @@ class SellerAdminConditionBuilderTest {
     }
 
     // ========================================================================
-    // 8. notDeleted 테스트
+    // 8. nameEq 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("nameEq 메서드 테스트")
+    class NameEqTest {
+
+        @Test
+        @DisplayName("유효한 이름 입력 시 BooleanExpression을 반환합니다")
+        void nameEq_WithValidName_ReturnsBooleanExpression() {
+            // given
+            String name = "홍길동";
+
+            // when
+            BooleanExpression result = conditionBuilder.nameEq(name);
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("null 이름 입력 시 null을 반환합니다")
+        void nameEq_WithNullName_ReturnsNull() {
+            // when
+            BooleanExpression result = conditionBuilder.nameEq(null);
+
+            // then
+            assertThat(result).isNull();
+        }
+    }
+
+    // ========================================================================
+    // 9. phoneNumberEq 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("phoneNumberEq 메서드 테스트")
+    class PhoneNumberEqTest {
+
+        @Test
+        @DisplayName("유효한 핸드폰 번호 입력 시 BooleanExpression을 반환합니다")
+        void phoneNumberEq_WithValidPhoneNumber_ReturnsBooleanExpression() {
+            // given
+            String phoneNumber = "010-1234-5678";
+
+            // when
+            BooleanExpression result = conditionBuilder.phoneNumberEq(phoneNumber);
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("null 핸드폰 번호 입력 시 null을 반환합니다")
+        void phoneNumberEq_WithNullPhoneNumber_ReturnsNull() {
+            // when
+            BooleanExpression result = conditionBuilder.phoneNumberEq(null);
+
+            // then
+            assertThat(result).isNull();
+        }
+    }
+
+    // ========================================================================
+    // 11. notDeleted 테스트
     // ========================================================================
 
     @Nested

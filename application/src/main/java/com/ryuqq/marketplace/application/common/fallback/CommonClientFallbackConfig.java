@@ -3,10 +3,25 @@ package com.ryuqq.marketplace.application.common.fallback;
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
+import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadStatusResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
+import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
+import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
+import com.ryuqq.marketplace.application.order.port.out.query.OrderQueryPort;
+import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.domain.order.aggregate.Order;
+import com.ryuqq.marketplace.domain.order.id.OrderId;
+import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
+import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
+import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import java.time.Clock;
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -78,6 +93,108 @@ public class CommonClientFallbackConfig {
             @Override
             public String uploadHtmlContent(String htmlContent, String category, String filename) {
                 throw new UnsupportedOperationException("FileStorageClient not available");
+            }
+
+            @Override
+            public String createDownloadTask(ExternalDownloadRequest request) {
+                throw new UnsupportedOperationException("FileStorageClient not available");
+            }
+
+            @Override
+            public ExternalDownloadStatusResponse getDownloadTaskStatus(String downloadTaskId) {
+                throw new UnsupportedOperationException("FileStorageClient not available");
+            }
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    OrderQueryPort noOpOrderQueryPort() {
+        return new OrderQueryPort() {
+            @Override
+            public Optional<Order> findById(OrderId id) {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<Order> findByOrderNumber(String orderNumber) {
+                return Optional.empty();
+            }
+
+            @Override
+            public boolean existsByExternalOrderNo(long salesChannelId, String externalOrderNo) {
+                return false;
+            }
+
+            @Override
+            public List<Order> findByCriteria(OrderSearchCriteria criteria) {
+                return List.of();
+            }
+
+            @Override
+            public long countByCriteria(OrderSearchCriteria criteria) {
+                return 0;
+            }
+
+            @Override
+            public Map<OrderStatus, Long> countByStatus() {
+                return Map.of();
+            }
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    SalesChannelOrderClient noOpSalesChannelOrderClient() {
+        return new SalesChannelOrderClient() {
+            @Override
+            public boolean supports(String channelCode) {
+                return false;
+            }
+
+            @Override
+            public List<ExternalOrderPayload> fetchNewOrders(
+                    long salesChannelId,
+                    long shopId,
+                    ShopCredentials credentials,
+                    Instant fromTime,
+                    Instant toTime) {
+                return List.of();
+            }
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    SalesChannelProductClient noOpSalesChannelProductClient() {
+        return new SalesChannelProductClient() {
+            @Override
+            public String channelCode() {
+                return "NOOP";
+            }
+
+            @Override
+            public String registerProduct(
+                    ProductGroupDetailBundle bundle,
+                    Long externalCategoryId,
+                    Long externalBrandId,
+                    SellerSalesChannel channel) {
+                throw new UnsupportedOperationException("SalesChannelProductClient not available");
+            }
+
+            @Override
+            public void updateProduct(
+                    ProductGroupDetailBundle bundle,
+                    Long externalCategoryId,
+                    Long externalBrandId,
+                    String externalProductId,
+                    SellerSalesChannel channel) {
+                throw new UnsupportedOperationException("SalesChannelProductClient not available");
+            }
+
+            @Override
+            public void deleteProduct(String externalProductId, SellerSalesChannel channel) {
+                throw new UnsupportedOperationException("SalesChannelProductClient not available");
             }
         };
     }

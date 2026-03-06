@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.sellerapplication.internal;
 
+import com.ryuqq.marketplace.application.outboundseller.manager.OutboundSellerOutboxCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerAuthOutboxCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerBusinessInfoCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerCommandManager;
@@ -8,6 +9,9 @@ import com.ryuqq.marketplace.application.seller.manager.SellerCsCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerSettlementCommandManager;
 import com.ryuqq.marketplace.application.sellerapplication.dto.bundle.SellerCreationBundle;
 import com.ryuqq.marketplace.application.sellerapplication.manager.SellerApplicationCommandManager;
+import com.ryuqq.marketplace.domain.outboundseller.aggregate.OutboundSellerOutbox;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerEntityType;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellerapplication.aggregate.SellerApplication;
 import java.time.Instant;
@@ -31,6 +35,7 @@ public class SellerCreationFacade {
     private final SellerSettlementCommandManager settlementCommandManager;
     private final SellerAuthOutboxCommandManager authOutboxCommandManager;
     private final SellerApplicationCommandManager applicationCommandManager;
+    private final OutboundSellerOutboxCommandManager outboundSellerOutboxCommandManager;
 
     public SellerCreationFacade(
             SellerCommandManager sellerCommandManager,
@@ -39,7 +44,8 @@ public class SellerCreationFacade {
             SellerContractCommandManager contractCommandManager,
             SellerSettlementCommandManager settlementCommandManager,
             SellerAuthOutboxCommandManager authOutboxCommandManager,
-            SellerApplicationCommandManager applicationCommandManager) {
+            SellerApplicationCommandManager applicationCommandManager,
+            OutboundSellerOutboxCommandManager outboundSellerOutboxCommandManager) {
         this.sellerCommandManager = sellerCommandManager;
         this.businessInfoCommandManager = businessInfoCommandManager;
         this.csCommandManager = csCommandManager;
@@ -47,6 +53,7 @@ public class SellerCreationFacade {
         this.settlementCommandManager = settlementCommandManager;
         this.authOutboxCommandManager = authOutboxCommandManager;
         this.applicationCommandManager = applicationCommandManager;
+        this.outboundSellerOutboxCommandManager = outboundSellerOutboxCommandManager;
     }
 
     /**
@@ -64,7 +71,8 @@ public class SellerCreationFacade {
             String processedBy,
             Instant now) {
         Long sellerId = persistSeller(bundle);
-        application.approve(SellerId.of(sellerId), processedBy, now);
+        SellerId sid = SellerId.of(sellerId);
+        application.approve(sid, processedBy, now);
         applicationCommandManager.persist(application);
     }
 
@@ -83,7 +91,24 @@ public class SellerCreationFacade {
         contractCommandManager.persist(bundle.sellerContract());
         settlementCommandManager.persist(bundle.sellerSettlement());
         authOutboxCommandManager.persist(bundle.authOutbox());
+        createOutboundSellerOutbox(
+                SellerId.of(sellerId),
+                sellerId,
+                OutboundSellerEntityType.SELLER,
+                OutboundSellerOperationType.CREATE,
+                bundle.seller().createdAt());
 
         return sellerId;
+    }
+
+    private void createOutboundSellerOutbox(
+            SellerId sellerId,
+            Long entityId,
+            OutboundSellerEntityType entityType,
+            OutboundSellerOperationType operationType,
+            Instant now) {
+        OutboundSellerOutbox outbox =
+                OutboundSellerOutbox.forNew(sellerId, entityId, entityType, operationType, now);
+        outboundSellerOutboxCommandManager.persist(outbox);
     }
 }

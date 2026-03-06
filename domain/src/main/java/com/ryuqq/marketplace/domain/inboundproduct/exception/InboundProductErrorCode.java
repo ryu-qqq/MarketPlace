@@ -11,7 +11,8 @@ public enum InboundProductErrorCode implements ErrorCode {
     INBOUND_PRODUCT_VALIDATION_FAILED("IBP-005", 400, "인바운드 상품 검증에 실패했습니다"),
     INBOUND_PRODUCT_ITEM_NOT_FOUND("IBP-006", 404, "인바운드 상품 아이템을 찾을 수 없습니다"),
     INBOUND_PRODUCT_ITEM_UNMAPPED("IBP-007", 400, "매핑되지 않은 외부 상품 ID가 포함되어 있습니다"),
-    INBOUND_PRODUCT_PAYLOAD_INVALID("IBP-008", 400, "인바운드 상품 페이로드가 유효하지 않습니다");
+    INBOUND_PRODUCT_PAYLOAD_INVALID("IBP-008", 400, "인바운드 상품 페이로드가 유효하지 않습니다"),
+    INBOUND_PRODUCT_NOT_YET_CONVERTED("IBP-009", 422, "인바운드 상품이 아직 변환되지 않았습니다");
 
     private final String code;
     private final int httpStatus;

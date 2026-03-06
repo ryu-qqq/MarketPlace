@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.refundpolicy.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -8,7 +9,8 @@ import com.ryuqq.marketplace.application.refundpolicy.RefundPolicyCommandFixture
 import com.ryuqq.marketplace.application.refundpolicy.dto.command.RegisterRefundPolicyCommand;
 import com.ryuqq.marketplace.application.refundpolicy.factory.RefundPolicyCommandFactory;
 import com.ryuqq.marketplace.application.refundpolicy.internal.DefaultRefundPolicyResolver;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyCommandManager;
+import com.ryuqq.marketplace.application.refundpolicy.internal.RefundPolicyOutboundFacade;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.refundpolicy.RefundPolicyFixtures;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import org.junit.jupiter.api.DisplayName;
@@ -28,8 +30,8 @@ class RegisterRefundPolicyServiceTest {
     @InjectMocks private RegisterRefundPolicyService sut;
 
     @Mock private RefundPolicyCommandFactory commandFactory;
-    @Mock private RefundPolicyCommandManager commandManager;
     @Mock private DefaultRefundPolicyResolver defaultPolicyResolver;
+    @Mock private RefundPolicyOutboundFacade outboundFacade;
 
     @Nested
     @DisplayName("execute() - 환불 정책 등록")
@@ -46,7 +48,12 @@ class RegisterRefundPolicyServiceTest {
             RefundPolicy refundPolicy = RefundPolicyFixtures.newRefundPolicy();
 
             given(commandFactory.create(command)).willReturn(refundPolicy);
-            given(commandManager.persist(refundPolicy)).willReturn(expectedPolicyId);
+            given(
+                            outboundFacade.persistWithSync(
+                                    eq(refundPolicy),
+                                    eq(OutboundSellerOperationType.CREATE),
+                                    eq(refundPolicy.createdAt())))
+                    .willReturn(expectedPolicyId);
 
             // when
             Long result = sut.execute(command);
@@ -58,7 +65,12 @@ class RegisterRefundPolicyServiceTest {
                     .should()
                     .resolveForRegistration(
                             refundPolicy.sellerId(), refundPolicy, refundPolicy.createdAt());
-            then(commandManager).should().persist(refundPolicy);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            eq(refundPolicy),
+                            eq(OutboundSellerOperationType.CREATE),
+                            eq(refundPolicy.createdAt()));
         }
 
         @Test
@@ -72,7 +84,12 @@ class RegisterRefundPolicyServiceTest {
             RefundPolicy refundPolicy = RefundPolicyFixtures.newRefundPolicy(7, 14);
 
             given(commandFactory.create(command)).willReturn(refundPolicy);
-            given(commandManager.persist(refundPolicy)).willReturn(expectedPolicyId);
+            given(
+                            outboundFacade.persistWithSync(
+                                    eq(refundPolicy),
+                                    eq(OutboundSellerOperationType.CREATE),
+                                    eq(refundPolicy.createdAt())))
+                    .willReturn(expectedPolicyId);
 
             // when
             Long result = sut.execute(command);

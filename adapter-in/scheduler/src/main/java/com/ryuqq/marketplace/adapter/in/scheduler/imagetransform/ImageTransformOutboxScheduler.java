@@ -74,12 +74,20 @@ public class ImageTransformOutboxScheduler {
      *
      * <p>PROCESSING 상태의 Outbox에 대해 외부 서비스의 변환 완료 여부를 확인합니다.
      */
+    /**
+     * PROCESSING 상태의 이미지 변환 Outbox를 폴링합니다 (콜백 fallback용).
+     *
+     * <p>콜백 방식으로 전환되어 기본 비활성화. enabled=true 시에만 동작합니다.
+     */
     @Scheduled(
             cron = "${scheduler.jobs.image-transform-outbox.poll-processing.cron}",
             zone = "${scheduler.jobs.image-transform-outbox.poll-processing.timezone}")
     @SchedulerJob("ImageTransformOutbox-PollProcessing")
     public SchedulerBatchProcessingResult pollProcessing() {
         SchedulerProperties.PollProcessing pollProcessing = config.pollProcessing();
+        if (!pollProcessing.enabled()) {
+            return SchedulerBatchProcessingResult.of(0, 0, 0);
+        }
         PollProcessingImageTransformCommand command =
                 PollProcessingImageTransformCommand.of(pollProcessing.batchSize());
         return pollProcessingUseCase.execute(command);

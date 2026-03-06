@@ -166,6 +166,8 @@ class ShipmentQueryDslRepositoryTest {
             ShipmentSearchCriteria criteria =
                     ShipmentSearchCriteria.of(
                             List.of(ShipmentStatus.READY),
+                            List.of(),
+                            List.of(),
                             null,
                             null,
                             null,
@@ -220,6 +222,8 @@ class ShipmentQueryDslRepositoryTest {
             ShipmentSearchCriteria criteria =
                     ShipmentSearchCriteria.of(
                             List.of(ShipmentStatus.SHIPPED),
+                            List.of(),
+                            List.of(),
                             null,
                             null,
                             null,

@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.brand.entity.QBrandJpaEntit
 import com.ryuqq.marketplace.adapter.out.persistence.category.entity.QCategoryJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.product.entity.QProductJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.product.entity.QProductOptionMappingJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.productgroup.condition.CompositionProductConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.condition.ProductGroupConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QProductGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QSellerOptionGroupJpaEntity;
@@ -63,11 +64,15 @@ public class ProductGroupCompositionQueryDslRepository {
 
     private final JPAQueryFactory queryFactory;
     private final ProductGroupConditionBuilder conditionBuilder;
+    private final CompositionProductConditionBuilder productConditionBuilder;
 
     public ProductGroupCompositionQueryDslRepository(
-            JPAQueryFactory queryFactory, ProductGroupConditionBuilder conditionBuilder) {
+            JPAQueryFactory queryFactory,
+            ProductGroupConditionBuilder conditionBuilder,
+            CompositionProductConditionBuilder productConditionBuilder) {
         this.queryFactory = queryFactory;
         this.conditionBuilder = conditionBuilder;
+        this.productConditionBuilder = productConditionBuilder;
     }
 
     /** 단건 Composite 조회 (목록용 기본 데이터). */
@@ -247,7 +252,9 @@ public class ProductGroupCompositionQueryDslRepository {
                                 product.currentPrice.max(),
                                 product.discountRate.max())
                         .from(product)
-                        .where(product.productGroupId.in(productGroupIds))
+                        .where(
+                                productConditionBuilder.productGroupIdIn(productGroupIds),
+                                productConditionBuilder.statusNotDeleted())
                         .groupBy(product.productGroupId)
                         .fetch();
 
@@ -365,7 +372,9 @@ public class ProductGroupCompositionQueryDslRepository {
                                 product.currentPrice.max(),
                                 product.discountRate.max())
                         .from(product)
-                        .where(product.productGroupId.in(pgIds))
+                        .where(
+                                productConditionBuilder.productGroupIdIn(pgIds),
+                                productConditionBuilder.statusNotDeleted())
                         .groupBy(product.productGroupId)
                         .fetch();
 
@@ -448,7 +457,9 @@ public class ProductGroupCompositionQueryDslRepository {
                                 product.createdAt,
                                 product.updatedAt)
                         .from(product)
-                        .where(product.productGroupId.in(productGroupIds))
+                        .where(
+                                productConditionBuilder.productGroupIdIn(productGroupIds),
+                                productConditionBuilder.statusNotDeleted())
                         .orderBy(product.sortOrder.asc())
                         .fetch();
 
@@ -557,7 +568,9 @@ public class ProductGroupCompositionQueryDslRepository {
                 queryFactory
                         .select(product.count())
                         .from(product)
-                        .where(product.productGroupId.eq(productGroupId))
+                        .where(
+                                productConditionBuilder.productGroupIdEq(productGroupId),
+                                productConditionBuilder.statusNotDeleted())
                         .fetchOne();
         return count != null ? count.intValue() : 0;
     }
@@ -567,7 +580,9 @@ public class ProductGroupCompositionQueryDslRepository {
                 queryFactory
                         .select(product.productGroupId, product.count())
                         .from(product)
-                        .where(product.productGroupId.in(productGroupIds))
+                        .where(
+                                productConditionBuilder.productGroupIdIn(productGroupIds),
+                                productConditionBuilder.statusNotDeleted())
                         .groupBy(product.productGroupId)
                         .fetch();
 

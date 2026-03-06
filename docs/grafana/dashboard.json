@@ -848,10 +848,9 @@
           "id": 170,
           "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
           "targets": [
-            { "alias": "description-analysis", "dimensions": { "QueueName": ["intelligence-description-analysis"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateNumberOfMessagesVisible", "namespace": "AWS/SQS", "period": "60", "refId": "A", "region": "default", "statistic": "Maximum" },
-            { "alias": "notice-analysis", "dimensions": { "QueueName": ["intelligence-notice-analysis"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateNumberOfMessagesVisible", "namespace": "AWS/SQS", "period": "60", "refId": "B", "region": "default", "statistic": "Maximum" },
-            { "alias": "option-analysis", "dimensions": { "QueueName": ["intelligence-option-analysis"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateNumberOfMessagesVisible", "namespace": "AWS/SQS", "period": "60", "refId": "C", "region": "default", "statistic": "Maximum" },
-            { "alias": "aggregation", "dimensions": { "QueueName": ["intelligence-aggregation"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateNumberOfMessagesVisible", "namespace": "AWS/SQS", "period": "60", "refId": "D", "region": "default", "statistic": "Maximum" }
+            { "alias": "scoring", "dimensions": { "QueueName": ["$environment-marketplace-inspection-scoring"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateNumberOfMessagesVisible", "namespace": "AWS/SQS", "period": "60", "refId": "A", "region": "default", "statistic": "Maximum" },
+            { "alias": "enhancement", "dimensions": { "QueueName": ["$environment-marketplace-inspection-enhancement"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateNumberOfMessagesVisible", "namespace": "AWS/SQS", "period": "60", "refId": "B", "region": "default", "statistic": "Maximum" },
+            { "alias": "verification", "dimensions": { "QueueName": ["$environment-marketplace-inspection-verification"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateNumberOfMessagesVisible", "namespace": "AWS/SQS", "period": "60", "refId": "C", "region": "default", "statistic": "Maximum" }
           ],
           "title": "Queue Messages Visible",
           "type": "timeseries"
@@ -863,10 +862,9 @@
           "id": 171,
           "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
           "targets": [
-            { "alias": "description-analysis", "dimensions": { "QueueName": ["intelligence-description-analysis"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateAgeOfOldestMessage", "namespace": "AWS/SQS", "period": "60", "refId": "A", "region": "default", "statistic": "Maximum" },
-            { "alias": "notice-analysis", "dimensions": { "QueueName": ["intelligence-notice-analysis"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateAgeOfOldestMessage", "namespace": "AWS/SQS", "period": "60", "refId": "B", "region": "default", "statistic": "Maximum" },
-            { "alias": "option-analysis", "dimensions": { "QueueName": ["intelligence-option-analysis"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateAgeOfOldestMessage", "namespace": "AWS/SQS", "period": "60", "refId": "C", "region": "default", "statistic": "Maximum" },
-            { "alias": "aggregation", "dimensions": { "QueueName": ["intelligence-aggregation"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateAgeOfOldestMessage", "namespace": "AWS/SQS", "period": "60", "refId": "D", "region": "default", "statistic": "Maximum" }
+            { "alias": "scoring", "dimensions": { "QueueName": ["$environment-marketplace-inspection-scoring"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateAgeOfOldestMessage", "namespace": "AWS/SQS", "period": "60", "refId": "A", "region": "default", "statistic": "Maximum" },
+            { "alias": "enhancement", "dimensions": { "QueueName": ["$environment-marketplace-inspection-enhancement"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateAgeOfOldestMessage", "namespace": "AWS/SQS", "period": "60", "refId": "B", "region": "default", "statistic": "Maximum" },
+            { "alias": "verification", "dimensions": { "QueueName": ["$environment-marketplace-inspection-verification"] }, "matchExact": true, "metricEditorMode": 0, "metricName": "ApproximateAgeOfOldestMessage", "namespace": "AWS/SQS", "period": "60", "refId": "C", "region": "default", "statistic": "Maximum" }
           ],
           "title": "Queue Message Age",
           "type": "timeseries"
@@ -892,7 +890,7 @@
           "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
           "id": 180,
           "targets": [
-            { "alias": "CPU Utilization", "dimensions": { "ServiceName": ["marketplace-worker"] }, "matchExact": false, "metricEditorMode": 0, "metricName": "CPUUtilization", "namespace": "AWS/ECS", "period": "60", "refId": "A", "region": "default", "statistic": "Average" }
+            { "alias": "CPU Utilization", "dimensions": { "ServiceName": ["marketplace-worker-$environment"] }, "matchExact": false, "metricEditorMode": 0, "metricName": "CPUUtilization", "namespace": "AWS/ECS", "period": "60", "refId": "A", "region": "default", "statistic": "Average" }
           ],
           "title": "CPU Utilization",
           "type": "timeseries"
@@ -909,7 +907,7 @@
           "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
           "id": 181,
           "targets": [
-            { "alias": "Memory Utilization", "dimensions": { "ServiceName": ["marketplace-worker"] }, "matchExact": false, "metricEditorMode": 0, "metricName": "MemoryUtilization", "namespace": "AWS/ECS", "period": "60", "refId": "A", "region": "default", "statistic": "Average" }
+            { "alias": "Memory Utilization", "dimensions": { "ServiceName": ["marketplace-worker-$environment"] }, "matchExact": false, "metricEditorMode": 0, "metricName": "MemoryUtilization", "namespace": "AWS/ECS", "period": "60", "refId": "A", "region": "default", "statistic": "Average" }
           ],
           "title": "Memory Utilization",
           "type": "timeseries"

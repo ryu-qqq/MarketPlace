@@ -98,6 +98,24 @@ public abstract class E2ETestBase {
     }
 
     /**
+     * 특정 권한을 가진 인증 사용자 요청 시작.
+     *
+     * <p>{@link #givenAuthenticatedUser()} 와 달리, 지정한 권한이 단일 헤더로 설정되므로 {@code
+     * @access.hasPermission()} 검사를 정확히 통과합니다.
+     *
+     * @param permissions 부여할 권한 목록
+     */
+    protected RequestSpecification givenWithPermission(String... permissions) {
+        return given().contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .header("X-User-Id", "user-001")
+                .header("X-Tenant-Id", "tenant-001")
+                .header("X-User-Roles", "ROLE_USER")
+                .header("X-User-Permissions", String.join(",", permissions))
+                .header("X-User-Email", "user@example.com");
+    }
+
+    /**
      * 비인증 요청 시작 (인증 헤더 없음).
      *
      * <p>SecurityConfig의 {@code anyRequest().authenticated()} 규칙에 의해 permitAll이 아닌 엔드포인트는 401

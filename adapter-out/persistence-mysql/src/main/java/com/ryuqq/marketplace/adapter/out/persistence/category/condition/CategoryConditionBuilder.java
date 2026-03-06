@@ -84,6 +84,18 @@ public class CategoryConditionBuilder {
         };
     }
 
+    public BooleanExpression pathStartsWithAny(List<String> pathPrefixes) {
+        if (pathPrefixes == null || pathPrefixes.isEmpty()) {
+            return null;
+        }
+        BooleanExpression result = null;
+        for (String prefix : pathPrefixes) {
+            BooleanExpression condition = category.path.like(prefix + "%");
+            result = (result == null) ? condition : result.or(condition);
+        }
+        return result;
+    }
+
     public BooleanExpression notDeleted() {
         return category.deletedAt.isNull();
     }

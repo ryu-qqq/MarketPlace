@@ -730,7 +730,7 @@ class ProductGroupQueryDslRepositoryTest {
                             List.of(),
                             List.of(),
                             List.of(),
-                            ProductGroupSearchField.NAME,
+                            ProductGroupSearchField.PRODUCT_GROUP_NAME,
                             "자켓",
                             ProductGroupSortKey.CREATED_AT,
                             SortDirection.DESC,

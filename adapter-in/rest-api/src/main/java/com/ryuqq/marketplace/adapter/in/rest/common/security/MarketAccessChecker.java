@@ -4,7 +4,10 @@ import com.ryuqq.authhub.sdk.access.BaseAccessChecker;
 import com.ryuqq.authhub.sdk.context.UserContextHolder;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
 import com.ryuqq.marketplace.application.seller.port.in.query.ResolveSellerIdByOrganizationUseCase;
+import com.ryuqq.marketplace.application.selleradmin.port.in.query.ResolveSellerIdBySellerAdminIdUseCase;
 import com.ryuqq.marketplace.domain.adminmenu.vo.AdminRole;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,22 +24,28 @@ import org.springframework.stereotype.Component;
  * @PreAuthorize("@access.hasPermission('brand:read')")
  * @PreAuthorize("@access.authenticated()")
  * @PreAuthorize("@access.isSellerOwnerOr(#sellerId, 'seller:write')")
+ * @PreAuthorize("@access.isSellerAdminOwnerOrSuperAdmin(#sellerAdminId)")
+ * @PreAuthorize("@access.isSellerAdminBulkOwnerOrSuperAdmin(#request.sellerAdminIds())")
  * }</pre>
  *
  * @author ryu-qqq
  * @since 1.0.0
  */
+@SuppressWarnings("PMD.TooManyMethods")
 @Component("access")
 public class MarketAccessChecker extends BaseAccessChecker {
 
     private final ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase;
     private final ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase;
+    private final ResolveSellerIdBySellerAdminIdUseCase resolveSellerIdBySellerAdminIdUseCase;
 
     public MarketAccessChecker(
             ResolveSellerIdByOrganizationUseCase resolveSellerIdUseCase,
-            ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase) {
+            ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase,
+            ResolveSellerIdBySellerAdminIdUseCase resolveSellerIdBySellerAdminIdUseCase) {
         this.resolveSellerIdUseCase = resolveSellerIdUseCase;
         this.resolveLegacyProductGroupSellerIdUseCase = resolveLegacyProductGroupSellerIdUseCase;
+        this.resolveSellerIdBySellerAdminIdUseCase = resolveSellerIdBySellerAdminIdUseCase;
     }
 
     /**
@@ -83,6 +92,41 @@ public class MarketAccessChecker extends BaseAccessChecker {
     }
 
     /**
+     * 등록 요청에서 sellerId를 해석합니다.
+     *
+     * <p>SUPER_ADMIN은 요청에 포함된 sellerId를 사용하며, 누락 시 예외를 발생시킵니다. 일반 사용자는 인증 컨텍스트에서 셀러 ID를 해석합니다.
+     *
+     * @param requestedSellerId 요청에 포함된 sellerId (nullable)
+     * @return 해석된 sellerId
+     * @throws IllegalArgumentException SUPER_ADMIN이 sellerId를 누락한 경우
+     * @throws AccessDeniedException 셀러 정보를 찾을 수 없는 경우
+     */
+    public long resolveSellerIdForRegistration(Long requestedSellerId) {
+        if (superAdmin()) {
+            if (requestedSellerId == null) {
+                throw new IllegalArgumentException("SUPER_ADMIN은 sellerId를 명시해야 합니다");
+            }
+            return requestedSellerId;
+        }
+        return resolveCurrentSellerId();
+    }
+
+    /**
+     * SUPER_ADMIN이면 null, 일반 사용자이면 sellerId를 반환합니다.
+     *
+     * <p>배치 상태 변경 등 소유권 검증이 선택적인 엔드포인트에서 사용합니다. null이면 서비스 레이어에서 소유권 검증을 건너뜁니다.
+     *
+     * @return 셀러 ID (SUPER_ADMIN이면 null)
+     * @throws AccessDeniedException 셀러 정보를 찾을 수 없는 경우
+     */
+    public Long resolveSellerIdOrNull() {
+        if (superAdmin()) {
+            return null;
+        }
+        return resolveCurrentSellerId();
+    }
+
+    /**
      * 레거시 상품그룹 소유자 검증.
      *
      * <p>SUPER_ADMIN은 자동 통과합니다. 그 외 사용자는 현재 인증된 셀러 ID와 상품그룹의 셀러 ID가 일치해야 합니다.
@@ -108,6 +152,100 @@ public class MarketAccessChecker extends BaseAccessChecker {
         Optional<Long> productSellerId =
                 resolveLegacyProductGroupSellerIdUseCase.execute(productGroupId);
         return productSellerId.isPresent() && productSellerId.get().equals(currentSellerId.get());
+    }
+
+    /**
+     * 셀러 관리자 소속 검증 (단건).
+     *
+     * <p>SUPER_ADMIN이거나, 대상 sellerAdminId의 소속 셀러가 현재 사용자의 셀러와 같으면 통과합니다.
+     *
+     * @param sellerAdminId 대상 셀러 관리자 ID
+     * @return SUPER_ADMIN이거나 같은 셀러 소속이면 true
+     */
+    public boolean isSellerAdminOwnerOrSuperAdmin(String sellerAdminId) {
+        if (superAdmin()) {
+            return true;
+        }
+        return isSameSellerAsAdmin(sellerAdminId);
+    }
+
+    /**
+     * 셀러 관리자 소속 검증 (일괄).
+     *
+     * <p>SUPER_ADMIN이거나, 대상 sellerAdminId 목록이 모두 현재 사용자와 같은 셀러 소속이면 통과합니다.
+     *
+     * @param sellerAdminIds 대상 셀러 관리자 ID 목록
+     * @return SUPER_ADMIN이거나 전부 같은 셀러 소속이면 true
+     */
+    public boolean isSellerAdminBulkOwnerOrSuperAdmin(List<String> sellerAdminIds) {
+        if (superAdmin()) {
+            return true;
+        }
+
+        Optional<Long> currentSellerId = resolveCurrentSellerIdOptional();
+        if (currentSellerId.isEmpty()) {
+            return false;
+        }
+
+        return resolveSellerIdBySellerAdminIdUseCase
+                .resolveIfAllSameSeller(sellerAdminIds)
+                .map(targetSellerId -> targetSellerId.equals(currentSellerId.get()))
+                .orElse(false);
+    }
+
+    private boolean isSameSellerAsAdmin(String sellerAdminId) {
+        Optional<Long> currentSellerId = resolveCurrentSellerIdOptional();
+        return currentSellerId
+                .map(
+                        aLong ->
+                                resolveSellerIdBySellerAdminIdUseCase
+                                        .execute(sellerAdminId)
+                                        .map(targetSellerId -> targetSellerId.equals(aLong))
+                                        .orElse(false))
+                .orElse(false);
+    }
+
+    private Optional<Long> resolveCurrentSellerIdOptional() {
+        String organizationId = getCurrentOrganizationId();
+        if (organizationId == null || organizationId.isBlank()) {
+            return Optional.empty();
+        }
+        return resolveSellerIdUseCase.execute(organizationId);
+    }
+
+    /**
+     * 조회 필터용 셀러 ID 목록 해석.
+     *
+     * <p>SUPER_ADMIN은 요청된 sellerIds를 그대로 사용합니다 (null이면 빈 리스트). 일반 사용자는 자신의 셀러 ID만 포함된 단건 리스트를
+     * 반환합니다.
+     *
+     * @param requestedSellerIds 요청에 포함된 셀러 ID 목록 (nullable)
+     * @return 유효한 셀러 ID 목록
+     * @throws AccessDeniedException 셀러 정보를 찾을 수 없는 경우
+     */
+    public List<Long> resolveEffectiveSellerIds(List<Long> requestedSellerIds) {
+        if (superAdmin()) {
+            return requestedSellerIds != null ? requestedSellerIds : Collections.emptyList();
+        }
+        return List.of(resolveCurrentSellerId());
+    }
+
+    /**
+     * 리소스 소유권 검증.
+     *
+     * <p>SUPER_ADMIN은 자동 통과합니다. 일반 사용자는 현재 셀러 ID와 리소스의 셀러 ID가 일치해야 합니다.
+     *
+     * @param resourceSellerId 리소스의 셀러 ID
+     * @throws AccessDeniedException 소유권이 없는 경우
+     */
+    public void verifySellerOwnership(long resourceSellerId) {
+        if (superAdmin()) {
+            return;
+        }
+        long currentSellerId = resolveCurrentSellerId();
+        if (currentSellerId != resourceSellerId) {
+            throw new AccessDeniedException("해당 리소스에 접근 권한이 없습니다");
+        }
     }
 
     /**

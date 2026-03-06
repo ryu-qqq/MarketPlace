@@ -43,4 +43,9 @@ public class CategoryReadManager {
     public List<Category> findAllByIds(List<Long> ids) {
         return queryPort.findAllByIds(ids);
     }
+
+    @Transactional(readOnly = true)
+    public List<Long> expandWithDescendants(List<Long> categoryIds) {
+        return queryPort.findDescendantIds(categoryIds);
+    }
 }

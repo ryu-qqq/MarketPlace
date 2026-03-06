@@ -96,8 +96,6 @@ public class SellerApplicationCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.authenticated()")
-    @RequirePermission(value = "seller-application:write", description = "셀러 입점 신청")
     @PostMapping
     public ResponseEntity<ApiResponse<ApplySellerApplicationApiResponse>> apply(
             @Valid @RequestBody ApplySellerApplicationApiRequest request) {
@@ -132,7 +130,7 @@ public class SellerApplicationCommandController {
                 responseCode = "409",
                 description = "이미 처리된 신청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller-application:approve')")
     @RequirePermission(value = "seller-application:approve", description = "셀러 입점 신청 승인")
     @PostMapping(SellerApplicationAdminEndpoints.APPROVE)
     public ResponseEntity<ApiResponse<ApproveSellerApplicationApiResponse>> approve(
@@ -170,7 +168,7 @@ public class SellerApplicationCommandController {
                 responseCode = "409",
                 description = "이미 처리된 신청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('seller-application:reject')")
     @RequirePermission(value = "seller-application:reject", description = "셀러 입점 신청 거절")
     @PostMapping(SellerApplicationAdminEndpoints.REJECT)
     public ResponseEntity<Void> reject(

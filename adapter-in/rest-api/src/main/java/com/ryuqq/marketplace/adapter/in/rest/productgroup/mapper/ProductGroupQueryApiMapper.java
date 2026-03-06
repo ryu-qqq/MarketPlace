@@ -32,6 +32,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupExcelCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupExcelPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductOptionMatrixResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionGroupResult;
@@ -64,6 +65,20 @@ public class ProductGroupQueryApiMapper {
     private static final int DEFAULT_SIZE = 20;
 
     public ProductGroupSearchParams toSearchParams(SearchProductGroupsApiRequest request) {
+        return toSearchParams(request, request.sellerIds());
+    }
+
+    /**
+     * 목록 조회 API Request를 SearchParams로 변환합니다 (셀러 ID 오버라이드).
+     *
+     * <p>SUPER_ADMIN이 아닌 경우 서버에서 해석된 셀러 ID로 강제 적용합니다.
+     *
+     * @param request API Request
+     * @param effectiveSellerIds 서버에서 해석된 유효 셀러 ID 목록
+     * @return Application SearchParams
+     */
+    public ProductGroupSearchParams toSearchParams(
+            SearchProductGroupsApiRequest request, List<Long> effectiveSellerIds) {
         int page = request.page() != null ? request.page() : DEFAULT_PAGE;
         int size = request.size() != null ? request.size() : DEFAULT_SIZE;
 
@@ -79,7 +94,7 @@ public class ProductGroupQueryApiMapper {
 
         return ProductGroupSearchParams.of(
                 request.statuses(),
-                request.sellerIds(),
+                effectiveSellerIds,
                 request.brandIds(),
                 request.categoryIds(),
                 request.productGroupIds(),
@@ -143,7 +158,17 @@ public class ProductGroupQueryApiMapper {
 
     // ==================== 엑셀 변환 ====================
 
-    public List<ProductGroupExcelApiResponse> toExcelResponses(
+    public PageApiResponse<ProductGroupExcelApiResponse> toExcelPageResponse(
+            ProductGroupExcelPageResult pageResult) {
+        List<ProductGroupExcelApiResponse> responses = toExcelResponses(pageResult.results());
+        return PageApiResponse.of(
+                responses,
+                pageResult.pageMeta().page(),
+                pageResult.pageMeta().size(),
+                pageResult.pageMeta().totalElements());
+    }
+
+    private List<ProductGroupExcelApiResponse> toExcelResponses(
             List<ProductGroupExcelCompositeResult> results) {
         return results.stream().map(this::toExcelResponse).toList();
     }

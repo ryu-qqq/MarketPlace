@@ -25,6 +25,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
     public static final String DEFAULT_ACCESS_TOKEN = "test-access-token";
     public static final String DEFAULT_VENDOR_ID = "vendor-001";
     public static final String DEFAULT_DISPLAY_NAME = "테스트 판매채널";
+    public static final long DEFAULT_SHOP_ID = 0L;
 
     // ===== Entity Fixtures =====
 
@@ -43,6 +44,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }
@@ -62,6 +64,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }
@@ -81,6 +84,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }
@@ -100,6 +104,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }
@@ -119,6 +124,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }
@@ -138,6 +144,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }
@@ -157,6 +164,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }
@@ -176,6 +184,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }
@@ -195,6 +204,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 null,
                 DEFAULT_VENDOR_ID,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }
@@ -214,6 +224,7 @@ public final class SellerSalesChannelJpaEntityFixtures {
                 DEFAULT_ACCESS_TOKEN,
                 null,
                 DEFAULT_DISPLAY_NAME,
+                DEFAULT_SHOP_ID,
                 now,
                 now);
     }

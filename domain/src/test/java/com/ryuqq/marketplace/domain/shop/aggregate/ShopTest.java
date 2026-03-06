@@ -131,6 +131,11 @@ class ShopTest {
                             accountId,
                             status,
                             null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
                             createdAt,
                             updatedAt);
 
@@ -166,6 +171,11 @@ class ShopTest {
                             ShopFixtures.defaultAccountId(),
                             status,
                             null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
                             createdAt,
                             updatedAt);
 
@@ -193,6 +203,11 @@ class ShopTest {
                             ShopFixtures.defaultAccountId(),
                             ShopStatus.INACTIVE,
                             deletedAt,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
                             createdAt,
                             updatedAt);
 
@@ -421,6 +436,11 @@ class ShopTest {
                             shopName,
                             accountId,
                             status,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
                             null,
                             createdAt,
                             updatedAt);

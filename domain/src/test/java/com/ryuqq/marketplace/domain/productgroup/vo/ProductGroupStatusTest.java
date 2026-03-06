@@ -34,9 +34,9 @@ class ProductGroupStatusTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT는 isActive() false를 반환한다")
+        @DisplayName("SOLD_OUT는 isActive() false를 반환한다")
         void soldoutIsNotActive() {
-            assertThat(ProductGroupStatus.SOLDOUT.isActive()).isFalse();
+            assertThat(ProductGroupStatus.SOLD_OUT.isActive()).isFalse();
         }
 
         @Test
@@ -62,7 +62,7 @@ class ProductGroupStatusTest {
             assertThat(ProductGroupStatus.DRAFT.isDeleted()).isFalse();
             assertThat(ProductGroupStatus.ACTIVE.isDeleted()).isFalse();
             assertThat(ProductGroupStatus.INACTIVE.isDeleted()).isFalse();
-            assertThat(ProductGroupStatus.SOLDOUT.isDeleted()).isFalse();
+            assertThat(ProductGroupStatus.SOLD_OUT.isDeleted()).isFalse();
         }
     }
 
@@ -83,9 +83,9 @@ class ProductGroupStatusTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT는 활성화 가능하다")
+        @DisplayName("SOLD_OUT는 활성화 가능하다")
         void soldoutCanActivate() {
-            assertThat(ProductGroupStatus.SOLDOUT.canActivate()).isTrue();
+            assertThat(ProductGroupStatus.SOLD_OUT.canActivate()).isTrue();
         }
 
         @Test
@@ -124,9 +124,9 @@ class ProductGroupStatusTest {
         }
 
         @Test
-        @DisplayName("SOLDOUT는 삭제 가능하다")
+        @DisplayName("SOLD_OUT는 삭제 가능하다")
         void soldoutCanDelete() {
-            assertThat(ProductGroupStatus.SOLDOUT.canDelete()).isTrue();
+            assertThat(ProductGroupStatus.SOLD_OUT.canDelete()).isTrue();
         }
 
         @Test
@@ -146,7 +146,7 @@ class ProductGroupStatusTest {
             assertThat(ProductGroupStatus.DRAFT.displayName()).isEqualTo("임시저장");
             assertThat(ProductGroupStatus.ACTIVE.displayName()).isEqualTo("판매중");
             assertThat(ProductGroupStatus.INACTIVE.displayName()).isEqualTo("판매중지");
-            assertThat(ProductGroupStatus.SOLDOUT.displayName()).isEqualTo("품절");
+            assertThat(ProductGroupStatus.SOLD_OUT.displayName()).isEqualTo("품절");
             assertThat(ProductGroupStatus.DELETED.displayName()).isEqualTo("삭제");
         }
     }
@@ -165,7 +165,7 @@ class ProductGroupStatusTest {
                             ProductGroupStatus.PENDING_REVIEW,
                             ProductGroupStatus.ACTIVE,
                             ProductGroupStatus.INACTIVE,
-                            ProductGroupStatus.SOLDOUT,
+                            ProductGroupStatus.SOLD_OUT,
                             ProductGroupStatus.REJECTED,
                             ProductGroupStatus.DELETED);
         }

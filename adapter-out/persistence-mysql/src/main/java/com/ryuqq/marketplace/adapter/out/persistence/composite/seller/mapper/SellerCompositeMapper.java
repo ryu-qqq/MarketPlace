@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.dto.Seller
 import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.dto.SellerCompositeDto;
 import com.ryuqq.marketplace.application.seller.dto.composite.SellerAdminCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
+import java.time.LocalTime;
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,10 +42,8 @@ public class SellerCompositeMapper {
                         dto.csPhone(),
                         dto.csMobile(),
                         dto.csEmail(),
-                        dto.operatingStartTime() != null
-                                ? dto.operatingStartTime().toString()
-                                : null,
-                        dto.operatingEndTime() != null ? dto.operatingEndTime().toString() : null,
+                        toNullableTimeString(dto.operatingStartTime()),
+                        toNullableTimeString(dto.operatingEndTime()),
                         dto.operatingDays(),
                         dto.kakaoChannelUrl()));
     }
@@ -74,8 +73,8 @@ public class SellerCompositeMapper {
                         dto.csPhone(),
                         dto.csMobile(),
                         dto.csEmail(),
-                        dto.operatingStartTime().toString(),
-                        dto.operatingEndTime().toString(),
+                        toNullableTimeString(dto.operatingStartTime()),
+                        toNullableTimeString(dto.operatingEndTime()),
                         dto.operatingDays(),
                         dto.kakaoChannelUrl()),
                 new SellerAdminCompositeResult.ContractInfo(
@@ -99,5 +98,9 @@ public class SellerCompositeMapper {
                         dto.verifiedAt(),
                         dto.settlementCreatedAt(),
                         dto.settlementUpdatedAt()));
+    }
+
+    private String toNullableTimeString(LocalTime time) {
+        return time != null ? time.toString() : null;
     }
 }

@@ -30,6 +30,19 @@ public class SellerAuthOutboxQueryDslRepository {
     }
 
     /**
+     * ID로 Outbox 단건 조회.
+     *
+     * @param outboxId Outbox ID
+     * @return Outbox 엔티티 (없으면 null)
+     */
+    public SellerAuthOutboxJpaEntity findById(Long outboxId) {
+        return queryFactory
+                .selectFrom(sellerAuthOutboxJpaEntity)
+                .where(sellerAuthOutboxJpaEntity.id.eq(outboxId))
+                .fetchOne();
+    }
+
+    /**
      * SellerId로 PENDING 상태의 Outbox 조회.
      *
      * @param sellerId 셀러 ID

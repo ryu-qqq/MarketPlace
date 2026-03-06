@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,7 @@ public class CanonicalOptionGroupQueryController {
     }
 
     @Operation(summary = "정규 옵션그룹 목록 조회", description = "정규 옵션그룹 목록을 조회합니다.")
+    @PreAuthorize("@access.hasPermission('canonical-option-group:read')")
     @RequirePermission(value = "canonical-option-group:read", description = "캐노니컬 옵션 그룹 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<CanonicalOptionGroupApiResponse>>>
@@ -53,6 +55,7 @@ public class CanonicalOptionGroupQueryController {
     }
 
     @Operation(summary = "정규 옵션그룹 상세 조회", description = "정규 옵션그룹 상세 정보를 조회합니다.")
+    @PreAuthorize("@access.hasPermission('canonical-option-group:read')")
     @RequirePermission(value = "canonical-option-group:read", description = "캐노니컬 옵션 그룹 단건 조회")
     @GetMapping(CanonicalOptionAdminEndpoints.CANONICAL_OPTION_GROUP_ID)
     public ResponseEntity<ApiResponse<CanonicalOptionGroupApiResponse>> getCanonicalOptionGroup(

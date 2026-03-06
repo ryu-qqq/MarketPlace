@@ -214,6 +214,101 @@ class OutboundSyncOutboxQueryDslRepositoryE2ETest extends E2ETestBase {
     }
 
     // ========================================================================
+    // 2. findPendingByProductGroupIds 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findPendingByProductGroupIds 쿼리 테스트")
+    class FindPendingByProductGroupIdsTest {
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q2-S01] 여러 상품그룹 ID로 PENDING 상태 Outbox를 일괄 조회합니다")
+        void findPendingByProductGroupIds_MultipleIds_ReturnsAllPending() {
+            // given
+            jpaRepository.saveAll(
+                    List.of(
+                            OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(500L, 10L),
+                            OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(600L, 10L),
+                            OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(700L, 10L)));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupIds(List.of(500L, 600L));
+
+            // then
+            assertThat(result).hasSize(2);
+            assertThat(result)
+                    .extracting(OutboundSyncOutboxJpaEntity::getProductGroupId)
+                    .containsExactlyInAnyOrder(500L, 600L);
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q2-F01] 빈 ID 목록으로 조회 시 빈 리스트를 반환합니다")
+        void findPendingByProductGroupIds_EmptyIds_ReturnsEmpty() {
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupIds(List.of());
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q2-F02] null ID 목록으로 조회 시 빈 리스트를 반환합니다")
+        void findPendingByProductGroupIds_NullIds_ReturnsEmpty() {
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupIds(null);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q2-F03] PENDING이 아닌 상태는 조회에서 제외됩니다")
+        void findPendingByProductGroupIds_NonPendingExcluded() {
+            // given
+            Long targetPgId = 800L;
+            jpaRepository.saveAll(
+                    List.of(
+                            OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(
+                                    targetPgId, 10L),
+                            OutboundSyncOutboxJpaEntityFixtures.newProcessingEntity(),
+                            OutboundSyncOutboxJpaEntityFixtures.newCompletedEntity(),
+                            OutboundSyncOutboxJpaEntityFixtures.newFailedEntity()));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupIds(List.of(targetPgId));
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst().getProductGroupId()).isEqualTo(targetPgId);
+            assertThat(result.getFirst().getStatus())
+                    .isEqualTo(OutboundSyncOutboxJpaEntity.Status.PENDING);
+        }
+
+        @Test
+        @Tag("P1")
+        @DisplayName("[Q2-S02] 일치하는 상품그룹 ID가 없으면 빈 리스트를 반환합니다")
+        void findPendingByProductGroupIds_NoMatchingIds_ReturnsEmpty() {
+            // given
+            jpaRepository.save(OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(100L, 10L));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findPendingByProductGroupIds(List.of(999L, 998L));
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
+
+    // ========================================================================
     // 유틸리티 메서드
     // ========================================================================
 

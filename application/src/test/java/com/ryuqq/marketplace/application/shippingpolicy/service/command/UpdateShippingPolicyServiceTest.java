@@ -9,9 +9,10 @@ import com.ryuqq.marketplace.application.shippingpolicy.ShippingPolicyCommandFix
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.UpdateShippingPolicyCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
 import com.ryuqq.marketplace.application.shippingpolicy.internal.DefaultShippingPolicyResolver;
-import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyCommandManager;
+import com.ryuqq.marketplace.application.shippingpolicy.internal.ShippingPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.shippingpolicy.validator.ShippingPolicyValidator;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.ShippingPolicyFixtures;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
@@ -35,9 +36,9 @@ class UpdateShippingPolicyServiceTest {
     @InjectMocks private UpdateShippingPolicyService sut;
 
     @Mock private ShippingPolicyCommandFactory commandFactory;
-    @Mock private ShippingPolicyCommandManager commandManager;
     @Mock private ShippingPolicyValidator validator;
     @Mock private DefaultShippingPolicyResolver defaultPolicyResolver;
+    @Mock private ShippingPolicyOutboundFacade outboundFacade;
 
     @Nested
     @DisplayName("execute() - 배송 정책 수정")
@@ -88,7 +89,12 @@ class UpdateShippingPolicyServiceTest {
                             eq(shippingPolicy),
                             eq(command.defaultPolicy()),
                             eq(context.changedAt()));
-            then(commandManager).should().persist(shippingPolicy);
+            then(outboundFacade)
+                    .should()
+                    .persistWithSync(
+                            eq(shippingPolicy),
+                            eq(OutboundSellerOperationType.UPDATE),
+                            eq(context.changedAt()));
         }
     }
 }

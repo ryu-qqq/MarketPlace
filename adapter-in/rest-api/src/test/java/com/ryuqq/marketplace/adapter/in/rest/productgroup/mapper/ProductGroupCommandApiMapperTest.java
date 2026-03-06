@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.ProductGroupApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchChangeProductGroupStatusApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.BatchRegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.RegisterProductGroupExcelApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.command.UpdateProductGroupBasicInfoApiRequest;
@@ -13,7 +12,6 @@ import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangePro
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupBasicInfoCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -264,43 +262,8 @@ class ProductGroupCommandApiMapperTest {
     }
 
     @Nested
-    @DisplayName("toCommands(long, BatchRegisterProductGroupApiRequest) - 배치 등록 요청 변환")
-    class ToBatchRegisterCommandsTest {
-
-        @Test
-        @DisplayName("BatchRegisterProductGroupApiRequest를 List<RegisterProductGroupCommand>로 변환한다")
-        void toCommands_ConvertsBatchRegisterRequest_ReturnsCommands() {
-            // given
-            long sellerId = 7L;
-            BatchRegisterProductGroupApiRequest request =
-                    ProductGroupApiFixtures.batchRegisterRequest();
-
-            // when
-            List<RegisterProductGroupCommand> commands = mapper.toCommands(sellerId, request);
-
-            // then
-            assertThat(commands).hasSize(2);
-            assertThat(commands.get(0).sellerId()).isEqualTo(sellerId);
-            assertThat(commands.get(0).shippingPolicyId()).isZero();
-            assertThat(commands.get(0).refundPolicyId()).isZero();
-            assertThat(commands.get(0).productGroupName())
-                    .isEqualTo(ProductGroupApiFixtures.DEFAULT_PRODUCT_GROUP_NAME);
-        }
-
-        @Test
-        @DisplayName("배치 등록의 각 항목이 독립적으로 변환된다")
-        void toCommands_EachItemConverted_IndependentCommands() {
-            // given
-            long sellerId = 7L;
-            BatchRegisterProductGroupApiRequest request =
-                    ProductGroupApiFixtures.batchRegisterRequest();
-
-            // when
-            List<RegisterProductGroupCommand> commands = mapper.toCommands(sellerId, request);
-
-            // then
-            assertThat(commands).hasSize(request.items().size());
-        }
+    @DisplayName("toCommand(long, RegisterProductGroupExcelApiRequest) - 엑셀 등록 요청 변환")
+    class ToExcelRegisterCommandTest {
 
         @Test
         @DisplayName("엑셀 요청은 sellerId 주입 및 정책 미해결 상태로 변환된다")

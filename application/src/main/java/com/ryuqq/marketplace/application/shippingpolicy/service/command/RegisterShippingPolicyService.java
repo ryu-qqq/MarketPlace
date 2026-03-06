@@ -3,8 +3,9 @@ package com.ryuqq.marketplace.application.shippingpolicy.service.command;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.command.RegisterShippingPolicyCommand;
 import com.ryuqq.marketplace.application.shippingpolicy.factory.ShippingPolicyCommandFactory;
 import com.ryuqq.marketplace.application.shippingpolicy.internal.DefaultShippingPolicyResolver;
-import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyCommandManager;
+import com.ryuqq.marketplace.application.shippingpolicy.internal.ShippingPolicyOutboundFacade;
 import com.ryuqq.marketplace.application.shippingpolicy.port.in.command.RegisterShippingPolicyUseCase;
+import com.ryuqq.marketplace.domain.outboundseller.vo.OutboundSellerOperationType;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +28,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegisterShippingPolicyService implements RegisterShippingPolicyUseCase {
 
     private final ShippingPolicyCommandFactory commandFactory;
-    private final ShippingPolicyCommandManager commandManager;
     private final DefaultShippingPolicyResolver defaultPolicyResolver;
+    private final ShippingPolicyOutboundFacade outboundFacade;
 
     public RegisterShippingPolicyService(
             ShippingPolicyCommandFactory commandFactory,
-            ShippingPolicyCommandManager commandManager,
-            DefaultShippingPolicyResolver defaultPolicyResolver) {
+            DefaultShippingPolicyResolver defaultPolicyResolver,
+            ShippingPolicyOutboundFacade outboundFacade) {
         this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
         this.defaultPolicyResolver = defaultPolicyResolver;
+        this.outboundFacade = outboundFacade;
     }
 
     @Override
@@ -47,6 +48,7 @@ public class RegisterShippingPolicyService implements RegisterShippingPolicyUseC
         defaultPolicyResolver.resolveForRegistration(
                 shippingPolicy.sellerId(), shippingPolicy, shippingPolicy.createdAt());
 
-        return commandManager.persist(shippingPolicy);
+        return outboundFacade.persistWithSync(
+                shippingPolicy, OutboundSellerOperationType.CREATE, shippingPolicy.createdAt());
     }
 }

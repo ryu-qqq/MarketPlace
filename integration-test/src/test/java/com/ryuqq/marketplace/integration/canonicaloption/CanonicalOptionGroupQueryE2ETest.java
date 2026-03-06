@@ -66,9 +66,7 @@ class CanonicalOptionGroupQueryE2ETest extends E2ETestBase {
             }
 
             // when & then
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "canonical-option-group:read"))
+            given().spec(givenWithPermission("canonical-option-group:read"))
                     .when()
                     .get(BASE_URL)
                     .then()
@@ -82,9 +80,7 @@ class CanonicalOptionGroupQueryE2ETest extends E2ETestBase {
         @DisplayName("[Q1-2] 데이터 없을 때 빈 목록")
         void searchCanonicalOptionGroups_noData_returnsEmptyList() {
             // when & then
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "canonical-option-group:read"))
+            given().spec(givenWithPermission("canonical-option-group:read"))
                     .when()
                     .get(BASE_URL)
                     .then()
@@ -122,9 +118,7 @@ class CanonicalOptionGroupQueryE2ETest extends E2ETestBase {
                             CanonicalOptionGroupJpaEntityFixtures.activeEntityWithCode("CODE_Q2"));
 
             // when & then
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "canonical-option-group:read"))
+            given().spec(givenWithPermission("canonical-option-group:read"))
                     .when()
                     .get(BASE_URL + "/{id}", optionGroup.getId())
                     .then()
@@ -137,9 +131,7 @@ class CanonicalOptionGroupQueryE2ETest extends E2ETestBase {
         @DisplayName("[Q2-2] 존재하지 않는 ID → 404")
         void getCanonicalOptionGroup_nonExistingId_returns404() {
             // when & then
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "canonical-option-group:read"))
+            given().spec(givenWithPermission("canonical-option-group:read"))
                     .when()
                     .get(BASE_URL + "/{id}", 99999)
                     .then()
@@ -173,11 +165,7 @@ class CanonicalOptionGroupQueryE2ETest extends E2ETestBase {
 
             // Step 2: 목록 조회
             var listResponse =
-                    given().spec(
-                                    givenAuthenticatedUser()
-                                            .header(
-                                                    "X-User-Permissions",
-                                                    "canonical-option-group:read"))
+                    given().spec(givenWithPermission("canonical-option-group:read"))
                             .when()
                             .get(BASE_URL)
                             .then()
@@ -190,9 +178,7 @@ class CanonicalOptionGroupQueryE2ETest extends E2ETestBase {
             Long extractedId = listResponse.jsonPath().getLong("data.content[0].id");
 
             // Step 4: 상세 조회
-            given().spec(
-                            givenAuthenticatedUser()
-                                    .header("X-User-Permissions", "canonical-option-group:read"))
+            given().spec(givenWithPermission("canonical-option-group:read"))
                     .when()
                     .get(BASE_URL + "/{id}", extractedId)
                     .then()

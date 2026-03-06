@@ -13,10 +13,18 @@ server:
       max: 150
 
 # ===============================================
-# Sentry Configuration (Disabled for Stage)
+# Sentry Configuration (Stage)
 # ===============================================
 sentry:
-  dsn: ""  # Empty DSN disables Sentry
+  dsn: ${SENTRY_DSN:}
+  environment: stage
+  send-default-pii: true
+  traces-sample-rate: 1.0
+  exception-resolver-order: -2147483647
+  attach-stacktrace: true
+  logging:
+    minimum-event-level: error
+    minimum-breadcrumb-level: info
 
 # ===============================================
 # Config Import Override (환경별 설정 로드)
@@ -36,6 +44,7 @@ spring:
       - classpath:fileflow.yml
       - classpath:fileflow-stage.yml
       - classpath:naver-commerce.yml
+      - classpath:setof-commerce.yml
 
 management:
   endpoints:

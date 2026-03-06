@@ -62,7 +62,7 @@ public class BrandPresetCommandController {
                 responseCode = "400",
                 description = "잘못된 요청")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('brand-preset:write')")
     @RequirePermission(value = "brand-preset:write", description = "브랜드 프리셋 등록")
     @PostMapping
     public ResponseEntity<ApiResponse<BrandPresetIdApiResponse>> registerBrandPreset(
@@ -84,7 +84,7 @@ public class BrandPresetCommandController {
                 responseCode = "404",
                 description = "프리셋을 찾을 수 없음")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('brand-preset:write')")
     @RequirePermission(value = "brand-preset:write", description = "브랜드 프리셋 수정")
     @PutMapping(BrandPresetAdminEndpoints.BRAND_PRESET_ID)
     public ResponseEntity<Void> updateBrandPreset(
@@ -105,7 +105,7 @@ public class BrandPresetCommandController {
                 responseCode = "200",
                 description = "삭제 성공")
     })
-    @PreAuthorize("@access.superAdmin()")
+    @PreAuthorize("@access.hasPermission('brand-preset:write')")
     @RequirePermission(value = "brand-preset:write", description = "브랜드 프리셋 삭제")
     @DeleteMapping
     public ResponseEntity<ApiResponse<DeleteBrandPresetsApiResponse>> deleteBrandPresets(

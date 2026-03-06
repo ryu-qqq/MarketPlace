@@ -32,6 +32,12 @@ scheduler:
         # 로컬: 짧은 지연
         delay-seconds: 10
 
+      poll-processing:
+        # 로컬: 30초마다 (빠른 테스트)
+        cron: "*/30 * * * * *"
+        # 로컬: 작은 배치
+        batch-size: 10
+
       recover-timeout:
         # 로컬: 2분마다
         cron: "0 */2 * * * *"
@@ -39,6 +45,14 @@ scheduler:
         batch-size: 10
         # 로컬: 짧은 타임아웃
         timeout-seconds: 60
+
+      recover-failed:
+        # 로컬: 5분마다 (빠른 테스트)
+        cron: "0 */5 * * * *"
+        # 로컬: 작은 배치
+        batch-size: 10
+        # 로컬: 5분 후 복구
+        failed-after-seconds: 300
 
     seller-admin-auth-outbox:
       process-pending:
@@ -88,6 +102,31 @@ scheduler:
         batch-size: 10
         # 로컬: 짧은 stuck 기준
         stuck-seconds: 60
+
+    legacy-conversion-seeder:
+      # 로컬: 비활성화 (수동 테스트)
+      enabled: false
+      # 로컬: 5분마다
+      cron: "0 */5 * * * *"
+      # 로컬: 작은 배치
+      batch-size: 10
+      # 로컬: 소량 제한
+      max-total: 50
+
+    inbound-order-polling:
+      entries:
+        - sales-channel-id: 1
+          enabled: true
+          # 로컬: 2분마다 (빠른 테스트)
+          cron: "0 */2 * * * *"
+          timezone: Asia/Seoul
+          batch-size: 50
+
+    inbound-product-retry:
+      # 로컬: 2분마다 (빠른 테스트)
+      cron: "0 */2 * * * *"
+      # 로컬: 작은 배치
+      batch-size: 10
 
     description-publish:
       # 로컬: 1분마다 (빠른 테스트)

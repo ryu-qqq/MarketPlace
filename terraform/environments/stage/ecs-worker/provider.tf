@@ -144,6 +144,29 @@ data "aws_ssm_parameter" "sqs_access_policy_arn" {
 }
 
 # ========================================
+# Intelligence SQS Queue References (from SQS module)
+# ========================================
+data "aws_ssm_parameter" "sqs_intelligence_orchestration_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-orchestration-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_description_analysis_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-description-analysis-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_option_analysis_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-option-analysis-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_notice_analysis_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-notice-analysis-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_aggregation_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-aggregation-queue-url"
+}
+
+# ========================================
 # AuthHub Configuration
 # ========================================
 data "aws_ssm_parameter" "authhub_service_token" {
@@ -155,6 +178,20 @@ data "aws_ssm_parameter" "authhub_service_token" {
 # ========================================
 data "aws_ssm_parameter" "openai_api_key" {
   name = "/${var.project_name}/openai/api-key"
+}
+
+# ========================================
+# Anthropic Configuration
+# ========================================
+data "aws_ssm_parameter" "anthropic_api_key" {
+  name = "/${var.project_name}/anthropic/api-key"
+}
+
+# ========================================
+# FileFlow Configuration (Shared Service Token)
+# ========================================
+data "aws_ssm_parameter" "fileflow_service_token" {
+  name = "/shared/security/service-token-secret"
 }
 
 # ========================================
@@ -194,4 +231,11 @@ locals {
   sqs_enhancement_queue_url  = data.aws_ssm_parameter.sqs_enhancement_queue_url.value
   sqs_verification_queue_url = data.aws_ssm_parameter.sqs_verification_queue_url.value
   sqs_access_policy_arn      = nonsensitive(data.aws_ssm_parameter.sqs_access_policy_arn.value)
+
+  # Intelligence SQS Queue URLs
+  sqs_intelligence_orchestration_queue_url          = data.aws_ssm_parameter.sqs_intelligence_orchestration_queue_url.value
+  sqs_intelligence_description_analysis_queue_url   = data.aws_ssm_parameter.sqs_intelligence_description_analysis_queue_url.value
+  sqs_intelligence_option_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_option_analysis_queue_url.value
+  sqs_intelligence_notice_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_notice_analysis_queue_url.value
+  sqs_intelligence_aggregation_queue_url            = data.aws_ssm_parameter.sqs_intelligence_aggregation_queue_url.value
 }

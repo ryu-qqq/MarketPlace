@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.commoncode.controller;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.commoncode.CommonCodeAdminEndpoints;
+import com.ryuqq.marketplace.adapter.in.rest.commoncode.CommonCodePublicEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.commoncode.dto.query.SearchCommonCodesPageApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.commoncode.dto.response.CommonCodeApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.commoncode.mapper.CommonCodeQueryApiMapper;
@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "공통 코드 조회", description = "공통 코드 조회 API")
 @RestController
-@RequestMapping(CommonCodeAdminEndpoints.BASE)
+@RequestMapping(CommonCodePublicEndpoints.BASE)
 public class CommonCodeQueryController {
 
     private final SearchCommonCodeUseCase searchCommonCodeUseCase;

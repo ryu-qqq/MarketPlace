@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +35,14 @@ public class GatewaySecurityBridgeFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        Authentication existing = SecurityContextHolder.getContext().getAuthentication();
+        if (existing != null
+                && existing.isAuthenticated()
+                && !(existing instanceof AnonymousAuthenticationToken)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         UserContext context = UserContextHolder.getContext();
 

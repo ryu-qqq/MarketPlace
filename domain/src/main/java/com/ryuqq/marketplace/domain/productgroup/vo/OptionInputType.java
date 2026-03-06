@@ -9,4 +9,9 @@ public enum OptionInputType {
     public boolean requiresOptionValues() {
         return true;
     }
+
+    /** name이 null이면 PREDEFINED를 기본값으로 반환. */
+    public static OptionInputType fromNameOrDefault(String name) {
+        return name != null ? valueOf(name) : PREDEFINED;
+    }
 }

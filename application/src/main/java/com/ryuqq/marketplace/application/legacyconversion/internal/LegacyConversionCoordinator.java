@@ -13,17 +13,8 @@ import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpd
 import com.ryuqq.marketplace.application.productgroup.dto.result.ProductGroupRegistrationResult;
 import com.ryuqq.marketplace.application.productgroup.internal.FullProductGroupRegistrationCoordinator;
 import com.ryuqq.marketplace.application.productgroup.internal.FullProductGroupUpdateCoordinator;
-import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadManager;
-import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyReadManager;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyConversionOutbox;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
-import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
-import com.ryuqq.marketplace.domain.refundpolicy.exception.DefaultRefundPolicyNotFoundException;
-import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
-import com.ryuqq.marketplace.domain.seller.id.SellerId;
-import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
-import com.ryuqq.marketplace.domain.shippingpolicy.exception.DefaultShippingPolicyNotFoundException;
-import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +47,7 @@ public class LegacyConversionCoordinator {
     private final LegacyConversionOutboxCommandManager outboxCommandManager;
     private final LegacyProductIdMappingCommandManager mappingCommandManager;
     private final LegacyProductIdMappingReadManager mappingReadManager;
-    private final ShippingPolicyReadManager shippingPolicyReadManager;
-    private final RefundPolicyReadManager refundPolicyReadManager;
+    private final LegacyConversionPreResolver preResolver;
 
     public LegacyConversionCoordinator(
             LegacyProductGroupReadFacade readFacade,
@@ -68,8 +58,7 @@ public class LegacyConversionCoordinator {
             LegacyConversionOutboxCommandManager outboxCommandManager,
             LegacyProductIdMappingCommandManager mappingCommandManager,
             LegacyProductIdMappingReadManager mappingReadManager,
-            ShippingPolicyReadManager shippingPolicyReadManager,
-            RefundPolicyReadManager refundPolicyReadManager) {
+            LegacyConversionPreResolver preResolver) {
         this.readFacade = readFacade;
         this.registrationBundleFactory = registrationBundleFactory;
         this.updateBundleFactory = updateBundleFactory;
@@ -78,8 +67,7 @@ public class LegacyConversionCoordinator {
         this.outboxCommandManager = outboxCommandManager;
         this.mappingCommandManager = mappingCommandManager;
         this.mappingReadManager = mappingReadManager;
-        this.shippingPolicyReadManager = shippingPolicyReadManager;
-        this.refundPolicyReadManager = refundPolicyReadManager;
+        this.preResolver = preResolver;
     }
 
     /**
@@ -125,13 +113,11 @@ public class LegacyConversionCoordinator {
     private void handleRegistration(
             LegacyProductGroupDetailBundle legacyBundle, long legacyProductGroupId, Instant now) {
 
-        SellerId sellerId = SellerId.of(legacyBundle.composite().sellerId());
-        ShippingPolicyId shippingPolicyId = resolveShippingPolicy(sellerId);
-        RefundPolicyId refundPolicyId = resolveRefundPolicy(sellerId);
+        LegacyConversionResolvedContext resolvedContext =
+                preResolver.resolve(legacyBundle.composite());
 
         ProductGroupRegistrationBundle bundle =
-                registrationBundleFactory.create(
-                        legacyBundle, shippingPolicyId, refundPolicyId, now);
+                registrationBundleFactory.create(legacyBundle, resolvedContext, now);
         ProductGroupRegistrationResult result = registrationCoordinator.register(bundle);
 
         persistSkuMappings(
@@ -155,17 +141,15 @@ public class LegacyConversionCoordinator {
             Instant now) {
 
         long internalProductGroupId = deriveInternalProductGroupId(existingMappings);
-        SellerId sellerId = SellerId.of(legacyBundle.composite().sellerId());
-        ShippingPolicyId shippingPolicyId = resolveShippingPolicy(sellerId);
-        RefundPolicyId refundPolicyId = resolveRefundPolicy(sellerId);
+        LegacyConversionResolvedContext resolvedContext =
+                preResolver.resolve(legacyBundle.composite());
 
         ProductGroupUpdateBundle updateBundle =
                 updateBundleFactory.create(
                         legacyBundle,
                         internalProductGroupId,
                         existingMappings,
-                        shippingPolicyId,
-                        refundPolicyId,
+                        resolvedContext,
                         now);
 
         updateCoordinator.update(updateBundle);
@@ -177,7 +161,7 @@ public class LegacyConversionCoordinator {
     }
 
     private long deriveInternalProductGroupId(List<LegacyProductIdMapping> mappings) {
-        return mappings.get(0).internalProductGroupId();
+        return mappings.getFirst().internalProductGroupId();
     }
 
     private void persistSkuMappings(
@@ -197,20 +181,6 @@ public class LegacyConversionCoordinator {
                             now));
         }
         mappingCommandManager.persistAll(mappings);
-    }
-
-    private ShippingPolicyId resolveShippingPolicy(SellerId sellerId) {
-        return shippingPolicyReadManager
-                .findDefaultBySellerId(sellerId)
-                .map(ShippingPolicy::id)
-                .orElseThrow(() -> new DefaultShippingPolicyNotFoundException(sellerId.value()));
-    }
-
-    private RefundPolicyId resolveRefundPolicy(SellerId sellerId) {
-        return refundPolicyReadManager
-                .findDefaultBySellerId(sellerId)
-                .map(RefundPolicy::id)
-                .orElseThrow(() -> new DefaultRefundPolicyNotFoundException(sellerId.value()));
     }
 
     private String truncateMessage(String message) {

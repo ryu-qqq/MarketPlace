@@ -38,10 +38,16 @@ public class ProductGroupDescriptionCommandFactory {
      * @return 생성된 ProductGroupDescription
      */
     public ProductGroupDescription create(RegisterProductGroupDescriptionCommand command) {
+        DescriptionHtml content = DescriptionHtml.of(command.content());
+        List<String> imageUrls = content.extractImageUrls();
+
+        List<DescriptionImage> images = new ArrayList<>();
+        for (int i = 0; i < imageUrls.size(); i++) {
+            images.add(DescriptionImage.forNew(ImageUrl.of(imageUrls.get(i)), i));
+        }
+
         return ProductGroupDescription.forNew(
-                ProductGroupId.of(command.productGroupId()),
-                DescriptionHtml.of(command.content()),
-                timeProvider.now());
+                ProductGroupId.of(command.productGroupId()), content, images, timeProvider.now());
     }
 
     /**
@@ -62,8 +68,16 @@ public class ProductGroupDescriptionCommandFactory {
             existing.updateContent(content);
             return existing;
         } else {
+            List<String> imageUrls = content.extractImageUrls();
+            List<DescriptionImage> images = new ArrayList<>();
+            for (int i = 0; i < imageUrls.size(); i++) {
+                images.add(DescriptionImage.forNew(ImageUrl.of(imageUrls.get(i)), i));
+            }
             return ProductGroupDescription.forNew(
-                    ProductGroupId.of(command.productGroupId()), content, timeProvider.now());
+                    ProductGroupId.of(command.productGroupId()),
+                    content,
+                    images,
+                    timeProvider.now());
         }
     }
 
