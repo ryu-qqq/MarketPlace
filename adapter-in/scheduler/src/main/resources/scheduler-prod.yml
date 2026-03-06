@@ -127,7 +127,8 @@ scheduler:
         timeout-seconds: 300
 
     legacy-conversion:
-      # Prod: 1분마다
+      # Prod: 비활성화 (셀러/배송정책 미설정)
+      enabled: false
       cron: "0 */1 * * * *"
 
     legacy-conversion-timeout:
@@ -135,13 +136,10 @@ scheduler:
       cron: "0 */5 * * * *"
 
     legacy-conversion-seeder:
-      # Prod: 활성화 (전체 마이그레이션)
-      enabled: true
-      # Prod: 1분마다
+      # Prod: 비활성화 (셀러/배송정책 미설정)
+      enabled: false
       cron: "0 */1 * * * *"
-      # Prod: 큰 배치
       batch-size: 200
-      # Prod: 무제한 (전체 마이그레이션)
       max-total: 0
 
     inbound-order-polling:
