@@ -240,7 +240,8 @@ module "web_api_task_execution_role" {
             ]
             Resource = [
               "arn:aws:ssm:${var.aws_region}:*:parameter/shared/*",
-              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*"
+              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*",
+              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*"
             ]
           },
           {
@@ -466,6 +467,10 @@ module "ecs_service" {
     # AWS SES Credentials (이메일 발송용)
     { name = "AWS_ACCESS_KEY_ID", valueFrom = data.aws_ssm_parameter.ses_access_key_id.arn },
     { name = "AWS_SECRET_ACCESS_KEY", valueFrom = data.aws_ssm_parameter.ses_secret_access_key.arn },
+    # AuthHub Service Token
+    { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
+    # FileFlow Service Token
+    { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
     # Legacy DB Password
     { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
   ]

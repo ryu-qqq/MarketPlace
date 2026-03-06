@@ -111,6 +111,20 @@ data "aws_secretsmanager_secret_version" "rds" {
 }
 
 # ========================================
+# AuthHub Configuration
+# ========================================
+data "aws_ssm_parameter" "authhub_service_token" {
+  name = "/authhub/security/service-token-secret"
+}
+
+# ========================================
+# FileFlow Configuration (Shared Service Token)
+# ========================================
+data "aws_ssm_parameter" "fileflow_service_token" {
+  name = "/shared/security/service-token-secret"
+}
+
+# ========================================
 # Monitoring Configuration (AMP)
 # ========================================
 data "aws_ssm_parameter" "amp_workspace_arn" {
