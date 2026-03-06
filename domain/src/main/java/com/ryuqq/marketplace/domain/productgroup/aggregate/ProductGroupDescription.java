@@ -129,7 +129,11 @@ public class ProductGroupDescription {
             List<DescriptionImage> newImages, Instant updatedAt) {
         Map<String, DescriptionImage> existingByUrl =
                 images.stream()
-                        .collect(Collectors.toMap(DescriptionImage::originUrlValue, img -> img));
+                        .collect(
+                                Collectors.toMap(
+                                        DescriptionImage::originUrlValue,
+                                        img -> img,
+                                        (existing, duplicate) -> existing));
 
         List<DescriptionImage> added = new ArrayList<>();
         List<DescriptionImage> retained = new ArrayList<>();
