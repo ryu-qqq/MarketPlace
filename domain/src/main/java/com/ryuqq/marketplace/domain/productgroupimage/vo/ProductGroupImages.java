@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,16 +25,27 @@ public class ProductGroupImages {
         this.images = images;
     }
 
-    /** 신규 생성 또는 수정 시 사용. 검증 + 정렬 적용. */
+    /** 신규 생성 또는 수정 시 사용. 중복 제거 + 검증 + 정렬 적용. */
     public static ProductGroupImages of(List<ProductGroupImage> images) {
-        validate(images);
-        List<ProductGroupImage> sorted = sort(images);
+        List<ProductGroupImage> deduped = deduplicate(images);
+        validate(deduped);
+        List<ProductGroupImage> sorted = sort(deduped);
         return new ProductGroupImages(sorted);
     }
 
     /** 영속성에서 복원 시 사용. 검증 스킵. */
     public static ProductGroupImages reconstitute(List<ProductGroupImage> images) {
         return new ProductGroupImages(List.copyOf(images));
+    }
+
+    // === 중복 제거 ===
+
+    private static List<ProductGroupImage> deduplicate(List<ProductGroupImage> images) {
+        LinkedHashMap<String, ProductGroupImage> seen = new LinkedHashMap<>();
+        for (ProductGroupImage img : images) {
+            seen.putIfAbsent(imageKey(img), img);
+        }
+        return new ArrayList<>(seen.values());
     }
 
     // === 검증 ===
@@ -101,7 +113,10 @@ public class ProductGroupImages {
      */
     public ProductGroupImageDiff update(ProductGroupImageUpdateData updateData) {
         Map<String, ProductGroupImage> existingByKey =
-                images.stream().collect(Collectors.toMap(ProductGroupImages::imageKey, img -> img));
+                images.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        ProductGroupImages::imageKey, img -> img, (a, b) -> a));
 
         List<ProductGroupImage> added = new ArrayList<>();
         List<ProductGroupImage> retained = new ArrayList<>();

@@ -11,6 +11,12 @@ logging:
     com.ryuqq.setof.adapter.in.scheduler: INFO
     org.hibernate.SQL: DEBUG
 
-# Sentry 비활성화 (스테이징)
+# Sentry Configuration (Stage)
 sentry:
-  dsn: ""
+  dsn: ${SENTRY_DSN:}
+  environment: stage
+  send-default-pii: true
+  attach-stacktrace: true
+  logging:
+    minimum-event-level: error
+    minimum-breadcrumb-level: info
