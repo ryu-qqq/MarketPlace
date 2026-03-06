@@ -103,7 +103,7 @@ data "aws_ssm_parameter" "rds_proxy_endpoint" {
 }
 
 data "aws_secretsmanager_secret" "rds" {
-  name = "/ryuqqq/market/prod/db-credentials"
+  name = "marketplace/rds/credentials"
 }
 
 data "aws_secretsmanager_secret_version" "rds" {
