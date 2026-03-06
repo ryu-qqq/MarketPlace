@@ -19,3 +19,16 @@ sentry:
   logging:
     minimum-event-level: error
     minimum-breadcrumb-level: info
+
+# ============================================================
+# Intelligence Pipeline 스케줄러 비활성화
+# ============================================================
+scheduler:
+  jobs:
+    intelligence-pipeline:
+      process-pending:
+        enabled: false
+      recover-timeout:
+        enabled: false
+      recover-stuck-aggregation:
+        enabled: false

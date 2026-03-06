@@ -8,3 +8,19 @@ spring:
         static: ap-northeast-2
       sqs:
         enabled: true
+
+# ============================================================
+# Intelligence Pipeline Consumer 일시정지
+# ============================================================
+sqs:
+  consumer:
+    intelligence-orchestration:
+      enabled: false
+    intelligence-description-analysis:
+      enabled: false
+    intelligence-option-analysis:
+      enabled: false
+    intelligence-notice-analysis:
+      enabled: false
+    intelligence-aggregation:
+      enabled: false
