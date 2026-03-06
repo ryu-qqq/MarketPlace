@@ -3,3 +3,9 @@
 # ============================================================
 sqs:
   region: ap-northeast-2
+  queues:
+    intelligence-orchestration: ${SQS_INTELLIGENCE_ORCHESTRATION_URL}
+    intelligence-description-analysis: ${SQS_INTELLIGENCE_DESCRIPTION_ANALYSIS_URL}
+    intelligence-option-analysis: ${SQS_INTELLIGENCE_OPTION_ANALYSIS_URL}
+    intelligence-notice-analysis: ${SQS_INTELLIGENCE_NOTICE_ANALYSIS_URL}
+    intelligence-aggregation: ${SQS_INTELLIGENCE_AGGREGATION_URL}
