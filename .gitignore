@@ -73,3 +73,6 @@ local-dev/.env.aws.stage
 
 tfplan
 *.tfplan
+
+# Legacy seed data (contains test tokens)
+local-dev/data/legacy-seed/
