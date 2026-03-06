@@ -218,7 +218,8 @@ module "scheduler_task_execution_role" {
               "kms:Decrypt"
             ]
             Resource = [
-              aws_kms_key.logs.arn
+              aws_kms_key.logs.arn,
+              "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/f3020de8-a983-4918-8223-6a0fbda5f4f6"
             ]
           }
         ]
