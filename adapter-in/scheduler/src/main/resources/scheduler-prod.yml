@@ -126,15 +126,23 @@ scheduler:
         # Prod: 안전한 타임아웃
         timeout-seconds: 300
 
+    legacy-conversion:
+      # Prod: 1분마다
+      cron: "0 */1 * * * *"
+
+    legacy-conversion-timeout:
+      # Prod: 5분마다
+      cron: "0 */5 * * * *"
+
     legacy-conversion-seeder:
       # Prod: 활성화 (전체 마이그레이션)
       enabled: true
-      # Prod: 30분마다
-      cron: "0 */30 * * * *"
+      # Prod: 1분마다
+      cron: "0 */1 * * * *"
       # Prod: 큰 배치
       batch-size: 200
-      # Prod: 초기 마이그레이션 상한 (안전 장치)
-      max-total: 50000
+      # Prod: 무제한 (전체 마이그레이션)
+      max-total: 0
 
     inbound-order-polling:
       entries:
