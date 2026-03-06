@@ -23,12 +23,12 @@ public class ImageUploadOutboxReadManager {
         this.queryPort = queryPort;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ImageUploadOutbox> findPendingOutboxesForRetry(Instant beforeTime, int limit) {
         return queryPort.findPendingOutboxesForRetry(beforeTime, limit);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ImageUploadOutbox> findProcessingTimeoutOutboxes(
             Instant timeoutThreshold, int limit) {
         return queryPort.findProcessingTimeoutOutboxes(timeoutThreshold, limit);
@@ -43,12 +43,12 @@ public class ImageUploadOutboxReadManager {
         return queryPort.findBySourceIdsAndSourceType(sourceIds, sourceType);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ImageUploadOutbox> findProcessingOutboxes(int limit) {
         return queryPort.findProcessingOutboxes(limit);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ImageUploadOutbox> findRecoverableFailedOutboxes(Instant failedBefore, int limit) {
         return queryPort.findRecoverableFailedOutboxes(failedBefore, limit);
     }
