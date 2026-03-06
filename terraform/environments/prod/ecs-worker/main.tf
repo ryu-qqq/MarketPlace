@@ -37,6 +37,13 @@ data "aws_ecs_cluster" "main" {
 
 data "aws_caller_identity" "current" {}
 
+# ========================================
+# Legacy DB Password
+# ========================================
+data "aws_ssm_parameter" "legacy_db_password" {
+  name = "/${var.project_name}/prod/legacy-db-password"
+}
+
 # VPC data source for internal communication
 data "aws_vpc" "main" {
   id = local.vpc_id
@@ -295,9 +302,21 @@ module "worker_task_role" {
             Sid    = "S3ConfigAccess"
             Effect = "Allow"
             Action = [
-              "s3:GetObject"
+              "s3:GetObject",
+              "s3:ListBucket"
             ]
-            Resource = "arn:aws:s3:::prod-connectly/*"
+            Resource = [
+              "arn:aws:s3:::prod-connectly",
+              "arn:aws:s3:::prod-connectly/*"
+            ]
+          },
+          {
+            Sid    = "KMSDecryptForS3"
+            Effect = "Allow"
+            Action = [
+              "kms:Decrypt"
+            ]
+            Resource = "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/086b1677-614f-46ba-863e-23c215fb5010"
           }
         ]
       })
@@ -374,13 +393,18 @@ module "ecs_service" {
     { name = "SQS_INSPECTION_ENHANCEMENT_URL", value = local.sqs_enhancement_queue_url },
     { name = "SQS_INSPECTION_VERIFICATION_URL", value = local.sqs_verification_queue_url },
     # Sentry
-    { name = "SENTRY_DSN", value = local.sentry_dsn }
+    { name = "SENTRY_DSN", value = local.sentry_dsn },
+    # Legacy DB
+    { name = "LEGACY_DB_NAME", value = "luxurydb" },
+    { name = "LEGACY_DB_USERNAME", value = "admin" }
   ]
 
   # Container Secrets
   container_secrets = [
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
-    { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn }
+    { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn },
+    # Legacy DB Password
+    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
   ]
 
   # Health Check
