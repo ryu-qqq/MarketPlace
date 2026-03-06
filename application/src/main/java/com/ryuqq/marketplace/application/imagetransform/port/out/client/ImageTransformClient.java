@@ -31,4 +31,12 @@ public interface ImageTransformClient {
      * @return 변환 요청 응답
      */
     ImageTransformResponse getTransformRequest(String transformRequestId);
+
+    /**
+     * 에셋 ID로 CDN URL을 해석합니다.
+     *
+     * @param assetId FileFlow 에셋 ID
+     * @return CDN URL
+     */
+    String resolveAssetCdnUrl(String assetId);
 }

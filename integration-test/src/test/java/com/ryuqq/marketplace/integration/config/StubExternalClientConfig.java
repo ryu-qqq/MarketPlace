@@ -201,6 +201,11 @@ public class StubExternalClientConfig {
                         300,
                         300);
             }
+
+            @Override
+            public String resolveAssetCdnUrl(String assetId) {
+                return "https://cdn.stub.com/" + assetId + ".webp";
+            }
         };
     }
 

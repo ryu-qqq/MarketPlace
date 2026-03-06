@@ -122,6 +122,17 @@ public class FileFlowTransformAdapter implements ImageTransformClient {
         }
     }
 
+    @Override
+    public String resolveAssetCdnUrl(String assetId) {
+        try {
+            ApiResponse<AssetResponse> assetResponse = assetApi.get(assetId);
+            return mapper.buildCdnUrl(assetResponse.data().s3Key());
+        } catch (FileFlowException e) {
+            throw new RuntimeException(
+                    "FileFlow 에셋 CDN URL 해석 실패: assetId=" + assetId + ", error=" + e.getErrorMessage(), e);
+        }
+    }
+
     private ImageTransformResponse handleCompleted(
             String transformRequestId, TransformRequestResponse result) {
         String resultAssetId = result.resultAssetId();
