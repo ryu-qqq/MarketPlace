@@ -50,7 +50,6 @@ public class ImageTransformPublicCommandController {
                         request.transformRequestId(),
                         request.status(),
                         request.resultAssetId(),
-                        request.resultCdnUrl(),
                         request.width(),
                         request.height(),
                         request.errorMessage());
