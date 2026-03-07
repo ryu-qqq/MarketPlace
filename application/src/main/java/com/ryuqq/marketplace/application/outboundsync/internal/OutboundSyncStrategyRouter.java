@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.application.outboundsync.internal;
 
-import com.ryuqq.marketplace.application.outboundsync.port.out.strategy.OutboundSyncExecutionStrategy;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import java.util.List;
 import org.springframework.stereotype.Component;
