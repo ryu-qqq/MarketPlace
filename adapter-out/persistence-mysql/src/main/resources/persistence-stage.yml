@@ -48,6 +48,9 @@ spring:
   flyway:
     # ⚠️ 스테이징에서도 clean 비활성화
     clean-disabled: true
+    # V1~V97 → V1+V2 통합 후 baseline 재설정
+    baseline-version: "2"
+    baseline-on-migrate: true
 
 logging:
   level:

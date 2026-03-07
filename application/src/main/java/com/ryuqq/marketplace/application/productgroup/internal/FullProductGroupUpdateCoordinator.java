@@ -83,8 +83,10 @@ public class FullProductGroupUpdateCoordinator {
         boolean descriptionChanged =
                 descriptionCommandCoordinator.update(bundle.descriptionCommand());
 
-        // 5. Notice → Coordinator
-        boolean noticeChanged = noticeCommandCoordinator.update(bundle.noticeCommand());
+        // 5. Notice → Coordinator (고시정보가 있는 경우만)
+        boolean noticeChanged =
+                bundle.noticeCommand().noticeCategoryId() > 0
+                        && noticeCommandCoordinator.update(bundle.noticeCommand());
 
         // 6. Products → Factory(resolve) + Coordinator(도메인 diff)
         ProductGroupId pgId = bundle.basicInfoUpdateData().productGroupId();

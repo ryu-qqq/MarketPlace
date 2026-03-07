@@ -15,7 +15,10 @@ import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOp
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand.OptionGroupCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand.OptionValueCommand;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
@@ -39,6 +42,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LegacyToInternalUpdateBundleFactory {
+
+    private static final String DEFAULT_NOTICE_VALUE = "상세설명 참고";
 
     /**
      * 레거시 데이터와 기존 SKU 매핑을 기반으로 내부 수정 번들을 생성합니다.
@@ -69,7 +74,11 @@ public class LegacyToInternalUpdateBundleFactory {
         UpdateProductGroupDescriptionCommand descriptionCommand =
                 new UpdateProductGroupDescriptionCommand(
                         internalProductGroupId, composite.detailDescription());
-        UpdateProductNoticeCommand noticeCommand = createNoticeCommand(internalProductGroupId);
+        UpdateProductNoticeCommand noticeCommand =
+                createNoticeCommand(
+                        internalProductGroupId,
+                        composite.notice(),
+                        resolvedContext.noticeCategory().orElse(null));
         List<ProductDiffUpdateEntry> productEntries =
                 createProductEntries(legacyBundle.products(), skuMappings, composite);
 
@@ -106,9 +115,17 @@ public class LegacyToInternalUpdateBundleFactory {
         List<ImageCommand> commands = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
             LegacyProductGroupCompositeResult.ImageInfo img = images.get(i);
-            commands.add(new ImageCommand(img.imageType(), img.imageUrl(), i + 1));
+            commands.add(
+                    new ImageCommand(toLegacyImageType(img.imageType()), img.imageUrl(), i + 1));
         }
         return new UpdateProductGroupImagesCommand(internalProductGroupId, commands);
+    }
+
+    private static String toLegacyImageType(String legacyType) {
+        if ("MAIN".equals(legacyType)) {
+            return ImageType.THUMBNAIL.name();
+        }
+        return legacyType;
     }
 
     private UpdateSellerOptionGroupsCommand createOptionCommand(
@@ -147,9 +164,31 @@ public class LegacyToInternalUpdateBundleFactory {
         return new UpdateSellerOptionGroupsCommand(internalProductGroupId, groups);
     }
 
-    /** 고시정보는 레거시↔내부 구조 차이로 현재 빈 Command를 생성합니다. */
-    private UpdateProductNoticeCommand createNoticeCommand(long internalProductGroupId) {
-        return new UpdateProductNoticeCommand(internalProductGroupId, 0L, List.of());
+    /**
+     * 레거시 NoticeInfo와 해소된 NoticeCategory를 기반으로 수정 Command를 생성합니다.
+     *
+     * <p>NoticeCategory가 없으면 noticeCategoryId=0으로 빈 Command를 생성합니다.
+     */
+    private UpdateProductNoticeCommand createNoticeCommand(
+            long internalProductGroupId,
+            LegacyProductGroupCompositeResult.NoticeInfo noticeInfo,
+            NoticeCategory noticeCategory) {
+        if (noticeCategory == null) {
+            return new UpdateProductNoticeCommand(internalProductGroupId, 0L, List.of());
+        }
+
+        Map<String, String> legacyValues =
+                LegacyNoticeFieldMapper.extractLegacyValues(noticeInfo, noticeCategory);
+        List<UpdateProductNoticeCommand.NoticeEntryCommand> entries = new ArrayList<>();
+
+        for (NoticeField field : noticeCategory.fields()) {
+            String fieldCode = field.fieldCodeValue();
+            String value = legacyValues.getOrDefault(fieldCode, DEFAULT_NOTICE_VALUE);
+            entries.add(new UpdateProductNoticeCommand.NoticeEntryCommand(field.idValue(), value));
+        }
+
+        return new UpdateProductNoticeCommand(
+                internalProductGroupId, noticeCategory.idValue(), entries);
     }
 
     /**
