@@ -8,8 +8,12 @@ import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCom
 import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupRegistrationBundle;
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
+import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
@@ -29,10 +33,13 @@ import org.springframework.stereotype.Component;
  *
  * <p>LegacyProductGroupDetailBundle → ProductGroupRegistrationBundle 변환을 담당합니다.
  *
- * <p>고시정보(Notice)는 레거시 시스템의 고정 필드 구조와 내부 시스템의 동적 구조가 달라 현재 변환에서 제외됩니다.
+ * <p>고시정보는 레거시 고정 컬럼(MATERIAL, COLOR 등)을 내부 notice_field의 field_code로 매핑하여 변환합니다. 매핑되지 않는 필드는 "상세설명
+ * 참고" 기본값으로 채웁니다.
  */
 @Component
 public class LegacyToInternalBundleFactory {
+
+    private static final String DEFAULT_NOTICE_VALUE = "상세설명 참고";
 
     /**
      * 레거시 상품 번들을 내부 등록 번들로 변환합니다.
@@ -55,14 +62,20 @@ public class LegacyToInternalBundleFactory {
 
         ProductGroup productGroup = createProductGroup(composite, resolvedContext, optionType, now);
 
+        long noticeCategoryId =
+                resolvedContext.noticeCategory().map(NoticeCategory::idValue).orElse(0L);
+        List<RegisterProductNoticeCommand.NoticeEntryCommand> noticeEntries =
+                convertNoticeEntries(
+                        composite.notice(), resolvedContext.noticeCategory().orElse(null));
+
         return new ProductGroupRegistrationBundle(
                 productGroup,
                 convertImages(composite.images()),
                 optionType.name(),
                 convertOptionGroups(composite, legacyBundle.products(), optionType),
                 composite.detailDescription(),
-                0L,
-                List.of(),
+                noticeCategoryId,
+                noticeEntries,
                 convertProducts(legacyBundle.products(), composite),
                 now);
     }
@@ -93,9 +106,16 @@ public class LegacyToInternalBundleFactory {
             LegacyProductGroupCompositeResult.ImageInfo img = images.get(i);
             commands.add(
                     new RegisterProductGroupImagesCommand.ImageCommand(
-                            img.imageType(), img.imageUrl(), i + 1));
+                            toLegacyImageType(img.imageType()), img.imageUrl(), i + 1));
         }
         return commands;
+    }
+
+    private static String toLegacyImageType(String legacyType) {
+        if ("MAIN".equals(legacyType)) {
+            return ImageType.THUMBNAIL.name();
+        }
+        return legacyType;
     }
 
     private List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> convertOptionGroups(
@@ -133,6 +153,33 @@ public class LegacyToInternalBundleFactory {
         }
 
         return groups;
+    }
+
+    /**
+     * 레거시 NoticeInfo를 내부 NoticeEntryCommand 목록으로 변환합니다.
+     *
+     * <p>NoticeCategory의 모든 필드를 순회하며, 레거시 데이터에 매핑되는 값이 있으면 해당 값을, 없으면 "상세설명 참고" 기본값을 사용합니다. 카테고리에
+     * 존재하지 않는 field_code는 무시합니다.
+     */
+    private List<RegisterProductNoticeCommand.NoticeEntryCommand> convertNoticeEntries(
+            LegacyProductGroupCompositeResult.NoticeInfo noticeInfo,
+            NoticeCategory noticeCategory) {
+        if (noticeCategory == null) {
+            return List.of();
+        }
+
+        Map<String, String> legacyValues =
+                LegacyNoticeFieldMapper.extractLegacyValues(noticeInfo, noticeCategory);
+        List<RegisterProductNoticeCommand.NoticeEntryCommand> entries = new ArrayList<>();
+
+        for (NoticeField field : noticeCategory.fields()) {
+            String fieldCode = field.fieldCodeValue();
+            String value = legacyValues.getOrDefault(fieldCode, DEFAULT_NOTICE_VALUE);
+            entries.add(
+                    new RegisterProductNoticeCommand.NoticeEntryCommand(field.idValue(), value));
+        }
+
+        return entries;
     }
 
     private List<RegisterProductsCommand.ProductData> convertProducts(

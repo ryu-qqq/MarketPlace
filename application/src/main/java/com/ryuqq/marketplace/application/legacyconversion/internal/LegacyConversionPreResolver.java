@@ -2,10 +2,12 @@ package com.ryuqq.marketplace.application.legacyconversion.internal;
 
 import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductMappingResolver;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult;
+import com.ryuqq.marketplace.application.notice.resolver.CategoryNoticeResolver;
 import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadManager;
 import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyReadManager;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.exception.DefaultRefundPolicyNotFoundException;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
@@ -13,12 +15,13 @@ import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import com.ryuqq.marketplace.domain.shippingpolicy.exception.DefaultShippingPolicyNotFoundException;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /**
  * 레거시 변환 사전 해소기.
  *
- * <p>레거시 brandId/categoryId를 SETOF 인바운드 소스 매핑을 통해 내부 ID로 변환하고, 셀러의 기본 배송/환불 정책을 조회합니다.
+ * <p>레거시 brandId/categoryId를 SETOF 인바운드 소스 매핑을 통해 내부 ID로 변환하고, 셀러의 기본 배송/환불 정책과 고시정보 카테고리를 조회합니다.
  */
 @Component
 public class LegacyConversionPreResolver {
@@ -28,14 +31,17 @@ public class LegacyConversionPreResolver {
     private final InboundProductMappingResolver mappingResolver;
     private final ShippingPolicyReadManager shippingPolicyReadManager;
     private final RefundPolicyReadManager refundPolicyReadManager;
+    private final CategoryNoticeResolver categoryNoticeResolver;
 
     public LegacyConversionPreResolver(
             InboundProductMappingResolver mappingResolver,
             ShippingPolicyReadManager shippingPolicyReadManager,
-            RefundPolicyReadManager refundPolicyReadManager) {
+            RefundPolicyReadManager refundPolicyReadManager,
+            CategoryNoticeResolver categoryNoticeResolver) {
         this.mappingResolver = mappingResolver;
         this.shippingPolicyReadManager = shippingPolicyReadManager;
         this.refundPolicyReadManager = refundPolicyReadManager;
+        this.categoryNoticeResolver = categoryNoticeResolver;
     }
 
     /**
@@ -53,9 +59,11 @@ public class LegacyConversionPreResolver {
         SellerId sellerId = SellerId.of(composite.sellerId());
         ShippingPolicyId shippingPolicyId = resolveShippingPolicy(sellerId);
         RefundPolicyId refundPolicyId = resolveRefundPolicy(sellerId);
+        Optional<NoticeCategory> noticeCategory =
+                categoryNoticeResolver.resolve(categoryId.value());
 
         return new LegacyConversionResolvedContext(
-                brandId, categoryId, shippingPolicyId, refundPolicyId);
+                brandId, categoryId, shippingPolicyId, refundPolicyId, noticeCategory);
     }
 
     private BrandId resolveBrand(long legacyBrandId) {
