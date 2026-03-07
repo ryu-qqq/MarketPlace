@@ -3,107 +3,98 @@
 # ============================================================
 # 활성화: spring.profiles.active=stage
 # ============================================================
+# 주기 정책:
+#   - PENDING 처리 (메인 작업): 5초
+#   - 타임아웃/복구: 1분
+#   - FAILED 복구: 5분
+#   - retry 계열: 1분
+# ============================================================
 
 scheduler:
   jobs:
     seller-auth-outbox:
       process-pending:
-        # Stage: 5초마다
         cron: "*/5 * * * * *"
         batch-size: 50
         delay-seconds: 5
 
       recover-timeout:
-        # Stage: 5초마다
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 50
         timeout-seconds: 180
 
     image-upload-outbox:
       process-pending:
-        # Stage: 5초마다
         cron: "*/5 * * * * *"
         batch-size: 30
         delay-seconds: 5
 
       poll-processing:
-        # Stage: 비활성화 (콜백 방식으로 전환)
         enabled: false
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 30
 
       recover-timeout:
-        # Stage: 5초마다
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 30
         timeout-seconds: 60
 
       recover-failed:
-        # Stage: 5초마다
-        cron: "*/5 * * * * *"
+        cron: "0 */5 * * * *"
         batch-size: 50
         failed-after-seconds: 300
 
     seller-admin-auth-outbox:
       process-pending:
         enabled: true
-        # Stage: 5초마다
         cron: "*/5 * * * * *"
         batch-size: 50
         delay-seconds: 5
 
       recover-timeout:
         enabled: true
-        # Stage: 5초마다
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 50
         timeout-seconds: 180
 
     image-transform-outbox:
       process-pending:
-        # Stage: 5초마다
         cron: "*/5 * * * * *"
         batch-size: 30
         delay-seconds: 5
 
       poll-processing:
-        # Stage: 비활성화 (콜백 방식으로 전환)
         enabled: false
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 30
 
       recover-timeout:
-        # Stage: 5초마다
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 30
         timeout-seconds: 60
 
     intelligence-pipeline:
       process-pending:
-        # Stage: 일시정지 (OpenAI 크레딧 소진)
         enabled: false
         cron: "*/5 * * * * *"
         batch-size: 15
         delay-seconds: 5
 
       recover-timeout:
-        # Stage: 일시정지 (OpenAI 크레딧 소진)
         enabled: false
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 15
         timeout-seconds: 300
 
       recover-stuck-aggregation:
-        # Stage: 일시정지 (OpenAI 크레딧 소진)
         enabled: false
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 15
         stuck-seconds: 180
 
     outbound-sync-outbox:
       process-pending:
         enabled: true
-        # Stage: 5초마다
         cron: "*/5 * * * * *"
         timezone: "Asia/Seoul"
         batch-size: 50
@@ -111,77 +102,65 @@ scheduler:
 
       recover-timeout:
         enabled: true
-        # Stage: 5초마다
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         timezone: "Asia/Seoul"
         batch-size: 50
         timeout-seconds: 180
 
     legacy-conversion-seeder:
       enabled: true
-      # Stage: 5초마다
       cron: "*/5 * * * * *"
       batch-size: 50
       max-total: 200
 
     # LegacyConversion 변환 스케줄러 (코드 기본값 오버라이드)
     legacy-conversion:
-      # Stage: 5초마다
       cron: "*/5 * * * * *"
       timezone: "Asia/Seoul"
 
     legacy-conversion-timeout:
-      # Stage: 5초마다
-      cron: "*/5 * * * * *"
+      cron: "0 */1 * * * *"
       timezone: "Asia/Seoul"
 
     inbound-order-polling:
       entries:
         - sales-channel-id: 1
           enabled: true
-          # Stage: 5초마다
           cron: "*/5 * * * * *"
           timezone: Asia/Seoul
           batch-size: 300
 
     inbound-product-retry:
-      # Stage: 5초마다
-      cron: "*/5 * * * * *"
+      cron: "0 */1 * * * *"
       batch-size: 30
 
     outbound-seller-outbox:
       process-pending:
-        # Stage: 5초마다
         cron: "*/5 * * * * *"
         batch-size: 50
         delay-seconds: 5
 
       recover-timeout:
-        # Stage: 5초마다
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 50
         timeout-seconds: 180
 
     description-publish:
-      # Stage: 5초마다
       cron: "*/5 * * * * *"
       timezone: "Asia/Seoul"
       batch-size: 30
 
     seller-admin-email-outbox:
       process-pending:
-        # Stage: 5초마다
         cron: "*/5 * * * * *"
         batch-size: 100
         delay-seconds: 5
 
       recover-timeout:
-        # Stage: 5초마다
-        cron: "*/5 * * * * *"
+        cron: "0 */1 * * * *"
         batch-size: 100
         timeout-seconds: 180
 
     inbound-order-retry:
-      # Stage: 5초마다
-      cron: "*/5 * * * * *"
+      cron: "0 */1 * * * *"
       batch-size: 100
