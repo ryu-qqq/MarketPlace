@@ -10,10 +10,10 @@ import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupReg
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
 import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
+import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
