@@ -12,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * ImageUploadOutbox Read Manager.
  *
- * <p>이미지 업로드 Outbox 조회를 위한 매니저입니다.
+ * <p>이미지 업로드 Outbox 조회를 위한 매니저입니다. 스케줄러에서 사용하는 메서드는 SELECT FOR UPDATE 잠금이 필요하므로 read-write 트랜잭션을
+ * 사용합니다.
  */
 @Component
 public class ImageUploadOutboxReadManager {
@@ -23,11 +24,13 @@ public class ImageUploadOutboxReadManager {
         this.queryPort = queryPort;
     }
 
+    /** PENDING 상태의 Outbox를 잠금 조회합니다 (SELECT FOR UPDATE). */
     @Transactional
     public List<ImageUploadOutbox> findPendingOutboxesForRetry(Instant beforeTime, int limit) {
         return queryPort.findPendingOutboxesForRetry(beforeTime, limit);
     }
 
+    /** PROCESSING 타임아웃 Outbox를 잠금 조회합니다 (SELECT FOR UPDATE). */
     @Transactional
     public List<ImageUploadOutbox> findProcessingTimeoutOutboxes(
             Instant timeoutThreshold, int limit) {
@@ -43,11 +46,13 @@ public class ImageUploadOutboxReadManager {
         return queryPort.findBySourceIdsAndSourceType(sourceIds, sourceType);
     }
 
+    /** PROCESSING 상태의 Outbox를 잠금 조회합니다 (SELECT FOR UPDATE). */
     @Transactional
     public List<ImageUploadOutbox> findProcessingOutboxes(int limit) {
         return queryPort.findProcessingOutboxes(limit);
     }
 
+    /** FAILED 상태의 복구 대상 Outbox를 잠금 조회합니다 (SELECT FOR UPDATE). */
     @Transactional
     public List<ImageUploadOutbox> findRecoverableFailedOutboxes(Instant failedBefore, int limit) {
         return queryPort.findRecoverableFailedOutboxes(failedBefore, limit);
