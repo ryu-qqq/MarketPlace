@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.application.outboundsync.port.out.strategy;
+package com.ryuqq.marketplace.application.outboundsync.internal;
 
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;

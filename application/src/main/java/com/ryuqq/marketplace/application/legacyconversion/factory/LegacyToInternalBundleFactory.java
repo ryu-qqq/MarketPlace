@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupReg
 import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
@@ -93,9 +94,16 @@ public class LegacyToInternalBundleFactory {
             LegacyProductGroupCompositeResult.ImageInfo img = images.get(i);
             commands.add(
                     new RegisterProductGroupImagesCommand.ImageCommand(
-                            img.imageType(), img.imageUrl(), i + 1));
+                            toLegacyImageType(img.imageType()), img.imageUrl(), i + 1));
         }
         return commands;
+    }
+
+    private static String toLegacyImageType(String legacyType) {
+        if ("MAIN".equals(legacyType)) {
+            return ImageType.THUMBNAIL.name();
+        }
+        return legacyType;
     }
 
     private List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> convertOptionGroups(
