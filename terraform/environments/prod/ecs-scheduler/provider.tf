@@ -58,13 +58,13 @@ variable "aws_region" {
 variable "scheduler_cpu" {
   description = "CPU units for scheduler task"
   type        = number
-  default     = 256
+  default     = 1024
 }
 
 variable "scheduler_memory" {
   description = "Memory for scheduler task"
   type        = number
-  default     = 512
+  default     = 2048
 }
 
 variable "scheduler_desired_count" {
@@ -113,6 +113,20 @@ data "aws_secretsmanager_secret_version" "rds" {
 }
 
 # ========================================
+# AuthHub Configuration
+# ========================================
+data "aws_ssm_parameter" "authhub_service_token" {
+  name = "/authhub/security/service-token-secret"
+}
+
+# ========================================
+# FileFlow Configuration (Shared Service Token)
+# ========================================
+data "aws_ssm_parameter" "fileflow_service_token" {
+  name = "/shared/security/service-token-secret"
+}
+
+# ========================================
 # Monitoring Configuration (AMP)
 # ========================================
 data "aws_ssm_parameter" "amp_workspace_arn" {
@@ -138,6 +152,36 @@ data "aws_ssm_parameter" "sentry_dsn" {
 }
 
 # ========================================
+# OutboundSync SQS Queue Reference
+# ========================================
+data "aws_ssm_parameter" "sqs_outbound_sync_queue_url" {
+  name = "/${var.project_name}/sqs/outbound-sync-queue-url"
+}
+
+# ========================================
+# Intelligence Pipeline SQS Queue References
+# ========================================
+data "aws_ssm_parameter" "sqs_intelligence_orchestration_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-orchestration-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_description_analysis_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-description-analysis-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_option_analysis_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-option-analysis-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_notice_analysis_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-notice-analysis-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_intelligence_aggregation_queue_url" {
+  name = "/${var.project_name}/sqs/intelligence-aggregation-queue-url"
+}
+
+# ========================================
 # OpenAI Configuration
 # ========================================
 data "aws_ssm_parameter" "openai_api_key" {
@@ -156,7 +200,7 @@ locals {
   rds_credentials = jsondecode(data.aws_secretsmanager_secret_version.rds.secret_string)
   rds_host        = data.aws_ssm_parameter.rds_proxy_endpoint.value
   rds_port        = "3306"
-  rds_dbname      = "marketplace"
+  rds_dbname      = "market"
   rds_username    = local.rds_credentials.username
 
   # AMP Configuration
@@ -168,4 +212,14 @@ locals {
 
   # Sentry Configuration
   sentry_dsn = data.aws_ssm_parameter.sentry_dsn.value
+
+  # OutboundSync SQS Queue URL
+  sqs_outbound_sync_queue_url = data.aws_ssm_parameter.sqs_outbound_sync_queue_url.value
+
+  # Intelligence Pipeline SQS Queue URLs
+  sqs_intelligence_orchestration_queue_url          = data.aws_ssm_parameter.sqs_intelligence_orchestration_queue_url.value
+  sqs_intelligence_description_analysis_queue_url   = data.aws_ssm_parameter.sqs_intelligence_description_analysis_queue_url.value
+  sqs_intelligence_option_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_option_analysis_queue_url.value
+  sqs_intelligence_notice_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_notice_analysis_queue_url.value
+  sqs_intelligence_aggregation_queue_url            = data.aws_ssm_parameter.sqs_intelligence_aggregation_queue_url.value
 }

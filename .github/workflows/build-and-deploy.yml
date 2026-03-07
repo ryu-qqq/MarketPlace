@@ -113,7 +113,7 @@ jobs:
     uses: ryu-qqq/Infrastructure/.github/workflows/reusable-deploy-ecs.yml@main
     with:
       ecs-cluster: marketplace-cluster-prod
-      ecs-service: marketplace-web-api-prod
+      ecs-service: marketplace-api-prod
       image-uri: ${{ needs.build-web-api.outputs.image-uri }}
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}

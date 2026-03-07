@@ -43,6 +43,13 @@ data "aws_ecs_cluster" "main" {
 data "aws_caller_identity" "current" {}
 
 # ========================================
+# Legacy DB Password
+# ========================================
+data "aws_ssm_parameter" "legacy_db_password" {
+  name = "/${var.project_name}/prod/legacy-db-password"
+}
+
+# ========================================
 # Service Discovery Namespace (from shared infrastructure)
 # ========================================
 data "aws_ssm_parameter" "service_discovery_namespace_id" {
@@ -142,8 +149,8 @@ module "ecs_security_group" {
 
   custom_ingress_rules = [
     {
-      from_port   = 8081
-      to_port     = 8081
+      from_port   = 8083
+      to_port     = 8083
       protocol    = "tcp"
       cidr_block  = data.aws_vpc.main.cidr_block
       description = "VPC internal traffic only (Health check, Service Discovery)"
@@ -202,7 +209,8 @@ module "scheduler_task_execution_role" {
             ]
             Resource = [
               "arn:aws:ssm:${var.aws_region}:*:parameter/shared/*",
-              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*"
+              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*",
+              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*"
             ]
           },
           {
@@ -211,7 +219,8 @@ module "scheduler_task_execution_role" {
               "kms:Decrypt"
             ]
             Resource = [
-              aws_kms_key.logs.arn
+              aws_kms_key.logs.arn,
+              "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/f3020de8-a983-4918-8223-6a0fbda5f4f6"
             ]
           }
         ]
@@ -339,9 +348,21 @@ module "scheduler_task_role" {
             Sid    = "S3ConfigAccess"
             Effect = "Allow"
             Action = [
-              "s3:GetObject"
+              "s3:GetObject",
+              "s3:ListBucket"
             ]
-            Resource = "arn:aws:s3:::prod-connectly/*"
+            Resource = [
+              "arn:aws:s3:::prod-connectly",
+              "arn:aws:s3:::prod-connectly/*"
+            ]
+          },
+          {
+            Sid    = "KMSDecryptForS3"
+            Effect = "Allow"
+            Action = [
+              "kms:Decrypt"
+            ]
+            Resource = "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/086b1677-614f-46ba-863e-23c215fb5010"
           }
         ]
       })
@@ -369,7 +390,7 @@ module "adot_sidecar" {
   amp_workspace_arn         = local.amp_workspace_arn
   amp_remote_write_endpoint = local.amp_remote_write_url
   log_group_name            = module.scheduler_logs.log_group_name
-  app_port                  = 8081
+  app_port                  = 8083
   cluster_name              = data.aws_ecs_cluster.main.cluster_name
   environment               = var.environment
   config_bucket             = "prod-connectly"
@@ -388,7 +409,7 @@ module "ecs_service" {
   cluster_id      = data.aws_ecs_cluster.main.arn
   container_name  = "scheduler"
   container_image = "${data.aws_ecr_repository.scheduler.repository_url}:${var.image_tag}"
-  container_port  = 8081
+  container_port  = 8083
   cpu             = var.scheduler_cpu
   memory          = var.scheduler_memory
   desired_count   = var.scheduler_desired_count
@@ -411,24 +432,41 @@ module "ecs_service" {
     { name = "DB_HOST", value = local.rds_host },
     { name = "DB_PORT", value = local.rds_port },
     { name = "DB_NAME", value = local.rds_dbname },
-    { name = "DB_USER", value = local.rds_username },
+    { name = "DB_USERNAME", value = local.rds_username },
     { name = "REDIS_HOST", value = local.redis_host },
     { name = "REDIS_PORT", value = tostring(local.redis_port) },
+    # OutboundSync SQS Queue URL
+    { name = "SQS_OUTBOUND_SYNC_URL", value = local.sqs_outbound_sync_queue_url },
+    # Intelligence Pipeline SQS Queue URLs
+    { name = "SQS_INTELLIGENCE_ORCHESTRATION_URL", value = local.sqs_intelligence_orchestration_queue_url },
+    { name = "SQS_INTELLIGENCE_DESCRIPTION_ANALYSIS_URL", value = local.sqs_intelligence_description_analysis_queue_url },
+    { name = "SQS_INTELLIGENCE_OPTION_ANALYSIS_URL", value = local.sqs_intelligence_option_analysis_queue_url },
+    { name = "SQS_INTELLIGENCE_NOTICE_ANALYSIS_URL", value = local.sqs_intelligence_notice_analysis_queue_url },
+    { name = "SQS_INTELLIGENCE_AGGREGATION_URL", value = local.sqs_intelligence_aggregation_queue_url },
     # Sentry
     { name = "SENTRY_DSN", value = local.sentry_dsn },
     # SES
     { name = "SES_SENDER_EMAIL", value = local.ses_sender_email },
-    { name = "SES_SIGN_UP_BASE_URL", value = "https://oms.set-of.com" }
+    { name = "SES_SIGN_UP_BASE_URL", value = "https://oms.set-of.com" },
+    # Legacy DB
+    { name = "LEGACY_DB_NAME", value = "luxurydb" },
+    { name = "LEGACY_DB_USERNAME", value = "admin" }
   ]
 
   # Container Secrets
   container_secrets = [
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
-    { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn }
+    { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn },
+    # AuthHub Service Token
+    { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
+    # FileFlow Service Token
+    { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
+    # Legacy DB Password
+    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
   ]
 
   # Health Check
-  health_check_command      = ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8081/actuator/health || exit 1"]
+  health_check_command      = ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8083/actuator/health || exit 1"]
   health_check_interval     = 30
   health_check_timeout      = 5
   health_check_retries      = 3
