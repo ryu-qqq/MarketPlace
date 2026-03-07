@@ -16,6 +16,7 @@ import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOp
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand.OptionValueCommand;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
@@ -106,9 +107,17 @@ public class LegacyToInternalUpdateBundleFactory {
         List<ImageCommand> commands = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
             LegacyProductGroupCompositeResult.ImageInfo img = images.get(i);
-            commands.add(new ImageCommand(img.imageType(), img.imageUrl(), i + 1));
+            commands.add(
+                    new ImageCommand(toLegacyImageType(img.imageType()), img.imageUrl(), i + 1));
         }
         return new UpdateProductGroupImagesCommand(internalProductGroupId, commands);
+    }
+
+    private static String toLegacyImageType(String legacyType) {
+        if ("MAIN".equals(legacyType)) {
+            return ImageType.THUMBNAIL.name();
+        }
+        return legacyType;
     }
 
     private UpdateSellerOptionGroupsCommand createOptionCommand(
