@@ -116,6 +116,20 @@ data "aws_secretsmanager_secret_version" "rds" {
 }
 
 # ========================================
+# AuthHub Configuration
+# ========================================
+data "aws_ssm_parameter" "authhub_service_token" {
+  name = "/authhub/security/service-token-secret"
+}
+
+# ========================================
+# FileFlow Configuration (Shared Service Token)
+# ========================================
+data "aws_ssm_parameter" "fileflow_service_token" {
+  name = "/shared/security/service-token-secret"
+}
+
+# ========================================
 # Monitoring Configuration (AMP)
 # ========================================
 data "aws_ssm_parameter" "amp_workspace_arn" {
@@ -145,7 +159,7 @@ locals {
   rds_credentials = jsondecode(data.aws_secretsmanager_secret_version.rds.secret_string)
   rds_host        = data.aws_ssm_parameter.rds_proxy_endpoint.value
   rds_port        = "3306"
-  rds_dbname      = "marketplace"
+  rds_dbname      = "market"
   rds_username    = local.rds_credentials.username
 
   # AMP Configuration
