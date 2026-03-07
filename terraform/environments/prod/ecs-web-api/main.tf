@@ -68,6 +68,13 @@ data "aws_ssm_parameter" "ses_secret_access_key" {
   name = "/${var.project_name}/ses/secret-access-key"
 }
 
+# ========================================
+# Legacy DB Password
+# ========================================
+data "aws_ssm_parameter" "legacy_db_password" {
+  name = "/${var.project_name}/prod/legacy-db-password"
+}
+
 # VPC data source for internal communication
 data "aws_vpc" "main" {
   id = local.vpc_id
@@ -233,7 +240,8 @@ module "web_api_task_execution_role" {
             ]
             Resource = [
               "arn:aws:ssm:${var.aws_region}:*:parameter/shared/*",
-              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*"
+              "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*",
+              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*"
             ]
           },
           {
@@ -242,7 +250,8 @@ module "web_api_task_execution_role" {
               "kms:Decrypt"
             ]
             Resource = [
-              aws_kms_key.logs.arn
+              aws_kms_key.logs.arn,
+              "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/f3020de8-a983-4918-8223-6a0fbda5f4f6"
             ]
           }
         ]
@@ -349,9 +358,21 @@ module "web_api_task_role" {
             Sid    = "S3ConfigAccess"
             Effect = "Allow"
             Action = [
-              "s3:GetObject"
+              "s3:GetObject",
+              "s3:ListBucket"
             ]
-            Resource = "arn:aws:s3:::prod-connectly/*"
+            Resource = [
+              "arn:aws:s3:::prod-connectly",
+              "arn:aws:s3:::prod-connectly/*"
+            ]
+          },
+          {
+            Sid    = "KMSDecryptForS3"
+            Effect = "Allow"
+            Action = [
+              "kms:Decrypt"
+            ]
+            Resource = "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/086b1677-614f-46ba-863e-23c215fb5010"
           }
         ]
       })
@@ -424,7 +445,7 @@ module "ecs_service" {
     { name = "DB_HOST", value = local.rds_host },
     { name = "DB_PORT", value = local.rds_port },
     { name = "DB_NAME", value = local.rds_dbname },
-    { name = "DB_USER", value = local.rds_username },
+    { name = "DB_USERNAME", value = local.rds_username },
     { name = "REDIS_HOST", value = local.redis_host },
     { name = "REDIS_PORT", value = tostring(local.redis_port) },
     # Service Token 인증 활성화 (서버 간 내부 통신용)
@@ -432,7 +453,10 @@ module "ecs_service" {
     # AWS SES 이메일 발송 활성화
     { name = "AWS_SES_ENABLED", value = "true" },
     # Sentry
-    { name = "SENTRY_DSN", value = local.sentry_dsn }
+    { name = "SENTRY_DSN", value = local.sentry_dsn },
+    # Legacy DB
+    { name = "LEGACY_DB_NAME", value = "luxurydb" },
+    { name = "LEGACY_DB_USERNAME", value = "admin" }
   ]
 
   # Container Secrets
@@ -442,7 +466,13 @@ module "ecs_service" {
     { name = "SECURITY_SERVICE_TOKEN_SECRET", valueFrom = data.aws_ssm_parameter.service_token_secret.arn },
     # AWS SES Credentials (이메일 발송용)
     { name = "AWS_ACCESS_KEY_ID", valueFrom = data.aws_ssm_parameter.ses_access_key_id.arn },
-    { name = "AWS_SECRET_ACCESS_KEY", valueFrom = data.aws_ssm_parameter.ses_secret_access_key.arn }
+    { name = "AWS_SECRET_ACCESS_KEY", valueFrom = data.aws_ssm_parameter.ses_secret_access_key.arn },
+    # AuthHub Service Token
+    { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
+    # FileFlow Service Token
+    { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
+    # Legacy DB Password
+    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
   ]
 
   # Health Check
@@ -468,7 +498,7 @@ module "ecs_service" {
   # Auto Scaling
   enable_autoscaling        = true
   autoscaling_min_capacity  = 1
-  autoscaling_max_capacity  = 2
+  autoscaling_max_capacity  = 3
   autoscaling_target_cpu    = 70
   autoscaling_target_memory = 80
 
