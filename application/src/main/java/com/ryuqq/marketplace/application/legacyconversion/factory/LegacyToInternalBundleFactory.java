@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSeller
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
@@ -209,12 +210,23 @@ public class LegacyToInternalBundleFactory {
         putIfPresent(values, "color", noticeInfo.color());
         putIfPresent(values, "size", noticeInfo.size());
         putIfPresent(values, "manufacturer", noticeInfo.maker());
-        putIfPresent(values, "made_in", noticeInfo.origin());
+        putIfPresent(values, "made_in", resolveOriginDescription(noticeInfo.origin()));
         putIfPresent(values, "wash_care", noticeInfo.washingMethod());
         putIfPresent(values, "release_date", noticeInfo.yearMonthDay());
         putIfPresent(values, "quality_assurance", noticeInfo.assuranceStandard());
         putIfPresent(values, "cs_info", noticeInfo.asPhone());
         return values;
+    }
+
+    private static String resolveOriginDescription(String originCode) {
+        if (originCode == null || originCode.isBlank()) {
+            return null;
+        }
+        try {
+            return Origin.valueOf(originCode).description();
+        } catch (IllegalArgumentException e) {
+            return originCode;
+        }
     }
 
     private static void putIfPresent(Map<String, String> map, String key, String value) {
