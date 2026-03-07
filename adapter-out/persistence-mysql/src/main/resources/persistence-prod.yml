@@ -52,6 +52,7 @@ spring:
     # ⚠️ 운영에서 clean 절대 금지
     clean-disabled: true
     baseline-version: "2"
+    baseline-on-migrate: true
 
 logging:
   level:

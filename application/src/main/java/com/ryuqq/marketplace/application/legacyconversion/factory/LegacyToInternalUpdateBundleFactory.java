@@ -14,7 +14,6 @@ import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProduct
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand.OptionGroupCommand;
 import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand.OptionValueCommand;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
@@ -178,7 +177,8 @@ public class LegacyToInternalUpdateBundleFactory {
             return new UpdateProductNoticeCommand(internalProductGroupId, 0L, List.of());
         }
 
-        Map<String, String> legacyValues = extractLegacyValues(noticeInfo);
+        Map<String, String> legacyValues =
+                LegacyNoticeFieldMapper.extractLegacyValues(noticeInfo, noticeCategory);
         List<UpdateProductNoticeCommand.NoticeEntryCommand> entries = new ArrayList<>();
 
         for (NoticeField field : noticeCategory.fields()) {
@@ -189,41 +189,6 @@ public class LegacyToInternalUpdateBundleFactory {
 
         return new UpdateProductNoticeCommand(
                 internalProductGroupId, noticeCategory.idValue(), entries);
-    }
-
-    private Map<String, String> extractLegacyValues(
-            LegacyProductGroupCompositeResult.NoticeInfo noticeInfo) {
-        if (noticeInfo == null) {
-            return Map.of();
-        }
-        Map<String, String> values = new LinkedHashMap<>();
-        putIfPresent(values, "material", noticeInfo.material());
-        putIfPresent(values, "color", noticeInfo.color());
-        putIfPresent(values, "size", noticeInfo.size());
-        putIfPresent(values, "manufacturer", noticeInfo.maker());
-        putIfPresent(values, "made_in", resolveOriginDescription(noticeInfo.origin()));
-        putIfPresent(values, "wash_care", noticeInfo.washingMethod());
-        putIfPresent(values, "release_date", noticeInfo.yearMonthDay());
-        putIfPresent(values, "quality_assurance", noticeInfo.assuranceStandard());
-        putIfPresent(values, "cs_info", noticeInfo.asPhone());
-        return values;
-    }
-
-    private static String resolveOriginDescription(String originCode) {
-        if (originCode == null || originCode.isBlank()) {
-            return null;
-        }
-        try {
-            return Origin.valueOf(originCode).description();
-        } catch (IllegalArgumentException e) {
-            return originCode;
-        }
-    }
-
-    private static void putIfPresent(Map<String, String> map, String key, String value) {
-        if (value != null && !value.isBlank()) {
-            map.put(key, value);
-        }
     }
 
     /**
