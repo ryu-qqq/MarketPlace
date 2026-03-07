@@ -115,7 +115,7 @@ CREATE TABLE `orders` (
   KEY `idx_orders_order_number` (`order_number`),
   KEY `idx_orders_status` (`status`),
   KEY `idx_orders_sales_channel_id` (`sales_channel_id`),
-  KEY `idx_orders_external_order_no` (`sales_channel_id`,`external_order_no`),
+  KEY `idx_orders_external_order_no` (`sales_channel_id`,`shop_id`,`external_order_no`),
   KEY `idx_orders_deleted` (`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -334,7 +334,7 @@ CREATE TABLE `inbound_products` (
   KEY `idx_status` (`status`),
   KEY `idx_internal_product_group` (`internal_product_group_id`),
   KEY `idx_seller` (`seller_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `inbound_orders` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -355,7 +355,7 @@ CREATE TABLE `inbound_orders` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_inbound_orders_channel_ext` (`sales_channel_id`,`external_order_no`),
+  UNIQUE KEY `uk_inbound_orders_channel_ext` (`sales_channel_id`,`shop_id`,`external_order_no`),
   KEY `idx_inbound_orders_status` (`status`),
   KEY `idx_inbound_orders_seller` (`seller_id`),
   KEY `idx_inbound_orders_external_ordered` (`sales_channel_id`,`external_ordered_at`)
@@ -497,7 +497,7 @@ CREATE TABLE `seller_sales_channels` (
   `access_token` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Access Token',
   `vendor_id` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '외부 벤더 ID',
   `display_name` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '표시명',
-  `shop_id` bigint NOT NULL DEFAULT '0',
+  `shop_id` bigint DEFAULT NULL,
   `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '생성일시',
   `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '수정일시',
   PRIMARY KEY (`id`),
@@ -584,9 +584,9 @@ CREATE TABLE `shop` (
   `api_secret` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `access_token` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `vendor_id` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-  `deleted_at` datetime(6) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_sc_account` (`sales_channel_id`,`account_id`),
   KEY `idx_shop_status` (`status`),
@@ -669,7 +669,7 @@ CREATE TABLE `inbound_order_items` (
   `resolved_product_id` bigint DEFAULT NULL,
   `resolved_seller_id` bigint DEFAULT NULL,
   `resolved_brand_id` bigint DEFAULT NULL,
-  `resolved_sku_code` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `resolved_sku_code` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mapped` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -699,7 +699,7 @@ CREATE TABLE `order_items` (
   `product_id` bigint NOT NULL COMMENT '상품 ID',
   `seller_id` bigint NOT NULL COMMENT '셀러 ID',
   `brand_id` bigint NOT NULL COMMENT '브랜드 ID',
-  `sku_code` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'SKU 코드',
+  `sku_code` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'SKU 코드',
   `external_product_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '외부 상품 ID',
   `external_option_id` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '외부 옵션 ID',
   `external_product_name` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '외부 상품명',
@@ -865,7 +865,7 @@ CREATE TABLE `outbound_products` (
   UNIQUE KEY `uk_pg_channel` (`product_group_id`,`sales_channel_id`),
   KEY `idx_status` (`status`),
   KEY `idx_external_product` (`external_product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `brand_mapping` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -928,7 +928,7 @@ CREATE TABLE `product_option_mappings` (
   `product_id` bigint NOT NULL COMMENT '상품 ID',
   `seller_option_value_id` bigint NOT NULL COMMENT '셀러 옵션값 ID',
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
-  `deleted_at` datetime(6) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_product_option_mappings_product_id` (`product_id`),
   KEY `idx_product_option_mappings_option_value_id` (`seller_option_value_id`)
