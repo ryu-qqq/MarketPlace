@@ -1,1 +1,0 @@
-ALTER TABLE admin_menus MODIFY COLUMN icon_name VARCHAR(50) NULL;

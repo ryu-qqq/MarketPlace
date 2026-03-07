@@ -76,3 +76,4 @@ tfplan
 
 # Legacy seed data (contains test tokens)
 local-dev/data/legacy-seed/
+docs/seller/seed_data.sql
