@@ -136,8 +136,8 @@ scheduler:
       cron: "0 */5 * * * *"
 
     legacy-conversion-seeder:
-      # Prod: 비활성화 (시딩 완료)
-      enabled: false
+      # Prod: 활성화 (전체 78K 상품 시딩)
+      enabled: true
       cron: "0 */1 * * * *"
       batch-size: 200
       max-total: 0
