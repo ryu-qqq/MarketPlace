@@ -105,8 +105,8 @@ public class LegacyConversionCoordinator {
                     legacyProductGroupId,
                     e.getMessage(),
                     e);
-            outbox.failAndRetry(truncateMessage(e.getMessage()), Instant.now());
-            outboxCommandManager.persist(outbox);
+            outboxCommandManager.failInNewTransaction(
+                    outbox, truncateMessage(e.getMessage()), Instant.now());
         }
     }
 
