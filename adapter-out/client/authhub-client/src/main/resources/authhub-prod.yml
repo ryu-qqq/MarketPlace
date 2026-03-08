@@ -3,7 +3,7 @@
 # ============================================================
 
 authhub:
-  base-url: ${AUTHHUB_BASE_URL:http://authhub-web-api-prod.connectly.local}
+  base-url: ${AUTHHUB_BASE_URL:http://authhub-web-api-prod.connectly.local:8080}
   service-token: ${AUTHHUB_SERVICE_TOKEN:}
   sync:
     enabled: true

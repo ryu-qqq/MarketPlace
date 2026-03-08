@@ -3,7 +3,7 @@
 # ============================================================
 
 fileflow:
-  base-url: ${FILEFLOW_BASE_URL:http://fileflow-web-api-prod.connectly.local}
+  base-url: ${FILEFLOW_BASE_URL:http://fileflow-web-api-prod.connectly.local:8080}
   cdn-domain: ${FILEFLOW_CDN_DOMAIN:cdn.set-of.com}
   bucket: ${FILEFLOW_BUCKET:fileflow-uploads-prod}
   callback-base-url: ${FILEFLOW_CALLBACK_BASE_URL:http://marketplace-api-prod.connectly.local:8080}
