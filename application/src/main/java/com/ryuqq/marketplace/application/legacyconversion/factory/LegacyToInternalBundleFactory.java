@@ -199,7 +199,7 @@ public class LegacyToInternalBundleFactory {
 
             entries.add(
                     new RegisterProductsCommand.ProductData(
-                            "LGC-" + product.productId(),
+                            null,
                             (int) composite.regularPrice(),
                             (int) composite.currentPrice(),
                             product.stockQuantity(),
