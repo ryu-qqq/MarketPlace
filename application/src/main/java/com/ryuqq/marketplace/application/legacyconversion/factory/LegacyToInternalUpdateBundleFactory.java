@@ -221,7 +221,7 @@ public class LegacyToInternalUpdateBundleFactory {
             entries.add(
                     new ProductDiffUpdateEntry(
                             internalProductId,
-                            "LGC-" + product.productId(),
+                            null,
                             (int) composite.regularPrice(),
                             (int) composite.currentPrice(),
                             product.stockQuantity(),
