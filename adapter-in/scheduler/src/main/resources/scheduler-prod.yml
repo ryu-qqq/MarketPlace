@@ -127,13 +127,13 @@ scheduler:
         timeout-seconds: 300
 
     legacy-conversion:
-      # Prod: 활성화 (셀러/배송정책 시딩 완료)
+      # Prod: 활성화 (5초마다)
       enabled: true
-      cron: "0 */5 * * * *"
+      cron: "*/5 * * * * *"
 
     legacy-conversion-timeout:
-      # Prod: 5분마다
-      cron: "0 */5 * * * *"
+      # Prod: 1분마다
+      cron: "0 */1 * * * *"
 
     legacy-conversion-seeder:
       # Prod: 활성화 (전체 78K 상품 시딩)
