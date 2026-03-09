@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.domain.inboundorder.vo.InboundOrderStatus;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,12 @@ public class InboundOrderReadManager {
     public boolean existsBySalesChannelIdAndExternalOrderNo(
             long salesChannelId, String externalOrderNo) {
         return queryPort.existsBySalesChannelIdAndExternalOrderNo(salesChannelId, externalOrderNo);
+    }
+
+    @Transactional(readOnly = true)
+    public Set<String> findExistingExternalOrderNos(
+            long salesChannelId, Set<String> externalOrderNos) {
+        return queryPort.findExistingExternalOrderNos(salesChannelId, externalOrderNos);
     }
 
     @Transactional(readOnly = true)

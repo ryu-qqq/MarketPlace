@@ -36,4 +36,11 @@ public class InboundOrderCommandAdapter implements InboundOrderCommandPort {
                 mapper.toItemEntities(inboundOrder.items(), saved.getId());
         itemRepository.saveAll(itemEntities);
     }
+
+    @Override
+    public void saveAll(List<InboundOrder> inboundOrders) {
+        for (InboundOrder inboundOrder : inboundOrders) {
+            save(inboundOrder);
+        }
+    }
 }

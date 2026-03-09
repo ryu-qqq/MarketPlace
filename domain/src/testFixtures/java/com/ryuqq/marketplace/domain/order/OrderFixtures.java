@@ -19,6 +19,7 @@ import com.ryuqq.marketplace.domain.order.vo.ExternalOrderReference;
 import com.ryuqq.marketplace.domain.order.vo.ExternalProductSnapshot;
 import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
 import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
+import com.ryuqq.marketplace.domain.order.vo.PaymentInfo;
 import com.ryuqq.marketplace.domain.order.vo.ReceiverInfo;
 import java.time.Instant;
 import java.util.List;
@@ -93,8 +94,14 @@ public final class OrderFixtures {
         return ExternalOrderReference.of(
                 DEFAULT_SALES_CHANNEL_ID,
                 DEFAULT_SHOP_ID,
+                null,
+                null,
                 DEFAULT_EXTERNAL_ORDER_NO,
                 CommonVoFixtures.yesterday());
+    }
+
+    public static PaymentInfo defaultPaymentInfo() {
+        return PaymentInfo.of("CARD", Money.of(20000), CommonVoFixtures.now());
     }
 
     public static ExternalProductSnapshot defaultExternalProductSnapshot() {
@@ -112,7 +119,11 @@ public final class OrderFixtures {
                 DEFAULT_PRODUCT_ID,
                 DEFAULT_SELLER_ID,
                 DEFAULT_BRAND_ID,
-                DEFAULT_SKU_CODE);
+                DEFAULT_SKU_CODE,
+                "테스트 상품그룹",
+                "테스트 브랜드",
+                "테스트 셀러",
+                "https://example.com/images/main.jpg");
     }
 
     public static ExternalOrderItemPrice defaultExternalOrderItemPrice() {
@@ -141,7 +152,9 @@ public final class OrderFixtures {
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
-                defaultReceiverInfo());
+                defaultReceiverInfo(),
+                null,
+                null);
     }
 
     // ===== OrderHistory Fixtures =====
@@ -163,6 +176,7 @@ public final class OrderFixtures {
                 defaultOrderId(),
                 defaultOrderNumber(),
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 List.of(defaultOrderItem()),
                 DEFAULT_CHANGED_BY,
@@ -175,6 +189,7 @@ public final class OrderFixtures {
                 defaultOrderNumber(),
                 OrderStatus.ORDERED,
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
@@ -188,6 +203,7 @@ public final class OrderFixtures {
                 defaultOrderNumber(),
                 OrderStatus.PREPARING,
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
@@ -201,6 +217,7 @@ public final class OrderFixtures {
                 defaultOrderNumber(),
                 OrderStatus.SHIPPED,
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
@@ -214,6 +231,7 @@ public final class OrderFixtures {
                 defaultOrderNumber(),
                 OrderStatus.DELIVERED,
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
@@ -227,6 +245,7 @@ public final class OrderFixtures {
                 defaultOrderNumber(),
                 OrderStatus.CONFIRMED,
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
@@ -240,6 +259,7 @@ public final class OrderFixtures {
                 defaultOrderNumber(),
                 OrderStatus.CANCELLED,
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
@@ -253,6 +273,7 @@ public final class OrderFixtures {
                 defaultOrderNumber(),
                 OrderStatus.CLAIM_IN_PROGRESS,
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
@@ -266,6 +287,7 @@ public final class OrderFixtures {
                 defaultOrderNumber(),
                 OrderStatus.REFUNDED,
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
@@ -279,6 +301,7 @@ public final class OrderFixtures {
                 defaultOrderNumber(),
                 OrderStatus.EXCHANGED,
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
@@ -293,6 +316,7 @@ public final class OrderFixtures {
                 defaultOrderId(),
                 defaultOrderNumber(),
                 defaultBuyerInfo(),
+                defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 List.of(defaultOrderItem()),
                 DEFAULT_CHANGED_BY,
