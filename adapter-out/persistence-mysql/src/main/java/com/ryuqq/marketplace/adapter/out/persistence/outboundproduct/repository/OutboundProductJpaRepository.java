@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.repository;
 
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.entity.OutboundProductJpaEntity;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,6 +19,9 @@ public interface OutboundProductJpaRepository
 
     Optional<OutboundProductJpaEntity> findByExternalProductIdAndSalesChannelId(
             String externalProductId, Long salesChannelId);
+
+    List<OutboundProductJpaEntity> findByExternalProductIdInAndSalesChannelId(
+            Collection<String> externalProductIds, Long salesChannelId);
 
     List<OutboundProductJpaEntity> findByProductGroupIdIn(List<Long> productGroupIds);
 }

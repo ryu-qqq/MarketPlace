@@ -50,4 +50,9 @@ public class ShopReadManager {
         return queryPort.existsBySalesChannelIdAndAccountIdExcluding(
                 salesChannelId, accountId, excludeId);
     }
+
+    @Transactional(readOnly = true)
+    public List<Shop> findActiveBySalesChannelId(long salesChannelId) {
+        return queryPort.findActiveBySalesChannelId(salesChannelId);
+    }
 }

@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,7 +41,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class LegacyToInternalBundleFactory {
 
+    private static final Logger log = LoggerFactory.getLogger(LegacyToInternalBundleFactory.class);
     private static final String DEFAULT_NOTICE_VALUE = "상세설명 참고";
+    private static final String DEFAULT_THUMBNAIL_URL =
+            "https://cdn.set-of.com/public/logo/setof_logo.jpg";
 
     /**
      * 레거시 상품 번들을 내부 등록 번들로 변환합니다.
@@ -60,6 +65,11 @@ public class LegacyToInternalBundleFactory {
                                 composite.optionType())
                         .toInternalOptionType();
 
+        List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> optionGroups =
+                convertOptionGroups(composite, legacyBundle.products(), optionType);
+
+        optionType = adjustOptionType(optionType, optionGroups.size(), composite.productGroupId());
+
         ProductGroup productGroup = createProductGroup(composite, resolvedContext, optionType, now);
 
         long noticeCategoryId =
@@ -72,12 +82,39 @@ public class LegacyToInternalBundleFactory {
                 productGroup,
                 convertImages(composite.images()),
                 optionType.name(),
-                convertOptionGroups(composite, legacyBundle.products(), optionType),
+                optionGroups,
                 composite.detailDescription(),
                 noticeCategoryId,
                 noticeEntries,
                 convertProducts(legacyBundle.products(), composite),
                 now);
+    }
+
+    private OptionType adjustOptionType(
+            OptionType original, int actualGroupCount, long legacyProductGroupId) {
+        int expectedCount =
+                switch (original) {
+                    case NONE -> 0;
+                    case SINGLE -> 1;
+                    case COMBINATION -> 2;
+                };
+        if (expectedCount == actualGroupCount) {
+            return original;
+        }
+        OptionType adjusted =
+                switch (actualGroupCount) {
+                    case 0 -> OptionType.NONE;
+                    case 1 -> OptionType.SINGLE;
+                    default -> OptionType.COMBINATION;
+                };
+        log.warn(
+                "옵션 타입 불일치 보정: legacyProductGroupId={}, original={}, actualGroupCount={},"
+                        + " adjusted={}",
+                legacyProductGroupId,
+                original,
+                actualGroupCount,
+                adjusted);
+        return adjusted;
     }
 
     private ProductGroup createProductGroup(
@@ -99,15 +136,35 @@ public class LegacyToInternalBundleFactory {
     private List<RegisterProductGroupImagesCommand.ImageCommand> convertImages(
             List<LegacyProductGroupCompositeResult.ImageInfo> images) {
         if (images == null || images.isEmpty()) {
-            return List.of();
+            return List.of(
+                    new RegisterProductGroupImagesCommand.ImageCommand(
+                            ImageType.THUMBNAIL.name(), DEFAULT_THUMBNAIL_URL, 1));
         }
+
         List<RegisterProductGroupImagesCommand.ImageCommand> commands = new ArrayList<>();
-        for (int i = 0; i < images.size(); i++) {
-            LegacyProductGroupCompositeResult.ImageInfo img = images.get(i);
+        boolean thumbnailAdded = false;
+        int sortOrder = 1;
+
+        for (LegacyProductGroupCompositeResult.ImageInfo img : images) {
+            String imageType = toLegacyImageType(img.imageType());
+            if (ImageType.THUMBNAIL.name().equals(imageType)) {
+                if (thumbnailAdded) {
+                    imageType = ImageType.DETAIL.name();
+                } else {
+                    thumbnailAdded = true;
+                }
+            }
             commands.add(
                     new RegisterProductGroupImagesCommand.ImageCommand(
-                            toLegacyImageType(img.imageType()), img.imageUrl(), i + 1));
+                            imageType, img.imageUrl(), sortOrder++));
         }
+
+        if (!thumbnailAdded) {
+            commands.addFirst(
+                    new RegisterProductGroupImagesCommand.ImageCommand(
+                            ImageType.THUMBNAIL.name(), DEFAULT_THUMBNAIL_URL, 0));
+        }
+
         return commands;
     }
 
@@ -123,7 +180,7 @@ public class LegacyToInternalBundleFactory {
             List<LegacyProductCompositeResult> products,
             OptionType optionType) {
 
-        if (!optionType.requiresOptionGroup() || products.isEmpty()) {
+        if (products.isEmpty()) {
             return List.of();
         }
 

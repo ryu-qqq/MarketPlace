@@ -16,7 +16,7 @@ public class InboundOrder {
     private final InboundOrderId id;
     private final long salesChannelId;
     private final long shopId;
-    private final long sellerId;
+    private long sellerId;
     private final String externalOrderNo;
     private final Instant externalOrderedAt;
 
@@ -168,6 +168,10 @@ public class InboundOrder {
         }
         this.status = InboundOrderStatus.MAPPED;
         this.updatedAt = now;
+    }
+
+    public void assignSellerId(long sellerId) {
+        this.sellerId = sellerId;
     }
 
     public void markConverted(String orderId, Instant now) {

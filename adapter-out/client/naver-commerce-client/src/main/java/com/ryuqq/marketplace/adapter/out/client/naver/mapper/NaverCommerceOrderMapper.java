@@ -52,7 +52,7 @@ public class NaverCommerceOrderMapper {
                 order.ordererName(),
                 null,
                 order.ordererTel(),
-                order.payLocationType(),
+                order.paymentMeans(),
                 totalPayment,
                 parseInstant(order.paymentDate()),
                 items);
