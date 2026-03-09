@@ -31,6 +31,7 @@ public class InboundOrderItem {
     private Long resolvedSellerId;
     private Long resolvedBrandId;
     private String resolvedSkuCode;
+    private String resolvedProductGroupName;
     private boolean mapped;
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -57,6 +58,7 @@ public class InboundOrderItem {
             Long resolvedSellerId,
             Long resolvedBrandId,
             String resolvedSkuCode,
+            String resolvedProductGroupName,
             boolean mapped) {
         this.id = id;
         this.externalProductId = externalProductId;
@@ -80,6 +82,7 @@ public class InboundOrderItem {
         this.resolvedSellerId = resolvedSellerId;
         this.resolvedBrandId = resolvedBrandId;
         this.resolvedSkuCode = resolvedSkuCode;
+        this.resolvedProductGroupName = resolvedProductGroupName;
         this.mapped = mapped;
     }
 
@@ -124,6 +127,7 @@ public class InboundOrderItem {
                 null,
                 null,
                 null,
+                null,
                 false);
     }
 
@@ -151,6 +155,7 @@ public class InboundOrderItem {
             Long resolvedSellerId,
             Long resolvedBrandId,
             String resolvedSkuCode,
+            String resolvedProductGroupName,
             boolean mapped) {
         return new InboundOrderItem(
                 id,
@@ -175,16 +180,23 @@ public class InboundOrderItem {
                 resolvedSellerId,
                 resolvedBrandId,
                 resolvedSkuCode,
+                resolvedProductGroupName,
                 mapped);
     }
 
     public void applyMapping(
-            long productGroupId, long productId, long sellerId, long brandId, String skuCode) {
+            Long productGroupId,
+            Long productId,
+            Long sellerId,
+            Long brandId,
+            String skuCode,
+            String productGroupName) {
         this.resolvedProductGroupId = productGroupId;
         this.resolvedProductId = productId;
         this.resolvedSellerId = sellerId;
         this.resolvedBrandId = brandId;
         this.resolvedSkuCode = skuCode;
+        this.resolvedProductGroupName = productGroupName;
         this.mapped = true;
     }
 
@@ -282,5 +294,9 @@ public class InboundOrderItem {
 
     public String resolvedSkuCode() {
         return resolvedSkuCode;
+    }
+
+    public String resolvedProductGroupName() {
+        return resolvedProductGroupName;
     }
 }

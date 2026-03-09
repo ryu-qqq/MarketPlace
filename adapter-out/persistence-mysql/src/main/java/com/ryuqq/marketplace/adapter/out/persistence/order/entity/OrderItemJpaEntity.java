@@ -37,6 +37,18 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "sku_code", length = 50)
     private String skuCode;
 
+    @Column(name = "product_group_name", length = 500)
+    private String productGroupName;
+
+    @Column(name = "brand_name", length = 200)
+    private String brandName;
+
+    @Column(name = "seller_name", length = 200)
+    private String sellerName;
+
+    @Column(name = "main_image_url", length = 1000)
+    private String mainImageUrl;
+
     @Column(name = "external_product_id", nullable = false, length = 100)
     private String externalProductId;
 
@@ -98,6 +110,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             long sellerId,
             long brandId,
             String skuCode,
+            String productGroupName,
+            String brandName,
+            String sellerName,
+            String mainImageUrl,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -124,6 +140,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.sellerId = sellerId;
         this.brandId = brandId;
         this.skuCode = skuCode;
+        this.productGroupName = productGroupName;
+        this.brandName = brandName;
+        this.sellerName = sellerName;
+        this.mainImageUrl = mainImageUrl;
         this.externalProductId = externalProductId;
         this.externalOptionId = externalOptionId;
         this.externalProductName = externalProductName;
@@ -151,6 +171,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             long sellerId,
             long brandId,
             String skuCode,
+            String productGroupName,
+            String brandName,
+            String sellerName,
+            String mainImageUrl,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -177,6 +201,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 sellerId,
                 brandId,
                 skuCode,
+                productGroupName,
+                brandName,
+                sellerName,
+                mainImageUrl,
                 externalProductId,
                 externalOptionId,
                 externalProductName,
@@ -287,5 +315,21 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     public String getDeliveryRequest() {
         return deliveryRequest;
+    }
+
+    public String getProductGroupName() {
+        return productGroupName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public String getMainImageUrl() {
+        return mainImageUrl;
     }
 }

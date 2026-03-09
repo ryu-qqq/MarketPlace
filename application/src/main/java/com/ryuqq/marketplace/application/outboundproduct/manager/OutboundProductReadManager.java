@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.outboundproduct.manager;
 import com.ryuqq.marketplace.application.outboundproduct.port.out.query.OutboundProductQueryPort;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,5 +57,12 @@ public class OutboundProductReadManager {
     @Transactional(readOnly = true)
     public List<OutboundProduct> findDeregisteredByProductGroupId(Long productGroupId) {
         return queryPort.findDeregisteredByProductGroupId(productGroupId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OutboundProduct> findByExternalProductIdsAndSalesChannelId(
+            Set<String> externalProductIds, long salesChannelId) {
+        return queryPort.findByExternalProductIdsAndSalesChannelId(
+                externalProductIds, salesChannelId);
     }
 }
