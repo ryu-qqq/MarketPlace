@@ -481,8 +481,8 @@ public class StubExternalClientConfig {
     }
 
     /**
-     * legacyconversion 패키지는 ComponentScan에서 legacy.* 패턴으로 제외되므로,
-     * ExternalProductInitializer가 의존하는 Manager를 직접 등록합니다.
+     * legacyconversion 패키지는 ComponentScan에서 legacy.* 패턴으로 제외되므로, ExternalProductInitializer가 의존하는
+     * Manager를 직접 등록합니다.
      */
     @Bean
     @Primary
