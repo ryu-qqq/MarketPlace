@@ -1,10 +1,10 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.strategy;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.adapter.SetofCommerceBasicInfoAdapter;
 import com.ryuqq.marketplace.adapter.out.client.setof.adapter.SetofCommerceDescriptionAdapter;
 import com.ryuqq.marketplace.adapter.out.client.setof.adapter.SetofCommerceImageAdapter;
 import com.ryuqq.marketplace.adapter.out.client.setof.adapter.SetofCommerceNoticeAdapter;
 import com.ryuqq.marketplace.adapter.out.client.setof.adapter.SetofCommerceProductAdapter;
-import com.ryuqq.marketplace.adapter.out.client.setof.adapter.SetofCommerceProductClientAdapter;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofDescriptionRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofImagesRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofNoticeRequest;
@@ -43,7 +43,7 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
     private static final Logger log =
             LoggerFactory.getLogger(SetofPartialProductUpdateExecutor.class);
 
-    private final SetofCommerceProductClientAdapter productClientAdapter;
+    private final SetofCommerceBasicInfoAdapter basicInfoAdapter;
     private final SetofCommerceProductAdapter productAdapter;
     private final SetofCommerceImageAdapter imageAdapter;
     private final SetofCommerceDescriptionAdapter descriptionAdapter;
@@ -51,13 +51,13 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
     private final SetofCommerceProductMapper mapper;
 
     public SetofPartialProductUpdateExecutor(
-            SetofCommerceProductClientAdapter productClientAdapter,
+            SetofCommerceBasicInfoAdapter basicInfoAdapter,
             SetofCommerceProductAdapter productAdapter,
             SetofCommerceImageAdapter imageAdapter,
             SetofCommerceDescriptionAdapter descriptionAdapter,
             SetofCommerceNoticeAdapter noticeAdapter,
             SetofCommerceProductMapper mapper) {
-        this.productClientAdapter = productClientAdapter;
+        this.basicInfoAdapter = basicInfoAdapter;
         this.productAdapter = productAdapter;
         this.imageAdapter = imageAdapter;
         this.descriptionAdapter = descriptionAdapter;
@@ -116,7 +116,7 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
             String externalProductId) {
         SetofProductGroupBasicInfoUpdateRequest request =
                 mapper.toBasicInfoUpdateRequest(bundle, externalCategoryId, externalBrandId);
-        productClientAdapter.updateBasicInfo(externalProductId, request);
+        basicInfoAdapter.updateBasicInfo(externalProductId, request);
     }
 
     private void updateProducts(ProductGroupDetailBundle bundle, Long externalId) {
