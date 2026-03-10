@@ -143,7 +143,7 @@ public class LegacyConversionPreResolver {
                 categoryNoticeResolver.resolve(categoryId.value());
 
         return new LegacyConversionResolvedContext(
-                brandId, categoryId, shippingPolicyId, refundPolicyId, noticeCategory);
+                sellerId, brandId, categoryId, shippingPolicyId, refundPolicyId, noticeCategory);
     }
 
     private BrandId resolveBrand(long legacyBrandId) {
