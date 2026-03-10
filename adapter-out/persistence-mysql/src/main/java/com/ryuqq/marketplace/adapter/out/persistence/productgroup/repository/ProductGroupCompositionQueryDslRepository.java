@@ -480,11 +480,17 @@ public class ProductGroupCompositionQueryDslRepository {
                                 optionValue.optionValueName)
                         .from(optionMapping)
                         .leftJoin(optionValue)
-                        .on(optionMapping.sellerOptionValueId.eq(optionValue.id)
-                                .and(optionValue.deleted.isFalse()))
+                        .on(
+                                optionMapping
+                                        .sellerOptionValueId
+                                        .eq(optionValue.id)
+                                        .and(optionValue.deleted.isFalse()))
                         .leftJoin(optionGroup)
-                        .on(optionValue.sellerOptionGroupId.eq(optionGroup.id)
-                                .and(optionGroup.deleted.isFalse()))
+                        .on(
+                                optionValue
+                                        .sellerOptionGroupId
+                                        .eq(optionGroup.id)
+                                        .and(optionGroup.deleted.isFalse()))
                         .where(
                                 optionMapping.productId.in(productIds),
                                 optionMapping.deleted.isFalse())
