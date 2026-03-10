@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupBasicInfoUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
@@ -114,20 +115,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
     public void deleteProduct(String externalProductId, SellerSalesChannel channel) {
         log.info("세토프 커머스 상품 삭제(판매중지) 요청: externalProductId={}", externalProductId);
 
-        SetofProductGroupUpdateRequest deleteRequest =
-                new SetofProductGroupUpdateRequest(
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        "DISCONTINUED",
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
+        SetofProductGroupUpdateRequest deleteRequest = mapper.toDeleteRequest();
 
         restClient
                 .put()
@@ -138,5 +126,30 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
                 .toBodilessEntity();
 
         log.info("세토프 커머스 상품 삭제(판매중지) 성공: externalProductId={}", externalProductId);
+    }
+
+    /**
+     * 상품 그룹 기본 정보 수정.
+     *
+     * <p>PATCH /api/v2/admin/product-groups/{productGroupId}/basic-info
+     *
+     * @param externalProductGroupId 세토프 상품 그룹 ID
+     * @param request 기본 정보 수정 요청
+     */
+    public void updateBasicInfo(
+            String externalProductGroupId, SetofProductGroupBasicInfoUpdateRequest request) {
+        log.info("세토프 커머스 상품 그룹 기본정보 수정 요청: externalProductGroupId={}", externalProductGroupId);
+
+        restClient
+                .patch()
+                .uri(
+                        "/api/v2/admin/product-groups/{productGroupId}/basic-info",
+                        externalProductGroupId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .retrieve()
+                .toBodilessEntity();
+
+        log.info("세토프 커머스 상품 그룹 기본정보 수정 성공: externalProductGroupId={}", externalProductGroupId);
     }
 }

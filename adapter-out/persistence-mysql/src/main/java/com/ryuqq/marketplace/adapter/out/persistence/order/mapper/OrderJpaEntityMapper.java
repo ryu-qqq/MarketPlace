@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.order.mapper;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderHistoryJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.order.entity.PaymentJpaEntity;
 import com.ryuqq.marketplace.domain.common.vo.Address;
 import com.ryuqq.marketplace.domain.common.vo.Email;
 import com.ryuqq.marketplace.domain.common.vo.Money;
@@ -22,6 +23,7 @@ import com.ryuqq.marketplace.domain.order.vo.ExternalProductSnapshot;
 import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
 import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.order.vo.PaymentInfo;
+import com.ryuqq.marketplace.domain.order.vo.PaymentStatus;
 import com.ryuqq.marketplace.domain.order.vo.ReceiverInfo;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -33,7 +35,6 @@ public class OrderJpaEntityMapper {
     public OrderJpaEntity toOrderEntity(Order order) {
         BuyerInfo buyer = order.buyerInfo();
         ExternalOrderReference ext = order.externalOrderReference();
-        PaymentInfo payment = order.paymentInfo();
         return OrderJpaEntity.create(
                 order.idValue(),
                 order.orderNumberValue(),
@@ -47,12 +48,28 @@ public class OrderJpaEntityMapper {
                 ext.externalOrderedAt(),
                 ext.shopCode(),
                 ext.shopName(),
-                payment != null ? payment.paymentMethod() : null,
-                payment != null ? payment.totalPaymentAmount().value() : 0,
-                payment != null ? payment.paidAt() : null,
                 order.createdAt(),
                 order.updatedAt(),
                 null);
+    }
+
+    public PaymentJpaEntity toPaymentEntity(Order order) {
+        PaymentInfo payment = order.paymentInfo();
+        String status =
+                payment != null && payment.paidAt() != null
+                        ? PaymentStatus.COMPLETED.name()
+                        : PaymentStatus.PENDING.name();
+        return PaymentJpaEntity.create(
+                null,
+                order.idValue(),
+                status,
+                payment != null ? payment.paymentMethod() : null,
+                null,
+                payment != null ? payment.totalPaymentAmount().value() : 0,
+                payment != null ? payment.paidAt() : null,
+                null,
+                order.createdAt(),
+                order.updatedAt());
     }
 
     public OrderItemJpaEntity toOrderItemEntity(OrderItem item, String orderId) {
@@ -92,6 +109,17 @@ public class OrderJpaEntityMapper {
                         ? item.receiverInfo().address().line2()
                         : null,
                 item.receiverInfo().deliveryRequest(),
+                "READY",
+                null,
+                null,
+                null,
+                0,
+                0,
+                0,
+                0,
+                0,
+                null,
+                null,
                 null,
                 null);
     }
@@ -120,6 +148,7 @@ public class OrderJpaEntityMapper {
     /** Entity → Domain 변환 (Query Phase에서 활용 예정). */
     public Order toDomain(
             OrderJpaEntity entity,
+            PaymentJpaEntity paymentEntity,
             List<OrderItemJpaEntity> itemEntities,
             List<OrderHistoryJpaEntity> historyEntities) {
         return Order.reconstitute(
@@ -127,7 +156,7 @@ public class OrderJpaEntityMapper {
                 OrderNumber.of(entity.getOrderNumber()),
                 OrderStatus.valueOf(entity.getStatus()),
                 resolveBuyerInfo(entity),
-                resolvePaymentInfo(entity),
+                resolvePaymentInfo(paymentEntity),
                 resolveExternalOrderReference(entity),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
@@ -142,11 +171,12 @@ public class OrderJpaEntityMapper {
                 entity.getBuyerPhone() != null ? PhoneNumber.of(entity.getBuyerPhone()) : null);
     }
 
-    private PaymentInfo resolvePaymentInfo(OrderJpaEntity entity) {
+    private PaymentInfo resolvePaymentInfo(PaymentJpaEntity entity) {
+        if (entity == null) {
+            return null;
+        }
         return PaymentInfo.of(
-                entity.getPaymentMethod(),
-                Money.of(entity.getTotalPaymentAmount()),
-                entity.getPaidAt());
+                entity.getPaymentMethod(), Money.of(entity.getPaymentAmount()), entity.getPaidAt());
     }
 
     private ExternalOrderReference resolveExternalOrderReference(OrderJpaEntity entity) {

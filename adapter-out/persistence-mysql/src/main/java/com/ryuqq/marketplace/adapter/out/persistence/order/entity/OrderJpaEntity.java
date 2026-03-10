@@ -49,15 +49,6 @@ public class OrderJpaEntity extends SoftDeletableEntity {
     @Column(name = "shop_name", length = 100)
     private String shopName;
 
-    @Column(name = "payment_method", length = 50)
-    private String paymentMethod;
-
-    @Column(name = "total_payment_amount")
-    private int totalPaymentAmount;
-
-    @Column(name = "paid_at")
-    private Instant paidAt;
-
     protected OrderJpaEntity() {
         super();
     }
@@ -76,9 +67,6 @@ public class OrderJpaEntity extends SoftDeletableEntity {
             Instant externalOrderedAt,
             String shopCode,
             String shopName,
-            String paymentMethod,
-            int totalPaymentAmount,
-            Instant paidAt,
             Instant createdAt,
             Instant updatedAt,
             Instant deletedAt) {
@@ -95,9 +83,6 @@ public class OrderJpaEntity extends SoftDeletableEntity {
         this.externalOrderedAt = externalOrderedAt;
         this.shopCode = shopCode;
         this.shopName = shopName;
-        this.paymentMethod = paymentMethod;
-        this.totalPaymentAmount = totalPaymentAmount;
-        this.paidAt = paidAt;
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -114,9 +99,6 @@ public class OrderJpaEntity extends SoftDeletableEntity {
             Instant externalOrderedAt,
             String shopCode,
             String shopName,
-            String paymentMethod,
-            int totalPaymentAmount,
-            Instant paidAt,
             Instant createdAt,
             Instant updatedAt,
             Instant deletedAt) {
@@ -133,9 +115,6 @@ public class OrderJpaEntity extends SoftDeletableEntity {
                 externalOrderedAt,
                 shopCode,
                 shopName,
-                paymentMethod,
-                totalPaymentAmount,
-                paidAt,
                 createdAt,
                 updatedAt,
                 deletedAt);
@@ -187,17 +166,5 @@ public class OrderJpaEntity extends SoftDeletableEntity {
 
     public String getShopName() {
         return shopName;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public int getTotalPaymentAmount() {
-        return totalPaymentAmount;
-    }
-
-    public Instant getPaidAt() {
-        return paidAt;
     }
 }
