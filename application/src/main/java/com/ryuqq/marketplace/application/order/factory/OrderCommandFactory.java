@@ -19,6 +19,7 @@ import com.ryuqq.marketplace.domain.order.vo.ExternalOrderItemPrice;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderReference;
 import com.ryuqq.marketplace.domain.order.vo.ExternalProductSnapshot;
 import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
+import com.ryuqq.marketplace.domain.order.vo.PaymentInfo;
 import com.ryuqq.marketplace.domain.order.vo.ReceiverInfo;
 import java.time.Instant;
 import java.util.List;
@@ -59,17 +60,32 @@ public class OrderCommandFactory {
                         Email.of(command.buyerEmail()),
                         PhoneNumber.of(command.buyerPhone()));
 
+        PaymentInfo paymentInfo =
+                PaymentInfo.of(
+                        command.paymentMethod(),
+                        Money.of(command.totalPaymentAmount()),
+                        command.paidAt());
+
         ExternalOrderReference externalOrderRef =
                 ExternalOrderReference.of(
                         command.salesChannelId(),
                         command.shopId(),
+                        command.shopCode(),
+                        command.shopName(),
                         command.externalOrderNo(),
                         command.externalOrderedAt());
 
         List<OrderItem> items = command.items().stream().map(this::createOrderItem).toList();
 
         return Order.forNew(
-                orderId, orderNumber, buyerInfo, externalOrderRef, items, command.changedBy(), now);
+                orderId,
+                orderNumber,
+                buyerInfo,
+                paymentInfo,
+                externalOrderRef,
+                items,
+                command.changedBy(),
+                now);
     }
 
     /**
@@ -114,7 +130,11 @@ public class OrderCommandFactory {
                         cmd.productId(),
                         cmd.sellerId(),
                         cmd.brandId(),
-                        cmd.skuCode());
+                        cmd.skuCode(),
+                        cmd.productGroupName(),
+                        cmd.brandName(),
+                        cmd.sellerName(),
+                        cmd.mainImageUrl());
 
         ExternalProductSnapshot externalProduct =
                 ExternalProductSnapshot.of(

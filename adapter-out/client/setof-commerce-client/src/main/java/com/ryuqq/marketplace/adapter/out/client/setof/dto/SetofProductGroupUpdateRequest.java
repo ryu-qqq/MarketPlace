@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 /**
- * 세토프 커머스 상품 그룹 수정 요청 DTO.
+ * 세토프 커머스 상품 그룹 전체 수정 요청 DTO.
  *
  * <p>PUT /api/v2/admin/product-groups/{id} 요청 본문. 세토프 커머스의 UpdateProductGroupFullApiRequest 스펙에 맞는
  * 중첩 record 구조입니다.
@@ -17,7 +17,8 @@ public record SetofProductGroupUpdateRequest(
         Long shippingPolicyId,
         Long refundPolicyId,
         String optionType,
-        String status,
+        int regularPrice,
+        int currentPrice,
         List<ImageRequest> images,
         List<OptionGroupRequest> optionGroups,
         List<ProductRequest> products,
@@ -33,15 +34,14 @@ public record SetofProductGroupUpdateRequest(
 
     /** 이미지 요청. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public record ImageRequest(String imageType, String originUrl, Integer sortOrder) {}
+    public record ImageRequest(String imageType, String imageUrl, Integer sortOrder) {}
 
     /** 옵션 그룹 요청. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record OptionGroupRequest(
             Long sellerOptionGroupId,
             String optionGroupName,
-            Long canonicalOptionGroupId,
-            String inputType,
+            Integer sortOrder,
             List<OptionValueRequest> optionValues) {
 
         /** 방어적 복사. */
@@ -53,10 +53,7 @@ public record SetofProductGroupUpdateRequest(
     /** 옵션 값 요청. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record OptionValueRequest(
-            Long sellerOptionValueId,
-            String optionValueName,
-            Long canonicalOptionValueId,
-            Integer sortOrder) {}
+            Long sellerOptionValueId, String optionValueName, Integer sortOrder) {}
 
     /** 상품 요청. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -79,11 +76,22 @@ public record SetofProductGroupUpdateRequest(
     public record SelectedOptionRequest(String optionGroupName, String optionValueName) {}
 
     /** 상세 설명 요청. */
-    public record DescriptionRequest(String content) {}
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record DescriptionRequest(
+            String content, List<DescriptionImageRequest> descriptionImages) {
+
+        /** 방어적 복사. */
+        public DescriptionRequest {
+            descriptionImages = descriptionImages == null ? null : List.copyOf(descriptionImages);
+        }
+    }
+
+    /** 상세설명 이미지 요청. */
+    public record DescriptionImageRequest(String imageUrl, int sortOrder) {}
 
     /** 고시정보 요청. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public record NoticeRequest(Long noticeCategoryId, List<NoticeEntryRequest> entries) {
+    public record NoticeRequest(List<NoticeEntryRequest> entries) {
 
         /** 방어적 복사. */
         public NoticeRequest {
@@ -92,5 +100,5 @@ public record SetofProductGroupUpdateRequest(
     }
 
     /** 고시정보 항목 요청. */
-    public record NoticeEntryRequest(Long noticeFieldId, String fieldValue) {}
+    public record NoticeEntryRequest(Long noticeFieldId, String fieldName, String fieldValue) {}
 }

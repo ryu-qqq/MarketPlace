@@ -85,6 +85,9 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "resolved_sku_code", length = 50)
     private String resolvedSkuCode;
 
+    @Column(name = "resolved_product_group_name", length = 500)
+    private String resolvedProductGroupName;
+
     @Column(name = "mapped", nullable = false)
     private boolean mapped;
 
@@ -117,6 +120,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
             Long resolvedSellerId,
             Long resolvedBrandId,
             String resolvedSkuCode,
+            String resolvedProductGroupName,
             boolean mapped,
             Instant createdAt,
             Instant updatedAt) {
@@ -144,6 +148,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
         this.resolvedSellerId = resolvedSellerId;
         this.resolvedBrandId = resolvedBrandId;
         this.resolvedSkuCode = resolvedSkuCode;
+        this.resolvedProductGroupName = resolvedProductGroupName;
         this.mapped = mapped;
     }
 
@@ -172,6 +177,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
             Long resolvedSellerId,
             Long resolvedBrandId,
             String resolvedSkuCode,
+            String resolvedProductGroupName,
             boolean mapped,
             Instant createdAt,
             Instant updatedAt) {
@@ -199,6 +205,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
                 resolvedSellerId,
                 resolvedBrandId,
                 resolvedSkuCode,
+                resolvedProductGroupName,
                 mapped,
                 createdAt,
                 updatedAt);
@@ -294,6 +301,10 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
 
     public String getResolvedSkuCode() {
         return resolvedSkuCode;
+    }
+
+    public String getResolvedProductGroupName() {
+        return resolvedProductGroupName;
     }
 
     public boolean isMapped() {

@@ -1,0 +1,19 @@
+package com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto;
+
+import java.time.Instant;
+
+/** 주문 취소 프로젝션. */
+public record OrderCancelProjectionDto(
+        Long cancelId,
+        long orderItemId,
+        String cancelNumber,
+        String cancelStatus,
+        int quantity,
+        String reasonType,
+        String reasonDetail,
+        int originalAmount,
+        int refundAmount,
+        String refundMethod,
+        Instant refundedAt,
+        Instant requestedAt,
+        Instant completedAt) {}

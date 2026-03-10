@@ -37,6 +37,18 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "sku_code", length = 50)
     private String skuCode;
 
+    @Column(name = "product_group_name", length = 500)
+    private String productGroupName;
+
+    @Column(name = "brand_name", length = 200)
+    private String brandName;
+
+    @Column(name = "seller_name", length = 200)
+    private String sellerName;
+
+    @Column(name = "main_image_url", length = 1000)
+    private String mainImageUrl;
+
     @Column(name = "external_product_id", nullable = false, length = 100)
     private String externalProductId;
 
@@ -85,6 +97,39 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "delivery_request", length = 500)
     private String deliveryRequest;
 
+    @Column(name = "delivery_status", nullable = false, length = 20)
+    private String deliveryStatus;
+
+    @Column(name = "shipment_company_code", length = 50)
+    private String shipmentCompanyCode;
+
+    @Column(name = "invoice", length = 100)
+    private String invoice;
+
+    @Column(name = "shipment_completed_date")
+    private Instant shipmentCompletedDate;
+
+    @Column(name = "commission_rate", nullable = false)
+    private int commissionRate;
+
+    @Column(name = "fee", nullable = false)
+    private int fee;
+
+    @Column(name = "expectation_settlement_amount", nullable = false)
+    private int expectationSettlementAmount;
+
+    @Column(name = "settlement_amount", nullable = false)
+    private int settlementAmount;
+
+    @Column(name = "share_ratio", nullable = false)
+    private int shareRatio;
+
+    @Column(name = "expected_settlement_day")
+    private Instant expectedSettlementDay;
+
+    @Column(name = "settlement_day")
+    private Instant settlementDay;
+
     protected OrderItemJpaEntity() {
         super();
     }
@@ -98,6 +143,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             long sellerId,
             long brandId,
             String skuCode,
+            String productGroupName,
+            String brandName,
+            String sellerName,
+            String mainImageUrl,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -114,6 +163,17 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String receiverAddress,
             String receiverAddressDetail,
             String deliveryRequest,
+            String deliveryStatus,
+            String shipmentCompanyCode,
+            String invoice,
+            Instant shipmentCompletedDate,
+            int commissionRate,
+            int fee,
+            int expectationSettlementAmount,
+            int settlementAmount,
+            int shareRatio,
+            Instant expectedSettlementDay,
+            Instant settlementDay,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
@@ -124,6 +184,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.sellerId = sellerId;
         this.brandId = brandId;
         this.skuCode = skuCode;
+        this.productGroupName = productGroupName;
+        this.brandName = brandName;
+        this.sellerName = sellerName;
+        this.mainImageUrl = mainImageUrl;
         this.externalProductId = externalProductId;
         this.externalOptionId = externalOptionId;
         this.externalProductName = externalProductName;
@@ -140,6 +204,17 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.receiverAddress = receiverAddress;
         this.receiverAddressDetail = receiverAddressDetail;
         this.deliveryRequest = deliveryRequest;
+        this.deliveryStatus = deliveryStatus;
+        this.shipmentCompanyCode = shipmentCompanyCode;
+        this.invoice = invoice;
+        this.shipmentCompletedDate = shipmentCompletedDate;
+        this.commissionRate = commissionRate;
+        this.fee = fee;
+        this.expectationSettlementAmount = expectationSettlementAmount;
+        this.settlementAmount = settlementAmount;
+        this.shareRatio = shareRatio;
+        this.expectedSettlementDay = expectedSettlementDay;
+        this.settlementDay = settlementDay;
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -151,6 +226,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             long sellerId,
             long brandId,
             String skuCode,
+            String productGroupName,
+            String brandName,
+            String sellerName,
+            String mainImageUrl,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -167,6 +246,17 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String receiverAddress,
             String receiverAddressDetail,
             String deliveryRequest,
+            String deliveryStatus,
+            String shipmentCompanyCode,
+            String invoice,
+            Instant shipmentCompletedDate,
+            int commissionRate,
+            int fee,
+            int expectationSettlementAmount,
+            int settlementAmount,
+            int shareRatio,
+            Instant expectedSettlementDay,
+            Instant settlementDay,
             Instant createdAt,
             Instant updatedAt) {
         return new OrderItemJpaEntity(
@@ -177,6 +267,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 sellerId,
                 brandId,
                 skuCode,
+                productGroupName,
+                brandName,
+                sellerName,
+                mainImageUrl,
                 externalProductId,
                 externalOptionId,
                 externalProductName,
@@ -193,6 +287,17 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 receiverAddress,
                 receiverAddressDetail,
                 deliveryRequest,
+                deliveryStatus,
+                shipmentCompanyCode,
+                invoice,
+                shipmentCompletedDate,
+                commissionRate,
+                fee,
+                expectationSettlementAmount,
+                settlementAmount,
+                shareRatio,
+                expectedSettlementDay,
+                settlementDay,
                 createdAt,
                 updatedAt);
     }
@@ -287,5 +392,65 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     public String getDeliveryRequest() {
         return deliveryRequest;
+    }
+
+    public String getProductGroupName() {
+        return productGroupName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public String getMainImageUrl() {
+        return mainImageUrl;
+    }
+
+    public String getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    public String getShipmentCompanyCode() {
+        return shipmentCompanyCode;
+    }
+
+    public String getInvoice() {
+        return invoice;
+    }
+
+    public Instant getShipmentCompletedDate() {
+        return shipmentCompletedDate;
+    }
+
+    public int getCommissionRate() {
+        return commissionRate;
+    }
+
+    public int getFee() {
+        return fee;
+    }
+
+    public int getExpectationSettlementAmount() {
+        return expectationSettlementAmount;
+    }
+
+    public int getSettlementAmount() {
+        return settlementAmount;
+    }
+
+    public int getShareRatio() {
+        return shareRatio;
+    }
+
+    public Instant getExpectedSettlementDay() {
+        return expectedSettlementDay;
+    }
+
+    public Instant getSettlementDay() {
+        return settlementDay;
     }
 }
