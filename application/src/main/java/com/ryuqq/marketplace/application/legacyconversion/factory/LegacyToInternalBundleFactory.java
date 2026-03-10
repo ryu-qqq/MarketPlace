@@ -123,7 +123,7 @@ public class LegacyToInternalBundleFactory {
             OptionType optionType,
             Instant now) {
         return ProductGroup.forNew(
-                SellerId.of(composite.sellerId()),
+                resolvedContext.sellerId(),
                 resolvedContext.brandId(),
                 resolvedContext.categoryId(),
                 resolvedContext.shippingPolicyId(),
