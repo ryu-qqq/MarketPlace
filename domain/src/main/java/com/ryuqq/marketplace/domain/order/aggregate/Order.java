@@ -18,6 +18,7 @@ import com.ryuqq.marketplace.domain.order.id.OrderNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderReference;
 import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
+import com.ryuqq.marketplace.domain.order.vo.PaymentInfo;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,7 @@ public class Order {
     private final OrderNumber orderNumber;
     private OrderStatus status;
     private final BuyerInfo buyerInfo;
+    private final PaymentInfo paymentInfo;
     private final ExternalOrderReference externalOrderReference;
     private final Instant createdAt;
     private Instant updatedAt;
@@ -43,6 +45,7 @@ public class Order {
             OrderNumber orderNumber,
             OrderStatus status,
             BuyerInfo buyerInfo,
+            PaymentInfo paymentInfo,
             ExternalOrderReference externalOrderReference,
             Instant createdAt,
             Instant updatedAt) {
@@ -50,6 +53,7 @@ public class Order {
         this.orderNumber = orderNumber;
         this.status = status;
         this.buyerInfo = buyerInfo;
+        this.paymentInfo = paymentInfo;
         this.externalOrderReference = externalOrderReference;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -59,6 +63,7 @@ public class Order {
             OrderId id,
             OrderNumber orderNumber,
             BuyerInfo buyerInfo,
+            PaymentInfo paymentInfo,
             ExternalOrderReference externalOrderReference,
             List<OrderItem> items,
             String changedBy,
@@ -69,6 +74,7 @@ public class Order {
                         orderNumber,
                         OrderStatus.ORDERED,
                         buyerInfo,
+                        paymentInfo,
                         externalOrderReference,
                         now,
                         now);
@@ -86,6 +92,7 @@ public class Order {
             OrderNumber orderNumber,
             OrderStatus status,
             BuyerInfo buyerInfo,
+            PaymentInfo paymentInfo,
             ExternalOrderReference externalOrderReference,
             Instant createdAt,
             Instant updatedAt,
@@ -97,6 +104,7 @@ public class Order {
                         orderNumber,
                         status,
                         buyerInfo,
+                        paymentInfo,
                         externalOrderReference,
                         createdAt,
                         updatedAt);
@@ -234,6 +242,10 @@ public class Order {
 
     public BuyerInfo buyerInfo() {
         return buyerInfo;
+    }
+
+    public PaymentInfo paymentInfo() {
+        return paymentInfo;
     }
 
     public ExternalOrderReference externalOrderReference() {

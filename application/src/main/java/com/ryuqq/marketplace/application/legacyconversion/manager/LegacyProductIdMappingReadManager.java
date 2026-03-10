@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.legacyconversion.manager;
 
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyProductIdMappingQueryPort;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -44,5 +45,16 @@ public class LegacyProductIdMappingReadManager {
      */
     public List<LegacyProductIdMapping> findByLegacyProductGroupId(long legacyProductGroupId) {
         return queryPort.findByLegacyProductGroupId(legacyProductGroupId);
+    }
+
+    /**
+     * 여러 레거시 상품그룹 ID로 매핑 일괄 조회.
+     *
+     * @param legacyProductGroupIds 레거시 상품그룹 ID 목록
+     * @return 매핑 목록
+     */
+    public List<LegacyProductIdMapping> findByLegacyProductGroupIds(
+            Collection<Long> legacyProductGroupIds) {
+        return queryPort.findByLegacyProductGroupIds(legacyProductGroupIds);
     }
 }

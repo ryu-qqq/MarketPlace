@@ -111,6 +111,7 @@ public final class InboundOrderFixtures {
                 DEFAULT_SELLER_ID,
                 500L,
                 "SKU-001",
+                "테스트 상품그룹",
                 true);
     }
 

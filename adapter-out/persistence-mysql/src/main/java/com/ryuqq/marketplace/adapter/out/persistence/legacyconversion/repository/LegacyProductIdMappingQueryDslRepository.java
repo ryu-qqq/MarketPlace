@@ -4,6 +4,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.ent
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.entity.LegacyProductIdMappingJpaEntity;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -68,6 +69,25 @@ public class LegacyProductIdMappingQueryDslRepository {
                 .where(
                         legacyProductIdMappingJpaEntity.legacyProductGroupId.eq(
                                 legacyProductGroupId))
+                .fetch();
+    }
+
+    /**
+     * 여러 legacyProductGroupId로 매핑 일괄 조회.
+     *
+     * @param legacyProductGroupIds 레거시 상품그룹 ID 목록
+     * @return 매핑 목록
+     */
+    public List<LegacyProductIdMappingJpaEntity> findByLegacyProductGroupIds(
+            Collection<Long> legacyProductGroupIds) {
+        if (legacyProductGroupIds == null || legacyProductGroupIds.isEmpty()) {
+            return List.of();
+        }
+        return queryFactory
+                .selectFrom(legacyProductIdMappingJpaEntity)
+                .where(
+                        legacyProductIdMappingJpaEntity.legacyProductGroupId.in(
+                                legacyProductGroupIds))
                 .fetch();
     }
 }

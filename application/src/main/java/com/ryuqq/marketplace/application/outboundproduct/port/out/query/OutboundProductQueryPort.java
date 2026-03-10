@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.outboundproduct.port.out.query;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface OutboundProductQueryPort {
     boolean existsByProductGroupIdAndSalesChannelId(Long productGroupId, Long salesChannelId);
@@ -30,6 +31,10 @@ public interface OutboundProductQueryPort {
      */
     Optional<OutboundProduct> findByExternalProductIdAndSalesChannelId(
             String externalProductId, long salesChannelId);
+
+    /** 외부 상품 ID 목록 + 판매채널 ID로 일괄 역조회. */
+    List<OutboundProduct> findByExternalProductIdsAndSalesChannelId(
+            Set<String> externalProductIds, long salesChannelId);
 
     /**
      * DEREGISTERED 상태의 OutboundProduct를 상품그룹 ID로 조회.

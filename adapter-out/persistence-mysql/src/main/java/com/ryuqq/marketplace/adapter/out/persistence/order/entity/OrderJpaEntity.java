@@ -43,10 +43,17 @@ public class OrderJpaEntity extends SoftDeletableEntity {
     @Column(name = "external_ordered_at", nullable = false)
     private Instant externalOrderedAt;
 
+    @Column(name = "shop_code", length = 30)
+    private String shopCode;
+
+    @Column(name = "shop_name", length = 100)
+    private String shopName;
+
     protected OrderJpaEntity() {
         super();
     }
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     private OrderJpaEntity(
             String id,
             String orderNumber,
@@ -58,6 +65,8 @@ public class OrderJpaEntity extends SoftDeletableEntity {
             long shopId,
             String externalOrderNo,
             Instant externalOrderedAt,
+            String shopCode,
+            String shopName,
             Instant createdAt,
             Instant updatedAt,
             Instant deletedAt) {
@@ -72,8 +81,11 @@ public class OrderJpaEntity extends SoftDeletableEntity {
         this.shopId = shopId;
         this.externalOrderNo = externalOrderNo;
         this.externalOrderedAt = externalOrderedAt;
+        this.shopCode = shopCode;
+        this.shopName = shopName;
     }
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public static OrderJpaEntity create(
             String id,
             String orderNumber,
@@ -85,6 +97,8 @@ public class OrderJpaEntity extends SoftDeletableEntity {
             long shopId,
             String externalOrderNo,
             Instant externalOrderedAt,
+            String shopCode,
+            String shopName,
             Instant createdAt,
             Instant updatedAt,
             Instant deletedAt) {
@@ -99,6 +113,8 @@ public class OrderJpaEntity extends SoftDeletableEntity {
                 shopId,
                 externalOrderNo,
                 externalOrderedAt,
+                shopCode,
+                shopName,
                 createdAt,
                 updatedAt,
                 deletedAt);
@@ -142,5 +158,13 @@ public class OrderJpaEntity extends SoftDeletableEntity {
 
     public Instant getExternalOrderedAt() {
         return externalOrderedAt;
+    }
+
+    public String getShopCode() {
+        return shopCode;
+    }
+
+    public String getShopName() {
+        return shopName;
     }
 }
