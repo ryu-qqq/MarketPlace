@@ -4,7 +4,8 @@ import java.time.Instant;
 
 /** 결제 정보 프로젝션 (payments 테이블). */
 public record PaymentProjectionDto(
-        Long paymentId,
+        String paymentId,
+        String paymentNumber,
         String orderId,
         String paymentStatus,
         String paymentMethod,

@@ -329,7 +329,9 @@ public class StubExternalClientConfig {
                     Long externalBrandId,
                     String externalProductId,
                     com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel
-                            channel) {
+                            channel,
+                    java.util.Set<com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea>
+                            changedAreas) {
                 // stub: no-op
             }
 

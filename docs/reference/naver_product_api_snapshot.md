@@ -1,0 +1,2003 @@
+- generic [ref=e2]:
+  - region "Skip to main content":
+    - link "Skip to main content" [ref=e3] [cursor=pointer]:
+      - /url: "#__docusaurus_skipToContent_fallback"
+  - navigation "Main" [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - link "Keytar" [ref=e7] [cursor=pointer]:
+          - /url: /docs/introduction
+          - img "Keytar" [ref=e9]
+        - link "소개" [ref=e10] [cursor=pointer]:
+          - /url: /docs/introduction
+        - link "커머스API" [ref=e11] [cursor=pointer]:
+          - /url: /docs/commerce-api/current
+        - link "변경 이력" [ref=e12] [cursor=pointer]:
+          - /url: https://github.com/commerce-api-naver/commerce-api/discussions/categories/%EB%A6%B4%EB%A6%AC%EC%A6%88-%EB%85%B8%ED%8A%B8
+        - link "솔루션 가이드" [ref=e13] [cursor=pointer]:
+          - /url: /docs/solution-doc
+      - generic [ref=e14]:
+        - button "Search" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]:
+            - img [ref=e18]
+            - generic [ref=e20]: Search
+          - generic [ref=e21]:
+            - generic [ref=e22]: ⌘
+            - generic [ref=e23]: K
+        - generic [ref=e24]: 2.73.0
+        - button "버전 선택" [ref=e26] [cursor=pointer]
+        - link "GitHub repository" [ref=e27] [cursor=pointer]:
+          - /url: https://github.com/commerce-api-naver/commerce-api
+        - button "Switch between dark and light mode (currently light mode)" [ref=e29] [cursor=pointer]:
+          - img [ref=e30]
+  - generic [ref=e34]:
+    - complementary [ref=e35]:
+      - navigation "Docs sidebar" [ref=e38]:
+        - list [ref=e39]:
+          - listitem [ref=e40]:
+            - link "커머스API" [ref=e42] [cursor=pointer]:
+              - /url: /docs/commerce-api/current
+            - list [ref=e43]:
+              - listitem [ref=e44]:
+                - button "인증" [ref=e46] [cursor=pointer]
+              - listitem [ref=e47]:
+                - button "API데이터솔루션(통계)" [ref=e49] [cursor=pointer]
+              - listitem [ref=e50]:
+                - button "문의" [ref=e52] [cursor=pointer]
+              - listitem [ref=e53]:
+                - button "물류" [ref=e55] [cursor=pointer]
+              - listitem [ref=e56]:
+                - button "상품" [expanded] [ref=e58] [cursor=pointer]
+                - list [ref=e59]:
+                  - listitem [ref=e60]:
+                    - link "그룹상품" [ref=e62] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/그룹상품
+                    - list [ref=e63]:
+                      - listitem [ref=e64]:
+                        - link "post (v2) 그룹상품 등록" [ref=e65] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/create-product-1-product
+                      - listitem [ref=e66]:
+                        - link "get (v2) 그룹상품 요청 결과 조회" [ref=e67] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-progress-product
+                      - listitem [ref=e68]:
+                        - link "post (v2) 상품 상세 정보 임시 저장" [ref=e69] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/save-detail-info-product
+                      - listitem [ref=e70]:
+                        - link "get (v2) 그룹상품 조회" [ref=e71] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/read-product-product
+                      - listitem [ref=e72]:
+                        - link "put (v2) 그룹상품 수정" [ref=e73] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/update-product-product
+                      - listitem [ref=e74]:
+                        - link "del (v2) 그룹상품 삭제" [ref=e75] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/delete-product-product
+                  - listitem [ref=e76]:
+                    - link "브랜드" [ref=e78] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/브랜드
+                    - list [ref=e79]:
+                      - listitem [ref=e80]:
+                        - link "get 브랜드 조회" [ref=e81] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-brand-list-product
+                  - listitem [ref=e82]:
+                    - link "사이즈" [ref=e84] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/사이즈
+                    - list [ref=e85]:
+                      - listitem [ref=e86]:
+                        - link "get 전체 사이즈 타입 조회" [ref=e87] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-size-type-vo-list-product
+                      - listitem [ref=e88]:
+                        - link "get 사이즈 타입 조회" [ref=e89] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-size-type-vo-product
+                  - listitem [ref=e90]:
+                    - link "상품" [ref=e92] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품
+                    - list [ref=e93]:
+                      - listitem [ref=e94]:
+                        - link "schema 원상품 정보 구조체" [ref=e95] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/schemas/원상품-정보-구조체
+                      - listitem [ref=e96]:
+                        - link "schema 스마트스토어 채널상품 정보 구조체" [ref=e97] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/schemas/스마트스토어-채널상품-정보-구조체
+                      - listitem [ref=e98]:
+                        - link "schema 쇼핑윈도 채널상품 정보 구조체" [ref=e99] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/schemas/쇼핑윈도-채널상품-정보-구조체
+                      - listitem [ref=e100]:
+                        - link "patch 멀티 상품 변경" [ref=e101] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/update-multi-products-product
+                      - listitem [ref=e102]:
+                        - link "put 판매 상태 변경" [ref=e103] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/read-channel-product-product
+                      - listitem [ref=e104]:
+                        - link "put 상품 옵션 재고 변경" [ref=e105] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/update-options-product
+                      - listitem [ref=e106]:
+                        - link "post (v2) 상품 등록" [ref=e107] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/create-product-product
+                      - listitem [ref=e108]:
+                        - link "get (v2) 채널 상품 조회" [ref=e109] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/read-channel-product-1-product
+                      - listitem [ref=e110]:
+                        - link "put (v2) 채널 상품 수정" [ref=e111] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/update-channel-product-product
+                      - listitem [ref=e112]:
+                        - link "del (v2) 채널 상품 삭제" [ref=e113] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/delete-channel-product-product
+                      - listitem [ref=e114]:
+                        - link "get (v2) 원상품 조회" [ref=e115] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/read-origin-product-product
+                      - listitem [ref=e116]:
+                        - link "put (v2) 원상품 수정" [ref=e117] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/update-origin-product-product
+                      - listitem [ref=e118]:
+                        - link "del (v2) 원상품 삭제" [ref=e119] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/delete-origin-product-product
+                  - listitem [ref=e120]:
+                    - link "상품 검수" [ref=e122] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품-검수
+                    - list [ref=e123]:
+                      - listitem [ref=e124]:
+                        - link "put 수정 요청 상품에 대해 복원 요청" [ref=e125] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/restore-inspection-product-product
+                      - listitem [ref=e126]:
+                        - link "get 수정 요청 상품 목록을 조회" [ref=e127] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-inspection-products-request-product
+                  - listitem [ref=e128]:
+                    - link "상품 공지사항" [ref=e130] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품-공지사항
+                    - list [ref=e131]:
+                      - listitem [ref=e132]:
+                        - link "schema 공지사항 내용 구조체" [ref=e133] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/schemas/공지사항-내용-구조체
+                      - listitem [ref=e134]:
+                        - link "get 공지사항 목록 조회" [ref=e135] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-posts-contents
+                      - listitem [ref=e136]:
+                        - link "post 공지사항 등록" [ref=e137] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/create-post-contents
+                      - listitem [ref=e138]:
+                        - link "get 공지사항 단건 조회" [ref=e139] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-post-contents
+                      - listitem [ref=e140]:
+                        - link "put 공지사항 수정" [ref=e141] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/update-post-contents
+                      - listitem [ref=e142]:
+                        - link "del 공지사항 삭제" [ref=e143] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/delete-post-contents
+                  - listitem [ref=e144]:
+                    - link "상품 공지사항 적용" [ref=e146] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품-공지사항-적용
+                    - list [ref=e147]:
+                      - listitem [ref=e148]:
+                        - link "put 채널 상품 공지사항 적용" [ref=e149] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/apply-notice-product
+                  - listitem [ref=e150]:
+                    - link "상품 목록" [ref=e152] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품-목록
+                    - list [ref=e153]:
+                      - listitem [ref=e154]:
+                        - link "post 상품 목록 조회" [ref=e155] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/search-product
+                  - listitem [ref=e156]:
+                    - link "상품 배송 정보" [ref=e158] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품-배송-정보
+                    - list [ref=e159]:
+                      - listitem [ref=e160]:
+                        - link "schema 묶음배송 그룹 정보 구조체" [ref=e161] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/schemas/묶음배송-그룹-정보-구조체
+                      - listitem [ref=e162]:
+                        - link "schema 희망일배송 그룹 정보 구조체" [ref=e163] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/schemas/희망일배송-그룹-정보-구조체
+                      - listitem [ref=e164]:
+                        - link "schema 반품 택배사 정보 구조체" [ref=e165] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/schemas/반품-택배사-정보-구조체
+                      - listitem [ref=e166]:
+                        - link "get 묶음배송 그룹 다건 조회" [ref=e167] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-delivery-bundle-group-list-product
+                      - listitem [ref=e168]:
+                        - link "post 묶음배송 그룹 등록" [ref=e169] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/create-delivery-bundle-group-product
+                      - listitem [ref=e170]:
+                        - link "get 묶음배송 그룹 단건 조회" [ref=e171] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-delivery-bundle-group-product
+                      - listitem [ref=e172]:
+                        - link "put 묶음배송 그룹 수정" [ref=e173] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/update-delivery-bundle-group-product
+                      - listitem [ref=e174]:
+                        - link "get 희망일배송 그룹 다건 조회" [ref=e175] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-hope-delivery-group-list-product
+                      - listitem [ref=e176]:
+                        - link "post 희망일배송 그룹 등록" [ref=e177] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/create-hope-delivery-group-product
+                      - listitem [ref=e178]:
+                        - link "get 희망일배송 그룹 단건 조회" [ref=e179] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-hope-delivery-group-product
+                      - listitem [ref=e180]:
+                        - link "put 희망일배송 그룹 수정" [ref=e181] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/update-hope-delivery-group-product
+                      - listitem [ref=e182]:
+                        - link "get (v2) 반품 택배사 다건 조회" [ref=e183] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-return-delivery-company-list-product
+                  - listitem [ref=e184]:
+                    - link "상품 속성" [ref=e186] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품-속성
+                    - list [ref=e187]:
+                      - listitem [ref=e188]:
+                        - link "get 전체 속성값 단위 조회" [ref=e189] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-attribute-value-unit-list-product
+                      - listitem [ref=e190]:
+                        - link "get 카테고리별 속성값 조회" [ref=e191] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-attribute-value-list-product
+                      - listitem [ref=e192]:
+                        - link "get 카테고리별 속성 조회" [ref=e193] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-attribute-list-product
+                  - listitem [ref=e194]:
+                    - link "상품 원산지 정보" [ref=e196] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품-원산지-정보
+                    - list [ref=e197]:
+                      - listitem [ref=e198]:
+                        - link "get 원산지 코드 정보 전체 조회" [ref=e199] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-all-origin-area-list-product
+                      - listitem [ref=e200]:
+                        - link "get 원산지 코드 정보 다건 조회" [ref=e201] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-origin-area-list-product
+                      - listitem [ref=e202]:
+                        - link "get 하위 원산지 코드 정보 다건 조회" [ref=e203] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-sub-origin-area-list-product
+                  - listitem [ref=e204]:
+                    - link "상품 이미지" [ref=e206] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품-이미지
+                    - list [ref=e207]:
+                      - listitem [ref=e208]:
+                        - link "post 상품 이미지 다건 등록" [ref=e209] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/upload-product
+                  - listitem [ref=e210]:
+                    - link "상품 일괄 수정" [ref=e212] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품-일괄-수정
+                    - list [ref=e213]:
+                      - listitem [ref=e214]:
+                        - link "put 상품 벌크 업데이트" [ref=e215] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/bulk-update-origin-product-product
+                  - listitem [ref=e216]:
+                    - link "상품정보제공고시" [ref=e218] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/상품정보제공고시
+                    - list [ref=e219]:
+                      - listitem [ref=e220]:
+                        - link "get 상품정보제공고시 상품군 목록 조회" [ref=e221] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-all-product-info-provided-notice-type-vo-product
+                      - listitem [ref=e222]:
+                        - link "get 상품정보제공고시 상품군 단건 조회" [ref=e223] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-product-info-provided-notice-type-vo-product
+                  - listitem [ref=e224]:
+                    - link "옵션" [ref=e226] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/옵션
+                    - list [ref=e227]:
+                      - listitem [ref=e228]:
+                        - link "get 카테고리별 표준형 옵션 조회" [ref=e229] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-standard-option-by-category-product
+                  - listitem [ref=e230]:
+                    - link "제조사" [ref=e232] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/제조사
+                    - list [ref=e233]:
+                      - listitem [ref=e234]:
+                        - link "get 제조사 조회" [ref=e235] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-manufacturer-list-product
+                  - listitem [ref=e236]:
+                    - link "카탈로그" [ref=e238] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/카탈로그
+                    - list [ref=e239]:
+                      - listitem [ref=e240]:
+                        - link "get 카탈로그 조회" [ref=e241] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-model-list-product
+                      - listitem [ref=e242]:
+                        - link "get 카탈로그 단건 조회" [ref=e243] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-model-product
+                  - listitem [ref=e244]:
+                    - link "카테고리" [ref=e246] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/카테고리
+                    - list [ref=e247]:
+                      - listitem [ref=e248]:
+                        - link "get 전체 카테고리 조회" [ref=e249] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-category-list-product
+                      - listitem [ref=e250]:
+                        - link "get 카테고리 조회" [ref=e251] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-category-product
+                      - listitem [ref=e252]:
+                        - link "get 하위 카테고리 조회" [ref=e253] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-sub-category-product
+                  - listitem [ref=e254]:
+                    - link "태그" [ref=e256] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/태그
+                    - list [ref=e257]:
+                      - listitem [ref=e258]:
+                        - link "get (v2) 추천 태그 검색 목록 조회" [ref=e259] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-recommend-tags-product
+                      - listitem [ref=e260]:
+                        - link "get (v2) 제한 태그 여부 조회" [ref=e261] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/is-restrict-tags-product
+                  - listitem [ref=e262]:
+                    - link "판매 옵션" [ref=e264] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/판매-옵션
+                    - list [ref=e265]:
+                      - listitem [ref=e266]:
+                        - link "get (v2) 판매 옵션 정보 조회" [ref=e267] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-option-guides-by-category-id-product
+                  - listitem [ref=e268]:
+                    - link "패션모델" [ref=e270] [cursor=pointer]:
+                      - /url: /docs/commerce-api/current/패션모델
+                    - list [ref=e271]:
+                      - listitem [ref=e272]:
+                        - link "get 전체 패션모델 조회" [ref=e273] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/get-fashion-models-product
+                      - listitem [ref=e274]:
+                        - link "post 패션모델 저장" [ref=e275] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/save-fashion-model-product
+                      - listitem [ref=e276]:
+                        - link "put 패션모델 수정" [ref=e277] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/update-fashion-model-product
+                      - listitem [ref=e278]:
+                        - link "del 패션모델 삭제" [ref=e279] [cursor=pointer]:
+                          - /url: /docs/commerce-api/current/delete-fashion-model-product
+              - listitem [ref=e280]:
+                - button "정산" [ref=e282] [cursor=pointer]
+              - listitem [ref=e283]:
+                - button "주문" [ref=e285] [cursor=pointer]
+              - listitem [ref=e286]:
+                - button "커머스솔루션" [ref=e288] [cursor=pointer]
+              - listitem [ref=e289]:
+                - button "판매자정보" [ref=e291] [cursor=pointer]
+      - button "Expand sidebar" [ref=e292] [cursor=pointer]:
+        - img [ref=e293]
+    - main [ref=e296]:
+      - generic [ref=e300]:
+        - article [ref=e301]:
+          - navigation "Breadcrumbs" [ref=e302]:
+            - list [ref=e303]:
+              - listitem [ref=e304]:
+                - link "Home page" [ref=e305] [cursor=pointer]:
+                  - /url: /docs/introduction
+                  - img [ref=e306]
+              - listitem [ref=e308]:
+                - link "커머스API" [ref=e309] [cursor=pointer]:
+                  - /url: /docs/commerce-api/current
+              - listitem [ref=e310]:
+                - generic [ref=e311]: 상품
+              - listitem [ref=e312]:
+                - link "상품" [ref=e313] [cursor=pointer]:
+                  - /url: /docs/commerce-api/current/상품
+              - listitem [ref=e314]:
+                - generic [ref=e315]: (v2) 상품 등록
+          - generic [ref=e317]:
+            - generic [ref=e318]:
+              - heading "(v2) 상품 등록" [level=1] [ref=e319]
+              - generic [ref=e320]:
+                - generic [ref=e321]:
+                  - generic [ref=e322]: POST
+                  - heading "/v2/products" [level=2] [ref=e323]
+                - button [ref=e324] [cursor=pointer]:
+                  - img [ref=e326]
+              - text: BAD_REQUEST 오류 응답 시, InvalidInputs 필드 정보가 없거나 InvalidInputs 필드만으로 정확한 판단이 어려울 수 있습니다. 이때는 message 내용을 활용한 오류 판단을 권장합니다.
+              - heading "RequestDirect link to Request" [level=2] [ref=e329]:
+                - text: Request
+                - link "Direct link to Request" [ref=e330] [cursor=pointer]:
+                  - /url: "#request"
+                  - text: "#"
+              - generic [ref=e331]:
+                - tablist [ref=e334]:
+                  - tab "application/json" [selected] [ref=e335] [cursor=pointer]
+                - tabpanel [ref=e337]:
+                  - group [ref=e338]:
+                    - generic "Body required" [ref=e339] [cursor=pointer]:
+                      - heading "Body required" [level=3] [ref=e340]:
+                        - text: Body
+                        - strong [ref=e341]: required
+                    - list [ref=e344]:
+                      - generic [ref=e345]:
+                        - group [ref=e347]:
+                          - generic "originProduct 원상품 (object) required" [ref=e348] [cursor=pointer]:
+                            - generic [ref=e349]:
+                              - strong [ref=e350]: originProduct
+                              - generic [ref=e351]: 원상품 (object)
+                              - generic [ref=e352]: required
+                          - generic [ref=e355]:
+                            - paragraph [ref=e357]: 상품 공통 속성. 원상품에 속한 채널 상품은 모두 상품 공통 속성을 참고하게 됩니다.
+                            - generic [ref=e358]:
+                              - generic [ref=e360]:
+                                - generic [ref=e361]:
+                                  - strong [ref=e362]: statusType
+                                  - generic [ref=e363]: 상품 판매 상태 코드 (string)
+                                  - generic [ref=e364]: required
+                                - paragraph [ref=e365]: 상품 API에서 상품의 판매 상태를 나타내기 위해 사용하는 코드입니다. 상품 등록 시에는 SALE(판매 중)만 입력할 수 있으며, 상품 수정 시에는 SALE(판매 중), SUSPENSION(판매 중지)만 입력할 수 있습니다. 상품 등록 시에는 SUSPENSION(판매 중지)으로 입력하면 SALE(판매 중)로 등록됩니다. StockQuantity의 값이 0인 경우 상품 상태는 OUTOFSTOCK(품절)으로 저장됩니다. 품절 상태의 상품을 판매 중으로 변경하는 경우, StockQuantity(재고 수량)와 함께 statusType을 SALE(판매 중)로 입력해야 합니다.
+                                - list [ref=e366]:
+                                  - listitem [ref=e367]: WAIT(판매 대기), SALE(판매 중), OUTOFSTOCK(품절), UNADMISSION(승인 대기), REJECTION(승인 거부), SUSPENSION(판매 중지), CLOSE(판매 종료), PROHIBITION(판매 금지)
+                                - paragraph [ref=e369]:
+                                  - strong [ref=e370]: "Possible values:"
+                                  - text: "["
+                                  - code [ref=e371]: WAIT
+                                  - text: ","
+                                  - code [ref=e372]: SALE
+                                  - text: ","
+                                  - code [ref=e373]: OUTOFSTOCK
+                                  - text: ","
+                                  - code [ref=e374]: UNADMISSION
+                                  - text: ","
+                                  - code [ref=e375]: REJECTION
+                                  - text: ","
+                                  - code [ref=e376]: SUSPENSION
+                                  - text: ","
+                                  - code [ref=e377]: CLOSE
+                                  - text: ","
+                                  - code [ref=e378]: PROHIBITION
+                                  - text: ","
+                                  - code [ref=e379]: DELETE
+                                  - text: "]"
+                              - generic [ref=e382]:
+                                - generic [ref=e383]:
+                                  - strong [ref=e384]: saleType
+                                  - generic [ref=e385]: 상품 판매 유형 코드 (string)
+                                - paragraph [ref=e386]: 상품 API에서 상품의 판매 유형을 나타내기 위해 사용하는 코드입니다. 미입력 시 NEW(새 상품)로 저장됩니다.
+                                - list [ref=e387]:
+                                  - listitem [ref=e388]: NEW(새 상품), OLD(중고 상품)
+                                - paragraph [ref=e390]:
+                                  - strong [ref=e391]: "Possible values:"
+                                  - text: "["
+                                  - code [ref=e392]: NEW
+                                  - text: ","
+                                  - code [ref=e393]: OLD
+                                  - text: "]"
+                              - generic [ref=e396]:
+                                - generic [ref=e397]:
+                                  - strong [ref=e398]: leafCategoryId
+                                  - generic [ref=e399]: 리프 카테고리 ID (string)
+                                - paragraph [ref=e400]: 상품 등록 시 필수입니다. 상품 수정 시 카탈로그 ID(modelId)를 입력한 경우 필수입니다. 표준형 옵션 카테고리 상품 수정 요청의 경우 CategoryId 변경 요청은 무시됩니다.(렌탈상품은 정상 처리됨)
+                              - generic [ref=e404]:
+                                - strong [ref=e405]: name
+                                - generic [ref=e406]: 상품명 (string)
+                                - generic [ref=e407]: required
+                              - generic [ref=e410]:
+                                - generic [ref=e411]:
+                                  - strong [ref=e412]: detailContent
+                                  - generic [ref=e413]: 상품 상세 정보 (string)
+                                  - generic [ref=e414]: required
+                                - paragraph [ref=e415]: 상품 수정 시에만 생략할 수 있습니다. 이 경우 기존에 저장된 상품 상세 정보 값이 유지됩니다.
+                              - group [ref=e418]:
+                                - generic "images 상품 이미지 (object) required" [ref=e419] [cursor=pointer]:
+                                  - generic [ref=e420]:
+                                    - strong [ref=e421]: images
+                                    - generic [ref=e422]: 상품 이미지 (object)
+                                    - generic [ref=e423]: required
+                              - generic [ref=e425]:
+                                - generic [ref=e426]:
+                                  - strong [ref=e427]: saleStartDate
+                                  - generic [ref=e428]: 판매 시작 일시 (string<date-time>)
+                                - paragraph [ref=e429]: 매 시각 00분으로만 설정 가능합니다. 'yyyy-MM-dd'T'HH:mm[:ss][.SSS]XXX' 형식으로 입력합니다.
+                              - generic [ref=e432]:
+                                - generic [ref=e433]:
+                                  - strong [ref=e434]: saleEndDate
+                                  - generic [ref=e435]: 판매 종료 일시 (string<date-time>)
+                                - paragraph [ref=e436]: 매 시각 59분으로만 설정 가능합니다. 'yyyy-MM-dd'T'HH:mm[:ss][.SSS]XXX' 형식으로 입력합니다.
+                              - generic [ref=e439]:
+                                - generic [ref=e440]:
+                                  - strong [ref=e441]: salePrice
+                                  - generic [ref=e442]: 상품 판매 가격 (integer<int64>)
+                                  - generic [ref=e443]: required
+                                - paragraph [ref=e445]:
+                                  - strong [ref=e446]: "Possible values:"
+                                  - code [ref=e447]: <= 999999990
+                              - generic [ref=e450]:
+                                - generic [ref=e451]:
+                                  - strong [ref=e452]: stockQuantity
+                                  - generic [ref=e453]: 재고 수량 (integer<int32>)
+                                - paragraph [ref=e454]: 상품 등록 시 필수. 상품 수정 시 재고 수량을 입력하지 않으면 스마트스토어 데이터베이스에 저장된 현재 재고 값이 변하지 않습니다. 수정 시 재고 수량이 0으로 입력되면 StatusType으로 전달된 항목은 무시되며 상품 상태는 OUTOFSTOCK(품절)으로 저장됩니다.
+                                - paragraph [ref=e456]:
+                                  - strong [ref=e457]: "Possible values:"
+                                  - code [ref=e458]: <= 99999999
+                              - group [ref=e461]:
+                                - generic "deliveryInfo 배송 정보 (object)" [ref=e462] [cursor=pointer]:
+                                  - generic [ref=e463]:
+                                    - strong [ref=e464]: deliveryInfo
+                                    - generic [ref=e465]: 배송 정보 (object)
+                              - group [ref=e467]:
+                                - generic "productLogistics 물류사 정보 (object)[]" [ref=e468] [cursor=pointer]:
+                                  - generic [ref=e469]:
+                                    - strong [ref=e470]: productLogistics
+                                    - generic [ref=e471]: 물류사 정보 (object)[]
+                              - group [ref=e473]:
+                                - generic "detailAttribute 원상품 상세 속성 (object) required" [ref=e474] [cursor=pointer]:
+                                  - generic [ref=e475]:
+                                    - strong [ref=e476]: detailAttribute
+                                    - generic [ref=e477]: 원상품 상세 속성 (object)
+                                    - generic [ref=e478]: required
+                              - group [ref=e480]:
+                                - generic "customerBenefit 상품 고객 혜택 정보 (object)" [ref=e481] [cursor=pointer]:
+                                  - generic [ref=e482]:
+                                    - strong [ref=e483]: customerBenefit
+                                    - generic [ref=e484]: 상품 고객 혜택 정보 (object)
+                        - group [ref=e486]:
+                          - generic "smartstoreChannelProduct 스마트스토어 채널상품 정보 구조체 (object) required" [ref=e487] [cursor=pointer]:
+                            - generic [ref=e488]:
+                              - strong [ref=e489]: smartstoreChannelProduct
+                              - generic [ref=e490]: 스마트스토어 채널상품 정보 구조체 (object)
+                              - generic [ref=e491]: required
+                          - generic [ref=e494]:
+                            - generic [ref=e495]:
+                              - paragraph [ref=e496]: 이 구조체는 상품 정보 중 스마트스토어 채널상품 속성에 해당하는 상품 데이터를 표현하는 구조체입니다.
+                              - list [ref=e497]:
+                                - listitem [ref=e498]: 이 구조체는 API 호출에 대한 요청/응답 모두에서 사용합니다.
+                                - listitem [ref=e499]: 구조체의 객체 1개는 상품 1개에 대한 스마트스토어 채널상품 정보를 표현합니다.
+                                - listitem [ref=e500]: 상품 단위별로 스마트스토어 채널상품 정보는 단일 구조체로만 포함되나 계층 구조상 자매 개체로 원상품 구조체 혹은 쇼핑윈도 채널상품 구조체와 함께 사용할 수 있습니다.
+                                - listitem [ref=e501]:
+                                  - text: 이 구조체는 아래 API에서 사용합니다.
+                                  - list [ref=e502]:
+                                    - listitem [ref=e503]: 상품 등록, 채널 상품 조회, 채널 상품 수정, 원상품 조회, 원상품 수정 등 이 구조체는 상품 정보 중 스마트스토어 채널상품 속성에 해당하는 상품 데이터를 표현하는 구조체입니다.
+                                - listitem [ref=e504]: 이 구조체는 API 호출에 대한 요청/응답 모두에서 사용합니다.
+                                - listitem [ref=e505]: 구조체의 객체 1개는 상품 1개에 대한 스마트스토어 채널상품 정보를 표현합니다.
+                                - listitem [ref=e506]: 상품 단위별로 스마트스토어 채널상품 정보는 단일 구조체로만 포함되나 계층 구조상 자매 개체로 원상품 구조체 혹은 쇼핑윈도 채널상품 구조체와 함께 사용할 수 있습니다.
+                                - listitem [ref=e507]:
+                                  - text: 이 구조체는 아래 API에서 사용합니다.
+                                  - list [ref=e508]:
+                                    - listitem [ref=e509]: 상품 등록, 채널 상품 조회, 채널 상품 수정, 원상품 조회, 원상품 수정 등
+                            - generic [ref=e510]:
+                              - generic [ref=e512]:
+                                - generic [ref=e513]:
+                                  - strong [ref=e514]: channelProductName
+                                  - generic [ref=e515]: 채널 상품 전용 상품명 (string)
+                                - paragraph [ref=e516]: 채널 상품 전용 상품명을 사용하는 경우 입력합니다. 미입력 시 원상품명으로 적용됩니다.
+                              - generic [ref=e519]:
+                                - generic [ref=e520]:
+                                  - strong [ref=e521]: bbsSeq
+                                  - generic [ref=e522]: 콘텐츠 게시글 일련번호 (integer<int64>)
+                                - paragraph [ref=e523]: 공지사항
+                              - generic [ref=e526]:
+                                - generic [ref=e527]:
+                                  - strong [ref=e528]: storeKeepExclusiveProduct
+                                  - generic [ref=e529]: 알림받기 동의 회원 전용 상품 여부 (boolean)
+                                - paragraph [ref=e530]: 미입력 시 false로 저장됩니다.
+                              - generic [ref=e533]:
+                                - generic [ref=e534]:
+                                  - strong [ref=e535]: naverShoppingRegistration
+                                  - generic [ref=e536]: 네이버 쇼핑 등록 여부 (boolean)
+                                  - generic [ref=e537]: required
+                                - paragraph [ref=e538]: 네이버 쇼핑 광고주가 아닌 경우에는 false로 저장됩니다.
+                              - generic [ref=e541]:
+                                - generic [ref=e542]:
+                                  - strong [ref=e543]: channelProductDisplayStatusType
+                                  - generic [ref=e544]: 전시 상태 코드(스마트스토어 채널 전용) (string)
+                                  - generic [ref=e545]: required
+                                - paragraph [ref=e546]: ON, SUSPENSION만 입력 가능합니다.
+                                - list [ref=e547]:
+                                  - listitem [ref=e548]: WAIT(전시 대기), ON(전시 중), SUSPENSION(전시 중지)
+                                - paragraph [ref=e550]:
+                                  - strong [ref=e551]: "Possible values:"
+                                  - text: "["
+                                  - code [ref=e552]: WAIT
+                                  - text: ","
+                                  - code [ref=e553]: "ON"
+                                  - text: ","
+                                  - code [ref=e554]: SUSPENSION
+                                  - text: "]"
+                        - group [ref=e557]:
+                          - generic "windowChannelProduct 쇼핑윈도 채널상품 정보 구조체 (object)" [ref=e558] [cursor=pointer]:
+                            - generic [ref=e559]:
+                              - strong [ref=e560]: windowChannelProduct
+                              - generic [ref=e561]: 쇼핑윈도 채널상품 정보 구조체 (object)
+                          - generic [ref=e564]:
+                            - generic [ref=e565]:
+                              - paragraph [ref=e566]: 이 구조체는 상품 정보 중 쇼핑윈도 채널상품 속성에 해당하는 상품 데이터를 표현하는 구조체입니다.
+                              - list [ref=e567]:
+                                - listitem [ref=e568]: 이 구조체는 API 호출에 대한 요청/응답 모두에서 사용합니다.
+                                - listitem [ref=e569]: 구조체의 객체 1개는 상품 1개에 대한 쇼핑윈도 채널상품 정보를 표현합니다.
+                                - listitem [ref=e570]: 상품 단위별로 쇼핑윈도 채널상품 정보는 단일 구조체로만 포함되나 계층 구조상 자매 개체로 원상품 구조체 혹은 스마트스토어 채널상품 구조체와 함께 사용할 수 있습니다.
+                                - listitem [ref=e571]:
+                                  - text: 이 구조체는 아래 API에서 사용합니다.
+                                  - list [ref=e572]:
+                                    - listitem [ref=e573]: 상품 등록, 채널 상품 조회, 채널 상품 수정, 원상품 조회, 원상품 수정 등 이 구조체는 상품 정보 중 쇼핑윈도 채널상품 속성에 해당하는 상품 데이터를 표현하는 구조체입니다.
+                                - listitem [ref=e574]: 이 구조체는 API 호출에 대한 요청/응답 모두에서 사용합니다.
+                                - listitem [ref=e575]: 구조체의 객체 1개는 상품 1개에 대한 쇼핑윈도 채널상품 정보를 표현합니다.
+                                - listitem [ref=e576]: 상품 단위별로 쇼핑윈도 채널상품 정보는 단일 구조체로만 포함되나 계층 구조상 자매 개체로 원상품 구조체 혹은 스마트스토어 채널상품 구조체와 함께 사용할 수 있습니다.
+                                - listitem [ref=e577]:
+                                  - text: 이 구조체는 아래 API에서 사용합니다.
+                                  - list [ref=e578]:
+                                    - listitem [ref=e579]: 상품 등록, 채널 상품 조회, 채널 상품 수정, 원상품 조회, 원상품 수정 등
+                            - generic [ref=e580]:
+                              - generic [ref=e582]:
+                                - generic [ref=e583]:
+                                  - strong [ref=e584]: channelProductName
+                                  - generic [ref=e585]: 채널 상품 전용 상품명 (string)
+                                - paragraph [ref=e586]: 채널 상품 전용 상품명을 사용하는 경우 입력합니다. 미입력 시 원상품명으로 적용됩니다.
+                              - generic [ref=e589]:
+                                - generic [ref=e590]:
+                                  - strong [ref=e591]: bbsSeq
+                                  - generic [ref=e592]: 콘텐츠 게시글 일련번호 (integer<int64>)
+                                - paragraph [ref=e593]: 공지사항
+                              - generic [ref=e596]:
+                                - generic [ref=e597]:
+                                  - strong [ref=e598]: storeKeepExclusiveProduct
+                                  - generic [ref=e599]: 알림받기 동의 회원 전용 상품 여부 (boolean)
+                                - paragraph [ref=e600]: 미입력 시 false로 저장됩니다.
+                              - generic [ref=e603]:
+                                - generic [ref=e604]:
+                                  - strong [ref=e605]: naverShoppingRegistration
+                                  - generic [ref=e606]: 네이버 쇼핑 등록 여부 (boolean)
+                                  - generic [ref=e607]: required
+                                - paragraph [ref=e608]: 네이버 쇼핑 광고주가 아닌 경우에는 false로 저장됩니다.
+                              - generic [ref=e611]:
+                                - generic [ref=e612]:
+                                  - strong [ref=e613]: channelNo
+                                  - generic [ref=e614]: 윈도 채널 상품 채널 번호 (integer<int64>)
+                                  - generic [ref=e615]: required
+                                - paragraph [ref=e616]: 전시할 윈도 채널 선택
+                              - generic [ref=e619]:
+                                - generic [ref=e620]:
+                                  - strong [ref=e621]: best
+                                  - generic [ref=e622]: 베스트 여부(윈도 채널 전용) (boolean)
+                                - paragraph [ref=e623]: 미입력 시 false로 저장됩니다.
+              - generic [ref=e625]:
+                - generic [ref=e626]:
+                  - heading "ResponsesDirect link to Responses" [level=2] [ref=e627]:
+                    - text: Responses
+                    - link "Direct link to Responses" [ref=e628] [cursor=pointer]:
+                      - /url: "#responses"
+                      - text: "#"
+                  - generic [ref=e629]:
+                    - button [ref=e630]
+                    - tablist [ref=e631]:
+                      - tab "200" [selected] [ref=e632] [cursor=pointer]
+                      - tab "308" [ref=e633] [cursor=pointer]
+                      - tab "400" [ref=e634] [cursor=pointer]
+                      - tab "401" [ref=e635] [cursor=pointer]
+                      - tab "403" [ref=e636] [cursor=pointer]
+                      - tab "404" [ref=e637] [cursor=pointer]
+                      - tab "500" [ref=e638] [cursor=pointer]
+                    - button [ref=e639]
+                - tabpanel [ref=e641]:
+                  - paragraph [ref=e644]: 성공
+                  - generic [ref=e645]:
+                    - tablist [ref=e648]:
+                      - tab "application/json;charset=UTF-8" [selected] [ref=e649] [cursor=pointer]
+                    - tabpanel [ref=e651]:
+                      - generic [ref=e652]:
+                        - tablist [ref=e654]:
+                          - tab "Schema" [selected] [ref=e655] [cursor=pointer]:
+                            - generic [ref=e656]: Schema
+                          - tab "Example (auto)" [ref=e657] [cursor=pointer]:
+                            - generic [ref=e658]: Example (auto)
+                        - tabpanel [ref=e660]:
+                          - group [ref=e661]:
+                            - generic "Schema" [ref=e662] [cursor=pointer]:
+                              - strong [ref=e663]: Schema
+                            - list [ref=e666]:
+                              - generic [ref=e667]:
+                                - generic [ref=e670]:
+                                  - strong [ref=e671]: originProductNo
+                                  - generic [ref=e672]: 원상품번호 (integer<int64>)
+                                - generic [ref=e676]:
+                                  - strong [ref=e677]: smartstoreChannelProductNo
+                                  - generic [ref=e678]: 스마트스토어 채널 상품번호 (integer<int64>)
+                                - generic [ref=e682]:
+                                  - strong [ref=e683]: windowChannelProductNo
+                                  - generic [ref=e684]: 윈도 채널 상품번호 (integer<int64>)
+                                - group [ref=e687]:
+                                  - generic "originProduct 원상품 (object)" [ref=e688] [cursor=pointer]:
+                                    - generic [ref=e689]:
+                                      - strong [ref=e690]: originProduct
+                                      - generic [ref=e691]: 원상품 (object)
+                                  - generic [ref=e694]:
+                                    - paragraph [ref=e696]: 응답용 상품 속성. 원상품에 속한 채널 상품은 모두 상품 공통 속성을 참고합니다.
+                                    - generic [ref=e697]:
+                                      - generic [ref=e699]:
+                                        - generic [ref=e700]:
+                                          - strong [ref=e701]: statusType
+                                          - generic [ref=e702]: 상품 판매 상태 코드 (string)
+                                          - generic [ref=e703]: required
+                                        - paragraph [ref=e705]:
+                                          - strong [ref=e706]: "Possible values:"
+                                          - text: "["
+                                          - code [ref=e707]: WAIT
+                                          - text: ","
+                                          - code [ref=e708]: SALE
+                                          - text: ","
+                                          - code [ref=e709]: OUTOFSTOCK
+                                          - text: ","
+                                          - code [ref=e710]: UNADMISSION
+                                          - text: ","
+                                          - code [ref=e711]: REJECTION
+                                          - text: ","
+                                          - code [ref=e712]: SUSPENSION
+                                          - text: ","
+                                          - code [ref=e713]: CLOSE
+                                          - text: ","
+                                          - code [ref=e714]: PROHIBITION
+                                          - text: ","
+                                          - code [ref=e715]: DELETE
+                                          - text: "]"
+                                      - generic [ref=e718]:
+                                        - generic [ref=e719]:
+                                          - strong [ref=e720]: saleType
+                                          - generic [ref=e721]: 상품 판매 유형 코드 (string)
+                                        - paragraph [ref=e723]:
+                                          - strong [ref=e724]: "Possible values:"
+                                          - text: "["
+                                          - code [ref=e725]: NEW
+                                          - text: ","
+                                          - code [ref=e726]: OLD
+                                          - text: "]"
+                                      - generic [ref=e730]:
+                                        - strong [ref=e731]: leafCategoryId
+                                        - generic [ref=e732]: 리프 카테고리 ID (string)
+                                      - generic [ref=e736]:
+                                        - strong [ref=e737]: name
+                                        - generic [ref=e738]: 상품명 (string)
+                                        - generic [ref=e739]: required
+                                      - generic [ref=e743]:
+                                        - strong [ref=e744]: detailContent
+                                        - generic [ref=e745]: 상품 상세 정보 (string)
+                                        - generic [ref=e746]: required
+                                      - group [ref=e749]:
+                                        - generic "images 상품 이미지 (object) required" [ref=e750] [cursor=pointer]:
+                                          - generic [ref=e751]:
+                                            - strong [ref=e752]: images
+                                            - generic [ref=e753]: 상품 이미지 (object)
+                                            - generic [ref=e754]: required
+                                      - generic [ref=e756]:
+                                        - generic [ref=e757]:
+                                          - strong [ref=e758]: saleStartDate
+                                          - generic [ref=e759]: 판매 시작 일시 (string<date-time>)
+                                        - paragraph [ref=e760]: "'yyyy-MM-dd'T'HH:mm[:ss][.SSS]XXX' 형식으로 입력합니다."
+                                      - generic [ref=e763]:
+                                        - generic [ref=e764]:
+                                          - strong [ref=e765]: saleEndDate
+                                          - generic [ref=e766]: 판매 종료 일시 (string<date-time>)
+                                        - paragraph [ref=e767]: "'yyyy-MM-dd'T'HH:mm[:ss][.SSS]XXX' 형식으로 입력합니다."
+                                      - generic [ref=e770]:
+                                        - generic [ref=e771]:
+                                          - strong [ref=e772]: salePrice
+                                          - generic [ref=e773]: 상품 판매 가격 (integer<int64>)
+                                          - generic [ref=e774]: required
+                                        - paragraph [ref=e776]:
+                                          - strong [ref=e777]: "Possible values:"
+                                          - code [ref=e778]: <= 999999990
+                                      - generic [ref=e781]:
+                                        - generic [ref=e782]:
+                                          - strong [ref=e783]: stockQuantity
+                                          - generic [ref=e784]: 재고 수량 (integer<int32>)
+                                        - paragraph [ref=e786]:
+                                          - strong [ref=e787]: "Possible values:"
+                                          - code [ref=e788]: <= 99999999
+                                      - group [ref=e791]:
+                                        - generic "deliveryInfo 배송 정보 (object)" [ref=e792] [cursor=pointer]:
+                                          - generic [ref=e793]:
+                                            - strong [ref=e794]: deliveryInfo
+                                            - generic [ref=e795]: 배송 정보 (object)
+                                      - group [ref=e797]:
+                                        - generic "productLogistics 물류사 정보 (object)[]" [ref=e798] [cursor=pointer]:
+                                          - generic [ref=e799]:
+                                            - strong [ref=e800]: productLogistics
+                                            - generic [ref=e801]: 물류사 정보 (object)[]
+                                      - group [ref=e803]:
+                                        - generic "detailAttribute 조회용 원상품 상세 속성 (object) required" [ref=e804] [cursor=pointer]:
+                                          - generic [ref=e805]:
+                                            - strong [ref=e806]: detailAttribute
+                                            - generic [ref=e807]: 조회용 원상품 상세 속성 (object)
+                                            - generic [ref=e808]: required
+                                      - group [ref=e810]:
+                                        - generic "customerBenefit 상품 고객 혜택 정보 응답 (object)" [ref=e811] [cursor=pointer]:
+                                          - generic [ref=e812]:
+                                            - strong [ref=e813]: customerBenefit
+                                            - generic [ref=e814]: 상품 고객 혜택 정보 응답 (object)
+                                - group [ref=e816]:
+                                  - generic "smartstoreChannelProduct 스마트스토어 채널 상품 (object)" [ref=e817] [cursor=pointer]:
+                                    - generic [ref=e818]:
+                                      - strong [ref=e819]: smartstoreChannelProduct
+                                      - generic [ref=e820]: 스마트스토어 채널 상품 (object)
+                                  - generic [ref=e824]:
+                                    - generic [ref=e826]:
+                                      - generic [ref=e827]:
+                                        - strong [ref=e828]: channelProductName
+                                        - generic [ref=e829]: 채널 상품 전용 상품명 (string)
+                                      - paragraph [ref=e830]: 채널 상품 전용 상품명을 사용하는 경우 입력합니다. 미입력 시 원상품명으로 적용됩니다.
+                                    - generic [ref=e833]:
+                                      - generic [ref=e834]:
+                                        - strong [ref=e835]: bbsSeq
+                                        - generic [ref=e836]: 콘텐츠 게시글 일련번호 (integer<int64>)
+                                      - paragraph [ref=e837]: 공지사항
+                                    - generic [ref=e840]:
+                                      - generic [ref=e841]:
+                                        - strong [ref=e842]: storeKeepExclusiveProduct
+                                        - generic [ref=e843]: 알림받기 동의 회원 전용 상품 여부 (boolean)
+                                      - paragraph [ref=e844]: 미입력 시 false로 저장됩니다.
+                                    - generic [ref=e847]:
+                                      - generic [ref=e848]:
+                                        - strong [ref=e849]: naverShoppingRegistration
+                                        - generic [ref=e850]: 네이버 쇼핑 등록 여부 (boolean)
+                                        - generic [ref=e851]: required
+                                      - paragraph [ref=e852]: 네이버 쇼핑 광고주가 아닌 경우에는 false로 저장됩니다.
+                                    - generic [ref=e855]:
+                                      - generic [ref=e856]:
+                                        - strong [ref=e857]: channelProductDisplayStatusType
+                                        - generic [ref=e858]: 전시 상태 코드(스마트스토어 채널 전용) (string)
+                                        - generic [ref=e859]: required
+                                      - paragraph [ref=e860]: ON, SUSPENSION만 입력 가능합니다.
+                                      - list [ref=e861]:
+                                        - listitem [ref=e862]: WAIT(전시 대기), ON(전시 중), SUSPENSION(전시 중지)
+                                      - paragraph [ref=e864]:
+                                        - strong [ref=e865]: "Possible values:"
+                                        - text: "["
+                                        - code [ref=e866]: WAIT
+                                        - text: ","
+                                        - code [ref=e867]: "ON"
+                                        - text: ","
+                                        - code [ref=e868]: SUSPENSION
+                                        - text: "]"
+                                - group [ref=e871]:
+                                  - generic "windowChannelProduct 윈도 채널 상품 (object)" [ref=e872] [cursor=pointer]:
+                                    - generic [ref=e873]:
+                                      - strong [ref=e874]: windowChannelProduct
+                                      - generic [ref=e875]: 윈도 채널 상품 (object)
+                                  - generic [ref=e879]:
+                                    - generic [ref=e881]:
+                                      - generic [ref=e882]:
+                                        - strong [ref=e883]: channelProductName
+                                        - generic [ref=e884]: 채널 상품 전용 상품명 (string)
+                                      - paragraph [ref=e885]: 채널 상품 전용 상품명을 사용하는 경우 입력합니다. 미입력 시 원상품명으로 적용됩니다.
+                                    - generic [ref=e888]:
+                                      - generic [ref=e889]:
+                                        - strong [ref=e890]: bbsSeq
+                                        - generic [ref=e891]: 콘텐츠 게시글 일련번호 (integer<int64>)
+                                      - paragraph [ref=e892]: 공지사항
+                                    - generic [ref=e895]:
+                                      - generic [ref=e896]:
+                                        - strong [ref=e897]: storeKeepExclusiveProduct
+                                        - generic [ref=e898]: 알림받기 동의 회원 전용 상품 여부 (boolean)
+                                      - paragraph [ref=e899]: 미입력 시 false로 저장됩니다.
+                                    - generic [ref=e902]:
+                                      - generic [ref=e903]:
+                                        - strong [ref=e904]: naverShoppingRegistration
+                                        - generic [ref=e905]: 네이버 쇼핑 등록 여부 (boolean)
+                                        - generic [ref=e906]: required
+                                      - paragraph [ref=e907]: 네이버 쇼핑 광고주가 아닌 경우에는 false로 저장됩니다.
+                                    - generic [ref=e910]:
+                                      - generic [ref=e911]:
+                                        - strong [ref=e912]: channelNo
+                                        - generic [ref=e913]: 윈도 채널 상품 채널 번호 (integer<int64>)
+                                        - generic [ref=e914]: required
+                                      - paragraph [ref=e915]: 전시할 윈도 채널 선택
+                                    - generic [ref=e918]:
+                                      - generic [ref=e919]:
+                                        - strong [ref=e920]: best
+                                        - generic [ref=e921]: 베스트 여부(윈도 채널 전용) (boolean)
+                                      - paragraph [ref=e922]: 미입력 시 false로 저장됩니다.
+                                    - generic [ref=e925]:
+                                      - generic [ref=e926]:
+                                        - strong [ref=e927]: channelProductDisplayStatusType
+                                        - generic [ref=e928]: 전시 상태 코드(윈도 채널 읽기 전용) (string)
+                                      - paragraph [ref=e929]: WAIT(전시 대기), ON(전시 중), SUSPENSION(전시 중지)
+                                      - paragraph [ref=e931]:
+                                        - strong [ref=e932]: "Possible values:"
+                                        - text: "["
+                                        - code [ref=e933]: WAIT
+                                        - text: ","
+                                        - code [ref=e934]: "ON"
+                                        - text: ","
+                                        - code [ref=e935]: SUSPENSION
+                                        - text: "]"
+            - generic [ref=e938]:
+              - tablist [ref=e939]:
+                - tab "curl" [selected] [ref=e940] [cursor=pointer]:
+                  - generic [ref=e941]: curl
+                - tab "java" [ref=e942] [cursor=pointer]:
+                  - generic [ref=e943]: java
+                - tab "python" [ref=e944] [cursor=pointer]:
+                  - generic [ref=e945]: python
+                - tab "php" [ref=e946] [cursor=pointer]:
+                  - generic [ref=e947]: php
+                - tab "nodejs" [ref=e948] [cursor=pointer]:
+                  - generic [ref=e949]: nodejs
+                - tab "csharp" [ref=e950] [cursor=pointer]:
+                  - generic [ref=e951]: csharp
+                - tab "kotlin" [ref=e952] [cursor=pointer]:
+                  - generic [ref=e953]: kotlin
+              - tabpanel [ref=e954]:
+                - generic [ref=e955]:
+                  - tablist [ref=e956]:
+                    - tab "CURL" [selected] [ref=e957] [cursor=pointer]:
+                      - generic [ref=e958]: CURL
+                  - tabpanel [ref=e959]:
+                    - generic [ref=e961]:
+                      - code [ref=e963]:
+                        - generic [ref=e966]: curl -L 'https://api.commerce.naver.com/external/v2/products' \
+                        - generic [ref=e969]: "-H 'Content-Type: application/json' \\"
+                        - generic [ref=e972]: "-H 'Accept: application/json;charset=UTF-8' \\"
+                        - generic [ref=e975]: "-H 'Authorization: Bearer <token>' \\"
+                        - generic [ref=e978]: "-d '{"
+                        - generic [ref=e981]: "\"originProduct\": {"
+                        - generic [ref=e984]: "\"statusType\": \"WAIT\","
+                        - generic [ref=e987]: "\"saleType\": \"NEW\","
+                        - generic [ref=e990]: "\"leafCategoryId\": \"string\","
+                        - generic [ref=e993]: "\"name\": \"string\","
+                        - generic [ref=e996]: "\"detailContent\": \"string\","
+                        - generic [ref=e999]: "\"images\": {"
+                        - generic [ref=e1002]: "\"representativeImage\": {"
+                        - generic [ref=e1005]: "\"url\": \"string\""
+                        - generic [ref=e1008]: "},"
+                        - generic [ref=e1011]: "\"optionalImages\": ["
+                        - generic [ref=e1014]: "{"
+                        - generic [ref=e1017]: "\"url\": \"string\""
+                        - generic [ref=e1020]: "}"
+                        - generic [ref=e1023]: "]"
+                        - generic [ref=e1026]: "},"
+                        - generic [ref=e1029]: "\"saleStartDate\": \"2024-07-29T15:51:28.071Z\","
+                        - generic [ref=e1032]: "\"saleEndDate\": \"2024-07-29T15:51:28.071Z\","
+                        - generic [ref=e1035]: "\"salePrice\": 0,"
+                        - generic [ref=e1038]: "\"stockQuantity\": 0,"
+                        - generic [ref=e1041]: "\"deliveryInfo\": {"
+                        - generic [ref=e1044]: "\"deliveryType\": \"DELIVERY\","
+                        - generic [ref=e1047]: "\"deliveryAttributeType\": \"NORMAL\","
+                        - generic [ref=e1050]: "\"deliveryCompany\": \"string\","
+                        - generic [ref=e1053]: "\"outboundLocationId\": \"string\","
+                        - generic [ref=e1056]: "\"deliveryBundleGroupUsable\": true,"
+                        - generic [ref=e1059]: "\"deliveryBundleGroupId\": 0,"
+                        - generic [ref=e1062]: "\"quickServiceAreas\": ["
+                        - generic [ref=e1065]: "\"SEOUL\""
+                        - generic [ref=e1068]: "],"
+                        - generic [ref=e1071]: "\"visitAddressId\": 0,"
+                        - generic [ref=e1074]: "\"deliveryFee\": {"
+                        - generic [ref=e1077]: "\"deliveryFeeType\": \"FREE\","
+                        - generic [ref=e1080]: "\"baseFee\": 0,"
+                        - generic [ref=e1083]: "\"freeConditionalAmount\": 0,"
+                        - generic [ref=e1086]: "\"repeatQuantity\": 0,"
+                        - generic [ref=e1089]: "\"secondBaseQuantity\": 0,"
+                        - generic [ref=e1092]: "\"secondExtraFee\": 0,"
+                        - generic [ref=e1095]: "\"thirdBaseQuantity\": 0,"
+                        - generic [ref=e1098]: "\"thirdExtraFee\": 0,"
+                        - generic [ref=e1101]: "\"deliveryFeePayType\": \"COLLECT\","
+                        - generic [ref=e1104]: "\"deliveryFeeByArea\": {"
+                        - generic [ref=e1107]: "\"deliveryAreaType\": \"AREA_2\","
+                        - generic [ref=e1110]: "\"area2extraFee\": 0,"
+                        - generic [ref=e1113]: "\"area3extraFee\": 0"
+                        - generic [ref=e1116]: "},"
+                        - generic [ref=e1119]: "\"differentialFeeByArea\": \"string\""
+                        - generic [ref=e1122]: "},"
+                        - generic [ref=e1125]: "\"claimDeliveryInfo\": {"
+                        - generic [ref=e1128]: "\"returnDeliveryCompanyPriorityType\": \"PRIMARY\","
+                        - generic [ref=e1131]: "\"returnDeliveryFee\": 0,"
+                        - generic [ref=e1134]: "\"exchangeDeliveryFee\": 0,"
+                        - generic [ref=e1137]: "\"shippingAddressId\": 0,"
+                        - generic [ref=e1140]: "\"returnAddressId\": 0,"
+                        - generic [ref=e1143]: "\"freeReturnInsuranceYn\": true"
+                        - generic [ref=e1146]: "},"
+                        - generic [ref=e1149]: "\"installation\": true,"
+                        - generic [ref=e1152]: "\"installationFee\": true,"
+                        - generic [ref=e1155]: "\"expectedDeliveryPeriodType\": \"ETC\","
+                        - generic [ref=e1158]: "\"expectedDeliveryPeriodDirectInput\": \"string\","
+                        - generic [ref=e1161]: "\"todayStockQuantity\": 0,"
+                        - generic [ref=e1164]: "\"customProductAfterOrderYn\": true,"
+                        - generic [ref=e1167]: "\"hopeDeliveryGroupId\": 0,"
+                        - generic [ref=e1170]: "\"businessCustomsClearanceSaleYn\": true"
+                        - generic [ref=e1173]: "},"
+                        - generic [ref=e1176]: "\"productLogistics\": ["
+                        - generic [ref=e1179]: "{"
+                        - generic [ref=e1182]: "\"logisticsCompanyId\": \"string\""
+                        - generic [ref=e1185]: "}"
+                        - generic [ref=e1188]: "],"
+                        - generic [ref=e1191]: "\"detailAttribute\": {"
+                        - generic [ref=e1194]: "\"naverShoppingSearchInfo\": {"
+                        - generic [ref=e1197]: "\"modelId\": 0,"
+                        - generic [ref=e1200]: "\"modelName\": \"string\","
+                        - generic [ref=e1203]: "\"manufacturerName\": \"string\","
+                        - generic [ref=e1206]: "\"brandId\": 0,"
+                        - generic [ref=e1209]: "\"brandName\": \"string\""
+                        - generic [ref=e1212]: "},"
+                        - generic [ref=e1215]: "\"manufactureDefineNo\": \"string\","
+                        - generic [ref=e1218]: "\"afterServiceInfo\": {"
+                        - generic [ref=e1221]: "\"afterServiceTelephoneNumber\": \"string\","
+                        - generic [ref=e1224]: "\"afterServiceGuideContent\": \"string\""
+                        - generic [ref=e1227]: "},"
+                        - generic [ref=e1230]: "\"purchaseQuantityInfo\": {"
+                        - generic [ref=e1233]: "\"minPurchaseQuantity\": 0,"
+                        - generic [ref=e1236]: "\"maxPurchaseQuantityPerId\": 0,"
+                        - generic [ref=e1239]: "\"maxPurchaseQuantityPerOrder\": 0"
+                        - generic [ref=e1242]: "},"
+                        - generic [ref=e1245]: "\"originAreaInfo\": {"
+                        - generic [ref=e1248]: "\"originAreaCode\": \"string\","
+                        - generic [ref=e1251]: "\"importer\": \"string\","
+                        - generic [ref=e1254]: "\"content\": \"string\","
+                        - generic [ref=e1257]: "\"plural\": true"
+                        - generic [ref=e1260]: "},"
+                        - generic [ref=e1263]: "\"sellerCodeInfo\": {"
+                        - generic [ref=e1266]: "\"sellerManagementCode\": \"string\","
+                        - generic [ref=e1269]: "\"sellerBarcode\": \"string\","
+                        - generic [ref=e1272]: "\"sellerCustomCode1\": \"string\","
+                        - generic [ref=e1275]: "\"sellerCustomCode2\": \"string\""
+                        - generic [ref=e1278]: "},"
+                        - generic [ref=e1281]: "\"skuYn\": true,"
+                        - generic [ref=e1284]: "\"optionInfo\": {"
+                        - generic [ref=e1287]: "\"simpleOptionSortType\": \"CREATE\","
+                        - generic [ref=e1290]: "\"optionSimple\": ["
+                        - generic [ref=e1293]: "{"
+                        - generic [ref=e1296]: "\"id\": 0,"
+                        - generic [ref=e1299]: "\"groupName\": \"string\","
+                        - generic [ref=e1302]: "\"name\": \"string\","
+                        - generic [ref=e1305]: "\"usable\": true"
+                        - generic [ref=e1308]: "}"
+                        - generic [ref=e1311]: "],"
+                        - generic [ref=e1314]: "\"optionCustom\": ["
+                        - generic [ref=e1317]: "{"
+                        - generic [ref=e1320]: "\"id\": 0,"
+                        - generic [ref=e1323]: "\"groupName\": \"string\","
+                        - generic [ref=e1326]: "\"name\": \"string\","
+                        - generic [ref=e1329]: "\"usable\": true"
+                        - generic [ref=e1332]: "}"
+                        - generic [ref=e1335]: "],"
+                        - generic [ref=e1338]: "\"optionCombinationSortType\": \"CREATE\","
+                        - generic [ref=e1341]: "\"optionCombinationGroupNames\": {"
+                        - generic [ref=e1344]: "\"optionGroupName1\": \"string\","
+                        - generic [ref=e1347]: "\"optionGroupName2\": \"string\","
+                        - generic [ref=e1350]: "\"optionGroupName3\": \"string\","
+                        - generic [ref=e1353]: "\"optionGroupName4\": \"string\""
+                        - generic [ref=e1356]: "},"
+                        - generic [ref=e1359]: "\"optionCombinations\": ["
+                        - generic [ref=e1362]: "{"
+                        - generic [ref=e1365]: "\"id\": 0,"
+                        - generic [ref=e1368]: "\"stockQuantity\": 0,"
+                        - generic [ref=e1371]: "\"price\": 0,"
+                        - generic [ref=e1374]: "\"usable\": true,"
+                        - generic [ref=e1377]: "\"optionName1\": \"string\","
+                        - generic [ref=e1380]: "\"optionName2\": \"string\","
+                        - generic [ref=e1383]: "\"optionName3\": \"string\","
+                        - generic [ref=e1386]: "\"optionName4\": \"string\","
+                        - generic [ref=e1389]: "\"sellerManagerCode\": \"string\","
+                        - generic [ref=e1392]: "\"skuYn\": true"
+                        - generic [ref=e1395]: "}"
+                        - generic [ref=e1398]: "],"
+                        - generic [ref=e1401]: "\"standardOptionGroups\": ["
+                        - generic [ref=e1404]: "{"
+                        - generic [ref=e1407]: "\"groupName\": \"string\","
+                        - generic [ref=e1410]: "\"standardOptionAttributes\": ["
+                        - generic [ref=e1413]: "{"
+                        - generic [ref=e1416]: "\"attributeId\": 0,"
+                        - generic [ref=e1419]: "\"attributeValueId\": 0,"
+                        - generic [ref=e1422]: "\"attributeValueName\": \"string\","
+                        - generic [ref=e1425]: "\"imageUrls\": ["
+                        - generic [ref=e1428]: "\"string\""
+                        - generic [ref=e1431]: "]"
+                        - generic [ref=e1434]: "}"
+                        - generic [ref=e1437]: "]"
+                        - generic [ref=e1440]: "}"
+                        - generic [ref=e1443]: "],"
+                        - generic [ref=e1446]: "\"optionStandards\": ["
+                        - generic [ref=e1449]: "{"
+                        - generic [ref=e1452]: "\"id\": 0,"
+                        - generic [ref=e1455]: "\"stockQuantity\": 0,"
+                        - generic [ref=e1458]: "\"usable\": true,"
+                        - generic [ref=e1461]: "\"optionName1\": \"string\","
+                        - generic [ref=e1464]: "\"optionName2\": \"string\","
+                        - generic [ref=e1467]: "\"sellerManagerCode\": \"string\","
+                        - generic [ref=e1470]: "\"skuYn\": true"
+                        - generic [ref=e1473]: "}"
+                        - generic [ref=e1476]: "],"
+                        - generic [ref=e1479]: "\"useStockManagement\": true,"
+                        - generic [ref=e1482]: "\"optionDeliveryAttributes\": ["
+                        - generic [ref=e1485]: "\"string\""
+                        - generic [ref=e1488]: "]"
+                        - generic [ref=e1491]: "},"
+                        - generic [ref=e1494]: "\"supplementProductInfo\": {"
+                        - generic [ref=e1497]: "\"sortType\": \"CREATE\","
+                        - generic [ref=e1500]: "\"supplementProducts\": ["
+                        - generic [ref=e1503]: "{"
+                        - generic [ref=e1506]: "\"id\": 0,"
+                        - generic [ref=e1509]: "\"groupName\": \"string\","
+                        - generic [ref=e1512]: "\"name\": \"string\","
+                        - generic [ref=e1515]: "\"price\": 0,"
+                        - generic [ref=e1518]: "\"stockQuantity\": 0,"
+                        - generic [ref=e1521]: "\"sellerManagementCode\": \"string\","
+                        - generic [ref=e1524]: "\"usable\": true"
+                        - generic [ref=e1527]: "}"
+                        - generic [ref=e1530]: "]"
+                        - generic [ref=e1533]: "},"
+                        - generic [ref=e1536]: "\"purchaseReviewInfo\": {"
+                        - generic [ref=e1539]: "\"purchaseReviewExposure\": true,"
+                        - generic [ref=e1542]: "\"reviewUnExposeReason\": \"string\""
+                        - generic [ref=e1545]: "},"
+                        - generic [ref=e1548]: "\"isbnInfo\": {"
+                        - generic [ref=e1551]: "\"isbn13\": \"string\","
+                        - generic [ref=e1554]: "\"issn\": \"string\","
+                        - generic [ref=e1557]: "\"independentPublicationYn\": true"
+                        - generic [ref=e1560]: "},"
+                        - generic [ref=e1563]: "\"bookInfo\": {"
+                        - generic [ref=e1566]: "\"publishDay\": \"string\","
+                        - generic [ref=e1569]: "\"publisher\": {"
+                        - generic [ref=e1572]: "\"code\": \"string\","
+                        - generic [ref=e1575]: "\"text\": \"string\""
+                        - generic [ref=e1578]: "},"
+                        - generic [ref=e1581]: "\"authors\": ["
+                        - generic [ref=e1584]: "{"
+                        - generic [ref=e1587]: "\"code\": \"string\","
+                        - generic [ref=e1590]: "\"text\": \"string\""
+                        - generic [ref=e1593]: "}"
+                        - generic [ref=e1596]: "],"
+                        - generic [ref=e1599]: "\"illustrators\": ["
+                        - generic [ref=e1602]: "{"
+                        - generic [ref=e1605]: "\"code\": \"string\","
+                        - generic [ref=e1608]: "\"text\": \"string\""
+                        - generic [ref=e1611]: "}"
+                        - generic [ref=e1614]: "],"
+                        - generic [ref=e1617]: "\"translators\": ["
+                        - generic [ref=e1620]: "{"
+                        - generic [ref=e1623]: "\"code\": \"string\","
+                        - generic [ref=e1626]: "\"text\": \"string\""
+                        - generic [ref=e1629]: "}"
+                        - generic [ref=e1632]: "]"
+                        - generic [ref=e1635]: "},"
+                        - generic [ref=e1638]: "\"eventPhraseCont\": \"string\","
+                        - generic [ref=e1641]: "\"manufactureDate\": \"2024-07-29\","
+                        - generic [ref=e1644]: "\"releaseDate\": \"2024-07-29\","
+                        - generic [ref=e1647]: "\"validDate\": \"2024-07-29\","
+                        - generic [ref=e1650]: "\"taxType\": \"TAX\","
+                        - generic [ref=e1653]: "\"customsTaxType\": \"NOT_APPLICABLE\","
+                        - generic [ref=e1656]: "\"productCertificationInfos\": ["
+                        - generic [ref=e1659]: "{"
+                        - generic [ref=e1662]: "\"certificationInfoId\": 0,"
+                        - generic [ref=e1665]: "\"certificationKindType\": \"KC_CERTIFICATION\","
+                        - generic [ref=e1668]: "\"name\": \"string\","
+                        - generic [ref=e1671]: "\"certificationNumber\": \"string\","
+                        - generic [ref=e1674]: "\"certificationMark\": true,"
+                        - generic [ref=e1677]: "\"companyName\": \"string\","
+                        - generic [ref=e1680]: "\"certificationDate\": \"2024-07-29\""
+                        - generic [ref=e1683]: "}"
+                        - generic [ref=e1686]: "],"
+                        - generic [ref=e1689]: "\"certificationTargetExcludeContent\": {"
+                        - generic [ref=e1692]: "\"childCertifiedProductExclusionYn\": true,"
+                        - generic [ref=e1695]: "\"kcExemptionType\": \"OVERSEAS\","
+                        - generic [ref=e1698]: "\"kcCertifiedProductExclusionYn\": \"FALSE\","
+                        - generic [ref=e1701]: "\"greenCertifiedProductExclusionYn\": true"
+                        - generic [ref=e1704]: "},"
+                        - generic [ref=e1707]: "\"sellerCommentContent\": \"string\","
+                        - generic [ref=e1710]: "\"sellerCommentUsable\": true,"
+                        - generic [ref=e1713]: "\"minorPurchasable\": true,"
+                        - generic [ref=e1716]: "\"ecoupon\": {"
+                        - generic [ref=e1719]: "\"periodType\": \"FIXED\","
+                        - generic [ref=e1722]: "\"validStartDate\": \"2024-07-29\","
+                        - generic [ref=e1725]: "\"validEndDate\": \"2024-07-29\","
+                        - generic [ref=e1728]: "\"periodDays\": 0,"
+                        - generic [ref=e1731]: "\"publicInformationContents\": \"string\","
+                        - generic [ref=e1734]: "\"contactInformationContents\": \"string\","
+                        - generic [ref=e1737]: "\"usePlaceType\": \"PLACE\","
+                        - generic [ref=e1740]: "\"usePlaceContents\": \"string\","
+                        - generic [ref=e1743]: "\"restrictCart\": true,"
+                        - generic [ref=e1746]: "\"siteName\": \"string\""
+                        - generic [ref=e1749]: "},"
+                        - generic [ref=e1752]: "\"productInfoProvidedNotice\": {"
+                        - generic [ref=e1755]: "\"productInfoProvidedNoticeType\": \"WEAR\","
+                        - generic [ref=e1758]: "\"wear\": {"
+                        - generic [ref=e1761]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e1764]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e1767]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e1770]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e1773]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e1776]: "\"material\": \"string\","
+                        - generic [ref=e1779]: "\"color\": \"string\","
+                        - generic [ref=e1782]: "\"size\": \"string\","
+                        - generic [ref=e1785]: "\"manufacturer\": \"string\","
+                        - generic [ref=e1788]: "\"caution\": \"string\","
+                        - generic [ref=e1791]: "\"packDate\": \"string\","
+                        - generic [ref=e1794]: "\"packDateText\": \"string\","
+                        - generic [ref=e1797]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e1800]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e1803]: "},"
+                        - generic [ref=e1806]: "\"shoes\": {"
+                        - generic [ref=e1809]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e1812]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e1815]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e1818]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e1821]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e1824]: "\"material\": \"string\","
+                        - generic [ref=e1827]: "\"color\": \"string\","
+                        - generic [ref=e1830]: "\"size\": \"string\","
+                        - generic [ref=e1833]: "\"height\": \"string\","
+                        - generic [ref=e1836]: "\"manufacturer\": \"string\","
+                        - generic [ref=e1839]: "\"caution\": \"string\","
+                        - generic [ref=e1842]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e1845]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e1848]: "},"
+                        - generic [ref=e1851]: "\"bag\": {"
+                        - generic [ref=e1854]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e1857]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e1860]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e1863]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e1866]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e1869]: "\"type\": \"string\","
+                        - generic [ref=e1872]: "\"material\": \"string\","
+                        - generic [ref=e1875]: "\"color\": \"string\","
+                        - generic [ref=e1878]: "\"size\": \"string\","
+                        - generic [ref=e1881]: "\"manufacturer\": \"string\","
+                        - generic [ref=e1884]: "\"caution\": \"string\","
+                        - generic [ref=e1887]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e1890]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e1893]: "},"
+                        - generic [ref=e1896]: "\"fashionItems\": {"
+                        - generic [ref=e1899]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e1902]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e1905]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e1908]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e1911]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e1914]: "\"type\": \"string\","
+                        - generic [ref=e1917]: "\"material\": \"string\","
+                        - generic [ref=e1920]: "\"size\": \"string\","
+                        - generic [ref=e1923]: "\"manufacturer\": \"string\","
+                        - generic [ref=e1926]: "\"caution\": \"string\","
+                        - generic [ref=e1929]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e1932]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e1935]: "},"
+                        - generic [ref=e1938]: "\"sleepingGear\": {"
+                        - generic [ref=e1941]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e1944]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e1947]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e1950]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e1953]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e1956]: "\"material\": \"string\","
+                        - generic [ref=e1959]: "\"color\": \"string\","
+                        - generic [ref=e1962]: "\"size\": \"string\","
+                        - generic [ref=e1965]: "\"components\": \"string\","
+                        - generic [ref=e1968]: "\"manufacturer\": \"string\","
+                        - generic [ref=e1971]: "\"caution\": \"string\","
+                        - generic [ref=e1974]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e1977]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e1980]: "},"
+                        - generic [ref=e1983]: "\"furniture\": {"
+                        - generic [ref=e1986]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e1989]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e1992]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e1995]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e1998]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2001]: "\"itemName\": \"string\","
+                        - generic [ref=e2004]: "\"certificationType\": \"string\","
+                        - generic [ref=e2007]: "\"color\": \"string\","
+                        - generic [ref=e2010]: "\"components\": \"string\","
+                        - generic [ref=e2013]: "\"material\": \"string\","
+                        - generic [ref=e2016]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2019]: "\"importer\": \"string\","
+                        - generic [ref=e2022]: "\"producer\": \"string\","
+                        - generic [ref=e2025]: "\"size\": \"string\","
+                        - generic [ref=e2028]: "\"installedCharge\": \"string\","
+                        - generic [ref=e2031]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2034]: "\"refurb\": \"string\","
+                        - generic [ref=e2037]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2040]: "},"
+                        - generic [ref=e2043]: "\"imageAppliances\": {"
+                        - generic [ref=e2046]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2049]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2052]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2055]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2058]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2061]: "\"itemName\": \"string\","
+                        - generic [ref=e2064]: "\"modelName\": \"string\","
+                        - generic [ref=e2067]: "\"certificationType\": \"string\","
+                        - generic [ref=e2070]: "\"ratedVoltage\": \"string\","
+                        - generic [ref=e2073]: "\"powerConsumption\": \"string\","
+                        - generic [ref=e2076]: "\"energyEfficiencyRating\": \"string\","
+                        - generic [ref=e2079]: "\"releaseDate\": \"string\","
+                        - generic [ref=e2082]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2085]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2088]: "\"size\": \"string\","
+                        - generic [ref=e2091]: "\"additionalCost\": \"string\","
+                        - generic [ref=e2094]: "\"displaySpecification\": \"string\","
+                        - generic [ref=e2097]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2100]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2103]: "},"
+                        - generic [ref=e2106]: "\"homeAppliances\": {"
+                        - generic [ref=e2109]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2112]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2115]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2118]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2121]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2124]: "\"itemName\": \"string\","
+                        - generic [ref=e2127]: "\"modelName\": \"string\","
+                        - generic [ref=e2130]: "\"certificationType\": \"string\","
+                        - generic [ref=e2133]: "\"ratedVoltage\": \"string\","
+                        - generic [ref=e2136]: "\"powerConsumption\": \"string\","
+                        - generic [ref=e2139]: "\"energyEfficiencyRating\": \"string\","
+                        - generic [ref=e2142]: "\"releaseDate\": \"string\","
+                        - generic [ref=e2145]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2148]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2151]: "\"size\": \"string\","
+                        - generic [ref=e2154]: "\"additionalCost\": \"string\","
+                        - generic [ref=e2157]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2160]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2163]: "},"
+                        - generic [ref=e2166]: "\"seasonAppliances\": {"
+                        - generic [ref=e2169]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2172]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2175]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2178]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2181]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2184]: "\"itemName\": \"string\","
+                        - generic [ref=e2187]: "\"modelName\": \"string\","
+                        - generic [ref=e2190]: "\"certificationType\": \"string\","
+                        - generic [ref=e2193]: "\"ratedVoltage\": \"string\","
+                        - generic [ref=e2196]: "\"powerConsumption\": \"string\","
+                        - generic [ref=e2199]: "\"energyEfficiencyRating\": \"string\","
+                        - generic [ref=e2202]: "\"releaseDate\": {"
+                        - generic [ref=e2205]: "\"year\": 0,"
+                        - generic [ref=e2208]: "\"month\": \"JANUARY\","
+                        - generic [ref=e2211]: "\"monthValue\": 0,"
+                        - generic [ref=e2214]: "\"leapYear\": true"
+                        - generic [ref=e2217]: "},"
+                        - generic [ref=e2220]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2223]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2226]: "\"size\": \"string\","
+                        - generic [ref=e2229]: "\"area\": \"string\","
+                        - generic [ref=e2232]: "\"installedCharge\": \"string\","
+                        - generic [ref=e2235]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2238]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2241]: "},"
+                        - generic [ref=e2244]: "\"officeAppliances\": {"
+                        - generic [ref=e2247]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2250]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2253]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2256]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2259]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2262]: "\"itemName\": \"string\","
+                        - generic [ref=e2265]: "\"modelName\": \"string\","
+                        - generic [ref=e2268]: "\"certificationType\": \"string\","
+                        - generic [ref=e2271]: "\"ratedVoltage\": \"string\","
+                        - generic [ref=e2274]: "\"powerConsumption\": \"string\","
+                        - generic [ref=e2277]: "\"energyEfficiencyRating\": \"string\","
+                        - generic [ref=e2280]: "\"releaseDate\": {"
+                        - generic [ref=e2283]: "\"year\": 0,"
+                        - generic [ref=e2286]: "\"month\": \"JANUARY\","
+                        - generic [ref=e2289]: "\"monthValue\": 0,"
+                        - generic [ref=e2292]: "\"leapYear\": true"
+                        - generic [ref=e2295]: "},"
+                        - generic [ref=e2298]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2301]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2304]: "\"size\": \"string\","
+                        - generic [ref=e2307]: "\"weight\": \"string\","
+                        - generic [ref=e2310]: "\"specification\": \"string\","
+                        - generic [ref=e2313]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2316]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2319]: "},"
+                        - generic [ref=e2322]: "\"opticsAppliances\": {"
+                        - generic [ref=e2325]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2328]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2331]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2334]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2337]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2340]: "\"itemName\": \"string\","
+                        - generic [ref=e2343]: "\"modelName\": \"string\","
+                        - generic [ref=e2346]: "\"certificationType\": \"string\","
+                        - generic [ref=e2349]: "\"releaseDate\": \"string\","
+                        - generic [ref=e2352]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2355]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2358]: "\"size\": \"string\","
+                        - generic [ref=e2361]: "\"weight\": \"string\","
+                        - generic [ref=e2364]: "\"specification\": \"string\","
+                        - generic [ref=e2367]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2370]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2373]: "},"
+                        - generic [ref=e2376]: "\"microElectronics\": {"
+                        - generic [ref=e2379]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2382]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2385]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2388]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2391]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2394]: "\"itemName\": \"string\","
+                        - generic [ref=e2397]: "\"modelName\": \"string\","
+                        - generic [ref=e2400]: "\"certificationType\": \"string\","
+                        - generic [ref=e2403]: "\"ratedVoltage\": \"string\","
+                        - generic [ref=e2406]: "\"powerConsumption\": \"string\","
+                        - generic [ref=e2409]: "\"releaseDate\": \"string\","
+                        - generic [ref=e2412]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2415]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2418]: "\"size\": \"string\","
+                        - generic [ref=e2421]: "\"weight\": \"string\","
+                        - generic [ref=e2424]: "\"specification\": \"string\","
+                        - generic [ref=e2427]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2430]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2433]: "},"
+                        - generic [ref=e2436]: "\"navigation\": {"
+                        - generic [ref=e2439]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2442]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2445]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2448]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2451]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2454]: "\"itemName\": \"string\","
+                        - generic [ref=e2457]: "\"modelName\": \"string\","
+                        - generic [ref=e2460]: "\"certificationType\": \"string\","
+                        - generic [ref=e2463]: "\"ratedVoltage\": \"string\","
+                        - generic [ref=e2466]: "\"powerConsumption\": \"string\","
+                        - generic [ref=e2469]: "\"releaseDate\": \"string\","
+                        - generic [ref=e2472]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2475]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2478]: "\"size\": \"string\","
+                        - generic [ref=e2481]: "\"weight\": \"string\","
+                        - generic [ref=e2484]: "\"specification\": \"string\","
+                        - generic [ref=e2487]: "\"updateCost\": \"string\","
+                        - generic [ref=e2490]: "\"freeCostPeriod\": \"string\","
+                        - generic [ref=e2493]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2496]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2499]: "},"
+                        - generic [ref=e2502]: "\"carArticles\": {"
+                        - generic [ref=e2505]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2508]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2511]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2514]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2517]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2520]: "\"itemName\": \"string\","
+                        - generic [ref=e2523]: "\"modelName\": \"string\","
+                        - generic [ref=e2526]: "\"releaseDate\": \"string\","
+                        - generic [ref=e2529]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2532]: "\"certificationType\": \"string\","
+                        - generic [ref=e2535]: "\"caution\": \"string\","
+                        - generic [ref=e2538]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2541]: "\"size\": \"string\","
+                        - generic [ref=e2544]: "\"applyModel\": \"string\","
+                        - generic [ref=e2547]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2550]: "\"roadWorthyCertification\": \"string\","
+                        - generic [ref=e2553]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2556]: "},"
+                        - generic [ref=e2559]: "\"medicalAppliances\": {"
+                        - generic [ref=e2562]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2565]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2568]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2571]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2574]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2577]: "\"itemName\": \"string\","
+                        - generic [ref=e2580]: "\"modelName\": \"string\","
+                        - generic [ref=e2583]: "\"licenceNo\": \"string\","
+                        - generic [ref=e2586]: "\"advertisingCertificationType\": \"string\","
+                        - generic [ref=e2589]: "\"ratedVoltage\": \"string\","
+                        - generic [ref=e2592]: "\"powerConsumption\": \"string\","
+                        - generic [ref=e2595]: "\"releaseDate\": \"string\","
+                        - generic [ref=e2598]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2601]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2604]: "\"purpose\": \"string\","
+                        - generic [ref=e2607]: "\"usage\": \"string\","
+                        - generic [ref=e2610]: "\"caution\": \"string\","
+                        - generic [ref=e2613]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2616]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2619]: "},"
+                        - generic [ref=e2622]: "\"kitchenUtensils\": {"
+                        - generic [ref=e2625]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2628]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2631]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2634]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2637]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2640]: "\"itemName\": \"string\","
+                        - generic [ref=e2643]: "\"modelName\": \"string\","
+                        - generic [ref=e2646]: "\"material\": \"string\","
+                        - generic [ref=e2649]: "\"component\": \"string\","
+                        - generic [ref=e2652]: "\"size\": \"string\","
+                        - generic [ref=e2655]: "\"releaseDate\": \"string\","
+                        - generic [ref=e2658]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e2661]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2664]: "\"producer\": \"string\","
+                        - generic [ref=e2667]: "\"importDeclaration\": true,"
+                        - generic [ref=e2670]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2673]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2676]: "},"
+                        - generic [ref=e2679]: "\"cosmetic\": {"
+                        - generic [ref=e2682]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2685]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2688]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2691]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2694]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2697]: "\"capacity\": \"string\","
+                        - generic [ref=e2700]: "\"specification\": \"string\","
+                        - generic [ref=e2703]: "\"expirationDate\": \"string\","
+                        - generic [ref=e2706]: "\"expirationDateText\": \"string\","
+                        - generic [ref=e2709]: "\"usage\": \"string\","
+                        - generic [ref=e2712]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2715]: "\"producer\": \"string\","
+                        - generic [ref=e2718]: "\"distributor\": \"string\","
+                        - generic [ref=e2721]: "\"customizedDistributor\": \"string\","
+                        - generic [ref=e2724]: "\"mainIngredient\": \"string\","
+                        - generic [ref=e2727]: "\"certificationType\": \"string\","
+                        - generic [ref=e2730]: "\"caution\": \"string\","
+                        - generic [ref=e2733]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2736]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e2739]: "},"
+                        - generic [ref=e2742]: "\"jewellery\": {"
+                        - generic [ref=e2745]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2748]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2751]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2754]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2757]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2760]: "\"material\": \"string\","
+                        - generic [ref=e2763]: "\"purity\": \"string\","
+                        - generic [ref=e2766]: "\"bandMaterial\": \"string\","
+                        - generic [ref=e2769]: "\"weight\": \"string\","
+                        - generic [ref=e2772]: "\"manufacturer\": \"string\","
+                        - generic [ref=e2775]: "\"producer\": \"string\","
+                        - generic [ref=e2778]: "\"size\": \"string\","
+                        - generic [ref=e2781]: "\"caution\": \"string\","
+                        - generic [ref=e2784]: "\"specification\": \"string\","
+                        - generic [ref=e2787]: "\"provideWarranty\": \"string\","
+                        - generic [ref=e2790]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e2793]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e2796]: "},"
+                        - generic [ref=e2799]: "\"food\": {"
+                        - generic [ref=e2802]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2805]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2808]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2811]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2814]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2817]: "\"foodItem\": \"string\","
+                        - generic [ref=e2820]: "\"weight\": \"string\","
+                        - generic [ref=e2823]: "\"amount\": \"string\","
+                        - generic [ref=e2826]: "\"size\": \"string\","
+                        - generic [ref=e2829]: "\"packDate\": \"2024-07-29\","
+                        - generic [ref=e2832]: "\"packDateText\": \"string\","
+                        - generic [ref=e2835]: "\"consumptionDate\": \"2024-07-29\","
+                        - generic [ref=e2838]: "\"consumptionDateText\": \"string\","
+                        - generic [ref=e2841]: "\"producer\": \"string\","
+                        - generic [ref=e2844]: "\"relevantLawContent\": \"string\","
+                        - generic [ref=e2847]: "\"productComposition\": \"string\","
+                        - generic [ref=e2850]: "\"keep\": \"string\","
+                        - generic [ref=e2853]: "\"adCaution\": \"string\","
+                        - generic [ref=e2856]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e2859]: "},"
+                        - generic [ref=e2862]: "\"generalFood\": {"
+                        - generic [ref=e2865]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2868]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2871]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2874]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2877]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2880]: "\"productName\": \"string\","
+                        - generic [ref=e2883]: "\"foodType\": \"string\","
+                        - generic [ref=e2886]: "\"producer\": \"string\","
+                        - generic [ref=e2889]: "\"location\": \"string\","
+                        - generic [ref=e2892]: "\"packDate\": \"2024-07-29\","
+                        - generic [ref=e2895]: "\"packDateText\": \"string\","
+                        - generic [ref=e2898]: "\"consumptionDate\": \"2024-07-29\","
+                        - generic [ref=e2901]: "\"consumptionDateText\": \"string\","
+                        - generic [ref=e2904]: "\"weight\": \"string\","
+                        - generic [ref=e2907]: "\"amount\": \"string\","
+                        - generic [ref=e2910]: "\"ingredients\": \"string\","
+                        - generic [ref=e2913]: "\"nutritionFacts\": \"string\","
+                        - generic [ref=e2916]: "\"geneticallyModified\": true,"
+                        - generic [ref=e2919]: "\"consumerSafetyCaution\": \"string\","
+                        - generic [ref=e2922]: "\"importDeclarationCheck\": true,"
+                        - generic [ref=e2925]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e2928]: "},"
+                        - generic [ref=e2931]: "\"dietFood\": {"
+                        - generic [ref=e2934]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e2937]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e2940]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e2943]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e2946]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e2949]: "\"productName\": \"string\","
+                        - generic [ref=e2952]: "\"producer\": \"string\","
+                        - generic [ref=e2955]: "\"location\": \"string\","
+                        - generic [ref=e2958]: "\"consumptionDate\": \"2024-07-29\","
+                        - generic [ref=e2961]: "\"consumptionDateText\": \"string\","
+                        - generic [ref=e2964]: "\"storageMethod\": \"string\","
+                        - generic [ref=e2967]: "\"weight\": \"string\","
+                        - generic [ref=e2970]: "\"amount\": \"string\","
+                        - generic [ref=e2973]: "\"ingredients\": \"string\","
+                        - generic [ref=e2976]: "\"nutritionFacts\": \"string\","
+                        - generic [ref=e2979]: "\"specification\": \"string\","
+                        - generic [ref=e2982]: "\"cautionAndSideEffect\": \"string\","
+                        - generic [ref=e2985]: "\"nonMedicinalUsesMessage\": \"string\","
+                        - generic [ref=e2988]: "\"geneticallyModified\": true,"
+                        - generic [ref=e2991]: "\"importDeclarationCheck\": true,"
+                        - generic [ref=e2994]: "\"consumerSafetyCaution\": \"string\","
+                        - generic [ref=e2997]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e3000]: "},"
+                        - generic [ref=e3003]: "\"kids\": {"
+                        - generic [ref=e3006]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3009]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3012]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3015]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3018]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3021]: "\"itemName\": \"string\","
+                        - generic [ref=e3024]: "\"modelName\": \"string\","
+                        - generic [ref=e3027]: "\"certificationType\": \"string\","
+                        - generic [ref=e3030]: "\"size\": \"string\","
+                        - generic [ref=e3033]: "\"weight\": \"string\","
+                        - generic [ref=e3036]: "\"color\": \"string\","
+                        - generic [ref=e3039]: "\"material\": \"string\","
+                        - generic [ref=e3042]: "\"recommendedAge\": \"string\","
+                        - generic [ref=e3045]: "\"releaseDate\": \"string\","
+                        - generic [ref=e3048]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e3051]: "\"manufacturer\": \"string\","
+                        - generic [ref=e3054]: "\"caution\": \"string\","
+                        - generic [ref=e3057]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e3060]: "\"afterServiceDirector\": \"string\","
+                        - generic [ref=e3063]: "\"numberLimit\": \"string\""
+                        - generic [ref=e3066]: "},"
+                        - generic [ref=e3069]: "\"musicalInstrument\": {"
+                        - generic [ref=e3072]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3075]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3078]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3081]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3084]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3087]: "\"itemName\": \"string\","
+                        - generic [ref=e3090]: "\"modelName\": \"string\","
+                        - generic [ref=e3093]: "\"size\": \"string\","
+                        - generic [ref=e3096]: "\"color\": \"string\","
+                        - generic [ref=e3099]: "\"material\": \"string\","
+                        - generic [ref=e3102]: "\"components\": \"string\","
+                        - generic [ref=e3105]: "\"releaseDate\": \"string\","
+                        - generic [ref=e3108]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e3111]: "\"manufacturer\": \"string\","
+                        - generic [ref=e3114]: "\"detailContent\": \"string\","
+                        - generic [ref=e3117]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e3120]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e3123]: "},"
+                        - generic [ref=e3126]: "\"sportsEquipment\": {"
+                        - generic [ref=e3129]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3132]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3135]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3138]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3141]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3144]: "\"itemName\": \"string\","
+                        - generic [ref=e3147]: "\"modelName\": \"string\","
+                        - generic [ref=e3150]: "\"certificationType\": \"string\","
+                        - generic [ref=e3153]: "\"size\": \"string\","
+                        - generic [ref=e3156]: "\"weight\": \"string\","
+                        - generic [ref=e3159]: "\"color\": \"string\","
+                        - generic [ref=e3162]: "\"material\": \"string\","
+                        - generic [ref=e3165]: "\"components\": \"string\","
+                        - generic [ref=e3168]: "\"releaseDate\": {"
+                        - generic [ref=e3171]: "\"year\": 0,"
+                        - generic [ref=e3174]: "\"month\": \"JANUARY\","
+                        - generic [ref=e3177]: "\"monthValue\": 0,"
+                        - generic [ref=e3180]: "\"leapYear\": true"
+                        - generic [ref=e3183]: "},"
+                        - generic [ref=e3186]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e3189]: "\"manufacturer\": \"string\","
+                        - generic [ref=e3192]: "\"detailContent\": \"string\","
+                        - generic [ref=e3195]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e3198]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e3201]: "},"
+                        - generic [ref=e3204]: "\"books\": {"
+                        - generic [ref=e3207]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3210]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3213]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3216]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3219]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3222]: "\"title\": \"string\","
+                        - generic [ref=e3225]: "\"author\": \"string\","
+                        - generic [ref=e3228]: "\"publisher\": \"string\","
+                        - generic [ref=e3231]: "\"size\": \"string\","
+                        - generic [ref=e3234]: "\"pages\": \"string\","
+                        - generic [ref=e3237]: "\"components\": \"string\","
+                        - generic [ref=e3240]: "\"publishDate\": \"2024-07-29\","
+                        - generic [ref=e3243]: "\"publishDateText\": \"string\","
+                        - generic [ref=e3246]: "\"description\": \"string\""
+                        - generic [ref=e3249]: "},"
+                        - generic [ref=e3252]: "\"rentalEtc\": {"
+                        - generic [ref=e3255]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3258]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3261]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3264]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3267]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3270]: "\"itemName\": \"string\","
+                        - generic [ref=e3273]: "\"modelName\": \"string\","
+                        - generic [ref=e3276]: "\"ownershipTransferCondition\": \"string\","
+                        - generic [ref=e3279]: "\"payingForLossOrDamage\": \"string\","
+                        - generic [ref=e3282]: "\"refundPolicyForCancel\": \"string\","
+                        - generic [ref=e3285]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e3288]: "},"
+                        - generic [ref=e3291]: "\"rentalHa\": {"
+                        - generic [ref=e3294]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3297]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3300]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3303]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3306]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3309]: "\"itemName\": \"string\","
+                        - generic [ref=e3312]: "\"modelName\": \"string\","
+                        - generic [ref=e3315]: "\"ownershipTransferCondition\": \"string\","
+                        - generic [ref=e3318]: "\"payingForLossOrDamage\": \"string\","
+                        - generic [ref=e3321]: "\"refundPolicyForCancel\": \"string\","
+                        - generic [ref=e3324]: "\"customerServicePhoneNumber\": \"string\","
+                        - generic [ref=e3327]: "\"maintenance\": \"string\","
+                        - generic [ref=e3330]: "\"specification\": \"string\""
+                        - generic [ref=e3333]: "},"
+                        - generic [ref=e3336]: "\"digitalContents\": {"
+                        - generic [ref=e3339]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3342]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3345]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3348]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3351]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3354]: "\"producer\": \"string\","
+                        - generic [ref=e3357]: "\"termsOfUse\": \"string\","
+                        - generic [ref=e3360]: "\"usePeriod\": \"string\","
+                        - generic [ref=e3363]: "\"medium\": \"string\","
+                        - generic [ref=e3366]: "\"requirement\": \"string\","
+                        - generic [ref=e3369]: "\"cancelationPolicy\": \"string\","
+                        - generic [ref=e3372]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e3375]: "},"
+                        - generic [ref=e3378]: "\"giftCard\": {"
+                        - generic [ref=e3381]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3384]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3387]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3390]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3393]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3396]: "\"issuer\": \"string\","
+                        - generic [ref=e3399]: "\"periodStartDate\": \"2024-07-29\","
+                        - generic [ref=e3402]: "\"periodEndDate\": \"2024-07-29\","
+                        - generic [ref=e3405]: "\"periodDays\": 0,"
+                        - generic [ref=e3408]: "\"termsOfUse\": \"string\","
+                        - generic [ref=e3411]: "\"useStorePlace\": \"string\","
+                        - generic [ref=e3414]: "\"useStoreAddressId\": 0,"
+                        - generic [ref=e3417]: "\"useStoreUrl\": \"string\","
+                        - generic [ref=e3420]: "\"refundPolicy\": \"string\","
+                        - generic [ref=e3423]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e3426]: "},"
+                        - generic [ref=e3429]: "\"mobileCoupon\": {"
+                        - generic [ref=e3432]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3435]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3438]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3441]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3444]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3447]: "\"issuer\": \"string\","
+                        - generic [ref=e3450]: "\"usableCondition\": \"string\","
+                        - generic [ref=e3453]: "\"usableStore\": \"string\","
+                        - generic [ref=e3456]: "\"cancelationPolicy\": \"string\","
+                        - generic [ref=e3459]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e3462]: "},"
+                        - generic [ref=e3465]: "\"movieShow\": {"
+                        - generic [ref=e3468]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3471]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3474]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3477]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3480]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3483]: "\"sponsor\": \"string\","
+                        - generic [ref=e3486]: "\"actor\": \"string\","
+                        - generic [ref=e3489]: "\"rating\": \"string\","
+                        - generic [ref=e3492]: "\"showTime\": \"string\","
+                        - generic [ref=e3495]: "\"showPlace\": \"string\","
+                        - generic [ref=e3498]: "\"cancelationCondition\": \"string\","
+                        - generic [ref=e3501]: "\"cancelationPolicy\": \"string\","
+                        - generic [ref=e3504]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e3507]: "},"
+                        - generic [ref=e3510]: "\"etcService\": {"
+                        - generic [ref=e3513]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3516]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3519]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3522]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3525]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3528]: "\"serviceProvider\": \"string\","
+                        - generic [ref=e3531]: "\"certificateDetails\": \"string\","
+                        - generic [ref=e3534]: "\"usableCondition\": \"string\","
+                        - generic [ref=e3537]: "\"cancelationStandard\": \"string\","
+                        - generic [ref=e3540]: "\"cancelationPolicy\": \"string\","
+                        - generic [ref=e3543]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e3546]: "},"
+                        - generic [ref=e3549]: "\"biochemistry\": {"
+                        - generic [ref=e3552]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3555]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3558]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3561]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3564]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3567]: "\"productName\": \"string\","
+                        - generic [ref=e3570]: "\"dosageForm\": \"string\","
+                        - generic [ref=e3573]: "\"packDate\": \"string\","
+                        - generic [ref=e3576]: "\"packDateText\": \"string\","
+                        - generic [ref=e3579]: "\"expirationDate\": \"string\","
+                        - generic [ref=e3582]: "\"expirationDateText\": \"string\","
+                        - generic [ref=e3585]: "\"weight\": \"string\","
+                        - generic [ref=e3588]: "\"effect\": \"string\","
+                        - generic [ref=e3591]: "\"importer\": \"string\","
+                        - generic [ref=e3594]: "\"producer\": \"string\","
+                        - generic [ref=e3597]: "\"manufacturer\": \"string\","
+                        - generic [ref=e3600]: "\"childProtection\": \"string\","
+                        - generic [ref=e3603]: "\"chemicals\": \"string\","
+                        - generic [ref=e3606]: "\"caution\": \"string\","
+                        - generic [ref=e3609]: "\"safeCriterionNo\": \"string\","
+                        - generic [ref=e3612]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e3615]: "},"
+                        - generic [ref=e3618]: "\"biocidal\": {"
+                        - generic [ref=e3621]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3624]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3627]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3630]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3633]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3636]: "\"productName\": \"string\","
+                        - generic [ref=e3639]: "\"weight\": \"string\","
+                        - generic [ref=e3642]: "\"effect\": \"string\","
+                        - generic [ref=e3645]: "\"rangeOfUse\": \"string\","
+                        - generic [ref=e3648]: "\"importer\": \"string\","
+                        - generic [ref=e3651]: "\"producer\": \"string\","
+                        - generic [ref=e3654]: "\"manufacturer\": \"string\","
+                        - generic [ref=e3657]: "\"childProtection\": \"string\","
+                        - generic [ref=e3660]: "\"harmfulChemicalSubstance\": \"string\","
+                        - generic [ref=e3663]: "\"maleficence\": \"string\","
+                        - generic [ref=e3666]: "\"caution\": \"string\","
+                        - generic [ref=e3669]: "\"approvalNumber\": \"string\","
+                        - generic [ref=e3672]: "\"customerServicePhoneNumber\": \"string\","
+                        - generic [ref=e3675]: "\"expirationDate\": \"2024-07-29\","
+                        - generic [ref=e3678]: "\"expirationDateText\": \"string\""
+                        - generic [ref=e3681]: "},"
+                        - generic [ref=e3684]: "\"cellPhone\": {"
+                        - generic [ref=e3687]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3690]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3693]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3696]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3699]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3702]: "\"itemName\": \"string\","
+                        - generic [ref=e3705]: "\"modelName\": \"string\","
+                        - generic [ref=e3708]: "\"certificationType\": \"string\","
+                        - generic [ref=e3711]: "\"releaseDate\": \"string\","
+                        - generic [ref=e3714]: "\"releaseDateText\": \"string\","
+                        - generic [ref=e3717]: "\"manufacturer\": \"string\","
+                        - generic [ref=e3720]: "\"importer\": \"string\","
+                        - generic [ref=e3723]: "\"producer\": \"string\","
+                        - generic [ref=e3726]: "\"size\": \"string\","
+                        - generic [ref=e3729]: "\"weight\": \"string\","
+                        - generic [ref=e3732]: "\"telecomType\": \"string\","
+                        - generic [ref=e3735]: "\"joinProcess\": \"string\","
+                        - generic [ref=e3738]: "\"extraBurden\": \"string\","
+                        - generic [ref=e3741]: "\"specification\": \"string\","
+                        - generic [ref=e3744]: "\"warrantyPolicy\": \"string\","
+                        - generic [ref=e3747]: "\"afterServiceDirector\": \"string\""
+                        - generic [ref=e3750]: "},"
+                        - generic [ref=e3753]: "\"etc\": {"
+                        - generic [ref=e3756]: "\"returnCostReason\": \"string\","
+                        - generic [ref=e3759]: "\"noRefundReason\": \"string\","
+                        - generic [ref=e3762]: "\"qualityAssuranceStandard\": \"string\","
+                        - generic [ref=e3765]: "\"compensationProcedure\": \"string\","
+                        - generic [ref=e3768]: "\"troubleShootingContents\": \"string\","
+                        - generic [ref=e3771]: "\"itemName\": \"string\","
+                        - generic [ref=e3774]: "\"modelName\": \"string\","
+                        - generic [ref=e3777]: "\"certificateDetails\": \"string\","
+                        - generic [ref=e3780]: "\"manufacturer\": \"string\","
+                        - generic [ref=e3783]: "\"afterServiceDirector\": \"string\","
+                        - generic [ref=e3786]: "\"customerServicePhoneNumber\": \"string\""
+                        - generic [ref=e3789]: "}"
+                        - generic [ref=e3792]: "},"
+                        - generic [ref=e3795]: "\"productAttributes\": ["
+                        - generic [ref=e3798]: "{"
+                        - generic [ref=e3801]: "\"attributeSeq\": 0,"
+                        - generic [ref=e3804]: "\"attributeValueSeq\": 0,"
+                        - generic [ref=e3807]: "\"attributeRealValue\": \"string\","
+                        - generic [ref=e3810]: "\"attributeRealValueUnitCode\": \"string\""
+                        - generic [ref=e3813]: "}"
+                        - generic [ref=e3816]: "],"
+                        - generic [ref=e3819]: "\"cultureCostIncomeDeductionYn\": true,"
+                        - generic [ref=e3822]: "\"customProductYn\": true,"
+                        - generic [ref=e3825]: "\"itselfProductionProductYn\": true,"
+                        - generic [ref=e3828]: "\"brandCertificationYn\": true,"
+                        - generic [ref=e3831]: "\"seoInfo\": {"
+                        - generic [ref=e3834]: "\"pageTitle\": \"string\","
+                        - generic [ref=e3837]: "\"metaDescription\": \"string\","
+                        - generic [ref=e3840]: "\"sellerTags\": ["
+                        - generic [ref=e3843]: "{"
+                        - generic [ref=e3846]: "\"code\": 0,"
+                        - generic [ref=e3849]: "\"text\": \"string\""
+                        - generic [ref=e3852]: "}"
+                        - generic [ref=e3855]: "]"
+                        - generic [ref=e3858]: "},"
+                        - generic [ref=e3861]: "\"productSize\": {"
+                        - generic [ref=e3864]: "\"sizeTypeNo\": 0,"
+                        - generic [ref=e3867]: "\"sizeAttributes\": ["
+                        - generic [ref=e3870]: "{"
+                        - generic [ref=e3873]: "\"name\": \"string\","
+                        - generic [ref=e3876]: "\"sizeValues\": ["
+                        - generic [ref=e3879]: "{"
+                        - generic [ref=e3882]: "\"sizeValueTypeNo\": 0,"
+                        - generic [ref=e3885]: "\"value\": 0"
+                        - generic [ref=e3888]: "}"
+                        - generic [ref=e3891]: "]"
+                        - generic [ref=e3894]: "}"
+                        - generic [ref=e3897]: "],"
+                        - generic [ref=e3900]: "\"models\": ["
+                        - generic [ref=e3903]: "{"
+                        - generic [ref=e3906]: "\"modelId\": 0"
+                        - generic [ref=e3909]: "}"
+                        - generic [ref=e3912]: "]"
+                        - generic [ref=e3915]: "},"
+                        - generic [ref=e3918]: "\"unitCapacity\": {"
+                        - generic [ref=e3921]: "\"unitPriceYn\": true,"
+                        - generic [ref=e3924]: "\"totalCapacityValue\": 0,"
+                        - generic [ref=e3927]: "\"unitCapacity\": 0,"
+                        - generic [ref=e3930]: "\"indicationUnit\": \"string\""
+                        - generic [ref=e3933]: "}"
+                        - generic [ref=e3936]: "},"
+                        - generic [ref=e3939]: "\"customerBenefit\": {"
+                        - generic [ref=e3942]: "\"immediateDiscountPolicy\": {"
+                        - generic [ref=e3945]: "\"discountMethod\": {"
+                        - generic [ref=e3948]: "\"value\": 0,"
+                        - generic [ref=e3951]: "\"unitType\": \"PERCENT\","
+                        - generic [ref=e3954]: "\"startDate\": \"2024-07-29T15:51:28.071Z\","
+                        - generic [ref=e3957]: "\"endDate\": \"2024-07-29T15:51:28.071Z\""
+                        - generic [ref=e3960]: "}"
+                        - generic [ref=e3963]: "},"
+                        - generic [ref=e3966]: "\"purchasePointPolicy\": {"
+                        - generic [ref=e3969]: "\"value\": 0,"
+                        - generic [ref=e3972]: "\"unitType\": \"PERCENT\","
+                        - generic [ref=e3975]: "\"startDate\": \"2024-07-29\","
+                        - generic [ref=e3978]: "\"endDate\": \"2024-07-29\""
+                        - generic [ref=e3981]: "},"
+                        - generic [ref=e3984]: "\"reviewPointPolicy\": {"
+                        - generic [ref=e3987]: "\"textReviewPoint\": 0,"
+                        - generic [ref=e3990]: "\"photoVideoReviewPoint\": 0,"
+                        - generic [ref=e3993]: "\"afterUseTextReviewPoint\": 0,"
+                        - generic [ref=e3996]: "\"afterUsePhotoVideoReviewPoint\": 0,"
+                        - generic [ref=e3999]: "\"storeMemberReviewPoint\": 0,"
+                        - generic [ref=e4002]: "\"startDate\": \"2024-07-29\","
+                        - generic [ref=e4005]: "\"endDate\": \"2024-07-29\""
+                        - generic [ref=e4008]: "},"
+                        - generic [ref=e4011]: "\"freeInterestPolicy\": {"
+                        - generic [ref=e4014]: "\"value\": 0,"
+                        - generic [ref=e4017]: "\"startDate\": \"2024-07-29\","
+                        - generic [ref=e4020]: "\"endDate\": \"2024-07-29\""
+                        - generic [ref=e4023]: "},"
+                        - generic [ref=e4026]: "\"giftPolicy\": {"
+                        - generic [ref=e4029]: "\"presentContent\": \"string\""
+                        - generic [ref=e4032]: "},"
+                        - generic [ref=e4035]: "\"multiPurchaseDiscountPolicy\": {"
+                        - generic [ref=e4038]: "\"discountMethod\": {"
+                        - generic [ref=e4041]: "\"value\": 0,"
+                        - generic [ref=e4044]: "\"unitType\": \"PERCENT\","
+                        - generic [ref=e4047]: "\"startDate\": \"2024-07-29\","
+                        - generic [ref=e4050]: "\"endDate\": \"2024-07-29\""
+                        - generic [ref=e4053]: "},"
+                        - generic [ref=e4056]: "\"orderValue\": 0,"
+                        - generic [ref=e4059]: "\"orderValueUnitType\": \"PERCENT\""
+                        - generic [ref=e4062]: "},"
+                        - generic [ref=e4065]: "\"reservedDiscountPolicy\": {"
+                        - generic [ref=e4068]: "\"discountMethod\": {"
+                        - generic [ref=e4071]: "\"value\": 0,"
+                        - generic [ref=e4074]: "\"unitType\": \"PERCENT\","
+                        - generic [ref=e4077]: "\"startDate\": \"2024-07-29T15:51:28.071Z\","
+                        - generic [ref=e4080]: "\"endDate\": \"2024-07-29T15:51:28.071Z\""
+                        - generic [ref=e4083]: "}"
+                        - generic [ref=e4086]: "}"
+                        - generic [ref=e4089]: "}"
+                        - generic [ref=e4092]: "},"
+                        - generic [ref=e4095]: "\"smartstoreChannelProduct\": {"
+                        - generic [ref=e4098]: "\"channelProductName\": \"string\","
+                        - generic [ref=e4101]: "\"bbsSeq\": 0,"
+                        - generic [ref=e4104]: "\"storeKeepExclusiveProduct\": true,"
+                        - generic [ref=e4107]: "\"naverShoppingRegistration\": true,"
+                        - generic [ref=e4110]: "\"channelProductDisplayStatusType\": \"WAIT\""
+                        - generic [ref=e4113]: "},"
+                        - generic [ref=e4116]: "\"windowChannelProduct\": {"
+                        - generic [ref=e4119]: "\"channelProductName\": \"string\","
+                        - generic [ref=e4122]: "\"bbsSeq\": 0,"
+                        - generic [ref=e4125]: "\"storeKeepExclusiveProduct\": true,"
+                        - generic [ref=e4128]: "\"naverShoppingRegistration\": true,"
+                        - generic [ref=e4131]: "\"channelNo\": 0,"
+                        - generic [ref=e4134]: "\"best\": true"
+                        - generic [ref=e4137]: "}"
+                        - generic [ref=e4140]: "}'"
+                      - generic [ref=e4141]:
+                        - button "Copy code to clipboard" [ref=e4142] [cursor=pointer]:
+                          - generic [ref=e4143]:
+                            - img [ref=e4144]
+                            - img [ref=e4146]
+                        - button "Expand code to fullscreen" [ref=e4148] [cursor=pointer]:
+                          - generic [ref=e4149]:
+                            - img [ref=e4150]
+                            - img [ref=e4152]
+        - navigation "Docs pages" [ref=e4156]:
+          - link "Previous « 상품 옵션 재고 변경" [ref=e4157] [cursor=pointer]:
+            - /url: /docs/commerce-api/current/update-options-product
+            - generic [ref=e4158]: Previous
+            - generic [ref=e4159]: « 상품 옵션 재고 변경
+          - link "Next (v2) 채널 상품 조회 »" [ref=e4160] [cursor=pointer]:
+            - /url: /docs/commerce-api/current/read-channel-product-1-product
+            - generic [ref=e4161]: Next
+            - generic [ref=e4162]: (v2) 채널 상품 조회 »
+  - contentinfo [ref=e4163]:
+    - generic [ref=e4164]:
+      - list [ref=e4167]:
+        - listitem [ref=e4168]:
+          - link "커머스API센터" [ref=e4169] [cursor=pointer]:
+            - /url: https://apicenter.commerce.naver.com
+        - listitem [ref=e4170]:
+          - link "개인정보 처리방침" [ref=e4171] [cursor=pointer]:
+            - /url: https://business.naver.com/privacy/privacy.html
+        - listitem [ref=e4172]:
+          - link "고객센터" [ref=e4173] [cursor=pointer]:
+            - /url: https://help.sell.smartstore.naver.com/faq/list.help?categoryId=10783
+      - generic [ref=e4174]:
+        - img [ref=e4175]
+        - generic [ref=e4176]:
+          - text: Copyright ©
+          - link "NAVER Corp." [ref=e4177] [cursor=pointer]:
+            - /url: https://www.navercorp.com/
+            - strong [ref=e4178]: NAVER Corp.
+          - text: All rights reserved.

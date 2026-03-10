@@ -3,24 +3,24 @@ package com.ryuqq.marketplace.adapter.out.persistence.order.entity;
 import com.ryuqq.marketplace.adapter.out.persistence.common.entity.BaseAuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
 
-/** Payment JPA 엔티티. 주문과 1:1 매핑. */
+/** Payment JPA 엔티티. 주문과 1:1 매핑. ID는 UUIDv7. */
 @Entity
 @Table(name = "payments")
 public class PaymentJpaEntity extends BaseAuditEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "id", length = 36)
+    private String id;
 
     @Column(name = "order_id", nullable = false, length = 36)
     private String orderId;
+
+    @Column(name = "payment_number", nullable = false, length = 50)
+    private String paymentNumber;
 
     @Column(name = "payment_status", nullable = false, length = 30)
     private String paymentStatus;
@@ -45,8 +45,9 @@ public class PaymentJpaEntity extends BaseAuditEntity {
     }
 
     private PaymentJpaEntity(
-            Long id,
+            String id,
             String orderId,
+            String paymentNumber,
             String paymentStatus,
             String paymentMethod,
             String paymentAgencyId,
@@ -58,6 +59,7 @@ public class PaymentJpaEntity extends BaseAuditEntity {
         super(createdAt, updatedAt);
         this.id = id;
         this.orderId = orderId;
+        this.paymentNumber = paymentNumber;
         this.paymentStatus = paymentStatus;
         this.paymentMethod = paymentMethod;
         this.paymentAgencyId = paymentAgencyId;
@@ -67,8 +69,9 @@ public class PaymentJpaEntity extends BaseAuditEntity {
     }
 
     public static PaymentJpaEntity create(
-            Long id,
+            String id,
             String orderId,
+            String paymentNumber,
             String paymentStatus,
             String paymentMethod,
             String paymentAgencyId,
@@ -80,6 +83,7 @@ public class PaymentJpaEntity extends BaseAuditEntity {
         return new PaymentJpaEntity(
                 id,
                 orderId,
+                paymentNumber,
                 paymentStatus,
                 paymentMethod,
                 paymentAgencyId,
@@ -90,12 +94,16 @@ public class PaymentJpaEntity extends BaseAuditEntity {
                 updatedAt);
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
     public String getOrderId() {
         return orderId;
+    }
+
+    public String getPaymentNumber() {
+        return paymentNumber;
     }
 
     public String getPaymentStatus() {

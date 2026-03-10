@@ -17,7 +17,6 @@ import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
-import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

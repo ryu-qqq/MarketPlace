@@ -57,6 +57,7 @@ public class LegacyConversionPreResolver {
                     Map.entry(25L, 21L), // wdrobe
                     Map.entry(26L, 23L), // winsome1978
                     Map.entry(27L, 24L), // winusavenue
+                    Map.entry(28L, 25L), // setof (= trexi)
                     Map.entry(29L, 26L), // ALLIWANT
                     Map.entry(30L, 27L), // UPSET
                     Map.entry(31L, 25L), // trexi

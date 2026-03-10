@@ -83,11 +83,9 @@ public class FullProductGroupRegistrationCoordinator {
                         productGroupId, bundle.descriptionContent()));
 
         // 5. Notice → Command 기반 등록 (고시정보가 있는 경우만)
-        if (bundle.noticeCategoryId() > 0) {
-            noticeCommandCoordinator.register(
-                    new RegisterProductNoticeCommand(
-                            productGroupId, bundle.noticeCategoryId(), bundle.noticeEntries()));
-        }
+        noticeCommandCoordinator.register(
+                new RegisterProductNoticeCommand(
+                        productGroupId, bundle.noticeCategoryId(), bundle.noticeEntries()));
 
         // 6. Products → 이름 기반 옵션 resolve 후 등록
         List<Long> productIds =

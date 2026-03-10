@@ -15,6 +15,7 @@ import com.ryuqq.marketplace.domain.order.id.OrderHistoryId;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
+import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
 import com.ryuqq.marketplace.domain.order.vo.BuyerName;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderItemPrice;
@@ -53,15 +54,20 @@ public class OrderJpaEntityMapper {
                 null);
     }
 
-    public PaymentJpaEntity toPaymentEntity(Order order) {
+    public PaymentJpaEntity toPaymentEntity(Order order, String paymentId) {
         PaymentInfo payment = order.paymentInfo();
         String status =
                 payment != null && payment.paidAt() != null
                         ? PaymentStatus.COMPLETED.name()
                         : PaymentStatus.PENDING.name();
+        String paymentNumber =
+                payment != null && payment.paymentNumber() != null
+                        ? payment.paymentNumber().value()
+                        : null;
         return PaymentJpaEntity.create(
-                null,
+                paymentId,
                 order.idValue(),
+                paymentNumber,
                 status,
                 payment != null ? payment.paymentMethod() : null,
                 null,
@@ -176,7 +182,12 @@ public class OrderJpaEntityMapper {
             return null;
         }
         return PaymentInfo.of(
-                entity.getPaymentMethod(), Money.of(entity.getPaymentAmount()), entity.getPaidAt());
+                entity.getPaymentNumber() != null
+                        ? PaymentNumber.of(entity.getPaymentNumber())
+                        : null,
+                entity.getPaymentMethod(),
+                Money.of(entity.getPaymentAmount()),
+                entity.getPaidAt());
     }
 
     private ExternalOrderReference resolveExternalOrderReference(OrderJpaEntity entity) {

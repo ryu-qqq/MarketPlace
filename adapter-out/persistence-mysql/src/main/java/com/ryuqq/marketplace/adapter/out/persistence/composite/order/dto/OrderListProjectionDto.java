@@ -18,6 +18,8 @@ public record OrderListProjectionDto(
         String buyerPhone,
         Instant createdAt,
         Instant updatedAt,
+        String paymentId,
+        String paymentNumber,
         String paymentStatus,
         String paymentMethod,
         int paymentAmount,

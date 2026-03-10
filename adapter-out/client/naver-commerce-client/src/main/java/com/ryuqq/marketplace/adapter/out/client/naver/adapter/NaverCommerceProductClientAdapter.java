@@ -10,9 +10,11 @@ import com.ryuqq.marketplace.application.outboundproduct.dto.vo.ExternalProductE
 import com.ryuqq.marketplace.application.outboundproduct.port.out.client.SalesChannelProductSearchClient;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -99,7 +101,8 @@ public class NaverCommerceProductClientAdapter
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
-            SellerSalesChannel channel) {
+            SellerSalesChannel channel,
+            Set<ChangedArea> changedAreas) {
 
         NaverProductRegistrationRequest request =
                 mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId);
