@@ -69,6 +69,9 @@ public class OrderCompositionQueryAdapter implements OrderCompositionQueryPort {
 
     @Override
     public Map<String, OrderListResult> findOrdersByIds(List<String> orderIds) {
+        if (orderIds == null || orderIds.isEmpty()) {
+            return Map.of();
+        }
         return compositeRepository.findOrdersByIds(orderIds).stream()
                 .map(compositeMapper::toListResult)
                 .collect(Collectors.toMap(OrderListResult::orderId, Function.identity()));
@@ -76,6 +79,9 @@ public class OrderCompositionQueryAdapter implements OrderCompositionQueryPort {
 
     @Override
     public Map<Long, List<OrderCancelResult>> findCancelsByItemIds(List<Long> orderItemIds) {
+        if (orderItemIds == null || orderItemIds.isEmpty()) {
+            return Map.of();
+        }
         return compositeRepository.findCancelsByOrderItemIds(orderItemIds).stream()
                 .map(compositeMapper::toCancelResult)
                 .collect(Collectors.groupingBy(OrderCancelResult::orderItemId));
@@ -83,6 +89,9 @@ public class OrderCompositionQueryAdapter implements OrderCompositionQueryPort {
 
     @Override
     public Map<Long, List<OrderClaimResult>> findClaimsByItemIds(List<Long> orderItemIds) {
+        if (orderItemIds == null || orderItemIds.isEmpty()) {
+            return Map.of();
+        }
         return compositeRepository.findClaimsByOrderItemIds(orderItemIds).stream()
                 .map(compositeMapper::toClaimResult)
                 .collect(Collectors.groupingBy(OrderClaimResult::orderItemId));

@@ -118,8 +118,7 @@ public class OrderQueryApiMapper {
 
     private OrderInfoApiResponse toOrderInfoApi(ProductOrderListResult.OrderInfo order) {
         if (order == null) {
-            return new OrderInfoApiResponse(
-                    null, null, null, 0, 0, null, null, null, null, null, null, null, null, null);
+            return null;
         }
         return new OrderInfoApiResponse(
                 order.orderId(),

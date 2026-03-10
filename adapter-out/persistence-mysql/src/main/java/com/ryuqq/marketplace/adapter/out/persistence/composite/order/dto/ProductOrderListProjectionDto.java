@@ -59,6 +59,6 @@ public record ProductOrderListProjectionDto(
         String paymentStatus,
         String paymentMethod,
         String paymentAgencyId,
-        int paymentAmount,
+        Integer paymentAmount,
         Instant paidAt,
         Instant canceledAt) {}

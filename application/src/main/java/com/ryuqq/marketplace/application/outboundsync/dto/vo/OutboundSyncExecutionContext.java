@@ -22,4 +22,9 @@ public record OutboundSyncExecutionContext(
         SellerSalesChannel sellerSalesChannel,
         Long productGroupId,
         SyncType syncType,
-        Set<ChangedArea> changedAreas) {}
+        Set<ChangedArea> changedAreas) {
+
+    public OutboundSyncExecutionContext {
+        changedAreas = changedAreas != null ? Set.copyOf(changedAreas) : Set.of();
+    }
+}

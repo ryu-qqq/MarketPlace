@@ -22,6 +22,6 @@ public record OrderListProjectionDto(
         String paymentNumber,
         String paymentStatus,
         String paymentMethod,
-        int paymentAmount,
+        Integer paymentAmount,
         Instant paidAt,
         long itemCount) {}

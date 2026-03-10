@@ -58,7 +58,7 @@ public class OrderReadFacade {
                 orderItems.stream()
                         .map(OrderItemResult::orderId)
                         .distinct()
-                        .collect(Collectors.toList());
+                        .toList();
 
         Map<String, OrderListResult> ordersById = compositionReadManager.findOrdersByIds(orderIds);
 
