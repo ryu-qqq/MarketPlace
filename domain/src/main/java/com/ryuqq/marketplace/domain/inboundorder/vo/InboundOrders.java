@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /** InboundOrder 목록을 감싸는 도메인 VO. */
+@SuppressWarnings("PMD.DomainTooManyMethods")
 public class InboundOrders {
 
     private final List<InboundOrder> orders;

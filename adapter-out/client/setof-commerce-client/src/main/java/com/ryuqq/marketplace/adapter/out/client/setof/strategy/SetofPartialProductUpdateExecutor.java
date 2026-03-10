@@ -35,6 +35,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Spring-managed bean injection")
 public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExecutor {
 
     private static final Logger log =

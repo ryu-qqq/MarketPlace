@@ -12,6 +12,9 @@ import java.util.List;
  *     목록 조회</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+        value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"},
+        justification = "Record DTO – immutable by convention")
 public record NaverProductSearchRequest(
         String searchKeywordType,
         List<Long> channelProductNos,

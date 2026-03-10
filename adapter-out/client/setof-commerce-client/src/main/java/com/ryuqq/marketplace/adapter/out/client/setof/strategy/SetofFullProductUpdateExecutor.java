@@ -21,6 +21,9 @@ import org.springframework.web.client.RestClient;
  */
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "Spring-managed bean injection")
 public class SetofFullProductUpdateExecutor implements SetofProductUpdateExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(SetofFullProductUpdateExecutor.class);
