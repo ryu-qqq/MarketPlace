@@ -13,7 +13,6 @@ import com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,10 +54,7 @@ public class OrderReadFacade {
         List<Long> orderItemIds = orderItems.stream().map(OrderItemResult::orderItemId).toList();
 
         List<String> orderIds =
-                orderItems.stream()
-                        .map(OrderItemResult::orderId)
-                        .distinct()
-                        .toList();
+                orderItems.stream().map(OrderItemResult::orderId).distinct().toList();
 
         Map<String, OrderListResult> ordersById = compositionReadManager.findOrdersByIds(orderIds);
 
