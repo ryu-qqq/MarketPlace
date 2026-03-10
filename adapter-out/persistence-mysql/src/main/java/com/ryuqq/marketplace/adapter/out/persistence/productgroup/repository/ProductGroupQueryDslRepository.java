@@ -128,7 +128,9 @@ public class ProductGroupQueryDslRepository {
     public List<SellerOptionGroupJpaEntity> findOptionGroupsByProductGroupId(Long productGroupId) {
         return queryFactory
                 .selectFrom(sellerOptionGroup)
-                .where(sellerOptionGroup.productGroupId.eq(productGroupId))
+                .where(
+                        sellerOptionGroup.productGroupId.eq(productGroupId),
+                        sellerOptionGroup.deleted.isFalse())
                 .orderBy(sellerOptionGroup.sortOrder.asc())
                 .fetch();
     }
@@ -137,7 +139,9 @@ public class ProductGroupQueryDslRepository {
             List<Long> productGroupIds) {
         return queryFactory
                 .selectFrom(sellerOptionGroup)
-                .where(sellerOptionGroup.productGroupId.in(productGroupIds))
+                .where(
+                        sellerOptionGroup.productGroupId.in(productGroupIds),
+                        sellerOptionGroup.deleted.isFalse())
                 .orderBy(sellerOptionGroup.sortOrder.asc())
                 .fetch();
     }
@@ -149,7 +153,9 @@ public class ProductGroupQueryDslRepository {
         }
         return queryFactory
                 .selectFrom(sellerOptionValue)
-                .where(sellerOptionValue.sellerOptionGroupId.in(optionGroupIds))
+                .where(
+                        sellerOptionValue.sellerOptionGroupId.in(optionGroupIds),
+                        sellerOptionValue.deleted.isFalse())
                 .orderBy(sellerOptionValue.sortOrder.asc())
                 .fetch();
     }

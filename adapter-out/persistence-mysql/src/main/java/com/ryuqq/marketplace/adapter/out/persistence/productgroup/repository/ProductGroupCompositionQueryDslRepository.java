@@ -483,7 +483,11 @@ public class ProductGroupCompositionQueryDslRepository {
                         .on(optionMapping.sellerOptionValueId.eq(optionValue.id))
                         .leftJoin(optionGroup)
                         .on(optionValue.sellerOptionGroupId.eq(optionGroup.id))
-                        .where(optionMapping.productId.in(productIds))
+                        .where(
+                                optionMapping.productId.in(productIds),
+                                optionMapping.deleted.isFalse(),
+                                optionValue.deleted.isFalse(),
+                                optionGroup.deleted.isFalse())
                         .fetch();
 
         // productId별 매핑 그룹핑
@@ -603,7 +607,9 @@ public class ProductGroupCompositionQueryDslRepository {
                                 optionGroup.productGroupId,
                                 optionGroup.optionGroupName)
                         .from(optionGroup)
-                        .where(optionGroup.productGroupId.in(productGroupIds))
+                        .where(
+                                optionGroup.productGroupId.in(productGroupIds),
+                                optionGroup.deleted.isFalse())
                         .orderBy(optionGroup.sortOrder.asc())
                         .fetch();
 
@@ -617,7 +623,9 @@ public class ProductGroupCompositionQueryDslRepository {
                 queryFactory
                         .select(optionValue.sellerOptionGroupId, optionValue.optionValueName)
                         .from(optionValue)
-                        .where(optionValue.sellerOptionGroupId.in(groupIds))
+                        .where(
+                                optionValue.sellerOptionGroupId.in(groupIds),
+                                optionValue.deleted.isFalse())
                         .orderBy(optionValue.sortOrder.asc())
                         .fetch();
 
