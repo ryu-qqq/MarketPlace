@@ -34,9 +34,6 @@ public final class OrderJpaEntityFixtures {
                 now,
                 null,
                 null,
-                "CARD",
-                50000,
-                now,
                 now,
                 now,
                 null);
@@ -58,9 +55,6 @@ public final class OrderJpaEntityFixtures {
                 now,
                 null,
                 null,
-                "CARD",
-                50000,
-                now,
                 now,
                 now,
                 null);
@@ -82,9 +76,6 @@ public final class OrderJpaEntityFixtures {
                 now,
                 null,
                 null,
-                "CARD",
-                50000,
-                now,
                 now,
                 now,
                 null);
@@ -106,9 +97,6 @@ public final class OrderJpaEntityFixtures {
                 now,
                 null,
                 null,
-                "CARD",
-                50000,
-                now,
                 now,
                 now,
                 now);

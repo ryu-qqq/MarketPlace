@@ -57,8 +57,8 @@ public class OrderQueryApiMapper {
                 result.salesChannelId(),
                 result.externalOrderNo(),
                 result.buyerName(),
-                result.itemCount(),
-                DateTimeFormatUtils.formatIso8601(result.orderedAt()),
+                (int) result.itemCount(),
+                DateTimeFormatUtils.formatIso8601(result.externalOrderedAt()),
                 DateTimeFormatUtils.formatIso8601(result.createdAt()));
     }
 
@@ -90,7 +90,7 @@ public class OrderQueryApiMapper {
                 buyerInfo,
                 items,
                 timeLine,
-                DateTimeFormatUtils.formatIso8601(result.orderedAt()),
+                DateTimeFormatUtils.formatIso8601(result.externalOrderedAt()),
                 DateTimeFormatUtils.formatIso8601(result.createdAt()),
                 DateTimeFormatUtils.formatIso8601(result.updatedAt()));
     }
