@@ -28,6 +28,11 @@ public class OrderCompositeConditionBuilder {
         return paymentJpaEntity.orderId.eq(orderJpaEntity.id);
     }
 
+    /** order_items ↔ orders 조인 조건. */
+    public BooleanExpression itemOrderJoinCondition() {
+        return orderItemJpaEntity.orderId.eq(orderJpaEntity.id);
+    }
+
     public BooleanExpression itemOrderIdEq(String orderId) {
         return orderItemJpaEntity.orderId.eq(orderId);
     }

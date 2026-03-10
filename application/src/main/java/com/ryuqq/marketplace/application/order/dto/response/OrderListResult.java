@@ -17,6 +17,8 @@ import java.time.Instant;
  * @param buyerName 구매자명
  * @param buyerEmail 구매자 이메일
  * @param buyerPhone 구매자 전화번호
+ * @param paymentId 결제 ID (UUIDv7)
+ * @param paymentNumber 결제 번호 (PAY-YYYYMMDD-XXXX)
  * @param paymentStatus 결제 상태
  * @param paymentMethod 결제 수단
  * @param paymentAmount 결제 금액
@@ -38,6 +40,8 @@ public record OrderListResult(
         String buyerName,
         String buyerEmail,
         String buyerPhone,
+        String paymentId,
+        String paymentNumber,
         String paymentStatus,
         String paymentMethod,
         int paymentAmount,

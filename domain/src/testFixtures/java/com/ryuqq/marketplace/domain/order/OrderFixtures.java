@@ -12,6 +12,7 @@ import com.ryuqq.marketplace.domain.order.id.OrderHistoryId;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
+import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
 import com.ryuqq.marketplace.domain.order.vo.BuyerName;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderItemPrice;
@@ -101,7 +102,11 @@ public final class OrderFixtures {
     }
 
     public static PaymentInfo defaultPaymentInfo() {
-        return PaymentInfo.of("CARD", Money.of(20000), CommonVoFixtures.now());
+        return PaymentInfo.of(
+                PaymentNumber.of("PAY-20260218-0001"),
+                "CARD",
+                Money.of(20000),
+                CommonVoFixtures.now());
     }
 
     public static ExternalProductSnapshot defaultExternalProductSnapshot() {

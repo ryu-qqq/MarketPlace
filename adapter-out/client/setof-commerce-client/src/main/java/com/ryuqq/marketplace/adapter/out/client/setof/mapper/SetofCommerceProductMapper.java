@@ -60,6 +60,7 @@ public class SetofCommerceProductMapper {
         int representativeCurrentPrice = computeMinCurrentPrice(products);
 
         return new SetofProductGroupRegistrationRequest(
+                group.idValue(),
                 queryResult.sellerId(),
                 externalBrandId,
                 externalCategoryId,

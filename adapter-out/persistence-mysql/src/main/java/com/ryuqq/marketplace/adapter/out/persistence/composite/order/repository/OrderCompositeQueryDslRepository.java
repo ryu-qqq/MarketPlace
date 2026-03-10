@@ -17,6 +17,8 @@ import com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto.OrderHi
 import com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto.OrderItemProjectionDto;
 import com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto.OrderListProjectionDto;
 import com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto.PaymentProjectionDto;
+import com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto.ProductOrderDetailProjectionDto;
+import com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto.ProductOrderListProjectionDto;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,326 @@ public class OrderCompositeQueryDslRepository {
         this.queryFactory = queryFactory;
         this.conditionBuilder = conditionBuilder;
     }
+
+    // ===== 상품주문(productOrder) 기반 목록 조회 =====
+
+    /** 상품주문 목록 조회 (order_items JOIN orders LEFT JOIN payments). 각 행 = 1 order_item. */
+    public List<ProductOrderListProjectionDto> searchProductOrders(OrderSearchCriteria criteria) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                ProductOrderListProjectionDto.class,
+                                // orders
+                                orderJpaEntity.id,
+                                orderJpaEntity.orderNumber,
+                                orderJpaEntity.status,
+                                orderJpaEntity.salesChannelId,
+                                orderJpaEntity.shopId,
+                                orderJpaEntity.shopCode,
+                                orderJpaEntity.shopName,
+                                orderJpaEntity.externalOrderNo,
+                                orderJpaEntity.externalOrderedAt,
+                                orderJpaEntity.buyerName,
+                                orderJpaEntity.buyerEmail,
+                                orderJpaEntity.buyerPhone,
+                                orderJpaEntity.createdAt,
+                                orderJpaEntity.updatedAt,
+                                // order_items
+                                orderItemJpaEntity.id,
+                                orderItemJpaEntity.productGroupId,
+                                orderItemJpaEntity.productId,
+                                orderItemJpaEntity.sellerId,
+                                orderItemJpaEntity.brandId,
+                                orderItemJpaEntity.skuCode,
+                                orderItemJpaEntity.productGroupName,
+                                orderItemJpaEntity.brandName,
+                                orderItemJpaEntity.sellerName,
+                                orderItemJpaEntity.mainImageUrl,
+                                orderItemJpaEntity.externalProductId,
+                                orderItemJpaEntity.externalOptionId,
+                                orderItemJpaEntity.externalProductName,
+                                orderItemJpaEntity.externalOptionName,
+                                orderItemJpaEntity.externalImageUrl,
+                                orderItemJpaEntity.unitPrice,
+                                orderItemJpaEntity.quantity,
+                                orderItemJpaEntity.totalAmount,
+                                orderItemJpaEntity.discountAmount,
+                                orderItemJpaEntity.paymentAmount,
+                                orderItemJpaEntity.receiverName,
+                                orderItemJpaEntity.receiverPhone,
+                                orderItemJpaEntity.receiverZipcode,
+                                orderItemJpaEntity.receiverAddress,
+                                orderItemJpaEntity.receiverAddressDetail,
+                                orderItemJpaEntity.deliveryRequest,
+                                orderItemJpaEntity.deliveryStatus,
+                                orderItemJpaEntity.shipmentCompanyCode,
+                                orderItemJpaEntity.invoice,
+                                orderItemJpaEntity.shipmentCompletedDate,
+                                // payments (LEFT JOIN)
+                                paymentJpaEntity.id,
+                                paymentJpaEntity.paymentNumber,
+                                paymentJpaEntity.paymentStatus,
+                                paymentJpaEntity.paymentMethod,
+                                paymentJpaEntity.paymentAgencyId,
+                                paymentJpaEntity.paymentAmount,
+                                paymentJpaEntity.paidAt,
+                                paymentJpaEntity.canceledAt))
+                .from(orderItemJpaEntity)
+                .join(orderJpaEntity)
+                .on(conditionBuilder.itemOrderJoinCondition())
+                .leftJoin(paymentJpaEntity)
+                .on(conditionBuilder.paymentJoinCondition())
+                .where(conditionBuilder.buildWhereConditions(criteria))
+                .orderBy(conditionBuilder.buildOrderSpecifier(criteria))
+                .offset(criteria.offset())
+                .limit(criteria.size())
+                .fetch();
+    }
+
+    /** 상품주문 목록 카운트 (order_items 기준). */
+    public long countProductOrders(OrderSearchCriteria criteria) {
+        Long count =
+                queryFactory
+                        .select(orderItemJpaEntity.count())
+                        .from(orderItemJpaEntity)
+                        .join(orderJpaEntity)
+                        .on(conditionBuilder.itemOrderJoinCondition())
+                        .where(conditionBuilder.buildWhereConditions(criteria))
+                        .fetchOne();
+        return count != null ? count : 0L;
+    }
+
+    // ===== 상품주문(productOrder) 상세 조회 =====
+
+    /** 상품주문 상세 단건 조회 (order_items JOIN orders LEFT JOIN payments + 정산 필드). */
+    public Optional<ProductOrderDetailProjectionDto> findProductOrderDetail(long orderItemId) {
+        ProductOrderDetailProjectionDto result =
+                queryFactory
+                        .select(
+                                Projections.constructor(
+                                        ProductOrderDetailProjectionDto.class,
+                                        // orders
+                                        orderJpaEntity.id,
+                                        orderJpaEntity.orderNumber,
+                                        orderJpaEntity.status,
+                                        orderJpaEntity.salesChannelId,
+                                        orderJpaEntity.shopId,
+                                        orderJpaEntity.shopCode,
+                                        orderJpaEntity.shopName,
+                                        orderJpaEntity.externalOrderNo,
+                                        orderJpaEntity.externalOrderedAt,
+                                        orderJpaEntity.buyerName,
+                                        orderJpaEntity.buyerEmail,
+                                        orderJpaEntity.buyerPhone,
+                                        orderJpaEntity.createdAt,
+                                        orderJpaEntity.updatedAt,
+                                        // order_items
+                                        orderItemJpaEntity.id,
+                                        orderItemJpaEntity.productGroupId,
+                                        orderItemJpaEntity.productId,
+                                        orderItemJpaEntity.sellerId,
+                                        orderItemJpaEntity.brandId,
+                                        orderItemJpaEntity.skuCode,
+                                        orderItemJpaEntity.productGroupName,
+                                        orderItemJpaEntity.brandName,
+                                        orderItemJpaEntity.sellerName,
+                                        orderItemJpaEntity.mainImageUrl,
+                                        orderItemJpaEntity.externalProductId,
+                                        orderItemJpaEntity.externalOptionId,
+                                        orderItemJpaEntity.externalProductName,
+                                        orderItemJpaEntity.externalOptionName,
+                                        orderItemJpaEntity.externalImageUrl,
+                                        orderItemJpaEntity.unitPrice,
+                                        orderItemJpaEntity.quantity,
+                                        orderItemJpaEntity.totalAmount,
+                                        orderItemJpaEntity.discountAmount,
+                                        orderItemJpaEntity.paymentAmount,
+                                        orderItemJpaEntity.receiverName,
+                                        orderItemJpaEntity.receiverPhone,
+                                        orderItemJpaEntity.receiverZipcode,
+                                        orderItemJpaEntity.receiverAddress,
+                                        orderItemJpaEntity.receiverAddressDetail,
+                                        orderItemJpaEntity.deliveryRequest,
+                                        orderItemJpaEntity.deliveryStatus,
+                                        orderItemJpaEntity.shipmentCompanyCode,
+                                        orderItemJpaEntity.invoice,
+                                        orderItemJpaEntity.shipmentCompletedDate,
+                                        // settlement
+                                        orderItemJpaEntity.commissionRate,
+                                        orderItemJpaEntity.fee,
+                                        orderItemJpaEntity.expectationSettlementAmount,
+                                        orderItemJpaEntity.settlementAmount,
+                                        orderItemJpaEntity.shareRatio,
+                                        orderItemJpaEntity.expectedSettlementDay,
+                                        orderItemJpaEntity.settlementDay,
+                                        // payments (LEFT JOIN)
+                                        paymentJpaEntity.id,
+                                        paymentJpaEntity.paymentNumber,
+                                        paymentJpaEntity.paymentStatus,
+                                        paymentJpaEntity.paymentMethod,
+                                        paymentJpaEntity.paymentAgencyId,
+                                        paymentJpaEntity.paymentAmount,
+                                        paymentJpaEntity.paidAt,
+                                        paymentJpaEntity.canceledAt))
+                        .from(orderItemJpaEntity)
+                        .join(orderJpaEntity)
+                        .on(conditionBuilder.itemOrderJoinCondition())
+                        .leftJoin(paymentJpaEntity)
+                        .on(conditionBuilder.paymentJoinCondition())
+                        .where(
+                                orderItemJpaEntity.id.eq(orderItemId),
+                                conditionBuilder.orderNotDeleted())
+                        .fetchOne();
+        return Optional.ofNullable(result);
+    }
+
+    /** 상품주문 단건 취소 목록 조회. */
+    public List<OrderCancelProjectionDto> findCancelsByOrderItemId(long orderItemId) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                OrderCancelProjectionDto.class,
+                                orderCancelJpaEntity.id,
+                                orderCancelJpaEntity.orderItemId,
+                                orderCancelJpaEntity.cancelNumber,
+                                orderCancelJpaEntity.cancelStatus,
+                                orderCancelJpaEntity.quantity,
+                                orderCancelJpaEntity.reasonType,
+                                orderCancelJpaEntity.reasonDetail,
+                                orderCancelJpaEntity.originalAmount,
+                                orderCancelJpaEntity.refundAmount,
+                                orderCancelJpaEntity.refundMethod,
+                                orderCancelJpaEntity.refundedAt,
+                                orderCancelJpaEntity.requestedAt,
+                                orderCancelJpaEntity.completedAt))
+                .from(orderCancelJpaEntity)
+                .where(orderCancelJpaEntity.orderItemId.eq(orderItemId))
+                .orderBy(orderCancelJpaEntity.requestedAt.desc())
+                .fetch();
+    }
+
+    /** 상품주문 단건 클레임 목록 조회. */
+    public List<OrderClaimProjectionDto> findClaimsByOrderItemId(long orderItemId) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                OrderClaimProjectionDto.class,
+                                orderClaimJpaEntity.id,
+                                orderClaimJpaEntity.orderItemId,
+                                orderClaimJpaEntity.claimNumber,
+                                orderClaimJpaEntity.claimType,
+                                orderClaimJpaEntity.claimStatus,
+                                orderClaimJpaEntity.quantity,
+                                orderClaimJpaEntity.reasonType,
+                                orderClaimJpaEntity.reasonDetail,
+                                orderClaimJpaEntity.collectMethod,
+                                orderClaimJpaEntity.originalAmount,
+                                orderClaimJpaEntity.deductionAmount,
+                                orderClaimJpaEntity.deductionReason,
+                                orderClaimJpaEntity.refundAmount,
+                                orderClaimJpaEntity.refundMethod,
+                                orderClaimJpaEntity.refundedAt,
+                                orderClaimJpaEntity.requestedAt,
+                                orderClaimJpaEntity.completedAt,
+                                orderClaimJpaEntity.rejectedAt))
+                .from(orderClaimJpaEntity)
+                .where(orderClaimJpaEntity.orderItemId.eq(orderItemId))
+                .orderBy(orderClaimJpaEntity.requestedAt.desc())
+                .fetch();
+    }
+
+    /** 주문상품 ID 목록 기반 취소 일괄 조회. */
+    public List<OrderCancelProjectionDto> findCancelsByOrderItemIds(List<Long> orderItemIds) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                OrderCancelProjectionDto.class,
+                                orderCancelJpaEntity.id,
+                                orderCancelJpaEntity.orderItemId,
+                                orderCancelJpaEntity.cancelNumber,
+                                orderCancelJpaEntity.cancelStatus,
+                                orderCancelJpaEntity.quantity,
+                                orderCancelJpaEntity.reasonType,
+                                orderCancelJpaEntity.reasonDetail,
+                                orderCancelJpaEntity.originalAmount,
+                                orderCancelJpaEntity.refundAmount,
+                                orderCancelJpaEntity.refundMethod,
+                                orderCancelJpaEntity.refundedAt,
+                                orderCancelJpaEntity.requestedAt,
+                                orderCancelJpaEntity.completedAt))
+                .from(orderCancelJpaEntity)
+                .where(orderCancelJpaEntity.orderItemId.in(orderItemIds))
+                .orderBy(orderCancelJpaEntity.requestedAt.desc())
+                .fetch();
+    }
+
+    /** 주문상품 ID 목록 기반 클레임 일괄 조회. */
+    public List<OrderClaimProjectionDto> findClaimsByOrderItemIds(List<Long> orderItemIds) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                OrderClaimProjectionDto.class,
+                                orderClaimJpaEntity.id,
+                                orderClaimJpaEntity.orderItemId,
+                                orderClaimJpaEntity.claimNumber,
+                                orderClaimJpaEntity.claimType,
+                                orderClaimJpaEntity.claimStatus,
+                                orderClaimJpaEntity.quantity,
+                                orderClaimJpaEntity.reasonType,
+                                orderClaimJpaEntity.reasonDetail,
+                                orderClaimJpaEntity.collectMethod,
+                                orderClaimJpaEntity.originalAmount,
+                                orderClaimJpaEntity.deductionAmount,
+                                orderClaimJpaEntity.deductionReason,
+                                orderClaimJpaEntity.refundAmount,
+                                orderClaimJpaEntity.refundMethod,
+                                orderClaimJpaEntity.refundedAt,
+                                orderClaimJpaEntity.requestedAt,
+                                orderClaimJpaEntity.completedAt,
+                                orderClaimJpaEntity.rejectedAt))
+                .from(orderClaimJpaEntity)
+                .where(orderClaimJpaEntity.orderItemId.in(orderItemIds))
+                .orderBy(orderClaimJpaEntity.requestedAt.desc())
+                .fetch();
+    }
+
+    /** 주문 ID 목록으로 주문 기본정보 일괄 조회 (orders + payments LEFT JOIN). */
+    public List<OrderListProjectionDto> findOrdersByIds(List<String> orderIds) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                OrderListProjectionDto.class,
+                                orderJpaEntity.id,
+                                orderJpaEntity.orderNumber,
+                                orderJpaEntity.status,
+                                orderJpaEntity.salesChannelId,
+                                orderJpaEntity.shopId,
+                                orderJpaEntity.shopCode,
+                                orderJpaEntity.shopName,
+                                orderJpaEntity.externalOrderNo,
+                                orderJpaEntity.externalOrderedAt,
+                                orderJpaEntity.buyerName,
+                                orderJpaEntity.buyerEmail,
+                                orderJpaEntity.buyerPhone,
+                                orderJpaEntity.createdAt,
+                                orderJpaEntity.updatedAt,
+                                paymentJpaEntity.id,
+                                paymentJpaEntity.paymentNumber,
+                                paymentJpaEntity.paymentStatus,
+                                paymentJpaEntity.paymentMethod,
+                                paymentJpaEntity.paymentAmount,
+                                paymentJpaEntity.paidAt,
+                                JPAExpressions.select(orderItemJpaEntity.count())
+                                        .from(orderItemJpaEntity)
+                                        .where(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))))
+                .from(orderJpaEntity)
+                .leftJoin(paymentJpaEntity)
+                .on(conditionBuilder.paymentJoinCondition())
+                .where(orderJpaEntity.id.in(orderIds), conditionBuilder.orderNotDeleted())
+                .fetch();
+    }
+
+    // ===== 기존 주문(order) 기반 조회 =====
 
     /** 주문 목록 조회 (orders + payments LEFT JOIN + item count subquery). */
     public List<OrderListProjectionDto> searchOrders(OrderSearchCriteria criteria) {
@@ -55,6 +377,8 @@ public class OrderCompositeQueryDslRepository {
                                 orderJpaEntity.buyerPhone,
                                 orderJpaEntity.createdAt,
                                 orderJpaEntity.updatedAt,
+                                paymentJpaEntity.id,
+                                paymentJpaEntity.paymentNumber,
                                 paymentJpaEntity.paymentStatus,
                                 paymentJpaEntity.paymentMethod,
                                 paymentJpaEntity.paymentAmount,
@@ -104,6 +428,8 @@ public class OrderCompositeQueryDslRepository {
                                         orderJpaEntity.buyerPhone,
                                         orderJpaEntity.createdAt,
                                         orderJpaEntity.updatedAt,
+                                        paymentJpaEntity.id,
+                                        paymentJpaEntity.paymentNumber,
                                         paymentJpaEntity.paymentStatus,
                                         paymentJpaEntity.paymentMethod,
                                         paymentJpaEntity.paymentAmount,
@@ -132,6 +458,7 @@ public class OrderCompositeQueryDslRepository {
                                 Projections.constructor(
                                         PaymentProjectionDto.class,
                                         paymentJpaEntity.id,
+                                        paymentJpaEntity.paymentNumber,
                                         paymentJpaEntity.orderId,
                                         paymentJpaEntity.paymentStatus,
                                         paymentJpaEntity.paymentMethod,

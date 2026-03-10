@@ -10,12 +10,12 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResp
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.mapper.OrderQueryApiMapper;
 import com.ryuqq.marketplace.application.order.dto.query.OrderSearchParams;
-import com.ryuqq.marketplace.application.order.dto.response.OrderDetailResult;
-import com.ryuqq.marketplace.application.order.dto.response.OrderPageResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
+import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
+import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
 import com.ryuqq.marketplace.application.order.port.in.query.GetOrderDetailUseCase;
-import com.ryuqq.marketplace.application.order.port.in.query.GetOrderListUseCase;
 import com.ryuqq.marketplace.application.order.port.in.query.GetOrderSummaryUseCase;
+import com.ryuqq.marketplace.application.order.port.in.query.GetProductOrderListUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
@@ -26,29 +26,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** 주문 조회 Controller. */
+/** 주문 조회 Controller (V5). */
 @Tag(name = "주문 조회", description = "주문 조회 API")
 @RestController
 @RequestMapping(OrderAdminEndpoints.ORDERS)
 public class OrderQueryController {
 
-    private final GetOrderListUseCase getOrderListUseCase;
+    private final GetProductOrderListUseCase getProductOrderListUseCase;
     private final GetOrderDetailUseCase getOrderDetailUseCase;
     private final GetOrderSummaryUseCase getOrderSummaryUseCase;
     private final OrderQueryApiMapper mapper;
 
     public OrderQueryController(
-            GetOrderListUseCase getOrderListUseCase,
+            GetProductOrderListUseCase getProductOrderListUseCase,
             GetOrderDetailUseCase getOrderDetailUseCase,
             GetOrderSummaryUseCase getOrderSummaryUseCase,
             OrderQueryApiMapper mapper) {
-        this.getOrderListUseCase = getOrderListUseCase;
+        this.getProductOrderListUseCase = getProductOrderListUseCase;
         this.getOrderDetailUseCase = getOrderDetailUseCase;
         this.getOrderSummaryUseCase = getOrderSummaryUseCase;
         this.mapper = mapper;
     }
 
-    @Operation(summary = "주문 목록 조회", description = "주문 목록을 페이지 단위로 조회합니다.")
+    @Operation(summary = "상품주문 목록 조회", description = "상품주문(아이템) 단위로 목록을 페이지 조회합니다.")
     @PreAuthorize("@access.hasPermission('order:read')")
     @RequirePermission(value = "order:read", description = "주문 목록 조회")
     @GetMapping
@@ -56,20 +56,20 @@ public class OrderQueryController {
             @ParameterObject SearchOrdersApiRequest request) {
 
         OrderSearchParams params = mapper.toSearchParams(request);
-        OrderPageResult pageResult = getOrderListUseCase.execute(params);
+        ProductOrderPageResult pageResult = getProductOrderListUseCase.execute(params);
         PageApiResponse<OrderListApiResponse> response = mapper.toPageResponse(pageResult);
 
         return ResponseEntity.ok(ApiResponse.of(response));
     }
 
-    @Operation(summary = "주문 상세 조회", description = "주문 상세 정보를 조회합니다.")
+    @Operation(summary = "상품주문 상세 조회", description = "상품주문(아이템) 단위 상세 정보를 조회합니다.")
     @PreAuthorize("@access.hasPermission('order:read')")
     @RequirePermission(value = "order:read", description = "주문 상세 조회")
-    @GetMapping(OrderAdminEndpoints.ORDER_ID)
+    @GetMapping(OrderAdminEndpoints.ORDER_ITEM_ID)
     public ResponseEntity<ApiResponse<OrderDetailApiResponse>> getOrderDetail(
-            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ID) String orderId) {
+            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) long orderItemId) {
 
-        OrderDetailResult result = getOrderDetailUseCase.execute(orderId);
+        ProductOrderDetailResult result = getOrderDetailUseCase.execute(orderItemId);
         OrderDetailApiResponse response = mapper.toDetailResponse(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));

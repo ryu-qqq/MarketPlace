@@ -11,6 +11,7 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SetofProductGroupRegistrationRequest(
+        Long productGroupId,
         Long sellerId,
         Long brandId,
         Long categoryId,

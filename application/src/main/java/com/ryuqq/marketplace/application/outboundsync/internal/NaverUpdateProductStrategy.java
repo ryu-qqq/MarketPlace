@@ -77,7 +77,8 @@ public class NaverUpdateProductStrategy implements OutboundSyncExecutionStrategy
                     mapping.categoryId(),
                     mapping.brandId(),
                     outboundProduct.externalProductId(),
-                    context.sellerSalesChannel());
+                    context.sellerSalesChannel(),
+                    context.changedAreas());
 
             log.info(
                     "네이버 상품 수정 성공: productGroupId={}, externalProductId={}",

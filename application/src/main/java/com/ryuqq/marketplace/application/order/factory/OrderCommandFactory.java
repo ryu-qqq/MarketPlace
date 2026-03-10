@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
+import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
 import com.ryuqq.marketplace.domain.order.vo.BuyerName;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderItemPrice;
@@ -60,8 +61,10 @@ public class OrderCommandFactory {
                         Email.of(command.buyerEmail()),
                         PhoneNumber.of(command.buyerPhone()));
 
+        PaymentNumber paymentNumber = PaymentNumber.generate();
         PaymentInfo paymentInfo =
                 PaymentInfo.of(
+                        paymentNumber,
                         command.paymentMethod(),
                         Money.of(command.totalPaymentAmount()),
                         command.paidAt());

@@ -5,9 +5,12 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegis
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
+import com.ryuqq.marketplace.adapter.out.client.setof.strategy.SetofProductUpdateExecutorProvider;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,11 +35,15 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
 
     private final RestClient restClient;
     private final SetofCommerceProductMapper mapper;
+    private final SetofProductUpdateExecutorProvider updateExecutorProvider;
 
     public SetofCommerceProductClientAdapter(
-            RestClient setofCommerceRestClient, SetofCommerceProductMapper mapper) {
+            RestClient setofCommerceRestClient,
+            SetofCommerceProductMapper mapper,
+            SetofProductUpdateExecutorProvider updateExecutorProvider) {
         this.restClient = setofCommerceRestClient;
         this.mapper = mapper;
+        this.updateExecutorProvider = updateExecutorProvider;
     }
 
     @Override
@@ -87,23 +94,24 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
-            SellerSalesChannel channel) {
-
-        SetofProductGroupUpdateRequest request =
-                mapper.toUpdateRequest(bundle, externalCategoryId, externalBrandId);
+            SellerSalesChannel channel,
+            Set<ChangedArea> changedAreas) {
 
         log.info(
-                "세토프 커머스 상품 수정 요청: productGroupId={}, externalProductId={}",
+                "세토프 커머스 상품 수정 요청: productGroupId={}, externalProductId={}, changedAreas={}",
                 bundle.group().idValue(),
-                externalProductId);
+                externalProductId,
+                changedAreas);
 
-        restClient
-                .put()
-                .uri("/api/v2/admin/product-groups/{productGroupId}", externalProductId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
+        updateExecutorProvider
+                .resolve(changedAreas)
+                .execute(
+                        bundle,
+                        externalCategoryId,
+                        externalBrandId,
+                        externalProductId,
+                        channel,
+                        changedAreas);
 
         log.info(
                 "세토프 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",

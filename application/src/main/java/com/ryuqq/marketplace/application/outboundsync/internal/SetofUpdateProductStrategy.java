@@ -77,7 +77,8 @@ public class SetofUpdateProductStrategy implements OutboundSyncExecutionStrategy
                     mapping.categoryId(),
                     mapping.brandId(),
                     outboundProduct.externalProductId(),
-                    context.sellerSalesChannel());
+                    context.sellerSalesChannel(),
+                    context.changedAreas());
 
             log.info(
                     "세토프 상품 수정 성공: productGroupId={}, externalProductId={}",

@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.outboundsync.factory;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
+import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
@@ -10,6 +11,8 @@ import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 /**
@@ -51,13 +54,51 @@ public class OutboundSyncCommandFactory {
             SellerId sellerId,
             List<SalesChannelId> salesChannelIds,
             SyncType syncType) {
+        return createOutboxesForSync(productGroupId, sellerId, salesChannelIds, syncType, Set.of());
+    }
+
+    /**
+     * 변경 영역 정보를 포함하여 채널별 OutboundSyncOutbox를 생성합니다.
+     *
+     * @param productGroupId 상품그룹 ID
+     * @param sellerId 셀러 ID
+     * @param salesChannelIds 대상 채널 ID 목록
+     * @param syncType 연동 타입
+     * @param changedAreas 변경된 영역 집합 (비어있으면 전체 수정으로 간주)
+     * @return 생성된 Outbox 목록
+     */
+    public List<OutboundSyncOutbox> createOutboxesForSync(
+            ProductGroupId productGroupId,
+            SellerId sellerId,
+            List<SalesChannelId> salesChannelIds,
+            SyncType syncType,
+            Set<ChangedArea> changedAreas) {
         Instant now = timeProvider.now();
+        String payload = toPayload(changedAreas);
         return salesChannelIds.stream()
                 .map(
                         channelId ->
                                 OutboundSyncOutbox.forNew(
-                                        productGroupId, channelId, sellerId, syncType, "{}", now))
+                                        productGroupId,
+                                        channelId,
+                                        sellerId,
+                                        syncType,
+                                        payload,
+                                        now))
                 .toList();
+    }
+
+    private static String toPayload(Set<ChangedArea> changedAreas) {
+        if (changedAreas == null || changedAreas.isEmpty()) {
+            return "{}";
+        }
+        String areas =
+                changedAreas.stream()
+                        .map(ChangedArea::name)
+                        .sorted()
+                        .map(name -> "\"" + name + "\"")
+                        .collect(Collectors.joining(","));
+        return "{\"changedAreas\":[" + areas + "]}";
     }
 
     /** 채널 목록에 대한 OutboundProduct 목록 생성. (필터링은 호출측에서 수행) */
