@@ -11,6 +11,9 @@ import java.util.List;
  * @param productOrder 상품주문 레벨 정보
  * @param delivery 배송 정보
  */
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+        value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"},
+        justification = "Record DTO – immutable by convention")
 public record NaverProductOrderDetail(
         NaverProductOrderOrder order, ProductOrderInfo productOrder, NaverDeliveryInfo delivery) {
 
@@ -72,6 +75,9 @@ public record NaverProductOrderDetail(
      * @param currentClaim 현재 진행 중 클레임
      * @param completedClaims 완료된 클레임 목록
      */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+            value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"},
+            justification = "Record DTO – immutable by convention")
     public record ProductOrderInfo(
             String productOrderId,
             String productOrderStatus,

@@ -40,7 +40,8 @@ public final class NaverProductExportRunner {
         int size = 500;
         int totalExported = 0;
 
-        try (PrintWriter writer = new PrintWriter(new FileWriter(OUTPUT_FILE))) {
+        try (PrintWriter writer =
+                new PrintWriter(new FileWriter(OUTPUT_FILE, StandardCharsets.UTF_8))) {
             writer.println("origin_product_no,seller_management_code,status_type,name");
 
             while (true) {
@@ -74,7 +75,9 @@ public final class NaverProductExportRunner {
                 }
 
                 for (NaverProductSearchResponse.ProductContent content : response.contents()) {
-                    if (content.channelProducts() == null) continue;
+                    if (content.channelProducts() == null) {
+                        continue;
+                    }
 
                     for (NaverProductSearchResponse.ChannelProduct cp : content.channelProducts()) {
                         String escapedName =
