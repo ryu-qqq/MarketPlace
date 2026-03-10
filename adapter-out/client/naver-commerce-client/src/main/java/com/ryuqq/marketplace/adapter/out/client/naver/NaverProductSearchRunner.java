@@ -33,7 +33,7 @@ public final class NaverProductSearchRunner {
         // 1. 토큰 발급
         System.out.println("=== 1. 토큰 발급 ===");
         String token = getAccessToken(httpClient, mapper);
-        System.out.println("토큰 발급 성공: " + token.substring(0, 20) + "...");
+        System.out.println("토큰 발급 성공");
 
         // 2. 상품 목록 조회 (1페이지, 50건)
         System.out.println("\n=== 2. 상품 목록 조회 ===");

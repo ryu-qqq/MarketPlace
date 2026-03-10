@@ -21,6 +21,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,7 +55,7 @@ public class OrderQueryController {
     @RequirePermission(value = "order:read", description = "주문 목록 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<PageApiResponse<OrderListApiResponse>>> searchOrders(
-            @ParameterObject SearchOrdersApiRequest request) {
+            @Valid @ParameterObject SearchOrdersApiRequest request) {
 
         OrderSearchParams params = mapper.toSearchParams(request);
         ProductOrderPageResult pageResult = getProductOrderListUseCase.execute(params);
@@ -67,7 +69,7 @@ public class OrderQueryController {
     @RequirePermission(value = "order:read", description = "주문 상세 조회")
     @GetMapping(OrderAdminEndpoints.ORDER_ITEM_ID)
     public ResponseEntity<ApiResponse<OrderDetailApiResponse>> getOrderDetail(
-            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) long orderItemId) {
+            @Positive @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) long orderItemId) {
 
         ProductOrderDetailResult result = getOrderDetailUseCase.execute(orderItemId);
         OrderDetailApiResponse response = mapper.toDetailResponse(result);

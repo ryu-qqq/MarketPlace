@@ -39,12 +39,13 @@ public final class NaverProductExportRunner {
         int page = 1;
         int size = 500;
         int totalExported = 0;
+        int maxPages = 10_000;
 
         try (PrintWriter writer =
                 new PrintWriter(new FileWriter(OUTPUT_FILE, StandardCharsets.UTF_8))) {
             writer.println("origin_product_no,seller_management_code,status_type,name");
 
-            while (true) {
+            while (page <= maxPages) {
                 NaverProductSearchRequest request =
                         NaverProductSearchRequest.allProducts(page, size);
                 String requestJson = mapper.writeValueAsString(request);

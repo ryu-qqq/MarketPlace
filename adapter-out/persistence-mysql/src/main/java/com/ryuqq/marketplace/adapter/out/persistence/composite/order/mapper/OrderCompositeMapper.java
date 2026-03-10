@@ -41,7 +41,7 @@ public class OrderCompositeMapper {
                 dto.paymentNumber(),
                 dto.paymentStatus(),
                 dto.paymentMethod(),
-                dto.paymentAmount(),
+                dto.paymentAmount() != null ? dto.paymentAmount() : 0,
                 dto.paidAt(),
                 dto.itemCount(),
                 dto.createdAt(),
@@ -82,7 +82,7 @@ public class OrderCompositeMapper {
                 order.paymentStatus(),
                 order.paymentMethod(),
                 null,
-                order.paymentAmount(),
+                order.paymentAmount() != null ? order.paymentAmount() : 0,
                 order.paidAt(),
                 null);
     }
@@ -235,7 +235,7 @@ public class OrderCompositeMapper {
                         dto.paymentNumber(),
                         dto.paymentStatus(),
                         dto.paymentMethod(),
-                        dto.paymentAmount(),
+                        dto.paymentAmount() != null ? dto.paymentAmount() : 0,
                         dto.paidAt(),
                         0L,
                         dto.orderCreatedAt(),
@@ -249,7 +249,7 @@ public class OrderCompositeMapper {
                                 dto.paymentStatus(),
                                 dto.paymentMethod(),
                                 dto.paymentAgencyId(),
-                                dto.paymentAmount(),
+                                dto.paymentAmount() != null ? dto.paymentAmount() : 0,
                                 dto.paidAt(),
                                 dto.canceledAt())
                         : null;
