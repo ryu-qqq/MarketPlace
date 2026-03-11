@@ -32,6 +32,8 @@ public final class OrderJpaEntityFixtures {
                 DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_ORDER_NO,
                 now,
+                null,
+                null,
                 now,
                 now,
                 null);
@@ -51,6 +53,8 @@ public final class OrderJpaEntityFixtures {
                 DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_ORDER_NO,
                 now,
+                null,
+                null,
                 now,
                 now,
                 null);
@@ -70,6 +74,8 @@ public final class OrderJpaEntityFixtures {
                 DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_ORDER_NO,
                 now,
+                null,
+                null,
                 now,
                 now,
                 null);
@@ -89,6 +95,8 @@ public final class OrderJpaEntityFixtures {
                 DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_ORDER_NO,
                 now,
+                null,
+                null,
                 now,
                 now,
                 now);

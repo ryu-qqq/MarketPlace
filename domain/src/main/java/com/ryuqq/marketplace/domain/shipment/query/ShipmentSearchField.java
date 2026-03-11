@@ -5,8 +5,8 @@ import com.ryuqq.marketplace.domain.common.vo.SearchField;
 /** 배송 검색 필드. */
 public enum ShipmentSearchField implements SearchField {
 
-    /** 주문 ID */
-    ORDER_ID("orderId"),
+    /** 상품주문 ID */
+    ORDER_ITEM_ID("orderItemId"),
 
     /** 송장번호 */
     TRACKING_NUMBER("trackingNumber"),

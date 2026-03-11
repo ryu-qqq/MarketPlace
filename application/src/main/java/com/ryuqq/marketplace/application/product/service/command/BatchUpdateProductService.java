@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.application.product.manager.ProductCommandManager;
 import com.ryuqq.marketplace.application.product.port.in.command.BatchUpdateProductUseCase;
 import com.ryuqq.marketplace.application.product.validator.ProductOwnershipValidator;
 import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.product.exception.DuplicateProductIdException;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
@@ -74,7 +75,8 @@ public class BatchUpdateProductService implements BatchUpdateProductUseCase {
         for (Product product : products) {
             if (processedGroupIds.add(product.productGroupIdValue())) {
                 updateOutboxCoordinator.createUpdateOutboxesIfNeeded(
-                        ProductGroupId.of(product.productGroupIdValue()));
+                        ProductGroupId.of(product.productGroupIdValue()),
+                        Set.of(ChangedArea.PRICE, ChangedArea.STOCK));
             }
         }
     }

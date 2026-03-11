@@ -29,7 +29,8 @@ public record SchedulerProperties(Jobs jobs) {
             OutboundSellerOutbox outboundSellerOutbox,
             LegacyConversionSeeder legacyConversionSeeder,
             InboundOrderPolling inboundOrderPolling,
-            InboundOrderRetry inboundOrderRetry) {}
+            InboundOrderRetry inboundOrderRetry,
+            ShipmentOutbox shipmentOutbox) {}
 
     public record OutboundSyncOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
@@ -94,4 +95,6 @@ public record SchedulerProperties(Jobs jobs) {
             long salesChannelId, boolean enabled, String cron, String timezone, int batchSize) {}
 
     public record InboundOrderRetry(boolean enabled, String cron, String timezone, int batchSize) {}
+
+    public record ShipmentOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 }

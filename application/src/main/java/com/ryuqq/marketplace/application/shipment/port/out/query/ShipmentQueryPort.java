@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.shipment.port.out.query;
 
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
 import com.ryuqq.marketplace.domain.shipment.query.ShipmentSearchCriteria;
@@ -13,7 +14,9 @@ public interface ShipmentQueryPort {
 
     Optional<Shipment> findById(ShipmentId id);
 
-    Optional<Shipment> findByOrderId(String orderId);
+    Optional<Shipment> findByOrderItemId(OrderItemId orderItemId);
+
+    List<Shipment> findByOrderItemIds(List<OrderItemId> orderItemIds);
 
     List<Shipment> findByCriteria(ShipmentSearchCriteria criteria);
 

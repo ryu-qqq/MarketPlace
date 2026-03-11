@@ -19,11 +19,8 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
     @Column(name = "shipment_number", nullable = false, length = 50)
     private String shipmentNumber;
 
-    @Column(name = "order_id", nullable = false, length = 36)
-    private String orderId;
-
-    @Column(name = "order_number", nullable = false, length = 50)
-    private String orderNumber;
+    @Column(name = "order_item_id", nullable = false)
+    private Long orderItemId;
 
     @Column(name = "status", nullable = false, length = 20)
     private String status;
@@ -56,8 +53,7 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
     private ShipmentJpaEntity(
             String id,
             String shipmentNumber,
-            String orderId,
-            String orderNumber,
+            Long orderItemId,
             String status,
             String shipmentMethodType,
             String courierCode,
@@ -72,8 +68,7 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
         super(createdAt, updatedAt, deletedAt);
         this.id = id;
         this.shipmentNumber = shipmentNumber;
-        this.orderId = orderId;
-        this.orderNumber = orderNumber;
+        this.orderItemId = orderItemId;
         this.status = status;
         this.shipmentMethodType = shipmentMethodType;
         this.courierCode = courierCode;
@@ -87,8 +82,7 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
     public static ShipmentJpaEntity create(
             String id,
             String shipmentNumber,
-            String orderId,
-            String orderNumber,
+            Long orderItemId,
             String status,
             String shipmentMethodType,
             String courierCode,
@@ -103,8 +97,7 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
         return new ShipmentJpaEntity(
                 id,
                 shipmentNumber,
-                orderId,
-                orderNumber,
+                orderItemId,
                 status,
                 shipmentMethodType,
                 courierCode,
@@ -126,12 +119,8 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
         return shipmentNumber;
     }
 
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public String getOrderNumber() {
-        return orderNumber;
+    public Long getOrderItemId() {
+        return orderItemId;
     }
 
     public String getStatus() {

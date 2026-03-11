@@ -2,9 +2,11 @@ package com.ryuqq.marketplace.application.outboundsync.manager;
 
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -44,10 +46,16 @@ public class SalesChannelProductClientManager {
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
-            SellerSalesChannel channel) {
+            SellerSalesChannel channel,
+            Set<ChangedArea> changedAreas) {
         resolve(channelCode)
                 .updateProduct(
-                        bundle, externalCategoryId, externalBrandId, externalProductId, channel);
+                        bundle,
+                        externalCategoryId,
+                        externalBrandId,
+                        externalProductId,
+                        channel,
+                        changedAreas);
     }
 
     public void deleteProduct(

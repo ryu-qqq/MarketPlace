@@ -83,7 +83,7 @@ public class FullProductGroupRegistrationCoordinator {
                         productGroupId, bundle.descriptionContent()));
 
         // 5. Notice → Command 기반 등록 (고시정보가 있는 경우만)
-        if (bundle.noticeCategoryId() > 0) {
+        if (bundle.noticeCategoryId() > 0 && !bundle.noticeEntries().isEmpty()) {
             noticeCommandCoordinator.register(
                     new RegisterProductNoticeCommand(
                             productGroupId, bundle.noticeCategoryId(), bundle.noticeEntries()));

@@ -7,11 +7,13 @@ import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangePro
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
 import com.ryuqq.marketplace.application.productgroup.port.in.command.BatchChangeProductGroupStatusUseCase;
+import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 
 /**
@@ -64,7 +66,8 @@ public class BatchChangeProductGroupStatusService implements BatchChangeProductG
             } else if (targetStatus.requiresExternalDeregistration()) {
                 deactivationOutboxCoordinator.createDeleteOutboxesIfNeeded(productGroup.id());
             } else if (targetStatus.isSoldout()) {
-                updateOutboxCoordinator.createUpdateOutboxesIfNeeded(productGroup.id());
+                updateOutboxCoordinator.createUpdateOutboxesIfNeeded(
+                        productGroup.id(), Set.of(ChangedArea.STATUS));
             }
         }
     }

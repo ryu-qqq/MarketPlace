@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.shipment.ShipmentJpaEntityF
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.ShipmentJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.mapper.ShipmentJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.repository.ShipmentQueryDslRepository;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.ShipmentFixtures;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
@@ -106,28 +107,29 @@ class ShipmentQueryAdapterTest {
     }
 
     // ========================================================================
-    // 2. findByOrderId 테스트
+    // 2. findByOrderItemId 테스트
     // ========================================================================
 
     @Nested
-    @DisplayName("findByOrderId 메서드 테스트")
-    class FindByOrderIdTest {
+    @DisplayName("findByOrderItemId 메서드 테스트")
+    class FindByOrderItemIdTest {
 
         @Test
-        @DisplayName("존재하는 orderId로 조회 시 Domain을 반환합니다")
-        void findByOrderId_WithExistingOrderId_ReturnsDomain() {
+        @DisplayName("존재하는 orderItemId로 조회 시 Domain을 반환합니다")
+        void findByOrderItemId_WithExistingOrderItemId_ReturnsDomain() {
             // given
-            String orderId = "ORD-20260218-9999";
+            Long orderItemId = 1001L;
             ShipmentJpaEntity entity =
-                    ShipmentJpaEntityFixtures.readyEntityWithOrderId(
-                            ShipmentJpaEntityFixtures.DEFAULT_ID, orderId);
+                    ShipmentJpaEntityFixtures.readyEntityWithOrderItemId(
+                            ShipmentJpaEntityFixtures.DEFAULT_ID, orderItemId);
             Shipment domain = ShipmentFixtures.readyShipment();
 
-            given(queryDslRepository.findByOrderId(orderId)).willReturn(Optional.of(entity));
+            given(queryDslRepository.findByOrderItemId(orderItemId))
+                    .willReturn(Optional.of(entity));
             given(mapper.toDomain(entity)).willReturn(domain);
 
             // when
-            Optional<Shipment> result = queryAdapter.findByOrderId(orderId);
+            Optional<Shipment> result = queryAdapter.findByOrderItemId(OrderItemId.of(orderItemId));
 
             // then
             assertThat(result).isPresent();
@@ -135,14 +137,14 @@ class ShipmentQueryAdapterTest {
         }
 
         @Test
-        @DisplayName("존재하지 않는 orderId로 조회 시 빈 Optional을 반환합니다")
-        void findByOrderId_WithNonExistingOrderId_ReturnsEmpty() {
+        @DisplayName("존재하지 않는 orderItemId로 조회 시 빈 Optional을 반환합니다")
+        void findByOrderItemId_WithNonExistingOrderItemId_ReturnsEmpty() {
             // given
-            String orderId = "NON-EXISTENT-ORDER";
-            given(queryDslRepository.findByOrderId(orderId)).willReturn(Optional.empty());
+            Long orderItemId = 9999L;
+            given(queryDslRepository.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
 
             // when
-            Optional<Shipment> result = queryAdapter.findByOrderId(orderId);
+            Optional<Shipment> result = queryAdapter.findByOrderItemId(OrderItemId.of(orderItemId));
 
             // then
             assertThat(result).isEmpty();

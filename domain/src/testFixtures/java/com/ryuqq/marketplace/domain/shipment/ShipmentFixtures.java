@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.domain.shipment;
 
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentNumber;
@@ -20,8 +21,7 @@ public final class ShipmentFixtures {
     // ===== 기본 상수 =====
     private static final String DEFAULT_SHIPMENT_ID = "01944b2a-1234-7fff-8888-abcdef012345";
     private static final String DEFAULT_SHIPMENT_NUMBER = "SHP-20260218-0001";
-    private static final String DEFAULT_ORDER_ID = "ORD-20260218-9999";
-    private static final String DEFAULT_ORDER_NUMBER = "ON-20260218-0001";
+    private static final long DEFAULT_ORDER_ITEM_ID = 1001L;
     private static final String DEFAULT_TRACKING_NUMBER = "1234567890";
 
     // ===== ID Fixtures =====
@@ -32,6 +32,16 @@ public final class ShipmentFixtures {
 
     public static ShipmentId shipmentId(String value) {
         return ShipmentId.of(value);
+    }
+
+    // ===== OrderItemId Fixtures =====
+
+    public static OrderItemId defaultOrderItemId() {
+        return OrderItemId.of(DEFAULT_ORDER_ITEM_ID);
+    }
+
+    public static OrderItemId orderItemId(long value) {
+        return OrderItemId.of(value);
     }
 
     // ===== ShipmentNumber Fixtures =====
@@ -64,8 +74,7 @@ public final class ShipmentFixtures {
         return Shipment.forNew(
                 defaultShipmentId(),
                 defaultShipmentNumber(),
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                defaultOrderItemId(),
                 CommonVoFixtures.now());
     }
 
@@ -75,8 +84,7 @@ public final class ShipmentFixtures {
         return Shipment.reconstitute(
                 defaultShipmentId(),
                 defaultShipmentNumber(),
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                defaultOrderItemId(),
                 ShipmentStatus.READY,
                 null,
                 null,
@@ -91,8 +99,7 @@ public final class ShipmentFixtures {
         return Shipment.reconstitute(
                 defaultShipmentId(),
                 defaultShipmentNumber(),
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                defaultOrderItemId(),
                 ShipmentStatus.PREPARING,
                 null,
                 null,
@@ -107,8 +114,7 @@ public final class ShipmentFixtures {
         return Shipment.reconstitute(
                 defaultShipmentId(),
                 defaultShipmentNumber(),
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                defaultOrderItemId(),
                 ShipmentStatus.SHIPPED,
                 defaultShipmentMethod(),
                 DEFAULT_TRACKING_NUMBER,
@@ -123,8 +129,7 @@ public final class ShipmentFixtures {
         return Shipment.reconstitute(
                 defaultShipmentId(),
                 defaultShipmentNumber(),
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                defaultOrderItemId(),
                 ShipmentStatus.IN_TRANSIT,
                 defaultShipmentMethod(),
                 DEFAULT_TRACKING_NUMBER,
@@ -139,8 +144,7 @@ public final class ShipmentFixtures {
         return Shipment.reconstitute(
                 defaultShipmentId(),
                 defaultShipmentNumber(),
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                defaultOrderItemId(),
                 ShipmentStatus.DELIVERED,
                 defaultShipmentMethod(),
                 DEFAULT_TRACKING_NUMBER,
@@ -155,8 +159,7 @@ public final class ShipmentFixtures {
         return Shipment.reconstitute(
                 defaultShipmentId(),
                 defaultShipmentNumber(),
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                defaultOrderItemId(),
                 ShipmentStatus.FAILED,
                 defaultShipmentMethod(),
                 DEFAULT_TRACKING_NUMBER,
@@ -171,8 +174,7 @@ public final class ShipmentFixtures {
         return Shipment.reconstitute(
                 defaultShipmentId(),
                 defaultShipmentNumber(),
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                defaultOrderItemId(),
                 ShipmentStatus.CANCELLED,
                 null,
                 null,

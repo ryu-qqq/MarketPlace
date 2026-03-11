@@ -3,10 +3,13 @@ package com.ryuqq.marketplace.application.shipment.service.command;
 import com.ryuqq.marketplace.application.shipment.dto.command.ShipSingleCommand;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory.ShipSingleContext;
-import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentOutboxPayloadBuilder;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ShipSingleUseCase;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
+import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
+import com.ryuqq.marketplace.domain.shipment.outbox.vo.ShipmentOutboxType;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentShipData;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +24,15 @@ import org.springframework.stereotype.Service;
 public class ShipSingleService implements ShipSingleUseCase {
 
     private final ShipmentReadManager readManager;
-    private final ShipmentCommandManager writeManager;
+    private final ShipmentPersistFacade persistFacade;
     private final ShipmentCommandFactory commandFactory;
 
     public ShipSingleService(
             ShipmentReadManager readManager,
-            ShipmentCommandManager writeManager,
+            ShipmentPersistFacade persistFacade,
             ShipmentCommandFactory commandFactory) {
         this.readManager = readManager;
-        this.writeManager = writeManager;
+        this.persistFacade = persistFacade;
         this.commandFactory = commandFactory;
     }
 
@@ -37,9 +40,17 @@ public class ShipSingleService implements ShipSingleUseCase {
     public void execute(ShipSingleCommand command) {
         ShipSingleContext context = commandFactory.createShipSingleContext(command);
 
-        Shipment shipment = readManager.getByOrderId(context.orderId());
+        Shipment shipment = readManager.getByOrderItemId(context.orderItemId());
         ShipmentShipData shipData = context.shipData();
         shipment.ship(shipData.trackingNumber(), shipData.method(), context.changedAt());
-        writeManager.persist(shipment);
+
+        ShipmentOutbox outbox =
+                ShipmentOutbox.forNew(
+                        context.orderItemId(),
+                        ShipmentOutboxType.SHIP,
+                        ShipmentOutboxPayloadBuilder.shipPayload(command),
+                        context.changedAt());
+
+        persistFacade.persistWithOutbox(shipment, outbox);
     }
 }
