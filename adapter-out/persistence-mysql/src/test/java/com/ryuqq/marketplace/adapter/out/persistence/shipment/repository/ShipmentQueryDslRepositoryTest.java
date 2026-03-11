@@ -94,42 +94,43 @@ class ShipmentQueryDslRepositoryTest {
     }
 
     // ========================================================================
-    // 2. findByOrderId 테스트
+    // 2. findByOrderItemId 테스트
     // ========================================================================
 
     @Nested
-    @DisplayName("findByOrderId")
-    class FindByOrderIdTest {
+    @DisplayName("findByOrderItemId")
+    class FindByOrderItemIdTest {
 
         @Test
-        @DisplayName("미삭제 Entity는 orderId로 조회됩니다")
-        void findByOrderId_WithNotDeleted_ReturnsEntity() {
-            String orderId = "ORD-FIND-001";
+        @DisplayName("미삭제 Entity는 orderItemId로 조회됩니다")
+        void findByOrderItemId_WithNotDeleted_ReturnsEntity() {
+            Long orderItemId = 2001L;
             ShipmentJpaEntity saved =
                     persist(
-                            ShipmentJpaEntityFixtures.readyEntityWithOrderId(
-                                    "id-order-001", orderId));
+                            ShipmentJpaEntityFixtures.readyEntityWithOrderItemId(
+                                    "id-order-001", orderItemId));
 
-            Optional<ShipmentJpaEntity> result = repository().findByOrderId(orderId);
+            Optional<ShipmentJpaEntity> result = repository().findByOrderItemId(orderItemId);
 
             assertThat(result).isPresent();
-            assertThat(result.get().getOrderId()).isEqualTo(orderId);
+            assertThat(result.get().getOrderItemId()).isEqualTo(orderItemId);
         }
 
         @Test
-        @DisplayName("삭제된 Entity는 orderId로 조회되지 않습니다")
-        void findByOrderId_WithDeleted_ReturnsEmpty() {
+        @DisplayName("삭제된 Entity는 orderItemId로 조회되지 않습니다")
+        void findByOrderItemId_WithDeleted_ReturnsEmpty() {
             ShipmentJpaEntity deleted = persist(ShipmentJpaEntityFixtures.deletedEntity());
 
-            Optional<ShipmentJpaEntity> result = repository().findByOrderId(deleted.getOrderId());
+            Optional<ShipmentJpaEntity> result =
+                    repository().findByOrderItemId(ShipmentJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID);
 
             assertThat(result).isEmpty();
         }
 
         @Test
-        @DisplayName("존재하지 않는 orderId 조회 시 빈 Optional을 반환합니다")
-        void findByOrderId_WithNonExistent_ReturnsEmpty() {
-            Optional<ShipmentJpaEntity> result = repository().findByOrderId("NON-EXISTENT-ORDER");
+        @DisplayName("존재하지 않는 orderItemId 조회 시 빈 Optional을 반환합니다")
+        void findByOrderItemId_WithNonExistent_ReturnsEmpty() {
+            Optional<ShipmentJpaEntity> result = repository().findByOrderItemId(99999L);
 
             assertThat(result).isEmpty();
         }

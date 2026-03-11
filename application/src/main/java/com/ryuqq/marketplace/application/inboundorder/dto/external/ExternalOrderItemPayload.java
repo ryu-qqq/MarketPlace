@@ -20,6 +20,10 @@ package com.ryuqq.marketplace.application.inboundorder.dto.external;
  * @param receiverAddressDetail 상세주소
  * @param deliveryRequest 배송 요청사항
  */
+@SuppressWarnings("PMD.MethodNamingConventions")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+        value = "NM_CONFUSING",
+        justification = "receiverZipCode follows domain convention")
 public record ExternalOrderItemPayload(
         String externalProductId,
         String externalOptionId,

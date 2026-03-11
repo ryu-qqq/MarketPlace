@@ -5,11 +5,12 @@ import java.util.List;
 /**
  * 발주확인 일괄 처리 커맨드.
  *
- * @param shipmentIds 발주확인 대상 배송 ID 목록
+ * @param orderItemIds 발주확인 대상 상품주문 ID 목록
+ * @param sellerId 셀러 ID (SUPER_ADMIN이면 null → 소유권 검증 skip)
  */
-public record ConfirmShipmentBatchCommand(List<String> shipmentIds) {
+public record ConfirmShipmentBatchCommand(List<Long> orderItemIds, Long sellerId) {
 
     public ConfirmShipmentBatchCommand {
-        shipmentIds = shipmentIds != null ? List.copyOf(shipmentIds) : List.of();
+        orderItemIds = orderItemIds != null ? List.copyOf(orderItemIds) : List.of();
     }
 }

@@ -145,6 +145,21 @@ scheduler:
         batch-size: 50
         timeout-seconds: 180
 
+    shipment-outbox:
+      process-pending:
+        enabled: true
+        cron: "*/5 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 50
+        delay-seconds: 5
+
+      recover-timeout:
+        enabled: true
+        cron: "0 */1 * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 50
+        timeout-seconds: 180
+
     description-publish:
       cron: "*/5 * * * * *"
       timezone: "Asia/Seoul"

@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.inboundorder.manager;
 
 import com.ryuqq.marketplace.application.inboundorder.port.out.command.InboundOrderCommandPort;
 import com.ryuqq.marketplace.domain.inboundorder.aggregate.InboundOrder;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,5 +19,10 @@ public class InboundOrderCommandManager {
     @Transactional
     public void persist(InboundOrder inboundOrder) {
         commandPort.save(inboundOrder);
+    }
+
+    @Transactional
+    public void persistAll(List<InboundOrder> inboundOrders) {
+        commandPort.saveAll(inboundOrders);
     }
 }

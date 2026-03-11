@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.shipment.manager;
 
 import com.ryuqq.marketplace.application.shipment.port.out.query.ShipmentQueryPort;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.exception.ShipmentNotFoundException;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
@@ -27,10 +28,16 @@ public class ShipmentReadManager {
     }
 
     @Transactional(readOnly = true)
-    public Shipment getByOrderId(String orderId) {
+    public Shipment getByOrderItemId(OrderItemId orderItemId) {
         return queryPort
-                .findByOrderId(orderId)
-                .orElseThrow(() -> new ShipmentNotFoundException(orderId));
+                .findByOrderItemId(orderItemId)
+                .orElseThrow(
+                        () -> new ShipmentNotFoundException(String.valueOf(orderItemId.value())));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Shipment> findByOrderItemIds(List<OrderItemId> orderItemIds) {
+        return queryPort.findByOrderItemIds(orderItemIds);
     }
 
     @Transactional(readOnly = true)

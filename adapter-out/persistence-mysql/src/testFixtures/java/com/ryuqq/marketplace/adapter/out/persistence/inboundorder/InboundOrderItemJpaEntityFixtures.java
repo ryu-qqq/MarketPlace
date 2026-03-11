@@ -60,6 +60,7 @@ public final class InboundOrderItemJpaEntityFixtures {
                 null,
                 null,
                 null,
+                null,
                 false,
                 now,
                 now);
@@ -93,6 +94,7 @@ public final class InboundOrderItemJpaEntityFixtures {
                 1L,
                 500L,
                 "SKU-001",
+                "테스트 상품그룹",
                 true,
                 now,
                 now);
@@ -120,6 +122,7 @@ public final class InboundOrderItemJpaEntityFixtures {
                 DEFAULT_RECEIVER_ADDRESS,
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
+                null,
                 null,
                 null,
                 null,

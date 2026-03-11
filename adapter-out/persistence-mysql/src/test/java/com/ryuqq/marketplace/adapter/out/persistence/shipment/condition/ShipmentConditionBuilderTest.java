@@ -77,31 +77,31 @@ class ShipmentConditionBuilderTest {
     }
 
     // ========================================================================
-    // 2. orderIdEq 테스트
+    // 2. orderItemIdEq 테스트
     // ========================================================================
 
     @Nested
-    @DisplayName("orderIdEq 메서드 테스트")
-    class OrderIdEqTest {
+    @DisplayName("orderItemIdEq 메서드 테스트")
+    class OrderItemIdEqTest {
 
         @Test
-        @DisplayName("유효한 orderId 입력 시 BooleanExpression을 반환합니다")
-        void orderIdEq_WithValidOrderId_ReturnsBooleanExpression() {
+        @DisplayName("유효한 orderItemId 입력 시 BooleanExpression을 반환합니다")
+        void orderItemIdEq_WithValidOrderItemId_ReturnsBooleanExpression() {
             // given
-            String orderId = "ORD-20260218-9999";
+            Long orderItemId = 1001L;
 
             // when
-            BooleanExpression result = conditionBuilder.orderIdEq(orderId);
+            BooleanExpression result = conditionBuilder.orderItemIdEq(orderItemId);
 
             // then
             assertThat(result).isNotNull();
         }
 
         @Test
-        @DisplayName("null orderId 입력 시 null을 반환합니다")
-        void orderIdEq_WithNullOrderId_ReturnsNull() {
+        @DisplayName("null orderItemId 입력 시 null을 반환합니다")
+        void orderItemIdEq_WithNullOrderItemId_ReturnsNull() {
             // when
-            BooleanExpression result = conditionBuilder.orderIdEq(null);
+            BooleanExpression result = conditionBuilder.orderItemIdEq(null);
 
             // then
             assertThat(result).isNull();
@@ -201,8 +201,8 @@ class ShipmentConditionBuilderTest {
             // given
             given(criteria.hasSearchCondition()).willReturn(true);
             given(criteria.hasSearchField()).willReturn(true);
-            given(criteria.searchField()).willReturn(ShipmentSearchField.ORDER_ID);
-            given(criteria.searchWord()).willReturn("ORD-2026");
+            given(criteria.searchField()).willReturn(ShipmentSearchField.ORDER_ITEM_ID);
+            given(criteria.searchWord()).willReturn("1001");
 
             // when
             BooleanExpression result = conditionBuilder.searchCondition(criteria);

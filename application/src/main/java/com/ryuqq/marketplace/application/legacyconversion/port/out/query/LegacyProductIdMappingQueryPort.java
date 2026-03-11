@@ -30,4 +30,13 @@ public interface LegacyProductIdMappingQueryPort {
      * @return SKU 매핑 목록
      */
     List<LegacyProductIdMapping> findByLegacyProductGroupId(long legacyProductGroupId);
+
+    /**
+     * 여러 레거시 상품그룹 ID로 매핑 일괄 조회.
+     *
+     * @param legacyProductGroupIds 레거시 상품그룹 ID 목록
+     * @return 매핑 목록
+     */
+    List<LegacyProductIdMapping> findByLegacyProductGroupIds(
+            java.util.Collection<Long> legacyProductGroupIds);
 }

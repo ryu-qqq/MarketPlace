@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.application.outboundsync.dto.command.ExecuteOutboun
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
 import com.ryuqq.marketplace.application.outboundsync.internal.OutboundSyncExecutionStrategy;
+import com.ryuqq.marketplace.application.outboundsync.internal.OutboundSyncPayloadParser;
 import com.ryuqq.marketplace.application.outboundsync.internal.OutboundSyncStrategyRouter;
 import com.ryuqq.marketplace.application.outboundsync.manager.OutboundSyncOutboxCommandManager;
 import com.ryuqq.marketplace.application.outboundsync.manager.OutboundSyncOutboxReadManager;
@@ -75,7 +76,11 @@ public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
 
             OutboundSyncExecutionContext context =
                     new OutboundSyncExecutionContext(
-                            outbox, channel, command.productGroupId(), command.syncType());
+                            outbox,
+                            channel,
+                            command.productGroupId(),
+                            command.syncType(),
+                            OutboundSyncPayloadParser.parseChangedAreas(outbox.payload()));
 
             OutboundSyncExecutionResult result = strategy.execute(context);
 

@@ -15,6 +15,7 @@ import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
+import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import java.time.Clock;
@@ -22,6 +23,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -188,7 +190,8 @@ public class CommonClientFallbackConfig {
                     Long externalCategoryId,
                     Long externalBrandId,
                     String externalProductId,
-                    SellerSalesChannel channel) {
+                    SellerSalesChannel channel,
+                    Set<ChangedArea> changedAreas) {
                 throw new UnsupportedOperationException("SalesChannelProductClient not available");
             }
 

@@ -6,8 +6,8 @@ import com.ryuqq.marketplace.application.inboundorder.internal.InboundOrderRecei
 import com.ryuqq.marketplace.application.inboundorder.manager.InboundOrderReadManager;
 import com.ryuqq.marketplace.application.inboundorder.port.in.command.PollExternalOrdersUseCase;
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
-import com.ryuqq.marketplace.application.saleschannel.port.out.query.SalesChannelQueryPort;
-import com.ryuqq.marketplace.application.shop.port.out.query.ShopQueryPort;
+import com.ryuqq.marketplace.application.saleschannel.manager.SalesChannelReadManager;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.saleschannel.aggregate.SalesChannel;
 import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
@@ -25,20 +25,20 @@ public class PollExternalOrdersService implements PollExternalOrdersUseCase {
     private static final Logger log = LoggerFactory.getLogger(PollExternalOrdersService.class);
     private static final Duration DEFAULT_LOOKBACK = Duration.ofDays(7);
 
-    private final SalesChannelQueryPort salesChannelQueryPort;
-    private final ShopQueryPort shopQueryPort;
+    private final SalesChannelReadManager salesChannelReadManager;
+    private final ShopReadManager shopReadManager;
     private final InboundOrderReadManager inboundOrderReadManager;
     private final SalesChannelOrderClient orderClient;
     private final InboundOrderReceiveCoordinator coordinator;
 
     public PollExternalOrdersService(
-            SalesChannelQueryPort salesChannelQueryPort,
-            ShopQueryPort shopQueryPort,
+            SalesChannelReadManager salesChannelReadManager,
+            ShopReadManager shopReadManager,
             InboundOrderReadManager inboundOrderReadManager,
             SalesChannelOrderClient orderClient,
             InboundOrderReceiveCoordinator coordinator) {
-        this.salesChannelQueryPort = salesChannelQueryPort;
-        this.shopQueryPort = shopQueryPort;
+        this.salesChannelReadManager = salesChannelReadManager;
+        this.shopReadManager = shopReadManager;
         this.inboundOrderReadManager = inboundOrderReadManager;
         this.orderClient = orderClient;
         this.coordinator = coordinator;
@@ -50,12 +50,7 @@ public class PollExternalOrdersService implements PollExternalOrdersUseCase {
         InboundOrderPollingResult totalResult = InboundOrderPollingResult.empty();
 
         SalesChannel salesChannel =
-                salesChannelQueryPort
-                        .findById(SalesChannelId.of(salesChannelId))
-                        .orElseThrow(
-                                () ->
-                                        new IllegalStateException(
-                                                "SalesChannel not found: id=" + salesChannelId));
+                salesChannelReadManager.getById(SalesChannelId.of(salesChannelId));
 
         String channelCode = salesChannel.channelName();
 
@@ -64,7 +59,7 @@ public class PollExternalOrdersService implements PollExternalOrdersUseCase {
             return totalResult;
         }
 
-        List<Shop> shops = shopQueryPort.findActiveBySalesChannelId(salesChannelId);
+        List<Shop> shops = shopReadManager.findActiveBySalesChannelId(salesChannelId);
         if (shops.isEmpty()) {
             log.info("활성 Shop 없음: salesChannelId={}", salesChannelId);
             return totalResult;
@@ -96,7 +91,7 @@ public class PollExternalOrdersService implements PollExternalOrdersUseCase {
                     payloads.size());
 
             InboundOrderPollingResult result =
-                    coordinator.receiveAll(payloads, salesChannelId, shop.idValue(), 0L, now);
+                    coordinator.receiveAll(payloads, salesChannelId, shop.idValue(), now);
 
             totalResult = totalResult.merge(result);
         }

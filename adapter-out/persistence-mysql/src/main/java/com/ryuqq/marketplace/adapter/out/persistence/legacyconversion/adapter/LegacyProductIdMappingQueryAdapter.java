@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.mapper.Leg
 import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.repository.LegacyProductIdMappingQueryDslRepository;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyProductIdMappingQueryPort;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,14 @@ public class LegacyProductIdMappingQueryAdapter implements LegacyProductIdMappin
     @Override
     public List<LegacyProductIdMapping> findByLegacyProductGroupId(long legacyProductGroupId) {
         return queryDslRepository.findByLegacyProductGroupId(legacyProductGroupId).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<LegacyProductIdMapping> findByLegacyProductGroupIds(
+            Collection<Long> legacyProductGroupIds) {
+        return queryDslRepository.findByLegacyProductGroupIds(legacyProductGroupIds).stream()
                 .map(mapper::toDomain)
                 .toList();
     }

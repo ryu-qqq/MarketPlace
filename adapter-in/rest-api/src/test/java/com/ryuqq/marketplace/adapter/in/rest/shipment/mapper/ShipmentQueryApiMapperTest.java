@@ -121,17 +121,18 @@ class ShipmentQueryApiMapperTest {
             ShipmentListApiResponse response = mapper.toResponse(result);
 
             // then
-            assertThat(response.shipmentId()).isEqualTo("SHIP-001");
-            assertThat(response.shipmentNumber())
+            assertThat(response.shipment().shipmentId()).isEqualTo("SHIP-001");
+            assertThat(response.shipment().shipmentNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_SHIPMENT_NUMBER);
-            assertThat(response.orderId()).isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_ID);
-            assertThat(response.orderNumber()).isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_NUMBER);
-            assertThat(response.status()).isEqualTo(ShipmentApiFixtures.DEFAULT_STATUS);
-            assertThat(response.trackingNumber())
+            assertThat(response.productOrder().orderItemId())
+                    .isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.shipment().status()).isEqualTo(ShipmentApiFixtures.DEFAULT_STATUS);
+            assertThat(response.shipment().trackingNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_TRACKING_NUMBER);
-            assertThat(response.courierName()).isEqualTo(ShipmentApiFixtures.DEFAULT_COURIER_NAME);
-            assertThat(response.shippedAt()).isNotNull();
-            assertThat(response.createdAt()).isNotNull();
+            assertThat(response.shipment().courierName())
+                    .isEqualTo(ShipmentApiFixtures.DEFAULT_COURIER_NAME);
+            assertThat(response.shipment().shippedAt()).isNotNull();
+            assertThat(response.shipment().createdAt()).isNotNull();
         }
 
         @Test
@@ -144,10 +145,10 @@ class ShipmentQueryApiMapperTest {
             ShipmentListApiResponse response = mapper.toResponse(result);
 
             // then
-            assertThat(response.shippedAt()).contains("T");
-            assertThat(response.shippedAt()).contains("+09:00");
-            assertThat(response.createdAt()).contains("T");
-            assertThat(response.createdAt()).contains("+09:00");
+            assertThat(response.shipment().shippedAt()).contains("T");
+            assertThat(response.shipment().shippedAt()).contains("+09:00");
+            assertThat(response.shipment().createdAt()).contains("T");
+            assertThat(response.shipment().createdAt()).contains("+09:00");
         }
 
         @Test
@@ -160,7 +161,38 @@ class ShipmentQueryApiMapperTest {
             ShipmentListApiResponse response = mapper.toResponse(result);
 
             // then
-            assertThat(response.deliveredAt()).isNull();
+            assertThat(response.shipment().deliveredAt()).isNull();
+        }
+
+        @Test
+        @DisplayName("주문 정보가 올바르게 변환된다")
+        void toResponse_ConvertsOrderInfo_ReturnsCorrectOrder() {
+            // given
+            ShipmentListResult result = ShipmentApiFixtures.listResult("SHIP-001");
+
+            // when
+            ShipmentListApiResponse response = mapper.toResponse(result);
+
+            // then
+            assertThat(response.order().orderId()).isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_ID);
+            assertThat(response.order().orderNumber())
+                    .isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_NUMBER);
+            assertThat(response.order().buyerName()).isEqualTo("홍길동");
+        }
+
+        @Test
+        @DisplayName("수령인 정보가 올바르게 변환된다")
+        void toResponse_ConvertsReceiverInfo_ReturnsCorrectReceiver() {
+            // given
+            ShipmentListResult result = ShipmentApiFixtures.listResult("SHIP-001");
+
+            // when
+            ShipmentListApiResponse response = mapper.toResponse(result);
+
+            // then
+            assertThat(response.receiver().receiverName()).isEqualTo("김수령");
+            assertThat(response.receiver().receiverPhone()).isEqualTo("010-9876-5432");
+            assertThat(response.receiver().deliveryRequest()).isEqualTo("문 앞에 놓아주세요");
         }
     }
 
@@ -178,19 +210,19 @@ class ShipmentQueryApiMapperTest {
             ShipmentDetailApiResponse response = mapper.toDetailResponse(result);
 
             // then
-            assertThat(response.shipmentId()).isEqualTo("SHIP-001");
-            assertThat(response.shipmentNumber())
+            assertThat(response.shipment().shipmentId()).isEqualTo("SHIP-001");
+            assertThat(response.shipment().shipmentNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_SHIPMENT_NUMBER);
-            assertThat(response.orderId()).isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_ID);
-            assertThat(response.orderNumber()).isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_NUMBER);
-            assertThat(response.status()).isEqualTo(ShipmentApiFixtures.DEFAULT_STATUS);
-            assertThat(response.trackingNumber())
+            assertThat(response.productOrder().orderItemId())
+                    .isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.shipment().status()).isEqualTo(ShipmentApiFixtures.DEFAULT_STATUS);
+            assertThat(response.shipment().trackingNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_TRACKING_NUMBER);
         }
 
         @Test
-        @DisplayName("ShipmentMethod가 있으면 ShipmentMethodApiResponse로 변환한다")
-        void toDetailResponse_WithShipmentMethod_ReturnsMethodResponse() {
+        @DisplayName("결제 정보가 올바르게 변환된다")
+        void toDetailResponse_WithPayment_ReturnsPaymentResponse() {
             // given
             ShipmentDetailResult result = ShipmentApiFixtures.detailResult("SHIP-001");
 
@@ -198,27 +230,41 @@ class ShipmentQueryApiMapperTest {
             ShipmentDetailApiResponse response = mapper.toDetailResponse(result);
 
             // then
-            assertThat(response.shipmentMethod()).isNotNull();
-            assertThat(response.shipmentMethod().type())
-                    .isEqualTo(ShipmentApiFixtures.DEFAULT_SHIPMENT_METHOD_TYPE);
-            assertThat(response.shipmentMethod().courierCode())
-                    .isEqualTo(ShipmentApiFixtures.DEFAULT_COURIER_CODE);
-            assertThat(response.shipmentMethod().courierName())
-                    .isEqualTo(ShipmentApiFixtures.DEFAULT_COURIER_NAME);
+            assertThat(response.payment()).isNotNull();
+            assertThat(response.payment().paymentId()).isEqualTo("PAY-001");
+            assertThat(response.payment().paymentStatus()).isEqualTo("COMPLETED");
+            assertThat(response.payment().paymentMethod()).isEqualTo("CARD");
+            assertThat(response.payment().paymentAmount()).isEqualTo(10000);
         }
 
         @Test
-        @DisplayName("ShipmentMethod가 null이면 shipmentMethod 필드도 null을 반환한다")
-        void toDetailResponse_NullShipmentMethod_ReturnsNullMethod() {
+        @DisplayName("정산 정보가 올바르게 변환된다")
+        void toDetailResponse_WithSettlement_ReturnsSettlementResponse() {
             // given
-            ShipmentDetailResult result = ShipmentApiFixtures.detailResultWithoutMethod("SHIP-001");
+            ShipmentDetailResult result = ShipmentApiFixtures.detailResult("SHIP-001");
 
             // when
             ShipmentDetailApiResponse response = mapper.toDetailResponse(result);
 
             // then
-            assertThat(response.shipmentMethod()).isNull();
-            assertThat(response.trackingNumber()).isNull();
+            assertThat(response.settlement()).isNotNull();
+            assertThat(response.settlement().commissionRate()).isEqualTo(10);
+            assertThat(response.settlement().fee()).isEqualTo(1000);
+            assertThat(response.settlement().expectationSettlementAmount()).isEqualTo(9000);
+        }
+
+        @Test
+        @DisplayName("결제 정보가 null이면 payment 필드도 null을 반환한다")
+        void toDetailResponse_NullPayment_ReturnsNullPayment() {
+            // given
+            ShipmentDetailResult result =
+                    ShipmentApiFixtures.detailResultWithoutPayment("SHIP-001");
+
+            // when
+            ShipmentDetailApiResponse response = mapper.toDetailResponse(result);
+
+            // then
+            assertThat(response.payment()).isNull();
         }
 
         @Test
@@ -231,12 +277,10 @@ class ShipmentQueryApiMapperTest {
             ShipmentDetailApiResponse response = mapper.toDetailResponse(result);
 
             // then
-            assertThat(response.orderConfirmedAt()).contains("T");
-            assertThat(response.orderConfirmedAt()).contains("+09:00");
-            assertThat(response.createdAt()).contains("T");
-            assertThat(response.createdAt()).contains("+09:00");
-            assertThat(response.updatedAt()).contains("T");
-            assertThat(response.updatedAt()).contains("+09:00");
+            assertThat(response.shipment().orderConfirmedAt()).contains("T");
+            assertThat(response.shipment().orderConfirmedAt()).contains("+09:00");
+            assertThat(response.shipment().createdAt()).contains("T");
+            assertThat(response.shipment().createdAt()).contains("+09:00");
         }
     }
 
@@ -309,8 +353,8 @@ class ShipmentQueryApiMapperTest {
 
             // then
             List<ShipmentListApiResponse> content = response.content();
-            assertThat(content.get(0).shipmentId()).isEqualTo("SHIP-001");
-            assertThat(content.get(1).shipmentId()).isEqualTo("SHIP-002");
+            assertThat(content.get(0).shipment().shipmentId()).isEqualTo("SHIP-001");
+            assertThat(content.get(1).shipment().shipmentId()).isEqualTo("SHIP-002");
         }
     }
 }

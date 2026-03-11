@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.domain.shipment.aggregate;
 import static org.assertj.core.api.Assertions.*;
 
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.ShipmentFixtures;
 import com.ryuqq.marketplace.domain.shipment.exception.ShipmentException;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
@@ -37,20 +38,20 @@ class ShipmentTest {
             Instant now = CommonVoFixtures.now();
 
             // when
+            OrderItemId orderItemId = OrderItemId.of(1001L);
             Shipment shipment =
                     Shipment.forNew(
                             ShipmentFixtures.defaultShipmentId(),
                             ShipmentFixtures.defaultShipmentNumber(),
-                            "ORD-20260218-0001",
-                            "ON-20260218-0001",
+                            orderItemId,
                             now);
 
             // then
             assertThat(shipment.id()).isEqualTo(ShipmentFixtures.defaultShipmentId());
             assertThat(shipment.shipmentNumber())
                     .isEqualTo(ShipmentFixtures.defaultShipmentNumber());
-            assertThat(shipment.orderId()).isEqualTo("ORD-20260218-0001");
-            assertThat(shipment.orderNumber()).isEqualTo("ON-20260218-0001");
+            assertThat(shipment.orderItemId()).isEqualTo(orderItemId);
+            assertThat(shipment.orderItemIdValue()).isEqualTo(1001L);
             assertThat(shipment.status()).isEqualTo(ShipmentStatus.READY);
             assertThat(shipment.shipmentMethod()).isNull();
             assertThat(shipment.trackingNumber()).isNull();

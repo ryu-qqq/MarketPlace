@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundproduct.vo.OutboundProductStatus;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -58,6 +59,19 @@ public class OutboundProductQueryAdapter implements OutboundProductQueryPort {
         return repository
                 .findByExternalProductIdAndSalesChannelId(externalProductId, salesChannelId)
                 .map(mapper::toDomain);
+    }
+
+    @Override
+    public List<OutboundProduct> findByExternalProductIdsAndSalesChannelId(
+            Set<String> externalProductIds, long salesChannelId) {
+        if (externalProductIds.isEmpty()) {
+            return List.of();
+        }
+        return repository
+                .findByExternalProductIdInAndSalesChannelId(externalProductIds, salesChannelId)
+                .stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 
     @Override
