@@ -453,4 +453,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     public Instant getSettlementDay() {
         return settlementDay;
     }
+
+    public void updateDeliveryStatus(String deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
+    }
 }

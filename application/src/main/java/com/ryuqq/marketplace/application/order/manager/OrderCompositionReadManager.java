@@ -70,6 +70,11 @@ public class OrderCompositionReadManager {
         return compositionQueryPort.findClaimsByItemIds(orderItemIds);
     }
 
+    @Transactional(readOnly = true)
+    public Map<Long, OrderItemResult> findOrderItemsByIds(List<Long> orderItemIds) {
+        return compositionQueryPort.findOrderItemsByIds(orderItemIds);
+    }
+
     // ==================== V5 상품주문 상세 ====================
 
     @Transactional(readOnly = true)

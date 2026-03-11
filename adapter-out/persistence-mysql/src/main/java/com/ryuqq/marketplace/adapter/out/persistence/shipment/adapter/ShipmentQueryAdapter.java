@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.shipment.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.mapper.ShipmentJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.repository.ShipmentQueryDslRepository;
 import com.ryuqq.marketplace.application.shipment.port.out.query.ShipmentQueryPort;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
 import com.ryuqq.marketplace.domain.shipment.query.ShipmentSearchCriteria;
@@ -32,8 +33,14 @@ public class ShipmentQueryAdapter implements ShipmentQueryPort {
     }
 
     @Override
-    public Optional<Shipment> findByOrderId(String orderId) {
-        return repository.findByOrderId(orderId).map(mapper::toDomain);
+    public Optional<Shipment> findByOrderItemId(OrderItemId orderItemId) {
+        return repository.findByOrderItemId(orderItemId.value()).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<Shipment> findByOrderItemIds(List<OrderItemId> orderItemIds) {
+        List<Long> ids = orderItemIds.stream().map(OrderItemId::value).toList();
+        return repository.findByOrderItemIds(ids).stream().map(mapper::toDomain).toList();
     }
 
     @Override

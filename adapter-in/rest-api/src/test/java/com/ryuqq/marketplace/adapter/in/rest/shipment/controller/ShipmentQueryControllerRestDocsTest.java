@@ -191,40 +191,181 @@ class ShipmentQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[]")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("배송 목록"),
-                                            fieldWithPath("data.content[].shipmentId")
+                                            fieldWithPath("data.content[].shipment")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("배송 정보"),
+                                            fieldWithPath("data.content[].shipment.shipmentId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("배송 ID"),
-                                            fieldWithPath("data.content[].shipmentNumber")
+                                            fieldWithPath("data.content[].shipment.shipmentNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("배송번호"),
-                                            fieldWithPath("data.content[].orderId")
+                                            fieldWithPath("data.content[].shipment.status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("주문 ID"),
-                                            fieldWithPath("data.content[].orderNumber")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("주문번호"),
-                                            fieldWithPath("data.content[].status")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description(
-                                                            "배송 상태 (READY, PREPARING, SHIPPED,"
-                                                                + " IN_TRANSIT, DELIVERED, FAILED,"
-                                                                + " CANCELLED)"),
-                                            fieldWithPath("data.content[].trackingNumber")
+                                                    .description("배송 상태"),
+                                            fieldWithPath("data.content[].shipment.trackingNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("송장번호"),
-                                            fieldWithPath("data.content[].courierName")
+                                            fieldWithPath("data.content[].shipment.courierCode")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("택배사 코드"),
+                                            fieldWithPath("data.content[].shipment.courierName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("택배사명"),
-                                            fieldWithPath("data.content[].shippedAt")
+                                            fieldWithPath(
+                                                            "data.content[].shipment.orderConfirmedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("발주확인일시"),
+                                            fieldWithPath("data.content[].shipment.shippedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("발송일시"),
-                                            fieldWithPath("data.content[].deliveredAt")
-                                                    .type(JsonFieldType.STRING)
+                                            fieldWithPath("data.content[].shipment.deliveredAt")
+                                                    .type(JsonFieldType.NULL)
                                                     .description("배송완료일시")
                                                     .optional(),
-                                            fieldWithPath("data.content[].createdAt")
+                                            fieldWithPath("data.content[].shipment.createdAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("등록일시"),
+                                            fieldWithPath("data.content[].order")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("주문 정보"),
+                                            fieldWithPath("data.content[].order.orderId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("주문 ID"),
+                                            fieldWithPath("data.content[].order.orderNumber")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("주문번호"),
+                                            fieldWithPath("data.content[].order.status")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("주문 상태"),
+                                            fieldWithPath("data.content[].order.salesChannelId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("판매채널 ID"),
+                                            fieldWithPath("data.content[].order.shopId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("샵 ID"),
+                                            fieldWithPath("data.content[].order.shopCode")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("샵 코드"),
+                                            fieldWithPath("data.content[].order.shopName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("샵 이름"),
+                                            fieldWithPath("data.content[].order.externalOrderNo")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 주문번호"),
+                                            fieldWithPath("data.content[].order.externalOrderedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 주문일시"),
+                                            fieldWithPath("data.content[].order.buyerName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("구매자명"),
+                                            fieldWithPath("data.content[].order.buyerEmail")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("구매자 이메일"),
+                                            fieldWithPath("data.content[].order.buyerPhone")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("구매자 전화번호"),
+                                            fieldWithPath("data.content[].order.createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("생성일시"),
+                                            fieldWithPath("data.content[].order.updatedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수정일시"),
+                                            fieldWithPath("data.content[].productOrder")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("상품주문 정보"),
+                                            fieldWithPath("data.content[].productOrder.orderItemId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("주문상품 ID"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.productGroupId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품그룹 ID"),
+                                            fieldWithPath("data.content[].productOrder.productId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품 ID"),
+                                            fieldWithPath("data.content[].productOrder.sellerId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("셀러 ID"),
+                                            fieldWithPath("data.content[].productOrder.brandId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("브랜드 ID"),
+                                            fieldWithPath("data.content[].productOrder.skuCode")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("SKU 코드"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.productGroupName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("상품그룹명"),
+                                            fieldWithPath("data.content[].productOrder.brandName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("브랜드명"),
+                                            fieldWithPath("data.content[].productOrder.sellerName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("셀러명"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.mainImageUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("대표 이미지"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.externalProductId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 상품 ID"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.externalOptionId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 옵션 ID"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.externalProductName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 상품명"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.externalOptionName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 옵션명"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.externalImageUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 이미지"),
+                                            fieldWithPath("data.content[].productOrder.unitPrice")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("단가"),
+                                            fieldWithPath("data.content[].productOrder.quantity")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("수량"),
+                                            fieldWithPath("data.content[].productOrder.totalAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("총 금액"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.discountAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("할인 금액"),
+                                            fieldWithPath(
+                                                            "data.content[].productOrder.paymentAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("실결제 금액"),
+                                            fieldWithPath("data.content[].receiver")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("수령인 정보"),
+                                            fieldWithPath("data.content[].receiver.receiverName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인명"),
+                                            fieldWithPath("data.content[].receiver.receiverPhone")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인 전화번호"),
+                                            fieldWithPath("data.content[].receiver.receiverZipcode")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인 우편번호"),
+                                            fieldWithPath("data.content[].receiver.receiverAddress")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인 주소"),
+                                            fieldWithPath(
+                                                            "data.content[].receiver.receiverAddressDetail")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인 상세주소"),
+                                            fieldWithPath("data.content[].receiver.deliveryRequest")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("배송 요청사항"),
                                             fieldWithPath("data.page")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("현재 페이지 번호"),
@@ -314,14 +455,18 @@ class ShipmentQueryControllerRestDocsTest {
                             RestDocumentationRequestBuilders.get(
                                     BASE_URL + ShipmentEndpoints.SHIPMENT_ID, DEFAULT_SHIPMENT_ID))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.shipmentId").value(DEFAULT_SHIPMENT_ID))
+                    .andExpect(jsonPath("$.data.shipment.shipmentId").value(DEFAULT_SHIPMENT_ID))
                     .andExpect(
-                            jsonPath("$.data.shipmentNumber")
+                            jsonPath("$.data.shipment.shipmentNumber")
                                     .value(ShipmentApiFixtures.DEFAULT_SHIPMENT_NUMBER))
                     .andExpect(
-                            jsonPath("$.data.orderId").value(ShipmentApiFixtures.DEFAULT_ORDER_ID))
-                    .andExpect(jsonPath("$.data.status").value(ShipmentApiFixtures.DEFAULT_STATUS))
-                    .andExpect(jsonPath("$.data.shipmentMethod").exists())
+                            jsonPath("$.data.productOrder.orderItemId")
+                                    .value(ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID))
+                    .andExpect(
+                            jsonPath("$.data.shipment.status")
+                                    .value(ShipmentApiFixtures.DEFAULT_STATUS))
+                    .andExpect(jsonPath("$.data.payment").exists())
+                    .andExpect(jsonPath("$.data.settlement").exists())
                     .andDo(
                             document(
                                     "shipment/detail",
@@ -330,62 +475,224 @@ class ShipmentQueryControllerRestDocsTest {
                                     pathParameters(
                                             parameterWithName("shipmentId").description("배송 ID")),
                                     responseFields(
-                                            fieldWithPath("data.shipmentId")
+                                            fieldWithPath("data.shipment")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("배송 정보"),
+                                            fieldWithPath("data.shipment.shipmentId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("배송 ID"),
-                                            fieldWithPath("data.shipmentNumber")
+                                            fieldWithPath("data.shipment.shipmentNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("배송번호"),
-                                            fieldWithPath("data.orderId")
+                                            fieldWithPath("data.shipment.status")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("주문 ID"),
-                                            fieldWithPath("data.orderNumber")
+                                                    .description("배송 상태"),
+                                            fieldWithPath("data.shipment.trackingNumber")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("주문번호"),
-                                            fieldWithPath("data.status")
+                                                    .description("송장번호"),
+                                            fieldWithPath("data.shipment.courierCode")
                                                     .type(JsonFieldType.STRING)
-                                                    .description(
-                                                            "배송 상태 (READY, PREPARING, SHIPPED,"
-                                                                + " IN_TRANSIT, DELIVERED, FAILED,"
-                                                                + " CANCELLED)"),
-                                            fieldWithPath("data.shipmentMethod")
-                                                    .type(JsonFieldType.OBJECT)
-                                                    .description("배송 방법 정보")
-                                                    .optional(),
-                                            fieldWithPath("data.shipmentMethod.type")
+                                                    .description("택배사 코드"),
+                                            fieldWithPath("data.shipment.courierName")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("배송 방법 유형")
-                                                    .optional(),
-                                            fieldWithPath("data.shipmentMethod.courierCode")
+                                                    .description("택배사명"),
+                                            fieldWithPath("data.shipment.orderConfirmedAt")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("택배사 코드")
-                                                    .optional(),
-                                            fieldWithPath("data.shipmentMethod.courierName")
+                                                    .description("발주확인일시"),
+                                            fieldWithPath("data.shipment.shippedAt")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("택배사명")
-                                                    .optional(),
-                                            fieldWithPath("data.trackingNumber")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("송장번호")
-                                                    .optional(),
-                                            fieldWithPath("data.orderConfirmedAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("발주확인일시")
-                                                    .optional(),
-                                            fieldWithPath("data.shippedAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("발송일시")
-                                                    .optional(),
-                                            fieldWithPath("data.deliveredAt")
-                                                    .type(JsonFieldType.STRING)
+                                                    .description("발송일시"),
+                                            fieldWithPath("data.shipment.deliveredAt")
+                                                    .type(JsonFieldType.NULL)
                                                     .description("배송완료일시")
                                                     .optional(),
-                                            fieldWithPath("data.createdAt")
+                                            fieldWithPath("data.shipment.createdAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("등록일시"),
-                                            fieldWithPath("data.updatedAt")
+                                            fieldWithPath("data.order")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("주문 정보"),
+                                            fieldWithPath("data.order.orderId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("주문 ID"),
+                                            fieldWithPath("data.order.orderNumber")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("주문번호"),
+                                            fieldWithPath("data.order.status")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("주문 상태"),
+                                            fieldWithPath("data.order.salesChannelId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("판매채널 ID"),
+                                            fieldWithPath("data.order.shopId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("샵 ID"),
+                                            fieldWithPath("data.order.shopCode")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("샵 코드"),
+                                            fieldWithPath("data.order.shopName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("샵 이름"),
+                                            fieldWithPath("data.order.externalOrderNo")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 주문번호"),
+                                            fieldWithPath("data.order.externalOrderedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 주문일시"),
+                                            fieldWithPath("data.order.buyerName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("구매자명"),
+                                            fieldWithPath("data.order.buyerEmail")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("구매자 이메일"),
+                                            fieldWithPath("data.order.buyerPhone")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("구매자 전화번호"),
+                                            fieldWithPath("data.order.createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("생성일시"),
+                                            fieldWithPath("data.order.updatedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("수정일시"),
+                                            fieldWithPath("data.productOrder")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("상품주문 정보"),
+                                            fieldWithPath("data.productOrder.orderItemId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("주문상품 ID"),
+                                            fieldWithPath("data.productOrder.productGroupId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품그룹 ID"),
+                                            fieldWithPath("data.productOrder.productId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("상품 ID"),
+                                            fieldWithPath("data.productOrder.sellerId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("셀러 ID"),
+                                            fieldWithPath("data.productOrder.brandId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("브랜드 ID"),
+                                            fieldWithPath("data.productOrder.skuCode")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("SKU 코드"),
+                                            fieldWithPath("data.productOrder.productGroupName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("상품그룹명"),
+                                            fieldWithPath("data.productOrder.brandName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("브랜드명"),
+                                            fieldWithPath("data.productOrder.sellerName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("셀러명"),
+                                            fieldWithPath("data.productOrder.mainImageUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("대표 이미지"),
+                                            fieldWithPath("data.productOrder.externalProductId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 상품 ID"),
+                                            fieldWithPath("data.productOrder.externalOptionId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 옵션 ID"),
+                                            fieldWithPath("data.productOrder.externalProductName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 상품명"),
+                                            fieldWithPath("data.productOrder.externalOptionName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 옵션명"),
+                                            fieldWithPath("data.productOrder.externalImageUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 이미지"),
+                                            fieldWithPath("data.productOrder.unitPrice")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("단가"),
+                                            fieldWithPath("data.productOrder.quantity")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("수량"),
+                                            fieldWithPath("data.productOrder.totalAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("총 금액"),
+                                            fieldWithPath("data.productOrder.discountAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("할인 금액"),
+                                            fieldWithPath("data.productOrder.paymentAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("실결제 금액"),
+                                            fieldWithPath("data.receiver")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("수령인 정보"),
+                                            fieldWithPath("data.receiver.receiverName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인명"),
+                                            fieldWithPath("data.receiver.receiverPhone")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인 전화번호"),
+                                            fieldWithPath("data.receiver.receiverZipcode")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인 우편번호"),
+                                            fieldWithPath("data.receiver.receiverAddress")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인 주소"),
+                                            fieldWithPath("data.receiver.receiverAddressDetail")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수령인 상세주소"),
+                                            fieldWithPath("data.receiver.deliveryRequest")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("배송 요청사항"),
+                                            fieldWithPath("data.payment")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("결제 정보"),
+                                            fieldWithPath("data.payment.paymentId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("결제 ID"),
+                                            fieldWithPath("data.payment.paymentNumber")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("결제 번호"),
+                                            fieldWithPath("data.payment.paymentStatus")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("결제 상태"),
+                                            fieldWithPath("data.payment.paymentMethod")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("결제 수단"),
+                                            fieldWithPath("data.payment.paymentAgencyId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("PG사 결제 ID"),
+                                            fieldWithPath("data.payment.paymentAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("결제 금액"),
+                                            fieldWithPath("data.payment.paidAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("결제일시"),
+                                            fieldWithPath("data.payment.canceledAt")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description("결제취소일시")
+                                                    .optional(),
+                                            fieldWithPath("data.settlement")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("정산 정보"),
+                                            fieldWithPath("data.settlement.commissionRate")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("수수료율"),
+                                            fieldWithPath("data.settlement.fee")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("수수료"),
+                                            fieldWithPath(
+                                                            "data.settlement.expectationSettlementAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("예상 정산금액"),
+                                            fieldWithPath("data.settlement.settlementAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("정산금액"),
+                                            fieldWithPath("data.settlement.shareRatio")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("배분비율"),
+                                            fieldWithPath("data.settlement.expectedSettlementDay")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description("예상 정산일")
+                                                    .optional(),
+                                            fieldWithPath("data.settlement.settlementDay")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description("정산일")
+                                                    .optional(),
                                             fieldWithPath("timestamp")
                                                     .type(JsonFieldType.STRING)
                                                     .description("응답 시간"),

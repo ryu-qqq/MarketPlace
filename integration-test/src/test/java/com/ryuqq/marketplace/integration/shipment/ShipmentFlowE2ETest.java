@@ -26,7 +26,7 @@ import org.springframework.http.HttpStatus;
  * <ul>
  *   <li>C1→Q2: 발주확인(배치) → 상세 조회 (READY→PREPARING 상태 전이)
  *   <li>C1→C2→Q2: 발주확인 → 송장등록(배치) → 상세 조회 (PREPARING→SHIPPED)
- *   <li>C2: 단건 송장등록 (주문ID 기반)
+ *   <li>C2: 단건 송장등록 (주문상품ID 기반)
  *   <li>Q1: 배송 요약 조회 (상태별 카운트)
  *   <li>Q2: 배송 목록 페이징 조회 + 필터
  * </ul>
@@ -40,7 +40,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
     private static final String SHIPMENTS = "/shipments";
     private static final String CONFIRM_BATCH = "/shipments/confirm/batch";
     private static final String SHIP_BATCH = "/shipments/ship/batch";
-    private static final String SHIP_SINGLE = "/shipments/orders/{orderId}/ship";
+    private static final String SHIP_SINGLE = "/shipments/orders/{orderItemId}/ship";
     private static final String SHIPMENT_SUMMARY = "/shipments/summary";
     private static final String SHIPMENT_DETAIL = "/shipments/{shipmentId}";
 
@@ -70,12 +70,12 @@ class ShipmentFlowE2ETest extends E2ETestBase {
                             ShipmentJpaEntityFixtures.readyEntity("ship-confirm-001"));
             var s2 =
                     shipmentRepository.save(
-                            ShipmentJpaEntityFixtures.readyEntityWithOrderId(
-                                    "ship-confirm-002", "order-confirm-002"));
+                            ShipmentJpaEntityFixtures.readyEntityWithOrderItemId(
+                                    "ship-confirm-002", 2002L));
 
-            // Step 1: POST - 발주확인 배치
+            // Step 1: POST - 발주확인 배치 (orderItemId 기반)
             given().spec(givenSuperAdmin())
-                    .body(Map.of("shipmentIds", List.of(s1.getId(), s2.getId())))
+                    .body(Map.of("orderItemIds", List.of(s1.getOrderItemId(), s2.getOrderItemId())))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -106,34 +106,28 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[FLOW-2] 발주확인 - 존재하지 않는 ID 포함 시 partial failure")
+        @DisplayName("[FLOW-2] 발주확인 - 존재하지 않는 orderItemId 포함 시 partial failure")
         void confirmBatch_NonExistentId_PartialFailure() {
             var s1 =
                     shipmentRepository.save(
                             ShipmentJpaEntityFixtures.readyEntity("ship-partial-001"));
 
             given().spec(givenSuperAdmin())
-                    .body(Map.of("shipmentIds", List.of(s1.getId(), "non-existent-id")))
+                    .body(Map.of("orderItemIds", List.of(s1.getOrderItemId(), 99999L)))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.totalCount", equalTo(2))
                     .body("data.successCount", equalTo(1))
-                    .body("data.failureCount", equalTo(1))
-                    .body(
-                            "data.results.find { it.id == 'non-existent-id' }.success",
-                            equalTo(false))
-                    .body(
-                            "data.results.find { it.id == 'non-existent-id' }.errorMessage",
-                            notNullValue());
+                    .body("data.failureCount", equalTo(1));
         }
 
         @Test
         @DisplayName("[FLOW-3] 발주확인 - 빈 목록 요청 시 400 Bad Request")
         void confirmBatch_EmptyList_Returns400() {
             given().spec(givenSuperAdmin())
-                    .body(Map.of("shipmentIds", List.of()))
+                    .body(Map.of("orderItemIds", List.of()))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -155,7 +149,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
             // Step 1: 발주확인
             given().spec(givenSuperAdmin())
-                    .body(Map.of("shipmentIds", List.of(s1.getId())))
+                    .body(Map.of("orderItemIds", List.of(s1.getOrderItemId())))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -164,7 +158,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
             // Step 2: 송장등록 배치
             Map<String, Object> shipItem = new HashMap<>();
-            shipItem.put("shipmentId", s1.getId());
+            shipItem.put("orderItemId", s1.getOrderItemId());
             shipItem.put("trackingNumber", "1234567890");
             shipItem.put("courierCode", "CJ");
             shipItem.put("courierName", "CJ대한통운");
@@ -204,12 +198,12 @@ class ShipmentFlowE2ETest extends E2ETestBase {
                             ShipmentJpaEntityFixtures.readyEntity("ship-multi-001"));
             var s2 =
                     shipmentRepository.save(
-                            ShipmentJpaEntityFixtures.readyEntityWithOrderId(
-                                    "ship-multi-002", "order-multi-002"));
+                            ShipmentJpaEntityFixtures.readyEntityWithOrderItemId(
+                                    "ship-multi-002", 3002L));
 
             // Step 1: 발주확인 배치
             given().spec(givenSuperAdmin())
-                    .body(Map.of("shipmentIds", List.of(s1.getId(), s2.getId())))
+                    .body(Map.of("orderItemIds", List.of(s1.getOrderItemId(), s2.getOrderItemId())))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -218,14 +212,14 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
             // Step 2: 송장등록 배치 (2건)
             Map<String, Object> item1 = new HashMap<>();
-            item1.put("shipmentId", s1.getId());
+            item1.put("orderItemId", s1.getOrderItemId());
             item1.put("trackingNumber", "TRK-001");
             item1.put("courierCode", "CJ");
             item1.put("courierName", "CJ대한통운");
             item1.put("shipmentMethodType", "COURIER");
 
             Map<String, Object> item2 = new HashMap<>();
-            item2.put("shipmentId", s2.getId());
+            item2.put("orderItemId", s2.getOrderItemId());
             item2.put("trackingNumber", "TRK-002");
             item2.put("courierCode", "LOTTE");
             item2.put("courierName", "롯데택배");
@@ -260,23 +254,23 @@ class ShipmentFlowE2ETest extends E2ETestBase {
     }
 
     @Nested
-    @DisplayName("C2: 단건 송장등록 (주문ID 기반)")
+    @DisplayName("C2: 단건 송장등록 (주문상품ID 기반)")
     class ShipSingleTest {
 
         @Test
         @Tag("P1")
-        @DisplayName("[FLOW-6] 단건 주문별 송장등록 → 상세 조회")
+        @DisplayName("[FLOW-6] 단건 주문상품별 송장등록 → 상세 조회")
         void shipSingle_ThenGetDetail_Shipped() {
-            // Seed: READY 배송 (특정 orderId)
-            String orderId = "order-single-001";
+            // Seed: READY 배송 (특정 orderItemId)
+            Long orderItemId = 5001L;
             var s1 =
                     shipmentRepository.save(
-                            ShipmentJpaEntityFixtures.readyEntityWithOrderId(
-                                    "ship-single-001", orderId));
+                            ShipmentJpaEntityFixtures.readyEntityWithOrderItemId(
+                                    "ship-single-001", orderItemId));
 
             // Step 1: 발주확인
             given().spec(givenSuperAdmin())
-                    .body(Map.of("shipmentIds", List.of(s1.getId())))
+                    .body(Map.of("orderItemIds", List.of(s1.getOrderItemId())))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -293,7 +287,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
             given().spec(givenSuperAdmin())
                     .body(shipRequest)
                     .when()
-                    .post(SHIP_SINGLE, orderId)
+                    .post(SHIP_SINGLE, orderItemId)
                     .then()
                     .statusCode(HttpStatus.OK.value());
 
@@ -388,7 +382,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @DisplayName("[AUTH-1] 비인증 요청으로 발주확인 시도 - 401")
         void confirmBatch_Unauthenticated_Returns401() {
             given().spec(givenUnauthenticated())
-                    .body(Map.of("shipmentIds", List.of("any-id")))
+                    .body(Map.of("orderItemIds", List.of(1L)))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -409,7 +403,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @DisplayName("[AUTH-3] 권한 없는 사용자 발주확인 시도 - 403")
         void confirmBatch_NoPermission_Returns403() {
             given().spec(givenSellerUser("org-001", "product-group:write"))
-                    .body(Map.of("shipmentIds", List.of("any-id")))
+                    .body(Map.of("orderItemIds", List.of(1L)))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()

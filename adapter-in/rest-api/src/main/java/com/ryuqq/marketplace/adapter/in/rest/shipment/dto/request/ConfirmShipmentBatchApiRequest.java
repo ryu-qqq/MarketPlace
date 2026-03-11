@@ -8,8 +8,8 @@ import java.util.List;
 @Schema(description = "발주확인 일괄 처리 요청")
 public record ConfirmShipmentBatchApiRequest(
         @Schema(
-                        description = "발주확인 대상 배송 ID 목록",
-                        example = "[\"ship-001\", \"ship-002\"]",
+                        description = "발주확인 대상 상품주문 ID 목록",
+                        example = "[1001, 1002]",
                         requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotEmpty
-                List<String> shipmentIds) {}
+                List<Long> orderItemIds) {}

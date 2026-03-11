@@ -18,8 +18,14 @@ public class ShipmentConditionBuilder {
         return id != null ? shipment.id.eq(id) : null;
     }
 
-    public BooleanExpression orderIdEq(String orderId) {
-        return orderId != null ? shipment.orderId.eq(orderId) : null;
+    public BooleanExpression orderItemIdEq(Long orderItemId) {
+        return orderItemId != null ? shipment.orderItemId.eq(orderItemId) : null;
+    }
+
+    public BooleanExpression orderItemIdIn(List<Long> orderItemIds) {
+        return orderItemIds != null && !orderItemIds.isEmpty()
+                ? shipment.orderItemId.in(orderItemIds)
+                : null;
     }
 
     public BooleanExpression statusIn(ShipmentSearchCriteria criteria) {
@@ -36,15 +42,19 @@ public class ShipmentConditionBuilder {
         }
         String word = "%" + criteria.searchWord() + "%";
         if (!criteria.hasSearchField()) {
-            return shipment.orderId
-                    .like(word)
-                    .or(shipment.trackingNumber.like(word))
-                    .or(shipment.shipmentNumber.like(word));
+            return shipment.trackingNumber.like(word).or(shipment.shipmentNumber.like(word));
         }
         return switch (criteria.searchField()) {
-            case ORDER_ID -> shipment.orderId.like(word);
+            case ORDER_ITEM_ID -> {
+                try {
+                    Long orderItemId = Long.parseLong(criteria.searchWord().trim());
+                    yield shipment.orderItemId.eq(orderItemId);
+                } catch (NumberFormatException e) {
+                    yield null;
+                }
+            }
             case TRACKING_NUMBER -> shipment.trackingNumber.like(word);
-            case CUSTOMER_NAME -> shipment.orderNumber.like(word);
+            case CUSTOMER_NAME -> shipment.shipmentNumber.like(word);
         };
     }
 

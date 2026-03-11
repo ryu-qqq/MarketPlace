@@ -22,6 +22,7 @@ import com.ryuqq.marketplace.domain.order.vo.ExternalOrderItemPrice;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderReference;
 import com.ryuqq.marketplace.domain.order.vo.ExternalProductSnapshot;
 import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.order.vo.PaymentInfo;
 import com.ryuqq.marketplace.domain.order.vo.PaymentStatus;
@@ -115,7 +116,7 @@ public class OrderJpaEntityMapper {
                         ? item.receiverInfo().address().line2()
                         : null,
                 item.receiverInfo().deliveryRequest(),
-                "READY",
+                item.status().name(),
                 null,
                 null,
                 null,
@@ -200,7 +201,7 @@ public class OrderJpaEntityMapper {
                 entity.getExternalOrderedAt());
     }
 
-    private OrderItem toOrderItem(OrderItemJpaEntity entity) {
+    public OrderItem toOrderItem(OrderItemJpaEntity entity) {
         return OrderItem.reconstitute(
                 OrderItemId.of(entity.getId()),
                 InternalProductReference.of(
@@ -226,7 +227,7 @@ public class OrderJpaEntityMapper {
                         Money.of(entity.getDiscountAmount()),
                         Money.of(entity.getPaymentAmount())),
                 resolveReceiverInfo(entity),
-                null,
+                OrderItemStatus.valueOf(entity.getDeliveryStatus()),
                 null);
     }
 

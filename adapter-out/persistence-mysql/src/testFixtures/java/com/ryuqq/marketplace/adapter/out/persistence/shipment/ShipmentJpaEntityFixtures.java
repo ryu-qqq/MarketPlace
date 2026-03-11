@@ -15,8 +15,7 @@ public final class ShipmentJpaEntityFixtures {
     // ===== 기본 상수 =====
     public static final String DEFAULT_ID = "01944b2a-1234-7fff-8888-abcdef012345";
     public static final String DEFAULT_SHIPMENT_NUMBER = "SHP-20260218-0001";
-    public static final String DEFAULT_ORDER_ID = "ORD-20260218-9999";
-    public static final String DEFAULT_ORDER_NUMBER = "ON-20260218-0001";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final String DEFAULT_STATUS_READY = "READY";
     public static final String DEFAULT_STATUS_SHIPPED = "SHIPPED";
     public static final String DEFAULT_STATUS_DELIVERED = "DELIVERED";
@@ -33,8 +32,7 @@ public final class ShipmentJpaEntityFixtures {
         return ShipmentJpaEntity.create(
                 DEFAULT_ID,
                 DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_STATUS_READY,
                 null,
                 null,
@@ -54,8 +52,7 @@ public final class ShipmentJpaEntityFixtures {
         return ShipmentJpaEntity.create(
                 id,
                 DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_STATUS_READY,
                 null,
                 null,
@@ -76,8 +73,7 @@ public final class ShipmentJpaEntityFixtures {
         return ShipmentJpaEntity.create(
                 DEFAULT_ID,
                 DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_STATUS_SHIPPED,
                 DEFAULT_SHIPMENT_METHOD_TYPE,
                 DEFAULT_COURIER_CODE,
@@ -98,8 +94,7 @@ public final class ShipmentJpaEntityFixtures {
         return ShipmentJpaEntity.create(
                 DEFAULT_ID,
                 DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_STATUS_DELIVERED,
                 DEFAULT_SHIPMENT_METHOD_TYPE,
                 DEFAULT_COURIER_CODE,
@@ -119,8 +114,7 @@ public final class ShipmentJpaEntityFixtures {
         return ShipmentJpaEntity.create(
                 DEFAULT_ID,
                 DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_STATUS_READY,
                 null,
                 null,
@@ -134,14 +128,13 @@ public final class ShipmentJpaEntityFixtures {
                 now);
     }
 
-    /** 특정 orderId를 가진 READY Entity 생성. */
-    public static ShipmentJpaEntity readyEntityWithOrderId(String id, String orderId) {
+    /** 특정 orderItemId를 가진 READY Entity 생성. */
+    public static ShipmentJpaEntity readyEntityWithOrderItemId(String id, Long orderItemId) {
         Instant now = Instant.now();
         return ShipmentJpaEntity.create(
                 id,
                 DEFAULT_SHIPMENT_NUMBER,
-                orderId,
-                DEFAULT_ORDER_NUMBER,
+                orderItemId,
                 DEFAULT_STATUS_READY,
                 null,
                 null,
@@ -161,8 +154,7 @@ public final class ShipmentJpaEntityFixtures {
         return ShipmentJpaEntity.create(
                 id,
                 DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                DEFAULT_ORDER_ITEM_ID,
                 status,
                 null,
                 null,
@@ -182,8 +174,7 @@ public final class ShipmentJpaEntityFixtures {
         return ShipmentJpaEntity.create(
                 DEFAULT_ID,
                 DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_STATUS_READY,
                 null,
                 null,
@@ -204,8 +195,7 @@ public final class ShipmentJpaEntityFixtures {
         return ShipmentJpaEntity.create(
                 id,
                 DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
+                DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_STATUS_SHIPPED,
                 DEFAULT_SHIPMENT_METHOD_TYPE,
                 DEFAULT_COURIER_CODE,

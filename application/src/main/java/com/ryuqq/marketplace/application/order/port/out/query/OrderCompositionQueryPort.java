@@ -67,6 +67,14 @@ public interface OrderCompositionQueryPort {
      */
     Map<Long, List<OrderClaimResult>> findClaimsByItemIds(List<Long> orderItemIds);
 
+    /**
+     * orderItemId 목록으로 주문 아이템 정보 일괄 조회.
+     *
+     * @param orderItemIds 주문 상품 ID 목록
+     * @return orderItemId 키의 주문 아이템 결과 맵
+     */
+    Map<Long, OrderItemResult> findOrderItemsByIds(List<Long> orderItemIds);
+
     // ==================== V5 상품주문 상세 ====================
 
     /** 상품주문 상세 단건 조회 (item + order + payment를 한 쿼리로 조회). */

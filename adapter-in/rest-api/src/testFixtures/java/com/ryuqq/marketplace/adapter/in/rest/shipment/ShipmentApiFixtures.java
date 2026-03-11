@@ -9,13 +9,17 @@ import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipmentSearch
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse.BatchResultItemApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.ShipmentMethodApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.PaymentInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.SettlementInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.OrderInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ProductOrderInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ReceiverInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ShipmentInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentSummaryApiResponse;
 import com.ryuqq.marketplace.application.common.dto.result.BatchItemResult;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult;
-import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult.ShipmentMethodResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentPageResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentSummaryResult;
@@ -28,9 +32,6 @@ import java.util.stream.IntStream;
  * Shipment API 테스트 Fixtures.
  *
  * <p>Shipment REST API 테스트에서 사용하는 요청/응답 객체를 생성합니다.
- *
- * @author ryu-qqq
- * @since 1.1.0
  */
 public final class ShipmentApiFixtures {
 
@@ -39,35 +40,38 @@ public final class ShipmentApiFixtures {
     // ===== 상수 =====
     public static final String DEFAULT_SHIPMENT_ID = "SHIP-001";
     public static final String DEFAULT_SHIPMENT_NUMBER = "SN-20250101-001";
-    public static final String DEFAULT_ORDER_ID = "ORDER-001";
+    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ID = "ORD-001";
     public static final String DEFAULT_ORDER_NUMBER = "ON-20250101-001";
     public static final String DEFAULT_STATUS = "READY";
     public static final String DEFAULT_TRACKING_NUMBER = "1234567890";
     public static final String DEFAULT_COURIER_CODE = "CJ";
     public static final String DEFAULT_COURIER_NAME = "CJ대한통운";
-    public static final String DEFAULT_SHIPMENT_METHOD_TYPE = "PARCEL";
+    public static final String DEFAULT_SHIPMENT_METHOD_TYPE = "COURIER";
+    public static final Instant DEFAULT_INSTANT = Instant.parse("2025-01-23T01:30:00Z");
+    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23T10:30:00+09:00";
 
     // ===== ConfirmShipmentBatchApiRequest =====
 
     public static ConfirmShipmentBatchApiRequest confirmBatchRequest() {
-        return new ConfirmShipmentBatchApiRequest(List.of("SHIP-001", "SHIP-002", "SHIP-003"));
+        return new ConfirmShipmentBatchApiRequest(List.of(1001L, 1002L, 1003L));
     }
 
-    public static ConfirmShipmentBatchApiRequest confirmBatchRequest(List<String> shipmentIds) {
-        return new ConfirmShipmentBatchApiRequest(shipmentIds);
+    public static ConfirmShipmentBatchApiRequest confirmBatchRequest(List<Long> orderItemIds) {
+        return new ConfirmShipmentBatchApiRequest(orderItemIds);
     }
 
     // ===== ShipBatchApiRequest =====
 
     public static ShipBatchApiRequest shipBatchRequest() {
         List<ShipBatchItemApiRequest> items =
-                List.of(shipBatchItemRequest("SHIP-001"), shipBatchItemRequest("SHIP-002"));
+                List.of(shipBatchItemRequest(1001L), shipBatchItemRequest(1002L));
         return new ShipBatchApiRequest(items);
     }
 
-    public static ShipBatchItemApiRequest shipBatchItemRequest(String shipmentId) {
+    public static ShipBatchItemApiRequest shipBatchItemRequest(Long orderItemId) {
         return new ShipBatchItemApiRequest(
-                shipmentId,
+                orderItemId,
                 DEFAULT_TRACKING_NUMBER,
                 DEFAULT_COURIER_CODE,
                 DEFAULT_COURIER_NAME,
@@ -128,18 +132,56 @@ public final class ShipmentApiFixtures {
     // ===== ShipmentListResult (Application) =====
 
     public static ShipmentListResult listResult(String shipmentId) {
-        Instant now = Instant.parse("2025-01-23T01:30:00Z");
         return new ShipmentListResult(
-                shipmentId,
-                DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
-                DEFAULT_STATUS,
-                DEFAULT_TRACKING_NUMBER,
-                DEFAULT_COURIER_NAME,
-                now,
-                null,
-                now);
+                new ShipmentListResult.ShipmentInfo(
+                        shipmentId,
+                        DEFAULT_SHIPMENT_NUMBER,
+                        DEFAULT_STATUS,
+                        DEFAULT_TRACKING_NUMBER,
+                        DEFAULT_COURIER_CODE,
+                        DEFAULT_COURIER_NAME,
+                        DEFAULT_INSTANT,
+                        DEFAULT_INSTANT,
+                        null,
+                        DEFAULT_INSTANT),
+                new ShipmentListResult.OrderInfo(
+                        DEFAULT_ORDER_ID,
+                        DEFAULT_ORDER_NUMBER,
+                        "COMPLETED",
+                        1L,
+                        1L,
+                        "SHOP-001",
+                        "테스트샵",
+                        "EXT-001",
+                        DEFAULT_INSTANT,
+                        "홍길동",
+                        "buyer@test.com",
+                        "010-1234-5678",
+                        DEFAULT_INSTANT,
+                        DEFAULT_INSTANT),
+                new ShipmentListResult.ProductOrderInfo(
+                        DEFAULT_ORDER_ITEM_ID,
+                        100L,
+                        200L,
+                        1L,
+                        1L,
+                        "SKU-001",
+                        "테스트상품",
+                        "테스트브랜드",
+                        "테스트셀러",
+                        "https://img.test.com/main.jpg",
+                        "EXT-P-001",
+                        "EXT-O-001",
+                        "외부상품명",
+                        "외부옵션명",
+                        "https://img.test.com/ext.jpg",
+                        10000,
+                        1,
+                        10000,
+                        0,
+                        10000),
+                new ShipmentListResult.ReceiverInfo(
+                        "김수령", "010-9876-5432", "12345", "서울시 강남구", "101동 202호", "문 앞에 놓아주세요"));
     }
 
     public static List<ShipmentListResult> listResults(int count) {
@@ -160,40 +202,121 @@ public final class ShipmentApiFixtures {
     // ===== ShipmentDetailResult (Application) =====
 
     public static ShipmentDetailResult detailResult(String shipmentId) {
-        Instant now = Instant.parse("2025-01-23T01:30:00Z");
-        ShipmentMethodResult method =
-                new ShipmentMethodResult(
-                        DEFAULT_SHIPMENT_METHOD_TYPE, DEFAULT_COURIER_CODE, DEFAULT_COURIER_NAME);
         return new ShipmentDetailResult(
-                shipmentId,
-                DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
-                DEFAULT_STATUS,
-                method,
-                DEFAULT_TRACKING_NUMBER,
-                now,
-                now,
-                null,
-                now,
-                now);
+                new ShipmentListResult.ShipmentInfo(
+                        shipmentId,
+                        DEFAULT_SHIPMENT_NUMBER,
+                        DEFAULT_STATUS,
+                        DEFAULT_TRACKING_NUMBER,
+                        DEFAULT_COURIER_CODE,
+                        DEFAULT_COURIER_NAME,
+                        DEFAULT_INSTANT,
+                        DEFAULT_INSTANT,
+                        null,
+                        DEFAULT_INSTANT),
+                new ShipmentListResult.OrderInfo(
+                        DEFAULT_ORDER_ID,
+                        DEFAULT_ORDER_NUMBER,
+                        "COMPLETED",
+                        1L,
+                        1L,
+                        "SHOP-001",
+                        "테스트샵",
+                        "EXT-001",
+                        DEFAULT_INSTANT,
+                        "홍길동",
+                        "buyer@test.com",
+                        "010-1234-5678",
+                        DEFAULT_INSTANT,
+                        DEFAULT_INSTANT),
+                new ShipmentListResult.ProductOrderInfo(
+                        DEFAULT_ORDER_ITEM_ID,
+                        100L,
+                        200L,
+                        1L,
+                        1L,
+                        "SKU-001",
+                        "테스트상품",
+                        "테스트브랜드",
+                        "테스트셀러",
+                        "https://img.test.com/main.jpg",
+                        "EXT-P-001",
+                        "EXT-O-001",
+                        "외부상품명",
+                        "외부옵션명",
+                        "https://img.test.com/ext.jpg",
+                        10000,
+                        1,
+                        10000,
+                        0,
+                        10000),
+                new ShipmentListResult.ReceiverInfo(
+                        "김수령", "010-9876-5432", "12345", "서울시 강남구", "101동 202호", "문 앞에 놓아주세요"),
+                new ShipmentDetailResult.PaymentInfo(
+                        "PAY-001",
+                        "PN-20250101-001",
+                        "COMPLETED",
+                        "CARD",
+                        "PG-001",
+                        10000,
+                        DEFAULT_INSTANT,
+                        null),
+                new ShipmentDetailResult.SettlementInfo(10, 1000, 9000, 0, 100, null, null));
     }
 
-    public static ShipmentDetailResult detailResultWithoutMethod(String shipmentId) {
-        Instant now = Instant.parse("2025-01-23T01:30:00Z");
+    public static ShipmentDetailResult detailResultWithoutPayment(String shipmentId) {
         return new ShipmentDetailResult(
-                shipmentId,
-                DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
-                DEFAULT_STATUS,
+                new ShipmentListResult.ShipmentInfo(
+                        shipmentId,
+                        DEFAULT_SHIPMENT_NUMBER,
+                        DEFAULT_STATUS,
+                        null,
+                        null,
+                        null,
+                        DEFAULT_INSTANT,
+                        null,
+                        null,
+                        DEFAULT_INSTANT),
+                new ShipmentListResult.OrderInfo(
+                        DEFAULT_ORDER_ID,
+                        DEFAULT_ORDER_NUMBER,
+                        "COMPLETED",
+                        1L,
+                        1L,
+                        "SHOP-001",
+                        "테스트샵",
+                        "EXT-001",
+                        DEFAULT_INSTANT,
+                        "홍길동",
+                        "buyer@test.com",
+                        "010-1234-5678",
+                        DEFAULT_INSTANT,
+                        DEFAULT_INSTANT),
+                new ShipmentListResult.ProductOrderInfo(
+                        DEFAULT_ORDER_ITEM_ID,
+                        100L,
+                        200L,
+                        1L,
+                        1L,
+                        "SKU-001",
+                        "테스트상품",
+                        "테스트브랜드",
+                        "테스트셀러",
+                        "https://img.test.com/main.jpg",
+                        "EXT-P-001",
+                        "EXT-O-001",
+                        "외부상품명",
+                        "외부옵션명",
+                        "https://img.test.com/ext.jpg",
+                        10000,
+                        1,
+                        10000,
+                        0,
+                        10000),
+                new ShipmentListResult.ReceiverInfo(
+                        "김수령", "010-9876-5432", "12345", "서울시 강남구", "101동 202호", "문 앞에 놓아주세요"),
                 null,
-                null,
-                now,
-                null,
-                null,
-                now,
-                now);
+                new ShipmentDetailResult.SettlementInfo(0, 0, 0, 0, 0, null, null));
     }
 
     // ===== BatchProcessingResult (Application) =====
@@ -206,10 +329,9 @@ public final class ShipmentApiFixtures {
     public static BatchProcessingResult<String> batchMixedResult() {
         List<BatchItemResult<String>> items =
                 List.of(
-                        BatchItemResult.success("SHIP-001"),
-                        BatchItemResult.failure(
-                                "SHIP-002", "ALREADY_CONFIRMED", "이미 발주 확인된 배송입니다."),
-                        BatchItemResult.success("SHIP-003"));
+                        BatchItemResult.success("1001"),
+                        BatchItemResult.failure("1002", "ALREADY_CONFIRMED", "이미 발주 확인된 배송입니다."),
+                        BatchItemResult.success("1003"));
         return BatchProcessingResult.from(items);
     }
 
@@ -223,16 +345,55 @@ public final class ShipmentApiFixtures {
 
     public static ShipmentListApiResponse listApiResponse(String shipmentId) {
         return new ShipmentListApiResponse(
-                shipmentId,
-                DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
-                DEFAULT_STATUS,
-                DEFAULT_TRACKING_NUMBER,
-                DEFAULT_COURIER_NAME,
-                "2025-01-23T10:30:00+09:00",
-                null,
-                "2025-01-23T10:30:00+09:00");
+                new ShipmentInfoResponse(
+                        shipmentId,
+                        DEFAULT_SHIPMENT_NUMBER,
+                        DEFAULT_STATUS,
+                        DEFAULT_TRACKING_NUMBER,
+                        DEFAULT_COURIER_CODE,
+                        DEFAULT_COURIER_NAME,
+                        DEFAULT_FORMATTED_TIME,
+                        DEFAULT_FORMATTED_TIME,
+                        null,
+                        DEFAULT_FORMATTED_TIME),
+                new OrderInfoResponse(
+                        DEFAULT_ORDER_ID,
+                        DEFAULT_ORDER_NUMBER,
+                        "COMPLETED",
+                        1L,
+                        1L,
+                        "SHOP-001",
+                        "테스트샵",
+                        "EXT-001",
+                        DEFAULT_FORMATTED_TIME,
+                        "홍길동",
+                        "buyer@test.com",
+                        "010-1234-5678",
+                        DEFAULT_FORMATTED_TIME,
+                        DEFAULT_FORMATTED_TIME),
+                new ProductOrderInfoResponse(
+                        DEFAULT_ORDER_ITEM_ID,
+                        100L,
+                        200L,
+                        1L,
+                        1L,
+                        "SKU-001",
+                        "테스트상품",
+                        "테스트브랜드",
+                        "테스트셀러",
+                        "https://img.test.com/main.jpg",
+                        "EXT-P-001",
+                        "EXT-O-001",
+                        "외부상품명",
+                        "외부옵션명",
+                        "https://img.test.com/ext.jpg",
+                        10000,
+                        1,
+                        10000,
+                        0,
+                        10000),
+                new ReceiverInfoResponse(
+                        "김수령", "010-9876-5432", "12345", "서울시 강남구", "101동 202호", "문 앞에 놓아주세요"));
     }
 
     public static List<ShipmentListApiResponse> listApiResponses(int count) {
@@ -248,22 +409,66 @@ public final class ShipmentApiFixtures {
     // ===== ShipmentDetailApiResponse =====
 
     public static ShipmentDetailApiResponse detailApiResponse(String shipmentId) {
-        ShipmentMethodApiResponse method =
-                new ShipmentMethodApiResponse(
-                        DEFAULT_SHIPMENT_METHOD_TYPE, DEFAULT_COURIER_CODE, DEFAULT_COURIER_NAME);
         return new ShipmentDetailApiResponse(
-                shipmentId,
-                DEFAULT_SHIPMENT_NUMBER,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_NUMBER,
-                DEFAULT_STATUS,
-                method,
-                DEFAULT_TRACKING_NUMBER,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00",
-                null,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                new ShipmentInfoResponse(
+                        shipmentId,
+                        DEFAULT_SHIPMENT_NUMBER,
+                        DEFAULT_STATUS,
+                        DEFAULT_TRACKING_NUMBER,
+                        DEFAULT_COURIER_CODE,
+                        DEFAULT_COURIER_NAME,
+                        DEFAULT_FORMATTED_TIME,
+                        DEFAULT_FORMATTED_TIME,
+                        null,
+                        DEFAULT_FORMATTED_TIME),
+                new OrderInfoResponse(
+                        DEFAULT_ORDER_ID,
+                        DEFAULT_ORDER_NUMBER,
+                        "COMPLETED",
+                        1L,
+                        1L,
+                        "SHOP-001",
+                        "테스트샵",
+                        "EXT-001",
+                        DEFAULT_FORMATTED_TIME,
+                        "홍길동",
+                        "buyer@test.com",
+                        "010-1234-5678",
+                        DEFAULT_FORMATTED_TIME,
+                        DEFAULT_FORMATTED_TIME),
+                new ProductOrderInfoResponse(
+                        DEFAULT_ORDER_ITEM_ID,
+                        100L,
+                        200L,
+                        1L,
+                        1L,
+                        "SKU-001",
+                        "테스트상품",
+                        "테스트브랜드",
+                        "테스트셀러",
+                        "https://img.test.com/main.jpg",
+                        "EXT-P-001",
+                        "EXT-O-001",
+                        "외부상품명",
+                        "외부옵션명",
+                        "https://img.test.com/ext.jpg",
+                        10000,
+                        1,
+                        10000,
+                        0,
+                        10000),
+                new ReceiverInfoResponse(
+                        "김수령", "010-9876-5432", "12345", "서울시 강남구", "101동 202호", "문 앞에 놓아주세요"),
+                new PaymentInfoResponse(
+                        "PAY-001",
+                        "PN-20250101-001",
+                        "COMPLETED",
+                        "CARD",
+                        "PG-001",
+                        10000,
+                        DEFAULT_FORMATTED_TIME,
+                        null),
+                new SettlementInfoResponse(10, 1000, 9000, 0, 100, null, null));
     }
 
     // ===== BatchResultApiResponse =====
@@ -271,10 +476,10 @@ public final class ShipmentApiFixtures {
     public static BatchResultApiResponse batchResultApiResponse() {
         List<BatchResultItemApiResponse> items =
                 List.of(
-                        new BatchResultItemApiResponse("SHIP-001", true, null, null),
+                        new BatchResultItemApiResponse("1001", true, null, null),
                         new BatchResultItemApiResponse(
-                                "SHIP-002", false, "ALREADY_CONFIRMED", "이미 발주 확인된 배송입니다."),
-                        new BatchResultItemApiResponse("SHIP-003", true, null, null));
+                                "1002", false, "ALREADY_CONFIRMED", "이미 발주 확인된 배송입니다."),
+                        new BatchResultItemApiResponse("1003", true, null, null));
         return new BatchResultApiResponse(3, 2, 1, items);
     }
 

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /** 송장등록 일괄 처리 요청 DTO. */
@@ -18,11 +19,11 @@ public record ShipBatchApiRequest(
     @Schema(description = "송장등록 개별 항목")
     public record ShipBatchItemApiRequest(
             @Schema(
-                            description = "배송 ID",
-                            example = "ship-001",
+                            description = "상품주문 ID",
+                            example = "1001",
                             requiredMode = Schema.RequiredMode.REQUIRED)
-                    @NotBlank
-                    String shipmentId,
+                    @NotNull
+                    Long orderItemId,
             @Schema(
                             description = "송장번호",
                             example = "1234567890",
@@ -43,7 +44,7 @@ public record ShipBatchApiRequest(
                     String courierName,
             @Schema(
                             description = "배송 방법 유형",
-                            example = "PARCEL",
+                            example = "COURIER",
                             requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank
                     String shipmentMethodType) {}

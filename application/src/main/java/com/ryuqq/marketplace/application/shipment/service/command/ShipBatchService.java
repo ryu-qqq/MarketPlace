@@ -1,18 +1,18 @@
 package com.ryuqq.marketplace.application.shipment.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
-import com.ryuqq.marketplace.application.common.dto.result.BatchItemResult;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.shipment.dto.command.ShipBatchCommand;
+import com.ryuqq.marketplace.application.shipment.dto.command.ShipBatchCommand.ShipBatchItem;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
-import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
-import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentBatchProcessor;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ShipBatchUseCase;
-import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
-import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentShipData;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,40 +25,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class ShipBatchService implements ShipBatchUseCase {
 
-    private final ShipmentReadManager readManager;
-    private final ShipmentCommandManager writeManager;
     private final ShipmentCommandFactory commandFactory;
+    private final ShipmentBatchProcessor batchProcessor;
 
     public ShipBatchService(
-            ShipmentReadManager readManager,
-            ShipmentCommandManager writeManager,
-            ShipmentCommandFactory commandFactory) {
-        this.readManager = readManager;
-        this.writeManager = writeManager;
+            ShipmentCommandFactory commandFactory, ShipmentBatchProcessor batchProcessor) {
         this.commandFactory = commandFactory;
+        this.batchProcessor = batchProcessor;
     }
 
     @Override
     public BatchProcessingResult<String> execute(ShipBatchCommand command) {
-        List<UpdateContext<ShipmentId, ShipmentShipData>> contexts =
+        List<UpdateContext<OrderItemId, ShipmentShipData>> contexts =
                 commandFactory.createShipContexts(command);
-
-        List<BatchItemResult<String>> results = new ArrayList<>();
-
-        for (UpdateContext<ShipmentId, ShipmentShipData> ctx : contexts) {
-            try {
-                Shipment shipment = readManager.getById(ctx.id());
-                ShipmentShipData shipData = ctx.updateData();
-                shipment.ship(shipData.trackingNumber(), shipData.method(), ctx.changedAt());
-                writeManager.persist(shipment);
-                results.add(BatchItemResult.success(ctx.id().value()));
-            } catch (Exception e) {
-                results.add(
-                        BatchItemResult.failure(
-                                ctx.id().value(), e.getClass().getSimpleName(), e.getMessage()));
-            }
-        }
-
-        return BatchProcessingResult.from(results);
+        Map<Long, ShipBatchItem> itemMap =
+                command.items().stream()
+                        .collect(Collectors.toMap(ShipBatchItem::orderItemId, Function.identity()));
+        return batchProcessor.shipBatch(contexts, itemMap);
     }
 }

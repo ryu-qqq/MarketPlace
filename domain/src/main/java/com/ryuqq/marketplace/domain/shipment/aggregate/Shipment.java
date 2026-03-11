@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.domain.shipment.aggregate;
 
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.exception.ShipmentErrorCode;
 import com.ryuqq.marketplace.domain.shipment.exception.ShipmentException;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
@@ -13,8 +14,7 @@ public class Shipment {
 
     private final ShipmentId id;
     private final ShipmentNumber shipmentNumber;
-    private final String orderId;
-    private final String orderNumber;
+    private final OrderItemId orderItemId;
     private ShipmentStatus status;
     private ShipmentMethod shipmentMethod;
     private String trackingNumber;
@@ -27,8 +27,7 @@ public class Shipment {
     private Shipment(
             ShipmentId id,
             ShipmentNumber shipmentNumber,
-            String orderId,
-            String orderNumber,
+            OrderItemId orderItemId,
             ShipmentStatus status,
             ShipmentMethod shipmentMethod,
             String trackingNumber,
@@ -39,8 +38,7 @@ public class Shipment {
             Instant updatedAt) {
         this.id = id;
         this.shipmentNumber = shipmentNumber;
-        this.orderId = orderId;
-        this.orderNumber = orderNumber;
+        this.orderItemId = orderItemId;
         this.status = status;
         this.shipmentMethod = shipmentMethod;
         this.trackingNumber = trackingNumber;
@@ -52,16 +50,11 @@ public class Shipment {
     }
 
     public static Shipment forNew(
-            ShipmentId id,
-            ShipmentNumber shipmentNumber,
-            String orderId,
-            String orderNumber,
-            Instant now) {
+            ShipmentId id, ShipmentNumber shipmentNumber, OrderItemId orderItemId, Instant now) {
         return new Shipment(
                 id,
                 shipmentNumber,
-                orderId,
-                orderNumber,
+                orderItemId,
                 ShipmentStatus.READY,
                 null,
                 null,
@@ -75,8 +68,7 @@ public class Shipment {
     public static Shipment reconstitute(
             ShipmentId id,
             ShipmentNumber shipmentNumber,
-            String orderId,
-            String orderNumber,
+            OrderItemId orderItemId,
             ShipmentStatus status,
             ShipmentMethod shipmentMethod,
             String trackingNumber,
@@ -88,8 +80,7 @@ public class Shipment {
         return new Shipment(
                 id,
                 shipmentNumber,
-                orderId,
-                orderNumber,
+                orderItemId,
                 status,
                 shipmentMethod,
                 trackingNumber,
@@ -98,6 +89,14 @@ public class Shipment {
                 deliveredAt,
                 createdAt,
                 updatedAt);
+    }
+
+    public boolean canPrepare() {
+        return this.status == ShipmentStatus.READY;
+    }
+
+    public boolean canShip() {
+        return this.status == ShipmentStatus.PREPARING;
     }
 
     /** 발주확인: READY → PREPARING */
@@ -177,12 +176,12 @@ public class Shipment {
         return shipmentNumber.value();
     }
 
-    public String orderId() {
-        return orderId;
+    public OrderItemId orderItemId() {
+        return orderItemId;
     }
 
-    public String orderNumber() {
-        return orderNumber;
+    public long orderItemIdValue() {
+        return orderItemId.value();
     }
 
     public ShipmentStatus status() {
