@@ -81,6 +81,7 @@ public class ShipmentCommandFactory {
                             ShipmentNumber.generate(),
                             orderItemId,
                             now);
+            shipment.prepare(now);
             shipments.add(shipment);
 
             ShipmentOutbox outbox =
