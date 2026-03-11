@@ -25,11 +25,13 @@ class ExternalOrderReferenceTest {
 
             // when
             ExternalOrderReference ref =
-                    ExternalOrderReference.of(1L, 10L, "EXT-ORDER-001", orderedAt);
+                    ExternalOrderReference.of(1L, 10L, "NAVER", "네이버", "EXT-ORDER-001", orderedAt);
 
             // then
             assertThat(ref.salesChannelId()).isEqualTo(1L);
             assertThat(ref.shopId()).isEqualTo(10L);
+            assertThat(ref.shopCode()).isEqualTo("NAVER");
+            assertThat(ref.shopName()).isEqualTo("네이버");
             assertThat(ref.externalOrderNo()).isEqualTo("EXT-ORDER-001");
             assertThat(ref.externalOrderedAt()).isEqualTo(orderedAt);
         }
@@ -41,7 +43,12 @@ class ExternalOrderReferenceTest {
             assertThatThrownBy(
                             () ->
                                     ExternalOrderReference.of(
-                                            1L, 10L, null, CommonVoFixtures.yesterday()))
+                                            1L,
+                                            10L,
+                                            null,
+                                            null,
+                                            null,
+                                            CommonVoFixtures.yesterday()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("외부 주문번호는 필수");
         }
@@ -53,7 +60,12 @@ class ExternalOrderReferenceTest {
             assertThatThrownBy(
                             () ->
                                     ExternalOrderReference.of(
-                                            1L, 10L, "   ", CommonVoFixtures.yesterday()))
+                                            1L,
+                                            10L,
+                                            null,
+                                            null,
+                                            "   ",
+                                            CommonVoFixtures.yesterday()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("외부 주문번호는 필수");
         }
@@ -62,7 +74,10 @@ class ExternalOrderReferenceTest {
         @DisplayName("외부 주문시간이 null이면 예외가 발생한다")
         void createWithNullExternalOrderedAt_ThrowsException() {
             // when & then
-            assertThatThrownBy(() -> ExternalOrderReference.of(1L, 10L, "EXT-ORDER-001", null))
+            assertThatThrownBy(
+                            () ->
+                                    ExternalOrderReference.of(
+                                            1L, 10L, null, null, "EXT-ORDER-001", null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("외부 주문시간은 필수");
         }
@@ -80,9 +95,9 @@ class ExternalOrderReferenceTest {
 
             // when
             ExternalOrderReference ref1 =
-                    ExternalOrderReference.of(1L, 10L, "EXT-ORDER-001", orderedAt);
+                    ExternalOrderReference.of(1L, 10L, null, null, "EXT-ORDER-001", orderedAt);
             ExternalOrderReference ref2 =
-                    ExternalOrderReference.of(1L, 10L, "EXT-ORDER-001", orderedAt);
+                    ExternalOrderReference.of(1L, 10L, null, null, "EXT-ORDER-001", orderedAt);
 
             // then
             assertThat(ref1).isEqualTo(ref2);

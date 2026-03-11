@@ -21,6 +21,7 @@ import com.ryuqq.marketplace.application.imagetransform.port.out.client.ImageTra
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyProductIdMappingReadManager;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyConversionOutboxCommandPort;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyProductIdMappingCommandPort;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyConversionOutboxQueryPort;
@@ -328,7 +329,9 @@ public class StubExternalClientConfig {
                     Long externalBrandId,
                     String externalProductId,
                     com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel
-                            channel) {
+                            channel,
+                    java.util.Set<com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea>
+                            changedAreas) {
                 // stub: no-op
             }
 
@@ -470,7 +473,24 @@ public class StubExternalClientConfig {
                     long legacyProductGroupId) {
                 return Collections.emptyList();
             }
+
+            @Override
+            public List<LegacyProductIdMapping> findByLegacyProductGroupIds(
+                    java.util.Collection<Long> legacyProductGroupIds) {
+                return Collections.emptyList();
+            }
         };
+    }
+
+    /**
+     * legacyconversion 패키지는 ComponentScan에서 legacy.* 패턴으로 제외되므로, ExternalProductInitializer가 의존하는
+     * Manager를 직접 등록합니다.
+     */
+    @Bean
+    @Primary
+    public LegacyProductIdMappingReadManager stubLegacyProductIdMappingReadManager(
+            LegacyProductIdMappingQueryPort queryPort) {
+        return new LegacyProductIdMappingReadManager(queryPort);
     }
 
     // ===== 레거시 모듈 Stubs (persistence-mysql-legacy 제외 시 필요) =====

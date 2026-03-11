@@ -1,8 +1,10 @@
 package com.ryuqq.marketplace.application.outboundsync.dto.vo;
 
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
+import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import java.util.Set;
 
 /**
  * 외부 채널 연동 실행 컨텍스트.
@@ -13,9 +15,16 @@ import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChan
  * @param sellerSalesChannel 셀러 판매채널 (채널 코드, 인증 정보)
  * @param productGroupId 상품그룹 ID
  * @param syncType 연동 타입
+ * @param changedAreas 변경된 영역 집합 (비어있으면 전체 수정으로 간주)
  */
 public record OutboundSyncExecutionContext(
         OutboundSyncOutbox outbox,
         SellerSalesChannel sellerSalesChannel,
         Long productGroupId,
-        SyncType syncType) {}
+        SyncType syncType,
+        Set<ChangedArea> changedAreas) {
+
+    public OutboundSyncExecutionContext {
+        changedAreas = changedAreas != null ? Set.copyOf(changedAreas) : Set.of();
+    }
+}

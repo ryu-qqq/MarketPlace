@@ -14,6 +14,8 @@ spring:
 # ============================================================
 sqs:
   consumer:
+    outbound-sync:
+      enabled: true
     intelligence-orchestration:
       enabled: false
     intelligence-description-analysis:

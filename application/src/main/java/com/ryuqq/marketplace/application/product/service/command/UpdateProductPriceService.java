@@ -8,8 +8,10 @@ import com.ryuqq.marketplace.application.product.manager.ProductCommandManager;
 import com.ryuqq.marketplace.application.product.manager.ProductReadManager;
 import com.ryuqq.marketplace.application.product.port.in.command.UpdateProductPriceUseCase;
 import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 
 /**
@@ -48,6 +50,7 @@ public class UpdateProductPriceService implements UpdateProductPriceUseCase {
 
         commandManager.persist(product);
 
-        updateOutboxCoordinator.createUpdateOutboxesIfNeeded(product.productGroupId());
+        updateOutboxCoordinator.createUpdateOutboxesIfNeeded(
+                product.productGroupId(), Set.of(ChangedArea.PRICE));
     }
 }

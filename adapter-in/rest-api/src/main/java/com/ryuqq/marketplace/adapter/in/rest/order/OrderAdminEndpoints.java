@@ -7,7 +7,7 @@ public final class OrderAdminEndpoints {
 
     private static final String BASE = "/api/v1/market";
     public static final String ORDERS = BASE + "/orders";
-    public static final String ORDER_ID = "/{orderId}";
-    public static final String PATH_ORDER_ID = "orderId";
+    public static final String ORDER_ITEM_ID = "/{orderItemId}";
+    public static final String PATH_ORDER_ITEM_ID = "orderItemId";
     public static final String SUMMARY = "/summary";
 }

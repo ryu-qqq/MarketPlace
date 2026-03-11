@@ -77,3 +77,7 @@ tfplan
 # Legacy seed data (contains test tokens)
 local-dev/data/legacy-seed/
 docs/seller/seed_data.sql
+
+# Naver API reference docs (external)
+docs/reference/NAVER_*
+docs/reference/naver_*

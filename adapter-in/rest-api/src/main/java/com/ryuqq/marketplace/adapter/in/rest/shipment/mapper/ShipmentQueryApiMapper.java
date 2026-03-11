@@ -4,8 +4,13 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipmentSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.ShipmentMethodApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.PaymentInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.SettlementInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.OrderInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ProductOrderInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ReceiverInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ShipmentInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentSummaryApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.shipment.dto.query.ShipmentSearchParams;
@@ -49,41 +54,20 @@ public class ShipmentQueryApiMapper {
 
     public ShipmentListApiResponse toResponse(ShipmentListResult result) {
         return new ShipmentListApiResponse(
-                result.shipmentId(),
-                result.shipmentNumber(),
-                result.orderId(),
-                result.orderNumber(),
-                result.status(),
-                result.trackingNumber(),
-                result.courierName(),
-                DateTimeFormatUtils.formatIso8601(result.shippedAt()),
-                DateTimeFormatUtils.formatIso8601(result.deliveredAt()),
-                DateTimeFormatUtils.formatIso8601(result.createdAt()));
+                toShipmentInfoResponse(result.shipment()),
+                toOrderInfoResponse(result.order()),
+                toProductOrderInfoResponse(result.productOrder()),
+                toReceiverInfoResponse(result.receiver()));
     }
 
     public ShipmentDetailApiResponse toDetailResponse(ShipmentDetailResult result) {
-        ShipmentMethodApiResponse methodResponse = null;
-        if (result.shipmentMethod() != null) {
-            methodResponse =
-                    new ShipmentMethodApiResponse(
-                            result.shipmentMethod().type(),
-                            result.shipmentMethod().courierCode(),
-                            result.shipmentMethod().courierName());
-        }
-
         return new ShipmentDetailApiResponse(
-                result.shipmentId(),
-                result.shipmentNumber(),
-                result.orderId(),
-                result.orderNumber(),
-                result.status(),
-                methodResponse,
-                result.trackingNumber(),
-                DateTimeFormatUtils.formatIso8601(result.orderConfirmedAt()),
-                DateTimeFormatUtils.formatIso8601(result.shippedAt()),
-                DateTimeFormatUtils.formatIso8601(result.deliveredAt()),
-                DateTimeFormatUtils.formatIso8601(result.createdAt()),
-                DateTimeFormatUtils.formatIso8601(result.updatedAt()));
+                toShipmentInfoResponse(result.shipment()),
+                toOrderInfoResponse(result.order()),
+                toProductOrderInfoResponse(result.productOrder()),
+                toReceiverInfoResponse(result.receiver()),
+                toPaymentInfoResponse(result.payment()),
+                toSettlementInfoResponse(result.settlement()));
     }
 
     public ShipmentSummaryApiResponse toSummaryResponse(ShipmentSummaryResult result) {
@@ -105,5 +89,102 @@ public class ShipmentQueryApiMapper {
                 pageResult.pageMeta().page(),
                 pageResult.pageMeta().size(),
                 pageResult.pageMeta().totalElements());
+    }
+
+    private ShipmentInfoResponse toShipmentInfoResponse(ShipmentListResult.ShipmentInfo info) {
+        return new ShipmentInfoResponse(
+                info.shipmentId(),
+                info.shipmentNumber(),
+                info.status(),
+                info.trackingNumber(),
+                info.courierCode(),
+                info.courierName(),
+                DateTimeFormatUtils.formatIso8601(info.orderConfirmedAt()),
+                DateTimeFormatUtils.formatIso8601(info.shippedAt()),
+                DateTimeFormatUtils.formatIso8601(info.deliveredAt()),
+                DateTimeFormatUtils.formatIso8601(info.createdAt()));
+    }
+
+    private OrderInfoResponse toOrderInfoResponse(ShipmentListResult.OrderInfo info) {
+        return new OrderInfoResponse(
+                info.orderId(),
+                info.orderNumber(),
+                info.status(),
+                info.salesChannelId(),
+                info.shopId(),
+                info.shopCode(),
+                info.shopName(),
+                info.externalOrderNo(),
+                DateTimeFormatUtils.formatIso8601(info.externalOrderedAt()),
+                info.buyerName(),
+                info.buyerEmail(),
+                info.buyerPhone(),
+                DateTimeFormatUtils.formatIso8601(info.createdAt()),
+                DateTimeFormatUtils.formatIso8601(info.updatedAt()));
+    }
+
+    private ProductOrderInfoResponse toProductOrderInfoResponse(
+            ShipmentListResult.ProductOrderInfo info) {
+        return new ProductOrderInfoResponse(
+                info.orderItemId(),
+                info.productGroupId(),
+                info.productId(),
+                info.sellerId(),
+                info.brandId(),
+                info.skuCode(),
+                info.productGroupName(),
+                info.brandName(),
+                info.sellerName(),
+                info.mainImageUrl(),
+                info.externalProductId(),
+                info.externalOptionId(),
+                info.externalProductName(),
+                info.externalOptionName(),
+                info.externalImageUrl(),
+                info.unitPrice(),
+                info.quantity(),
+                info.totalAmount(),
+                info.discountAmount(),
+                info.paymentAmount());
+    }
+
+    private ReceiverInfoResponse toReceiverInfoResponse(ShipmentListResult.ReceiverInfo info) {
+        return new ReceiverInfoResponse(
+                info.receiverName(),
+                info.receiverPhone(),
+                info.receiverZipcode(),
+                info.receiverAddress(),
+                info.receiverAddressDetail(),
+                info.deliveryRequest());
+    }
+
+    private PaymentInfoResponse toPaymentInfoResponse(ShipmentDetailResult.PaymentInfo info) {
+        if (info == null) {
+            return null;
+        }
+        return new PaymentInfoResponse(
+                info.paymentId(),
+                info.paymentNumber(),
+                info.paymentStatus(),
+                info.paymentMethod(),
+                info.paymentAgencyId(),
+                info.paymentAmount(),
+                DateTimeFormatUtils.formatIso8601(info.paidAt()),
+                DateTimeFormatUtils.formatIso8601(info.canceledAt()));
+    }
+
+    private SettlementInfoResponse toSettlementInfoResponse(
+            ShipmentDetailResult.SettlementInfo info) {
+        if (info == null) {
+            return null;
+        }
+        return new SettlementInfoResponse(
+                info.commissionRate(),
+                info.fee(),
+                info.expectationSettlementAmount(),
+                info.settlementAmount(),
+                info.shareRatio(),
+                DateTimeFormatUtils.formatIso8601(info.expectedSettlementDay()),
+                DateTimeFormatUtils.formatIso8601(info.settlementDay()));
     }
 }

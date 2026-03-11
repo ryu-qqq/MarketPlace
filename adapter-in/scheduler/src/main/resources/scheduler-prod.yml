@@ -174,3 +174,20 @@ scheduler:
       timezone: "Asia/Seoul"
       # Prod: 큰 배치
       batch-size: 50
+
+    shipment-outbox:
+      process-pending:
+        enabled: true
+        # Prod: 1분마다 (배송 상태 동기화는 빠르게)
+        cron: "0 */1 * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 100
+        delay-seconds: 5
+
+      recover-timeout:
+        enabled: true
+        # Prod: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 100
+        timeout-seconds: 300

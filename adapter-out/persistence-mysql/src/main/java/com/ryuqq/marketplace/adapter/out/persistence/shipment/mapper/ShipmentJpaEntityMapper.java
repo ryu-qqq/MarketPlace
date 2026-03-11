@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.shipment.mapper;
 
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.ShipmentJpaEntity;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentNumber;
@@ -18,8 +19,7 @@ public class ShipmentJpaEntityMapper {
         return ShipmentJpaEntity.create(
                 shipment.idValue(),
                 shipment.shipmentNumberValue(),
-                shipment.orderId(),
-                shipment.orderNumber(),
+                shipment.orderItemIdValue(),
                 shipment.status().name(),
                 method != null ? method.type().name() : null,
                 method != null ? method.courierCode() : null,
@@ -38,8 +38,7 @@ public class ShipmentJpaEntityMapper {
         return Shipment.reconstitute(
                 ShipmentId.of(entity.getId()),
                 ShipmentNumber.of(entity.getShipmentNumber()),
-                entity.getOrderId(),
-                entity.getOrderNumber(),
+                OrderItemId.of(entity.getOrderItemId()),
                 ShipmentStatus.valueOf(entity.getStatus()),
                 method,
                 entity.getTrackingNumber(),

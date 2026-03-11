@@ -86,7 +86,8 @@ class OrderAssemblerTest {
             ProductOrderListResult item = result.productOrders().get(0);
             PaymentInfo paymentInfo = item.payment();
             assertThat(paymentInfo.paymentId()).isEqualTo(OrderQueryFixtures.DEFAULT_PAYMENT_ID);
-            assertThat(paymentInfo.paymentNumber()).isEqualTo(OrderQueryFixtures.DEFAULT_PAYMENT_NUMBER);
+            assertThat(paymentInfo.paymentNumber())
+                    .isEqualTo(OrderQueryFixtures.DEFAULT_PAYMENT_NUMBER);
         }
 
         @Test

@@ -39,13 +39,22 @@ public class ShipmentQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public Optional<ShipmentJpaEntity> findByOrderId(String orderId) {
+    public Optional<ShipmentJpaEntity> findByOrderItemId(Long orderItemId) {
         ShipmentJpaEntity entity =
                 queryFactory
                         .selectFrom(shipment)
-                        .where(conditionBuilder.orderIdEq(orderId), conditionBuilder.notDeleted())
+                        .where(
+                                conditionBuilder.orderItemIdEq(orderItemId),
+                                conditionBuilder.notDeleted())
                         .fetchOne();
         return Optional.ofNullable(entity);
+    }
+
+    public List<ShipmentJpaEntity> findByOrderItemIds(List<Long> orderItemIds) {
+        return queryFactory
+                .selectFrom(shipment)
+                .where(conditionBuilder.orderItemIdIn(orderItemIds), conditionBuilder.notDeleted())
+                .fetch();
     }
 
     public List<ShipmentJpaEntity> findByCriteria(ShipmentSearchCriteria criteria) {

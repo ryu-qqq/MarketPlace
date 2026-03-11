@@ -41,6 +41,24 @@ public class SellerAdminReadManager {
     }
 
     /**
+     * AuthHub 사용자 ID로 셀러 관리자를 조회합니다.
+     *
+     * @param authUserId AuthHub 사용자 ID
+     * @return 셀러 관리자
+     * @throws SellerAdminNotFoundException 존재하지 않는 경우
+     */
+    @Transactional(readOnly = true)
+    public SellerAdmin getByAuthUserId(String authUserId) {
+        return queryPort
+                .findByAuthUserId(authUserId)
+                .orElseThrow(
+                        () ->
+                                SellerAdminNotFoundException.withMessage(
+                                        "AuthUserId에 해당하는 셀러 관리자를 찾을 수 없습니다. authUserId="
+                                                + authUserId));
+    }
+
+    /**
      * ID로 셀러 관리자를 조회합니다.
      *
      * @param sellerAdminId 셀러 관리자 ID

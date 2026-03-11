@@ -60,6 +60,7 @@ public class InboundOrderJpaEntityMapper {
                 item.resolvedSellerId(),
                 item.resolvedBrandId(),
                 item.resolvedSkuCode(),
+                item.resolvedProductGroupName(),
                 item.isMapped(),
                 null,
                 null);
@@ -119,6 +120,7 @@ public class InboundOrderJpaEntityMapper {
                 entity.getResolvedSellerId(),
                 entity.getResolvedBrandId(),
                 entity.getResolvedSkuCode(),
+                entity.getResolvedProductGroupName(),
                 entity.isMapped());
     }
 }

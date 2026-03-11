@@ -13,12 +13,14 @@ import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
+import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
 import com.ryuqq.marketplace.domain.order.vo.BuyerName;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderItemPrice;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderReference;
 import com.ryuqq.marketplace.domain.order.vo.ExternalProductSnapshot;
 import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
+import com.ryuqq.marketplace.domain.order.vo.PaymentInfo;
 import com.ryuqq.marketplace.domain.order.vo.ReceiverInfo;
 import java.time.Instant;
 import java.util.List;
@@ -59,17 +61,34 @@ public class OrderCommandFactory {
                         Email.of(command.buyerEmail()),
                         PhoneNumber.of(command.buyerPhone()));
 
+        PaymentNumber paymentNumber = PaymentNumber.generate();
+        PaymentInfo paymentInfo =
+                PaymentInfo.of(
+                        paymentNumber,
+                        command.paymentMethod(),
+                        Money.of(command.totalPaymentAmount()),
+                        command.paidAt());
+
         ExternalOrderReference externalOrderRef =
                 ExternalOrderReference.of(
                         command.salesChannelId(),
                         command.shopId(),
+                        command.shopCode(),
+                        command.shopName(),
                         command.externalOrderNo(),
                         command.externalOrderedAt());
 
         List<OrderItem> items = command.items().stream().map(this::createOrderItem).toList();
 
         return Order.forNew(
-                orderId, orderNumber, buyerInfo, externalOrderRef, items, command.changedBy(), now);
+                orderId,
+                orderNumber,
+                buyerInfo,
+                paymentInfo,
+                externalOrderRef,
+                items,
+                command.changedBy(),
+                now);
     }
 
     /**
@@ -114,7 +133,11 @@ public class OrderCommandFactory {
                         cmd.productId(),
                         cmd.sellerId(),
                         cmd.brandId(),
-                        cmd.skuCode());
+                        cmd.skuCode(),
+                        cmd.productGroupName(),
+                        cmd.brandName(),
+                        cmd.sellerName(),
+                        cmd.mainImageUrl());
 
         ExternalProductSnapshot externalProduct =
                 ExternalProductSnapshot.of(

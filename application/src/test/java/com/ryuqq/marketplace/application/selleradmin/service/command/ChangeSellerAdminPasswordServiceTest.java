@@ -63,14 +63,14 @@ class ChangeSellerAdminPasswordServiceTest {
             ChangeSellerAdminPasswordCommand command =
                     new ChangeSellerAdminPasswordCommand(SELLER_ADMIN_ID, NEW_PASSWORD);
 
-            given(readManager.getById(SellerAdminId.of(SELLER_ADMIN_ID))).willReturn(sellerAdmin);
+            given(readManager.getByAuthUserId(SELLER_ADMIN_ID)).willReturn(sellerAdmin);
             doNothing().when(identityClient).changeSellerAdminPassword(AUTH_USER_ID, NEW_PASSWORD);
 
             // when
             sut.execute(command);
 
             // then
-            then(readManager).should().getById(SellerAdminId.of(SELLER_ADMIN_ID));
+            then(readManager).should().getByAuthUserId(SELLER_ADMIN_ID);
             then(identityClient).should().changeSellerAdminPassword(AUTH_USER_ID, NEW_PASSWORD);
         }
     }

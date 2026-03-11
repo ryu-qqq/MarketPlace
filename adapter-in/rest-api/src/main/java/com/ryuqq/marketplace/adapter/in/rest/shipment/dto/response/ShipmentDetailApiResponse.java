@@ -1,33 +1,41 @@
 package com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response;
 
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.OrderInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ProductOrderInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ReceiverInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ShipmentInfoResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-/** 배송 상세 조회 응답 DTO. */
+/** 배송 상세 조회 응답 DTO (V4). */
 @Schema(description = "배송 상세 조회 응답")
 public record ShipmentDetailApiResponse(
-        @Schema(description = "배송 ID", example = "ship-001") String shipmentId,
-        @Schema(description = "배송번호", example = "SHP-20260220-001") String shipmentNumber,
-        @Schema(description = "주문 ID", example = "ord-001") String orderId,
-        @Schema(description = "주문번호", example = "ORD-20260220-001") String orderNumber,
-        @Schema(
-                        description =
-                                "배송 상태 (READY, PREPARING, SHIPPED, IN_TRANSIT, DELIVERED, FAILED,"
-                                        + " CANCELLED)",
-                        example = "SHIPPED")
-                String status,
-        @Schema(description = "배송 방법 정보") ShipmentMethodApiResponse shipmentMethod,
-        @Schema(description = "송장번호", example = "1234567890") String trackingNumber,
-        @Schema(description = "발주확인일시", example = "2026-02-20T09:00:00+09:00")
-                String orderConfirmedAt,
-        @Schema(description = "발송일시", example = "2026-02-20T10:00:00+09:00") String shippedAt,
-        @Schema(description = "배송완료일시", example = "2026-02-21T14:00:00+09:00") String deliveredAt,
-        @Schema(description = "등록일시", example = "2026-02-20T08:00:00+09:00") String createdAt,
-        @Schema(description = "수정일시", example = "2026-02-20T10:00:00+09:00") String updatedAt) {
+        @Schema(description = "배송 정보") ShipmentInfoResponse shipment,
+        @Schema(description = "주문 정보") OrderInfoResponse order,
+        @Schema(description = "상품주문 정보") ProductOrderInfoResponse productOrder,
+        @Schema(description = "수령인 정보") ReceiverInfoResponse receiver,
+        @Schema(description = "결제 정보") PaymentInfoResponse payment,
+        @Schema(description = "정산 정보") SettlementInfoResponse settlement) {
 
-    /** 배송 방법 응답. */
-    @Schema(description = "배송 방법 정보")
-    public record ShipmentMethodApiResponse(
-            @Schema(description = "배송 방법 유형", example = "PARCEL") String type,
-            @Schema(description = "택배사 코드", example = "CJ") String courierCode,
-            @Schema(description = "택배사명", example = "CJ대한통운") String courierName) {}
+    /** 결제 정보 응답. */
+    @Schema(description = "결제 정보")
+    public record PaymentInfoResponse(
+            @Schema(description = "결제 ID") String paymentId,
+            @Schema(description = "결제 번호") String paymentNumber,
+            @Schema(description = "결제 상태") String paymentStatus,
+            @Schema(description = "결제 수단") String paymentMethod,
+            @Schema(description = "PG사 결제 ID") String paymentAgencyId,
+            @Schema(description = "결제 금액") int paymentAmount,
+            @Schema(description = "결제일시") String paidAt,
+            @Schema(description = "결제취소일시") String canceledAt) {}
+
+    /** 정산 정보 응답. */
+    @Schema(description = "정산 정보")
+    public record SettlementInfoResponse(
+            @Schema(description = "수수료율") int commissionRate,
+            @Schema(description = "수수료") int fee,
+            @Schema(description = "예상 정산금액") int expectationSettlementAmount,
+            @Schema(description = "정산금액") int settlementAmount,
+            @Schema(description = "배분비율") int shareRatio,
+            @Schema(description = "예상 정산일") String expectedSettlementDay,
+            @Schema(description = "정산일") String settlementDay) {}
 }

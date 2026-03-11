@@ -42,7 +42,8 @@ public class LegacyConversionOutboxCommandManager {
      * @param now 현재 시각
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void failInNewTransaction(LegacyConversionOutbox outbox, String errorMessage, Instant now) {
+    public void failInNewTransaction(
+            LegacyConversionOutbox outbox, String errorMessage, Instant now) {
         outbox.failAndRetry(errorMessage, now);
         commandPort.persist(outbox);
     }

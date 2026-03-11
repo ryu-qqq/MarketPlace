@@ -69,3 +69,15 @@ tasks.jacocoTestCoverageVerification {
 tasks.test {
     finalizedBy tasks.jacocoTestCoverageVerification
 }
+
+// Temporary task for running NaverProductSearchRunner
+tasks.register('runSearchRunner', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.ryuqq.marketplace.adapter.out.client.naver.NaverProductSearchRunner'
+}
+
+// Temporary task for running NaverProductExportRunner
+tasks.register('runExportRunner', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.ryuqq.marketplace.adapter.out.client.naver.NaverProductExportRunner'
+}
