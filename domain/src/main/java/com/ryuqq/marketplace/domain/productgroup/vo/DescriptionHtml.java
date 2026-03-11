@@ -10,8 +10,14 @@ import java.util.regex.Pattern;
 /** 상품 상세설명 HTML Value Object. Persistence 레이어에서 별도 테이블(product_group_description)로 분리 저장. */
 public record DescriptionHtml(String value) {
 
+    private static final Pattern IMG_TAG_PATTERN =
+            Pattern.compile("<img[^>]*>", Pattern.CASE_INSENSITIVE);
+
     private static final Pattern IMG_SRC_PATTERN =
             Pattern.compile("<img[^>]+src=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern HIDDEN_IMG_PATTERN =
+            Pattern.compile("display\\s*:\\s*none", Pattern.CASE_INSENSITIVE);
 
     public DescriptionHtml {
         if (value != null) {
@@ -34,15 +40,22 @@ public record DescriptionHtml(String value) {
         return value == null;
     }
 
-    /** HTML 콘텐츠에서 &lt;img&gt; 태그의 src URL을 등장 순서대로 추출합니다. */
+    /** HTML 콘텐츠에서 &lt;img&gt; 태그의 src URL을 등장 순서대로 추출합니다. display:none 등 숨겨진 이미지는 제외합니다. */
     public List<String> extractImageUrls() {
         if (isEmpty()) {
             return Collections.emptyList();
         }
-        Matcher matcher = IMG_SRC_PATTERN.matcher(value);
+        Matcher tagMatcher = IMG_TAG_PATTERN.matcher(value);
         List<String> urls = new ArrayList<>();
-        while (matcher.find()) {
-            urls.add(matcher.group(1));
+        while (tagMatcher.find()) {
+            String imgTag = tagMatcher.group();
+            if (HIDDEN_IMG_PATTERN.matcher(imgTag).find()) {
+                continue;
+            }
+            Matcher srcMatcher = IMG_SRC_PATTERN.matcher(imgTag);
+            if (srcMatcher.find()) {
+                urls.add(srcMatcher.group(1));
+            }
         }
         return Collections.unmodifiableList(urls);
     }
