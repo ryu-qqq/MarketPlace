@@ -97,6 +97,16 @@ public class OrderCompositionQueryAdapter implements OrderCompositionQueryPort {
                 .collect(Collectors.groupingBy(OrderClaimResult::orderItemId));
     }
 
+    @Override
+    public Map<Long, OrderItemResult> findOrderItemsByIds(List<Long> orderItemIds) {
+        if (orderItemIds == null || orderItemIds.isEmpty()) {
+            return Map.of();
+        }
+        return compositeRepository.findOrderItemsByIds(orderItemIds).stream()
+                .map(compositeMapper::toItemResultFromProjection)
+                .collect(Collectors.toMap(OrderItemResult::orderItemId, Function.identity()));
+    }
+
     // ==================== V5 상품주문 상세 ====================
 
     @Override

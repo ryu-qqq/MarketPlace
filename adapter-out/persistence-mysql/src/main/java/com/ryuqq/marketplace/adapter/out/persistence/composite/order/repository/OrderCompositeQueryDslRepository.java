@@ -355,6 +355,76 @@ public class OrderCompositeQueryDslRepository {
                 .fetch();
     }
 
+    /** 주문상품 ID 목록으로 상품주문 일괄 조회 (order_items JOIN orders LEFT JOIN payments). */
+    public List<ProductOrderListProjectionDto> findOrderItemsByIds(List<Long> orderItemIds) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                ProductOrderListProjectionDto.class,
+                                // orders
+                                orderJpaEntity.id,
+                                orderJpaEntity.orderNumber,
+                                orderJpaEntity.status,
+                                orderJpaEntity.salesChannelId,
+                                orderJpaEntity.shopId,
+                                orderJpaEntity.shopCode,
+                                orderJpaEntity.shopName,
+                                orderJpaEntity.externalOrderNo,
+                                orderJpaEntity.externalOrderedAt,
+                                orderJpaEntity.buyerName,
+                                orderJpaEntity.buyerEmail,
+                                orderJpaEntity.buyerPhone,
+                                orderJpaEntity.createdAt,
+                                orderJpaEntity.updatedAt,
+                                // order_items
+                                orderItemJpaEntity.id,
+                                orderItemJpaEntity.productGroupId,
+                                orderItemJpaEntity.productId,
+                                orderItemJpaEntity.sellerId,
+                                orderItemJpaEntity.brandId,
+                                orderItemJpaEntity.skuCode,
+                                orderItemJpaEntity.productGroupName,
+                                orderItemJpaEntity.brandName,
+                                orderItemJpaEntity.sellerName,
+                                orderItemJpaEntity.mainImageUrl,
+                                orderItemJpaEntity.externalProductId,
+                                orderItemJpaEntity.externalOptionId,
+                                orderItemJpaEntity.externalProductName,
+                                orderItemJpaEntity.externalOptionName,
+                                orderItemJpaEntity.externalImageUrl,
+                                orderItemJpaEntity.unitPrice,
+                                orderItemJpaEntity.quantity,
+                                orderItemJpaEntity.totalAmount,
+                                orderItemJpaEntity.discountAmount,
+                                orderItemJpaEntity.paymentAmount,
+                                orderItemJpaEntity.receiverName,
+                                orderItemJpaEntity.receiverPhone,
+                                orderItemJpaEntity.receiverZipcode,
+                                orderItemJpaEntity.receiverAddress,
+                                orderItemJpaEntity.receiverAddressDetail,
+                                orderItemJpaEntity.deliveryRequest,
+                                orderItemJpaEntity.deliveryStatus,
+                                orderItemJpaEntity.shipmentCompanyCode,
+                                orderItemJpaEntity.invoice,
+                                orderItemJpaEntity.shipmentCompletedDate,
+                                // payments (LEFT JOIN)
+                                paymentJpaEntity.id,
+                                paymentJpaEntity.paymentNumber,
+                                paymentJpaEntity.paymentStatus,
+                                paymentJpaEntity.paymentMethod,
+                                paymentJpaEntity.paymentAgencyId,
+                                paymentJpaEntity.paymentAmount,
+                                paymentJpaEntity.paidAt,
+                                paymentJpaEntity.canceledAt))
+                .from(orderItemJpaEntity)
+                .join(orderJpaEntity)
+                .on(conditionBuilder.itemOrderJoinCondition())
+                .leftJoin(paymentJpaEntity)
+                .on(conditionBuilder.paymentJoinCondition())
+                .where(orderItemJpaEntity.id.in(orderItemIds), conditionBuilder.orderNotDeleted())
+                .fetch();
+    }
+
     // ===== 기존 주문(order) 기반 조회 =====
 
     /** 주문 목록 조회 (orders + payments LEFT JOIN + item count subquery). */

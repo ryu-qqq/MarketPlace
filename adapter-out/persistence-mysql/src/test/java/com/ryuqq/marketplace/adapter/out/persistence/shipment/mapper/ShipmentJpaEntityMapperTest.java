@@ -54,8 +54,7 @@ class ShipmentJpaEntityMapperTest {
             // then
             assertThat(entity.getId()).isEqualTo(domain.idValue());
             assertThat(entity.getShipmentNumber()).isEqualTo(domain.shipmentNumberValue());
-            assertThat(entity.getOrderId()).isEqualTo(domain.orderId());
-            assertThat(entity.getOrderNumber()).isEqualTo(domain.orderNumber());
+            assertThat(entity.getOrderItemId()).isEqualTo(domain.orderItemIdValue());
             assertThat(entity.getStatus()).isEqualTo(ShipmentStatus.READY.name());
         }
 
@@ -141,8 +140,7 @@ class ShipmentJpaEntityMapperTest {
             // then
             assertThat(domain.idValue()).isEqualTo(entity.getId());
             assertThat(domain.shipmentNumberValue()).isEqualTo(entity.getShipmentNumber());
-            assertThat(domain.orderId()).isEqualTo(entity.getOrderId());
-            assertThat(domain.orderNumber()).isEqualTo(entity.getOrderNumber());
+            assertThat(domain.orderItemIdValue()).isEqualTo(entity.getOrderItemId());
             assertThat(domain.status()).isEqualTo(ShipmentStatus.READY);
         }
 
@@ -211,8 +209,7 @@ class ShipmentJpaEntityMapperTest {
             // then
             assertThat(converted.idValue()).isEqualTo(original.idValue());
             assertThat(converted.shipmentNumberValue()).isEqualTo(original.shipmentNumberValue());
-            assertThat(converted.orderId()).isEqualTo(original.orderId());
-            assertThat(converted.orderNumber()).isEqualTo(original.orderNumber());
+            assertThat(converted.orderItemIdValue()).isEqualTo(original.orderItemIdValue());
             assertThat(converted.status()).isEqualTo(original.status());
             assertThat(converted.trackingNumber()).isEqualTo(original.trackingNumber());
         }
@@ -230,8 +227,7 @@ class ShipmentJpaEntityMapperTest {
             // then
             assertThat(converted.getId()).isEqualTo(original.getId());
             assertThat(converted.getShipmentNumber()).isEqualTo(original.getShipmentNumber());
-            assertThat(converted.getOrderId()).isEqualTo(original.getOrderId());
-            assertThat(converted.getOrderNumber()).isEqualTo(original.getOrderNumber());
+            assertThat(converted.getOrderItemId()).isEqualTo(original.getOrderItemId());
             assertThat(converted.getStatus()).isEqualTo(original.getStatus());
             assertThat(converted.getTrackingNumber()).isEqualTo(original.getTrackingNumber());
         }

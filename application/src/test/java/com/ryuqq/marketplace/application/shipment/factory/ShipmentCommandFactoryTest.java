@@ -11,7 +11,7 @@ import com.ryuqq.marketplace.application.shipment.dto.command.ConfirmShipmentBat
 import com.ryuqq.marketplace.application.shipment.dto.command.ShipBatchCommand;
 import com.ryuqq.marketplace.application.shipment.dto.command.ShipSingleCommand;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory.ShipSingleContext;
-import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentMethod;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentMethodType;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentShipData;
@@ -34,29 +34,30 @@ class ShipmentCommandFactoryTest {
     @InjectMocks private ShipmentCommandFactory sut;
 
     @Mock private TimeProvider timeProvider;
+    @Mock private com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort idGeneratorPort;
 
     @Nested
     @DisplayName("createConfirmContexts() - 발주확인 배치 컨텍스트 생성")
     class CreateConfirmContextsTest {
 
         @Test
-        @DisplayName("shipmentIds를 ShipmentId 목록으로 변환하고 changedAt을 설정한다")
+        @DisplayName("orderItemIds를 OrderItemId 목록으로 변환하고 changedAt을 설정한다")
         void createConfirmContexts_ValidCommand_ReturnsBulkStatusChangeContext() {
             // given
             Instant now = Instant.parse("2026-02-18T10:00:00Z");
             given(timeProvider.now()).willReturn(now);
 
             ConfirmShipmentBatchCommand command =
-                    ShipmentCommandFixtures.confirmBatchCommand("id-1", "id-2", "id-3");
+                    ShipmentCommandFixtures.confirmBatchCommand(1L, 2L, 3L);
 
             // when
-            BulkStatusChangeContext<ShipmentId> result = sut.createConfirmContexts(command);
+            BulkStatusChangeContext<OrderItemId> result = sut.createConfirmContexts(command);
 
             // then
             assertThat(result.ids()).hasSize(3);
-            assertThat(result.ids().get(0).value()).isEqualTo("id-1");
-            assertThat(result.ids().get(1).value()).isEqualTo("id-2");
-            assertThat(result.ids().get(2).value()).isEqualTo("id-3");
+            assertThat(result.ids().get(0).value()).isEqualTo(1L);
+            assertThat(result.ids().get(1).value()).isEqualTo(2L);
+            assertThat(result.ids().get(2).value()).isEqualTo(3L);
             assertThat(result.changedAt()).isEqualTo(now);
         }
 
@@ -67,10 +68,10 @@ class ShipmentCommandFactoryTest {
             Instant now = Instant.parse("2026-02-18T10:00:00Z");
             given(timeProvider.now()).willReturn(now);
 
-            ConfirmShipmentBatchCommand command = new ConfirmShipmentBatchCommand(List.of());
+            ConfirmShipmentBatchCommand command = new ConfirmShipmentBatchCommand(List.of(), null);
 
             // when
-            BulkStatusChangeContext<ShipmentId> result = sut.createConfirmContexts(command);
+            BulkStatusChangeContext<OrderItemId> result = sut.createConfirmContexts(command);
 
             // then
             assertThat(result.ids()).isEmpty();
@@ -92,20 +93,20 @@ class ShipmentCommandFactoryTest {
             ShipBatchCommand command = ShipmentCommandFixtures.shipBatchCommand(2);
 
             // when
-            List<UpdateContext<ShipmentId, ShipmentShipData>> result =
+            List<UpdateContext<OrderItemId, ShipmentShipData>> result =
                     sut.createShipContexts(command);
 
             // then
             assertThat(result).hasSize(2);
 
-            UpdateContext<ShipmentId, ShipmentShipData> first = result.get(0);
-            assertThat(first.id().value()).isEqualTo("shipment-id-1");
+            UpdateContext<OrderItemId, ShipmentShipData> first = result.get(0);
+            assertThat(first.id().value()).isEqualTo(1L);
             assertThat(first.updateData().trackingNumber()).isEqualTo("tracking-1");
             assertThat(first.updateData().method().type()).isEqualTo(ShipmentMethodType.COURIER);
             assertThat(first.changedAt()).isEqualTo(now);
 
-            UpdateContext<ShipmentId, ShipmentShipData> second = result.get(1);
-            assertThat(second.id().value()).isEqualTo("shipment-id-2");
+            UpdateContext<OrderItemId, ShipmentShipData> second = result.get(1);
+            assertThat(second.id().value()).isEqualTo(2L);
             assertThat(second.updateData().trackingNumber()).isEqualTo("tracking-2");
             assertThat(second.changedAt()).isEqualTo(now);
         }
@@ -120,7 +121,7 @@ class ShipmentCommandFactoryTest {
             ShipBatchCommand command = new ShipBatchCommand(List.of());
 
             // when
-            List<UpdateContext<ShipmentId, ShipmentShipData>> result =
+            List<UpdateContext<OrderItemId, ShipmentShipData>> result =
                     sut.createShipContexts(command);
 
             // then
@@ -145,7 +146,7 @@ class ShipmentCommandFactoryTest {
             ShipSingleContext result = sut.createShipSingleContext(command);
 
             // then
-            assertThat(result.orderId()).isEqualTo("ORD-20260218-9999");
+            assertThat(result.orderItemId().value()).isEqualTo(1001L);
             assertThat(result.shipData().trackingNumber()).isEqualTo("1234567890");
             assertThat(result.shipData().method().type()).isEqualTo(ShipmentMethodType.COURIER);
             assertThat(result.shipData().method().courierCode()).isEqualTo("CJ");

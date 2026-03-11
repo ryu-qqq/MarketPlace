@@ -1,43 +1,63 @@
 package com.ryuqq.marketplace.application.shipment.dto.response;
 
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.OrderInfo;
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.ProductOrderInfo;
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.ReceiverInfo;
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.ShipmentInfo;
 import java.time.Instant;
 
 /**
- * 배송 상세 조회 결과.
+ * 배송 상세 조회 결과 (V4).
  *
- * @param shipmentId 배송 ID
- * @param shipmentNumber 배송번호
- * @param orderId 주문 ID
- * @param orderNumber 주문번호
- * @param status 배송 상태
- * @param shipmentMethod 배송 방법 정보
- * @param trackingNumber 송장번호
- * @param orderConfirmedAt 발주확인일시
- * @param shippedAt 발송일시
- * @param deliveredAt 배송완료일시
- * @param createdAt 등록일시
- * @param updatedAt 수정일시
+ * <p>배송 목록 결과에 결제/정산 정보를 추가합니다.
  */
 public record ShipmentDetailResult(
-        String shipmentId,
-        String shipmentNumber,
-        String orderId,
-        String orderNumber,
-        String status,
-        ShipmentMethodResult shipmentMethod,
-        String trackingNumber,
-        Instant orderConfirmedAt,
-        Instant shippedAt,
-        Instant deliveredAt,
-        Instant createdAt,
-        Instant updatedAt) {
+        ShipmentInfo shipment,
+        OrderInfo order,
+        ProductOrderInfo productOrder,
+        ReceiverInfo receiver,
+        PaymentInfo payment,
+        SettlementInfo settlement) {
 
     /**
-     * 배송 방법 결과.
+     * 결제 정보.
      *
-     * @param type 배송 방법 유형
-     * @param courierCode 택배사 코드
-     * @param courierName 택배사명
+     * @param paymentId 결제 ID
+     * @param paymentNumber 결제 번호
+     * @param paymentStatus 결제 상태
+     * @param paymentMethod 결제 수단
+     * @param paymentAgencyId PG사 결제 ID
+     * @param paymentAmount 결제 금액
+     * @param paidAt 결제일시
+     * @param canceledAt 결제취소일시
      */
-    public record ShipmentMethodResult(String type, String courierCode, String courierName) {}
+    public record PaymentInfo(
+            String paymentId,
+            String paymentNumber,
+            String paymentStatus,
+            String paymentMethod,
+            String paymentAgencyId,
+            int paymentAmount,
+            Instant paidAt,
+            Instant canceledAt) {}
+
+    /**
+     * 정산 정보.
+     *
+     * @param commissionRate 수수료율
+     * @param fee 수수료
+     * @param expectationSettlementAmount 예상 정산금액
+     * @param settlementAmount 정산금액
+     * @param shareRatio 배분비율
+     * @param expectedSettlementDay 예상 정산일
+     * @param settlementDay 정산일
+     */
+    public record SettlementInfo(
+            int commissionRate,
+            int fee,
+            int expectationSettlementAmount,
+            int settlementAmount,
+            int shareRatio,
+            Instant expectedSettlementDay,
+            Instant settlementDay) {}
 }

@@ -5,7 +5,6 @@ import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminReadMana
 import com.ryuqq.marketplace.application.selleradmin.port.in.command.ChangeSellerAdminPasswordUseCase;
 import com.ryuqq.marketplace.application.selleradmin.port.out.client.SellerAdminIdentityClient;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdmin;
-import com.ryuqq.marketplace.domain.selleradmin.id.SellerAdminId;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,8 +29,7 @@ public class ChangeSellerAdminPasswordService implements ChangeSellerAdminPasswo
 
     @Override
     public void execute(ChangeSellerAdminPasswordCommand command) {
-        SellerAdminId sellerAdminId = SellerAdminId.of(command.sellerAdminId());
-        SellerAdmin sellerAdmin = readManager.getById(sellerAdminId);
+        SellerAdmin sellerAdmin = readManager.getByAuthUserId(command.sellerAdminId());
 
         sellerAdmin.validatePasswordChangeEligibility();
 

@@ -19,6 +19,7 @@ import com.ryuqq.marketplace.domain.order.vo.ExternalOrderItemPrice;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderReference;
 import com.ryuqq.marketplace.domain.order.vo.ExternalProductSnapshot;
 import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.order.vo.PaymentInfo;
 import com.ryuqq.marketplace.domain.order.vo.ReceiverInfo;
@@ -158,7 +159,29 @@ public final class OrderFixtures {
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
                 defaultReceiverInfo(),
-                null,
+                OrderItemStatus.READY,
+                null);
+    }
+
+    public static OrderItem confirmedOrderItem() {
+        return OrderItem.reconstitute(
+                defaultOrderItemId(),
+                defaultInternalProductReference(),
+                defaultExternalProductSnapshot(),
+                defaultExternalOrderItemPrice(),
+                defaultReceiverInfo(),
+                OrderItemStatus.CONFIRMED,
+                null);
+    }
+
+    public static OrderItem reconstitutedOrderItem(long id, OrderItemStatus status) {
+        return OrderItem.reconstitute(
+                OrderItemId.of(id),
+                defaultInternalProductReference(),
+                defaultExternalProductSnapshot(),
+                defaultExternalOrderItemPrice(),
+                defaultReceiverInfo(),
+                status,
                 null);
     }
 

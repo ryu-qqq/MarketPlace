@@ -1,8 +1,17 @@
 package com.ryuqq.marketplace.application.shipment.assembler;
 
+import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailData;
+import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
+import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
+import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult;
-import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult.ShipmentMethodResult;
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult.PaymentInfo;
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult.SettlementInfo;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult;
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.OrderInfo;
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.ProductOrderInfo;
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.ReceiverInfo;
+import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.ShipmentInfo;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentPageResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentSummaryResult;
 import com.ryuqq.marketplace.domain.common.vo.PageMeta;
@@ -16,80 +25,58 @@ import org.springframework.stereotype.Component;
 /**
  * Shipment Assembler.
  *
- * <p>Domain → Result 변환 및 PageResult 생성을 담당합니다.
+ * <p>Shipment Domain + OrderItemResult + OrderListResult → ShipmentListResult/ShipmentDetailResult
+ * 변환을 담당합니다.
  */
 @Component
 public class ShipmentAssembler {
 
     /**
-     * Domain → ShipmentListResult 변환.
+     * Shipment + OrderItemResult + OrderListResult → ShipmentListResult 변환.
      *
      * @param shipment Shipment 도메인 객체
+     * @param item 주문 상품 조회 결과
+     * @param order 주문 기본 정보
      * @return ShipmentListResult
      */
-    public ShipmentListResult toListResult(Shipment shipment) {
-        ShipmentMethod method = shipment.shipmentMethod();
-        String courierName = method != null ? method.courierName() : null;
-
+    public ShipmentListResult toListResult(
+            Shipment shipment, OrderItemResult item, OrderListResult order) {
         return new ShipmentListResult(
-                shipment.idValue(),
-                shipment.shipmentNumberValue(),
-                shipment.orderId(),
-                shipment.orderNumber(),
-                shipment.status().name(),
-                shipment.trackingNumber(),
-                courierName,
-                shipment.shippedAt(),
-                shipment.deliveredAt(),
-                shipment.createdAt());
+                toShipmentInfo(shipment),
+                toOrderInfo(order),
+                toProductOrderInfo(item),
+                toReceiverInfo(item));
     }
 
     /**
-     * Domain List → ShipmentListResult List 변환.
-     *
-     * @param shipments Shipment 도메인 객체 목록
-     * @return ShipmentListResult 목록
-     */
-    public List<ShipmentListResult> toListResults(List<Shipment> shipments) {
-        return shipments.stream().map(this::toListResult).toList();
-    }
-
-    /**
-     * Domain → ShipmentDetailResult 변환.
+     * Shipment + ProductOrderDetailData → ShipmentDetailResult 변환.
      *
      * @param shipment Shipment 도메인 객체
+     * @param detailData 상품주문 상세 데이터 (item + order + payment)
      * @return ShipmentDetailResult
      */
-    public ShipmentDetailResult toDetailResult(Shipment shipment) {
-        ShipmentMethodResult methodResult = toMethodResult(shipment.shipmentMethod());
-
+    public ShipmentDetailResult toDetailResult(
+            Shipment shipment, ProductOrderDetailData detailData) {
         return new ShipmentDetailResult(
-                shipment.idValue(),
-                shipment.shipmentNumberValue(),
-                shipment.orderId(),
-                shipment.orderNumber(),
-                shipment.status().name(),
-                methodResult,
-                shipment.trackingNumber(),
-                shipment.orderConfirmedAt(),
-                shipment.shippedAt(),
-                shipment.deliveredAt(),
-                shipment.createdAt(),
-                shipment.updatedAt());
+                toShipmentInfo(shipment),
+                toOrderInfo(detailData.order()),
+                toProductOrderInfo(detailData.item()),
+                toReceiverInfo(detailData.item()),
+                toPaymentInfo(detailData.payment()),
+                toSettlementInfo(detailData.item()));
     }
 
     /**
      * 페이지 결과 생성.
      *
-     * @param shipments Shipment 도메인 객체 목록
+     * @param results 배송 목록 결과
      * @param page 페이지 번호
      * @param size 페이지 크기
      * @param totalCount 전체 개수
      * @return ShipmentPageResult
      */
     public ShipmentPageResult toPageResult(
-            List<Shipment> shipments, int page, int size, long totalCount) {
-        List<ShipmentListResult> results = toListResults(shipments);
+            List<ShipmentListResult> results, int page, int size, long totalCount) {
         PageMeta pageMeta = PageMeta.of(page, size, totalCount);
         return new ShipmentPageResult(results, pageMeta);
     }
@@ -111,11 +98,96 @@ public class ShipmentAssembler {
                 statusCounts.getOrDefault(ShipmentStatus.CANCELLED, 0L).intValue());
     }
 
-    private ShipmentMethodResult toMethodResult(ShipmentMethod method) {
-        if (method == null) {
+    private ShipmentInfo toShipmentInfo(Shipment shipment) {
+        ShipmentMethod method = shipment.shipmentMethod();
+        return new ShipmentInfo(
+                shipment.idValue(),
+                shipment.shipmentNumberValue(),
+                shipment.status().name(),
+                shipment.trackingNumber(),
+                method != null ? method.courierCode() : null,
+                method != null ? method.courierName() : null,
+                shipment.orderConfirmedAt(),
+                shipment.shippedAt(),
+                shipment.deliveredAt(),
+                shipment.createdAt());
+    }
+
+    private OrderInfo toOrderInfo(OrderListResult order) {
+        return new OrderInfo(
+                order.orderId(),
+                order.orderNumber(),
+                order.status(),
+                order.salesChannelId(),
+                order.shopId(),
+                order.shopCode(),
+                order.shopName(),
+                order.externalOrderNo(),
+                order.externalOrderedAt(),
+                order.buyerName(),
+                order.buyerEmail(),
+                order.buyerPhone(),
+                order.createdAt(),
+                order.updatedAt());
+    }
+
+    private ProductOrderInfo toProductOrderInfo(OrderItemResult item) {
+        return new ProductOrderInfo(
+                item.orderItemId(),
+                item.productGroupId(),
+                item.productId(),
+                item.sellerId(),
+                item.brandId(),
+                item.skuCode(),
+                item.productGroupName(),
+                item.brandName(),
+                item.sellerName(),
+                item.mainImageUrl(),
+                item.externalProductId(),
+                item.externalOptionId(),
+                item.externalProductName(),
+                item.externalOptionName(),
+                item.externalImageUrl(),
+                item.unitPrice(),
+                item.quantity(),
+                item.totalAmount(),
+                item.discountAmount(),
+                item.paymentAmount());
+    }
+
+    private ReceiverInfo toReceiverInfo(OrderItemResult item) {
+        return new ReceiverInfo(
+                item.receiverName(),
+                item.receiverPhone(),
+                item.receiverZipcode(),
+                item.receiverAddress(),
+                item.receiverAddressDetail(),
+                item.deliveryRequest());
+    }
+
+    private PaymentInfo toPaymentInfo(PaymentResult payment) {
+        if (payment == null) {
             return null;
         }
-        return new ShipmentMethodResult(
-                method.type().name(), method.courierCode(), method.courierName());
+        return new PaymentInfo(
+                payment.paymentId(),
+                payment.paymentNumber(),
+                payment.paymentStatus(),
+                payment.paymentMethod(),
+                payment.paymentAgencyId(),
+                payment.paymentAmount(),
+                payment.paidAt(),
+                payment.canceledAt());
+    }
+
+    private SettlementInfo toSettlementInfo(OrderItemResult item) {
+        return new SettlementInfo(
+                item.commissionRate(),
+                item.fee(),
+                item.expectationSettlementAmount(),
+                item.settlementAmount(),
+                item.shareRatio(),
+                item.expectedSettlementDay(),
+                item.settlementDay());
     }
 }

@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
 public class ShipmentCommandApiMapper {
 
     public ConfirmShipmentBatchCommand toConfirmBatchCommand(
-            ConfirmShipmentBatchApiRequest request) {
-        return new ConfirmShipmentBatchCommand(request.shipmentIds());
+            ConfirmShipmentBatchApiRequest request, Long sellerId) {
+        return new ConfirmShipmentBatchCommand(request.orderItemIds(), sellerId);
     }
 
     public ShipBatchCommand toShipBatchCommand(ShipBatchApiRequest request) {
@@ -29,9 +29,9 @@ public class ShipmentCommandApiMapper {
         return new ShipBatchCommand(items);
     }
 
-    public ShipSingleCommand toShipSingleCommand(String orderId, ShipSingleApiRequest request) {
+    public ShipSingleCommand toShipSingleCommand(long orderItemId, ShipSingleApiRequest request) {
         return new ShipSingleCommand(
-                orderId,
+                orderItemId,
                 request.trackingNumber(),
                 request.courierCode(),
                 request.courierName(),
@@ -47,7 +47,7 @@ public class ShipmentCommandApiMapper {
 
     private ShipBatchItem toShipBatchItem(ShipBatchItemApiRequest request) {
         return new ShipBatchItem(
-                request.shipmentId(),
+                request.orderItemId(),
                 request.trackingNumber(),
                 request.courierCode(),
                 request.courierName(),
