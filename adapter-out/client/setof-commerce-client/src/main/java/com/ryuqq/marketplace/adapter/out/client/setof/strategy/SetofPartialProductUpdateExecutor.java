@@ -79,7 +79,13 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
             SellerSalesChannel channel,
             Set<ChangedArea> changedAreas) {
 
-        Long externalId = Long.valueOf(externalProductId);
+        Long externalId;
+        try {
+            externalId = Long.valueOf(externalProductId);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(
+                    "유효하지 않은 externalProductId: " + externalProductId, e);
+        }
 
         log.info(
                 "세토프 부분 수정 실행: externalProductId={}, changedAreas={}",
