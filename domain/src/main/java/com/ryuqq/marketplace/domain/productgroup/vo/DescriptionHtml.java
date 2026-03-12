@@ -63,6 +63,17 @@ public record DescriptionHtml(String value) {
      * @return 추출된 이미지 URL 목록 (불변)
      */
     public List<String> extractImageUrls() {
+        return extractImageUrls(Set.of());
+    }
+
+    /**
+     * HTML 콘텐츠에서 &lt;img&gt; 태그의 src URL을 등장 순서대로 추출합니다. {@code style="display:none"} 등 인라인 스타일로
+     * 숨겨진 이미지와 제외 도메인에 해당하는 이미지는 건너뜁니다.
+     *
+     * @param excludeDomains 제외할 도메인 Set (예: 자체 CDN 도메인)
+     * @return 추출된 이미지 URL 목록 (불변)
+     */
+    public List<String> extractImageUrls(Set<String> excludeDomains) {
         if (isEmpty()) {
             return Collections.emptyList();
         }
@@ -75,10 +86,25 @@ public record DescriptionHtml(String value) {
             }
             Matcher srcMatcher = IMG_SRC_PATTERN.matcher(imgTag);
             if (srcMatcher.find()) {
-                urls.add(srcMatcher.group(1));
+                String url = srcMatcher.group(1);
+                if (!containsExcludedDomain(url, excludeDomains)) {
+                    urls.add(url);
+                }
             }
         }
         return Collections.unmodifiableList(urls);
+    }
+
+    private static boolean containsExcludedDomain(String url, Set<String> excludeDomains) {
+        if (excludeDomains.isEmpty()) {
+            return false;
+        }
+        for (String domain : excludeDomains) {
+            if (url.contains(domain)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

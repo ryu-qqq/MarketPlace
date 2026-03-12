@@ -15,6 +15,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,9 +28,13 @@ import org.springframework.stereotype.Component;
 public class ProductGroupDescriptionCommandFactory {
 
     private final TimeProvider timeProvider;
+    private final Set<String> excludeDomains;
 
-    public ProductGroupDescriptionCommandFactory(TimeProvider timeProvider) {
+    public ProductGroupDescriptionCommandFactory(
+            TimeProvider timeProvider, @Value("${fileflow.cdn-domain:}") String cdnDomain) {
         this.timeProvider = timeProvider;
+        this.excludeDomains =
+                (cdnDomain == null || cdnDomain.isBlank()) ? Set.of() : Set.of(cdnDomain);
     }
 
     /**
@@ -39,7 +45,7 @@ public class ProductGroupDescriptionCommandFactory {
      */
     public ProductGroupDescription create(RegisterProductGroupDescriptionCommand command) {
         DescriptionHtml content = DescriptionHtml.of(command.content());
-        List<String> imageUrls = content.extractImageUrls();
+        List<String> imageUrls = content.extractImageUrls(excludeDomains);
 
         List<DescriptionImage> images = new ArrayList<>();
         for (int i = 0; i < imageUrls.size(); i++) {
@@ -68,7 +74,7 @@ public class ProductGroupDescriptionCommandFactory {
             existing.updateContent(content);
             return existing;
         } else {
-            List<String> imageUrls = content.extractImageUrls();
+            List<String> imageUrls = content.extractImageUrls(excludeDomains);
             List<DescriptionImage> images = new ArrayList<>();
             for (int i = 0; i < imageUrls.size(); i++) {
                 images.add(DescriptionImage.forNew(ImageUrl.of(imageUrls.get(i)), i));
@@ -89,7 +95,7 @@ public class ProductGroupDescriptionCommandFactory {
      */
     public DescriptionUpdateData createUpdateData(UpdateProductGroupDescriptionCommand command) {
         DescriptionHtml content = DescriptionHtml.of(command.content());
-        List<String> imageUrls = content.extractImageUrls();
+        List<String> imageUrls = content.extractImageUrls(excludeDomains);
 
         List<DescriptionImage> newImages = new ArrayList<>();
         for (int i = 0; i < imageUrls.size(); i++) {

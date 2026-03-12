@@ -26,7 +26,9 @@ import com.ryuqq.marketplace.domain.legacy.productimage.vo.ProductGroupImageType
 import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionHtml;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,9 +40,13 @@ import org.springframework.stereotype.Component;
 public class LegacyProductGroupCommandFactory {
 
     private final TimeProvider timeProvider;
+    private final Set<String> excludeDomains;
 
-    public LegacyProductGroupCommandFactory(TimeProvider timeProvider) {
+    public LegacyProductGroupCommandFactory(
+            TimeProvider timeProvider, @Value("${fileflow.cdn-domain:}") String cdnDomain) {
         this.timeProvider = timeProvider;
+        this.excludeDomains =
+                (cdnDomain == null || cdnDomain.isBlank()) ? Set.of() : Set.of(cdnDomain);
     }
 
     /** 가격 수정 컨텍스트 생성. */
@@ -95,7 +101,7 @@ public class LegacyProductGroupCommandFactory {
     public List<LegacyDescriptionImage> extractDescriptionImages(
             long productGroupId, String content) {
         DescriptionHtml html = DescriptionHtml.of(content);
-        List<String> imageUrls = html.extractImageUrls();
+        List<String> imageUrls = html.extractImageUrls(excludeDomains);
         return IntStream.range(0, imageUrls.size())
                 .mapToObj(i -> LegacyDescriptionImage.forNew(productGroupId, imageUrls.get(i), i))
                 .toList();
