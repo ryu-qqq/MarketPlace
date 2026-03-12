@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.domain.productgroup.vo;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -99,12 +100,15 @@ public record DescriptionHtml(String value) {
         if (excludeDomains.isEmpty()) {
             return false;
         }
-        for (String domain : excludeDomains) {
-            if (url.contains(domain)) {
-                return true;
+        try {
+            String host = URI.create(url).getHost();
+            if (host == null) {
+                return false;
             }
+            return excludeDomains.contains(host);
+        } catch (IllegalArgumentException e) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -114,6 +118,16 @@ public record DescriptionHtml(String value) {
      * @return 숨겨진 이미지 URL Set (불변)
      */
     public Set<String> extractHiddenImageUrls() {
+        return extractHiddenImageUrls(Set.of());
+    }
+
+    /**
+     * HTML 콘텐츠에서 {@code style="display:none"}으로 숨겨진 이미지의 URL을 추출합니다. 제외 도메인에 해당하는 이미지는 건너뜁니다.
+     *
+     * @param excludeDomains 제외할 도메인 Set (예: 자체 CDN 도메인)
+     * @return 숨겨진 이미지 URL Set (불변)
+     */
+    public Set<String> extractHiddenImageUrls(Set<String> excludeDomains) {
         if (isEmpty()) {
             return Collections.emptySet();
         }
@@ -124,7 +138,10 @@ public record DescriptionHtml(String value) {
             if (isHiddenImage(imgTag)) {
                 Matcher srcMatcher = IMG_SRC_PATTERN.matcher(imgTag);
                 if (srcMatcher.find()) {
-                    urls.add(srcMatcher.group(1));
+                    String url = srcMatcher.group(1);
+                    if (!containsExcludedDomain(url, excludeDomains)) {
+                        urls.add(url);
+                    }
                 }
             }
         }
