@@ -150,6 +150,32 @@ class DescriptionHtmlTest {
         }
 
         @Test
+        @DisplayName("도메인 이름이 부분 일치하는 경우 제외하지 않는다 (host exact match)")
+        void doesNotExcludePartialDomainMatch() {
+            DescriptionHtml html =
+                    DescriptionHtml.of(
+                            "<img src=\"https://not-cdn.set-of.com/img.jpg\">"
+                                    + "<img src=\"https://cdn.set-of.com/img.jpg\">");
+
+            List<String> urls = html.extractImageUrls(Set.of("cdn.set-of.com"));
+
+            assertThat(urls).containsExactly("https://not-cdn.set-of.com/img.jpg");
+        }
+
+        @Test
+        @DisplayName("프로토콜 상대 URL도 excludeDomains로 제외한다")
+        void excludesProtocolRelativeUrl() {
+            DescriptionHtml html =
+                    DescriptionHtml.of(
+                            "<img src=\"//cdn.set-of.com/img.jpg\">"
+                                    + "<img src=\"https://external.com/product.jpg\">");
+
+            List<String> urls = html.extractImageUrls(Set.of("cdn.set-of.com"));
+
+            assertThat(urls).containsExactly("https://external.com/product.jpg");
+        }
+
+        @Test
         @DisplayName("실제 storebot.info 트래킹 이미지 패턴을 필터링한다")
         void filtersRealWorldStorebotTrackingImage() {
             String longUrl =
@@ -200,6 +226,37 @@ class DescriptionHtmlTest {
         @DisplayName("빈 HTML은 빈 Set을 반환한다")
         void emptyHtmlReturnsEmptySet() {
             assertThat(DescriptionHtml.empty().extractHiddenImageUrls()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("excludeDomains에 포함된 숨겨진 이미지는 제외한다")
+        void excludesSelfCdnHiddenImages() {
+            DescriptionHtml html =
+                    DescriptionHtml.of(
+                            "<img style=\"display:none\" src=\"https://cdn.set-of.com/hidden.jpg\">"
+                                    + "<img style=\"display:none\""
+                                    + " src=\"https://tracking.example.com/pixel.gif\">");
+
+            Set<String> hiddenUrls = html.extractHiddenImageUrls(Set.of("cdn.set-of.com"));
+
+            assertThat(hiddenUrls).containsExactly("https://tracking.example.com/pixel.gif");
+        }
+
+        @Test
+        @DisplayName("excludeDomains가 비어있으면 모든 숨겨진 이미지를 추출한다")
+        void emptyExcludeDomainsExtractsAllHidden() {
+            DescriptionHtml html =
+                    DescriptionHtml.of(
+                            "<img style=\"display:none\" src=\"https://cdn.set-of.com/hidden.jpg\">"
+                                    + "<img style=\"display:none\""
+                                    + " src=\"https://tracking.example.com/pixel.gif\">");
+
+            Set<String> hiddenUrls = html.extractHiddenImageUrls(Set.of());
+
+            assertThat(hiddenUrls)
+                    .containsExactlyInAnyOrder(
+                            "https://cdn.set-of.com/hidden.jpg",
+                            "https://tracking.example.com/pixel.gif");
         }
     }
 

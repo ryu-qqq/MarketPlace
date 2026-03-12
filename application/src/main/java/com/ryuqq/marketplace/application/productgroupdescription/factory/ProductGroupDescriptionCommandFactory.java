@@ -102,7 +102,7 @@ public class ProductGroupDescriptionCommandFactory {
             newImages.add(DescriptionImage.forNew(ImageUrl.of(imageUrls.get(i)), i));
         }
 
-        return DescriptionUpdateData.of(content, newImages, timeProvider.now());
+        return DescriptionUpdateData.of(content, newImages, excludeDomains, timeProvider.now());
     }
 
     /**
