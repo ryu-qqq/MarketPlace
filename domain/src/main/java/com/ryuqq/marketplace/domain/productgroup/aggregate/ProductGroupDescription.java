@@ -122,11 +122,12 @@ public class ProductGroupDescription {
         this.updatedAt = updateData.updatedAt();
         this.publishStatus = DescriptionPublishStatus.PENDING;
         this.cdnPath = null;
-        return computeImageDiff(updateData.newImages(), updateData.updatedAt());
+        return computeImageDiff(
+                updateData.newImages(), updateData.excludeDomains(), updateData.updatedAt());
     }
 
     private DescriptionImageDiff computeImageDiff(
-            List<DescriptionImage> newImages, Instant updatedAt) {
+            List<DescriptionImage> newImages, Set<String> excludeDomains, Instant updatedAt) {
         Map<String, DescriptionImage> existingByUrl =
                 images.stream()
                         .collect(
@@ -135,7 +136,8 @@ public class ProductGroupDescription {
                                         img -> img,
                                         (existing, duplicate) -> existing));
 
-        Set<String> hiddenUrls = content != null ? content.extractHiddenImageUrls() : Set.of();
+        Set<String> hiddenUrls =
+                content != null ? content.extractHiddenImageUrls(excludeDomains) : Set.of();
 
         List<DescriptionImage> added = new ArrayList<>();
         List<DescriptionImage> retained = new ArrayList<>();
