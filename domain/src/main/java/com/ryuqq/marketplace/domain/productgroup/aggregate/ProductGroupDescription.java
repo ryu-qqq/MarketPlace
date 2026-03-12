@@ -135,6 +135,8 @@ public class ProductGroupDescription {
                                         img -> img,
                                         (existing, duplicate) -> existing));
 
+        Set<String> hiddenUrls = content != null ? content.extractHiddenImageUrls() : Set.of();
+
         List<DescriptionImage> added = new ArrayList<>();
         List<DescriptionImage> retained = new ArrayList<>();
         Set<String> newUrls = new HashSet<>();
@@ -154,7 +156,12 @@ public class ProductGroupDescription {
         }
 
         List<DescriptionImage> removed =
-                images.stream().filter(img -> !newUrls.contains(img.originUrlValue())).toList();
+                images.stream()
+                        .filter(
+                                img ->
+                                        !newUrls.contains(img.originUrlValue())
+                                                && !hiddenUrls.contains(img.originUrlValue()))
+                        .toList();
 
         for (DescriptionImage image : removed) {
             image.delete(updatedAt);
