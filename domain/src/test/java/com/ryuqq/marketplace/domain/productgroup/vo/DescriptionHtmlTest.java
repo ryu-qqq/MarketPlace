@@ -163,6 +163,19 @@ class DescriptionHtmlTest {
         }
 
         @Test
+        @DisplayName("프로토콜 상대 URL도 excludeDomains로 제외한다")
+        void excludesProtocolRelativeUrl() {
+            DescriptionHtml html =
+                    DescriptionHtml.of(
+                            "<img src=\"//cdn.set-of.com/img.jpg\">"
+                                    + "<img src=\"https://external.com/product.jpg\">");
+
+            List<String> urls = html.extractImageUrls(Set.of("cdn.set-of.com"));
+
+            assertThat(urls).containsExactly("https://external.com/product.jpg");
+        }
+
+        @Test
         @DisplayName("실제 storebot.info 트래킹 이미지 패턴을 필터링한다")
         void filtersRealWorldStorebotTrackingImage() {
             String longUrl =
