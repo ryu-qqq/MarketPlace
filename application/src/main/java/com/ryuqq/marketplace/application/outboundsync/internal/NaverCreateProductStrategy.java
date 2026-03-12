@@ -1,5 +1,8 @@
 package com.ryuqq.marketplace.application.outboundsync.internal;
 
+import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
+import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
+import com.ryuqq.marketplace.application.outboundproductimage.internal.OutboundImageSyncCoordinator;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
@@ -7,6 +10,7 @@ import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProduc
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
+import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +20,7 @@ import org.springframework.stereotype.Component;
 /**
  * 네이버 커머스 상품 등록(CREATE) 전략.
  *
- * <p>ProductGroupReadFacade로 상품 데이터 조회 → 매핑 역조회 → SalesChannelProductClient로 API 호출.
+ * <p>ProductGroupReadFacade로 상품 데이터 조회 → 이미지 동기화 → 매핑 역조회 → SalesChannelProductClient로 API 호출.
  */
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
@@ -28,14 +32,20 @@ public class NaverCreateProductStrategy implements OutboundSyncExecutionStrategy
     private final ProductGroupReadFacade productGroupReadFacade;
     private final OutboundMappingResolver mappingResolver;
     private final SalesChannelProductClientManager productClientManager;
+    private final OutboundProductReadManager outboundProductReadManager;
+    private final OutboundImageSyncCoordinator outboundImageSyncCoordinator;
 
     public NaverCreateProductStrategy(
             ProductGroupReadFacade productGroupReadFacade,
             OutboundMappingResolver mappingResolver,
-            SalesChannelProductClientManager productClientManager) {
+            SalesChannelProductClientManager productClientManager,
+            OutboundProductReadManager outboundProductReadManager,
+            OutboundImageSyncCoordinator outboundImageSyncCoordinator) {
         this.productGroupReadFacade = productGroupReadFacade;
         this.mappingResolver = mappingResolver;
         this.productClientManager = productClientManager;
+        this.outboundProductReadManager = outboundProductReadManager;
+        this.outboundImageSyncCoordinator = outboundImageSyncCoordinator;
     }
 
     @Override
@@ -52,6 +62,16 @@ public class NaverCreateProductStrategy implements OutboundSyncExecutionStrategy
             ProductGroupDetailBundle bundle =
                     productGroupReadFacade.getDetailBundle(productGroupId);
 
+            OutboundProduct outboundProduct =
+                    outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                            productGroupId, salesChannelId);
+
+            ResolvedExternalImages resolvedImages =
+                    outboundImageSyncCoordinator.syncImages(
+                            outboundProduct.idValue(),
+                            NAVER_CHANNEL_CODE,
+                            bundle.group().images());
+
             SalesChannelMappingResult mapping =
                     mappingResolver.resolve(
                             salesChannelId,
@@ -64,7 +84,8 @@ public class NaverCreateProductStrategy implements OutboundSyncExecutionStrategy
                             bundle,
                             mapping.categoryId(),
                             mapping.brandId(),
-                            context.sellerSalesChannel());
+                            context.sellerSalesChannel(),
+                            resolvedImages);
 
             log.info(
                     "네이버 상품 등록 성공: productGroupId={}, externalProductId={}",

@@ -1,0 +1,49 @@
+package com.ryuqq.marketplace.application.outboundproductimage.manager;
+
+import com.ryuqq.marketplace.application.outboundproductimage.port.out.client.SalesChannelImageClient;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
+
+/**
+ * 채널 코드 기반 이미지 클라이언트 라우팅 매니저.
+ */
+@Component
+public class SalesChannelImageClientManager {
+
+    private final Map<String, SalesChannelImageClient> clientMap;
+
+    public SalesChannelImageClientManager(List<SalesChannelImageClient> clients) {
+        this.clientMap =
+                clients.stream()
+                        .collect(Collectors.toMap(
+                                SalesChannelImageClient::channelCode,
+                                Function.identity()));
+    }
+
+    /**
+     * 이미지 URL 목록을 해당 채널에 업로드합니다.
+     *
+     * @param channelCode 판매채널 코드
+     * @param imageUrls 원본 이미지 URL 목록
+     * @return 외부 채널 CDN URL 목록
+     */
+    public List<String> uploadImages(String channelCode, List<String> imageUrls) {
+        return resolve(channelCode).uploadImages(imageUrls);
+    }
+
+    public boolean supports(String channelCode) {
+        return clientMap.containsKey(channelCode);
+    }
+
+    private SalesChannelImageClient resolve(String channelCode) {
+        SalesChannelImageClient client = clientMap.get(channelCode);
+        if (client == null) {
+            throw new IllegalArgumentException(
+                    "이미지 업로드를 지원하지 않는 판매채널입니다: channelCode=" + channelCode);
+        }
+        return client;
+    }
+}

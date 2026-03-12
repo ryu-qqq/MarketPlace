@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.outboundsync.manager;
 
+import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
@@ -40,6 +41,18 @@ public class SalesChannelProductClientManager {
                 .registerProduct(bundle, externalCategoryId, externalBrandId, channel);
     }
 
+    public String registerProduct(
+            String channelCode,
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            SellerSalesChannel channel,
+            ResolvedExternalImages resolvedImages) {
+        return resolve(channelCode)
+                .registerProduct(bundle, externalCategoryId, externalBrandId,
+                        channel, resolvedImages);
+    }
+
     public void updateProduct(
             String channelCode,
             ProductGroupDetailBundle bundle,
@@ -56,6 +69,26 @@ public class SalesChannelProductClientManager {
                         externalProductId,
                         channel,
                         changedAreas);
+    }
+
+    public void updateProduct(
+            String channelCode,
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            String externalProductId,
+            SellerSalesChannel channel,
+            Set<ChangedArea> changedAreas,
+            ResolvedExternalImages resolvedImages) {
+        resolve(channelCode)
+                .updateProduct(
+                        bundle,
+                        externalCategoryId,
+                        externalBrandId,
+                        externalProductId,
+                        channel,
+                        changedAreas,
+                        resolvedImages);
     }
 
     public void deleteProduct(
