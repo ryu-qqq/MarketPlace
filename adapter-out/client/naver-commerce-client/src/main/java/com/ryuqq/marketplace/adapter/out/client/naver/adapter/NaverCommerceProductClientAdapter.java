@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductSearchResp
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProductMapper;
 import com.ryuqq.marketplace.application.outboundproduct.dto.vo.ExternalProductEntry;
 import com.ryuqq.marketplace.application.outboundproduct.port.out.client.SalesChannelProductSearchClient;
+import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
@@ -96,6 +97,48 @@ public class NaverCommerceProductClientAdapter
     }
 
     @Override
+    public String registerProduct(
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            SellerSalesChannel channel,
+            ResolvedExternalImages resolvedImages) {
+
+        NaverProductRegistrationRequest request =
+                mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId,
+                        resolvedImages);
+
+        String token = tokenManager.getAccessToken();
+
+        log.info(
+                "네이버 커머스 상품 등록 요청 (외부 이미지): productGroupId={}, categoryId={}",
+                bundle.group().idValue(),
+                externalCategoryId);
+
+        NaverProductRegistrationResponse response =
+                restClient
+                        .post()
+                        .uri("/v2/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
+                        .body(request)
+                        .retrieve()
+                        .body(NaverProductRegistrationResponse.class);
+
+        if (response == null || response.originProductNo() == null) {
+            throw new IllegalStateException(
+                    "네이버 커머스 상품 등록 응답이 null입니다: productGroupId=" + bundle.group().idValue());
+        }
+
+        log.info(
+                "네이버 커머스 상품 등록 성공: productGroupId={}, originProductNo={}",
+                bundle.group().idValue(),
+                response.originProductNo());
+
+        return String.valueOf(response.originProductNo());
+    }
+
+    @Override
     public void updateProduct(
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
@@ -111,6 +154,42 @@ public class NaverCommerceProductClientAdapter
 
         log.info(
                 "네이버 커머스 상품 수정 요청: productGroupId={}, externalProductId={}",
+                bundle.group().idValue(),
+                externalProductId);
+
+        restClient
+                .put()
+                .uri("/v2/products/origin-products/{originProductNo}", externalProductId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body(request)
+                .retrieve()
+                .toBodilessEntity();
+
+        log.info(
+                "네이버 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",
+                bundle.group().idValue(),
+                externalProductId);
+    }
+
+    @Override
+    public void updateProduct(
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            String externalProductId,
+            SellerSalesChannel channel,
+            Set<ChangedArea> changedAreas,
+            ResolvedExternalImages resolvedImages) {
+
+        NaverProductRegistrationRequest request =
+                mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId,
+                        resolvedImages);
+
+        String token = tokenManager.getAccessToken();
+
+        log.info(
+                "네이버 커머스 상품 수정 요청 (외부 이미지): productGroupId={}, externalProductId={}",
                 bundle.group().idValue(),
                 externalProductId);
 

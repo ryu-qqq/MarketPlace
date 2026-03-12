@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.application.outboundsync.internal;
 
 import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
+import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
+import com.ryuqq.marketplace.application.outboundproductimage.internal.OutboundImageSyncCoordinator;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component;
 /**
  * 네이버 커머스 상품 수정(UPDATE) 전략.
  *
- * <p>OutboundProduct에서 externalProductId 조회 → 최신 상품 데이터 조회 → 매핑 역조회 → PUT API 호출.
+ * <p>OutboundProduct에서 externalProductId 조회 → 이미지 동기화 → 최신 상품 데이터 조회 → 매핑 역조회 → PUT API 호출.
  */
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
@@ -31,16 +33,19 @@ public class NaverUpdateProductStrategy implements OutboundSyncExecutionStrategy
     private final ProductGroupReadFacade productGroupReadFacade;
     private final OutboundMappingResolver mappingResolver;
     private final SalesChannelProductClientManager productClientManager;
+    private final OutboundImageSyncCoordinator outboundImageSyncCoordinator;
 
     public NaverUpdateProductStrategy(
             OutboundProductReadManager outboundProductReadManager,
             ProductGroupReadFacade productGroupReadFacade,
             OutboundMappingResolver mappingResolver,
-            SalesChannelProductClientManager productClientManager) {
+            SalesChannelProductClientManager productClientManager,
+            OutboundImageSyncCoordinator outboundImageSyncCoordinator) {
         this.outboundProductReadManager = outboundProductReadManager;
         this.productGroupReadFacade = productGroupReadFacade;
         this.mappingResolver = mappingResolver;
         this.productClientManager = productClientManager;
+        this.outboundImageSyncCoordinator = outboundImageSyncCoordinator;
     }
 
     @Override
@@ -65,6 +70,12 @@ public class NaverUpdateProductStrategy implements OutboundSyncExecutionStrategy
             ProductGroupDetailBundle bundle =
                     productGroupReadFacade.getDetailBundle(productGroupId);
 
+            ResolvedExternalImages resolvedImages =
+                    outboundImageSyncCoordinator.syncImages(
+                            outboundProduct.idValue(),
+                            NAVER_CHANNEL_CODE,
+                            bundle.group().images());
+
             SalesChannelMappingResult mapping =
                     mappingResolver.resolve(
                             salesChannelId,
@@ -78,7 +89,8 @@ public class NaverUpdateProductStrategy implements OutboundSyncExecutionStrategy
                     mapping.brandId(),
                     outboundProduct.externalProductId(),
                     context.sellerSalesChannel(),
-                    context.changedAreas());
+                    context.changedAreas(),
+                    resolvedImages);
 
             log.info(
                     "네이버 상품 수정 성공: productGroupId={}, externalProductId={}",
