@@ -30,7 +30,7 @@ public class DescriptionUpdateData {
 
     public static DescriptionUpdateData of(
             DescriptionHtml content, List<DescriptionImage> newImages, Instant updatedAt) {
-        return new DescriptionUpdateData(content, List.copyOf(newImages), Set.of(), updatedAt);
+        return of(content, newImages, Set.of(), updatedAt);
     }
 
     public static DescriptionUpdateData of(

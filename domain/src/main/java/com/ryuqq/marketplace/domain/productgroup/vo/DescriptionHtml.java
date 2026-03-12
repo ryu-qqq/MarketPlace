@@ -85,12 +85,9 @@ public record DescriptionHtml(String value) {
             if (isHiddenImage(imgTag)) {
                 continue;
             }
-            Matcher srcMatcher = IMG_SRC_PATTERN.matcher(imgTag);
-            if (srcMatcher.find()) {
-                String url = srcMatcher.group(1);
-                if (!containsExcludedDomain(url, excludeDomains)) {
-                    urls.add(url);
-                }
+            String extractedUrl = extractSrc(imgTag);
+            if (extractedUrl != null && !containsExcludedDomain(extractedUrl, excludeDomains)) {
+                urls.add(extractedUrl);
             }
         }
         return Collections.unmodifiableList(urls);
@@ -101,7 +98,8 @@ public record DescriptionHtml(String value) {
             return false;
         }
         try {
-            String host = URI.create(url).getHost();
+            String normalized = url.startsWith("//") ? "https:" + url : url;
+            String host = URI.create(normalized).getHost();
             if (host == null) {
                 return false;
             }
@@ -135,17 +133,20 @@ public record DescriptionHtml(String value) {
         Set<String> urls = new HashSet<>();
         while (tagMatcher.find()) {
             String imgTag = tagMatcher.group();
-            if (isHiddenImage(imgTag)) {
-                Matcher srcMatcher = IMG_SRC_PATTERN.matcher(imgTag);
-                if (srcMatcher.find()) {
-                    String url = srcMatcher.group(1);
-                    if (!containsExcludedDomain(url, excludeDomains)) {
-                        urls.add(url);
-                    }
-                }
+            if (!isHiddenImage(imgTag)) {
+                continue;
+            }
+            String extractedUrl = extractSrc(imgTag);
+            if (extractedUrl != null && !containsExcludedDomain(extractedUrl, excludeDomains)) {
+                urls.add(extractedUrl);
             }
         }
         return Collections.unmodifiableSet(urls);
+    }
+
+    private static String extractSrc(String imgTag) {
+        Matcher srcMatcher = IMG_SRC_PATTERN.matcher(imgTag);
+        return srcMatcher.find() ? srcMatcher.group(1) : null;
     }
 
     static boolean isHiddenImage(String imgTag) {
