@@ -28,8 +28,8 @@ class DescriptionHtmlTest {
 
             List<String> urls = html.extractImageUrls();
 
-            assertThat(urls).containsExactly(
-                    "https://example.com/1.jpg", "https://example.com/2.jpg");
+            assertThat(urls)
+                    .containsExactly("https://example.com/1.jpg", "https://example.com/2.jpg");
         }
 
         @Test
@@ -37,8 +37,8 @@ class DescriptionHtmlTest {
         void excludesDisplayNoneImages() {
             DescriptionHtml html =
                     DescriptionHtml.of(
-                            "<img src=\"https://example.com/visible.jpg\">"
-                                    + "<img style=\"display: none;\" src=\"https://tracking.example.com/hidden.jpg\">");
+                            "<img src=\"https://example.com/visible.jpg\"><img style=\"display:"
+                                    + " none;\" src=\"https://tracking.example.com/hidden.jpg\">");
 
             List<String> urls = html.extractImageUrls();
 
@@ -62,7 +62,8 @@ class DescriptionHtmlTest {
         void handlesWhitespaceAroundDisplayNone() {
             DescriptionHtml html =
                     DescriptionHtml.of(
-                            "<img style=\"display :  none\" src=\"https://example.com/hidden.jpg\">");
+                            "<img style=\"display :  none\""
+                                    + " src=\"https://example.com/hidden.jpg\">");
 
             List<String> urls = html.extractImageUrls();
 
@@ -72,8 +73,7 @@ class DescriptionHtmlTest {
         @Test
         @DisplayName("src가 작은따옴표로 감싸져 있어도 추출한다")
         void extractsSingleQuotedSrc() {
-            DescriptionHtml html =
-                    DescriptionHtml.of("<img src='https://example.com/img.jpg'>");
+            DescriptionHtml html = DescriptionHtml.of("<img src='https://example.com/img.jpg'>");
 
             List<String> urls = html.extractImageUrls();
 
@@ -105,6 +105,51 @@ class DescriptionHtmlTest {
         }
 
         @Test
+        @DisplayName("excludeDomains에 포함된 도메인의 이미지는 제외한다")
+        void excludesSelfCdnDomainImages() {
+            DescriptionHtml html =
+                    DescriptionHtml.of(
+                            "<img src=\"https://cdn.set-of.com/public/logo/setof_logo.jpg\"><img"
+                                + " src=\"https://external.com/product.jpg\"><img"
+                                + " src=\"https://cdn.set-of.com/DESCRIPTION/2025-06-10/abc.jpg\">");
+
+            List<String> urls = html.extractImageUrls(Set.of("cdn.set-of.com"));
+
+            assertThat(urls).containsExactly("https://external.com/product.jpg");
+        }
+
+        @Test
+        @DisplayName("excludeDomains가 비어있으면 모든 이미지를 추출한다")
+        void emptyExcludeDomainsExtractsAll() {
+            DescriptionHtml html =
+                    DescriptionHtml.of(
+                            "<img src=\"https://cdn.set-of.com/public/logo/setof_logo.jpg\">"
+                                    + "<img src=\"https://external.com/product.jpg\">");
+
+            List<String> urls = html.extractImageUrls(Set.of());
+
+            assertThat(urls)
+                    .containsExactly(
+                            "https://cdn.set-of.com/public/logo/setof_logo.jpg",
+                            "https://external.com/product.jpg");
+        }
+
+        @Test
+        @DisplayName("여러 excludeDomains를 동시에 필터링한다")
+        void excludesMultipleDomains() {
+            DescriptionHtml html =
+                    DescriptionHtml.of(
+                            "<img src=\"https://cdn.set-of.com/img.jpg\">"
+                                    + "<img src=\"https://stage-cdn.set-of.com/img.jpg\">"
+                                    + "<img src=\"https://external.com/product.jpg\">");
+
+            List<String> urls =
+                    html.extractImageUrls(Set.of("cdn.set-of.com", "stage-cdn.set-of.com"));
+
+            assertThat(urls).containsExactly("https://external.com/product.jpg");
+        }
+
+        @Test
         @DisplayName("실제 storebot.info 트래킹 이미지 패턴을 필터링한다")
         void filtersRealWorldStorebotTrackingImage() {
             String longUrl =
@@ -133,8 +178,9 @@ class DescriptionHtmlTest {
         void extractsOnlyHiddenImageUrls() {
             DescriptionHtml html =
                     DescriptionHtml.of(
-                            "<img src=\"https://example.com/visible.jpg\">"
-                                    + "<img style=\"display:none\" src=\"https://example.com/hidden.jpg\">");
+                            "<img src=\"https://example.com/visible.jpg\"><img"
+                                    + " style=\"display:none\""
+                                    + " src=\"https://example.com/hidden.jpg\">");
 
             Set<String> hiddenUrls = html.extractHiddenImageUrls();
 
@@ -164,9 +210,7 @@ class DescriptionHtmlTest {
         @Test
         @DisplayName("style에 display:none이 있으면 hidden이다")
         void detectsHiddenImage() {
-            assertThat(
-                            DescriptionHtml.isHiddenImage(
-                                    "<img style=\"display: none;\" src=\"url\">"))
+            assertThat(DescriptionHtml.isHiddenImage("<img style=\"display: none;\" src=\"url\">"))
                     .isTrue();
         }
 
@@ -179,18 +223,14 @@ class DescriptionHtmlTest {
         @Test
         @DisplayName("alt 속성에 display:none이 있어도 hidden이 아니다")
         void displayNoneInAltIsNotHidden() {
-            assertThat(
-                            DescriptionHtml.isHiddenImage(
-                                    "<img alt=\"display: none\" src=\"url\">"))
+            assertThat(DescriptionHtml.isHiddenImage("<img alt=\"display: none\" src=\"url\">"))
                     .isFalse();
         }
 
         @Test
         @DisplayName("대소문자를 구분하지 않는다")
         void caseInsensitive() {
-            assertThat(
-                            DescriptionHtml.isHiddenImage(
-                                    "<img STYLE=\"DISPLAY: NONE\" src=\"url\">"))
+            assertThat(DescriptionHtml.isHiddenImage("<img STYLE=\"DISPLAY: NONE\" src=\"url\">"))
                     .isTrue();
         }
     }
@@ -202,8 +242,7 @@ class DescriptionHtmlTest {
         @Test
         @DisplayName("매핑된 URL을 치환한다")
         void replacesMatchedUrls() {
-            DescriptionHtml html =
-                    DescriptionHtml.of("<img src=\"https://origin.com/img.jpg\">");
+            DescriptionHtml html = DescriptionHtml.of("<img src=\"https://origin.com/img.jpg\">");
 
             DescriptionHtml replaced =
                     html.replaceImageUrls(
