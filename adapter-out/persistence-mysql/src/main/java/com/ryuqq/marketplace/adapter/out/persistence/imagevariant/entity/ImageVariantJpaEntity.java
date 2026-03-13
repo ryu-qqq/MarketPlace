@@ -43,7 +43,7 @@ public class ImageVariantJpaEntity {
     @Column(name = "result_asset_id", length = 100)
     private String resultAssetId;
 
-    @Column(name = "variant_url", nullable = false, length = 500)
+    @Column(name = "variant_url", nullable = false, length = 1000)
     private String variantUrl;
 
     @Column(name = "width")

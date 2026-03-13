@@ -23,10 +23,10 @@ public class OutboundProductImageJpaEntity extends BaseAuditEntity {
     @Column(name = "product_group_image_id")
     private Long productGroupImageId;
 
-    @Column(name = "origin_url", nullable = false, length = 500)
+    @Column(name = "origin_url", nullable = false, length = 1000)
     private String originUrl;
 
-    @Column(name = "external_url", length = 500)
+    @Column(name = "external_url", length = 1000)
     private String externalUrl;
 
     @Column(name = "image_type", nullable = false, length = 50)
