@@ -35,14 +35,11 @@ class NaverCommerceProductIntegrationTest {
     /** 테스트에서 등록한 상품 ID를 공유. */
     private static String registeredProductId;
 
-    @Autowired
-    private NaverCommerceProductClientAdapter productClientAdapter;
+    @Autowired private NaverCommerceProductClientAdapter productClientAdapter;
 
-    @Autowired
-    private RestClient naverCommerceRestClient;
+    @Autowired private RestClient naverCommerceRestClient;
 
-    @Autowired
-    private NaverCommerceTokenManager tokenManager;
+    @Autowired private NaverCommerceTokenManager tokenManager;
 
     @Test
     @Order(1)
@@ -62,23 +59,23 @@ class NaverCommerceProductIntegrationTest {
 
         // 기존 "test" 상품(12648262923)의 구조를 가져와서 복제 등록
         @SuppressWarnings("unchecked")
-        Map<String, Object> sourceDetail = naverCommerceRestClient
-                .get()
-                .uri("/v2/products/origin-products/{id}", "12648262923")
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(Map.class);
+        Map<String, Object> sourceDetail =
+                naverCommerceRestClient
+                        .get()
+                        .uri("/v2/products/origin-products/{id}", "12648262923")
+                        .header("Authorization", "Bearer " + token)
+                        .retrieve()
+                        .body(Map.class);
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> sourceOrigin = new java.util.HashMap<>(
-                (Map<String, Object>) sourceDetail.get("originProduct"));
+        Map<String, Object> sourceOrigin =
+                new java.util.HashMap<>((Map<String, Object>) sourceDetail.get("originProduct"));
 
         // 변경할 필드만 덮어쓰기
         sourceOrigin.put("name", productName);
         sourceOrigin.put("salePrice", 5000);
         sourceOrigin.put("stockQuantity", 10);
-        sourceOrigin.put("detailContent",
-                "<p>MarketPlace 통합 테스트 상품입니다. 등록 후 즉시 판매중지 예정.</p>");
+        sourceOrigin.put("detailContent", "<p>MarketPlace 통합 테스트 상품입니다. 등록 후 즉시 판매중지 예정.</p>");
         // 등록 시 불필요한 읽기전용 필드 제거
         sourceOrigin.remove("originProductNo");
         sourceOrigin.remove("channelProducts");
@@ -87,32 +84,39 @@ class NaverCommerceProductIntegrationTest {
         sourceOrigin.remove("barcode");
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> sourceSmartstore = sourceDetail.get("smartstoreChannelProduct") != null
-                ? new java.util.HashMap<>((Map<String, Object>) sourceDetail.get("smartstoreChannelProduct"))
-                : new java.util.HashMap<>();
+        Map<String, Object> sourceSmartstore =
+                sourceDetail.get("smartstoreChannelProduct") != null
+                        ? new java.util.HashMap<>(
+                                (Map<String, Object>) sourceDetail.get("smartstoreChannelProduct"))
+                        : new java.util.HashMap<>();
         sourceSmartstore.put("channelProductName", productName);
         sourceSmartstore.remove("channelProductNo");
 
-        Map<String, Object> registerBody = Map.of(
-                "originProduct", sourceOrigin,
-                "smartstoreChannelProduct", sourceSmartstore);
+        Map<String, Object> registerBody =
+                Map.of(
+                        "originProduct", sourceOrigin,
+                        "smartstoreChannelProduct", sourceSmartstore);
 
         // POST 등록
         @SuppressWarnings("unchecked")
-        Map<String, Object> response = naverCommerceRestClient
-                .post()
-                .uri("/v2/products")
-                .header("Authorization", "Bearer " + token)
-                .body(registerBody)
-                .retrieve()
-                .body(Map.class);
+        Map<String, Object> response =
+                naverCommerceRestClient
+                        .post()
+                        .uri("/v2/products")
+                        .header("Authorization", "Bearer " + token)
+                        .body(registerBody)
+                        .retrieve()
+                        .body(Map.class);
 
         assertThat(response).isNotNull();
         assertThat(response.get("originProductNo")).isNotNull();
 
         registeredProductId = String.valueOf(response.get("originProductNo"));
-        System.out.println("[PASS] 상품 등록 성공: originProductNo=" + registeredProductId
-                + ", name=" + productName);
+        System.out.println(
+                "[PASS] 상품 등록 성공: originProductNo="
+                        + registeredProductId
+                        + ", name="
+                        + productName);
     }
 
     @Test
@@ -124,12 +128,13 @@ class NaverCommerceProductIntegrationTest {
         String token = tokenManager.getAccessToken();
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> detail = naverCommerceRestClient
-                .get()
-                .uri("/v2/products/origin-products/{id}", registeredProductId)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(Map.class);
+        Map<String, Object> detail =
+                naverCommerceRestClient
+                        .get()
+                        .uri("/v2/products/origin-products/{id}", registeredProductId)
+                        .header("Authorization", "Bearer " + token)
+                        .retrieve()
+                        .body(Map.class);
 
         @SuppressWarnings("unchecked")
         Map<String, Object> origin = (Map<String, Object>) detail.get("originProduct");
@@ -138,10 +143,15 @@ class NaverCommerceProductIntegrationTest {
         assertThat(((Number) origin.get("salePrice")).intValue()).isEqualTo(5000);
         assertThat(((Number) origin.get("stockQuantity")).intValue()).isEqualTo(10);
 
-        System.out.println("[PASS] 상품 조회 확인: name=" + origin.get("name")
-                + ", status=" + origin.get("statusType")
-                + ", price=" + origin.get("salePrice")
-                + ", stock=" + origin.get("stockQuantity"));
+        System.out.println(
+                "[PASS] 상품 조회 확인: name="
+                        + origin.get("name")
+                        + ", status="
+                        + origin.get("statusType")
+                        + ", price="
+                        + origin.get("salePrice")
+                        + ", stock="
+                        + origin.get("stockQuantity"));
     }
 
     @Test
@@ -154,12 +164,13 @@ class NaverCommerceProductIntegrationTest {
 
         // 기존 데이터 조회
         @SuppressWarnings("unchecked")
-        Map<String, Object> detail = naverCommerceRestClient
-                .get()
-                .uri("/v2/products/origin-products/{id}", registeredProductId)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(Map.class);
+        Map<String, Object> detail =
+                naverCommerceRestClient
+                        .get()
+                        .uri("/v2/products/origin-products/{id}", registeredProductId)
+                        .header("Authorization", "Bearer " + token)
+                        .retrieve()
+                        .body(Map.class);
 
         @SuppressWarnings("unchecked")
         Map<String, Object> currentOrigin = (Map<String, Object>) detail.get("originProduct");
@@ -182,14 +193,17 @@ class NaverCommerceProductIntegrationTest {
         originUpdate.put("detailContent", "<p>수정된 테스트 상품 상세입니다.</p>");
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> currentSmartstore = detail.get("smartstoreChannelProduct") != null
-                ? new java.util.HashMap<>((Map<String, Object>) detail.get("smartstoreChannelProduct"))
-                : new java.util.HashMap<>();
+        Map<String, Object> currentSmartstore =
+                detail.get("smartstoreChannelProduct") != null
+                        ? new java.util.HashMap<>(
+                                (Map<String, Object>) detail.get("smartstoreChannelProduct"))
+                        : new java.util.HashMap<>();
         currentSmartstore.put("channelProductName", updatedName);
 
-        Map<String, Object> updateBody = Map.of(
-                "originProduct", originUpdate,
-                "smartstoreChannelProduct", currentSmartstore);
+        Map<String, Object> updateBody =
+                Map.of(
+                        "originProduct", originUpdate,
+                        "smartstoreChannelProduct", currentSmartstore);
 
         // PUT 수정
         naverCommerceRestClient
@@ -202,12 +216,13 @@ class NaverCommerceProductIntegrationTest {
 
         // 수정 확인
         @SuppressWarnings("unchecked")
-        Map<String, Object> afterDetail = naverCommerceRestClient
-                .get()
-                .uri("/v2/products/origin-products/{id}", registeredProductId)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(Map.class);
+        Map<String, Object> afterDetail =
+                naverCommerceRestClient
+                        .get()
+                        .uri("/v2/products/origin-products/{id}", registeredProductId)
+                        .header("Authorization", "Bearer " + token)
+                        .retrieve()
+                        .body(Map.class);
 
         @SuppressWarnings("unchecked")
         Map<String, Object> afterOrigin = (Map<String, Object>) afterDetail.get("originProduct");
@@ -216,9 +231,13 @@ class NaverCommerceProductIntegrationTest {
         assertThat(((Number) afterOrigin.get("salePrice")).intValue()).isEqualTo(3000);
         assertThat(((Number) afterOrigin.get("stockQuantity")).intValue()).isEqualTo(50);
 
-        System.out.println("[PASS] 상품 수정 확인: name=" + afterOrigin.get("name")
-                + ", price=" + afterOrigin.get("salePrice")
-                + ", stock=" + afterOrigin.get("stockQuantity"));
+        System.out.println(
+                "[PASS] 상품 수정 확인: name="
+                        + afterOrigin.get("name")
+                        + ", price="
+                        + afterOrigin.get("salePrice")
+                        + ", stock="
+                        + afterOrigin.get("stockQuantity"));
     }
 
     @Test
@@ -231,27 +250,31 @@ class NaverCommerceProductIntegrationTest {
 
         // 기존 데이터 조회
         @SuppressWarnings("unchecked")
-        Map<String, Object> detail = naverCommerceRestClient
-                .get()
-                .uri("/v2/products/origin-products/{id}", registeredProductId)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(Map.class);
+        Map<String, Object> detail =
+                naverCommerceRestClient
+                        .get()
+                        .uri("/v2/products/origin-products/{id}", registeredProductId)
+                        .header("Authorization", "Bearer " + token)
+                        .retrieve()
+                        .body(Map.class);
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> originUpdate = new java.util.HashMap<>(
-                (Map<String, Object>) detail.get("originProduct"));
+        Map<String, Object> originUpdate =
+                new java.util.HashMap<>((Map<String, Object>) detail.get("originProduct"));
         originUpdate.put("statusType", "SUSPENSION");
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> smartstoreUpdate = detail.get("smartstoreChannelProduct") != null
-                ? new java.util.HashMap<>((Map<String, Object>) detail.get("smartstoreChannelProduct"))
-                : new java.util.HashMap<>();
+        Map<String, Object> smartstoreUpdate =
+                detail.get("smartstoreChannelProduct") != null
+                        ? new java.util.HashMap<>(
+                                (Map<String, Object>) detail.get("smartstoreChannelProduct"))
+                        : new java.util.HashMap<>();
         smartstoreUpdate.put("channelProductDisplayStatusType", "SUSPENSION");
 
-        Map<String, Object> updateBody = Map.of(
-                "originProduct", originUpdate,
-                "smartstoreChannelProduct", smartstoreUpdate);
+        Map<String, Object> updateBody =
+                Map.of(
+                        "originProduct", originUpdate,
+                        "smartstoreChannelProduct", smartstoreUpdate);
 
         // PUT 판매중지
         naverCommerceRestClient
@@ -264,20 +287,24 @@ class NaverCommerceProductIntegrationTest {
 
         // 판매중지 확인
         @SuppressWarnings("unchecked")
-        Map<String, Object> afterDetail = naverCommerceRestClient
-                .get()
-                .uri("/v2/products/origin-products/{id}", registeredProductId)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(Map.class);
+        Map<String, Object> afterDetail =
+                naverCommerceRestClient
+                        .get()
+                        .uri("/v2/products/origin-products/{id}", registeredProductId)
+                        .header("Authorization", "Bearer " + token)
+                        .retrieve()
+                        .body(Map.class);
 
         @SuppressWarnings("unchecked")
         Map<String, Object> afterOrigin = (Map<String, Object>) afterDetail.get("originProduct");
 
         assertThat(String.valueOf(afterOrigin.get("statusType"))).isEqualTo("SUSPENSION");
 
-        System.out.println("[PASS] 판매중지 확인: originProductNo=" + registeredProductId
-                + ", status=" + afterOrigin.get("statusType"));
+        System.out.println(
+                "[PASS] 판매중지 확인: originProductNo="
+                        + registeredProductId
+                        + ", status="
+                        + afterOrigin.get("statusType"));
     }
 
     @Test

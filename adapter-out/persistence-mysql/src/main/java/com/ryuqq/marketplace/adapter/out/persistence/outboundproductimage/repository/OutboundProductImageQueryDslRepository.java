@@ -2,14 +2,12 @@ package com.ryuqq.marketplace.adapter.out.persistence.outboundproductimage.repos
 
 import static com.ryuqq.marketplace.adapter.out.persistence.outboundproductimage.entity.QOutboundProductImageJpaEntity.outboundProductImageJpaEntity;
 
-import com.ryuqq.marketplace.adapter.out.persistence.outboundproductimage.entity.OutboundProductImageJpaEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundproductimage.entity.OutboundProductImageJpaEntity;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
-/**
- * OutboundProductImage QueryDSL 조회 레포지토리.
- */
+/** OutboundProductImage QueryDSL 조회 레포지토리. */
 @Repository
 public class OutboundProductImageQueryDslRepository {
 

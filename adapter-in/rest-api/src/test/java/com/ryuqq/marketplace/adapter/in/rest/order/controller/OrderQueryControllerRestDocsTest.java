@@ -461,9 +461,7 @@ class OrderQueryControllerRestDocsTest {
                             RestDocumentationRequestBuilders.get(
                                     BASE_URL + OrderAdminEndpoints.ORDER_ITEM_ID, ORDER_ITEM_ID))
                     .andExpect(status().isOk())
-                    .andExpect(
-                            jsonPath("$.data.orderId")
-                                    .value(OrderApiFixtures.DEFAULT_ORDER_ID))
+                    .andExpect(jsonPath("$.data.orderId").value(OrderApiFixtures.DEFAULT_ORDER_ID))
                     .andExpect(jsonPath("$.data.buyerInfo").exists())
                     .andExpect(jsonPath("$.data.settlementInfo").exists())
                     .andExpect(jsonPath("$.data.orderProduct").exists())
@@ -473,7 +471,7 @@ class OrderQueryControllerRestDocsTest {
                     .andExpect(jsonPath("$.data.claimIds").isArray())
                     .andExpect(jsonPath("$.data.claims").isArray())
                     .andDo(
-                                    document(
+                            document(
                                     "order/detail",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),

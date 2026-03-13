@@ -8,9 +8,7 @@ import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import java.time.Instant;
 import org.springframework.stereotype.Component;
 
-/**
- * OutboundProductImage Entity-Domain 매퍼.
- */
+/** OutboundProductImage Entity-Domain 매퍼. */
 @Component
 public class OutboundProductImageJpaEntityMapper {
 
@@ -31,9 +29,10 @@ public class OutboundProductImageJpaEntityMapper {
     }
 
     public OutboundProductImage toDomain(OutboundProductImageJpaEntity entity) {
-        OutboundProductImageId id = entity.getId() != null
-                ? OutboundProductImageId.of(entity.getId())
-                : OutboundProductImageId.forNew();
+        OutboundProductImageId id =
+                entity.getId() != null
+                        ? OutboundProductImageId.of(entity.getId())
+                        : OutboundProductImageId.forNew();
 
         DeletionStatus deletionStatus =
                 DeletionStatus.reconstitute(entity.isDeleted(), entity.getDeletedAt());

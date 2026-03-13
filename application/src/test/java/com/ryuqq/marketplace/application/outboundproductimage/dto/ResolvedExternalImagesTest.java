@@ -51,7 +51,8 @@ class ResolvedExternalImagesTest {
         @Test
         @DisplayName("썸네일 이미지가 있으면 external URL을 반환한다")
         void thumbnailUrl_WithThumbnail_ReturnsExternalUrl() {
-            ResolvedExternalImages sut = ResolvedExternalImageFixtures.thumbnailOnlyResolvedImages();
+            ResolvedExternalImages sut =
+                    ResolvedExternalImageFixtures.thumbnailOnlyResolvedImages();
 
             assertThat(sut.thumbnailUrl())
                     .isEqualTo(ResolvedExternalImageFixtures.DEFAULT_THUMBNAIL_EXTERNAL_URL);
@@ -94,7 +95,8 @@ class ResolvedExternalImagesTest {
         @Test
         @DisplayName("썸네일만 있으면 detailUrls는 빈 목록을 반환한다")
         void detailUrls_WithThumbnailOnly_ReturnsEmptyList() {
-            ResolvedExternalImages sut = ResolvedExternalImageFixtures.thumbnailOnlyResolvedImages();
+            ResolvedExternalImages sut =
+                    ResolvedExternalImageFixtures.thumbnailOnlyResolvedImages();
 
             assertThat(sut.detailUrls()).isEmpty();
         }
@@ -102,17 +104,20 @@ class ResolvedExternalImagesTest {
         @Test
         @DisplayName("sortOrder가 역순으로 입력되어도 오름차순 정렬 결과를 반환한다")
         void detailUrls_ReverseOrderInput_ReturnsSortedAscending() {
-            ResolvedExternalImage detail2 = new ResolvedExternalImage(
-                    "https://shop-phinf.pstatic.net/detail2.jpg", ImageType.DETAIL, 2);
-            ResolvedExternalImage detail1 = new ResolvedExternalImage(
-                    "https://shop-phinf.pstatic.net/detail1.jpg", ImageType.DETAIL, 1);
+            ResolvedExternalImage detail2 =
+                    new ResolvedExternalImage(
+                            "https://shop-phinf.pstatic.net/detail2.jpg", ImageType.DETAIL, 2);
+            ResolvedExternalImage detail1 =
+                    new ResolvedExternalImage(
+                            "https://shop-phinf.pstatic.net/detail1.jpg", ImageType.DETAIL, 1);
             ResolvedExternalImages sut = ResolvedExternalImages.of(List.of(detail2, detail1));
 
             List<String> urls = sut.detailUrls();
 
-            assertThat(urls).containsExactly(
-                    "https://shop-phinf.pstatic.net/detail1.jpg",
-                    "https://shop-phinf.pstatic.net/detail2.jpg");
+            assertThat(urls)
+                    .containsExactly(
+                            "https://shop-phinf.pstatic.net/detail1.jpg",
+                            "https://shop-phinf.pstatic.net/detail2.jpg");
         }
     }
 
@@ -131,7 +136,8 @@ class ResolvedExternalImagesTest {
         @Test
         @DisplayName("이미지가 있으면 isEmpty는 false를 반환한다")
         void isEmpty_WithImages_ReturnsFalse() {
-            ResolvedExternalImages sut = ResolvedExternalImageFixtures.thumbnailOnlyResolvedImages();
+            ResolvedExternalImages sut =
+                    ResolvedExternalImageFixtures.thumbnailOnlyResolvedImages();
 
             assertThat(sut.isEmpty()).isFalse();
         }

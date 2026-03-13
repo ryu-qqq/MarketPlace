@@ -34,15 +34,22 @@ class OutboundProductImageTest {
             int sortOrder = 0;
 
             // when
-            OutboundProductImage image = OutboundProductImage.forNew(
-                    outboundProductId, productGroupImageId, originUrl, imageType, sortOrder);
+            OutboundProductImage image =
+                    OutboundProductImage.forNew(
+                            outboundProductId,
+                            productGroupImageId,
+                            originUrl,
+                            imageType,
+                            sortOrder);
 
             // then
             assertThat(image).isNotNull();
             assertThat(image.id().isNew()).isTrue();
-            assertThat(image.outboundProductId()).isEqualTo(OutboundProductId.of(outboundProductId));
+            assertThat(image.outboundProductId())
+                    .isEqualTo(OutboundProductId.of(outboundProductId));
             assertThat(image.outboundProductIdValue()).isEqualTo(outboundProductId);
-            assertThat(image.productGroupImageId()).isEqualTo(ProductGroupImageId.of(productGroupImageId));
+            assertThat(image.productGroupImageId())
+                    .isEqualTo(ProductGroupImageId.of(productGroupImageId));
             assertThat(image.productGroupImageIdValue()).isEqualTo(productGroupImageId);
             assertThat(image.originUrl()).isEqualTo(originUrl);
             assertThat(image.externalUrl()).isNull();
@@ -98,8 +105,9 @@ class OutboundProductImageTest {
         @DisplayName("productGroupImageId가 null이면 null VO로 생성된다")
         void createWithNullProductGroupImageId() {
             // when
-            OutboundProductImage image = OutboundProductImage.forNew(
-                    100L, null, "https://s3.example.com/img.jpg", ImageType.THUMBNAIL, 0);
+            OutboundProductImage image =
+                    OutboundProductImage.forNew(
+                            100L, null, "https://s3.example.com/img.jpg", ImageType.THUMBNAIL, 0);
 
             // then
             assertThat(image.productGroupImageId()).isNull();
@@ -115,7 +123,8 @@ class OutboundProductImageTest {
         @DisplayName("영속성에서 활성 이미지를 복원한다")
         void reconstituteActiveImage() {
             // given
-            OutboundProductImageId id = OutboundProductImageFixtures.defaultOutboundProductImageId();
+            OutboundProductImageId id =
+                    OutboundProductImageFixtures.defaultOutboundProductImageId();
             Long outboundProductId = OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID;
             Long productGroupImageId = OutboundProductImageFixtures.DEFAULT_PRODUCT_GROUP_IMAGE_ID;
             String originUrl = OutboundProductImageFixtures.DEFAULT_ORIGIN_URL;
@@ -125,9 +134,16 @@ class OutboundProductImageTest {
             DeletionStatus deletionStatus = DeletionStatus.active();
 
             // when
-            OutboundProductImage image = OutboundProductImage.reconstitute(
-                    id, outboundProductId, productGroupImageId,
-                    originUrl, externalUrl, imageType, sortOrder, deletionStatus);
+            OutboundProductImage image =
+                    OutboundProductImage.reconstitute(
+                            id,
+                            outboundProductId,
+                            productGroupImageId,
+                            originUrl,
+                            externalUrl,
+                            imageType,
+                            sortOrder,
+                            deletionStatus);
 
             // then
             assertThat(image.id()).isEqualTo(id);
@@ -149,15 +165,16 @@ class OutboundProductImageTest {
             Instant deletedAt = CommonVoFixtures.yesterday();
 
             // when
-            OutboundProductImage image = OutboundProductImage.reconstitute(
-                    OutboundProductImageFixtures.defaultOutboundProductImageId(),
-                    OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID,
-                    OutboundProductImageFixtures.DEFAULT_PRODUCT_GROUP_IMAGE_ID,
-                    OutboundProductImageFixtures.DEFAULT_ORIGIN_URL,
-                    OutboundProductImageFixtures.DEFAULT_EXTERNAL_URL,
-                    ImageType.THUMBNAIL,
-                    0,
-                    DeletionStatus.deletedAt(deletedAt));
+            OutboundProductImage image =
+                    OutboundProductImage.reconstitute(
+                            OutboundProductImageFixtures.defaultOutboundProductImageId(),
+                            OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID,
+                            OutboundProductImageFixtures.DEFAULT_PRODUCT_GROUP_IMAGE_ID,
+                            OutboundProductImageFixtures.DEFAULT_ORIGIN_URL,
+                            OutboundProductImageFixtures.DEFAULT_EXTERNAL_URL,
+                            ImageType.THUMBNAIL,
+                            0,
+                            DeletionStatus.deletedAt(deletedAt));
 
             // then
             assertThat(image.isDeleted()).isTrue();
@@ -168,15 +185,16 @@ class OutboundProductImageTest {
         @DisplayName("externalUrl이 null인 이미지를 복원한다")
         void reconstituteImageWithNullExternalUrl() {
             // given & when
-            OutboundProductImage image = OutboundProductImage.reconstitute(
-                    OutboundProductImageFixtures.defaultOutboundProductImageId(),
-                    OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID,
-                    OutboundProductImageFixtures.DEFAULT_PRODUCT_GROUP_IMAGE_ID,
-                    OutboundProductImageFixtures.DEFAULT_ORIGIN_URL,
-                    null,
-                    ImageType.THUMBNAIL,
-                    0,
-                    DeletionStatus.active());
+            OutboundProductImage image =
+                    OutboundProductImage.reconstitute(
+                            OutboundProductImageFixtures.defaultOutboundProductImageId(),
+                            OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID,
+                            OutboundProductImageFixtures.DEFAULT_PRODUCT_GROUP_IMAGE_ID,
+                            OutboundProductImageFixtures.DEFAULT_ORIGIN_URL,
+                            null,
+                            ImageType.THUMBNAIL,
+                            0,
+                            DeletionStatus.active());
 
             // then
             assertThat(image.externalUrl()).isNull();
@@ -207,7 +225,8 @@ class OutboundProductImageTest {
         @DisplayName("externalUrl을 재설정하면 덮어쓴다")
         void reassignExternalUrl() {
             // given
-            OutboundProductImage image = OutboundProductImageFixtures.thumbnailImageWithExternalUrl();
+            OutboundProductImage image =
+                    OutboundProductImageFixtures.thumbnailImageWithExternalUrl();
             String newUrl = "https://shop-phinf.pstatic.net/new-image.jpg";
 
             // when
@@ -301,8 +320,11 @@ class OutboundProductImageTest {
             String key = image.imageKey();
 
             // then
-            assertThat(key).isEqualTo(
-                    OutboundProductImageFixtures.DEFAULT_ORIGIN_URL + "::" + ImageType.THUMBNAIL.name());
+            assertThat(key)
+                    .isEqualTo(
+                            OutboundProductImageFixtures.DEFAULT_ORIGIN_URL
+                                    + "::"
+                                    + ImageType.THUMBNAIL.name());
         }
 
         @Test
@@ -322,10 +344,12 @@ class OutboundProductImageTest {
         @DisplayName("같은 originUrl과 imageType이면 imageKey가 같다")
         void sameOriginUrlAndTypeProduceSameKey() {
             // given
-            OutboundProductImage image1 = OutboundProductImage.forNew(
-                    1L, 10L, "https://s3.example.com/same.jpg", ImageType.THUMBNAIL, 0);
-            OutboundProductImage image2 = OutboundProductImage.forNew(
-                    2L, 20L, "https://s3.example.com/same.jpg", ImageType.THUMBNAIL, 1);
+            OutboundProductImage image1 =
+                    OutboundProductImage.forNew(
+                            1L, 10L, "https://s3.example.com/same.jpg", ImageType.THUMBNAIL, 0);
+            OutboundProductImage image2 =
+                    OutboundProductImage.forNew(
+                            2L, 20L, "https://s3.example.com/same.jpg", ImageType.THUMBNAIL, 1);
 
             // when & then
             assertThat(image1.imageKey()).isEqualTo(image2.imageKey());
@@ -335,10 +359,12 @@ class OutboundProductImageTest {
         @DisplayName("같은 URL이지만 imageType이 다르면 imageKey가 다르다")
         void sameUrlButDifferentTypeProduceDifferentKey() {
             // given
-            OutboundProductImage thumbnail = OutboundProductImage.forNew(
-                    1L, 10L, "https://s3.example.com/same.jpg", ImageType.THUMBNAIL, 0);
-            OutboundProductImage detail = OutboundProductImage.forNew(
-                    1L, 10L, "https://s3.example.com/same.jpg", ImageType.DETAIL, 1);
+            OutboundProductImage thumbnail =
+                    OutboundProductImage.forNew(
+                            1L, 10L, "https://s3.example.com/same.jpg", ImageType.THUMBNAIL, 0);
+            OutboundProductImage detail =
+                    OutboundProductImage.forNew(
+                            1L, 10L, "https://s3.example.com/same.jpg", ImageType.DETAIL, 1);
 
             // when & then
             assertThat(thumbnail.imageKey()).isNotEqualTo(detail.imageKey());

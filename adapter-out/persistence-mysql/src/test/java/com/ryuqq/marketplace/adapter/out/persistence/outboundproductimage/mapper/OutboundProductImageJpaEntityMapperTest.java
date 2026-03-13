@@ -55,7 +55,8 @@ class OutboundProductImageJpaEntityMapperTest {
             // then
             assertThat(entity.getId()).isEqualTo(domain.idValue());
             assertThat(entity.getOutboundProductId()).isEqualTo(domain.outboundProductIdValue());
-            assertThat(entity.getProductGroupImageId()).isEqualTo(domain.productGroupImageIdValue());
+            assertThat(entity.getProductGroupImageId())
+                    .isEqualTo(domain.productGroupImageIdValue());
             assertThat(entity.getOriginUrl()).isEqualTo(domain.originUrl());
             assertThat(entity.getExternalUrl()).isEqualTo(domain.externalUrl());
             assertThat(entity.getImageType()).isEqualTo(domain.imageType().name());
@@ -140,7 +141,8 @@ class OutboundProductImageJpaEntityMapperTest {
             // then
             assertThat(domain.idValue()).isEqualTo(entity.getId());
             assertThat(domain.outboundProductIdValue()).isEqualTo(entity.getOutboundProductId());
-            assertThat(domain.productGroupImageIdValue()).isEqualTo(entity.getProductGroupImageId());
+            assertThat(domain.productGroupImageIdValue())
+                    .isEqualTo(entity.getProductGroupImageId());
             assertThat(domain.originUrl()).isEqualTo(entity.getOriginUrl());
             assertThat(domain.externalUrl()).isEqualTo(entity.getExternalUrl());
             assertThat(domain.imageType().name()).isEqualTo(entity.getImageType());

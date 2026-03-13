@@ -7,8 +7,7 @@ import java.util.List;
 /**
  * OutboundProductImage 변경 비교 결과.
  *
- * <p>기존 캐시된 이미지와 현재 이미지를 originUrl + imageType 기준으로 비교하여
- * 추가/삭제/유지 목록을 제공합니다.
+ * <p>기존 캐시된 이미지와 현재 이미지를 originUrl + imageType 기준으로 비교하여 추가/삭제/유지 목록을 제공합니다.
  */
 public record OutboundProductImageDiff(
         List<OutboundProductImage> added,

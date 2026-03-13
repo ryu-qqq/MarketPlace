@@ -42,12 +42,14 @@ class SalesChannelImageClientManagerTest {
         void uploadImages_SupportedChannel_ReturnsExternalUrls() {
             // given
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
-            List<String> imageUrls = List.of(
-                    "https://s3.example.com/image1.jpg",
-                    "https://s3.example.com/image2.jpg");
-            List<String> expectedExternalUrls = List.of(
-                    ResolvedExternalImageFixtures.DEFAULT_THUMBNAIL_EXTERNAL_URL,
-                    ResolvedExternalImageFixtures.DEFAULT_DETAIL_EXTERNAL_URL_1);
+            List<String> imageUrls =
+                    List.of(
+                            "https://s3.example.com/image1.jpg",
+                            "https://s3.example.com/image2.jpg");
+            List<String> expectedExternalUrls =
+                    List.of(
+                            ResolvedExternalImageFixtures.DEFAULT_THUMBNAIL_EXTERNAL_URL,
+                            ResolvedExternalImageFixtures.DEFAULT_DETAIL_EXTERNAL_URL_1);
 
             given(naverClient.uploadImages(imageUrls)).willReturn(expectedExternalUrls);
 
@@ -78,8 +80,8 @@ class SalesChannelImageClientManagerTest {
             // given
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
             List<String> imageUrls = List.of("https://s3.example.com/single.jpg");
-            List<String> expectedUrls = List.of(
-                    ResolvedExternalImageFixtures.DEFAULT_THUMBNAIL_EXTERNAL_URL);
+            List<String> expectedUrls =
+                    List.of(ResolvedExternalImageFixtures.DEFAULT_THUMBNAIL_EXTERNAL_URL);
 
             given(naverClient.uploadImages(imageUrls)).willReturn(expectedUrls);
 
@@ -175,8 +177,10 @@ class SalesChannelImageClientManagerTest {
                     .willReturn(ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE);
 
             // when & then
-            assertThatThrownBy(() ->
-                    new SalesChannelImageClientManager(List.of(naverClient, coupangClient)))
+            assertThatThrownBy(
+                            () ->
+                                    new SalesChannelImageClientManager(
+                                            List.of(naverClient, coupangClient)))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("중복된 channelCode");
         }

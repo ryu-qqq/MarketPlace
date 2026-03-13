@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  * 네이버 커머스 이미지 업로드 SalesChannelImageClient 구현.
  *
- * <p>기존 NaverCommerceImageClientAdapter를 래핑하여
- * SalesChannelImageClient 포트를 구현합니다.
+ * <p>기존 NaverCommerceImageClientAdapter를 래핑하여 SalesChannelImageClient 포트를 구현합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")

@@ -19,12 +19,10 @@ import org.springframework.stereotype.Component;
 /**
  * 아웃바운드 이미지 동기화 코디네이터.
  *
- * <p>캐시된 외부 이미지 URL과 현재 이미지를 diff 비교하여,
- * 새로 추가된 이미지만 외부 채널에 업로드하고, 삭제된 이미지는 soft delete 처리합니다.
- * 이미 업로드된 이미지는 캐시된 external URL을 재사용합니다.
+ * <p>캐시된 외부 이미지 URL과 현재 이미지를 diff 비교하여, 새로 추가된 이미지만 외부 채널에 업로드하고, 삭제된 이미지는 soft delete 처리합니다. 이미
+ * 업로드된 이미지는 캐시된 external URL을 재사용합니다.
  *
- * <p>외부 API 호출(이미지 업로드)은 트랜잭션 밖에서 수행됩니다.
- * DB 영속화는 Spring Data JPA의 기본 트랜잭션에 위임합니다.
+ * <p>외부 API 호출(이미지 업로드)은 트랜잭션 밖에서 수행됩니다. DB 영속화는 Spring Data JPA의 기본 트랜잭션에 위임합니다.
  */
 @Component
 public class OutboundImageSyncCoordinator {
@@ -47,8 +45,7 @@ public class OutboundImageSyncCoordinator {
     /**
      * 이미지 동기화를 수행하고 외부 채널 URL이 반영된 결과를 반환합니다.
      *
-     * <p>외부 API 호출은 트랜잭션 밖에서 수행하며,
-     * DB 변경은 Spring Data JPA의 기본 트랜잭션에 위임합니다.
+     * <p>외부 API 호출은 트랜잭션 밖에서 수행하며, DB 변경은 Spring Data JPA의 기본 트랜잭션에 위임합니다.
      *
      * @param outboundProductId 아웃바운드 상품 ID
      * @param channelCode 판매채널 코드
@@ -56,9 +53,7 @@ public class OutboundImageSyncCoordinator {
      * @return 외부 채널 URL이 반영된 이미지 결과
      */
     public ResolvedExternalImages syncImages(
-            Long outboundProductId,
-            String channelCode,
-            List<ProductGroupImage> currentImages) {
+            Long outboundProductId, String channelCode, List<ProductGroupImage> currentImages) {
 
         Instant now = Instant.now();
 
@@ -101,16 +96,17 @@ public class OutboundImageSyncCoordinator {
     private void uploadAndAssignExternalUrls(
             String channelCode, List<OutboundProductImage> addedImages) {
 
-        List<String> originUrls = addedImages.stream()
-                .map(OutboundProductImage::originUrl)
-                .toList();
+        List<String> originUrls =
+                addedImages.stream().map(OutboundProductImage::originUrl).toList();
 
         List<String> externalUrls = imageClientManager.uploadImages(channelCode, originUrls);
 
         if (externalUrls.size() != addedImages.size()) {
             throw new IllegalStateException(
-                    "업로드 결과 개수 불일치: expected=" + addedImages.size()
-                            + ", actual=" + externalUrls.size());
+                    "업로드 결과 개수 불일치: expected="
+                            + addedImages.size()
+                            + ", actual="
+                            + externalUrls.size());
         }
 
         for (int i = 0; i < addedImages.size(); i++) {
@@ -124,11 +120,16 @@ public class OutboundImageSyncCoordinator {
     }
 
     private ResolvedExternalImages toResolvedImages(List<OutboundProductImage> images) {
-        List<ResolvedExternalImage> resolved = images.stream()
-                .filter(OutboundProductImage::hasExternalUrl)
-                .map(img -> new ResolvedExternalImage(
-                        img.externalUrl(), img.imageType(), img.sortOrder()))
-                .toList();
+        List<ResolvedExternalImage> resolved =
+                images.stream()
+                        .filter(OutboundProductImage::hasExternalUrl)
+                        .map(
+                                img ->
+                                        new ResolvedExternalImage(
+                                                img.externalUrl(),
+                                                img.imageType(),
+                                                img.sortOrder()))
+                        .toList();
         return ResolvedExternalImages.of(resolved);
     }
 }

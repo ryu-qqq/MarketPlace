@@ -10,9 +10,8 @@ import java.time.Instant;
 /**
  * OutboundProductImage Aggregate.
  *
- * <p>외부 채널(네이버 등)에 업로드된 이미지의 URL 매핑을 관리합니다.
- * originUrl(우리 S3 URL)과 externalUrl(채널 CDN URL)을 매핑하여,
- * 상품 수정 시 이미 업로드된 이미지를 재사용할 수 있도록 캐싱합니다.
+ * <p>외부 채널(네이버 등)에 업로드된 이미지의 URL 매핑을 관리합니다. originUrl(우리 S3 URL)과 externalUrl(채널 CDN URL)을 매핑하여, 상품
+ * 수정 시 이미 업로드된 이미지를 재사용할 수 있도록 캐싱합니다.
  */
 public class OutboundProductImage {
 
@@ -54,8 +53,7 @@ public class OutboundProductImage {
         return new OutboundProductImage(
                 OutboundProductImageId.forNew(),
                 OutboundProductId.of(outboundProductId),
-                productGroupImageId != null
-                        ? ProductGroupImageId.of(productGroupImageId) : null,
+                productGroupImageId != null ? ProductGroupImageId.of(productGroupImageId) : null,
                 originUrl,
                 null,
                 imageType,
@@ -76,23 +74,37 @@ public class OutboundProductImage {
         return new OutboundProductImage(
                 id,
                 OutboundProductId.of(outboundProductId),
-                productGroupImageId != null
-                        ? ProductGroupImageId.of(productGroupImageId) : null,
-                originUrl, externalUrl, imageType, sortOrder, deletionStatus);
+                productGroupImageId != null ? ProductGroupImageId.of(productGroupImageId) : null,
+                originUrl,
+                externalUrl,
+                imageType,
+                sortOrder,
+                deletionStatus);
     }
 
     /** sortOrder와 externalUrl을 유지하면서 새 인스턴스를 반환 (diff retained용). */
     public OutboundProductImage withSortOrder(int newSortOrder) {
         return new OutboundProductImage(
-                id, outboundProductId, productGroupImageId,
-                originUrl, externalUrl, imageType, newSortOrder, deletionStatus);
+                id,
+                outboundProductId,
+                productGroupImageId,
+                originUrl,
+                externalUrl,
+                imageType,
+                newSortOrder,
+                deletionStatus);
     }
 
     /** soft delete된 새 인스턴스를 반환 (diff removed용). */
     public OutboundProductImage asDeleted(Instant occurredAt) {
         return new OutboundProductImage(
-                id, outboundProductId, productGroupImageId,
-                originUrl, externalUrl, imageType, sortOrder,
+                id,
+                outboundProductId,
+                productGroupImageId,
+                originUrl,
+                externalUrl,
+                imageType,
+                sortOrder,
                 DeletionStatus.deletedAt(occurredAt));
     }
 

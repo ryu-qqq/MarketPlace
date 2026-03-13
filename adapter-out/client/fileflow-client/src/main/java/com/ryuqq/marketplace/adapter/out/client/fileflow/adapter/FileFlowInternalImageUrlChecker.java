@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * FileFlow CDN 도메인 기반 내부 URL 판별 어댑터.
  *
- * <p>fileflow.cdn-domain 설정값과 URL의 호스트를 비교하여
- * 내부 스토리지 URL인지 판별합니다.
+ * <p>fileflow.cdn-domain 설정값과 URL의 호스트를 비교하여 내부 스토리지 URL인지 판별합니다.
  *
  * @author ryu-qqq
  * @since 1.0.0

@@ -34,8 +34,7 @@ public interface SalesChannelProductClient {
     /**
      * 외부 채널에 상품을 등록합니다 (외부 이미지 URL 포함).
      *
-     * <p>기본 구현은 resolvedImages를 무시하고 기존 메서드를 호출합니다.
-     * 이미지 업로드가 필요한 채널(네이버 등)에서 오버라이드합니다.
+     * <p>기본 구현은 resolvedImages를 무시하고 기존 메서드를 호출합니다. 이미지 업로드가 필요한 채널(네이버 등)에서 오버라이드합니다.
      */
     default String registerProduct(
             ProductGroupDetailBundle bundle,
@@ -80,8 +79,13 @@ public interface SalesChannelProductClient {
             SellerSalesChannel channel,
             Set<ChangedArea> changedAreas,
             ResolvedExternalImages resolvedImages) {
-        updateProduct(bundle, externalCategoryId, externalBrandId,
-                externalProductId, channel, changedAreas);
+        updateProduct(
+                bundle,
+                externalCategoryId,
+                externalBrandId,
+                externalProductId,
+                channel,
+                changedAreas);
     }
 
     /**

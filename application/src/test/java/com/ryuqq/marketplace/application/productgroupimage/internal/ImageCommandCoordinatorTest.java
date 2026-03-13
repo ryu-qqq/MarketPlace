@@ -114,18 +114,20 @@ class ImageCommandCoordinatorTest {
         void register_InternalUrl_SkipsUploadAndCreatesTransformOutbox() {
             // given
             String internalUrl = "https://cdn.set-of.com/images/thumb.jpg";
-            ProductGroupImage internalImage = ProductGroupImage.forNew(
-                    ProductGroupId.of(1L),
-                    ImageUrl.of(internalUrl),
-                    ImageType.THUMBNAIL,
-                    0);
+            ProductGroupImage internalImage =
+                    ProductGroupImage.forNew(
+                            ProductGroupId.of(1L),
+                            ImageUrl.of(internalUrl),
+                            ImageType.THUMBNAIL,
+                            0);
             ProductGroupImages images = ProductGroupImages.of(List.of(internalImage));
             List<Long> expectedIds = List.of(10L);
 
             given(internalImageUrlChecker.isInternal(internalUrl)).willReturn(true);
             given(imageCommandManager.persistAll(anyList())).willReturn(expectedIds);
-            given(transformOutboxFactory.createOutboxes(
-                    anyLong(), any(), any(), isNull(String.class)))
+            given(
+                            transformOutboxFactory.createOutboxes(
+                                    anyLong(), any(), any(), isNull(String.class)))
                     .willReturn(List.of());
 
             // when
@@ -134,8 +136,9 @@ class ImageCommandCoordinatorTest {
             // then
             assertThat(result).isEqualTo(expectedIds);
             then(uploadOutboxCommandManager).should(never()).persistAll(anyList());
-            then(transformOutboxFactory).should().createOutboxes(
-                    anyLong(), any(), any(), isNull(String.class));
+            then(transformOutboxFactory)
+                    .should()
+                    .createOutboxes(anyLong(), any(), any(), isNull(String.class));
         }
     }
 }
