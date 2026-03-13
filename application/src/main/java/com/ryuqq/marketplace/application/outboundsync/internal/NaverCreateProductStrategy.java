@@ -68,9 +68,7 @@ public class NaverCreateProductStrategy implements OutboundSyncExecutionStrategy
 
             ResolvedExternalImages resolvedImages =
                     outboundImageSyncCoordinator.syncImages(
-                            outboundProduct.idValue(),
-                            NAVER_CHANNEL_CODE,
-                            bundle.group().images());
+                            outboundProduct.idValue(), NAVER_CHANNEL_CODE, bundle.group().images());
 
             SalesChannelMappingResult mapping =
                     mappingResolver.resolve(

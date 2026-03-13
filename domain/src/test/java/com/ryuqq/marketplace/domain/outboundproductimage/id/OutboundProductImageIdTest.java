@@ -101,7 +101,8 @@ class OutboundProductImageIdTest {
         @DisplayName("record로 구현되어 불변성이 보장된다")
         void recordGuaranteesImmutability() {
             // given
-            OutboundProductImageId id = OutboundProductImageFixtures.defaultOutboundProductImageId();
+            OutboundProductImageId id =
+                    OutboundProductImageFixtures.defaultOutboundProductImageId();
 
             // when
             Long originalValue = id.value();

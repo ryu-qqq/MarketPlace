@@ -56,8 +56,7 @@ public final class ResolvedExternalImageFixtures {
 
     /** 썸네일 + 상세 이미지 2개를 포함한 ResolvedExternalImages. */
     public static ResolvedExternalImages fullResolvedImages() {
-        return ResolvedExternalImages.of(
-                List.of(thumbnailImage(), detailImage(1), detailImage(2)));
+        return ResolvedExternalImages.of(List.of(thumbnailImage(), detailImage(1), detailImage(2)));
     }
 
     /** 상세 이미지만 있는 ResolvedExternalImages (sortOrder 역순 입력). */

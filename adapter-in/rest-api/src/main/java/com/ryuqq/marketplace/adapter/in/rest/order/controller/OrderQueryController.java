@@ -64,7 +64,9 @@ public class OrderQueryController {
         return ResponseEntity.ok(ApiResponse.of(response));
     }
 
-    @Operation(summary = "상품주문 상세 조회", description = "상품주문(아이템) 단위 상세. V4 스펙 형태로 반환 (경로 orderItemId, 실상 orderItem 데이터)")
+    @Operation(
+            summary = "상품주문 상세 조회",
+            description = "상품주문(아이템) 단위 상세. V4 스펙 형태로 반환 (경로 orderItemId, 실상 orderItem 데이터)")
     @PreAuthorize("@access.hasPermission('order:read')")
     @RequirePermission(value = "order:read", description = "주문 상세 조회")
     @GetMapping(OrderAdminEndpoints.ORDER_ITEM_ID)

@@ -48,22 +48,24 @@ class OutboundImageSyncCoordinatorTest {
             // given
             Long outboundProductId = OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID;
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
-            List<ProductGroupImage> currentImages = List.of(
-                    ProductGroupFixtures.thumbnailImage(),
-                    ProductGroupFixtures.detailImage(1));
+            List<ProductGroupImage> currentImages =
+                    List.of(
+                            ProductGroupFixtures.thumbnailImage(),
+                            ProductGroupFixtures.detailImage(1));
 
             OutboundProductImages emptyCache = OutboundProductImageFixtures.emptyImages();
             given(readManager.findByOutboundProductId(outboundProductId)).willReturn(emptyCache);
 
-            List<String> externalUrls = List.of(
-                    OutboundProductImageFixtures.DEFAULT_EXTERNAL_URL,
-                    "https://cdn.naver.com/detail1.jpg");
+            List<String> externalUrls =
+                    List.of(
+                            OutboundProductImageFixtures.DEFAULT_EXTERNAL_URL,
+                            "https://cdn.naver.com/detail1.jpg");
             given(imageClientManager.uploadImages(eq(channelCode), anyList()))
                     .willReturn(externalUrls);
 
             // when
-            ResolvedExternalImages result = sut.syncImages(
-                    outboundProductId, channelCode, currentImages);
+            ResolvedExternalImages result =
+                    sut.syncImages(outboundProductId, channelCode, currentImages);
 
             // then
             assertThat(result).isNotNull();
@@ -84,8 +86,8 @@ class OutboundImageSyncCoordinatorTest {
             given(readManager.findByOutboundProductId(outboundProductId)).willReturn(emptyCache);
 
             // when
-            ResolvedExternalImages result = sut.syncImages(
-                    outboundProductId, channelCode, currentImages);
+            ResolvedExternalImages result =
+                    sut.syncImages(outboundProductId, channelCode, currentImages);
 
             // then
             assertThat(result.isEmpty()).isTrue();
@@ -106,17 +108,17 @@ class OutboundImageSyncCoordinatorTest {
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
 
             // 캐시된 썸네일 이미지의 originUrl과 동일한 이미지 (uploadedUrl 사용)
-            List<ProductGroupImage> currentImages = List.of(
-                    buildUploadedThumbnailImage(
-                            OutboundProductImageFixtures.DEFAULT_ORIGIN_URL));
+            List<ProductGroupImage> currentImages =
+                    List.of(
+                            buildUploadedThumbnailImage(
+                                    OutboundProductImageFixtures.DEFAULT_ORIGIN_URL));
 
             OutboundProductImages cachedImages = OutboundProductImageFixtures.thumbnailOnlyImages();
-            given(readManager.findByOutboundProductId(outboundProductId))
-                    .willReturn(cachedImages);
+            given(readManager.findByOutboundProductId(outboundProductId)).willReturn(cachedImages);
 
             // when
-            ResolvedExternalImages result = sut.syncImages(
-                    outboundProductId, channelCode, currentImages);
+            ResolvedExternalImages result =
+                    sut.syncImages(outboundProductId, channelCode, currentImages);
 
             // then
             then(imageClientManager).shouldHaveNoInteractions();
@@ -130,17 +132,17 @@ class OutboundImageSyncCoordinatorTest {
             Long outboundProductId = OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID;
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
 
-            List<ProductGroupImage> currentImages = List.of(
-                    buildUploadedThumbnailImage(
-                            OutboundProductImageFixtures.DEFAULT_ORIGIN_URL));
+            List<ProductGroupImage> currentImages =
+                    List.of(
+                            buildUploadedThumbnailImage(
+                                    OutboundProductImageFixtures.DEFAULT_ORIGIN_URL));
 
             OutboundProductImages cachedImages = OutboundProductImageFixtures.thumbnailOnlyImages();
-            given(readManager.findByOutboundProductId(outboundProductId))
-                    .willReturn(cachedImages);
+            given(readManager.findByOutboundProductId(outboundProductId)).willReturn(cachedImages);
 
             // when
-            ResolvedExternalImages result = sut.syncImages(
-                    outboundProductId, channelCode, currentImages);
+            ResolvedExternalImages result =
+                    sut.syncImages(outboundProductId, channelCode, currentImages);
 
             // then
             assertThat(result.thumbnailUrl())
@@ -160,14 +162,12 @@ class OutboundImageSyncCoordinatorTest {
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
 
             // 캐시에 없는 새 이미지
-            List<ProductGroupImage> currentImages = List.of(
-                    ProductGroupFixtures.thumbnailImage());
+            List<ProductGroupImage> currentImages = List.of(ProductGroupFixtures.thumbnailImage());
 
             OutboundProductImages emptyCache = OutboundProductImageFixtures.emptyImages();
             given(readManager.findByOutboundProductId(outboundProductId)).willReturn(emptyCache);
 
-            List<String> externalUrls = List.of(
-                    OutboundProductImageFixtures.DEFAULT_EXTERNAL_URL);
+            List<String> externalUrls = List.of(OutboundProductImageFixtures.DEFAULT_EXTERNAL_URL);
             given(imageClientManager.uploadImages(eq(channelCode), anyList()))
                     .willReturn(externalUrls);
 
@@ -190,8 +190,7 @@ class OutboundImageSyncCoordinatorTest {
             List<ProductGroupImage> currentImages = List.of();
 
             OutboundProductImages cachedImages = OutboundProductImageFixtures.thumbnailOnlyImages();
-            given(readManager.findByOutboundProductId(outboundProductId))
-                    .willReturn(cachedImages);
+            given(readManager.findByOutboundProductId(outboundProductId)).willReturn(cachedImages);
 
             // when
             sut.syncImages(outboundProductId, channelCode, currentImages);
@@ -212,8 +211,7 @@ class OutboundImageSyncCoordinatorTest {
             // given
             Long outboundProductId = OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID;
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
-            List<ProductGroupImage> currentImages = List.of(
-                    ProductGroupFixtures.thumbnailImage());
+            List<ProductGroupImage> currentImages = List.of(ProductGroupFixtures.thumbnailImage());
 
             OutboundProductImages emptyCache = OutboundProductImageFixtures.emptyImages();
             given(readManager.findByOutboundProductId(outboundProductId)).willReturn(emptyCache);
@@ -223,8 +221,8 @@ class OutboundImageSyncCoordinatorTest {
                     .willReturn(List.of(expectedExternalUrl));
 
             // when
-            ResolvedExternalImages result = sut.syncImages(
-                    outboundProductId, channelCode, currentImages);
+            ResolvedExternalImages result =
+                    sut.syncImages(outboundProductId, channelCode, currentImages);
 
             // then
             assertThat(result.isEmpty()).isFalse();
@@ -237,9 +235,10 @@ class OutboundImageSyncCoordinatorTest {
             // given
             Long outboundProductId = OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID;
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
-            List<ProductGroupImage> currentImages = List.of(
-                    ProductGroupFixtures.thumbnailImage(),
-                    ProductGroupFixtures.detailImage(1));
+            List<ProductGroupImage> currentImages =
+                    List.of(
+                            ProductGroupFixtures.thumbnailImage(),
+                            ProductGroupFixtures.detailImage(1));
 
             OutboundProductImages emptyCache = OutboundProductImageFixtures.emptyImages();
             given(readManager.findByOutboundProductId(outboundProductId)).willReturn(emptyCache);
@@ -250,8 +249,8 @@ class OutboundImageSyncCoordinatorTest {
                     .willReturn(List.of(thumbnailExternalUrl, detailExternalUrl));
 
             // when
-            ResolvedExternalImages result = sut.syncImages(
-                    outboundProductId, channelCode, currentImages);
+            ResolvedExternalImages result =
+                    sut.syncImages(outboundProductId, channelCode, currentImages);
 
             // then
             assertThat(result.thumbnailUrl()).isEqualTo(thumbnailExternalUrl);
@@ -269,30 +268,33 @@ class OutboundImageSyncCoordinatorTest {
             // given
             Long outboundProductId = OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID;
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
-            List<ProductGroupImage> currentImages = List.of(
-                    ProductGroupFixtures.thumbnailImage(),
-                    ProductGroupFixtures.detailImage(1),
-                    ProductGroupFixtures.detailImage(2));
+            List<ProductGroupImage> currentImages =
+                    List.of(
+                            ProductGroupFixtures.thumbnailImage(),
+                            ProductGroupFixtures.detailImage(1),
+                            ProductGroupFixtures.detailImage(2));
 
             OutboundProductImages emptyCache = OutboundProductImageFixtures.emptyImages();
             given(readManager.findByOutboundProductId(outboundProductId)).willReturn(emptyCache);
 
             given(imageClientManager.uploadImages(eq(channelCode), anyList()))
-                    .willReturn(List.of(
-                            "https://cdn.naver.com/thumb.jpg",
-                            "https://cdn.naver.com/detail1.jpg",
-                            "https://cdn.naver.com/detail2.jpg"));
+                    .willReturn(
+                            List.of(
+                                    "https://cdn.naver.com/thumb.jpg",
+                                    "https://cdn.naver.com/detail1.jpg",
+                                    "https://cdn.naver.com/detail2.jpg"));
 
             // when
-            ResolvedExternalImages result = sut.syncImages(
-                    outboundProductId, channelCode, currentImages);
+            ResolvedExternalImages result =
+                    sut.syncImages(outboundProductId, channelCode, currentImages);
 
             // then
             assertThat(result.thumbnailUrl()).isEqualTo("https://cdn.naver.com/thumb.jpg");
             assertThat(result.detailUrls()).hasSize(2);
-            assertThat(result.detailUrls()).contains(
-                    "https://cdn.naver.com/detail1.jpg",
-                    "https://cdn.naver.com/detail2.jpg");
+            assertThat(result.detailUrls())
+                    .contains(
+                            "https://cdn.naver.com/detail1.jpg",
+                            "https://cdn.naver.com/detail2.jpg");
         }
 
         @Test
@@ -303,17 +305,17 @@ class OutboundImageSyncCoordinatorTest {
             String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
 
             // 캐시에 있는 이미지와 동일한 이미지
-            List<ProductGroupImage> currentImages = List.of(
-                    buildUploadedThumbnailImage(
-                            OutboundProductImageFixtures.DEFAULT_ORIGIN_URL));
+            List<ProductGroupImage> currentImages =
+                    List.of(
+                            buildUploadedThumbnailImage(
+                                    OutboundProductImageFixtures.DEFAULT_ORIGIN_URL));
 
             OutboundProductImages cachedImages = OutboundProductImageFixtures.thumbnailOnlyImages();
-            given(readManager.findByOutboundProductId(outboundProductId))
-                    .willReturn(cachedImages);
+            given(readManager.findByOutboundProductId(outboundProductId)).willReturn(cachedImages);
 
             // when
-            ResolvedExternalImages result = sut.syncImages(
-                    outboundProductId, channelCode, currentImages);
+            ResolvedExternalImages result =
+                    sut.syncImages(outboundProductId, channelCode, currentImages);
 
             // then
             assertThat(result.thumbnailUrl())
@@ -324,8 +326,8 @@ class OutboundImageSyncCoordinatorTest {
     // ===== 헬퍼 메서드 =====
 
     /**
-     * 특정 URL로 uploadedUrl이 세팅된 썸네일 ProductGroupImage를 생성합니다.
-     * OutboundProductImages의 diff 비교는 uploadedUrl(우선) 또는 originUrl을 사용합니다.
+     * 특정 URL로 uploadedUrl이 세팅된 썸네일 ProductGroupImage를 생성합니다. OutboundProductImages의 diff 비교는
+     * uploadedUrl(우선) 또는 originUrl을 사용합니다.
      */
     private ProductGroupImage buildUploadedThumbnailImage(String uploadedUrl) {
         ProductGroupImage image = ProductGroupFixtures.thumbnailImage();

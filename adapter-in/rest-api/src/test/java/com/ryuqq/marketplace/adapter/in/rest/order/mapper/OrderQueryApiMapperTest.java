@@ -441,7 +441,8 @@ class OrderQueryApiMapperTest {
             assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ID);
             assertThat(response.orderNumber()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_NUMBER);
             assertThat(response.buyerInfo()).isNotNull();
-            assertThat(response.buyerInfo().buyerName()).isEqualTo(OrderApiFixtures.DEFAULT_BUYER_NAME);
+            assertThat(response.buyerInfo().buyerName())
+                    .isEqualTo(OrderApiFixtures.DEFAULT_BUYER_NAME);
             assertThat(response.payment()).isNotNull();
             assertThat(response.receiverInfo()).isNotNull();
             assertThat(response.paymentShipmentInfo()).isNotNull();

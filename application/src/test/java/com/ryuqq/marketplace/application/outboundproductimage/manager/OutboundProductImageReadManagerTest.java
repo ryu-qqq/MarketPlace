@@ -36,9 +36,10 @@ class OutboundProductImageReadManagerTest {
         void findByOutboundProductId_WithImages_ReturnsOutboundProductImages() {
             // given
             Long outboundProductId = OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID;
-            List<OutboundProductImage> images = List.of(
-                    OutboundProductImageFixtures.activeThumbnailImage(),
-                    OutboundProductImageFixtures.activeDetailImage(2L, 1));
+            List<OutboundProductImage> images =
+                    List.of(
+                            OutboundProductImageFixtures.activeThumbnailImage(),
+                            OutboundProductImageFixtures.activeDetailImage(2L, 1));
 
             given(queryPort.findActiveByOutboundProductId(outboundProductId)).willReturn(images);
 
@@ -57,8 +58,7 @@ class OutboundProductImageReadManagerTest {
             // given
             Long outboundProductId = OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID;
 
-            given(queryPort.findActiveByOutboundProductId(outboundProductId))
-                    .willReturn(List.of());
+            given(queryPort.findActiveByOutboundProductId(outboundProductId)).willReturn(List.of());
 
             // when
             OutboundProductImages result = sut.findByOutboundProductId(outboundProductId);
@@ -74,8 +74,7 @@ class OutboundProductImageReadManagerTest {
             // given
             Long outboundProductId = 999L;
 
-            given(queryPort.findActiveByOutboundProductId(outboundProductId))
-                    .willReturn(List.of());
+            given(queryPort.findActiveByOutboundProductId(outboundProductId)).willReturn(List.of());
 
             // when
             sut.findByOutboundProductId(outboundProductId);

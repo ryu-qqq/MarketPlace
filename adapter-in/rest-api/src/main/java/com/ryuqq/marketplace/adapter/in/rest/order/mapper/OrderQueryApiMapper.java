@@ -8,9 +8,8 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiRe
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.ClaimInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.SettlementApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.TimeLineApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponseV4;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.CancelSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.CancelSummaryApiResponse.LatestCancelApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ClaimSummaryApiResponse;
@@ -20,6 +19,7 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResp
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.PaymentInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ProductOrderApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ReceiverApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderSummaryApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.order.dto.query.OrderSearchParams;
@@ -88,7 +88,8 @@ public class OrderQueryApiMapper {
                 pageResult.pageMeta().totalElements());
     }
 
-    // ==================== V4 호환 리스트 (legacyOrderId, settlementInfo 제외, 기본값 0/"") ====================
+    // ==================== V4 호환 리스트 (legacyOrderId, settlementInfo 제외, 기본값 0/"")
+    // ====================
 
     public OrderListApiResponseV4 toListResponseV4(ProductOrderListResult result) {
         return new OrderListApiResponseV4(
@@ -104,7 +105,8 @@ public class OrderQueryApiMapper {
                 toClaimSummaryV4(result.claim()));
     }
 
-    public PageApiResponse<OrderListApiResponseV4> toPageResponseV4(ProductOrderPageResult pageResult) {
+    public PageApiResponse<OrderListApiResponseV4> toPageResponseV4(
+            ProductOrderPageResult pageResult) {
         List<OrderListApiResponseV4> responses =
                 pageResult.productOrders().stream().map(this::toListResponseV4).toList();
         return PageApiResponse.of(
@@ -151,9 +153,10 @@ public class OrderQueryApiMapper {
                         .map(c -> String.valueOf(c.cancelId()))
                         .collect(Collectors.toList()),
                 result.cancels().stream()
-                        .sorted(Comparator.comparing(
-                                OrderCancelResult::requestedAt,
-                                Comparator.nullsFirst(Comparator.reverseOrder())))
+                        .sorted(
+                                Comparator.comparing(
+                                        OrderCancelResult::requestedAt,
+                                        Comparator.nullsFirst(Comparator.reverseOrder())))
                         .limit(3)
                         .map(this::toCancelItemV4)
                         .collect(Collectors.toList()),
@@ -161,9 +164,10 @@ public class OrderQueryApiMapper {
                         .map(c -> String.valueOf(c.claimId()))
                         .collect(Collectors.toList()),
                 result.claims().stream()
-                        .sorted(Comparator.comparing(
-                                OrderClaimResult::requestedAt,
-                                Comparator.nullsFirst(Comparator.reverseOrder())))
+                        .sorted(
+                                Comparator.comparing(
+                                        OrderClaimResult::requestedAt,
+                                        Comparator.nullsFirst(Comparator.reverseOrder())))
                         .limit(3)
                         .map(this::toClaimItemV4)
                         .collect(Collectors.toList()));
@@ -491,8 +495,7 @@ public class OrderQueryApiMapper {
                         discountRate,
                         discountRate),
                 new OrderListApiResponseV4.BrandApiResponse(
-                        productOrder.brandId(),
-                        nullToEmpty(productOrder.brandName())),
+                        productOrder.brandId(), nullToEmpty(productOrder.brandName())),
                 productOrder.productGroupId(),
                 productOrder.productId(),
                 nullToEmpty(productOrder.sellerName()),
@@ -510,7 +513,8 @@ public class OrderQueryApiMapper {
 
     private OrderListApiResponseV4.ExternalOrderInfoApiResponse toExternalOrderInfoV4(
             ProductOrderListResult.OrderInfo order) {
-        if (order == null || (order.externalOrderNo() == null || order.externalOrderNo().isBlank())) {
+        if (order == null
+                || (order.externalOrderNo() == null || order.externalOrderNo().isBlank())) {
             return null;
         }
         return new OrderListApiResponseV4.ExternalOrderInfoApiResponse(
@@ -608,8 +612,7 @@ public class OrderQueryApiMapper {
             OrderCancelResult cancel) {
         OrderDetailApiResponseV4.CancelItemApiResponse.ReasonApiResponse reason =
                 new OrderDetailApiResponseV4.CancelItemApiResponse.ReasonApiResponse(
-                        nullToEmpty(cancel.reasonType()),
-                        nullToEmpty(cancel.reasonDetail()));
+                        nullToEmpty(cancel.reasonType()), nullToEmpty(cancel.reasonDetail()));
 
         OrderDetailApiResponseV4.CancelItemApiResponse.CancelRefundInfoApiResponse refundInfo =
                 new OrderDetailApiResponseV4.CancelItemApiResponse.CancelRefundInfoApiResponse(
@@ -631,12 +634,10 @@ public class OrderQueryApiMapper {
                 formatYyyyMmDdHhMmSs(cancel.requestedAt()));
     }
 
-    private OrderDetailApiResponseV4.ClaimItemApiResponse toClaimItemV4(
-            OrderClaimResult claim) {
+    private OrderDetailApiResponseV4.ClaimItemApiResponse toClaimItemV4(OrderClaimResult claim) {
         OrderDetailApiResponseV4.ClaimItemApiResponse.ClaimReasonApiResponse reason =
                 new OrderDetailApiResponseV4.ClaimItemApiResponse.ClaimReasonApiResponse(
-                        nullToEmpty(claim.reasonType()),
-                        nullToEmpty(claim.reasonDetail()));
+                        nullToEmpty(claim.reasonType()), nullToEmpty(claim.reasonDetail()));
 
         OrderDetailApiResponseV4.ClaimItemApiResponse.ClaimRefundInfoApiResponse refundInfo =
                 new OrderDetailApiResponseV4.ClaimItemApiResponse.ClaimRefundInfoApiResponse(

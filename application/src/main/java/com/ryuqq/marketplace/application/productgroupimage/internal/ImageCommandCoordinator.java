@@ -27,8 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * <p>ProductGroupImageCommandManager를 통해 이미지 저장 후, ImageUploadOutbox를 생성하여 이미지 업로드 아웃박스까지 처리합니다.
  *
- * <p>내부 CDN URL(presigned URL로 이미 업로드된 이미지)은 Outbox를 건너뛰고
- * 즉시 uploadedUrl로 설정합니다.
+ * <p>내부 CDN URL(presigned URL로 이미 업로드된 이미지)은 Outbox를 건너뛰고 즉시 uploadedUrl로 설정합니다.
  */
 @Component
 public class ImageCommandCoordinator {
@@ -75,10 +74,8 @@ public class ImageCommandCoordinator {
     /**
      * 이미지 저장 + Outbox 생성.
      *
-     * <p>내부 CDN URL 이미지는 uploadedUrl을 즉시 설정하고 ImageUploadOutbox를 건너뛰되,
-     * ImageTransformOutbox는 바로 생성합니다.
-     * 외부 URL 이미지는 기존대로 ImageUploadOutbox를 생성하여 비동기 업로드 후
-     * 콜백에서 ImageTransformOutbox가 생성됩니다.
+     * <p>내부 CDN URL 이미지는 uploadedUrl을 즉시 설정하고 ImageUploadOutbox를 건너뛰되, ImageTransformOutbox는 바로
+     * 생성합니다. 외부 URL 이미지는 기존대로 ImageUploadOutbox를 생성하여 비동기 업로드 후 콜백에서 ImageTransformOutbox가 생성됩니다.
      *
      * @param images ProductGroupImages 도메인 객체
      * @return 저장된 이미지 ID 목록
@@ -111,8 +108,8 @@ public class ImageCommandCoordinator {
     /**
      * 이미지 diff 기반 수정: 삭제/유지는 더티체킹, 신규만 persist + Outbox 생성.
      *
-     * <p>removed 이미지는 도메인에서 이미 soft delete 처리된 상태이므로 persist 호출 시 더티체킹으로 DB에 반영됩니다.
-     * 내부 CDN URL 이미지는 ImageUploadOutbox를 건너뛰고 ImageTransformOutbox를 바로 생성합니다.
+     * <p>removed 이미지는 도메인에서 이미 soft delete 처리된 상태이므로 persist 호출 시 더티체킹으로 DB에 반영됩니다. 내부 CDN URL 이미지는
+     * ImageUploadOutbox를 건너뛰고 ImageTransformOutbox를 바로 생성합니다.
      *
      * @param diff 이미지 변경 비교 결과 (도메인에서 상태 변경 완료)
      */
@@ -139,6 +136,7 @@ public class ImageCommandCoordinator {
      * URL 타입에 따라 적절한 Outbox를 생성합니다.
      *
      * <p>내부 URL (isUploaded=true): ImageTransformOutbox 바로 생성 (fileAssetId 없이)
+     *
      * <p>외부 URL (isUploaded=false): ImageUploadOutbox 생성 → 콜백에서 ImageTransformOutbox 생성
      */
     private void createOutboxesByUrlType(List<Long> imageIds, List<ProductGroupImage> images) {

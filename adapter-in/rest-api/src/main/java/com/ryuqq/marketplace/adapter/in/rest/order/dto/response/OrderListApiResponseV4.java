@@ -16,7 +16,8 @@ public record OrderListApiResponseV4(
         @Schema(description = "수령인 정보") ReceiverInfoApiResponse receiverInfo,
         @Schema(description = "배송 정보") PaymentShipmentInfoApiResponse paymentShipmentInfo,
         @Schema(description = "주문 상품 정보") OrderProductApiResponse orderProduct,
-        @Schema(description = "외부몰 주문 정보 (자사몰이면 null)") ExternalOrderInfoApiResponse externalOrderInfo,
+        @Schema(description = "외부몰 주문 정보 (자사몰이면 null)")
+                ExternalOrderInfoApiResponse externalOrderInfo,
         @Schema(description = "취소 요약 (없으면 null)") CancelSummaryV4ApiResponse cancel,
         @Schema(description = "클레임 요약 (없으면 null)") ClaimSummaryV4ApiResponse claim) {
 

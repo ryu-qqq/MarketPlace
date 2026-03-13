@@ -77,8 +77,8 @@ public class NaverCommerceProductClientAdapter
             ResolvedExternalImages resolvedImages) {
 
         NaverProductRegistrationRequest request =
-                mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId,
-                        resolvedImages);
+                mapper.toRegistrationRequest(
+                        bundle, externalCategoryId, externalBrandId, resolvedImages);
         return executeRegister(request, bundle.group().idValue(), externalCategoryId);
     }
 
@@ -107,8 +107,8 @@ public class NaverCommerceProductClientAdapter
             ResolvedExternalImages resolvedImages) {
 
         NaverProductRegistrationRequest request =
-                mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId,
-                        resolvedImages);
+                mapper.toRegistrationRequest(
+                        bundle, externalCategoryId, externalBrandId, resolvedImages);
         executeUpdate(request, bundle.group().idValue(), externalProductId);
     }
 
@@ -151,9 +151,7 @@ public class NaverCommerceProductClientAdapter
         return entries;
     }
 
-    /**
-     * 네이버 커머스 상품 목록을 단일 페이지로 조회합니다.
-     */
+    /** 네이버 커머스 상품 목록을 단일 페이지로 조회합니다. */
     public NaverProductSearchResponse searchProducts(NaverProductSearchRequest request) {
         String token = tokenManager.getAccessToken();
 
@@ -185,8 +183,7 @@ public class NaverCommerceProductClientAdapter
             NaverProductRegistrationRequest request, Long productGroupId, Long categoryId) {
         String token = tokenManager.getAccessToken();
 
-        log.info("네이버 커머스 상품 등록 요청: productGroupId={}, categoryId={}",
-                productGroupId, categoryId);
+        log.info("네이버 커머스 상품 등록 요청: productGroupId={}, categoryId={}", productGroupId, categoryId);
 
         NaverProductRegistrationResponse response =
                 restClient
@@ -203,18 +200,24 @@ public class NaverCommerceProductClientAdapter
                     "네이버 커머스 상품 등록 응답이 null입니다: productGroupId=" + productGroupId);
         }
 
-        log.info("네이버 커머스 상품 등록 성공: productGroupId={}, originProductNo={}",
-                productGroupId, response.originProductNo());
+        log.info(
+                "네이버 커머스 상품 등록 성공: productGroupId={}, originProductNo={}",
+                productGroupId,
+                response.originProductNo());
 
         return String.valueOf(response.originProductNo());
     }
 
     private void executeUpdate(
-            NaverProductRegistrationRequest request, Long productGroupId, String externalProductId) {
+            NaverProductRegistrationRequest request,
+            Long productGroupId,
+            String externalProductId) {
         String token = tokenManager.getAccessToken();
 
-        log.info("네이버 커머스 상품 수정 요청: productGroupId={}, externalProductId={}",
-                productGroupId, externalProductId);
+        log.info(
+                "네이버 커머스 상품 수정 요청: productGroupId={}, externalProductId={}",
+                productGroupId,
+                externalProductId);
 
         restClient
                 .put()
@@ -225,13 +228,13 @@ public class NaverCommerceProductClientAdapter
                 .retrieve()
                 .toBodilessEntity();
 
-        log.info("네이버 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",
-                productGroupId, externalProductId);
+        log.info(
+                "네이버 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",
+                productGroupId,
+                externalProductId);
     }
 
-    /**
-     * 네이버 커머스에 등록된 전체 상품을 페이지 단위로 조회합니다.
-     */
+    /** 네이버 커머스에 등록된 전체 상품을 페이지 단위로 조회합니다. */
     private List<NaverProductSearchResponse.ProductContent> searchAllProducts() {
         String token = tokenManager.getAccessToken();
         List<NaverProductSearchResponse.ProductContent> allProducts = new ArrayList<>();

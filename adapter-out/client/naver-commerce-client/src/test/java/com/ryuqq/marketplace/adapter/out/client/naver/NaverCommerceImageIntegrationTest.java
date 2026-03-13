@@ -32,11 +32,9 @@ class NaverCommerceImageIntegrationTest {
     private static final String TEST_IMAGE_URL =
             "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/200px-Wikipedia-logo-v2.svg.png";
 
-    @Autowired
-    private NaverCommerceImageClientAdapter imageClientAdapter;
+    @Autowired private NaverCommerceImageClientAdapter imageClientAdapter;
 
-    @Autowired
-    private NaverCommerceTokenManager tokenManager;
+    @Autowired private NaverCommerceTokenManager tokenManager;
 
     @Test
     @Order(1)
@@ -67,8 +65,8 @@ class NaverCommerceImageIntegrationTest {
     void uploadFromBytes() throws Exception {
         byte[] jpegBytes = generateTestJpeg(100, 100);
 
-        String uploadedUrl = imageClientAdapter.uploadBytes(
-                jpegBytes, "test-generated.jpg", "image/jpeg");
+        String uploadedUrl =
+                imageClientAdapter.uploadBytes(jpegBytes, "test-generated.jpg", "image/jpeg");
 
         assertThat(uploadedUrl).isNotBlank();
         assertThat(uploadedUrl).contains("pstatic.net");

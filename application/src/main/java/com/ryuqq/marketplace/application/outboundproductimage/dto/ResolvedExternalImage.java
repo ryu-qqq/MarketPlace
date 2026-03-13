@@ -9,10 +9,7 @@ import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
  * @param imageType 이미지 타입 (THUMBNAIL/DETAIL)
  * @param sortOrder 정렬 순서
  */
-public record ResolvedExternalImage(
-        String externalUrl,
-        ImageType imageType,
-        int sortOrder) {
+public record ResolvedExternalImage(String externalUrl, ImageType imageType, int sortOrder) {
 
     public boolean isThumbnail() {
         return imageType == ImageType.THUMBNAIL;

@@ -59,10 +59,8 @@ class OutboundProductImageQueryAdapterTest {
                     OutboundProductImageJpaEntityFixtures.entityWithId(1L);
             OutboundProductImageJpaEntity entity2 =
                     OutboundProductImageJpaEntityFixtures.entityWithId(2L);
-            OutboundProductImage domain1 =
-                    OutboundProductImageFixtures.activeThumbnailImage();
-            OutboundProductImage domain2 =
-                    OutboundProductImageFixtures.activeDetailImage(2L, 1);
+            OutboundProductImage domain1 = OutboundProductImageFixtures.activeThumbnailImage();
+            OutboundProductImage domain2 = OutboundProductImageFixtures.activeDetailImage(2L, 1);
 
             given(queryDslRepository.findActiveByOutboundProductId(outboundProductId))
                     .willReturn(List.of(entity1, entity2));
@@ -108,9 +106,7 @@ class OutboundProductImageQueryAdapterTest {
             queryAdapter.findActiveByOutboundProductId(outboundProductId);
 
             // then
-            then(queryDslRepository)
-                    .should()
-                    .findActiveByOutboundProductId(outboundProductId);
+            then(queryDslRepository).should().findActiveByOutboundProductId(outboundProductId);
         }
 
         @Test

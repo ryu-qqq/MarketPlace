@@ -82,9 +82,17 @@ public class OutboundProductImageJpaEntity extends BaseAuditEntity {
             Instant createdAt,
             Instant updatedAt) {
         return new OutboundProductImageJpaEntity(
-                id, outboundProductId, productGroupImageId,
-                originUrl, externalUrl, imageType, sortOrder,
-                deleted, deletedAt, createdAt, updatedAt);
+                id,
+                outboundProductId,
+                productGroupImageId,
+                originUrl,
+                externalUrl,
+                imageType,
+                sortOrder,
+                deleted,
+                deletedAt,
+                createdAt,
+                updatedAt);
     }
 
     public Long getId() {

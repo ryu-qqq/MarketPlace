@@ -30,8 +30,9 @@ class OutboundProductImageDiffTest {
             Instant now = CommonVoFixtures.now();
 
             // when
-            OutboundProductImageDiff diff = OutboundProductImageDiff.of(
-                    List.of(added), List.of(removed), List.of(retained), now);
+            OutboundProductImageDiff diff =
+                    OutboundProductImageDiff.of(
+                            List.of(added), List.of(removed), List.of(retained), now);
 
             // then
             assertThat(diff.added()).hasSize(1);
@@ -47,8 +48,8 @@ class OutboundProductImageDiffTest {
             Instant now = CommonVoFixtures.now();
 
             // when
-            OutboundProductImageDiff diff = OutboundProductImageDiff.of(
-                    List.of(), List.of(), List.of(), now);
+            OutboundProductImageDiff diff =
+                    OutboundProductImageDiff.of(List.of(), List.of(), List.of(), now);
 
             // then
             assertThat(diff.added()).isEmpty();
@@ -68,8 +69,8 @@ class OutboundProductImageDiffTest {
             // given
             OutboundProductImage retained = OutboundProductImageFixtures.activeThumbnailImage();
             Instant now = CommonVoFixtures.now();
-            OutboundProductImageDiff diff = OutboundProductImageDiff.of(
-                    List.of(), List.of(), List.of(retained), now);
+            OutboundProductImageDiff diff =
+                    OutboundProductImageDiff.of(List.of(), List.of(), List.of(retained), now);
 
             // when & then
             assertThat(diff.hasNoChanges()).isTrue();
@@ -81,8 +82,8 @@ class OutboundProductImageDiffTest {
             // given
             OutboundProductImage added = OutboundProductImageFixtures.newThumbnailImage();
             Instant now = CommonVoFixtures.now();
-            OutboundProductImageDiff diff = OutboundProductImageDiff.of(
-                    List.of(added), List.of(), List.of(), now);
+            OutboundProductImageDiff diff =
+                    OutboundProductImageDiff.of(List.of(added), List.of(), List.of(), now);
 
             // when & then
             assertThat(diff.hasNoChanges()).isFalse();
@@ -94,8 +95,8 @@ class OutboundProductImageDiffTest {
             // given
             OutboundProductImage removed = OutboundProductImageFixtures.activeThumbnailImage();
             Instant now = CommonVoFixtures.now();
-            OutboundProductImageDiff diff = OutboundProductImageDiff.of(
-                    List.of(), List.of(removed), List.of(), now);
+            OutboundProductImageDiff diff =
+                    OutboundProductImageDiff.of(List.of(), List.of(removed), List.of(), now);
 
             // when & then
             assertThat(diff.hasNoChanges()).isFalse();
@@ -106,11 +107,12 @@ class OutboundProductImageDiffTest {
         void returnsFalseWhenHasBothAddedAndRemoved() {
             // given
             Instant now = CommonVoFixtures.now();
-            OutboundProductImageDiff diff = OutboundProductImageDiff.of(
-                    List.of(OutboundProductImageFixtures.newThumbnailImage()),
-                    List.of(OutboundProductImageFixtures.activeThumbnailImage()),
-                    List.of(),
-                    now);
+            OutboundProductImageDiff diff =
+                    OutboundProductImageDiff.of(
+                            List.of(OutboundProductImageFixtures.newThumbnailImage()),
+                            List.of(OutboundProductImageFixtures.activeThumbnailImage()),
+                            List.of(),
+                            now);
 
             // when & then
             assertThat(diff.hasNoChanges()).isFalse();
@@ -126,11 +128,12 @@ class OutboundProductImageDiffTest {
         void addedListIsDefensivelyCopied() {
             // given
             OutboundProductImage image = OutboundProductImageFixtures.newThumbnailImage();
-            java.util.List<OutboundProductImage> mutableAdded = new java.util.ArrayList<>(List.of(image));
+            java.util.List<OutboundProductImage> mutableAdded =
+                    new java.util.ArrayList<>(List.of(image));
             Instant now = CommonVoFixtures.now();
 
-            OutboundProductImageDiff diff = OutboundProductImageDiff.of(
-                    mutableAdded, List.of(), List.of(), now);
+            OutboundProductImageDiff diff =
+                    OutboundProductImageDiff.of(mutableAdded, List.of(), List.of(), now);
 
             // when - 원본 리스트를 변경해도
             mutableAdded.add(OutboundProductImageFixtures.newDetailImage(1));
@@ -144,11 +147,12 @@ class OutboundProductImageDiffTest {
         void removedListIsDefensivelyCopied() {
             // given
             OutboundProductImage image = OutboundProductImageFixtures.activeThumbnailImage();
-            java.util.List<OutboundProductImage> mutableRemoved = new java.util.ArrayList<>(List.of(image));
+            java.util.List<OutboundProductImage> mutableRemoved =
+                    new java.util.ArrayList<>(List.of(image));
             Instant now = CommonVoFixtures.now();
 
-            OutboundProductImageDiff diff = OutboundProductImageDiff.of(
-                    List.of(), mutableRemoved, List.of(), now);
+            OutboundProductImageDiff diff =
+                    OutboundProductImageDiff.of(List.of(), mutableRemoved, List.of(), now);
 
             // when
             mutableRemoved.add(OutboundProductImageFixtures.activeDetailImage(2L, 1));
@@ -162,11 +166,12 @@ class OutboundProductImageDiffTest {
         void retainedListIsDefensivelyCopied() {
             // given
             OutboundProductImage image = OutboundProductImageFixtures.activeThumbnailImage();
-            java.util.List<OutboundProductImage> mutableRetained = new java.util.ArrayList<>(List.of(image));
+            java.util.List<OutboundProductImage> mutableRetained =
+                    new java.util.ArrayList<>(List.of(image));
             Instant now = CommonVoFixtures.now();
 
-            OutboundProductImageDiff diff = OutboundProductImageDiff.of(
-                    List.of(), List.of(), mutableRetained, now);
+            OutboundProductImageDiff diff =
+                    OutboundProductImageDiff.of(List.of(), List.of(), mutableRetained, now);
 
             // when
             mutableRetained.add(OutboundProductImageFixtures.activeDetailImage(2L, 1));
@@ -183,7 +188,8 @@ class OutboundProductImageDiffTest {
             OutboundProductImageDiff diff = OutboundProductImageFixtures.addedOnlyDiff(now);
 
             // when & then
-            assertThatThrownBy(() -> diff.added().add(OutboundProductImageFixtures.newDetailImage(1)))
+            assertThatThrownBy(
+                            () -> diff.added().add(OutboundProductImageFixtures.newDetailImage(1)))
                     .isInstanceOf(UnsupportedOperationException.class);
         }
     }

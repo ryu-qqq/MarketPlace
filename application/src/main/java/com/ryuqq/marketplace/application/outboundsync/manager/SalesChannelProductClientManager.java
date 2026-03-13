@@ -49,8 +49,8 @@ public class SalesChannelProductClientManager {
             SellerSalesChannel channel,
             ResolvedExternalImages resolvedImages) {
         return resolve(channelCode)
-                .registerProduct(bundle, externalCategoryId, externalBrandId,
-                        channel, resolvedImages);
+                .registerProduct(
+                        bundle, externalCategoryId, externalBrandId, channel, resolvedImages);
     }
 
     public void updateProduct(

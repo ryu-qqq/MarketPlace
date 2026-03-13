@@ -29,7 +29,8 @@ public final class OutboundProductImageFixtures {
     public static final String DEFAULT_ORIGIN_URL = "https://s3.example.com/image.jpg";
     public static final String DEFAULT_EXTERNAL_URL = "https://shop-phinf.pstatic.net/image.jpg";
     public static final String DEFAULT_DETAIL_ORIGIN_URL = "https://s3.example.com/detail.jpg";
-    public static final String DEFAULT_DETAIL_EXTERNAL_URL = "https://shop-phinf.pstatic.net/detail.jpg";
+    public static final String DEFAULT_DETAIL_EXTERNAL_URL =
+            "https://shop-phinf.pstatic.net/detail.jpg";
 
     // ===== ID Fixtures =====
 
@@ -135,13 +136,15 @@ public final class OutboundProductImageFixtures {
     /** 썸네일 + 상세 이미지 2개를 포함한 OutboundProductImages. */
     public static OutboundProductImages fullImages() {
         return OutboundProductImages.of(
-                List.of(activeThumbnailImage(), activeDetailImage(2L, 1), activeDetailImage(3L, 2)));
+                List.of(
+                        activeThumbnailImage(),
+                        activeDetailImage(2L, 1),
+                        activeDetailImage(3L, 2)));
     }
 
     /** 삭제된 이미지를 포함한 OutboundProductImages. */
     public static OutboundProductImages imagesWithDeleted() {
-        return OutboundProductImages.of(
-                List.of(activeThumbnailImage(), deletedThumbnailImage()));
+        return OutboundProductImages.of(List.of(activeThumbnailImage(), deletedThumbnailImage()));
     }
 
     // ===== OutboundProductImageDiff Fixtures =====
