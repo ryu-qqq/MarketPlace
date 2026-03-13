@@ -98,6 +98,10 @@ public class OutboundProductImage {
 
     /** 외부 채널 업로드 완료 후 external URL 설정. */
     public void assignExternalUrl(String externalUrl) {
+        if (externalUrl == null || externalUrl.isBlank()) {
+            throw new IllegalArgumentException(
+                    "외부 URL은 null이거나 비어있을 수 없습니다: originUrl=" + this.originUrl);
+        }
         this.externalUrl = externalUrl;
     }
 

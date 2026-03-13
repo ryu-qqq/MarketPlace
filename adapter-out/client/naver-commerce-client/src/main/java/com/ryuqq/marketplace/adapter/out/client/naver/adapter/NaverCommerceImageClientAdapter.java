@@ -81,6 +81,19 @@ public class NaverCommerceImageClientAdapter {
                 .map(NaverImageUploadResponse.UploadedImage::url)
                 .toList();
 
+        if (uploadedUrls.size() != imageUrls.size()) {
+            throw new NaverImageUploadException(
+                    "업로드 결과 개수 불일치: expected=" + imageUrls.size()
+                            + ", actual=" + uploadedUrls.size());
+        }
+
+        for (int i = 0; i < uploadedUrls.size(); i++) {
+            if (uploadedUrls.get(i) == null || uploadedUrls.get(i).isBlank()) {
+                throw new NaverImageUploadException(
+                        "업로드된 URL이 비어있습니다: index=" + i);
+            }
+        }
+
         log.info("네이버 이미지 업로드 성공: {}건", uploadedUrls.size());
         return uploadedUrls;
     }
@@ -118,7 +131,7 @@ public class NaverCommerceImageClientAdapter {
                 .retrieve()
                 .body(NaverImageUploadResponse.class);
 
-        if (response == null || response.images().isEmpty()) {
+        if (response == null || response.images() == null || response.images().isEmpty()) {
             throw new NaverImageUploadException("네이버 이미지 업로드 응답이 비어있습니다");
         }
 
@@ -170,7 +183,7 @@ public class NaverCommerceImageClientAdapter {
                                 : guessContentType(filename);
 
                 log.debug("이미지 다운로드 완료: url={}, size={}bytes, type={}",
-                        imageUrl, bytes.length, contentType);
+                        maskUrl(imageUrl), bytes.length, contentType);
 
                 return new ImageData(bytes, filename, contentType);
             } finally {
@@ -178,7 +191,7 @@ public class NaverCommerceImageClientAdapter {
             }
         } catch (IOException e) {
             throw new NaverImageUploadException(
-                    "이미지 다운로드 실패: " + imageUrl + " - " + e.getMessage(), e);
+                    "이미지 다운로드 실패: " + maskUrl(imageUrl) + " - " + e.getMessage(), e);
         }
     }
 
@@ -207,6 +220,11 @@ public class NaverCommerceImageClientAdapter {
             return "image/bmp";
         }
         return "image/jpeg";
+    }
+
+    private String maskUrl(String url) {
+        int queryIndex = url.indexOf('?');
+        return queryIndex > 0 ? url.substring(0, queryIndex) + "?***" : url;
     }
 
     private record ImageData(byte[] bytes, String filename, String contentType) {}
