@@ -34,6 +34,8 @@ dependencies {
     implementation project(':adapter-out:client:ses-client')
     implementation project(':adapter-out:client:sqs-client')
     implementation project(':adapter-out:client:spring-ai-client')
+    implementation project(':adapter-out:client:naver-commerce-client')
+    implementation project(':adapter-out:client:setof-commerce-client')
 
     // AuthHub SDK (Auto-configuration for TokenResolver, AuthHubClient, AuthApi, OnboardingApi)
     implementation libs.authhub.sdk.spring.boot.starter

@@ -34,6 +34,7 @@ dependencies {
     implementation project(':adapter-out:client:fileflow-client')
     implementation project(':adapter-out:client:authhub-client')
     implementation project(':adapter-out:client:setof-commerce-client')
+    implementation project(':adapter-out:client:naver-commerce-client')
 
     // AuthHub SDK Spring Boot Starter (TokenResolver auto-configuration)
     implementation libs.authhub.sdk.spring.boot.starter
