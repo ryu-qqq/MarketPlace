@@ -18,15 +18,15 @@ public class OutboundProductImageJpaEntityMapper {
         Instant now = Instant.now();
         return OutboundProductImageJpaEntity.create(
                 domain.idValue(),
-                domain.outboundProductId(),
-                domain.productGroupImageId(),
+                domain.outboundProductIdValue(),
+                domain.productGroupImageIdValue(),
                 domain.originUrl(),
                 domain.externalUrl(),
                 domain.imageType().name(),
                 domain.sortOrder(),
                 domain.deletionStatus().deleted(),
                 domain.deletionStatus().deletedAt(),
-                domain.idValue() == null ? now : now,
+                now,
                 now);
     }
 

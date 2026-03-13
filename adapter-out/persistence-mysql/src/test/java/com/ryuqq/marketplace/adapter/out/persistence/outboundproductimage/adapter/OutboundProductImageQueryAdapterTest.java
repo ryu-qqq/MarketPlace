@@ -8,7 +8,7 @@ import static org.mockito.Mockito.times;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproductimage.OutboundProductImageJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproductimage.entity.OutboundProductImageJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproductimage.mapper.OutboundProductImageJpaEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.outboundproductimage.repository.OutboundProductImageJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundproductimage.repository.OutboundProductImageQueryDslRepository;
 import com.ryuqq.marketplace.domain.outboundproductimage.OutboundProductImageFixtures;
 import com.ryuqq.marketplace.domain.outboundproductimage.aggregate.OutboundProductImage;
 import java.util.List;
@@ -24,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * OutboundProductImageQueryAdapterTest - Query Adapter 단위 테스트.
  *
- * <p>PER-ADP-001: QueryAdapter는 JpaRepository만 사용 (QueryDSL Repository 없음).
+ * <p>PER-ADP-001: QueryAdapter는 QueryDSL Repository를 사용합니다.
  *
  * <p>PER-ADP-005: Entity -> Domain 변환 (Mapper 사용).
  *
@@ -36,7 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("OutboundProductImageQueryAdapter 단위 테스트")
 class OutboundProductImageQueryAdapterTest {
 
-    @Mock private OutboundProductImageJpaRepository repository;
+    @Mock private OutboundProductImageQueryDslRepository queryDslRepository;
 
     @Mock private OutboundProductImageJpaEntityMapper mapper;
 
@@ -64,7 +64,7 @@ class OutboundProductImageQueryAdapterTest {
             OutboundProductImage domain2 =
                     OutboundProductImageFixtures.activeDetailImage(2L, 1);
 
-            given(repository.findByOutboundProductIdAndDeletedFalse(outboundProductId))
+            given(queryDslRepository.findActiveByOutboundProductId(outboundProductId))
                     .willReturn(List.of(entity1, entity2));
             given(mapper.toDomain(entity1)).willReturn(domain1);
             given(mapper.toDomain(entity2)).willReturn(domain2);
@@ -84,7 +84,7 @@ class OutboundProductImageQueryAdapterTest {
             // given
             Long outboundProductId = 999L;
 
-            given(repository.findByOutboundProductIdAndDeletedFalse(outboundProductId))
+            given(queryDslRepository.findActiveByOutboundProductId(outboundProductId))
                     .willReturn(List.of());
 
             // when
@@ -96,21 +96,21 @@ class OutboundProductImageQueryAdapterTest {
         }
 
         @Test
-        @DisplayName("Repository가 정확히 한 번 호출됩니다")
+        @DisplayName("QueryDSL Repository가 정확히 한 번 호출됩니다")
         void findActiveByOutboundProductId_CallsRepositoryOnce() {
             // given
             Long outboundProductId = 100L;
 
-            given(repository.findByOutboundProductIdAndDeletedFalse(outboundProductId))
+            given(queryDslRepository.findActiveByOutboundProductId(outboundProductId))
                     .willReturn(List.of());
 
             // when
             queryAdapter.findActiveByOutboundProductId(outboundProductId);
 
             // then
-            then(repository)
+            then(queryDslRepository)
                     .should()
-                    .findByOutboundProductIdAndDeletedFalse(outboundProductId);
+                    .findActiveByOutboundProductId(outboundProductId);
         }
 
         @Test
@@ -128,7 +128,7 @@ class OutboundProductImageQueryAdapterTest {
             OutboundProductImage domain2 = OutboundProductImageFixtures.activeDetailImage(2L, 1);
             OutboundProductImage domain3 = OutboundProductImageFixtures.activeDetailImage(3L, 2);
 
-            given(repository.findByOutboundProductIdAndDeletedFalse(outboundProductId))
+            given(queryDslRepository.findActiveByOutboundProductId(outboundProductId))
                     .willReturn(List.of(entity1, entity2, entity3));
             given(mapper.toDomain(entity1)).willReturn(domain1);
             given(mapper.toDomain(entity2)).willReturn(domain2);
@@ -154,7 +154,7 @@ class OutboundProductImageQueryAdapterTest {
                     OutboundProductImageJpaEntityFixtures.newThumbnailEntity();
             OutboundProductImage domain = OutboundProductImageFixtures.activeThumbnailImage();
 
-            given(repository.findByOutboundProductIdAndDeletedFalse(outboundProductId))
+            given(queryDslRepository.findActiveByOutboundProductId(outboundProductId))
                     .willReturn(List.of(entity));
             given(mapper.toDomain(entity)).willReturn(domain);
 
@@ -176,7 +176,7 @@ class OutboundProductImageQueryAdapterTest {
                     OutboundProductImageJpaEntityFixtures.newThumbnailEntity();
             OutboundProductImage activeDomain = OutboundProductImageFixtures.activeThumbnailImage();
 
-            given(repository.findByOutboundProductIdAndDeletedFalse(outboundProductId))
+            given(queryDslRepository.findActiveByOutboundProductId(outboundProductId))
                     .willReturn(List.of(activeEntity));
             given(mapper.toDomain(activeEntity)).willReturn(activeDomain);
 

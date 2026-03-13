@@ -5,7 +5,6 @@ import com.ryuqq.marketplace.domain.outboundproductimage.aggregate.OutboundProdu
 import com.ryuqq.marketplace.domain.outboundproductimage.vo.OutboundProductImages;
 import java.util.List;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class OutboundProductImageReadManager {
@@ -16,7 +15,6 @@ public class OutboundProductImageReadManager {
         this.queryPort = queryPort;
     }
 
-    @Transactional(readOnly = true)
     public OutboundProductImages findByOutboundProductId(Long outboundProductId) {
         List<OutboundProductImage> images =
                 queryPort.findActiveByOutboundProductId(outboundProductId);

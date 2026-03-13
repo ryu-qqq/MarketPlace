@@ -241,7 +241,7 @@ class OutboundProductImagesTest {
             // then
             assertThat(diff.added()).hasSize(1);
             assertThat(diff.added().get(0).id().isNew()).isTrue();
-            assertThat(diff.added().get(0).outboundProductId())
+            assertThat(diff.added().get(0).outboundProductIdValue())
                     .isEqualTo(OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID);
         }
     }
@@ -354,7 +354,7 @@ class OutboundProductImagesTest {
                     OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID,
                     10L,
                     retainedUrl,
-                    "https://cdn.naver.com/retained.jpg",
+                    "https://shop-phinf.pstatic.net/retained.jpg",
                     ImageType.THUMBNAIL,
                     0,
                     DeletionStatus.active());
@@ -364,7 +364,7 @@ class OutboundProductImagesTest {
                     OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID,
                     20L,
                     removedUrl,
-                    "https://cdn.naver.com/removed.jpg",
+                    "https://shop-phinf.pstatic.net/removed.jpg",
                     ImageType.DETAIL,
                     1,
                     DeletionStatus.active());
@@ -542,8 +542,8 @@ class OutboundProductImagesTest {
 
             // then
             assertThat(urls).hasSize(2);
-            assertThat(urls.get(0)).isEqualTo("https://cdn.naver.com/detail1.jpg");
-            assertThat(urls.get(1)).isEqualTo("https://cdn.naver.com/detail2.jpg");
+            assertThat(urls.get(0)).isEqualTo("https://shop-phinf.pstatic.net/detail1.jpg");
+            assertThat(urls.get(1)).isEqualTo("https://shop-phinf.pstatic.net/detail2.jpg");
         }
 
         @Test
@@ -591,7 +591,7 @@ class OutboundProductImagesTest {
                     OutboundProductImageFixtures.DEFAULT_OUTBOUND_PRODUCT_ID,
                     20L,
                     "https://s3.example.com/detail.jpg",
-                    "https://cdn.naver.com/detail.jpg",
+                    "https://shop-phinf.pstatic.net/detail.jpg",
                     ImageType.DETAIL,
                     1,
                     DeletionStatus.deletedAt(CommonVoFixtures.yesterday()));

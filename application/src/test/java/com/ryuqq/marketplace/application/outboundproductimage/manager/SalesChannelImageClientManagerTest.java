@@ -121,6 +121,25 @@ class SalesChannelImageClientManagerTest {
     }
 
     @Nested
+    @DisplayName("uploadImages() - 빈 목록 가드")
+    class EmptyListGuardTest {
+
+        @Test
+        @DisplayName("빈 이미지 URL 목록이면 클라이언트를 호출하지 않고 빈 리스트를 반환한다")
+        void uploadImages_EmptyList_ReturnsEmptyWithoutClientCall() {
+            // given
+            String channelCode = ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE;
+
+            // when
+            List<String> result = sut.uploadImages(channelCode, List.of());
+
+            // then
+            assertThat(result).isEmpty();
+            then(naverClient).shouldHaveNoMoreInteractions();
+        }
+    }
+
+    @Nested
     @DisplayName("다중 클라이언트 등록 시나리오")
     class MultipleClientsTest {
 
@@ -146,6 +165,20 @@ class SalesChannelImageClientManagerTest {
             assertThat(result).isEqualTo(coupangUrls);
             then(naverClient).shouldHaveNoMoreInteractions();
             then(coupangClient).should().uploadImages(imageUrls);
+        }
+
+        @Test
+        @DisplayName("중복된 channelCode가 있으면 IllegalStateException을 던진다")
+        void duplicateChannelCode_ThrowsIllegalStateException() {
+            // given
+            given(coupangClient.channelCode())
+                    .willReturn(ResolvedExternalImageFixtures.DEFAULT_CHANNEL_CODE);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    new SalesChannelImageClientManager(List.of(naverClient, coupangClient)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("중복된 channelCode");
         }
     }
 }

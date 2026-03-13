@@ -57,86 +57,43 @@ public class NaverCommerceProductMapper {
     private static final String DEFAULT_AS_GUIDE = "상세페이지 참조";
     private static final String ORIGIN_AREA_IMPORT = "03";
     private static final String ORIGIN_AREA_CONTENT = "상세설명에 표시";
+    private static final long DEFAULT_CLAIM_DELIVERY_FEE = 2500L;
 
     /**
      * 상품 등록 요청 변환.
-     *
-     * @param bundle 상품 그룹 상세 번들
-     * @param externalCategoryId 네이버 카테고리 ID
-     * @param externalBrandId 네이버 브랜드 ID (nullable)
-     * @return 네이버 상품 등록 요청 DTO
      */
     public NaverProductRegistrationRequest toRegistrationRequest(
             ProductGroupDetailBundle bundle, Long externalCategoryId, Long externalBrandId) {
-
-        ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
-        ProductGroup group = bundle.group();
-        List<Product> products = bundle.products();
-
-        Images images = mapImages(group.images());
-        DeliveryInfo deliveryInfo = mapDeliveryInfo(queryResult.shippingPolicy());
-        OptionInfo optionInfo = mapOptionInfo(group, products);
-
-        AfterServiceInfo afterServiceInfo =
-                new AfterServiceInfo(DEFAULT_AS_PHONE, DEFAULT_AS_GUIDE);
-        OriginAreaInfo originAreaInfo =
-                new OriginAreaInfo(ORIGIN_AREA_IMPORT, ORIGIN_AREA_CONTENT);
-
-        DetailAttribute detailAttribute = DetailAttribute.of(
-                externalCategoryId, optionInfo, externalBrandId,
-                afterServiceInfo, originAreaInfo, true);
-
-        String detailContent = mapDetailContent(bundle);
-        ProductInfoProvidedNotice notice = mapNotice(bundle);
-
-        int representativePrice = resolveRepresentativePrice(products);
-        int totalStock = products.stream().mapToInt(Product::stockQuantity).sum();
-
-        OriginProduct originProduct =
-                new OriginProduct(
-                        STATUS_SALE,
-                        SALE_TYPE_NEW,
-                        String.valueOf(externalCategoryId),
-                        queryResult.productGroupName(),
-                        images,
-                        detailAttribute,
-                        representativePrice,
-                        totalStock,
-                        detailContent,
-                        deliveryInfo,
-                        notice);
-
-        SmartstoreChannelProduct channelProduct =
-                new SmartstoreChannelProduct(queryResult.productGroupName(), "ON", null);
-
-        return new NaverProductRegistrationRequest(originProduct, channelProduct);
+        Images images = mapImages(bundle.group().images());
+        return buildRegistrationRequest(bundle, externalCategoryId, externalBrandId, images);
     }
 
     /**
      * 상품 등록 요청 변환 (외부 채널 이미지 URL 사용).
      *
-     * <p>ResolvedExternalImages가 제공되면 외부 채널 CDN URL을 사용하고,
-     * 비어있으면 기존 내부 URL을 사용합니다.
-     *
-     * @param bundle 상품 그룹 상세 번들
-     * @param externalCategoryId 네이버 카테고리 ID
-     * @param externalBrandId 네이버 브랜드 ID (nullable)
-     * @param resolvedImages 외부 채널 이미지 결과
-     * @return 네이버 상품 등록 요청 DTO
+     * <p>ResolvedExternalImages에 썸네일이 있으면 외부 URL을 사용하고,
+     * 없는 이미지는 내부 URL로 폴백합니다.
      */
     public NaverProductRegistrationRequest toRegistrationRequest(
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
             ResolvedExternalImages resolvedImages) {
+        Images images = resolvedImages != null && !resolvedImages.isEmpty()
+                ? mapExternalImages(resolvedImages)
+                : mapImages(bundle.group().images());
+        return buildRegistrationRequest(bundle, externalCategoryId, externalBrandId, images);
+    }
+
+    private NaverProductRegistrationRequest buildRegistrationRequest(
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            Images images) {
 
         ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
         ProductGroup group = bundle.group();
         List<Product> products = bundle.products();
-
-        Images images = resolvedImages != null && !resolvedImages.isEmpty()
-                ? mapExternalImages(resolvedImages)
-                : mapImages(group.images());
 
         DeliveryInfo deliveryInfo = mapDeliveryInfo(queryResult.shippingPolicy());
         OptionInfo optionInfo = mapOptionInfo(group, products);
@@ -220,7 +177,8 @@ public class NaverCommerceProductMapper {
     private DeliveryInfo mapDeliveryInfo(ShippingPolicyResult shipping) {
         if (shipping == null) {
             DeliveryFee fee = new DeliveryFee("FREE", 0);
-            ClaimDeliveryInfo claimInfo = new ClaimDeliveryInfo(2500L, 2500L);
+            ClaimDeliveryInfo claimInfo = new ClaimDeliveryInfo(
+                    DEFAULT_CLAIM_DELIVERY_FEE, DEFAULT_CLAIM_DELIVERY_FEE);
             return new DeliveryInfo(
                     DELIVERY_TYPE_DELIVERY, DELIVERY_ATTR_NORMAL, fee,
                     DELIVERY_COMPANY_DEFAULT, null, claimInfo);
