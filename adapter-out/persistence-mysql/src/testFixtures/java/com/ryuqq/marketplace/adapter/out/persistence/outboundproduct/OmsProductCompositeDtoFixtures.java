@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.outboundproduct;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductListCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductMainImageDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductPriceStockDto;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductShopInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductSyncInfoDto;
 import java.time.Instant;
 import java.util.List;
@@ -194,5 +195,22 @@ public final class OmsProductCompositeDtoFixtures {
     /** 비어있는 연동정보 맵 (미연동 상태 시뮬레이션). */
     public static Map<Long, OmsProductSyncInfoDto> emptySyncInfoMap() {
         return Map.of();
+    }
+
+    // ========================================================================
+    // OmsProductShopInfoDto Fixtures
+    // ========================================================================
+
+    /** 지정 productGroupId의 샵 정보 DTO. */
+    public static OmsProductShopInfoDto shopInfoDto(Long productGroupId) {
+        return new OmsProductShopInfoDto(productGroupId, 1L, "스마트스토어");
+    }
+
+    /** productGroupId → OmsProductShopInfoDto 맵 생성. */
+    public static Map<Long, OmsProductShopInfoDto> shopInfoMap(List<Long> productGroupIds) {
+        return productGroupIds.stream()
+                .collect(
+                        java.util.stream.Collectors.toMap(
+                                id -> id, id -> new OmsProductShopInfoDto(id, 1L, "스마트스토어")));
     }
 }

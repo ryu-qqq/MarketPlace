@@ -23,6 +23,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
     public static final Long DEFAULT_ID = 1L;
     public static final Long DEFAULT_PRODUCT_GROUP_ID = 100L;
     public static final Long DEFAULT_SALES_CHANNEL_ID = 10L;
+    public static final Long DEFAULT_SHOP_ID = 1L;
     public static final Long DEFAULT_SELLER_ID = 1L;
     public static final String DEFAULT_PAYLOAD =
             "{\"productGroupId\":100,\"salesChannelId\":10,\"syncType\":\"CREATE\"}";
@@ -55,6 +56,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 DEFAULT_ID,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.PENDING,
@@ -82,6 +84,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 null,
                 productGroupId,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.PENDING,
@@ -108,6 +111,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 null,
                 productGroupId,
                 salesChannelId,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.PENDING,
@@ -133,6 +137,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 DEFAULT_ID,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.UPDATE,
                 OutboundSyncOutboxJpaEntity.Status.PENDING,
@@ -158,6 +163,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 DEFAULT_ID,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.DELETE,
                 OutboundSyncOutboxJpaEntity.Status.PENDING,
@@ -185,6 +191,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 DEFAULT_ID,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.PROCESSING,
@@ -212,6 +219,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 null,
                 productGroupId,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.PROCESSING,
@@ -240,6 +248,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 null,
                 productGroupId,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.PROCESSING,
@@ -267,6 +276,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 DEFAULT_ID,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.COMPLETED,
@@ -294,6 +304,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 null,
                 productGroupId,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.COMPLETED,
@@ -321,6 +332,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 DEFAULT_ID,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.FAILED,
@@ -348,6 +360,7 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                 null,
                 productGroupId,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_SELLER_ID,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.FAILED,

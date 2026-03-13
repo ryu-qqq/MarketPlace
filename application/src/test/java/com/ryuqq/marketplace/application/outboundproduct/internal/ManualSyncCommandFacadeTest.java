@@ -42,7 +42,7 @@ class ManualSyncCommandFacadeTest {
         @DisplayName("OutboundProduct와 OutboundSyncOutbox를 모두 영속화한다")
         void createProductAndOutbox_PersistsBoth() {
             // when
-            sut.createProductAndOutbox(PG_ID, CHANNEL_ID, SELLER_ID, NOW);
+            sut.createProductAndOutbox(PG_ID, CHANNEL_ID, 1L, SELLER_ID, NOW);
 
             // then
             then(outboundProductCommandManager).should().persist(any(OutboundProduct.class));
@@ -58,7 +58,7 @@ class ManualSyncCommandFacadeTest {
         @DisplayName("OutboundSyncOutbox만 영속화하고 OutboundProduct는 생성하지 않는다")
         void createUpdateOutbox_PersistsOnlyOutbox() {
             // when
-            sut.createUpdateOutbox(PG_ID, CHANNEL_ID, SELLER_ID, NOW);
+            sut.createUpdateOutbox(PG_ID, CHANNEL_ID, 1L, SELLER_ID, NOW);
 
             // then
             then(outboxCommandManager).should().persist(any(OutboundSyncOutbox.class));

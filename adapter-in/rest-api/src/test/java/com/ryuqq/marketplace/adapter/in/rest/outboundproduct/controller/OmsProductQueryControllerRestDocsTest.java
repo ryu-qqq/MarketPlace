@@ -185,6 +185,12 @@ class OmsProductQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].lastSyncAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("마지막 연동일"),
+                                            fieldWithPath("data.content[].shopId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("샵 ID"),
+                                            fieldWithPath("data.content[].shopName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("샵 이름"),
                                             fieldWithPath("data.page")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("현재 페이지 번호"),

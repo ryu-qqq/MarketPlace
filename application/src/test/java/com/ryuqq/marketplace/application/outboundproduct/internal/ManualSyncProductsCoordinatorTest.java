@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.outboundproduct.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -55,7 +56,12 @@ class ManualSyncProductsCoordinatorTest {
             ProductGroup pg = productGroup(1L, 1L);
             ManualSyncContext ctx =
                     new ManualSyncContext(
-                            Set.of(10L), List.of(pg), Map.of(1L, Set.of(10L)), Set.of(), Set.of());
+                            Set.of(10L),
+                            Map.of(10L, 1L),
+                            List.of(pg),
+                            Map.of(1L, Set.of(10L)),
+                            Set.of(),
+                            Set.of());
             given(readFacade.resolve(command)).willReturn(ctx);
 
             // when
@@ -70,6 +76,7 @@ class ManualSyncProductsCoordinatorTest {
                     .createProductAndOutbox(
                             eq(ProductGroupId.of(1L)),
                             eq(SalesChannelId.of(10L)),
+                            eq(1L),
                             eq(SellerId.of(1L)),
                             any(Instant.class));
         }
@@ -84,6 +91,7 @@ class ManualSyncProductsCoordinatorTest {
             ManualSyncContext ctx =
                     new ManualSyncContext(
                             Set.of(10L),
+                            Map.of(10L, 1L),
                             List.of(pg),
                             Map.of(1L, Set.of(10L)),
                             Set.of("1:10"),
@@ -102,6 +110,7 @@ class ManualSyncProductsCoordinatorTest {
                     .createUpdateOutbox(
                             eq(ProductGroupId.of(1L)),
                             eq(SalesChannelId.of(10L)),
+                            eq(1L),
                             eq(SellerId.of(1L)),
                             any(Instant.class));
         }
@@ -115,7 +124,12 @@ class ManualSyncProductsCoordinatorTest {
             ProductGroup pg = productGroup(1L, 1L);
             ManualSyncContext ctx =
                     new ManualSyncContext(
-                            Set.of(10L), List.of(pg), Map.of(1L, Set.of(20L)), Set.of(), Set.of());
+                            Set.of(10L),
+                            Map.of(10L, 1L),
+                            List.of(pg),
+                            Map.of(1L, Set.of(20L)),
+                            Set.of(),
+                            Set.of());
             given(readFacade.resolve(command)).willReturn(ctx);
 
             // when
@@ -138,6 +152,7 @@ class ManualSyncProductsCoordinatorTest {
             ManualSyncContext ctx =
                     new ManualSyncContext(
                             Set.of(10L),
+                            Map.of(10L, 1L),
                             List.of(pg),
                             Map.of(1L, Set.of(10L)),
                             Set.of(),
@@ -170,6 +185,7 @@ class ManualSyncProductsCoordinatorTest {
             ManualSyncContext ctx =
                     new ManualSyncContext(
                             Set.of(10L, 20L),
+                            Map.of(10L, 1L, 20L, 2L),
                             List.of(pg1, pg2),
                             Map.of(1L, Set.of(10L, 20L)),
                             Set.of("1:10"),
@@ -185,10 +201,10 @@ class ManualSyncProductsCoordinatorTest {
             assertThat(result.skippedCount()).isEqualTo(1);
             then(manualSyncCommandFacade)
                     .should(times(2))
-                    .createProductAndOutbox(any(), any(), any(), any());
+                    .createProductAndOutbox(any(), any(), anyLong(), any(), any());
             then(manualSyncCommandFacade)
                     .should(times(1))
-                    .createUpdateOutbox(any(), any(), any(), any());
+                    .createUpdateOutbox(any(), any(), anyLong(), any(), any());
         }
 
         @Test
@@ -200,7 +216,12 @@ class ManualSyncProductsCoordinatorTest {
             ProductGroup pg = productGroup(1L, 99L);
             ManualSyncContext ctx =
                     new ManualSyncContext(
-                            Set.of(10L, 20L), List.of(pg), Map.of(), Set.of(), Set.of());
+                            Set.of(10L, 20L),
+                            Map.of(10L, 1L, 20L, 2L),
+                            List.of(pg),
+                            Map.of(),
+                            Set.of(),
+                            Set.of());
             given(readFacade.resolve(command)).willReturn(ctx);
 
             // when
@@ -220,7 +241,8 @@ class ManualSyncProductsCoordinatorTest {
             ManualSyncProductsCommand command =
                     new ManualSyncProductsCommand(List.of(), List.of(10L));
             ManualSyncContext ctx =
-                    new ManualSyncContext(Set.of(10L), List.of(), Map.of(), Set.of(), Set.of());
+                    new ManualSyncContext(
+                            Set.of(10L), Map.of(10L, 1L), List.of(), Map.of(), Set.of(), Set.of());
             given(readFacade.resolve(command)).willReturn(ctx);
 
             // when

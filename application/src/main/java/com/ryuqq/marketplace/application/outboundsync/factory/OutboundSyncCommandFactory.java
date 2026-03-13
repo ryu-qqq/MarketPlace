@@ -6,7 +6,6 @@ import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.time.Instant;
@@ -41,6 +40,7 @@ public class OutboundSyncCommandFactory {
                                 OutboundSyncOutbox.forNew(
                                         productGroupId,
                                         channel.salesChannelId(),
+                                        channel.shopId(),
                                         sellerId,
                                         SyncType.CREATE,
                                         "{}",
@@ -52,9 +52,10 @@ public class OutboundSyncCommandFactory {
     public List<OutboundSyncOutbox> createOutboxesForSync(
             ProductGroupId productGroupId,
             SellerId sellerId,
-            List<SalesChannelId> salesChannelIds,
+            List<OutboundProduct> outboundProducts,
             SyncType syncType) {
-        return createOutboxesForSync(productGroupId, sellerId, salesChannelIds, syncType, Set.of());
+        return createOutboxesForSync(
+                productGroupId, sellerId, outboundProducts, syncType, Set.of());
     }
 
     /**
@@ -62,7 +63,7 @@ public class OutboundSyncCommandFactory {
      *
      * @param productGroupId 상품그룹 ID
      * @param sellerId 셀러 ID
-     * @param salesChannelIds 대상 채널 ID 목록
+     * @param outboundProducts 대상 OutboundProduct 목록
      * @param syncType 연동 타입
      * @param changedAreas 변경된 영역 집합 (비어있으면 전체 수정으로 간주)
      * @return 생성된 Outbox 목록
@@ -70,17 +71,18 @@ public class OutboundSyncCommandFactory {
     public List<OutboundSyncOutbox> createOutboxesForSync(
             ProductGroupId productGroupId,
             SellerId sellerId,
-            List<SalesChannelId> salesChannelIds,
+            List<OutboundProduct> outboundProducts,
             SyncType syncType,
             Set<ChangedArea> changedAreas) {
         Instant now = timeProvider.now();
         String payload = toPayload(changedAreas);
-        return salesChannelIds.stream()
+        return outboundProducts.stream()
                 .map(
-                        channelId ->
+                        product ->
                                 OutboundSyncOutbox.forNew(
                                         productGroupId,
-                                        channelId,
+                                        product.salesChannelId(),
+                                        product.shopId(),
                                         sellerId,
                                         syncType,
                                         payload,
@@ -109,7 +111,10 @@ public class OutboundSyncCommandFactory {
                 .map(
                         channel ->
                                 OutboundProduct.forNew(
-                                        productGroupId, channel.salesChannelId(), now))
+                                        productGroupId,
+                                        channel.salesChannelId(),
+                                        channel.shopId(),
+                                        now))
                 .toList();
     }
 }

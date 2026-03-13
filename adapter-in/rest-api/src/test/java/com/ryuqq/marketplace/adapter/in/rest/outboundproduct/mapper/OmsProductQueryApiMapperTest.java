@@ -233,6 +233,8 @@ class OmsProductQueryApiMapperTest {
             assertThat(first.partnerName()).isEqualTo("나이키코리아");
             assertThat(first.syncStatus()).isEqualTo("SUCCESS");
             assertThat(first.syncStatusLabel()).isEqualTo("연동완료");
+            assertThat(first.shopId()).isEqualTo(1L);
+            assertThat(first.shopName()).isEqualTo("스마트스토어");
         }
 
         @Test

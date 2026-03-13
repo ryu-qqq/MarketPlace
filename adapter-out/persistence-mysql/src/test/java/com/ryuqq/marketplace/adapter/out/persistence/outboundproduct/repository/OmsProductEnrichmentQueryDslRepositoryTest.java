@@ -119,6 +119,7 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
                 productGroupId,
                 1L,
                 1L,
+                1L,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 status,
                 "{}",

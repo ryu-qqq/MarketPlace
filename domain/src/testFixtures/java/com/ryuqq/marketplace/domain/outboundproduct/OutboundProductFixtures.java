@@ -23,6 +23,7 @@ public final class OutboundProductFixtures {
     public static final Long DEFAULT_ID = 1L;
     public static final Long DEFAULT_PRODUCT_GROUP_ID = 100L;
     public static final Long DEFAULT_SALES_CHANNEL_ID = 10L;
+    public static final long DEFAULT_SHOP_ID = 1L;
     public static final String DEFAULT_EXTERNAL_PRODUCT_ID = "EXT-PROD-001";
 
     // ===== Aggregate Fixtures =====
@@ -32,6 +33,7 @@ public final class OutboundProductFixtures {
         return OutboundProduct.forNew(
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 Instant.now());
     }
 
@@ -40,6 +42,7 @@ public final class OutboundProductFixtures {
         return OutboundProduct.forNewWithExternalId(
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 Instant.now());
     }
@@ -51,6 +54,7 @@ public final class OutboundProductFixtures {
                 OutboundProductId.of(DEFAULT_ID),
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 null,
                 OutboundProductStatus.PENDING_REGISTRATION,
                 now,
@@ -64,6 +68,7 @@ public final class OutboundProductFixtures {
                 OutboundProductId.of(DEFAULT_ID),
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 OutboundProductStatus.REGISTERED,
                 now,
@@ -77,6 +82,7 @@ public final class OutboundProductFixtures {
                 OutboundProductId.of(DEFAULT_ID),
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 null,
                 OutboundProductStatus.REGISTRATION_FAILED,
                 now,
@@ -90,6 +96,7 @@ public final class OutboundProductFixtures {
                 OutboundProductId.of(id),
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 OutboundProductStatus.REGISTERED,
                 now,
@@ -103,6 +110,7 @@ public final class OutboundProductFixtures {
                 OutboundProductId.forNew(),
                 ProductGroupId.of(productGroupId),
                 SalesChannelId.of(salesChannelId),
+                DEFAULT_SHOP_ID,
                 null,
                 OutboundProductStatus.PENDING_REGISTRATION,
                 now,

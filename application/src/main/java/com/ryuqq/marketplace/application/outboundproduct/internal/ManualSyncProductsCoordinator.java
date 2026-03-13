@@ -44,14 +44,15 @@ public class ManualSyncProductsCoordinator {
                 }
 
                 SalesChannelId channelId = SalesChannelId.of(channelIdValue);
+                long shopId = ctx.shopIdBySalesChannelId().getOrDefault(channelIdValue, 0L);
 
                 if (ctx.existingProductKeys().contains(key)) {
                     manualSyncCommandFacade.createUpdateOutbox(
-                            pg.id(), channelId, pg.sellerId(), now);
+                            pg.id(), channelId, shopId, pg.sellerId(), now);
                     updateCount++;
                 } else {
                     manualSyncCommandFacade.createProductAndOutbox(
-                            pg.id(), channelId, pg.sellerId(), now);
+                            pg.id(), channelId, shopId, pg.sellerId(), now);
                     createCount++;
                 }
             }

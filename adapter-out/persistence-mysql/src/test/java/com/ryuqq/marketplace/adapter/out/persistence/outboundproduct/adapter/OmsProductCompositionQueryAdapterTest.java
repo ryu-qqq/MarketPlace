@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.OmsProductC
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductListCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductMainImageDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductPriceStockDto;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductShopInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductSyncInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.mapper.OmsProductCompositionMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.repository.OmsProductCompositionQueryDslRepository;
@@ -66,6 +67,8 @@ class OmsProductCompositionQueryAdapterTest {
                     OmsProductCompositeDtoFixtures.priceStockMap(List.of(100L));
             Map<Long, OmsProductSyncInfoDto> syncInfoMap =
                     OmsProductCompositeDtoFixtures.completedSyncInfoMap(List.of(100L));
+            Map<Long, OmsProductShopInfoDto> shopInfoMap =
+                    OmsProductCompositeDtoFixtures.shopInfoMap(List.of(100L));
             List<OmsProductListResult> expected =
                     List.of(
                             new OmsProductListResult(
@@ -81,13 +84,16 @@ class OmsProductCompositionQueryAdapterTest {
                                     java.time.Instant.now(),
                                     "SUCCESS",
                                     "연동완료",
-                                    java.time.Instant.now()));
+                                    java.time.Instant.now(),
+                                    1L,
+                                    "스마트스토어"));
 
             given(compositionRepository.findByCriteria(criteria)).willReturn(composites);
             given(enrichmentRepository.fetchMainImages(anyList())).willReturn(imageMap);
             given(enrichmentRepository.fetchPriceStock(anyList())).willReturn(priceStockMap);
             given(enrichmentRepository.fetchLatestSyncInfo(anyList())).willReturn(syncInfoMap);
-            given(mapper.toResults(any(), any(), any(), any())).willReturn(expected);
+            given(enrichmentRepository.fetchShopInfo(anyList())).willReturn(shopInfoMap);
+            given(mapper.toResults(any(), any(), any(), any(), any())).willReturn(expected);
 
             // when
             List<OmsProductListResult> results = adapter.findByCriteria(criteria);
@@ -98,7 +104,8 @@ class OmsProductCompositionQueryAdapterTest {
             then(enrichmentRepository).should().fetchMainImages(anyList());
             then(enrichmentRepository).should().fetchPriceStock(anyList());
             then(enrichmentRepository).should().fetchLatestSyncInfo(anyList());
-            then(mapper).should().toResults(any(), any(), any(), any());
+            then(enrichmentRepository).should().fetchShopInfo(anyList());
+            then(mapper).should().toResults(any(), any(), any(), any(), any());
         }
 
         @Test
@@ -130,7 +137,8 @@ class OmsProductCompositionQueryAdapterTest {
             given(enrichmentRepository.fetchMainImages(anyList())).willReturn(Map.of());
             given(enrichmentRepository.fetchPriceStock(anyList())).willReturn(Map.of());
             given(enrichmentRepository.fetchLatestSyncInfo(anyList())).willReturn(Map.of());
-            given(mapper.toResults(any(), any(), any(), any())).willReturn(List.of());
+            given(enrichmentRepository.fetchShopInfo(anyList())).willReturn(Map.of());
+            given(mapper.toResults(any(), any(), any(), any(), any())).willReturn(List.of());
 
             // when
             adapter.findByCriteria(criteria);
@@ -139,6 +147,7 @@ class OmsProductCompositionQueryAdapterTest {
             then(enrichmentRepository).should().fetchMainImages(anyList());
             then(enrichmentRepository).should().fetchPriceStock(anyList());
             then(enrichmentRepository).should().fetchLatestSyncInfo(anyList());
+            then(enrichmentRepository).should().fetchShopInfo(anyList());
         }
     }
 

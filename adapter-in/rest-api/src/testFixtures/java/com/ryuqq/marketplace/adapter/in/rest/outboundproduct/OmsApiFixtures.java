@@ -148,7 +148,9 @@ public final class OmsApiFixtures {
                 DEFAULT_INSTANT,
                 "SUCCESS",
                 "연동완료",
-                DEFAULT_INSTANT);
+                DEFAULT_INSTANT,
+                1L,
+                "스마트스토어");
     }
 
     public static List<OmsProductListResult> productListResults(int count) {
@@ -338,7 +340,9 @@ public final class OmsApiFixtures {
                 DEFAULT_FORMATTED_TIME,
                 "SUCCESS",
                 "연동완료",
-                DEFAULT_FORMATTED_TIME);
+                DEFAULT_FORMATTED_TIME,
+                1L,
+                "스마트스토어");
     }
 
     public static List<OmsProductApiResponse> productApiResponses(int count) {

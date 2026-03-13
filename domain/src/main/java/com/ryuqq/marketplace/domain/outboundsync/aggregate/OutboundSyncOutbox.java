@@ -31,6 +31,7 @@ public class OutboundSyncOutbox {
     private final OutboundSyncOutboxId id;
     private final ProductGroupId productGroupId;
     private final SalesChannelId salesChannelId;
+    private final long shopId;
     private final SellerId sellerId;
     private final SyncType syncType;
     private SyncStatus status;
@@ -48,6 +49,7 @@ public class OutboundSyncOutbox {
             OutboundSyncOutboxId id,
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             SellerId sellerId,
             SyncType syncType,
             SyncStatus status,
@@ -63,6 +65,7 @@ public class OutboundSyncOutbox {
         this.id = id;
         this.productGroupId = productGroupId;
         this.salesChannelId = salesChannelId;
+        this.shopId = shopId;
         this.sellerId = sellerId;
         this.syncType = syncType;
         this.status = status;
@@ -91,6 +94,7 @@ public class OutboundSyncOutbox {
     public static OutboundSyncOutbox forNew(
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             SellerId sellerId,
             SyncType syncType,
             String payload,
@@ -102,6 +106,7 @@ public class OutboundSyncOutbox {
                 OutboundSyncOutboxId.forNew(),
                 productGroupId,
                 salesChannelId,
+                shopId,
                 sellerId,
                 syncType,
                 SyncStatus.PENDING,
@@ -140,6 +145,7 @@ public class OutboundSyncOutbox {
             OutboundSyncOutboxId id,
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             SellerId sellerId,
             SyncType syncType,
             SyncStatus status,
@@ -156,6 +162,7 @@ public class OutboundSyncOutbox {
                 id,
                 productGroupId,
                 salesChannelId,
+                shopId,
                 sellerId,
                 syncType,
                 status,
@@ -332,6 +339,10 @@ public class OutboundSyncOutbox {
 
     public Long salesChannelIdValue() {
         return salesChannelId.value();
+    }
+
+    public long shopId() {
+        return shopId;
     }
 
     public SellerId sellerId() {

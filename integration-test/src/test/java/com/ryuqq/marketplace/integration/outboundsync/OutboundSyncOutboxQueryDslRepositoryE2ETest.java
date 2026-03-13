@@ -331,6 +331,7 @@ class OutboundSyncOutboxQueryDslRepositoryE2ETest extends E2ETestBase {
                 null,
                 productGroupId,
                 salesChannelId,
+                OutboundSyncOutboxJpaEntityFixtures.DEFAULT_SHOP_ID,
                 OutboundSyncOutboxJpaEntityFixtures.DEFAULT_SELLER_ID,
                 syncType,
                 OutboundSyncOutboxJpaEntity.Status.PENDING,

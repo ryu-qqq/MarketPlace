@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductListCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductMainImageDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductPriceStockDto;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductShopInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductSyncInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.mapper.OmsProductCompositionMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.repository.OmsProductCompositionQueryDslRepository;
@@ -51,8 +52,9 @@ public class OmsProductCompositionQueryAdapter implements OmsProductCompositionQ
                 enrichmentRepository.fetchPriceStock(pgIds);
         Map<Long, OmsProductSyncInfoDto> syncInfoMap =
                 enrichmentRepository.fetchLatestSyncInfo(pgIds);
+        Map<Long, OmsProductShopInfoDto> shopInfoMap = enrichmentRepository.fetchShopInfo(pgIds);
 
-        return mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap);
+        return mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap, shopInfoMap);
     }
 
     @Override

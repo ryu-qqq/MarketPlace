@@ -36,6 +36,9 @@ public class OutboundSyncOutboxJpaEntity {
     @Column(name = "sales_channel_id", nullable = false)
     private Long salesChannelId;
 
+    @Column(name = "shop_id", nullable = false)
+    private Long shopId;
+
     @Column(name = "seller_id", nullable = false)
     private Long sellerId;
 
@@ -81,6 +84,7 @@ public class OutboundSyncOutboxJpaEntity {
             Long id,
             Long productGroupId,
             Long salesChannelId,
+            Long shopId,
             Long sellerId,
             SyncType syncType,
             Status status,
@@ -96,6 +100,7 @@ public class OutboundSyncOutboxJpaEntity {
         this.id = id;
         this.productGroupId = productGroupId;
         this.salesChannelId = salesChannelId;
+        this.shopId = shopId;
         this.sellerId = sellerId;
         this.syncType = syncType;
         this.status = status;
@@ -114,6 +119,7 @@ public class OutboundSyncOutboxJpaEntity {
             Long id,
             Long productGroupId,
             Long salesChannelId,
+            Long shopId,
             Long sellerId,
             SyncType syncType,
             Status status,
@@ -130,6 +136,7 @@ public class OutboundSyncOutboxJpaEntity {
                 id,
                 productGroupId,
                 salesChannelId,
+                shopId,
                 sellerId,
                 syncType,
                 status,
@@ -154,6 +161,10 @@ public class OutboundSyncOutboxJpaEntity {
 
     public Long getSalesChannelId() {
         return salesChannelId;
+    }
+
+    public Long getShopId() {
+        return shopId;
     }
 
     public Long getSellerId() {
