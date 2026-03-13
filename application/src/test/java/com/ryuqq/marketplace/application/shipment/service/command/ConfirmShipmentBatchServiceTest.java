@@ -40,6 +40,9 @@ class ConfirmShipmentBatchServiceTest {
     @DisplayName("execute() - 발주확인 일괄 처리")
     class ExecuteTest {
 
+        private static final String ORDER_ITEM_ID_1 = "01940001-0000-7000-8000-000000000001";
+        private static final String ORDER_ITEM_ID_2 = "01940001-0000-7000-8000-000000000002";
+
         @Test
         @DisplayName("모든 항목이 성공하면 전체 성공 결과를 반환한다")
         void execute_AllSuccess_ReturnsAllSuccess() {
@@ -48,9 +51,10 @@ class ConfirmShipmentBatchServiceTest {
             OrderItem item2 = OrderFixtures.reconstitutedOrderItem(2L, OrderItemStatus.READY);
 
             ConfirmShipmentBatchCommand command =
-                    new ConfirmShipmentBatchCommand(List.of(1L, 2L), null);
+                    new ConfirmShipmentBatchCommand(
+                            List.of(ORDER_ITEM_ID_1, ORDER_ITEM_ID_2), null);
 
-            given(orderItemReadManager.findAllByIds(List.of(1L, 2L)))
+            given(orderItemReadManager.findAllByIds(List.of(ORDER_ITEM_ID_1, ORDER_ITEM_ID_2)))
                     .willReturn(List.of(item1, item2));
             given(commandFactory.createConfirmBundle(any()))
                     .willReturn(
@@ -73,9 +77,10 @@ class ConfirmShipmentBatchServiceTest {
             OrderItem item1 = OrderFixtures.reconstitutedOrderItem(1L, OrderItemStatus.CONFIRMED);
 
             ConfirmShipmentBatchCommand command =
-                    new ConfirmShipmentBatchCommand(List.of(1L), null);
+                    new ConfirmShipmentBatchCommand(List.of(ORDER_ITEM_ID_1), null);
 
-            given(orderItemReadManager.findAllByIds(List.of(1L))).willReturn(List.of(item1));
+            given(orderItemReadManager.findAllByIds(List.of(ORDER_ITEM_ID_1)))
+                    .willReturn(List.of(item1));
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);
@@ -95,9 +100,10 @@ class ConfirmShipmentBatchServiceTest {
             OrderItem item1 = OrderFixtures.reconstitutedOrderItem(1L, OrderItemStatus.READY);
 
             ConfirmShipmentBatchCommand command =
-                    new ConfirmShipmentBatchCommand(List.of(1L), 999L);
+                    new ConfirmShipmentBatchCommand(List.of(ORDER_ITEM_ID_1), 999L);
 
-            given(orderItemReadManager.findAllByIds(List.of(1L))).willReturn(List.of(item1));
+            given(orderItemReadManager.findAllByIds(List.of(ORDER_ITEM_ID_1)))
+                    .willReturn(List.of(item1));
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);
@@ -117,9 +123,10 @@ class ConfirmShipmentBatchServiceTest {
             OrderItem item1 = OrderFixtures.reconstitutedOrderItem(1L, OrderItemStatus.READY);
 
             ConfirmShipmentBatchCommand command =
-                    new ConfirmShipmentBatchCommand(List.of(1L), null);
+                    new ConfirmShipmentBatchCommand(List.of(ORDER_ITEM_ID_1), null);
 
-            given(orderItemReadManager.findAllByIds(List.of(1L))).willReturn(List.of(item1));
+            given(orderItemReadManager.findAllByIds(List.of(ORDER_ITEM_ID_1)))
+                    .willReturn(List.of(item1));
             given(commandFactory.createConfirmBundle(any()))
                     .willReturn(new ConfirmShipmentBundle(List.of(), List.of(), List.of(item1)));
 

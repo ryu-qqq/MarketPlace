@@ -66,7 +66,7 @@ public final class OrderFixtures {
     }
 
     public static OrderItemId defaultOrderItemId() {
-        return OrderItemId.of(1L);
+        return OrderItemId.of("01940001-0000-7000-8000-000000000001");
     }
 
     public static OrderHistoryId defaultOrderHistoryId() {
@@ -146,6 +146,7 @@ public final class OrderFixtures {
 
     public static OrderItem defaultOrderItem() {
         return OrderItem.forNew(
+                defaultOrderItemId(),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
@@ -176,7 +177,7 @@ public final class OrderFixtures {
 
     public static OrderItem reconstitutedOrderItem(long id, OrderItemStatus status) {
         return OrderItem.reconstitute(
-                OrderItemId.of(id),
+                OrderItemId.of("01940001-0000-7000-8000-000000000" + String.format("%03d", id)),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),

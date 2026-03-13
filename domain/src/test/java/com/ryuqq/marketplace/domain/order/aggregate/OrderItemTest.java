@@ -18,14 +18,15 @@ class OrderItemTest {
     class ForNewTest {
 
         @Test
-        @DisplayName("신규 주문 상품 생성 시 ID가 null이고 isNew가 true이다")
-        void forNewOrderItemHasNullId() {
+        @DisplayName("신규 주문 상품 생성 시 UUIDv7 ID가 설정된다")
+        void forNewOrderItemHasUuidId() {
             // when
             OrderItem item = OrderFixtures.defaultOrderItem();
 
             // then
-            assertThat(item.id().isNew()).isTrue();
-            assertThat(item.id().value()).isNull();
+            assertThat(item.id().value()).isNotBlank();
+            assertThat(item.id().value())
+                    .matches("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
         }
 
         @Test
@@ -83,7 +84,7 @@ class OrderItemTest {
 
             // then
             assertThat(item.id()).isEqualTo(OrderFixtures.defaultOrderItemId());
-            assertThat(item.id().isNew()).isFalse();
+            assertThat(item.id().value()).isNotBlank();
         }
 
         @Test
@@ -107,13 +108,13 @@ class OrderItemTest {
     class GetterTest {
 
         @Test
-        @DisplayName("idValue()는 ID의 Long 값을 반환한다")
-        void idValueReturnsLong() {
+        @DisplayName("idValue()는 ID의 String(UUIDv7) 값을 반환한다")
+        void idValueReturnsString() {
             // given
             OrderItem item = OrderFixtures.reconstitutedOrderItem();
 
             // then
-            assertThat(item.idValue()).isEqualTo(1L);
+            assertThat(item.idValue()).isEqualTo(OrderFixtures.defaultOrderItemId().value());
         }
 
         @Test
@@ -132,25 +133,14 @@ class OrderItemTest {
     class OrderItemIdTest {
 
         @Test
-        @DisplayName("forNew()는 value가 null인 ID를 생성한다")
-        void forNewOrderItemIdHasNullValue() {
-            // when
-            OrderItemId id = OrderItemId.forNew();
-
-            // then
-            assertThat(id.value()).isNull();
-            assertThat(id.isNew()).isTrue();
-        }
-
-        @Test
-        @DisplayName("of()로 유효한 ID를 생성한다")
+        @DisplayName("of()로 유효한 UUIDv7 ID를 생성한다")
         void ofCreateValidOrderItemId() {
             // when
-            OrderItemId id = OrderItemId.of(100L);
+            String uuid = "01940001-0000-7000-8000-000000000001";
+            OrderItemId id = OrderItemId.of(uuid);
 
             // then
-            assertThat(id.value()).isEqualTo(100L);
-            assertThat(id.isNew()).isFalse();
+            assertThat(id.value()).isEqualTo(uuid);
         }
 
         @Test
@@ -158,6 +148,15 @@ class OrderItemTest {
         void ofWithNull_ThrowsException() {
             // when & then
             assertThatThrownBy(() -> OrderItemId.of(null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("null");
+        }
+
+        @Test
+        @DisplayName("of()에 빈 문자열을 전달하면 예외가 발생한다")
+        void ofWithBlank_ThrowsException() {
+            // when & then
+            assertThatThrownBy(() -> OrderItemId.of("   "))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("null");
         }

@@ -653,6 +653,15 @@ public class StubExternalClientConfig {
         };
     }
 
+    // ===== 이미지 인프라 Stubs =====
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.common.port.out.InternalImageUrlChecker
+            stubInternalImageUrlChecker() {
+        return url -> false;
+    }
+
     // ===== InboundOrder 외부 채널 클라이언트 Stub =====
 
     @Bean

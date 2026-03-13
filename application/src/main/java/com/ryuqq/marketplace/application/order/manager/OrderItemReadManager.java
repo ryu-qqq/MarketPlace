@@ -17,7 +17,7 @@ public class OrderItemReadManager {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderItem> findAllByIds(List<Long> orderItemIds) {
+    public List<OrderItem> findAllByIds(List<String> orderItemIds) {
         return queryPort.findAllByIds(orderItemIds);
     }
 }

@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.shipment.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -52,7 +51,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class ShipmentCommandControllerRestDocsTest {
 
     private static final String SHIPMENTS_URL = ShipmentEndpoints.SHIPMENTS;
-    private static final long DEFAULT_ORDER_ITEM_ID = ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID;
+    private static final String DEFAULT_ORDER_ITEM_ID = ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID;
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
@@ -206,7 +205,7 @@ class ShipmentCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("송장등록 대상 목록"),
                                             fieldWithPath("items[].orderItemId")
-                                                    .type(JsonFieldType.NUMBER)
+                                                    .type(JsonFieldType.STRING)
                                                     .description("주문상품 ID"),
                                             fieldWithPath("items[].trackingNumber")
                                                     .type(JsonFieldType.STRING)
@@ -266,7 +265,7 @@ class ShipmentCommandControllerRestDocsTest {
             // given
             ShipSingleApiRequest request = ShipmentApiFixtures.shipSingleRequest();
 
-            given(mapper.toShipSingleCommand(anyLong(), any(ShipSingleApiRequest.class)))
+            given(mapper.toShipSingleCommand(any(String.class), any(ShipSingleApiRequest.class)))
                     .willReturn(null);
             doNothing().when(shipSingleUseCase).execute(any());
 

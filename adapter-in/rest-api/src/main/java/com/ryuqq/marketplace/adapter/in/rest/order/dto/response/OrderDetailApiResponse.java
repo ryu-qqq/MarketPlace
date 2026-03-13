@@ -44,7 +44,7 @@ public record OrderDetailApiResponse(
     @Schema(description = "취소 상세 정보")
     public record CancelInfoApiResponse(
             @Schema(description = "취소 ID (UUIDv7)") String cancelId,
-            @Schema(description = "취소 대상 상품주문 ID") long orderItemId,
+            @Schema(description = "취소 대상 상품주문 ID (UUIDv7)") String orderItemId,
             @Schema(description = "취소번호") String cancelNumber,
             @Schema(description = "취소 상태") String cancelStatus,
             @Schema(description = "취소 수량") int quantity,
@@ -61,7 +61,7 @@ public record OrderDetailApiResponse(
     @Schema(description = "클레임 상세 정보")
     public record ClaimInfoApiResponse(
             @Schema(description = "클레임 ID (UUIDv7)") String claimId,
-            @Schema(description = "클레임 대상 상품주문 ID") long orderItemId,
+            @Schema(description = "클레임 대상 상품주문 ID (UUIDv7)") String orderItemId,
             @Schema(description = "클레임번호") String claimNumber,
             @Schema(description = "클레임 유형 (REFUND, EXCHANGE)") String claimType,
             @Schema(description = "클레임 상태") String claimStatus,

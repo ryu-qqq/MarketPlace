@@ -180,7 +180,7 @@ public class Shipment {
         return orderItemId;
     }
 
-    public long orderItemIdValue() {
+    public String orderItemIdValue() {
         return orderItemId.value();
     }
 

@@ -25,7 +25,7 @@ public final class OrderCompositeProjectionDtoFixtures {
     public static final String DEFAULT_BUYER_EMAIL = "buyer@example.com";
     public static final String DEFAULT_BUYER_PHONE = "010-1234-5678";
 
-    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
     public static final long DEFAULT_PRODUCT_GROUP_ID = 100L;
     public static final long DEFAULT_PRODUCT_ID = 200L;
     public static final long DEFAULT_SELLER_ID = 10L;

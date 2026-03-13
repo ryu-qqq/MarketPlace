@@ -45,7 +45,7 @@ import java.time.Instant;
  * @param settlementDay 정산일
  */
 public record OrderItemResult(
-        long orderItemId,
+        String orderItemId,
         String orderId,
         long productGroupId,
         long productId,

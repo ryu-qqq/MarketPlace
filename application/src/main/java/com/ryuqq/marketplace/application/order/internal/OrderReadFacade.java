@@ -51,17 +51,17 @@ public class OrderReadFacade {
                     List.of(), Map.of(), Map.of(), Map.of(), totalElements);
         }
 
-        List<Long> orderItemIds = orderItems.stream().map(OrderItemResult::orderItemId).toList();
+        List<String> orderItemIds = orderItems.stream().map(OrderItemResult::orderItemId).toList();
 
         List<String> orderIds =
                 orderItems.stream().map(OrderItemResult::orderId).distinct().toList();
 
         Map<String, OrderListResult> ordersById = compositionReadManager.findOrdersByIds(orderIds);
 
-        Map<Long, List<OrderCancelResult>> cancelsByItemId =
+        Map<String, List<OrderCancelResult>> cancelsByItemId =
                 compositionReadManager.findCancelsByItemIds(orderItemIds);
 
-        Map<Long, List<OrderClaimResult>> claimsByItemId =
+        Map<String, List<OrderClaimResult>> claimsByItemId =
                 compositionReadManager.findClaimsByItemIds(orderItemIds);
 
         return new ProductOrderListBundle(
@@ -78,11 +78,11 @@ public class OrderReadFacade {
      * <p>3단계: orderId로 주문 타임라인 조회
      */
     @Transactional(readOnly = true)
-    public ProductOrderDetailBundle getProductOrderDetailBundle(long orderItemId) {
+    public ProductOrderDetailBundle getProductOrderDetailBundle(String orderItemId) {
         ProductOrderDetailData data =
                 compositionReadManager
                         .findProductOrderDetail(orderItemId)
-                        .orElseThrow(() -> new OrderNotFoundException(String.valueOf(orderItemId)));
+                        .orElseThrow(() -> new OrderNotFoundException(orderItemId));
 
         List<OrderCancelResult> cancels =
                 compositionReadManager.findCancelsByOrderItemId(orderItemId);

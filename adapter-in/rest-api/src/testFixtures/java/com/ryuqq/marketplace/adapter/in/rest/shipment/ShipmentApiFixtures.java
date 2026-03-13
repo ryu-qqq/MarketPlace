@@ -40,7 +40,7 @@ public final class ShipmentApiFixtures {
     // ===== 상수 =====
     public static final String DEFAULT_SHIPMENT_ID = "SHIP-001";
     public static final String DEFAULT_SHIPMENT_NUMBER = "SN-20250101-001";
-    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
     public static final String DEFAULT_ORDER_ID = "ORD-001";
     public static final String DEFAULT_ORDER_NUMBER = "ON-20250101-001";
     public static final String DEFAULT_STATUS = "READY";
@@ -54,10 +54,14 @@ public final class ShipmentApiFixtures {
     // ===== ConfirmShipmentBatchApiRequest =====
 
     public static ConfirmShipmentBatchApiRequest confirmBatchRequest() {
-        return new ConfirmShipmentBatchApiRequest(List.of(1001L, 1002L, 1003L));
+        return new ConfirmShipmentBatchApiRequest(
+                List.of(
+                        "01940001-0000-7000-8000-000000000001",
+                        "01940001-0000-7000-8000-000000000002",
+                        "01940001-0000-7000-8000-000000000003"));
     }
 
-    public static ConfirmShipmentBatchApiRequest confirmBatchRequest(List<Long> orderItemIds) {
+    public static ConfirmShipmentBatchApiRequest confirmBatchRequest(List<String> orderItemIds) {
         return new ConfirmShipmentBatchApiRequest(orderItemIds);
     }
 
@@ -65,11 +69,13 @@ public final class ShipmentApiFixtures {
 
     public static ShipBatchApiRequest shipBatchRequest() {
         List<ShipBatchItemApiRequest> items =
-                List.of(shipBatchItemRequest(1001L), shipBatchItemRequest(1002L));
+                List.of(
+                        shipBatchItemRequest("01940001-0000-7000-8000-000000000001"),
+                        shipBatchItemRequest("01940001-0000-7000-8000-000000000002"));
         return new ShipBatchApiRequest(items);
     }
 
-    public static ShipBatchItemApiRequest shipBatchItemRequest(Long orderItemId) {
+    public static ShipBatchItemApiRequest shipBatchItemRequest(String orderItemId) {
         return new ShipBatchItemApiRequest(
                 orderItemId,
                 DEFAULT_TRACKING_NUMBER,

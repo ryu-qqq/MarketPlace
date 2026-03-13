@@ -12,6 +12,7 @@ import com.ryuqq.marketplace.domain.common.vo.PhoneNumber;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
 import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
@@ -165,6 +166,11 @@ public class OrderCommandFactory {
                                 cmd.receiverAddressDetail()),
                         cmd.deliveryRequest());
 
-        return OrderItem.forNew(internalProduct, externalProduct, price, receiverInfo);
+        return OrderItem.forNew(
+                OrderItemId.forNew(idGeneratorPort.generate()),
+                internalProduct,
+                externalProduct,
+                price,
+                receiverInfo);
     }
 }

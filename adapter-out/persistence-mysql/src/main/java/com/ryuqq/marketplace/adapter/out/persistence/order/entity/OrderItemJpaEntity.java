@@ -3,8 +3,6 @@ package com.ryuqq.marketplace.adapter.out.persistence.order.entity;
 import com.ryuqq.marketplace.adapter.out.persistence.common.entity.BaseAuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
@@ -15,9 +13,8 @@ import java.time.Instant;
 public class OrderItemJpaEntity extends BaseAuditEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "id", length = 36, nullable = false)
+    private String id;
 
     @Column(name = "order_id", nullable = false, length = 36)
     private String orderId;
@@ -136,7 +133,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private OrderItemJpaEntity(
-            Long id,
+            String id,
             String orderId,
             long productGroupId,
             long productId,
@@ -219,7 +216,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static OrderItemJpaEntity create(
-            Long id,
+            String id,
             String orderId,
             long productGroupId,
             long productId,
@@ -302,7 +299,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 updatedAt);
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

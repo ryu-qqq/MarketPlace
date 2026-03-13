@@ -26,7 +26,7 @@ import java.time.Instant;
  */
 public record OrderClaimResult(
         long claimId,
-        long orderItemId,
+        String orderItemId,
         String claimNumber,
         String claimType,
         String claimStatus,

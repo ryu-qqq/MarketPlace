@@ -22,6 +22,6 @@ import java.util.Map;
 public record ProductOrderListBundle(
         List<OrderItemResult> orderItems,
         Map<String, OrderListResult> ordersById,
-        Map<Long, List<OrderCancelResult>> cancelsByItemId,
-        Map<Long, List<OrderClaimResult>> claimsByItemId,
+        Map<String, List<OrderCancelResult>> cancelsByItemId,
+        Map<String, List<OrderClaimResult>> claimsByItemId,
         long totalElements) {}
