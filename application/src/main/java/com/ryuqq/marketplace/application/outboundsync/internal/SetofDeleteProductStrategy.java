@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * 없으므로 상태 변경으로 대체합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 public class SetofDeleteProductStrategy implements OutboundSyncExecutionStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(SetofDeleteProductStrategy.class);

@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  * </ul>
  */
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
         value = "EI_EXPOSE_REP2",
         justification = "Spring-managed bean injection")

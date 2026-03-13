@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 public class OutboundSellerOutboxProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(OutboundSellerOutboxProcessor.class);

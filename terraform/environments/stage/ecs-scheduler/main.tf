@@ -452,6 +452,8 @@ module "ecs_service" {
     { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local:8080" },
     # FileFlow
     { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-stage.connectly.local:8080" },
+    # Setof Commerce
+    { name = "SETOF_COMMERCE_BASE_URL", value = "http://setof-commerce-web-api-admin-stage.connectly.local:8081" },
     # Intelligence SQS Queue URLs
     { name = "SQS_INTELLIGENCE_ORCHESTRATION_URL", value = local.sqs_intelligence_orchestration_queue_url },
     { name = "SQS_INTELLIGENCE_DESCRIPTION_ANALYSIS_URL", value = local.sqs_intelligence_description_analysis_queue_url },
@@ -470,6 +472,7 @@ module "ecs_service" {
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
+    { name = "SETOF_COMMERCE_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
     { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn },
     { name = "ANTHROPIC_API_KEY", valueFrom = data.aws_ssm_parameter.anthropic_api_key.arn },
     { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
