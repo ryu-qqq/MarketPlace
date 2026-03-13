@@ -189,6 +189,17 @@ data "aws_ssm_parameter" "openai_api_key" {
 }
 
 # ========================================
+# Naver Commerce Configuration
+# ========================================
+data "aws_ssm_parameter" "naver_commerce_client_id" {
+  name = "/naver-commerce/prod/client-id"
+}
+
+data "aws_ssm_parameter" "naver_commerce_client_secret" {
+  name = "/naver-commerce/prod/client-secret"
+}
+
+# ========================================
 # Locals
 # ========================================
 locals {

@@ -198,7 +198,8 @@ module "worker_task_execution_role" {
             Resource = [
               "arn:aws:ssm:${var.aws_region}:*:parameter/shared/*",
               "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*",
-              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*"
+              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*",
+              "arn:aws:ssm:${var.aws_region}:*:parameter/naver-commerce/*"
             ]
           },
           {
@@ -418,6 +419,8 @@ module "ecs_service" {
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     # FileFlow Service Token
     { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
+    # Naver Commerce
+    { name = "NAVER_COMMERCE_CLIENT_SECRET", valueFrom = data.aws_ssm_parameter.naver_commerce_client_secret.arn },
     # Legacy DB Password
     { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
   ]
