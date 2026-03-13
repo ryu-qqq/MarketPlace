@@ -6,7 +6,6 @@ import com.ryuqq.marketplace.adapter.out.client.naver.adapter.NaverCommerceImage
 import com.ryuqq.marketplace.adapter.out.client.naver.auth.NaverCommerceTokenManager;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.util.List;
 import javax.imageio.ImageIO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
