@@ -5,7 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.OrderAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrdersApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.mapper.OrderQueryApiMapper;
@@ -64,15 +64,15 @@ public class OrderQueryController {
         return ResponseEntity.ok(ApiResponse.of(response));
     }
 
-    @Operation(summary = "상품주문 상세 조회", description = "상품주문(아이템) 단위 상세 정보를 조회합니다.")
+    @Operation(summary = "상품주문 상세 조회", description = "상품주문(아이템) 단위 상세. V4 스펙 형태로 반환 (경로 orderItemId, 실상 orderItem 데이터)")
     @PreAuthorize("@access.hasPermission('order:read')")
     @RequirePermission(value = "order:read", description = "주문 상세 조회")
     @GetMapping(OrderAdminEndpoints.ORDER_ITEM_ID)
-    public ResponseEntity<ApiResponse<OrderDetailApiResponse>> getOrderDetail(
+    public ResponseEntity<ApiResponse<OrderDetailApiResponseV4>> getOrderDetail(
             @Positive @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) long orderItemId) {
 
         ProductOrderDetailResult result = getOrderDetailUseCase.execute(orderItemId);
-        OrderDetailApiResponse response = mapper.toDetailResponse(result);
+        OrderDetailApiResponseV4 response = mapper.toDetailResponseV4(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));
     }
