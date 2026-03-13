@@ -42,6 +42,7 @@ import org.springframework.stereotype.Component;
  *
  * <p>내부 상품 데이터를 네이버 커머스 API 등록 요청 형식으로 변환합니다.
  */
+@SuppressWarnings("PMD.GodClass")
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
 public class NaverCommerceProductMapper {
@@ -59,9 +60,7 @@ public class NaverCommerceProductMapper {
     private static final String ORIGIN_AREA_CONTENT = "상세설명에 표시";
     private static final long DEFAULT_CLAIM_DELIVERY_FEE = 2500L;
 
-    /**
-     * 상품 등록 요청 변환.
-     */
+    /** 상품 등록 요청 변환. */
     public NaverProductRegistrationRequest toRegistrationRequest(
             ProductGroupDetailBundle bundle, Long externalCategoryId, Long externalBrandId) {
         Images images = mapImages(bundle.group().images());
@@ -71,17 +70,17 @@ public class NaverCommerceProductMapper {
     /**
      * 상품 등록 요청 변환 (외부 채널 이미지 URL 사용).
      *
-     * <p>ResolvedExternalImages에 썸네일이 있으면 외부 URL을 사용하고,
-     * 없는 이미지는 내부 URL로 폴백합니다.
+     * <p>ResolvedExternalImages에 썸네일이 있으면 외부 URL을 사용하고, 없는 이미지는 내부 URL로 폴백합니다.
      */
     public NaverProductRegistrationRequest toRegistrationRequest(
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
             ResolvedExternalImages resolvedImages) {
-        Images images = resolvedImages != null && !resolvedImages.isEmpty()
-                ? mapExternalImages(resolvedImages)
-                : mapImages(bundle.group().images());
+        Images images =
+                resolvedImages != null && !resolvedImages.isEmpty()
+                        ? mapExternalImages(resolvedImages)
+                        : mapImages(bundle.group().images());
         return buildRegistrationRequest(bundle, externalCategoryId, externalBrandId, images);
     }
 
@@ -100,12 +99,16 @@ public class NaverCommerceProductMapper {
 
         AfterServiceInfo afterServiceInfo =
                 new AfterServiceInfo(DEFAULT_AS_PHONE, DEFAULT_AS_GUIDE);
-        OriginAreaInfo originAreaInfo =
-                new OriginAreaInfo(ORIGIN_AREA_IMPORT, ORIGIN_AREA_CONTENT);
+        OriginAreaInfo originAreaInfo = new OriginAreaInfo(ORIGIN_AREA_IMPORT, ORIGIN_AREA_CONTENT);
 
-        DetailAttribute detailAttribute = DetailAttribute.of(
-                externalCategoryId, optionInfo, externalBrandId,
-                afterServiceInfo, originAreaInfo, true);
+        DetailAttribute detailAttribute =
+                DetailAttribute.of(
+                        externalCategoryId,
+                        optionInfo,
+                        externalBrandId,
+                        afterServiceInfo,
+                        originAreaInfo,
+                        true);
 
         String detailContent = mapDetailContent(bundle);
         ProductInfoProvidedNotice notice = mapNotice(bundle);
@@ -177,11 +180,15 @@ public class NaverCommerceProductMapper {
     private DeliveryInfo mapDeliveryInfo(ShippingPolicyResult shipping) {
         if (shipping == null) {
             DeliveryFee fee = new DeliveryFee("FREE", 0);
-            ClaimDeliveryInfo claimInfo = new ClaimDeliveryInfo(
-                    DEFAULT_CLAIM_DELIVERY_FEE, DEFAULT_CLAIM_DELIVERY_FEE);
+            ClaimDeliveryInfo claimInfo =
+                    new ClaimDeliveryInfo(DEFAULT_CLAIM_DELIVERY_FEE, DEFAULT_CLAIM_DELIVERY_FEE);
             return new DeliveryInfo(
-                    DELIVERY_TYPE_DELIVERY, DELIVERY_ATTR_NORMAL, fee,
-                    DELIVERY_COMPANY_DEFAULT, null, claimInfo);
+                    DELIVERY_TYPE_DELIVERY,
+                    DELIVERY_ATTR_NORMAL,
+                    fee,
+                    DELIVERY_COMPANY_DEFAULT,
+                    null,
+                    claimInfo);
         }
 
         String feeType = mapDeliveryFeeType(shipping.shippingFeeType(), shipping.baseFee());
@@ -201,8 +208,12 @@ public class NaverCommerceProductMapper {
         }
 
         return new DeliveryInfo(
-                DELIVERY_TYPE_DELIVERY, DELIVERY_ATTR_NORMAL, fee,
-                DELIVERY_COMPANY_DEFAULT, feeByArea, claimInfo);
+                DELIVERY_TYPE_DELIVERY,
+                DELIVERY_ATTR_NORMAL,
+                fee,
+                DELIVERY_COMPANY_DEFAULT,
+                feeByArea,
+                claimInfo);
     }
 
     private String mapDeliveryFeeType(String shippingFeeType, Long baseFee) {

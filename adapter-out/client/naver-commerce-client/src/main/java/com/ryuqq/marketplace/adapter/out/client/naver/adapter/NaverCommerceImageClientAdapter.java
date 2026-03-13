@@ -23,8 +23,7 @@ import org.springframework.web.client.RestClient;
 /**
  * 네이버 커머스 이미지 업로드 클라이언트 어댑터.
  *
- * <p>외부 URL에서 이미지를 다운로드한 뒤 네이버 커머스 API에 업로드하여
- * shop-phinf.pstatic.net 도메인의 URL을 반환합니다.
+ * <p>외부 URL에서 이미지를 다운로드한 뒤 네이버 커머스 API에 업로드하여 shop-phinf.pstatic.net 도메인의 URL을 반환합니다.
  *
  * <p>API: POST /v1/product-images/upload (multipart/form-data, field: imageFiles)
  *
@@ -44,8 +43,7 @@ public class NaverCommerceImageClientAdapter {
     private final NaverCommerceTokenManager tokenManager;
 
     public NaverCommerceImageClientAdapter(
-            RestClient naverCommerceRestClient,
-            NaverCommerceTokenManager tokenManager) {
+            RestClient naverCommerceRestClient, NaverCommerceTokenManager tokenManager) {
         this.restClient = naverCommerceRestClient;
         this.tokenManager = tokenManager;
     }
@@ -77,20 +75,22 @@ public class NaverCommerceImageClientAdapter {
 
         NaverImageUploadResponse response = executeUpload(body);
 
-        List<String> uploadedUrls = response.images().stream()
-                .map(NaverImageUploadResponse.UploadedImage::url)
-                .toList();
+        List<String> uploadedUrls =
+                response.images().stream()
+                        .map(NaverImageUploadResponse.UploadedImage::url)
+                        .toList();
 
         if (uploadedUrls.size() != imageUrls.size()) {
             throw new NaverImageUploadException(
-                    "업로드 결과 개수 불일치: expected=" + imageUrls.size()
-                            + ", actual=" + uploadedUrls.size());
+                    "업로드 결과 개수 불일치: expected="
+                            + imageUrls.size()
+                            + ", actual="
+                            + uploadedUrls.size());
         }
 
         for (int i = 0; i < uploadedUrls.size(); i++) {
             if (uploadedUrls.get(i) == null || uploadedUrls.get(i).isBlank()) {
-                throw new NaverImageUploadException(
-                        "업로드된 URL이 비어있습니다: index=" + i);
+                throw new NaverImageUploadException("업로드된 URL이 비어있습니다: index=" + i);
             }
         }
 
@@ -122,14 +122,15 @@ public class NaverCommerceImageClientAdapter {
     private NaverImageUploadResponse executeUpload(MultiValueMap<String, Object> body) {
         String token = tokenManager.getAccessToken();
 
-        NaverImageUploadResponse response = restClient
-                .post()
-                .uri(UPLOAD_URI)
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .header("Authorization", "Bearer " + token)
-                .body(body)
-                .retrieve()
-                .body(NaverImageUploadResponse.class);
+        NaverImageUploadResponse response =
+                restClient
+                        .post()
+                        .uri(UPLOAD_URI)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .header("Authorization", "Bearer " + token)
+                        .body(body)
+                        .retrieve()
+                        .body(NaverImageUploadResponse.class);
 
         if (response == null || response.images() == null || response.images().isEmpty()) {
             throw new NaverImageUploadException("네이버 이미지 업로드 응답이 비어있습니다");
@@ -182,8 +183,11 @@ public class NaverCommerceImageClientAdapter {
                                 ? responseContentType.split(";")[0].trim()
                                 : guessContentType(filename);
 
-                log.debug("이미지 다운로드 완료: url={}, size={}bytes, type={}",
-                        maskUrl(imageUrl), bytes.length, contentType);
+                log.debug(
+                        "이미지 다운로드 완료: url={}, size={}bytes, type={}",
+                        maskUrl(imageUrl),
+                        bytes.length,
+                        contentType);
 
                 return new ImageData(bytes, filename, contentType);
             } finally {
@@ -232,9 +236,12 @@ public class NaverCommerceImageClientAdapter {
     /**
      * ByteArrayResource에 파일명을 부여하기 위한 래퍼.
      *
-     * <p>Spring의 multipart 변환기가 Content-Disposition에 filename을 포함하려면
-     * getFilename()이 non-null이어야 합니다.
+     * <p>Spring의 multipart 변환기가 Content-Disposition에 filename을 포함하려면 getFilename()이 non-null이어야
+     * 합니다.
      */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+            value = "EQ_DOESNT_OVERRIDE_EQUALS",
+            justification = "multipart 파일명 래퍼 – equals/hashCode 비교 대상 아님")
     private static class NamedByteArrayResource extends ByteArrayResource {
 
         private final String filename;
