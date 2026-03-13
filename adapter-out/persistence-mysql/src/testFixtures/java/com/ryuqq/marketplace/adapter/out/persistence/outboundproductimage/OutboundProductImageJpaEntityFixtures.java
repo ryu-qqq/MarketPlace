@@ -34,7 +34,7 @@ public final class OutboundProductImageJpaEntityFixtures {
     /** THUMBNAIL 타입의 신규 활성 Entity (ID null). */
     public static OutboundProductImageJpaEntity newThumbnailEntity() {
         Instant now = Instant.now();
-        return OutboundProductImageJpaEntity.create(
+        return OutboundProductImageJpaEntity.of(
                 null,
                 DEFAULT_OUTBOUND_PRODUCT_ID,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID,
@@ -51,7 +51,7 @@ public final class OutboundProductImageJpaEntityFixtures {
     /** DETAIL 타입의 신규 활성 Entity (ID null). */
     public static OutboundProductImageJpaEntity newDetailEntity() {
         Instant now = Instant.now();
-        return OutboundProductImageJpaEntity.create(
+        return OutboundProductImageJpaEntity.of(
                 null,
                 DEFAULT_OUTBOUND_PRODUCT_ID,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID,
@@ -68,7 +68,7 @@ public final class OutboundProductImageJpaEntityFixtures {
     /** externalUrl이 null인 신규 THUMBNAIL Entity (업로드 전 상태). */
     public static OutboundProductImageJpaEntity newThumbnailEntityWithoutExternalUrl() {
         Instant now = Instant.now();
-        return OutboundProductImageJpaEntity.create(
+        return OutboundProductImageJpaEntity.of(
                 null,
                 DEFAULT_OUTBOUND_PRODUCT_ID,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID,
@@ -86,7 +86,7 @@ public final class OutboundProductImageJpaEntityFixtures {
     public static OutboundProductImageJpaEntity deletedThumbnailEntity() {
         Instant now = Instant.now();
         Instant deletedAt = now.minusSeconds(3600);
-        return OutboundProductImageJpaEntity.create(
+        return OutboundProductImageJpaEntity.of(
                 null,
                 DEFAULT_OUTBOUND_PRODUCT_ID,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID,
@@ -103,7 +103,7 @@ public final class OutboundProductImageJpaEntityFixtures {
     /** ID를 지정한 활성 THUMBNAIL Entity. */
     public static OutboundProductImageJpaEntity entityWithId(Long id) {
         Instant now = Instant.now();
-        return OutboundProductImageJpaEntity.create(
+        return OutboundProductImageJpaEntity.of(
                 id,
                 DEFAULT_OUTBOUND_PRODUCT_ID,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID,
@@ -122,7 +122,7 @@ public final class OutboundProductImageJpaEntityFixtures {
             Long outboundProductId) {
         long seq = SEQUENCE.getAndIncrement();
         Instant now = Instant.now();
-        return OutboundProductImageJpaEntity.create(
+        return OutboundProductImageJpaEntity.of(
                 null,
                 outboundProductId,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID + seq,
@@ -139,7 +139,7 @@ public final class OutboundProductImageJpaEntityFixtures {
     /** sortOrder를 지정한 DETAIL Entity. */
     public static OutboundProductImageJpaEntity detailEntityWithSortOrder(int sortOrder) {
         Instant now = Instant.now();
-        return OutboundProductImageJpaEntity.create(
+        return OutboundProductImageJpaEntity.of(
                 null,
                 DEFAULT_OUTBOUND_PRODUCT_ID,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID,

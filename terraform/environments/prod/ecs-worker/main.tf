@@ -403,6 +403,8 @@ module "ecs_service" {
     { name = "SQS_INTELLIGENCE_AGGREGATION_URL", value = local.sqs_intelligence_aggregation_queue_url },
     # Sentry
     { name = "SENTRY_DSN", value = local.sentry_dsn },
+    # Naver Commerce
+    { name = "NAVER_COMMERCE_CLIENT_ID", value = data.aws_ssm_parameter.naver_commerce_client_id.value },
     # Legacy DB
     { name = "LEGACY_DB_NAME", value = "luxurydb" },
     { name = "LEGACY_DB_USERNAME", value = "admin" }
