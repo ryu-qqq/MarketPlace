@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
  *
  * <p>실행 시 환경변수 필요: NAVER_COMMERCE_CLIENT_ID, NAVER_COMMERCE_CLIENT_SECRET
  */
+@Tag("external-integration")
 @SpringBootTest(classes = NaverCommerceTestApplication.class)
 @ActiveProfiles("naver-test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
