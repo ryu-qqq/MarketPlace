@@ -195,6 +195,17 @@ data "aws_ssm_parameter" "fileflow_service_token" {
 }
 
 # ========================================
+# Naver Commerce Configuration
+# ========================================
+data "aws_ssm_parameter" "naver_commerce_client_id" {
+  name = "/naver-commerce/stage/client-id"
+}
+
+data "aws_ssm_parameter" "naver_commerce_client_secret" {
+  name = "/naver-commerce/stage/client-secret"
+}
+
+# ========================================
 # Legacy DB Configuration
 # ========================================
 data "aws_ssm_parameter" "legacy_db_password" {

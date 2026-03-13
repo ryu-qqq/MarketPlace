@@ -88,7 +88,7 @@ class ShipmentConditionBuilderTest {
         @DisplayName("유효한 orderItemId 입력 시 BooleanExpression을 반환합니다")
         void orderItemIdEq_WithValidOrderItemId_ReturnsBooleanExpression() {
             // given
-            Long orderItemId = 1001L;
+            String orderItemId = "01940001-0000-7000-8000-000000000001";
 
             // when
             BooleanExpression result = conditionBuilder.orderItemIdEq(orderItemId);

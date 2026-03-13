@@ -11,7 +11,6 @@ import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,13 +84,12 @@ public class ProductGroupUpdateOutboxCoordinator {
                         .map(OutboundSyncOutbox::salesChannelIdValue)
                         .collect(Collectors.toSet());
 
-        List<SalesChannelId> channelsNeedingOutbox =
+        List<OutboundProduct> productsNeedingOutbox =
                 registeredProducts.stream()
                         .filter(p -> !channelsWithActiveOutbox.contains(p.salesChannelIdValue()))
-                        .map(OutboundProduct::salesChannelId)
                         .toList();
 
-        if (channelsNeedingOutbox.isEmpty()) {
+        if (productsNeedingOutbox.isEmpty()) {
             return;
         }
 
@@ -101,7 +99,7 @@ public class ProductGroupUpdateOutboxCoordinator {
                 outboundSyncCommandFactory.createOutboxesForSync(
                         productGroupId,
                         productGroup.sellerId(),
-                        channelsNeedingOutbox,
+                        productsNeedingOutbox,
                         SyncType.UPDATE,
                         changedAreas);
 
@@ -110,7 +108,7 @@ public class ProductGroupUpdateOutboxCoordinator {
         log.info(
                 "UPDATE Outbox 생성: productGroupId={}, count={}, skipped={}, changedAreas={}",
                 productGroupId.value(),
-                channelsNeedingOutbox.size(),
+                productsNeedingOutbox.size(),
                 channelsWithActiveOutbox.size(),
                 changedAreas);
     }

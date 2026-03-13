@@ -179,7 +179,9 @@ public final class OmsProductQueryFixtures {
                 now,
                 "COMPLETED",
                 "완료",
-                now);
+                now,
+                1L,
+                "테스트 샵");
     }
 
     public static OmsProductListResult omsProductListResult(
@@ -198,7 +200,9 @@ public final class OmsProductQueryFixtures {
                 now,
                 syncStatus,
                 syncStatus.equals("COMPLETED") ? "완료" : "실패",
-                now);
+                now,
+                1L,
+                "테스트 샵");
     }
 
     // ===== OmsProductPageResult =====

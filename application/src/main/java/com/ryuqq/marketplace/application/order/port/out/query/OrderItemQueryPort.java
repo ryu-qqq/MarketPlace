@@ -6,5 +6,5 @@ import java.util.List;
 /** 주문상품 Query Port. */
 public interface OrderItemQueryPort {
 
-    List<OrderItem> findAllByIds(List<Long> orderItemIds);
+    List<OrderItem> findAllByIds(List<String> orderItemIds);
 }

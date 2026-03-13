@@ -127,6 +127,7 @@ class OmsSyncHistoryCompositionQueryDslRepositoryTest {
                 null,
                 productGroupId,
                 salesChannelId,
+                1L,
                 sellerId,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 status,
@@ -148,6 +149,7 @@ class OmsSyncHistoryCompositionQueryDslRepositoryTest {
                 null,
                 productGroupId,
                 salesChannelId,
+                1L,
                 sellerId,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.FAILED,
@@ -166,7 +168,14 @@ class OmsSyncHistoryCompositionQueryDslRepositoryTest {
             Long productGroupId, Long salesChannelId, String externalProductId) {
         Instant now = Instant.now();
         return OutboundProductJpaEntity.create(
-                null, productGroupId, salesChannelId, externalProductId, "REGISTERED", now, now);
+                null,
+                productGroupId,
+                salesChannelId,
+                1L,
+                externalProductId,
+                "REGISTERED",
+                now,
+                now);
     }
 
     private SyncHistorySearchCriteria defaultCriteria(Long productGroupId) {

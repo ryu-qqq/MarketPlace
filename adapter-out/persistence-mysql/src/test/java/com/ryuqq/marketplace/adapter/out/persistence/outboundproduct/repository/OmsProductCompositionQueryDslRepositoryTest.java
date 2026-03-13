@@ -122,7 +122,7 @@ class OmsProductCompositionQueryDslRepositoryTest {
     private OutboundProductJpaEntity createOutboundProduct(
             Long id, Long productGroupId, Long salesChannelId, Instant now) {
         return OutboundProductJpaEntity.create(
-                id, productGroupId, salesChannelId, null, "PENDING_REGISTRATION", now, now);
+                id, productGroupId, salesChannelId, 1L, null, "PENDING_REGISTRATION", now, now);
     }
 
     private QueryContext<OmsProductSortKey> defaultQueryContext() {

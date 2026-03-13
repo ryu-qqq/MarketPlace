@@ -50,7 +50,7 @@ public record ShipmentListApiResponse(
     /** 상품주문 정보 응답. */
     @Schema(description = "상품주문 정보")
     public record ProductOrderInfoResponse(
-            @Schema(description = "주문 상품 ID") long orderItemId,
+            @Schema(description = "주문 상품 ID (UUIDv7)") String orderItemId,
             @Schema(description = "내부 상품그룹 ID") long productGroupId,
             @Schema(description = "내부 상품 ID") long productId,
             @Schema(description = "셀러 ID") long sellerId,

@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.outboundsync.port.out.client;
 
+import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
@@ -31,6 +32,20 @@ public interface SalesChannelProductClient {
             SellerSalesChannel channel);
 
     /**
+     * 외부 채널에 상품을 등록합니다 (외부 이미지 URL 포함).
+     *
+     * <p>기본 구현은 resolvedImages를 무시하고 기존 메서드를 호출합니다. 이미지 업로드가 필요한 채널(네이버 등)에서 오버라이드합니다.
+     */
+    default String registerProduct(
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            SellerSalesChannel channel,
+            ResolvedExternalImages resolvedImages) {
+        return registerProduct(bundle, externalCategoryId, externalBrandId, channel);
+    }
+
+    /**
      * 외부 채널의 상품을 수정합니다.
      *
      * <p>changedAreas가 비어있으면 전체 수정(Full Replacement)으로 동작합니다. 채널 어댑터는 changedAreas 기반으로 전체 수정 또는 부분
@@ -50,6 +65,28 @@ public interface SalesChannelProductClient {
             String externalProductId,
             SellerSalesChannel channel,
             Set<ChangedArea> changedAreas);
+
+    /**
+     * 외부 채널의 상품을 수정합니다 (외부 이미지 URL 포함).
+     *
+     * <p>기본 구현은 resolvedImages를 무시하고 기존 메서드를 호출합니다.
+     */
+    default void updateProduct(
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            String externalProductId,
+            SellerSalesChannel channel,
+            Set<ChangedArea> changedAreas,
+            ResolvedExternalImages resolvedImages) {
+        updateProduct(
+                bundle,
+                externalCategoryId,
+                externalBrandId,
+                externalProductId,
+                channel,
+                changedAreas);
+    }
 
     /**
      * 외부 채널의 상품을 삭제합니다.

@@ -23,7 +23,7 @@ public record ShipBatchCommand(List<ShipBatchItem> items) {
      * @param shipmentMethodType 배송 방법 유형
      */
     public record ShipBatchItem(
-            long orderItemId,
+            String orderItemId,
             String trackingNumber,
             String courierCode,
             String courierName,

@@ -20,10 +20,10 @@ public class ProductGroupImageJpaEntity {
     @Column(name = "product_group_id", nullable = false)
     private Long productGroupId;
 
-    @Column(name = "origin_url", nullable = false, length = 500)
+    @Column(name = "origin_url", nullable = false, length = 1000)
     private String originUrl;
 
-    @Column(name = "uploaded_url", length = 500)
+    @Column(name = "uploaded_url", length = 1000)
     private String uploadedUrl;
 
     @Column(name = "image_type", nullable = false, length = 50)

@@ -62,5 +62,21 @@ tasks.jacocoTestCoverageVerification {
 }
 
 tasks.test {
+    useJUnitPlatform {
+        excludeTags 'external-integration'
+    }
     finalizedBy tasks.jacocoTestCoverageVerification
+}
+
+// ========================================
+// External Integration Test Task
+// Run with: ./gradlew :adapter-out:client:setof-commerce-client:externalIntegrationTest
+// Requires env vars: SETOF_COMMERCE_BASE_URL, SETOF_COMMERCE_SERVICE_TOKEN
+// ========================================
+tasks.register('externalIntegrationTest', Test) {
+    description = 'Runs external integration tests that require a live Setof Commerce server'
+    group = 'verification'
+    useJUnitPlatform {
+        includeTags 'external-integration'
+    }
 }

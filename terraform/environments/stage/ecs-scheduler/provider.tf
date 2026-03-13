@@ -187,6 +187,17 @@ data "aws_ssm_parameter" "sqs_intelligence_aggregation_queue_url" {
 }
 
 # ========================================
+# Naver Commerce Configuration
+# ========================================
+data "aws_ssm_parameter" "naver_commerce_client_id" {
+  name = "/naver-commerce/stage/client-id"
+}
+
+data "aws_ssm_parameter" "naver_commerce_client_secret" {
+  name = "/naver-commerce/stage/client-secret"
+}
+
+# ========================================
 # Locals
 # ========================================
 locals {

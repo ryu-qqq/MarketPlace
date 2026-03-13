@@ -8,6 +8,7 @@ import java.util.Set;
 /** 수동 전송에 필요한 조회 데이터 컨텍스트. */
 public record ManualSyncContext(
         Set<Long> salesChannelIds,
+        Map<Long, Long> shopIdBySalesChannelId,
         List<ProductGroup> productGroups,
         Map<Long, Set<Long>> connectedChannelIdsBySellerId,
         Set<String> existingProductKeys,

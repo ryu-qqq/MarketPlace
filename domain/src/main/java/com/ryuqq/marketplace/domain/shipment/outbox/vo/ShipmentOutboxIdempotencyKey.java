@@ -14,7 +14,7 @@ public record ShipmentOutboxIdempotencyKey(String value) {
     private static final String DELIMITER = ":";
 
     public static ShipmentOutboxIdempotencyKey generate(
-            Long orderItemId, ShipmentOutboxType outboxType, Instant createdAt) {
+            String orderItemId, ShipmentOutboxType outboxType, Instant createdAt) {
         Objects.requireNonNull(orderItemId, "orderItemId는 필수입니다");
         Objects.requireNonNull(outboxType, "outboxType은 필수입니다");
         Objects.requireNonNull(createdAt, "createdAt은 필수입니다");

@@ -1,8 +1,10 @@
 package com.ryuqq.marketplace.adapter.out.client.naver.mapper;
 
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.AfterServiceInfo;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.DeliveryInfo;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.DeliveryInfo.ClaimDeliveryInfo;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.DeliveryInfo.DeliveryFee;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.DeliveryInfo.DeliveryFeeByArea;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.DetailAttribute;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.Images;
@@ -11,10 +13,12 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrati
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo.OptionCombination;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo.OptionCombinationGroupNames;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OriginAreaInfo;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OriginProduct;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.ProductInfoProvidedNotice;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.ProductInfoProvidedNotice.ProductInfoProvidedNoticeContent;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.SmartstoreChannelProduct;
+import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
@@ -38,6 +42,7 @@ import org.springframework.stereotype.Component;
  *
  * <p>내부 상품 데이터를 네이버 커머스 API 등록 요청 형식으로 변환합니다.
  */
+@SuppressWarnings("PMD.GodClass")
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
 public class NaverCommerceProductMapper {
@@ -46,29 +51,64 @@ public class NaverCommerceProductMapper {
     private static final String SALE_TYPE_NEW = "NEW";
     private static final String DELIVERY_TYPE_DELIVERY = "DELIVERY";
     private static final String DELIVERY_ATTR_NORMAL = "NORMAL";
+    private static final String DELIVERY_COMPANY_DEFAULT = "CJGLS";
     private static final String AREA_TYPE_AREA2 = "AREA_2";
     private static final String OPTION_SORT_CREATE = "CREATE";
+    private static final String DEFAULT_AS_PHONE = "1660-1126";
+    private static final String DEFAULT_AS_GUIDE = "상세페이지 참조";
+    private static final String ORIGIN_AREA_IMPORT = "03";
+    private static final String ORIGIN_AREA_CONTENT = "상세설명에 표시";
+    private static final long DEFAULT_CLAIM_DELIVERY_FEE = 2500L;
 
-    /**
-     * 상품 등록 요청 변환.
-     *
-     * @param bundle 상품 그룹 상세 번들
-     * @param externalCategoryId 네이버 카테고리 ID
-     * @param externalBrandId 네이버 브랜드 ID (nullable)
-     * @return 네이버 상품 등록 요청 DTO
-     */
+    /** 상품 등록 요청 변환. */
     public NaverProductRegistrationRequest toRegistrationRequest(
             ProductGroupDetailBundle bundle, Long externalCategoryId, Long externalBrandId) {
+        Images images = mapImages(bundle.group().images());
+        return buildRegistrationRequest(bundle, externalCategoryId, externalBrandId, images);
+    }
+
+    /**
+     * 상품 등록 요청 변환 (외부 채널 이미지 URL 사용).
+     *
+     * <p>ResolvedExternalImages에 썸네일이 있으면 외부 URL을 사용하고, 없는 이미지는 내부 URL로 폴백합니다.
+     */
+    public NaverProductRegistrationRequest toRegistrationRequest(
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            ResolvedExternalImages resolvedImages) {
+        Images images =
+                resolvedImages != null && !resolvedImages.isEmpty()
+                        ? mapExternalImages(resolvedImages)
+                        : mapImages(bundle.group().images());
+        return buildRegistrationRequest(bundle, externalCategoryId, externalBrandId, images);
+    }
+
+    private NaverProductRegistrationRequest buildRegistrationRequest(
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            Images images) {
 
         ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
         ProductGroup group = bundle.group();
         List<Product> products = bundle.products();
 
-        Images images = mapImages(group.images());
         DeliveryInfo deliveryInfo = mapDeliveryInfo(queryResult.shippingPolicy());
         OptionInfo optionInfo = mapOptionInfo(group, products);
+
+        AfterServiceInfo afterServiceInfo =
+                new AfterServiceInfo(DEFAULT_AS_PHONE, DEFAULT_AS_GUIDE);
+        OriginAreaInfo originAreaInfo = new OriginAreaInfo(ORIGIN_AREA_IMPORT, ORIGIN_AREA_CONTENT);
+
         DetailAttribute detailAttribute =
-                DetailAttribute.of(externalCategoryId, optionInfo, externalBrandId);
+                DetailAttribute.of(
+                        externalCategoryId,
+                        optionInfo,
+                        externalBrandId,
+                        afterServiceInfo,
+                        originAreaInfo,
+                        true);
 
         String detailContent = mapDetailContent(bundle);
         ProductInfoProvidedNotice notice = mapNotice(bundle);
@@ -91,9 +131,25 @@ public class NaverCommerceProductMapper {
                         notice);
 
         SmartstoreChannelProduct channelProduct =
-                new SmartstoreChannelProduct(queryResult.productGroupName(), null);
+                new SmartstoreChannelProduct(queryResult.productGroupName(), "ON", null);
 
         return new NaverProductRegistrationRequest(originProduct, channelProduct);
+    }
+
+    private Images mapExternalImages(ResolvedExternalImages resolvedImages) {
+        RepresentativeImage mainImage = null;
+        List<OptionalImage> optionalImages = new ArrayList<>();
+
+        String thumbnailUrl = resolvedImages.thumbnailUrl();
+        if (thumbnailUrl != null) {
+            mainImage = new RepresentativeImage(thumbnailUrl);
+        }
+
+        for (String detailUrl : resolvedImages.detailUrls()) {
+            optionalImages.add(new OptionalImage(detailUrl));
+        }
+
+        return new Images(mainImage, optionalImages.isEmpty() ? null : optionalImages);
     }
 
     private Images mapImages(List<ProductGroupImage> groupImages) {
@@ -123,11 +179,21 @@ public class NaverCommerceProductMapper {
 
     private DeliveryInfo mapDeliveryInfo(ShippingPolicyResult shipping) {
         if (shipping == null) {
+            DeliveryFee fee = new DeliveryFee("FREE", 0);
+            ClaimDeliveryInfo claimInfo =
+                    new ClaimDeliveryInfo(DEFAULT_CLAIM_DELIVERY_FEE, DEFAULT_CLAIM_DELIVERY_FEE);
             return new DeliveryInfo(
-                    DELIVERY_TYPE_DELIVERY, DELIVERY_ATTR_NORMAL, "FREE", null, null);
+                    DELIVERY_TYPE_DELIVERY,
+                    DELIVERY_ATTR_NORMAL,
+                    fee,
+                    DELIVERY_COMPANY_DEFAULT,
+                    null,
+                    claimInfo);
         }
 
-        String deliveryFee = mapDeliveryFeeType(shipping.shippingFeeType(), shipping.baseFee());
+        String feeType = mapDeliveryFeeType(shipping.shippingFeeType(), shipping.baseFee());
+        int baseFee = shipping.baseFee() != null ? shipping.baseFee().intValue() : 0;
+        DeliveryFee fee = new DeliveryFee(feeType, baseFee);
 
         DeliveryFeeByArea feeByArea = null;
         if (shipping.jejuExtraFee() != null || shipping.islandExtraFee() != null) {
@@ -142,7 +208,12 @@ public class NaverCommerceProductMapper {
         }
 
         return new DeliveryInfo(
-                DELIVERY_TYPE_DELIVERY, DELIVERY_ATTR_NORMAL, deliveryFee, feeByArea, claimInfo);
+                DELIVERY_TYPE_DELIVERY,
+                DELIVERY_ATTR_NORMAL,
+                fee,
+                DELIVERY_COMPANY_DEFAULT,
+                feeByArea,
+                claimInfo);
     }
 
     private String mapDeliveryFeeType(String shippingFeeType, Long baseFee) {

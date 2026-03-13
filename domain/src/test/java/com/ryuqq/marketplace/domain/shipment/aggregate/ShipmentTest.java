@@ -38,7 +38,7 @@ class ShipmentTest {
             Instant now = CommonVoFixtures.now();
 
             // when
-            OrderItemId orderItemId = OrderItemId.of(1001L);
+            OrderItemId orderItemId = OrderItemId.of("01940001-0000-7000-8000-000000000001");
             Shipment shipment =
                     Shipment.forNew(
                             ShipmentFixtures.defaultShipmentId(),
@@ -51,7 +51,8 @@ class ShipmentTest {
             assertThat(shipment.shipmentNumber())
                     .isEqualTo(ShipmentFixtures.defaultShipmentNumber());
             assertThat(shipment.orderItemId()).isEqualTo(orderItemId);
-            assertThat(shipment.orderItemIdValue()).isEqualTo(1001L);
+            assertThat(shipment.orderItemIdValue())
+                    .isEqualTo("01940001-0000-7000-8000-000000000001");
             assertThat(shipment.status()).isEqualTo(ShipmentStatus.READY);
             assertThat(shipment.shipmentMethod()).isNull();
             assertThat(shipment.trackingNumber()).isNull();

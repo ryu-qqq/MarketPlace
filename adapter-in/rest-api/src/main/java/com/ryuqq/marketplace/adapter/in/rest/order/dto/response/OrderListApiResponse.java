@@ -38,7 +38,7 @@ public record OrderListApiResponse(
     /** 상품주문 정보. */
     @Schema(description = "상품주문 정보")
     public record ProductOrderApiResponse(
-            @Schema(description = "상품주문 ID") long orderItemId,
+            @Schema(description = "상품주문 ID (UUIDv7)") String orderItemId,
             @Schema(description = "상품그룹 ID") long productGroupId,
             @Schema(description = "상품 ID (SKU)") long productId,
             @Schema(description = "판매자 ID") long sellerId,

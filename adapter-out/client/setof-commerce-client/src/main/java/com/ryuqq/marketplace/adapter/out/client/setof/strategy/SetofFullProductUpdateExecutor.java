@@ -20,7 +20,7 @@ import org.springframework.web.client.RestClient;
  * 임계값 이상일 때 사용됩니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
         value = "EI_EXPOSE_REP2",
         justification = "Spring-managed bean injection")

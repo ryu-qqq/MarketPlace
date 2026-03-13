@@ -1,14 +1,17 @@
 package com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.repository;
 
+import static com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.entity.QOutboundProductJpaEntity.outboundProductJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.QOutboundSyncOutboxJpaEntity.outboundSyncOutboxJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.product.entity.QProductJpaEntity.productJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.QProductGroupImageJpaEntity.productGroupImageJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.entity.QSellerSalesChannelJpaEntity.sellerSalesChannelJpaEntity;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductMainImageDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductPriceStockDto;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductShopInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductSyncInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.condition.OmsProductEnrichmentConditionBuilder;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.QOutboundSyncOutboxJpaEntity;
@@ -129,6 +132,40 @@ public class OmsProductEnrichmentQueryDslRepository {
                 .collect(
                         Collectors.toMap(
                                 OmsProductSyncInfoDto::productGroupId,
+                                Function.identity(),
+                                (first, second) -> first));
+    }
+
+    /**
+     * 상품그룹별 샵 정보 조회.
+     *
+     * <p>outbound_products → seller_sales_channels 조인으로 shopId, displayName을 가져온다. 상품그룹당 첫 번째 채널
+     * 정보를 반환한다.
+     *
+     * @param pgIds 상품그룹 ID 목록
+     * @return productGroupId → 샵 정보 DTO
+     */
+    public Map<Long, OmsProductShopInfoDto> fetchShopInfo(List<Long> pgIds) {
+        List<OmsProductShopInfoDto> results =
+                queryFactory
+                        .select(
+                                Projections.constructor(
+                                        OmsProductShopInfoDto.class,
+                                        outboundProductJpaEntity.productGroupId,
+                                        sellerSalesChannelJpaEntity.shopId,
+                                        sellerSalesChannelJpaEntity.displayName))
+                        .from(outboundProductJpaEntity)
+                        .innerJoin(sellerSalesChannelJpaEntity)
+                        .on(
+                                sellerSalesChannelJpaEntity.salesChannelId.eq(
+                                        outboundProductJpaEntity.salesChannelId))
+                        .where(outboundProductJpaEntity.productGroupId.in(pgIds))
+                        .fetch();
+
+        return results.stream()
+                .collect(
+                        Collectors.toMap(
+                                OmsProductShopInfoDto::productGroupId,
                                 Function.identity(),
                                 (first, second) -> first));
     }

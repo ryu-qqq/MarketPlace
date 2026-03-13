@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
  * <p>세토프 커머스 v2 Admin API 스펙에 맞춰 변환합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 public class SetofCommerceProductMapper {
 
     /**

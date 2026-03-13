@@ -21,7 +21,7 @@ public class OrderItemQueryAdapter implements OrderItemQueryPort {
     }
 
     @Override
-    public List<OrderItem> findAllByIds(List<Long> orderItemIds) {
+    public List<OrderItem> findAllByIds(List<String> orderItemIds) {
         return itemRepository.findAllById(orderItemIds).stream().map(mapper::toOrderItem).toList();
     }
 }
