@@ -380,13 +380,15 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1),
+                                1,
+                                List.of()),
                         new ProductGroupImageResult(
                                 2L,
                                 "https://origin.example.com/img2.jpg",
                                 "https://cdn.example.com/img2.jpg",
                                 "DETAIL",
-                                2));
+                                2,
+                                List.of()));
 
         ProductOptionMatrixResult matrix = createProductOptionMatrixResult();
         ShippingPolicyResult shippingPolicy = createShippingPolicyResult();
@@ -427,7 +429,8 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1));
+                                1,
+                                List.of()));
 
         ProductOptionMatrixResult matrix = createProductOptionMatrixResult();
 
@@ -464,13 +467,15 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1),
+                                1,
+                                List.of()),
                         new ProductGroupImageApiResponse(
                                 2L,
                                 "https://origin.example.com/img2.jpg",
                                 "https://cdn.example.com/img2.jpg",
                                 "DETAIL",
-                                2));
+                                2,
+                                List.of()));
 
         ProductOptionMatrixApiResponse matrix = createProductOptionMatrixApiResponse();
         ShippingPolicyApiResponse shippingPolicy = createShippingPolicyApiResponse();
@@ -513,13 +518,15 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1),
+                                1,
+                                List.of()),
                         new ProductGroupImageResult(
                                 2L,
                                 "https://origin.example.com/img2.jpg",
                                 "https://cdn.example.com/img2.jpg",
                                 "DETAIL",
-                                2));
+                                2,
+                                List.of()));
 
         List<ProductResult> products =
                 List.of(createProductResult(1L, id), createProductResult(2L, id));
@@ -556,13 +563,15 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1),
+                                1,
+                                List.of()),
                         new ProductGroupImageApiResponse(
                                 2L,
                                 "https://origin.example.com/img2.jpg",
                                 "https://cdn.example.com/img2.jpg",
                                 "DETAIL",
-                                2));
+                                2,
+                                List.of()));
 
         List<ProductExcelApiResponse> products =
                 List.of(

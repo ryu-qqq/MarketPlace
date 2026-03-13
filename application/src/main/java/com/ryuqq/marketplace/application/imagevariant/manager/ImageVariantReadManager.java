@@ -21,4 +21,10 @@ public class ImageVariantReadManager {
     public List<ImageVariant> findBySourceImageId(Long sourceImageId, ImageSourceType sourceType) {
         return queryPort.findBySourceImageId(sourceImageId, sourceType);
     }
+
+    @Transactional(readOnly = true)
+    public List<ImageVariant> findBySourceImageIds(
+            List<Long> sourceImageIds, ImageSourceType sourceType) {
+        return queryPort.findBySourceImageIds(sourceImageIds, sourceType);
+    }
 }

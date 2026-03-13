@@ -237,7 +237,8 @@ public final class OmsApiFixtures {
                 "https://example.com/origin.jpg",
                 "https://example.com/uploaded.jpg",
                 "MAIN",
-                1);
+                1,
+                java.util.List.of());
     }
 
     public static SyncSummaryResult syncSummaryResult() {

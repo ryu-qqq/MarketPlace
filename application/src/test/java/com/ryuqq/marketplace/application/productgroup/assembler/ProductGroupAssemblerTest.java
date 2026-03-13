@@ -223,7 +223,8 @@ class ProductGroupAssemblerTest {
                             group,
                             List.of(),
                             Optional.empty(),
-                            Optional.empty());
+                            Optional.empty(),
+                            Map.of());
 
             // when
             ProductGroupDetailCompositeResult result = sut.toDetailResult(bundle);
@@ -245,7 +246,8 @@ class ProductGroupAssemblerTest {
                             group,
                             List.of(),
                             Optional.empty(),
-                            Optional.empty());
+                            Optional.empty(),
+                            Map.of());
 
             // when
             ProductGroupDetailCompositeResult result = sut.toDetailResult(bundle);
@@ -304,7 +306,8 @@ class ProductGroupAssemblerTest {
                 group,
                 List.of(),
                 Optional.empty(),
-                Optional.empty());
+                Optional.empty(),
+                Map.of());
     }
 
     private ProductGroupDetailCompositeQueryResult createQueryResult(

@@ -52,7 +52,8 @@ public class OmsProductCompositionQueryAdapter implements OmsProductCompositionQ
                 enrichmentRepository.fetchPriceStock(pgIds);
         Map<Long, OmsProductSyncInfoDto> syncInfoMap =
                 enrichmentRepository.fetchLatestSyncInfo(pgIds);
-        Map<Long, OmsProductShopInfoDto> shopInfoMap = enrichmentRepository.fetchShopInfo(pgIds);
+        Map<Long, OmsProductShopInfoDto> shopInfoMap =
+                enrichmentRepository.fetchShopInfo(pgIds, criteria.shopIds());
 
         return mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap, shopInfoMap);
     }

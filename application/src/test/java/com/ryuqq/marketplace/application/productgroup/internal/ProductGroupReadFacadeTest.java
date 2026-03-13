@@ -1,9 +1,12 @@
 package com.ryuqq.marketplace.application.productgroup.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.imagevariant.manager.ImageVariantReadManager;
 import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.manager.ProductReadManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
@@ -18,6 +21,7 @@ import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadMa
 import com.ryuqq.marketplace.application.productgroupdescription.manager.ProductGroupDescriptionReadManager;
 import com.ryuqq.marketplace.application.productgroupimage.manager.ProductGroupImageReadManager;
 import com.ryuqq.marketplace.application.productnotice.manager.ProductNoticeReadManager;
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
@@ -52,6 +56,7 @@ class ProductGroupReadFacadeTest {
     @Mock private ProductReadManager productReadManager;
     @Mock private ProductNoticeReadManager productNoticeReadManager;
     @Mock private ProductGroupImageReadManager imageReadManager;
+    @Mock private ImageVariantReadManager imageVariantReadManager;
 
     @Nested
     @DisplayName("getListBundle() - Offset 기반 목록 조회 번들")
@@ -152,6 +157,9 @@ class ProductGroupReadFacadeTest {
             given(productReadManager.findByProductGroupId(groupId)).willReturn(products);
             given(descriptionReadManager.findByProductGroupId(groupId)).willReturn(description);
             given(productNoticeReadManager.findByProductGroupId(groupId)).willReturn(notice);
+            given(imageVariantReadManager.findBySourceImageIds(
+                            any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE)))
+                    .willReturn(List.of());
 
             // when
             ProductGroupDetailBundle result = sut.getDetailBundle(productGroupId);
@@ -163,6 +171,7 @@ class ProductGroupReadFacadeTest {
             assertThat(result.products()).isEmpty();
             assertThat(result.description()).isEmpty();
             assertThat(result.notice()).isEmpty();
+            assertThat(result.variantsByImageId()).isEmpty();
         }
 
         @Test
@@ -181,6 +190,9 @@ class ProductGroupReadFacadeTest {
                     .willReturn(Optional.empty());
             given(productNoticeReadManager.findByProductGroupId(groupId))
                     .willReturn(Optional.empty());
+            given(imageVariantReadManager.findBySourceImageIds(
+                            any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE)))
+                    .willReturn(List.of());
 
             // when
             sut.getDetailBundle(productGroupId);
@@ -191,6 +203,9 @@ class ProductGroupReadFacadeTest {
             then(productReadManager).should().findByProductGroupId(groupId);
             then(descriptionReadManager).should().findByProductGroupId(groupId);
             then(productNoticeReadManager).should().findByProductGroupId(groupId);
+            then(imageVariantReadManager)
+                    .should()
+                    .findBySourceImageIds(any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE));
         }
 
         @Test
@@ -212,6 +227,9 @@ class ProductGroupReadFacadeTest {
                     .willReturn(Optional.of(description));
             given(productNoticeReadManager.findByProductGroupId(groupId))
                     .willReturn(Optional.of(notice));
+            given(imageVariantReadManager.findBySourceImageIds(
+                            any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE)))
+                    .willReturn(List.of());
 
             // when
             ProductGroupDetailBundle result = sut.getDetailBundle(productGroupId);

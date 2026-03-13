@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -85,7 +86,7 @@ class GetProductGroupServiceTest {
                         null);
 
         return new ProductGroupDetailBundle(
-                queryResult, group, List.of(), Optional.empty(), Optional.empty());
+                queryResult, group, List.of(), Optional.empty(), Optional.empty(), Map.of());
     }
 
     private ProductGroupDetailCompositeResult createDetailCompositeResult(

@@ -377,6 +377,30 @@ class ProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.images[].sortOrder")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),
+                                            fieldWithPath("data.images[].variants[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description(
+                                                            "이미지 Variant 목록 (멀티 사이즈"
+                                                                    + " WEBP)"),
+                                            fieldWithPath("data.images[].variants[].variantType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description(
+                                                            "Variant 타입 (SMALL_WEBP,"
+                                                                    + " MEDIUM_WEBP, LARGE_WEBP,"
+                                                                    + " ORIGINAL_WEBP)")
+                                                    .optional(),
+                                            fieldWithPath("data.images[].variants[].variantUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("변환된 이미지 CDN URL")
+                                                    .optional(),
+                                            fieldWithPath("data.images[].variants[].width")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("너비(픽셀)")
+                                                    .optional(),
+                                            fieldWithPath("data.images[].variants[].height")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("높이(픽셀)")
+                                                    .optional(),
                                             fieldWithPath("data.optionProductMatrix")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("옵션-상품 매트릭스"),
@@ -925,6 +949,31 @@ class ProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].images[].sortOrder")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("정렬 순서"),
+                                            fieldWithPath("data.content[].images[].variants[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description(
+                                                            "이미지 Variant 목록 (멀티 사이즈"
+                                                                    + " WEBP)"),
+                                            fieldWithPath(
+                                                            "data.content[].images[].variants[].variantType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("Variant 타입")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.content[].images[].variants[].variantUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("변환된 이미지 CDN URL")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.content[].images[].variants[].width")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("너비(픽셀)")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.content[].images[].variants[].height")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("높이(픽셀)")
+                                                    .optional(),
                                             fieldWithPath("data.content[].products[]")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("상품(SKU) 목록"),

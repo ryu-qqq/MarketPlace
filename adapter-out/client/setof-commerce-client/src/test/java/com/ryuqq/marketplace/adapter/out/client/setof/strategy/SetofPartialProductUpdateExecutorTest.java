@@ -27,6 +27,7 @@ import com.ryuqq.marketplace.domain.sellersaleschannel.SellerSalesChannelFixture
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -319,7 +320,8 @@ class SetofPartialProductUpdateExecutorTest {
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
                 Optional.empty(),
-                Optional.empty());
+                Optional.empty(),
+                Map.of());
     }
 
     private ProductGroupDetailBundle createBundleWithDescription() {
@@ -346,7 +348,8 @@ class SetofPartialProductUpdateExecutorTest {
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
                 Optional.of(ProductGroupFixtures.defaultProductGroupDescription()),
-                Optional.empty());
+                Optional.empty(),
+                Map.of());
     }
 
     private ProductGroupDetailBundle createBundleWithNotice(
@@ -374,6 +377,7 @@ class SetofPartialProductUpdateExecutorTest {
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
                 Optional.empty(),
-                Optional.of(notice));
+                Optional.of(notice),
+                Map.of());
     }
 }

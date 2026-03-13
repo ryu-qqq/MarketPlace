@@ -139,14 +139,15 @@ public class OmsProductEnrichmentQueryDslRepository {
     /**
      * 상품그룹별 샵 정보 조회.
      *
-     * <p>outbound_products → seller_sales_channels 조인으로 shopId, displayName을 가져온다. 상품그룹당 첫 번째 채널
-     * 정보를 반환한다.
+     * <p>outbound_products → shops 조인으로 shopId, shopName을 가져온다. shopIds 필터가 있으면 해당 샵만 조회하고, 없으면
+     * 상품그룹당 첫 번째 샵 정보를 반환한다.
      *
      * @param pgIds 상품그룹 ID 목록
+     * @param shopIds 샵 ID 필터 (빈 리스트면 전체)
      * @return productGroupId → 샵 정보 DTO
      */
-    public Map<Long, OmsProductShopInfoDto> fetchShopInfo(List<Long> pgIds) {
-        List<OmsProductShopInfoDto> results =
+    public Map<Long, OmsProductShopInfoDto> fetchShopInfo(List<Long> pgIds, List<Long> shopIds) {
+        var query =
                 queryFactory
                         .select(
                                 Projections.constructor(
@@ -157,8 +158,13 @@ public class OmsProductEnrichmentQueryDslRepository {
                         .from(outboundProductJpaEntity)
                         .innerJoin(shopJpaEntity)
                         .on(shopJpaEntity.id.eq(outboundProductJpaEntity.shopId))
-                        .where(outboundProductJpaEntity.productGroupId.in(pgIds))
-                        .fetch();
+                        .where(outboundProductJpaEntity.productGroupId.in(pgIds));
+
+        if (shopIds != null && !shopIds.isEmpty()) {
+            query.where(outboundProductJpaEntity.shopId.in(shopIds));
+        }
+
+        List<OmsProductShopInfoDto> results = query.fetch();
 
         return results.stream()
                 .collect(

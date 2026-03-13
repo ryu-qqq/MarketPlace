@@ -1,5 +1,7 @@
 package com.ryuqq.marketplace.application.productgroup.internal;
 
+import com.ryuqq.marketplace.application.imagevariant.dto.response.ImageVariantResult;
+import com.ryuqq.marketplace.application.imagevariant.manager.ImageVariantReadManager;
 import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.manager.ProductReadManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
@@ -16,6 +18,8 @@ import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductG
 import com.ryuqq.marketplace.application.productgroupimage.manager.ProductGroupImageReadManager;
 import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import com.ryuqq.marketplace.application.productnotice.manager.ProductNoticeReadManager;
+import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
+import com.ryuqq.marketplace.domain.imagevariant.aggregate.ImageVariant;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
@@ -44,6 +48,7 @@ public class ProductGroupReadFacade {
     private final ProductReadManager productReadManager;
     private final ProductNoticeReadManager productNoticeReadManager;
     private final ProductGroupImageReadManager imageReadManager;
+    private final ImageVariantReadManager imageVariantReadManager;
 
     public ProductGroupReadFacade(
             ProductGroupCompositionReadManager compositionReadManager,
@@ -51,13 +56,15 @@ public class ProductGroupReadFacade {
             ProductGroupDescriptionReadManager descriptionReadManager,
             ProductReadManager productReadManager,
             ProductNoticeReadManager productNoticeReadManager,
-            ProductGroupImageReadManager imageReadManager) {
+            ProductGroupImageReadManager imageReadManager,
+            ImageVariantReadManager imageVariantReadManager) {
         this.compositionReadManager = compositionReadManager;
         this.productGroupReadManager = productGroupReadManager;
         this.descriptionReadManager = descriptionReadManager;
         this.productReadManager = productReadManager;
         this.productNoticeReadManager = productNoticeReadManager;
         this.imageReadManager = imageReadManager;
+        this.imageVariantReadManager = imageVariantReadManager;
     }
 
     /**
@@ -168,6 +175,19 @@ public class ProductGroupReadFacade {
 
         Optional<ProductNotice> notice = productNoticeReadManager.findByProductGroupId(groupId);
 
-        return new ProductGroupDetailBundle(queryResult, group, products, description, notice);
+        List<Long> imageIds = group.images().stream().map(img -> img.idValue()).toList();
+
+        Map<Long, List<ImageVariantResult>> variantsByImageId =
+                imageVariantReadManager
+                        .findBySourceImageIds(imageIds, ImageSourceType.PRODUCT_GROUP_IMAGE)
+                        .stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        ImageVariant::sourceImageId,
+                                        Collectors.mapping(
+                                                ImageVariantResult::from, Collectors.toList())));
+
+        return new ProductGroupDetailBundle(
+                queryResult, group, products, description, notice, variantsByImageId);
     }
 }

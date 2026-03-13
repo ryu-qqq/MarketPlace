@@ -1,10 +1,12 @@
 package com.ryuqq.marketplace.application.productgroup.dto.composite;
 
+import com.ryuqq.marketplace.application.imagevariant.dto.response.ImageVariantResult;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -17,10 +19,17 @@ import java.util.Optional;
  * @param products 상품 목록
  * @param description 상품 상세설명
  * @param notice 상품 고시정보
+ * @param variantsByImageId 이미지 ID별 Variant 목록
  */
 public record ProductGroupDetailBundle(
         ProductGroupDetailCompositeQueryResult queryResult,
         ProductGroup group,
         List<Product> products,
         Optional<ProductGroupDescription> description,
-        Optional<ProductNotice> notice) {}
+        Optional<ProductNotice> notice,
+        Map<Long, List<ImageVariantResult>> variantsByImageId) {
+
+    public ProductGroupDetailBundle {
+        variantsByImageId = variantsByImageId != null ? Map.copyOf(variantsByImageId) : Map.of();
+    }
+}

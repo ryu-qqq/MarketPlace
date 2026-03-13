@@ -24,6 +24,7 @@ import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -65,7 +66,7 @@ class SetofCommerceProductMapperTest {
             Optional<ProductGroupDescription> description,
             Optional<ProductNotice> notice) {
         return new ProductGroupDetailBundle(
-                createQueryResult(null, null), group, products, description, notice);
+                createQueryResult(null, null), group, products, description, notice, Map.of());
     }
 
     private ProductGroupDetailBundle createBundleWithPolicies(
@@ -75,7 +76,8 @@ class SetofCommerceProductMapperTest {
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
                 Optional.empty(),
-                Optional.empty());
+                Optional.empty(),
+                Map.of());
     }
 
     @Nested

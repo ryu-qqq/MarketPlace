@@ -92,7 +92,7 @@ class OmsProductCompositionQueryAdapterTest {
             given(enrichmentRepository.fetchMainImages(anyList())).willReturn(imageMap);
             given(enrichmentRepository.fetchPriceStock(anyList())).willReturn(priceStockMap);
             given(enrichmentRepository.fetchLatestSyncInfo(anyList())).willReturn(syncInfoMap);
-            given(enrichmentRepository.fetchShopInfo(anyList())).willReturn(shopInfoMap);
+            given(enrichmentRepository.fetchShopInfo(anyList(), anyList())).willReturn(shopInfoMap);
             given(mapper.toResults(any(), any(), any(), any(), any())).willReturn(expected);
 
             // when
@@ -104,7 +104,7 @@ class OmsProductCompositionQueryAdapterTest {
             then(enrichmentRepository).should().fetchMainImages(anyList());
             then(enrichmentRepository).should().fetchPriceStock(anyList());
             then(enrichmentRepository).should().fetchLatestSyncInfo(anyList());
-            then(enrichmentRepository).should().fetchShopInfo(anyList());
+            then(enrichmentRepository).should().fetchShopInfo(anyList(), anyList());
             then(mapper).should().toResults(any(), any(), any(), any(), any());
         }
 
@@ -137,7 +137,7 @@ class OmsProductCompositionQueryAdapterTest {
             given(enrichmentRepository.fetchMainImages(anyList())).willReturn(Map.of());
             given(enrichmentRepository.fetchPriceStock(anyList())).willReturn(Map.of());
             given(enrichmentRepository.fetchLatestSyncInfo(anyList())).willReturn(Map.of());
-            given(enrichmentRepository.fetchShopInfo(anyList())).willReturn(Map.of());
+            given(enrichmentRepository.fetchShopInfo(anyList(), anyList())).willReturn(Map.of());
             given(mapper.toResults(any(), any(), any(), any(), any())).willReturn(List.of());
 
             // when
@@ -147,7 +147,7 @@ class OmsProductCompositionQueryAdapterTest {
             then(enrichmentRepository).should().fetchMainImages(anyList());
             then(enrichmentRepository).should().fetchPriceStock(anyList());
             then(enrichmentRepository).should().fetchLatestSyncInfo(anyList());
-            then(enrichmentRepository).should().fetchShopInfo(anyList());
+            then(enrichmentRepository).should().fetchShopInfo(anyList(), anyList());
         }
     }
 
