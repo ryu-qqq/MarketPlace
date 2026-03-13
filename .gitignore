@@ -81,3 +81,6 @@ docs/seller/seed_data.sql
 # Naver API reference docs (external)
 docs/reference/NAVER_*
 docs/reference/naver_*
+
+# Auto-generated guides (AI/documentation artifacts)
+docs/guide/

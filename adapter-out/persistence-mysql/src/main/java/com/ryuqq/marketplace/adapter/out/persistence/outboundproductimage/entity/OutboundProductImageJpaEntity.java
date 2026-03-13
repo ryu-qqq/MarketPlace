@@ -69,7 +69,7 @@ public class OutboundProductImageJpaEntity extends BaseAuditEntity {
         this.deletedAt = deletedAt;
     }
 
-    public static OutboundProductImageJpaEntity create(
+    public static OutboundProductImageJpaEntity of(
             Long id,
             Long outboundProductId,
             Long productGroupImageId,

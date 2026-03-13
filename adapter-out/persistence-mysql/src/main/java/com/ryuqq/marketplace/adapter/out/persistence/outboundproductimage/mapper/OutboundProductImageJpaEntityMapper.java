@@ -16,7 +16,7 @@ public class OutboundProductImageJpaEntityMapper {
 
     public OutboundProductImageJpaEntity toEntity(OutboundProductImage domain) {
         Instant now = Instant.now();
-        return OutboundProductImageJpaEntity.create(
+        return OutboundProductImageJpaEntity.of(
                 domain.idValue(),
                 domain.outboundProductIdValue(),
                 domain.productGroupImageIdValue(),
