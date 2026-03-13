@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.order.factory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
 import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
@@ -50,7 +51,7 @@ class OrderCommandFactoryTest {
             assertThat(result).isNotNull();
             assertThat(result.orderNumber()).isNotNull();
             then(timeProvider).should().now();
-            then(idGeneratorPort).should().generate();
+            then(idGeneratorPort).should(times(2)).generate();
         }
 
         @Test

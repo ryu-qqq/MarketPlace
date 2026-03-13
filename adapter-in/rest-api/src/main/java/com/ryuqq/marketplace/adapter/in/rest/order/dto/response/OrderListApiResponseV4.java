@@ -29,7 +29,8 @@ public record OrderListApiResponseV4(
 
     @Schema(description = "결제 정보 (V4 PaymentDetail)")
     public record PaymentDetailApiResponse(
-            @Schema(description = "결제 ID") long paymentId,
+            @Schema(description = "결제 ID (UUIDv7)") String paymentId,
+            @Schema(description = "결제 번호 (PAY-YYYYMMDD-XXXX)") String paymentNumber,
             @Schema(description = "PG사 거래 ID") String paymentAgencyId,
             @Schema(description = "결제 상태") String paymentStatus,
             @Schema(description = "결제 수단") String paymentMethod,
