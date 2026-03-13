@@ -1,0 +1,7 @@
+setof-commerce:
+  base-url: ${SETOF_COMMERCE_BASE_URL:http://setof-commerce-web-api-admin-stage.connectly.local:8081}
+  service-name: SVC_MARKETPLACE
+  service-token: ${SETOF_COMMERCE_SERVICE_TOKEN:test-token}
+  timeout:
+    connect: 5s
+    read: 30s

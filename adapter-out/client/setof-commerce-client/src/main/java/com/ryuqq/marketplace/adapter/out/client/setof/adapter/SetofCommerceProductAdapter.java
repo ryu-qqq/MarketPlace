@@ -16,7 +16,7 @@ import org.springframework.web.client.RestClient;
  * <p>가격, 재고, 상품+옵션 일괄 수정 엔드포인트를 호출합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 public class SetofCommerceProductAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceProductAdapter.class);

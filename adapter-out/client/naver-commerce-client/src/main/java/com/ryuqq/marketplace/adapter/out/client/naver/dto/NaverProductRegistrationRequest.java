@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 /**
- * 네이버 커머스 상품 등록 요청 DTO.
+ * 네이버 커머스 상품 등록/수정 요청 DTO.
  *
- * <p>POST /v2/products 요청 본문. 네이버 커머스 일반상품 등록 API 스펙에 맞는 중첩 record 구조입니다.
+ * <p>POST /v2/products (등록), PUT /v2/products/origin-products/{id} (수정) 요청 본문.
  *
  * @see <a href="https://apicenter.commerce.naver.com/ko/basic/commerce-api">Naver Commerce API</a>
  */
@@ -49,14 +49,40 @@ public record NaverProductRegistrationRequest(
     /** 상세 속성. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record DetailAttribute(
-            Long naverShoppingSearchInfo, OptionInfo optionInfo, Long brandId) {
+            NaverShoppingSearchInfo naverShoppingSearchInfo,
+            OptionInfo optionInfo,
+            AfterServiceInfo afterServiceInfo,
+            OriginAreaInfo originAreaInfo,
+            Boolean minorPurchasable) {
 
-        /** 네이버 쇼핑 검색 정보 (categoryId). */
+        /** 팩토리 메서드 - 카테고리/브랜드 기반. */
         public static DetailAttribute of(
-                Long naverCategoryId, OptionInfo optionInfo, Long brandId) {
-            return new DetailAttribute(naverCategoryId, optionInfo, brandId);
+                Long naverCategoryId,
+                OptionInfo optionInfo,
+                Long brandId,
+                AfterServiceInfo afterServiceInfo,
+                OriginAreaInfo originAreaInfo,
+                Boolean minorPurchasable) {
+            NaverShoppingSearchInfo searchInfo =
+                    new NaverShoppingSearchInfo(null, null, naverCategoryId, brandId);
+            return new DetailAttribute(
+                    searchInfo, optionInfo, afterServiceInfo, originAreaInfo, minorPurchasable);
         }
     }
+
+    /** 네이버 쇼핑 검색 정보. */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record NaverShoppingSearchInfo(
+            String manufacturerName, String brandName, Long categoryId, Long brandId) {}
+
+    /** A/S 정보. */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record AfterServiceInfo(
+            String afterServiceTelephoneNumber, String afterServiceGuideContent) {}
+
+    /** 원산지 정보. */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record OriginAreaInfo(String originAreaCode, String content) {}
 
     /** 옵션 정보. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -96,9 +122,14 @@ public record NaverProductRegistrationRequest(
     public record DeliveryInfo(
             String deliveryType,
             String deliveryAttributeType,
-            String deliveryFee,
+            DeliveryFee deliveryFee,
+            String deliveryCompany,
             DeliveryFeeByArea deliveryFeeByArea,
             ClaimDeliveryInfo claimDeliveryInfo) {
+
+        /** 배송비 정보. */
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public record DeliveryFee(String deliveryFeeType, int baseFee) {}
 
         /** 지역별 추가 배송비. */
         @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -131,5 +162,7 @@ public record NaverProductRegistrationRequest(
     /** 스마트스토어 채널 상품 정보. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record SmartstoreChannelProduct(
-            String channelProductName, Long storeKeepExclusiveProduct) {}
+            String channelProductName,
+            String channelProductDisplayStatusType,
+            Long storeKeepExclusiveProduct) {}
 }

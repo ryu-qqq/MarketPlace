@@ -14,7 +14,7 @@ import org.springframework.web.client.RestClient;
  * <p>고시정보 등록/수정 엔드포인트를 호출합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 public class SetofCommerceNoticeAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceNoticeAdapter.class);
