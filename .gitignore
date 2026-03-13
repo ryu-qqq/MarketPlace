@@ -78,6 +78,9 @@ tfplan
 local-dev/data/legacy-seed/
 docs/seller/seed_data.sql
 
+# Naver commerce client test config (contains credential placeholders)
+adapter-out/client/naver-commerce-client/src/test/resources/application-naver-test.yml
+
 # Naver API reference docs (external)
 docs/reference/NAVER_*
 docs/reference/naver_*
