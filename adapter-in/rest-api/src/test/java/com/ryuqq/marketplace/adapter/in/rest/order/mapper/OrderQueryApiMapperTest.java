@@ -460,7 +460,10 @@ class OrderQueryApiMapperTest {
             OrderListApiResponseV4 response = mapper.toListResponseV4(result);
 
             // then
-            assertThat(response.payment().paymentId()).isZero();
+            assertThat(response.payment().paymentId())
+                    .isEqualTo(OrderApiFixtures.DEFAULT_PAYMENT_ID);
+            assertThat(response.payment().paymentNumber())
+                    .isEqualTo(OrderApiFixtures.DEFAULT_PAYMENT_NUMBER);
             assertThat(response.payment().userId()).isZero();
             assertThat(response.payment().billAmount()).isZero();
             assertThat(response.payment().usedMileageAmount()).isZero();

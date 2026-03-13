@@ -417,10 +417,11 @@ public class OrderQueryApiMapper {
             ProductOrderListResult.PaymentInfo payment, ProductOrderListResult.OrderInfo order) {
         if (payment == null) {
             return new OrderListApiResponseV4.PaymentDetailApiResponse(
-                    0L, "", "", "", "", "", 0L, "", 0, 0, 0);
+                    "", "", "", "", "", "", "", 0L, "", 0, 0, 0);
         }
         return new OrderListApiResponseV4.PaymentDetailApiResponse(
-                0L,
+                nullToEmpty(payment.paymentId()),
+                nullToEmpty(payment.paymentNumber()),
                 nullToEmpty(payment.paymentAgencyId()),
                 nullToEmpty(payment.paymentStatus()),
                 nullToEmpty(payment.paymentMethod()),
