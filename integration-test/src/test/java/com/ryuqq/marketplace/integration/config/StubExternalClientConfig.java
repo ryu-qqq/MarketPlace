@@ -348,13 +348,37 @@ public class StubExternalClientConfig {
     @Bean
     @Primary
     public CategoryMappingQueryPort stubCategoryMappingQueryPort() {
-        return (salesChannelId, internalCategoryId) -> Optional.of(internalCategoryId);
+        return new CategoryMappingQueryPort() {
+            @Override
+            public Optional<Long> findSalesChannelCategoryId(
+                    Long salesChannelId, Long internalCategoryId) {
+                return Optional.of(internalCategoryId);
+            }
+
+            @Override
+            public Optional<String> findExternalCategoryCode(
+                    Long salesChannelId, Long internalCategoryId) {
+                return Optional.of(String.valueOf(internalCategoryId));
+            }
+        };
     }
 
     @Bean
     @Primary
     public BrandMappingQueryPort stubBrandMappingQueryPort() {
-        return (salesChannelId, internalBrandId) -> Optional.of(internalBrandId);
+        return new BrandMappingQueryPort() {
+            @Override
+            public Optional<Long> findSalesChannelBrandId(
+                    Long salesChannelId, Long internalBrandId) {
+                return Optional.of(internalBrandId);
+            }
+
+            @Override
+            public Optional<String> findExternalBrandCode(
+                    Long salesChannelId, Long internalBrandId) {
+                return Optional.of(String.valueOf(internalBrandId));
+            }
+        };
     }
 
     @Bean

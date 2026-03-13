@@ -1,4 +1,10 @@
 package com.ryuqq.marketplace.application.outboundsync.dto.vo;
 
 /** 판매채널 카테고리/브랜드 매핑 결과. */
-public record SalesChannelMappingResult(Long categoryId, Long brandId) {}
+public record SalesChannelMappingResult(
+        Long categoryId, Long brandId, String externalCategoryCode, String externalBrandCode) {
+
+    public SalesChannelMappingResult(Long categoryId, Long brandId) {
+        this(categoryId, brandId, null, null);
+    }
+}

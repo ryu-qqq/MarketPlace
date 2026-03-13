@@ -80,8 +80,8 @@ public class NaverCreateProductStrategy implements OutboundSyncExecutionStrategy
                     productClientManager.registerProduct(
                             NAVER_CHANNEL_CODE,
                             bundle,
-                            mapping.categoryId(),
-                            mapping.brandId(),
+                            Long.parseLong(mapping.externalCategoryCode()),
+                            Long.parseLong(mapping.externalBrandCode()),
                             context.sellerSalesChannel(),
                             resolvedImages);
 

@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.brandmapping.repository;
 
 import static com.ryuqq.marketplace.adapter.out.persistence.brandpreset.entity.QBrandPresetJpaEntity.brandPresetJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.saleschannelbrand.entity.QSalesChannelBrandJpaEntity.salesChannelBrandJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.shop.entity.QShopJpaEntity.shopJpaEntity;
 
 import com.querydsl.core.types.Projections;
@@ -59,6 +60,30 @@ public class BrandMappingQueryDslRepository {
                         .on(brandMapping.presetId.eq(brandPresetJpaEntity.id))
                         .join(shopJpaEntity)
                         .on(brandPresetJpaEntity.shopId.eq(shopJpaEntity.id))
+                        .where(
+                                brandMapping.internalBrandId.eq(internalBrandId),
+                                shopJpaEntity.salesChannelId.eq(salesChannelId),
+                                brandMapping.status.eq("ACTIVE"),
+                                brandPresetJpaEntity.status.eq("ACTIVE"))
+                        .fetchFirst());
+    }
+
+    /**
+     * 내부 브랜드 ID → 외부 브랜드 코드 역조회.
+     *
+     * <p>BrandMapping → BrandPreset → Shop → SalesChannelBrand 4-way JOIN.
+     */
+    public Optional<String> findExternalBrandCode(Long salesChannelId, Long internalBrandId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .select(salesChannelBrandJpaEntity.externalBrandCode)
+                        .from(brandMapping)
+                        .join(brandPresetJpaEntity)
+                        .on(brandMapping.presetId.eq(brandPresetJpaEntity.id))
+                        .join(shopJpaEntity)
+                        .on(brandPresetJpaEntity.shopId.eq(shopJpaEntity.id))
+                        .join(salesChannelBrandJpaEntity)
+                        .on(salesChannelBrandJpaEntity.id.eq(brandMapping.salesChannelBrandId))
                         .where(
                                 brandMapping.internalBrandId.eq(internalBrandId),
                                 shopJpaEntity.salesChannelId.eq(salesChannelId),

@@ -72,6 +72,13 @@ tasks.test {
     }
 }
 
+tasks.register('externalIntegrationTest', Test) {
+    group = 'verification'
+    useJUnitPlatform {
+        includeTags 'external-integration'
+    }
+}
+
 tasks.jacocoTestCoverageVerification {
     dependsOn tasks.test
     onlyIf {

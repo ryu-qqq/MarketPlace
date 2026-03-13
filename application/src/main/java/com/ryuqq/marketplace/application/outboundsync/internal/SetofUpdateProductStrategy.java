@@ -74,8 +74,8 @@ public class SetofUpdateProductStrategy implements OutboundSyncExecutionStrategy
             productClientManager.updateProduct(
                     SETOF_CHANNEL_CODE,
                     bundle,
-                    mapping.categoryId(),
-                    mapping.brandId(),
+                    Long.parseLong(mapping.externalCategoryCode()),
+                    Long.parseLong(mapping.externalBrandCode()),
                     outboundProduct.externalProductId(),
                     context.sellerSalesChannel(),
                     context.changedAreas());

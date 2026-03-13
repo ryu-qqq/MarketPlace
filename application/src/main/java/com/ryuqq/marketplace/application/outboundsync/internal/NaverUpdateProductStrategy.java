@@ -83,8 +83,8 @@ public class NaverUpdateProductStrategy implements OutboundSyncExecutionStrategy
             productClientManager.updateProduct(
                     NAVER_CHANNEL_CODE,
                     bundle,
-                    mapping.categoryId(),
-                    mapping.brandId(),
+                    Long.parseLong(mapping.externalCategoryCode()),
+                    Long.parseLong(mapping.externalBrandCode()),
                     outboundProduct.externalProductId(),
                     context.sellerSalesChannel(),
                     context.changedAreas(),

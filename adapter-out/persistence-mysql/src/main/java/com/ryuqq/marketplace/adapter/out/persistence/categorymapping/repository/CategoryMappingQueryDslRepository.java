@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.categorymapping.repository;
 
 import static com.ryuqq.marketplace.adapter.out.persistence.categorypreset.entity.QCategoryPresetJpaEntity.categoryPresetJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.saleschannelcategory.entity.QSalesChannelCategoryJpaEntity.salesChannelCategoryJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.shop.entity.QShopJpaEntity.shopJpaEntity;
 
 import com.querydsl.core.types.Projections;
@@ -61,6 +62,32 @@ public class CategoryMappingQueryDslRepository {
                         .on(categoryMapping.presetId.eq(categoryPresetJpaEntity.id))
                         .join(shopJpaEntity)
                         .on(categoryPresetJpaEntity.shopId.eq(shopJpaEntity.id))
+                        .where(
+                                categoryMapping.internalCategoryId.eq(internalCategoryId),
+                                shopJpaEntity.salesChannelId.eq(salesChannelId),
+                                categoryMapping.status.eq("ACTIVE"),
+                                categoryPresetJpaEntity.status.eq("ACTIVE"))
+                        .fetchFirst());
+    }
+
+    /**
+     * 내부 카테고리 ID → 외부 카테고리 코드 역조회.
+     *
+     * <p>CategoryMapping → CategoryPreset → Shop → SalesChannelCategory 4-way JOIN.
+     */
+    public Optional<String> findExternalCategoryCode(Long salesChannelId, Long internalCategoryId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .select(salesChannelCategoryJpaEntity.externalCategoryCode)
+                        .from(categoryMapping)
+                        .join(categoryPresetJpaEntity)
+                        .on(categoryMapping.presetId.eq(categoryPresetJpaEntity.id))
+                        .join(shopJpaEntity)
+                        .on(categoryPresetJpaEntity.shopId.eq(shopJpaEntity.id))
+                        .join(salesChannelCategoryJpaEntity)
+                        .on(
+                                salesChannelCategoryJpaEntity.id.eq(
+                                        categoryMapping.salesChannelCategoryId))
                         .where(
                                 categoryMapping.internalCategoryId.eq(internalCategoryId),
                                 shopJpaEntity.salesChannelId.eq(salesChannelId),

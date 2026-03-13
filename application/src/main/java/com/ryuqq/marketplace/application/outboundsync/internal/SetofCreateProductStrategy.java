@@ -62,8 +62,8 @@ public class SetofCreateProductStrategy implements OutboundSyncExecutionStrategy
                     productClientManager.registerProduct(
                             SETOF_CHANNEL_CODE,
                             bundle,
-                            mapping.categoryId(),
-                            mapping.brandId(),
+                            Long.parseLong(mapping.externalCategoryCode()),
+                            Long.parseLong(mapping.externalBrandCode()),
                             context.sellerSalesChannel());
 
             log.info(
