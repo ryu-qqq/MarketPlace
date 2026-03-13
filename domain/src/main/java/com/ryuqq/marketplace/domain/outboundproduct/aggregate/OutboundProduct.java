@@ -17,6 +17,7 @@ public class OutboundProduct {
     private final OutboundProductId id;
     private final ProductGroupId productGroupId;
     private final SalesChannelId salesChannelId;
+    private final long shopId;
     private String externalProductId;
     private OutboundProductStatus status;
     private final Instant createdAt;
@@ -26,6 +27,7 @@ public class OutboundProduct {
             OutboundProductId id,
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             String externalProductId,
             OutboundProductStatus status,
             Instant createdAt,
@@ -33,6 +35,7 @@ public class OutboundProduct {
         this.id = id;
         this.productGroupId = productGroupId;
         this.salesChannelId = salesChannelId;
+        this.shopId = shopId;
         this.externalProductId = externalProductId;
         this.status = status;
         this.createdAt = createdAt;
@@ -41,11 +44,15 @@ public class OutboundProduct {
 
     /** 외부 상품 ID 없이 신규 생성 (검수 후 아웃바운드 동기화 시). */
     public static OutboundProduct forNew(
-            ProductGroupId productGroupId, SalesChannelId salesChannelId, Instant now) {
+            ProductGroupId productGroupId,
+            SalesChannelId salesChannelId,
+            long shopId,
+            Instant now) {
         return new OutboundProduct(
                 OutboundProductId.forNew(),
                 productGroupId,
                 salesChannelId,
+                shopId,
                 null,
                 OutboundProductStatus.PENDING_REGISTRATION,
                 now,
@@ -56,12 +63,14 @@ public class OutboundProduct {
     public static OutboundProduct forNewWithExternalId(
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             String externalProductId,
             Instant now) {
         return new OutboundProduct(
                 OutboundProductId.forNew(),
                 productGroupId,
                 salesChannelId,
+                shopId,
                 externalProductId,
                 OutboundProductStatus.REGISTERED,
                 now,
@@ -73,6 +82,7 @@ public class OutboundProduct {
             OutboundProductId id,
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             String externalProductId,
             OutboundProductStatus status,
             Instant createdAt,
@@ -81,6 +91,7 @@ public class OutboundProduct {
                 id,
                 productGroupId,
                 salesChannelId,
+                shopId,
                 externalProductId,
                 status,
                 createdAt,
@@ -172,6 +183,10 @@ public class OutboundProduct {
 
     public Long salesChannelIdValue() {
         return salesChannelId.value();
+    }
+
+    public long shopId() {
+        return shopId;
     }
 
     public String externalProductId() {

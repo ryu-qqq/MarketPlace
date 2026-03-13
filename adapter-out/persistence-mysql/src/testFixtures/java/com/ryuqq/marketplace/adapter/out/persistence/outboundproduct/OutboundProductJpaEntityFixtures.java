@@ -19,6 +19,7 @@ public final class OutboundProductJpaEntityFixtures {
     public static final Long DEFAULT_ID = 1L;
     public static final Long DEFAULT_PRODUCT_GROUP_ID = 100L;
     public static final Long DEFAULT_SALES_CHANNEL_ID = 10L;
+    public static final Long DEFAULT_SHOP_ID = 1L;
     public static final String DEFAULT_EXTERNAL_PRODUCT_ID = "EXT-PROD-001";
     public static final String STATUS_PENDING = "PENDING_REGISTRATION";
     public static final String STATUS_REGISTERED = "REGISTERED";
@@ -34,6 +35,7 @@ public final class OutboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_PRODUCT_GROUP_ID + seq,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 null,
                 STATUS_PENDING,
                 now,
@@ -47,6 +49,7 @@ public final class OutboundProductJpaEntityFixtures {
                 id,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 null,
                 STATUS_PENDING,
                 now,
@@ -61,6 +64,7 @@ public final class OutboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_PRODUCT_GROUP_ID + seq,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 "EXT-PROD-" + seq,
                 STATUS_REGISTERED,
                 now,
@@ -74,6 +78,7 @@ public final class OutboundProductJpaEntityFixtures {
                 id,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 STATUS_REGISTERED,
                 now,
@@ -88,6 +93,7 @@ public final class OutboundProductJpaEntityFixtures {
                 null,
                 DEFAULT_PRODUCT_GROUP_ID + seq,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 null,
                 STATUS_FAILED,
                 now,
@@ -99,7 +105,14 @@ public final class OutboundProductJpaEntityFixtures {
             Long productGroupId, Long salesChannelId) {
         Instant now = Instant.now();
         return OutboundProductJpaEntity.create(
-                null, productGroupId, salesChannelId, null, STATUS_PENDING, now, now);
+                null,
+                productGroupId,
+                salesChannelId,
+                DEFAULT_SHOP_ID,
+                null,
+                STATUS_PENDING,
+                now,
+                now);
     }
 
     /** productGroupId와 salesChannelId를 지정한 REGISTERED 상태 Entity (ID null). */
@@ -111,6 +124,7 @@ public final class OutboundProductJpaEntityFixtures {
                 null,
                 productGroupId,
                 salesChannelId,
+                DEFAULT_SHOP_ID,
                 "EXT-PROD-" + seq,
                 STATUS_REGISTERED,
                 now,
@@ -124,6 +138,7 @@ public final class OutboundProductJpaEntityFixtures {
                 DEFAULT_ID,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 STATUS_REGISTERED,
                 now,
@@ -137,6 +152,7 @@ public final class OutboundProductJpaEntityFixtures {
                 id,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_SALES_CHANNEL_ID,
+                DEFAULT_SHOP_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 STATUS_REGISTERED,
                 now,

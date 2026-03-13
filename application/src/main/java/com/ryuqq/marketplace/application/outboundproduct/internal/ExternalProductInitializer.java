@@ -51,7 +51,7 @@ public class ExternalProductInitializer {
      * @return 초기화 결과
      */
     public InitResult initialize(
-            SalesChannelProductSearchClient searchClient, long salesChannelId) {
+            SalesChannelProductSearchClient searchClient, long salesChannelId, long shopId) {
         log.info(
                 "외부 상품 초기화 시작: channel={}, salesChannelId={}",
                 searchClient.channelCode(),
@@ -133,6 +133,7 @@ public class ExternalProductInitializer {
                     OutboundProduct.forNewWithExternalId(
                             ProductGroupId.of(internalGroupId),
                             SalesChannelId.of(salesChannelId),
+                            shopId,
                             entry.externalProductId(),
                             now));
         }

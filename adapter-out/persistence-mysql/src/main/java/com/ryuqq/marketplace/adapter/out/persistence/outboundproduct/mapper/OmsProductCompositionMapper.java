@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.mapper;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductListCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductMainImageDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductPriceStockDto;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductShopInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductSyncInfoDto;
 import com.ryuqq.marketplace.application.outboundproduct.dto.result.OmsProductListResult;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncStatus;
@@ -35,7 +36,8 @@ public class OmsProductCompositionMapper {
             List<OmsProductListCompositeDto> composites,
             Map<Long, OmsProductMainImageDto> imageMap,
             Map<Long, OmsProductPriceStockDto> priceStockMap,
-            Map<Long, OmsProductSyncInfoDto> syncInfoMap) {
+            Map<Long, OmsProductSyncInfoDto> syncInfoMap,
+            Map<Long, OmsProductShopInfoDto> shopInfoMap) {
 
         return composites.stream()
                 .map(
@@ -46,6 +48,7 @@ public class OmsProductCompositionMapper {
                                     priceStockMap.getOrDefault(
                                             c.productGroupId(), EMPTY_PRICE_STOCK);
                             OmsProductSyncInfoDto si = syncInfoMap.get(c.productGroupId());
+                            OmsProductShopInfoDto shop = shopInfoMap.get(c.productGroupId());
 
                             String statusLabel = resolveStatusLabel(c.status());
 
@@ -63,6 +66,9 @@ public class OmsProductCompositionMapper {
                                 lastSyncAt = null;
                             }
 
+                            Long shopId = shop != null ? shop.shopId() : null;
+                            String shopName = shop != null ? shop.shopName() : null;
+
                             return new OmsProductListResult(
                                     c.productGroupId(),
                                     "PG-" + c.productGroupId(),
@@ -76,7 +82,9 @@ public class OmsProductCompositionMapper {
                                     c.createdAt(),
                                     syncStatus,
                                     syncStatusLabel,
-                                    lastSyncAt);
+                                    lastSyncAt,
+                                    shopId,
+                                    shopName);
                         })
                 .toList();
     }

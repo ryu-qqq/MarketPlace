@@ -208,7 +208,9 @@ public class OmsProductQueryApiMapper {
                 DateTimeFormatUtils.formatIso8601(r.createdAt()),
                 r.syncStatus(),
                 r.syncStatusLabel(),
-                DateTimeFormatUtils.formatIso8601(r.lastSyncAt()));
+                DateTimeFormatUtils.formatIso8601(r.lastSyncAt()),
+                r.shopId(),
+                r.shopName());
     }
 
     private SyncHistoryApiResponse toSyncHistoryResponse(SyncHistoryListResult r) {

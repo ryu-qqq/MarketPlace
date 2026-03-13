@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
@@ -33,6 +34,11 @@ class OutboundSyncCommandFactoryTest {
 
     private static final Instant NOW = Instant.parse("2026-03-10T12:00:00Z");
 
+    private static OutboundProduct outboundProduct(long salesChannelId, long shopId) {
+        return OutboundProduct.forNew(
+                ProductGroupId.of(1L), SalesChannelId.of(salesChannelId), shopId, NOW);
+    }
+
     @Nested
     @DisplayName("createOutboxesForSync() - changedAreas 포함")
     class CreateOutboxesForSyncWithChangedAreasTest {
@@ -46,7 +52,7 @@ class OutboundSyncCommandFactoryTest {
                     sut.createOutboxesForSync(
                             ProductGroupId.of(1L),
                             SellerId.of(1L),
-                            List.of(SalesChannelId.of(1L)),
+                            List.of(outboundProduct(1L, 1L)),
                             SyncType.UPDATE,
                             Set.of());
 
@@ -63,7 +69,7 @@ class OutboundSyncCommandFactoryTest {
                     sut.createOutboxesForSync(
                             ProductGroupId.of(1L),
                             SellerId.of(1L),
-                            List.of(SalesChannelId.of(1L)),
+                            List.of(outboundProduct(1L, 1L)),
                             SyncType.UPDATE,
                             Set.of(ChangedArea.PRICE, ChangedArea.STOCK));
 
@@ -83,7 +89,7 @@ class OutboundSyncCommandFactoryTest {
                     sut.createOutboxesForSync(
                             ProductGroupId.of(1L),
                             SellerId.of(1L),
-                            List.of(SalesChannelId.of(1L), SalesChannelId.of(2L)),
+                            List.of(outboundProduct(1L, 1L), outboundProduct(2L, 2L)),
                             SyncType.UPDATE,
                             Set.of(ChangedArea.IMAGE));
 
@@ -99,7 +105,7 @@ class OutboundSyncCommandFactoryTest {
                     sut.createOutboxesForSync(
                             ProductGroupId.of(1L),
                             SellerId.of(1L),
-                            List.of(SalesChannelId.of(1L)),
+                            List.of(outboundProduct(1L, 1L)),
                             SyncType.UPDATE,
                             null);
 
@@ -116,7 +122,7 @@ class OutboundSyncCommandFactoryTest {
                     sut.createOutboxesForSync(
                             ProductGroupId.of(1L),
                             SellerId.of(1L),
-                            List.of(SalesChannelId.of(1L)),
+                            List.of(outboundProduct(1L, 1L)),
                             SyncType.UPDATE,
                             Set.of(ChangedArea.STOCK, ChangedArea.BASIC_INFO));
 
@@ -140,7 +146,7 @@ class OutboundSyncCommandFactoryTest {
                     sut.createOutboxesForSync(
                             ProductGroupId.of(1L),
                             SellerId.of(1L),
-                            List.of(SalesChannelId.of(1L)),
+                            List.of(outboundProduct(1L, 1L)),
                             SyncType.UPDATE);
 
             assertThat(result).hasSize(1);

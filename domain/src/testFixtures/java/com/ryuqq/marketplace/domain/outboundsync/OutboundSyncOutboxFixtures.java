@@ -25,6 +25,7 @@ public final class OutboundSyncOutboxFixtures {
     public static final Long DEFAULT_ID = 1L;
     public static final Long DEFAULT_PRODUCT_GROUP_ID = 100L;
     public static final Long DEFAULT_SALES_CHANNEL_ID = 10L;
+    public static final long DEFAULT_SHOP_ID = 1L;
     public static final Long DEFAULT_SELLER_ID = 1L;
     public static final String DEFAULT_PAYLOAD =
             "{\"productGroupId\":100,\"salesChannelId\":10,\"syncType\":\"CREATE\"}";
@@ -39,6 +40,7 @@ public final class OutboundSyncOutboxFixtures {
         return OutboundSyncOutbox.forNew(
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 SellerId.of(DEFAULT_SELLER_ID),
                 SyncType.CREATE,
                 DEFAULT_PAYLOAD,
@@ -50,6 +52,7 @@ public final class OutboundSyncOutboxFixtures {
         return OutboundSyncOutbox.forNew(
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 SellerId.of(DEFAULT_SELLER_ID),
                 SyncType.UPDATE,
                 DEFAULT_PAYLOAD,
@@ -61,6 +64,7 @@ public final class OutboundSyncOutboxFixtures {
         return OutboundSyncOutbox.forNew(
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 SellerId.of(DEFAULT_SELLER_ID),
                 SyncType.DELETE,
                 DEFAULT_PAYLOAD,
@@ -74,6 +78,7 @@ public final class OutboundSyncOutboxFixtures {
                 OutboundSyncOutboxId.of(DEFAULT_ID),
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 SellerId.of(DEFAULT_SELLER_ID),
                 SyncType.CREATE,
                 SyncStatus.PENDING,
@@ -96,6 +101,7 @@ public final class OutboundSyncOutboxFixtures {
                 OutboundSyncOutboxId.of(DEFAULT_ID),
                 ProductGroupId.of(productGroupId),
                 SalesChannelId.of(salesChannelId),
+                DEFAULT_SHOP_ID,
                 SellerId.of(DEFAULT_SELLER_ID),
                 SyncType.CREATE,
                 SyncStatus.PENDING,
@@ -119,6 +125,7 @@ public final class OutboundSyncOutboxFixtures {
                 OutboundSyncOutboxId.of(DEFAULT_ID),
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 SellerId.of(DEFAULT_SELLER_ID),
                 SyncType.CREATE,
                 SyncStatus.PROCESSING,
@@ -142,6 +149,7 @@ public final class OutboundSyncOutboxFixtures {
                 OutboundSyncOutboxId.of(DEFAULT_ID),
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 SellerId.of(DEFAULT_SELLER_ID),
                 SyncType.CREATE,
                 SyncStatus.PROCESSING,
@@ -166,6 +174,7 @@ public final class OutboundSyncOutboxFixtures {
                 OutboundSyncOutboxId.of(DEFAULT_ID),
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 SellerId.of(DEFAULT_SELLER_ID),
                 SyncType.CREATE,
                 SyncStatus.COMPLETED,
@@ -190,6 +199,7 @@ public final class OutboundSyncOutboxFixtures {
                 OutboundSyncOutboxId.of(DEFAULT_ID),
                 ProductGroupId.of(DEFAULT_PRODUCT_GROUP_ID),
                 SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID),
+                DEFAULT_SHOP_ID,
                 SellerId.of(DEFAULT_SELLER_ID),
                 SyncType.CREATE,
                 SyncStatus.FAILED,

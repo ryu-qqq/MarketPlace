@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.OmsProductC
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductListCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductMainImageDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductPriceStockDto;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductShopInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductSyncInfoDto;
 import com.ryuqq.marketplace.application.outboundproduct.dto.result.OmsProductListResult;
 import java.time.Instant;
@@ -57,10 +58,12 @@ class OmsProductCompositionMapperTest {
                             pgId,
                             new OmsProductSyncInfoDto(
                                     pgId, "COMPLETED", Instant.now().minusSeconds(3600)));
+            Map<Long, OmsProductShopInfoDto> shopInfoMap =
+                    Map.of(pgId, new OmsProductShopInfoDto(pgId, 1L, "스마트스토어"));
 
             // when
             List<OmsProductListResult> results =
-                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap);
+                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap, shopInfoMap);
 
             // then
             assertThat(results).hasSize(1);
@@ -73,6 +76,8 @@ class OmsProductCompositionMapperTest {
             assertThat(result.syncStatus()).isEqualTo("SUCCESS");
             assertThat(result.syncStatusLabel()).isEqualTo("연동완료");
             assertThat(result.lastSyncAt()).isNotNull();
+            assertThat(result.shopId()).isEqualTo(1L);
+            assertThat(result.shopName()).isEqualTo("스마트스토어");
         }
 
         @Test
@@ -86,10 +91,11 @@ class OmsProductCompositionMapperTest {
             Map<Long, OmsProductPriceStockDto> priceStockMap =
                     Map.of(pgId, new OmsProductPriceStockDto(pgId, 50000, 100));
             Map<Long, OmsProductSyncInfoDto> syncInfoMap = Map.of();
+            Map<Long, OmsProductShopInfoDto> shopInfoMap = Map.of();
 
             // when
             List<OmsProductListResult> results =
-                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap);
+                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap, shopInfoMap);
 
             // then
             assertThat(results).hasSize(1);
@@ -106,10 +112,11 @@ class OmsProductCompositionMapperTest {
             Map<Long, OmsProductMainImageDto> imageMap = Map.of();
             Map<Long, OmsProductPriceStockDto> priceStockMap = Map.of();
             Map<Long, OmsProductSyncInfoDto> syncInfoMap = Map.of();
+            Map<Long, OmsProductShopInfoDto> shopInfoMap = Map.of();
 
             // when
             List<OmsProductListResult> results =
-                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap);
+                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap, shopInfoMap);
 
             // then
             assertThat(results).hasSize(1);
@@ -127,10 +134,11 @@ class OmsProductCompositionMapperTest {
             Map<Long, OmsProductMainImageDto> imageMap = Map.of();
             Map<Long, OmsProductPriceStockDto> priceStockMap = Map.of();
             Map<Long, OmsProductSyncInfoDto> syncInfoMap = Map.of();
+            Map<Long, OmsProductShopInfoDto> shopInfoMap = Map.of();
 
             // when
             List<OmsProductListResult> results =
-                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap);
+                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap, shopInfoMap);
 
             // then
             assertThat(results).hasSize(1);
@@ -144,7 +152,7 @@ class OmsProductCompositionMapperTest {
         void toResults_WithEmptyComposites_ReturnsEmptyList() {
             // when
             List<OmsProductListResult> results =
-                    mapper.toResults(List.of(), Map.of(), Map.of(), Map.of());
+                    mapper.toResults(List.of(), Map.of(), Map.of(), Map.of(), Map.of());
 
             // then
             assertThat(results).isEmpty();
@@ -169,10 +177,11 @@ class OmsProductCompositionMapperTest {
                             pgId1, new OmsProductPriceStockDto(pgId1, 10000, 50),
                             pgId2, new OmsProductPriceStockDto(pgId2, 20000, 200));
             Map<Long, OmsProductSyncInfoDto> syncInfoMap = Map.of();
+            Map<Long, OmsProductShopInfoDto> shopInfoMap = Map.of();
 
             // when
             List<OmsProductListResult> results =
-                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap);
+                    mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap, shopInfoMap);
 
             // then
             assertThat(results).hasSize(2);
