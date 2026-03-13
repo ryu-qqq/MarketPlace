@@ -64,7 +64,10 @@ public class OutboundProductImages {
         for (ProductGroupImage current : currentImages) {
             String resolvedUrl = resolveInternalUrl(current);
             String key = resolvedUrl + "::" + current.imageTypeName();
-            newKeys.add(key);
+            if (!newKeys.add(key)) {
+                throw new IllegalStateException(
+                        "currentImages에 중복된 imageKey가 존재합니다: " + key);
+            }
 
             OutboundProductImage existing = existingByKey.get(key);
             if (existing != null) {
