@@ -1,30 +1,33 @@
 package com.ryuqq.marketplace.application.outboundproductimage.manager;
 
 import com.ryuqq.marketplace.application.outboundproductimage.port.out.client.SalesChannelImageClient;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
-/**
- * 채널 코드 기반 이미지 클라이언트 라우팅 매니저.
- */
+/** 채널 코드 기반 이미지 클라이언트 라우팅 매니저. */
 @Component
 public class SalesChannelImageClientManager {
 
     private final Map<String, SalesChannelImageClient> clientMap;
 
+    @SuppressFBWarnings(
+            value = "CT_CONSTRUCTOR_THROW",
+            justification = "Spring @Component – 중복 channelCode는 빈 생성 시 즉시 실패해야 합니다")
     public SalesChannelImageClientManager(List<SalesChannelImageClient> clients) {
         this.clientMap =
                 clients.stream()
-                        .collect(Collectors.toMap(
-                                SalesChannelImageClient::channelCode,
-                                Function.identity(),
-                                (a, b) -> {
-                                    throw new IllegalStateException(
-                                            "중복된 channelCode가 존재합니다: " + a.channelCode());
-                                }));
+                        .collect(
+                                Collectors.toMap(
+                                        SalesChannelImageClient::channelCode,
+                                        Function.identity(),
+                                        (a, b) -> {
+                                            throw new IllegalStateException(
+                                                    "중복된 channelCode가 존재합니다: " + a.channelCode());
+                                        }));
     }
 
     /**

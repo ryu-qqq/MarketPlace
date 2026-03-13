@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.order.dto.response;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
@@ -9,18 +10,26 @@ import java.util.List;
  * <p>legacyOrderId 제외. orderItem 단위 데이터를 V4 OrderDetail 형태로 변환. 미존재 필드는 0/"" 기본값.
  */
 @Schema(description = "주문 상세 (V4)")
+@SuppressFBWarnings(
+        value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"},
+        justification = "record의 List 필드는 API 응답 DTO이므로 방어적 복사 불필요")
 public record OrderDetailApiResponseV4(
         @Schema(description = "주문 ID (UUIDv7)") String orderId,
         @Schema(description = "주문번호 (ORD-YYYYMMDD-XXXX)") String orderNumber,
         @Schema(description = "구매자 정보") OrderListApiResponseV4.BuyerInfoApiResponse buyerInfo,
         @Schema(description = "결제 정보") OrderListApiResponseV4.PaymentDetailApiResponse payment,
         @Schema(description = "수령인 정보") OrderListApiResponseV4.ReceiverInfoApiResponse receiverInfo,
-        @Schema(description = "배송 정보") OrderListApiResponseV4.PaymentShipmentInfoApiResponse paymentShipmentInfo,
+        @Schema(description = "배송 정보")
+                OrderListApiResponseV4.PaymentShipmentInfoApiResponse paymentShipmentInfo,
         @Schema(description = "정산 정보") SettlementInfoApiResponse settlementInfo,
-        @Schema(description = "주문 상품 정보") OrderListApiResponseV4.OrderProductApiResponse orderProduct,
-        @Schema(description = "외부몰 주문 정보 (자사몰이면 null)") OrderListApiResponseV4.ExternalOrderInfoApiResponse externalOrderInfo,
-        @Schema(description = "취소 요약 (없으면 null)") OrderListApiResponseV4.CancelSummaryV4ApiResponse cancel,
-        @Schema(description = "클레임 요약 (없으면 null)") OrderListApiResponseV4.ClaimSummaryV4ApiResponse claim,
+        @Schema(description = "주문 상품 정보")
+                OrderListApiResponseV4.OrderProductApiResponse orderProduct,
+        @Schema(description = "외부몰 주문 정보 (자사몰이면 null)")
+                OrderListApiResponseV4.ExternalOrderInfoApiResponse externalOrderInfo,
+        @Schema(description = "취소 요약 (없으면 null)")
+                OrderListApiResponseV4.CancelSummaryV4ApiResponse cancel,
+        @Schema(description = "클레임 요약 (없으면 null)")
+                OrderListApiResponseV4.ClaimSummaryV4ApiResponse claim,
         @Schema(description = "주문 상태 변경 이력") List<OrderHistoryItemApiResponse> orderHistories,
         @Schema(description = "취소 ID 목록") List<String> cancelIds,
         @Schema(description = "취소 상세 목록 (최근 3개)") List<CancelItemApiResponse> cancels,
@@ -82,7 +91,8 @@ public record OrderDetailApiResponseV4(
             @Schema(description = "클레임 사유") ClaimReasonApiResponse reason,
             @Schema(description = "회수 방식") String collectMethod,
             @Schema(description = "환불 정보 (REFUND 시)") ClaimRefundInfoApiResponse refundInfo,
-            @Schema(description = "교환 정보 (EXCHANGE 시, order_exchanges JOIN 전 null)") ClaimExchangeInfoApiResponse exchangeInfo,
+            @Schema(description = "교환 정보 (EXCHANGE 시, order_exchanges JOIN 전 null)")
+                    ClaimExchangeInfoApiResponse exchangeInfo,
             @Schema(description = "클레임 신청 일시") String requestedAt,
             @Schema(description = "클레임 완료 일시") String completedAt,
             @Schema(description = "클레임 거절 일시") String rejectedAt,
