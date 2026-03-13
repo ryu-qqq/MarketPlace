@@ -67,7 +67,16 @@ tasks.jacocoTestCoverageVerification {
 }
 
 tasks.test {
-    finalizedBy tasks.jacocoTestCoverageVerification
+    useJUnitPlatform {
+        excludeTags 'external-integration'
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn tasks.test
+    onlyIf {
+        tasks.test.state.didWork && !tasks.test.state.skipped
+    }
 }
 
 // Temporary task for running NaverProductSearchRunner

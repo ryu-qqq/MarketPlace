@@ -22,6 +22,7 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ import org.springframework.web.client.RestClient;
  *
  * <p>실행 시 환경변수 필요: SETOF_COMMERCE_BASE_URL, SETOF_COMMERCE_SERVICE_TOKEN
  */
+@Tag("external-integration")
 @SpringBootTest(classes = SetofCommerceTestApplication.class)
 @ActiveProfiles("setof-test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

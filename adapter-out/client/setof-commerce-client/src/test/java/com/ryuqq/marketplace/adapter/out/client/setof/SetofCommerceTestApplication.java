@@ -7,5 +7,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * <p>세토프 API 관련 빈만 로드합니다 (DB, 기타 인프라 불필요).
  */
-@SpringBootApplication(scanBasePackages = "com.ryuqq.marketplace.adapter.out.client.setof")
+@SpringBootApplication(scanBasePackages = "com.ryuqq.marketplace.adapter.out.client.setof.config")
 public class SetofCommerceTestApplication {}

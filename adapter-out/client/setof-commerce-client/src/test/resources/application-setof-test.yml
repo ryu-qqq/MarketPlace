@@ -1,7 +1,7 @@
 setof-commerce:
-  base-url: ${SETOF_COMMERCE_BASE_URL}
+  base-url: ${SETOF_COMMERCE_BASE_URL:http://localhost:8080}
   service-name: SVC_MARKETPLACE
-  service-token: ${SETOF_COMMERCE_SERVICE_TOKEN}
+  service-token: ${SETOF_COMMERCE_SERVICE_TOKEN:test-token}
   timeout:
     connect: 5s
     read: 30s
