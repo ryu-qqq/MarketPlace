@@ -24,10 +24,10 @@ public class DescriptionImageJpaEntity {
     @Column(name = "product_group_description_id", nullable = false)
     private Long productGroupDescriptionId;
 
-    @Column(name = "origin_url", nullable = false, length = 500)
+    @Column(name = "origin_url", nullable = false, length = 1000)
     private String originUrl;
 
-    @Column(name = "uploaded_url", length = 500)
+    @Column(name = "uploaded_url", length = 1000)
     private String uploadedUrl;
 
     @Column(name = "sort_order", nullable = false)

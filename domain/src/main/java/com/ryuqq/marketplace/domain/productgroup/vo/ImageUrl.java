@@ -3,7 +3,7 @@ package com.ryuqq.marketplace.domain.productgroup.vo;
 /** 이미지 URL Value Object. */
 public record ImageUrl(String value) {
 
-    private static final int MAX_LENGTH = 500;
+    private static final int MAX_LENGTH = 1000;
 
     public ImageUrl {
         if (value == null || value.isBlank()) {
