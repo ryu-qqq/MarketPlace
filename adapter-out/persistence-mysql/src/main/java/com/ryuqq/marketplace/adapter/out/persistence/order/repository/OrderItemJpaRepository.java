@@ -4,4 +4,4 @@ import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEn
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /** OrderItem JPA Repository (save 용). */
-public interface OrderItemJpaRepository extends JpaRepository<OrderItemJpaEntity, Long> {}
+public interface OrderItemJpaRepository extends JpaRepository<OrderItemJpaEntity, String> {}

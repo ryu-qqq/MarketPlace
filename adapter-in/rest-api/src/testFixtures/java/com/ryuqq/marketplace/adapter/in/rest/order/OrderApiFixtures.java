@@ -52,7 +52,7 @@ public final class OrderApiFixtures {
     private OrderApiFixtures() {}
 
     // ===== 상수 =====
-    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
     public static final String DEFAULT_ORDER_ID = "01900000-0000-7000-0000-000000000001";
     public static final String DEFAULT_ORDER_NUMBER = "ORD-20260101-0001";
     public static final String DEFAULT_ORDER_STATUS = "PREPARING";

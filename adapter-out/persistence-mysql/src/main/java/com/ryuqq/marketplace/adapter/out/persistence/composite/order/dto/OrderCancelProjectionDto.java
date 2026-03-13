@@ -5,7 +5,7 @@ import java.time.Instant;
 /** 주문 취소 프로젝션. */
 public record OrderCancelProjectionDto(
         Long cancelId,
-        long orderItemId,
+        String orderItemId,
         String cancelNumber,
         String cancelStatus,
         int quantity,

@@ -42,15 +42,15 @@ public class ShipmentBatchProcessor {
      */
     public BatchProcessingResult<String> confirmBatch(
             BulkStatusChangeContext<OrderItemId> context) {
-        Map<Long, Shipment> shipmentMap = fetchShipmentMap(context.ids());
+        Map<String, Shipment> shipmentMap = fetchShipmentMap(context.ids());
 
         List<BatchItemResult<String>> results = new ArrayList<>();
         List<Shipment> succeeded = new ArrayList<>();
         List<ShipmentOutbox> outboxes = new ArrayList<>();
 
         for (OrderItemId orderItemId : context.ids()) {
-            String idStr = String.valueOf(orderItemId.value());
-            Shipment shipment = shipmentMap.get(orderItemId.value());
+            String idStr = orderItemId.value();
+            Shipment shipment = shipmentMap.get(idStr);
 
             if (shipment == null) {
                 results.add(notFoundResult(idStr));
@@ -84,17 +84,17 @@ public class ShipmentBatchProcessor {
      */
     public BatchProcessingResult<String> shipBatch(
             List<UpdateContext<OrderItemId, ShipmentShipData>> contexts,
-            Map<Long, ShipBatchItem> itemMap) {
+            Map<String, ShipBatchItem> itemMap) {
         List<OrderItemId> orderItemIds = contexts.stream().map(UpdateContext::id).toList();
-        Map<Long, Shipment> shipmentMap = fetchShipmentMap(orderItemIds);
+        Map<String, Shipment> shipmentMap = fetchShipmentMap(orderItemIds);
 
         List<BatchItemResult<String>> results = new ArrayList<>();
         List<Shipment> succeeded = new ArrayList<>();
         List<ShipmentOutbox> outboxes = new ArrayList<>();
 
         for (UpdateContext<OrderItemId, ShipmentShipData> ctx : contexts) {
-            Long orderItemIdValue = ctx.id().value();
-            String idStr = String.valueOf(orderItemIdValue);
+            String orderItemIdValue = ctx.id().value();
+            String idStr = orderItemIdValue;
             Shipment shipment = shipmentMap.get(orderItemIdValue);
 
             if (shipment == null) {
@@ -124,7 +124,7 @@ public class ShipmentBatchProcessor {
         return BatchProcessingResult.from(results);
     }
 
-    private Map<Long, Shipment> fetchShipmentMap(List<OrderItemId> orderItemIds) {
+    private Map<String, Shipment> fetchShipmentMap(List<OrderItemId> orderItemIds) {
         return readManager.findByOrderItemIds(orderItemIds).stream()
                 .collect(Collectors.toMap(Shipment::orderItemIdValue, Function.identity()));
     }

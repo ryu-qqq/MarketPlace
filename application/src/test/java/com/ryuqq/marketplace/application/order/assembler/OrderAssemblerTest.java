@@ -94,7 +94,9 @@ class OrderAssemblerTest {
         @DisplayName("주문 정보가 없는 아이템의 PaymentInfo는 빈 상태로 조립된다")
         void toProductOrderPageResult_MissingOrder_PaymentInfoIsEmpty() {
             // given
-            OrderItemResult item = OrderQueryFixtures.orderItemResult(1L, "UNKNOWN-ORDER-ID");
+            OrderItemResult item =
+                    OrderQueryFixtures.orderItemResult(
+                            "01940001-0000-7000-8000-000000000001", "UNKNOWN-ORDER-ID");
             ProductOrderListBundle bundle =
                     new ProductOrderListBundle(List.of(item), Map.of(), Map.of(), Map.of(), 1L);
 
@@ -277,7 +279,9 @@ class OrderAssemblerTest {
         @DisplayName("활성 취소(REQUESTED)가 있으면 hasActiveCancel이 true이다")
         void toProductOrderDetailResult_ActiveCancel_HasActiveCancelIsTrue() {
             // given
-            OrderCancelResult requestedCancel = OrderQueryFixtures.requestedCancelResult(1L);
+            OrderCancelResult requestedCancel =
+                    OrderQueryFixtures.requestedCancelResult(
+                            "01940001-0000-7000-8000-000000000001");
             ProductOrderDetailBundle bundle =
                     new ProductOrderDetailBundle(
                             OrderQueryFixtures.orderItemResult(),
@@ -321,7 +325,8 @@ class OrderAssemblerTest {
         @DisplayName("활성 클레임(REQUESTED)이 있으면 hasActiveClaim이 true이다")
         void toProductOrderDetailResult_ActiveClaim_HasActiveClaimIsTrue() {
             // given
-            OrderClaimResult requestedClaim = OrderQueryFixtures.requestedClaimResult(1L);
+            OrderClaimResult requestedClaim =
+                    OrderQueryFixtures.requestedClaimResult("01940001-0000-7000-8000-000000000001");
             ProductOrderDetailBundle bundle =
                     new ProductOrderDetailBundle(
                             OrderQueryFixtures.orderItemResult(),
@@ -343,7 +348,8 @@ class OrderAssemblerTest {
         @DisplayName("완료된 클레임이 있으면 totalClaimedQty에 반영된다")
         void toProductOrderDetailResult_CompletedClaim_TotalClaimedQtyIsReflected() {
             // given
-            OrderClaimResult completedClaim = OrderQueryFixtures.completedClaimResult(1L);
+            OrderClaimResult completedClaim =
+                    OrderQueryFixtures.completedClaimResult("01940001-0000-7000-8000-000000000001");
             ProductOrderDetailBundle bundle =
                     new ProductOrderDetailBundle(
                             OrderQueryFixtures.orderItemResult(),

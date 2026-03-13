@@ -50,7 +50,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class OrderQueryControllerRestDocsTest {
 
     private static final String BASE_URL = OrderAdminEndpoints.ORDERS;
-    private static final long ORDER_ITEM_ID = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+    private static final String ORDER_ITEM_ID = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
 
     @Autowired private MockMvc mockMvc;
 
@@ -186,7 +186,7 @@ class OrderQueryControllerRestDocsTest {
                                                     .description("주문 수정일시 (ISO 8601)"),
                                             // productOrder
                                             fieldWithPath("data.content[].productOrder.orderItemId")
-                                                    .type(JsonFieldType.NUMBER)
+                                                    .type(JsonFieldType.STRING)
                                                     .description("상품주문 ID"),
                                             fieldWithPath(
                                                             "data.content[].productOrder"

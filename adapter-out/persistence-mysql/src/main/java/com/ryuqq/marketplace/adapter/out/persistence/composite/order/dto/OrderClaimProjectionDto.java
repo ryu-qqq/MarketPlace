@@ -5,7 +5,7 @@ import java.time.Instant;
 /** 주문 클레임 프로젝션. */
 public record OrderClaimProjectionDto(
         Long claimId,
-        long orderItemId,
+        String orderItemId,
         String claimNumber,
         String claimType,
         String claimStatus,

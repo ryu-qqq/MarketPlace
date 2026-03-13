@@ -20,7 +20,7 @@ public class GetOrderDetailService implements GetOrderDetailUseCase {
     }
 
     @Override
-    public ProductOrderDetailResult execute(long orderItemId) {
+    public ProductOrderDetailResult execute(String orderItemId) {
         ProductOrderDetailBundle bundle = readFacade.getProductOrderDetailBundle(orderItemId);
         return assembler.toProductOrderDetailResult(bundle);
     }

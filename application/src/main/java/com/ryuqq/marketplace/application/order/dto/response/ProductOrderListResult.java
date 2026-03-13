@@ -76,7 +76,7 @@ public record ProductOrderListResult(
      * @param paymentAmount 실결제 금액
      */
     public record ProductOrderInfo(
-            long orderItemId,
+            String orderItemId,
             long productGroupId,
             long productId,
             long sellerId,

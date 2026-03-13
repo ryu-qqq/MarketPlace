@@ -275,7 +275,7 @@ class ShipmentQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("상품주문 정보"),
                                             fieldWithPath("data.content[].productOrder.orderItemId")
-                                                    .type(JsonFieldType.NUMBER)
+                                                    .type(JsonFieldType.STRING)
                                                     .description("주문상품 ID"),
                                             fieldWithPath(
                                                             "data.content[].productOrder.productGroupId")
@@ -558,7 +558,7 @@ class ShipmentQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("상품주문 정보"),
                                             fieldWithPath("data.productOrder.orderItemId")
-                                                    .type(JsonFieldType.NUMBER)
+                                                    .type(JsonFieldType.STRING)
                                                     .description("주문상품 ID"),
                                             fieldWithPath("data.productOrder.productGroupId")
                                                     .type(JsonFieldType.NUMBER)

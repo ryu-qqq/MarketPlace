@@ -15,7 +15,7 @@ public final class ShipmentJpaEntityFixtures {
     // ===== 기본 상수 =====
     public static final String DEFAULT_ID = "01944b2a-1234-7fff-8888-abcdef012345";
     public static final String DEFAULT_SHIPMENT_NUMBER = "SHP-20260218-0001";
-    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
     public static final String DEFAULT_STATUS_READY = "READY";
     public static final String DEFAULT_STATUS_SHIPPED = "SHIPPED";
     public static final String DEFAULT_STATUS_DELIVERED = "DELIVERED";
@@ -129,7 +129,7 @@ public final class ShipmentJpaEntityFixtures {
     }
 
     /** 특정 orderItemId를 가진 READY Entity 생성. */
-    public static ShipmentJpaEntity readyEntityWithOrderItemId(String id, Long orderItemId) {
+    public static ShipmentJpaEntity readyEntityWithOrderItemId(String id, String orderItemId) {
         Instant now = Instant.now();
         return ShipmentJpaEntity.create(
                 id,

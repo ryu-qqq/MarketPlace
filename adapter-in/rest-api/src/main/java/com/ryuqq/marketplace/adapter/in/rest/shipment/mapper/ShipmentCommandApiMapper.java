@@ -29,7 +29,7 @@ public class ShipmentCommandApiMapper {
         return new ShipBatchCommand(items);
     }
 
-    public ShipSingleCommand toShipSingleCommand(long orderItemId, ShipSingleApiRequest request) {
+    public ShipSingleCommand toShipSingleCommand(String orderItemId, ShipSingleApiRequest request) {
         return new ShipSingleCommand(
                 orderItemId,
                 request.trackingNumber(),

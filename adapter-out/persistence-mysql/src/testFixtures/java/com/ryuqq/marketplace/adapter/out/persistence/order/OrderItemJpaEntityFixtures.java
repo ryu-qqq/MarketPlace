@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.order;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 /** OrderItemJpaEntity 테스트 Fixtures. */
@@ -36,7 +37,7 @@ public final class OrderItemJpaEntityFixtures {
     public static OrderItemJpaEntity defaultItem(String orderId) {
         Instant now = Instant.now();
         return OrderItemJpaEntity.create(
-                null,
+                UUID.randomUUID().toString(),
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,
@@ -88,7 +89,7 @@ public final class OrderItemJpaEntityFixtures {
         Instant now = Instant.now();
         int totalAmount = unitPrice * quantity;
         return OrderItemJpaEntity.create(
-                null,
+                UUID.randomUUID().toString(),
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,

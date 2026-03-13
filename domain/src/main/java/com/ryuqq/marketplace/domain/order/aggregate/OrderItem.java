@@ -39,12 +39,13 @@ public class OrderItem {
     }
 
     public static OrderItem forNew(
+            OrderItemId id,
             InternalProductReference internalProduct,
             ExternalProductSnapshot externalProduct,
             ExternalOrderItemPrice price,
             ReceiverInfo receiverInfo) {
         return new OrderItem(
-                OrderItemId.forNew(),
+                id,
                 internalProduct,
                 externalProduct,
                 price,
@@ -106,7 +107,7 @@ public class OrderItem {
         return id;
     }
 
-    public Long idValue() {
+    public String idValue() {
         return id.value();
     }
 

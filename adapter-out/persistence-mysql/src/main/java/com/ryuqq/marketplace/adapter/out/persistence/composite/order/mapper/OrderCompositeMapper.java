@@ -104,7 +104,7 @@ public class OrderCompositeMapper {
 
     public OrderItemResult toItemResult(OrderItemProjectionDto dto) {
         return new OrderItemResult(
-                dto.orderItemId() != null ? dto.orderItemId() : 0L,
+                dto.orderItemId() != null ? dto.orderItemId() : "",
                 dto.orderId(),
                 dto.productGroupId(),
                 dto.productId(),
@@ -178,7 +178,7 @@ public class OrderCompositeMapper {
     public ProductOrderDetailData toDetailData(ProductOrderDetailProjectionDto dto) {
         OrderItemResult item =
                 new OrderItemResult(
-                        dto.orderItemId() != null ? dto.orderItemId() : 0L,
+                        dto.orderItemId() != null ? dto.orderItemId() : "",
                         dto.orderId(),
                         dto.productGroupId(),
                         dto.productId(),
@@ -260,7 +260,7 @@ public class OrderCompositeMapper {
     /** ProductOrderListProjectionDto → OrderItemResult (리스트 조회용, 정산 필드 미포함). */
     public OrderItemResult toItemResultFromProjection(ProductOrderListProjectionDto dto) {
         return new OrderItemResult(
-                dto.orderItemId() != null ? dto.orderItemId() : 0L,
+                dto.orderItemId() != null ? dto.orderItemId() : "",
                 dto.orderId(),
                 dto.productGroupId(),
                 dto.productId(),

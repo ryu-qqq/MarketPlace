@@ -43,7 +43,7 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
         List<OrderItem> confirmable = new ArrayList<>();
 
         for (OrderItem item : orderItems) {
-            String idStr = String.valueOf(item.idValue());
+            String idStr = item.idValue();
 
             if (!validateOwnership(item, command.sellerId())) {
                 results.add(BatchItemResult.failure(idStr, "FORBIDDEN", "해당 주문상품에 대한 권한이 없습니다"));

@@ -48,16 +48,22 @@ class ShipmentCommandFactoryTest {
             given(timeProvider.now()).willReturn(now);
 
             ConfirmShipmentBatchCommand command =
-                    ShipmentCommandFixtures.confirmBatchCommand(1L, 2L, 3L);
+                    ShipmentCommandFixtures.confirmBatchCommand(
+                            "01940001-0000-7000-8000-000000000001",
+                            "01940001-0000-7000-8000-000000000002",
+                            "01940001-0000-7000-8000-000000000003");
 
             // when
             BulkStatusChangeContext<OrderItemId> result = sut.createConfirmContexts(command);
 
             // then
             assertThat(result.ids()).hasSize(3);
-            assertThat(result.ids().get(0).value()).isEqualTo(1L);
-            assertThat(result.ids().get(1).value()).isEqualTo(2L);
-            assertThat(result.ids().get(2).value()).isEqualTo(3L);
+            assertThat(result.ids().get(0).value())
+                    .isEqualTo("01940001-0000-7000-8000-000000000001");
+            assertThat(result.ids().get(1).value())
+                    .isEqualTo("01940001-0000-7000-8000-000000000002");
+            assertThat(result.ids().get(2).value())
+                    .isEqualTo("01940001-0000-7000-8000-000000000003");
             assertThat(result.changedAt()).isEqualTo(now);
         }
 
@@ -100,13 +106,13 @@ class ShipmentCommandFactoryTest {
             assertThat(result).hasSize(2);
 
             UpdateContext<OrderItemId, ShipmentShipData> first = result.get(0);
-            assertThat(first.id().value()).isEqualTo(1L);
+            assertThat(first.id().value()).isEqualTo("01940001-0000-7000-8000-000000000001");
             assertThat(first.updateData().trackingNumber()).isEqualTo("tracking-1");
             assertThat(first.updateData().method().type()).isEqualTo(ShipmentMethodType.COURIER);
             assertThat(first.changedAt()).isEqualTo(now);
 
             UpdateContext<OrderItemId, ShipmentShipData> second = result.get(1);
-            assertThat(second.id().value()).isEqualTo(2L);
+            assertThat(second.id().value()).isEqualTo("01940001-0000-7000-8000-000000000002");
             assertThat(second.updateData().trackingNumber()).isEqualTo("tracking-2");
             assertThat(second.changedAt()).isEqualTo(now);
         }
@@ -146,7 +152,8 @@ class ShipmentCommandFactoryTest {
             ShipSingleContext result = sut.createShipSingleContext(command);
 
             // then
-            assertThat(result.orderItemId().value()).isEqualTo(1001L);
+            assertThat(result.orderItemId().value())
+                    .isEqualTo("01940001-0000-7000-8000-000000000001");
             assertThat(result.shipData().trackingNumber()).isEqualTo("1234567890");
             assertThat(result.shipData().method().type()).isEqualTo(ShipmentMethodType.COURIER);
             assertThat(result.shipData().method().courierCode()).isEqualTo("CJ");

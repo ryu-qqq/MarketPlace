@@ -39,7 +39,7 @@ public class ShipmentQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public Optional<ShipmentJpaEntity> findByOrderItemId(Long orderItemId) {
+    public Optional<ShipmentJpaEntity> findByOrderItemId(String orderItemId) {
         ShipmentJpaEntity entity =
                 queryFactory
                         .selectFrom(shipment)
@@ -50,7 +50,7 @@ public class ShipmentQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public List<ShipmentJpaEntity> findByOrderItemIds(List<Long> orderItemIds) {
+    public List<ShipmentJpaEntity> findByOrderItemIds(List<String> orderItemIds) {
         return queryFactory
                 .selectFrom(shipment)
                 .where(conditionBuilder.orderItemIdIn(orderItemIds), conditionBuilder.notDeleted())

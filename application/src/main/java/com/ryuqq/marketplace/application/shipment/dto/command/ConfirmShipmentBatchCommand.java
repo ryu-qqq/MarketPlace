@@ -8,7 +8,7 @@ import java.util.List;
  * @param orderItemIds 발주확인 대상 상품주문 ID 목록
  * @param sellerId 셀러 ID (SUPER_ADMIN이면 null → 소유권 검증 skip)
  */
-public record ConfirmShipmentBatchCommand(List<Long> orderItemIds, Long sellerId) {
+public record ConfirmShipmentBatchCommand(List<String> orderItemIds, Long sellerId) {
 
     public ConfirmShipmentBatchCommand {
         orderItemIds = orderItemIds != null ? List.copyOf(orderItemIds) : List.of();

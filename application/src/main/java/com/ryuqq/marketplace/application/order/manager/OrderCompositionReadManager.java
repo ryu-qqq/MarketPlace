@@ -61,34 +61,34 @@ public class OrderCompositionReadManager {
     }
 
     @Transactional(readOnly = true)
-    public Map<Long, List<OrderCancelResult>> findCancelsByItemIds(List<Long> orderItemIds) {
+    public Map<String, List<OrderCancelResult>> findCancelsByItemIds(List<String> orderItemIds) {
         return compositionQueryPort.findCancelsByItemIds(orderItemIds);
     }
 
     @Transactional(readOnly = true)
-    public Map<Long, List<OrderClaimResult>> findClaimsByItemIds(List<Long> orderItemIds) {
+    public Map<String, List<OrderClaimResult>> findClaimsByItemIds(List<String> orderItemIds) {
         return compositionQueryPort.findClaimsByItemIds(orderItemIds);
     }
 
     @Transactional(readOnly = true)
-    public Map<Long, OrderItemResult> findOrderItemsByIds(List<Long> orderItemIds) {
+    public Map<String, OrderItemResult> findOrderItemsByIds(List<String> orderItemIds) {
         return compositionQueryPort.findOrderItemsByIds(orderItemIds);
     }
 
     // ==================== V5 상품주문 상세 ====================
 
     @Transactional(readOnly = true)
-    public Optional<ProductOrderDetailData> findProductOrderDetail(long orderItemId) {
+    public Optional<ProductOrderDetailData> findProductOrderDetail(String orderItemId) {
         return compositionQueryPort.findProductOrderDetail(orderItemId);
     }
 
     @Transactional(readOnly = true)
-    public List<OrderCancelResult> findCancelsByOrderItemId(long orderItemId) {
+    public List<OrderCancelResult> findCancelsByOrderItemId(String orderItemId) {
         return compositionQueryPort.findCancelsByOrderItemId(orderItemId);
     }
 
     @Transactional(readOnly = true)
-    public List<OrderClaimResult> findClaimsByOrderItemId(long orderItemId) {
+    public List<OrderClaimResult> findClaimsByOrderItemId(String orderItemId) {
         return compositionQueryPort.findClaimsByOrderItemId(orderItemId);
     }
 

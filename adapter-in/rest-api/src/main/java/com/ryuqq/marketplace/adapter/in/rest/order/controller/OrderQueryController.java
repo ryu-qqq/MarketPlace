@@ -19,7 +19,6 @@ import com.ryuqq.marketplace.application.order.port.in.query.GetProductOrderList
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,7 +70,7 @@ public class OrderQueryController {
     @RequirePermission(value = "order:read", description = "주문 상세 조회")
     @GetMapping(OrderAdminEndpoints.ORDER_ITEM_ID)
     public ResponseEntity<ApiResponse<OrderDetailApiResponseV4>> getOrderDetail(
-            @Positive @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) long orderItemId) {
+            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) String orderItemId) {
 
         ProductOrderDetailResult result = getOrderDetailUseCase.execute(orderItemId);
         OrderDetailApiResponseV4 response = mapper.toDetailResponseV4(result);

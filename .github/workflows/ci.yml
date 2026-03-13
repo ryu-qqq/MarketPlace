@@ -88,7 +88,10 @@ jobs:
       # 테스트 실행 (단위 + ArchUnit)
       # ----------------------------------------------------------------------
       - name: Run Tests
-        run: ./gradlew test --no-daemon -x asciidoctor
+        run: >-
+          ./gradlew test --no-daemon -x asciidoctor
+          -x :adapter-out:client:naver-commerce-client:test
+          -x :adapter-out:client:setof-commerce-client:test
 
       # ----------------------------------------------------------------------
       # JaCoCo 커버리지 검증

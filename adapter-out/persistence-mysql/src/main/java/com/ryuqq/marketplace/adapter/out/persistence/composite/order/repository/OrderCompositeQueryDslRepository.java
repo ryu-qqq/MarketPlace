@@ -128,7 +128,7 @@ public class OrderCompositeQueryDslRepository {
     // ===== 상품주문(productOrder) 상세 조회 =====
 
     /** 상품주문 상세 단건 조회 (order_items JOIN orders LEFT JOIN payments + 정산 필드). */
-    public Optional<ProductOrderDetailProjectionDto> findProductOrderDetail(long orderItemId) {
+    public Optional<ProductOrderDetailProjectionDto> findProductOrderDetail(String orderItemId) {
         ProductOrderDetailProjectionDto result =
                 queryFactory
                         .select(
@@ -210,7 +210,7 @@ public class OrderCompositeQueryDslRepository {
     }
 
     /** 상품주문 단건 취소 목록 조회. */
-    public List<OrderCancelProjectionDto> findCancelsByOrderItemId(long orderItemId) {
+    public List<OrderCancelProjectionDto> findCancelsByOrderItemId(String orderItemId) {
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -235,7 +235,7 @@ public class OrderCompositeQueryDslRepository {
     }
 
     /** 상품주문 단건 클레임 목록 조회. */
-    public List<OrderClaimProjectionDto> findClaimsByOrderItemId(long orderItemId) {
+    public List<OrderClaimProjectionDto> findClaimsByOrderItemId(String orderItemId) {
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -265,7 +265,7 @@ public class OrderCompositeQueryDslRepository {
     }
 
     /** 주문상품 ID 목록 기반 취소 일괄 조회. */
-    public List<OrderCancelProjectionDto> findCancelsByOrderItemIds(List<Long> orderItemIds) {
+    public List<OrderCancelProjectionDto> findCancelsByOrderItemIds(List<String> orderItemIds) {
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -290,7 +290,7 @@ public class OrderCompositeQueryDslRepository {
     }
 
     /** 주문상품 ID 목록 기반 클레임 일괄 조회. */
-    public List<OrderClaimProjectionDto> findClaimsByOrderItemIds(List<Long> orderItemIds) {
+    public List<OrderClaimProjectionDto> findClaimsByOrderItemIds(List<String> orderItemIds) {
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -356,7 +356,7 @@ public class OrderCompositeQueryDslRepository {
     }
 
     /** 주문상품 ID 목록으로 상품주문 일괄 조회 (order_items JOIN orders LEFT JOIN payments). */
-    public List<ProductOrderListProjectionDto> findOrderItemsByIds(List<Long> orderItemIds) {
+    public List<ProductOrderListProjectionDto> findOrderItemsByIds(List<String> orderItemIds) {
         return queryFactory
                 .select(
                         Projections.constructor(

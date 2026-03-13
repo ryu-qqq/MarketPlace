@@ -48,9 +48,9 @@ public class GetShipmentListService implements GetShipmentListUseCase {
             return assembler.toPageResult(List.of(), params.page(), params.size(), totalElements);
         }
 
-        List<Long> orderItemIds = shipments.stream().map(Shipment::orderItemIdValue).toList();
+        List<String> orderItemIds = shipments.stream().map(Shipment::orderItemIdValue).toList();
 
-        Map<Long, OrderItemResult> itemMap = orderReadManager.findOrderItemsByIds(orderItemIds);
+        Map<String, OrderItemResult> itemMap = orderReadManager.findOrderItemsByIds(orderItemIds);
 
         List<String> orderIds =
                 itemMap.values().stream().map(OrderItemResult::orderId).distinct().toList();
