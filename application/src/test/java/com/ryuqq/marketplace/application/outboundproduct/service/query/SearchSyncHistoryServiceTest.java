@@ -49,6 +49,7 @@ class SearchSyncHistoryServiceTest {
                     new SyncHistorySearchCriteria(
                             productGroupId,
                             null,
+                            null,
                             QueryContext.defaultOf(SyncHistorySortKey.defaultKey()));
 
             List<SyncHistoryListResult> results =
@@ -88,6 +89,7 @@ class SearchSyncHistoryServiceTest {
                     new SyncHistorySearchCriteria(
                             productGroupId,
                             null,
+                            null,
                             QueryContext.defaultOf(SyncHistorySortKey.defaultKey()));
 
             List<SyncHistoryListResult> emptyResults = Collections.emptyList();
@@ -121,6 +123,7 @@ class SearchSyncHistoryServiceTest {
                     new SyncHistorySearchCriteria(
                             productGroupId,
                             null,
+                            null,
                             QueryContext.defaultOf(SyncHistorySortKey.defaultKey()));
 
             List<SyncHistoryListResult> results =
@@ -150,6 +153,7 @@ class SearchSyncHistoryServiceTest {
             SyncHistorySearchCriteria criteria =
                     new SyncHistorySearchCriteria(
                             productGroupId,
+                            null,
                             null,
                             QueryContext.defaultOf(SyncHistorySortKey.defaultKey()));
 

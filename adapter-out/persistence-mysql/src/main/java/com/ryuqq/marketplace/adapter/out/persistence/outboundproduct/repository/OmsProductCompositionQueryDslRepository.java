@@ -63,7 +63,7 @@ public class OmsProductCompositionQueryDslRepository {
                 .leftJoin(brandJpaEntity)
                 .on(brandJpaEntity.id.eq(productGroupJpaEntity.brandId))
                 .where(
-                        outboundProductExists(),
+                        outboundProductExists(criteria),
                         conditionBuilder.notDeleted(),
                         buildStatusCondition(criteria),
                         buildPartnerCondition(criteria),
@@ -89,7 +89,7 @@ public class OmsProductCompositionQueryDslRepository {
                         .leftJoin(sellerJpaEntity)
                         .on(sellerJpaEntity.id.eq(productGroupJpaEntity.sellerId))
                         .where(
-                                outboundProductExists(),
+                                outboundProductExists(criteria),
                                 conditionBuilder.notDeleted(),
                                 buildStatusCondition(criteria),
                                 buildPartnerCondition(criteria),
@@ -101,11 +101,13 @@ public class OmsProductCompositionQueryDslRepository {
 
     // -- private helpers --
 
-    private BooleanExpression outboundProductExists() {
-        return JPAExpressions.selectOne()
-                .from(outboundProductJpaEntity)
-                .where(outboundProductJpaEntity.productGroupId.eq(productGroupJpaEntity.id))
-                .exists();
+    private BooleanExpression outboundProductExists(OmsProductSearchCriteria criteria) {
+        BooleanExpression condition =
+                outboundProductJpaEntity.productGroupId.eq(productGroupJpaEntity.id);
+        if (criteria.hasShopFilter()) {
+            condition = condition.and(outboundProductJpaEntity.shopId.in(criteria.shopIds()));
+        }
+        return JPAExpressions.selectOne().from(outboundProductJpaEntity).where(condition).exists();
     }
 
     private BooleanExpression buildStatusCondition(OmsProductSearchCriteria criteria) {

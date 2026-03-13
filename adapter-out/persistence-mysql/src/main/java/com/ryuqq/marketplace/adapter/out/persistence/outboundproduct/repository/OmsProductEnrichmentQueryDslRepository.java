@@ -4,7 +4,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.enti
 import static com.ryuqq.marketplace.adapter.out.persistence.outboundsync.entity.QOutboundSyncOutboxJpaEntity.outboundSyncOutboxJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.product.entity.QProductJpaEntity.productJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.productgroupimage.entity.QProductGroupImageJpaEntity.productGroupImageJpaEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.entity.QSellerSalesChannelJpaEntity.sellerSalesChannelJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.shop.entity.QShopJpaEntity.shopJpaEntity;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -152,13 +152,11 @@ public class OmsProductEnrichmentQueryDslRepository {
                                 Projections.constructor(
                                         OmsProductShopInfoDto.class,
                                         outboundProductJpaEntity.productGroupId,
-                                        sellerSalesChannelJpaEntity.shopId,
-                                        sellerSalesChannelJpaEntity.displayName))
+                                        outboundProductJpaEntity.shopId,
+                                        shopJpaEntity.shopName))
                         .from(outboundProductJpaEntity)
-                        .innerJoin(sellerSalesChannelJpaEntity)
-                        .on(
-                                sellerSalesChannelJpaEntity.salesChannelId.eq(
-                                        outboundProductJpaEntity.salesChannelId))
+                        .innerJoin(shopJpaEntity)
+                        .on(shopJpaEntity.id.eq(outboundProductJpaEntity.shopId))
                         .where(outboundProductJpaEntity.productGroupId.in(pgIds))
                         .fetch();
 

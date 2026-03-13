@@ -164,7 +164,8 @@ class OmsProductQueryApiMapperTest {
         void toSyncHistoryParams_NullPageSize_UsesDefaults() {
             // given
             long productGroupId = 100L;
-            SearchSyncHistoryApiRequest request = new SearchSyncHistoryApiRequest(null, null, null);
+            SearchSyncHistoryApiRequest request =
+                    new SearchSyncHistoryApiRequest(null, null, null, null);
 
             // when
             SyncHistorySearchParams params = mapper.toSyncHistoryParams(productGroupId, request);

@@ -103,12 +103,17 @@ public final class OmsApiFixtures {
     // ===== SearchSyncHistoryApiRequest =====
 
     public static SearchSyncHistoryApiRequest searchSyncHistoryRequest() {
-        return new SearchSyncHistoryApiRequest(null, 0, 10);
+        return new SearchSyncHistoryApiRequest(null, null, 0, 10);
     }
 
     public static SearchSyncHistoryApiRequest searchSyncHistoryRequest(
             String status, int page, int size) {
-        return new SearchSyncHistoryApiRequest(status, page, size);
+        return new SearchSyncHistoryApiRequest(null, status, page, size);
+    }
+
+    public static SearchSyncHistoryApiRequest searchSyncHistoryRequest(
+            Long shopId, String status, int page, int size) {
+        return new SearchSyncHistoryApiRequest(shopId, status, page, size);
     }
 
     // ===== SearchOmsPartnersApiRequest =====

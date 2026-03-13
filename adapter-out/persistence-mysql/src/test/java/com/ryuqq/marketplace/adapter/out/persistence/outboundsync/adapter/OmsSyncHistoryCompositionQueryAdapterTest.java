@@ -45,7 +45,7 @@ class OmsSyncHistoryCompositionQueryAdapterTest {
         QueryContext<SyncHistorySortKey> queryContext =
                 QueryContext.of(
                         SyncHistorySortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(0, 20));
-        return new SyncHistorySearchCriteria(100L, null, queryContext);
+        return new SyncHistorySearchCriteria(100L, null, null, queryContext);
     }
 
     // ========================================================================

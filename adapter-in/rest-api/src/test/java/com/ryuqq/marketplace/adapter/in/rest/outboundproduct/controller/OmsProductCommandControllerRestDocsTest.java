@@ -162,7 +162,7 @@ class OmsProductCommandControllerRestDocsTest {
                     """
                     {
                         "productIds": [1, 2, 3],
-                        "shopId": [10, 20]
+                        "shopId": 10
                     }
                     """;
 
@@ -186,8 +186,8 @@ class OmsProductCommandControllerRestDocsTest {
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("전송 대상 상품그룹 ID 목록"),
                                             fieldWithPath("shopId")
-                                                    .type(JsonFieldType.ARRAY)
-                                                    .description("Shop ID 목록")),
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("쇼핑몰 ID")),
                                     responseFields(
                                             fieldWithPath("data.createCount")
                                                     .type(JsonFieldType.NUMBER)
@@ -225,7 +225,7 @@ class OmsProductCommandControllerRestDocsTest {
                     """
                     {
                         "productIds": [1],
-                        "shopId": [10]
+                        "shopId": 10
                     }
                     """;
 

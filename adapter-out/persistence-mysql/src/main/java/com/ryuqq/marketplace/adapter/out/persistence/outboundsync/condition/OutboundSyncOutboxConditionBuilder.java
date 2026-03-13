@@ -28,6 +28,10 @@ public class OutboundSyncOutboxConditionBuilder {
                 : null;
     }
 
+    public BooleanExpression shopIdEq(Long shopId) {
+        return shopId != null ? outboundSyncOutboxJpaEntity.shopId.eq(shopId) : null;
+    }
+
     public BooleanExpression sellerIdEq(Long sellerId) {
         return sellerId != null ? outboundSyncOutboxJpaEntity.sellerId.eq(sellerId) : null;
     }

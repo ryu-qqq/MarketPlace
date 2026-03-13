@@ -78,6 +78,7 @@ public class OmsSyncHistoryCompositionQueryDslRepository {
                                                 outboundSyncOutboxJpaEntity.salesChannelId)))
                 .where(
                         conditionBuilder.productGroupIdEq(criteria.productGroupId()),
+                        conditionBuilder.shopIdEq(criteria.shopId()),
                         buildStatusCondition(criteria))
                 .orderBy(outboundSyncOutboxJpaEntity.createdAt.desc())
                 .offset(criteria.offset())
@@ -98,6 +99,7 @@ public class OmsSyncHistoryCompositionQueryDslRepository {
                         .from(outboundSyncOutboxJpaEntity)
                         .where(
                                 conditionBuilder.productGroupIdEq(criteria.productGroupId()),
+                                conditionBuilder.shopIdEq(criteria.shopId()),
                                 buildStatusCondition(criteria))
                         .fetchOne();
         return count != null ? count : 0L;

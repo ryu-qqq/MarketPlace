@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.outboundproduct.dto.response.RetryS
 import com.ryuqq.marketplace.adapter.in.rest.outboundproduct.dto.response.SyncProductsApiResponse;
 import com.ryuqq.marketplace.application.outboundproduct.dto.command.ManualSyncProductsCommand;
 import com.ryuqq.marketplace.application.outboundproduct.dto.result.ManualSyncResult;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /** OMS Command API 매퍼. */
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class OmsProductCommandApiMapper {
 
     public ManualSyncProductsCommand toCommand(SyncProductsApiRequest request) {
-        return new ManualSyncProductsCommand(request.productIds(), request.shopId());
+        return new ManualSyncProductsCommand(request.productIds(), List.of(request.shopId()));
     }
 
     public SyncProductsApiResponse toSyncResponse(ManualSyncResult result) {

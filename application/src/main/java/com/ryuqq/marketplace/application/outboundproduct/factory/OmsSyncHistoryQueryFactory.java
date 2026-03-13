@@ -16,7 +16,8 @@ public class OmsSyncHistoryQueryFactory {
                 params.commonSearchParams().toQueryContext(SyncHistorySortKey.class);
         SyncStatus statusFilter = parseStatus(params.status());
 
-        return new SyncHistorySearchCriteria(params.productGroupId(), statusFilter, queryContext);
+        return new SyncHistorySearchCriteria(
+                params.productGroupId(), params.shopId(), statusFilter, queryContext);
     }
 
     private SyncStatus parseStatus(String status) {

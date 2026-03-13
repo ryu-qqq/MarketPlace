@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.outboundproduct.dto.command;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /** 상품 외부몰 전송 요청. */
@@ -13,9 +14,6 @@ public record SyncProductsApiRequest(
                         requiredMode = Schema.RequiredMode.REQUIRED)
                 @NotEmpty
                 List<Long> productIds,
-        @Schema(
-                        description = "프리셋 ID 목록",
-                        example = "[10, 20]",
-                        requiredMode = Schema.RequiredMode.REQUIRED)
-                @NotEmpty
-                List<Long> shopId) {}
+        @Schema(description = "쇼핑몰 ID", example = "2", requiredMode = Schema.RequiredMode.REQUIRED)
+                @NotNull
+                Long shopId) {}

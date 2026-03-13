@@ -72,7 +72,8 @@ public class OmsProductQueryApiMapper {
                         request.page() != null ? request.page() : 0,
                         request.size() != null ? request.size() : 10);
 
-        return new SyncHistorySearchParams(productGroupId, request.status(), commonParams);
+        return new SyncHistorySearchParams(
+                productGroupId, request.shopId(), request.status(), commonParams);
     }
 
     public PageApiResponse<OmsProductApiResponse> toProductPageResponse(
