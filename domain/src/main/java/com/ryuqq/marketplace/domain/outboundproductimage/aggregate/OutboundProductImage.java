@@ -1,8 +1,10 @@
 package com.ryuqq.marketplace.domain.outboundproductimage.aggregate;
 
 import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
+import com.ryuqq.marketplace.domain.outboundproduct.id.OutboundProductId;
 import com.ryuqq.marketplace.domain.outboundproductimage.id.OutboundProductImageId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
+import com.ryuqq.marketplace.domain.productgroupimage.id.ProductGroupImageId;
 import java.time.Instant;
 
 /**
@@ -15,8 +17,8 @@ import java.time.Instant;
 public class OutboundProductImage {
 
     private final OutboundProductImageId id;
-    private final Long outboundProductId;
-    private final Long productGroupImageId;
+    private final OutboundProductId outboundProductId;
+    private final ProductGroupImageId productGroupImageId;
     private final String originUrl;
     private String externalUrl;
     private final ImageType imageType;
@@ -25,8 +27,8 @@ public class OutboundProductImage {
 
     private OutboundProductImage(
             OutboundProductImageId id,
-            Long outboundProductId,
-            Long productGroupImageId,
+            OutboundProductId outboundProductId,
+            ProductGroupImageId productGroupImageId,
             String originUrl,
             String externalUrl,
             ImageType imageType,
@@ -51,8 +53,9 @@ public class OutboundProductImage {
             int sortOrder) {
         return new OutboundProductImage(
                 OutboundProductImageId.forNew(),
-                outboundProductId,
-                productGroupImageId,
+                OutboundProductId.of(outboundProductId),
+                productGroupImageId != null
+                        ? ProductGroupImageId.of(productGroupImageId) : null,
                 originUrl,
                 null,
                 imageType,
@@ -71,23 +74,31 @@ public class OutboundProductImage {
             int sortOrder,
             DeletionStatus deletionStatus) {
         return new OutboundProductImage(
-                id, outboundProductId, productGroupImageId,
+                id,
+                OutboundProductId.of(outboundProductId),
+                productGroupImageId != null
+                        ? ProductGroupImageId.of(productGroupImageId) : null,
                 originUrl, externalUrl, imageType, sortOrder, deletionStatus);
+    }
+
+    /** sortOrder와 externalUrl을 유지하면서 새 인스턴스를 반환 (diff retained용). */
+    public OutboundProductImage withSortOrder(int newSortOrder) {
+        return new OutboundProductImage(
+                id, outboundProductId, productGroupImageId,
+                originUrl, externalUrl, imageType, newSortOrder, deletionStatus);
+    }
+
+    /** soft delete된 새 인스턴스를 반환 (diff removed용). */
+    public OutboundProductImage asDeleted(Instant occurredAt) {
+        return new OutboundProductImage(
+                id, outboundProductId, productGroupImageId,
+                originUrl, externalUrl, imageType, sortOrder,
+                DeletionStatus.deletedAt(occurredAt));
     }
 
     /** 외부 채널 업로드 완료 후 external URL 설정. */
     public void assignExternalUrl(String externalUrl) {
         this.externalUrl = externalUrl;
-    }
-
-    /** 정렬 순서 갱신. */
-    public void updateSortOrder(int sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    /** soft delete 처리. */
-    public void delete(Instant occurredAt) {
-        this.deletionStatus = DeletionStatus.deletedAt(occurredAt);
     }
 
     public boolean isThumbnail() {
@@ -117,12 +128,20 @@ public class OutboundProductImage {
         return id.value();
     }
 
-    public Long outboundProductId() {
+    public OutboundProductId outboundProductId() {
         return outboundProductId;
     }
 
-    public Long productGroupImageId() {
+    public Long outboundProductIdValue() {
+        return outboundProductId.value();
+    }
+
+    public ProductGroupImageId productGroupImageId() {
         return productGroupImageId;
+    }
+
+    public Long productGroupImageIdValue() {
+        return productGroupImageId != null ? productGroupImageId.value() : null;
     }
 
     public String originUrl() {

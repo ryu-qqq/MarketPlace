@@ -13,5 +13,6 @@ CREATE TABLE `outbound_product_images` (
   `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '갱신일시',
   PRIMARY KEY (`id`),
   KEY `idx_outbound_product_images_outbound_product_id` (`outbound_product_id`),
+  KEY `idx_outbound_product_images_outbound_product_id_deleted` (`outbound_product_id`, `deleted`),
   KEY `idx_outbound_product_images_product_group_image_id` (`product_group_image_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='아웃바운드 상품 이미지 (채널별 외부 URL 캐싱)';

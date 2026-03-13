@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.domain.outboundproductimage.vo;
 
 import com.ryuqq.marketplace.domain.outboundproductimage.aggregate.OutboundProductImage;
-import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ public class OutboundProductImages {
      * 현재 ProductGroupImage 목록과 비교하여 diff를 생성합니다.
      *
      * <p>비교 키: resolvedInternalUrl(uploadedUrl 우선, 없으면 originUrl) + imageType
+     * <p>내부 상태를 변경하지 않고 새 인스턴스를 반환합니다.
      *
      * @param currentImages 현재 상품 이미지 목록
      * @param outboundProductId 아웃바운드 상품 ID
@@ -51,7 +51,11 @@ public class OutboundProductImages {
                 images.stream()
                         .filter(img -> !img.isDeleted())
                         .collect(Collectors.toMap(
-                                OutboundProductImage::imageKey, img -> img, (a, b) -> a));
+                                OutboundProductImage::imageKey, img -> img,
+                                (a, b) -> {
+                                    throw new IllegalStateException(
+                                            "중복된 imageKey가 존재합니다: " + a.imageKey());
+                                }));
 
         List<OutboundProductImage> added = new ArrayList<>();
         List<OutboundProductImage> retained = new ArrayList<>();
@@ -64,8 +68,7 @@ public class OutboundProductImages {
 
             OutboundProductImage existing = existingByKey.get(key);
             if (existing != null) {
-                existing.updateSortOrder(current.sortOrder());
-                retained.add(existing);
+                retained.add(existing.withSortOrder(current.sortOrder()));
             } else {
                 OutboundProductImage newImage = OutboundProductImage.forNew(
                         outboundProductId,
@@ -79,11 +82,8 @@ public class OutboundProductImages {
 
         List<OutboundProductImage> removed = images.stream()
                 .filter(img -> !img.isDeleted() && !newKeys.contains(img.imageKey()))
+                .map(img -> img.asDeleted(now))
                 .toList();
-
-        for (OutboundProductImage image : removed) {
-            image.delete(now);
-        }
 
         return OutboundProductImageDiff.of(added, removed, retained, now);
     }

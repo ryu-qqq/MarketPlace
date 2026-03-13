@@ -20,7 +20,11 @@ public class SalesChannelImageClientManager {
                 clients.stream()
                         .collect(Collectors.toMap(
                                 SalesChannelImageClient::channelCode,
-                                Function.identity()));
+                                Function.identity(),
+                                (a, b) -> {
+                                    throw new IllegalStateException(
+                                            "중복된 channelCode가 존재합니다: " + a.channelCode());
+                                }));
     }
 
     /**
@@ -31,6 +35,9 @@ public class SalesChannelImageClientManager {
      * @return 외부 채널 CDN URL 목록
      */
     public List<String> uploadImages(String channelCode, List<String> imageUrls) {
+        if (imageUrls.isEmpty()) {
+            return List.of();
+        }
         return resolve(channelCode).uploadImages(imageUrls);
     }
 

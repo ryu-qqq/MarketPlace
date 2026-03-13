@@ -65,35 +65,7 @@ public class NaverCommerceProductClientAdapter
 
         NaverProductRegistrationRequest request =
                 mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId);
-
-        String token = tokenManager.getAccessToken();
-
-        log.info(
-                "네이버 커머스 상품 등록 요청: productGroupId={}, categoryId={}",
-                bundle.group().idValue(),
-                externalCategoryId);
-
-        NaverProductRegistrationResponse response =
-                restClient
-                        .post()
-                        .uri("/v2/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
-                        .body(request)
-                        .retrieve()
-                        .body(NaverProductRegistrationResponse.class);
-
-        if (response == null || response.originProductNo() == null) {
-            throw new IllegalStateException(
-                    "네이버 커머스 상품 등록 응답이 null입니다: productGroupId=" + bundle.group().idValue());
-        }
-
-        log.info(
-                "네이버 커머스 상품 등록 성공: productGroupId={}, originProductNo={}",
-                bundle.group().idValue(),
-                response.originProductNo());
-
-        return String.valueOf(response.originProductNo());
+        return executeRegister(request, bundle.group().idValue(), externalCategoryId);
     }
 
     @Override
@@ -107,35 +79,7 @@ public class NaverCommerceProductClientAdapter
         NaverProductRegistrationRequest request =
                 mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId,
                         resolvedImages);
-
-        String token = tokenManager.getAccessToken();
-
-        log.info(
-                "네이버 커머스 상품 등록 요청 (외부 이미지): productGroupId={}, categoryId={}",
-                bundle.group().idValue(),
-                externalCategoryId);
-
-        NaverProductRegistrationResponse response =
-                restClient
-                        .post()
-                        .uri("/v2/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
-                        .body(request)
-                        .retrieve()
-                        .body(NaverProductRegistrationResponse.class);
-
-        if (response == null || response.originProductNo() == null) {
-            throw new IllegalStateException(
-                    "네이버 커머스 상품 등록 응답이 null입니다: productGroupId=" + bundle.group().idValue());
-        }
-
-        log.info(
-                "네이버 커머스 상품 등록 성공: productGroupId={}, originProductNo={}",
-                bundle.group().idValue(),
-                response.originProductNo());
-
-        return String.valueOf(response.originProductNo());
+        return executeRegister(request, bundle.group().idValue(), externalCategoryId);
     }
 
     @Override
@@ -149,27 +93,7 @@ public class NaverCommerceProductClientAdapter
 
         NaverProductRegistrationRequest request =
                 mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId);
-
-        String token = tokenManager.getAccessToken();
-
-        log.info(
-                "네이버 커머스 상품 수정 요청: productGroupId={}, externalProductId={}",
-                bundle.group().idValue(),
-                externalProductId);
-
-        restClient
-                .put()
-                .uri("/v2/products/origin-products/{originProductNo}", externalProductId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
-
-        log.info(
-                "네이버 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",
-                bundle.group().idValue(),
-                externalProductId);
+        executeUpdate(request, bundle.group().idValue(), externalProductId);
     }
 
     @Override
@@ -185,27 +109,7 @@ public class NaverCommerceProductClientAdapter
         NaverProductRegistrationRequest request =
                 mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId,
                         resolvedImages);
-
-        String token = tokenManager.getAccessToken();
-
-        log.info(
-                "네이버 커머스 상품 수정 요청 (외부 이미지): productGroupId={}, externalProductId={}",
-                bundle.group().idValue(),
-                externalProductId);
-
-        restClient
-                .put()
-                .uri("/v2/products/origin-products/{originProductNo}", externalProductId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
-
-        log.info(
-                "네이버 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",
-                bundle.group().idValue(),
-                externalProductId);
+        executeUpdate(request, bundle.group().idValue(), externalProductId);
     }
 
     @Override
@@ -224,14 +128,111 @@ public class NaverCommerceProductClientAdapter
         log.info("네이버 커머스 상품 삭제 성공: externalProductId={}", externalProductId);
     }
 
+    @Override
+    public List<ExternalProductEntry> fetchAllProducts() {
+        List<NaverProductSearchResponse.ProductContent> naverProducts = searchAllProducts();
+        List<ExternalProductEntry> entries = new ArrayList<>();
+
+        for (NaverProductSearchResponse.ProductContent content : naverProducts) {
+            if (content.channelProducts() == null) {
+                continue;
+            }
+            for (NaverProductSearchResponse.ChannelProduct cp : content.channelProducts()) {
+                entries.add(
+                        new ExternalProductEntry(
+                                String.valueOf(content.originProductNo()),
+                                cp.sellerManagementCode(),
+                                cp.name(),
+                                cp.statusType()));
+            }
+        }
+
+        log.info("네이버 커머스 ExternalProductEntry 변환 완료: {}건", entries.size());
+        return entries;
+    }
+
+    /**
+     * 네이버 커머스 상품 목록을 단일 페이지로 조회합니다.
+     */
+    public NaverProductSearchResponse searchProducts(NaverProductSearchRequest request) {
+        String token = tokenManager.getAccessToken();
+
+        log.info("네이버 커머스 상품 목록 조회 요청: page={}, size={}", request.page(), request.size());
+
+        NaverProductSearchResponse response =
+                restClient
+                        .post()
+                        .uri("/v1/products/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
+                        .body(request)
+                        .retrieve()
+                        .body(NaverProductSearchResponse.class);
+
+        if (response == null) {
+            throw new IllegalStateException("네이버 커머스 상품 목록 조회 응답이 null입니다");
+        }
+
+        log.info(
+                "네이버 커머스 상품 목록 조회 성공: 조회건수={}, 전체={}",
+                response.contents() != null ? response.contents().size() : 0,
+                response.totalElements());
+
+        return response;
+    }
+
+    private String executeRegister(
+            NaverProductRegistrationRequest request, Long productGroupId, Long categoryId) {
+        String token = tokenManager.getAccessToken();
+
+        log.info("네이버 커머스 상품 등록 요청: productGroupId={}, categoryId={}",
+                productGroupId, categoryId);
+
+        NaverProductRegistrationResponse response =
+                restClient
+                        .post()
+                        .uri("/v2/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
+                        .body(request)
+                        .retrieve()
+                        .body(NaverProductRegistrationResponse.class);
+
+        if (response == null || response.originProductNo() == null) {
+            throw new IllegalStateException(
+                    "네이버 커머스 상품 등록 응답이 null입니다: productGroupId=" + productGroupId);
+        }
+
+        log.info("네이버 커머스 상품 등록 성공: productGroupId={}, originProductNo={}",
+                productGroupId, response.originProductNo());
+
+        return String.valueOf(response.originProductNo());
+    }
+
+    private void executeUpdate(
+            NaverProductRegistrationRequest request, Long productGroupId, String externalProductId) {
+        String token = tokenManager.getAccessToken();
+
+        log.info("네이버 커머스 상품 수정 요청: productGroupId={}, externalProductId={}",
+                productGroupId, externalProductId);
+
+        restClient
+                .put()
+                .uri("/v2/products/origin-products/{originProductNo}", externalProductId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body(request)
+                .retrieve()
+                .toBodilessEntity();
+
+        log.info("네이버 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",
+                productGroupId, externalProductId);
+    }
+
     /**
      * 네이버 커머스에 등록된 전체 상품을 페이지 단위로 조회합니다.
-     *
-     * <p>POST /v1/products/search API를 반복 호출하여 모든 페이지의 상품을 수집합니다.
-     *
-     * @return 전체 상품 목록
      */
-    public List<NaverProductSearchResponse.ProductContent> searchAllProducts() {
+    private List<NaverProductSearchResponse.ProductContent> searchAllProducts() {
         String token = tokenManager.getAccessToken();
         List<NaverProductSearchResponse.ProductContent> allProducts = new ArrayList<>();
 
@@ -273,61 +274,5 @@ public class NaverCommerceProductClientAdapter
 
         log.info("네이버 커머스 전체 상품 조회 완료: 총 {}건", allProducts.size());
         return allProducts;
-    }
-
-    @Override
-    public List<ExternalProductEntry> fetchAllProducts() {
-        List<NaverProductSearchResponse.ProductContent> naverProducts = searchAllProducts();
-        List<ExternalProductEntry> entries = new ArrayList<>();
-
-        for (NaverProductSearchResponse.ProductContent content : naverProducts) {
-            if (content.channelProducts() == null) {
-                continue;
-            }
-            for (NaverProductSearchResponse.ChannelProduct cp : content.channelProducts()) {
-                entries.add(
-                        new ExternalProductEntry(
-                                String.valueOf(content.originProductNo()),
-                                cp.sellerManagementCode(),
-                                cp.name(),
-                                cp.statusType()));
-            }
-        }
-
-        log.info("네이버 커머스 ExternalProductEntry 변환 완료: {}건", entries.size());
-        return entries;
-    }
-
-    /**
-     * 네이버 커머스 상품 목록을 단일 페이지로 조회합니다.
-     *
-     * @param request 검색 요청
-     * @return 검색 응답
-     */
-    public NaverProductSearchResponse searchProducts(NaverProductSearchRequest request) {
-        String token = tokenManager.getAccessToken();
-
-        log.info("네이버 커머스 상품 목록 조회 요청: page={}, size={}", request.page(), request.size());
-
-        NaverProductSearchResponse response =
-                restClient
-                        .post()
-                        .uri("/v1/products/search")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
-                        .body(request)
-                        .retrieve()
-                        .body(NaverProductSearchResponse.class);
-
-        if (response == null) {
-            throw new IllegalStateException("네이버 커머스 상품 목록 조회 응답이 null입니다");
-        }
-
-        log.info(
-                "네이버 커머스 상품 목록 조회 성공: 조회건수={}, 전체={}",
-                response.contents() != null ? response.contents().size() : 0,
-                response.totalElements());
-
-        return response;
     }
 }

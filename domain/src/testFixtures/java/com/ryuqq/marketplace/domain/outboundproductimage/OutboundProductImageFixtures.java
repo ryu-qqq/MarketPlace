@@ -27,9 +27,9 @@ public final class OutboundProductImageFixtures {
     public static final Long DEFAULT_OUTBOUND_PRODUCT_ID = 100L;
     public static final Long DEFAULT_PRODUCT_GROUP_IMAGE_ID = 10L;
     public static final String DEFAULT_ORIGIN_URL = "https://s3.example.com/image.jpg";
-    public static final String DEFAULT_EXTERNAL_URL = "https://cdn.naver.com/image.jpg";
+    public static final String DEFAULT_EXTERNAL_URL = "https://shop-phinf.pstatic.net/image.jpg";
     public static final String DEFAULT_DETAIL_ORIGIN_URL = "https://s3.example.com/detail.jpg";
-    public static final String DEFAULT_DETAIL_EXTERNAL_URL = "https://cdn.naver.com/detail.jpg";
+    public static final String DEFAULT_DETAIL_EXTERNAL_URL = "https://shop-phinf.pstatic.net/detail.jpg";
 
     // ===== ID Fixtures =====
 
@@ -77,7 +77,7 @@ public final class OutboundProductImageFixtures {
     /** externalUrl이 할당된 상세 이미지. */
     public static OutboundProductImage detailImageWithExternalUrl(int sortOrder) {
         OutboundProductImage image = newDetailImage(sortOrder);
-        image.assignExternalUrl("https://cdn.naver.com/detail" + sortOrder + ".jpg");
+        image.assignExternalUrl("https://shop-phinf.pstatic.net/detail" + sortOrder + ".jpg");
         return image;
     }
 
@@ -101,7 +101,7 @@ public final class OutboundProductImageFixtures {
                 DEFAULT_OUTBOUND_PRODUCT_ID,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID + sortOrder,
                 "https://s3.example.com/detail" + sortOrder + ".jpg",
-                "https://cdn.naver.com/detail" + sortOrder + ".jpg",
+                "https://shop-phinf.pstatic.net/detail" + sortOrder + ".jpg",
                 ImageType.DETAIL,
                 sortOrder,
                 DeletionStatus.active());
@@ -160,8 +160,7 @@ public final class OutboundProductImageFixtures {
 
     /** 삭제만 있는 diff. */
     public static OutboundProductImageDiff removedOnlyDiff(Instant now) {
-        OutboundProductImage removed = activeThumbnailImage();
-        removed.delete(now);
+        OutboundProductImage removed = activeThumbnailImage().asDeleted(now);
         return OutboundProductImageDiff.of(List.of(), List.of(removed), List.of(), now);
     }
 }

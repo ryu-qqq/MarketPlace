@@ -24,7 +24,7 @@ public final class OutboundProductImageJpaEntityFixtures {
     public static final String DEFAULT_ORIGIN_URL =
             "https://s3.amazonaws.com/bucket/images/thumbnail.jpg";
     public static final String DEFAULT_EXTERNAL_URL =
-            "https://cdn.naver.com/images/thumbnail.jpg";
+            "https://shop-phinf.pstatic.net/images/thumbnail.jpg";
     public static final String IMAGE_TYPE_THUMBNAIL = "THUMBNAIL";
     public static final String IMAGE_TYPE_DETAIL = "DETAIL";
     public static final int DEFAULT_SORT_ORDER = 0;
@@ -56,7 +56,7 @@ public final class OutboundProductImageJpaEntityFixtures {
                 DEFAULT_OUTBOUND_PRODUCT_ID,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID,
                 "https://s3.amazonaws.com/bucket/images/detail.jpg",
-                "https://cdn.naver.com/images/detail.jpg",
+                "https://shop-phinf.pstatic.net/images/detail.jpg",
                 IMAGE_TYPE_DETAIL,
                 1,
                 false,
@@ -144,7 +144,7 @@ public final class OutboundProductImageJpaEntityFixtures {
                 DEFAULT_OUTBOUND_PRODUCT_ID,
                 DEFAULT_PRODUCT_GROUP_IMAGE_ID,
                 "https://s3.amazonaws.com/bucket/images/detail_" + sortOrder + ".jpg",
-                "https://cdn.naver.com/images/detail_" + sortOrder + ".jpg",
+                "https://shop-phinf.pstatic.net/images/detail_" + sortOrder + ".jpg",
                 IMAGE_TYPE_DETAIL,
                 sortOrder,
                 false,

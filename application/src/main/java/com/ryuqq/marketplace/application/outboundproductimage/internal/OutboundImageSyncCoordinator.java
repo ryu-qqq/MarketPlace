@@ -15,7 +15,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 아웃바운드 이미지 동기화 코디네이터.
@@ -23,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>캐시된 외부 이미지 URL과 현재 이미지를 diff 비교하여,
  * 새로 추가된 이미지만 외부 채널에 업로드하고, 삭제된 이미지는 soft delete 처리합니다.
  * 이미 업로드된 이미지는 캐시된 external URL을 재사용합니다.
+ *
+ * <p>외부 API 호출(이미지 업로드)은 트랜잭션 밖에서 수행됩니다.
+ * DB 영속화는 Spring Data JPA의 기본 트랜잭션에 위임합니다.
  */
 @Component
 public class OutboundImageSyncCoordinator {
@@ -45,12 +47,14 @@ public class OutboundImageSyncCoordinator {
     /**
      * 이미지 동기화를 수행하고 외부 채널 URL이 반영된 결과를 반환합니다.
      *
+     * <p>외부 API 호출은 트랜잭션 밖에서 수행하며,
+     * DB 변경은 Spring Data JPA의 기본 트랜잭션에 위임합니다.
+     *
      * @param outboundProductId 아웃바운드 상품 ID
      * @param channelCode 판매채널 코드
      * @param currentImages 현재 상품 이미지 목록
      * @return 외부 채널 URL이 반영된 이미지 결과
      */
-    @Transactional
     public ResolvedExternalImages syncImages(
             Long outboundProductId,
             String channelCode,
@@ -82,7 +86,7 @@ public class OutboundImageSyncCoordinator {
             commandManager.persistAll(diff.removed());
         }
 
-        // 5. added → 외부 채널에 업로드 → externalUrl 세팅
+        // 5. added → 외부 채널에 업로드 (트랜잭션 밖) → externalUrl 세팅 → persist
         if (!diff.added().isEmpty()) {
             uploadAndAssignExternalUrls(channelCode, diff.added());
             commandManager.persistAll(diff.added());
@@ -103,8 +107,19 @@ public class OutboundImageSyncCoordinator {
 
         List<String> externalUrls = imageClientManager.uploadImages(channelCode, originUrls);
 
+        if (externalUrls.size() != addedImages.size()) {
+            throw new IllegalStateException(
+                    "업로드 결과 개수 불일치: expected=" + addedImages.size()
+                            + ", actual=" + externalUrls.size());
+        }
+
         for (int i = 0; i < addedImages.size(); i++) {
-            addedImages.get(i).assignExternalUrl(externalUrls.get(i));
+            String externalUrl = externalUrls.get(i);
+            if (externalUrl == null || externalUrl.isBlank()) {
+                throw new IllegalStateException(
+                        "업로드된 외부 URL이 비어있습니다: originUrl=" + addedImages.get(i).originUrl());
+            }
+            addedImages.get(i).assignExternalUrl(externalUrl);
         }
     }
 
