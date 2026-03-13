@@ -4,10 +4,10 @@ import static com.ryuqq.marketplace.adapter.out.persistence.brand.entity.QBrandJ
 import static com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.entity.QOutboundProductJpaEntity.outboundProductJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.QProductGroupJpaEntity.productGroupJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.seller.entity.QSellerJpaEntity.sellerJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.shop.entity.QShopJpaEntity.shopJpaEntity;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductListCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.condition.OmsProductConditionBuilder;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 /**
  * OmsProductCompositionQueryDslRepository - OMS 상품 목록 Composition QueryDSL 레포지토리.
  *
- * <p>product_groups WHERE EXISTS(outbound_products) LEFT JOIN sellers LEFT JOIN brands + 필터 + 페이징.
+ * <p>outbound_products JOIN product_groups JOIN shops LEFT JOIN sellers LEFT JOIN brands + 필터 + 페이징.
  *
  * <p>PER-REP-003: 모든 조회는 QueryDslRepository.
  *
@@ -40,6 +40,8 @@ public class OmsProductCompositionQueryDslRepository {
     /**
      * 검색 조건에 맞는 OMS 상품 목록 조회.
      *
+     * <p>outbound_products 기준으로 조회하여 shop별로 행이 분리된다.
+     *
      * @param criteria 검색 조건
      * @return OMS 상품 Composite DTO 목록
      */
@@ -55,16 +57,22 @@ public class OmsProductCompositionQueryDslRepository {
                                 sellerJpaEntity.sellerName,
                                 brandJpaEntity.id,
                                 brandJpaEntity.nameKo,
+                                outboundProductJpaEntity.shopId,
+                                shopJpaEntity.shopName,
                                 productGroupJpaEntity.createdAt,
                                 productGroupJpaEntity.updatedAt))
-                .from(productGroupJpaEntity)
+                .from(outboundProductJpaEntity)
+                .innerJoin(productGroupJpaEntity)
+                .on(productGroupJpaEntity.id.eq(outboundProductJpaEntity.productGroupId))
+                .innerJoin(shopJpaEntity)
+                .on(shopJpaEntity.id.eq(outboundProductJpaEntity.shopId))
                 .leftJoin(sellerJpaEntity)
                 .on(sellerJpaEntity.id.eq(productGroupJpaEntity.sellerId))
                 .leftJoin(brandJpaEntity)
                 .on(brandJpaEntity.id.eq(productGroupJpaEntity.brandId))
                 .where(
-                        outboundProductExists(criteria),
                         conditionBuilder.notDeleted(),
+                        buildShopCondition(criteria),
                         buildStatusCondition(criteria),
                         buildPartnerCondition(criteria),
                         buildSearchCondition(criteria),
@@ -84,13 +92,15 @@ public class OmsProductCompositionQueryDslRepository {
     public long countByCriteria(OmsProductSearchCriteria criteria) {
         Long count =
                 queryFactory
-                        .select(productGroupJpaEntity.count())
-                        .from(productGroupJpaEntity)
+                        .select(outboundProductJpaEntity.count())
+                        .from(outboundProductJpaEntity)
+                        .innerJoin(productGroupJpaEntity)
+                        .on(productGroupJpaEntity.id.eq(outboundProductJpaEntity.productGroupId))
                         .leftJoin(sellerJpaEntity)
                         .on(sellerJpaEntity.id.eq(productGroupJpaEntity.sellerId))
                         .where(
-                                outboundProductExists(criteria),
                                 conditionBuilder.notDeleted(),
+                                buildShopCondition(criteria),
                                 buildStatusCondition(criteria),
                                 buildPartnerCondition(criteria),
                                 buildSearchCondition(criteria),
@@ -101,13 +111,11 @@ public class OmsProductCompositionQueryDslRepository {
 
     // -- private helpers --
 
-    private BooleanExpression outboundProductExists(OmsProductSearchCriteria criteria) {
-        BooleanExpression condition =
-                outboundProductJpaEntity.productGroupId.eq(productGroupJpaEntity.id);
-        if (criteria.hasShopFilter()) {
-            condition = condition.and(outboundProductJpaEntity.shopId.in(criteria.shopIds()));
+    private BooleanExpression buildShopCondition(OmsProductSearchCriteria criteria) {
+        if (!criteria.hasShopFilter()) {
+            return null;
         }
-        return JPAExpressions.selectOne().from(outboundProductJpaEntity).where(condition).exists();
+        return outboundProductJpaEntity.shopId.in(criteria.shopIds());
     }
 
     private BooleanExpression buildStatusCondition(OmsProductSearchCriteria criteria) {

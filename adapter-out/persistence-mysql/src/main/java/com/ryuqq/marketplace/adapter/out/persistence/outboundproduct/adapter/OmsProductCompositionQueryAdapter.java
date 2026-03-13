@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductListCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductMainImageDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductPriceStockDto;
-import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductShopInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.composite.OmsProductSyncInfoDto;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.mapper.OmsProductCompositionMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.repository.OmsProductCompositionQueryDslRepository;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 /**
  * OMS 상품 목록 Composition 조회 어댑터.
  *
- * <p>2-pass 전략: 1) base composite 조회 → 2) 이미지/가격재고/연동상태 enrichment.
+ * <p>2-pass 전략: 1) outbound_products 기준 base composite 조회 → 2) 이미지/가격재고/연동상태 enrichment.
  */
 @Component
 public class OmsProductCompositionQueryAdapter implements OmsProductCompositionQueryPort {
@@ -45,17 +44,18 @@ public class OmsProductCompositionQueryAdapter implements OmsProductCompositionQ
         }
 
         List<Long> pgIds =
-                composites.stream().map(OmsProductListCompositeDto::productGroupId).toList();
+                composites.stream()
+                        .map(OmsProductListCompositeDto::productGroupId)
+                        .distinct()
+                        .toList();
 
         Map<Long, OmsProductMainImageDto> imageMap = enrichmentRepository.fetchMainImages(pgIds);
         Map<Long, OmsProductPriceStockDto> priceStockMap =
                 enrichmentRepository.fetchPriceStock(pgIds);
-        Map<Long, OmsProductSyncInfoDto> syncInfoMap =
+        Map<String, OmsProductSyncInfoDto> syncInfoMap =
                 enrichmentRepository.fetchLatestSyncInfo(pgIds);
-        Map<Long, OmsProductShopInfoDto> shopInfoMap =
-                enrichmentRepository.fetchShopInfo(pgIds, criteria.shopIds());
 
-        return mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap, shopInfoMap);
+        return mapper.toResults(composites, imageMap, priceStockMap, syncInfoMap);
     }
 
     @Override

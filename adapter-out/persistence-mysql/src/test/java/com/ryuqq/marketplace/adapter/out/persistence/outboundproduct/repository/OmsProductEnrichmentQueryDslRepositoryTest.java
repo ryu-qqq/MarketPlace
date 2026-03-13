@@ -373,13 +373,14 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
                             "key-" + UUID.randomUUID()));
 
             // when
-            Map<Long, OmsProductSyncInfoDto> result =
+            Map<String, OmsProductSyncInfoDto> result =
                     repository.fetchLatestSyncInfo(List.of(PG_ID_1));
 
             // then
+            String key = OmsProductSyncInfoDto.key(PG_ID_1, 1L);
             assertThat(result).hasSize(1);
-            assertThat(result.get(PG_ID_1).entityStatusName()).isEqualTo("COMPLETED");
-            assertThat(result.get(PG_ID_1).processedAt()).isEqualTo(processedAt);
+            assertThat(result.get(key).entityStatusName()).isEqualTo("COMPLETED");
+            assertThat(result.get(key).processedAt()).isEqualTo(processedAt);
         }
 
         @Test
@@ -402,13 +403,14 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
                             "key-new-" + UUID.randomUUID()));
 
             // when
-            Map<Long, OmsProductSyncInfoDto> result =
+            Map<String, OmsProductSyncInfoDto> result =
                     repository.fetchLatestSyncInfo(List.of(PG_ID_1));
 
             // then
+            String key = OmsProductSyncInfoDto.key(PG_ID_1, 1L);
             assertThat(result).hasSize(1);
-            assertThat(result.get(PG_ID_1).entityStatusName()).isEqualTo("COMPLETED");
-            assertThat(result.get(PG_ID_1).processedAt()).isEqualTo(newer);
+            assertThat(result.get(key).entityStatusName()).isEqualTo("COMPLETED");
+            assertThat(result.get(key).processedAt()).isEqualTo(newer);
         }
 
         @Test
@@ -424,12 +426,13 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
                             "key-" + UUID.randomUUID()));
 
             // when
-            Map<Long, OmsProductSyncInfoDto> result =
+            Map<String, OmsProductSyncInfoDto> result =
                     repository.fetchLatestSyncInfo(List.of(PG_ID_1));
 
             // then
+            String key = OmsProductSyncInfoDto.key(PG_ID_1, 1L);
             assertThat(result).hasSize(1);
-            assertThat(result.get(PG_ID_1).entityStatusName()).isEqualTo("FAILED");
+            assertThat(result.get(key).entityStatusName()).isEqualTo("FAILED");
         }
 
         @Test
@@ -452,13 +455,15 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
                             "key-pg2-" + UUID.randomUUID()));
 
             // when
-            Map<Long, OmsProductSyncInfoDto> result =
+            Map<String, OmsProductSyncInfoDto> result =
                     repository.fetchLatestSyncInfo(List.of(PG_ID_1, PG_ID_2));
 
             // then
             assertThat(result).hasSize(2);
-            assertThat(result.get(PG_ID_1).entityStatusName()).isEqualTo("COMPLETED");
-            assertThat(result.get(PG_ID_2).entityStatusName()).isEqualTo("FAILED");
+            assertThat(result.get(OmsProductSyncInfoDto.key(PG_ID_1, 1L)).entityStatusName())
+                    .isEqualTo("COMPLETED");
+            assertThat(result.get(OmsProductSyncInfoDto.key(PG_ID_2, 1L)).entityStatusName())
+                    .isEqualTo("FAILED");
         }
 
         @Test
@@ -473,7 +478,7 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
                             "key-" + UUID.randomUUID()));
 
             // when
-            Map<Long, OmsProductSyncInfoDto> result =
+            Map<String, OmsProductSyncInfoDto> result =
                     repository.fetchLatestSyncInfo(List.of(PG_ID_1));
 
             // then
@@ -484,7 +489,7 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
         @DisplayName("연동 이력이 없는 상품그룹은 맵에 포함되지 않습니다")
         void fetchLatestSyncInfo_WithNoOutbox_ReturnsEmptyMap() {
             // when
-            Map<Long, OmsProductSyncInfoDto> result =
+            Map<String, OmsProductSyncInfoDto> result =
                     repository.fetchLatestSyncInfo(List.of(PG_ID_NO_DATA));
 
             // then
@@ -495,7 +500,7 @@ class OmsProductEnrichmentQueryDslRepositoryTest {
         @DisplayName("빈 목록으로 조회하면 빈 맵을 반환합니다")
         void fetchLatestSyncInfo_WithEmptyIds_ReturnsEmptyMap() {
             // when
-            Map<Long, OmsProductSyncInfoDto> result = repository.fetchLatestSyncInfo(List.of());
+            Map<String, OmsProductSyncInfoDto> result = repository.fetchLatestSyncInfo(List.of());
 
             // then
             assertThat(result).isEmpty();
