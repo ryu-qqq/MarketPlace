@@ -60,19 +60,6 @@ class OutboundProductImagesTest {
                 DeletionStatus.active());
     }
 
-    /** imageKey 비교용: uploadedUrl 기준 상세 ProductGroupImage. */
-    private ProductGroupImage pgDetailWithUploadedUrl(
-            Long id, String originUrl, String uploadedUrl, int sortOrder) {
-        return ProductGroupImage.reconstitute(
-                ProductGroupImageId.of(id),
-                ProductGroupFixtures.defaultProductGroupId(),
-                ImageUrl.of(originUrl),
-                ImageUrl.of(uploadedUrl),
-                ImageType.DETAIL,
-                sortOrder,
-                DeletionStatus.active());
-    }
-
     @Nested
     @DisplayName("of / empty 팩토리 메서드 테스트")
     class FactoryTest {

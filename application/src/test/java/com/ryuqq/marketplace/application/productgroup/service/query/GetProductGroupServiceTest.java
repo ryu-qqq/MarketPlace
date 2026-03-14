@@ -86,7 +86,14 @@ class GetProductGroupServiceTest {
                         null);
 
         return new ProductGroupDetailBundle(
-                queryResult, group, List.of(), Optional.empty(), Optional.empty(), Map.of());
+                queryResult,
+                group,
+                List.of(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 
     private ProductGroupDetailCompositeResult createDetailCompositeResult(

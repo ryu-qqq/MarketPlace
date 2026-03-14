@@ -132,8 +132,19 @@ class OmsProductCompositionQueryDslRepositoryTest {
 
     private ShopJpaEntity createShop(Instant now) {
         return ShopJpaEntity.create(
-                null, 1L, "테스트샵", "test-account", "ACTIVE", "TEST", null, null, null, null, now,
-                now, null);
+                null,
+                1L,
+                "테스트샵",
+                "test-account",
+                "ACTIVE",
+                "TEST",
+                null,
+                null,
+                null,
+                null,
+                now,
+                now,
+                null);
     }
 
     private QueryContext<OmsProductSortKey> defaultQueryContext() {
@@ -215,7 +226,9 @@ class OmsProductCompositionQueryDslRepositoryTest {
                     persist(
                             createProductGroup(
                                     null, seller2.getId(), brand.getId(), "셀러2상품", "ACTIVE", now));
-            persist(createOutboundProduct(null, seller2ProductGroup.getId(), 1L, shop.getId(), now));
+            persist(
+                    createOutboundProduct(
+                            null, seller2ProductGroup.getId(), 1L, shop.getId(), now));
 
             OmsProductSearchCriteria criteria =
                     new OmsProductSearchCriteria(

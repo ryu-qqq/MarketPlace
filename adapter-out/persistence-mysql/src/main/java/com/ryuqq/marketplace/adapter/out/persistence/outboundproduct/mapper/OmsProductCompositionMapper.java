@@ -66,9 +66,12 @@ public class OmsProductCompositionMapper {
                                 lastSyncAt = null;
                             }
 
+                            String productCode =
+                                    c.externalProductId() != null ? c.externalProductId() : "";
+
                             return new OmsProductListResult(
                                     c.productGroupId(),
-                                    "PG-" + c.productGroupId(),
+                                    productCode,
                                     c.productGroupName(),
                                     imageUrl,
                                     ps.price(),

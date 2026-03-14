@@ -5,8 +5,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
 
 import com.ryuqq.marketplace.application.imagevariant.manager.ImageVariantReadManager;
+import com.ryuqq.marketplace.application.notice.manager.NoticeCategoryReadManager;
 import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.manager.ProductReadManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
@@ -21,7 +23,9 @@ import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadMa
 import com.ryuqq.marketplace.application.productgroupdescription.manager.ProductGroupDescriptionReadManager;
 import com.ryuqq.marketplace.application.productgroupimage.manager.ProductGroupImageReadManager;
 import com.ryuqq.marketplace.application.productnotice.manager.ProductNoticeReadManager;
+import com.ryuqq.marketplace.application.seller.manager.SellerCsReadManager;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
@@ -30,6 +34,7 @@ import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchCriteria;
 import com.ryuqq.marketplace.domain.productnotice.ProductNoticeFixtures;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
+import com.ryuqq.marketplace.domain.seller.aggregate.SellerCs;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +60,10 @@ class ProductGroupReadFacadeTest {
     @Mock private ProductGroupDescriptionReadManager descriptionReadManager;
     @Mock private ProductReadManager productReadManager;
     @Mock private ProductNoticeReadManager productNoticeReadManager;
+    @Mock private NoticeCategoryReadManager noticeCategoryReadManager;
     @Mock private ProductGroupImageReadManager imageReadManager;
     @Mock private ImageVariantReadManager imageVariantReadManager;
+    @Mock private SellerCsReadManager sellerCsReadManager;
 
     @Nested
     @DisplayName("getListBundle() - Offset 기반 목록 조회 번들")
@@ -157,8 +164,11 @@ class ProductGroupReadFacadeTest {
             given(productReadManager.findByProductGroupId(groupId)).willReturn(products);
             given(descriptionReadManager.findByProductGroupId(groupId)).willReturn(description);
             given(productNoticeReadManager.findByProductGroupId(groupId)).willReturn(notice);
-            given(imageVariantReadManager.findBySourceImageIds(
-                            any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE)))
+            given(sellerCsReadManager.findBySellerId(any()))
+                    .willReturn(Optional.of(mock(SellerCs.class)));
+            given(
+                            imageVariantReadManager.findBySourceImageIds(
+                                    any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE)))
                     .willReturn(List.of());
 
             // when
@@ -171,6 +181,7 @@ class ProductGroupReadFacadeTest {
             assertThat(result.products()).isEmpty();
             assertThat(result.description()).isEmpty();
             assertThat(result.notice()).isEmpty();
+            assertThat(result.sellerCs()).isPresent();
             assertThat(result.variantsByImageId()).isEmpty();
         }
 
@@ -190,8 +201,11 @@ class ProductGroupReadFacadeTest {
                     .willReturn(Optional.empty());
             given(productNoticeReadManager.findByProductGroupId(groupId))
                     .willReturn(Optional.empty());
-            given(imageVariantReadManager.findBySourceImageIds(
-                            any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE)))
+            given(sellerCsReadManager.findBySellerId(any()))
+                    .willReturn(Optional.of(mock(SellerCs.class)));
+            given(
+                            imageVariantReadManager.findBySourceImageIds(
+                                    any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE)))
                     .willReturn(List.of());
 
             // when
@@ -203,6 +217,7 @@ class ProductGroupReadFacadeTest {
             then(productReadManager).should().findByProductGroupId(groupId);
             then(descriptionReadManager).should().findByProductGroupId(groupId);
             then(productNoticeReadManager).should().findByProductGroupId(groupId);
+            then(sellerCsReadManager).should().findBySellerId(any());
             then(imageVariantReadManager)
                     .should()
                     .findBySourceImageIds(any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE));
@@ -227,8 +242,12 @@ class ProductGroupReadFacadeTest {
                     .willReturn(Optional.of(description));
             given(productNoticeReadManager.findByProductGroupId(groupId))
                     .willReturn(Optional.of(notice));
-            given(imageVariantReadManager.findBySourceImageIds(
-                            any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE)))
+            given(noticeCategoryReadManager.getById(any())).willReturn(mock(NoticeCategory.class));
+            given(sellerCsReadManager.findBySellerId(any()))
+                    .willReturn(Optional.of(mock(SellerCs.class)));
+            given(
+                            imageVariantReadManager.findBySourceImageIds(
+                                    any(), eq(ImageSourceType.PRODUCT_GROUP_IMAGE)))
                     .willReturn(List.of());
 
             // when
@@ -237,6 +256,8 @@ class ProductGroupReadFacadeTest {
             // then
             assertThat(result.description()).isPresent();
             assertThat(result.notice()).isPresent();
+            assertThat(result.noticeCategory()).isPresent();
+            assertThat(result.sellerCs()).isPresent();
         }
     }
 

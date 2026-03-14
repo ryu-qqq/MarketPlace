@@ -140,6 +140,8 @@ class SetofFullProductUpdateExecutorTest {
                 List.of(ProductFixtures.activeProduct()),
                 Optional.empty(),
                 Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
                 Map.of());
     }
 }

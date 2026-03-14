@@ -64,6 +64,7 @@ langfuse/tests/__pycache__/
 .env
 local-dev/.env.aws
 local-dev/.env.aws.stage
+local-dev/.env.naver
 
 # Terraform
 .terraform/

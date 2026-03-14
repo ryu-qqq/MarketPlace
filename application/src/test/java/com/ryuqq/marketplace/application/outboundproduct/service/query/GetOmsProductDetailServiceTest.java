@@ -115,6 +115,13 @@ class GetOmsProductDetailServiceTest {
 
     private ProductGroupDetailBundle createDetailBundle() {
         return new ProductGroupDetailBundle(
-                null, null, List.of(), Optional.empty(), Optional.empty(), Map.of());
+                null,
+                null,
+                List.of(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 }

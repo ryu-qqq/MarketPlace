@@ -321,6 +321,8 @@ class SetofPartialProductUpdateExecutorTest {
                 List.of(ProductFixtures.activeProduct()),
                 Optional.empty(),
                 Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
                 Map.of());
     }
 
@@ -348,6 +350,8 @@ class SetofPartialProductUpdateExecutorTest {
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
                 Optional.of(ProductGroupFixtures.defaultProductGroupDescription()),
+                Optional.empty(),
+                Optional.empty(),
                 Optional.empty(),
                 Map.of());
     }
@@ -378,6 +382,8 @@ class SetofPartialProductUpdateExecutorTest {
                 List.of(ProductFixtures.activeProduct()),
                 Optional.empty(),
                 Optional.of(notice),
+                Optional.empty(),
+                Optional.empty(),
                 Map.of());
     }
 }

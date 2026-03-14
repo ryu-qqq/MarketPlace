@@ -50,7 +50,10 @@ public class SetofCommerceProductMapper {
      * @return 세토프 상품 등록 요청 DTO
      */
     public SetofProductGroupRegistrationRequest toRegistrationRequest(
-            ProductGroupDetailBundle bundle, Long externalCategoryId, Long externalBrandId) {
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            long shopId) {
 
         ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
         ProductGroup group = bundle.group();
@@ -61,7 +64,7 @@ public class SetofCommerceProductMapper {
 
         return new SetofProductGroupRegistrationRequest(
                 group.idValue(),
-                queryResult.sellerId(),
+                shopId,
                 externalBrandId,
                 externalCategoryId,
                 queryResult.shippingPolicy() != null

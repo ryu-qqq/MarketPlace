@@ -380,8 +380,7 @@ class ProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.images[].variants[]")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description(
-                                                            "이미지 Variant 목록 (멀티 사이즈"
-                                                                    + " WEBP)"),
+                                                            "이미지 Variant 목록 (멀티 사이즈" + " WEBP)"),
                                             fieldWithPath("data.images[].variants[].variantType")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
@@ -952,8 +951,7 @@ class ProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].images[].variants[]")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description(
-                                                            "이미지 Variant 목록 (멀티 사이즈"
-                                                                    + " WEBP)"),
+                                                            "이미지 Variant 목록 (멀티 사이즈" + " WEBP)"),
                                             fieldWithPath(
                                                             "data.content[].images[].variants[].variantType")
                                                     .type(JsonFieldType.STRING)

@@ -77,6 +77,18 @@ tasks.register('externalIntegrationTest', Test) {
     useJUnitPlatform {
         includeTags 'external-integration'
     }
+    def envFile = rootProject.file('local-dev/.env.naver')
+    if (envFile.exists()) {
+        envFile.readLines().each { line ->
+            def trimmed = line.trim()
+            if (trimmed && !trimmed.startsWith('#')) {
+                def idx = trimmed.indexOf('=')
+                if (idx > 0) {
+                    environment trimmed.substring(0, idx), trimmed.substring(idx + 1)
+                }
+            }
+        }
+    }
 }
 
 tasks.jacocoTestCoverageVerification {

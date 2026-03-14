@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.naver.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 네이버 커머스 상품 등록/수정 요청 DTO.
@@ -26,8 +27,7 @@ public record NaverProductRegistrationRequest(
             int salePrice,
             int stockQuantity,
             String detailContent,
-            DeliveryInfo deliveryInfo,
-            ProductInfoProvidedNotice productInfoProvidedNotice) {}
+            DeliveryInfo deliveryInfo) {}
 
     /** 이미지 정보. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -53,27 +53,88 @@ public record NaverProductRegistrationRequest(
             OptionInfo optionInfo,
             AfterServiceInfo afterServiceInfo,
             OriginAreaInfo originAreaInfo,
-            Boolean minorPurchasable) {
+            Boolean minorPurchasable,
+            List<ProductCertificationInfo> productCertificationInfos,
+            CertificationTargetExcludeContent certificationTargetExcludeContent,
+            ProductInfoProvidedNotice productInfoProvidedNotice) {
+
+        /** 방어적 복사. */
+        public DetailAttribute {
+            productCertificationInfos =
+                    productCertificationInfos == null
+                            ? null
+                            : List.copyOf(productCertificationInfos);
+        }
 
         /** 팩토리 메서드 - 카테고리/브랜드 기반. */
         public static DetailAttribute of(
                 Long naverCategoryId,
                 OptionInfo optionInfo,
                 Long brandId,
+                String manufacturerName,
                 AfterServiceInfo afterServiceInfo,
                 OriginAreaInfo originAreaInfo,
-                Boolean minorPurchasable) {
+                Boolean minorPurchasable,
+                List<ProductCertificationInfo> productCertificationInfos,
+                CertificationTargetExcludeContent certificationTargetExcludeContent,
+                ProductInfoProvidedNotice productInfoProvidedNotice) {
             NaverShoppingSearchInfo searchInfo =
-                    new NaverShoppingSearchInfo(null, null, naverCategoryId, brandId);
+                    new NaverShoppingSearchInfo(
+                            manufacturerName,
+                            manufacturerName,
+                            null,
+                            naverCategoryId,
+                            brandId,
+                            false);
             return new DetailAttribute(
-                    searchInfo, optionInfo, afterServiceInfo, originAreaInfo, minorPurchasable);
+                    searchInfo,
+                    optionInfo,
+                    afterServiceInfo,
+                    originAreaInfo,
+                    minorPurchasable,
+                    productCertificationInfos,
+                    certificationTargetExcludeContent,
+                    productInfoProvidedNotice);
+        }
+    }
+
+    /** KC 인증 정보. */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record ProductCertificationInfo(
+            String certificationKindType,
+            String name,
+            String certificationNumber,
+            Boolean certificationMark,
+            String companyName,
+            String certificationDate) {}
+
+    /** KC 인증 대상 제외 정보. */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record CertificationTargetExcludeContent(
+            String kcCertifiedProductExclusionYn,
+            String kcExemptionType,
+            String childCertifiedProductExclusionYn,
+            String greenCertifiedProductExclusionYn) {
+
+        /** KC 인증 면제 팩토리 메서드. */
+        public static CertificationTargetExcludeContent kcExempt() {
+            return new CertificationTargetExcludeContent("TRUE", null, null, null);
         }
     }
 
     /** 네이버 쇼핑 검색 정보. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record NaverShoppingSearchInfo(
-            String manufacturerName, String brandName, Long categoryId, Long brandId) {}
+            String manufacturerName,
+            String brandName,
+            String modelName,
+            Long categoryId,
+            Long brandId,
+            Boolean catalogMatchingYn) {}
+
+    /** 네이버 쇼핑 검색 속성 (카테고리별 PRIMARY 속성). */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record ProductAttribute(Long attributeSeq, Long attributeValueSeq) {}
 
     /** A/S 정보. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -88,21 +149,31 @@ public record NaverProductRegistrationRequest(
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record OptionInfo(
             String optionCombinationSortType,
-            List<OptionCombinationGroupNames> optionCombinationGroupNames,
+            OptionCombinationGroupNames optionCombinationGroupNames,
             List<OptionCombination> optionCombinations) {
 
         /** 방어적 복사. */
         public OptionInfo {
-            optionCombinationGroupNames =
-                    optionCombinationGroupNames == null
-                            ? null
-                            : List.copyOf(optionCombinationGroupNames);
             optionCombinations =
                     optionCombinations == null ? null : List.copyOf(optionCombinations);
         }
 
-        /** 옵션 조합 그룹명. */
-        public record OptionCombinationGroupNames(String optionGroupName) {}
+        /** 옵션 조합 그룹명 (최대 4개). */
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public record OptionCombinationGroupNames(
+                String optionGroupName1,
+                String optionGroupName2,
+                String optionGroupName3,
+                String optionGroupName4) {
+
+            public static OptionCombinationGroupNames of(List<String> groupNames) {
+                return new OptionCombinationGroupNames(
+                        groupNames.size() > 0 ? groupNames.get(0) : null,
+                        groupNames.size() > 1 ? groupNames.get(1) : null,
+                        groupNames.size() > 2 ? groupNames.get(2) : null,
+                        groupNames.size() > 3 ? groupNames.get(3) : null);
+            }
+        }
 
         /** 옵션 조합 (개별 SKU). */
         @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -129,7 +200,11 @@ public record NaverProductRegistrationRequest(
 
         /** 배송비 정보. */
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        public record DeliveryFee(String deliveryFeeType, int baseFee) {}
+        public record DeliveryFee(
+                String deliveryFeeType,
+                String deliveryFeePayType,
+                int baseFee,
+                Long freeConditionalAmount) {}
 
         /** 지역별 추가 배송비. */
         @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -141,22 +216,58 @@ public record NaverProductRegistrationRequest(
         public record ClaimDeliveryInfo(Long returnDeliveryFee, Long exchangeDeliveryFee) {}
     }
 
-    /** 상품정보제공고시. */
+    /**
+     * 상품정보제공고시.
+     *
+     * <p>네이버 API는 타입별 고정 필드 구조를 사용합니다. productInfoProvidedNoticeType에 해당하는 필드만 값을 설정하고 나머지는 null로
+     * 둡니다.
+     */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record ProductInfoProvidedNotice(
             String productInfoProvidedNoticeType,
-            List<ProductInfoProvidedNoticeContent> productInfoProvidedNoticeContents) {
+            Map<String, String> wear,
+            Map<String, String> shoes,
+            Map<String, String> bag,
+            Map<String, String> fashionItems,
+            Map<String, String> sleepingGear,
+            Map<String, String> furniture,
+            Map<String, String> imageAppliances,
+            Map<String, String> homeAppliances,
+            Map<String, String> seasonAppliances,
+            Map<String, String> kids,
+            Map<String, String> etc) {
 
         /** 방어적 복사. */
         public ProductInfoProvidedNotice {
-            productInfoProvidedNoticeContents =
-                    productInfoProvidedNoticeContents == null
-                            ? null
-                            : List.copyOf(productInfoProvidedNoticeContents);
+            wear = wear == null ? null : Map.copyOf(wear);
+            shoes = shoes == null ? null : Map.copyOf(shoes);
+            bag = bag == null ? null : Map.copyOf(bag);
+            fashionItems = fashionItems == null ? null : Map.copyOf(fashionItems);
+            sleepingGear = sleepingGear == null ? null : Map.copyOf(sleepingGear);
+            furniture = furniture == null ? null : Map.copyOf(furniture);
+            imageAppliances = imageAppliances == null ? null : Map.copyOf(imageAppliances);
+            homeAppliances = homeAppliances == null ? null : Map.copyOf(homeAppliances);
+            seasonAppliances = seasonAppliances == null ? null : Map.copyOf(seasonAppliances);
+            kids = kids == null ? null : Map.copyOf(kids);
+            etc = etc == null ? null : Map.copyOf(etc);
         }
 
-        /** 고시정보 항목. */
-        public record ProductInfoProvidedNoticeContent(int order, String title, String content) {}
+        /** 타입별 팩토리 메서드. 지정된 타입의 필드에만 내용을 설정한다. */
+        public static ProductInfoProvidedNotice of(String type, Map<String, String> contents) {
+            return new ProductInfoProvidedNotice(
+                    type,
+                    "WEAR".equals(type) ? contents : null,
+                    "SHOES".equals(type) ? contents : null,
+                    "BAG".equals(type) ? contents : null,
+                    "FASHION_ITEMS".equals(type) ? contents : null,
+                    "SLEEPING_GEAR".equals(type) ? contents : null,
+                    "FURNITURE".equals(type) ? contents : null,
+                    "IMAGE_APPLIANCES".equals(type) ? contents : null,
+                    "HOME_APPLIANCES".equals(type) ? contents : null,
+                    "SEASON_APPLIANCES".equals(type) ? contents : null,
+                    "KIDS".equals(type) ? contents : null,
+                    "ETC".equals(type) ? contents : null);
+        }
     }
 
     /** 스마트스토어 채널 상품 정보. */
@@ -164,5 +275,6 @@ public record NaverProductRegistrationRequest(
     public record SmartstoreChannelProduct(
             String channelProductName,
             String channelProductDisplayStatusType,
+            Boolean naverShoppingRegistration,
             Long storeKeepExclusiveProduct) {}
 }

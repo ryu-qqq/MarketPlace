@@ -104,7 +104,7 @@ class NaverCommerceBrandIntegrationTest {
 
         // CSV 파일 저장
         String csvPath = "naver_brands.csv";
-        try (FileWriter writer = new FileWriter(csvPath)) {
+        try (FileWriter writer = new FileWriter(csvPath, java.nio.charset.StandardCharsets.UTF_8)) {
             writer.write("id,name\n");
             for (NaverCommerceBrand brand : allBrands.values()) {
                 String safeName = brand.name().replace("\"", "\"\"");

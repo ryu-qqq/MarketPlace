@@ -266,10 +266,11 @@ class OutboundProductImageTest {
             Instant now = CommonVoFixtures.now();
 
             // when
-            image.asDeleted(now);
+            OutboundProductImage deleted = image.asDeleted(now);
 
             // then
             assertThat(image.isDeleted()).isFalse();
+            assertThat(deleted.isDeleted()).isTrue();
         }
     }
 

@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.domain.seller.exception.SellerErrorCode;
 import com.ryuqq.marketplace.domain.seller.exception.SellerException;
 import com.ryuqq.marketplace.domain.seller.id.SellerCsId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +62,17 @@ public class SellerCsReadManager {
                                         String.format(
                                                 "셀러 ID %d에 해당하는 CS 정보를 찾을 수 없습니다",
                                                 sellerId.value())));
+    }
+
+    /**
+     * 셀러 ID로 CS 정보를 조회합니다 (Optional).
+     *
+     * @param sellerId 셀러 ID
+     * @return CS 정보 (없으면 empty)
+     */
+    @Transactional(readOnly = true)
+    public Optional<SellerCs> findBySellerId(SellerId sellerId) {
+        return queryPort.findBySellerId(sellerId);
     }
 
     /**

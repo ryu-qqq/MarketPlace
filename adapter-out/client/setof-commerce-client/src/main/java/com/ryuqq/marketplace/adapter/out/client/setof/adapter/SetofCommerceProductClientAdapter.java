@@ -58,7 +58,8 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
             SellerSalesChannel channel) {
 
         SetofProductGroupRegistrationRequest request =
-                mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId);
+                mapper.toRegistrationRequest(
+                        bundle, externalCategoryId, externalBrandId, channel.shopId());
 
         log.info(
                 "세토프 커머스 상품 등록 요청: productGroupId={}, categoryId={}",

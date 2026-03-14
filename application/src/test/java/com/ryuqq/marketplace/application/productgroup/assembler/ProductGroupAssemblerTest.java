@@ -224,6 +224,8 @@ class ProductGroupAssemblerTest {
                             List.of(),
                             Optional.empty(),
                             Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
                             Map.of());
 
             // when
@@ -245,6 +247,8 @@ class ProductGroupAssemblerTest {
                             createQueryResult(productGroupId, now),
                             group,
                             List.of(),
+                            Optional.empty(),
+                            Optional.empty(),
                             Optional.empty(),
                             Optional.empty(),
                             Map.of());
@@ -305,6 +309,8 @@ class ProductGroupAssemblerTest {
                 createQueryResult(productGroupId, now),
                 group,
                 List.of(),
+                Optional.empty(),
+                Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
                 Map.of());

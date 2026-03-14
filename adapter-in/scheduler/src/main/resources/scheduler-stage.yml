@@ -107,20 +107,21 @@ scheduler:
         batch-size: 50
         timeout-seconds: 180
 
-    legacy-conversion-seeder:
+    legacy-conversion:
+      # Stage: 운영과 동일 (5초마다)
       enabled: true
       cron: "*/5 * * * * *"
-      batch-size: 50
-      max-total: 200
-
-    # LegacyConversion 변환 스케줄러 (코드 기본값 오버라이드)
-    legacy-conversion:
-      cron: "*/5 * * * * *"
-      timezone: "Asia/Seoul"
 
     legacy-conversion-timeout:
+      # Stage: 운영과 동일 (1분마다)
       cron: "0 */1 * * * *"
-      timezone: "Asia/Seoul"
+
+    legacy-conversion-seeder:
+      # Stage: 운영과 동일 (전체 시딩)
+      enabled: true
+      cron: "0 */1 * * * *"
+      batch-size: 200
+      max-total: 0
 
     inbound-order-polling:
       entries:

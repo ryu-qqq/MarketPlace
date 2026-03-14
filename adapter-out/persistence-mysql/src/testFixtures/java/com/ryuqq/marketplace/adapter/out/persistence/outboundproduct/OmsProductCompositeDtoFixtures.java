@@ -29,6 +29,7 @@ public final class OmsProductCompositeDtoFixtures {
     public static final String DEFAULT_SELLER_NAME = "테스트 셀러";
     public static final String DEFAULT_BRAND_NAME = "테스트 브랜드";
     public static final String DEFAULT_SHOP_NAME = "스마트스토어";
+    public static final String DEFAULT_EXTERNAL_PRODUCT_ID = "EXT-12345";
     public static final String DEFAULT_IMAGE_URL = "https://example.com/image.jpg";
     public static final int DEFAULT_PRICE = 50000;
     public static final int DEFAULT_STOCK = 100;
@@ -58,6 +59,7 @@ public final class OmsProductCompositeDtoFixtures {
                 DEFAULT_BRAND_NAME,
                 DEFAULT_SHOP_ID,
                 DEFAULT_SHOP_NAME,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
                 now.minusSeconds(86400),
                 now);
     }
@@ -76,6 +78,7 @@ public final class OmsProductCompositeDtoFixtures {
                 DEFAULT_BRAND_NAME,
                 shopId,
                 shopName,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
                 now.minusSeconds(86400),
                 now);
     }
@@ -93,6 +96,7 @@ public final class OmsProductCompositeDtoFixtures {
                 DEFAULT_BRAND_NAME,
                 DEFAULT_SHOP_ID,
                 DEFAULT_SHOP_NAME,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
                 now.minusSeconds(172800),
                 now.minusSeconds(86400));
     }
@@ -111,6 +115,7 @@ public final class OmsProductCompositeDtoFixtures {
                 DEFAULT_BRAND_NAME,
                 DEFAULT_SHOP_ID,
                 DEFAULT_SHOP_NAME,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
                 now.minusSeconds(3600),
                 now);
     }

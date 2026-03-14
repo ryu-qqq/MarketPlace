@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.productgroup.internal;
 
 import com.ryuqq.marketplace.application.imagevariant.dto.response.ImageVariantResult;
 import com.ryuqq.marketplace.application.imagevariant.manager.ImageVariantReadManager;
+import com.ryuqq.marketplace.application.notice.manager.NoticeCategoryReadManager;
 import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.manager.ProductReadManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
@@ -18,8 +19,10 @@ import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductG
 import com.ryuqq.marketplace.application.productgroupimage.manager.ProductGroupImageReadManager;
 import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import com.ryuqq.marketplace.application.productnotice.manager.ProductNoticeReadManager;
+import com.ryuqq.marketplace.application.seller.manager.SellerCsReadManager;
 import com.ryuqq.marketplace.domain.imageupload.vo.ImageSourceType;
 import com.ryuqq.marketplace.domain.imagevariant.aggregate.ImageVariant;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
@@ -27,6 +30,8 @@ import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.query.ProductGroupSearchCriteria;
 import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
+import com.ryuqq.marketplace.domain.seller.aggregate.SellerCs;
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,6 +54,8 @@ public class ProductGroupReadFacade {
     private final ProductNoticeReadManager productNoticeReadManager;
     private final ProductGroupImageReadManager imageReadManager;
     private final ImageVariantReadManager imageVariantReadManager;
+    private final NoticeCategoryReadManager noticeCategoryReadManager;
+    private final SellerCsReadManager sellerCsReadManager;
 
     public ProductGroupReadFacade(
             ProductGroupCompositionReadManager compositionReadManager,
@@ -57,7 +64,9 @@ public class ProductGroupReadFacade {
             ProductReadManager productReadManager,
             ProductNoticeReadManager productNoticeReadManager,
             ProductGroupImageReadManager imageReadManager,
-            ImageVariantReadManager imageVariantReadManager) {
+            ImageVariantReadManager imageVariantReadManager,
+            NoticeCategoryReadManager noticeCategoryReadManager,
+            SellerCsReadManager sellerCsReadManager) {
         this.compositionReadManager = compositionReadManager;
         this.productGroupReadManager = productGroupReadManager;
         this.descriptionReadManager = descriptionReadManager;
@@ -65,6 +74,8 @@ public class ProductGroupReadFacade {
         this.productNoticeReadManager = productNoticeReadManager;
         this.imageReadManager = imageReadManager;
         this.imageVariantReadManager = imageVariantReadManager;
+        this.noticeCategoryReadManager = noticeCategoryReadManager;
+        this.sellerCsReadManager = sellerCsReadManager;
     }
 
     /**
@@ -175,6 +186,13 @@ public class ProductGroupReadFacade {
 
         Optional<ProductNotice> notice = productNoticeReadManager.findByProductGroupId(groupId);
 
+        Optional<NoticeCategory> noticeCategory =
+                notice.map(n -> noticeCategoryReadManager.getById(n.noticeCategoryId()));
+
+        Optional<SellerCs> sellerCs =
+                Optional.ofNullable(queryResult.sellerId())
+                        .flatMap(id -> sellerCsReadManager.findBySellerId(SellerId.of(id)));
+
         List<Long> imageIds = group.images().stream().map(img -> img.idValue()).toList();
 
         Map<Long, List<ImageVariantResult>> variantsByImageId =
@@ -188,6 +206,13 @@ public class ProductGroupReadFacade {
                                                 ImageVariantResult::from, Collectors.toList())));
 
         return new ProductGroupDetailBundle(
-                queryResult, group, products, description, notice, variantsByImageId);
+                queryResult,
+                group,
+                products,
+                description,
+                notice,
+                noticeCategory,
+                sellerCs,
+                variantsByImageId);
     }
 }

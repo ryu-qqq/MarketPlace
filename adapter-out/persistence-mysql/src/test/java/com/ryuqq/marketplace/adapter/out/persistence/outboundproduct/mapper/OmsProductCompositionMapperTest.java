@@ -67,7 +67,7 @@ class OmsProductCompositionMapperTest {
             assertThat(results).hasSize(1);
             OmsProductListResult result = results.get(0);
             assertThat(result.id()).isEqualTo(pgId);
-            assertThat(result.productCode()).isEqualTo("PG-" + pgId);
+            assertThat(result.productCode()).isEqualTo("EXT-12345");
             assertThat(result.imageUrl()).isEqualTo("https://example.com/img.jpg");
             assertThat(result.price()).isEqualTo(50000);
             assertThat(result.stock()).isEqualTo(100);
@@ -140,6 +140,37 @@ class OmsProductCompositionMapperTest {
             assertThat(results.get(0).syncStatus()).isEqualTo("NONE");
             assertThat(results.get(0).syncStatusLabel()).isEqualTo("미연동");
             assertThat(results.get(0).lastSyncAt()).isNull();
+        }
+
+        @Test
+        @DisplayName("externalProductId가 null이면 productCode는 빈 문자열을 반환합니다")
+        void toResults_WithNullExternalProductId_ReturnsEmptyProductCode() {
+            // given
+            Long pgId = 100L;
+            Instant now = Instant.now();
+            List<OmsProductListCompositeDto> composites =
+                    List.of(
+                            new OmsProductListCompositeDto(
+                                    pgId,
+                                    "테스트 상품",
+                                    "ACTIVE",
+                                    1L,
+                                    "테스트 셀러",
+                                    10L,
+                                    "테스트 브랜드",
+                                    1L,
+                                    "스마트스토어",
+                                    null,
+                                    now.minusSeconds(86400),
+                                    now));
+
+            // when
+            List<OmsProductListResult> results =
+                    mapper.toResults(composites, Map.of(), Map.of(), Map.of());
+
+            // then
+            assertThat(results).hasSize(1);
+            assertThat(results.get(0).productCode()).isEmpty();
         }
 
         @Test

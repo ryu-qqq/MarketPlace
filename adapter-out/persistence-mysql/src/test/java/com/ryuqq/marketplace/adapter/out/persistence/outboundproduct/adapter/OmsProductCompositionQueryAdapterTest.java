@@ -70,7 +70,7 @@ class OmsProductCompositionQueryAdapterTest {
                     List.of(
                             new OmsProductListResult(
                                     100L,
-                                    "PG-100",
+                                    "EXT-12345",
                                     "테스트 상품",
                                     "https://example.com/image.jpg",
                                     50000,

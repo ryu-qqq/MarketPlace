@@ -16,6 +16,7 @@ import java.time.Instant;
  * @param brandName 브랜드명(nameKo)
  * @param shopId 샵 ID
  * @param shopName 샵 이름
+ * @param externalProductId 외부 채널 상품 ID (nullable)
  * @param createdAt 등록일
  * @param updatedAt 수정일
  */
@@ -29,5 +30,6 @@ public record OmsProductListCompositeDto(
         String brandName,
         Long shopId,
         String shopName,
+        String externalProductId,
         Instant createdAt,
         Instant updatedAt) {}

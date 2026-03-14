@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.naver.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.naver.auth.NaverCommerceTokenManager;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationResponse;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductSearchRequest;
@@ -91,8 +92,10 @@ public class NaverCommerceProductClientAdapter
             SellerSalesChannel channel,
             Set<ChangedArea> changedAreas) {
 
+        NaverProductDetailResponse existing = fetchExistingProduct(externalProductId);
         NaverProductRegistrationRequest request =
-                mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId);
+                mapper.toUpdateRequest(
+                        bundle, externalCategoryId, externalBrandId, existing, changedAreas);
         executeUpdate(request, bundle.group().idValue(), externalProductId);
     }
 
@@ -106,9 +109,15 @@ public class NaverCommerceProductClientAdapter
             Set<ChangedArea> changedAreas,
             ResolvedExternalImages resolvedImages) {
 
+        NaverProductDetailResponse existing = fetchExistingProduct(externalProductId);
         NaverProductRegistrationRequest request =
-                mapper.toRegistrationRequest(
-                        bundle, externalCategoryId, externalBrandId, resolvedImages);
+                mapper.toUpdateRequest(
+                        bundle,
+                        externalCategoryId,
+                        externalBrandId,
+                        resolvedImages,
+                        existing,
+                        changedAreas);
         executeUpdate(request, bundle.group().idValue(), externalProductId);
     }
 
@@ -206,6 +215,28 @@ public class NaverCommerceProductClientAdapter
                 response.originProductNo());
 
         return String.valueOf(response.originProductNo());
+    }
+
+    private NaverProductDetailResponse fetchExistingProduct(String externalProductId) {
+        String token = tokenManager.getAccessToken();
+
+        log.info("네이버 커머스 기존 상품 조회: externalProductId={}", externalProductId);
+
+        NaverProductDetailResponse response =
+                restClient
+                        .get()
+                        .uri("/v2/products/origin-products/{originProductNo}", externalProductId)
+                        .header("Authorization", "Bearer " + token)
+                        .retrieve()
+                        .body(NaverProductDetailResponse.class);
+
+        if (response == null || response.originProduct() == null) {
+            log.warn("네이버 기존 상품 조회 실패, 전체 교체 모드로 진행: externalProductId={}", externalProductId);
+            return null;
+        }
+
+        log.info("네이버 기존 상품 조회 성공: externalProductId={}", externalProductId);
+        return response;
     }
 
     private void executeUpdate(

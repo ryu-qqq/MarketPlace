@@ -19,7 +19,8 @@ import org.springframework.stereotype.Repository;
 /**
  * OmsProductCompositionQueryDslRepository - OMS 상품 목록 Composition QueryDSL 레포지토리.
  *
- * <p>outbound_products JOIN product_groups JOIN shops LEFT JOIN sellers LEFT JOIN brands + 필터 + 페이징.
+ * <p>outbound_products JOIN product_groups JOIN shops LEFT JOIN sellers LEFT JOIN brands + 필터 +
+ * 페이징.
  *
  * <p>PER-REP-003: 모든 조회는 QueryDslRepository.
  *
@@ -59,6 +60,7 @@ public class OmsProductCompositionQueryDslRepository {
                                 brandJpaEntity.nameKo,
                                 outboundProductJpaEntity.shopId,
                                 shopJpaEntity.shopName,
+                                outboundProductJpaEntity.externalProductId,
                                 productGroupJpaEntity.createdAt,
                                 productGroupJpaEntity.updatedAt))
                 .from(outboundProductJpaEntity)

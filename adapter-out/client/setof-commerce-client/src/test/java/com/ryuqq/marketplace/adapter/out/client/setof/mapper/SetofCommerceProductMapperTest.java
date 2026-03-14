@@ -24,7 +24,6 @@ import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -66,7 +65,14 @@ class SetofCommerceProductMapperTest {
             Optional<ProductGroupDescription> description,
             Optional<ProductNotice> notice) {
         return new ProductGroupDetailBundle(
-                createQueryResult(null, null), group, products, description, notice, Map.of());
+                createQueryResult(null, null),
+                group,
+                products,
+                description,
+                notice,
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 
     private ProductGroupDetailBundle createBundleWithPolicies(
@@ -75,6 +81,8 @@ class SetofCommerceProductMapperTest {
                 createQueryResult(shippingPolicy, refundPolicy),
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
+                Optional.empty(),
+                Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
                 Map.of());
@@ -375,7 +383,7 @@ class SetofCommerceProductMapperTest {
                             Optional.empty());
 
             SetofProductGroupRegistrationRequest result =
-                    sut.toRegistrationRequest(bundle, 500L, 600L);
+                    sut.toRegistrationRequest(bundle, 500L, 600L, 99L);
 
             assertThat(result).isNotNull();
             assertThat(result.productGroupName()).isEqualTo("테스트 상품 그룹");
@@ -399,7 +407,7 @@ class SetofCommerceProductMapperTest {
                             Optional.empty());
 
             SetofProductGroupRegistrationRequest result =
-                    sut.toRegistrationRequest(bundle, 500L, 600L);
+                    sut.toRegistrationRequest(bundle, 500L, 600L, 99L);
 
             // 두 상품 모두 같은 가격이므로 그대로
             assertThat(result.regularPrice()).isEqualTo(ProductFixtures.DEFAULT_REGULAR_PRICE);
@@ -418,7 +426,7 @@ class SetofCommerceProductMapperTest {
                             Optional.empty());
 
             SetofProductGroupRegistrationRequest result =
-                    sut.toRegistrationRequest(bundle, 500L, 600L);
+                    sut.toRegistrationRequest(bundle, 500L, 600L, 99L);
 
             assertThat(result.description()).isNotNull();
             assertThat(result.description().content()).isEqualTo(desc.contentValue());
@@ -436,7 +444,7 @@ class SetofCommerceProductMapperTest {
                             Optional.of(notice));
 
             SetofProductGroupRegistrationRequest result =
-                    sut.toRegistrationRequest(bundle, 500L, 600L);
+                    sut.toRegistrationRequest(bundle, 500L, 600L, 99L);
 
             assertThat(result.notice()).isNotNull();
             assertThat(result.notice().entries()).hasSize(3);
