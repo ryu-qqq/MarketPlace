@@ -90,7 +90,9 @@ class SetofCommerceProductIntegrationTest {
                                         "https://stage-cdn.set-of.com/public/2026/03/019cd52e-d294-7f72-89ec-210f68a66e5b.jpg",
                                         0)),
                         List.of(),
-                        List.of(new ProductRequest("TEST-SKU-001", 50000, 40000, 10, 1, List.of())),
+                        List.of(
+                                new ProductRequest(
+                                        null, "TEST-SKU-001", 50000, 40000, 10, 1, List.of())),
                         new DescriptionRequest("<p>MarketPlace 통합 테스트 상품입니다.</p>", List.of()),
                         new NoticeRequest(
                                 List.of(

@@ -81,7 +81,7 @@ class SetofFullProductUpdateExecutorTest {
                     new SetofProductGroupUpdateRequest(
                             "테스트", null, null, null, null, null, 0, 0, null, null, null, null,
                             null);
-            given(mapper.toUpdateRequest(bundle, externalCategoryId, externalBrandId))
+            given(mapper.toUpdateRequest(bundle, externalCategoryId, externalBrandId, null))
                     .willReturn(updateRequest);
 
             var requestHeadersUriSpec = mock(RestClient.RequestBodyUriSpec.class);
@@ -107,10 +107,11 @@ class SetofFullProductUpdateExecutorTest {
                     externalBrandId,
                     externalProductId,
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
+                    null,
                     null);
 
             // then
-            verify(mapper).toUpdateRequest(bundle, externalCategoryId, externalBrandId);
+            verify(mapper).toUpdateRequest(bundle, externalCategoryId, externalBrandId, null);
             verify(restClient).put();
         }
     }

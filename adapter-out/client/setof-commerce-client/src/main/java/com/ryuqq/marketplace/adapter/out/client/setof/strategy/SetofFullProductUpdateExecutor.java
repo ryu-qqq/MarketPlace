@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProduc
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +51,12 @@ public class SetofFullProductUpdateExecutor implements SetofProductUpdateExecuto
             Long externalBrandId,
             String externalProductId,
             SellerSalesChannel channel,
-            Set<ChangedArea> changedAreas) {
+            Set<ChangedArea> changedAreas,
+            Map<Long, Long> legacyProductIdMap) {
 
         SetofProductGroupUpdateRequest request =
-                mapper.toUpdateRequest(bundle, externalCategoryId, externalBrandId);
+                mapper.toUpdateRequest(
+                        bundle, externalCategoryId, externalBrandId, legacyProductIdMap);
 
         log.info(
                 "세토프 전체 수정 실행: externalProductId={}, productGroupId={}",

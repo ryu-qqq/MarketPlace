@@ -106,7 +106,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.BASIC_INFO));
+                    EnumSet.of(ChangedArea.BASIC_INFO),
+                    null);
 
             verify(basicInfoAdapter).updateBasicInfo("12345", request);
             verify(productAdapter, never()).updateProducts(any(), any());
@@ -122,7 +123,7 @@ class SetofPartialProductUpdateExecutorTest {
             var request = new SetofProductsUpdateRequest(List.of(), List.of());
             given(
                             mapper.toProductsUpdateRequest(
-                                    bundle.products(), bundle.group().sellerOptionGroups()))
+                                    bundle.products(), bundle.group().sellerOptionGroups(), null))
                     .willReturn(request);
 
             sut.execute(
@@ -131,7 +132,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.PRICE));
+                    EnumSet.of(ChangedArea.PRICE),
+                    null);
 
             verify(productAdapter).updateProducts(12345L, request);
         }
@@ -143,7 +145,7 @@ class SetofPartialProductUpdateExecutorTest {
             var request = new SetofProductsUpdateRequest(List.of(), List.of());
             given(
                             mapper.toProductsUpdateRequest(
-                                    bundle.products(), bundle.group().sellerOptionGroups()))
+                                    bundle.products(), bundle.group().sellerOptionGroups(), null))
                     .willReturn(request);
 
             sut.execute(
@@ -152,7 +154,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.STOCK));
+                    EnumSet.of(ChangedArea.STOCK),
+                    null);
 
             verify(productAdapter).updateProducts(12345L, request);
         }
@@ -164,7 +167,7 @@ class SetofPartialProductUpdateExecutorTest {
             var request = new SetofProductsUpdateRequest(List.of(), List.of());
             given(
                             mapper.toProductsUpdateRequest(
-                                    bundle.products(), bundle.group().sellerOptionGroups()))
+                                    bundle.products(), bundle.group().sellerOptionGroups(), null))
                     .willReturn(request);
 
             sut.execute(
@@ -173,7 +176,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.OPTION));
+                    EnumSet.of(ChangedArea.OPTION),
+                    null);
 
             verify(productAdapter).updateProducts(12345L, request);
         }
@@ -191,7 +195,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.IMAGE));
+                    EnumSet.of(ChangedArea.IMAGE),
+                    null);
 
             verify(imageAdapter).updateImages(12345L, request);
         }
@@ -209,7 +214,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.DESCRIPTION));
+                    EnumSet.of(ChangedArea.DESCRIPTION),
+                    null);
 
             verify(descriptionAdapter).updateDescription(12345L, request);
         }
@@ -226,7 +232,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.DESCRIPTION));
+                    EnumSet.of(ChangedArea.DESCRIPTION),
+                    null);
 
             verify(descriptionAdapter, never()).updateDescription(any(), any());
         }
@@ -245,7 +252,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.NOTICE));
+                    EnumSet.of(ChangedArea.NOTICE),
+                    null);
 
             verify(noticeAdapter).updateNotice(12345L, request);
         }
@@ -261,7 +269,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.NOTICE));
+                    EnumSet.of(ChangedArea.NOTICE),
+                    null);
 
             verify(noticeAdapter, never()).updateNotice(any(), any());
         }
@@ -278,7 +287,7 @@ class SetofPartialProductUpdateExecutorTest {
             given(mapper.toBasicInfoUpdateRequest(bundle, 500L, 600L)).willReturn(basicInfoRequest);
             given(
                             mapper.toProductsUpdateRequest(
-                                    bundle.products(), bundle.group().sellerOptionGroups()))
+                                    bundle.products(), bundle.group().sellerOptionGroups(), null))
                     .willReturn(productsRequest);
             given(mapper.toImagesRequest(bundle.group().images())).willReturn(imagesRequest);
 
@@ -288,7 +297,8 @@ class SetofPartialProductUpdateExecutorTest {
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.BASIC_INFO, ChangedArea.PRICE, ChangedArea.IMAGE));
+                    EnumSet.of(ChangedArea.BASIC_INFO, ChangedArea.PRICE, ChangedArea.IMAGE),
+                    null);
 
             verify(basicInfoAdapter).updateBasicInfo("12345", basicInfoRequest);
             verify(productAdapter).updateProducts(12345L, productsRequest);

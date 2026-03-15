@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.client.setof.strategy;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,6 +30,7 @@ public interface SetofProductUpdateExecutor {
      * @param externalProductId 외부 상품 ID
      * @param channel 셀러 판매채널
      * @param changedAreas 변경된 영역 집합
+     * @param legacyProductIdMap 내부 productId → 레거시 productId 매핑 (nullable)
      */
     void execute(
             ProductGroupDetailBundle bundle,
@@ -36,5 +38,6 @@ public interface SetofProductUpdateExecutor {
             Long externalBrandId,
             String externalProductId,
             SellerSalesChannel channel,
-            Set<ChangedArea> changedAreas);
+            Set<ChangedArea> changedAreas,
+            Map<Long, Long> legacyProductIdMap);
 }

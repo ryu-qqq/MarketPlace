@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.outboundsync.service.command;
 
+import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductCommandManager;
 import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
 import com.ryuqq.marketplace.application.outboundsync.dto.command.ExecuteOutboundSyncCommand;
@@ -99,6 +100,12 @@ public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
                 handleFailure(outbox, result);
             }
 
+        } catch (ExternalServiceUnavailableException e) {
+            log.warn(
+                    "외부 서비스 일시 장애 (deferRetry): outboxId={}, error={}",
+                    command.outboxId(),
+                    e.getMessage());
+            handleDeferRetry(outbox);
         } catch (Exception e) {
             log.error(
                     "OutboundSync 실행 중 예외: outboxId={}, error={}",
@@ -167,6 +174,25 @@ public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
      */
     private void handleFailure(OutboundSyncOutbox outbox, OutboundSyncExecutionResult result) {
         persistFailureWithReRead(outbox.idValue(), result.retryable(), result.errorMessage());
+    }
+
+    /**
+     * 외부 서비스 일시 장애 시 deferRetry 처리 (retry 횟수 미소진).
+     *
+     * <p>Circuit Breaker OPEN 등 외부 서비스가 일시적으로 불가능한 경우, retryCount를 증가시키지 않고 PENDING으로 복귀하여 서비스 복구 후
+     * 재처리합니다.
+     */
+    private void handleDeferRetry(OutboundSyncOutbox outbox) {
+        try {
+            OutboundSyncOutbox freshOutbox = outboxReadManager.getById(outbox.idValue());
+            freshOutbox.deferRetry(Instant.now());
+            outboxCommandManager.persist(freshOutbox);
+        } catch (Exception reReadEx) {
+            log.warn(
+                    "Outbox deferRetry re-read 실패: outboxId={}, error={}",
+                    outbox.idValue(),
+                    reReadEx.getMessage());
+        }
     }
 
     private void handleException(OutboundSyncOutbox outbox, Exception e) {

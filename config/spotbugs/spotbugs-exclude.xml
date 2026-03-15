@@ -245,6 +245,16 @@
     </Match>
 
     <!-- ========================================
+         외부 API 응답 null check (RestClient 패턴)
+         RestClient.retrieve().body()는 null 반환 가능하지만
+         실제 API 응답에서 null이 아닌 경우 redundant check로 감지됨
+         ======================================== -->
+    <Match>
+        <Class name="~.*ClientAdapter"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+    </Match>
+
+    <!-- ========================================
          Legacy/New DTO 네이밍 혼동 (의도된 공존)
          레거시 API와 신규 API의 record 필드명 차이는
          마이그레이션 과정에서의 의도된 공존

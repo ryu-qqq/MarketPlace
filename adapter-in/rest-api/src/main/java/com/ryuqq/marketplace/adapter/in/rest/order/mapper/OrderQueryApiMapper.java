@@ -429,7 +429,7 @@ public class OrderQueryApiMapper {
                 formatYyyyMmDdHhMmSs(payment.canceledAt()),
                 0L,
                 order != null ? nullToEmpty(order.shopCode()) : "",
-                0,
+                payment.paymentAmount(),
                 payment.paymentAmount(),
                 0);
     }

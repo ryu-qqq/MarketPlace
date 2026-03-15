@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -50,6 +51,25 @@ public interface SalesChannelProductClient {
     }
 
     /**
+     * 외부 채널에 상품을 등록합니다 (레거시 ID 매핑 포함).
+     *
+     * <p>레거시 시스템의 PK를 외부 채널에 전달해야 하는 경우 사용합니다. 기본 구현은 레거시 매핑을 무시하고 기존 메서드를 호출합니다.
+     *
+     * @param legacyProductGroupId 레거시 상품그룹 ID (nullable)
+     * @param legacyProductIdMap 내부 productId → 레거시 productId 매핑 (nullable)
+     */
+    default String registerProduct(
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            SellerSalesChannel channel,
+            Shop shop,
+            Long legacyProductGroupId,
+            Map<Long, Long> legacyProductIdMap) {
+        return registerProduct(bundle, externalCategoryId, externalBrandId, channel, shop);
+    }
+
+    /**
      * 외부 채널의 상품을 수정합니다.
      *
      * <p>changedAreas가 비어있으면 전체 수정(Full Replacement)으로 동작합니다. 채널 어댑터는 changedAreas 기반으로 전체 수정 또는 부분
@@ -69,6 +89,28 @@ public interface SalesChannelProductClient {
             String externalProductId,
             SellerSalesChannel channel,
             Set<ChangedArea> changedAreas);
+
+    /**
+     * 외부 채널의 상품을 수정합니다 (레거시 ID 매핑 포함).
+     *
+     * <p>기본 구현은 레거시 매핑을 무시하고 기존 메서드를 호출합니다.
+     */
+    default void updateProduct(
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            String externalProductId,
+            SellerSalesChannel channel,
+            Set<ChangedArea> changedAreas,
+            Map<Long, Long> legacyProductIdMap) {
+        updateProduct(
+                bundle,
+                externalCategoryId,
+                externalBrandId,
+                externalProductId,
+                channel,
+                changedAreas);
+    }
 
     /**
      * 외부 채널의 상품을 수정합니다 (외부 이미지 URL 포함).

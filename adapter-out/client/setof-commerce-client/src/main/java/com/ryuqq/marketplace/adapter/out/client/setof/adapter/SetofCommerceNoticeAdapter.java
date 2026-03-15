@@ -1,6 +1,9 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofNoticeRequest;
+import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,9 +23,12 @@ public class SetofCommerceNoticeAdapter {
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceNoticeAdapter.class);
 
     private final RestClient restClient;
+    private final CircuitBreaker circuitBreaker;
 
-    public SetofCommerceNoticeAdapter(RestClient setofCommerceRestClient) {
+    public SetofCommerceNoticeAdapter(
+            RestClient setofCommerceRestClient, CircuitBreaker setofCommerceCircuitBreaker) {
         this.restClient = setofCommerceRestClient;
+        this.circuitBreaker = setofCommerceCircuitBreaker;
     }
 
     /**
@@ -34,17 +40,27 @@ public class SetofCommerceNoticeAdapter {
      * @param request 고시정보 등록 요청
      */
     public void registerNotice(Long productGroupId, SetofNoticeRequest request) {
-        log.info("세토프 커머스 고시정보 등록 요청: productGroupId={}", productGroupId);
+        try {
+            circuitBreaker.executeRunnable(
+                    () -> {
+                        log.info("세토프 커머스 고시정보 등록 요청: productGroupId={}", productGroupId);
 
-        restClient
-                .post()
-                .uri("/api/v2/admin/product-groups/{productGroupId}/notice", productGroupId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
+                        restClient
+                                .post()
+                                .uri(
+                                        "/api/v2/admin/product-groups/{productGroupId}/notice",
+                                        productGroupId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(request)
+                                .retrieve()
+                                .toBodilessEntity();
 
-        log.info("세토프 커머스 고시정보 등록 성공: productGroupId={}", productGroupId);
+                        log.info("세토프 커머스 고시정보 등록 성공: productGroupId={}", productGroupId);
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
     }
 
     /**
@@ -56,16 +72,26 @@ public class SetofCommerceNoticeAdapter {
      * @param request 고시정보 수정 요청
      */
     public void updateNotice(Long productGroupId, SetofNoticeRequest request) {
-        log.info("세토프 커머스 고시정보 수정 요청: productGroupId={}", productGroupId);
+        try {
+            circuitBreaker.executeRunnable(
+                    () -> {
+                        log.info("세토프 커머스 고시정보 수정 요청: productGroupId={}", productGroupId);
 
-        restClient
-                .put()
-                .uri("/api/v2/admin/product-groups/{productGroupId}/notice", productGroupId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
+                        restClient
+                                .put()
+                                .uri(
+                                        "/api/v2/admin/product-groups/{productGroupId}/notice",
+                                        productGroupId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(request)
+                                .retrieve()
+                                .toBodilessEntity();
 
-        log.info("세토프 커머스 고시정보 수정 성공: productGroupId={}", productGroupId);
+                        log.info("세토프 커머스 고시정보 수정 성공: productGroupId={}", productGroupId);
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
     }
 }

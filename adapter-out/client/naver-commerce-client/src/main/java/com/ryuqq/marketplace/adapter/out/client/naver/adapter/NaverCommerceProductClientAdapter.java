@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrati
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductSearchRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductSearchResponse;
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProductMapper;
+import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.outboundproduct.dto.vo.ExternalProductEntry;
 import com.ryuqq.marketplace.application.outboundproduct.port.out.client.SalesChannelProductSearchClient;
 import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
@@ -15,6 +16,8 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -43,14 +46,17 @@ public class NaverCommerceProductClientAdapter
     private final RestClient restClient;
     private final NaverCommerceTokenManager tokenManager;
     private final NaverCommerceProductMapper mapper;
+    private final CircuitBreaker circuitBreaker;
 
     public NaverCommerceProductClientAdapter(
             RestClient naverCommerceRestClient,
             NaverCommerceTokenManager tokenManager,
-            NaverCommerceProductMapper mapper) {
+            NaverCommerceProductMapper mapper,
+            CircuitBreaker naverCommerceCircuitBreaker) {
         this.restClient = naverCommerceRestClient;
         this.tokenManager = tokenManager;
         this.mapper = mapper;
+        this.circuitBreaker = naverCommerceCircuitBreaker;
     }
 
     @Override
@@ -126,18 +132,28 @@ public class NaverCommerceProductClientAdapter
 
     @Override
     public void deleteProduct(String externalProductId, SellerSalesChannel channel) {
-        String token = tokenManager.getAccessToken();
+        try {
+            circuitBreaker.executeRunnable(
+                    () -> {
+                        String token = tokenManager.getAccessToken();
 
-        log.info("네이버 커머스 상품 삭제 요청: externalProductId={}", externalProductId);
+                        log.info("네이버 커머스 상품 삭제 요청: externalProductId={}", externalProductId);
 
-        restClient
-                .delete()
-                .uri("/v2/products/origin-products/{originProductNo}", externalProductId)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .toBodilessEntity();
+                        restClient
+                                .delete()
+                                .uri(
+                                        "/v2/products/origin-products/{originProductNo}",
+                                        externalProductId)
+                                .header("Authorization", "Bearer " + token)
+                                .retrieve()
+                                .toBodilessEntity();
 
-        log.info("네이버 커머스 상품 삭제 성공: externalProductId={}", externalProductId);
+                        log.info("네이버 커머스 상품 삭제 성공: externalProductId={}", externalProductId);
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "네이버 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
     }
 
     @Override
@@ -193,79 +209,112 @@ public class NaverCommerceProductClientAdapter
 
     private String executeRegister(
             NaverProductRegistrationRequest request, Long productGroupId, Long categoryId) {
-        String token = tokenManager.getAccessToken();
+        try {
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        String token = tokenManager.getAccessToken();
 
-        log.info("네이버 커머스 상품 등록 요청: productGroupId={}, categoryId={}", productGroupId, categoryId);
+                        log.info(
+                                "네이버 커머스 상품 등록 요청: productGroupId={}, categoryId={}",
+                                productGroupId,
+                                categoryId);
 
-        NaverProductRegistrationResponse response =
-                restClient
-                        .post()
-                        .uri("/v2/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
-                        .body(request)
-                        .retrieve()
-                        .body(NaverProductRegistrationResponse.class);
+                        NaverProductRegistrationResponse response =
+                                restClient
+                                        .post()
+                                        .uri("/v2/products")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .header("Authorization", "Bearer " + token)
+                                        .body(request)
+                                        .retrieve()
+                                        .body(NaverProductRegistrationResponse.class);
 
-        if (response == null || response.originProductNo() == null) {
-            throw new IllegalStateException(
-                    "네이버 커머스 상품 등록 응답이 null입니다: productGroupId=" + productGroupId);
+                        if (response == null || response.originProductNo() == null) {
+                            throw new IllegalStateException(
+                                    "네이버 커머스 상품 등록 응답이 null입니다: productGroupId=" + productGroupId);
+                        }
+
+                        log.info(
+                                "네이버 커머스 상품 등록 성공: productGroupId={}, originProductNo={}",
+                                productGroupId,
+                                response.originProductNo());
+
+                        return String.valueOf(response.originProductNo());
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "네이버 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
         }
-
-        log.info(
-                "네이버 커머스 상품 등록 성공: productGroupId={}, originProductNo={}",
-                productGroupId,
-                response.originProductNo());
-
-        return String.valueOf(response.originProductNo());
     }
 
     private NaverProductDetailResponse fetchExistingProduct(String externalProductId) {
-        String token = tokenManager.getAccessToken();
+        try {
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        String token = tokenManager.getAccessToken();
 
-        log.info("네이버 커머스 기존 상품 조회: externalProductId={}", externalProductId);
+                        log.info("네이버 커머스 기존 상품 조회: externalProductId={}", externalProductId);
 
-        NaverProductDetailResponse response =
-                restClient
-                        .get()
-                        .uri("/v2/products/origin-products/{originProductNo}", externalProductId)
-                        .header("Authorization", "Bearer " + token)
-                        .retrieve()
-                        .body(NaverProductDetailResponse.class);
+                        NaverProductDetailResponse response =
+                                restClient
+                                        .get()
+                                        .uri(
+                                                "/v2/products/origin-products/{originProductNo}",
+                                                externalProductId)
+                                        .header("Authorization", "Bearer " + token)
+                                        .retrieve()
+                                        .body(NaverProductDetailResponse.class);
 
-        if (response == null || response.originProduct() == null) {
-            log.warn("네이버 기존 상품 조회 실패, 전체 교체 모드로 진행: externalProductId={}", externalProductId);
-            return null;
+                        if (response == null || response.originProduct() == null) {
+                            log.warn(
+                                    "네이버 기존 상품 조회 실패, 전체 교체 모드로 진행:" + " externalProductId={}",
+                                    externalProductId);
+                            return null;
+                        }
+
+                        log.info("네이버 기존 상품 조회 성공: externalProductId={}", externalProductId);
+                        return response;
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "네이버 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
         }
-
-        log.info("네이버 기존 상품 조회 성공: externalProductId={}", externalProductId);
-        return response;
     }
 
     private void executeUpdate(
             NaverProductRegistrationRequest request,
             Long productGroupId,
             String externalProductId) {
-        String token = tokenManager.getAccessToken();
+        try {
+            circuitBreaker.executeRunnable(
+                    () -> {
+                        String token = tokenManager.getAccessToken();
 
-        log.info(
-                "네이버 커머스 상품 수정 요청: productGroupId={}, externalProductId={}",
-                productGroupId,
-                externalProductId);
+                        log.info(
+                                "네이버 커머스 상품 수정 요청: productGroupId={}," + " externalProductId={}",
+                                productGroupId,
+                                externalProductId);
 
-        restClient
-                .put()
-                .uri("/v2/products/origin-products/{originProductNo}", externalProductId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
+                        restClient
+                                .put()
+                                .uri(
+                                        "/v2/products/origin-products/{originProductNo}",
+                                        externalProductId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + token)
+                                .body(request)
+                                .retrieve()
+                                .toBodilessEntity();
 
-        log.info(
-                "네이버 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",
-                productGroupId,
-                externalProductId);
+                        log.info(
+                                "네이버 커머스 상품 수정 성공: productGroupId={}," + " externalProductId={}",
+                                productGroupId,
+                                externalProductId);
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "네이버 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
     }
 
     /** 네이버 커머스에 등록된 전체 상품을 페이지 단위로 조회합니다. */

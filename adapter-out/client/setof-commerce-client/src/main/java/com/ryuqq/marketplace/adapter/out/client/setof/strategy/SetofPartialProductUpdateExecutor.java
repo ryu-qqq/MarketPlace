@@ -14,6 +14,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProduc
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,8 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
             Long externalBrandId,
             String externalProductId,
             SellerSalesChannel channel,
-            Set<ChangedArea> changedAreas) {
+            Set<ChangedArea> changedAreas,
+            Map<Long, Long> legacyProductIdMap) {
 
         Long externalId;
         try {
@@ -97,7 +99,7 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
         }
 
         if (containsAny(changedAreas, ChangedArea.PRICE, ChangedArea.STOCK, ChangedArea.OPTION)) {
-            updateProducts(bundle, externalId);
+            updateProducts(bundle, externalId, legacyProductIdMap);
         }
 
         if (changedAreas.contains(ChangedArea.IMAGE)) {
@@ -125,10 +127,11 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
         basicInfoAdapter.updateBasicInfo(externalProductId, request);
     }
 
-    private void updateProducts(ProductGroupDetailBundle bundle, Long externalId) {
+    private void updateProducts(
+            ProductGroupDetailBundle bundle, Long externalId, Map<Long, Long> legacyProductIdMap) {
         SetofProductsUpdateRequest request =
                 mapper.toProductsUpdateRequest(
-                        bundle.products(), bundle.group().sellerOptionGroups());
+                        bundle.products(), bundle.group().sellerOptionGroups(), legacyProductIdMap);
         productAdapter.updateProducts(externalId, request);
     }
 

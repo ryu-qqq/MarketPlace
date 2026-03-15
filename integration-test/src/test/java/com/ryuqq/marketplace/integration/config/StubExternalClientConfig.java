@@ -494,6 +494,12 @@ public class StubExternalClientConfig {
             }
 
             @Override
+            public List<LegacyProductIdMapping> findByInternalProductGroupId(
+                    long internalProductGroupId) {
+                return Collections.emptyList();
+            }
+
+            @Override
             public List<LegacyProductIdMapping> findByLegacyProductGroupId(
                     long legacyProductGroupId) {
                 return Collections.emptyList();

@@ -3,11 +3,14 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSyncApiResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
+import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.outboundseller.dto.response.OutboundSellerSyncResult;
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundSellerSyncClient;
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,34 +28,43 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
     private final RestClient restClient;
     private final SellerReadManager sellerReadManager;
     private final SetofCommerceSellerSyncMapper mapper;
+    private final CircuitBreaker circuitBreaker;
 
     public SetofCommerceSellerSyncAdapter(
             RestClient setofCommerceRestClient,
             SellerReadManager sellerReadManager,
-            SetofCommerceSellerSyncMapper mapper) {
+            SetofCommerceSellerSyncMapper mapper,
+            CircuitBreaker setofCommerceCircuitBreaker) {
         this.restClient = setofCommerceRestClient;
         this.sellerReadManager = sellerReadManager;
         this.mapper = mapper;
+        this.circuitBreaker = setofCommerceCircuitBreaker;
     }
 
     @Override
     public OutboundSellerSyncResult createSeller(Long sellerId) {
         try {
-            Seller seller = sellerReadManager.getById(SellerId.of(sellerId));
-            SetofSellerSyncRequest request = mapper.toSellerRequest(seller);
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        Seller seller = sellerReadManager.getById(SellerId.of(sellerId));
+                        SetofSellerSyncRequest request = mapper.toSellerRequest(seller);
 
-            log.info("세토프 커머스 셀러 등록 요청: sellerId={}", sellerId);
+                        log.info("세토프 커머스 셀러 등록 요청: sellerId={}", sellerId);
 
-            SetofSyncApiResponse response =
-                    restClient
-                            .post()
-                            .uri("/api/v2/admin/sellers")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body(request)
-                            .retrieve()
-                            .body(SetofSyncApiResponse.class);
+                        SetofSyncApiResponse response =
+                                restClient
+                                        .post()
+                                        .uri("/api/v2/admin/sellers")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .body(request)
+                                        .retrieve()
+                                        .body(SetofSyncApiResponse.class);
 
-            return toResult(response);
+                        return toResult(response);
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
         } catch (RestClientException e) {
             log.error("세토프 커머스 셀러 등록 실패: sellerId={}", sellerId, e);
             return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
@@ -62,20 +74,26 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
     @Override
     public OutboundSellerSyncResult updateSeller(Long sellerId) {
         try {
-            Seller seller = sellerReadManager.getById(SellerId.of(sellerId));
-            SetofSellerSyncRequest request = mapper.toSellerRequest(seller);
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        Seller seller = sellerReadManager.getById(SellerId.of(sellerId));
+                        SetofSellerSyncRequest request = mapper.toSellerRequest(seller);
 
-            log.info("세토프 커머스 셀러 수정 요청: sellerId={}", sellerId);
+                        log.info("세토프 커머스 셀러 수정 요청: sellerId={}", sellerId);
 
-            restClient
-                    .put()
-                    .uri("/api/v2/admin/sellers/{sellerId}", sellerId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(request)
-                    .retrieve()
-                    .toBodilessEntity();
+                        restClient
+                                .put()
+                                .uri("/api/v2/admin/sellers/{sellerId}", sellerId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(request)
+                                .retrieve()
+                                .toBodilessEntity();
 
-            return OutboundSellerSyncResult.ofSuccess();
+                        return OutboundSellerSyncResult.ofSuccess();
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
         } catch (RestClientException e) {
             log.error("세토프 커머스 셀러 수정 실패: sellerId={}", sellerId, e);
             return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());

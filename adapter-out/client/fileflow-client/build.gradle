@@ -35,9 +35,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 
     // ========================================
-    // Resilience (Circuit Breaker)
+    // Resilience (Circuit Breaker + Metrics)
     // ========================================
     implementation libs.resilience4j.circuitbreaker
+    implementation libs.resilience4j.micrometer
+    implementation libs.micrometer.core
 
     // ========================================
     // Logging

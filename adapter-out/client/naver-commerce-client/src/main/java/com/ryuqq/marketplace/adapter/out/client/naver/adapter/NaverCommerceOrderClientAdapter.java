@@ -12,9 +12,12 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrde
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderQueryRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverWishedDeliveryDateRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceOrderMapper;
+import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
 import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +40,7 @@ import org.springframework.web.client.RestClient;
  */
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
+@SuppressWarnings("PMD.ExcessiveImports")
 public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient {
 
     private static final Logger log =
@@ -48,14 +52,17 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
     private final RestClient restClient;
     private final NaverCommerceTokenManager tokenManager;
     private final NaverCommerceOrderMapper mapper;
+    private final CircuitBreaker circuitBreaker;
 
     public NaverCommerceOrderClientAdapter(
             RestClient naverCommerceRestClient,
             NaverCommerceTokenManager tokenManager,
-            NaverCommerceOrderMapper mapper) {
+            NaverCommerceOrderMapper mapper,
+            CircuitBreaker naverCommerceCircuitBreaker) {
         this.restClient = naverCommerceRestClient;
         this.tokenManager = tokenManager;
         this.mapper = mapper;
+        this.circuitBreaker = naverCommerceCircuitBreaker;
     }
 
     @Override
@@ -136,49 +143,74 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
     /** 변경 상품주문 내역을 조회합니다 (폴링용). */
     public NaverLastChangedStatusesResponse getLastChangedStatuses(
             Instant fromTime, Instant toTime, String moreSequence) {
-        String token = tokenManager.getAccessToken();
+        try {
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        String token = tokenManager.getAccessToken();
 
-        Map<String, Object> params = new LinkedHashMap<>();
-        params.put("type", LAST_CHANGED_TYPE_PAYED);
-        params.put("from", formatForNaver(fromTime));
-        params.put("to", formatForNaver(toTime));
-        params.put("limit", MAX_BATCH_SIZE);
+                        Map<String, Object> params = new LinkedHashMap<>();
+                        params.put("type", LAST_CHANGED_TYPE_PAYED);
+                        params.put("from", formatForNaver(fromTime));
+                        params.put("to", formatForNaver(toTime));
+                        params.put("limit", MAX_BATCH_SIZE);
 
-        String uri =
-                "/v1/pay-order/seller/product-orders/last-changed-statuses"
-                        + "?lastChangedType={type}"
-                        + "&lastChangedFrom={from}&lastChangedTo={to}"
-                        + "&limitCount={limit}";
+                        String uri =
+                                "/v1/pay-order/seller/product-orders/last-changed-statuses"
+                                        + "?lastChangedType={type}"
+                                        + "&lastChangedFrom={from}&lastChangedTo={to}"
+                                        + "&limitCount={limit}";
 
-        if (moreSequence != null) {
-            uri += "&moreSequence={seq}";
-            params.put("seq", moreSequence);
+                        if (moreSequence != null) {
+                            String uriWithMore = uri + "&moreSequence={seq}";
+                            params.put("seq", moreSequence);
+                            return restClient
+                                    .get()
+                                    .uri(uriWithMore, params)
+                                    .header("Authorization", "Bearer " + token)
+                                    .retrieve()
+                                    .body(NaverLastChangedStatusesResponse.class);
+                        }
+
+                        return restClient
+                                .get()
+                                .uri(uri, params)
+                                .header("Authorization", "Bearer " + token)
+                                .retrieve()
+                                .body(NaverLastChangedStatusesResponse.class);
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "네이버 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
         }
-
-        return restClient
-                .get()
-                .uri(uri, params)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(NaverLastChangedStatusesResponse.class);
     }
 
     /** 상품주문 상세를 일괄 조회합니다. */
     public NaverProductOrderDetailResponse queryProductOrders(List<String> productOrderIds) {
-        String token = tokenManager.getAccessToken();
-        NaverProductOrderQueryRequest request = new NaverProductOrderQueryRequest(productOrderIds);
+        try {
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        String token = tokenManager.getAccessToken();
+                        NaverProductOrderQueryRequest request =
+                                new NaverProductOrderQueryRequest(productOrderIds);
 
-        NaverProductOrderDetailResponse response =
-                restClient
-                        .post()
-                        .uri("/v1/pay-order/seller/product-orders/query")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
-                        .body(request)
-                        .retrieve()
-                        .body(NaverProductOrderDetailResponse.class);
+                        NaverProductOrderDetailResponse response =
+                                restClient
+                                        .post()
+                                        .uri("/v1/pay-order/seller/product-orders/query")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .header("Authorization", "Bearer " + token)
+                                        .body(request)
+                                        .retrieve()
+                                        .body(NaverProductOrderDetailResponse.class);
 
-        return response != null ? response : new NaverProductOrderDetailResponse(List.of());
+                        return response != null
+                                ? response
+                                : new NaverProductOrderDetailResponse(List.of());
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "네이버 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
     }
 
     // === 발주/발송 ===

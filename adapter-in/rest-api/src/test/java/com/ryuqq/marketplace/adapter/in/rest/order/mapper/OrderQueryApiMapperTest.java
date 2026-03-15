@@ -465,7 +465,8 @@ class OrderQueryApiMapperTest {
             assertThat(response.payment().paymentNumber())
                     .isEqualTo(OrderApiFixtures.DEFAULT_PAYMENT_NUMBER);
             assertThat(response.payment().userId()).isZero();
-            assertThat(response.payment().billAmount()).isZero();
+            assertThat(response.payment().billAmount())
+                    .isEqualTo(response.payment().paymentAmount());
             assertThat(response.payment().usedMileageAmount()).isZero();
             assertThat(response.orderProduct().totalExpectedRefundMileageAmount()).isZero();
             assertThat(response.orderProduct().deliveryArea()).isEmpty();

@@ -73,6 +73,22 @@ public class LegacyProductIdMappingQueryDslRepository {
     }
 
     /**
+     * internalProductGroupId로 해당 그룹의 모든 SKU 매핑 조회.
+     *
+     * @param internalProductGroupId 내부 상품그룹 ID
+     * @return SKU 매핑 목록
+     */
+    public List<LegacyProductIdMappingJpaEntity> findByInternalProductGroupId(
+            long internalProductGroupId) {
+        return queryFactory
+                .selectFrom(legacyProductIdMappingJpaEntity)
+                .where(
+                        legacyProductIdMappingJpaEntity.internalProductGroupId.eq(
+                                internalProductGroupId))
+                .fetch();
+    }
+
+    /**
      * 여러 legacyProductGroupId로 매핑 일괄 조회.
      *
      * @param legacyProductGroupIds 레거시 상품그룹 ID 목록

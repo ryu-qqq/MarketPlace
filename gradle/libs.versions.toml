@@ -237,6 +237,7 @@ snakeyaml = { module = "org.yaml:snakeyaml", version = "2.2" }
 # Resilience
 # ========================================
 resilience4j-circuitbreaker = { module = "io.github.resilience4j:resilience4j-circuitbreaker", version.ref = "resilience4j" }
+resilience4j-micrometer = { module = "io.github.resilience4j:resilience4j-micrometer", version.ref = "resilience4j" }
 
 [bundles]
 # ========================================

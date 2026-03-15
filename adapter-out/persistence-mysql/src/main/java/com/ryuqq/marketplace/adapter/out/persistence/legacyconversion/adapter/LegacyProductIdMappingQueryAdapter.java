@@ -42,6 +42,13 @@ public class LegacyProductIdMappingQueryAdapter implements LegacyProductIdMappin
     }
 
     @Override
+    public List<LegacyProductIdMapping> findByInternalProductGroupId(long internalProductGroupId) {
+        return queryDslRepository.findByInternalProductGroupId(internalProductGroupId).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<LegacyProductIdMapping> findByLegacyProductGroupId(long legacyProductGroupId) {
         return queryDslRepository.findByLegacyProductGroupId(legacyProductGroupId).stream()
                 .map(mapper::toDomain)

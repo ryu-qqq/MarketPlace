@@ -1,6 +1,9 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupBasicInfoUpdateRequest;
+import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,9 +23,12 @@ public class SetofCommerceBasicInfoAdapter {
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceBasicInfoAdapter.class);
 
     private final RestClient restClient;
+    private final CircuitBreaker circuitBreaker;
 
-    public SetofCommerceBasicInfoAdapter(RestClient setofCommerceRestClient) {
+    public SetofCommerceBasicInfoAdapter(
+            RestClient setofCommerceRestClient, CircuitBreaker setofCommerceCircuitBreaker) {
         this.restClient = setofCommerceRestClient;
+        this.circuitBreaker = setofCommerceCircuitBreaker;
     }
 
     /**
@@ -33,18 +39,30 @@ public class SetofCommerceBasicInfoAdapter {
      */
     public void updateBasicInfo(
             String externalProductGroupId, SetofProductGroupBasicInfoUpdateRequest request) {
-        log.info("세토프 커머스 상품 그룹 기본정보 수정 요청: externalProductGroupId={}", externalProductGroupId);
+        try {
+            circuitBreaker.executeRunnable(
+                    () -> {
+                        log.info(
+                                "세토프 커머스 상품 그룹 기본정보 수정 요청: externalProductGroupId={}",
+                                externalProductGroupId);
 
-        restClient
-                .patch()
-                .uri(
-                        "/api/v2/admin/product-groups/{productGroupId}/basic-info",
-                        externalProductGroupId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
+                        restClient
+                                .patch()
+                                .uri(
+                                        "/api/v2/admin/product-groups/{productGroupId}/basic-info",
+                                        externalProductGroupId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(request)
+                                .retrieve()
+                                .toBodilessEntity();
 
-        log.info("세토프 커머스 상품 그룹 기본정보 수정 성공: externalProductGroupId={}", externalProductGroupId);
+                        log.info(
+                                "세토프 커머스 상품 그룹 기본정보 수정 성공: externalProductGroupId={}",
+                                externalProductGroupId);
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
     }
 }

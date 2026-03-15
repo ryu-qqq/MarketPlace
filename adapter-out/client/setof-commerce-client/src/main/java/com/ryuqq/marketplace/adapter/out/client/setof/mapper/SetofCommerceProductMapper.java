@@ -49,13 +49,17 @@ public class SetofCommerceProductMapper {
      * @param externalCategoryId 세토프 카테고리 ID
      * @param externalBrandId 세토프 브랜드 ID (nullable)
      * @param externalSellerId 세토프 셀러 ID (shop.accountId)
+     * @param legacyProductGroupId 레거시 상품그룹 ID (nullable: 레거시 매핑이 없는 신규 상품)
+     * @param legacyProductIdMap 내부 productId → 레거시 productId 매핑 (nullable)
      * @return 세토프 상품 등록 요청 DTO
      */
     public SetofProductGroupRegistrationRequest toRegistrationRequest(
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
-            long externalSellerId) {
+            long externalSellerId,
+            Long legacyProductGroupId,
+            Map<Long, Long> legacyProductIdMap) {
 
         ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
         ProductGroup group = bundle.group();
@@ -64,8 +68,10 @@ public class SetofCommerceProductMapper {
         int representativeRegularPrice = computeMinRegularPrice(products);
         int representativeCurrentPrice = computeMinCurrentPrice(products);
 
+        Long productGroupId = legacyProductGroupId != null ? legacyProductGroupId : group.idValue();
+
         return new SetofProductGroupRegistrationRequest(
-                group.idValue(),
+                productGroupId,
                 externalSellerId,
                 externalBrandId,
                 externalCategoryId,
@@ -79,7 +85,7 @@ public class SetofCommerceProductMapper {
                 representativeCurrentPrice,
                 mapImages(group.images()),
                 mapOptionGroups(group.sellerOptionGroups()),
-                mapProducts(products, group.sellerOptionGroups()),
+                mapProducts(products, group.sellerOptionGroups(), legacyProductIdMap),
                 mapDescription(bundle),
                 mapNotice(bundle));
     }
@@ -93,7 +99,10 @@ public class SetofCommerceProductMapper {
      * @return 세토프 상품 수정 요청 DTO
      */
     public SetofProductGroupUpdateRequest toUpdateRequest(
-            ProductGroupDetailBundle bundle, Long externalCategoryId, Long externalBrandId) {
+            ProductGroupDetailBundle bundle,
+            Long externalCategoryId,
+            Long externalBrandId,
+            Map<Long, Long> legacyProductIdMap) {
 
         ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
         ProductGroup group = bundle.group();
@@ -115,7 +124,7 @@ public class SetofCommerceProductMapper {
                 representativeCurrentPrice,
                 mapUpdateImages(group.images()),
                 mapUpdateOptionGroups(group.sellerOptionGroups()),
-                mapUpdateProducts(products, group.sellerOptionGroups()),
+                mapUpdateProducts(products, group.sellerOptionGroups(), legacyProductIdMap),
                 mapUpdateDescription(bundle),
                 mapUpdateNotice(bundle));
     }
@@ -163,7 +172,9 @@ public class SetofCommerceProductMapper {
      * @return 상품 + 옵션 일괄 수정 요청 DTO
      */
     public SetofProductsUpdateRequest toProductsUpdateRequest(
-            List<Product> products, List<SellerOptionGroup> optionGroups) {
+            List<Product> products,
+            List<SellerOptionGroup> optionGroups,
+            Map<Long, Long> legacyProductIdMap) {
 
         List<SetofProductsUpdateRequest.OptionGroupRequest> optionGroupRequests =
                 optionGroups.stream()
@@ -186,11 +197,15 @@ public class SetofCommerceProductMapper {
                         .toList();
 
         Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
+        Map<Long, Long> idMap = legacyProductIdMap != null ? legacyProductIdMap : Map.of();
 
         List<SetofProductsUpdateRequest.ProductRequest> productRequests =
                 products.stream()
                         .map(
                                 product -> {
+                                    Long productId =
+                                            idMap.getOrDefault(
+                                                    product.idValue(), product.idValue());
                                     Map<Long, String> mappingByGroupId =
                                             buildMappingByGroupId(product, optionValueMap);
                                     List<SetofProductsUpdateRequest.SelectedOptionRequest>
@@ -206,7 +221,7 @@ public class SetofCommerceProductMapper {
                                         }
                                     }
                                     return new SetofProductsUpdateRequest.ProductRequest(
-                                            product.idValue(),
+                                            productId,
                                             product.skuCodeValue(),
                                             product.regularPriceValue(),
                                             product.currentPriceValue(),
@@ -312,20 +327,27 @@ public class SetofCommerceProductMapper {
     }
 
     private List<ProductRequest> mapProducts(
-            List<Product> products, List<SellerOptionGroup> optionGroups) {
+            List<Product> products,
+            List<SellerOptionGroup> optionGroups,
+            Map<Long, Long> legacyProductIdMap) {
 
         Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
+        Map<Long, Long> idMap = legacyProductIdMap != null ? legacyProductIdMap : Map.of();
 
         return products.stream()
                 .map(
-                        product ->
-                                new ProductRequest(
-                                        product.skuCodeValue(),
-                                        product.regularPriceValue(),
-                                        product.currentPriceValue(),
-                                        product.stockQuantity(),
-                                        product.sortOrder(),
-                                        mapSelectedOptions(product, optionGroups, optionValueMap)))
+                        product -> {
+                            Long productId =
+                                    idMap.getOrDefault(product.idValue(), product.idValue());
+                            return new ProductRequest(
+                                    productId,
+                                    product.skuCodeValue(),
+                                    product.regularPriceValue(),
+                                    product.currentPriceValue(),
+                                    product.stockQuantity(),
+                                    product.sortOrder(),
+                                    mapSelectedOptions(product, optionGroups, optionValueMap));
+                        })
                 .toList();
     }
 
@@ -432,22 +454,28 @@ public class SetofCommerceProductMapper {
     }
 
     private List<SetofProductGroupUpdateRequest.ProductRequest> mapUpdateProducts(
-            List<Product> products, List<SellerOptionGroup> optionGroups) {
+            List<Product> products,
+            List<SellerOptionGroup> optionGroups,
+            Map<Long, Long> legacyProductIdMap) {
 
         Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
+        Map<Long, Long> idMap = legacyProductIdMap != null ? legacyProductIdMap : Map.of();
 
         return products.stream()
                 .map(
-                        product ->
-                                new SetofProductGroupUpdateRequest.ProductRequest(
-                                        product.idValue(),
-                                        product.skuCodeValue(),
-                                        product.regularPriceValue(),
-                                        product.currentPriceValue(),
-                                        product.stockQuantity(),
-                                        product.sortOrder(),
-                                        mapUpdateSelectedOptions(
-                                                product, optionGroups, optionValueMap)))
+                        product -> {
+                            Long productId =
+                                    idMap.getOrDefault(product.idValue(), product.idValue());
+                            return new SetofProductGroupUpdateRequest.ProductRequest(
+                                    productId,
+                                    product.skuCodeValue(),
+                                    product.regularPriceValue(),
+                                    product.currentPriceValue(),
+                                    product.stockQuantity(),
+                                    product.sortOrder(),
+                                    mapUpdateSelectedOptions(
+                                            product, optionGroups, optionValueMap));
+                        })
                 .toList();
     }
 

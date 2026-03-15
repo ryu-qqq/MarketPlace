@@ -186,7 +186,7 @@ class SetofCommerceDtoContractTest {
                     new SetofProductGroupRegistrationRequest.SelectedOptionRequest("색상", "블랙");
             var product =
                     new SetofProductGroupRegistrationRequest.ProductRequest(
-                            "SKU-001", 10000, 8000, 50, 1, List.of(selectedOption));
+                            null, "SKU-001", 10000, 8000, 50, 1, List.of(selectedOption));
             var descImage =
                     new SetofProductGroupRegistrationRequest.DescriptionImageRequest(
                             "https://img.example.com/desc.jpg", 1);
@@ -287,7 +287,7 @@ class SetofCommerceDtoContractTest {
         void optionalNullFieldsShouldBeExcluded() {
             var product =
                     new SetofProductGroupRegistrationRequest.ProductRequest(
-                            "SKU-001", 10000, 8000, 50, 1, List.of());
+                            null, "SKU-001", 10000, 8000, 50, 1, List.of());
             var image =
                     new SetofProductGroupRegistrationRequest.ImageRequest(
                             "THUMBNAIL", "https://img.example.com/1.jpg", 1);

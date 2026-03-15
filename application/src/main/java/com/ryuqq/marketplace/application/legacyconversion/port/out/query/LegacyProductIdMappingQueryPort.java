@@ -32,6 +32,14 @@ public interface LegacyProductIdMappingQueryPort {
     List<LegacyProductIdMapping> findByLegacyProductGroupId(long legacyProductGroupId);
 
     /**
+     * 내부 상품그룹 ID로 해당 그룹의 모든 SKU 매핑 조회.
+     *
+     * @param internalProductGroupId 내부 상품그룹 ID
+     * @return SKU 매핑 목록
+     */
+    List<LegacyProductIdMapping> findByInternalProductGroupId(long internalProductGroupId);
+
+    /**
      * 여러 레거시 상품그룹 ID로 매핑 일괄 조회.
      *
      * @param legacyProductGroupIds 레거시 상품그룹 ID 목록

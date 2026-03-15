@@ -56,6 +56,7 @@ public record SetofProductGroupRegistrationRequest(
     /** 상품 요청. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record ProductRequest(
+            Long productId,
             String skuCode,
             int regularPrice,
             int currentPrice,

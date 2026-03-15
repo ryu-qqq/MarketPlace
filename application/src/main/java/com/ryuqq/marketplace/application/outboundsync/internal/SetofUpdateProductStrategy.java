@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.outboundsync.internal;
 
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyProductIdMappingReadManager;
 import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
@@ -8,8 +9,12 @@ import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProduc
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
+import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,16 +36,19 @@ public class SetofUpdateProductStrategy implements OutboundSyncExecutionStrategy
     private final ProductGroupReadFacade productGroupReadFacade;
     private final OutboundMappingResolver mappingResolver;
     private final SalesChannelProductClientManager productClientManager;
+    private final LegacyProductIdMappingReadManager legacyMappingReadManager;
 
     public SetofUpdateProductStrategy(
             OutboundProductReadManager outboundProductReadManager,
             ProductGroupReadFacade productGroupReadFacade,
             OutboundMappingResolver mappingResolver,
-            SalesChannelProductClientManager productClientManager) {
+            SalesChannelProductClientManager productClientManager,
+            LegacyProductIdMappingReadManager legacyMappingReadManager) {
         this.outboundProductReadManager = outboundProductReadManager;
         this.productGroupReadFacade = productGroupReadFacade;
         this.mappingResolver = mappingResolver;
         this.productClientManager = productClientManager;
+        this.legacyMappingReadManager = legacyMappingReadManager;
     }
 
     @Override
@@ -71,6 +79,16 @@ public class SetofUpdateProductStrategy implements OutboundSyncExecutionStrategy
                             bundle.queryResult().categoryId(),
                             bundle.queryResult().brandId());
 
+            List<LegacyProductIdMapping> legacyMappings =
+                    legacyMappingReadManager.findByInternalProductGroupId(productGroupId);
+
+            Map<Long, Long> legacyProductIdMap =
+                    legacyMappings.stream()
+                            .collect(
+                                    Collectors.toMap(
+                                            LegacyProductIdMapping::internalProductId,
+                                            LegacyProductIdMapping::legacyProductId));
+
             productClientManager.updateProduct(
                     SETOF_CHANNEL_CODE,
                     bundle,
@@ -78,7 +96,8 @@ public class SetofUpdateProductStrategy implements OutboundSyncExecutionStrategy
                     Long.parseLong(mapping.externalBrandCode()),
                     outboundProduct.externalProductId(),
                     context.sellerSalesChannel(),
-                    context.changedAreas());
+                    context.changedAreas(),
+                    legacyProductIdMap);
 
             log.info(
                     "세토프 상품 수정 성공: productGroupId={}, externalProductId={}",

@@ -18,6 +18,8 @@ import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMa
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -152,12 +154,65 @@ public class LegacyConversionCoordinator {
                         resolvedContext,
                         now);
 
-        updateCoordinator.update(updateBundle);
+        List<Long> addedProductIds = updateCoordinator.update(updateBundle);
+
+        persistNewSkuMappings(
+                legacyBundle,
+                existingMappings,
+                addedProductIds,
+                legacyProductGroupId,
+                internalProductGroupId,
+                now);
 
         log.info(
-                "레거시 업데이트 동기화 완료: legacyGroupId={} → internalGroupId={}",
+                "레거시 업데이트 동기화 완료: legacyGroupId={} → internalGroupId={}, 신규 SKU 매핑 {}건",
                 legacyProductGroupId,
-                internalProductGroupId);
+                internalProductGroupId,
+                addedProductIds.size());
+    }
+
+    private void persistNewSkuMappings(
+            LegacyProductGroupDetailBundle legacyBundle,
+            List<LegacyProductIdMapping> existingMappings,
+            List<Long> addedProductIds,
+            long legacyProductGroupId,
+            long internalProductGroupId,
+            Instant now) {
+
+        if (addedProductIds.isEmpty()) {
+            return;
+        }
+
+        Set<Long> mappedLegacyIds =
+                existingMappings.stream()
+                        .map(LegacyProductIdMapping::legacyProductId)
+                        .collect(Collectors.toSet());
+
+        List<LegacyProductCompositeResult> unmappedProducts =
+                legacyBundle.products().stream()
+                        .filter(p -> !mappedLegacyIds.contains(p.productId()))
+                        .toList();
+
+        if (unmappedProducts.size() != addedProductIds.size()) {
+            log.warn(
+                    "신규 SKU 매핑 수 불일치: unmappedProducts={}, addedProductIds={}, legacyGroupId={}",
+                    unmappedProducts.size(),
+                    addedProductIds.size(),
+                    legacyProductGroupId);
+        }
+
+        int mappingCount = Math.min(unmappedProducts.size(), addedProductIds.size());
+        List<LegacyProductIdMapping> newMappings = new ArrayList<>(mappingCount);
+        for (int i = 0; i < mappingCount; i++) {
+            newMappings.add(
+                    LegacyProductIdMapping.forNew(
+                            unmappedProducts.get(i).productId(),
+                            addedProductIds.get(i),
+                            legacyProductGroupId,
+                            internalProductGroupId,
+                            now));
+        }
+        mappingCommandManager.persistAll(newMappings);
     }
 
     private long deriveInternalProductGroupId(List<LegacyProductIdMapping> mappings) {

@@ -30,6 +30,13 @@ dependencies {
     implementation libs.jackson.databind
 
     // ========================================
+    // Resilience (Circuit Breaker + Metrics)
+    // ========================================
+    implementation libs.resilience4j.circuitbreaker
+    implementation libs.resilience4j.micrometer
+    implementation libs.micrometer.core
+
+    // ========================================
     // Configuration Processor
     // ========================================
     annotationProcessor libs.spring.boot.configuration.processor
