@@ -14,6 +14,7 @@ import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChann
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -62,7 +63,8 @@ public class NaverCommerceProductClientAdapter
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
-            SellerSalesChannel channel) {
+            SellerSalesChannel channel,
+            Shop shop) {
 
         NaverProductRegistrationRequest request =
                 mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId);
@@ -75,6 +77,7 @@ public class NaverCommerceProductClientAdapter
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
+            Shop shop,
             ResolvedExternalImages resolvedImages) {
 
         NaverProductRegistrationRequest request =

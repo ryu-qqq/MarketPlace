@@ -64,7 +64,8 @@ public class SetofCreateProductStrategy implements OutboundSyncExecutionStrategy
                             bundle,
                             Long.parseLong(mapping.externalCategoryCode()),
                             Long.parseLong(mapping.externalBrandCode()),
-                            context.sellerSalesChannel());
+                            context.sellerSalesChannel(),
+                            context.shop());
 
             log.info(
                     "세토프 상품 등록 성공: productGroupId={}, externalProductId={}",

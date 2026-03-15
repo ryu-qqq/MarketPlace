@@ -17,6 +17,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdat
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductsUpdateRequest;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
@@ -47,13 +48,14 @@ public class SetofCommerceProductMapper {
      * @param bundle 상품 그룹 상세 번들
      * @param externalCategoryId 세토프 카테고리 ID
      * @param externalBrandId 세토프 브랜드 ID (nullable)
+     * @param externalSellerId 세토프 셀러 ID (shop.accountId)
      * @return 세토프 상품 등록 요청 DTO
      */
     public SetofProductGroupRegistrationRequest toRegistrationRequest(
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
-            long shopId) {
+            long externalSellerId) {
 
         ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
         ProductGroup group = bundle.group();
@@ -64,7 +66,7 @@ public class SetofCommerceProductMapper {
 
         return new SetofProductGroupRegistrationRequest(
                 group.idValue(),
-                shopId,
+                externalSellerId,
                 externalBrandId,
                 externalCategoryId,
                 queryResult.shippingPolicy() != null
@@ -352,10 +354,29 @@ public class SetofCommerceProductMapper {
     }
 
     private NoticeRequest mapNotice(ProductGroupDetailBundle bundle) {
-        return bundle.notice().map(this::convertNotice).orElse(null);
+        return bundle.notice()
+                .map(
+                        notice -> {
+                            Map<Long, String> fieldNameMap =
+                                    bundle.noticeCategory()
+                                            .map(
+                                                    nc ->
+                                                            nc.fields().stream()
+                                                                    .collect(
+                                                                            java.util.stream
+                                                                                    .Collectors
+                                                                                    .toMap(
+                                                                                            NoticeField
+                                                                                                    ::idValue,
+                                                                                            NoticeField
+                                                                                                    ::fieldNameValue)))
+                                            .orElse(Map.of());
+                            return convertNotice(notice, fieldNameMap);
+                        })
+                .orElse(null);
     }
 
-    private NoticeRequest convertNotice(ProductNotice notice) {
+    private NoticeRequest convertNotice(ProductNotice notice, Map<Long, String> fieldNameMap) {
         List<ProductNoticeEntry> entries = notice.entries();
         if (entries.isEmpty()) {
             return null;
@@ -367,7 +388,8 @@ public class SetofCommerceProductMapper {
                                 entry ->
                                         new NoticeEntryRequest(
                                                 entry.noticeFieldIdValue(),
-                                                "",
+                                                fieldNameMap.getOrDefault(
+                                                        entry.noticeFieldIdValue(), "기타"),
                                                 entry.fieldValueValue()))
                         .toList();
 
@@ -461,10 +483,30 @@ public class SetofCommerceProductMapper {
 
     private SetofProductGroupUpdateRequest.NoticeRequest mapUpdateNotice(
             ProductGroupDetailBundle bundle) {
-        return bundle.notice().map(this::convertUpdateNotice).orElse(null);
+        return bundle.notice()
+                .map(
+                        notice -> {
+                            Map<Long, String> fieldNameMap =
+                                    bundle.noticeCategory()
+                                            .map(
+                                                    nc ->
+                                                            nc.fields().stream()
+                                                                    .collect(
+                                                                            java.util.stream
+                                                                                    .Collectors
+                                                                                    .toMap(
+                                                                                            NoticeField
+                                                                                                    ::idValue,
+                                                                                            NoticeField
+                                                                                                    ::fieldNameValue)))
+                                            .orElse(Map.of());
+                            return convertUpdateNotice(notice, fieldNameMap);
+                        })
+                .orElse(null);
     }
 
-    private SetofProductGroupUpdateRequest.NoticeRequest convertUpdateNotice(ProductNotice notice) {
+    private SetofProductGroupUpdateRequest.NoticeRequest convertUpdateNotice(
+            ProductNotice notice, Map<Long, String> fieldNameMap) {
         List<ProductNoticeEntry> entries = notice.entries();
         if (entries.isEmpty()) {
             return null;
@@ -476,7 +518,8 @@ public class SetofCommerceProductMapper {
                                 entry ->
                                         new SetofProductGroupUpdateRequest.NoticeEntryRequest(
                                                 entry.noticeFieldIdValue(),
-                                                "",
+                                                fieldNameMap.getOrDefault(
+                                                        entry.noticeFieldIdValue(), "기타"),
                                                 entry.fieldValueValue()))
                         .toList();
 

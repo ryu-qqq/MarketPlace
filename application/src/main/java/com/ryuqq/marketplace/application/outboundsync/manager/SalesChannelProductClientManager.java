@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChann
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,9 +37,10 @@ public class SalesChannelProductClientManager {
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
-            SellerSalesChannel channel) {
+            SellerSalesChannel channel,
+            Shop shop) {
         return resolve(channelCode)
-                .registerProduct(bundle, externalCategoryId, externalBrandId, channel);
+                .registerProduct(bundle, externalCategoryId, externalBrandId, channel, shop);
     }
 
     public String registerProduct(
@@ -47,10 +49,11 @@ public class SalesChannelProductClientManager {
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
+            Shop shop,
             ResolvedExternalImages resolvedImages) {
         return resolve(channelCode)
                 .registerProduct(
-                        bundle, externalCategoryId, externalBrandId, channel, resolvedImages);
+                        bundle, externalCategoryId, externalBrandId, channel, shop, resolvedImages);
     }
 
     public void updateProduct(

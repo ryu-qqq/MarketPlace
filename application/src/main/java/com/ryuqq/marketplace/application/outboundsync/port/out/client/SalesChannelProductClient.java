@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExtern
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.util.Set;
 
 /**
@@ -23,13 +24,15 @@ public interface SalesChannelProductClient {
      * @param externalCategoryId 외부 채널 카테고리 ID
      * @param externalBrandId 외부 채널 브랜드 ID (nullable, 선택 필드)
      * @param channel 셀러 판매채널 (인증 정보 포함)
+     * @param shop 셀러 매장 (외부 채널 셀러 식별 정보)
      * @return 외부 상품 ID (String)
      */
     String registerProduct(
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
-            SellerSalesChannel channel);
+            SellerSalesChannel channel,
+            Shop shop);
 
     /**
      * 외부 채널에 상품을 등록합니다 (외부 이미지 URL 포함).
@@ -41,8 +44,9 @@ public interface SalesChannelProductClient {
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
+            Shop shop,
             ResolvedExternalImages resolvedImages) {
-        return registerProduct(bundle, externalCategoryId, externalBrandId, channel);
+        return registerProduct(bundle, externalCategoryId, externalBrandId, channel, shop);
     }
 
     /**

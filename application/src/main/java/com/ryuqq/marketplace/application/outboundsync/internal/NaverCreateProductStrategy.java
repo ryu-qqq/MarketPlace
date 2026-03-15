@@ -83,6 +83,7 @@ public class NaverCreateProductStrategy implements OutboundSyncExecutionStrategy
                             Long.parseLong(mapping.externalCategoryCode()),
                             Long.parseLong(mapping.externalBrandCode()),
                             context.sellerSalesChannel(),
+                            context.shop(),
                             resolvedImages);
 
             log.info(

@@ -12,12 +12,15 @@ import com.ryuqq.marketplace.application.outboundsync.manager.OutboundSyncOutbox
 import com.ryuqq.marketplace.application.outboundsync.manager.OutboundSyncOutboxReadManager;
 import com.ryuqq.marketplace.application.outboundsync.port.in.command.ExecuteOutboundSyncUseCase;
 import com.ryuqq.marketplace.application.sellersaleschannel.manager.SellerSalesChannelReadManager;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import com.ryuqq.marketplace.domain.shop.id.ShopId;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +46,7 @@ public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
     private final OutboundSyncOutboxCommandManager outboxCommandManager;
     private final OutboundSyncStrategyRouter strategyRouter;
     private final SellerSalesChannelReadManager channelReadManager;
+    private final ShopReadManager shopReadManager;
     private final OutboundProductReadManager productReadManager;
     private final OutboundProductCommandManager productCommandManager;
 
@@ -51,12 +55,14 @@ public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
             OutboundSyncOutboxCommandManager outboxCommandManager,
             OutboundSyncStrategyRouter strategyRouter,
             SellerSalesChannelReadManager channelReadManager,
+            ShopReadManager shopReadManager,
             OutboundProductReadManager productReadManager,
             OutboundProductCommandManager productCommandManager) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
         this.strategyRouter = strategyRouter;
         this.channelReadManager = channelReadManager;
+        this.shopReadManager = shopReadManager;
         this.productReadManager = productReadManager;
         this.productCommandManager = productCommandManager;
     }
@@ -74,10 +80,13 @@ public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
             OutboundSyncExecutionStrategy strategy =
                     strategyRouter.route(channel.channelCode(), command.syncType());
 
+            Shop shop = shopReadManager.getById(ShopId.of(channel.shopId()));
+
             OutboundSyncExecutionContext context =
                     new OutboundSyncExecutionContext(
                             outbox,
                             channel,
+                            shop,
                             command.productGroupId(),
                             command.syncType(),
                             OutboundSyncPayloadParser.parseChangedAreas(outbox.payload()));

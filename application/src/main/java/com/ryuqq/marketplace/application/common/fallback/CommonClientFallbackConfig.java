@@ -17,6 +17,7 @@ import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import java.time.Clock;
 import java.time.Instant;
@@ -37,6 +38,7 @@ import org.springframework.context.annotation.Configuration;
  * 존재하면 이 폴백은 무시됩니다.
  */
 @Configuration
+@SuppressWarnings("PMD.ExcessiveImports")
 public class CommonClientFallbackConfig {
 
     @Bean
@@ -180,7 +182,8 @@ public class CommonClientFallbackConfig {
                     ProductGroupDetailBundle bundle,
                     Long externalCategoryId,
                     Long externalBrandId,
-                    SellerSalesChannel channel) {
+                    SellerSalesChannel channel,
+                    Shop shop) {
                 throw new UnsupportedOperationException("SalesChannelProductClient not available");
             }
 

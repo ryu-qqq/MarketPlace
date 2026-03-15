@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChann
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +56,14 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
-            SellerSalesChannel channel) {
+            SellerSalesChannel channel,
+            Shop shop) {
+
+        long externalSellerId = Long.parseLong(shop.accountId());
 
         SetofProductGroupRegistrationRequest request =
                 mapper.toRegistrationRequest(
-                        bundle, externalCategoryId, externalBrandId, channel.shopId());
+                        bundle, externalCategoryId, externalBrandId, externalSellerId);
 
         log.info(
                 "세토프 커머스 상품 등록 요청: productGroupId={}, categoryId={}",

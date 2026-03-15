@@ -316,7 +316,8 @@ public class StubExternalClientConfig {
                     Long externalCategoryId,
                     Long externalBrandId,
                     com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel
-                            channel) {
+                            channel,
+                    com.ryuqq.marketplace.domain.shop.aggregate.Shop shop) {
                 return "stub-external-product-" + bundle.group().idValue();
             }
 
