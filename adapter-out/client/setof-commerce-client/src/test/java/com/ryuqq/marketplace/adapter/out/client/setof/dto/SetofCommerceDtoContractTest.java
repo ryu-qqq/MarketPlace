@@ -653,7 +653,7 @@ class SetofCommerceDtoContractTest {
         void shouldDeserializeServerResponse() {
             String serverJson =
                     """
-                    {"productGroupId": 12345}
+                    {"data": {"productGroupId": 12345}, "timestamp": "2026-03-15T22:44:17+09:00"}
                     """;
 
             SetofProductGroupRegistrationResponse response =
@@ -663,18 +663,19 @@ class SetofCommerceDtoContractTest {
         }
 
         @Test
-        @DisplayName("서버가 ApiResponse로 감싸서 응답해도 data 필드에서 추출 가능하다")
-        void shouldHandleApiResponseWrapper() throws JsonProcessingException {
+        @DisplayName("data 래퍼 내부의 productGroupId를 편의 접근자로 추출한다")
+        void shouldExtractProductGroupIdFromDataWrapper() {
             String wrappedJson =
                     """
-                    {"data": {"productGroupId": 67890}}
+                    {"data": {"productGroupId": 67890}, "requestId": "abc-123"}
                     """;
 
-            JsonNode dataNode = objectMapper.readTree(wrappedJson).path("data");
-            // 실제 adapter에서는 .body() 호출 시 이미 unwrap된 상태
-            // 여기서는 data 노드를 직접 파싱하여 호환성 확인
-            assertThat(dataNode.has("productGroupId")).isTrue();
-            assertThat(dataNode.get("productGroupId").asLong()).isEqualTo(67890L);
+            SetofProductGroupRegistrationResponse response =
+                    fromJson(wrappedJson, SetofProductGroupRegistrationResponse.class);
+
+            assertThat(response.productGroupId()).isEqualTo(67890L);
+            assertThat(response.data()).isNotNull();
+            assertThat(response.data().productGroupId()).isEqualTo(67890L);
         }
     }
 
