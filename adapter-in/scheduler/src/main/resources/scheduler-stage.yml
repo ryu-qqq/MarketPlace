@@ -73,6 +73,11 @@ scheduler:
         batch-size: 30
         timeout-seconds: 60
 
+    image-variant-sync-outbox:
+      process-pending:
+        cron: "*/5 * * * * *"
+        batch-size: 30
+
     intelligence-pipeline:
       process-pending:
         enabled: false

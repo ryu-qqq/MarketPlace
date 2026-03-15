@@ -22,6 +22,7 @@ public record SchedulerProperties(Jobs jobs) {
             SellerAdminEmailOutbox sellerAdminEmailOutbox,
             ImageUploadOutbox imageUploadOutbox,
             ImageTransformOutbox imageTransformOutbox,
+            ImageVariantSyncOutbox imageVariantSyncOutbox,
             DescriptionPublish descriptionPublish,
             IntelligencePipeline intelligencePipeline,
             InboundProductRetry inboundProductRetry,
@@ -97,4 +98,9 @@ public record SchedulerProperties(Jobs jobs) {
     public record InboundOrderRetry(boolean enabled, String cron, String timezone, int batchSize) {}
 
     public record ShipmentOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record ImageVariantSyncOutbox(ImageVariantSyncProcessPending processPending) {}
+
+    public record ImageVariantSyncProcessPending(
+            boolean enabled, String cron, String timezone, int batchSize) {}
 }

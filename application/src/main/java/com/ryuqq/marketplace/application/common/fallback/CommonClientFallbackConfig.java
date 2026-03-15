@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadRes
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadStatusResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
+import com.ryuqq.marketplace.application.imagevariantsync.port.out.client.ImageVariantSyncClient;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
 import com.ryuqq.marketplace.application.order.port.out.query.OrderQueryPort;
@@ -108,6 +109,14 @@ public class CommonClientFallbackConfig {
             public ExternalDownloadStatusResponse getDownloadTaskStatus(String downloadTaskId) {
                 throw new UnsupportedOperationException("FileStorageClient not available");
             }
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    ImageVariantSyncClient noOpImageVariantSyncClient() {
+        return (sourceImageId, sourceType, variants) -> {
+            // no-op: ImageVariantSyncClient not available
         };
     }
 

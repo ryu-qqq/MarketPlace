@@ -684,6 +684,17 @@ public class StubExternalClientConfig {
         };
     }
 
+    // ===== ImageVariantSync Stubs =====
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.imagevariantsync.port.out.client.ImageVariantSyncClient
+            stubImageVariantSyncClient() {
+        return (sourceImageId, sourceType, variants) -> {
+            // stub: no-op
+        };
+    }
+
     // ===== 이미지 인프라 Stubs =====
 
     @Bean

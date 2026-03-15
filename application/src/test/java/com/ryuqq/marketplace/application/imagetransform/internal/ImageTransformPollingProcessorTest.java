@@ -8,8 +8,11 @@ import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.imagetransform.ImageTransformResponseFixtures;
 import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
+import com.ryuqq.marketplace.application.imagetransform.factory.ImageTransformCompletionBundle;
+import com.ryuqq.marketplace.application.imagetransform.factory.ImageTransformCompletionFactory;
 import com.ryuqq.marketplace.application.imagetransform.manager.ImageTransformManager;
 import com.ryuqq.marketplace.application.imagetransform.manager.ImageTransformOutboxCommandManager;
+import com.ryuqq.marketplace.application.imagevariantsync.manager.ImageVariantSyncOutboxReadManager;
 import com.ryuqq.marketplace.domain.imagetransform.ImageTransformFixtures;
 import com.ryuqq.marketplace.domain.imagetransform.aggregate.ImageTransformOutbox;
 import java.time.Instant;
@@ -31,7 +34,9 @@ class ImageTransformPollingProcessorTest {
 
     @Mock private ImageTransformOutboxCommandManager outboxCommandManager;
     @Mock private ImageTransformManager transformManager;
+    @Mock private ImageTransformCompletionFactory completionFactory;
     @Mock private ImageTransformCompletionCoordinator completionCoordinator;
+    @Mock private ImageVariantSyncOutboxReadManager syncOutboxReadManager;
 
     @Nested
     @DisplayName("pollOutbox() - PROCESSING Outbox 폴링")
@@ -45,8 +50,20 @@ class ImageTransformPollingProcessorTest {
             ImageTransformResponse completedResponse =
                     ImageTransformResponseFixtures.completedResponse();
 
+            ImageTransformCompletionBundle bundle =
+                    ImageTransformCompletionBundle.completed(null, java.util.Optional.empty());
+
             given(transformManager.getTransformRequest(outbox.transformRequestId()))
                     .willReturn(completedResponse);
+            given(syncOutboxReadManager.existsPendingBySourceImageId(outbox.sourceImageId()))
+                    .willReturn(false);
+            given(
+                            completionFactory.createFromPolling(
+                                    eq(outbox),
+                                    eq(completedResponse),
+                                    eq(true),
+                                    any(Instant.class)))
+                    .willReturn(bundle);
 
             // when
             boolean result = sut.pollOutbox(outbox);
@@ -55,7 +72,7 @@ class ImageTransformPollingProcessorTest {
             assertThat(result).isTrue();
             then(completionCoordinator)
                     .should()
-                    .complete(eq(outbox), eq(completedResponse), any(Instant.class));
+                    .complete(eq(outbox), eq(bundle), any(Instant.class));
         }
 
         @Test

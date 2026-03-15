@@ -268,4 +268,13 @@
         </Or>
         <Bug pattern="NM_CONFUSING"/>
     </Match>
+
+    <!-- ========================================
+         Condition Builder switch 중복 (의도된 동작)
+         검색 조건 빌더에서 다른 case가 같은 로직을 공유하는 것은 의도된 설계
+         ======================================== -->
+    <Match>
+        <Class name="~.*ConditionBuilder"/>
+        <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+    </Match>
 </FindBugsFilter>

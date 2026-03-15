@@ -137,6 +137,17 @@ scheduler:
         # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
         timeout-seconds: 600
 
+    # ImageVariantSyncOutbox 처리 스케줄러
+    image-variant-sync-outbox:
+      # PENDING 처리 (세토프 Sync API 호출)
+      process-pending:
+        enabled: true
+        # Cron: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: Asia/Seoul
+        # 배치 크기
+        batch-size: 50
+
     # DescriptionPublish 처리 스케줄러
     description-publish:
       enabled: true

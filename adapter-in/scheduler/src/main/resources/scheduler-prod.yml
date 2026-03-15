@@ -94,6 +94,13 @@ scheduler:
         # Prod: 1분 타임아웃
         timeout-seconds: 60
 
+    image-variant-sync-outbox:
+      process-pending:
+        # Prod: 5분마다
+        cron: "0 */5 * * * *"
+        # Prod: 큰 배치
+        batch-size: 50
+
     intelligence-pipeline:
       recover-stuck-aggregation:
         # Prod: 10분마다

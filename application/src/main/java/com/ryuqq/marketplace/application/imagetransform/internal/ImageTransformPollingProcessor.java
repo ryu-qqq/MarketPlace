@@ -1,8 +1,11 @@
 package com.ryuqq.marketplace.application.imagetransform.internal;
 
 import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransformResponse;
+import com.ryuqq.marketplace.application.imagetransform.factory.ImageTransformCompletionBundle;
+import com.ryuqq.marketplace.application.imagetransform.factory.ImageTransformCompletionFactory;
 import com.ryuqq.marketplace.application.imagetransform.manager.ImageTransformManager;
 import com.ryuqq.marketplace.application.imagetransform.manager.ImageTransformOutboxCommandManager;
+import com.ryuqq.marketplace.application.imagevariantsync.manager.ImageVariantSyncOutboxReadManager;
 import com.ryuqq.marketplace.domain.imagetransform.aggregate.ImageTransformOutbox;
 import java.time.Instant;
 import org.slf4j.Logger;
@@ -30,14 +33,20 @@ public class ImageTransformPollingProcessor {
 
     private final ImageTransformOutboxCommandManager outboxCommandManager;
     private final ImageTransformManager transformManager;
+    private final ImageTransformCompletionFactory completionFactory;
     private final ImageTransformCompletionCoordinator completionCoordinator;
+    private final ImageVariantSyncOutboxReadManager syncOutboxReadManager;
 
     public ImageTransformPollingProcessor(
             ImageTransformOutboxCommandManager outboxCommandManager,
             ImageTransformManager transformManager,
-            ImageTransformCompletionCoordinator completionCoordinator) {
+            ImageTransformCompletionFactory completionFactory,
+            ImageTransformCompletionCoordinator completionCoordinator,
+            ImageVariantSyncOutboxReadManager syncOutboxReadManager) {
         this.outboxCommandManager = outboxCommandManager;
         this.transformManager = transformManager;
+        this.completionFactory = completionFactory;
+        this.syncOutboxReadManager = syncOutboxReadManager;
         this.completionCoordinator = completionCoordinator;
     }
 
@@ -82,7 +91,12 @@ public class ImageTransformPollingProcessor {
                 outbox.variantType(),
                 response.resultCdnUrl());
 
-        completionCoordinator.complete(outbox, response, Instant.now());
+        Instant now = Instant.now();
+        boolean needsSyncOutbox =
+                !syncOutboxReadManager.existsPendingBySourceImageId(outbox.sourceImageId());
+        ImageTransformCompletionBundle bundle =
+                completionFactory.createFromPolling(outbox, response, needsSyncOutbox, now);
+        completionCoordinator.complete(outbox, bundle, now);
         return true;
     }
 
