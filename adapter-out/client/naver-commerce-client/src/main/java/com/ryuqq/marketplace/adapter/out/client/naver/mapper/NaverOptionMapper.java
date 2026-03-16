@@ -36,11 +36,12 @@ final class NaverOptionMapper {
             return null;
         }
 
+        boolean soldOut = group.status().isSoldout();
         List<SellerOptionGroup> combinationGroups = resolveCombinationGroups(optionGroups);
         List<SellerOptionGroup> customGroups = resolveCustomGroups(optionGroups);
 
         OptionCombinationGroupNames groupNames = combinationGroups.isEmpty() ? null : buildGroupNames(combinationGroups);
-        List<OptionCombination> combinations = combinationGroups.isEmpty() ? List.of() : buildCombinations(combinationGroups, products, null);
+        List<OptionCombination> combinations = combinationGroups.isEmpty() ? List.of() : buildCombinations(combinationGroups, products, null, soldOut);
         List<OptionCustom> optionCustom = customGroups.isEmpty() ? List.of() : buildOptionCustom(customGroups);
 
         String sortType = combinationGroups.isEmpty() ? null : OPTION_SORT_CREATE;
@@ -70,13 +71,14 @@ final class NaverOptionMapper {
             return null;
         }
 
+        boolean soldOut = group.status().isSoldout();
         List<SellerOptionGroup> combinationGroups = resolveCombinationGroups(optionGroups);
         List<SellerOptionGroup> customGroups = resolveCustomGroups(optionGroups);
 
         OptionCombinationGroupNames groupNames = combinationGroups.isEmpty() ? null : buildGroupNames(combinationGroups);
         List<OptionCombination> combinations = combinationGroups.isEmpty()
                 ? List.of()
-                : buildCombinationsForUpdate(combinationGroups, products, existingProduct);
+                : buildCombinationsForUpdate(combinationGroups, products, existingProduct, soldOut);
         List<OptionCustom> optionCustom = customGroups.isEmpty() ? List.of() : buildOptionCustomForUpdate(customGroups, existingProduct);
 
         String sortType = combinationGroups.isEmpty() ? null : OPTION_SORT_CREATE;
@@ -113,7 +115,8 @@ final class NaverOptionMapper {
     private static List<OptionCombination> buildCombinations(
             List<SellerOptionGroup> predefinedGroups,
             List<Product> products,
-            Map<String, Long> skuToNaverId) {
+            Map<String, Long> skuToNaverId,
+            boolean soldOut) {
 
         Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(predefinedGroups);
         int basePrice = resolveBasePrice(products);
@@ -127,7 +130,7 @@ final class NaverOptionMapper {
             Long naverId = skuToNaverId != null
                     ? matchNaverIdBySkuOrOptionKey(product.skuCodeValue(), optionNames, skuToNaverId, Map.of())
                     : null;
-            combinations.add(buildCombination(naverId, optionNames, product, basePrice));
+            combinations.add(buildCombination(naverId, optionNames, product, basePrice, soldOut));
         }
 
         return combinations;
@@ -136,7 +139,8 @@ final class NaverOptionMapper {
     private static List<OptionCombination> buildCombinationsForUpdate(
             List<SellerOptionGroup> predefinedGroups,
             List<Product> products,
-            NaverProductDetailResponse existingProduct) {
+            NaverProductDetailResponse existingProduct,
+            boolean soldOut) {
 
         Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(predefinedGroups);
         int basePrice = resolveBasePrice(products);
@@ -164,7 +168,7 @@ final class NaverOptionMapper {
             }
             Long naverId = matchNaverIdBySkuOrOptionKey(
                     product.skuCodeValue(), optionNames, skuToNaverId, optionKeyToNaverId);
-            combinations.add(buildCombination(naverId, optionNames, product, basePrice));
+            combinations.add(buildCombination(naverId, optionNames, product, basePrice, soldOut));
         }
 
         return combinations;
@@ -283,17 +287,18 @@ final class NaverOptionMapper {
      * <p>price는 대표가격(salePrice) 대비 차액입니다. 네이버 API에서 옵션 price는 절대 가격이 아닌 추가/할인 금액입니다.
      */
     private static OptionCombination buildCombination(
-            Long id, List<String> optionNames, Product product, int basePrice) {
+            Long id, List<String> optionNames, Product product, int basePrice, boolean soldOut) {
         int priceDiff = product.currentPriceValue() - basePrice;
+        int stock = soldOut ? 0 : product.stockQuantity();
         return new OptionCombination(
                 id,
                 optionNames.size() > 0 ? optionNames.get(0) : null,
                 optionNames.size() > 1 ? optionNames.get(1) : null,
                 optionNames.size() > 2 ? optionNames.get(2) : null,
-                product.stockQuantity(),
+                stock,
                 priceDiff,
                 product.skuCodeValue(),
-                product.stockQuantity() > 0);
+                !soldOut && product.stockQuantity() > 0);
     }
 
     private static int resolveBasePrice(List<Product> products) {
