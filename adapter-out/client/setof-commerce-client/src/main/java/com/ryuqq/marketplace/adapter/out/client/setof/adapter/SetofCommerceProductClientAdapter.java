@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
@@ -13,7 +14,6 @@ import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChan
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,25 +65,6 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
             Long externalBrandId,
             SellerSalesChannel channel,
             Shop shop) {
-        return registerProduct(
-                bundle, externalCategoryId, externalBrandId, channel, shop, null, null);
-    }
-
-    /**
-     * 레거시 ID를 포함한 세토프 상품 등록.
-     *
-     * @param legacyProductGroupId 레거시 상품그룹 ID (nullable)
-     * @param legacyProductIdMap 내부 productId → 레거시 productId 매핑 (nullable)
-     */
-    @Override
-    public String registerProduct(
-            ProductGroupDetailBundle bundle,
-            Long externalCategoryId,
-            Long externalBrandId,
-            SellerSalesChannel channel,
-            Shop shop,
-            Long legacyProductGroupId,
-            Map<Long, Long> legacyProductIdMap) {
 
         long externalSellerId = Long.parseLong(shop.accountId());
 
@@ -92,9 +73,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
                         bundle,
                         externalCategoryId,
                         externalBrandId,
-                        externalSellerId,
-                        legacyProductGroupId,
-                        legacyProductIdMap);
+                        externalSellerId);
 
         try {
             return circuitBreaker.executeSupplier(
@@ -141,31 +120,15 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
             String externalProductId,
             SellerSalesChannel channel,
             Set<ChangedArea> changedAreas) {
-        updateProduct(
-                bundle,
-                externalCategoryId,
-                externalBrandId,
-                externalProductId,
-                channel,
-                changedAreas,
-                (Map<Long, Long>) null);
-    }
-
-    @Override
-    public void updateProduct(
-            ProductGroupDetailBundle bundle,
-            Long externalCategoryId,
-            Long externalBrandId,
-            String externalProductId,
-            SellerSalesChannel channel,
-            Set<ChangedArea> changedAreas,
-            Map<Long, Long> legacyProductIdMap) {
 
         log.info(
                 "세토프 커머스 상품 수정 요청: productGroupId={}, externalProductId={}, changedAreas={}",
                 bundle.group().idValue(),
                 externalProductId,
                 changedAreas);
+
+        // 기존 세토프 상품 조회 (옵션명 기반 productId 매칭용)
+        SetofProductGroupDetailResponse existingProduct = fetchExistingProduct(externalProductId);
 
         updateExecutorProvider
                 .resolve(changedAreas)
@@ -176,7 +139,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
                         externalProductId,
                         channel,
                         changedAreas,
-                        legacyProductIdMap);
+                        existingProduct);
 
         log.info(
                 "세토프 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",
@@ -208,6 +171,48 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
         } catch (CallNotPermittedException e) {
             throw new ExternalServiceUnavailableException(
                     "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
+    }
+
+    /**
+     * 기존 세토프 상품 조회.
+     *
+     * <p>GET /api/v2/admin/product-groups/{productGroupId} 호출하여 기존 상품 정보를 조회합니다.
+     * 옵션명 기반 productId 매칭에 사용됩니다. 조회 실패 시 null을 반환하여 수정은 계속 진행됩니다.
+     *
+     * @param externalProductId 세토프 외부 상품 그룹 ID
+     * @return 기존 상품 조회 결과 (실패 시 null)
+     */
+    private SetofProductGroupDetailResponse fetchExistingProduct(String externalProductId) {
+        try {
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        log.info("세토프 커머스 기존 상품 조회: externalProductId={}", externalProductId);
+
+                        SetofProductGroupDetailResponse response =
+                                restClient
+                                        .get()
+                                        .uri(
+                                                "/api/v2/admin/product-groups/{productGroupId}",
+                                                externalProductId)
+                                        .retrieve()
+                                        .body(SetofProductGroupDetailResponse.class);
+
+                        log.info(
+                                "세토프 커머스 기존 상품 조회 성공: externalProductId={}, productsCount={}",
+                                externalProductId,
+                                response != null && response.products() != null
+                                        ? response.products().size()
+                                        : 0);
+
+                        return response;
+                    });
+        } catch (Exception e) {
+            log.warn(
+                    "세토프 커머스 기존 상품 조회 실패 (수정은 계속 진행): externalProductId={}, error={}",
+                    externalProductId,
+                    e.getMessage());
+            return null;
         }
     }
 }

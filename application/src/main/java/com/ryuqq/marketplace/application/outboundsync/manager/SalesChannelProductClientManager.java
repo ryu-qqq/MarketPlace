@@ -50,26 +50,6 @@ public class SalesChannelProductClientManager {
             Long externalBrandId,
             SellerSalesChannel channel,
             Shop shop,
-            Long legacyProductGroupId,
-            java.util.Map<Long, Long> legacyProductIdMap) {
-        return resolve(channelCode)
-                .registerProduct(
-                        bundle,
-                        externalCategoryId,
-                        externalBrandId,
-                        channel,
-                        shop,
-                        legacyProductGroupId,
-                        legacyProductIdMap);
-    }
-
-    public String registerProduct(
-            String channelCode,
-            ProductGroupDetailBundle bundle,
-            Long externalCategoryId,
-            Long externalBrandId,
-            SellerSalesChannel channel,
-            Shop shop,
             ResolvedExternalImages resolvedImages) {
         return resolve(channelCode)
                 .registerProduct(
@@ -92,26 +72,6 @@ public class SalesChannelProductClientManager {
                         externalProductId,
                         channel,
                         changedAreas);
-    }
-
-    public void updateProduct(
-            String channelCode,
-            ProductGroupDetailBundle bundle,
-            Long externalCategoryId,
-            Long externalBrandId,
-            String externalProductId,
-            SellerSalesChannel channel,
-            Set<ChangedArea> changedAreas,
-            java.util.Map<Long, Long> legacyProductIdMap) {
-        resolve(channelCode)
-                .updateProduct(
-                        bundle,
-                        externalCategoryId,
-                        externalBrandId,
-                        externalProductId,
-                        channel,
-                        changedAreas,
-                        legacyProductIdMap);
     }
 
     public void updateProduct(

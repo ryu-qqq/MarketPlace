@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofDescriptionReques
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofImagesRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofNoticeRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupBasicInfoUpdateRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest.DescriptionRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest.ImageRequest;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -45,21 +47,20 @@ public class SetofCommerceProductMapper {
     /**
      * 상품 등록 요청 변환.
      *
+     * <p>등록 시 productGroupId, productId를 보내지 않습니다.
+     * 세토프 서버에서 auto_increment로 ID를 생성합니다.
+     *
      * @param bundle 상품 그룹 상세 번들
      * @param externalCategoryId 세토프 카테고리 ID
      * @param externalBrandId 세토프 브랜드 ID (nullable)
      * @param externalSellerId 세토프 셀러 ID (shop.accountId)
-     * @param legacyProductGroupId 레거시 상품그룹 ID (nullable: 레거시 매핑이 없는 신규 상품)
-     * @param legacyProductIdMap 내부 productId → 레거시 productId 매핑 (nullable)
      * @return 세토프 상품 등록 요청 DTO
      */
     public SetofProductGroupRegistrationRequest toRegistrationRequest(
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
-            long externalSellerId,
-            Long legacyProductGroupId,
-            Map<Long, Long> legacyProductIdMap) {
+            long externalSellerId) {
 
         ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
         ProductGroup group = bundle.group();
@@ -68,10 +69,8 @@ public class SetofCommerceProductMapper {
         int representativeRegularPrice = computeMinRegularPrice(products);
         int representativeCurrentPrice = computeMinCurrentPrice(products);
 
-        Long productGroupId = legacyProductGroupId != null ? legacyProductGroupId : group.idValue();
-
         return new SetofProductGroupRegistrationRequest(
-                productGroupId,
+                null,
                 externalSellerId,
                 externalBrandId,
                 externalCategoryId,
@@ -85,7 +84,7 @@ public class SetofCommerceProductMapper {
                 representativeCurrentPrice,
                 mapImages(group.images()),
                 mapOptionGroups(group.sellerOptionGroups()),
-                mapProducts(products, group.sellerOptionGroups(), legacyProductIdMap),
+                mapProducts(products, group.sellerOptionGroups()),
                 mapDescription(bundle),
                 mapNotice(bundle));
     }
@@ -93,16 +92,19 @@ public class SetofCommerceProductMapper {
     /**
      * 상품 수정 요청 변환.
      *
+     * <p>기존 세토프 상품 조회 결과를 기반으로 옵션명 매칭하여 productId를 할당합니다.
+     *
      * @param bundle 상품 그룹 상세 번들
      * @param externalCategoryId 세토프 카테고리 ID
      * @param externalBrandId 세토프 브랜드 ID (nullable)
+     * @param existingProduct 기존 세토프 상품 조회 결과 (nullable)
      * @return 세토프 상품 수정 요청 DTO
      */
     public SetofProductGroupUpdateRequest toUpdateRequest(
             ProductGroupDetailBundle bundle,
             Long externalCategoryId,
             Long externalBrandId,
-            Map<Long, Long> legacyProductIdMap) {
+            SetofProductGroupDetailResponse existingProduct) {
 
         ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
         ProductGroup group = bundle.group();
@@ -124,7 +126,7 @@ public class SetofCommerceProductMapper {
                 representativeCurrentPrice,
                 mapUpdateImages(group.images()),
                 mapUpdateOptionGroups(group.sellerOptionGroups()),
-                mapUpdateProducts(products, group.sellerOptionGroups(), legacyProductIdMap),
+                mapUpdateProducts(products, group.sellerOptionGroups(), existingProduct),
                 mapUpdateDescription(bundle),
                 mapUpdateNotice(bundle));
     }
@@ -167,14 +169,17 @@ public class SetofCommerceProductMapper {
     /**
      * 상품 + 옵션 일괄 수정 요청 변환.
      *
+     * <p>기존 세토프 상품 조회 결과를 기반으로 옵션명 매칭하여 productId를 할당합니다.
+     *
      * @param products 상품 목록
      * @param optionGroups 옵션 그룹 목록
+     * @param existingProduct 기존 세토프 상품 조회 결과 (nullable)
      * @return 상품 + 옵션 일괄 수정 요청 DTO
      */
     public SetofProductsUpdateRequest toProductsUpdateRequest(
             List<Product> products,
             List<SellerOptionGroup> optionGroups,
-            Map<Long, Long> legacyProductIdMap) {
+            SetofProductGroupDetailResponse existingProduct) {
 
         List<SetofProductsUpdateRequest.OptionGroupRequest> optionGroupRequests =
                 optionGroups.stream()
@@ -197,14 +202,15 @@ public class SetofCommerceProductMapper {
                         .toList();
 
         Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
-        Map<Long, Long> idMap = legacyProductIdMap != null ? legacyProductIdMap : Map.of();
+        Map<Long, Long> productIdMatchMap =
+                buildProductIdMatchMap(products, optionGroups, existingProduct);
 
         List<SetofProductsUpdateRequest.ProductRequest> productRequests =
                 products.stream()
                         .map(
                                 product -> {
                                     Long productId =
-                                            idMap.getOrDefault(
+                                            productIdMatchMap.getOrDefault(
                                                     product.idValue(), product.idValue());
                                     Map<Long, String> mappingByGroupId =
                                             buildMappingByGroupId(product, optionValueMap);
@@ -327,27 +333,22 @@ public class SetofCommerceProductMapper {
     }
 
     private List<ProductRequest> mapProducts(
-            List<Product> products,
-            List<SellerOptionGroup> optionGroups,
-            Map<Long, Long> legacyProductIdMap) {
+            List<Product> products, List<SellerOptionGroup> optionGroups) {
 
         Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
-        Map<Long, Long> idMap = legacyProductIdMap != null ? legacyProductIdMap : Map.of();
 
         return products.stream()
                 .map(
-                        product -> {
-                            Long productId =
-                                    idMap.getOrDefault(product.idValue(), product.idValue());
-                            return new ProductRequest(
-                                    productId,
-                                    product.skuCodeValue(),
-                                    product.regularPriceValue(),
-                                    product.currentPriceValue(),
-                                    product.stockQuantity(),
-                                    product.sortOrder(),
-                                    mapSelectedOptions(product, optionGroups, optionValueMap));
-                        })
+                        product ->
+                                new ProductRequest(
+                                        null,
+                                        product.skuCodeValue(),
+                                        product.regularPriceValue(),
+                                        product.currentPriceValue(),
+                                        product.stockQuantity(),
+                                        product.sortOrder(),
+                                        mapSelectedOptions(
+                                                product, optionGroups, optionValueMap)))
                 .toList();
     }
 
@@ -453,19 +454,26 @@ public class SetofCommerceProductMapper {
                 .toList();
     }
 
+    /**
+     * 수정 시 상품 목록 변환.
+     *
+     * <p>기존 세토프 상품의 옵션명 조합 또는 SKU 코드로 매칭하여 세토프 productId를 할당합니다.
+     */
     private List<SetofProductGroupUpdateRequest.ProductRequest> mapUpdateProducts(
             List<Product> products,
             List<SellerOptionGroup> optionGroups,
-            Map<Long, Long> legacyProductIdMap) {
+            SetofProductGroupDetailResponse existingProduct) {
 
         Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
-        Map<Long, Long> idMap = legacyProductIdMap != null ? legacyProductIdMap : Map.of();
+        Map<Long, Long> productIdMatchMap =
+                buildProductIdMatchMap(products, optionGroups, existingProduct);
 
         return products.stream()
                 .map(
                         product -> {
                             Long productId =
-                                    idMap.getOrDefault(product.idValue(), product.idValue());
+                                    productIdMatchMap.getOrDefault(
+                                            product.idValue(), product.idValue());
                             return new SetofProductGroupUpdateRequest.ProductRequest(
                                     productId,
                                     product.skuCodeValue(),
@@ -552,6 +560,99 @@ public class SetofCommerceProductMapper {
                         .toList();
 
         return new SetofProductGroupUpdateRequest.NoticeRequest(entryRequests);
+    }
+
+    // ── 옵션명 기반 productId 매칭 ──
+
+    /**
+     * 내부 product와 기존 세토프 product를 옵션명 조합 또는 SKU 코드로 매칭하여
+     * 내부 productId → 세토프 productId 매핑을 생성합니다.
+     *
+     * <p>매칭 우선순위:
+     * <ol>
+     *   <li>SKU 코드 일치</li>
+     *   <li>옵션명 조합(optionGroupName:optionValueName) 일치</li>
+     * </ol>
+     *
+     * @param products 내부 상품 목록
+     * @param optionGroups 옵션 그룹 목록
+     * @param existingProduct 기존 세토프 상품 조회 결과 (nullable)
+     * @return 내부 productId → 세토프 productId 매핑
+     */
+    private Map<Long, Long> buildProductIdMatchMap(
+            List<Product> products,
+            List<SellerOptionGroup> optionGroups,
+            SetofProductGroupDetailResponse existingProduct) {
+
+        if (existingProduct == null || existingProduct.products() == null) {
+            return Map.of();
+        }
+
+        // 기존 세토프 product를 SKU 코드 → setofProductId, 옵션명 조합 → setofProductId로 인덱싱
+        Map<String, Long> skuToSetofId = new HashMap<>();
+        Map<String, Long> optionKeyToSetofId = new HashMap<>();
+
+        for (var ep : existingProduct.products()) {
+            if (ep.skuCode() != null && !ep.skuCode().isBlank()) {
+                skuToSetofId.put(ep.skuCode(), ep.productId());
+            }
+            String key = buildExternalOptionKey(ep.selectedOptions());
+            if (!key.isEmpty()) {
+                optionKeyToSetofId.put(key, ep.productId());
+            }
+        }
+
+        // 내부 product를 순회하며 매칭
+        Map<Long, Long> matchMap = new HashMap<>();
+        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
+
+        for (Product product : products) {
+            // 우선순위 1: SKU 코드
+            Long setofId = null;
+            if (product.skuCodeValue() != null && !product.skuCodeValue().isBlank()) {
+                setofId = skuToSetofId.get(product.skuCodeValue());
+            }
+            // 우선순위 2: 옵션명 조합
+            if (setofId == null) {
+                String key = buildInternalOptionKey(product, optionGroups, optionValueMap);
+                if (!key.isEmpty()) {
+                    setofId = optionKeyToSetofId.get(key);
+                }
+            }
+            if (setofId != null) {
+                matchMap.put(product.idValue(), setofId);
+            }
+        }
+        return matchMap;
+    }
+
+    /**
+     * 기존 세토프 상품의 selectedOptions를 정렬된 옵션 키 문자열로 변환합니다.
+     */
+    private String buildExternalOptionKey(
+            List<SetofProductGroupDetailResponse.SelectedOptionResponse> selectedOptions) {
+        if (selectedOptions == null || selectedOptions.isEmpty()) {
+            return "";
+        }
+        return selectedOptions.stream()
+                .map(so -> so.optionGroupName() + ":" + so.optionValueName())
+                .sorted()
+                .collect(Collectors.joining("|"));
+    }
+
+    /**
+     * 내부 상품의 옵션 매핑을 정렬된 옵션 키 문자열로 변환합니다.
+     */
+    private String buildInternalOptionKey(
+            Product product,
+            List<SellerOptionGroup> optionGroups,
+            Map<Long, SellerOptionValue> optionValueMap) {
+        Map<Long, String> mappingByGroupId = buildMappingByGroupId(product, optionValueMap);
+        return optionGroups.stream()
+                .filter(g -> mappingByGroupId.containsKey(g.idValue()))
+                .map(g -> g.optionGroupNameValue() + ":" + mappingByGroupId.get(g.idValue()))
+                .sorted()
+                .collect(Collectors.joining("|"));
     }
 
     // ── 공통 유틸리티 ──

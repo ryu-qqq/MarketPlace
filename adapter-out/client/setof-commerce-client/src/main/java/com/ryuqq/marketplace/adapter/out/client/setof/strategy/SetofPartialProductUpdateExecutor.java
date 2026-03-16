@@ -9,12 +9,12 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofDescriptionReques
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofImagesRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofNoticeRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupBasicInfoUpdateRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductsUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
-import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
             String externalProductId,
             SellerSalesChannel channel,
             Set<ChangedArea> changedAreas,
-            Map<Long, Long> legacyProductIdMap) {
+            SetofProductGroupDetailResponse existingProduct) {
 
         Long externalId;
         try {
@@ -99,7 +99,7 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
         }
 
         if (containsAny(changedAreas, ChangedArea.PRICE, ChangedArea.STOCK, ChangedArea.OPTION)) {
-            updateProducts(bundle, externalId, legacyProductIdMap);
+            updateProducts(bundle, externalId, existingProduct);
         }
 
         if (changedAreas.contains(ChangedArea.IMAGE)) {
@@ -128,10 +128,12 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
     }
 
     private void updateProducts(
-            ProductGroupDetailBundle bundle, Long externalId, Map<Long, Long> legacyProductIdMap) {
+            ProductGroupDetailBundle bundle,
+            Long externalId,
+            SetofProductGroupDetailResponse existingProduct) {
         SetofProductsUpdateRequest request =
                 mapper.toProductsUpdateRequest(
-                        bundle.products(), bundle.group().sellerOptionGroups(), legacyProductIdMap);
+                        bundle.products(), bundle.group().sellerOptionGroups(), existingProduct);
         productAdapter.updateProducts(externalId, request);
     }
 
