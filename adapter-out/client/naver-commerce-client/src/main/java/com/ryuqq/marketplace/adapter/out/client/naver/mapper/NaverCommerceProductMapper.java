@@ -146,7 +146,9 @@ public class NaverCommerceProductMapper {
         String detailContent = mapDetailContent(bundle);
 
         int representativePrice = resolveRepresentativePrice(products);
-        int totalStock = products.stream().mapToInt(Product::stockQuantity).sum();
+        int totalStock = bundle.group().status().isSoldout()
+                ? 0
+                : products.stream().mapToInt(Product::stockQuantity).sum();
         String naverStatusType = mapNaverStatusType(bundle.group());
 
         OriginProduct originProduct =
@@ -203,12 +205,16 @@ public class NaverCommerceProductMapper {
         return products.stream().mapToInt(Product::currentPriceValue).min().orElse(0);
     }
 
-    /** 내부 상품 상태 → 네이버 statusType 매핑. */
+    /**
+     * 내부 상품 상태 → 네이버 statusType 매핑.
+     *
+     * <p>네이버 수정 API에서는 SALE, SUSPENSION만 입력 가능합니다. OUTOFSTOCK(품절)은 stockQuantity=0일 때
+     * 네이버가 자동으로 설정하므로, SOLD_OUT은 SALE로 보내고 재고를 0으로 전송합니다.
+     */
     private String mapNaverStatusType(ProductGroup group) {
         ProductGroupStatus status = group.status();
         return switch (status) {
-            case ACTIVE -> "SALE";
-            case SOLD_OUT -> "OUTOFSTOCK";
+            case ACTIVE, SOLD_OUT -> "SALE";
             case INACTIVE -> "SUSPENSION";
             default -> "SALE";
         };
