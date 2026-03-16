@@ -197,7 +197,7 @@ public class NaverCommerceImageClientAdapter {
                 String responseContentType = conn.getContentType();
                 String contentType =
                         responseContentType != null && responseContentType.startsWith("image/")
-                                ? responseContentType.split(";")[0].trim()
+                                ? normalizeContentType(responseContentType.split(";")[0].trim())
                                 : guessContentType(filename);
 
                 log.debug(
@@ -227,6 +227,18 @@ public class NaverCommerceImageClientAdapter {
         }
 
         return filename.isBlank() ? "image.jpg" : filename;
+    }
+
+    /**
+     * 비표준 Content-Type을 표준으로 정규화합니다.
+     *
+     * <p>일부 CDN이 image/jpg (비표준)를 반환하지만 네이버 API는 image/jpeg (표준)만 인식합니다.
+     */
+    private String normalizeContentType(String contentType) {
+        if ("image/jpg".equals(contentType)) {
+            return "image/jpeg";
+        }
+        return contentType;
     }
 
     private String guessContentType(String filename) {
