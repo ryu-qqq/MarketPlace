@@ -79,7 +79,7 @@ public class OmsProductCompositionQueryDslRepository {
                         buildPartnerCondition(criteria),
                         buildSearchCondition(criteria),
                         buildDateCondition(criteria))
-                .orderBy(productGroupJpaEntity.createdAt.desc())
+                .orderBy(outboundProductJpaEntity.createdAt.desc())
                 .offset(criteria.offset())
                 .limit(criteria.size())
                 .fetch();
@@ -149,8 +149,8 @@ public class OmsProductCompositionQueryDslRepository {
         Instant start = criteria.dateRange().startInstant();
         Instant end = criteria.dateRange().endInstant();
         if ("UPDATED_AT".equalsIgnoreCase(criteria.dateType())) {
-            return conditionBuilder.updatedAtBetween(start, end);
+            return outboundProductJpaEntity.updatedAt.between(start, end);
         }
-        return conditionBuilder.createdAtBetween(start, end);
+        return outboundProductJpaEntity.createdAt.between(start, end);
     }
 }
