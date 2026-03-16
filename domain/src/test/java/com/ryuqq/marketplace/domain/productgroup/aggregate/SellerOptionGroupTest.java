@@ -246,6 +246,20 @@ class SellerOptionGroupTest {
         }
 
         @Test
+        @DisplayName("옵션 입력 타입을 수정한다")
+        void updateInputType() {
+            // given
+            SellerOptionGroup optionGroup = ProductGroupFixtures.defaultSellerOptionGroup();
+            assertThat(optionGroup.inputType()).isEqualTo(OptionInputType.PREDEFINED);
+
+            // when
+            optionGroup.updateInputType(OptionInputType.FREE_INPUT);
+
+            // then
+            assertThat(optionGroup.inputType()).isEqualTo(OptionInputType.FREE_INPUT);
+        }
+
+        @Test
         @DisplayName("정렬 순서를 변경한다")
         void updateSortOrder() {
             // given

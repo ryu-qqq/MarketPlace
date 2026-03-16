@@ -128,6 +128,11 @@ public class SellerOptionGroup {
         this.optionValues.add(optionValue);
     }
 
+    /** 옵션 입력 타입 수정. */
+    public void updateInputType(OptionInputType inputType) {
+        this.inputType = inputType;
+    }
+
     /** 정렬 순서 변경. */
     public void updateSortOrder(int sortOrder) {
         this.sortOrder = sortOrder;
