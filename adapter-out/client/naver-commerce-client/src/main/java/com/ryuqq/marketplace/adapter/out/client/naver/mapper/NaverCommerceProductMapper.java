@@ -18,6 +18,7 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerCs;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +39,6 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
 public class NaverCommerceProductMapper {
 
-    private static final String STATUS_SALE = "SALE";
     private static final String SALE_TYPE_NEW = "NEW";
     private static final String DEFAULT_AS_PHONE = "1660-1126";
     private static final String DEFAULT_AS_GUIDE = "상세페이지 참조";
@@ -147,10 +147,11 @@ public class NaverCommerceProductMapper {
 
         int representativePrice = resolveRepresentativePrice(products);
         int totalStock = products.stream().mapToInt(Product::stockQuantity).sum();
+        String naverStatusType = mapNaverStatusType(bundle.group());
 
         OriginProduct originProduct =
                 new OriginProduct(
-                        STATUS_SALE,
+                        naverStatusType,
                         SALE_TYPE_NEW,
                         String.valueOf(externalCategoryId),
                         queryResult.productGroupName(),
@@ -200,5 +201,16 @@ public class NaverCommerceProductMapper {
 
     private int resolveRepresentativePrice(List<Product> products) {
         return products.stream().mapToInt(Product::currentPriceValue).min().orElse(0);
+    }
+
+    /** 내부 상품 상태 → 네이버 statusType 매핑. */
+    private String mapNaverStatusType(ProductGroup group) {
+        ProductGroupStatus status = group.status();
+        return switch (status) {
+            case ACTIVE -> "SALE";
+            case SOLD_OUT -> "OUTOFSTOCK";
+            case INACTIVE -> "SUSPENSION";
+            default -> "SALE";
+        };
     }
 }

@@ -4,11 +4,13 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductDetailResp
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo.OptionCombination;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo.OptionCombinationGroupNames;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo.OptionCustom;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionValue;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.Map;
  * 옵션 정보 변환 매퍼.
  *
  * <p>등록 시에는 순차 ID를 부여하고, 수정 시에는 기존 네이버 combination ID를 매칭하여 유지합니다.
+ *
+ * <p>inputType에 따라 PREDEFINED 그룹은 optionCombinations로, FREE_INPUT 그룹은 optionCustom으로 분리하여 매핑합니다.
  */
 final class NaverOptionMapper {
 
@@ -32,18 +36,15 @@ final class NaverOptionMapper {
             return null;
         }
 
-        OptionCombinationGroupNames groupNames = buildGroupNames(optionGroups);
-        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
-        int basePrice = resolveBasePrice(products);
+        List<SellerOptionGroup> predefinedGroups = filterByInputType(optionGroups, OptionInputType.PREDEFINED);
+        List<SellerOptionGroup> freeInputGroups = filterByInputType(optionGroups, OptionInputType.FREE_INPUT);
 
-        List<OptionCombination> combinations = new ArrayList<>();
+        OptionCombinationGroupNames groupNames = predefinedGroups.isEmpty() ? null : buildGroupNames(predefinedGroups);
+        List<OptionCombination> combinations = predefinedGroups.isEmpty() ? null : buildCombinations(predefinedGroups, products, null);
+        List<OptionCustom> optionCustom = freeInputGroups.isEmpty() ? null : buildOptionCustom(freeInputGroups);
 
-        for (Product product : products) {
-            List<String> optionNames = resolveOptionNames(product, optionGroups, optionValueMap);
-            combinations.add(buildCombination(null, optionNames, product, basePrice));
-        }
-
-        return new OptionInfo(OPTION_SORT_CREATE, groupNames, combinations);
+        String sortType = predefinedGroups.isEmpty() ? null : OPTION_SORT_CREATE;
+        return new OptionInfo(sortType, groupNames, combinations, optionCustom);
     }
 
     /**
@@ -69,8 +70,57 @@ final class NaverOptionMapper {
             return null;
         }
 
-        OptionCombinationGroupNames groupNames = buildGroupNames(optionGroups);
-        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
+        List<SellerOptionGroup> predefinedGroups = filterByInputType(optionGroups, OptionInputType.PREDEFINED);
+        List<SellerOptionGroup> freeInputGroups = filterByInputType(optionGroups, OptionInputType.FREE_INPUT);
+
+        OptionCombinationGroupNames groupNames = predefinedGroups.isEmpty() ? null : buildGroupNames(predefinedGroups);
+        List<OptionCombination> combinations = predefinedGroups.isEmpty()
+                ? null
+                : buildCombinationsForUpdate(predefinedGroups, products, existingProduct);
+        List<OptionCustom> optionCustom = freeInputGroups.isEmpty() ? null : buildOptionCustomForUpdate(freeInputGroups, existingProduct);
+
+        String sortType = predefinedGroups.isEmpty() ? null : OPTION_SORT_CREATE;
+        return new OptionInfo(sortType, groupNames, combinations, optionCustom);
+    }
+
+    private static List<SellerOptionGroup> filterByInputType(
+            List<SellerOptionGroup> optionGroups, OptionInputType inputType) {
+        return optionGroups.stream()
+                .filter(g -> g.inputType() == inputType)
+                .toList();
+    }
+
+    // === PREDEFINED 옵션 (optionCombinations) ===
+
+    private static List<OptionCombination> buildCombinations(
+            List<SellerOptionGroup> predefinedGroups,
+            List<Product> products,
+            Map<String, Long> skuToNaverId) {
+
+        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(predefinedGroups);
+        int basePrice = resolveBasePrice(products);
+        List<OptionCombination> combinations = new ArrayList<>();
+
+        for (Product product : products) {
+            List<String> optionNames = resolveOptionNames(product, predefinedGroups, optionValueMap);
+            if (optionNames.isEmpty()) {
+                continue;
+            }
+            Long naverId = skuToNaverId != null
+                    ? matchNaverIdBySkuOrOptionKey(product.skuCodeValue(), optionNames, skuToNaverId, Map.of())
+                    : null;
+            combinations.add(buildCombination(naverId, optionNames, product, basePrice));
+        }
+
+        return combinations;
+    }
+
+    private static List<OptionCombination> buildCombinationsForUpdate(
+            List<SellerOptionGroup> predefinedGroups,
+            List<Product> products,
+            NaverProductDetailResponse existingProduct) {
+
+        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(predefinedGroups);
         int basePrice = resolveBasePrice(products);
 
         List<NaverProductDetailResponse.OptionCombination> existingCombinations =
@@ -90,23 +140,71 @@ final class NaverOptionMapper {
         List<OptionCombination> combinations = new ArrayList<>();
 
         for (Product product : products) {
-            List<String> optionNames = resolveOptionNames(product, optionGroups, optionValueMap);
-            Long naverId =
-                    matchNaverCombinationId(
-                            product.skuCodeValue(), optionNames, skuToNaverId, optionKeyToNaverId);
+            List<String> optionNames = resolveOptionNames(product, predefinedGroups, optionValueMap);
+            if (optionNames.isEmpty()) {
+                continue;
+            }
+            Long naverId = matchNaverIdBySkuOrOptionKey(
+                    product.skuCodeValue(), optionNames, skuToNaverId, optionKeyToNaverId);
             combinations.add(buildCombination(naverId, optionNames, product, basePrice));
         }
 
-        return new OptionInfo(OPTION_SORT_CREATE, groupNames, combinations);
+        return combinations;
     }
 
-    private static Long matchNaverCombinationId(
+    // === FREE_INPUT 옵션 (optionCustom) ===
+
+    /** 등록용: groupName만 전송. */
+    private static List<OptionCustom> buildOptionCustom(List<SellerOptionGroup> freeInputGroups) {
+        return freeInputGroups.stream()
+                .map(g -> new OptionCustom(null, g.optionGroupNameValue(), true))
+                .toList();
+    }
+
+    /** 수정용: 기존 네이버 optionCustom ID 매칭. */
+    private static List<OptionCustom> buildOptionCustomForUpdate(
+            List<SellerOptionGroup> freeInputGroups,
+            NaverProductDetailResponse existingProduct) {
+
+        Map<String, Long> existingCustomByName = resolveExistingOptionCustom(existingProduct);
+
+        return freeInputGroups.stream()
+                .map(g -> {
+                    Long existingId = existingCustomByName.get(g.optionGroupNameValue());
+                    return new OptionCustom(existingId, g.optionGroupNameValue(), true);
+                })
+                .toList();
+    }
+
+    /** 기존 네이버 optionCustom에서 groupName → id 매핑 추출. */
+    private static Map<String, Long> resolveExistingOptionCustom(
+            NaverProductDetailResponse existingProduct) {
+        if (existingProduct == null
+                || existingProduct.originProduct() == null
+                || existingProduct.originProduct().detailAttribute() == null
+                || existingProduct.originProduct().detailAttribute().optionInfo() == null
+                || existingProduct.originProduct().detailAttribute().optionInfo().optionCustom() == null) {
+            return Map.of();
+        }
+
+        Map<String, Long> map = new HashMap<>();
+        for (NaverProductDetailResponse.OptionCustom oc :
+                existingProduct.originProduct().detailAttribute().optionInfo().optionCustom()) {
+            if (oc.groupName() != null) {
+                map.put(oc.groupName(), oc.id());
+            }
+        }
+        return map;
+    }
+
+    // === 공통 유틸 ===
+
+    private static Long matchNaverIdBySkuOrOptionKey(
             String skuCode,
             List<String> optionNames,
             Map<String, Long> skuToNaverId,
             Map<String, Long> optionKeyToNaverId) {
 
-        // 1순위: SKU 코드로 매칭
         if (skuCode != null && !skuCode.isBlank()) {
             Long id = skuToNaverId.get(skuCode);
             if (id != null) {
@@ -114,7 +212,6 @@ final class NaverOptionMapper {
             }
         }
 
-        // 2순위: 옵션명 조합으로 매칭
         String key =
                 buildOptionKey(
                         optionNames.size() > 0 ? optionNames.get(0) : null,

@@ -27,12 +27,14 @@ public record NaverProductDetailResponse(OriginProduct originProduct) {
     public record OptionInfo(
             String optionCombinationSortType,
             OptionCombinationGroupNames optionCombinationGroupNames,
-            List<OptionCombination> optionCombinations) {
+            List<OptionCombination> optionCombinations,
+            List<OptionCustom> optionCustom) {
 
         /** 방어적 복사. */
         public OptionInfo {
             optionCombinations =
                     optionCombinations == null ? null : List.copyOf(optionCombinations);
+            optionCustom = optionCustom == null ? null : List.copyOf(optionCustom);
         }
     }
 
@@ -53,4 +55,8 @@ public record NaverProductDetailResponse(OriginProduct originProduct) {
             int price,
             String sellerManagerCode,
             boolean usable) {}
+
+    /** 직접 입력형 옵션 (응답에서 기존 ID 매칭용). */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record OptionCustom(Long id, String groupName, boolean usable) {}
 }

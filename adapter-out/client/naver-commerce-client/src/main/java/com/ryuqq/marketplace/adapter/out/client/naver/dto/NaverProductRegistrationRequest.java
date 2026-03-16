@@ -150,12 +150,14 @@ public record NaverProductRegistrationRequest(
     public record OptionInfo(
             String optionCombinationSortType,
             OptionCombinationGroupNames optionCombinationGroupNames,
-            List<OptionCombination> optionCombinations) {
+            List<OptionCombination> optionCombinations,
+            List<OptionCustom> optionCustom) {
 
         /** 방어적 복사. */
         public OptionInfo {
             optionCombinations =
                     optionCombinations == null ? null : List.copyOf(optionCombinations);
+            optionCustom = optionCustom == null ? null : List.copyOf(optionCustom);
         }
 
         /** 옵션 조합 그룹명 (최대 4개). */
@@ -186,6 +188,10 @@ public record NaverProductRegistrationRequest(
                 int price,
                 String sellerManagerCode,
                 boolean usable) {}
+
+        /** 직접 입력형 옵션 (구매자가 주문 시 직접 텍스트 입력). */
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public record OptionCustom(Long id, String groupName, boolean usable) {}
     }
 
     /** 배송 정보. */
