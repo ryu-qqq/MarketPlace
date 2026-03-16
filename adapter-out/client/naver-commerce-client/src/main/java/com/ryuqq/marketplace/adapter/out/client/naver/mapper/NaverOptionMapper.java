@@ -298,7 +298,7 @@ final class NaverOptionMapper {
                 stock,
                 priceDiff,
                 product.skuCodeValue(),
-                !soldOut && product.stockQuantity() > 0);
+                product.stockQuantity() > 0);
     }
 
     private static int resolveBasePrice(List<Product> products) {
