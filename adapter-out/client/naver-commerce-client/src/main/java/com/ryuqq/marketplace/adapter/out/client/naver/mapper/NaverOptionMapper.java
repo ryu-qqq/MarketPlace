@@ -83,11 +83,29 @@ final class NaverOptionMapper {
         return new OptionInfo(sortType, groupNames, combinations, optionCustom);
     }
 
+    /**
+     * 네이버 매핑 기준으로 그룹을 분류합니다.
+     *
+     * <p>FREE_INPUT이어도 옵션값이 2개 이상이면 선택형(PREDEFINED)처럼 combination으로 보냅니다.
+     * FREE_INPUT이고 옵션값이 1개(기본값)인 경우에만 optionCustom(자유입력)으로 보냅니다.
+     */
     private static List<SellerOptionGroup> filterByInputType(
             List<SellerOptionGroup> optionGroups, OptionInputType inputType) {
         return optionGroups.stream()
-                .filter(g -> g.inputType() == inputType)
+                .filter(g -> resolveNaverOptionType(g) == inputType)
                 .toList();
+    }
+
+    /**
+     * 네이버 매핑 기준 옵션 타입 결정.
+     *
+     * <p>FREE_INPUT이어도 옵션값 2개 이상이면 PREDEFINED로 취급 (선택형으로 전송).
+     */
+    private static OptionInputType resolveNaverOptionType(SellerOptionGroup group) {
+        if (group.inputType() == OptionInputType.FREE_INPUT && group.optionValueCount() >= 2) {
+            return OptionInputType.PREDEFINED;
+        }
+        return group.inputType();
     }
 
     // === PREDEFINED 옵션 (optionCombinations) ===
