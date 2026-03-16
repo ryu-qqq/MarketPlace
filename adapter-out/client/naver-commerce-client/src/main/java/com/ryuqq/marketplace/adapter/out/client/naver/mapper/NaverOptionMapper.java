@@ -40,8 +40,8 @@ final class NaverOptionMapper {
         List<SellerOptionGroup> freeInputGroups = filterByInputType(optionGroups, OptionInputType.FREE_INPUT);
 
         OptionCombinationGroupNames groupNames = predefinedGroups.isEmpty() ? null : buildGroupNames(predefinedGroups);
-        List<OptionCombination> combinations = predefinedGroups.isEmpty() ? null : buildCombinations(predefinedGroups, products, null);
-        List<OptionCustom> optionCustom = freeInputGroups.isEmpty() ? null : buildOptionCustom(freeInputGroups);
+        List<OptionCombination> combinations = predefinedGroups.isEmpty() ? List.of() : buildCombinations(predefinedGroups, products, null);
+        List<OptionCustom> optionCustom = freeInputGroups.isEmpty() ? List.of() : buildOptionCustom(freeInputGroups);
 
         String sortType = predefinedGroups.isEmpty() ? null : OPTION_SORT_CREATE;
         return new OptionInfo(sortType, groupNames, combinations, optionCustom);
@@ -75,9 +75,9 @@ final class NaverOptionMapper {
 
         OptionCombinationGroupNames groupNames = predefinedGroups.isEmpty() ? null : buildGroupNames(predefinedGroups);
         List<OptionCombination> combinations = predefinedGroups.isEmpty()
-                ? null
+                ? List.of()
                 : buildCombinationsForUpdate(predefinedGroups, products, existingProduct);
-        List<OptionCustom> optionCustom = freeInputGroups.isEmpty() ? null : buildOptionCustomForUpdate(freeInputGroups, existingProduct);
+        List<OptionCustom> optionCustom = freeInputGroups.isEmpty() ? List.of() : buildOptionCustomForUpdate(freeInputGroups, existingProduct);
 
         String sortType = predefinedGroups.isEmpty() ? null : OPTION_SORT_CREATE;
         return new OptionInfo(sortType, groupNames, combinations, optionCustom);
