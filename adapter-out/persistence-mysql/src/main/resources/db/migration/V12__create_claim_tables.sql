@@ -66,7 +66,7 @@ CREATE TABLE `cancels` (
 -- 3. cancel_items 테이블 (취소 대상 주문상품)
 -- ============================================================
 CREATE TABLE `cancel_items` (
-  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '취소 아이템 ID (UUIDv7)',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '취소 아이템 ID',
   `cancel_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '취소 ID (FK)',
   `order_item_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '주문 상품 ID',
   `cancel_qty` int NOT NULL COMMENT '취소 수량',
@@ -113,7 +113,7 @@ CREATE TABLE `refund_claims` (
 -- 5. refund_items 테이블 (환불 대상 주문상품)
 -- ============================================================
 CREATE TABLE `refund_items` (
-  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '환불 아이템 ID (UUIDv7)',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '환불 아이템 ID',
   `refund_claim_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '환불 클레임 ID (FK)',
   `order_item_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '주문 상품 ID',
   `refund_qty` int NOT NULL COMMENT '환불 수량',
@@ -166,7 +166,7 @@ CREATE TABLE `exchange_claims` (
 -- 7. exchange_items 테이블 (교환 대상 주문상품)
 -- ============================================================
 CREATE TABLE `exchange_items` (
-  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '교환 아이템 ID (UUIDv7)',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '교환 아이템 ID',
   `exchange_claim_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '교환 클레임 ID (FK)',
   `order_item_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '주문 상품 ID',
   `exchange_qty` int NOT NULL COMMENT '교환 수량',
