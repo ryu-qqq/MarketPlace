@@ -36,14 +36,14 @@ final class NaverOptionMapper {
             return null;
         }
 
-        List<SellerOptionGroup> predefinedGroups = filterByInputType(optionGroups, OptionInputType.PREDEFINED);
-        List<SellerOptionGroup> freeInputGroups = filterByInputType(optionGroups, OptionInputType.FREE_INPUT);
+        List<SellerOptionGroup> combinationGroups = resolveCombinationGroups(optionGroups);
+        List<SellerOptionGroup> customGroups = resolveCustomGroups(optionGroups);
 
-        OptionCombinationGroupNames groupNames = predefinedGroups.isEmpty() ? null : buildGroupNames(predefinedGroups);
-        List<OptionCombination> combinations = predefinedGroups.isEmpty() ? List.of() : buildCombinations(predefinedGroups, products, null);
-        List<OptionCustom> optionCustom = freeInputGroups.isEmpty() ? List.of() : buildOptionCustom(freeInputGroups);
+        OptionCombinationGroupNames groupNames = combinationGroups.isEmpty() ? null : buildGroupNames(combinationGroups);
+        List<OptionCombination> combinations = combinationGroups.isEmpty() ? List.of() : buildCombinations(combinationGroups, products, null);
+        List<OptionCustom> optionCustom = customGroups.isEmpty() ? List.of() : buildOptionCustom(customGroups);
 
-        String sortType = predefinedGroups.isEmpty() ? null : OPTION_SORT_CREATE;
+        String sortType = combinationGroups.isEmpty() ? null : OPTION_SORT_CREATE;
         return new OptionInfo(sortType, groupNames, combinations, optionCustom);
     }
 
@@ -70,42 +70,42 @@ final class NaverOptionMapper {
             return null;
         }
 
-        List<SellerOptionGroup> predefinedGroups = filterByInputType(optionGroups, OptionInputType.PREDEFINED);
-        List<SellerOptionGroup> freeInputGroups = filterByInputType(optionGroups, OptionInputType.FREE_INPUT);
+        List<SellerOptionGroup> combinationGroups = resolveCombinationGroups(optionGroups);
+        List<SellerOptionGroup> customGroups = resolveCustomGroups(optionGroups);
 
-        OptionCombinationGroupNames groupNames = predefinedGroups.isEmpty() ? null : buildGroupNames(predefinedGroups);
-        List<OptionCombination> combinations = predefinedGroups.isEmpty()
+        OptionCombinationGroupNames groupNames = combinationGroups.isEmpty() ? null : buildGroupNames(combinationGroups);
+        List<OptionCombination> combinations = combinationGroups.isEmpty()
                 ? List.of()
-                : buildCombinationsForUpdate(predefinedGroups, products, existingProduct);
-        List<OptionCustom> optionCustom = freeInputGroups.isEmpty() ? List.of() : buildOptionCustomForUpdate(freeInputGroups, existingProduct);
+                : buildCombinationsForUpdate(combinationGroups, products, existingProduct);
+        List<OptionCustom> optionCustom = customGroups.isEmpty() ? List.of() : buildOptionCustomForUpdate(customGroups, existingProduct);
 
-        String sortType = predefinedGroups.isEmpty() ? null : OPTION_SORT_CREATE;
+        String sortType = combinationGroups.isEmpty() ? null : OPTION_SORT_CREATE;
         return new OptionInfo(sortType, groupNames, combinations, optionCustom);
     }
 
     /**
-     * 네이버 매핑 기준으로 그룹을 분류합니다.
+     * optionCombinations로 보낼 그룹을 결정합니다.
      *
-     * <p>FREE_INPUT이어도 옵션값이 2개 이상이면 선택형(PREDEFINED)처럼 combination으로 보냅니다.
-     * FREE_INPUT이고 옵션값이 1개(기본값)인 경우에만 optionCustom(자유입력)으로 보냅니다.
+     * <p>PREDEFINED 그룹 + FREE_INPUT이면서 옵션값 2개 이상인 그룹 (선택형으로 전송).
      */
-    private static List<SellerOptionGroup> filterByInputType(
-            List<SellerOptionGroup> optionGroups, OptionInputType inputType) {
+    private static List<SellerOptionGroup> resolveCombinationGroups(List<SellerOptionGroup> optionGroups) {
         return optionGroups.stream()
-                .filter(g -> resolveNaverOptionType(g) == inputType)
+                .filter(g -> g.inputType() == OptionInputType.PREDEFINED
+                        || (g.inputType() == OptionInputType.FREE_INPUT && g.optionValueCount() >= 2))
                 .toList();
     }
 
     /**
-     * 네이버 매핑 기준 옵션 타입 결정.
+     * optionCustom으로 보낼 그룹을 결정합니다.
      *
-     * <p>FREE_INPUT이어도 옵션값 2개 이상이면 PREDEFINED로 취급 (선택형으로 전송).
+     * <p>모든 FREE_INPUT 그룹은 optionCustom으로도 보냅니다.
+     * 옵션값이 여러 개인 경우 combination + custom 양쪽 모두 전송되어,
+     * 구매자가 선택형 값을 고르면서 동시에 자유입력란도 사용할 수 있습니다.
      */
-    private static OptionInputType resolveNaverOptionType(SellerOptionGroup group) {
-        if (group.inputType() == OptionInputType.FREE_INPUT && group.optionValueCount() >= 2) {
-            return OptionInputType.PREDEFINED;
-        }
-        return group.inputType();
+    private static List<SellerOptionGroup> resolveCustomGroups(List<SellerOptionGroup> optionGroups) {
+        return optionGroups.stream()
+                .filter(g -> g.inputType() == OptionInputType.FREE_INPUT)
+                .toList();
     }
 
     // === PREDEFINED 옵션 (optionCombinations) ===
