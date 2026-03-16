@@ -74,7 +74,7 @@ public class SetofCommerceImageVariantSyncAdapter implements ImageVariantSyncCli
                                 v ->
                                         new SetofImageVariantSyncRequest.VariantRequest(
                                                 v.variantType().name(),
-                                                null,
+                                                v.resultAssetId(),
                                                 v.variantUrl(),
                                                 v.width(),
                                                 v.height()))

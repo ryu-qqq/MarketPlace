@@ -21,6 +21,7 @@ public final class ImageVariantApiFixtures {
     // ===== 상수 =====
     public static final Long DEFAULT_PRODUCT_GROUP_ID = 100L;
     public static final Long DEFAULT_IMAGE_ID = 200L;
+    public static final String DEFAULT_RESULT_ASSET_ID = "test-asset-001";
     public static final String DEFAULT_VARIANT_URL =
             "https://cdn.example.com/images/small_300x300.webp";
     public static final String DEFAULT_SMALL_URL =
@@ -55,10 +56,10 @@ public final class ImageVariantApiFixtures {
 
     public static ImageVariantResult imageVariantResult(ImageVariantType type) {
         return switch (type) {
-            case SMALL_WEBP -> new ImageVariantResult(type, DEFAULT_SMALL_URL, 300, 300);
-            case MEDIUM_WEBP -> new ImageVariantResult(type, DEFAULT_MEDIUM_URL, 600, 600);
-            case LARGE_WEBP -> new ImageVariantResult(type, DEFAULT_LARGE_URL, 1200, 1200);
-            case ORIGINAL_WEBP -> new ImageVariantResult(type, DEFAULT_ORIGINAL_URL, null, null);
+            case SMALL_WEBP -> new ImageVariantResult(type, DEFAULT_RESULT_ASSET_ID, DEFAULT_SMALL_URL, 300, 300);
+            case MEDIUM_WEBP -> new ImageVariantResult(type, DEFAULT_RESULT_ASSET_ID, DEFAULT_MEDIUM_URL, 600, 600);
+            case LARGE_WEBP -> new ImageVariantResult(type, DEFAULT_RESULT_ASSET_ID, DEFAULT_LARGE_URL, 1200, 1200);
+            case ORIGINAL_WEBP -> new ImageVariantResult(type, DEFAULT_RESULT_ASSET_ID, DEFAULT_ORIGINAL_URL, null, null);
         };
     }
 

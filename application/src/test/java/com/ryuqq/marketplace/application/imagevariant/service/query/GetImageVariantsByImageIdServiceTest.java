@@ -48,12 +48,14 @@ class GetImageVariantsByImageIdServiceTest {
                             new ImageVariantResult(
                                     com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType
                                             .SMALL_WEBP,
+                                    ImageVariantFixtures.DEFAULT_RESULT_ASSET_ID,
                                     ImageVariantFixtures.DEFAULT_VARIANT_URL,
                                     300,
                                     300),
                             new ImageVariantResult(
                                     com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType
                                             .MEDIUM_WEBP,
+                                    ImageVariantFixtures.DEFAULT_RESULT_ASSET_ID,
                                     "https://cdn.example.com/images/variant_600x600.webp",
                                     600,
                                     600));
