@@ -54,6 +54,20 @@ public class ProductGroupDeactivationOutboxCoordinator {
      * @param productGroupId 비활성화/삭제된 상품그룹 ID
      */
     public void createDeleteOutboxesIfNeeded(ProductGroupId productGroupId) {
+        ProductGroup productGroup = productGroupReadManager.getById(productGroupId);
+        createDeleteOutboxesIfNeeded(productGroup);
+    }
+
+    /**
+     * 이미 조회된 ProductGroup 객체를 사용하여 DELETE outbox를 생성합니다.
+     *
+     * <p>상태 변경 후 재조회 시 soft delete 필터에 의해 조회 불가능한 경우를 방지합니다.
+     *
+     * @param productGroup 비활성화/삭제된 상품그룹
+     */
+    public void createDeleteOutboxesIfNeeded(ProductGroup productGroup) {
+        ProductGroupId productGroupId = productGroup.id();
+
         List<OutboundProduct> registeredProducts =
                 outboundProductReadManager.findRegisteredByProductGroupId(productGroupId.value());
 
@@ -78,8 +92,6 @@ public class ProductGroupDeactivationOutboxCoordinator {
         if (productsNeedingOutbox.isEmpty()) {
             return;
         }
-
-        ProductGroup productGroup = productGroupReadManager.getById(productGroupId);
 
         List<OutboundSyncOutbox> outboxes =
                 outboundSyncCommandFactory.createOutboxesForSync(

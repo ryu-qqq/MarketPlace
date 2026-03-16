@@ -1,20 +1,21 @@
 package com.ryuqq.marketplace.application.productgroup.service.command;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupActivationOutboxCoordinator;
-import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupDeactivationOutboxCoordinator;
-import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.productgroup.ProductGroupCommandFixtures;
 import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangeProductGroupStatusCommand;
+import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupStatusChangeOutboxCoordinator;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupOwnershipViolationException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -34,9 +35,7 @@ class BatchChangeProductGroupStatusServiceTest {
 
     @Mock private ProductGroupReadManager readManager;
     @Mock private ProductGroupCommandManager commandManager;
-    @Mock private ProductGroupActivationOutboxCoordinator activationOutboxCoordinator;
-    @Mock private ProductGroupDeactivationOutboxCoordinator deactivationOutboxCoordinator;
-    @Mock private ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
+    @Mock private ProductGroupStatusChangeOutboxCoordinator statusChangeOutboxCoordinator;
 
     @Nested
     @DisplayName("execute() - 상품 그룹 배치 상태 변경")
@@ -69,9 +68,9 @@ class BatchChangeProductGroupStatusServiceTest {
             then(commandManager).should().persist(group1);
             then(commandManager).should().persist(group2);
             then(commandManager).should().persist(group3);
-            then(activationOutboxCoordinator).should().createOutboxAndProducts(group1);
-            then(activationOutboxCoordinator).should().createOutboxAndProducts(group2);
-            then(activationOutboxCoordinator).should().createOutboxAndProducts(group3);
+            then(statusChangeOutboxCoordinator)
+                    .should()
+                    .processOutboxes(eq(groups), eq(ProductGroupStatus.ACTIVE));
         }
 
         @Test
@@ -99,7 +98,9 @@ class BatchChangeProductGroupStatusServiceTest {
             then(readManager).should().getByIdsAndSellerId(ids, sellerId);
             then(commandManager).should().persist(group1);
             then(commandManager).should().persist(group2);
-            then(activationOutboxCoordinator).shouldHaveNoInteractions();
+            then(statusChangeOutboxCoordinator)
+                    .should()
+                    .processOutboxes(eq(groups), eq(ProductGroupStatus.INACTIVE));
         }
 
         @Test
@@ -127,8 +128,9 @@ class BatchChangeProductGroupStatusServiceTest {
             then(readManager).shouldHaveNoMoreInteractions();
             then(commandManager).should().persist(group1);
             then(commandManager).should().persist(group2);
-            then(activationOutboxCoordinator).should().createOutboxAndProducts(group1);
-            then(activationOutboxCoordinator).should().createOutboxAndProducts(group2);
+            then(statusChangeOutboxCoordinator)
+                    .should()
+                    .processOutboxes(eq(groups), eq(ProductGroupStatus.ACTIVE));
         }
 
         @Test
@@ -151,7 +153,7 @@ class BatchChangeProductGroupStatusServiceTest {
                     .isInstanceOf(ProductGroupOwnershipViolationException.class);
 
             then(commandManager).shouldHaveNoInteractions();
-            then(activationOutboxCoordinator).shouldHaveNoInteractions();
+            then(statusChangeOutboxCoordinator).shouldHaveNoInteractions();
         }
     }
 }

@@ -68,6 +68,22 @@ public class ProductGroupUpdateOutboxCoordinator {
      */
     public void createUpdateOutboxesIfNeeded(
             ProductGroupId productGroupId, Set<ChangedArea> changedAreas) {
+        ProductGroup productGroup = productGroupReadManager.getById(productGroupId);
+        createUpdateOutboxesIfNeeded(productGroup, changedAreas);
+    }
+
+    /**
+     * 이미 조회된 ProductGroup 객체와 변경 영역 정보를 사용하여 UPDATE outbox를 생성합니다.
+     *
+     * <p>상태 변경 후 재조회 시 soft delete 필터에 의해 조회 불가능한 경우를 방지합니다.
+     *
+     * @param productGroup 변경된 상품그룹
+     * @param changedAreas 변경된 영역 집합 (비어있으면 전체 수정으로 간주)
+     */
+    public void createUpdateOutboxesIfNeeded(
+            ProductGroup productGroup, Set<ChangedArea> changedAreas) {
+        ProductGroupId productGroupId = productGroup.id();
+
         List<OutboundProduct> registeredProducts =
                 outboundProductReadManager.findRegisteredByProductGroupId(productGroupId.value());
 
@@ -92,8 +108,6 @@ public class ProductGroupUpdateOutboxCoordinator {
         if (productsNeedingOutbox.isEmpty()) {
             return;
         }
-
-        ProductGroup productGroup = productGroupReadManager.getById(productGroupId);
 
         List<OutboundSyncOutbox> outboxes =
                 outboundSyncCommandFactory.createOutboxesForSync(
