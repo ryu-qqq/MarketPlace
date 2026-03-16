@@ -21,8 +21,8 @@ public class ExchangeItemJpaEntity {
     @Column(name = "exchange_claim_id", nullable = false, length = 36)
     private String exchangeClaimId;
 
-    @Column(name = "order_item_id", nullable = false)
-    private Long orderItemId;
+    @Column(name = "order_item_id", nullable = false, length = 36)
+    private String orderItemId;
 
     @Column(name = "exchange_qty", nullable = false)
     private int exchangeQty;
@@ -33,7 +33,7 @@ public class ExchangeItemJpaEntity {
     protected ExchangeItemJpaEntity() {}
 
     private ExchangeItemJpaEntity(
-            Long id, String exchangeClaimId, Long orderItemId, int exchangeQty, Instant createdAt) {
+            Long id, String exchangeClaimId, String orderItemId, int exchangeQty, Instant createdAt) {
         this.id = id;
         this.exchangeClaimId = exchangeClaimId;
         this.orderItemId = orderItemId;
@@ -42,7 +42,7 @@ public class ExchangeItemJpaEntity {
     }
 
     public static ExchangeItemJpaEntity create(
-            Long id, String exchangeClaimId, Long orderItemId, int exchangeQty, Instant createdAt) {
+            Long id, String exchangeClaimId, String orderItemId, int exchangeQty, Instant createdAt) {
         return new ExchangeItemJpaEntity(id, exchangeClaimId, orderItemId, exchangeQty, createdAt);
     }
 
@@ -54,7 +54,7 @@ public class ExchangeItemJpaEntity {
         return exchangeClaimId;
     }
 
-    public Long getOrderItemId() {
+    public String getOrderItemId() {
         return orderItemId;
     }
 

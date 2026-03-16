@@ -79,7 +79,7 @@ public class CancelJpaEntityMapper {
     private CancelItemJpaEntity toItemEntity(String cancelId, CancelItem item, Instant createdAt) {
         Long itemId = item.id().isNew() ? null : item.idValue();
         return CancelItemJpaEntity.create(
-                itemId, cancelId, item.orderItemId(), item.cancelQty(), createdAt);
+                itemId, cancelId, String.valueOf(item.orderItemId()), item.cancelQty(), createdAt);
     }
 
     /**
@@ -117,7 +117,7 @@ public class CancelJpaEntityMapper {
 
     private CancelItem toCancelItemDomain(CancelItemJpaEntity entity) {
         return CancelItem.reconstitute(
-                CancelItemId.of(entity.getId()), entity.getOrderItemId(), entity.getCancelQty());
+                CancelItemId.of(entity.getId()), Long.parseLong(entity.getOrderItemId()), entity.getCancelQty());
     }
 
     private CancelRefundInfo resolveRefundInfo(CancelJpaEntity entity) {

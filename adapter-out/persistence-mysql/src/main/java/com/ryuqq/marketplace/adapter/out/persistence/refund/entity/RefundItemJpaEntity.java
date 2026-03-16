@@ -21,8 +21,8 @@ public class RefundItemJpaEntity {
     @Column(name = "refund_claim_id", nullable = false, length = 36)
     private String refundClaimId;
 
-    @Column(name = "order_item_id", nullable = false)
-    private Long orderItemId;
+    @Column(name = "order_item_id", nullable = false, length = 36)
+    private String orderItemId;
 
     @Column(name = "refund_qty", nullable = false)
     private int refundQty;
@@ -33,7 +33,7 @@ public class RefundItemJpaEntity {
     protected RefundItemJpaEntity() {}
 
     private RefundItemJpaEntity(
-            Long id, String refundClaimId, Long orderItemId, int refundQty, Instant createdAt) {
+            Long id, String refundClaimId, String orderItemId, int refundQty, Instant createdAt) {
         this.id = id;
         this.refundClaimId = refundClaimId;
         this.orderItemId = orderItemId;
@@ -42,7 +42,7 @@ public class RefundItemJpaEntity {
     }
 
     public static RefundItemJpaEntity create(
-            Long id, String refundClaimId, Long orderItemId, int refundQty, Instant createdAt) {
+            Long id, String refundClaimId, String orderItemId, int refundQty, Instant createdAt) {
         return new RefundItemJpaEntity(id, refundClaimId, orderItemId, refundQty, createdAt);
     }
 
@@ -54,7 +54,7 @@ public class RefundItemJpaEntity {
         return refundClaimId;
     }
 
-    public Long getOrderItemId() {
+    public String getOrderItemId() {
         return orderItemId;
     }
 

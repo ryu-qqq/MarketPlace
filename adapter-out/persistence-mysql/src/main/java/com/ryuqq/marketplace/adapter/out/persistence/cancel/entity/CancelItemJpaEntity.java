@@ -26,8 +26,8 @@ public class CancelItemJpaEntity {
     @Column(name = "cancel_id", nullable = false, length = 36)
     private String cancelId;
 
-    @Column(name = "order_item_id", nullable = false)
-    private long orderItemId;
+    @Column(name = "order_item_id", nullable = false, length = 36)
+    private String orderItemId;
 
     @Column(name = "cancel_qty", nullable = false)
     private int cancelQty;
@@ -39,7 +39,7 @@ public class CancelItemJpaEntity {
     protected CancelItemJpaEntity() {}
 
     private CancelItemJpaEntity(
-            Long id, String cancelId, long orderItemId, int cancelQty, Instant createdAt) {
+            Long id, String cancelId, String orderItemId, int cancelQty, Instant createdAt) {
         this.id = id;
         this.cancelId = cancelId;
         this.orderItemId = orderItemId;
@@ -58,7 +58,7 @@ public class CancelItemJpaEntity {
      * @return CancelItemJpaEntity 인스턴스
      */
     public static CancelItemJpaEntity create(
-            Long id, String cancelId, long orderItemId, int cancelQty, Instant createdAt) {
+            Long id, String cancelId, String orderItemId, int cancelQty, Instant createdAt) {
         return new CancelItemJpaEntity(id, cancelId, orderItemId, cancelQty, createdAt);
     }
 
@@ -70,7 +70,7 @@ public class CancelItemJpaEntity {
         return cancelId;
     }
 
-    public long getOrderItemId() {
+    public String getOrderItemId() {
         return orderItemId;
     }
 

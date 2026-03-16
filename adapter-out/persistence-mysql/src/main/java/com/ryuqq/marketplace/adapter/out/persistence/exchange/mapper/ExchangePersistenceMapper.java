@@ -61,7 +61,7 @@ public class ExchangePersistenceMapper {
         return ExchangeItemJpaEntity.create(
                 item.idValue(),
                 exchangeClaimId,
-                item.orderItemId(),
+                String.valueOf(item.orderItemId()),
                 item.exchangeQty(),
                 Instant.now());
     }
@@ -76,7 +76,7 @@ public class ExchangePersistenceMapper {
                                 i ->
                                         ExchangeItem.reconstitute(
                                                 ExchangeItemId.of(i.getId()),
-                                                i.getOrderItemId(),
+                                                Long.parseLong(i.getOrderItemId()),
                                                 i.getExchangeQty()))
                         .toList();
 

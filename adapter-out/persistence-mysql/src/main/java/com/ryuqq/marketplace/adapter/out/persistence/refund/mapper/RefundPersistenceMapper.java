@@ -52,7 +52,7 @@ public class RefundPersistenceMapper {
         return RefundItemJpaEntity.create(
                 item.idValue(),
                 refundClaimId,
-                item.orderItemId(),
+                String.valueOf(item.orderItemId()),
                 item.refundQty(),
                 java.time.Instant.now());
     }
@@ -67,7 +67,7 @@ public class RefundPersistenceMapper {
                                 i ->
                                         RefundItem.reconstitute(
                                                 RefundItemId.of(i.getId()),
-                                                i.getOrderItemId(),
+                                                Long.parseLong(i.getOrderItemId()),
                                                 i.getRefundQty()))
                         .toList();
 
