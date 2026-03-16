@@ -172,10 +172,10 @@ final class NaverOptionMapper {
 
     // === FREE_INPUT 옵션 (optionCustom) ===
 
-    /** 등록용: groupName만 전송. */
+    /** 등록용: groupName 전송. 옵션값 여러개인 경우 combination과 이름 중복 방지를 위해 접미사 추가. */
     private static List<OptionCustom> buildOptionCustom(List<SellerOptionGroup> freeInputGroups) {
         return freeInputGroups.stream()
-                .map(g -> new OptionCustom(null, g.optionGroupNameValue(), true))
+                .map(g -> new OptionCustom(null, resolveCustomGroupName(g), true))
                 .toList();
     }
 
@@ -188,8 +188,9 @@ final class NaverOptionMapper {
 
         return freeInputGroups.stream()
                 .map(g -> {
-                    Long existingId = existingCustomByName.get(g.optionGroupNameValue());
-                    return new OptionCustom(existingId, g.optionGroupNameValue(), true);
+                    String customName = resolveCustomGroupName(g);
+                    Long existingId = existingCustomByName.get(customName);
+                    return new OptionCustom(existingId, customName, true);
                 })
                 .toList();
     }
@@ -213,6 +214,19 @@ final class NaverOptionMapper {
             }
         }
         return map;
+    }
+
+    /**
+     * optionCustom groupName 결정.
+     *
+     * <p>옵션값이 2개 이상이면 combination에도 같은 이름이 들어가므로,
+     * 네이버 중복 방지를 위해 "(자유입력)" 접미사를 추가합니다.
+     */
+    private static String resolveCustomGroupName(SellerOptionGroup group) {
+        if (group.optionValueCount() >= 2) {
+            return group.optionGroupNameValue() + "(자유입력)";
+        }
+        return group.optionGroupNameValue();
     }
 
     // === 공통 유틸 ===
