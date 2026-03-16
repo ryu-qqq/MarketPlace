@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProdu
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult.DeliveryInfo;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult.ImageInfo;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult.NoticeInfo;
+import com.ryuqq.marketplace.application.legacy.productgroup.dto.response.LegacyProductGroupPageResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyDeliveryResult;
@@ -22,6 +23,28 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LegacyProductGroupAssembler {
+
+    /**
+     * 번들 목록 → 레거시 페이징 결과 조립.
+     *
+     * @param bundles 세토프 DB 목록 조회 번들 목록
+     * @param totalElements 전체 건수
+     * @param page 현재 페이지 번호
+     * @param size 페이지 크기
+     * @return 레거시 상품그룹 페이징 결과
+     */
+    public LegacyProductGroupPageResult toPageResult(
+            List<LegacyProductGroupDetailBundle> bundles,
+            long totalElements,
+            int page,
+            int size) {
+        if (bundles == null || bundles.isEmpty()) {
+            return LegacyProductGroupPageResult.empty(page, size);
+        }
+        List<LegacyProductGroupDetailResult> items =
+                bundles.stream().map(this::toDetailResult).toList();
+        return LegacyProductGroupPageResult.of(items, totalElements, page, size);
+    }
 
     /**
      * 번들 → 레거시 상세 결과 조립.

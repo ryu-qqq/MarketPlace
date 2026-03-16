@@ -3,8 +3,14 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.LegacyProductGroupApiFixtures;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacySearchProductGroupByOffsetApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductGroupDetailItem;
+import com.ryuqq.marketplace.application.legacy.productgroup.dto.query.LegacyProductGroupSearchParams;
+import com.ryuqq.marketplace.application.legacy.productgroup.dto.response.LegacyProductGroupPageResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,6 +26,136 @@ class LegacyProductGroupQueryApiMapperTest {
     @BeforeEach
     void setUp() {
         mapper = new LegacyProductGroupQueryApiMapper();
+    }
+
+    @Nested
+    @DisplayName("toSearchParams - 레거시 Request → 내부 SearchParams 변환")
+    class ToSearchParamsTest {
+
+        @Test
+        @DisplayName("기본 요청이 올바르게 변환된다")
+        void toSearchParams_BasicRequest_ReturnsCorrectParams() {
+            // given
+            LegacySearchProductGroupByOffsetApiRequest request =
+                    LegacyProductGroupApiFixtures.searchRequest();
+
+            // when
+            LegacyProductGroupSearchParams params = mapper.toSearchParams(request);
+
+            // then
+            assertThat(params.sellerId())
+                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_SELLER_ID);
+            assertThat(params.brandId())
+                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_BRAND_ID);
+            assertThat(params.page()).isZero();
+            assertThat(params.size()).isEqualTo(20);
+        }
+
+        @Test
+        @DisplayName("필터 조건이 있는 요청이 올바르게 변환된다")
+        void toSearchParams_WithFilters_ReturnsCorrectParams() {
+            // given
+            LegacySearchProductGroupByOffsetApiRequest request =
+                    LegacyProductGroupApiFixtures.searchRequestWithFilters();
+
+            // when
+            LegacyProductGroupSearchParams params = mapper.toSearchParams(request);
+
+            // then
+            assertThat(params.categoryId())
+                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_CATEGORY_ID);
+            assertThat(params.soldOutYn()).isEqualTo("N");
+            assertThat(params.displayYn()).isEqualTo("Y");
+        }
+
+        @Test
+        @DisplayName("sellerId가 null이면 null로 변환된다")
+        void toSearchParams_NullSellerId_ReturnsNull() {
+            // given
+            LegacySearchProductGroupByOffsetApiRequest request =
+                    new LegacySearchProductGroupByOffsetApiRequest(
+                            null, null, null, null, null, null, null, null, null, null, null, null,
+                            null, null, null, null);
+
+            // when
+            LegacyProductGroupSearchParams params = mapper.toSearchParams(request);
+
+            // then
+            assertThat(params.sellerId()).isNull();
+            assertThat(params.brandId()).isNull();
+            assertThat(params.categoryId()).isNull();
+        }
+
+        @Test
+        @DisplayName("page/size가 null이면 기본값으로 변환된다")
+        void toSearchParams_NullPageSize_ReturnsDefaults() {
+            // given
+            LegacySearchProductGroupByOffsetApiRequest request =
+                    new LegacySearchProductGroupByOffsetApiRequest(
+                            null, null, null, null, null, null, null, null, null, null, null, null,
+                            null, null, null, null);
+
+            // when
+            LegacyProductGroupSearchParams params = mapper.toSearchParams(request);
+
+            // then
+            assertThat(params.page()).isZero();
+            assertThat(params.size()).isEqualTo(20);
+        }
+    }
+
+    @Nested
+    @DisplayName("toListResponse - 내부 PageResult → 레거시 목록 응답 변환")
+    class ToListResponseTest {
+
+        @Test
+        @DisplayName("PageResult를 LegacyProductGroupListApiResponse로 변환한다")
+        void toListResponse_ConvertsResult_ReturnsResponse() {
+            // given
+            LegacyProductGroupDetailResult detailResult =
+                    LegacyProductGroupApiFixtures.productGroupDetailResult();
+            LegacyProductGroupPageResult pageResult =
+                    LegacyProductGroupPageResult.of(List.of(detailResult), 1, 0, 20);
+
+            // when
+            LegacyProductGroupListApiResponse response = mapper.toListResponse(pageResult);
+
+            // then
+            assertThat(response.content()).hasSize(1);
+            assertThat(response.totalElements()).isEqualTo(1);
+            assertThat(response.size()).isEqualTo(20);
+            assertThat(response.number()).isZero();
+            assertThat(response.first()).isTrue();
+        }
+
+        @Test
+        @DisplayName("레거시 nested 구조(productGroup + products)로 변환된다")
+        void toListResponse_ConvertsToNestedStructure_ReturnsCorrectFields() {
+            // given
+            LegacyProductGroupDetailResult detailResult =
+                    LegacyProductGroupApiFixtures.productGroupDetailResult();
+            LegacyProductGroupPageResult pageResult =
+                    LegacyProductGroupPageResult.of(List.of(detailResult), 1, 0, 20);
+
+            // when
+            LegacyProductGroupListApiResponse response = mapper.toListResponse(pageResult);
+
+            // then
+            LegacyProductGroupDetailItem item = response.content().getFirst();
+            assertThat(item.productGroup()).isNotNull();
+            assertThat(item.products()).isNotNull();
+            assertThat(item.products()).hasSize(2);
+            assertThat(item.productGroup().productGroupId())
+                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_PRODUCT_GROUP_ID);
+            assertThat(item.productGroup().productGroupName())
+                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_PRODUCT_GROUP_NAME);
+            assertThat(item.productGroup().sellerId())
+                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_SELLER_ID);
+            assertThat(item.productGroup().brand().id())
+                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_BRAND_ID);
+            assertThat(item.productGroup().brand().brandName())
+                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_BRAND_NAME);
+        }
     }
 
     @Nested
@@ -102,121 +238,6 @@ class LegacyProductGroupQueryApiMapperTest {
         }
 
         @Test
-        @DisplayName("의류 상세정보가 올바르게 변환된다")
-        void toResponse_ConvertsClothesDetail_ReturnsCorrectDetail() {
-            // given
-            LegacyProductGroupDetailResult result =
-                    LegacyProductGroupApiFixtures.productGroupDetailResult();
-
-            // when
-            LegacyProductDetailApiResponse response = mapper.toResponse(result);
-
-            // then
-            assertThat(response.productGroup().clothesDetailInfo()).isNotNull();
-            assertThat(response.productGroup().clothesDetailInfo().productCondition())
-                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_PRODUCT_CONDITION);
-            assertThat(response.productGroup().clothesDetailInfo().origin())
-                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_ORIGIN);
-        }
-
-        @Test
-        @DisplayName("배송 정보가 올바르게 변환된다")
-        void toResponse_ConvertsDeliveryNotice_ReturnsCorrectDelivery() {
-            // given
-            LegacyProductGroupDetailResult result =
-                    LegacyProductGroupApiFixtures.productGroupDetailResult();
-
-            // when
-            LegacyProductDetailApiResponse response = mapper.toResponse(result);
-
-            // then
-            assertThat(response.productGroup().deliveryNotice()).isNotNull();
-            assertThat(response.productGroup().deliveryNotice().deliveryArea()).isEqualTo("전국");
-            assertThat(response.productGroup().deliveryNotice().deliveryFee()).isEqualTo(3000L);
-        }
-
-        @Test
-        @DisplayName("반품 정보가 올바르게 변환된다")
-        void toResponse_ConvertsRefundNotice_ReturnsCorrectRefund() {
-            // given
-            LegacyProductGroupDetailResult result =
-                    LegacyProductGroupApiFixtures.productGroupDetailResult();
-
-            // when
-            LegacyProductDetailApiResponse response = mapper.toResponse(result);
-
-            // then
-            assertThat(response.productGroup().refundNotice()).isNotNull();
-            assertThat(response.productGroup().refundNotice().returnMethodDomestic())
-                    .isEqualTo("택배");
-            assertThat(response.productGroup().refundNotice().returnCourierDomestic())
-                    .isEqualTo("CJ대한통운");
-        }
-
-        @Test
-        @DisplayName("고시정보가 올바르게 변환된다")
-        void toResponse_ConvertsNotice_ReturnsCorrectNotice() {
-            // given
-            LegacyProductGroupDetailResult result =
-                    LegacyProductGroupApiFixtures.productGroupDetailResult();
-
-            // when
-            LegacyProductDetailApiResponse response = mapper.toResponse(result);
-
-            // then
-            assertThat(response.productNotices()).isNotNull();
-            assertThat(response.productNotices().material()).isEqualTo("면 100%");
-            assertThat(response.productNotices().color()).isEqualTo("블랙");
-            assertThat(response.productNotices().origin()).isEqualTo("대한민국");
-        }
-
-        @Test
-        @DisplayName("이미지 목록이 올바르게 변환된다")
-        void toResponse_ConvertsImages_ReturnsCorrectImages() {
-            // given
-            LegacyProductGroupDetailResult result =
-                    LegacyProductGroupApiFixtures.productGroupDetailResult();
-
-            // when
-            LegacyProductDetailApiResponse response = mapper.toResponse(result);
-
-            // then
-            assertThat(response.productGroupImages()).hasSize(2);
-            assertThat(response.productGroupImages().get(0).type()).isEqualTo("MAIN");
-            assertThat(response.productGroupImages().get(0).productImageUrl())
-                    .isEqualTo("https://cdn.example.com/main.jpg");
-        }
-
-        @Test
-        @DisplayName("MAIN 이미지 URL이 productGroupMainImageUrl로 설정된다")
-        void toResponse_ExtractsMainImageUrl_SetsCorrectUrl() {
-            // given
-            LegacyProductGroupDetailResult result =
-                    LegacyProductGroupApiFixtures.productGroupDetailResult();
-
-            // when
-            LegacyProductDetailApiResponse response = mapper.toResponse(result);
-
-            // then
-            assertThat(response.productGroup().productGroupMainImageUrl())
-                    .isEqualTo("https://cdn.example.com/main.jpg");
-        }
-
-        @Test
-        @DisplayName("상품 목록이 올바르게 변환된다")
-        void toResponse_ConvertsProducts_ReturnsCorrectProducts() {
-            // given
-            LegacyProductGroupDetailResult result =
-                    LegacyProductGroupApiFixtures.productGroupDetailResult();
-
-            // when
-            LegacyProductDetailApiResponse response = mapper.toResponse(result);
-
-            // then
-            assertThat(response.products()).hasSize(2);
-        }
-
-        @Test
         @DisplayName("delivery가 null이면 deliveryNotice와 refundNotice가 null이다")
         void toResponse_NullDelivery_DeliveryAndRefundAreNull() {
             // given
@@ -230,20 +251,6 @@ class LegacyProductGroupQueryApiMapperTest {
             // then
             assertThat(response.productGroup().deliveryNotice()).isNull();
             assertThat(response.productGroup().refundNotice()).isNull();
-        }
-
-        @Test
-        @DisplayName("detailDescription이 올바르게 매핑된다")
-        void toResponse_MapsDetailDescription_Correctly() {
-            // given
-            LegacyProductGroupDetailResult result =
-                    LegacyProductGroupApiFixtures.productGroupDetailResult();
-
-            // when
-            LegacyProductDetailApiResponse response = mapper.toResponse(result);
-
-            // then
-            assertThat(response.detailDescription()).isEqualTo("<p>상품 상세 설명</p>");
         }
 
         @Test

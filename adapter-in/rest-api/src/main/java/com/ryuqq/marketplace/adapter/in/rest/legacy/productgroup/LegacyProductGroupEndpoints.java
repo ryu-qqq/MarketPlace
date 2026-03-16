@@ -9,6 +9,7 @@ public final class LegacyProductGroupEndpoints {
 
     public static final String PRODUCT_GROUP = BASE + "/product/group";
     public static final String PRODUCT_GROUP_ID = PRODUCT_GROUP + "/{productGroupId}";
+    public static final String PRODUCTS_GROUP = BASE + "/products/group";
     public static final String GROUP_DISPLAY_YN = PRODUCT_GROUP_ID + "/display-yn";
     public static final String OUT_STOCK = PRODUCT_GROUP_ID + "/out-stock";
 }

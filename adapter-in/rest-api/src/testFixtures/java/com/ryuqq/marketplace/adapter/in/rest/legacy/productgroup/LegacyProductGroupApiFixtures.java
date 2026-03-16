@@ -5,6 +5,14 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCr
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyOptionDto;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductFetchResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductStatusResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacySearchProductGroupByOffsetApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyBrandInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyPriceInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductGroupDetailItem;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductGroupInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductStatusInfo;
+import com.ryuqq.marketplace.application.legacy.productgroup.dto.query.LegacyProductGroupSearchParams;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyCreateClothesDetailRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyCreateDeliveryNoticeRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyCreateProductGroupRequest;
@@ -371,6 +379,71 @@ public final class LegacyProductGroupApiFixtures {
                 "<p>상품 상세 설명</p>",
                 null,
                 products);
+    }
+
+    // ===== 목록 조회 Fixtures =====
+
+    public static LegacySearchProductGroupByOffsetApiRequest searchRequest() {
+        return new LegacySearchProductGroupByOffsetApiRequest(
+                null, null, null, null, DEFAULT_BRAND_ID, DEFAULT_SELLER_ID, null, null, null, null,
+                null, null, null, null, 0, 20);
+    }
+
+    public static LegacyProductGroupSearchParams legacySearchParams() {
+        return LegacyProductGroupSearchParams.of(
+                DEFAULT_SELLER_ID, DEFAULT_BRAND_ID, null, null, null, null, null, null, null, null,
+                null, null, null, null, 0, 20);
+    }
+
+    public static LegacySearchProductGroupByOffsetApiRequest searchRequestWithFilters() {
+        return new LegacySearchProductGroupByOffsetApiRequest(
+                LocalDateTime.of(2025, 1, 1, 0, 0, 0),
+                LocalDateTime.of(2025, 12, 31, 23, 59, 59),
+                null,
+                DEFAULT_CATEGORY_ID,
+                DEFAULT_BRAND_ID,
+                DEFAULT_SELLER_ID,
+                "N",
+                "Y",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                20);
+    }
+
+    public static LegacyProductGroupListApiResponse productGroupListApiResponse() {
+        var productGroupInfo =
+                new LegacyProductGroupInfo(
+                        DEFAULT_PRODUCT_GROUP_ID,
+                        DEFAULT_PRODUCT_GROUP_NAME,
+                        DEFAULT_SELLER_ID,
+                        DEFAULT_SELLER_NAME,
+                        DEFAULT_CATEGORY_ID,
+                        DEFAULT_OPTION_TYPE,
+                        DEFAULT_MANAGEMENT_TYPE,
+                        new LegacyBrandInfo(DEFAULT_BRAND_ID, DEFAULT_BRAND_NAME),
+                        new LegacyPriceInfo(
+                                java.math.BigDecimal.valueOf(DEFAULT_REGULAR_PRICE),
+                                java.math.BigDecimal.valueOf(DEFAULT_CURRENT_PRICE),
+                                10),
+                        "https://cdn.example.com/main.jpg",
+                        "패션 > 의류",
+                        LegacyProductStatusInfo.of(false, true),
+                        LocalDateTime.of(2025, 1, 1, 10, 0, 0),
+                        LocalDateTime.of(2025, 1, 2, 10, 0, 0));
+        var products =
+                List.of(
+                        new LegacyProductGroupListApiResponse.LegacyProductItem(
+                                2001L, 100, "색상블랙"),
+                        new LegacyProductGroupListApiResponse.LegacyProductItem(
+                                2002L, 50, "색상화이트"));
+        List<LegacyProductGroupDetailItem> items =
+                List.of(new LegacyProductGroupDetailItem(productGroupInfo, products));
+        return LegacyProductGroupListApiResponse.of(items, 1, 0, 20);
     }
 
     // ===== API Response Fixtures =====

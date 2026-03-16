@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.mapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyOptionDto;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductFetchResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductStatusResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacySearchProductGroupByOffsetApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyBrandResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyClothesDetailResponse;
@@ -12,6 +13,9 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.Le
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyProductImageResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyProductNoticeResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyRefundNoticeResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse;
+import com.ryuqq.marketplace.application.legacy.productgroup.dto.query.LegacyProductGroupSearchParams;
+import com.ryuqq.marketplace.application.legacy.productgroup.dto.response.LegacyProductGroupPageResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyDeliveryResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyImageResult;
@@ -28,11 +32,101 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 상품 조회 결과 → API 응답 변환 매퍼.
  *
- * <p>LegacyProductGroupDetailResult → LegacyProductDetailApiResponse 변환을 담당합니다. 세토프 OMS의
- * ProductGroupFetchResponse JSON 구조에 맞게 nested 구조로 변환합니다.
+ * <p>레거시 목록 조회: LegacySearchProductGroupByOffsetApiRequest → LegacyProductGroupSearchParams,
+ * LegacyProductGroupPageResult → LegacyProductGroupListApiResponse
+ *
+ * <p>레거시 단건 조회: LegacyProductGroupDetailResult → LegacyProductDetailApiResponse
  */
 @Component
 public class LegacyProductGroupQueryApiMapper {
+
+    /**
+     * 레거시 목록 조회 Request → 내부 LegacyProductGroupSearchParams 변환.
+     *
+     * @param request 레거시 목록 조회 요청 DTO
+     * @return 내부 검색 파라미터
+     */
+    public LegacyProductGroupSearchParams toSearchParams(
+            LegacySearchProductGroupByOffsetApiRequest request) {
+        return LegacyProductGroupSearchParams.of(
+                request.sellerId(),
+                request.brandId(),
+                request.categoryId(),
+                request.managementType(),
+                request.soldOutYn(),
+                request.displayYn(),
+                request.minSalePrice(),
+                request.maxSalePrice(),
+                request.minDiscountRate(),
+                request.maxDiscountRate(),
+                request.searchKeyword(),
+                request.searchWord(),
+                request.startDate(),
+                request.endDate(),
+                request.resolvedPage(),
+                request.resolvedSize());
+    }
+
+    /**
+     * 내부 LegacyProductGroupPageResult → 레거시 목록 응답 변환.
+     *
+     * @param pageResult 페이징 처리된 레거시 상품그룹 목록 결과
+     * @return 레거시 목록 조회 응답 DTO
+     */
+    public LegacyProductGroupListApiResponse toListResponse(
+            LegacyProductGroupPageResult pageResult) {
+        List<LegacyProductGroupListApiResponse.LegacyProductGroupDetailItem> items =
+                pageResult.items().stream().map(this::toDetailItem).toList();
+
+        return LegacyProductGroupListApiResponse.of(
+                items, pageResult.totalElements(), pageResult.page(), pageResult.size());
+    }
+
+    private LegacyProductGroupListApiResponse.LegacyProductGroupDetailItem toDetailItem(
+            LegacyProductGroupDetailResult result) {
+        var productGroupInfo =
+                new LegacyProductGroupListApiResponse.LegacyProductGroupInfo(
+                        result.productGroupId(),
+                        result.productGroupName(),
+                        result.sellerId(),
+                        result.sellerName(),
+                        result.categoryId(),
+                        result.optionType(),
+                        result.managementType(),
+                        new LegacyProductGroupListApiResponse.LegacyBrandInfo(
+                                result.brandId(), result.brandName()),
+                        new LegacyProductGroupListApiResponse.LegacyPriceInfo(
+                                BigDecimal.valueOf(result.regularPrice()),
+                                BigDecimal.valueOf(result.salePrice()),
+                                result.discountRate()),
+                        extractMainImageUrl(result.images()),
+                        result.categoryPath(),
+                        LegacyProductGroupListApiResponse.LegacyProductStatusInfo.of(
+                                result.soldOut(), result.displayed()),
+                        result.createdAt(),
+                        result.updatedAt());
+
+        List<LegacyProductGroupListApiResponse.LegacyProductItem> products =
+                toProductItems(result.products());
+
+        return new LegacyProductGroupListApiResponse.LegacyProductGroupDetailItem(
+                productGroupInfo, products);
+    }
+
+    private List<LegacyProductGroupListApiResponse.LegacyProductItem> toProductItems(
+            List<LegacyProductResult> products) {
+        if (products == null || products.isEmpty()) {
+            return List.of();
+        }
+        return products.stream()
+                .map(
+                        p ->
+                                new LegacyProductGroupListApiResponse.LegacyProductItem(
+                                        p.productId(),
+                                        p.stockQuantity(),
+                                        buildOptionString(p.options())))
+                .toList();
+    }
 
     public LegacyProductDetailApiResponse toResponse(LegacyProductGroupDetailResult result) {
         return new LegacyProductDetailApiResponse(
