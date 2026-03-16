@@ -51,16 +51,19 @@ public class MainJpaConfig {
             havingValue = "true",
             matchIfMissing = true)
     public Flyway mainFlyway(@Qualifier("dataSource") DataSource dataSource) {
-        return Flyway.configure()
-                .dataSource(dataSource)
-                .locations("classpath:db/migration")
-                .table("flyway_schema_history")
-                .baselineOnMigrate(true)
-                .baselineVersion("87")
-                .validateOnMigrate(true)
-                .outOfOrder(false)
-                .cleanDisabled(true)
-                .load();
+        Flyway flyway =
+                Flyway.configure()
+                        .dataSource(dataSource)
+                        .locations("classpath:db/migration")
+                        .table("flyway_schema_history")
+                        .baselineOnMigrate(true)
+                        .baselineVersion("87")
+                        .validateOnMigrate(true)
+                        .outOfOrder(false)
+                        .cleanDisabled(true)
+                        .load();
+        flyway.repair();
+        return flyway;
     }
 
     @Bean
