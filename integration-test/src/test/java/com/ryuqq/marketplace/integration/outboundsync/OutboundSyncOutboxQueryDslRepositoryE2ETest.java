@@ -309,6 +309,112 @@ class OutboundSyncOutboxQueryDslRepositoryE2ETest extends E2ETestBase {
     }
 
     // ========================================================================
+    // 3. findActiveByProductGroupIdAndSyncType 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findActiveByProductGroupIdAndSyncType 쿼리 테스트")
+    class FindActiveByProductGroupIdAndSyncTypeTest {
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q3-S01] PENDING/PROCESSING/FAILED 상태의 Outbox를 모두 조회합니다")
+        void findActive_AllActiveStatuses_ReturnsAll() {
+            // given
+            Long targetPgId = 2000L;
+            jpaRepository.saveAll(
+                    List.of(
+                            OutboundSyncOutboxJpaEntityFixtures.newEntityWith(
+                                    targetPgId,
+                                    10L,
+                                    OutboundSyncOutboxJpaEntity.SyncType.UPDATE,
+                                    OutboundSyncOutboxJpaEntity.Status.PENDING),
+                            OutboundSyncOutboxJpaEntityFixtures.newEntityWith(
+                                    targetPgId,
+                                    20L,
+                                    OutboundSyncOutboxJpaEntity.SyncType.UPDATE,
+                                    OutboundSyncOutboxJpaEntity.Status.PROCESSING),
+                            OutboundSyncOutboxJpaEntityFixtures.newEntityWith(
+                                    targetPgId,
+                                    30L,
+                                    OutboundSyncOutboxJpaEntity.SyncType.UPDATE,
+                                    OutboundSyncOutboxJpaEntity.Status.FAILED)));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findActiveByProductGroupIdAndSyncType(targetPgId, "UPDATE");
+
+            // then
+            assertThat(result).hasSize(3);
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q3-S02] FAILED 상태의 Outbox도 active로 조회됩니다")
+        void findActive_FailedStatus_IsIncluded() {
+            // given
+            Long targetPgId = 2100L;
+            jpaRepository.save(
+                    OutboundSyncOutboxJpaEntityFixtures.newEntityWith(
+                            targetPgId,
+                            10L,
+                            OutboundSyncOutboxJpaEntity.SyncType.UPDATE,
+                            OutboundSyncOutboxJpaEntity.Status.FAILED));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findActiveByProductGroupIdAndSyncType(targetPgId, "UPDATE");
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst().getStatus())
+                    .isEqualTo(OutboundSyncOutboxJpaEntity.Status.FAILED);
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q3-F01] COMPLETED 상태는 조회에서 제외됩니다")
+        void findActive_CompletedStatus_IsExcluded() {
+            // given
+            Long targetPgId = 2200L;
+            jpaRepository.save(
+                    OutboundSyncOutboxJpaEntityFixtures.newEntityWith(
+                            targetPgId,
+                            10L,
+                            OutboundSyncOutboxJpaEntity.SyncType.UPDATE,
+                            OutboundSyncOutboxJpaEntity.Status.COMPLETED));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findActiveByProductGroupIdAndSyncType(targetPgId, "UPDATE");
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[Q3-F02] 다른 SyncType의 Outbox는 조회에서 제외됩니다")
+        void findActive_DifferentSyncType_IsExcluded() {
+            // given
+            Long targetPgId = 2300L;
+            jpaRepository.save(
+                    OutboundSyncOutboxJpaEntityFixtures.newEntityWith(
+                            targetPgId,
+                            10L,
+                            OutboundSyncOutboxJpaEntity.SyncType.CREATE,
+                            OutboundSyncOutboxJpaEntity.Status.FAILED));
+
+            // when
+            List<OutboundSyncOutboxJpaEntity> result =
+                    queryDslRepository.findActiveByProductGroupIdAndSyncType(targetPgId, "UPDATE");
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
+
+    // ========================================================================
     // 유틸리티 메서드
     // ========================================================================
 

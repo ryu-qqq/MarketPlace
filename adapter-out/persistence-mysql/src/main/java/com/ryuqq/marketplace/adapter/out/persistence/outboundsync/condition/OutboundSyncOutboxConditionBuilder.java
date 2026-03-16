@@ -70,6 +70,13 @@ public class OutboundSyncOutboxConditionBuilder {
                 OutboundSyncOutboxJpaEntity.Status.PROCESSING);
     }
 
+    public BooleanExpression statusPendingOrProcessingOrFailed() {
+        return outboundSyncOutboxJpaEntity.status.in(
+                OutboundSyncOutboxJpaEntity.Status.PENDING,
+                OutboundSyncOutboxJpaEntity.Status.PROCESSING,
+                OutboundSyncOutboxJpaEntity.Status.FAILED);
+    }
+
     public BooleanExpression statusEq(String status) {
         if (status == null || status.isBlank()) {
             return null;

@@ -351,6 +351,34 @@ public final class OutboundSyncOutboxJpaEntityFixtures {
                         now));
     }
 
+    /** 상품그룹 ID, 판매채널 ID, SyncType, Status를 지정한 새 Entity (통합 테스트용, ID null). */
+    public static OutboundSyncOutboxJpaEntity newEntityWith(
+            Long productGroupId,
+            Long salesChannelId,
+            OutboundSyncOutboxJpaEntity.SyncType syncType,
+            OutboundSyncOutboxJpaEntity.Status status) {
+        Instant now = Instant.now();
+        boolean isFailed = status == OutboundSyncOutboxJpaEntity.Status.FAILED;
+        boolean isCompleted = status == OutboundSyncOutboxJpaEntity.Status.COMPLETED;
+        return OutboundSyncOutboxJpaEntity.of(
+                null,
+                productGroupId,
+                salesChannelId,
+                DEFAULT_SHOP_ID,
+                DEFAULT_SELLER_ID,
+                syncType,
+                status,
+                DEFAULT_PAYLOAD,
+                isFailed ? DEFAULT_MAX_RETRY : DEFAULT_RETRY_COUNT,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                (isFailed || isCompleted) ? now : null,
+                isFailed ? "테스트 실패 메시지" : null,
+                DEFAULT_VERSION,
+                generateIdempotencyKey(productGroupId, salesChannelId, syncType, now));
+    }
+
     /** FAILED 상태의 새 Entity (통합 테스트용, ID null). */
     public static OutboundSyncOutboxJpaEntity newFailedEntity() {
         long seq = SEQUENCE.getAndIncrement();

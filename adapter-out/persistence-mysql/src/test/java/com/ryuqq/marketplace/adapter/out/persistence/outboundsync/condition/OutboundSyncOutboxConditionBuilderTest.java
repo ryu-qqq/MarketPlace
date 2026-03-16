@@ -134,6 +134,26 @@ class OutboundSyncOutboxConditionBuilderTest {
     }
 
     // ========================================================================
+    // 4-1. statusPendingOrProcessingOrFailed 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("statusPendingOrProcessingOrFailed 메서드 테스트")
+    class StatusPendingOrProcessingOrFailedTest {
+
+        @Test
+        @DisplayName("항상 PENDING/PROCESSING/FAILED 상태 BooleanExpression을 반환합니다")
+        void statusPendingOrProcessingOrFailed_Always_ReturnsBooleanExpression() {
+            // when
+            BooleanExpression result = conditionBuilder.statusPendingOrProcessingOrFailed();
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.toString()).contains("PENDING", "PROCESSING", "FAILED");
+        }
+    }
+
+    // ========================================================================
     // 5. retryCountLtMaxRetry 테스트
     // ========================================================================
 
