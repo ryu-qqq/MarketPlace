@@ -127,10 +127,10 @@ public class LegacyOrderConversionFactory {
         OrderItem orderItem = buildOrderItem(orderItemId, orderNumber, composite, statusResolution);
 
         return Order.reconstitute(
-                id, orderNumber, statusResolution.orderStatus(),
+                id, orderNumber,
                 buyerInfo, paymentInfo, externalRef,
                 composite.orderDate(), now,
-                List.of(orderItem), List.of());
+                List.of(orderItem));
     }
 
     private OrderItem buildOrderItem(
@@ -143,7 +143,7 @@ public class LegacyOrderConversionFactory {
         OrderItemNumber itemNumber = OrderItemNumber.generate(orderNumber, 1);
 
         InternalProductReference internalProduct = InternalProductReference.of(
-                composite.productGroupId(), null,
+                composite.productGroupId(), composite.legacyProductId(),
                 composite.legacySellerId(), composite.brandId(),
                 null, composite.productGroupName(),
                 null, null, composite.mainImageUrl());
@@ -170,7 +170,7 @@ public class LegacyOrderConversionFactory {
         OrderItemStatus itemStatus = resolveOrderItemStatus(statusResolution);
 
         return OrderItem.reconstitute(id, itemNumber, internalProduct, externalProduct,
-                price, receiverInfo, itemStatus, null);
+                price, receiverInfo, itemStatus, null, java.util.List.of());
     }
 
     private OrderItemStatus resolveOrderItemStatus(

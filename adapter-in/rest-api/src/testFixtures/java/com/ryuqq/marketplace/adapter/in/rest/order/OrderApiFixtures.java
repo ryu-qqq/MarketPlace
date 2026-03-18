@@ -17,11 +17,10 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResp
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.PaymentInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ProductOrderApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ReceiverApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderSummaryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;
-import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.CancelSummary;
@@ -112,7 +111,6 @@ public final class OrderApiFixtures {
         return new OrderInfo(
                 DEFAULT_ORDER_ID,
                 DEFAULT_ORDER_NUMBER,
-                DEFAULT_ORDER_STATUS,
                 1L,
                 10L,
                 DEFAULT_SHOP_CODE,
@@ -295,12 +293,6 @@ public final class OrderApiFixtures {
                 List.of(historyResult()));
     }
 
-    // ===== Application Result Fixtures (OrderSummaryResult) =====
-
-    public static OrderSummaryResult orderSummaryResult() {
-        return new OrderSummaryResult(10, 5, 30, 15, 8, 3, 2, 4, 1);
-    }
-
     // ===== API Response Fixtures =====
 
     public static PaymentInfoApiResponse paymentInfoApiResponse() {
@@ -418,6 +410,70 @@ public final class OrderApiFixtures {
         return PageApiResponse.of(orderListApiResponses(count), 0, 20, count);
     }
 
+    public static OrderListApiResponseV4 orderListApiResponseV4() {
+        return new OrderListApiResponseV4(
+                DEFAULT_ORDER_ITEM_ID,
+                "ORD-20260101-0001-001",
+                new OrderListApiResponseV4.BuyerInfoApiResponse(
+                        DEFAULT_BUYER_NAME, DEFAULT_BUYER_EMAIL, DEFAULT_BUYER_PHONE),
+                new OrderListApiResponseV4.PaymentDetailApiResponse(
+                        DEFAULT_PAYMENT_ID,
+                        DEFAULT_PAYMENT_NUMBER,
+                        DEFAULT_PAYMENT_AGENCY_ID,
+                        DEFAULT_PAYMENT_STATUS,
+                        DEFAULT_PAYMENT_METHOD,
+                        "2026-01-01T09:00:00+09:00",
+                        null,
+                        0L,
+                        DEFAULT_SHOP_CODE,
+                        DEFAULT_PAYMENT_AMOUNT,
+                        DEFAULT_PAYMENT_AMOUNT,
+                        0),
+                new OrderListApiResponseV4.ReceiverInfoApiResponse(
+                        DEFAULT_RECEIVER_NAME,
+                        DEFAULT_RECEIVER_PHONE,
+                        DEFAULT_RECEIVER_ADDRESS,
+                        DEFAULT_RECEIVER_ADDRESS_DETAIL,
+                        DEFAULT_RECEIVER_ZIPCODE,
+                        DEFAULT_DELIVERY_REQUEST),
+                new OrderListApiResponseV4.PaymentShipmentInfoApiResponse(
+                        DEFAULT_DELIVERY_STATUS, null, null, null),
+                new OrderListApiResponseV4.OrderProductApiResponse(
+                        DEFAULT_ORDER_ID,
+                        DEFAULT_PRODUCT_GROUP_NAME,
+                        new OrderListApiResponseV4.PriceApiResponse(50000, 50000, 50000, 0, 0, 0),
+                        new OrderListApiResponseV4.BrandApiResponse(50L, DEFAULT_BRAND_NAME),
+                        100L,
+                        200L,
+                        DEFAULT_SELLER_NAME,
+                        DEFAULT_MAIN_IMAGE_URL,
+                        "",
+                        1,
+                        "",
+                        50000,
+                        50000,
+                        0,
+                        "",
+                        DEFAULT_SKU_CODE,
+                        List.of()),
+                new OrderListApiResponseV4.ExternalOrderInfoApiResponse(
+                        10L,
+                        DEFAULT_SHOP_CODE,
+                        "EXT-ORDER-001",
+                        "",
+                        "2026-01-01T09:00:00+09:00"),
+                new OrderListApiResponseV4.CancelSummaryV4ApiResponse(false, 0, 1, null),
+                new OrderListApiResponseV4.ClaimSummaryV4ApiResponse(false, 0, 0, 1, null));
+    }
+
+    public static List<OrderListApiResponseV4> orderListApiResponsesV4(int count) {
+        return IntStream.rangeClosed(1, count).mapToObj(i -> orderListApiResponseV4()).toList();
+    }
+
+    public static PageApiResponse<OrderListApiResponseV4> pageApiResponseV4(int count) {
+        return PageApiResponse.of(orderListApiResponsesV4(count), 0, 20, count);
+    }
+
     public static SettlementApiResponse settlementApiResponse() {
         return new SettlementApiResponse(
                 10.0, 5000, 45000, 0, 100.0, "2026-01-31T09:00:00+09:00", null);
@@ -482,7 +538,4 @@ public final class OrderApiFixtures {
                 List.of(timeLineApiResponse()));
     }
 
-    public static OrderSummaryApiResponse orderSummaryApiResponse() {
-        return new OrderSummaryApiResponse(10, 5, 30, 15, 8, 3, 2, 4, 1);
-    }
 }

@@ -20,13 +20,11 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResp
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ProductOrderApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ReceiverApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderSummaryApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.order.dto.query.OrderSearchParams;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;
-import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
@@ -173,19 +171,6 @@ public class OrderQueryApiMapper {
                         .collect(Collectors.toList()));
     }
 
-    public OrderSummaryApiResponse toSummaryResponse(OrderSummaryResult result) {
-        return new OrderSummaryApiResponse(
-                result.ordered(),
-                result.preparing(),
-                result.shipped(),
-                result.delivered(),
-                result.confirmed(),
-                result.cancelled(),
-                result.claimInProgress(),
-                result.refunded(),
-                result.exchanged());
-    }
-
     // ==================== V5 공통 변환 메서드 ====================
 
     private OrderInfoApiResponse toOrderInfoApi(ProductOrderListResult.OrderInfo order) {
@@ -195,7 +180,7 @@ public class OrderQueryApiMapper {
         return new OrderInfoApiResponse(
                 order.orderId(),
                 order.orderNumber(),
-                order.status(),
+                null,
                 order.salesChannelId(),
                 order.shopId(),
                 order.shopCode(),
@@ -504,7 +489,7 @@ public class OrderQueryApiMapper {
                 nullToEmpty(productOrder.mainImageUrl()),
                 "",
                 productOrder.quantity(),
-                order != null ? nullToEmpty(order.status()) : "",
+                "",
                 unitPrice,
                 productOrder.totalAmount(),
                 0,

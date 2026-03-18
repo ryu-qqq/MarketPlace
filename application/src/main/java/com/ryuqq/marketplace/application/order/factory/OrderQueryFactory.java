@@ -10,7 +10,7 @@ import com.ryuqq.marketplace.domain.order.query.OrderDateField;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchField;
 import com.ryuqq.marketplace.domain.order.query.OrderSortKey;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.stereotype.Component;
@@ -47,7 +47,7 @@ public class OrderQueryFactory {
                         pageRequest,
                         params.searchParams().includeDeleted());
 
-        List<OrderStatus> statuses = resolveStatuses(params.statuses());
+        List<OrderItemStatus> statuses = resolveStatuses(params.statuses());
         OrderSearchField searchField = OrderSearchField.fromString(params.searchField());
         OrderDateField dateField = resolveDateField(params.dateField());
         DateRange dateRange =
@@ -73,13 +73,13 @@ public class OrderQueryFactory {
         return OrderSortKey.defaultKey();
     }
 
-    private List<OrderStatus> resolveStatuses(List<String> statusStrings) {
+    private List<OrderItemStatus> resolveStatuses(List<String> statusStrings) {
         if (statusStrings == null || statusStrings.isEmpty()) {
             return List.of();
         }
 
         return statusStrings.stream()
-                .map(s -> OrderStatus.valueOf(s.toUpperCase(Locale.ROOT)))
+                .map(s -> OrderItemStatus.valueOf(s.toUpperCase(Locale.ROOT)))
                 .toList();
     }
 

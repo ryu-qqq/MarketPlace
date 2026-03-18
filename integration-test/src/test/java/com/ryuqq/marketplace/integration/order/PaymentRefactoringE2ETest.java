@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderItemJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.PaymentJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderHistoryJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.PaymentJpaRepository;
@@ -64,7 +64,7 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
 
     @Autowired private OrderJpaRepository orderRepository;
     @Autowired private OrderItemJpaRepository orderItemRepository;
-    @Autowired private OrderHistoryJpaRepository orderHistoryRepository;
+    @Autowired private OrderItemHistoryJpaRepository orderHistoryRepository;
     @Autowired private PaymentJpaRepository paymentRepository;
 
     @BeforeEach

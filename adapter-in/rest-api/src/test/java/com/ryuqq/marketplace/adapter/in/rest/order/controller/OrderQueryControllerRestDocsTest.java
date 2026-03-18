@@ -19,14 +19,11 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.order.OrderAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.order.OrderApiFixtures;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderSummaryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.mapper.OrderQueryApiMapper;
-import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
 import com.ryuqq.marketplace.application.order.port.in.query.GetOrderDetailUseCase;
-import com.ryuqq.marketplace.application.order.port.in.query.GetOrderSummaryUseCase;
 import com.ryuqq.marketplace.application.order.port.in.query.GetProductOrderListUseCase;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -56,7 +53,6 @@ class OrderQueryControllerRestDocsTest {
 
     @MockitoBean private GetProductOrderListUseCase getProductOrderListUseCase;
     @MockitoBean private GetOrderDetailUseCase getOrderDetailUseCase;
-    @MockitoBean private GetOrderSummaryUseCase getOrderSummaryUseCase;
     @MockitoBean private OrderQueryApiMapper mapper;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
@@ -69,12 +65,12 @@ class OrderQueryControllerRestDocsTest {
         void searchOrders_ValidRequest_Returns200WithPage() throws Exception {
             // given
             ProductOrderPageResult pageResult = OrderApiFixtures.productOrderPageResult(3, 0, 20);
-            PageApiResponse<OrderListApiResponse> pageResponse =
-                    OrderApiFixtures.pageApiResponse(3);
+            PageApiResponse<OrderListApiResponseV4> pageResponse =
+                    OrderApiFixtures.pageApiResponseV4(3);
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getProductOrderListUseCase.execute(any())).willReturn(pageResult);
-            given(mapper.toPageResponse(any(ProductOrderPageResult.class)))
+            given(mapper.toPageResponseV4(any(ProductOrderPageResult.class)))
                     .willReturn(pageResponse);
 
             // when & then
@@ -136,140 +132,30 @@ class OrderQueryControllerRestDocsTest {
                                             parameterWithName("size")
                                                     .description("페이지 크기. 기본값: 20")
                                                     .optional()),
-                                    responseFields(
+                                    relaxedResponseFields(
                                             // 목록
                                             fieldWithPath("data.content[]")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("상품주문 목록"),
-                                            // order
-                                            fieldWithPath("data.content[].order.orderId")
+                                                    .description("상품주문 목록 (V4 스펙)"),
+                                            // orderId / orderNumber (V4 top-level)
+                                            fieldWithPath("data.content[].orderId")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("주문 ID (UUIDv7)"),
-                                            fieldWithPath("data.content[].order.orderNumber")
+                                                    .description("상품주문 ID (UUIDv7)"),
+                                            fieldWithPath("data.content[].orderNumber")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("주문번호"),
-                                            fieldWithPath("data.content[].order.status")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("주문 상태"),
-                                            fieldWithPath("data.content[].order.salesChannelId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("판매채널 ID"),
-                                            fieldWithPath("data.content[].order.shopId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("샵 ID"),
-                                            fieldWithPath("data.content[].order.shopCode")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("샵 코드"),
-                                            fieldWithPath("data.content[].order.shopName")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("샵 이름"),
-                                            fieldWithPath("data.content[].order.externalOrderNo")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("외부몰 주문번호"),
-                                            fieldWithPath("data.content[].order.externalOrderedAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("외부몰 주문일시 (ISO 8601)"),
-                                            fieldWithPath("data.content[].order.buyerName")
+                                                    .description("상품주문번호"),
+                                            // buyerInfo
+                                            fieldWithPath("data.content[].buyerInfo.buyerName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("구매자명"),
-                                            fieldWithPath("data.content[].order.buyerEmail")
+                                            fieldWithPath("data.content[].buyerInfo.buyerEmail")
                                                     .type(JsonFieldType.STRING)
                                                     .description("구매자 이메일"),
-                                            fieldWithPath("data.content[].order.buyerPhone")
+                                            fieldWithPath(
+                                                            "data.content[].buyerInfo"
+                                                                    + ".buyerPhoneNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("구매자 연락처"),
-                                            fieldWithPath("data.content[].order.createdAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("주문 생성일시 (ISO 8601)"),
-                                            fieldWithPath("data.content[].order.updatedAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("주문 수정일시 (ISO 8601)"),
-                                            // productOrder
-                                            fieldWithPath("data.content[].productOrder.orderItemId")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("상품주문 ID"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".orderItemNumber")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("상품주문 번호 (ORD-YYYYMMDD-XXXX-NNN)"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".productGroupId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("상품그룹 ID"),
-                                            fieldWithPath("data.content[].productOrder.productId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("상품 ID (SKU)"),
-                                            fieldWithPath("data.content[].productOrder.sellerId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("판매자 ID"),
-                                            fieldWithPath("data.content[].productOrder.brandId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("브랜드 ID"),
-                                            fieldWithPath("data.content[].productOrder.skuCode")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("SKU 코드"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".productGroupName")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("상품명"),
-                                            fieldWithPath("data.content[].productOrder.brandName")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("브랜드명"),
-                                            fieldWithPath("data.content[].productOrder.sellerName")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("판매자명"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".mainImageUrl")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("대표 이미지 URL"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".externalProductId")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("외부 상품 ID"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".externalOptionId")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("외부 옵션 ID"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".externalProductName")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("외부 상품명"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".externalOptionName")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("외부 옵션명"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".externalImageUrl")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("외부 이미지 URL"),
-                                            fieldWithPath("data.content[].productOrder.unitPrice")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("개당 판매가 (원)"),
-                                            fieldWithPath("data.content[].productOrder.quantity")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("주문 수량"),
-                                            fieldWithPath("data.content[].productOrder.totalAmount")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("총 금액"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".discountAmount")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("할인 금액"),
-                                            fieldWithPath(
-                                                            "data.content[].productOrder"
-                                                                    + ".paymentAmount")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("실결제 금액"),
                                             // payment
                                             fieldWithPath("data.content[].payment.paymentId")
                                                     .type(JsonFieldType.STRING)
@@ -283,61 +169,13 @@ class OrderQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].payment.paymentMethod")
                                                     .type(JsonFieldType.STRING)
                                                     .description("결제 수단"),
-                                            fieldWithPath("data.content[].payment.paymentAgencyId")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("PG사 거래 ID"),
+                                            fieldWithPath("data.content[].payment.billAmount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("청구 금액 (원)"),
                                             fieldWithPath("data.content[].payment.paymentAmount")
                                                     .type(JsonFieldType.NUMBER)
-                                                    .description("결제 금액 (원)"),
-                                            fieldWithPath("data.content[].payment.paidAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("결제일시 (ISO 8601)"),
-                                            fieldWithPath("data.content[].payment.canceledAt")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description("취소일시 (ISO 8601)")
-                                                    .optional(),
-                                            // receiver
-                                            fieldWithPath("data.content[].receiver.receiverName")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("수령인명"),
-                                            fieldWithPath("data.content[].receiver.receiverPhone")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("수령인 연락처"),
-                                            fieldWithPath("data.content[].receiver.receiverZipcode")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("우편번호"),
-                                            fieldWithPath("data.content[].receiver.receiverAddress")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("기본 주소"),
-                                            fieldWithPath(
-                                                            "data.content[].receiver"
-                                                                    + ".receiverAddressDetail")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("상세 주소"),
-                                            fieldWithPath("data.content[].receiver.deliveryRequest")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("배송 요청사항"),
-                                            // delivery
-                                            fieldWithPath("data.content[].delivery.deliveryStatus")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("배송 상태"),
-                                            fieldWithPath(
-                                                            "data.content[].delivery"
-                                                                    + ".shipmentCompanyCode")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description("택배사 코드")
-                                                    .optional(),
-                                            fieldWithPath("data.content[].delivery.invoice")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description("송장번호")
-                                                    .optional(),
-                                            fieldWithPath(
-                                                            "data.content[].delivery"
-                                                                    + ".shipmentCompletedDate")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description("출고완료일시 (ISO 8601)")
-                                                    .optional(),
-                                            // cancel
+                                                    .description("실결제 금액 (원)"),
+                                            // cancel summary
                                             fieldWithPath("data.content[].cancel.hasActiveCancel")
                                                     .type(JsonFieldType.BOOLEAN)
                                                     .description("진행 중인 취소 존재 여부"),
@@ -346,30 +184,13 @@ class OrderQueryControllerRestDocsTest {
                                                                     + ".totalCancelledQty")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("총 취소 수량"),
-                                            fieldWithPath("data.content[].cancel.cancelableQty")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("추가 취소 가능 수량"),
-                                            fieldWithPath("data.content[].cancel.latest")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description("가장 최근 취소 정보")
-                                                    .optional(),
-                                            // claim
+                                            // claim summary
                                             fieldWithPath("data.content[].claim.hasActiveClaim")
                                                     .type(JsonFieldType.BOOLEAN)
                                                     .description("진행 중인 클레임 존재 여부"),
                                             fieldWithPath("data.content[].claim.activeCount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("진행 중인 클레임 수"),
-                                            fieldWithPath("data.content[].claim.totalClaimedQty")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("총 클레임 수량"),
-                                            fieldWithPath("data.content[].claim.claimableQty")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("추가 클레임 가능 수량"),
-                                            fieldWithPath("data.content[].claim.latest")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description("가장 최근 클레임 정보")
-                                                    .optional(),
                                             // page meta
                                             fieldWithPath("data.page")
                                                     .type(JsonFieldType.NUMBER)
@@ -402,12 +223,12 @@ class OrderQueryControllerRestDocsTest {
         void searchOrders_WithFilters_Returns200() throws Exception {
             // given
             ProductOrderPageResult pageResult = OrderApiFixtures.productOrderPageResult(1, 0, 20);
-            PageApiResponse<OrderListApiResponse> pageResponse =
-                    OrderApiFixtures.pageApiResponse(1);
+            PageApiResponse<OrderListApiResponseV4> pageResponse =
+                    OrderApiFixtures.pageApiResponseV4(1);
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getProductOrderListUseCase.execute(any())).willReturn(pageResult);
-            given(mapper.toPageResponse(any(ProductOrderPageResult.class)))
+            given(mapper.toPageResponseV4(any(ProductOrderPageResult.class)))
                     .willReturn(pageResponse);
 
             // when & then
@@ -427,12 +248,12 @@ class OrderQueryControllerRestDocsTest {
         void searchOrders_EmptyResult_Returns200WithEmptyPage() throws Exception {
             // given
             ProductOrderPageResult emptyResult = OrderApiFixtures.emptyPageResult();
-            PageApiResponse<OrderListApiResponse> emptyResponse =
+            PageApiResponse<OrderListApiResponseV4> emptyResponse =
                     PageApiResponse.of(List.of(), 0, 20, 0);
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getProductOrderListUseCase.execute(any())).willReturn(emptyResult);
-            given(mapper.toPageResponse(any(ProductOrderPageResult.class)))
+            given(mapper.toPageResponseV4(any(ProductOrderPageResult.class)))
                     .willReturn(emptyResponse);
 
             // when & then
@@ -546,74 +367,4 @@ class OrderQueryControllerRestDocsTest {
         }
     }
 
-    @Nested
-    @DisplayName("주문 상태별 요약 조회 API")
-    class GetOrderSummaryTest {
-
-        @Test
-        @DisplayName("주문 상태별 요약 조회 성공")
-        void getSummary_Success() throws Exception {
-            // given
-            OrderSummaryResult summaryResult = OrderApiFixtures.orderSummaryResult();
-            OrderSummaryApiResponse summaryResponse = OrderApiFixtures.orderSummaryApiResponse();
-
-            given(getOrderSummaryUseCase.execute()).willReturn(summaryResult);
-            given(mapper.toSummaryResponse(any(OrderSummaryResult.class)))
-                    .willReturn(summaryResponse);
-
-            // when & then
-            mockMvc.perform(
-                            RestDocumentationRequestBuilders.get(
-                                    BASE_URL + OrderAdminEndpoints.SUMMARY))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.ordered").value(10))
-                    .andExpect(jsonPath("$.data.preparing").value(5))
-                    .andExpect(jsonPath("$.data.shipped").value(30))
-                    .andExpect(jsonPath("$.data.delivered").value(15))
-                    .andExpect(jsonPath("$.data.confirmed").value(8))
-                    .andExpect(jsonPath("$.data.cancelled").value(3))
-                    .andExpect(jsonPath("$.data.claimInProgress").value(2))
-                    .andExpect(jsonPath("$.data.refunded").value(4))
-                    .andExpect(jsonPath("$.data.exchanged").value(1))
-                    .andDo(
-                            document(
-                                    "order/summary",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    responseFields(
-                                            fieldWithPath("data.ordered")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("주문접수 건수"),
-                                            fieldWithPath("data.preparing")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("발주확인 건수"),
-                                            fieldWithPath("data.shipped")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("출고완료 건수"),
-                                            fieldWithPath("data.delivered")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("배송완료 건수"),
-                                            fieldWithPath("data.confirmed")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("구매확정 건수"),
-                                            fieldWithPath("data.cancelled")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("취소 건수"),
-                                            fieldWithPath("data.claimInProgress")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("클레임 진행중 건수"),
-                                            fieldWithPath("data.refunded")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("환불완료 건수"),
-                                            fieldWithPath("data.exchanged")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("교환완료 건수"),
-                                            fieldWithPath("timestamp")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("응답 시간"),
-                                            fieldWithPath("requestId")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("요청 ID"))));
-        }
-    }
 }

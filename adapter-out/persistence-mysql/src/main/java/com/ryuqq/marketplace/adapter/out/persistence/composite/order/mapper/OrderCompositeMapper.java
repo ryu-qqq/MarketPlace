@@ -27,7 +27,6 @@ public class OrderCompositeMapper {
         return new OrderListResult(
                 dto.orderId(),
                 dto.orderNumber(),
-                dto.status(),
                 dto.salesChannelId(),
                 dto.shopId(),
                 dto.shopCode(),
@@ -53,7 +52,6 @@ public class OrderCompositeMapper {
         return new OrderDetailResult(
                 order.orderId(),
                 order.orderNumber(),
-                order.status(),
                 order.salesChannelId(),
                 order.shopId(),
                 order.shopCode(),
@@ -64,7 +62,6 @@ public class OrderCompositeMapper {
                         order.buyerName(), order.buyerEmail(), order.buyerPhone()),
                 toPaymentResult(composite),
                 composite.items().stream().map(this::toItemResult).toList(),
-                composite.histories().stream().map(this::toHistoryResult).toList(),
                 composite.cancels().stream().map(this::toCancelResult).toList(),
                 composite.claims().stream().map(this::toClaimResult).toList(),
                 order.createdAt(),
@@ -223,7 +220,6 @@ public class OrderCompositeMapper {
                 new OrderListResult(
                         dto.orderId(),
                         dto.orderNumber(),
-                        dto.status(),
                         dto.salesChannelId(),
                         dto.shopId(),
                         dto.shopCode(),

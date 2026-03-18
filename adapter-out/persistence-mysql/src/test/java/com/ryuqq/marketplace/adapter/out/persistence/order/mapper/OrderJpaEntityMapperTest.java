@@ -131,16 +131,14 @@ class OrderJpaEntityMapperTest {
         void toPaymentEntity_WithNullPaymentInfo_MapsStatusAsPending() {
             // given
             Order order =
-                    com.ryuqq.marketplace.domain.order.aggregate.Order.reconstitute(
+                    Order.reconstitute(
                             OrderFixtures.defaultOrderId(),
                             OrderFixtures.defaultOrderNumber(),
-                            com.ryuqq.marketplace.domain.order.vo.OrderStatus.ORDERED,
                             OrderFixtures.defaultBuyerInfo(),
                             null,
                             OrderFixtures.defaultExternalOrderReference(),
                             Instant.now().minusSeconds(3600),
                             Instant.now(),
-                            java.util.List.of(),
                             java.util.List.of());
             String paymentId = "01944b2a-bbbb-7fff-8888-000000000005";
 

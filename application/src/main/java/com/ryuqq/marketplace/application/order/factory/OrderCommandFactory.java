@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.application.order.factory;
 
-import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.dto.command.CreateOrderCommand;
@@ -92,44 +91,8 @@ public class OrderCommandFactory {
                 paymentInfo,
                 externalOrderRef,
                 items,
-                command.changedBy(),
                 now);
     }
-
-    /**
-     * 단순 상태 전이 컨텍스트 생성.
-     *
-     * @param orderId 주문 ID 문자열
-     * @return StatusChangeContext
-     */
-    public StatusChangeContext<OrderId> createStatusContext(String orderId) {
-        return new StatusChangeContext<>(OrderId.of(orderId), timeProvider.now());
-    }
-
-    /**
-     * 사유 포함 상태 전이 컨텍스트 생성.
-     *
-     * @param orderId 주문 ID 문자열
-     * @param reason 변경 사유
-     * @param changedBy 변경자
-     * @return OrderStatusChangeWithReasonContext
-     */
-    public OrderStatusChangeWithReasonContext createStatusContextWithReason(
-            String orderId, String reason, String changedBy) {
-        return new OrderStatusChangeWithReasonContext(
-                OrderId.of(orderId), reason, changedBy, timeProvider.now());
-    }
-
-    /**
-     * 사유 포함 상태 변경 컨텍스트.
-     *
-     * @param orderId 주문 ID
-     * @param reason 변경 사유
-     * @param changedBy 변경자
-     * @param changedAt 변경 시간
-     */
-    public record OrderStatusChangeWithReasonContext(
-            OrderId orderId, String reason, String changedBy, Instant changedAt) {}
 
     private OrderItem createOrderItem(
             CreateOrderItemCommand cmd, OrderNumber orderNumber, int sequence) {

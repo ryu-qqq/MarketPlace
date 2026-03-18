@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.composite.order.repository
 
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderCancelJpaEntity.orderCancelJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderClaimJpaEntity.orderClaimJpaEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderHistoryJpaEntity.orderHistoryJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemHistoryJpaEntity.orderItemHistoryJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemJpaEntity.orderItemJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderJpaEntity.orderJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QPaymentJpaEntity.paymentJpaEntity;
@@ -595,21 +595,30 @@ public class OrderCompositeQueryDslRepository {
                 .fetch();
     }
 
-    /** 주문 히스토리 목록 조회. */
+    /**
+     * 주문 히스토리 목록 조회.
+     *
+     * <p>order_item_histories 테이블을 기준으로 조회합니다.
+     * orderId에 속한 order_items의 ID를 서브쿼리로 추출하여 histories를 조회합니다.
+     */
     public List<OrderHistoryProjectionDto> findOrderHistories(String orderId) {
         return queryFactory
                 .select(
                         Projections.constructor(
                                 OrderHistoryProjectionDto.class,
-                                orderHistoryJpaEntity.id,
-                                orderHistoryJpaEntity.fromStatus,
-                                orderHistoryJpaEntity.toStatus,
-                                orderHistoryJpaEntity.changedBy,
-                                orderHistoryJpaEntity.reason,
-                                orderHistoryJpaEntity.changedAt))
-                .from(orderHistoryJpaEntity)
-                .where(conditionBuilder.historyOrderIdEq(orderId))
-                .orderBy(orderHistoryJpaEntity.changedAt.desc())
+                                orderItemHistoryJpaEntity.id,
+                                orderItemHistoryJpaEntity.fromStatus,
+                                orderItemHistoryJpaEntity.toStatus,
+                                orderItemHistoryJpaEntity.changedBy,
+                                orderItemHistoryJpaEntity.reason,
+                                orderItemHistoryJpaEntity.changedAt))
+                .from(orderItemHistoryJpaEntity)
+                .where(
+                        orderItemHistoryJpaEntity.orderItemId.in(
+                                JPAExpressions.select(orderItemJpaEntity.id)
+                                        .from(orderItemJpaEntity)
+                                        .where(orderItemJpaEntity.orderId.eq(orderId))))
+                .orderBy(orderItemHistoryJpaEntity.changedAt.desc())
                 .fetch();
     }
 

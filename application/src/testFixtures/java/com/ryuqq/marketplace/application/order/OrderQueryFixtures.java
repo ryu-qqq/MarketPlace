@@ -67,7 +67,6 @@ public final class OrderQueryFixtures {
         return new OrderListResult(
                 orderId,
                 DEFAULT_ORDER_NUMBER,
-                "ORDERED",
                 1L,
                 10L,
                 "NAVER",

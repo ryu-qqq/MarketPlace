@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ConfirmShipmentBatchUseCase;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
     @Override
     public BatchProcessingResult<String> execute(ConfirmShipmentBatchCommand command) {
         List<OrderItem> orderItems = orderItemReadManager.findAllByIds(command.orderItemIds());
+        Instant now = Instant.now();
 
         List<BatchItemResult<String>> results = new ArrayList<>();
         List<OrderItem> confirmable = new ArrayList<>();
@@ -57,7 +59,8 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
                 continue;
             }
 
-            item.confirm();
+            // 발주확인 처리: changedBy는 시스템 처리이므로 "system" 사용
+            item.confirm("system", now);
             confirmable.add(item);
             results.add(BatchItemResult.success(idStr));
         }

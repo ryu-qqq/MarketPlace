@@ -1,21 +1,17 @@
 package com.ryuqq.marketplace.adapter.out.persistence.order.repository;
 
-import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderHistoryJpaEntity.orderHistoryJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemHistoryJpaEntity.orderItemHistoryJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemJpaEntity.orderItemJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderJpaEntity.orderJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QPaymentJpaEntity.paymentJpaEntity;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.order.condition.OrderConditionBuilder;
-import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderHistoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemHistoryJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.PaymentJpaEntity;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -87,36 +83,16 @@ public class OrderQueryDslRepository {
                 .fetch();
     }
 
-    public List<OrderHistoryJpaEntity> findHistoriesByOrderId(String orderId) {
-        return queryFactory
-                .selectFrom(orderHistoryJpaEntity)
-                .where(orderHistoryJpaEntity.orderId.eq(orderId))
-                .orderBy(orderHistoryJpaEntity.changedAt.desc())
-                .fetch();
-    }
-
-    /** 상태별 주문 건수 조회. */
-    public Map<OrderStatus, Long> countByStatus() {
-        List<Tuple> results =
-                queryFactory
-                        .select(orderJpaEntity.status, orderJpaEntity.count())
-                        .from(orderJpaEntity)
-                        .where(conditionBuilder.notDeleted())
-                        .groupBy(orderJpaEntity.status)
-                        .fetch();
-
-        Map<OrderStatus, Long> statusCounts = new EnumMap<>(OrderStatus.class);
-        for (Tuple tuple : results) {
-            String statusName = tuple.get(orderJpaEntity.status);
-            Long count = tuple.get(orderJpaEntity.count());
-            if (statusName != null && count != null) {
-                try {
-                    statusCounts.put(OrderStatus.valueOf(statusName), count);
-                } catch (IllegalArgumentException ignored) {
-                    // 알 수 없는 status 값은 무시
-                }
-            }
+    /** 주문상품 ID 목록으로 OrderItemHistory 일괄 조회. */
+    public List<OrderItemHistoryJpaEntity> findItemHistoriesByOrderItemIds(
+            List<String> orderItemIds) {
+        if (orderItemIds == null || orderItemIds.isEmpty()) {
+            return List.of();
         }
-        return statusCounts;
+        return queryFactory
+                .selectFrom(orderItemHistoryJpaEntity)
+                .where(orderItemHistoryJpaEntity.orderItemId.in(orderItemIds))
+                .orderBy(orderItemHistoryJpaEntity.changedAt.desc())
+                .fetch();
     }
 }

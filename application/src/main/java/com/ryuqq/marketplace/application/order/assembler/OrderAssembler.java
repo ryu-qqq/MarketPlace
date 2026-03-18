@@ -6,7 +6,6 @@ import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
-import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult.SettlementInfo;
@@ -20,10 +19,8 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResu
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ReceiverInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
 import com.ryuqq.marketplace.domain.common.vo.PageMeta;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.springframework.stereotype.Component;
 
@@ -45,25 +42,6 @@ public class OrderAssembler {
     /** 완료된 클레임 상태 집합. */
     private static final Set<String> COMPLETED_CLAIM_STATUSES =
             Set.of("COMPLETED", "REFUNDED", "EXCHANGED");
-
-    /**
-     * 상태별 카운트 → OrderSummaryResult 변환.
-     *
-     * @param statusCounts 상태별 카운트 맵
-     * @return OrderSummaryResult
-     */
-    public OrderSummaryResult toSummaryResult(Map<OrderStatus, Long> statusCounts) {
-        return new OrderSummaryResult(
-                statusCounts.getOrDefault(OrderStatus.ORDERED, 0L).intValue(),
-                statusCounts.getOrDefault(OrderStatus.PREPARING, 0L).intValue(),
-                statusCounts.getOrDefault(OrderStatus.SHIPPED, 0L).intValue(),
-                statusCounts.getOrDefault(OrderStatus.DELIVERED, 0L).intValue(),
-                statusCounts.getOrDefault(OrderStatus.CONFIRMED, 0L).intValue(),
-                statusCounts.getOrDefault(OrderStatus.CANCELLED, 0L).intValue(),
-                statusCounts.getOrDefault(OrderStatus.CLAIM_IN_PROGRESS, 0L).intValue(),
-                statusCounts.getOrDefault(OrderStatus.REFUNDED, 0L).intValue(),
-                statusCounts.getOrDefault(OrderStatus.EXCHANGED, 0L).intValue());
-    }
 
     // ==================== V5 상품주문 리스트 조립 ====================
 
@@ -187,12 +165,11 @@ public class OrderAssembler {
     private OrderInfo toOrderInfo(OrderListResult order) {
         if (order == null) {
             return new OrderInfo(
-                    null, null, null, 0, 0, null, null, null, null, null, null, null, null, null);
+                    null, null, 0, 0, null, null, null, null, null, null, null, null, null);
         }
         return new OrderInfo(
                 order.orderId(),
                 order.orderNumber(),
-                order.status(),
                 order.salesChannelId(),
                 order.shopId(),
                 order.shopCode(),

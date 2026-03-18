@@ -9,9 +9,7 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiRe
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderSummaryApiResponse;
 import com.ryuqq.marketplace.application.order.dto.query.OrderSearchParams;
-import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
@@ -179,7 +177,6 @@ class OrderQueryApiMapperTest {
             assertThat(response.order().orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ID);
             assertThat(response.order().orderNumber())
                     .isEqualTo(OrderApiFixtures.DEFAULT_ORDER_NUMBER);
-            assertThat(response.order().status()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_STATUS);
             assertThat(response.order().buyerName()).isEqualTo(OrderApiFixtures.DEFAULT_BUYER_NAME);
         }
 
@@ -487,29 +484,4 @@ class OrderQueryApiMapperTest {
         }
     }
 
-    @Nested
-    @DisplayName("toSummaryResponse() - 요약 응답 변환")
-    class ToSummaryResponseTest {
-
-        @Test
-        @DisplayName("OrderSummaryResult를 OrderSummaryApiResponse로 변환한다")
-        void toSummaryResponse_ConvertsSummaryResult_ReturnsApiResponse() {
-            // given
-            OrderSummaryResult result = OrderApiFixtures.orderSummaryResult();
-
-            // when
-            OrderSummaryApiResponse response = mapper.toSummaryResponse(result);
-
-            // then
-            assertThat(response.ordered()).isEqualTo(10);
-            assertThat(response.preparing()).isEqualTo(5);
-            assertThat(response.shipped()).isEqualTo(30);
-            assertThat(response.delivered()).isEqualTo(15);
-            assertThat(response.confirmed()).isEqualTo(8);
-            assertThat(response.cancelled()).isEqualTo(3);
-            assertThat(response.claimInProgress()).isEqualTo(2);
-            assertThat(response.refunded()).isEqualTo(4);
-            assertThat(response.exchanged()).isEqualTo(1);
-        }
-    }
 }

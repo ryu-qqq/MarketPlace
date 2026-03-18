@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.composite.order.condition;
 
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderCancelJpaEntity.orderCancelJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderClaimJpaEntity.orderClaimJpaEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderHistoryJpaEntity.orderHistoryJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemHistoryJpaEntity.orderItemHistoryJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemJpaEntity.orderItemJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderJpaEntity.orderJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QPaymentJpaEntity.paymentJpaEntity;
@@ -13,9 +13,7 @@ import com.ryuqq.marketplace.domain.order.query.OrderDateField;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchField;
 import com.ryuqq.marketplace.domain.order.query.OrderSortKey;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import java.time.Instant;
-import java.util.List;
 import org.springframework.stereotype.Component;
 
 /** Order Composite QueryDSL 조건 빌더. */
@@ -37,8 +35,9 @@ public class OrderCompositeConditionBuilder {
         return orderItemJpaEntity.orderId.eq(orderId);
     }
 
-    public BooleanExpression historyOrderIdEq(String orderId) {
-        return orderHistoryJpaEntity.orderId.eq(orderId);
+    /** order_item_histories ↔ order_items 조인 조건 (orderItemId 기준). */
+    public BooleanExpression itemHistoryOrderItemIdEq(String orderItemId) {
+        return orderItemHistoryJpaEntity.orderItemId.eq(orderItemId);
     }
 
     public BooleanExpression cancelOrderIdEq(String orderId) {
@@ -57,14 +56,6 @@ public class OrderCompositeConditionBuilder {
 
     public BooleanExpression orderIdEq(String orderId) {
         return orderId != null ? orderJpaEntity.id.eq(orderId) : null;
-    }
-
-    public BooleanExpression statusIn(List<OrderStatus> statuses) {
-        if (statuses == null || statuses.isEmpty()) {
-            return null;
-        }
-        List<String> statusNames = statuses.stream().map(OrderStatus::name).toList();
-        return orderJpaEntity.status.in(statusNames);
     }
 
     public BooleanExpression searchCondition(OrderSearchField field, String word) {
@@ -100,7 +91,6 @@ public class OrderCompositeConditionBuilder {
     public BooleanExpression[] buildWhereConditions(OrderSearchCriteria criteria) {
         return new BooleanExpression[] {
             orderNotDeleted(),
-            criteria.hasStatusFilter() ? statusIn(criteria.statuses()) : null,
             criteria.hasSearchCondition()
                     ? searchCondition(criteria.searchField(), criteria.searchWord())
                     : null,
