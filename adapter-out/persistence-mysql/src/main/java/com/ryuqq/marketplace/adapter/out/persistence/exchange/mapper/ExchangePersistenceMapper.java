@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.refund.vo.HoldInfo;
 import org.springframework.stereotype.Component;
 
 /** 교환 클레임 JPA 엔티티 Mapper. */
@@ -22,6 +23,7 @@ public class ExchangePersistenceMapper {
     public ExchangeClaimJpaEntity toEntity(ExchangeClaim domain) {
         ExchangeOption option = domain.exchangeOption();
         AmountAdjustment adjustment = domain.amountAdjustment();
+        HoldInfo holdInfo = domain.holdInfo();
         return ExchangeClaimJpaEntity.create(
                 domain.idValue(),
                 domain.claimNumberValue(),
@@ -53,6 +55,8 @@ public class ExchangePersistenceMapper {
                 domain.requestedAt(),
                 domain.processedAt(),
                 domain.completedAt(),
+                holdInfo != null ? holdInfo.holdReason() : null,
+                holdInfo != null ? holdInfo.holdAt() : null,
                 domain.createdAt(),
                 domain.updatedAt());
     }
@@ -60,6 +64,8 @@ public class ExchangePersistenceMapper {
     public ExchangeClaim toDomain(ExchangeClaimJpaEntity entity, ClaimShipment collectShipment) {
         ExchangeOption option = resolveExchangeOption(entity);
         AmountAdjustment adjustment = resolveAmountAdjustment(entity);
+
+        HoldInfo holdInfo = resolveHoldInfo(entity);
 
         return ExchangeClaim.reconstitute(
                 ExchangeClaimId.of(entity.getId()),
@@ -74,6 +80,7 @@ public class ExchangePersistenceMapper {
                 option,
                 adjustment,
                 collectShipment,
+                holdInfo,
                 entity.getLinkedOrderId(),
                 entity.getRequestedBy(),
                 entity.getProcessedBy(),
@@ -99,6 +106,13 @@ public class ExchangePersistenceMapper {
                 entity.getTargetProductId(),
                 entity.getTargetSkuCode(),
                 entity.getTargetQuantity());
+    }
+
+    private HoldInfo resolveHoldInfo(ExchangeClaimJpaEntity entity) {
+        if (entity.getHoldReason() == null || entity.getHoldAt() == null) {
+            return null;
+        }
+        return HoldInfo.of(entity.getHoldReason(), entity.getHoldAt());
     }
 
     private AmountAdjustment resolveAmountAdjustment(ExchangeClaimJpaEntity entity) {

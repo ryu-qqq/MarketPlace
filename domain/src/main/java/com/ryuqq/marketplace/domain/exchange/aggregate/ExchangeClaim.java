@@ -20,6 +20,7 @@ import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.refund.vo.HoldInfo;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +39,7 @@ public class ExchangeClaim {
     private ExchangeOption exchangeOption;
     private AmountAdjustment amountAdjustment;
     private final ClaimShipment collectShipment;
+    private HoldInfo holdInfo;
     private String linkedOrderId;
     private final String requestedBy;
     private String processedBy;
@@ -60,6 +62,7 @@ public class ExchangeClaim {
             ExchangeOption exchangeOption,
             AmountAdjustment amountAdjustment,
             ClaimShipment collectShipment,
+            HoldInfo holdInfo,
             String linkedOrderId,
             String requestedBy,
             String processedBy,
@@ -78,6 +81,7 @@ public class ExchangeClaim {
         this.exchangeOption = exchangeOption;
         this.amountAdjustment = amountAdjustment;
         this.collectShipment = collectShipment;
+        this.holdInfo = holdInfo;
         this.linkedOrderId = linkedOrderId;
         this.requestedBy = requestedBy;
         this.processedBy = processedBy;
@@ -114,6 +118,7 @@ public class ExchangeClaim {
                         amountAdjustment,
                         collectShipment,
                         null,
+                        null,
                         requestedBy,
                         null,
                         now,
@@ -136,6 +141,7 @@ public class ExchangeClaim {
             ExchangeOption exchangeOption,
             AmountAdjustment amountAdjustment,
             ClaimShipment collectShipment,
+            HoldInfo holdInfo,
             String linkedOrderId,
             String requestedBy,
             String processedBy,
@@ -155,6 +161,7 @@ public class ExchangeClaim {
                 exchangeOption,
                 amountAdjustment,
                 collectShipment,
+                holdInfo,
                 linkedOrderId,
                 requestedBy,
                 processedBy,
@@ -262,6 +269,23 @@ public class ExchangeClaim {
         this.updatedAt = now;
     }
 
+    public void hold(String holdReason, Instant now) {
+        if (this.holdInfo != null) {
+            throw new ExchangeException(ExchangeErrorCode.ALREADY_HOLD);
+        }
+        String reason = (holdReason != null && !holdReason.isBlank()) ? holdReason : "보류 처리";
+        this.holdInfo = HoldInfo.of(reason, now);
+        this.updatedAt = now;
+    }
+
+    public void releaseHold(Instant now) {
+        if (this.holdInfo == null) {
+            throw new ExchangeException(ExchangeErrorCode.NOT_HOLD_STATUS);
+        }
+        this.holdInfo = null;
+        this.updatedAt = now;
+    }
+
     public void updateReason(ExchangeReason reason, Instant now) {
         if (this.status != ExchangeStatus.REQUESTED) {
             throw new ExchangeException(ExchangeErrorCode.REASON_UPDATE_NOT_ALLOWED);
@@ -295,6 +319,8 @@ public class ExchangeClaim {
         return Collections.unmodifiableList(polled);
     }
 
+    public boolean isHold() { return holdInfo != null; }
+
     public ExchangeClaimId id() { return id; }
     public String idValue() { return id.value(); }
     public ExchangeClaimNumber claimNumber() { return claimNumber; }
@@ -308,6 +334,7 @@ public class ExchangeClaim {
     public ExchangeOption exchangeOption() { return exchangeOption; }
     public AmountAdjustment amountAdjustment() { return amountAdjustment; }
     public ClaimShipment collectShipment() { return collectShipment; }
+    public HoldInfo holdInfo() { return holdInfo; }
     public String linkedOrderId() { return linkedOrderId; }
     public String requestedBy() { return requestedBy; }
     public String processedBy() { return processedBy; }

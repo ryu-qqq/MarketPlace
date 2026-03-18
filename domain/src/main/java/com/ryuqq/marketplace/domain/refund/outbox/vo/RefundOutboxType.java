@@ -13,11 +13,20 @@ public enum RefundOutboxType {
     /** 환불 승인 (수거 시작, COLLECTING) */
     APPROVE("환불 승인"),
 
+    /** 수거 완료 (COLLECTED) */
+    COLLECT("수거 완료"),
+
     /** 환불 거절 (REJECTED) */
     REJECT("환불 거절"),
 
     /** 환불 완료 (COMPLETED) */
-    COMPLETE("환불 완료");
+    COMPLETE("환불 완료"),
+
+    /** 환불 보류 → 네이버 holdbackReturn() */
+    HOLD("환불 보류"),
+
+    /** 환불 보류 해제 → 네이버 releaseReturnHoldback() */
+    RELEASE_HOLD("환불 보류 해제");
 
     private final String description;
 

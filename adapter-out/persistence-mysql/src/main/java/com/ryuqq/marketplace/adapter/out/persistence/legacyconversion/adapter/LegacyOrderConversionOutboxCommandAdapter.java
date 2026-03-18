@@ -34,7 +34,7 @@ public class LegacyOrderConversionOutboxCommandAdapter
     @Override
     public Long persist(LegacyOrderConversionOutbox outbox) {
         LegacyOrderConversionOutboxJpaEntity entity = mapper.toEntity(outbox);
-        LegacyOrderConversionOutboxJpaEntity saved = repository.save(entity);
+        LegacyOrderConversionOutboxJpaEntity saved = repository.saveAndFlush(entity);
         outbox.refreshVersion(saved.getVersion());
         return saved.getId();
     }

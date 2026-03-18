@@ -18,5 +18,6 @@ public final class ExchangeAdminEndpoints {
     public static final String SHIP_BATCH = "/ship/batch";
     public static final String COMPLETE_BATCH = "/complete/batch";
     public static final String CONVERT_TO_REFUND_BATCH = "/convert-to-refund/batch";
+    public static final String HOLD_BATCH = "/hold/batch";
     public static final String HISTORIES = "/{exchangeClaimId}/histories";
 }

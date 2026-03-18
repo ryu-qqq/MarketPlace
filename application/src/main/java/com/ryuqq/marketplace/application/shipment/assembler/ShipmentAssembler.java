@@ -117,7 +117,7 @@ public class ShipmentAssembler {
         return new OrderInfo(
                 order.orderId(),
                 order.orderNumber(),
-                order.status(),
+                null,
                 order.salesChannelId(),
                 order.shopId(),
                 order.shopCode(),

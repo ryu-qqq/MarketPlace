@@ -1,16 +1,19 @@
 package com.ryuqq.marketplace.application.exchange.service.command;
 
-import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand.ExchangeRequestItem;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
+import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory.ExchangeClaimWithHistory;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.RequestExchangeBatchUseCase;
-import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
-import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
-import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
+import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
+import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,8 +21,8 @@ import org.springframework.stereotype.Service;
 /**
  * 교환 요청 일괄 처리 서비스.
  *
- * <p>교환 요청은 새 ExchangeClaim을 생성하므로 기존 ExchangeClaim 조회/검증이 불필요합니다.
- * 네이버에 호출할 API가 없으므로 Outbox를 생성하지 않습니다.
+ * <p>교환 요청 시 OrderItem을 RETURN_REQUESTED로 전환합니다.
+ * 해당 OrderItem에 진행 중인 Refund/Exchange가 있으면 스킵합니다.
  */
 @Service
 public class RequestExchangeBatchService implements RequestExchangeBatchUseCase {
@@ -28,48 +31,55 @@ public class RequestExchangeBatchService implements RequestExchangeBatchUseCase 
 
     private final ExchangeCommandFactory commandFactory;
     private final ExchangePersistenceFacade persistenceFacade;
-    private final ClaimHistoryFactory historyFactory;
+    private final OrderItemReadManager orderItemReadManager;
+    private final ExchangeBatchValidator validator;
 
     public RequestExchangeBatchService(
             ExchangeCommandFactory commandFactory,
             ExchangePersistenceFacade persistenceFacade,
-            ClaimHistoryFactory historyFactory) {
+            OrderItemReadManager orderItemReadManager,
+            ExchangeBatchValidator validator) {
         this.commandFactory = commandFactory;
         this.persistenceFacade = persistenceFacade;
-        this.historyFactory = historyFactory;
+        this.orderItemReadManager = orderItemReadManager;
+        this.validator = validator;
     }
 
     @Override
     public BatchProcessingResult<String> execute(RequestExchangeBatchCommand command) {
-        ExchangeBatchResult batchResult = ExchangeBatchResult.create();
+        ExchangeBatchResult batchResult = ExchangeBatchResult.create("REQUEST");
+        List<OrderItem> returnRequestedItems = new ArrayList<>();
 
         for (ExchangeRequestItem item : command.items()) {
             try {
-                ExchangeClaim claim =
+                if (validator.hasActiveClaim(item.orderItemId())) {
+                    batchResult.addFailure(item.orderItemId(), "해당 주문상품에 진행 중인 클레임이 있습니다");
+                    continue;
+                }
+
+                ExchangeClaimWithHistory bundle =
                         commandFactory.createExchangeRequest(
                                 item, command.requestedBy(), command.sellerId());
-                ClaimHistory history =
-                        historyFactory.createStatusChange(
-                                ClaimType.EXCHANGE,
-                                claim.idValue(),
-                                null,
-                                "REQUESTED",
-                                command.requestedBy(),
-                                command.requestedBy());
-                batchResult.addSuccess(claim, history);
+                batchResult.addSuccess(bundle.claim(), bundle.history());
+
+                Optional<OrderItem> orderItem =
+                        orderItemReadManager.findById(item.orderItemId());
+                orderItem.ifPresent(oi -> {
+                    oi.requestReturn(command.requestedBy(), "교환 요청", commandFactory.now());
+                    returnRequestedItems.add(oi);
+                });
             } catch (Exception e) {
                 log.warn(
                         "교환 요청 생성 실패: orderItemId={}, error={}",
                         item.orderItemId(),
                         e.getMessage());
-                batchResult.addFailure(
-                        item.orderItemId(), "EXCHANGE_CREATION_FAILED", e.getMessage());
+                batchResult.addFailure(item.orderItemId(), e.getMessage());
             }
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistAllWithHistories(
-                    batchResult.claims(), batchResult.histories());
+            persistenceFacade.persistAllWithHistoriesAndOrderItems(
+                    batchResult.claims(), batchResult.histories(), returnRequestedItems);
         }
 
         return batchResult.toBatchProcessingResult();

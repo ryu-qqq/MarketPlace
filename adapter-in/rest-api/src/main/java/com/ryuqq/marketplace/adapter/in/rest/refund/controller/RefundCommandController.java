@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryMem
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.refund.RefundAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBatchApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.HoldRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RejectRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RequestRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.mapper.RefundApiMapper;
@@ -15,6 +16,7 @@ import com.ryuqq.marketplace.application.claimhistory.dto.command.AddClaimHistor
 import com.ryuqq.marketplace.application.claimhistory.port.in.command.AddClaimHistoryMemoUseCase;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.refund.port.in.command.ApproveRefundBatchUseCase;
+import com.ryuqq.marketplace.application.refund.port.in.command.HoldRefundBatchUseCase;
 import com.ryuqq.marketplace.application.refund.port.in.command.RejectRefundBatchUseCase;
 import com.ryuqq.marketplace.application.refund.port.in.command.RequestRefundBatchUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +43,7 @@ public class RefundCommandController {
     private final RequestRefundBatchUseCase requestRefundBatchUseCase;
     private final ApproveRefundBatchUseCase approveRefundBatchUseCase;
     private final RejectRefundBatchUseCase rejectRefundBatchUseCase;
+    private final HoldRefundBatchUseCase holdRefundBatchUseCase;
     private final AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase;
     private final RefundApiMapper mapper;
     private final MarketAccessChecker accessChecker;
@@ -48,12 +52,14 @@ public class RefundCommandController {
             RequestRefundBatchUseCase requestRefundBatchUseCase,
             ApproveRefundBatchUseCase approveRefundBatchUseCase,
             RejectRefundBatchUseCase rejectRefundBatchUseCase,
+            HoldRefundBatchUseCase holdRefundBatchUseCase,
             AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase,
             RefundApiMapper mapper,
             MarketAccessChecker accessChecker) {
         this.requestRefundBatchUseCase = requestRefundBatchUseCase;
         this.approveRefundBatchUseCase = approveRefundBatchUseCase;
         this.rejectRefundBatchUseCase = rejectRefundBatchUseCase;
+        this.holdRefundBatchUseCase = holdRefundBatchUseCase;
         this.addClaimHistoryMemoUseCase = addClaimHistoryMemoUseCase;
         this.mapper = mapper;
         this.accessChecker = accessChecker;
@@ -98,6 +104,20 @@ public class RefundCommandController {
         BatchProcessingResult<String> result =
                 rejectRefundBatchUseCase.execute(
                         mapper.toRejectRefundBatchCommand(request, processedBy, sellerId));
+        return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
+    }
+
+    @Operation(summary = "환불 보류/보류 해제 일괄 처리", description = "환불 건을 일괄 보류하거나 보류 해제합니다.")
+    @PreAuthorize("@access.hasPermission('refund:write')")
+    @RequirePermission(value = "refund:write", description = "환불 보류/보류 해제 일괄")
+    @PatchMapping(RefundAdminEndpoints.HOLD_BATCH)
+    public ResponseEntity<ApiResponse<BatchResultApiResponse>> holdBatch(
+            @RequestBody @Valid HoldRefundBatchApiRequest request) {
+        Long sellerId = accessChecker.resolveSellerIdOrNull();
+        String processedBy = resolveCurrentUsername();
+        BatchProcessingResult<String> result =
+                holdRefundBatchUseCase.execute(
+                        mapper.toHoldCommand(request, processedBy, sellerId));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 

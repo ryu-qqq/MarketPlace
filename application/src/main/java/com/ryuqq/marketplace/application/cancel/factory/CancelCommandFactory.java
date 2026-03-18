@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.cancel.factory;
 
 import com.ryuqq.marketplace.application.cancel.dto.command.SellerCancelBatchCommand.SellerCancelItem;
+import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.cancel.id.CancelId;
@@ -8,6 +9,8 @@ import com.ryuqq.marketplace.domain.cancel.id.CancelNumber;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
 import com.ryuqq.marketplace.domain.cancel.outbox.vo.CancelOutboxType;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReason;
+import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
+import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
 import org.springframework.stereotype.Component;
@@ -17,13 +20,15 @@ import org.springframework.stereotype.Component;
 public class CancelCommandFactory {
 
     private final TimeProvider timeProvider;
+    private final ClaimHistoryFactory historyFactory;
 
-    public CancelCommandFactory(TimeProvider timeProvider) {
+    public CancelCommandFactory(TimeProvider timeProvider, ClaimHistoryFactory historyFactory) {
         this.timeProvider = timeProvider;
+        this.historyFactory = historyFactory;
     }
 
-    /** 판매자 취소 Cancel + CancelOutbox 생성. */
-    public CancelWithOutbox createSellerCancel(
+    /** 판매자 취소 Cancel + CancelOutbox + ClaimHistory 생성. */
+    public CancelBundle createSellerCancel(
             SellerCancelItem item, String requestedBy, long sellerId) {
         Instant now = timeProvider.now();
         CancelId cancelId = CancelId.generate();
@@ -50,11 +55,51 @@ public class CancelCommandFactory {
                                 cancelId.value(), item.cancelQty()),
                         now);
 
-        return new CancelWithOutbox(cancel, outbox);
+        ClaimHistory history =
+                historyFactory.createStatusChange(
+                        ClaimType.CANCEL,
+                        cancelId.value(),
+                        null,
+                        "REQUESTED",
+                        requestedBy,
+                        requestedBy);
+
+        return new CancelBundle(cancel, outbox, history);
     }
 
-    /** 승인 시 CancelOutbox 생성. */
-    public CancelOutbox createApproveOutbox(Cancel cancel) {
+    /** 승인 시 CancelOutbox + ClaimHistory 생성. */
+    public OutboxWithHistory createApproveBundle(Cancel cancel, String processedBy) {
+        CancelOutbox outbox = createApproveOutbox(cancel);
+        ClaimHistory history =
+                historyFactory.createStatusChange(
+                        ClaimType.CANCEL,
+                        cancel.idValue(),
+                        "REQUESTED",
+                        "APPROVED",
+                        processedBy,
+                        processedBy);
+        return new OutboxWithHistory(outbox, history);
+    }
+
+    /** 거절 시 CancelOutbox + ClaimHistory 생성. */
+    public OutboxWithHistory createRejectBundle(Cancel cancel, String processedBy) {
+        CancelOutbox outbox = createRejectOutbox(cancel);
+        ClaimHistory history =
+                historyFactory.createStatusChange(
+                        ClaimType.CANCEL,
+                        cancel.idValue(),
+                        "REQUESTED",
+                        "REJECTED",
+                        processedBy,
+                        processedBy);
+        return new OutboxWithHistory(outbox, history);
+    }
+
+    public Instant now() {
+        return timeProvider.now();
+    }
+
+    private CancelOutbox createApproveOutbox(Cancel cancel) {
         Instant now = timeProvider.now();
         return CancelOutbox.forNew(
                 cancel.orderItemId(),
@@ -63,8 +108,7 @@ public class CancelCommandFactory {
                 now);
     }
 
-    /** 거절 시 CancelOutbox 생성. */
-    public CancelOutbox createRejectOutbox(Cancel cancel) {
+    private CancelOutbox createRejectOutbox(Cancel cancel) {
         Instant now = timeProvider.now();
         return CancelOutbox.forNew(
                 cancel.orderItemId(),
@@ -73,12 +117,11 @@ public class CancelCommandFactory {
                 now);
     }
 
-    public Instant now() {
-        return timeProvider.now();
-    }
+    /** Cancel + CancelOutbox + ClaimHistory 묶음 (판매자 취소용). */
+    public record CancelBundle(Cancel cancel, CancelOutbox outbox, ClaimHistory history) {}
 
-    /** Cancel + CancelOutbox 묶음. */
-    public record CancelWithOutbox(Cancel cancel, CancelOutbox outbox) {}
+    /** CancelOutbox + ClaimHistory 묶음 (승인/거절용). */
+    public record OutboxWithHistory(CancelOutbox outbox, ClaimHistory history) {}
 
     /** 취소 아웃박스 페이로드 빌더. */
     private static final class CancelOutboxPayloadBuilder {

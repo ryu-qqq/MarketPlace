@@ -4,6 +4,8 @@ import com.ryuqq.marketplace.application.cancel.manager.CancelCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelReadManager;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
+import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.cancel.id.CancelId;
 import com.ryuqq.marketplace.domain.cancel.id.CancelNumber;
@@ -14,8 +16,10 @@ import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -31,14 +35,20 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
 
     private final CancelReadManager cancelReadManager;
     private final CancelCommandManager cancelCommandManager;
+    private final OrderItemReadManager orderItemReadManager;
+    private final OrderItemCommandManager orderItemCommandManager;
     private final TimeProvider timeProvider;
 
     public CancelClaimSyncHandler(
             CancelReadManager cancelReadManager,
             CancelCommandManager cancelCommandManager,
+            OrderItemReadManager orderItemReadManager,
+            OrderItemCommandManager orderItemCommandManager,
             TimeProvider timeProvider) {
         this.cancelReadManager = cancelReadManager;
         this.cancelCommandManager = cancelCommandManager;
+        this.orderItemReadManager = orderItemReadManager;
+        this.orderItemCommandManager = orderItemCommandManager;
         this.timeProvider = timeProvider;
     }
 
@@ -145,6 +155,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         if ("ADMIN_CANCEL".equals(claim.claimType())) {
             cancel = Cancel.forSellerCancel(
                     cancelId, cancelNumber, orderItemId, sellerId, cancelQty, reason, SYNC_ACTOR, now);
+            cancelOrderItem(orderItemId, "관리자 취소 동기화", now);
         } else {
             cancel = Cancel.forBuyerCancel(
                     cancelId, cancelNumber, orderItemId, sellerId, cancelQty, reason, SYNC_ACTOR, now);
@@ -158,6 +169,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         Instant now = timeProvider.now();
         cancel.approve(SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
+        cancelOrderItem(cancel.orderItemId(), "취소 승인 동기화", now);
         return 0L;
     }
 
@@ -171,6 +183,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             Cancel cancel = existingCancel.get();
             cancel.complete(refundInfo, SYNC_ACTOR, now);
             cancelCommandManager.persist(cancel);
+            cancelOrderItem(orderItemId, "취소 완료 동기화", now);
             return 0L;
         }
 
@@ -191,6 +204,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         }
         cancel.complete(refundInfo, SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
+        cancelOrderItem(orderItemId, "취소 완료 동기화", now);
         return 0L;
     }
 
@@ -199,6 +213,17 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         cancel.withdraw(now);
         cancelCommandManager.persist(cancel);
         return 0L;
+    }
+
+    /** OrderItem을 CANCELLED로 전환합니다. 이미 취소 상태이면 무시합니다. */
+    private void cancelOrderItem(OrderItemId orderItemId, String reason, Instant now) {
+        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
+            if (item.status().canTransitionTo(
+                    com.ryuqq.marketplace.domain.order.vo.OrderItemStatus.CANCELLED)) {
+                item.cancel(SYNC_ACTOR, reason, now);
+                orderItemCommandManager.persistAll(List.of(item));
+            }
+        });
     }
 
     private int resolveQty(Integer requestQuantity) {

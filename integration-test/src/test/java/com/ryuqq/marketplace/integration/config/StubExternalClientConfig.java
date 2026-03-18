@@ -50,7 +50,6 @@ import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMa
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import com.ryuqq.marketplace.domain.productintelligence.vo.ExtractedAttribute;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
@@ -675,11 +674,6 @@ public class StubExternalClientConfig {
             @Override
             public long countByCriteria(OrderSearchCriteria criteria) {
                 return 0L;
-            }
-
-            @Override
-            public Map<OrderStatus, Long> countByStatus() {
-                return Collections.emptyMap();
             }
         };
     }

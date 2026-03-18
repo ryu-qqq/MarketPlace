@@ -16,20 +16,22 @@ import java.util.List;
  */
 public class CancelBatchResult {
 
+    private final String operationName;
     private final List<Cancel> cancels;
     private final List<CancelOutbox> outboxes;
     private final List<ClaimHistory> histories;
     private final List<BatchItemResult<String>> results;
 
-    private CancelBatchResult() {
+    private CancelBatchResult(String operationName) {
+        this.operationName = operationName;
         this.cancels = new ArrayList<>();
         this.outboxes = new ArrayList<>();
         this.histories = new ArrayList<>();
         this.results = new ArrayList<>();
     }
 
-    public static CancelBatchResult create() {
-        return new CancelBatchResult();
+    public static CancelBatchResult create(String operationName) {
+        return new CancelBatchResult(operationName);
     }
 
     public void addSuccess(Cancel cancel, CancelOutbox outbox, ClaimHistory history) {
@@ -39,8 +41,8 @@ public class CancelBatchResult {
         results.add(BatchItemResult.success(cancel.idValue()));
     }
 
-    public void addFailure(String id, String errorCode, String message) {
-        results.add(BatchItemResult.failure(id, errorCode, message));
+    public void addFailure(String id, String message) {
+        results.add(BatchItemResult.failure(id, operationName + "_FAILED", message));
     }
 
     public boolean hasSuccessItems() {

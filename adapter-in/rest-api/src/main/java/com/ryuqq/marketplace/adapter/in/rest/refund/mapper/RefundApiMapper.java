@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.refund.mapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBatchApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.HoldRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RefundSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RejectRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RequestRefundBatchApiRequest;
@@ -18,6 +19,7 @@ import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryR
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.application.refund.dto.command.ApproveRefundBatchCommand;
+import com.ryuqq.marketplace.application.refund.dto.command.HoldRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.dto.command.RejectRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.dto.command.RequestRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.dto.command.RequestRefundBatchCommand.RefundRequestItem;
@@ -77,6 +79,12 @@ public class RefundApiMapper {
     public RejectRefundBatchCommand toRejectRefundBatchCommand(
             RejectRefundBatchApiRequest request, String processedBy, Long sellerId) {
         return new RejectRefundBatchCommand(request.refundClaimIds(), processedBy, sellerId);
+    }
+
+    public HoldRefundBatchCommand toHoldCommand(
+            HoldRefundBatchApiRequest request, String processedBy, Long sellerId) {
+        return new HoldRefundBatchCommand(
+                request.refundClaimIds(), request.isHold(), request.memo(), processedBy, sellerId);
     }
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(

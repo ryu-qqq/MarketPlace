@@ -189,10 +189,8 @@ public class RefundClaim {
         if (this.holdInfo != null) {
             throw new RefundException(RefundErrorCode.ALREADY_HOLD);
         }
-        if (holdReason == null || holdReason.isBlank()) {
-            throw new RefundException(RefundErrorCode.HOLD_REASON_REQUIRED);
-        }
-        this.holdInfo = HoldInfo.of(holdReason, now);
+        String reason = (holdReason != null && !holdReason.isBlank()) ? holdReason : "보류 처리";
+        this.holdInfo = HoldInfo.of(reason, now);
         this.updatedAt = now;
     }
 

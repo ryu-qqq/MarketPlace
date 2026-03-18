@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ApproveExchang
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CollectExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CompleteExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ConvertToRefundBatchApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.HoldExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.PrepareExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.RejectExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.RequestExchangeBatchApiRequest;
@@ -23,6 +24,7 @@ import com.ryuqq.marketplace.application.exchange.port.in.command.ApproveExchang
 import com.ryuqq.marketplace.application.exchange.port.in.command.CollectExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.port.in.command.CompleteExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.port.in.command.ConvertToRefundBatchUseCase;
+import com.ryuqq.marketplace.application.exchange.port.in.command.HoldExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.port.in.command.PrepareExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.port.in.command.RejectExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.port.in.command.RequestExchangeBatchUseCase;
@@ -36,6 +38,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +58,7 @@ public class ExchangeCommandController {
     private final ShipExchangeBatchUseCase shipExchangeBatchUseCase;
     private final CompleteExchangeBatchUseCase completeExchangeBatchUseCase;
     private final ConvertToRefundBatchUseCase convertToRefundBatchUseCase;
+    private final HoldExchangeBatchUseCase holdExchangeBatchUseCase;
     private final AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase;
     private final ExchangeApiMapper mapper;
     private final MarketAccessChecker accessChecker;
@@ -68,6 +72,7 @@ public class ExchangeCommandController {
             ShipExchangeBatchUseCase shipExchangeBatchUseCase,
             CompleteExchangeBatchUseCase completeExchangeBatchUseCase,
             ConvertToRefundBatchUseCase convertToRefundBatchUseCase,
+            HoldExchangeBatchUseCase holdExchangeBatchUseCase,
             AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase,
             ExchangeApiMapper mapper,
             MarketAccessChecker accessChecker) {
@@ -79,6 +84,7 @@ public class ExchangeCommandController {
         this.shipExchangeBatchUseCase = shipExchangeBatchUseCase;
         this.completeExchangeBatchUseCase = completeExchangeBatchUseCase;
         this.convertToRefundBatchUseCase = convertToRefundBatchUseCase;
+        this.holdExchangeBatchUseCase = holdExchangeBatchUseCase;
         this.addClaimHistoryMemoUseCase = addClaimHistoryMemoUseCase;
         this.mapper = mapper;
         this.accessChecker = accessChecker;
@@ -193,6 +199,20 @@ public class ExchangeCommandController {
         BatchProcessingResult<String> result =
                 convertToRefundBatchUseCase.execute(
                         mapper.toConvertToRefundCommand(request, processedBy, sellerId));
+        return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
+    }
+
+    @Operation(summary = "교환 보류/보류 해제 일괄 처리", description = "교환 건을 일괄 보류하거나 보류 해제합니다.")
+    @PreAuthorize("@access.hasPermission('exchange:write')")
+    @RequirePermission(value = "exchange:write", description = "교환 보류/보류 해제 일괄")
+    @PatchMapping(ExchangeAdminEndpoints.HOLD_BATCH)
+    public ResponseEntity<ApiResponse<BatchResultApiResponse>> holdBatch(
+            @RequestBody @Valid HoldExchangeBatchApiRequest request) {
+        Long sellerId = accessChecker.resolveSellerIdOrNull();
+        String processedBy = resolveCurrentUsername();
+        BatchProcessingResult<String> result =
+                holdExchangeBatchUseCase.execute(
+                        mapper.toHoldCommand(request, processedBy, sellerId));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 

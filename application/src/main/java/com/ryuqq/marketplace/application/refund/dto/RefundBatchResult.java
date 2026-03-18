@@ -15,20 +15,22 @@ import java.util.List;
  */
 public class RefundBatchResult {
 
+    private final String operationName;
     private final List<RefundClaim> claims;
     private final List<RefundOutbox> outboxes;
     private final List<ClaimHistory> histories;
     private final List<BatchItemResult<String>> results;
 
-    private RefundBatchResult() {
+    private RefundBatchResult(String operationName) {
+        this.operationName = operationName;
         this.claims = new ArrayList<>();
         this.outboxes = new ArrayList<>();
         this.histories = new ArrayList<>();
         this.results = new ArrayList<>();
     }
 
-    public static RefundBatchResult create() {
-        return new RefundBatchResult();
+    public static RefundBatchResult create(String operationName) {
+        return new RefundBatchResult(operationName);
     }
 
     public void addSuccess(RefundClaim claim, RefundOutbox outbox, ClaimHistory history) {
@@ -38,8 +40,8 @@ public class RefundBatchResult {
         results.add(BatchItemResult.success(claim.idValue()));
     }
 
-    public void addFailure(String id, String errorCode, String message) {
-        results.add(BatchItemResult.failure(id, errorCode, message));
+    public void addFailure(String id, String message) {
+        results.add(BatchItemResult.failure(id, operationName + "_FAILED", message));
     }
 
     public boolean hasSuccessItems() {

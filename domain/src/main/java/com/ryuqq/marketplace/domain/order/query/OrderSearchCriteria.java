@@ -2,12 +2,12 @@ package com.ryuqq.marketplace.domain.order.query;
 
 import com.ryuqq.marketplace.domain.common.vo.DateRange;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.List;
 
 /** 주문 검색 조건 Criteria. */
 public record OrderSearchCriteria(
-        List<OrderStatus> statuses,
+        List<OrderItemStatus> statuses,
         OrderSearchField searchField,
         String searchWord,
         DateRange dateRange,
@@ -19,7 +19,7 @@ public record OrderSearchCriteria(
     }
 
     public static OrderSearchCriteria of(
-            List<OrderStatus> statuses,
+            List<OrderItemStatus> statuses,
             OrderSearchField searchField,
             String searchWord,
             DateRange dateRange,

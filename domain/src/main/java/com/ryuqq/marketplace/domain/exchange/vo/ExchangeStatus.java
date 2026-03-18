@@ -22,6 +22,13 @@ public enum ExchangeStatus {
     private static final Set<ExchangeStatus> REJECTABLE =
             EnumSet.of(REQUESTED, COLLECTED, PREPARING);
     private static final Set<ExchangeStatus> CANCELLABLE = EnumSet.of(REQUESTED, COLLECTING);
+    private static final Set<ExchangeStatus> ACTIVE =
+            EnumSet.of(REQUESTED, COLLECTING, COLLECTED, PREPARING, SHIPPING);
+
+    /** 진행 중인 상태인지 확인. COMPLETED/REJECTED/CANCELLED는 종료 상태. */
+    public boolean isActive() {
+        return ACTIVE.contains(this);
+    }
 
     public boolean canTransitionTo(ExchangeStatus target) {
         return getAllowedFrom(target).contains(this);

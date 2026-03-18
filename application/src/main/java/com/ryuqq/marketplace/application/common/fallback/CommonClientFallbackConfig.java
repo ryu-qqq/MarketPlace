@@ -15,7 +15,6 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
@@ -23,7 +22,6 @@ import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -147,11 +145,6 @@ public class CommonClientFallbackConfig {
             @Override
             public long countByCriteria(OrderSearchCriteria criteria) {
                 return 0;
-            }
-
-            @Override
-            public Map<OrderStatus, Long> countByStatus() {
-                return Map.of();
             }
         };
     }

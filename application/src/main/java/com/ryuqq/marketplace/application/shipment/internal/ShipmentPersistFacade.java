@@ -36,7 +36,7 @@ public class ShipmentPersistFacade {
     public void persistConfirmBundle(ConfirmShipmentBundle bundle) {
         shipmentCommandManager.persistAll(bundle.shipments());
         outboxCommandManager.persistAll(bundle.outboxes());
-        orderItemCommandManager.updateStatusAll(bundle.orderItems());
+        orderItemCommandManager.persistAll(bundle.orderItems());
     }
 
     @Transactional

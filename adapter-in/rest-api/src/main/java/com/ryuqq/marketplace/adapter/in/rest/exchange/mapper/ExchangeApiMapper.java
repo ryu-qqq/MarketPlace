@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CollectExchang
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CompleteExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ConvertToRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ExchangeSearchApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.HoldExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.PrepareExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.RejectExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.RequestExchangeBatchApiRequest;
@@ -26,6 +27,7 @@ import com.ryuqq.marketplace.application.exchange.dto.command.ApproveExchangeBat
 import com.ryuqq.marketplace.application.exchange.dto.command.CollectExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.CompleteExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.ConvertToRefundBatchCommand;
+import com.ryuqq.marketplace.application.exchange.dto.command.HoldExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.PrepareExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.RejectExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand;
@@ -130,6 +132,12 @@ public class ExchangeApiMapper {
             ConvertToRefundBatchApiRequest request, String processedBy, Long sellerId) {
         return new ConvertToRefundBatchCommand(
                 request.exchangeClaimIds(), processedBy, sellerId);
+    }
+
+    public HoldExchangeBatchCommand toHoldCommand(
+            HoldExchangeBatchApiRequest request, String processedBy, Long sellerId) {
+        return new HoldExchangeBatchCommand(
+                request.exchangeClaimIds(), request.isHold(), request.memo(), processedBy, sellerId);
     }
 
     // ==================== Query 변환 ====================

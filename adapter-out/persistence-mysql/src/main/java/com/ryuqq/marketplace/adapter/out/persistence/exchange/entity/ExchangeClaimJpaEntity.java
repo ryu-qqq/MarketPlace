@@ -103,6 +103,12 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
     @Column(name = "completed_at")
     private Instant completedAt;
 
+    @Column(name = "hold_reason", length = 500)
+    private String holdReason;
+
+    @Column(name = "hold_at")
+    private Instant holdAt;
+
     protected ExchangeClaimJpaEntity() {
         super();
     }
@@ -138,6 +144,8 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
             Instant requestedAt,
             Instant processedAt,
             Instant completedAt,
+            String holdReason,
+            Instant holdAt,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
@@ -171,6 +179,8 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
         this.requestedAt = requestedAt;
         this.processedAt = processedAt;
         this.completedAt = completedAt;
+        this.holdReason = holdReason;
+        this.holdAt = holdAt;
     }
 
     public static ExchangeClaimJpaEntity create(
@@ -204,6 +214,8 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
             Instant requestedAt,
             Instant processedAt,
             Instant completedAt,
+            String holdReason,
+            Instant holdAt,
             Instant createdAt,
             Instant updatedAt) {
         return new ExchangeClaimJpaEntity(
@@ -216,6 +228,7 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
                 collectShippingFee, reshipShippingFee, totalShippingFee, shippingFeePayer,
                 claimShipmentId, linkedOrderId,
                 requestedBy, processedBy, requestedAt, processedAt, completedAt,
+                holdReason, holdAt,
                 createdAt, updatedAt);
     }
 
@@ -249,4 +262,6 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
     public Instant getRequestedAt() { return requestedAt; }
     public Instant getProcessedAt() { return processedAt; }
     public Instant getCompletedAt() { return completedAt; }
+    public String getHoldReason() { return holdReason; }
+    public Instant getHoldAt() { return holdAt; }
 }

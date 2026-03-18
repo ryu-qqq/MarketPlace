@@ -168,6 +168,7 @@ public final class ExchangeFixtures {
                 defaultExchangeOption(),
                 defaultAmountAdjustment(),
                 defaultCollectShipment(),
+                null,
                 status == ExchangeStatus.SHIPPING || status == ExchangeStatus.COMPLETED
                         ? DEFAULT_LINKED_ORDER_ID
                         : null,

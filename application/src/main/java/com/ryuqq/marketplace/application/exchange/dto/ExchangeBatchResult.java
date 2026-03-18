@@ -16,20 +16,22 @@ import java.util.List;
  */
 public class ExchangeBatchResult {
 
+    private final String operationName;
     private final List<ExchangeClaim> claims;
     private final List<ExchangeOutbox> outboxes;
     private final List<ClaimHistory> histories;
     private final List<BatchItemResult<String>> results;
 
-    private ExchangeBatchResult() {
+    private ExchangeBatchResult(String operationName) {
+        this.operationName = operationName;
         this.claims = new ArrayList<>();
         this.outboxes = new ArrayList<>();
         this.histories = new ArrayList<>();
         this.results = new ArrayList<>();
     }
 
-    public static ExchangeBatchResult create() {
-        return new ExchangeBatchResult();
+    public static ExchangeBatchResult create(String operationName) {
+        return new ExchangeBatchResult(operationName);
     }
 
     /** Outbox를 포함한 성공 결과 추가. */
@@ -47,8 +49,8 @@ public class ExchangeBatchResult {
         addSuccess(claim, null, history);
     }
 
-    public void addFailure(String id, String errorCode, String message) {
-        results.add(BatchItemResult.failure(id, errorCode, message));
+    public void addFailure(String id, String message) {
+        results.add(BatchItemResult.failure(id, operationName + "_FAILED", message));
     }
 
     public boolean hasSuccessItems() {

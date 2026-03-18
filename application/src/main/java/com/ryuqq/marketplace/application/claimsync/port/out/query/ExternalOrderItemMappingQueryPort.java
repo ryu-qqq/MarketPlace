@@ -13,4 +13,6 @@ public interface ExternalOrderItemMappingQueryPort {
             long salesChannelId, String externalProductOrderId);
 
     List<ExternalOrderItemMapping> findByOrderItemIds(List<OrderItemId> orderItemIds);
+
+    Optional<ExternalOrderItemMapping> findByOrderItemId(String orderItemId);
 }

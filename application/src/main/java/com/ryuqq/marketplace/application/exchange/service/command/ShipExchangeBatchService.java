@@ -1,18 +1,15 @@
 package com.ryuqq.marketplace.application.exchange.service.command;
 
-import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.ShipExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.ShipExchangeBatchCommand.ShipItem;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
+import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory.OutboxWithHistory;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.ShipExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
-import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
-import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
-import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -30,17 +27,14 @@ public class ShipExchangeBatchService implements ShipExchangeBatchUseCase {
     private final ExchangeBatchValidator validator;
     private final ExchangeCommandFactory commandFactory;
     private final ExchangePersistenceFacade persistenceFacade;
-    private final ClaimHistoryFactory historyFactory;
 
     public ShipExchangeBatchService(
             ExchangeBatchValidator validator,
             ExchangeCommandFactory commandFactory,
-            ExchangePersistenceFacade persistenceFacade,
-            ClaimHistoryFactory historyFactory) {
+            ExchangePersistenceFacade persistenceFacade) {
         this.validator = validator;
         this.commandFactory = commandFactory;
         this.persistenceFacade = persistenceFacade;
-        this.historyFactory = historyFactory;
     }
 
     @Override
@@ -53,29 +47,24 @@ public class ShipExchangeBatchService implements ShipExchangeBatchUseCase {
                 command.items().stream()
                         .collect(Collectors.toMap(ShipItem::exchangeClaimId, Function.identity()));
 
-        ExchangeBatchResult batchResult = ExchangeBatchResult.create();
+        ExchangeBatchResult batchResult = ExchangeBatchResult.create("SHIP");
         for (ExchangeClaim claim : claims) {
             try {
                 ShipItem item = itemMap.get(claim.idValue());
                 claim.startShipping(item.linkedOrderId(), command.processedBy(), commandFactory.now());
-                ExchangeOutbox outbox =
-                        commandFactory.createShipOutbox(
-                                claim, item.deliveryCompany(), item.trackingNumber());
-                ClaimHistory history =
-                        historyFactory.createStatusChange(
-                                ClaimType.EXCHANGE,
-                                claim.idValue(),
-                                "PREPARING",
-                                "SHIPPING",
-                                command.processedBy(),
+                OutboxWithHistory bundle =
+                        commandFactory.createShipBundle(
+                                claim,
+                                item.deliveryCompany(),
+                                item.trackingNumber(),
                                 command.processedBy());
-                batchResult.addSuccess(claim, outbox, history);
+                batchResult.addSuccess(claim, bundle.outbox(), bundle.history());
             } catch (Exception e) {
                 log.warn(
                         "교환 재배송 실패: exchangeClaimId={}, error={}",
                         claim.idValue(),
                         e.getMessage());
-                batchResult.addFailure(claim.idValue(), "SHIP_FAILED", e.getMessage());
+                batchResult.addFailure(claim.idValue(), e.getMessage());
             }
         }
 

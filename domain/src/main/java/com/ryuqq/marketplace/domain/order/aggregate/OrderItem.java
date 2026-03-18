@@ -10,6 +10,10 @@ import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import com.ryuqq.marketplace.domain.order.vo.ReceiverInfo;
 import com.ryuqq.marketplace.domain.order.vo.SettlementInfo;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /** 주문 상품. Order Aggregate 내부 구성 요소. */
 public class OrderItem {
@@ -22,6 +26,8 @@ public class OrderItem {
     private final ReceiverInfo receiverInfo;
     private OrderItemStatus status;
     private SettlementInfo settlementInfo;
+
+    private final List<OrderItemHistory> histories = new ArrayList<>();
 
     private OrderItem(
             OrderItemId id,
@@ -68,30 +74,43 @@ public class OrderItem {
             ExternalOrderItemPrice price,
             ReceiverInfo receiverInfo,
             OrderItemStatus status,
-            SettlementInfo settlementInfo) {
-        return new OrderItem(
+            SettlementInfo settlementInfo,
+            List<OrderItemHistory> histories) {
+        OrderItem item = new OrderItem(
                 id, orderItemNumber, internalProduct, externalProduct, price, receiverInfo, status,
                 settlementInfo);
+        if (histories != null) {
+            item.histories.addAll(histories);
+        }
+        return item;
     }
 
-    public void confirm() {
+    public void confirm(String changedBy, Instant now) {
+        OrderItemStatus from = this.status;
         validateTransition(OrderItemStatus.CONFIRMED);
         this.status = OrderItemStatus.CONFIRMED;
+        this.histories.add(OrderItemHistory.of(this.id, from, OrderItemStatus.CONFIRMED, changedBy, null, now));
     }
 
-    public void cancel() {
+    public void cancel(String changedBy, String reason, Instant now) {
+        OrderItemStatus from = this.status;
         validateTransition(OrderItemStatus.CANCELLED);
         this.status = OrderItemStatus.CANCELLED;
+        this.histories.add(OrderItemHistory.of(this.id, from, OrderItemStatus.CANCELLED, changedBy, reason, now));
     }
 
-    public void requestReturn() {
+    public void requestReturn(String changedBy, String reason, Instant now) {
+        OrderItemStatus from = this.status;
         validateTransition(OrderItemStatus.RETURN_REQUESTED);
         this.status = OrderItemStatus.RETURN_REQUESTED;
+        this.histories.add(OrderItemHistory.of(this.id, from, OrderItemStatus.RETURN_REQUESTED, changedBy, reason, now));
     }
 
-    public void completeReturn() {
+    public void completeReturn(String changedBy, Instant now) {
+        OrderItemStatus from = this.status;
         validateTransition(OrderItemStatus.RETURNED);
         this.status = OrderItemStatus.RETURNED;
+        this.histories.add(OrderItemHistory.of(this.id, from, OrderItemStatus.RETURNED, changedBy, null, now));
     }
 
     public boolean isConfirmable() {
@@ -157,5 +176,9 @@ public class OrderItem {
 
     public SettlementInfo settlementInfo() {
         return settlementInfo;
+    }
+
+    public List<OrderItemHistory> histories() {
+        return Collections.unmodifiableList(histories);
     }
 }

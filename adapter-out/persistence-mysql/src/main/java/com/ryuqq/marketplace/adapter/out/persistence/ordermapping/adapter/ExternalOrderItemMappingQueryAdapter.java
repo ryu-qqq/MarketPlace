@@ -38,4 +38,11 @@ public class ExternalOrderItemMappingQueryAdapter implements ExternalOrderItemMa
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public Optional<ExternalOrderItemMapping> findByOrderItemId(String orderItemId) {
+        return queryDslRepository.findByOrderItemIdIn(List.of(orderItemId)).stream()
+                .findFirst()
+                .map(mapper::toDomain);
+    }
 }

@@ -14,7 +14,13 @@ public enum ExchangeOutboxType {
     SHIP("재배송"),
 
     /** 교환 거절 → 네이버 rejectExchange() */
-    REJECT("교환 거절");
+    REJECT("교환 거절"),
+
+    /** 교환 보류 → 네이버 holdbackExchange() */
+    HOLD("교환 보류"),
+
+    /** 교환 보류 해제 → 네이버 releaseExchangeHoldback() */
+    RELEASE_HOLD("교환 보류 해제");
 
     private final String description;
 

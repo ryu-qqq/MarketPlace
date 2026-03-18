@@ -2,12 +2,16 @@ package com.ryuqq.marketplace.application.claimsync.internal;
 
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
+import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundReadManager;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimId;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimNumber;
@@ -32,14 +36,20 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
 
     private final RefundReadManager refundReadManager;
     private final RefundCommandManager refundCommandManager;
+    private final OrderItemReadManager orderItemReadManager;
+    private final OrderItemCommandManager orderItemCommandManager;
     private final TimeProvider timeProvider;
 
     public RefundClaimSyncHandler(
             RefundReadManager refundReadManager,
             RefundCommandManager refundCommandManager,
+            OrderItemReadManager orderItemReadManager,
+            OrderItemCommandManager orderItemCommandManager,
             TimeProvider timeProvider) {
         this.refundReadManager = refundReadManager;
         this.refundCommandManager = refundCommandManager;
+        this.orderItemReadManager = orderItemReadManager;
+        this.orderItemCommandManager = orderItemCommandManager;
         this.timeProvider = timeProvider;
     }
 
@@ -122,6 +132,7 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
                 refundClaimId, claimNumber, orderItemId, sellerId, refundQty, reason, SYNC_ACTOR, now);
 
         refundCommandManager.persist(refundClaim);
+        requestReturnOrderItem(orderItemId, "환불 요청 동기화", now);
         return 0L;
     }
 
@@ -149,6 +160,7 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
             RefundClaim refundClaim = existingRefund.get();
             refundClaim.complete(refundInfo, SYNC_ACTOR, now);
             refundCommandManager.persist(refundClaim);
+            completeReturnOrderItem(orderItemId, now);
             return 0L;
         }
 
@@ -164,6 +176,8 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         refundClaim.completeCollection(SYNC_ACTOR, now);
         refundClaim.complete(refundInfo, SYNC_ACTOR, now);
         refundCommandManager.persist(refundClaim);
+        requestReturnOrderItem(orderItemId, "환불 완료 동기화", now);
+        completeReturnOrderItem(orderItemId, now);
         return 0L;
     }
 
@@ -182,6 +196,24 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         String rawReason = claim.claimReason();
         RefundReasonType reasonType = parseRefundReasonType(rawReason);
         return RefundReason.of(reasonType, null);
+    }
+
+    private void requestReturnOrderItem(OrderItemId orderItemId, String reason, Instant now) {
+        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
+            if (item.status().canTransitionTo(OrderItemStatus.RETURN_REQUESTED)) {
+                item.requestReturn(SYNC_ACTOR, reason, now);
+                orderItemCommandManager.persistAll(java.util.List.of(item));
+            }
+        });
+    }
+
+    private void completeReturnOrderItem(OrderItemId orderItemId, Instant now) {
+        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
+            if (item.status().canTransitionTo(OrderItemStatus.RETURNED)) {
+                item.completeReturn(SYNC_ACTOR, now);
+                orderItemCommandManager.persistAll(java.util.List.of(item));
+            }
+        });
     }
 
     private RefundReasonType parseRefundReasonType(String rawReason) {

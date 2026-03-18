@@ -1,15 +1,13 @@
 package com.ryuqq.marketplace.application.refund.service.command;
 
-import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.refund.dto.RefundBatchResult;
 import com.ryuqq.marketplace.application.refund.dto.command.RejectRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory.OutboxWithHistory;
 import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceFacade;
 import com.ryuqq.marketplace.application.refund.port.in.command.RejectRefundBatchUseCase;
 import com.ryuqq.marketplace.application.refund.validator.RefundBatchValidator;
-import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
-import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
 import java.util.List;
 import org.slf4j.Logger;
@@ -25,38 +23,30 @@ public class RejectRefundBatchService implements RejectRefundBatchUseCase {
     private final RefundBatchValidator validator;
     private final RefundCommandFactory commandFactory;
     private final RefundPersistenceFacade persistenceFacade;
-    private final ClaimHistoryFactory historyFactory;
 
     public RejectRefundBatchService(
             RefundBatchValidator validator,
             RefundCommandFactory commandFactory,
-            RefundPersistenceFacade persistenceFacade,
-            ClaimHistoryFactory historyFactory) {
+            RefundPersistenceFacade persistenceFacade) {
         this.validator = validator;
         this.commandFactory = commandFactory;
         this.persistenceFacade = persistenceFacade;
-        this.historyFactory = historyFactory;
     }
 
     @Override
     public BatchProcessingResult<String> execute(RejectRefundBatchCommand command) {
         List<RefundClaim> claims = validator.validateAndGet(command.refundClaimIds(), command.sellerId());
 
-        RefundBatchResult batchResult = RefundBatchResult.create();
+        RefundBatchResult batchResult = RefundBatchResult.create("REJECT");
         for (RefundClaim claim : claims) {
             try {
                 claim.reject(command.processedBy(), commandFactory.now());
-                ClaimHistory history = historyFactory.createStatusChange(
-                        ClaimType.REFUND,
-                        claim.idValue(),
-                        "REQUESTED",
-                        "REJECTED",
-                        command.processedBy(),
-                        command.processedBy());
-                batchResult.addSuccess(claim, commandFactory.createRejectOutbox(claim), history);
+                OutboxWithHistory bundle =
+                        commandFactory.createRejectBundle(claim, command.processedBy());
+                batchResult.addSuccess(claim, bundle.outbox(), bundle.history());
             } catch (Exception e) {
                 log.warn("환불 거절 실패: refundClaimId={}, error={}", claim.idValue(), e.getMessage());
-                batchResult.addFailure(claim.idValue(), "REJECT_FAILED", e.getMessage());
+                batchResult.addFailure(claim.idValue(), e.getMessage());
             }
         }
 

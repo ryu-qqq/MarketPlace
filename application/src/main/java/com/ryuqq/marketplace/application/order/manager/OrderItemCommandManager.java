@@ -17,7 +17,7 @@ public class OrderItemCommandManager {
     }
 
     @Transactional
-    public void updateStatusAll(List<OrderItem> orderItems) {
-        commandPort.updateStatusAll(orderItems);
+    public void persistAll(List<OrderItem> orderItems) {
+        commandPort.persistAll(orderItems);
     }
 }

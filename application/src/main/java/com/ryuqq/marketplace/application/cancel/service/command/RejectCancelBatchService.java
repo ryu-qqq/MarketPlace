@@ -3,14 +3,12 @@ package com.ryuqq.marketplace.application.cancel.service.command;
 import com.ryuqq.marketplace.application.cancel.dto.CancelBatchResult;
 import com.ryuqq.marketplace.application.cancel.dto.command.RejectCancelBatchCommand;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
+import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory.OutboxWithHistory;
 import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceFacade;
 import com.ryuqq.marketplace.application.cancel.port.in.command.RejectCancelBatchUseCase;
 import com.ryuqq.marketplace.application.cancel.validator.CancelBatchValidator;
-import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
-import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
-import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,38 +23,30 @@ public class RejectCancelBatchService implements RejectCancelBatchUseCase {
     private final CancelBatchValidator validator;
     private final CancelCommandFactory commandFactory;
     private final CancelPersistenceFacade persistenceFacade;
-    private final ClaimHistoryFactory historyFactory;
 
     public RejectCancelBatchService(
             CancelBatchValidator validator,
             CancelCommandFactory commandFactory,
-            CancelPersistenceFacade persistenceFacade,
-            ClaimHistoryFactory historyFactory) {
+            CancelPersistenceFacade persistenceFacade) {
         this.validator = validator;
         this.commandFactory = commandFactory;
         this.persistenceFacade = persistenceFacade;
-        this.historyFactory = historyFactory;
     }
 
     @Override
     public BatchProcessingResult<String> execute(RejectCancelBatchCommand command) {
         List<Cancel> cancels = validator.validateAndGet(command.cancelIds(), command.sellerId());
 
-        CancelBatchResult batchResult = CancelBatchResult.create();
+        CancelBatchResult batchResult = CancelBatchResult.create("REJECT");
         for (Cancel cancel : cancels) {
             try {
                 cancel.reject(command.processedBy(), commandFactory.now());
-                ClaimHistory history = historyFactory.createStatusChange(
-                        ClaimType.CANCEL,
-                        cancel.idValue(),
-                        "REQUESTED",
-                        "REJECTED",
-                        command.processedBy(),
-                        command.processedBy());
-                batchResult.addSuccess(cancel, commandFactory.createRejectOutbox(cancel), history);
+                OutboxWithHistory bundle =
+                        commandFactory.createRejectBundle(cancel, command.processedBy());
+                batchResult.addSuccess(cancel, bundle.outbox(), bundle.history());
             } catch (Exception e) {
                 log.warn("취소 거절 실패: cancelId={}, error={}", cancel.idValue(), e.getMessage());
-                batchResult.addFailure(cancel.idValue(), "REJECT_FAILED", e.getMessage());
+                batchResult.addFailure(cancel.idValue(), e.getMessage());
             }
         }
 

@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.application.exchange.service.command;
 
-import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.ConvertToRefundBatchCommand;
@@ -11,7 +10,6 @@ import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidat
 import com.ryuqq.marketplace.application.refund.dto.command.RequestRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.port.in.command.RequestRefundBatchUseCase;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
-import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReasonType;
 import java.util.ArrayList;
@@ -35,19 +33,16 @@ public class ConvertToRefundBatchService implements ConvertToRefundBatchUseCase 
     private final ExchangeBatchValidator validator;
     private final ExchangeCommandFactory commandFactory;
     private final ExchangePersistenceFacade persistenceFacade;
-    private final ClaimHistoryFactory historyFactory;
     private final RequestRefundBatchUseCase requestRefundBatchUseCase;
 
     public ConvertToRefundBatchService(
             ExchangeBatchValidator validator,
             ExchangeCommandFactory commandFactory,
             ExchangePersistenceFacade persistenceFacade,
-            ClaimHistoryFactory historyFactory,
             RequestRefundBatchUseCase requestRefundBatchUseCase) {
         this.validator = validator;
         this.commandFactory = commandFactory;
         this.persistenceFacade = persistenceFacade;
-        this.historyFactory = historyFactory;
         this.requestRefundBatchUseCase = requestRefundBatchUseCase;
     }
 
@@ -56,7 +51,7 @@ public class ConvertToRefundBatchService implements ConvertToRefundBatchUseCase 
         List<ExchangeClaim> claims =
                 validator.validateAndGet(command.exchangeClaimIds(), command.sellerId());
 
-        ExchangeBatchResult batchResult = ExchangeBatchResult.create();
+        ExchangeBatchResult batchResult = ExchangeBatchResult.create("CONVERT");
         List<RequestRefundBatchCommand.RefundRequestItem> refundItems = new ArrayList<>();
 
         for (ExchangeClaim claim : claims) {
@@ -64,13 +59,8 @@ public class ConvertToRefundBatchService implements ConvertToRefundBatchUseCase 
                 String fromStatus = claim.status().name();
                 claim.cancel(commandFactory.now());
                 ClaimHistory history =
-                        historyFactory.createStatusChange(
-                                ClaimType.EXCHANGE,
-                                claim.idValue(),
-                                fromStatus,
-                                "CANCELLED",
-                                command.processedBy(),
-                                command.processedBy());
+                        commandFactory.createConvertToRefundHistory(
+                                claim, fromStatus, command.processedBy());
                 batchResult.addSuccess(claim, history);
 
                 refundItems.add(
@@ -84,7 +74,7 @@ public class ConvertToRefundBatchService implements ConvertToRefundBatchUseCase 
                         "교환→환불 전환 실패: exchangeClaimId={}, error={}",
                         claim.idValue(),
                         e.getMessage());
-                batchResult.addFailure(claim.idValue(), "CONVERT_FAILED", e.getMessage());
+                batchResult.addFailure(claim.idValue(), e.getMessage());
             }
         }
 

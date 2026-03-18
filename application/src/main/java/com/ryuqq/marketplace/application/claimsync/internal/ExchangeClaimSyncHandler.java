@@ -4,6 +4,8 @@ import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPay
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeCommandManager;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeReadManager;
+import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
+import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.domain.claim.vo.FeePayer;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
@@ -16,8 +18,11 @@ import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
+import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
@@ -34,14 +39,20 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
 
     private final ExchangeReadManager exchangeReadManager;
     private final ExchangeCommandManager exchangeCommandManager;
+    private final OrderItemReadManager orderItemReadManager;
+    private final OrderItemCommandManager orderItemCommandManager;
     private final TimeProvider timeProvider;
 
     public ExchangeClaimSyncHandler(
             ExchangeReadManager exchangeReadManager,
             ExchangeCommandManager exchangeCommandManager,
+            OrderItemReadManager orderItemReadManager,
+            OrderItemCommandManager orderItemCommandManager,
             TimeProvider timeProvider) {
         this.exchangeReadManager = exchangeReadManager;
         this.exchangeCommandManager = exchangeCommandManager;
+        this.orderItemReadManager = orderItemReadManager;
+        this.orderItemCommandManager = orderItemCommandManager;
         this.timeProvider = timeProvider;
     }
 
@@ -149,6 +160,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
                 SYNC_ACTOR, now);
 
         exchangeCommandManager.persist(exchangeClaim);
+        requestReturnOrderItem(orderItemId, "교환 요청 동기화", now);
         return 0L;
     }
 
@@ -186,6 +198,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             ExchangeClaim exchangeClaim = existing.get();
             exchangeClaim.complete(SYNC_ACTOR, now);
             exchangeCommandManager.persist(exchangeClaim);
+            completeReturnOrderItem(orderItemId, now);
             return 0L;
         }
 
@@ -210,6 +223,8 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         exchangeClaim.startShipping(linkedOrderId, SYNC_ACTOR, now);
         exchangeClaim.complete(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
+        requestReturnOrderItem(orderItemId, "교환 완료 동기화", now);
+        completeReturnOrderItem(orderItemId, now);
         return 0L;
     }
 
@@ -231,6 +246,24 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
                 ? claim.claimDetailedReason()
                 : "외부 채널 교환";
         return new ExchangeReason(reasonType, detail);
+    }
+
+    private void requestReturnOrderItem(OrderItemId orderItemId, String reason, Instant now) {
+        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
+            if (item.status().canTransitionTo(OrderItemStatus.RETURN_REQUESTED)) {
+                item.requestReturn(SYNC_ACTOR, reason, now);
+                orderItemCommandManager.persistAll(List.of(item));
+            }
+        });
+    }
+
+    private void completeReturnOrderItem(OrderItemId orderItemId, Instant now) {
+        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
+            if (item.status().canTransitionTo(OrderItemStatus.RETURNED)) {
+                item.completeReturn(SYNC_ACTOR, now);
+                orderItemCommandManager.persistAll(List.of(item));
+            }
+        });
     }
 
     private ExchangeReasonType parseExchangeReasonType(String rawReason) {
