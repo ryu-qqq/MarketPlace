@@ -1,0 +1,21 @@
+package com.ryuqq.marketplace.domain.claimsync.vo;
+
+/** 클레임 동기화 처리 결과 액션. */
+public enum ClaimSyncAction {
+    CANCEL_CREATED,
+    CANCEL_APPROVED,
+    CANCEL_COMPLETED,
+    CANCEL_WITHDRAWN,
+    REFUND_CREATED,
+    REFUND_COLLECTING,
+    REFUND_COLLECTED,
+    REFUND_COMPLETED,
+    REFUND_REJECTED,
+    EXCHANGE_CREATED,
+    EXCHANGE_COLLECTING,
+    EXCHANGE_COLLECTED,
+    EXCHANGE_SHIPPING,
+    EXCHANGE_COMPLETED,
+    EXCHANGE_REJECTED,
+    SKIPPED
+}
