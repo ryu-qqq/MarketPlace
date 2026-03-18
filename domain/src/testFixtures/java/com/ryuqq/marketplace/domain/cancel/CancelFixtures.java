@@ -1,9 +1,7 @@
 package com.ryuqq.marketplace.domain.cancel;
 
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
-import com.ryuqq.marketplace.domain.cancel.aggregate.CancelItem;
 import com.ryuqq.marketplace.domain.cancel.id.CancelId;
-import com.ryuqq.marketplace.domain.cancel.id.CancelItemId;
 import com.ryuqq.marketplace.domain.cancel.id.CancelNumber;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReason;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReasonType;
@@ -12,8 +10,8 @@ import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelType;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
-import java.util.List;
 
 /**
  * Cancel 도메인 테스트 Fixtures.
@@ -29,11 +27,11 @@ public final class CancelFixtures {
 
     // ===== 기본 상수 =====
     private static final String DEFAULT_CANCEL_ID = "01900000-0000-7000-8000-000000000001";
-    private static final String DEFAULT_ORDER_ID = "ORD-20240101-0001";
+    private static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    private static final long DEFAULT_SELLER_ID = 10L;
+    private static final int DEFAULT_CANCEL_QTY = 2;
     private static final String DEFAULT_REQUESTED_BY = "buyer@marketplace.com";
     private static final String DEFAULT_PROCESSED_BY = "admin@marketplace.com";
-    private static final long DEFAULT_ORDER_ITEM_ID = 1001L;
-    private static final int DEFAULT_CANCEL_QTY = 2;
 
     // ===== ID Fixtures =====
 
@@ -73,33 +71,15 @@ public final class CancelFixtures {
                 refundAmount, "CARD", "REFUNDED", CommonVoFixtures.now(), "PG-REFUND-001");
     }
 
-    // ===== CancelItem Fixtures =====
-
-    public static CancelItem defaultCancelItem() {
-        return CancelItem.forNew(DEFAULT_ORDER_ITEM_ID, DEFAULT_CANCEL_QTY);
-    }
-
-    public static CancelItem cancelItem(long orderItemId, int cancelQty) {
-        return CancelItem.forNew(orderItemId, cancelQty);
-    }
-
-    public static CancelItem reconstitutedCancelItem() {
-        return CancelItem.reconstitute(
-                CancelItemId.of(1L), DEFAULT_ORDER_ITEM_ID, DEFAULT_CANCEL_QTY);
-    }
-
-    public static List<CancelItem> defaultCancelItems() {
-        return List.of(defaultCancelItem());
-    }
-
     // ===== Cancel Aggregate Fixtures (forNew) =====
 
     public static Cancel newBuyerCancel() {
         return Cancel.forBuyerCancel(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
-                defaultCancelItems(),
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 defaultCancelReason(),
                 DEFAULT_REQUESTED_BY,
                 CommonVoFixtures.now());
@@ -109,8 +89,9 @@ public final class CancelFixtures {
         return Cancel.forSellerCancel(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
-                defaultCancelItems(),
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 cancelReason(CancelReasonType.OUT_OF_STOCK),
                 DEFAULT_REQUESTED_BY,
                 CommonVoFixtures.now());
@@ -123,7 +104,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.REQUESTED,
                 defaultCancelReason(),
@@ -134,8 +117,7 @@ public final class CancelFixtures {
                 null,
                 null,
                 requestedAt,
-                requestedAt,
-                defaultCancelItems());
+                requestedAt);
     }
 
     public static Cancel approvedCancel() {
@@ -144,7 +126,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.APPROVED,
                 defaultCancelReason(),
@@ -155,8 +139,7 @@ public final class CancelFixtures {
                 processedAt,
                 null,
                 requestedAt,
-                processedAt,
-                defaultCancelItems());
+                processedAt);
     }
 
     public static Cancel completedCancel() {
@@ -165,7 +148,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.COMPLETED,
                 defaultCancelReason(),
@@ -176,8 +161,7 @@ public final class CancelFixtures {
                 processedAt,
                 processedAt,
                 requestedAt,
-                processedAt,
-                defaultCancelItems());
+                processedAt);
     }
 
     public static Cancel rejectedCancel() {
@@ -186,7 +170,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.REJECTED,
                 defaultCancelReason(),
@@ -197,8 +183,7 @@ public final class CancelFixtures {
                 processedAt,
                 null,
                 requestedAt,
-                processedAt,
-                defaultCancelItems());
+                processedAt);
     }
 
     public static Cancel cancelledCancel() {
@@ -207,7 +192,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.CANCELLED,
                 defaultCancelReason(),
@@ -218,7 +205,6 @@ public final class CancelFixtures {
                 null,
                 null,
                 requestedAt,
-                cancelledAt,
-                defaultCancelItems());
+                cancelledAt);
     }
 }

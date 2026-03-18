@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderHistoryId;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemNumber;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
 import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
@@ -144,9 +145,14 @@ public final class OrderFixtures {
 
     // ===== OrderItem Fixtures =====
 
+    public static OrderItemNumber defaultOrderItemNumber() {
+        return OrderItemNumber.of("ORD-20240101-0001-001");
+    }
+
     public static OrderItem defaultOrderItem() {
         return OrderItem.forNew(
                 defaultOrderItemId(),
+                defaultOrderItemNumber(),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
@@ -156,6 +162,7 @@ public final class OrderFixtures {
     public static OrderItem reconstitutedOrderItem() {
         return OrderItem.reconstitute(
                 defaultOrderItemId(),
+                defaultOrderItemNumber(),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
@@ -167,6 +174,7 @@ public final class OrderFixtures {
     public static OrderItem confirmedOrderItem() {
         return OrderItem.reconstitute(
                 defaultOrderItemId(),
+                defaultOrderItemNumber(),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
@@ -178,6 +186,7 @@ public final class OrderFixtures {
     public static OrderItem reconstitutedOrderItem(long id, OrderItemStatus status) {
         return OrderItem.reconstitute(
                 OrderItemId.of("01940001-0000-7000-8000-000000000" + String.format("%03d", id)),
+                OrderItemNumber.of("ORD-20240101-0001-" + String.format("%03d", id)),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),

@@ -1,22 +1,18 @@
 package com.ryuqq.marketplace.adapter.out.persistence.exchange.mapper;
 
 import com.ryuqq.marketplace.adapter.out.persistence.exchange.entity.ExchangeClaimJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.exchange.entity.ExchangeItemJpaEntity;
 import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.claim.vo.FeePayer;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
-import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeItem;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimId;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimNumber;
-import com.ryuqq.marketplace.domain.exchange.id.ExchangeItemId;
 import com.ryuqq.marketplace.domain.exchange.vo.AmountAdjustment;
+import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
-import com.ryuqq.marketplace.domain.exchange.vo.ExchangeTarget;
-import java.time.Instant;
-import java.util.List;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import org.springframework.stereotype.Component;
 
 /** 교환 클레임 JPA 엔티티 Mapper. */
@@ -24,19 +20,23 @@ import org.springframework.stereotype.Component;
 public class ExchangePersistenceMapper {
 
     public ExchangeClaimJpaEntity toEntity(ExchangeClaim domain) {
-        ExchangeTarget target = domain.exchangeTarget();
+        ExchangeOption option = domain.exchangeOption();
         AmountAdjustment adjustment = domain.amountAdjustment();
         return ExchangeClaimJpaEntity.create(
                 domain.idValue(),
                 domain.claimNumberValue(),
-                domain.orderId(),
+                domain.orderItemIdValue(),
+                domain.sellerId(),
+                domain.exchangeQty(),
                 domain.status().name(),
                 domain.reason().reasonType().name(),
                 domain.reason().reasonDetail(),
-                target != null ? target.productGroupId() : null,
-                target != null ? target.productId() : null,
-                target != null ? target.skuCode() : null,
-                target != null ? target.quantity() : null,
+                option != null ? option.originalProductId() : null,
+                option != null ? option.originalSkuCode() : null,
+                option != null ? option.targetProductGroupId() : null,
+                option != null ? option.targetProductId() : null,
+                option != null ? option.targetSkuCode() : null,
+                option != null ? option.quantity() : null,
                 adjustment != null ? adjustment.originalPrice().value() : null,
                 adjustment != null ? adjustment.targetPrice().value() : null,
                 adjustment != null ? adjustment.priceDifference().value() : null,
@@ -57,41 +57,21 @@ public class ExchangePersistenceMapper {
                 domain.updatedAt());
     }
 
-    public ExchangeItemJpaEntity toItemEntity(ExchangeItem item, String exchangeClaimId) {
-        return ExchangeItemJpaEntity.create(
-                item.idValue(),
-                exchangeClaimId,
-                String.valueOf(item.orderItemId()),
-                item.exchangeQty(),
-                Instant.now());
-    }
-
-    public ExchangeClaim toDomain(
-            ExchangeClaimJpaEntity entity,
-            List<ExchangeItemJpaEntity> itemEntities,
-            ClaimShipment collectShipment) {
-        List<ExchangeItem> items =
-                itemEntities.stream()
-                        .map(
-                                i ->
-                                        ExchangeItem.reconstitute(
-                                                ExchangeItemId.of(i.getId()),
-                                                Long.parseLong(i.getOrderItemId()),
-                                                i.getExchangeQty()))
-                        .toList();
-
-        ExchangeTarget target = resolveExchangeTarget(entity);
+    public ExchangeClaim toDomain(ExchangeClaimJpaEntity entity, ClaimShipment collectShipment) {
+        ExchangeOption option = resolveExchangeOption(entity);
         AmountAdjustment adjustment = resolveAmountAdjustment(entity);
 
         return ExchangeClaim.reconstitute(
                 ExchangeClaimId.of(entity.getId()),
                 ExchangeClaimNumber.of(entity.getClaimNumber()),
-                entity.getOrderId(),
+                OrderItemId.of(entity.getOrderItemId()),
+                entity.getSellerId(),
+                entity.getExchangeQty(),
                 ExchangeStatus.valueOf(entity.getExchangeStatus()),
                 new ExchangeReason(
                         ExchangeReasonType.valueOf(entity.getReasonType()),
                         entity.getReasonDetail() != null ? entity.getReasonDetail() : ""),
-                target,
+                option,
                 adjustment,
                 collectShipment,
                 entity.getLinkedOrderId(),
@@ -101,18 +81,20 @@ public class ExchangePersistenceMapper {
                 entity.getProcessedAt(),
                 entity.getCompletedAt(),
                 entity.getCreatedAt(),
-                entity.getUpdatedAt(),
-                items);
+                entity.getUpdatedAt());
     }
 
-    private ExchangeTarget resolveExchangeTarget(ExchangeClaimJpaEntity entity) {
+    private ExchangeOption resolveExchangeOption(ExchangeClaimJpaEntity entity) {
         if (entity.getTargetProductGroupId() == null
                 || entity.getTargetProductId() == null
                 || entity.getTargetSkuCode() == null
-                || entity.getTargetQuantity() == null) {
+                || entity.getTargetQuantity() == null
+                || entity.getOriginalSkuCode() == null) {
             return null;
         }
-        return new ExchangeTarget(
+        return new ExchangeOption(
+                entity.getOriginalProductId() != null ? entity.getOriginalProductId() : 0L,
+                entity.getOriginalSkuCode(),
                 entity.getTargetProductGroupId(),
                 entity.getTargetProductId(),
                 entity.getTargetSkuCode(),

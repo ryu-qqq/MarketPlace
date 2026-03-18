@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemNumber;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
 import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
@@ -79,7 +80,10 @@ public class OrderCommandFactory {
                         command.externalOrderNo(),
                         command.externalOrderedAt());
 
-        List<OrderItem> items = command.items().stream().map(this::createOrderItem).toList();
+        List<OrderItem> items = new java.util.ArrayList<>();
+        for (int i = 0; i < command.items().size(); i++) {
+            items.add(createOrderItem(command.items().get(i), orderNumber, i + 1));
+        }
 
         return Order.forNew(
                 orderId,
@@ -127,7 +131,8 @@ public class OrderCommandFactory {
     public record OrderStatusChangeWithReasonContext(
             OrderId orderId, String reason, String changedBy, Instant changedAt) {}
 
-    private OrderItem createOrderItem(CreateOrderItemCommand cmd) {
+    private OrderItem createOrderItem(
+            CreateOrderItemCommand cmd, OrderNumber orderNumber, int sequence) {
         InternalProductReference internalProduct =
                 InternalProductReference.of(
                         cmd.productGroupId(),
@@ -168,6 +173,7 @@ public class OrderCommandFactory {
 
         return OrderItem.forNew(
                 OrderItemId.forNew(idGeneratorPort.generate()),
+                OrderItemNumber.generate(orderNumber, sequence),
                 internalProduct,
                 externalProduct,
                 price,

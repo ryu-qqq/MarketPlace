@@ -26,6 +26,7 @@ public final class ServiceTokenAuthenticationFilter extends OncePerRequestFilter
 
     private static final String HEADER_SERVICE_TOKEN = "X-Service-Token";
     private static final String INTERNAL_PATH_PREFIX = "/api/v1/market/internal/";
+    private static final String LEGACY_PATH_PREFIX = "/api/v1/legacy/";
     private static final String ROLE_INTERNAL_SERVICE = "ROLE_INTERNAL_SERVICE";
     private static final String INTERNAL_SERVICE_PRINCIPAL = "INTERNAL_SERVICE";
 
@@ -40,7 +41,8 @@ public final class ServiceTokenAuthenticationFilter extends OncePerRequestFilter
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getRequestURI().startsWith(INTERNAL_PATH_PREFIX);
+        String uri = request.getRequestURI();
+        return !uri.startsWith(INTERNAL_PATH_PREFIX) && !uri.startsWith(LEGACY_PATH_PREFIX);
     }
 
     @Override

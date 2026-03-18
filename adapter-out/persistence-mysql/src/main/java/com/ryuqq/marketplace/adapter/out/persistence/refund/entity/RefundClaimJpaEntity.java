@@ -19,8 +19,14 @@ public class RefundClaimJpaEntity extends BaseAuditEntity {
     @Column(name = "claim_number", nullable = false, length = 50)
     private String claimNumber;
 
-    @Column(name = "order_id", nullable = false, length = 36)
-    private String orderId;
+    @Column(name = "order_item_id", nullable = false, length = 36)
+    private String orderItemId;
+
+    @Column(name = "seller_id", nullable = false)
+    private long sellerId;
+
+    @Column(name = "refund_qty", nullable = false)
+    private int refundQty;
 
     @Column(name = "refund_status", nullable = false, length = 20)
     private String refundStatus;
@@ -80,7 +86,9 @@ public class RefundClaimJpaEntity extends BaseAuditEntity {
     private RefundClaimJpaEntity(
             String id,
             String claimNumber,
-            String orderId,
+            String orderItemId,
+            long sellerId,
+            int refundQty,
             String refundStatus,
             String reasonType,
             String reasonDetail,
@@ -103,7 +111,9 @@ public class RefundClaimJpaEntity extends BaseAuditEntity {
         super(createdAt, updatedAt);
         this.id = id;
         this.claimNumber = claimNumber;
-        this.orderId = orderId;
+        this.orderItemId = orderItemId;
+        this.sellerId = sellerId;
+        this.refundQty = refundQty;
         this.refundStatus = refundStatus;
         this.reasonType = reasonType;
         this.reasonDetail = reasonDetail;
@@ -126,7 +136,9 @@ public class RefundClaimJpaEntity extends BaseAuditEntity {
     public static RefundClaimJpaEntity create(
             String id,
             String claimNumber,
-            String orderId,
+            String orderItemId,
+            long sellerId,
+            int refundQty,
             String refundStatus,
             String reasonType,
             String reasonDetail,
@@ -147,107 +159,36 @@ public class RefundClaimJpaEntity extends BaseAuditEntity {
             Instant createdAt,
             Instant updatedAt) {
         return new RefundClaimJpaEntity(
-                id,
-                claimNumber,
-                orderId,
-                refundStatus,
-                reasonType,
-                reasonDetail,
-                originalAmount,
-                finalAmount,
-                deductionAmount,
-                deductionReason,
-                refundMethod,
-                refundedAt,
-                claimShipmentId,
-                holdReason,
-                holdAt,
-                requestedBy,
-                processedBy,
-                requestedAt,
-                processedAt,
-                completedAt,
-                createdAt,
-                updatedAt);
+                id, claimNumber, orderItemId, sellerId, refundQty,
+                refundStatus, reasonType, reasonDetail,
+                originalAmount, finalAmount, deductionAmount, deductionReason,
+                refundMethod, refundedAt, claimShipmentId,
+                holdReason, holdAt,
+                requestedBy, processedBy,
+                requestedAt, processedAt, completedAt,
+                createdAt, updatedAt);
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getClaimNumber() {
-        return claimNumber;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public String getRefundStatus() {
-        return refundStatus;
-    }
-
-    public String getReasonType() {
-        return reasonType;
-    }
-
-    public String getReasonDetail() {
-        return reasonDetail;
-    }
-
-    public Integer getOriginalAmount() {
-        return originalAmount;
-    }
-
-    public Integer getFinalAmount() {
-        return finalAmount;
-    }
-
-    public Integer getDeductionAmount() {
-        return deductionAmount;
-    }
-
-    public String getDeductionReason() {
-        return deductionReason;
-    }
-
-    public String getRefundMethod() {
-        return refundMethod;
-    }
-
-    public Instant getRefundedAt() {
-        return refundedAt;
-    }
-
-    public String getClaimShipmentId() {
-        return claimShipmentId;
-    }
-
-    public String getHoldReason() {
-        return holdReason;
-    }
-
-    public Instant getHoldAt() {
-        return holdAt;
-    }
-
-    public String getRequestedBy() {
-        return requestedBy;
-    }
-
-    public String getProcessedBy() {
-        return processedBy;
-    }
-
-    public Instant getRequestedAt() {
-        return requestedAt;
-    }
-
-    public Instant getProcessedAt() {
-        return processedAt;
-    }
-
-    public Instant getCompletedAt() {
-        return completedAt;
-    }
+    public String getId() { return id; }
+    public String getClaimNumber() { return claimNumber; }
+    public String getOrderItemId() { return orderItemId; }
+    public long getSellerId() { return sellerId; }
+    public int getRefundQty() { return refundQty; }
+    public String getRefundStatus() { return refundStatus; }
+    public String getReasonType() { return reasonType; }
+    public String getReasonDetail() { return reasonDetail; }
+    public Integer getOriginalAmount() { return originalAmount; }
+    public Integer getFinalAmount() { return finalAmount; }
+    public Integer getDeductionAmount() { return deductionAmount; }
+    public String getDeductionReason() { return deductionReason; }
+    public String getRefundMethod() { return refundMethod; }
+    public Instant getRefundedAt() { return refundedAt; }
+    public String getClaimShipmentId() { return claimShipmentId; }
+    public String getHoldReason() { return holdReason; }
+    public Instant getHoldAt() { return holdAt; }
+    public String getRequestedBy() { return requestedBy; }
+    public String getProcessedBy() { return processedBy; }
+    public Instant getRequestedAt() { return requestedAt; }
+    public Instant getProcessedAt() { return processedAt; }
+    public Instant getCompletedAt() { return completedAt; }
 }

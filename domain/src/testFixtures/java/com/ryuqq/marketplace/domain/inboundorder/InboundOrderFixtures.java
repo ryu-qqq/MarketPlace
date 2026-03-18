@@ -25,6 +25,7 @@ public final class InboundOrderFixtures {
     public static final int DEFAULT_TOTAL_PAYMENT_AMOUNT = 50000;
     public static final String DEFAULT_INTERNAL_ORDER_ID = "order-uuid-001";
 
+    public static final String DEFAULT_EXTERNAL_PRODUCT_ORDER_ID = "EXT-PO-001";
     public static final String DEFAULT_EXTERNAL_PRODUCT_ID = "EXT-PROD-001";
     public static final String DEFAULT_EXTERNAL_OPTION_ID = "EXT-OPT-001";
     public static final String DEFAULT_EXTERNAL_PRODUCT_NAME = "테스트 상품";
@@ -47,6 +48,7 @@ public final class InboundOrderFixtures {
     /** 신규 아이템 (매핑 전). */
     public static InboundOrderItem newItem() {
         return InboundOrderItem.forNew(
+                DEFAULT_EXTERNAL_PRODUCT_ORDER_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 DEFAULT_EXTERNAL_PRODUCT_NAME,
@@ -68,6 +70,7 @@ public final class InboundOrderFixtures {
     /** 외부 상품 ID를 지정한 신규 아이템. */
     public static InboundOrderItem newItem(String externalProductId) {
         return InboundOrderItem.forNew(
+                "EXT-PO-" + externalProductId,
                 externalProductId,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 DEFAULT_EXTERNAL_PRODUCT_NAME,
@@ -90,6 +93,7 @@ public final class InboundOrderFixtures {
     public static InboundOrderItem mappedItem(Long id) {
         return InboundOrderItem.reconstitute(
                 InboundOrderItemId.of(id),
+                DEFAULT_EXTERNAL_PRODUCT_ORDER_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 DEFAULT_EXTERNAL_PRODUCT_NAME,

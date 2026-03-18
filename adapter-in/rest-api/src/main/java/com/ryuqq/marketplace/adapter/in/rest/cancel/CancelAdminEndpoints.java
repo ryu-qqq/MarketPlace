@@ -8,5 +8,10 @@ public final class CancelAdminEndpoints {
     }
 
     public static final String CANCELS = "/api/v1/market/cancels";
+    public static final String CANCEL_ID = "/{cancelId}";
     public static final String SUMMARY = "/summary";
+    public static final String SELLER_CANCEL_BATCH = "/seller-cancel/batch";
+    public static final String APPROVE_BATCH = "/approve/batch";
+    public static final String REJECT_BATCH = "/reject/batch";
+    public static final String HISTORIES = "/{cancelId}/histories";
 }

@@ -31,7 +31,10 @@ public record SchedulerProperties(Jobs jobs) {
             LegacyConversionSeeder legacyConversionSeeder,
             InboundOrderPolling inboundOrderPolling,
             InboundOrderRetry inboundOrderRetry,
-            ShipmentOutbox shipmentOutbox) {}
+            ShipmentOutbox shipmentOutbox,
+            CancelOutbox cancelOutbox,
+            RefundOutbox refundOutbox,
+            ExchangeOutbox exchangeOutbox) {}
 
     public record OutboundSyncOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
@@ -98,6 +101,12 @@ public record SchedulerProperties(Jobs jobs) {
     public record InboundOrderRetry(boolean enabled, String cron, String timezone, int batchSize) {}
 
     public record ShipmentOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record CancelOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record RefundOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record ExchangeOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
     public record ImageVariantSyncOutbox(ImageVariantSyncProcessPending processPending) {}
 

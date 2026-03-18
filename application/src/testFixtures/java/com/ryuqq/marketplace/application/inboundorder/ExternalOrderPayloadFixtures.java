@@ -21,6 +21,7 @@ public final class ExternalOrderPayloadFixtures {
     /** 기본 ExternalOrderItemPayload 생성. */
     public static ExternalOrderItemPayload defaultItemPayload() {
         return new ExternalOrderItemPayload(
+                "EXT-PO-001",
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 "테스트 상품",
@@ -42,6 +43,7 @@ public final class ExternalOrderPayloadFixtures {
     /** 외부 상품 ID를 지정한 아이템 페이로드. */
     public static ExternalOrderItemPayload itemPayload(String externalProductId) {
         return new ExternalOrderItemPayload(
+                "EXT-PO-" + externalProductId,
                 externalProductId,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 "테스트 상품",

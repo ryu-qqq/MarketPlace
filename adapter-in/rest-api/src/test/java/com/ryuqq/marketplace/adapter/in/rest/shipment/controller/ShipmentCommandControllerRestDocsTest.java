@@ -103,9 +103,9 @@ class ShipmentCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(
-                                            fieldWithPath("orderItemIds")
+                                            fieldWithPath("orderIds")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("발주확인 대상 주문상품 ID 목록")),
+                                                    .description("발주확인 대상 주문 ID 목록")),
                                     responseFields(
                                             fieldWithPath("data.totalCount")
                                                     .type(JsonFieldType.NUMBER)
@@ -204,9 +204,9 @@ class ShipmentCommandControllerRestDocsTest {
                                             fieldWithPath("items")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("송장등록 대상 목록"),
-                                            fieldWithPath("items[].orderItemId")
+                                            fieldWithPath("items[].orderId")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("주문상품 ID"),
+                                                    .description("주문 ID"),
                                             fieldWithPath("items[].trackingNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("송장번호"),
@@ -283,8 +283,8 @@ class ShipmentCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("orderItemId")
-                                                    .description("주문상품 ID")),
+                                            parameterWithName("orderId")
+                                                    .description("주문 ID")),
                                     requestFields(
                                             fieldWithPath("trackingNumber")
                                                     .type(JsonFieldType.STRING)

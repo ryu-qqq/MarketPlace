@@ -19,8 +19,14 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
     @Column(name = "claim_number", nullable = false, length = 50)
     private String claimNumber;
 
-    @Column(name = "order_id", nullable = false, length = 36)
-    private String orderId;
+    @Column(name = "order_item_id", nullable = false, length = 36)
+    private String orderItemId;
+
+    @Column(name = "seller_id", nullable = false)
+    private long sellerId;
+
+    @Column(name = "exchange_qty", nullable = false)
+    private int exchangeQty;
 
     @Column(name = "exchange_status", nullable = false, length = 20)
     private String exchangeStatus;
@@ -30,6 +36,12 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
 
     @Column(name = "reason_detail", length = 500)
     private String reasonDetail;
+
+    @Column(name = "original_product_id")
+    private Long originalProductId;
+
+    @Column(name = "original_sku_code", length = 50)
+    private String originalSkuCode;
 
     @Column(name = "target_product_group_id")
     private Long targetProductGroupId;
@@ -98,10 +110,14 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
     private ExchangeClaimJpaEntity(
             String id,
             String claimNumber,
-            String orderId,
+            String orderItemId,
+            long sellerId,
+            int exchangeQty,
             String exchangeStatus,
             String reasonType,
             String reasonDetail,
+            Long originalProductId,
+            String originalSkuCode,
             Long targetProductGroupId,
             Long targetProductId,
             String targetSkuCode,
@@ -127,10 +143,14 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
         super(createdAt, updatedAt);
         this.id = id;
         this.claimNumber = claimNumber;
-        this.orderId = orderId;
+        this.orderItemId = orderItemId;
+        this.sellerId = sellerId;
+        this.exchangeQty = exchangeQty;
         this.exchangeStatus = exchangeStatus;
         this.reasonType = reasonType;
         this.reasonDetail = reasonDetail;
+        this.originalProductId = originalProductId;
+        this.originalSkuCode = originalSkuCode;
         this.targetProductGroupId = targetProductGroupId;
         this.targetProductId = targetProductId;
         this.targetSkuCode = targetSkuCode;
@@ -156,10 +176,14 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
     public static ExchangeClaimJpaEntity create(
             String id,
             String claimNumber,
-            String orderId,
+            String orderItemId,
+            long sellerId,
+            int exchangeQty,
             String exchangeStatus,
             String reasonType,
             String reasonDetail,
+            Long originalProductId,
+            String originalSkuCode,
             Long targetProductGroupId,
             Long targetProductId,
             String targetSkuCode,
@@ -183,137 +207,46 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
             Instant createdAt,
             Instant updatedAt) {
         return new ExchangeClaimJpaEntity(
-                id,
-                claimNumber,
-                orderId,
-                exchangeStatus,
-                reasonType,
-                reasonDetail,
-                targetProductGroupId,
-                targetProductId,
-                targetSkuCode,
-                targetQuantity,
-                originalPrice,
-                targetPrice,
-                priceDifference,
-                additionalPaymentRequired,
-                partialRefundRequired,
-                collectShippingFee,
-                reshipShippingFee,
-                totalShippingFee,
-                shippingFeePayer,
-                claimShipmentId,
-                linkedOrderId,
-                requestedBy,
-                processedBy,
-                requestedAt,
-                processedAt,
-                completedAt,
-                createdAt,
-                updatedAt);
+                id, claimNumber, orderItemId, sellerId, exchangeQty,
+                exchangeStatus, reasonType, reasonDetail,
+                originalProductId, originalSkuCode,
+                targetProductGroupId, targetProductId, targetSkuCode, targetQuantity,
+                originalPrice, targetPrice, priceDifference,
+                additionalPaymentRequired, partialRefundRequired,
+                collectShippingFee, reshipShippingFee, totalShippingFee, shippingFeePayer,
+                claimShipmentId, linkedOrderId,
+                requestedBy, processedBy, requestedAt, processedAt, completedAt,
+                createdAt, updatedAt);
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getClaimNumber() {
-        return claimNumber;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public String getExchangeStatus() {
-        return exchangeStatus;
-    }
-
-    public String getReasonType() {
-        return reasonType;
-    }
-
-    public String getReasonDetail() {
-        return reasonDetail;
-    }
-
-    public Long getTargetProductGroupId() {
-        return targetProductGroupId;
-    }
-
-    public Long getTargetProductId() {
-        return targetProductId;
-    }
-
-    public String getTargetSkuCode() {
-        return targetSkuCode;
-    }
-
-    public Integer getTargetQuantity() {
-        return targetQuantity;
-    }
-
-    public Integer getOriginalPrice() {
-        return originalPrice;
-    }
-
-    public Integer getTargetPrice() {
-        return targetPrice;
-    }
-
-    public Integer getPriceDifference() {
-        return priceDifference;
-    }
-
-    public boolean isAdditionalPaymentRequired() {
-        return additionalPaymentRequired;
-    }
-
-    public boolean isPartialRefundRequired() {
-        return partialRefundRequired;
-    }
-
-    public Integer getCollectShippingFee() {
-        return collectShippingFee;
-    }
-
-    public Integer getReshipShippingFee() {
-        return reshipShippingFee;
-    }
-
-    public Integer getTotalShippingFee() {
-        return totalShippingFee;
-    }
-
-    public String getShippingFeePayer() {
-        return shippingFeePayer;
-    }
-
-    public String getClaimShipmentId() {
-        return claimShipmentId;
-    }
-
-    public String getLinkedOrderId() {
-        return linkedOrderId;
-    }
-
-    public String getRequestedBy() {
-        return requestedBy;
-    }
-
-    public String getProcessedBy() {
-        return processedBy;
-    }
-
-    public Instant getRequestedAt() {
-        return requestedAt;
-    }
-
-    public Instant getProcessedAt() {
-        return processedAt;
-    }
-
-    public Instant getCompletedAt() {
-        return completedAt;
-    }
+    public String getId() { return id; }
+    public String getClaimNumber() { return claimNumber; }
+    public String getOrderItemId() { return orderItemId; }
+    public long getSellerId() { return sellerId; }
+    public int getExchangeQty() { return exchangeQty; }
+    public String getExchangeStatus() { return exchangeStatus; }
+    public String getReasonType() { return reasonType; }
+    public String getReasonDetail() { return reasonDetail; }
+    public Long getOriginalProductId() { return originalProductId; }
+    public String getOriginalSkuCode() { return originalSkuCode; }
+    public Long getTargetProductGroupId() { return targetProductGroupId; }
+    public Long getTargetProductId() { return targetProductId; }
+    public String getTargetSkuCode() { return targetSkuCode; }
+    public Integer getTargetQuantity() { return targetQuantity; }
+    public Integer getOriginalPrice() { return originalPrice; }
+    public Integer getTargetPrice() { return targetPrice; }
+    public Integer getPriceDifference() { return priceDifference; }
+    public boolean isAdditionalPaymentRequired() { return additionalPaymentRequired; }
+    public boolean isPartialRefundRequired() { return partialRefundRequired; }
+    public Integer getCollectShippingFee() { return collectShippingFee; }
+    public Integer getReshipShippingFee() { return reshipShippingFee; }
+    public Integer getTotalShippingFee() { return totalShippingFee; }
+    public String getShippingFeePayer() { return shippingFeePayer; }
+    public String getClaimShipmentId() { return claimShipmentId; }
+    public String getLinkedOrderId() { return linkedOrderId; }
+    public String getRequestedBy() { return requestedBy; }
+    public String getProcessedBy() { return processedBy; }
+    public Instant getRequestedAt() { return requestedAt; }
+    public Instant getProcessedAt() { return processedAt; }
+    public Instant getCompletedAt() { return completedAt; }
 }

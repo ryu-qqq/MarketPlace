@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.domain.order.aggregate;
 import com.ryuqq.marketplace.domain.order.exception.OrderErrorCode;
 import com.ryuqq.marketplace.domain.order.exception.OrderException;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemNumber;
 import com.ryuqq.marketplace.domain.order.vo.ExternalOrderItemPrice;
 import com.ryuqq.marketplace.domain.order.vo.ExternalProductSnapshot;
 import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
@@ -14,6 +15,7 @@ import com.ryuqq.marketplace.domain.order.vo.SettlementInfo;
 public class OrderItem {
 
     private final OrderItemId id;
+    private final OrderItemNumber orderItemNumber;
     private final InternalProductReference internalProduct;
     private final ExternalProductSnapshot externalProduct;
     private final ExternalOrderItemPrice price;
@@ -23,6 +25,7 @@ public class OrderItem {
 
     private OrderItem(
             OrderItemId id,
+            OrderItemNumber orderItemNumber,
             InternalProductReference internalProduct,
             ExternalProductSnapshot externalProduct,
             ExternalOrderItemPrice price,
@@ -30,6 +33,7 @@ public class OrderItem {
             OrderItemStatus status,
             SettlementInfo settlementInfo) {
         this.id = id;
+        this.orderItemNumber = orderItemNumber;
         this.internalProduct = internalProduct;
         this.externalProduct = externalProduct;
         this.price = price;
@@ -40,12 +44,14 @@ public class OrderItem {
 
     public static OrderItem forNew(
             OrderItemId id,
+            OrderItemNumber orderItemNumber,
             InternalProductReference internalProduct,
             ExternalProductSnapshot externalProduct,
             ExternalOrderItemPrice price,
             ReceiverInfo receiverInfo) {
         return new OrderItem(
                 id,
+                orderItemNumber,
                 internalProduct,
                 externalProduct,
                 price,
@@ -56,6 +62,7 @@ public class OrderItem {
 
     public static OrderItem reconstitute(
             OrderItemId id,
+            OrderItemNumber orderItemNumber,
             InternalProductReference internalProduct,
             ExternalProductSnapshot externalProduct,
             ExternalOrderItemPrice price,
@@ -63,7 +70,8 @@ public class OrderItem {
             OrderItemStatus status,
             SettlementInfo settlementInfo) {
         return new OrderItem(
-                id, internalProduct, externalProduct, price, receiverInfo, status, settlementInfo);
+                id, orderItemNumber, internalProduct, externalProduct, price, receiverInfo, status,
+                settlementInfo);
     }
 
     public void confirm() {
@@ -109,6 +117,14 @@ public class OrderItem {
 
     public String idValue() {
         return id.value();
+    }
+
+    public OrderItemNumber orderItemNumber() {
+        return orderItemNumber;
+    }
+
+    public String orderItemNumberValue() {
+        return orderItemNumber.value();
     }
 
     public InternalProductReference internalProduct() {

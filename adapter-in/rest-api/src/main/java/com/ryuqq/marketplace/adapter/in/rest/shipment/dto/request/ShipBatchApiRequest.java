@@ -19,11 +19,11 @@ public record ShipBatchApiRequest(
     @Schema(description = "송장등록 개별 항목")
     public record ShipBatchItemApiRequest(
             @Schema(
-                            description = "상품주문 ID (UUIDv7)",
+                            description = "주문 ID (UUIDv7)",
                             example = "0194abcd-0000-7000-8000-000000000001",
                             requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotNull
-                    String orderItemId,
+                    String orderId,
             @Schema(
                             description = "송장번호",
                             example = "1234567890",

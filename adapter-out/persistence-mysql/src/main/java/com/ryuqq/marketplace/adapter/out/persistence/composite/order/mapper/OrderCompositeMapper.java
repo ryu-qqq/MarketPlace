@@ -105,6 +105,7 @@ public class OrderCompositeMapper {
     public OrderItemResult toItemResult(OrderItemProjectionDto dto) {
         return new OrderItemResult(
                 dto.orderItemId() != null ? dto.orderItemId() : "",
+                "",
                 dto.orderId(),
                 dto.productGroupId(),
                 dto.productId(),
@@ -179,6 +180,7 @@ public class OrderCompositeMapper {
         OrderItemResult item =
                 new OrderItemResult(
                         dto.orderItemId() != null ? dto.orderItemId() : "",
+                        dto.orderItemNumber() != null ? dto.orderItemNumber() : "",
                         dto.orderId(),
                         dto.productGroupId(),
                         dto.productId(),
@@ -261,6 +263,7 @@ public class OrderCompositeMapper {
     public OrderItemResult toItemResultFromProjection(ProductOrderListProjectionDto dto) {
         return new OrderItemResult(
                 dto.orderItemId() != null ? dto.orderItemId() : "",
+                dto.orderItemNumber() != null ? dto.orderItemNumber() : "",
                 dto.orderId(),
                 dto.productGroupId(),
                 dto.productId(),

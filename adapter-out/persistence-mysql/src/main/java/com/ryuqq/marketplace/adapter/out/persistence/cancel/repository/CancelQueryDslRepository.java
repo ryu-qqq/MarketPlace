@@ -7,16 +7,16 @@ import com.ryuqq.marketplace.adapter.out.persistence.cancel.entity.CancelJpaEnti
 import com.ryuqq.marketplace.adapter.out.persistence.cancel.entity.QCancelJpaEntity;
 import com.ryuqq.marketplace.domain.cancel.query.CancelSearchCriteria;
 import com.ryuqq.marketplace.domain.cancel.query.CancelSortKey;
+import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
+import com.querydsl.core.Tuple;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
-/**
- * Cancel QueryDSL Repository.
- *
- * <p>복잡한 동적 쿼리를 처리합니다.
- */
+/** Cancel QueryDSL Repository. */
 @Repository
 public class CancelQueryDslRepository {
 
@@ -31,49 +31,35 @@ public class CancelQueryDslRepository {
         this.conditionBuilder = conditionBuilder;
     }
 
-    /**
-     * ID로 취소를 조회합니다.
-     *
-     * @param id 취소 ID
-     * @return 취소 엔티티 (없으면 empty)
-     */
+    public List<CancelJpaEntity> findByIdIn(List<String> ids, Long sellerId) {
+        return queryFactory
+                .selectFrom(cancel)
+                .where(conditionBuilder.idIn(ids), conditionBuilder.sellerIdEq(sellerId))
+                .fetch();
+    }
+
     public Optional<CancelJpaEntity> findById(String id) {
         CancelJpaEntity entity =
                 queryFactory.selectFrom(cancel).where(conditionBuilder.idEq(id)).fetchOne();
         return Optional.ofNullable(entity);
     }
 
-    /**
-     * 주문 ID로 취소를 조회합니다.
-     *
-     * @param orderId 주문 ID
-     * @return 취소 엔티티 (없으면 empty)
-     */
-    public Optional<CancelJpaEntity> findByOrderId(String orderId) {
+    public Optional<CancelJpaEntity> findByOrderItemId(String orderItemId) {
         CancelJpaEntity entity =
                 queryFactory
                         .selectFrom(cancel)
-                        .where(conditionBuilder.orderIdEq(orderId))
+                        .where(conditionBuilder.orderItemIdEq(orderItemId))
                         .fetchOne();
         return Optional.ofNullable(entity);
     }
 
-    /**
-     * 주문 ID 목록으로 취소 목록을 조회합니다.
-     *
-     * @param orderIds 주문 ID 목록
-     * @return 취소 엔티티 목록
-     */
-    public List<CancelJpaEntity> findByOrderIds(List<String> orderIds) {
-        return queryFactory.selectFrom(cancel).where(conditionBuilder.orderIdIn(orderIds)).fetch();
+    public List<CancelJpaEntity> findByOrderItemIds(List<String> orderItemIds) {
+        return queryFactory
+                .selectFrom(cancel)
+                .where(conditionBuilder.orderItemIdIn(orderItemIds))
+                .fetch();
     }
 
-    /**
-     * 검색 조건으로 취소 목록을 조회합니다.
-     *
-     * @param criteria 검색 조건
-     * @return 취소 엔티티 목록
-     */
     public List<CancelJpaEntity> findByCriteria(CancelSearchCriteria criteria) {
         return queryFactory
                 .selectFrom(cancel)
@@ -88,12 +74,6 @@ public class CancelQueryDslRepository {
                 .fetch();
     }
 
-    /**
-     * 검색 조건에 해당하는 취소 건수를 반환합니다.
-     *
-     * @param criteria 검색 조건
-     * @return 건수
-     */
     public long countByCriteria(CancelSearchCriteria criteria) {
         Long count =
                 queryFactory
@@ -106,6 +86,25 @@ public class CancelQueryDslRepository {
                                 conditionBuilder.dateRange(criteria))
                         .fetchOne();
         return count != null ? count : 0L;
+    }
+
+    public Map<CancelStatus, Long> countByStatus() {
+        List<Tuple> results =
+                queryFactory
+                        .select(cancel.cancelStatus, cancel.count())
+                        .from(cancel)
+                        .groupBy(cancel.cancelStatus)
+                        .fetch();
+
+        Map<CancelStatus, Long> statusCounts = new EnumMap<>(CancelStatus.class);
+        for (Tuple tuple : results) {
+            String statusName = tuple.get(cancel.cancelStatus);
+            Long count = tuple.get(cancel.count());
+            if (statusName != null && count != null) {
+                statusCounts.put(CancelStatus.valueOf(statusName), count);
+            }
+        }
+        return statusCounts;
     }
 
     private OrderSpecifier<?> resolveOrderSpecifier(CancelSearchCriteria criteria) {

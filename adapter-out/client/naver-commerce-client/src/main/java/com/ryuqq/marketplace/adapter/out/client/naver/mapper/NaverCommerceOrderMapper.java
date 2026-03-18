@@ -63,6 +63,7 @@ public class NaverCommerceOrderMapper {
         NaverShippingAddress addr = po.shippingAddress();
 
         return new ExternalOrderItemPayload(
+                po.productOrderId(),
                 po.productId(),
                 po.optionCode(),
                 po.productName(),

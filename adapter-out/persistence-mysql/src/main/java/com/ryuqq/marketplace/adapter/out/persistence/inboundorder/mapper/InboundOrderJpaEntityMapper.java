@@ -39,6 +39,7 @@ public class InboundOrderJpaEntityMapper {
         return InboundOrderItemJpaEntity.create(
                 item.idValue(),
                 inboundOrderId,
+                item.externalProductOrderId(),
                 item.externalProductId(),
                 item.externalOptionId(),
                 item.externalProductName(),
@@ -99,6 +100,7 @@ public class InboundOrderJpaEntityMapper {
     private InboundOrderItem toItemDomain(InboundOrderItemJpaEntity entity) {
         return InboundOrderItem.reconstitute(
                 InboundOrderItemId.of(entity.getId()),
+                entity.getExternalProductOrderId(),
                 entity.getExternalProductId(),
                 entity.getExternalOptionId(),
                 entity.getExternalProductName(),

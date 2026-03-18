@@ -28,7 +28,7 @@ public class InboundOrderCommandAdapter implements InboundOrderCommandPort {
     }
 
     @Override
-    public void save(InboundOrder inboundOrder) {
+    public void persist(InboundOrder inboundOrder) {
         InboundOrderJpaEntity orderEntity = mapper.toEntity(inboundOrder);
         InboundOrderJpaEntity saved = orderRepository.save(orderEntity);
 
@@ -38,9 +38,9 @@ public class InboundOrderCommandAdapter implements InboundOrderCommandPort {
     }
 
     @Override
-    public void saveAll(List<InboundOrder> inboundOrders) {
+    public void persistAll(List<InboundOrder> inboundOrders) {
         for (InboundOrder inboundOrder : inboundOrders) {
-            save(inboundOrder);
+            persist(inboundOrder);
         }
     }
 }

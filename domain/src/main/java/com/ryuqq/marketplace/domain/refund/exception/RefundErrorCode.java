@@ -10,8 +10,9 @@ public enum RefundErrorCode implements ErrorCode {
     HOLD_REASON_REQUIRED("RFD-004", 400, "보류 사유는 필수입니다"),
     NOT_HOLD_STATUS("RFD-005", 400, "보류 상태가 아닙니다"),
     ALREADY_HOLD("RFD-006", 409, "이미 보류 상태입니다"),
-    EMPTY_REFUND_ITEMS("RFD-007", 400, "환불 대상 상품은 최소 1개 이상이어야 합니다"),
-    REASON_UPDATE_NOT_ALLOWED("RFD-008", 400, "현재 상태에서는 사유를 변경할 수 없습니다");
+    INVALID_REFUND_QTY("RFD-007", 400, "환불 수량은 1 이상이어야 합니다"),
+    REASON_UPDATE_NOT_ALLOWED("RFD-008", 400, "현재 상태에서는 사유를 변경할 수 없습니다"),
+    REFUND_OWNERSHIP_MISMATCH("RFD-009", 403, "환불 클레임 소유권이 일치하지 않습니다");
 
     private final String code;
     private final int httpStatus;

@@ -2,9 +2,10 @@ package com.ryuqq.marketplace.domain.exchange.event;
 
 import com.ryuqq.marketplace.domain.common.event.DomainEvent;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
 
 /** 교환 거절 이벤트. */
 public record ExchangeRejectedEvent(
-        ExchangeClaimId exchangeClaimId, String orderId, Instant occurredAt)
+        ExchangeClaimId exchangeClaimId, OrderItemId orderItemId, Instant occurredAt)
         implements DomainEvent {}

@@ -44,6 +44,7 @@ public class InboundOrderFactory {
                 .map(
                         p ->
                                 InboundOrderItem.forNew(
+                                        p.externalProductOrderId(),
                                         p.externalProductId(),
                                         p.externalOptionId(),
                                         p.externalProductName(),

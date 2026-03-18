@@ -1,22 +1,17 @@
 package com.ryuqq.marketplace.domain.refund;
 
-import com.ryuqq.marketplace.domain.claim.ClaimFixtures;
-import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
-import com.ryuqq.marketplace.domain.claim.id.ClaimShipmentId;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
-import com.ryuqq.marketplace.domain.refund.aggregate.RefundItem;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimId;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimNumber;
-import com.ryuqq.marketplace.domain.refund.id.RefundItemId;
 import com.ryuqq.marketplace.domain.refund.vo.HoldInfo;
 import com.ryuqq.marketplace.domain.refund.vo.RefundInfo;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReason;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReasonType;
 import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
 import java.time.Instant;
-import java.util.List;
 
 /**
  * Refund 도메인 테스트 Fixtures.
@@ -31,9 +26,11 @@ public final class RefundFixtures {
     private RefundFixtures() {}
 
     // ===== 기본 상수 =====
-    private static final String DEFAULT_REFUND_CLAIM_ID = "REFUND-CLAIM-0001";
+    private static final String DEFAULT_REFUND_CLAIM_ID = "01900000-0000-7000-8000-000000000010";
     private static final String DEFAULT_REFUND_CLAIM_NUMBER = "RFD-20260218-0001";
-    private static final String DEFAULT_ORDER_ID = "ORDER-0001";
+    private static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    private static final long DEFAULT_SELLER_ID = 10L;
+    private static final int DEFAULT_REFUND_QTY = 1;
     private static final String DEFAULT_REQUESTED_BY = "customer@marketplace.com";
     private static final String DEFAULT_PROCESSED_BY = "admin@marketplace.com";
     private static final String DEFAULT_HOLD_REASON = "추가 확인 필요";
@@ -52,12 +49,8 @@ public final class RefundFixtures {
         return RefundClaimNumber.of(DEFAULT_REFUND_CLAIM_NUMBER);
     }
 
-    public static RefundItemId defaultRefundItemId() {
-        return RefundItemId.of(1L);
-    }
-
-    public static RefundItemId newRefundItemId() {
-        return RefundItemId.forNew();
+    public static OrderItemId defaultOrderItemId() {
+        return OrderItemId.of(DEFAULT_ORDER_ITEM_ID);
     }
 
     // ===== VO Fixtures =====
@@ -101,61 +94,34 @@ public final class RefundFixtures {
         return HoldInfo.of(reason, CommonVoFixtures.now());
     }
 
-    public static ClaimShipment defaultCollectShipment() {
-        return ClaimShipment.forNew(
-                ClaimShipmentId.of("CLAIM-SHIP-REFUND-0001"),
-                ClaimFixtures.defaultClaimShipmentMethod(),
-                ClaimFixtures.defaultShippingFeeInfo(),
-                ClaimFixtures.senderContactInfo(),
-                ClaimFixtures.receiverContactInfo());
-    }
-
-    // ===== RefundItem Fixtures =====
-
-    public static RefundItem defaultRefundItem() {
-        return RefundItem.forNew(1001L, 1);
-    }
-
-    public static RefundItem refundItem(long orderItemId, int qty) {
-        return RefundItem.forNew(orderItemId, qty);
-    }
-
-    public static RefundItem reconstitutedRefundItem() {
-        return RefundItem.reconstitute(defaultRefundItemId(), 1001L, 1);
-    }
-
-    public static List<RefundItem> defaultRefundItems() {
-        return List.of(defaultRefundItem());
-    }
-
-    public static List<RefundItem> multipleRefundItems() {
-        return List.of(RefundItem.forNew(1001L, 1), RefundItem.forNew(1002L, 2));
-    }
-
-    // ===== RefundClaim Aggregate Fixtures =====
+    // ===== RefundClaim Aggregate Fixtures (forNew) =====
 
     public static RefundClaim newRefundClaim() {
         return RefundClaim.forNew(
                 defaultRefundClaimId(),
                 defaultRefundClaimNumber(),
-                DEFAULT_ORDER_ID,
-                defaultRefundItems(),
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_REFUND_QTY,
                 defaultRefundReason(),
-                defaultCollectShipment(),
                 DEFAULT_REQUESTED_BY,
                 CommonVoFixtures.now());
     }
+
+    // ===== RefundClaim Aggregate Fixtures (reconstitute) =====
 
     public static RefundClaim requestedRefundClaim() {
         Instant requestedAt = CommonVoFixtures.yesterday();
         return RefundClaim.reconstitute(
                 defaultRefundClaimId(),
                 defaultRefundClaimNumber(),
-                DEFAULT_ORDER_ID,
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_REFUND_QTY,
                 RefundStatus.REQUESTED,
                 defaultRefundReason(),
                 null,
-                defaultCollectShipment(),
+                null,
                 null,
                 DEFAULT_REQUESTED_BY,
                 null,
@@ -163,8 +129,7 @@ public final class RefundFixtures {
                 null,
                 null,
                 requestedAt,
-                requestedAt,
-                defaultRefundItems());
+                requestedAt);
     }
 
     public static RefundClaim collectingRefundClaim() {
@@ -173,11 +138,13 @@ public final class RefundFixtures {
         return RefundClaim.reconstitute(
                 defaultRefundClaimId(),
                 defaultRefundClaimNumber(),
-                DEFAULT_ORDER_ID,
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_REFUND_QTY,
                 RefundStatus.COLLECTING,
                 defaultRefundReason(),
                 null,
-                defaultCollectShipment(),
+                null,
                 null,
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
@@ -185,8 +152,7 @@ public final class RefundFixtures {
                 processedAt,
                 null,
                 requestedAt,
-                processedAt,
-                defaultRefundItems());
+                processedAt);
     }
 
     public static RefundClaim collectedRefundClaim() {
@@ -195,11 +161,13 @@ public final class RefundFixtures {
         return RefundClaim.reconstitute(
                 defaultRefundClaimId(),
                 defaultRefundClaimNumber(),
-                DEFAULT_ORDER_ID,
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_REFUND_QTY,
                 RefundStatus.COLLECTED,
                 defaultRefundReason(),
                 null,
-                defaultCollectShipment(),
+                null,
                 null,
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
@@ -207,8 +175,7 @@ public final class RefundFixtures {
                 processedAt,
                 null,
                 requestedAt,
-                processedAt,
-                defaultRefundItems());
+                processedAt);
     }
 
     public static RefundClaim completedRefundClaim() {
@@ -217,11 +184,13 @@ public final class RefundFixtures {
         return RefundClaim.reconstitute(
                 defaultRefundClaimId(),
                 defaultRefundClaimNumber(),
-                DEFAULT_ORDER_ID,
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_REFUND_QTY,
                 RefundStatus.COMPLETED,
                 defaultRefundReason(),
                 defaultRefundInfo(),
-                defaultCollectShipment(),
+                null,
                 null,
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
@@ -229,8 +198,7 @@ public final class RefundFixtures {
                 completedAt,
                 completedAt,
                 requestedAt,
-                completedAt,
-                defaultRefundItems());
+                completedAt);
     }
 
     public static RefundClaim rejectedRefundClaim() {
@@ -239,11 +207,13 @@ public final class RefundFixtures {
         return RefundClaim.reconstitute(
                 defaultRefundClaimId(),
                 defaultRefundClaimNumber(),
-                DEFAULT_ORDER_ID,
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_REFUND_QTY,
                 RefundStatus.REJECTED,
                 defaultRefundReason(),
                 null,
-                defaultCollectShipment(),
+                null,
                 null,
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
@@ -251,8 +221,7 @@ public final class RefundFixtures {
                 processedAt,
                 null,
                 requestedAt,
-                processedAt,
-                defaultRefundItems());
+                processedAt);
     }
 
     public static RefundClaim cancelledRefundClaim() {
@@ -261,11 +230,13 @@ public final class RefundFixtures {
         return RefundClaim.reconstitute(
                 defaultRefundClaimId(),
                 defaultRefundClaimNumber(),
-                DEFAULT_ORDER_ID,
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_REFUND_QTY,
                 RefundStatus.CANCELLED,
                 defaultRefundReason(),
                 null,
-                defaultCollectShipment(),
+                null,
                 null,
                 DEFAULT_REQUESTED_BY,
                 null,
@@ -273,8 +244,7 @@ public final class RefundFixtures {
                 null,
                 null,
                 requestedAt,
-                updatedAt,
-                defaultRefundItems());
+                updatedAt);
     }
 
     public static RefundClaim holdRefundClaim() {

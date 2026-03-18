@@ -19,42 +19,28 @@ public class CancelConditionBuilder {
 
     private static final QCancelJpaEntity cancel = QCancelJpaEntity.cancelJpaEntity;
 
-    /**
-     * ID 일치 조건.
-     *
-     * @param id 취소 ID
-     * @return BooleanExpression (null이면 조건 무시)
-     */
     public BooleanExpression idEq(String id) {
         return id != null ? cancel.id.eq(id) : null;
     }
 
-    /**
-     * 주문 ID 일치 조건.
-     *
-     * @param orderId 주문 ID
-     * @return BooleanExpression (null이면 조건 무시)
-     */
-    public BooleanExpression orderIdEq(String orderId) {
-        return orderId != null ? cancel.orderId.eq(orderId) : null;
+    public BooleanExpression idIn(List<String> ids) {
+        return ids != null && !ids.isEmpty() ? cancel.id.in(ids) : null;
     }
 
-    /**
-     * 주문 ID 목록 포함 조건.
-     *
-     * @param orderIds 주문 ID 목록
-     * @return BooleanExpression (null이면 조건 무시)
-     */
-    public BooleanExpression orderIdIn(List<String> orderIds) {
-        return orderIds != null && !orderIds.isEmpty() ? cancel.orderId.in(orderIds) : null;
+    public BooleanExpression sellerIdEq(Long sellerId) {
+        return sellerId != null ? cancel.sellerId.eq(sellerId) : null;
     }
 
-    /**
-     * 취소 상태 필터 조건.
-     *
-     * @param criteria 검색 조건
-     * @return BooleanExpression (null이면 조건 무시)
-     */
+    public BooleanExpression orderItemIdEq(String orderItemId) {
+        return cancel.orderItemId.eq(orderItemId);
+    }
+
+    public BooleanExpression orderItemIdIn(List<String> orderItemIds) {
+        return orderItemIds != null && !orderItemIds.isEmpty()
+                ? cancel.orderItemId.in(orderItemIds)
+                : null;
+    }
+
     public BooleanExpression statusIn(CancelSearchCriteria criteria) {
         if (!criteria.hasStatusFilter()) {
             return null;
@@ -63,12 +49,6 @@ public class CancelConditionBuilder {
         return cancel.cancelStatus.in(statusNames);
     }
 
-    /**
-     * 취소 유형 필터 조건.
-     *
-     * @param criteria 검색 조건
-     * @return BooleanExpression (null이면 조건 무시)
-     */
     public BooleanExpression typeIn(CancelSearchCriteria criteria) {
         if (!criteria.hasTypeFilter()) {
             return null;
@@ -77,14 +57,6 @@ public class CancelConditionBuilder {
         return cancel.cancelType.in(typeNames);
     }
 
-    /**
-     * 검색어 조건.
-     *
-     * <p>검색 필드가 지정된 경우 해당 필드만, 미지정 시 cancelNumber로 검색합니다.
-     *
-     * @param criteria 검색 조건
-     * @return BooleanExpression (null이면 조건 무시)
-     */
     public BooleanExpression searchCondition(CancelSearchCriteria criteria) {
         if (!criteria.hasSearchCondition()) {
             return null;
@@ -95,23 +67,11 @@ public class CancelConditionBuilder {
         }
         return switch (criteria.searchField()) {
             case CANCEL_NUMBER -> cancel.cancelNumber.like(word);
-            case ORDER_NUMBER -> {
-                String orderId =
-                        criteria.searchWord() != null ? criteria.searchWord().trim() : null;
-                yield orderId != null && !orderId.isBlank() ? cancel.orderId.eq(orderId) : null;
-            }
+            case ORDER_NUMBER -> cancel.cancelNumber.like(word);
             case CUSTOMER_NAME, CUSTOMER_PHONE, PRODUCT_NAME -> cancel.cancelNumber.like(word);
         };
     }
 
-    /**
-     * 날짜 범위 조건.
-     *
-     * <p>dateField에 따라 requestedAt 또는 completedAt을 기준으로 필터링합니다.
-     *
-     * @param criteria 검색 조건
-     * @return BooleanExpression (null이면 조건 무시)
-     */
     public BooleanExpression dateRange(CancelSearchCriteria criteria) {
         if (!criteria.hasDateRange()) {
             return null;

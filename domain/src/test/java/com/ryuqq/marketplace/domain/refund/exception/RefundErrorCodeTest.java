@@ -78,12 +78,12 @@ class RefundErrorCodeTest {
         }
 
         @Test
-        @DisplayName("EMPTY_REFUND_ITEMS 에러 코드를 검증한다")
-        void emptyRefundItems() {
-            assertThat(RefundErrorCode.EMPTY_REFUND_ITEMS.getCode()).isEqualTo("RFD-007");
-            assertThat(RefundErrorCode.EMPTY_REFUND_ITEMS.getHttpStatus()).isEqualTo(400);
-            assertThat(RefundErrorCode.EMPTY_REFUND_ITEMS.getMessage())
-                    .isEqualTo("환불 대상 상품은 최소 1개 이상이어야 합니다");
+        @DisplayName("INVALID_REFUND_QTY 에러 코드를 검증한다")
+        void invalidRefundQty() {
+            assertThat(RefundErrorCode.INVALID_REFUND_QTY.getCode()).isEqualTo("RFD-007");
+            assertThat(RefundErrorCode.INVALID_REFUND_QTY.getHttpStatus()).isEqualTo(400);
+            assertThat(RefundErrorCode.INVALID_REFUND_QTY.getMessage())
+                    .isEqualTo("환불 수량은 1 이상이어야 합니다");
         }
 
         @Test
@@ -111,8 +111,9 @@ class RefundErrorCodeTest {
                             RefundErrorCode.HOLD_REASON_REQUIRED,
                             RefundErrorCode.NOT_HOLD_STATUS,
                             RefundErrorCode.ALREADY_HOLD,
-                            RefundErrorCode.EMPTY_REFUND_ITEMS,
-                            RefundErrorCode.REASON_UPDATE_NOT_ALLOWED);
+                            RefundErrorCode.INVALID_REFUND_QTY,
+                            RefundErrorCode.REASON_UPDATE_NOT_ALLOWED,
+                            RefundErrorCode.REFUND_OWNERSHIP_MISMATCH);
         }
     }
 }

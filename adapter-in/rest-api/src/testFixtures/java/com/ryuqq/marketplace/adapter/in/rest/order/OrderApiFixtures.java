@@ -129,6 +129,7 @@ public final class OrderApiFixtures {
     public static ProductOrderInfo productOrderInfo() {
         return new ProductOrderInfo(
                 DEFAULT_ORDER_ITEM_ID,
+                "ORD-20250115-0001-001",
                 100L,
                 200L,
                 1L,
@@ -335,6 +336,7 @@ public final class OrderApiFixtures {
     public static ProductOrderApiResponse productOrderApiResponse() {
         return new ProductOrderApiResponse(
                 DEFAULT_ORDER_ITEM_ID,
+                "ORD-20260101-0001-001",
                 100L,
                 200L,
                 1L,

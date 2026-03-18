@@ -3,9 +3,10 @@ package com.ryuqq.marketplace.domain.cancel.event;
 import com.ryuqq.marketplace.domain.cancel.id.CancelId;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelType;
 import com.ryuqq.marketplace.domain.common.event.DomainEvent;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
 
 /** 취소 생성 이벤트. */
 public record CancelCreatedEvent(
-        CancelId cancelId, String orderId, CancelType cancelType, Instant occurredAt)
+        CancelId cancelId, OrderItemId orderItemId, CancelType cancelType, Instant occurredAt)
         implements DomainEvent {}

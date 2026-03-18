@@ -16,6 +16,9 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "id", length = 36, nullable = false)
     private String id;
 
+    @Column(name = "order_item_number", nullable = false, length = 50)
+    private String orderItemNumber;
+
     @Column(name = "order_id", nullable = false, length = 36)
     private String orderId;
 
@@ -134,6 +137,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private OrderItemJpaEntity(
             String id,
+            String orderItemNumber,
             String orderId,
             long productGroupId,
             long productId,
@@ -175,6 +179,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             Instant updatedAt) {
         super(createdAt, updatedAt);
         this.id = id;
+        this.orderItemNumber = orderItemNumber;
         this.orderId = orderId;
         this.productGroupId = productGroupId;
         this.productId = productId;
@@ -217,6 +222,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static OrderItemJpaEntity create(
             String id,
+            String orderItemNumber,
             String orderId,
             long productGroupId,
             long productId,
@@ -258,6 +264,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             Instant updatedAt) {
         return new OrderItemJpaEntity(
                 id,
+                orderItemNumber,
                 orderId,
                 productGroupId,
                 productId,
@@ -301,6 +308,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     public String getId() {
         return id;
+    }
+
+    public String getOrderItemNumber() {
+        return orderItemNumber;
     }
 
     public String getOrderId() {

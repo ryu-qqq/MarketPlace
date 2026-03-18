@@ -16,23 +16,26 @@ import com.ryuqq.marketplace.domain.exchange.exception.ExchangeException;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimId;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimNumber;
 import com.ryuqq.marketplace.domain.exchange.vo.AmountAdjustment;
+import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
-import com.ryuqq.marketplace.domain.exchange.vo.ExchangeTarget;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** 교환 클레임 Aggregate Root. */
+/** 교환 클레임 Aggregate Root. ExchangeClaim 1건 = OrderItem 1건의 1회 교환 요청. */
 public class ExchangeClaim {
 
     private final ExchangeClaimId id;
     private final ExchangeClaimNumber claimNumber;
-    private final String orderId;
+    private final OrderItemId orderItemId;
+    private final long sellerId;
+    private final int exchangeQty;
     private ExchangeStatus status;
     private ExchangeReason reason;
-    private ExchangeTarget exchangeTarget;
+    private ExchangeOption exchangeOption;
     private AmountAdjustment amountAdjustment;
     private final ClaimShipment collectShipment;
     private String linkedOrderId;
@@ -44,16 +47,17 @@ public class ExchangeClaim {
     private final Instant createdAt;
     private Instant updatedAt;
 
-    private final List<ExchangeItem> exchangeItems = new ArrayList<>();
     private final List<DomainEvent> events = new ArrayList<>();
 
     private ExchangeClaim(
             ExchangeClaimId id,
             ExchangeClaimNumber claimNumber,
-            String orderId,
+            OrderItemId orderItemId,
+            long sellerId,
+            int exchangeQty,
             ExchangeStatus status,
             ExchangeReason reason,
-            ExchangeTarget exchangeTarget,
+            ExchangeOption exchangeOption,
             AmountAdjustment amountAdjustment,
             ClaimShipment collectShipment,
             String linkedOrderId,
@@ -66,10 +70,12 @@ public class ExchangeClaim {
             Instant updatedAt) {
         this.id = id;
         this.claimNumber = claimNumber;
-        this.orderId = orderId;
+        this.orderItemId = orderItemId;
+        this.sellerId = sellerId;
+        this.exchangeQty = exchangeQty;
         this.status = status;
         this.reason = reason;
-        this.exchangeTarget = exchangeTarget;
+        this.exchangeOption = exchangeOption;
         this.amountAdjustment = amountAdjustment;
         this.collectShipment = collectShipment;
         this.linkedOrderId = linkedOrderId;
@@ -85,23 +91,26 @@ public class ExchangeClaim {
     public static ExchangeClaim forNew(
             ExchangeClaimId id,
             ExchangeClaimNumber claimNumber,
-            String orderId,
-            List<ExchangeItem> exchangeItems,
+            OrderItemId orderItemId,
+            long sellerId,
+            int exchangeQty,
             ExchangeReason reason,
-            ExchangeTarget exchangeTarget,
+            ExchangeOption exchangeOption,
             AmountAdjustment amountAdjustment,
             ClaimShipment collectShipment,
             String requestedBy,
             Instant now) {
-        validateExchangeItems(exchangeItems);
+        validateExchangeQty(exchangeQty);
         ExchangeClaim claim =
                 new ExchangeClaim(
                         id,
                         claimNumber,
-                        orderId,
+                        orderItemId,
+                        sellerId,
+                        exchangeQty,
                         ExchangeStatus.REQUESTED,
                         reason,
-                        exchangeTarget,
+                        exchangeOption,
                         amountAdjustment,
                         collectShipment,
                         null,
@@ -112,18 +121,19 @@ public class ExchangeClaim {
                         null,
                         now,
                         now);
-        claim.exchangeItems.addAll(exchangeItems);
-        claim.registerEvent(new ExchangeClaimCreatedEvent(id, orderId, now));
+        claim.registerEvent(new ExchangeClaimCreatedEvent(id, orderItemId, now));
         return claim;
     }
 
     public static ExchangeClaim reconstitute(
             ExchangeClaimId id,
             ExchangeClaimNumber claimNumber,
-            String orderId,
+            OrderItemId orderItemId,
+            long sellerId,
+            int exchangeQty,
             ExchangeStatus status,
             ExchangeReason reason,
-            ExchangeTarget exchangeTarget,
+            ExchangeOption exchangeOption,
             AmountAdjustment amountAdjustment,
             ClaimShipment collectShipment,
             String linkedOrderId,
@@ -133,30 +143,26 @@ public class ExchangeClaim {
             Instant processedAt,
             Instant completedAt,
             Instant createdAt,
-            Instant updatedAt,
-            List<ExchangeItem> exchangeItems) {
-        ExchangeClaim claim =
-                new ExchangeClaim(
-                        id,
-                        claimNumber,
-                        orderId,
-                        status,
-                        reason,
-                        exchangeTarget,
-                        amountAdjustment,
-                        collectShipment,
-                        linkedOrderId,
-                        requestedBy,
-                        processedBy,
-                        requestedAt,
-                        processedAt,
-                        completedAt,
-                        createdAt,
-                        updatedAt);
-        if (exchangeItems != null) {
-            claim.exchangeItems.addAll(exchangeItems);
-        }
-        return claim;
+            Instant updatedAt) {
+        return new ExchangeClaim(
+                id,
+                claimNumber,
+                orderItemId,
+                sellerId,
+                exchangeQty,
+                status,
+                reason,
+                exchangeOption,
+                amountAdjustment,
+                collectShipment,
+                linkedOrderId,
+                requestedBy,
+                processedBy,
+                requestedAt,
+                processedAt,
+                completedAt,
+                createdAt,
+                updatedAt);
     }
 
     public void startCollecting(String processedBy, Instant now) {
@@ -166,10 +172,10 @@ public class ExchangeClaim {
         this.processedBy = processedBy;
         this.processedAt = now;
         this.updatedAt = now;
-        registerEvent(new ExchangeCollectingEvent(id, orderId, now));
+        registerEvent(new ExchangeCollectingEvent(id, orderItemId, now));
         registerEvent(
                 new ExchangeClaimStatusChangedEvent(
-                        id, orderId, from, ExchangeStatus.COLLECTING, now));
+                        id, orderItemId, from, ExchangeStatus.COLLECTING, now));
     }
 
     public void completeCollection(String processedBy, Instant now) {
@@ -178,10 +184,10 @@ public class ExchangeClaim {
         this.status = ExchangeStatus.COLLECTED;
         this.processedBy = processedBy;
         this.updatedAt = now;
-        registerEvent(new ExchangeCollectedEvent(id, orderId, now));
+        registerEvent(new ExchangeCollectedEvent(id, orderItemId, now));
         registerEvent(
                 new ExchangeClaimStatusChangedEvent(
-                        id, orderId, from, ExchangeStatus.COLLECTED, now));
+                        id, orderItemId, from, ExchangeStatus.COLLECTED, now));
     }
 
     public void startPreparing(String processedBy, Instant now) {
@@ -190,10 +196,10 @@ public class ExchangeClaim {
         this.status = ExchangeStatus.PREPARING;
         this.processedBy = processedBy;
         this.updatedAt = now;
-        registerEvent(new ExchangePreparingEvent(id, orderId, now));
+        registerEvent(new ExchangePreparingEvent(id, orderItemId, now));
         registerEvent(
                 new ExchangeClaimStatusChangedEvent(
-                        id, orderId, from, ExchangeStatus.PREPARING, now));
+                        id, orderItemId, from, ExchangeStatus.PREPARING, now));
     }
 
     public void startShipping(String linkedOrderId, String processedBy, Instant now) {
@@ -203,10 +209,10 @@ public class ExchangeClaim {
         this.linkedOrderId = linkedOrderId;
         this.processedBy = processedBy;
         this.updatedAt = now;
-        registerEvent(new ExchangeShippingEvent(id, orderId, linkedOrderId, now));
+        registerEvent(new ExchangeShippingEvent(id, orderItemId, linkedOrderId, now));
         registerEvent(
                 new ExchangeClaimStatusChangedEvent(
-                        id, orderId, from, ExchangeStatus.SHIPPING, now));
+                        id, orderItemId, from, ExchangeStatus.SHIPPING, now));
     }
 
     public void complete(String processedBy, Instant now) {
@@ -216,10 +222,10 @@ public class ExchangeClaim {
         this.processedBy = processedBy;
         this.completedAt = now;
         this.updatedAt = now;
-        registerEvent(new ExchangeCompletedEvent(id, orderId, now));
+        registerEvent(new ExchangeCompletedEvent(id, orderItemId, now));
         registerEvent(
                 new ExchangeClaimStatusChangedEvent(
-                        id, orderId, from, ExchangeStatus.COMPLETED, now));
+                        id, orderItemId, from, ExchangeStatus.COMPLETED, now));
     }
 
     public void reject(String processedBy, Instant now) {
@@ -229,10 +235,10 @@ public class ExchangeClaim {
         this.processedBy = processedBy;
         this.processedAt = now;
         this.updatedAt = now;
-        registerEvent(new ExchangeRejectedEvent(id, orderId, now));
+        registerEvent(new ExchangeRejectedEvent(id, orderItemId, now));
         registerEvent(
                 new ExchangeClaimStatusChangedEvent(
-                        id, orderId, from, ExchangeStatus.REJECTED, now));
+                        id, orderItemId, from, ExchangeStatus.REJECTED, now));
     }
 
     public void cancel(Instant now) {
@@ -240,18 +246,18 @@ public class ExchangeClaim {
         validateTransition(ExchangeStatus.CANCELLED);
         this.status = ExchangeStatus.CANCELLED;
         this.updatedAt = now;
-        registerEvent(new ExchangeCancelledEvent(id, orderId, now));
+        registerEvent(new ExchangeCancelledEvent(id, orderItemId, now));
         registerEvent(
                 new ExchangeClaimStatusChangedEvent(
-                        id, orderId, from, ExchangeStatus.CANCELLED, now));
+                        id, orderItemId, from, ExchangeStatus.CANCELLED, now));
     }
 
-    public void updateTarget(
-            ExchangeTarget exchangeTarget, AmountAdjustment amountAdjustment, Instant now) {
+    public void updateOption(
+            ExchangeOption exchangeOption, AmountAdjustment amountAdjustment, Instant now) {
         if (this.status != ExchangeStatus.REQUESTED) {
             throw new ExchangeException(ExchangeErrorCode.TARGET_UPDATE_NOT_ALLOWED);
         }
-        this.exchangeTarget = exchangeTarget;
+        this.exchangeOption = exchangeOption;
         this.amountAdjustment = amountAdjustment;
         this.updatedAt = now;
     }
@@ -272,10 +278,10 @@ public class ExchangeClaim {
         }
     }
 
-    private static void validateExchangeItems(List<ExchangeItem> exchangeItems) {
-        if (exchangeItems == null || exchangeItems.isEmpty()) {
+    private static void validateExchangeQty(int exchangeQty) {
+        if (exchangeQty <= 0) {
             throw new ExchangeException(
-                    ExchangeErrorCode.EMPTY_EXCHANGE_ITEMS, "교환 대상 상품은 최소 1개 이상이어야 합니다");
+                    ExchangeErrorCode.INVALID_EXCHANGE_QTY, "교환 수량은 1 이상이어야 합니다");
         }
     }
 
@@ -289,79 +295,25 @@ public class ExchangeClaim {
         return Collections.unmodifiableList(polled);
     }
 
-    public ExchangeClaimId id() {
-        return id;
-    }
-
-    public String idValue() {
-        return id.value();
-    }
-
-    public ExchangeClaimNumber claimNumber() {
-        return claimNumber;
-    }
-
-    public String claimNumberValue() {
-        return claimNumber.value();
-    }
-
-    public String orderId() {
-        return orderId;
-    }
-
-    public ExchangeStatus status() {
-        return status;
-    }
-
-    public ExchangeReason reason() {
-        return reason;
-    }
-
-    public ExchangeTarget exchangeTarget() {
-        return exchangeTarget;
-    }
-
-    public AmountAdjustment amountAdjustment() {
-        return amountAdjustment;
-    }
-
-    public ClaimShipment collectShipment() {
-        return collectShipment;
-    }
-
-    public String linkedOrderId() {
-        return linkedOrderId;
-    }
-
-    public String requestedBy() {
-        return requestedBy;
-    }
-
-    public String processedBy() {
-        return processedBy;
-    }
-
-    public Instant requestedAt() {
-        return requestedAt;
-    }
-
-    public Instant processedAt() {
-        return processedAt;
-    }
-
-    public Instant completedAt() {
-        return completedAt;
-    }
-
-    public Instant createdAt() {
-        return createdAt;
-    }
-
-    public Instant updatedAt() {
-        return updatedAt;
-    }
-
-    public List<ExchangeItem> exchangeItems() {
-        return Collections.unmodifiableList(exchangeItems);
-    }
+    public ExchangeClaimId id() { return id; }
+    public String idValue() { return id.value(); }
+    public ExchangeClaimNumber claimNumber() { return claimNumber; }
+    public String claimNumberValue() { return claimNumber.value(); }
+    public OrderItemId orderItemId() { return orderItemId; }
+    public String orderItemIdValue() { return orderItemId.value(); }
+    public long sellerId() { return sellerId; }
+    public int exchangeQty() { return exchangeQty; }
+    public ExchangeStatus status() { return status; }
+    public ExchangeReason reason() { return reason; }
+    public ExchangeOption exchangeOption() { return exchangeOption; }
+    public AmountAdjustment amountAdjustment() { return amountAdjustment; }
+    public ClaimShipment collectShipment() { return collectShipment; }
+    public String linkedOrderId() { return linkedOrderId; }
+    public String requestedBy() { return requestedBy; }
+    public String processedBy() { return processedBy; }
+    public Instant requestedAt() { return requestedAt; }
+    public Instant processedAt() { return processedAt; }
+    public Instant completedAt() { return completedAt; }
+    public Instant createdAt() { return createdAt; }
+    public Instant updatedAt() { return updatedAt; }
 }

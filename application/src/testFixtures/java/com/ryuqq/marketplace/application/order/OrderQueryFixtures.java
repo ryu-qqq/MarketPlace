@@ -97,6 +97,7 @@ public final class OrderQueryFixtures {
     public static OrderItemResult orderItemResult(String orderItemId, String orderId) {
         return new OrderItemResult(
                 orderItemId,
+                "ORD-20250115-0001-001",
                 orderId,
                 100L,
                 200L,

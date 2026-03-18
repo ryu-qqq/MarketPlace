@@ -1,20 +1,17 @@
 package com.ryuqq.marketplace.adapter.out.persistence.refund.mapper;
 
 import com.ryuqq.marketplace.adapter.out.persistence.refund.entity.RefundClaimJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.refund.entity.RefundItemJpaEntity;
 import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
-import com.ryuqq.marketplace.domain.refund.aggregate.RefundItem;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimId;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimNumber;
-import com.ryuqq.marketplace.domain.refund.id.RefundItemId;
 import com.ryuqq.marketplace.domain.refund.vo.HoldInfo;
 import com.ryuqq.marketplace.domain.refund.vo.RefundInfo;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReason;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReasonType;
 import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
-import java.util.List;
 import org.springframework.stereotype.Component;
 
 /** 환불 클레임 JPA 엔티티 Mapper. */
@@ -26,7 +23,9 @@ public class RefundPersistenceMapper {
         return RefundClaimJpaEntity.create(
                 domain.idValue(),
                 domain.claimNumberValue(),
-                domain.orderId(),
+                domain.orderItemIdValue(),
+                domain.sellerId(),
+                domain.refundQty(),
                 domain.status().name(),
                 domain.reason().reasonType().name(),
                 domain.reason().reasonDetail(),
@@ -48,36 +47,16 @@ public class RefundPersistenceMapper {
                 domain.updatedAt());
     }
 
-    public RefundItemJpaEntity toItemEntity(RefundItem item, String refundClaimId) {
-        return RefundItemJpaEntity.create(
-                item.idValue(),
-                refundClaimId,
-                String.valueOf(item.orderItemId()),
-                item.refundQty(),
-                java.time.Instant.now());
-    }
-
-    public RefundClaim toDomain(
-            RefundClaimJpaEntity entity,
-            List<RefundItemJpaEntity> itemEntities,
-            ClaimShipment collectShipment) {
-        List<RefundItem> items =
-                itemEntities.stream()
-                        .map(
-                                i ->
-                                        RefundItem.reconstitute(
-                                                RefundItemId.of(i.getId()),
-                                                Long.parseLong(i.getOrderItemId()),
-                                                i.getRefundQty()))
-                        .toList();
-
+    public RefundClaim toDomain(RefundClaimJpaEntity entity, ClaimShipment collectShipment) {
         RefundInfo refundInfo = resolveRefundInfo(entity);
         HoldInfo holdInfo = resolveHoldInfo(entity);
 
         return RefundClaim.reconstitute(
                 RefundClaimId.of(entity.getId()),
                 RefundClaimNumber.of(entity.getClaimNumber()),
-                entity.getOrderId(),
+                OrderItemId.of(entity.getOrderItemId()),
+                entity.getSellerId(),
+                entity.getRefundQty(),
                 RefundStatus.valueOf(entity.getRefundStatus()),
                 RefundReason.of(
                         RefundReasonType.valueOf(entity.getReasonType()), entity.getReasonDetail()),
@@ -90,8 +69,7 @@ public class RefundPersistenceMapper {
                 entity.getProcessedAt(),
                 entity.getCompletedAt(),
                 entity.getCreatedAt(),
-                entity.getUpdatedAt(),
-                items);
+                entity.getUpdatedAt());
     }
 
     private RefundInfo resolveRefundInfo(RefundClaimJpaEntity entity) {

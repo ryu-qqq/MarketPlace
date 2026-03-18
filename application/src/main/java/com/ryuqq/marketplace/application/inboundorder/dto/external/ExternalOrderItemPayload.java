@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.inboundorder.dto.external;
 /**
  * 외부몰 주문 아이템 데이터.
  *
+ * @param externalProductOrderId 외부 상품주문 ID (예: 네이버 productOrderId)
  * @param externalProductId 외부 상품 ID
  * @param externalOptionId 외부 옵션 ID
  * @param externalProductName 외부 상품명
@@ -25,6 +26,7 @@ package com.ryuqq.marketplace.application.inboundorder.dto.external;
         value = "NM_CONFUSING",
         justification = "receiverZipCode follows domain convention")
 public record ExternalOrderItemPayload(
+        String externalProductOrderId,
         String externalProductId,
         String externalOptionId,
         String externalProductName,

@@ -3,3 +3,7 @@
 # ============================================================
 sqs:
   region: ap-northeast-2
+  queues:
+    cancel-outbox: ""
+    refund-outbox: ""
+    exchange-outbox: ""

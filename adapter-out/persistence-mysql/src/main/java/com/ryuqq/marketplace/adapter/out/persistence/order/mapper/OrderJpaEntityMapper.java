@@ -14,6 +14,7 @@ import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderHistoryId;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemNumber;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
 import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
@@ -82,6 +83,7 @@ public class OrderJpaEntityMapper {
     public OrderItemJpaEntity toOrderItemEntity(OrderItem item, String orderId) {
         return OrderItemJpaEntity.create(
                 item.idValue(),
+                item.orderItemNumberValue(),
                 orderId,
                 item.internalProduct().productGroupId(),
                 item.internalProduct().productId(),
@@ -204,6 +206,7 @@ public class OrderJpaEntityMapper {
     public OrderItem toOrderItem(OrderItemJpaEntity entity) {
         return OrderItem.reconstitute(
                 OrderItemId.of(entity.getId()),
+                OrderItemNumber.of(entity.getOrderItemNumber()),
                 InternalProductReference.of(
                         entity.getProductGroupId(),
                         entity.getProductId(),

@@ -209,6 +209,7 @@ public class OrderAssembler {
     private ProductOrderInfo toProductOrderInfo(OrderItemResult item) {
         return new ProductOrderInfo(
                 item.orderItemId(),
+                item.orderItemNumber(),
                 item.productGroupId(),
                 item.productId(),
                 item.sellerId(),

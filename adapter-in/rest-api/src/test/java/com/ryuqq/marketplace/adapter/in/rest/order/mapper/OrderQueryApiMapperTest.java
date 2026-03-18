@@ -342,7 +342,7 @@ class OrderQueryApiMapperTest {
 
             // then
             assertThat(response).isNotNull();
-            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ID);
+            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID);
             assertThat(response.buyerInfo()).isNotNull();
             assertThat(response.settlementInfo()).isNotNull();
             assertThat(response.orderHistories()).isNotEmpty();
@@ -438,8 +438,8 @@ class OrderQueryApiMapperTest {
 
             // then
             assertThat(response).isNotNull();
-            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ID);
-            assertThat(response.orderNumber()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_NUMBER);
+            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.orderNumber()).isEqualTo("ORD-20250115-0001-001");
             assertThat(response.buyerInfo()).isNotNull();
             assertThat(response.buyerInfo().buyerName())
                     .isEqualTo(OrderApiFixtures.DEFAULT_BUYER_NAME);

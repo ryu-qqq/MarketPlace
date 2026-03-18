@@ -36,8 +36,10 @@ public final class OrderItemJpaEntityFixtures {
     /** 기본 주문 상품 Entity 생성. */
     public static OrderItemJpaEntity defaultItem(String orderId) {
         Instant now = Instant.now();
+        String itemId = UUID.randomUUID().toString();
         return OrderItemJpaEntity.create(
-                UUID.randomUUID().toString(),
+                itemId,
+                "ORD-20240101-0001-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,
@@ -88,8 +90,10 @@ public final class OrderItemJpaEntityFixtures {
     public static OrderItemJpaEntity itemWithPrice(String orderId, int unitPrice, int quantity) {
         Instant now = Instant.now();
         int totalAmount = unitPrice * quantity;
+        String itemId = UUID.randomUUID().toString();
         return OrderItemJpaEntity.create(
-                UUID.randomUUID().toString(),
+                itemId,
+                "ORD-20240101-0001-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,

@@ -21,7 +21,7 @@ public class ShipmentCommandApiMapper {
 
     public ConfirmShipmentBatchCommand toConfirmBatchCommand(
             ConfirmShipmentBatchApiRequest request, Long sellerId) {
-        return new ConfirmShipmentBatchCommand(request.orderItemIds(), sellerId);
+        return new ConfirmShipmentBatchCommand(request.orderIds(), sellerId);
     }
 
     public ShipBatchCommand toShipBatchCommand(ShipBatchApiRequest request) {
@@ -47,7 +47,7 @@ public class ShipmentCommandApiMapper {
 
     private ShipBatchItem toShipBatchItem(ShipBatchItemApiRequest request) {
         return new ShipBatchItem(
-                request.orderItemId(),
+                request.orderId(),
                 request.trackingNumber(),
                 request.courierCode(),
                 request.courierName(),

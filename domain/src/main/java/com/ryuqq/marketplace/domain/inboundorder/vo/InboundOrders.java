@@ -59,6 +59,12 @@ public class InboundOrders {
                 .toList();
     }
 
+    public List<InboundOrder> notConverted() {
+        return orders.stream()
+                .filter(o -> o.status() != InboundOrderStatus.CONVERTED)
+                .toList();
+    }
+
     public List<InboundOrder> all() {
         return Collections.unmodifiableList(orders);
     }

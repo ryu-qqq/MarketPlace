@@ -10,7 +10,7 @@ public enum CancelErrorCode implements ErrorCode {
     INVALID_CANCEL_REASON("CAN-004", 400, "취소 사유가 유효하지 않습니다"),
     INVALID_CANCEL_QTY("CAN-005", 400, "취소 수량이 유효하지 않습니다"),
     ORDER_NOT_CANCELLABLE("CAN-006", 400, "취소할 수 없는 주문입니다"),
-    EMPTY_CANCEL_ITEMS("CAN-007", 400, "취소 대상 상품은 최소 1개 이상이어야 합니다");
+    CANCEL_OWNERSHIP_MISMATCH("CAN-008", 403, "요청한 취소 건의 소유권이 일치하지 않습니다");
 
     private final String code;
     private final int httpStatus;

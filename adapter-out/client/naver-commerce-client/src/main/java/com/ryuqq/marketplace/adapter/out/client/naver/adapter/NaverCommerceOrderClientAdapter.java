@@ -184,6 +184,52 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
         }
     }
 
+    /**
+     * 클레임 변경 상품주문 내역을 조회합니다 (lastChangedType 없이 전체 조회).
+     *
+     * <p>lastChangedType 파라미터를 생략하여 전체 변경 유형을 조회합니다. 클레임 어댑터에서 필터링에 사용합니다.
+     */
+    public NaverLastChangedStatusesResponse getLastChangedStatusesAll(
+            Instant fromTime, Instant toTime, String moreSequence) {
+        try {
+            return circuitBreaker.executeSupplier(
+                    () -> {
+                        String token = tokenManager.getAccessToken();
+
+                        Map<String, Object> params = new LinkedHashMap<>();
+                        params.put("from", formatForNaver(fromTime));
+                        params.put("to", formatForNaver(toTime));
+                        params.put("limit", MAX_BATCH_SIZE);
+
+                        String uri =
+                                "/v1/pay-order/seller/product-orders/last-changed-statuses"
+                                        + "?lastChangedFrom={from}&lastChangedTo={to}"
+                                        + "&limitCount={limit}";
+
+                        if (moreSequence != null) {
+                            String uriWithMore = uri + "&moreSequence={seq}";
+                            params.put("seq", moreSequence);
+                            return restClient
+                                    .get()
+                                    .uri(uriWithMore, params)
+                                    .header("Authorization", "Bearer " + token)
+                                    .retrieve()
+                                    .body(NaverLastChangedStatusesResponse.class);
+                        }
+
+                        return restClient
+                                .get()
+                                .uri(uri, params)
+                                .header("Authorization", "Bearer " + token)
+                                .retrieve()
+                                .body(NaverLastChangedStatusesResponse.class);
+                    });
+        } catch (CallNotPermittedException e) {
+            throw new ExternalServiceUnavailableException(
+                    "네이버 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        }
+    }
+
     /** 상품주문 상세를 일괄 조회합니다. */
     public NaverProductOrderDetailResponse queryProductOrders(List<String> productOrderIds) {
         try {

@@ -1,7 +1,5 @@
 package com.ryuqq.marketplace.adapter.out.persistence.refund.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.refund.entity.RefundClaimJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.refund.entity.RefundItemJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.refund.mapper.RefundPersistenceMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.refund.repository.RefundClaimQueryDslRepository;
 import com.ryuqq.marketplace.application.claim.port.out.query.ClaimShipmentQueryPort;
@@ -10,7 +8,10 @@ import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.claim.id.ClaimShipmentId;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimId;
+import com.ryuqq.marketplace.domain.refund.query.RefundSearchCriteria;
+import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -35,53 +36,44 @@ public class RefundQueryAdapter implements RefundQueryPort {
     public Optional<RefundClaim> findById(RefundClaimId id) {
         return repository
                 .findById(id.value())
-                .map(
-                        entity -> {
-                            List<RefundItemJpaEntity> items =
-                                    repository.findItemsByClaimId(entity.getId());
-                            ClaimShipment collectShipment =
-                                    resolveClaimShipment(entity.getClaimShipmentId());
-                            return mapper.toDomain(entity, items, collectShipment);
-                        });
+                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())));
     }
 
     @Override
-    public Optional<RefundClaim> findByOrderId(String orderId) {
+    public Optional<RefundClaim> findByOrderItemId(String orderItemId) {
         return repository
-                .findByOrderId(orderId)
-                .map(
-                        entity -> {
-                            List<RefundItemJpaEntity> items =
-                                    repository.findItemsByClaimId(entity.getId());
-                            ClaimShipment collectShipment =
-                                    resolveClaimShipment(entity.getClaimShipmentId());
-                            return mapper.toDomain(entity, items, collectShipment);
-                        });
+                .findByOrderItemId(orderItemId)
+                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())));
     }
 
     @Override
-    public List<RefundClaim> findByOrderIds(List<String> orderIds) {
-        List<RefundClaimJpaEntity> claimEntities = repository.findByOrderIds(orderIds);
-        if (claimEntities.isEmpty()) {
-            return List.of();
-        }
-        List<String> claimIds = claimEntities.stream().map(RefundClaimJpaEntity::getId).toList();
-        List<RefundItemJpaEntity> allItems = repository.findItemsByClaimIds(claimIds);
+    public List<RefundClaim> findByOrderItemIds(List<String> orderItemIds) {
+        return repository.findByOrderItemIds(orderItemIds).stream()
+                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())))
+                .toList();
+    }
 
-        return claimEntities.stream()
-                .map(
-                        entity -> {
-                            List<RefundItemJpaEntity> items =
-                                    allItems.stream()
-                                            .filter(
-                                                    i ->
-                                                            entity.getId()
-                                                                    .equals(i.getRefundClaimId()))
-                                            .toList();
-                            ClaimShipment collectShipment =
-                                    resolveClaimShipment(entity.getClaimShipmentId());
-                            return mapper.toDomain(entity, items, collectShipment);
-                        })
+    @Override
+    public List<RefundClaim> findByCriteria(RefundSearchCriteria criteria) {
+        return repository.findByCriteria(criteria).stream()
+                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())))
+                .toList();
+    }
+
+    @Override
+    public long countByCriteria(RefundSearchCriteria criteria) {
+        return repository.countByCriteria(criteria);
+    }
+
+    @Override
+    public Map<RefundStatus, Long> countByStatus() {
+        return repository.countByStatus();
+    }
+
+    @Override
+    public List<RefundClaim> findByIdIn(List<String> refundClaimIds, Long sellerId) {
+        return repository.findByIdIn(refundClaimIds, sellerId).stream()
+                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())))
                 .toList();
     }
 

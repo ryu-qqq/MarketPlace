@@ -10,8 +10,7 @@ import java.time.Instant;
 /**
  * 취소 JPA 엔티티.
  *
- * <p>cancels 테이블과 매핑됩니다. soft delete 없이 BaseAuditEntity를 상속합니다. cancel_items는 별도
- * CancelItemJpaEntity로 분리됩니다.
+ * <p>cancels 테이블과 매핑됩니다. Cancel 1건 = OrderItem 1건의 1회 취소 요청.
  */
 @Entity
 @Table(name = "cancels")
@@ -24,8 +23,14 @@ public class CancelJpaEntity extends BaseAuditEntity {
     @Column(name = "cancel_number", nullable = false, length = 50, unique = true)
     private String cancelNumber;
 
-    @Column(name = "order_id", nullable = false, length = 36)
-    private String orderId;
+    @Column(name = "order_item_id", nullable = false, length = 36)
+    private String orderItemId;
+
+    @Column(name = "seller_id", nullable = false)
+    private long sellerId;
+
+    @Column(name = "cancel_qty", nullable = false)
+    private int cancelQty;
 
     @Column(name = "cancel_type", nullable = false, length = 20)
     private String cancelType;
@@ -77,7 +82,9 @@ public class CancelJpaEntity extends BaseAuditEntity {
     private CancelJpaEntity(
             String id,
             String cancelNumber,
-            String orderId,
+            String orderItemId,
+            long sellerId,
+            int cancelQty,
             String cancelType,
             String cancelStatus,
             String reasonType,
@@ -97,7 +104,9 @@ public class CancelJpaEntity extends BaseAuditEntity {
         super(createdAt, updatedAt);
         this.id = id;
         this.cancelNumber = cancelNumber;
-        this.orderId = orderId;
+        this.orderItemId = orderItemId;
+        this.sellerId = sellerId;
+        this.cancelQty = cancelQty;
         this.cancelType = cancelType;
         this.cancelStatus = cancelStatus;
         this.reasonType = reasonType;
@@ -114,34 +123,12 @@ public class CancelJpaEntity extends BaseAuditEntity {
         this.completedAt = completedAt;
     }
 
-    /**
-     * 팩토리 메서드.
-     *
-     * @param id UUID 문자열
-     * @param cancelNumber 취소 번호
-     * @param orderId 주문 ID
-     * @param cancelType 취소 유형
-     * @param cancelStatus 취소 상태
-     * @param reasonType 취소 사유 유형
-     * @param reasonDetail 취소 상세 사유
-     * @param refundAmount 환불 금액
-     * @param refundMethod 환불 수단
-     * @param refundStatus 환불 상태
-     * @param refundedAt 환불 완료 일시
-     * @param pgRefundId PG 환불 ID
-     * @param requestedBy 취소 요청자
-     * @param processedBy 취소 처리자
-     * @param requestedAt 요청 일시
-     * @param processedAt 처리 일시
-     * @param completedAt 완료 일시
-     * @param createdAt 생성 일시
-     * @param updatedAt 수정 일시
-     * @return CancelJpaEntity 인스턴스
-     */
     public static CancelJpaEntity create(
             String id,
             String cancelNumber,
-            String orderId,
+            String orderItemId,
+            long sellerId,
+            int cancelQty,
             String cancelType,
             String cancelStatus,
             String reasonType,
@@ -161,7 +148,9 @@ public class CancelJpaEntity extends BaseAuditEntity {
         return new CancelJpaEntity(
                 id,
                 cancelNumber,
-                orderId,
+                orderItemId,
+                sellerId,
+                cancelQty,
                 cancelType,
                 cancelStatus,
                 reasonType,
@@ -188,8 +177,16 @@ public class CancelJpaEntity extends BaseAuditEntity {
         return cancelNumber;
     }
 
-    public String getOrderId() {
-        return orderId;
+    public String getOrderItemId() {
+        return orderItemId;
+    }
+
+    public long getSellerId() {
+        return sellerId;
+    }
+
+    public int getCancelQty() {
+        return cancelQty;
     }
 
     public String getCancelType() {

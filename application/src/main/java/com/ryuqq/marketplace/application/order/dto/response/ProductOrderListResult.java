@@ -77,6 +77,7 @@ public record ProductOrderListResult(
      */
     public record ProductOrderInfo(
             String orderItemId,
+            String orderItemNumber,
             long productGroupId,
             long productId,
             long sellerId,

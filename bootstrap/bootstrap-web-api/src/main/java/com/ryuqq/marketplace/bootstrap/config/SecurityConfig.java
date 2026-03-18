@@ -2,6 +2,10 @@ package com.ryuqq.marketplace.bootstrap.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.authhub.sdk.filter.GatewayAuthenticationFilter;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.auth.filter.LegacyJwtAuthenticationFilter;
+import com.ryuqq.marketplace.application.legacyauth.manager.LegacySellerAuthCompositeReadManager;
+import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenCacheReadManager;
+import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenManager;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
@@ -78,11 +82,23 @@ public class SecurityConfig {
     }
 
     @Bean
+    public LegacyJwtAuthenticationFilter legacyJwtAuthenticationFilter(
+            LegacyTokenManager legacyTokenManager,
+            LegacySellerAuthCompositeReadManager legacySellerAuthCompositeReadManager,
+            LegacyTokenCacheReadManager legacyTokenCacheReadManager) {
+        return new LegacyJwtAuthenticationFilter(
+                legacyTokenManager,
+                legacySellerAuthCompositeReadManager,
+                legacyTokenCacheReadManager);
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             GatewayAuthenticationFilter gatewayAuthenticationFilter,
             GatewaySecurityBridgeFilter gatewaySecurityBridgeFilter,
             ServiceTokenAuthenticationFilter serviceTokenAuthenticationFilter,
+            LegacyJwtAuthenticationFilter legacyJwtAuthenticationFilter,
             ObjectMapper objectMapper)
             throws Exception {
         http
@@ -147,6 +163,15 @@ public class SecurityConfig {
                                         .requestMatchers("/api/v1/market/internal/**")
                                         .hasAuthority("ROLE_INTERNAL_SERVICE")
 
+                                        // 레거시 인증 (토큰 발급은 인증 없이 허용)
+                                        .requestMatchers("/api/v1/legacy/auth/**")
+                                        .permitAll()
+
+                                        // 레거시 API (LegacyJwtAuthenticationFilter 또는
+                                        // GatewayAuthenticationFilter로 인증)
+                                        .requestMatchers("/api/v1/legacy/**")
+                                        .authenticated()
+
                                         // Actuator
                                         .requestMatchers("/actuator/**")
                                         .permitAll()
@@ -165,15 +190,21 @@ public class SecurityConfig {
                                         .anyRequest()
                                         .authenticated())
 
-                // ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal 경로
-                // 전용)
+                // 1. LegacyJwtAuthenticationFilter: 레거시 HS256 JWT → SecurityContext
+                // (/api/v1/legacy/** 전용, 가장 먼저 실행)
+                .addFilterBefore(
+                        legacyJwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class)
+                // 2. ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal
+                // 경로 전용)
                 .addFilterBefore(
                         serviceTokenAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
-                // GatewayAuthenticationFilter: X-User-* 헤더 → UserContext (ThreadLocal)
+                // 3. GatewayAuthenticationFilter: X-User-* 헤더 → UserContext (ThreadLocal)
                 .addFilterBefore(
                         gatewayAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                // GatewaySecurityBridgeFilter: UserContext → SecurityContext (Spring Security)
+                // 4. GatewaySecurityBridgeFilter: UserContext → SecurityContext
+                // (이미 SecurityContext가 있으면 스킵)
                 .addFilterAfter(gatewaySecurityBridgeFilter, GatewayAuthenticationFilter.class);
 
         return http.build();

@@ -7,6 +7,7 @@ public class InboundOrderItem {
 
     private final InboundOrderItemId id;
 
+    private final String externalProductOrderId;
     private final String externalProductId;
     private final String externalOptionId;
     private final String externalProductName;
@@ -37,6 +38,7 @@ public class InboundOrderItem {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private InboundOrderItem(
             InboundOrderItemId id,
+            String externalProductOrderId,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -61,6 +63,7 @@ public class InboundOrderItem {
             String resolvedProductGroupName,
             boolean mapped) {
         this.id = id;
+        this.externalProductOrderId = externalProductOrderId;
         this.externalProductId = externalProductId;
         this.externalOptionId = externalOptionId;
         this.externalProductName = externalProductName;
@@ -88,6 +91,7 @@ public class InboundOrderItem {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static InboundOrderItem forNew(
+            String externalProductOrderId,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -106,6 +110,7 @@ public class InboundOrderItem {
             String deliveryRequest) {
         return new InboundOrderItem(
                 InboundOrderItemId.forNew(),
+                externalProductOrderId,
                 externalProductId,
                 externalOptionId,
                 externalProductName,
@@ -134,6 +139,7 @@ public class InboundOrderItem {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static InboundOrderItem reconstitute(
             InboundOrderItemId id,
+            String externalProductOrderId,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -159,6 +165,7 @@ public class InboundOrderItem {
             boolean mapped) {
         return new InboundOrderItem(
                 id,
+                externalProductOrderId,
                 externalProductId,
                 externalOptionId,
                 externalProductName,
@@ -210,6 +217,10 @@ public class InboundOrderItem {
 
     public InboundOrderItemId id() {
         return id;
+    }
+
+    public String externalProductOrderId() {
+        return externalProductOrderId;
     }
 
     public String externalProductId() {

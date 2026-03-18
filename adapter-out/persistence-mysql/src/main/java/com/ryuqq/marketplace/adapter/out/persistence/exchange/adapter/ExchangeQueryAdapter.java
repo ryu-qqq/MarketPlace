@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.exchange.adapter;
 
 import com.ryuqq.marketplace.adapter.out.persistence.exchange.entity.ExchangeClaimJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.exchange.entity.ExchangeItemJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.exchange.mapper.ExchangePersistenceMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.exchange.repository.ExchangeClaimQueryDslRepository;
 import com.ryuqq.marketplace.application.claim.port.out.query.ClaimShipmentQueryPort;
@@ -10,7 +9,11 @@ import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.claim.id.ClaimShipmentId;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimId;
+import com.ryuqq.marketplace.domain.exchange.query.ExchangeSearchCriteria;
+import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -33,56 +36,49 @@ public class ExchangeQueryAdapter implements ExchangeQueryPort {
 
     @Override
     public Optional<ExchangeClaim> findById(ExchangeClaimId id) {
-        return repository
-                .findById(id.value())
-                .map(
-                        entity -> {
-                            List<ExchangeItemJpaEntity> items =
-                                    repository.findItemsByClaimId(entity.getId());
-                            ClaimShipment collectShipment =
-                                    resolveClaimShipment(entity.getClaimShipmentId());
-                            return mapper.toDomain(entity, items, collectShipment);
-                        });
+        return repository.findById(id.value()).map(this::toDomainWithShipment);
     }
 
     @Override
-    public Optional<ExchangeClaim> findByOrderId(String orderId) {
-        return repository
-                .findByOrderId(orderId)
-                .map(
-                        entity -> {
-                            List<ExchangeItemJpaEntity> items =
-                                    repository.findItemsByClaimId(entity.getId());
-                            ClaimShipment collectShipment =
-                                    resolveClaimShipment(entity.getClaimShipmentId());
-                            return mapper.toDomain(entity, items, collectShipment);
-                        });
+    public Optional<ExchangeClaim> findByOrderItemId(OrderItemId orderItemId) {
+        return repository.findByOrderItemId(orderItemId.value()).map(this::toDomainWithShipment);
     }
 
     @Override
-    public List<ExchangeClaim> findByOrderIds(List<String> orderIds) {
-        List<ExchangeClaimJpaEntity> claimEntities = repository.findByOrderIds(orderIds);
-        if (claimEntities.isEmpty()) {
-            return List.of();
-        }
-        List<String> claimIds = claimEntities.stream().map(ExchangeClaimJpaEntity::getId).toList();
-        List<ExchangeItemJpaEntity> allItems = repository.findItemsByClaimIds(claimIds);
-
-        return claimEntities.stream()
-                .map(
-                        entity -> {
-                            List<ExchangeItemJpaEntity> items =
-                                    allItems.stream()
-                                            .filter(
-                                                    i ->
-                                                            entity.getId()
-                                                                    .equals(i.getExchangeClaimId()))
-                                            .toList();
-                            ClaimShipment collectShipment =
-                                    resolveClaimShipment(entity.getClaimShipmentId());
-                            return mapper.toDomain(entity, items, collectShipment);
-                        })
+    public List<ExchangeClaim> findByOrderItemIds(List<OrderItemId> orderItemIds) {
+        List<String> ids = orderItemIds.stream().map(OrderItemId::value).toList();
+        return repository.findByOrderItemIds(ids).stream()
+                .map(this::toDomainWithShipment)
                 .toList();
+    }
+
+    @Override
+    public List<ExchangeClaim> findByCriteria(ExchangeSearchCriteria criteria) {
+        return repository.findByCriteria(criteria).stream()
+                .map(this::toDomainWithShipment)
+                .toList();
+    }
+
+    @Override
+    public long countByCriteria(ExchangeSearchCriteria criteria) {
+        return repository.countByCriteria(criteria);
+    }
+
+    @Override
+    public Map<ExchangeStatus, Long> countByStatus() {
+        return repository.countByStatus();
+    }
+
+    @Override
+    public List<ExchangeClaim> findByIdIn(List<String> exchangeClaimIds, Long sellerId) {
+        return repository.findByIdIn(exchangeClaimIds, sellerId).stream()
+                .map(this::toDomainWithShipment)
+                .toList();
+    }
+
+    private ExchangeClaim toDomainWithShipment(ExchangeClaimJpaEntity entity) {
+        ClaimShipment collectShipment = resolveClaimShipment(entity.getClaimShipmentId());
+        return mapper.toDomain(entity, collectShipment);
     }
 
     private ClaimShipment resolveClaimShipment(String claimShipmentId) {

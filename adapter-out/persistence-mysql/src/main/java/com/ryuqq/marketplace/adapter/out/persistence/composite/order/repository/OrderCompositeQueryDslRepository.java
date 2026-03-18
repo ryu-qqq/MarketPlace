@@ -62,6 +62,7 @@ public class OrderCompositeQueryDslRepository {
                                 orderJpaEntity.updatedAt,
                                 // order_items
                                 orderItemJpaEntity.id,
+                                orderItemJpaEntity.orderItemNumber,
                                 orderItemJpaEntity.productGroupId,
                                 orderItemJpaEntity.productId,
                                 orderItemJpaEntity.sellerId,
@@ -151,6 +152,7 @@ public class OrderCompositeQueryDslRepository {
                                         orderJpaEntity.updatedAt,
                                         // order_items
                                         orderItemJpaEntity.id,
+                                        orderItemJpaEntity.orderItemNumber,
                                         orderItemJpaEntity.productGroupId,
                                         orderItemJpaEntity.productId,
                                         orderItemJpaEntity.sellerId,
@@ -378,6 +380,7 @@ public class OrderCompositeQueryDslRepository {
                                 orderJpaEntity.updatedAt,
                                 // order_items
                                 orderItemJpaEntity.id,
+                                orderItemJpaEntity.orderItemNumber,
                                 orderItemJpaEntity.productGroupId,
                                 orderItemJpaEntity.productId,
                                 orderItemJpaEntity.sellerId,

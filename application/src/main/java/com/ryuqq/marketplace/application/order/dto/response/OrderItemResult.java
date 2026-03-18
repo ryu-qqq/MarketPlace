@@ -46,6 +46,7 @@ import java.time.Instant;
  */
 public record OrderItemResult(
         String orderItemId,
+        String orderItemNumber,
         String orderId,
         long productGroupId,
         long productId,

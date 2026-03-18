@@ -93,8 +93,8 @@ public class OrderQueryApiMapper {
 
     public OrderListApiResponseV4 toListResponseV4(ProductOrderListResult result) {
         return new OrderListApiResponseV4(
-                nullToEmpty(result.order() != null ? result.order().orderId() : null),
-                nullToEmpty(result.order() != null ? result.order().orderNumber() : null),
+                nullToEmpty(result.productOrder() != null ? result.productOrder().orderItemId() : null),
+                nullToEmpty(result.productOrder() != null ? result.productOrder().orderItemNumber() : null),
                 toBuyerInfoV4(result.order()),
                 toPaymentDetailV4(result.payment(), result.order()),
                 toReceiverInfoV4(result.receiver()),
@@ -137,8 +137,8 @@ public class OrderQueryApiMapper {
 
     public OrderDetailApiResponseV4 toDetailResponseV4(ProductOrderDetailResult result) {
         return new OrderDetailApiResponseV4(
-                nullToEmpty(result.order() != null ? result.order().orderId() : null),
-                nullToEmpty(result.order() != null ? result.order().orderNumber() : null),
+                nullToEmpty(result.productOrder() != null ? result.productOrder().orderItemId() : null),
+                nullToEmpty(result.productOrder() != null ? result.productOrder().orderItemNumber() : null),
                 toBuyerInfoV4(result.order()),
                 toPaymentDetailV4(result.payment(), result.order()),
                 toReceiverInfoV4(result.receiver()),
@@ -216,6 +216,7 @@ public class OrderQueryApiMapper {
         }
         return new ProductOrderApiResponse(
                 productOrder.orderItemId(),
+                productOrder.orderItemNumber(),
                 productOrder.productGroupId(),
                 productOrder.productId(),
                 productOrder.sellerId(),

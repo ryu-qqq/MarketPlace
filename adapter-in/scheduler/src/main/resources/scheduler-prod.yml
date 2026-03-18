@@ -198,3 +198,66 @@ scheduler:
         timezone: "Asia/Seoul"
         batch-size: 100
         timeout-seconds: 300
+
+    cancel-outbox:
+      process-pending:
+        enabled: true
+        # Prod: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 200
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        enabled: true
+        # Prod: 15분마다
+        cron: "0 */15 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 600
+
+    refund-outbox:
+      process-pending:
+        enabled: true
+        # Prod: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 200
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        enabled: true
+        # Prod: 15분마다
+        cron: "0 */15 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 600
+
+    exchange-outbox:
+      process-pending:
+        enabled: true
+        # Prod: 5분마다
+        cron: "0 */5 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 200
+        # Prod: 안전한 지연
+        delay-seconds: 60
+
+      recover-timeout:
+        enabled: true
+        # Prod: 15분마다
+        cron: "0 */15 * * * *"
+        timezone: "Asia/Seoul"
+        # Prod: 큰 배치
+        batch-size: 100
+        # Prod: 안전한 타임아웃
+        timeout-seconds: 600
