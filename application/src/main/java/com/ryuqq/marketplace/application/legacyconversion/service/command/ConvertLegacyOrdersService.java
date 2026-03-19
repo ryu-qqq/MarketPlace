@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class ConvertLegacyOrdersService implements ConvertLegacyOrdersUseCase {
 
     private static final Logger log = LoggerFactory.getLogger(ConvertLegacyOrdersService.class);
-    private static final int BATCH_SIZE = 30;
+    private static final int BATCH_SIZE = 100;
 
     private final LegacyOrderConversionOutboxReadManager readManager;
     private final LegacyOrderConversionCoordinator conversionCoordinator;
