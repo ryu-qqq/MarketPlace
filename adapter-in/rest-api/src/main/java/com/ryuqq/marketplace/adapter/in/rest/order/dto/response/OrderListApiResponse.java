@@ -42,12 +42,10 @@ public record OrderListApiResponse(
             @Schema(description = "상품주문 번호 (ORD-YYYYMMDD-XXXX-NNN)") String orderItemNumber,
             @Schema(description = "상품그룹 ID") long productGroupId,
             @Schema(description = "상품 ID (SKU)") long productId,
-            @Schema(description = "판매자 ID") long sellerId,
-            @Schema(description = "브랜드 ID") long brandId,
             @Schema(description = "SKU 코드") String skuCode,
             @Schema(description = "상품명") String productGroupName,
-            @Schema(description = "브랜드명") String brandName,
-            @Schema(description = "판매자명") String sellerName,
+            @Schema(description = "브랜드명 (스냅샷)") String brandName,
+            @Schema(description = "판매자명 (스냅샷)") String sellerName,
             @Schema(description = "대표 이미지 URL") String mainImageUrl,
             @Schema(description = "외부 상품 ID") String externalProductId,
             @Schema(description = "외부 옵션 ID") String externalOptionId,
@@ -85,10 +83,7 @@ public record OrderListApiResponse(
     /** 배송 상태. */
     @Schema(description = "배송 상태")
     public record DeliveryApiResponse(
-            @Schema(description = "배송 상태") String deliveryStatus,
-            @Schema(description = "택배사 코드") String shipmentCompanyCode,
-            @Schema(description = "송장번호") String invoice,
-            @Schema(description = "출고완료일시 (ISO 8601)") String shipmentCompletedDate) {}
+            @Schema(description = "주문 상품 상태") String orderItemStatus) {}
 
     /** 취소 요약 (배송 전 취소). */
     @Schema(description = "취소 요약")

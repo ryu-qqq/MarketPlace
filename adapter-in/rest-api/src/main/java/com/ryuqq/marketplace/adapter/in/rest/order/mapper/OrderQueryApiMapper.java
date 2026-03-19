@@ -6,7 +6,6 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrdersApiRequ
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.CancelInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.ClaimInfoApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.SettlementApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.TimeLineApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse;
@@ -125,7 +124,6 @@ public class OrderQueryApiMapper {
                 toDeliveryApi(result.delivery()),
                 toCancelSummaryApi(result.cancel()),
                 toClaimSummaryApi(result.claim()),
-                toSettlementApi(result.settlement()),
                 result.cancels().stream().map(this::toCancelInfoApi).toList(),
                 result.claims().stream().map(this::toClaimInfoApi).toList(),
                 result.timeLine().stream().map(this::toTimeLineApi).toList());
@@ -141,7 +139,6 @@ public class OrderQueryApiMapper {
                 toPaymentDetailV4(result.payment(), result.order()),
                 toReceiverInfoV4(result.receiver()),
                 toPaymentShipmentInfoV4(result.delivery()),
-                toSettlementInfoV4(result.settlement()),
                 toOrderProductV4(result.order(), result.productOrder()),
                 toExternalOrderInfoV4(result.order()),
                 toCancelSummaryV4(result.cancel()),
@@ -204,8 +201,6 @@ public class OrderQueryApiMapper {
                 productOrder.orderItemNumber(),
                 productOrder.productGroupId(),
                 productOrder.productId(),
-                productOrder.sellerId(),
-                productOrder.brandId(),
                 productOrder.skuCode(),
                 productOrder.productGroupName(),
                 productOrder.brandName(),
@@ -255,11 +250,7 @@ public class OrderQueryApiMapper {
         if (delivery == null) {
             return null;
         }
-        return new DeliveryApiResponse(
-                delivery.deliveryStatus(),
-                delivery.shipmentCompanyCode(),
-                delivery.invoice(),
-                formatIso(delivery.shipmentCompletedDate()));
+        return new DeliveryApiResponse(delivery.orderItemStatus());
     }
 
     private CancelSummaryApiResponse toCancelSummaryApi(
@@ -305,21 +296,6 @@ public class OrderQueryApiMapper {
                 claim.totalClaimedQty(),
                 claim.claimableQty(),
                 latestApi);
-    }
-
-    private SettlementApiResponse toSettlementApi(
-            ProductOrderDetailResult.SettlementInfo settlement) {
-        if (settlement == null) {
-            return null;
-        }
-        return new SettlementApiResponse(
-                settlement.commissionRate(),
-                settlement.fee(),
-                settlement.expectationSettlementAmount(),
-                settlement.settlementAmount(),
-                settlement.shareRatio(),
-                formatIso(settlement.expectedSettlementDay()),
-                formatIso(settlement.settlementDay()));
     }
 
     private CancelInfoApiResponse toCancelInfoApi(OrderCancelResult cancel) {
@@ -440,10 +416,10 @@ public class OrderQueryApiMapper {
             return new OrderListApiResponseV4.PaymentShipmentInfoApiResponse("", "", "", "");
         }
         return new OrderListApiResponseV4.PaymentShipmentInfoApiResponse(
-                nullToEmpty(delivery.deliveryStatus()),
-                nullToEmpty(delivery.shipmentCompanyCode()),
-                nullToEmpty(delivery.invoice()),
-                formatYyyyMmDdHhMmSs(delivery.shipmentCompletedDate()));
+                nullToEmpty(delivery.orderItemStatus()),
+                "",
+                "",
+                "");
     }
 
     private OrderListApiResponseV4.OrderProductApiResponse toOrderProductV4(
@@ -482,7 +458,7 @@ public class OrderQueryApiMapper {
                         discountRate,
                         discountRate),
                 new OrderListApiResponseV4.BrandApiResponse(
-                        productOrder.brandId(), nullToEmpty(productOrder.brandName())),
+                        0L, nullToEmpty(productOrder.brandName())),
                 productOrder.productGroupId(),
                 productOrder.productId(),
                 nullToEmpty(productOrder.sellerName()),
@@ -560,21 +536,6 @@ public class OrderQueryApiMapper {
     }
 
     // ==================== V4 상세 전용 변환 ====================
-
-    private OrderDetailApiResponseV4.SettlementInfoApiResponse toSettlementInfoV4(
-            ProductOrderDetailResult.SettlementInfo settlement) {
-        if (settlement == null) {
-            return new OrderDetailApiResponseV4.SettlementInfoApiResponse(0, 0, 0, 0, 0, "", "");
-        }
-        return new OrderDetailApiResponseV4.SettlementInfoApiResponse(
-                settlement.commissionRate(),
-                settlement.fee(),
-                settlement.expectationSettlementAmount(),
-                settlement.settlementAmount(),
-                settlement.shareRatio(),
-                formatYyyyMmDdHhMmSs(settlement.expectedSettlementDay()),
-                formatYyyyMmDdHhMmSs(settlement.settlementDay()));
-    }
 
     private List<OrderDetailApiResponseV4.OrderHistoryItemApiResponse> toOrderHistoriesV4(
             ProductOrderListResult.OrderInfo order, List<OrderHistoryResult> timeLine) {

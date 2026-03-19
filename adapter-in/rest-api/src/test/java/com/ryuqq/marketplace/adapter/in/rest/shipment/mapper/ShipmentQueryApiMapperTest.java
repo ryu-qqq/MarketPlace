@@ -238,22 +238,6 @@ class ShipmentQueryApiMapperTest {
         }
 
         @Test
-        @DisplayName("정산 정보가 올바르게 변환된다")
-        void toDetailResponse_WithSettlement_ReturnsSettlementResponse() {
-            // given
-            ShipmentDetailResult result = ShipmentApiFixtures.detailResult("SHIP-001");
-
-            // when
-            ShipmentDetailApiResponse response = mapper.toDetailResponse(result);
-
-            // then
-            assertThat(response.settlement()).isNotNull();
-            assertThat(response.settlement().commissionRate()).isEqualTo(10);
-            assertThat(response.settlement().fee()).isEqualTo(1000);
-            assertThat(response.settlement().expectationSettlementAmount()).isEqualTo(9000);
-        }
-
-        @Test
         @DisplayName("결제 정보가 null이면 payment 필드도 null을 반환한다")
         void toDetailResponse_NullPayment_ReturnsNullPayment() {
             // given

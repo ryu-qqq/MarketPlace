@@ -566,25 +566,33 @@ class RefundClaimTest {
         }
 
         @Test
-        @DisplayName("보류 사유가 null이면 예외가 발생한다")
-        void holdWithNullReason_ThrowsException() {
+        @DisplayName("보류 사유가 null이면 기본 사유로 보류 처리된다")
+        void holdWithNullReason_UsesDefaultReason() {
             // given
             RefundClaim claim = RefundFixtures.requestedRefundClaim();
+            Instant now = CommonVoFixtures.now();
 
-            // when & then
-            assertThatThrownBy(() -> claim.hold(null, CommonVoFixtures.now()))
-                    .isInstanceOf(RefundException.class);
+            // when
+            claim.hold(null, now);
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+            assertThat(claim.holdInfo().holdReason()).isEqualTo("보류 처리");
         }
 
         @Test
-        @DisplayName("보류 사유가 빈 문자열이면 예외가 발생한다")
-        void holdWithBlankReason_ThrowsException() {
+        @DisplayName("보류 사유가 빈 문자열이면 기본 사유로 보류 처리된다")
+        void holdWithBlankReason_UsesDefaultReason() {
             // given
             RefundClaim claim = RefundFixtures.requestedRefundClaim();
+            Instant now = CommonVoFixtures.now();
 
-            // when & then
-            assertThatThrownBy(() -> claim.hold("   ", CommonVoFixtures.now()))
-                    .isInstanceOf(RefundException.class);
+            // when
+            claim.hold("   ", now);
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+            assertThat(claim.holdInfo().holdReason()).isEqualTo("보류 처리");
         }
 
         @Test

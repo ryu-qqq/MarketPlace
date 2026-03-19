@@ -217,7 +217,6 @@ class OrderQueryApiMapperTest {
             assertThat(response.order()).isNotNull();
             assertThat(response.productOrder()).isNotNull();
             assertThat(response.payment()).isNotNull();
-            assertThat(response.settlement()).isNotNull();
         }
 
         @Test
@@ -315,20 +314,6 @@ class OrderQueryApiMapperTest {
         }
 
         @Test
-        @DisplayName("정산 정보가 올바르게 매핑된다")
-        void toDetailResponse_SettlementMapped() {
-            // given
-            ProductOrderDetailResult result = OrderApiFixtures.productOrderDetailResult();
-
-            // when
-            OrderDetailApiResponse response = mapper.toDetailResponse(result);
-
-            // then
-            assertThat(response.settlement().fee()).isEqualTo(5000);
-            assertThat(response.settlement().expectationSettlementAmount()).isEqualTo(45000);
-        }
-
-        @Test
         @DisplayName("ProductOrderDetailResult를 OrderDetailApiResponseV4로 변환한다")
         void toDetailResponseV4_ConvertsResult_ReturnsV4ApiResponse() {
             // given
@@ -341,7 +326,6 @@ class OrderQueryApiMapperTest {
             assertThat(response).isNotNull();
             assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID);
             assertThat(response.buyerInfo()).isNotNull();
-            assertThat(response.settlementInfo()).isNotNull();
             assertThat(response.orderHistories()).isNotEmpty();
             assertThat(response.cancelIds()).isNotEmpty();
             assertThat(response.cancels()).isNotEmpty();

@@ -686,6 +686,102 @@ class ExchangeClaimTest {
     }
 
     @Nested
+    @DisplayName("hold() - 교환 보류")
+    class HoldTest {
+
+        @Test
+        @DisplayName("보류 사유와 함께 교환을 보류 처리한다")
+        void holdWithReason() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+            Instant now = CommonVoFixtures.now();
+
+            // when
+            claim.hold("재고 부족으로 보류", now);
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+            assertThat(claim.holdInfo()).isNotNull();
+            assertThat(claim.updatedAt()).isEqualTo(now);
+        }
+
+        @Test
+        @DisplayName("보류 사유가 null이면 기본 사유로 처리된다")
+        void holdWithNullReasonUsesDefault() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+
+            // when
+            claim.hold(null, CommonVoFixtures.now());
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+            assertThat(claim.holdInfo()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("보류 사유가 빈 문자열이면 기본 사유로 처리된다")
+        void holdWithBlankReasonUsesDefault() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+
+            // when
+            claim.hold("   ", CommonVoFixtures.now());
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+        }
+
+        @Test
+        @DisplayName("이미 보류 중인 교환에 hold를 호출하면 예외가 발생한다")
+        void holdAlreadyHeld_ThrowsException() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+            claim.hold("첫 번째 보류", CommonVoFixtures.now());
+
+            // when & then
+            assertThatThrownBy(() -> claim.hold("두 번째 보류", CommonVoFixtures.now()))
+                    .isInstanceOf(ExchangeException.class)
+                    .extracting(e -> ((ExchangeException) e).getErrorCode())
+                    .isEqualTo(ExchangeErrorCode.ALREADY_HOLD);
+        }
+    }
+
+    @Nested
+    @DisplayName("releaseHold() - 보류 해제")
+    class ReleaseHoldTest {
+
+        @Test
+        @DisplayName("보류 중인 교환의 보류를 해제한다")
+        void releaseHoldFromHeld() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+            claim.hold("보류 사유", CommonVoFixtures.now());
+            assertThat(claim.isHold()).isTrue();
+
+            // when
+            claim.releaseHold(CommonVoFixtures.now());
+
+            // then
+            assertThat(claim.isHold()).isFalse();
+            assertThat(claim.holdInfo()).isNull();
+        }
+
+        @Test
+        @DisplayName("보류 상태가 아닌 교환에 releaseHold를 호출하면 예외가 발생한다")
+        void releaseHoldOnNotHeld_ThrowsException() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+
+            // when & then
+            assertThatThrownBy(() -> claim.releaseHold(CommonVoFixtures.now()))
+                    .isInstanceOf(ExchangeException.class)
+                    .extracting(e -> ((ExchangeException) e).getErrorCode())
+                    .isEqualTo(ExchangeErrorCode.NOT_HOLD_STATUS);
+        }
+    }
+
+    @Nested
     @DisplayName("pollEvents() - 도메인 이벤트 수집")
     class PollEventsTest {
 

@@ -21,7 +21,6 @@ public record OrderDetailApiResponseV4(
         @Schema(description = "수령인 정보") OrderListApiResponseV4.ReceiverInfoApiResponse receiverInfo,
         @Schema(description = "배송 정보")
                 OrderListApiResponseV4.PaymentShipmentInfoApiResponse paymentShipmentInfo,
-        @Schema(description = "정산 정보") SettlementInfoApiResponse settlementInfo,
         @Schema(description = "주문 상품 정보")
                 OrderListApiResponseV4.OrderProductApiResponse orderProduct,
         @Schema(description = "외부몰 주문 정보 (자사몰이면 null)")
@@ -35,16 +34,6 @@ public record OrderDetailApiResponseV4(
         @Schema(description = "취소 상세 목록 (최근 3개)") List<CancelItemApiResponse> cancels,
         @Schema(description = "클레임 ID 목록") List<String> claimIds,
         @Schema(description = "클레임 상세 목록 (최근 3개)") List<ClaimItemApiResponse> claims) {
-
-    @Schema(description = "정산 정보 (V4 SettlementInfo)")
-    public record SettlementInfoApiResponse(
-            @Schema(description = "수수료율 (%)") int commissionRate,
-            @Schema(description = "수수료 금액") int fee,
-            @Schema(description = "예상 정산 금액") int expectationSettlementAmount,
-            @Schema(description = "정산 금액") int settlementAmount,
-            @Schema(description = "쉐어 비율 (%)") int shareRatio,
-            @Schema(description = "정산 예정일") String expectedSettlementDay,
-            @Schema(description = "정산 완료일") String settlementDay) {}
 
     @Schema(description = "주문 상태 변경 이력 (V4 OrderHistoryItem)")
     public record OrderHistoryItemApiResponse(

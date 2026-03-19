@@ -24,21 +24,9 @@ public record OrderDetailApiResponse(
         @Schema(description = "배송 상태") DeliveryApiResponse delivery,
         @Schema(description = "취소 요약 (없으면 null)") CancelSummaryApiResponse cancel,
         @Schema(description = "클레임 요약 (없으면 null)") ClaimSummaryApiResponse claim,
-        @Schema(description = "정산 정보") SettlementApiResponse settlement,
         @Schema(description = "취소 상세 목록") List<CancelInfoApiResponse> cancels,
         @Schema(description = "클레임 상세 목록") List<ClaimInfoApiResponse> claims,
         @Schema(description = "주문 타임라인") List<TimeLineApiResponse> timeLine) {
-
-    /** 정산 정보. */
-    @Schema(description = "정산 정보")
-    public record SettlementApiResponse(
-            @Schema(description = "수수료율 (%)") double commissionRate,
-            @Schema(description = "수수료 금액") int fee,
-            @Schema(description = "예상 정산 금액") int expectationSettlementAmount,
-            @Schema(description = "정산 금액") int settlementAmount,
-            @Schema(description = "쉐어 비율 (%)") double shareRatio,
-            @Schema(description = "정산 예정일") String expectedSettlementDay,
-            @Schema(description = "정산 완료일") String settlementDay) {}
 
     /** 취소 상세. */
     @Schema(description = "취소 상세 정보")

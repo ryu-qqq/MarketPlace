@@ -7,8 +7,11 @@ import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
+import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.time.Instant;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,8 +103,6 @@ public final class OrderQueryFixtures {
                 orderId,
                 100L,
                 200L,
-                1L,
-                5L,
                 "SKU-TEST-0001",
                 "테스트 상품그룹",
                 "테스트 브랜드",
@@ -123,17 +124,7 @@ public final class OrderQueryFixtures {
                 "서울시 강남구 테헤란로 1",
                 "101호",
                 "부재시 문앞에 놓아주세요",
-                "PENDING",
-                null,
-                null,
-                null,
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
-                null);
+                "PENDING");
     }
 
     // ===== OrderCancelResult Fixtures =====
@@ -274,5 +265,21 @@ public final class OrderQueryFixtures {
     public static OrderHistoryResult orderHistoryResult() {
         return new OrderHistoryResult(
                 1L, null, "ORDERED", "system", null, Instant.parse("2026-02-18T10:06:00Z"));
+    }
+
+    // ===== OrderSummaryResult Fixtures =====
+
+    public static Map<OrderItemStatus, Long> orderItemStatusCounts() {
+        Map<OrderItemStatus, Long> counts = new EnumMap<>(OrderItemStatus.class);
+        counts.put(OrderItemStatus.READY, 10L);
+        counts.put(OrderItemStatus.CONFIRMED, 5L);
+        counts.put(OrderItemStatus.CANCELLED, 2L);
+        counts.put(OrderItemStatus.RETURN_REQUESTED, 1L);
+        counts.put(OrderItemStatus.RETURNED, 0L);
+        return counts;
+    }
+
+    public static OrderSummaryResult orderSummaryResult() {
+        return new OrderSummaryResult(10L, 5L, 2L, 1L, 0L);
     }
 }

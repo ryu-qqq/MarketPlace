@@ -5,7 +5,6 @@ import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipmentSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.PaymentInfoResponse;
-import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.SettlementInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.OrderInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ProductOrderInfoResponse;
@@ -66,8 +65,7 @@ public class ShipmentQueryApiMapper {
                 toOrderInfoResponse(result.order()),
                 toProductOrderInfoResponse(result.productOrder()),
                 toReceiverInfoResponse(result.receiver()),
-                toPaymentInfoResponse(result.payment()),
-                toSettlementInfoResponse(result.settlement()));
+                toPaymentInfoResponse(result.payment()));
     }
 
     public ShipmentSummaryApiResponse toSummaryResponse(ShipmentSummaryResult result) {
@@ -129,8 +127,6 @@ public class ShipmentQueryApiMapper {
                 info.orderItemId(),
                 info.productGroupId(),
                 info.productId(),
-                info.sellerId(),
-                info.brandId(),
                 info.skuCode(),
                 info.productGroupName(),
                 info.brandName(),
@@ -173,18 +169,4 @@ public class ShipmentQueryApiMapper {
                 DateTimeFormatUtils.formatIso8601(info.canceledAt()));
     }
 
-    private SettlementInfoResponse toSettlementInfoResponse(
-            ShipmentDetailResult.SettlementInfo info) {
-        if (info == null) {
-            return null;
-        }
-        return new SettlementInfoResponse(
-                info.commissionRate(),
-                info.fee(),
-                info.expectationSettlementAmount(),
-                info.settlementAmount(),
-                info.shareRatio(),
-                DateTimeFormatUtils.formatIso8601(info.expectedSettlementDay()),
-                DateTimeFormatUtils.formatIso8601(info.settlementDay()));
-    }
 }

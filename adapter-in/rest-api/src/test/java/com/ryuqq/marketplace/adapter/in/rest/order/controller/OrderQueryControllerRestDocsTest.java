@@ -289,7 +289,6 @@ class OrderQueryControllerRestDocsTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.orderId").value(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID))
                     .andExpect(jsonPath("$.data.buyerInfo").exists())
-                    .andExpect(jsonPath("$.data.settlementInfo").exists())
                     .andExpect(jsonPath("$.data.orderProduct").exists())
                     .andExpect(jsonPath("$.data.orderHistories").isArray())
                     .andExpect(jsonPath("$.data.cancelIds").isArray())
@@ -324,9 +323,6 @@ class OrderQueryControllerRestDocsTest {
                                             fieldWithPath("data.paymentShipmentInfo")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("배송 정보"),
-                                            fieldWithPath("data.settlementInfo")
-                                                    .type(JsonFieldType.OBJECT)
-                                                    .description("정산 정보"),
                                             fieldWithPath("data.orderProduct")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("주문 상품 정보"),
