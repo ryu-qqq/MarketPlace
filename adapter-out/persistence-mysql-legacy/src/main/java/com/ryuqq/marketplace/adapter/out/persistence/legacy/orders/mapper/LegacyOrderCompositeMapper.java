@@ -46,6 +46,7 @@ public class LegacyOrderCompositeMapper {
                 dto.productGroupId() != null ? dto.productGroupId() : 0L,
                 dto.productGroupName(),
                 dto.brandId() != null ? dto.brandId() : 0L,
+                dto.brandName(),
                 dto.categoryId() != null ? dto.categoryId() : 0L,
                 dto.regularPrice() != null ? dto.regularPrice() : 0L,
                 dto.currentPrice() != null ? dto.currentPrice() : 0L,

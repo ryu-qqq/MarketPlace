@@ -149,8 +149,8 @@ public class LegacyOrderConversionCoordinator {
         String sellerName = sellerIdMappingReadManager.findSellerNameByLegacySellerId(composite.legacySellerId())
                 .orElse(null);
 
-        // 브랜드명은 luxurydb 스냅샷에 별도 컬럼이 없어 null (추후 보강 가능)
-        String brandName = null;
+        // 브랜드명은 luxurydb brand 테이블 JOIN으로 조회됨
+        String brandName = composite.brandName();
 
         return new LegacyOrderResolvedIds(internalProductGroupId, internalProductId, sellerName, brandName);
     }

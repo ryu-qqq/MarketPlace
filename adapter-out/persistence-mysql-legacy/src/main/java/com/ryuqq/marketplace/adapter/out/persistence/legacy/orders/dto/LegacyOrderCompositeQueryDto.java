@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
  * @param productGroupId 상품그룹 ID
  * @param productGroupName 상품그룹명
  * @param brandId 브랜드 ID
+ * @param brandName 브랜드명 (brand 테이블 JOIN)
  * @param categoryId 카테고리 ID
  * @param regularPrice 정가
  * @param currentPrice 판매가
@@ -52,6 +53,7 @@ public record LegacyOrderCompositeQueryDto(
         Long productGroupId,
         String productGroupName,
         Long brandId,
+        String brandName,
         Long categoryId,
         Long regularPrice,
         Long currentPrice,

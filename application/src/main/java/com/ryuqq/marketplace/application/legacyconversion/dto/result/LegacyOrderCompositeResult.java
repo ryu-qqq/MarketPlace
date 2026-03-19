@@ -51,6 +51,7 @@ public record LegacyOrderCompositeResult(
         long productGroupId,
         String productGroupName,
         long brandId,
+        String brandName,
         long categoryId,
         long regularPrice,
         long currentPrice,

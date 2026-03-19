@@ -6,6 +6,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyOrderSnapshotOptionDetailEntity.legacyOrderSnapshotOptionDetailEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyOrderSnapshotProductGroupEntity.legacyOrderSnapshotProductGroupEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyOrderSnapshotProductGroupImageEntity.legacyOrderSnapshotProductGroupImageEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.brand.entity.QLegacyBrandEntity.legacyBrandEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyPaymentSnapshotShippingAddressEntity.legacyPaymentSnapshotShippingAddressEntity;
 
 import com.querydsl.core.types.Projections;
@@ -67,6 +68,7 @@ public class LegacyOrderCompositeQueryDslRepository {
                                         legacyOrderSnapshotProductGroupEntity.productGroupId,
                                         legacyOrderSnapshotProductGroupEntity.productGroupName,
                                         legacyOrderSnapshotProductGroupEntity.brandId,
+                                        legacyBrandEntity.brandName,
                                         legacyOrderSnapshotProductGroupEntity.categoryId,
                                         legacyOrderSnapshotProductGroupEntity.regularPrice,
                                         legacyOrderSnapshotProductGroupEntity.currentPrice,
@@ -85,6 +87,8 @@ public class LegacyOrderCompositeQueryDslRepository {
                         .from(legacyOrderEntity)
                         .innerJoin(legacyOrderSnapshotProductGroupEntity)
                         .on(legacyOrderSnapshotProductGroupEntity.orderId.eq(legacyOrderEntity.id))
+                        .leftJoin(legacyBrandEntity)
+                        .on(legacyBrandEntity.id.eq(legacyOrderSnapshotProductGroupEntity.brandId))
                         .leftJoin(legacyOrderSnapshotProductGroupImageEntity)
                         .on(
                                 legacyOrderSnapshotProductGroupImageEntity.orderId.eq(

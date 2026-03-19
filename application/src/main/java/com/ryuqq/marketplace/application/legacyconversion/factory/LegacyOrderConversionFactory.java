@@ -39,6 +39,10 @@ import com.ryuqq.marketplace.domain.refund.id.RefundClaimNumber;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReason;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReasonType;
 import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
+import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
+import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
+import com.ryuqq.marketplace.domain.shipment.id.ShipmentNumber;
+import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -85,6 +89,10 @@ public class LegacyOrderConversionFactory {
         Order order = buildOrder(orderId, orderItemId, orderNumber, composite, channel,
                 statusResolution, externalOrderNo, resolvedIds, now);
 
+        Shipment shipment = statusResolution.needsShipment()
+                ? buildShipment(orderItemId, statusResolution, now)
+                : null;
+
         Cancel cancel = statusResolution.hasCancel()
                 ? buildCancel(orderItemId, composite, statusResolution, now)
                 : null;
@@ -101,7 +109,7 @@ public class LegacyOrderConversionFactory {
                 channel.channelName(),
                 now);
 
-        return new LegacyOrderConversionBundle(order, cancel, refundClaim, mapping);
+        return new LegacyOrderConversionBundle(order, shipment, cancel, refundClaim, mapping);
     }
 
     // === Order 빌드 ===
@@ -182,7 +190,7 @@ public class LegacyOrderConversionFactory {
         OrderItemStatus itemStatus = resolveOrderItemStatus(statusResolution);
 
         return OrderItem.reconstitute(id, itemNumber, internalProduct, externalProduct,
-                price, receiverInfo, itemStatus, null, List.of());
+                price, receiverInfo, itemStatus, List.of());
     }
 
     private OrderItemStatus resolveOrderItemStatus(
@@ -202,6 +210,31 @@ public class LegacyOrderConversionFactory {
             return OrderItemStatus.RETURN_REQUESTED;
         }
         return OrderItemStatus.READY;
+    }
+
+    // === Shipment 빌드 ===
+
+    private Shipment buildShipment(
+            String orderItemId,
+            LegacyOrderStatusMapper.OrderStatusResolution statusResolution,
+            Instant now) {
+
+        ShipmentId shipmentId = ShipmentId.forNew(UUID.randomUUID().toString());
+        ShipmentNumber shipmentNumber = ShipmentNumber.generate();
+        ShipmentStatus targetStatus = statusResolution.shipmentStatus();
+
+        return Shipment.reconstitute(
+                shipmentId,
+                shipmentNumber,
+                OrderItemId.of(orderItemId),
+                targetStatus,
+                null,
+                null,
+                targetStatus.ordinal() >= ShipmentStatus.PREPARING.ordinal() ? now : null,
+                targetStatus.ordinal() >= ShipmentStatus.SHIPPED.ordinal() ? now : null,
+                targetStatus == ShipmentStatus.DELIVERED ? now : null,
+                now,
+                now);
     }
 
     // === Cancel 빌드 ===
