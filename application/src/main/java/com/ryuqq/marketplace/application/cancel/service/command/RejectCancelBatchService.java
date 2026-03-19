@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.application.cancel.dto.CancelBatchResult;
 import com.ryuqq.marketplace.application.cancel.dto.command.RejectCancelBatchCommand;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceBundle;
 import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceFacade;
 import com.ryuqq.marketplace.application.cancel.port.in.command.RejectCancelBatchUseCase;
 import com.ryuqq.marketplace.application.cancel.validator.CancelBatchValidator;
@@ -40,9 +41,9 @@ public class RejectCancelBatchService implements RejectCancelBatchUseCase {
         CancelBatchResult batchResult = CancelBatchResult.create("REJECT");
         for (Cancel cancel : cancels) {
             try {
-                cancel.reject(command.processedBy(), commandFactory.now());
                 OutboxWithHistory bundle =
                         commandFactory.createRejectBundle(cancel, command.processedBy());
+                cancel.reject(command.processedBy(), bundle.changedAt());
                 batchResult.addSuccess(cancel, bundle.outbox(), bundle.history());
             } catch (Exception e) {
                 log.warn("취소 거절 실패: cancelId={}, error={}", cancel.idValue(), e.getMessage());
@@ -51,8 +52,11 @@ public class RejectCancelBatchService implements RejectCancelBatchUseCase {
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistCancelsWithOutboxesAndHistories(
-                    batchResult.cancels(), batchResult.outboxes(), batchResult.histories());
+            persistenceFacade.persistAll(
+                    CancelPersistenceBundle.of(
+                            batchResult.cancels(),
+                            batchResult.outboxes(),
+                            batchResult.histories()));
         }
 
         return batchResult.toBatchProcessingResult();

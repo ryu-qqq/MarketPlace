@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.then;
 import com.ryuqq.marketplace.application.cancel.CancelQueryFixtures;
 import com.ryuqq.marketplace.application.cancel.assembler.CancelAssembler;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelSummaryResult;
-import com.ryuqq.marketplace.application.cancel.port.out.query.CancelQueryPort;
+import com.ryuqq.marketplace.application.cancel.manager.CancelReadManager;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ class GetCancelSummaryServiceTest {
 
     @InjectMocks private GetCancelSummaryService sut;
 
-    @Mock private CancelQueryPort cancelQueryPort;
+    @Mock private CancelReadManager cancelReadManager;
     @Mock private CancelAssembler assembler;
 
     @Nested
@@ -46,7 +46,7 @@ class GetCancelSummaryServiceTest {
                             CancelStatus.CANCELLED, 2L);
             CancelSummaryResult expectedResult = CancelQueryFixtures.cancelSummaryResult();
 
-            given(cancelQueryPort.countByStatus()).willReturn(statusCounts);
+            given(cancelReadManager.countByStatus()).willReturn(statusCounts);
             given(assembler.toSummaryResult(statusCounts)).willReturn(expectedResult);
 
             // when
@@ -54,7 +54,7 @@ class GetCancelSummaryServiceTest {
 
             // then
             assertThat(result).isEqualTo(expectedResult);
-            then(cancelQueryPort).should().countByStatus();
+            then(cancelReadManager).should().countByStatus();
             then(assembler).should().toSummaryResult(statusCounts);
         }
 
@@ -65,7 +65,7 @@ class GetCancelSummaryServiceTest {
             Map<CancelStatus, Long> emptyStatusCounts = Map.of();
             CancelSummaryResult emptyResult = CancelQueryFixtures.emptyCancelSummaryResult();
 
-            given(cancelQueryPort.countByStatus()).willReturn(emptyStatusCounts);
+            given(cancelReadManager.countByStatus()).willReturn(emptyStatusCounts);
             given(assembler.toSummaryResult(emptyStatusCounts)).willReturn(emptyResult);
 
             // when

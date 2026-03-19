@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.cancel.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -8,6 +9,7 @@ import com.ryuqq.marketplace.application.cancel.CancelCommandFixtures;
 import com.ryuqq.marketplace.application.cancel.dto.command.RejectCancelBatchCommand;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceBundle;
 import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceFacade;
 import com.ryuqq.marketplace.application.cancel.validator.CancelBatchValidator;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
@@ -50,11 +52,11 @@ class RejectCancelBatchServiceTest {
             RejectCancelBatchCommand command = CancelCommandFixtures.rejectBatchCommand();
             Cancel cancel = CancelFixtures.requestedCancel();
             ClaimHistory history = ClaimHistoryFixtures.cancelStatusChangeHistory();
-            OutboxWithHistory bundle = new OutboxWithHistory(cancelOutbox, history);
+            Instant now = Instant.now();
+            OutboxWithHistory bundle = new OutboxWithHistory(cancelOutbox, history, now);
 
             given(validator.validateAndGet(command.cancelIds(), command.sellerId()))
                     .willReturn(List.of(cancel));
-            given(commandFactory.now()).willReturn(Instant.now());
             given(commandFactory.createRejectBundle(cancel, command.processedBy()))
                     .willReturn(bundle);
 
@@ -66,12 +68,7 @@ class RejectCancelBatchServiceTest {
             assertThat(result.totalCount()).isEqualTo(1);
             assertThat(result.successCount()).isEqualTo(1);
             assertThat(result.failureCount()).isEqualTo(0);
-            then(persistenceFacade)
-                    .should()
-                    .persistCancelsWithOutboxesAndHistories(
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList());
+            then(persistenceFacade).should().persistAll(any(CancelPersistenceBundle.class));
         }
 
         @Test
@@ -102,11 +99,11 @@ class RejectCancelBatchServiceTest {
                                     "01900000-0000-7000-8000-000000000002"));
             Cancel validCancel = CancelFixtures.requestedCancel();
             ClaimHistory history = ClaimHistoryFixtures.cancelStatusChangeHistory();
-            OutboxWithHistory bundle = new OutboxWithHistory(cancelOutbox, history);
+            Instant now = Instant.now();
+            OutboxWithHistory bundle = new OutboxWithHistory(cancelOutbox, history, now);
 
             given(validator.validateAndGet(command.cancelIds(), command.sellerId()))
                     .willReturn(List.of(validCancel));
-            given(commandFactory.now()).willReturn(Instant.now());
             given(commandFactory.createRejectBundle(validCancel, command.processedBy()))
                     .willReturn(bundle);
 

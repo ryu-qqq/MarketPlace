@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.cancel.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -9,16 +10,19 @@ import com.ryuqq.marketplace.application.cancel.dto.command.SellerCancelBatchCom
 import com.ryuqq.marketplace.application.cancel.dto.command.SellerCancelBatchCommand.SellerCancelItem;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory.CancelBundle;
+import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceBundle;
 import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceFacade;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
-import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentCancelHelper;
 import com.ryuqq.marketplace.domain.cancel.CancelFixtures;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
 import com.ryuqq.marketplace.domain.claimhistory.ClaimHistoryFixtures;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -39,7 +43,7 @@ class SellerCancelBatchServiceTest {
     @Mock private CancelCommandFactory commandFactory;
     @Mock private CancelPersistenceFacade persistenceFacade;
     @Mock private OrderItemReadManager orderItemReadManager;
-    @Mock private ShipmentReadManager shipmentReadManager;
+    @Mock private ShipmentCancelHelper shipmentCancelHelper;
     @Mock private CancelOutbox cancelOutbox;
 
     @Nested
@@ -54,7 +58,8 @@ class SellerCancelBatchServiceTest {
             SellerCancelItem item = command.items().get(0);
             Cancel cancel = CancelFixtures.newSellerCancel();
             ClaimHistory history = ClaimHistoryFixtures.cancelStatusChangeHistory();
-            CancelBundle bundle = new CancelBundle(cancel, cancelOutbox, history);
+            Instant now = Instant.now();
+            CancelBundle bundle = new CancelBundle(cancel, cancelOutbox, history, now);
 
             given(
                             commandFactory.createSellerCancel(
@@ -62,6 +67,8 @@ class SellerCancelBatchServiceTest {
                     .willReturn(bundle);
             given(orderItemReadManager.findById(OrderItemId.of(item.orderItemId())))
                     .willReturn(Optional.empty());
+            given(shipmentCancelHelper.cancelPreparingShipments(any(), any()))
+                    .willReturn(List.of());
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);
@@ -81,7 +88,8 @@ class SellerCancelBatchServiceTest {
             SellerCancelItem item = command.items().get(0);
             Cancel cancel = CancelFixtures.newSellerCancel();
             ClaimHistory history = ClaimHistoryFixtures.cancelStatusChangeHistory();
-            CancelBundle bundle = new CancelBundle(cancel, cancelOutbox, history);
+            Instant now = Instant.now();
+            CancelBundle bundle = new CancelBundle(cancel, cancelOutbox, history, now);
 
             com.ryuqq.marketplace.domain.order.aggregate.OrderItem orderItem =
                     org.mockito.Mockito.mock(
@@ -91,22 +99,16 @@ class SellerCancelBatchServiceTest {
                             commandFactory.createSellerCancel(
                                     item, command.requestedBy(), command.sellerId()))
                     .willReturn(bundle);
-            given(commandFactory.now()).willReturn(java.time.Instant.now());
             given(orderItemReadManager.findById(OrderItemId.of(item.orderItemId())))
                     .willReturn(Optional.of(orderItem));
+            given(shipmentCancelHelper.cancelPreparingShipments(any(), any()))
+                    .willReturn(List.of());
 
             // when
             sut.execute(command);
 
             // then
-            then(persistenceFacade)
-                    .should()
-                    .persistAllWithOutboxesAndHistoriesAndOrderItemsAndShipments(
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList());
+            then(persistenceFacade).should().persistAll(any(CancelPersistenceBundle.class));
         }
 
         @Test
@@ -114,7 +116,7 @@ class SellerCancelBatchServiceTest {
         void execute_EmptyItems_NoPersistence() {
             // given
             SellerCancelBatchCommand command =
-                    CancelCommandFixtures.sellerCancelBatchCommand(java.util.List.of());
+                    CancelCommandFixtures.sellerCancelBatchCommand(List.of());
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);

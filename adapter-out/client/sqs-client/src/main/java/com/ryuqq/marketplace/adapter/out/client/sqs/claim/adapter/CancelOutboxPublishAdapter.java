@@ -1,6 +1,9 @@
 package com.ryuqq.marketplace.adapter.out.client.sqs.claim.adapter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.out.client.sqs.config.SqsClientProperties;
+import com.ryuqq.marketplace.application.cancel.port.out.client.CancelOutboxMessage;
 import com.ryuqq.marketplace.application.cancel.port.out.client.CancelOutboxPublishClient;
 import java.util.Objects;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,10 +19,13 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 public class CancelOutboxPublishAdapter implements CancelOutboxPublishClient {
 
     private final SqsClient sqsClient;
+    private final ObjectMapper objectMapper;
     private final String queueUrl;
 
-    public CancelOutboxPublishAdapter(SqsClient sqsClient, SqsClientProperties properties) {
+    public CancelOutboxPublishAdapter(
+            SqsClient sqsClient, ObjectMapper objectMapper, SqsClientProperties properties) {
         this.sqsClient = sqsClient;
+        this.objectMapper = objectMapper;
         this.queueUrl =
                 Objects.requireNonNull(
                         properties.getQueues().getCancelOutbox(),
@@ -27,8 +33,9 @@ public class CancelOutboxPublishAdapter implements CancelOutboxPublishClient {
     }
 
     @Override
-    public String publish(String messageBody) {
+    public String publish(CancelOutboxMessage message) {
         try {
+            String messageBody = objectMapper.writeValueAsString(message);
             SendMessageRequest request =
                     SendMessageRequest.builder()
                             .queueUrl(queueUrl)
@@ -36,6 +43,9 @@ public class CancelOutboxPublishAdapter implements CancelOutboxPublishClient {
                             .build();
             SendMessageResponse response = sqsClient.sendMessage(request);
             return response.messageId();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(
+                    "취소 Outbox SQS 메시지 직렬화 실패: outboxId=" + message.outboxId(), e);
         } catch (SqsException e) {
             throw new RuntimeException("취소 Outbox SQS 메시지 발행 실패: " + e.getMessage(), e);
         }

@@ -1,18 +1,16 @@
 package com.ryuqq.marketplace.application.cancel.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 
 import com.ryuqq.marketplace.application.cancel.CancelCommandFixtures;
 import com.ryuqq.marketplace.application.cancel.dto.command.RecoverTimeoutCancelOutboxCommand;
+import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxReadManager;
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
-import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
 import java.time.Instant;
 import java.util.List;
@@ -34,7 +32,7 @@ class RecoverTimeoutCancelOutboxServiceTest {
 
     @Mock private CancelOutboxReadManager outboxReadManager;
     @Mock private CancelOutboxCommandManager outboxCommandManager;
-    @Mock private TimeProvider timeProvider;
+    @Mock private CancelCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - 타임아웃 아웃박스 복구")
@@ -48,10 +46,15 @@ class RecoverTimeoutCancelOutboxServiceTest {
                     CancelCommandFixtures.recoverTimeoutOutboxCommand();
             CancelOutbox outbox = org.mockito.Mockito.mock(CancelOutbox.class);
             Instant now = Instant.now();
+            Instant timeoutThreshold = Instant.now();
 
-            given(outboxReadManager.findProcessingTimeoutOutboxes(any(), anyInt()))
+            given(commandFactory.calculateTimeoutThreshold(command.timeoutSeconds()))
+                    .willReturn(timeoutThreshold);
+            given(
+                            outboxReadManager.findProcessingTimeoutOutboxes(
+                                    timeoutThreshold, command.batchSize()))
                     .willReturn(List.of(outbox));
-            given(timeProvider.now()).willReturn(now);
+            given(commandFactory.now()).willReturn(now);
 
             // when
             SchedulerBatchProcessingResult result = sut.execute(command);
@@ -71,10 +74,15 @@ class RecoverTimeoutCancelOutboxServiceTest {
                     CancelCommandFixtures.recoverTimeoutOutboxCommand();
             CancelOutbox outbox = org.mockito.Mockito.mock(CancelOutbox.class);
             Instant now = Instant.now();
+            Instant timeoutThreshold = Instant.now();
 
-            given(outboxReadManager.findProcessingTimeoutOutboxes(any(), anyInt()))
+            given(commandFactory.calculateTimeoutThreshold(command.timeoutSeconds()))
+                    .willReturn(timeoutThreshold);
+            given(
+                            outboxReadManager.findProcessingTimeoutOutboxes(
+                                    timeoutThreshold, command.batchSize()))
                     .willReturn(List.of(outbox));
-            given(timeProvider.now()).willReturn(now);
+            given(commandFactory.now()).willReturn(now);
             willThrow(new RuntimeException("복구 실패")).given(outbox).recoverFromTimeout(now);
 
             // when
@@ -93,8 +101,13 @@ class RecoverTimeoutCancelOutboxServiceTest {
             // given
             RecoverTimeoutCancelOutboxCommand command =
                     CancelCommandFixtures.recoverTimeoutOutboxCommand();
+            Instant timeoutThreshold = Instant.now();
 
-            given(outboxReadManager.findProcessingTimeoutOutboxes(any(), anyInt()))
+            given(commandFactory.calculateTimeoutThreshold(command.timeoutSeconds()))
+                    .willReturn(timeoutThreshold);
+            given(
+                            outboxReadManager.findProcessingTimeoutOutboxes(
+                                    timeoutThreshold, command.batchSize()))
                     .willReturn(List.of());
 
             // when

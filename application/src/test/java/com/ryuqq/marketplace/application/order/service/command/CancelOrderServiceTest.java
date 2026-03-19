@@ -9,8 +9,8 @@ import com.ryuqq.marketplace.application.order.dto.command.OrderItemCancelComman
 import com.ryuqq.marketplace.application.order.factory.OrderCommandFactory;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentCancelHelper;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
-import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.order.OrderFixtures;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
@@ -36,7 +36,7 @@ class CancelOrderServiceTest {
     @Mock private OrderCommandFactory factory;
     @Mock private OrderItemReadManager readManager;
     @Mock private OrderItemCommandManager commandManager;
-    @Mock private ShipmentReadManager shipmentReadManager;
+    @Mock private ShipmentCancelHelper shipmentCancelHelper;
     @Mock private ShipmentCommandManager shipmentCommandManager;
 
     @Nested

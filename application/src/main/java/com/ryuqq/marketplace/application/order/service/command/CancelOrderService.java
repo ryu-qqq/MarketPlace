@@ -6,14 +6,11 @@ import com.ryuqq.marketplace.application.order.factory.OrderCommandFactory;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.order.port.in.command.CancelOrderUseCase;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentCancelHelper;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
-import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
-import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -28,19 +25,19 @@ public class CancelOrderService implements CancelOrderUseCase {
     private final OrderCommandFactory factory;
     private final OrderItemReadManager readManager;
     private final OrderItemCommandManager commandManager;
-    private final ShipmentReadManager shipmentReadManager;
+    private final ShipmentCancelHelper shipmentCancelHelper;
     private final ShipmentCommandManager shipmentCommandManager;
 
     public CancelOrderService(
             OrderCommandFactory factory,
             OrderItemReadManager readManager,
             OrderItemCommandManager commandManager,
-            ShipmentReadManager shipmentReadManager,
+            ShipmentCancelHelper shipmentCancelHelper,
             ShipmentCommandManager shipmentCommandManager) {
         this.factory = factory;
         this.readManager = readManager;
         this.commandManager = commandManager;
-        this.shipmentReadManager = shipmentReadManager;
+        this.shipmentCancelHelper = shipmentCancelHelper;
         this.shipmentCommandManager = shipmentCommandManager;
     }
 
@@ -53,21 +50,8 @@ public class CancelOrderService implements CancelOrderUseCase {
         commandManager.persistAll(orderItems);
 
         List<OrderItemId> orderItemIds = orderItems.stream().map(OrderItem::id).toList();
-        cancelAssociatedShipments(orderItemIds, ctx.changedAt());
-    }
-
-    private void cancelAssociatedShipments(List<OrderItemId> orderItemIds, Instant now) {
-        if (orderItemIds.isEmpty()) {
-            return;
-        }
-        List<Shipment> shipments = shipmentReadManager.findByOrderItemIds(orderItemIds);
-        List<Shipment> cancelled = new ArrayList<>();
-        for (Shipment shipment : shipments) {
-            if (shipment.status() == ShipmentStatus.PREPARING) {
-                shipment.cancel(now);
-                cancelled.add(shipment);
-            }
-        }
+        List<Shipment> cancelled =
+                shipmentCancelHelper.cancelPreparingShipments(orderItemIds, ctx.changedAt());
         if (!cancelled.isEmpty()) {
             shipmentCommandManager.persistAll(cancelled);
         }

@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 /** Cancel 도메인 객체 생성 팩토리. */
@@ -64,12 +65,18 @@ public class CancelCommandFactory {
                         requestedBy,
                         requestedBy);
 
-        return new CancelBundle(cancel, outbox, history);
+        return new CancelBundle(cancel, outbox, history, now);
     }
 
     /** 승인 시 CancelOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createApproveBundle(Cancel cancel, String processedBy) {
-        CancelOutbox outbox = createApproveOutbox(cancel);
+        Instant now = timeProvider.now();
+        CancelOutbox outbox =
+                CancelOutbox.forNew(
+                        cancel.orderItemId(),
+                        CancelOutboxType.APPROVE,
+                        CancelOutboxPayloadBuilder.approvePayload(cancel.idValue()),
+                        now);
         ClaimHistory history =
                 historyFactory.createStatusChange(
                         ClaimType.CANCEL,
@@ -78,12 +85,18 @@ public class CancelCommandFactory {
                         "APPROVED",
                         processedBy,
                         processedBy);
-        return new OutboxWithHistory(outbox, history);
+        return new OutboxWithHistory(outbox, history, now);
     }
 
     /** 거절 시 CancelOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createRejectBundle(Cancel cancel, String processedBy) {
-        CancelOutbox outbox = createRejectOutbox(cancel);
+        Instant now = timeProvider.now();
+        CancelOutbox outbox =
+                CancelOutbox.forNew(
+                        cancel.orderItemId(),
+                        CancelOutboxType.REJECT,
+                        CancelOutboxPayloadBuilder.rejectPayload(cancel.idValue()),
+                        now);
         ClaimHistory history =
                 historyFactory.createStatusChange(
                         ClaimType.CANCEL,
@@ -92,9 +105,10 @@ public class CancelCommandFactory {
                         "REJECTED",
                         processedBy,
                         processedBy);
-        return new OutboxWithHistory(outbox, history);
+        return new OutboxWithHistory(outbox, history, now);
     }
 
+    /** 현재 시간 반환. Outbox 상태 전환 등 Factory 외부에서 시간이 필요한 경우 사용. */
     public Instant now() {
         return timeProvider.now();
     }
@@ -109,45 +123,50 @@ public class CancelCommandFactory {
         return timeProvider.now().minusSeconds(timeoutSeconds);
     }
 
-    private CancelOutbox createApproveOutbox(Cancel cancel) {
-        Instant now = timeProvider.now();
-        return CancelOutbox.forNew(
-                cancel.orderItemId(),
-                CancelOutboxType.APPROVE,
-                CancelOutboxPayloadBuilder.approvePayload(cancel.idValue()),
-                now);
-    }
+    /** Cancel + CancelOutbox + ClaimHistory + 생성 시간 묶음 (판매자 취소용). */
+    public record CancelBundle(
+            Cancel cancel, CancelOutbox outbox, ClaimHistory history, Instant changedAt) {}
 
-    private CancelOutbox createRejectOutbox(Cancel cancel) {
-        Instant now = timeProvider.now();
-        return CancelOutbox.forNew(
-                cancel.orderItemId(),
-                CancelOutboxType.REJECT,
-                CancelOutboxPayloadBuilder.rejectPayload(cancel.idValue()),
-                now);
-    }
+    /** CancelOutbox + ClaimHistory + 변경 시간 묶음 (승인/거절용). */
+    public record OutboxWithHistory(CancelOutbox outbox, ClaimHistory history, Instant changedAt) {}
 
-    /** Cancel + CancelOutbox + ClaimHistory 묶음 (판매자 취소용). */
-    public record CancelBundle(Cancel cancel, CancelOutbox outbox, ClaimHistory history) {}
-
-    /** CancelOutbox + ClaimHistory 묶음 (승인/거절용). */
-    public record OutboxWithHistory(CancelOutbox outbox, ClaimHistory history) {}
-
-    /** 취소 아웃박스 페이로드 빌더. */
-    private static final class CancelOutboxPayloadBuilder {
+    /** 취소 아웃박스 페이로드 빌더. Map 기반 안전 직렬화. */
+    static final class CancelOutboxPayloadBuilder {
 
         private CancelOutboxPayloadBuilder() {}
 
         static String sellerCancelPayload(String cancelId, int cancelQty) {
-            return "{\"cancelId\":\"" + cancelId + "\",\"cancelQty\":" + cancelQty + "}";
+            return mapToJson(Map.of("cancelId", cancelId, "cancelQty", cancelQty));
         }
 
         static String approvePayload(String cancelId) {
-            return "{\"cancelId\":\"" + cancelId + "\",\"action\":\"APPROVE\"}";
+            return mapToJson(Map.of("cancelId", cancelId, "action", "APPROVE"));
         }
 
         static String rejectPayload(String cancelId) {
-            return "{\"cancelId\":\"" + cancelId + "\",\"action\":\"REJECT\"}";
+            return mapToJson(Map.of("cancelId", cancelId, "action", "REJECT"));
+        }
+
+        private static String mapToJson(Map<String, Object> map) {
+            StringBuilder sb = new StringBuilder("{");
+            boolean first = true;
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                if (!first) sb.append(",");
+                sb.append("\"").append(escapeJson(entry.getKey())).append("\":");
+                Object value = entry.getValue();
+                if (value instanceof String s) {
+                    sb.append("\"").append(escapeJson(s)).append("\"");
+                } else {
+                    sb.append(value);
+                }
+                first = false;
+            }
+            sb.append("}");
+            return sb.toString();
+        }
+
+        private static String escapeJson(String value) {
+            return value.replace("\\", "\\\\").replace("\"", "\\\"");
         }
     }
 }

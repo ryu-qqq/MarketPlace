@@ -1,14 +1,12 @@
 package com.ryuqq.marketplace.application.cancel.internal;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxReadManager;
+import com.ryuqq.marketplace.application.cancel.port.out.client.CancelOutboxMessage;
 import com.ryuqq.marketplace.application.cancel.port.out.client.CancelOutboxPublishClient;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
 import java.time.Instant;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,19 +26,16 @@ public class CancelOutboxRelayProcessor {
     private final CancelOutboxCommandManager outboxCommandManager;
     private final CancelOutboxReadManager outboxReadManager;
     private final CancelOutboxPublishClient publishClient;
-    private final ObjectMapper objectMapper;
     private final CancelCommandFactory commandFactory;
 
     public CancelOutboxRelayProcessor(
             CancelOutboxCommandManager outboxCommandManager,
             CancelOutboxReadManager outboxReadManager,
             CancelOutboxPublishClient publishClient,
-            ObjectMapper objectMapper,
             CancelCommandFactory commandFactory) {
         this.outboxCommandManager = outboxCommandManager;
         this.outboxReadManager = outboxReadManager;
         this.publishClient = publishClient;
-        this.objectMapper = objectMapper;
         this.commandFactory = commandFactory;
     }
 
@@ -58,8 +53,12 @@ public class CancelOutboxRelayProcessor {
             outbox.startProcessing(now);
             outboxCommandManager.persist(outbox);
 
-            String messageBody = buildMessageBody(outbox);
-            publishClient.publish(messageBody);
+            CancelOutboxMessage message =
+                    CancelOutboxMessage.of(
+                            outbox.idValue(),
+                            outbox.orderItemIdValue(),
+                            outbox.outboxType().name());
+            publishClient.publish(message);
 
             log.info(
                     "취소 Outbox SQS 발행 성공: outboxId={}, orderItemId={}",
@@ -86,20 +85,6 @@ public class CancelOutboxRelayProcessor {
                         reReadEx.getMessage());
             }
             return false;
-        }
-    }
-
-    private String buildMessageBody(CancelOutbox outbox) {
-        try {
-            Map<String, Object> message =
-                    Map.of(
-                            "outboxId", outbox.idValue(),
-                            "orderItemId", outbox.orderItemIdValue(),
-                            "outboxType", outbox.outboxType().name(),
-                            "claimDomain", "CANCEL");
-            return objectMapper.writeValueAsString(message);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("취소 Outbox SQS 메시지 직렬화 실패", e);
         }
     }
 }

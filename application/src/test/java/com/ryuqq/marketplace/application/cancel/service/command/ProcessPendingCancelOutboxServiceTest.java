@@ -1,17 +1,17 @@
 package com.ryuqq.marketplace.application.cancel.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.cancel.CancelCommandFixtures;
 import com.ryuqq.marketplace.application.cancel.dto.command.ProcessPendingCancelOutboxCommand;
+import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.internal.CancelOutboxRelayProcessor;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxReadManager;
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,6 +31,7 @@ class ProcessPendingCancelOutboxServiceTest {
 
     @Mock private CancelOutboxReadManager outboxReadManager;
     @Mock private CancelOutboxRelayProcessor relayProcessor;
+    @Mock private CancelCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - PENDING 아웃박스 처리")
@@ -44,8 +45,11 @@ class ProcessPendingCancelOutboxServiceTest {
                     CancelCommandFixtures.processPendingOutboxCommand();
             CancelOutbox outbox1 = org.mockito.Mockito.mock(CancelOutbox.class);
             CancelOutbox outbox2 = org.mockito.Mockito.mock(CancelOutbox.class);
+            Instant beforeTime = Instant.now();
 
-            given(outboxReadManager.findPendingOutboxes(any(), anyInt()))
+            given(commandFactory.calculateBeforeTime(command.delaySeconds()))
+                    .willReturn(beforeTime);
+            given(outboxReadManager.findPendingOutboxes(beforeTime, command.batchSize()))
                     .willReturn(List.of(outbox1, outbox2));
             given(relayProcessor.relay(outbox1)).willReturn(true);
             given(relayProcessor.relay(outbox2)).willReturn(true);
@@ -67,8 +71,11 @@ class ProcessPendingCancelOutboxServiceTest {
                     CancelCommandFixtures.processPendingOutboxCommand();
             CancelOutbox outbox1 = org.mockito.Mockito.mock(CancelOutbox.class);
             CancelOutbox outbox2 = org.mockito.Mockito.mock(CancelOutbox.class);
+            Instant beforeTime = Instant.now();
 
-            given(outboxReadManager.findPendingOutboxes(any(), anyInt()))
+            given(commandFactory.calculateBeforeTime(command.delaySeconds()))
+                    .willReturn(beforeTime);
+            given(outboxReadManager.findPendingOutboxes(beforeTime, command.batchSize()))
                     .willReturn(List.of(outbox1, outbox2));
             given(relayProcessor.relay(outbox1)).willReturn(true);
             given(relayProcessor.relay(outbox2)).willReturn(false);
@@ -88,8 +95,12 @@ class ProcessPendingCancelOutboxServiceTest {
             // given
             ProcessPendingCancelOutboxCommand command =
                     CancelCommandFixtures.processPendingOutboxCommand();
+            Instant beforeTime = Instant.now();
 
-            given(outboxReadManager.findPendingOutboxes(any(), anyInt())).willReturn(List.of());
+            given(commandFactory.calculateBeforeTime(command.delaySeconds()))
+                    .willReturn(beforeTime);
+            given(outboxReadManager.findPendingOutboxes(beforeTime, command.batchSize()))
+                    .willReturn(List.of());
 
             // when
             SchedulerBatchProcessingResult result = sut.execute(command);
