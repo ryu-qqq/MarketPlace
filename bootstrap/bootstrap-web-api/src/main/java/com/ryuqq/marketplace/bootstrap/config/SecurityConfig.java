@@ -10,9 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -84,7 +82,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "persistence.legacy.enabled", havingValue = "true")
     public LegacyJwtAuthenticationFilter legacyJwtAuthenticationFilter(
             LegacyTokenManager legacyTokenManager,
             LegacySellerAuthCompositeReadManager legacySellerAuthCompositeReadManager,
@@ -101,7 +98,7 @@ public class SecurityConfig {
             GatewayAuthenticationFilter gatewayAuthenticationFilter,
             GatewaySecurityBridgeFilter gatewaySecurityBridgeFilter,
             ServiceTokenAuthenticationFilter serviceTokenAuthenticationFilter,
-            Optional<LegacyJwtAuthenticationFilter> legacyJwtAuthenticationFilter,
+            LegacyJwtAuthenticationFilter legacyJwtAuthenticationFilter,
             ObjectMapper objectMapper)
             throws Exception {
         http
@@ -191,13 +188,15 @@ public class SecurityConfig {
 
                                         // 나머지는 인증 필요
                                         .anyRequest()
-                                        .authenticated());
-        // 1. LegacyJwtAuthenticationFilter: 레거시 HS256 JWT → SecurityContext
-        // (/api/v1/legacy/** 전용, legacy 모듈 활성화 시에만)
-        legacyJwtAuthenticationFilter.ifPresent(
-                filter -> http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class));
-        // 2. ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal 경로 전용)
-        http.addFilterBefore(
+                                        .authenticated())
+
+                // 1. LegacyJwtAuthenticationFilter: 레거시 HS256 JWT → SecurityContext
+                // (/api/v1/legacy/** 전용, 가장 먼저 실행)
+                .addFilterBefore(
+                        legacyJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                // 2. ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal
+                // 경로 전용)
+                .addFilterBefore(
                         serviceTokenAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
                 // 3. GatewayAuthenticationFilter: X-User-* 헤더 → UserContext (ThreadLocal)

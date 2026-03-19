@@ -36,7 +36,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
                         pattern = {
                             "com\\.ryuqq\\.marketplace\\.adapter\\.out\\.persistence\\.legacy\\..*",
                             "com\\.ryuqq\\.marketplace\\.adapter\\.in\\.rest\\.legacy\\..*",
-                            "com\\.ryuqq\\.marketplace\\.application\\.legacy.*"
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacy\\..*",
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacyconversion\\..*",
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacyseller\\..*",
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacyshipment\\..*",
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacycommoncode\\..*"
                         }))
 @Import(LegacyModuleConfig.class)
 @EnableJpaRepositories(
