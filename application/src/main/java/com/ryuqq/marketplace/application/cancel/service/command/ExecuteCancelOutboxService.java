@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.cancel.service.command;
 
 import com.ryuqq.marketplace.application.cancel.dto.command.ExecuteCancelOutboxCommand;
+import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxReadManager;
 import com.ryuqq.marketplace.application.cancel.port.in.command.ExecuteCancelOutboxUseCase;
@@ -8,7 +9,6 @@ import com.ryuqq.marketplace.application.cancel.port.out.client.CancelClaimSyncS
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
-import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,14 +31,17 @@ public class ExecuteCancelOutboxService implements ExecuteCancelOutboxUseCase {
     private final CancelOutboxReadManager outboxReadManager;
     private final CancelOutboxCommandManager outboxCommandManager;
     private final CancelClaimSyncStrategy claimSyncStrategy;
+    private final CancelCommandFactory commandFactory;
 
     public ExecuteCancelOutboxService(
             CancelOutboxReadManager outboxReadManager,
             CancelOutboxCommandManager outboxCommandManager,
-            CancelClaimSyncStrategy claimSyncStrategy) {
+            CancelClaimSyncStrategy claimSyncStrategy,
+            CancelCommandFactory commandFactory) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
         this.claimSyncStrategy = claimSyncStrategy;
+        this.commandFactory = commandFactory;
     }
 
     @Override
@@ -72,7 +75,7 @@ public class ExecuteCancelOutboxService implements ExecuteCancelOutboxUseCase {
 
     private void handleSuccess(CancelOutbox outbox) {
         CancelOutbox fresh = outboxReadManager.getById(outbox.idValue());
-        fresh.complete(Instant.now());
+        fresh.complete(commandFactory.now());
         outboxCommandManager.persist(fresh);
     }
 
@@ -83,7 +86,7 @@ public class ExecuteCancelOutboxService implements ExecuteCancelOutboxUseCase {
     private void handleDeferRetry(CancelOutbox outbox) {
         try {
             CancelOutbox fresh = outboxReadManager.getById(outbox.idValue());
-            fresh.recoverFromTimeout(Instant.now());
+            fresh.recoverFromTimeout(commandFactory.now());
             outboxCommandManager.persist(fresh);
         } catch (Exception e) {
             log.warn("취소 Outbox deferRetry 실패: outboxId={}", outbox.idValue());
@@ -93,7 +96,7 @@ public class ExecuteCancelOutboxService implements ExecuteCancelOutboxUseCase {
     private void persistFailureWithReRead(Long outboxId, boolean retryable, String errorMessage) {
         try {
             CancelOutbox fresh = outboxReadManager.getById(outboxId);
-            fresh.recordFailure(retryable, errorMessage, Instant.now());
+            fresh.recordFailure(retryable, errorMessage, commandFactory.now());
             outboxCommandManager.persist(fresh);
         } catch (Exception e) {
             log.warn(

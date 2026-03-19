@@ -5,8 +5,10 @@ import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.cancel.exception.CancelNotFoundException;
 import com.ryuqq.marketplace.domain.cancel.id.CancelId;
 import com.ryuqq.marketplace.domain.cancel.query.CancelSearchCriteria;
+import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,5 +46,10 @@ public class CancelReadManager {
     @Transactional(readOnly = true)
     public Optional<Cancel> findByOrderItemId(OrderItemId orderItemId) {
         return queryPort.findByOrderItemId(orderItemId);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<CancelStatus, Long> countByStatus() {
+        return queryPort.countByStatus();
     }
 }

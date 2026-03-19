@@ -717,6 +717,14 @@ public class StubExternalClientConfig {
 
     @Bean
     @Primary
+    public com.ryuqq.marketplace.application.legacyauth.port.out.LegacyPasswordEncoder
+            stubLegacyPasswordEncoder() {
+        return (rawPassword, encodedPassword) ->
+                rawPassword != null && rawPassword.equals(encodedPassword);
+    }
+
+    @Bean
+    @Primary
     public LegacyTokenClient stubLegacyTokenClient() {
         return new LegacyTokenClient() {
             @Override

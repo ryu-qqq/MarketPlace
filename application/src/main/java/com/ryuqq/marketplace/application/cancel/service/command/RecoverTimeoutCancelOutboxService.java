@@ -1,12 +1,13 @@
 package com.ryuqq.marketplace.application.cancel.service.command;
 
 import com.ryuqq.marketplace.application.cancel.dto.command.RecoverTimeoutCancelOutboxCommand;
+import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxReadManager;
 import com.ryuqq.marketplace.application.cancel.port.in.command.RecoverTimeoutCancelOutboxUseCase;
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
-import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,22 +22,24 @@ public class RecoverTimeoutCancelOutboxService implements RecoverTimeoutCancelOu
 
     private final CancelOutboxReadManager outboxReadManager;
     private final CancelOutboxCommandManager outboxCommandManager;
-    private final TimeProvider timeProvider;
+    private final CancelCommandFactory commandFactory;
 
     public RecoverTimeoutCancelOutboxService(
             CancelOutboxReadManager outboxReadManager,
             CancelOutboxCommandManager outboxCommandManager,
-            TimeProvider timeProvider) {
+            CancelCommandFactory commandFactory) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
-        this.timeProvider = timeProvider;
+        this.commandFactory = commandFactory;
     }
 
     @Override
     public SchedulerBatchProcessingResult execute(RecoverTimeoutCancelOutboxCommand command) {
+        Instant timeoutThreshold =
+                commandFactory.calculateTimeoutThreshold(command.timeoutSeconds());
         List<CancelOutbox> outboxes =
                 outboxReadManager.findProcessingTimeoutOutboxes(
-                        command.timeoutThreshold(), command.batchSize());
+                        timeoutThreshold, command.batchSize());
 
         int total = outboxes.size();
         int success = 0;
@@ -44,7 +47,7 @@ public class RecoverTimeoutCancelOutboxService implements RecoverTimeoutCancelOu
 
         for (CancelOutbox outbox : outboxes) {
             try {
-                outbox.recoverFromTimeout(timeProvider.now());
+                outbox.recoverFromTimeout(commandFactory.now());
                 outboxCommandManager.persist(outbox);
                 success++;
             } catch (Exception e) {

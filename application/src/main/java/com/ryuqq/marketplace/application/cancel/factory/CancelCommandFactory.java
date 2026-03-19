@@ -99,6 +99,16 @@ public class CancelCommandFactory {
         return timeProvider.now();
     }
 
+    /** PENDING 아웃박스 조회 기준 시간 계산. */
+    public Instant calculateBeforeTime(int delaySeconds) {
+        return timeProvider.now().minusSeconds(delaySeconds);
+    }
+
+    /** PROCESSING 타임아웃 기준 시간 계산. */
+    public Instant calculateTimeoutThreshold(long timeoutSeconds) {
+        return timeProvider.now().minusSeconds(timeoutSeconds);
+    }
+
     private CancelOutbox createApproveOutbox(Cancel cancel) {
         Instant now = timeProvider.now();
         return CancelOutbox.forNew(
