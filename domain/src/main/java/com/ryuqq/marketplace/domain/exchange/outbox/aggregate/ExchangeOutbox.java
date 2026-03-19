@@ -64,29 +64,59 @@ public class ExchangeOutbox {
         ExchangeOutboxIdempotencyKey idempotencyKey =
                 ExchangeOutboxIdempotencyKey.generate(orderItemId.value(), outboxType, now);
         return new ExchangeOutbox(
-                ExchangeOutboxId.forNew(), orderItemId, outboxType,
-                ExchangeOutboxStatus.PENDING, payload,
-                0, DEFAULT_MAX_RETRY, now, now, null, null, 0L, idempotencyKey);
+                ExchangeOutboxId.forNew(),
+                orderItemId,
+                outboxType,
+                ExchangeOutboxStatus.PENDING,
+                payload,
+                0,
+                DEFAULT_MAX_RETRY,
+                now,
+                now,
+                null,
+                null,
+                0L,
+                idempotencyKey);
     }
 
     public static ExchangeOutbox reconstitute(
-            ExchangeOutboxId id, OrderItemId orderItemId, ExchangeOutboxType outboxType,
-            ExchangeOutboxStatus status, String payload, int retryCount, int maxRetry,
-            Instant createdAt, Instant updatedAt, Instant processedAt,
-            String errorMessage, long version, String idempotencyKey) {
+            ExchangeOutboxId id,
+            OrderItemId orderItemId,
+            ExchangeOutboxType outboxType,
+            ExchangeOutboxStatus status,
+            String payload,
+            int retryCount,
+            int maxRetry,
+            Instant createdAt,
+            Instant updatedAt,
+            Instant processedAt,
+            String errorMessage,
+            long version,
+            String idempotencyKey) {
         return new ExchangeOutbox(
-                id, orderItemId, outboxType, status, payload, retryCount, maxRetry,
-                createdAt, updatedAt, processedAt, errorMessage, version,
+                id,
+                orderItemId,
+                outboxType,
+                status,
+                payload,
+                retryCount,
+                maxRetry,
+                createdAt,
+                updatedAt,
+                processedAt,
+                errorMessage,
+                version,
                 ExchangeOutboxIdempotencyKey.of(idempotencyKey));
     }
 
-    public boolean isNew() { return id.isNew(); }
+    public boolean isNew() {
+        return id.isNew();
+    }
 
     /** 처리 시작. PENDING → PROCESSING. */
     public void startProcessing(Instant now) {
         if (!status.isPending()) {
-            throw new IllegalStateException(
-                    "PENDING 상태에서만 처리를 시작할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PENDING 상태에서만 처리를 시작할 수 있습니다. 현재 상태: " + status);
         }
         this.status = ExchangeOutboxStatus.PROCESSING;
         this.updatedAt = now;
@@ -95,8 +125,7 @@ public class ExchangeOutbox {
     /** 처리 완료. PROCESSING → COMPLETED. */
     public void complete(Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "PROCESSING 상태에서만 완료할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PROCESSING 상태에서만 완료할 수 있습니다. 현재 상태: " + status);
         }
         this.status = ExchangeOutboxStatus.COMPLETED;
         this.processedAt = now;
@@ -107,8 +136,7 @@ public class ExchangeOutbox {
     /** 처리 실패 및 재시도. 최대 재시도 초과 시 FAILED. */
     public void failAndRetry(String errorMessage, Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
         }
         this.retryCount++;
         this.errorMessage = errorMessage;
@@ -124,8 +152,7 @@ public class ExchangeOutbox {
     /** 즉시 실패 처리 (재시도 없이). */
     public void fail(String errorMessage, Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
         }
         this.status = ExchangeOutboxStatus.FAILED;
         this.errorMessage = errorMessage;
@@ -145,8 +172,7 @@ public class ExchangeOutbox {
     /** FAILED → PENDING 수동 재처리. */
     public void retry(Instant now) {
         if (!status.isFailed()) {
-            throw new IllegalStateException(
-                    "FAILED 상태에서만 재처리할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("FAILED 상태에서만 재처리할 수 있습니다. 현재 상태: " + status);
         }
         this.status = ExchangeOutboxStatus.PENDING;
         this.retryCount = 0;
@@ -157,36 +183,102 @@ public class ExchangeOutbox {
     /** PROCESSING 타임아웃 복구. */
     public void recoverFromTimeout(Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "타임아웃 복구는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
+            throw new IllegalStateException("타임아웃 복구는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
         }
         this.status = ExchangeOutboxStatus.PENDING;
         this.updatedAt = now;
         this.errorMessage = "타임아웃으로 인한 복구";
     }
 
-    public boolean canRetry() { return retryCount < maxRetry && status.canProcess(); }
-    public boolean shouldProcess() { return status.isPending(); }
+    public boolean canRetry() {
+        return retryCount < maxRetry && status.canProcess();
+    }
 
-    public ExchangeOutboxId id() { return id; }
-    public Long idValue() { return id.value(); }
-    public OrderItemId orderItemId() { return orderItemId; }
-    public String orderItemIdValue() { return orderItemId.value(); }
-    public ExchangeOutboxType outboxType() { return outboxType; }
-    public ExchangeOutboxStatus status() { return status; }
-    public String payload() { return payload; }
-    public int retryCount() { return retryCount; }
-    public int maxRetry() { return maxRetry; }
-    public Instant createdAt() { return createdAt; }
-    public Instant updatedAt() { return updatedAt; }
-    public Instant processedAt() { return processedAt; }
-    public String errorMessage() { return errorMessage; }
-    public long version() { return version; }
-    public void refreshVersion(long version) { this.version = version; }
-    public ExchangeOutboxIdempotencyKey idempotencyKey() { return idempotencyKey; }
-    public String idempotencyKeyValue() { return idempotencyKey.value(); }
-    public boolean isPending() { return status.isPending(); }
-    public boolean isProcessing() { return status.isProcessing(); }
-    public boolean isCompleted() { return status.isCompleted(); }
-    public boolean isFailed() { return status.isFailed(); }
+    public boolean shouldProcess() {
+        return status.isPending();
+    }
+
+    public ExchangeOutboxId id() {
+        return id;
+    }
+
+    public Long idValue() {
+        return id.value();
+    }
+
+    public OrderItemId orderItemId() {
+        return orderItemId;
+    }
+
+    public String orderItemIdValue() {
+        return orderItemId.value();
+    }
+
+    public ExchangeOutboxType outboxType() {
+        return outboxType;
+    }
+
+    public ExchangeOutboxStatus status() {
+        return status;
+    }
+
+    public String payload() {
+        return payload;
+    }
+
+    public int retryCount() {
+        return retryCount;
+    }
+
+    public int maxRetry() {
+        return maxRetry;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
+
+    public Instant processedAt() {
+        return processedAt;
+    }
+
+    public String errorMessage() {
+        return errorMessage;
+    }
+
+    public long version() {
+        return version;
+    }
+
+    public void refreshVersion(long version) {
+        this.version = version;
+    }
+
+    public ExchangeOutboxIdempotencyKey idempotencyKey() {
+        return idempotencyKey;
+    }
+
+    public String idempotencyKeyValue() {
+        return idempotencyKey.value();
+    }
+
+    public boolean isPending() {
+        return status.isPending();
+    }
+
+    public boolean isProcessing() {
+        return status.isProcessing();
+    }
+
+    public boolean isCompleted() {
+        return status.isCompleted();
+    }
+
+    public boolean isFailed() {
+        return status.isFailed();
+    }
 }

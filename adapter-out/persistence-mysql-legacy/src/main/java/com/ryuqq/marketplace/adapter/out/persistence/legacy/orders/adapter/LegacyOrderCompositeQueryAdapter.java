@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 복합 조회 Adapter.
  *
- * <p>{@link LegacyOrderCompositeQueryPort} 구현체.
- * Repository에서 flat DTO 조회 + optionValues 별도 조회 후 Mapper로 Application DTO로 변환합니다.
+ * <p>{@link LegacyOrderCompositeQueryPort} 구현체. Repository에서 flat DTO 조회 + optionValues 별도 조회 후
+ * Mapper로 Application DTO로 변환합니다.
  *
  * @author ryu-qqq
  * @since 1.0.0
@@ -25,8 +25,7 @@ public class LegacyOrderCompositeQueryAdapter implements LegacyOrderCompositeQue
     private final LegacyOrderCompositeMapper mapper;
 
     public LegacyOrderCompositeQueryAdapter(
-            LegacyOrderCompositeQueryDslRepository repository,
-            LegacyOrderCompositeMapper mapper) {
+            LegacyOrderCompositeQueryDslRepository repository, LegacyOrderCompositeMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }

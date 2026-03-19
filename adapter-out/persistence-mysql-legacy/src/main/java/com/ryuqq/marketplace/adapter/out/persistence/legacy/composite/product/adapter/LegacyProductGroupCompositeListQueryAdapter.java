@@ -63,8 +63,7 @@ public class LegacyProductGroupCompositeListQueryAdapter
                 details.stream()
                         .collect(
                                 Collectors.toMap(
-                                        LegacyProductGroupListQueryDto::productGroupId,
-                                        d -> d));
+                                        LegacyProductGroupListQueryDto::productGroupId, d -> d));
 
         return productGroupIds.stream()
                 .filter(detailMap::containsKey)
@@ -92,8 +91,7 @@ public class LegacyProductGroupCompositeListQueryAdapter
         Map<Long, List<LegacyProductOptionQueryDto>> rowsByGroupId =
                 productRows.stream()
                         .collect(
-                                Collectors.groupingBy(
-                                        LegacyProductOptionQueryDto::productGroupId));
+                                Collectors.groupingBy(LegacyProductOptionQueryDto::productGroupId));
 
         return rowsByGroupId.entrySet().stream()
                 .collect(

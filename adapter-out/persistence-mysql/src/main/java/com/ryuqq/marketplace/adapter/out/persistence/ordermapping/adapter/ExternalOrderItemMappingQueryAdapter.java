@@ -3,8 +3,8 @@ package com.ryuqq.marketplace.adapter.out.persistence.ordermapping.adapter;
 import com.ryuqq.marketplace.adapter.out.persistence.ordermapping.mapper.ExternalOrderItemMappingPersistenceMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.ordermapping.repository.ExternalOrderItemMappingQueryDslRepository;
 import com.ryuqq.marketplace.application.claimsync.port.out.query.ExternalOrderItemMappingQueryPort;
-import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -27,16 +27,15 @@ public class ExternalOrderItemMappingQueryAdapter implements ExternalOrderItemMa
     public Optional<ExternalOrderItemMapping> findBySalesChannelIdAndExternalProductOrderId(
             long salesChannelId, String externalProductOrderId) {
         return queryDslRepository
-                .findBySalesChannelIdAndExternalProductOrderId(salesChannelId, externalProductOrderId)
+                .findBySalesChannelIdAndExternalProductOrderId(
+                        salesChannelId, externalProductOrderId)
                 .map(mapper::toDomain);
     }
 
     @Override
     public List<ExternalOrderItemMapping> findByOrderItemIds(List<OrderItemId> orderItemIds) {
         List<String> ids = orderItemIds.stream().map(OrderItemId::value).toList();
-        return queryDslRepository.findByOrderItemIdIn(ids).stream()
-                .map(mapper::toDomain)
-                .toList();
+        return queryDslRepository.findByOrderItemIdIn(ids).stream().map(mapper::toDomain).toList();
     }
 
     @Override

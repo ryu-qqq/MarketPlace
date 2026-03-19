@@ -45,8 +45,7 @@ class LegacyProductGroupQueryApiMapperTest {
             // then
             assertThat(params.sellerId())
                     .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_SELLER_ID);
-            assertThat(params.brandId())
-                    .isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_BRAND_ID);
+            assertThat(params.brandId()).isEqualTo(LegacyProductGroupApiFixtures.DEFAULT_BRAND_ID);
             assertThat(params.page()).isZero();
             assertThat(params.size()).isEqualTo(20);
         }

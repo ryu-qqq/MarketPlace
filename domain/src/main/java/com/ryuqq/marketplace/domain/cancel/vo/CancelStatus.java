@@ -15,6 +15,22 @@ public enum CancelStatus {
     private static final Set<CancelStatus> REJECTABLE = EnumSet.of(REQUESTED);
     private static final Set<CancelStatus> COMPLETABLE = EnumSet.of(APPROVED);
     private static final Set<CancelStatus> WITHDRAWABLE = EnumSet.of(REQUESTED);
+    private static final Set<CancelStatus> TERMINAL = EnumSet.of(COMPLETED, REJECTED, CANCELLED);
+
+    /** 완료 상태인지 확인. COMPLETED만 정상 완료. */
+    public boolean isCompleted() {
+        return this == COMPLETED;
+    }
+
+    /** 종료 상태인지 확인. COMPLETED/REJECTED/CANCELLED는 종료 상태. */
+    public boolean isTerminal() {
+        return TERMINAL.contains(this);
+    }
+
+    /** 진행 중인 상태인지 확인. */
+    public boolean isActive() {
+        return !isTerminal();
+    }
 
     public boolean canTransitionTo(CancelStatus target) {
         return getAllowedFrom(target).contains(this);

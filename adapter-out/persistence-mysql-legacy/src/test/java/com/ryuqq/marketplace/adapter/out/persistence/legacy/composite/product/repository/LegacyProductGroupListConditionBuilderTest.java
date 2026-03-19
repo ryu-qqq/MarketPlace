@@ -482,8 +482,7 @@ class LegacyProductGroupListConditionBuilderTest {
         @DisplayName("null 검색어 입력 시 null을 반환합니다")
         void searchKeywordEq_WithNullSearchWord_ReturnsNull() {
             // when
-            BooleanExpression result =
-                    conditionBuilder.searchKeywordEq("PRODUCT_GROUP_NAME", null);
+            BooleanExpression result = conditionBuilder.searchKeywordEq("PRODUCT_GROUP_NAME", null);
 
             // then
             assertThat(result).isNull();

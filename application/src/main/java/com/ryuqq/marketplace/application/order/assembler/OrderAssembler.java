@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
+import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
@@ -16,38 +17,29 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResu
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.PaymentInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ProductOrderInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ReceiverInfo;
-import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
+import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.common.vo.PageMeta;
+import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
+import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.springframework.stereotype.Component;
 
 /**
  * Order Assembler.
  *
  * <p>Domain/Composite 데이터 → Result 변환을 담당합니다. 번들(Bundle) DTO를 받아 최종 응답 DTO를 조립합니다.
+ *
+ * <p>상태 판별은 도메인 Enum(CancelStatus, ExchangeStatus, RefundStatus)의 isCompleted()/isActive() 메서드에
+ * 위임합니다. (APP-ASM-002, DOM-VO-003)
  */
 @Component
 public class OrderAssembler {
 
-    /** 완료된 취소 상태 집합. */
-    private static final Set<String> COMPLETED_CANCEL_STATUSES = Set.of("COMPLETED", "REFUNDED");
-
-    /** 활성 클레임 상태 집합 (진행 중인 클레임). */
-    private static final Set<String> ACTIVE_CLAIM_STATUSES =
-            Set.of("REQUESTED", "ACCEPTED", "IN_PROGRESS", "COLLECTING");
-
-    /** 완료된 클레임 상태 집합. */
-    private static final Set<String> COMPLETED_CLAIM_STATUSES =
-            Set.of("COMPLETED", "REFUNDED", "EXCHANGED");
-
-    /**
-     * 주문상품 상태별 카운트 → OrderSummaryResult 변환.
-     */
+    /** 주문상품 상태별 카운트 → OrderSummaryResult 변환. */
     public OrderSummaryResult toSummaryResult(Map<OrderItemStatus, Long> statusCounts) {
         return new OrderSummaryResult(
                 statusCounts.getOrDefault(OrderItemStatus.READY, 0L),
@@ -238,7 +230,7 @@ public class OrderAssembler {
     /**
      * 취소 내역 → CancelSummary 변환.
      *
-     * <p>완료된 취소의 수량 합산, 취소 가능 수량 계산, 최근 취소 추출을 수행합니다.
+     * <p>완료된 취소의 수량 합산, 취소 가능 수량 계산, 최근 취소 추출을 수행합니다. 상태 판별은 CancelStatus 도메인 Enum에 위임합니다.
      */
     private CancelSummary toCancelSummary(List<OrderCancelResult> cancels, int orderQuantity) {
         if (cancels.isEmpty()) {
@@ -247,18 +239,13 @@ public class OrderAssembler {
 
         int totalCancelledQty =
                 cancels.stream()
-                        .filter(c -> COMPLETED_CANCEL_STATUSES.contains(c.cancelStatus()))
+                        .filter(c -> isCancelCompleted(c.cancelStatus()))
                         .mapToInt(OrderCancelResult::quantity)
                         .sum();
 
         int cancelableQty = Math.max(0, orderQuantity - totalCancelledQty);
 
-        boolean hasActiveCancel =
-                cancels.stream()
-                        .anyMatch(
-                                c ->
-                                        !COMPLETED_CANCEL_STATUSES.contains(c.cancelStatus())
-                                                && !"REJECTED".equals(c.cancelStatus()));
+        boolean hasActiveCancel = cancels.stream().anyMatch(c -> isCancelActive(c.cancelStatus()));
 
         OrderCancelResult latest =
                 cancels.stream()
@@ -284,7 +271,8 @@ public class OrderAssembler {
     /**
      * 클레임 내역 → ClaimSummary 변환.
      *
-     * <p>활성 클레임 수, 총 클레임 수량, 클레임 가능 수량, 최근 클레임을 계산합니다.
+     * <p>활성 클레임 수, 총 클레임 수량, 클레임 가능 수량, 최근 클레임을 계산합니다. 상태 판별은 claimType 기반으로
+     * ExchangeStatus/RefundStatus 도메인 Enum에 위임합니다.
      */
     private ClaimSummary toClaimSummary(List<OrderClaimResult> claims, int orderQuantity) {
         if (claims.isEmpty()) {
@@ -292,16 +280,14 @@ public class OrderAssembler {
         }
 
         long activeCount =
-                claims.stream()
-                        .filter(c -> ACTIVE_CLAIM_STATUSES.contains(c.claimStatus()))
-                        .count();
+                claims.stream().filter(c -> isClaimActive(c.claimType(), c.claimStatus())).count();
 
         int totalClaimedQty =
                 claims.stream()
                         .filter(
                                 c ->
-                                        COMPLETED_CLAIM_STATUSES.contains(c.claimStatus())
-                                                || ACTIVE_CLAIM_STATUSES.contains(c.claimStatus()))
+                                        !isClaimTerminal(c.claimType(), c.claimStatus())
+                                                || isClaimCompleted(c.claimType(), c.claimStatus()))
                         .mapToInt(OrderClaimResult::quantity)
                         .sum();
 
@@ -330,5 +316,59 @@ public class OrderAssembler {
 
         return new ClaimSummary(
                 hasActiveClaim, (int) activeCount, totalClaimedQty, claimableQty, latestClaim);
+    }
+
+    // ==================== 도메인 Enum 기반 상태 판별 (DOM-VO-003) ====================
+
+    private boolean isCancelCompleted(String cancelStatus) {
+        try {
+            return CancelStatus.valueOf(cancelStatus).isCompleted();
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private boolean isCancelActive(String cancelStatus) {
+        try {
+            return CancelStatus.valueOf(cancelStatus).isActive();
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private boolean isClaimActive(String claimType, String claimStatus) {
+        try {
+            return switch (claimType) {
+                case "EXCHANGE" -> ExchangeStatus.valueOf(claimStatus).isActive();
+                case "REFUND" -> RefundStatus.valueOf(claimStatus).isActive();
+                default -> false;
+            };
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private boolean isClaimCompleted(String claimType, String claimStatus) {
+        try {
+            return switch (claimType) {
+                case "EXCHANGE" -> ExchangeStatus.valueOf(claimStatus).isCompleted();
+                case "REFUND" -> RefundStatus.valueOf(claimStatus).isCompleted();
+                default -> false;
+            };
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private boolean isClaimTerminal(String claimType, String claimStatus) {
+        try {
+            return switch (claimType) {
+                case "EXCHANGE" -> ExchangeStatus.valueOf(claimStatus).isTerminal();
+                case "REFUND" -> RefundStatus.valueOf(claimStatus).isTerminal();
+                default -> true;
+            };
+        } catch (IllegalArgumentException e) {
+            return true;
+        }
     }
 }

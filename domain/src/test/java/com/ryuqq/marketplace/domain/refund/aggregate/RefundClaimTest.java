@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.common.event.DomainEvent;
-import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.refund.RefundFixtures;
 import com.ryuqq.marketplace.domain.refund.event.RefundCancelledEvent;
 import com.ryuqq.marketplace.domain.refund.event.RefundClaimCreatedEvent;

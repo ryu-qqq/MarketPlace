@@ -43,9 +43,8 @@ class LegacyProductGroupCompositeListQueryAdapterTest {
 
     private LegacyProductGroupSearchCriteria defaultCriteria() {
         return LegacyProductGroupSearchCriteria.of(
-                null, null, List.of(), null, null, null,
-                null, null, null, null, null, null,
-                null, null, 0, 10);
+                null, null, List.of(), null, null, null, null, null, null, null, null, null, null,
+                null, 0, 10);
     }
 
     private LegacyProductGroupListQueryDto buildListQueryDto(long productGroupId) {

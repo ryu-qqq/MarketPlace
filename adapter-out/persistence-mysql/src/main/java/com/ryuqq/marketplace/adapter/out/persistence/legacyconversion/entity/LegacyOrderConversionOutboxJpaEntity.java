@@ -12,8 +12,8 @@ import java.time.Instant;
 /**
  * LegacyOrderConversionOutboxJpaEntity - 레거시 주문 변환 Outbox JPA 엔티티.
  *
- * <p>레거시 주문 → 내부 주문 변환 요청을 추적하는 Outbox 테이블입니다. legacyOrderId + legacyPaymentId를
- * 저장하고, 변환 시점에 데이터를 조회합니다.
+ * <p>레거시 주문 → 내부 주문 변환 요청을 추적하는 Outbox 테이블입니다. legacyOrderId + legacyPaymentId를 저장하고, 변환 시점에 데이터를
+ * 조회합니다.
  *
  * <p>PER-ENT-001: Entity는 @Entity, @Table 어노테이션 필수.
  *

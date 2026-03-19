@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
  * <p>orders + order_snapshot_product_group + external_order + interlocking_order +
  * payment_snapshot_shipping_address 조인 결과. option_values는 별도 쿼리로 조합됩니다.
  *
- * <p>QueryDSL Projections.constructor 사용으로 NumberPath&lt;Long&gt; 매핑을 위해
- * 숫자 필드는 래퍼 타입(Long, Integer)을 사용합니다. Mapper에서 null-safe 변환 처리합니다.
+ * <p>QueryDSL Projections.constructor 사용으로 NumberPath&lt;Long&gt; 매핑을 위해 숫자 필드는 래퍼 타입(Long,
+ * Integer)을 사용합니다. Mapper에서 null-safe 변환 처리합니다.
  *
  * @param legacyOrderId 레거시 주문 ID
  * @param legacyPaymentId 레거시 결제 ID

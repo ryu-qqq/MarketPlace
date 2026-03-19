@@ -33,7 +33,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class LegacyOrderConversionCoordinator {
 
-    private static final Logger log = LoggerFactory.getLogger(LegacyOrderConversionCoordinator.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(LegacyOrderConversionCoordinator.class);
 
     private final LegacyOrderCompositeReadManager compositeReadManager;
     private final LegacyOrderChannelResolver channelResolver;
@@ -83,32 +84,46 @@ public class LegacyOrderConversionCoordinator {
             }
 
             // 3. luxurydb 상세 조회
-            LegacyOrderCompositeResult composite = compositeReadManager.fetchOrderComposite(legacyOrderId);
+            LegacyOrderCompositeResult composite =
+                    compositeReadManager.fetchOrderComposite(legacyOrderId);
 
             // 4. 이관 대상 확인 (ORDER_FAILED 제외)
             if (!statusMapper.isEligibleForMigration(composite.orderStatus())) {
-                log.info("이관 제외 대상: legacyOrderId={}, status={}", legacyOrderId, composite.orderStatus());
+                log.info(
+                        "이관 제외 대상: legacyOrderId={}, status={}",
+                        legacyOrderId,
+                        composite.orderStatus());
                 completeOutbox(outbox, now);
                 return;
             }
 
             // 5. 채널 식별 + 상태 매핑 (순수 로직)
-            LegacyOrderChannelResolver.ChannelResolution channel = channelResolver.resolve(
-                    composite.externalOrderPkId(), composite.externalSiteId(), composite.interlockingSiteName());
+            LegacyOrderChannelResolver.ChannelResolution channel =
+                    channelResolver.resolve(
+                            composite.externalOrderPkId(),
+                            composite.externalSiteId(),
+                            composite.interlockingSiteName());
 
             LegacyOrderStatusMapper.OrderStatusResolution statusResolution =
                     statusMapper.resolve(composite.orderStatus());
 
-            String externalOrderNo = channelResolver.resolveExternalOrderNo(
-                    composite.externalOrderPkId(), legacyOrderId);
+            String externalOrderNo =
+                    channelResolver.resolveExternalOrderNo(
+                            composite.externalOrderPkId(), legacyOrderId);
 
             // 6. 내부 ID 변환
             LegacyOrderResolvedIds resolvedIds = resolveInternalIds(composite);
 
             // 7. 도메인 객체 조립 (순수 변환, 트랜잭션 없음)
-            LegacyOrderConversionBundle bundle = conversionFactory.create(
-                    composite, channel, statusResolution, externalOrderNo,
-                    outbox.legacyPaymentId(), resolvedIds, now);
+            LegacyOrderConversionBundle bundle =
+                    conversionFactory.create(
+                            composite,
+                            channel,
+                            statusResolution,
+                            externalOrderNo,
+                            outbox.legacyPaymentId(),
+                            resolvedIds,
+                            now);
 
             // 8. 원자적 저장 (Order + Cancel/Refund + Mapping)
             persistenceFacade.persist(bundle);
@@ -116,43 +131,51 @@ public class LegacyOrderConversionCoordinator {
             // 9. 완료
             completeOutbox(outbox, now);
 
-            log.info("레거시 주문 이관 완료: legacyOrderId={} → internalOrderId={}, channel={}",
-                    legacyOrderId, bundle.mapping().internalOrderId(), channel.channelName());
+            log.info(
+                    "레거시 주문 이관 완료: legacyOrderId={} → internalOrderId={}, channel={}",
+                    legacyOrderId,
+                    bundle.mapping().internalOrderId(),
+                    channel.channelName());
 
         } catch (Exception e) {
             log.error("레거시 주문 이관 실패: legacyOrderId={}", legacyOrderId, e);
-            outboxCommandManager.failInNewTransaction(outbox, truncateMessage(e.getMessage()), Instant.now());
+            outboxCommandManager.failInNewTransaction(
+                    outbox, truncateMessage(e.getMessage()), Instant.now());
         }
     }
 
     /**
      * 레거시 ID → 내부 ID 변환.
      *
-     * <p>legacy_product_id_mappings에서 상품 매핑을 조회하고,
-     * legacy_seller_id_mapping에서 셀러명을 조회합니다.
-     * 매핑이 없으면 레거시 ID를 그대로 사용합니다.
+     * <p>legacy_product_id_mappings에서 상품 매핑을 조회하고, legacy_seller_id_mapping에서 셀러명을 조회합니다. 매핑이 없으면
+     * 레거시 ID를 그대로 사용합니다.
      */
     private LegacyOrderResolvedIds resolveInternalIds(LegacyOrderCompositeResult composite) {
         // 상품 ID 변환
         Optional<LegacyProductIdMapping> productMapping =
                 productIdMappingReadManager.findByLegacyProductId(composite.legacyProductId());
 
-        long internalProductGroupId = productMapping
-                .map(LegacyProductIdMapping::internalProductGroupId)
-                .orElse(composite.productGroupId());
+        long internalProductGroupId =
+                productMapping
+                        .map(LegacyProductIdMapping::internalProductGroupId)
+                        .orElse(composite.productGroupId());
 
-        long internalProductId = productMapping
-                .map(LegacyProductIdMapping::internalProductId)
-                .orElse(composite.legacyProductId());
+        long internalProductId =
+                productMapping
+                        .map(LegacyProductIdMapping::internalProductId)
+                        .orElse(composite.legacyProductId());
 
         // 셀러명 조회
-        String sellerName = sellerIdMappingReadManager.findSellerNameByLegacySellerId(composite.legacySellerId())
-                .orElse(null);
+        String sellerName =
+                sellerIdMappingReadManager
+                        .findSellerNameByLegacySellerId(composite.legacySellerId())
+                        .orElse(null);
 
         // 브랜드명은 luxurydb brand 테이블 JOIN으로 조회됨
         String brandName = composite.brandName();
 
-        return new LegacyOrderResolvedIds(internalProductGroupId, internalProductId, sellerName, brandName);
+        return new LegacyOrderResolvedIds(
+                internalProductGroupId, internalProductId, sellerName, brandName);
     }
 
     private void completeOutbox(LegacyOrderConversionOutbox outbox, Instant now) {

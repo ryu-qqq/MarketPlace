@@ -1,12 +1,12 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.repository;
 
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.brand.entity.QLegacyBrandEntity.legacyBrandEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyExternalOrderEntity.legacyExternalOrderEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyInterlockingOrderEntity.legacyInterlockingOrderEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyOrderEntity.legacyOrderEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyOrderSnapshotOptionDetailEntity.legacyOrderSnapshotOptionDetailEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyOrderSnapshotProductGroupEntity.legacyOrderSnapshotProductGroupEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyOrderSnapshotProductGroupImageEntity.legacyOrderSnapshotProductGroupImageEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.brand.entity.QLegacyBrandEntity.legacyBrandEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyPaymentSnapshotShippingAddressEntity.legacyPaymentSnapshotShippingAddressEntity;
 
 import com.querydsl.core.types.Projections;
@@ -21,9 +21,8 @@ import org.springframework.stereotype.Repository;
  * 레거시 주문 복합 조회 QueryDSL Repository.
  *
  * <p>orders + order_snapshot_product_group + external_order + interlocking_order +
- * payment_snapshot_shipping_address 조인으로 flat DTO를 조회합니다.
- * order_snapshot_option_detail은 별도 메서드로 조회합니다.
- * order_snapshot_product_group_image는 첫 번째 이미지를 별도 메서드로 조회합니다.
+ * payment_snapshot_shipping_address 조인으로 flat DTO를 조회합니다. order_snapshot_option_detail은 별도 메서드로
+ * 조회합니다. order_snapshot_product_group_image는 첫 번째 이미지를 별도 메서드로 조회합니다.
  *
  * <p>레거시 구조: 1 order = 1 product (orders.PRODUCT_ID). 스냅샷도 order_id 단위.
  *
@@ -43,9 +42,9 @@ public class LegacyOrderCompositeQueryDslRepository {
     /**
      * 주문 ID로 주문 복합 flat DTO를 조회합니다.
      *
-     * <p>orders + order_snapshot_product_group + external_order (LEFT) + interlocking_order (LEFT) +
-     * payment_snapshot_shipping_address (LEFT) 조인.
-     * mainImageUrl은 별도 쿼리({@link #fetchMainImageUrl}) 결과로 채웁니다.
+     * <p>orders + order_snapshot_product_group + external_order (LEFT) + interlocking_order (LEFT)
+     * + payment_snapshot_shipping_address (LEFT) 조인. mainImageUrl은 별도 쿼리({@link
+     * #fetchMainImageUrl}) 결과로 채웁니다.
      *
      * @param orderId 레거시 주문 ID
      * @return 주문 복합 flat DTO Optional

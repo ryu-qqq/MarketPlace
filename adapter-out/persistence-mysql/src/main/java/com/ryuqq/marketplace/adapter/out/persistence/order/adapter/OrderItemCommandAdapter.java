@@ -8,7 +8,7 @@ import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
-/** OrderItem Command Adapter. 주문상품 상태 + 이력 저장. */
+/** OrderItem Command Adapter. 주문상품 저장 + 상태 변경 + 이력 저장. */
 @Component
 public class OrderItemCommandAdapter implements OrderItemCommandPort {
 
@@ -28,20 +28,14 @@ public class OrderItemCommandAdapter implements OrderItemCommandPort {
     @Override
     public void persistAll(List<OrderItem> orderItems) {
         for (OrderItem item : orderItems) {
-            itemRepository.save(mapper.toOrderItemEntity(item, item.idValue()));
-            itemHistoryRepository.saveAll(
-                    mapper.toOrderItemHistoryEntities(item.histories()));
-        }
-    }
-
-    @Override
-    public void updateAll(List<OrderItem> orderItems) {
-        for (OrderItem item : orderItems) {
             itemRepository
                     .findById(item.idValue())
-                    .ifPresent(entity -> entity.updateOrderItemStatus(item.status().name()));
-            itemHistoryRepository.saveAll(
-                    mapper.toOrderItemHistoryEntities(item.histories()));
+                    .ifPresentOrElse(
+                            entity -> entity.updateOrderItemStatus(item.status().name()),
+                            () ->
+                                    itemRepository.save(
+                                            mapper.toOrderItemEntity(item, item.idValue())));
+            itemHistoryRepository.saveAll(mapper.toOrderItemHistoryEntities(item.histories()));
         }
     }
 }

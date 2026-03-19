@@ -8,7 +8,7 @@ import java.time.Instant;
 /** 정산 상태 변경 이벤트. */
 public record SettlementStatusChangedEvent(
         SettlementId settlementId,
-        String orderId,
+        long sellerId,
         SettlementStatus fromStatus,
         SettlementStatus toStatus,
         Instant occurredAt)

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 상품그룹 목록 Read Facade.
  *
- * <p>CompositeListReadManager를 호출하여 상품그룹 목록과 카운트를 함께 조회합니다.
- * Service에서 직접 Manager를 여러 번 호출하지 않도록 오케스트레이션을 담당합니다.
+ * <p>CompositeListReadManager를 호출하여 상품그룹 목록과 카운트를 함께 조회합니다. Service에서 직접 Manager를 여러 번 호출하지 않도록
+ * 오케스트레이션을 담당합니다.
  */
 @Component
 public class LegacyProductGroupListReadFacade {

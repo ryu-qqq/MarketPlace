@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * 교환 배치 처리 결과 수집기.
  *
- * <p>ExchangeClaim + ExchangeOutbox + ClaimHistory + BatchItemResult를 하나로 묶어 관리합니다.
- * Outbox는 nullable로 관리됩니다 (일부 액션은 외부 API 호출 불필요).
+ * <p>ExchangeClaim + ExchangeOutbox + ClaimHistory + BatchItemResult를 하나로 묶어 관리합니다. Outbox는
+ * nullable로 관리됩니다 (일부 액션은 외부 API 호출 불필요).
  */
 public class ExchangeBatchResult {
 

@@ -49,7 +49,6 @@ public interface SalesChannelProductClient {
         return registerProduct(bundle, externalCategoryId, externalBrandId, channel, shop);
     }
 
-
     /**
      * 외부 채널의 상품을 수정합니다.
      *

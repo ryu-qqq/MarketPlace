@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 /**
  * 네이버 커머스 클레임 매퍼.
  *
- * <p>NaverLastChangedStatus + NaverProductOrderDetail → ExternalClaimPayload 변환.
- * lastChangedStatus의 claimType/claimStatus와 productOrder의 currentClaim 상세 정보를 결합합니다.
+ * <p>NaverLastChangedStatus + NaverProductOrderDetail → ExternalClaimPayload 변환. lastChangedStatus의
+ * claimType/claimStatus와 productOrder의 currentClaim 상세 정보를 결합합니다.
  */
 @Component
 public class NaverCommerceClaimMapper {
@@ -67,8 +67,7 @@ public class NaverCommerceClaimMapper {
         String reDeliveryCompany = claim != null ? claim.reDeliveryCompany() : null;
         String reDeliveryTrackingNumber = claim != null ? claim.reDeliveryTrackingNumber() : null;
         String reDeliveryStatus = claim != null ? claim.reDeliveryStatus() : null;
-        Instant claimRequestDate =
-                claim != null ? parseInstant(claim.claimRequestDate()) : null;
+        Instant claimRequestDate = claim != null ? parseInstant(claim.claimRequestDate()) : null;
 
         return new ExternalClaimPayload(
                 change.orderId(),

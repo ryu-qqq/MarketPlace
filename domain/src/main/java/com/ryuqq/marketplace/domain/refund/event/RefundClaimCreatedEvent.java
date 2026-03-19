@@ -7,4 +7,5 @@ import java.time.Instant;
 
 /** 환불 클레임 생성 이벤트. */
 public record RefundClaimCreatedEvent(
-        RefundClaimId refundClaimId, OrderItemId orderItemId, Instant occurredAt) implements DomainEvent {}
+        RefundClaimId refundClaimId, OrderItemId orderItemId, Instant occurredAt)
+        implements DomainEvent {}

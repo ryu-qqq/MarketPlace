@@ -605,7 +605,11 @@ class SellerOptionGroupsUpdateTest {
             List<SellerOptionGroupUpdateData.GroupEntry> entries =
                     List.of(
                             new SellerOptionGroupUpdateData.GroupEntry(
-                                    10L, "색상", null, OptionInputType.FREE_INPUT, 0,
+                                    10L,
+                                    "색상",
+                                    null,
+                                    OptionInputType.FREE_INPUT,
+                                    0,
                                     List.of(retainedValueEntry(101L, "검정", 0))));
 
             // when
@@ -637,7 +641,11 @@ class SellerOptionGroupsUpdateTest {
             List<SellerOptionGroupUpdateData.GroupEntry> entries =
                     List.of(
                             new SellerOptionGroupUpdateData.GroupEntry(
-                                    10L, "각인", null, OptionInputType.PREDEFINED, 0,
+                                    10L,
+                                    "각인",
+                                    null,
+                                    OptionInputType.PREDEFINED,
+                                    0,
                                     List.of(retainedValueEntry(101L, "각인입력", 0))));
 
             // when

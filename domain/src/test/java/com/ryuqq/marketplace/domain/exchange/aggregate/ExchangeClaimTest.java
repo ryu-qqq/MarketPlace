@@ -480,14 +480,15 @@ class ExchangeClaimTest {
         }
 
         @Test
-        @DisplayName("COLLECTING 상태에서 거절하면 예외가 발생한다")
-        void rejectFromCollecting_ThrowsException() {
+        @DisplayName("COLLECTING 상태에서도 교환을 거절할 수 있다")
+        void rejectFromCollecting() {
             // given
             ExchangeClaim claim = ExchangeFixtures.collectingExchangeClaim();
 
-            // when & then
-            assertThatThrownBy(() -> claim.reject("admin@marketplace.com", CommonVoFixtures.now()))
-                    .isInstanceOf(ExchangeException.class);
+            // when
+            assertThatCode(() -> claim.reject("admin@marketplace.com", CommonVoFixtures.now()))
+                    .doesNotThrowAnyException();
+            assertThat(claim.status()).isEqualTo(ExchangeStatus.REJECTED);
         }
 
         @Test
@@ -584,7 +585,8 @@ class ExchangeClaimTest {
             // given
             ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
             ExchangeOption newOption =
-                    ExchangeFixtures.exchangeOption(1000L, "SKU-RED-M", 1001L, 2002L, "SKU-BLUE-M", 2);
+                    ExchangeFixtures.exchangeOption(
+                            1000L, "SKU-RED-M", 1001L, 2002L, "SKU-BLUE-M", 2);
             Instant now = CommonVoFixtures.now();
 
             // when

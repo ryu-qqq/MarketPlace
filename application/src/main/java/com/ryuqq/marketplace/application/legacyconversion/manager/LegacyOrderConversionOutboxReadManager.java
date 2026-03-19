@@ -14,8 +14,7 @@ public class LegacyOrderConversionOutboxReadManager {
 
     private final LegacyOrderConversionOutboxQueryPort queryPort;
 
-    public LegacyOrderConversionOutboxReadManager(
-            LegacyOrderConversionOutboxQueryPort queryPort) {
+    public LegacyOrderConversionOutboxReadManager(LegacyOrderConversionOutboxQueryPort queryPort) {
         this.queryPort = queryPort;
     }
 

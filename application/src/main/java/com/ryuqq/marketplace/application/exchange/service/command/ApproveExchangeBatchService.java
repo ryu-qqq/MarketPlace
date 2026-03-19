@@ -50,10 +50,7 @@ public class ApproveExchangeBatchService implements ApproveExchangeBatchUseCase 
                         commandFactory.createApproveHistory(claim, command.processedBy());
                 batchResult.addSuccess(claim, history);
             } catch (Exception e) {
-                log.warn(
-                        "교환 승인 실패: exchangeClaimId={}, error={}",
-                        claim.idValue(),
-                        e.getMessage());
+                log.warn("교환 승인 실패: exchangeClaimId={}, error={}", claim.idValue(), e.getMessage());
                 batchResult.addFailure(claim.idValue(), e.getMessage());
             }
         }

@@ -37,9 +37,10 @@ class LegacyProductGroupListReadFacadeTest {
             // given
             LegacyProductGroupSearchCriteria criteria =
                     LegacyProductGroupQueryFixtures.defaultCriteria();
-            List<LegacyProductGroupDetailBundle> expected = List.of(
-                    LegacyProductGroupQueryFixtures.detailBundle(1L),
-                    LegacyProductGroupQueryFixtures.detailBundle(2L));
+            List<LegacyProductGroupDetailBundle> expected =
+                    List.of(
+                            LegacyProductGroupQueryFixtures.detailBundle(1L),
+                            LegacyProductGroupQueryFixtures.detailBundle(2L));
 
             given(compositeListReadManager.search(criteria)).willReturn(expected);
 
@@ -78,7 +79,8 @@ class LegacyProductGroupListReadFacadeTest {
             LegacyProductGroupDetailBundle bundleWithProducts =
                     LegacyProductGroupQueryFixtures.detailBundleWithProducts(1L);
 
-            given(compositeListReadManager.search(criteria)).willReturn(List.of(bundleWithProducts));
+            given(compositeListReadManager.search(criteria))
+                    .willReturn(List.of(bundleWithProducts));
 
             // when
             List<LegacyProductGroupDetailBundle> result = sut.getBundles(criteria);
@@ -133,8 +135,8 @@ class LegacyProductGroupListReadFacadeTest {
             // given
             LegacyProductGroupSearchCriteria criteria =
                     LegacyProductGroupQueryFixtures.defaultCriteria();
-            List<LegacyProductGroupDetailBundle> bundles = List.of(
-                    LegacyProductGroupQueryFixtures.detailBundle(1L));
+            List<LegacyProductGroupDetailBundle> bundles =
+                    List.of(LegacyProductGroupQueryFixtures.detailBundle(1L));
             long totalCount = 1L;
 
             given(compositeListReadManager.search(criteria)).willReturn(bundles);

@@ -60,9 +60,7 @@ public class InboundOrders {
     }
 
     public List<InboundOrder> notConverted() {
-        return orders.stream()
-                .filter(o -> o.status() != InboundOrderStatus.CONVERTED)
-                .toList();
+        return orders.stream().filter(o -> o.status() != InboundOrderStatus.CONVERTED).toList();
     }
 
     public List<InboundOrder> all() {

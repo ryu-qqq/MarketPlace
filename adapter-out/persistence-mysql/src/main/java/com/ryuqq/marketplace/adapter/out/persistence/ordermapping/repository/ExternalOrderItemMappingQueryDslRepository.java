@@ -20,8 +20,9 @@ public class ExternalOrderItemMappingQueryDslRepository {
         this.queryFactory = queryFactory;
     }
 
-    public Optional<ExternalOrderItemMappingJpaEntity> findBySalesChannelIdAndExternalProductOrderId(
-            long salesChannelId, String externalProductOrderId) {
+    public Optional<ExternalOrderItemMappingJpaEntity>
+            findBySalesChannelIdAndExternalProductOrderId(
+                    long salesChannelId, String externalProductOrderId) {
         ExternalOrderItemMappingJpaEntity entity =
                 queryFactory
                         .selectFrom(mapping)
@@ -33,9 +34,6 @@ public class ExternalOrderItemMappingQueryDslRepository {
     }
 
     public List<ExternalOrderItemMappingJpaEntity> findByOrderItemIdIn(List<String> orderItemIds) {
-        return queryFactory
-                .selectFrom(mapping)
-                .where(mapping.orderItemId.in(orderItemIds))
-                .fetch();
+        return queryFactory.selectFrom(mapping).where(mapping.orderItemId.in(orderItemIds)).fetch();
     }
 }

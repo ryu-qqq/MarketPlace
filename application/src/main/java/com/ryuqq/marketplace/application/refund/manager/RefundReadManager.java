@@ -22,9 +22,7 @@ public class RefundReadManager {
 
     @Transactional(readOnly = true)
     public RefundClaim getById(RefundClaimId id) {
-        return queryPort
-                .findById(id)
-                .orElseThrow(() -> new RefundNotFoundException(id.value()));
+        return queryPort.findById(id).orElseThrow(() -> new RefundNotFoundException(id.value()));
     }
 
     @Transactional(readOnly = true)

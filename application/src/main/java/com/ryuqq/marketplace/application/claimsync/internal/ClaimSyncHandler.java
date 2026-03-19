@@ -8,8 +8,7 @@ import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 /**
  * 특정 클레임 유형의 동기화 처리를 담당하는 핸들러 인터페이스.
  *
- * <p>각 구현체는 자신이 처리하는 InternalClaimType을 선언하고,
- * 액션 결정(resolve)과 실행(execute)을 완전히 캡슐화합니다.
+ * <p>각 구현체는 자신이 처리하는 InternalClaimType을 선언하고, 액션 결정(resolve)과 실행(execute)을 완전히 캡슐화합니다.
  */
 public interface ClaimSyncHandler {
 
@@ -38,6 +37,9 @@ public interface ClaimSyncHandler {
      * @param sellerId 판매자 ID
      * @return 내부 클레임 식별자 (로그 기록용)
      */
-    long execute(ClaimSyncAction action, ExternalClaimPayload claim,
-                 OrderItemId orderItemId, long sellerId);
+    long execute(
+            ClaimSyncAction action,
+            ExternalClaimPayload claim,
+            OrderItemId orderItemId,
+            long sellerId);
 }

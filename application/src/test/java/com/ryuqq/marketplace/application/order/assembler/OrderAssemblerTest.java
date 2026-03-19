@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.application.order.assembler;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.application.order.OrderQueryFixtures;
-import com.ryuqq.marketplace.application.order.assembler.OrderAssembler;
 import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailBundle;
 import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderListBundle;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
@@ -416,9 +415,10 @@ class OrderAssemblerTest {
         @DisplayName("일부 상태만 있는 카운트 맵이면 없는 상태는 0으로 처리된다")
         void toSummaryResult_PartialStatusCounts_MissingStatusIsZero() {
             // given
-            Map<OrderItemStatus, Long> partialCounts = Map.of(
-                    OrderItemStatus.READY, 3L,
-                    OrderItemStatus.CONFIRMED, 1L);
+            Map<OrderItemStatus, Long> partialCounts =
+                    Map.of(
+                            OrderItemStatus.READY, 3L,
+                            OrderItemStatus.CONFIRMED, 1L);
 
             // when
             OrderSummaryResult result = sut.toSummaryResult(partialCounts);

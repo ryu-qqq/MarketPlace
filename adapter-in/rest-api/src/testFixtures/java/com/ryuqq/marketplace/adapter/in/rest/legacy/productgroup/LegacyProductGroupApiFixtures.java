@@ -5,20 +5,13 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.request.LegacyCr
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyOptionDto;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductFetchResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductStatusResponse;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacySearchProductGroupByOffsetApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyBrandInfo;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyPriceInfo;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductGroupDetailItem;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductGroupInfo;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductStatusInfo;
-import com.ryuqq.marketplace.application.legacy.productgroup.dto.query.LegacyProductGroupSearchParams;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyCreateClothesDetailRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyCreateDeliveryNoticeRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyCreateProductGroupRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyCreateProductStatusRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyCreateRefundNoticeRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyProductGroupDetailsRequest;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacySearchProductGroupByOffsetApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyUpdateDisplayYnRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyUpdateProductGroupRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyUpdateStatusRequest;
@@ -32,9 +25,16 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.Le
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyProductImageResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyProductNoticeResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyRefundNoticeResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyBrandInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyPriceInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductGroupDetailItem;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductGroupInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductGroupListApiResponse.LegacyProductStatusInfo;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildescription.dto.request.LegacyUpdateProductDescriptionRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.dto.request.LegacyCreateProductImageRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productnotice.dto.request.LegacyCreateProductNoticeRequest;
+import com.ryuqq.marketplace.application.legacy.productgroup.dto.query.LegacyProductGroupSearchParams;
 import com.ryuqq.marketplace.application.legacy.shared.dto.response.LegacyProductRegistrationResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyDeliveryResult;
@@ -385,14 +385,42 @@ public final class LegacyProductGroupApiFixtures {
 
     public static LegacySearchProductGroupByOffsetApiRequest searchRequest() {
         return new LegacySearchProductGroupByOffsetApiRequest(
-                null, null, null, null, DEFAULT_BRAND_ID, DEFAULT_SELLER_ID, null, null, null, null,
-                null, null, null, null, 0, 20);
+                null,
+                null,
+                null,
+                null,
+                DEFAULT_BRAND_ID,
+                DEFAULT_SELLER_ID,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                20);
     }
 
     public static LegacyProductGroupSearchParams legacySearchParams() {
         return LegacyProductGroupSearchParams.of(
-                DEFAULT_SELLER_ID, DEFAULT_BRAND_ID, null, null, null, null, null, null, null, null,
-                null, null, null, null, 0, 20);
+                DEFAULT_SELLER_ID,
+                DEFAULT_BRAND_ID,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                20);
     }
 
     public static LegacySearchProductGroupByOffsetApiRequest searchRequestWithFilters() {
@@ -437,8 +465,7 @@ public final class LegacyProductGroupApiFixtures {
                         LocalDateTime.of(2025, 1, 2, 10, 0, 0));
         var products =
                 List.of(
-                        new LegacyProductGroupListApiResponse.LegacyProductItem(
-                                2001L, 100, "색상블랙"),
+                        new LegacyProductGroupListApiResponse.LegacyProductItem(2001L, 100, "색상블랙"),
                         new LegacyProductGroupListApiResponse.LegacyProductItem(
                                 2002L, 50, "색상화이트"));
         List<LegacyProductGroupDetailItem> items =

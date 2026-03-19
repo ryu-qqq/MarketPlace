@@ -112,9 +112,12 @@ public class ExchangeClaimQueryDslRepository {
         boolean isAsc = direction == SortDirection.ASC;
 
         return switch (sortKey) {
-            case CREATED_AT -> isAsc ? exchangeClaim.createdAt.asc() : exchangeClaim.createdAt.desc();
-            case REQUESTED_AT -> isAsc ? exchangeClaim.requestedAt.asc() : exchangeClaim.requestedAt.desc();
-            case COMPLETED_AT -> isAsc ? exchangeClaim.completedAt.asc() : exchangeClaim.completedAt.desc();
+            case CREATED_AT ->
+                    isAsc ? exchangeClaim.createdAt.asc() : exchangeClaim.createdAt.desc();
+            case REQUESTED_AT ->
+                    isAsc ? exchangeClaim.requestedAt.asc() : exchangeClaim.requestedAt.desc();
+            case COMPLETED_AT ->
+                    isAsc ? exchangeClaim.completedAt.asc() : exchangeClaim.completedAt.desc();
         };
     }
 }

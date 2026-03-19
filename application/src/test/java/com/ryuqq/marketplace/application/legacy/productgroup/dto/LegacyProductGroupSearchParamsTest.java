@@ -116,11 +116,10 @@ class LegacyProductGroupSearchParamsTest {
             LocalDateTime endDate = LocalDateTime.of(2025, 12, 31, 23, 59);
 
             // when
-            LegacyProductGroupSearchParams params = LegacyProductGroupSearchParams.of(
-                    null, null, null, null, null, null,
-                    null, null, null, null,
-                    null, null, startDate, endDate,
-                    0, 20);
+            LegacyProductGroupSearchParams params =
+                    LegacyProductGroupSearchParams.of(
+                            null, null, null, null, null, null, null, null, null, null, null, null,
+                            startDate, endDate, 0, 20);
 
             // then
             assertThat(params.startDate()).isEqualTo(startDate);

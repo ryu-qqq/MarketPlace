@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 /**
  * 세토프 커머스 상품 수정(UPDATE) 전략.
  *
- * <p>OutboundProduct에서 externalProductId 조회 → 최신 상품 데이터 조회 → PUT API 호출.
- * 기존 세토프 상품의 옵션명 기반 productId 매칭은 어댑터 레이어에서 처리합니다.
+ * <p>OutboundProduct에서 externalProductId 조회 → 최신 상품 데이터 조회 → PUT API 호출. 기존 세토프 상품의 옵션명 기반
+ * productId 매칭은 어댑터 레이어에서 처리합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")

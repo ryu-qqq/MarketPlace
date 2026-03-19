@@ -115,8 +115,10 @@ public class RefundClaimQueryDslRepository {
 
         return switch (sortKey) {
             case CREATED_AT -> isAsc ? refundClaim.createdAt.asc() : refundClaim.createdAt.desc();
-            case REQUESTED_AT -> isAsc ? refundClaim.requestedAt.asc() : refundClaim.requestedAt.desc();
-            case COMPLETED_AT -> isAsc ? refundClaim.completedAt.asc() : refundClaim.completedAt.desc();
+            case REQUESTED_AT ->
+                    isAsc ? refundClaim.requestedAt.asc() : refundClaim.requestedAt.desc();
+            case COMPLETED_AT ->
+                    isAsc ? refundClaim.completedAt.asc() : refundClaim.completedAt.desc();
         };
     }
 }

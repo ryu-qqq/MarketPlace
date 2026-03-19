@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 채널 식별기.
  *
- * <p>레거시 주문의 EXTERNAL_ORDER_PK_ID 패턴과 site 정보를 기반으로 salesChannelId를 식별합니다.
- * 외부 의존성(DB/API 호출) 없는 순수 비즈니스 로직 컴포넌트입니다.
+ * <p>레거시 주문의 EXTERNAL_ORDER_PK_ID 패턴과 site 정보를 기반으로 salesChannelId를 식별합니다. 외부 의존성(DB/API 호출) 없는 순수
+ * 비즈니스 로직 컴포넌트입니다.
  */
 @Component
 public class LegacyOrderChannelResolver {
@@ -14,15 +14,13 @@ public class LegacyOrderChannelResolver {
     /**
      * 레거시 주문의 채널을 식별합니다.
      *
-     * @param externalOrderPkId    external_order.EXTERNAL_ORDER_PK_ID (nullable - 자사몰이면 null)
-     * @param externalSiteId       external_order.SITE_ID (nullable)
+     * @param externalOrderPkId external_order.EXTERNAL_ORDER_PK_ID (nullable - 자사몰이면 null)
+     * @param externalSiteId external_order.SITE_ID (nullable)
      * @param interlockingSiteName interlocking_order.SITE_NAME (nullable)
      * @return 채널 식별 결과
      */
     public ChannelResolution resolve(
-            String externalOrderPkId,
-            Long externalSiteId,
-            String interlockingSiteName) {
+            String externalOrderPkId, Long externalSiteId, String interlockingSiteName) {
 
         // Case 1: external_order 없음 → 자사몰
         if (externalOrderPkId == null) {
@@ -61,7 +59,7 @@ public class LegacyOrderChannelResolver {
      * </ul>
      *
      * @param externalOrderPkId external_order.EXTERNAL_ORDER_PK_ID (nullable)
-     * @param legacyOrderId     레거시 주문 ID
+     * @param legacyOrderId 레거시 주문 ID
      * @return 결정된 externalOrderNo
      */
     public String resolveExternalOrderNo(String externalOrderPkId, long legacyOrderId) {
@@ -100,7 +98,7 @@ public class LegacyOrderChannelResolver {
      * 채널 식별 결과.
      *
      * @param salesChannelId 내부 채널 ID
-     * @param channelName    채널명
+     * @param channelName 채널명
      */
     public record ChannelResolution(long salesChannelId, String channelName) {}
 }

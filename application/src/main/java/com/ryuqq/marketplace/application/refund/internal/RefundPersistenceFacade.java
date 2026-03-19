@@ -51,9 +51,7 @@ public class RefundPersistenceFacade {
     /** RefundClaim + Outbox + History 일괄 저장 (신규 생성 시). */
     @Transactional
     public void persistAllWithOutboxesAndHistories(
-            List<RefundClaim> claims,
-            List<RefundOutbox> outboxes,
-            List<ClaimHistory> histories) {
+            List<RefundClaim> claims, List<RefundOutbox> outboxes, List<ClaimHistory> histories) {
         refundCommandManager.persistAll(claims);
         outboxCommandManager.persistAll(outboxes);
         historyCommandManager.persistAll(histories);
@@ -68,9 +66,7 @@ public class RefundPersistenceFacade {
     /** RefundClaim + Outbox + History 일괄 저장 (승인/거절 시). */
     @Transactional
     public void persistClaimsWithOutboxesAndHistories(
-            List<RefundClaim> claims,
-            List<RefundOutbox> outboxes,
-            List<ClaimHistory> histories) {
+            List<RefundClaim> claims, List<RefundOutbox> outboxes, List<ClaimHistory> histories) {
         refundCommandManager.persistAll(claims);
         outboxCommandManager.persistAll(outboxes);
         historyCommandManager.persistAll(histories);

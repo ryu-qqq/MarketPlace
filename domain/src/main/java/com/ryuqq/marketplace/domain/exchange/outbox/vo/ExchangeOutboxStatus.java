@@ -14,11 +14,31 @@ public enum ExchangeOutboxStatus {
         this.description = description;
     }
 
-    public String description() { return description; }
-    public boolean isPending() { return this == PENDING; }
-    public boolean isProcessing() { return this == PROCESSING; }
-    public boolean isCompleted() { return this == COMPLETED; }
-    public boolean isFailed() { return this == FAILED; }
-    public boolean canProcess() { return this == PENDING; }
-    public boolean isTerminal() { return this == COMPLETED || this == FAILED; }
+    public String description() {
+        return description;
+    }
+
+    public boolean isPending() {
+        return this == PENDING;
+    }
+
+    public boolean isProcessing() {
+        return this == PROCESSING;
+    }
+
+    public boolean isCompleted() {
+        return this == COMPLETED;
+    }
+
+    public boolean isFailed() {
+        return this == FAILED;
+    }
+
+    public boolean canProcess() {
+        return this == PENDING;
+    }
+
+    public boolean isTerminal() {
+        return this == COMPLETED || this == FAILED;
+    }
 }

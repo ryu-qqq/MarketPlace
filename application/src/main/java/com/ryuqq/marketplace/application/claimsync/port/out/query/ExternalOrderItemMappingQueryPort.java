@@ -2,7 +2,6 @@ package com.ryuqq.marketplace.application.claimsync.port.out.query;
 
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
-
 import java.util.List;
 import java.util.Optional;
 

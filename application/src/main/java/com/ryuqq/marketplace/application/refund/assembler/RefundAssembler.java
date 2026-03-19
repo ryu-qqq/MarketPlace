@@ -1,12 +1,11 @@
 package com.ryuqq.marketplace.application.refund.assembler;
 
 import com.ryuqq.marketplace.application.claimhistory.assembler.ClaimHistoryAssembler;
-import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryResult;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundDetailResult;
-import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundListResult;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundPageResult;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundSummaryResult;
+import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.common.vo.PageMeta;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
 import com.ryuqq.marketplace.domain.refund.vo.HoldInfo;
@@ -63,7 +62,8 @@ public class RefundAssembler {
         HoldInfo hold = claim.holdInfo();
         RefundDetailResult.HoldInfoResult holdInfoResult = null;
         if (hold != null) {
-            holdInfoResult = new RefundDetailResult.HoldInfoResult(hold.holdReason(), hold.holdAt());
+            holdInfoResult =
+                    new RefundDetailResult.HoldInfoResult(hold.holdReason(), hold.holdAt());
         }
 
         return new RefundDetailResult(

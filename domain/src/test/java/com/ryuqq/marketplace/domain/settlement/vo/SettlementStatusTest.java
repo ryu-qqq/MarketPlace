@@ -16,22 +16,48 @@ class SettlementStatusTest {
     class AllowedTransitionTest {
 
         @Test
-        @DisplayName("PENDING에서 COMPLETED로 전이할 수 있다")
-        void pendingToCompleted() {
-            assertThat(SettlementStatus.PENDING.canTransitionTo(SettlementStatus.COMPLETED))
+        @DisplayName("CALCULATING → CONFIRMED 전이 가능")
+        void calculatingToConfirmed() {
+            assertThat(SettlementStatus.CALCULATING.canTransitionTo(SettlementStatus.CONFIRMED))
                     .isTrue();
         }
 
         @Test
-        @DisplayName("PENDING에서 HOLD로 전이할 수 있다")
-        void pendingToHold() {
-            assertThat(SettlementStatus.PENDING.canTransitionTo(SettlementStatus.HOLD)).isTrue();
+        @DisplayName("CONFIRMED → PAYOUT_REQUESTED 전이 가능")
+        void confirmedToPayoutRequested() {
+            assertThat(
+                            SettlementStatus.CONFIRMED.canTransitionTo(
+                                    SettlementStatus.PAYOUT_REQUESTED))
+                    .isTrue();
         }
 
         @Test
-        @DisplayName("HOLD에서 PENDING으로 전이할 수 있다")
-        void holdToPending() {
-            assertThat(SettlementStatus.HOLD.canTransitionTo(SettlementStatus.PENDING)).isTrue();
+        @DisplayName("PAYOUT_REQUESTED → COMPLETED 전이 가능")
+        void payoutRequestedToCompleted() {
+            assertThat(
+                            SettlementStatus.PAYOUT_REQUESTED.canTransitionTo(
+                                    SettlementStatus.COMPLETED))
+                    .isTrue();
+        }
+
+        @Test
+        @DisplayName("CALCULATING → HOLD 전이 가능")
+        void calculatingToHold() {
+            assertThat(SettlementStatus.CALCULATING.canTransitionTo(SettlementStatus.HOLD))
+                    .isTrue();
+        }
+
+        @Test
+        @DisplayName("CONFIRMED → HOLD 전이 가능")
+        void confirmedToHold() {
+            assertThat(SettlementStatus.CONFIRMED.canTransitionTo(SettlementStatus.HOLD)).isTrue();
+        }
+
+        @Test
+        @DisplayName("HOLD → CALCULATING 전이 가능")
+        void holdToCalculating() {
+            assertThat(SettlementStatus.HOLD.canTransitionTo(SettlementStatus.CALCULATING))
+                    .isTrue();
         }
     }
 
@@ -40,41 +66,25 @@ class SettlementStatusTest {
     class DisallowedTransitionTest {
 
         @Test
-        @DisplayName("PENDING에서 PENDING으로 전이할 수 없다")
-        void pendingToPending() {
-            assertThat(SettlementStatus.PENDING.canTransitionTo(SettlementStatus.PENDING))
-                    .isFalse();
-        }
-
-        @Test
-        @DisplayName("HOLD에서 COMPLETED로 직접 전이할 수 없다")
+        @DisplayName("HOLD → COMPLETED 직접 전이 불가")
         void holdToCompleted() {
             assertThat(SettlementStatus.HOLD.canTransitionTo(SettlementStatus.COMPLETED)).isFalse();
         }
 
         @Test
-        @DisplayName("HOLD에서 HOLD로 전이할 수 없다")
-        void holdToHold() {
-            assertThat(SettlementStatus.HOLD.canTransitionTo(SettlementStatus.HOLD)).isFalse();
-        }
-
-        @Test
-        @DisplayName("COMPLETED에서 PENDING으로 전이할 수 없다")
-        void completedToPending() {
-            assertThat(SettlementStatus.COMPLETED.canTransitionTo(SettlementStatus.PENDING))
+        @DisplayName("COMPLETED는 terminal state")
+        void completedIsTerminal() {
+            assertThat(SettlementStatus.COMPLETED.canTransitionTo(SettlementStatus.CALCULATING))
                     .isFalse();
-        }
-
-        @Test
-        @DisplayName("COMPLETED에서 HOLD로 전이할 수 없다")
-        void completedToHold() {
+            assertThat(SettlementStatus.COMPLETED.canTransitionTo(SettlementStatus.CONFIRMED))
+                    .isFalse();
             assertThat(SettlementStatus.COMPLETED.canTransitionTo(SettlementStatus.HOLD)).isFalse();
         }
 
         @Test
-        @DisplayName("COMPLETED에서 COMPLETED로 전이할 수 없다")
-        void completedToCompleted() {
-            assertThat(SettlementStatus.COMPLETED.canTransitionTo(SettlementStatus.COMPLETED))
+        @DisplayName("CALCULATING → COMPLETED 직접 전이 불가")
+        void calculatingToCompletedDirectly() {
+            assertThat(SettlementStatus.CALCULATING.canTransitionTo(SettlementStatus.COMPLETED))
                     .isFalse();
         }
     }
@@ -84,14 +94,16 @@ class SettlementStatusTest {
     class EnumValueTest {
 
         @Test
-        @DisplayName("SettlementStatus는 PENDING, HOLD, COMPLETED 세 가지 값을 가진다")
+        @DisplayName("SettlementStatus는 5가지 값")
         void statusValues() {
             SettlementStatus[] values = SettlementStatus.values();
             assertThat(values)
                     .containsExactlyInAnyOrder(
-                            SettlementStatus.PENDING,
-                            SettlementStatus.HOLD,
-                            SettlementStatus.COMPLETED);
+                            SettlementStatus.CALCULATING,
+                            SettlementStatus.CONFIRMED,
+                            SettlementStatus.PAYOUT_REQUESTED,
+                            SettlementStatus.COMPLETED,
+                            SettlementStatus.HOLD);
         }
     }
 }

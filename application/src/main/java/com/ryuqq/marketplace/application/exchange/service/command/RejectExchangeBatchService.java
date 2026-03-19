@@ -47,10 +47,7 @@ public class RejectExchangeBatchService implements RejectExchangeBatchUseCase {
                         commandFactory.createRejectBundle(claim, fromStatus, command.processedBy());
                 batchResult.addSuccess(claim, bundle.outbox(), bundle.history());
             } catch (Exception e) {
-                log.warn(
-                        "교환 거절 실패: exchangeClaimId={}, error={}",
-                        claim.idValue(),
-                        e.getMessage());
+                log.warn("교환 거절 실패: exchangeClaimId={}, error={}", claim.idValue(), e.getMessage());
                 batchResult.addFailure(claim.idValue(), e.getMessage());
             }
         }

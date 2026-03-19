@@ -107,18 +107,19 @@ class NaverOptionCustomIntegrationTest {
 
         System.out.println("===== 시나리오 A: SINGLE + PREDEFINED =====\n");
 
-        SellerOptionGroup sizeGroup = buildOptionGroup(
-                1L, "사이즈", OptionInputType.PREDEFINED, 0,
-                List.of("230", "240", "250"));
+        SellerOptionGroup sizeGroup =
+                buildOptionGroup(
+                        1L, "사이즈", OptionInputType.PREDEFINED, 0, List.of("230", "240", "250"));
 
-        ProductGroupDetailBundle bundle = buildBundle(
-                "옵션테스트A SINGLE+PREDEFINED",
-                OptionType.SINGLE,
-                List.of(sizeGroup),
-                List.of(
-                        new SkuProduct("SKU-A-230", 29000, 10, Map.of(1L, 0)),
-                        new SkuProduct("SKU-A-240", 29000, 8, Map.of(1L, 1)),
-                        new SkuProduct("SKU-A-250", 29000, 5, Map.of(1L, 2))));
+        ProductGroupDetailBundle bundle =
+                buildBundle(
+                        "옵션테스트A SINGLE+PREDEFINED",
+                        OptionType.SINGLE,
+                        List.of(sizeGroup),
+                        List.of(
+                                new SkuProduct("SKU-A-230", 29000, 10, Map.of(1L, 0)),
+                                new SkuProduct("SKU-A-240", 29000, 8, Map.of(1L, 1)),
+                                new SkuProduct("SKU-A-250", 29000, 5, Map.of(1L, 2))));
 
         long productNo = registerAndVerify(http, token, bundle, "A");
 
@@ -126,9 +127,8 @@ class NaverOptionCustomIntegrationTest {
         var optionInfo = detail.originProduct().detailAttribute().optionInfo();
 
         assertThat(optionInfo.optionCombinations()).hasSize(3);
-        assertThat(optionInfo.optionCustom()).satisfiesAnyOf(
-                c -> assertThat(c).isNull(),
-                c -> assertThat(c).isEmpty());
+        assertThat(optionInfo.optionCustom())
+                .satisfiesAnyOf(c -> assertThat(c).isNull(), c -> assertThat(c).isEmpty());
         System.out.println("  [PASS] optionCombinations=3, optionCustom=없음\n");
 
         printOptionDetail(detail);
@@ -143,16 +143,15 @@ class NaverOptionCustomIntegrationTest {
 
         System.out.println("===== 시나리오 B: SINGLE + FREE_INPUT =====\n");
 
-        SellerOptionGroup engravingGroup = buildOptionGroup(
-                1L, "각인문구", OptionInputType.FREE_INPUT, 0,
-                List.of("기본값"));
+        SellerOptionGroup engravingGroup =
+                buildOptionGroup(1L, "각인문구", OptionInputType.FREE_INPUT, 0, List.of("기본값"));
 
-        ProductGroupDetailBundle bundle = buildBundle(
-                "옵션테스트B SINGLE+FREE_INPUT",
-                OptionType.SINGLE,
-                List.of(engravingGroup),
-                List.of(
-                        new SkuProduct("SKU-B-1", 35000, 20, Map.of(1L, 0))));
+        ProductGroupDetailBundle bundle =
+                buildBundle(
+                        "옵션테스트B SINGLE+FREE_INPUT",
+                        OptionType.SINGLE,
+                        List.of(engravingGroup),
+                        List.of(new SkuProduct("SKU-B-1", 35000, 20, Map.of(1L, 0))));
 
         // FREE_INPUT만 있는 경우: optionCombinations 없이 optionCustom만
         NaverProductRegistrationRequest req =
@@ -160,8 +159,9 @@ class NaverOptionCustomIntegrationTest {
         String json = objectMapper.writeValueAsString(req);
         System.out.println("  요청 JSON (optionInfo 부분):");
         JsonNode reqNode = objectMapper.readTree(json);
-        System.out.println(objectMapper.writeValueAsString(
-                reqNode.path("originProduct").path("detailAttribute").path("optionInfo")));
+        System.out.println(
+                objectMapper.writeValueAsString(
+                        reqNode.path("originProduct").path("detailAttribute").path("optionInfo")));
 
         long productNo = registerAndVerify(http, token, bundle, "B");
 
@@ -171,7 +171,8 @@ class NaverOptionCustomIntegrationTest {
         if (optionInfo != null && optionInfo.optionCustom() != null) {
             System.out.println("  optionCustom 수: " + optionInfo.optionCustom().size());
             for (var oc : optionInfo.optionCustom()) {
-                System.out.printf("    id=%d, groupName=%s, usable=%s%n",
+                System.out.printf(
+                        "    id=%d, groupName=%s, usable=%s%n",
                         oc.id(), oc.groupName(), oc.usable());
             }
             System.out.println("  [PASS] optionCustom 등록 확인\n");
@@ -191,22 +192,21 @@ class NaverOptionCustomIntegrationTest {
 
         System.out.println("===== 시나리오 C: COMBINATION + 전부 PREDEFINED =====\n");
 
-        SellerOptionGroup colorGroup = buildOptionGroup(
-                1L, "색상", OptionInputType.PREDEFINED, 0,
-                List.of("블랙", "화이트"));
-        SellerOptionGroup sizeGroup = buildOptionGroup(
-                2L, "사이즈", OptionInputType.PREDEFINED, 1,
-                List.of("M", "L"));
+        SellerOptionGroup colorGroup =
+                buildOptionGroup(1L, "색상", OptionInputType.PREDEFINED, 0, List.of("블랙", "화이트"));
+        SellerOptionGroup sizeGroup =
+                buildOptionGroup(2L, "사이즈", OptionInputType.PREDEFINED, 1, List.of("M", "L"));
 
-        ProductGroupDetailBundle bundle = buildBundle(
-                "옵션테스트C COMB+ALL_PREDEFINED",
-                OptionType.COMBINATION,
-                List.of(colorGroup, sizeGroup),
-                List.of(
-                        new SkuProduct("SKU-C-BK-M", 39000, 10, Map.of(1L, 0, 2L, 0)),
-                        new SkuProduct("SKU-C-BK-L", 39000, 8, Map.of(1L, 0, 2L, 1)),
-                        new SkuProduct("SKU-C-WH-M", 41000, 12, Map.of(1L, 1, 2L, 0)),
-                        new SkuProduct("SKU-C-WH-L", 41000, 6, Map.of(1L, 1, 2L, 1))));
+        ProductGroupDetailBundle bundle =
+                buildBundle(
+                        "옵션테스트C COMB+ALL_PREDEFINED",
+                        OptionType.COMBINATION,
+                        List.of(colorGroup, sizeGroup),
+                        List.of(
+                                new SkuProduct("SKU-C-BK-M", 39000, 10, Map.of(1L, 0, 2L, 0)),
+                                new SkuProduct("SKU-C-BK-L", 39000, 8, Map.of(1L, 0, 2L, 1)),
+                                new SkuProduct("SKU-C-WH-M", 41000, 12, Map.of(1L, 1, 2L, 0)),
+                                new SkuProduct("SKU-C-WH-L", 41000, 6, Map.of(1L, 1, 2L, 1))));
 
         long productNo = registerAndVerify(http, token, bundle, "C");
 
@@ -214,9 +214,8 @@ class NaverOptionCustomIntegrationTest {
         var optionInfo = detail.originProduct().detailAttribute().optionInfo();
 
         assertThat(optionInfo.optionCombinations()).hasSize(4);
-        assertThat(optionInfo.optionCustom()).satisfiesAnyOf(
-                c -> assertThat(c).isNull(),
-                c -> assertThat(c).isEmpty());
+        assertThat(optionInfo.optionCustom())
+                .satisfiesAnyOf(c -> assertThat(c).isNull(), c -> assertThat(c).isEmpty());
         System.out.println("  [PASS] optionCombinations=4, optionCustom=없음\n");
 
         printOptionDetail(detail);
@@ -231,29 +230,29 @@ class NaverOptionCustomIntegrationTest {
 
         System.out.println("===== 시나리오 D: COMBINATION + PREDEFINED + FREE_INPUT =====\n");
 
-        SellerOptionGroup sizeGroup = buildOptionGroup(
-                1L, "사이즈", OptionInputType.PREDEFINED, 0,
-                List.of("S", "M", "L"));
-        SellerOptionGroup engravingGroup = buildOptionGroup(
-                2L, "각인문구", OptionInputType.FREE_INPUT, 1,
-                List.of("기본값"));
+        SellerOptionGroup sizeGroup =
+                buildOptionGroup(1L, "사이즈", OptionInputType.PREDEFINED, 0, List.of("S", "M", "L"));
+        SellerOptionGroup engravingGroup =
+                buildOptionGroup(2L, "각인문구", OptionInputType.FREE_INPUT, 1, List.of("기본값"));
 
-        ProductGroupDetailBundle bundle = buildBundle(
-                "옵션테스트D COMB+MIXED",
-                OptionType.COMBINATION,
-                List.of(sizeGroup, engravingGroup),
-                List.of(
-                        new SkuProduct("SKU-D-S", 45000, 10, Map.of(1L, 0, 2L, 0)),
-                        new SkuProduct("SKU-D-M", 45000, 15, Map.of(1L, 1, 2L, 0)),
-                        new SkuProduct("SKU-D-L", 45000, 8, Map.of(1L, 2, 2L, 0))));
+        ProductGroupDetailBundle bundle =
+                buildBundle(
+                        "옵션테스트D COMB+MIXED",
+                        OptionType.COMBINATION,
+                        List.of(sizeGroup, engravingGroup),
+                        List.of(
+                                new SkuProduct("SKU-D-S", 45000, 10, Map.of(1L, 0, 2L, 0)),
+                                new SkuProduct("SKU-D-M", 45000, 15, Map.of(1L, 1, 2L, 0)),
+                                new SkuProduct("SKU-D-L", 45000, 8, Map.of(1L, 2, 2L, 0))));
 
         NaverProductRegistrationRequest req =
                 mapper.toRegistrationRequest(bundle, NAVER_CATEGORY_ID, null);
         String json = objectMapper.writeValueAsString(req);
         System.out.println("  요청 JSON (optionInfo 부분):");
         JsonNode reqNode = objectMapper.readTree(json);
-        System.out.println(objectMapper.writeValueAsString(
-                reqNode.path("originProduct").path("detailAttribute").path("optionInfo")));
+        System.out.println(
+                objectMapper.writeValueAsString(
+                        reqNode.path("originProduct").path("detailAttribute").path("optionInfo")));
 
         long productNo = registerAndVerify(http, token, bundle, "D");
 
@@ -261,9 +260,11 @@ class NaverOptionCustomIntegrationTest {
         var optionInfo = detail.originProduct().detailAttribute().optionInfo();
 
         if (optionInfo.optionCombinations() != null) {
-            System.out.println("  optionCombinations: " + optionInfo.optionCombinations().size() + "건");
+            System.out.println(
+                    "  optionCombinations: " + optionInfo.optionCombinations().size() + "건");
             for (var c : optionInfo.optionCombinations()) {
-                System.out.printf("    id=%d, %s/%s, SKU=%s%n",
+                System.out.printf(
+                        "    id=%d, %s/%s, SKU=%s%n",
                         c.id(), c.optionName1(), c.optionName2(), c.sellerManagerCode());
             }
         }
@@ -279,22 +280,31 @@ class NaverOptionCustomIntegrationTest {
         System.out.println("  --- 수정 테스트: 가격 변경 ---");
         Thread.sleep(1000);
 
-        ProductGroupDetailBundle updateBundle = buildBundle(
-                "옵션테스트D COMB+MIXED",
-                OptionType.COMBINATION,
-                List.of(sizeGroup, engravingGroup),
-                List.of(
-                        new SkuProduct("SKU-D-S", 48000, 10, Map.of(1L, 0, 2L, 0)),
-                        new SkuProduct("SKU-D-M", 48000, 15, Map.of(1L, 1, 2L, 0)),
-                        new SkuProduct("SKU-D-L", 48000, 8, Map.of(1L, 2, 2L, 0))));
+        ProductGroupDetailBundle updateBundle =
+                buildBundle(
+                        "옵션테스트D COMB+MIXED",
+                        OptionType.COMBINATION,
+                        List.of(sizeGroup, engravingGroup),
+                        List.of(
+                                new SkuProduct("SKU-D-S", 48000, 10, Map.of(1L, 0, 2L, 0)),
+                                new SkuProduct("SKU-D-M", 48000, 15, Map.of(1L, 1, 2L, 0)),
+                                new SkuProduct("SKU-D-L", 48000, 8, Map.of(1L, 2, 2L, 0))));
 
-        NaverProductRegistrationRequest updateReq = mapper.toUpdateRequest(
-                updateBundle, NAVER_CATEGORY_ID, null, detail,
-                Set.of(ChangedArea.PRICE, ChangedArea.OPTION));
+        NaverProductRegistrationRequest updateReq =
+                mapper.toUpdateRequest(
+                        updateBundle,
+                        NAVER_CATEGORY_ID,
+                        null,
+                        detail,
+                        Set.of(ChangedArea.PRICE, ChangedArea.OPTION));
 
         String updateJson = objectMapper.writeValueAsString(updateReq);
-        HttpResponse<String> updateResp = putJson(http, token,
-                NaverAuthHelper.BASE_URL + "/v2/products/origin-products/" + productNo, updateJson);
+        HttpResponse<String> updateResp =
+                putJson(
+                        http,
+                        token,
+                        NaverAuthHelper.BASE_URL + "/v2/products/origin-products/" + productNo,
+                        updateJson);
 
         System.out.println("  수정 Status: " + updateResp.statusCode());
         if (updateResp.statusCode() != 200) {
@@ -314,27 +324,26 @@ class NaverOptionCustomIntegrationTest {
 
         System.out.println("===== 시나리오 E: COMBINATION + 전부 FREE_INPUT =====\n");
 
-        SellerOptionGroup engraving1 = buildOptionGroup(
-                1L, "각인문구", OptionInputType.FREE_INPUT, 0,
-                List.of("기본값1"));
-        SellerOptionGroup engraving2 = buildOptionGroup(
-                2L, "메시지카드", OptionInputType.FREE_INPUT, 1,
-                List.of("기본값2"));
+        SellerOptionGroup engraving1 =
+                buildOptionGroup(1L, "각인문구", OptionInputType.FREE_INPUT, 0, List.of("기본값1"));
+        SellerOptionGroup engraving2 =
+                buildOptionGroup(2L, "메시지카드", OptionInputType.FREE_INPUT, 1, List.of("기본값2"));
 
-        ProductGroupDetailBundle bundle = buildBundle(
-                "옵션테스트E COMB+ALL_FREE_INPUT",
-                OptionType.COMBINATION,
-                List.of(engraving1, engraving2),
-                List.of(
-                        new SkuProduct("SKU-E-1", 55000, 20, Map.of(1L, 0, 2L, 0))));
+        ProductGroupDetailBundle bundle =
+                buildBundle(
+                        "옵션테스트E COMB+ALL_FREE_INPUT",
+                        OptionType.COMBINATION,
+                        List.of(engraving1, engraving2),
+                        List.of(new SkuProduct("SKU-E-1", 55000, 20, Map.of(1L, 0, 2L, 0))));
 
         NaverProductRegistrationRequest req =
                 mapper.toRegistrationRequest(bundle, NAVER_CATEGORY_ID, null);
         String json = objectMapper.writeValueAsString(req);
         System.out.println("  요청 JSON (optionInfo 부분):");
         JsonNode reqNode = objectMapper.readTree(json);
-        System.out.println(objectMapper.writeValueAsString(
-                reqNode.path("originProduct").path("detailAttribute").path("optionInfo")));
+        System.out.println(
+                objectMapper.writeValueAsString(
+                        reqNode.path("originProduct").path("detailAttribute").path("optionInfo")));
 
         long productNo = registerAndVerify(http, token, bundle, "E");
 
@@ -351,7 +360,8 @@ class NaverOptionCustomIntegrationTest {
         }
 
         if (optionInfo != null && optionInfo.optionCombinations() != null) {
-            System.out.println("  [WARN] optionCombinations도 존재: " + optionInfo.optionCombinations().size());
+            System.out.println(
+                    "  [WARN] optionCombinations도 존재: " + optionInfo.optionCombinations().size());
         } else {
             System.out.println("  [PASS] optionCombinations=없음");
         }
@@ -361,14 +371,15 @@ class NaverOptionCustomIntegrationTest {
 
     // ===== Helper =====
 
-    private long registerAndVerify(HttpClient http, String token,
-            ProductGroupDetailBundle bundle, String scenario) throws Exception {
+    private long registerAndVerify(
+            HttpClient http, String token, ProductGroupDetailBundle bundle, String scenario)
+            throws Exception {
         NaverProductRegistrationRequest req =
                 mapper.toRegistrationRequest(bundle, NAVER_CATEGORY_ID, null);
         String json = objectMapper.writeValueAsString(req);
 
-        HttpResponse<String> resp = postJson(http, token,
-                NaverAuthHelper.BASE_URL + "/v2/products", json);
+        HttpResponse<String> resp =
+                postJson(http, token, NaverAuthHelper.BASE_URL + "/v2/products", json);
 
         System.out.println("  등록 Status: " + resp.statusCode());
         if (resp.statusCode() != 200) {
@@ -386,11 +397,16 @@ class NaverOptionCustomIntegrationTest {
     private void deleteProduct(HttpClient http, String token, long productNo, String scenario)
             throws Exception {
         Thread.sleep(500);
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(NaverAuthHelper.BASE_URL + "/v2/products/origin-products/" + productNo))
-                .header("Authorization", "Bearer " + token)
-                .DELETE()
-                .build();
+        HttpRequest req =
+                HttpRequest.newBuilder()
+                        .uri(
+                                URI.create(
+                                        NaverAuthHelper.BASE_URL
+                                                + "/v2/products/origin-products/"
+                                                + productNo))
+                        .header("Authorization", "Bearer " + token)
+                        .DELETE()
+                        .build();
         HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
         System.out.println("  삭제 Status: " + resp.statusCode());
         if (resp.statusCode() == 200) {
@@ -409,15 +425,22 @@ class NaverOptionCustomIntegrationTest {
         if (optionInfo.optionCombinations() != null) {
             System.out.println("  -- optionCombinations --");
             for (var c : optionInfo.optionCombinations()) {
-                System.out.printf("    id=%d | %s/%s/%s | SKU=%s | stock=%d | price=%d%n",
-                        c.id(), c.optionName1(), c.optionName2(), c.optionName3(),
-                        c.sellerManagerCode(), c.stockQuantity(), c.price());
+                System.out.printf(
+                        "    id=%d | %s/%s/%s | SKU=%s | stock=%d | price=%d%n",
+                        c.id(),
+                        c.optionName1(),
+                        c.optionName2(),
+                        c.optionName3(),
+                        c.sellerManagerCode(),
+                        c.stockQuantity(),
+                        c.price());
             }
         }
         if (optionInfo.optionCustom() != null) {
             System.out.println("  -- optionCustom --");
             for (var oc : optionInfo.optionCustom()) {
-                System.out.printf("    id=%d | groupName=%s | usable=%s%n",
+                System.out.printf(
+                        "    id=%d | groupName=%s | usable=%s%n",
                         oc.id(), oc.groupName(), oc.usable());
             }
         }
@@ -425,11 +448,16 @@ class NaverOptionCustomIntegrationTest {
 
     private NaverProductDetailResponse fetchProduct(HttpClient client, String token, long productNo)
             throws Exception {
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(NaverAuthHelper.BASE_URL + "/v2/products/origin-products/" + productNo))
-                .header("Authorization", "Bearer " + token)
-                .GET()
-                .build();
+        HttpRequest req =
+                HttpRequest.newBuilder()
+                        .uri(
+                                URI.create(
+                                        NaverAuthHelper.BASE_URL
+                                                + "/v2/products/origin-products/"
+                                                + productNo))
+                        .header("Authorization", "Bearer " + token)
+                        .GET()
+                        .build();
         HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
         if (resp.statusCode() != 200) {
             System.out.println("  [WARN] 조회 실패: " + resp.statusCode() + " " + resp.body());
@@ -464,20 +492,26 @@ class NaverOptionCustomIntegrationTest {
 
     // ===== 도메인 객체 빌더 =====
 
-    private record SkuProduct(String skuCode, int price, int stock, Map<Long, Integer> optionMapping) {}
+    private record SkuProduct(
+            String skuCode, int price, int stock, Map<Long, Integer> optionMapping) {}
 
-    private SellerOptionGroup buildOptionGroup(long groupId, String groupName,
-            OptionInputType inputType, int sortOrder, List<String> valueNames) {
+    private SellerOptionGroup buildOptionGroup(
+            long groupId,
+            String groupName,
+            OptionInputType inputType,
+            int sortOrder,
+            List<String> valueNames) {
         long valueIdBase = groupId * 1000;
         List<SellerOptionValue> values = new ArrayList<>();
         for (int i = 0; i < valueNames.size(); i++) {
-            values.add(SellerOptionValue.reconstitute(
-                    SellerOptionValueId.of(valueIdBase + i),
-                    SellerOptionGroupId.of(groupId),
-                    OptionValueName.of(valueNames.get(i)),
-                    CanonicalOptionValueId.of(valueIdBase + i),
-                    i,
-                    DeletionStatus.active()));
+            values.add(
+                    SellerOptionValue.reconstitute(
+                            SellerOptionValueId.of(valueIdBase + i),
+                            SellerOptionGroupId.of(groupId),
+                            OptionValueName.of(valueNames.get(i)),
+                            CanonicalOptionValueId.of(valueIdBase + i),
+                            i,
+                            DeletionStatus.active()));
         }
         return SellerOptionGroup.reconstitute(
                 SellerOptionGroupId.of(groupId),
@@ -490,8 +524,11 @@ class NaverOptionCustomIntegrationTest {
                 DeletionStatus.active());
     }
 
-    private ProductGroupDetailBundle buildBundle(String productName, OptionType optionType,
-            List<SellerOptionGroup> optionGroups, List<SkuProduct> skuProducts) {
+    private ProductGroupDetailBundle buildBundle(
+            String productName,
+            OptionType optionType,
+            List<SellerOptionGroup> optionGroups,
+            List<SkuProduct> skuProducts) {
 
         Instant now = Instant.now();
         long productIdSeq = 500L;
@@ -505,105 +542,195 @@ class NaverOptionCustomIntegrationTest {
                 long groupId = entry.getKey();
                 int valueIdx = entry.getValue();
                 long valueId = groupId * 1000 + valueIdx;
-                mappings.add(ProductOptionMapping.reconstitute(
-                        ProductOptionMappingId.of(productIdSeq * 10 + mappings.size()),
-                        ProductId.of(productIdSeq),
-                        SellerOptionValueId.of(valueId),
-                        DeletionStatus.active()));
+                mappings.add(
+                        ProductOptionMapping.reconstitute(
+                                ProductOptionMappingId.of(productIdSeq * 10 + mappings.size()),
+                                ProductId.of(productIdSeq),
+                                SellerOptionValueId.of(valueId),
+                                DeletionStatus.active()));
             }
 
-            products.add(Product.reconstitute(
-                    ProductId.of(productIdSeq++),
-                    ProductGroupId.of(PG_ID),
-                    SkuCode.of(sku.skuCode()),
-                    Money.of(sku.price() + 5000),
-                    Money.of(sku.price()),
-                    Money.of(sku.price()),
-                    20,
-                    sku.stock(),
-                    ProductStatus.ACTIVE,
-                    i,
-                    mappings,
-                    now, now));
+            products.add(
+                    Product.reconstitute(
+                            ProductId.of(productIdSeq++),
+                            ProductGroupId.of(PG_ID),
+                            SkuCode.of(sku.skuCode()),
+                            Money.of(sku.price() + 5000),
+                            Money.of(sku.price()),
+                            Money.of(sku.price()),
+                            20,
+                            sku.stock(),
+                            ProductStatus.ACTIVE,
+                            i,
+                            mappings,
+                            now,
+                            now));
         }
 
-        ProductGroup group = ProductGroup.reconstitute(
-                ProductGroupId.of(PG_ID),
-                SellerId.of(25L),
-                BrandId.of(421L),
-                CategoryId.of(52L),
-                ShippingPolicyId.of(36L),
-                RefundPolicyId.of(35L),
-                ProductGroupName.of(productName),
-                optionType,
-                ProductGroupStatus.ACTIVE,
-                List.of(ProductGroupImage.reconstitute(
-                        ProductGroupImageId.of(1L),
+        ProductGroup group =
+                ProductGroup.reconstitute(
                         ProductGroupId.of(PG_ID),
-                        ImageUrl.of(IMAGE_URL),
-                        ImageUrl.of(IMAGE_URL),
-                        ImageType.THUMBNAIL, 0,
-                        DeletionStatus.active())),
-                optionGroups,
-                now, now);
+                        SellerId.of(25L),
+                        BrandId.of(421L),
+                        CategoryId.of(52L),
+                        ShippingPolicyId.of(36L),
+                        RefundPolicyId.of(35L),
+                        ProductGroupName.of(productName),
+                        optionType,
+                        ProductGroupStatus.ACTIVE,
+                        List.of(
+                                ProductGroupImage.reconstitute(
+                                        ProductGroupImageId.of(1L),
+                                        ProductGroupId.of(PG_ID),
+                                        ImageUrl.of(IMAGE_URL),
+                                        ImageUrl.of(IMAGE_URL),
+                                        ImageType.THUMBNAIL,
+                                        0,
+                                        DeletionStatus.active())),
+                        optionGroups,
+                        now,
+                        now);
 
-        List<NoticeField> noticeFields = List.of(
-                NoticeField.reconstitute(NoticeFieldId.of(100L), NoticeFieldCode.of("material"),
-                        NoticeFieldName.of("material"), true, 1),
-                NoticeField.reconstitute(NoticeFieldId.of(101L), NoticeFieldCode.of("color"),
-                        NoticeFieldName.of("color"), true, 2),
-                NoticeField.reconstitute(NoticeFieldId.of(102L), NoticeFieldCode.of("size"),
-                        NoticeFieldName.of("size"), true, 3),
-                NoticeField.reconstitute(NoticeFieldId.of(103L), NoticeFieldCode.of("manufacturer"),
-                        NoticeFieldName.of("manufacturer"), true, 4));
+        List<NoticeField> noticeFields =
+                List.of(
+                        NoticeField.reconstitute(
+                                NoticeFieldId.of(100L),
+                                NoticeFieldCode.of("material"),
+                                NoticeFieldName.of("material"),
+                                true,
+                                1),
+                        NoticeField.reconstitute(
+                                NoticeFieldId.of(101L),
+                                NoticeFieldCode.of("color"),
+                                NoticeFieldName.of("color"),
+                                true,
+                                2),
+                        NoticeField.reconstitute(
+                                NoticeFieldId.of(102L),
+                                NoticeFieldCode.of("size"),
+                                NoticeFieldName.of("size"),
+                                true,
+                                3),
+                        NoticeField.reconstitute(
+                                NoticeFieldId.of(103L),
+                                NoticeFieldCode.of("manufacturer"),
+                                NoticeFieldName.of("manufacturer"),
+                                true,
+                                4));
 
-        NoticeCategory noticeCategory = NoticeCategory.reconstitute(
-                NoticeCategoryId.of(1L),
-                NoticeCategoryCode.of("CLOTHING"),
-                NoticeCategoryName.of("CLOTHING", "의류"),
-                CategoryGroup.CLOTHING, true, noticeFields, now, now);
+        NoticeCategory noticeCategory =
+                NoticeCategory.reconstitute(
+                        NoticeCategoryId.of(1L),
+                        NoticeCategoryCode.of("CLOTHING"),
+                        NoticeCategoryName.of("CLOTHING", "의류"),
+                        CategoryGroup.CLOTHING,
+                        true,
+                        noticeFields,
+                        now,
+                        now);
 
-        List<ProductNoticeEntry> entries = List.of(
-                ProductNoticeEntry.reconstitute(ProductNoticeEntryId.of(1L), ProductNoticeId.of(1L),
-                        NoticeFieldId.of(100L), NoticeFieldValue.of("면 100%")),
-                ProductNoticeEntry.reconstitute(ProductNoticeEntryId.of(2L), ProductNoticeId.of(1L),
-                        NoticeFieldId.of(101L), NoticeFieldValue.of("블랙")),
-                ProductNoticeEntry.reconstitute(ProductNoticeEntryId.of(3L), ProductNoticeId.of(1L),
-                        NoticeFieldId.of(102L), NoticeFieldValue.of("FREE")),
-                ProductNoticeEntry.reconstitute(ProductNoticeEntryId.of(4L), ProductNoticeId.of(1L),
-                        NoticeFieldId.of(103L), NoticeFieldValue.of("테스트")));
+        List<ProductNoticeEntry> entries =
+                List.of(
+                        ProductNoticeEntry.reconstitute(
+                                ProductNoticeEntryId.of(1L),
+                                ProductNoticeId.of(1L),
+                                NoticeFieldId.of(100L),
+                                NoticeFieldValue.of("면 100%")),
+                        ProductNoticeEntry.reconstitute(
+                                ProductNoticeEntryId.of(2L),
+                                ProductNoticeId.of(1L),
+                                NoticeFieldId.of(101L),
+                                NoticeFieldValue.of("블랙")),
+                        ProductNoticeEntry.reconstitute(
+                                ProductNoticeEntryId.of(3L),
+                                ProductNoticeId.of(1L),
+                                NoticeFieldId.of(102L),
+                                NoticeFieldValue.of("FREE")),
+                        ProductNoticeEntry.reconstitute(
+                                ProductNoticeEntryId.of(4L),
+                                ProductNoticeId.of(1L),
+                                NoticeFieldId.of(103L),
+                                NoticeFieldValue.of("테스트")));
 
-        ProductNotice productNotice = ProductNotice.reconstitute(
-                ProductNoticeId.of(1L), ProductGroupId.of(PG_ID),
-                NoticeCategoryId.of(1L), entries, now, now);
+        ProductNotice productNotice =
+                ProductNotice.reconstitute(
+                        ProductNoticeId.of(1L),
+                        ProductGroupId.of(PG_ID),
+                        NoticeCategoryId.of(1L),
+                        entries,
+                        now,
+                        now);
 
-        SellerCs sellerCs = SellerCs.reconstitute(
-                SellerCsId.of(1L), SellerId.of(25L),
-                CsContact.of("01051304844", null, "test@test.com"),
-                OperatingHours.of(LocalTime.of(9, 0), LocalTime.of(18, 0)),
-                "MON,TUE,WED,THU,FRI", null, now, now);
+        SellerCs sellerCs =
+                SellerCs.reconstitute(
+                        SellerCsId.of(1L),
+                        SellerId.of(25L),
+                        CsContact.of("01051304844", null, "test@test.com"),
+                        OperatingHours.of(LocalTime.of(9, 0), LocalTime.of(18, 0)),
+                        "MON,TUE,WED,THU,FRI",
+                        null,
+                        now,
+                        now);
 
-        ProductGroupDescription description = ProductGroupDescription.reconstitute(
-                ProductGroupDescriptionId.of(1L), ProductGroupId.of(PG_ID),
-                DescriptionHtml.of("<p>옵션 타입별 테스트 상품</p>"),
-                CdnPath.of("https://cdn.test.com/test.html"),
-                DescriptionPublishStatus.PUBLISHED, List.of(), now, now);
+        ProductGroupDescription description =
+                ProductGroupDescription.reconstitute(
+                        ProductGroupDescriptionId.of(1L),
+                        ProductGroupId.of(PG_ID),
+                        DescriptionHtml.of("<p>옵션 타입별 테스트 상품</p>"),
+                        CdnPath.of("https://cdn.test.com/test.html"),
+                        DescriptionPublishStatus.PUBLISHED,
+                        List.of(),
+                        now,
+                        now);
 
-        ShippingPolicyResult shipping = new ShippingPolicyResult(
-                36L, 25L, "기본", true, true, "FREE", "무료배송",
-                0L, null, 3000L, 5000L, 3000L, 6000L, 1, 3,
-                LocalTime.of(14, 0), now, now);
+        ShippingPolicyResult shipping =
+                new ShippingPolicyResult(
+                        36L,
+                        25L,
+                        "기본",
+                        true,
+                        true,
+                        "FREE",
+                        "무료배송",
+                        0L,
+                        null,
+                        3000L,
+                        5000L,
+                        3000L,
+                        6000L,
+                        1,
+                        3,
+                        LocalTime.of(14, 0),
+                        now,
+                        now);
 
         ProductGroupDetailCompositeQueryResult queryResult =
                 new ProductGroupDetailCompositeQueryResult(
-                        PG_ID, 25L, "테스트 셀러", 421L, "테스트 브랜드",
-                        52L, "테스트 카테고리", "테스트", "52",
-                        productName, optionType.name(), "ACTIVE",
-                        now, now, shipping, null);
+                        PG_ID,
+                        25L,
+                        "테스트 셀러",
+                        421L,
+                        "테스트 브랜드",
+                        52L,
+                        "테스트 카테고리",
+                        "테스트",
+                        "52",
+                        productName,
+                        optionType.name(),
+                        "ACTIVE",
+                        now,
+                        now,
+                        shipping,
+                        null);
 
         return new ProductGroupDetailBundle(
-                queryResult, group, products,
-                Optional.of(description), Optional.of(productNotice),
-                Optional.of(noticeCategory), Optional.of(sellerCs), Map.of());
+                queryResult,
+                group,
+                products,
+                Optional.of(description),
+                Optional.of(productNotice),
+                Optional.of(noticeCategory),
+                Optional.of(sellerCs),
+                Map.of());
     }
 }

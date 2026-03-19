@@ -119,8 +119,8 @@ public class OutboundSyncOutboxQueryDslRepository {
     /**
      * 상품그룹 ID + syncType으로 PENDING/PROCESSING/FAILED 상태의 Outbox 목록 조회.
      *
-     * <p>UPDATE 중복 방지를 위해 활성(PENDING, PROCESSING) 또는 실패(FAILED) 상태의 Outbox를 조회합니다.
-     * FAILED도 포함하여 근본 원인이 해결되지 않은 상태에서 동일 에러 outbox가 무한 누적되는 것을 방지합니다.
+     * <p>UPDATE 중복 방지를 위해 활성(PENDING, PROCESSING) 또는 실패(FAILED) 상태의 Outbox를 조회합니다. FAILED도 포함하여 근본
+     * 원인이 해결되지 않은 상태에서 동일 에러 outbox가 무한 누적되는 것을 방지합니다.
      *
      * @param productGroupId 상품그룹 ID
      * @param syncType 연동 타입 (예: "UPDATE")

@@ -15,8 +15,7 @@ public class AddClaimHistoryMemoService implements AddClaimHistoryMemoUseCase {
     private final ClaimHistoryCommandManager historyCommandManager;
 
     public AddClaimHistoryMemoService(
-            ClaimHistoryFactory historyFactory,
-            ClaimHistoryCommandManager historyCommandManager) {
+            ClaimHistoryFactory historyFactory, ClaimHistoryCommandManager historyCommandManager) {
         this.historyFactory = historyFactory;
         this.historyCommandManager = historyCommandManager;
     }

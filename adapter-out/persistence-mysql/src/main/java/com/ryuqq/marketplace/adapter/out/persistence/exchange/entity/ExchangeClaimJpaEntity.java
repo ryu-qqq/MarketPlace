@@ -219,49 +219,167 @@ public class ExchangeClaimJpaEntity extends BaseAuditEntity {
             Instant createdAt,
             Instant updatedAt) {
         return new ExchangeClaimJpaEntity(
-                id, claimNumber, orderItemId, sellerId, exchangeQty,
-                exchangeStatus, reasonType, reasonDetail,
-                originalProductId, originalSkuCode,
-                targetProductGroupId, targetProductId, targetSkuCode, targetQuantity,
-                originalPrice, targetPrice, priceDifference,
-                additionalPaymentRequired, partialRefundRequired,
-                collectShippingFee, reshipShippingFee, totalShippingFee, shippingFeePayer,
-                claimShipmentId, linkedOrderId,
-                requestedBy, processedBy, requestedAt, processedAt, completedAt,
-                holdReason, holdAt,
-                createdAt, updatedAt);
+                id,
+                claimNumber,
+                orderItemId,
+                sellerId,
+                exchangeQty,
+                exchangeStatus,
+                reasonType,
+                reasonDetail,
+                originalProductId,
+                originalSkuCode,
+                targetProductGroupId,
+                targetProductId,
+                targetSkuCode,
+                targetQuantity,
+                originalPrice,
+                targetPrice,
+                priceDifference,
+                additionalPaymentRequired,
+                partialRefundRequired,
+                collectShippingFee,
+                reshipShippingFee,
+                totalShippingFee,
+                shippingFeePayer,
+                claimShipmentId,
+                linkedOrderId,
+                requestedBy,
+                processedBy,
+                requestedAt,
+                processedAt,
+                completedAt,
+                holdReason,
+                holdAt,
+                createdAt,
+                updatedAt);
     }
 
-    public String getId() { return id; }
-    public String getClaimNumber() { return claimNumber; }
-    public String getOrderItemId() { return orderItemId; }
-    public long getSellerId() { return sellerId; }
-    public int getExchangeQty() { return exchangeQty; }
-    public String getExchangeStatus() { return exchangeStatus; }
-    public String getReasonType() { return reasonType; }
-    public String getReasonDetail() { return reasonDetail; }
-    public Long getOriginalProductId() { return originalProductId; }
-    public String getOriginalSkuCode() { return originalSkuCode; }
-    public Long getTargetProductGroupId() { return targetProductGroupId; }
-    public Long getTargetProductId() { return targetProductId; }
-    public String getTargetSkuCode() { return targetSkuCode; }
-    public Integer getTargetQuantity() { return targetQuantity; }
-    public Integer getOriginalPrice() { return originalPrice; }
-    public Integer getTargetPrice() { return targetPrice; }
-    public Integer getPriceDifference() { return priceDifference; }
-    public boolean isAdditionalPaymentRequired() { return additionalPaymentRequired; }
-    public boolean isPartialRefundRequired() { return partialRefundRequired; }
-    public Integer getCollectShippingFee() { return collectShippingFee; }
-    public Integer getReshipShippingFee() { return reshipShippingFee; }
-    public Integer getTotalShippingFee() { return totalShippingFee; }
-    public String getShippingFeePayer() { return shippingFeePayer; }
-    public String getClaimShipmentId() { return claimShipmentId; }
-    public String getLinkedOrderId() { return linkedOrderId; }
-    public String getRequestedBy() { return requestedBy; }
-    public String getProcessedBy() { return processedBy; }
-    public Instant getRequestedAt() { return requestedAt; }
-    public Instant getProcessedAt() { return processedAt; }
-    public Instant getCompletedAt() { return completedAt; }
-    public String getHoldReason() { return holdReason; }
-    public Instant getHoldAt() { return holdAt; }
+    public String getId() {
+        return id;
+    }
+
+    public String getClaimNumber() {
+        return claimNumber;
+    }
+
+    public String getOrderItemId() {
+        return orderItemId;
+    }
+
+    public long getSellerId() {
+        return sellerId;
+    }
+
+    public int getExchangeQty() {
+        return exchangeQty;
+    }
+
+    public String getExchangeStatus() {
+        return exchangeStatus;
+    }
+
+    public String getReasonType() {
+        return reasonType;
+    }
+
+    public String getReasonDetail() {
+        return reasonDetail;
+    }
+
+    public Long getOriginalProductId() {
+        return originalProductId;
+    }
+
+    public String getOriginalSkuCode() {
+        return originalSkuCode;
+    }
+
+    public Long getTargetProductGroupId() {
+        return targetProductGroupId;
+    }
+
+    public Long getTargetProductId() {
+        return targetProductId;
+    }
+
+    public String getTargetSkuCode() {
+        return targetSkuCode;
+    }
+
+    public Integer getTargetQuantity() {
+        return targetQuantity;
+    }
+
+    public Integer getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public Integer getTargetPrice() {
+        return targetPrice;
+    }
+
+    public Integer getPriceDifference() {
+        return priceDifference;
+    }
+
+    public boolean isAdditionalPaymentRequired() {
+        return additionalPaymentRequired;
+    }
+
+    public boolean isPartialRefundRequired() {
+        return partialRefundRequired;
+    }
+
+    public Integer getCollectShippingFee() {
+        return collectShippingFee;
+    }
+
+    public Integer getReshipShippingFee() {
+        return reshipShippingFee;
+    }
+
+    public Integer getTotalShippingFee() {
+        return totalShippingFee;
+    }
+
+    public String getShippingFeePayer() {
+        return shippingFeePayer;
+    }
+
+    public String getClaimShipmentId() {
+        return claimShipmentId;
+    }
+
+    public String getLinkedOrderId() {
+        return linkedOrderId;
+    }
+
+    public String getRequestedBy() {
+        return requestedBy;
+    }
+
+    public String getProcessedBy() {
+        return processedBy;
+    }
+
+    public Instant getRequestedAt() {
+        return requestedAt;
+    }
+
+    public Instant getProcessedAt() {
+        return processedAt;
+    }
+
+    public Instant getCompletedAt() {
+        return completedAt;
+    }
+
+    public String getHoldReason() {
+        return holdReason;
+    }
+
+    public Instant getHoldAt() {
+        return holdAt;
+    }
 }

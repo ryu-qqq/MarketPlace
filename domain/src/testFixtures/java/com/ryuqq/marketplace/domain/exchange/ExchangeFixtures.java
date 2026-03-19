@@ -19,6 +19,7 @@ import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.refund.vo.HoldInfo;
 
 /**
  * ExchangeClaim 도메인 테스트 Fixtures.
@@ -75,11 +76,19 @@ public final class ExchangeFixtures {
     }
 
     public static ExchangeOption exchangeOption(
-            long originalProductId, String originalSkuCode,
-            long targetProductGroupId, long targetProductId, String targetSkuCode, int quantity) {
+            long originalProductId,
+            String originalSkuCode,
+            long targetProductGroupId,
+            long targetProductId,
+            String targetSkuCode,
+            int quantity) {
         return new ExchangeOption(
-                originalProductId, originalSkuCode,
-                targetProductGroupId, targetProductId, targetSkuCode, quantity);
+                originalProductId,
+                originalSkuCode,
+                targetProductGroupId,
+                targetProductId,
+                targetSkuCode,
+                quantity);
     }
 
     public static AmountAdjustment defaultAmountAdjustment() {
@@ -154,6 +163,30 @@ public final class ExchangeFixtures {
 
     public static ExchangeClaim cancelledExchangeClaim() {
         return reconstitute(ExchangeStatus.CANCELLED);
+    }
+
+    public static ExchangeClaim holdExchangeClaim() {
+        HoldInfo holdInfo = HoldInfo.of("추가 확인이 필요합니다", CommonVoFixtures.yesterday());
+        return ExchangeClaim.reconstitute(
+                defaultExchangeClaimId(),
+                defaultExchangeClaimNumber(),
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_EXCHANGE_QTY,
+                ExchangeStatus.REQUESTED,
+                defaultExchangeReason(),
+                defaultExchangeOption(),
+                defaultAmountAdjustment(),
+                defaultCollectShipment(),
+                holdInfo,
+                null,
+                DEFAULT_REQUESTED_BY,
+                DEFAULT_PROCESSED_BY,
+                CommonVoFixtures.yesterday(),
+                CommonVoFixtures.yesterday(),
+                null,
+                CommonVoFixtures.yesterday(),
+                CommonVoFixtures.now());
     }
 
     private static ExchangeClaim reconstitute(ExchangeStatus status) {

@@ -70,10 +70,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
 
         SetofProductGroupRegistrationRequest request =
                 mapper.toRegistrationRequest(
-                        bundle,
-                        externalCategoryId,
-                        externalBrandId,
-                        externalSellerId);
+                        bundle, externalCategoryId, externalBrandId, externalSellerId);
 
         try {
             return circuitBreaker.executeSupplier(
@@ -177,8 +174,8 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
     /**
      * 기존 세토프 상품 조회.
      *
-     * <p>GET /api/v2/admin/product-groups/{productGroupId} 호출하여 기존 상품 정보를 조회합니다.
-     * 옵션명 기반 productId 매칭에 사용됩니다. 조회 실패 시 null을 반환하여 수정은 계속 진행됩니다.
+     * <p>GET /api/v2/admin/product-groups/{productGroupId} 호출하여 기존 상품 정보를 조회합니다. 옵션명 기반 productId
+     * 매칭에 사용됩니다. 조회 실패 시 null을 반환하여 수정은 계속 진행됩니다.
      *
      * @param externalProductId 세토프 외부 상품 그룹 ID
      * @return 기존 상품 조회 결과 (실패 시 null)

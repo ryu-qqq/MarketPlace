@@ -27,8 +27,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,7 +71,8 @@ public class RefundCommandController {
     @PostMapping(RefundAdminEndpoints.REQUEST_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> requestBatch(
             @RequestBody @Valid RequestRefundBatchApiRequest request) {
-        long sellerId = accessChecker.resolveCurrentSellerId();
+        Long sellerIdOrNull = accessChecker.resolveSellerIdOrNull();
+        long sellerId = sellerIdOrNull != null ? sellerIdOrNull : 0L;
         String requestedBy = resolveCurrentUsername();
         BatchProcessingResult<String> result =
                 requestRefundBatchUseCase.execute(
@@ -128,7 +129,8 @@ public class RefundCommandController {
     public ResponseEntity<ApiResponse<ClaimHistoryMemoApiResponse>> addMemo(
             @PathVariable String refundClaimId,
             @RequestBody @Valid AddClaimHistoryMemoApiRequest request) {
-        long sellerId = accessChecker.resolveCurrentSellerId();
+        Long sellerIdOrNull = accessChecker.resolveSellerIdOrNull();
+        long sellerId = sellerIdOrNull != null ? sellerIdOrNull : 0L;
         String actorName = resolveCurrentUsername();
         AddClaimHistoryMemoCommand command =
                 mapper.toAddMemoCommand(refundClaimId, request, sellerId, actorName);

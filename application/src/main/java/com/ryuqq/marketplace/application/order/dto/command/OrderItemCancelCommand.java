@@ -9,7 +9,4 @@ import java.util.List;
  * @param reason 취소 사유
  * @param changedBy 변경자
  */
-public record OrderItemCancelCommand(
-        List<String> orderItemIds,
-        String reason,
-        String changedBy) {}
+public record OrderItemCancelCommand(List<String> orderItemIds, String reason, String changedBy) {}

@@ -35,7 +35,8 @@ public class ApproveRefundBatchService implements ApproveRefundBatchUseCase {
 
     @Override
     public BatchProcessingResult<String> execute(ApproveRefundBatchCommand command) {
-        List<RefundClaim> claims = validator.validateAndGet(command.refundClaimIds(), command.sellerId());
+        List<RefundClaim> claims =
+                validator.validateAndGet(command.refundClaimIds(), command.sellerId());
 
         RefundBatchResult batchResult = RefundBatchResult.create("APPROVE");
         for (RefundClaim claim : claims) {

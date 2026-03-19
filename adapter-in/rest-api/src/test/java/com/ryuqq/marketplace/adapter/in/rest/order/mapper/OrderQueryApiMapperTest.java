@@ -467,5 +467,4 @@ class OrderQueryApiMapperTest {
             assertThat(response.totalElements()).isEqualTo(2);
         }
     }
-
 }

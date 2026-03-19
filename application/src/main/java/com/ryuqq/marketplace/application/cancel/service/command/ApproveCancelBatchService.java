@@ -9,8 +9,12 @@ import com.ryuqq.marketplace.application.cancel.port.in.command.ApproveCancelBat
 import com.ryuqq.marketplace.application.cancel.validator.CancelBatchValidator;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
+import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,16 +36,19 @@ public class ApproveCancelBatchService implements ApproveCancelBatchUseCase {
     private final CancelCommandFactory commandFactory;
     private final CancelPersistenceFacade persistenceFacade;
     private final OrderItemReadManager orderItemReadManager;
+    private final ShipmentReadManager shipmentReadManager;
 
     public ApproveCancelBatchService(
             CancelBatchValidator validator,
             CancelCommandFactory commandFactory,
             CancelPersistenceFacade persistenceFacade,
-            OrderItemReadManager orderItemReadManager) {
+            OrderItemReadManager orderItemReadManager,
+            ShipmentReadManager shipmentReadManager) {
         this.validator = validator;
         this.commandFactory = commandFactory;
         this.persistenceFacade = persistenceFacade;
         this.orderItemReadManager = orderItemReadManager;
+        this.shipmentReadManager = shipmentReadManager;
     }
 
     @Override
@@ -50,6 +57,7 @@ public class ApproveCancelBatchService implements ApproveCancelBatchUseCase {
 
         CancelBatchResult batchResult = CancelBatchResult.create("APPROVE");
         List<OrderItem> cancelledItems = new ArrayList<>();
+        List<OrderItemId> cancelledOrderItemIds = new ArrayList<>();
 
         for (Cancel cancel : cancels) {
             try {
@@ -59,11 +67,13 @@ public class ApproveCancelBatchService implements ApproveCancelBatchUseCase {
                 batchResult.addSuccess(cancel, bundle.outbox(), bundle.history());
 
                 Optional<OrderItem> orderItem =
-                        orderItemReadManager.findById(cancel.orderItemIdValue());
-                orderItem.ifPresent(oi -> {
-                    oi.cancel(command.processedBy(), "취소 승인", commandFactory.now());
-                    cancelledItems.add(oi);
-                });
+                        orderItemReadManager.findById(OrderItemId.of(cancel.orderItemIdValue()));
+                orderItem.ifPresent(
+                        oi -> {
+                            oi.cancel(command.processedBy(), "취소 승인", commandFactory.now());
+                            cancelledItems.add(oi);
+                            cancelledOrderItemIds.add(cancel.orderItemId());
+                        });
             } catch (Exception e) {
                 log.warn("취소 승인 실패: cancelId={}, error={}", cancel.idValue(), e.getMessage());
                 batchResult.addFailure(cancel.idValue(), e.getMessage());
@@ -71,11 +81,32 @@ public class ApproveCancelBatchService implements ApproveCancelBatchUseCase {
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistCancelsWithOutboxesAndHistoriesAndOrderItems(
-                    batchResult.cancels(), batchResult.outboxes(),
-                    batchResult.histories(), cancelledItems);
+            List<Shipment> cancelledShipments =
+                    cancelAssociatedShipments(cancelledOrderItemIds, commandFactory.now());
+            persistenceFacade.persistCancelsWithOutboxesAndHistoriesAndOrderItemsAndShipments(
+                    batchResult.cancels(),
+                    batchResult.outboxes(),
+                    batchResult.histories(),
+                    cancelledItems,
+                    cancelledShipments);
         }
 
         return batchResult.toBatchProcessingResult();
+    }
+
+    private List<Shipment> cancelAssociatedShipments(
+            List<OrderItemId> orderItemIds, java.time.Instant now) {
+        if (orderItemIds.isEmpty()) {
+            return List.of();
+        }
+        List<Shipment> shipments = shipmentReadManager.findByOrderItemIds(orderItemIds);
+        List<Shipment> cancelled = new ArrayList<>();
+        for (Shipment shipment : shipments) {
+            if (shipment.status() == ShipmentStatus.PREPARING) {
+                shipment.cancel(now);
+                cancelled.add(shipment);
+            }
+        }
+        return cancelled;
     }
 }

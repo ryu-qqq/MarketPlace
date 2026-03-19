@@ -110,7 +110,10 @@ public class ExchangeCommandFactory {
 
     /** 재배송 시 ExchangeOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createShipBundle(
-            ExchangeClaim claim, String deliveryCompany, String trackingNumber, String processedBy) {
+            ExchangeClaim claim,
+            String deliveryCompany,
+            String trackingNumber,
+            String processedBy) {
         ExchangeOutbox outbox = createShipOutbox(claim, deliveryCompany, trackingNumber);
         ClaimHistory history =
                 historyFactory.createStatusChange(

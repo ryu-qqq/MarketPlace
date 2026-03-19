@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 /**
  * 레거시 상품그룹 목록 조회 Phase 2 flat projection DTO.
  *
- * <p>Phase 2에서 상품그룹 + 판매자 + 브랜드 + 카테고리 + 배송정책 + 메인이미지를 JOIN하여 조회한 결과 행입니다.
- * 단건 상세의 {@link LegacyProductGroupBasicQueryDto}와 달리 상품고지, 설명 등은 포함하지 않습니다.
+ * <p>Phase 2에서 상품그룹 + 판매자 + 브랜드 + 카테고리 + 배송정책 + 메인이미지를 JOIN하여 조회한 결과 행입니다. 단건 상세의 {@link
+ * LegacyProductGroupBasicQueryDto}와 달리 상품고지, 설명 등은 포함하지 않습니다.
  *
  * @param productGroupId 상품그룹 ID
  * @param productGroupName 상품그룹명

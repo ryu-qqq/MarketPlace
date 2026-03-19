@@ -11,8 +11,8 @@ import java.time.Instant;
 /**
  * 외부 주문상품 매핑 JPA 엔티티.
  *
- * <p>external_order_item_mappings 테이블과 매핑됩니다.
- * 외부 채널의 externalProductOrderId와 내부 orderItemId 간의 매핑을 저장합니다.
+ * <p>external_order_item_mappings 테이블과 매핑됩니다. 외부 채널의 externalProductOrderId와 내부 orderItemId 간의 매핑을
+ * 저장합니다.
  */
 @Entity
 @Table(name = "external_order_item_mappings")
@@ -70,7 +70,13 @@ public class ExternalOrderItemMappingJpaEntity {
             String orderItemId,
             Instant createdAt) {
         return new ExternalOrderItemMappingJpaEntity(
-                id, salesChannelId, channelCode, externalOrderId, externalProductOrderId, orderItemId, createdAt);
+                id,
+                salesChannelId,
+                channelCode,
+                externalOrderId,
+                externalProductOrderId,
+                orderItemId,
+                createdAt);
     }
 
     public Long getId() {

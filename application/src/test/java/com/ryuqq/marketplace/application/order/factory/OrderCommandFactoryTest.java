@@ -171,5 +171,4 @@ class OrderCommandFactoryTest {
             assertThat(result.paymentInfo().paymentNumber().value()).matches("PAY-\\d{8}-\\d{4}");
         }
     }
-
 }

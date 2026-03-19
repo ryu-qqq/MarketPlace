@@ -37,7 +37,13 @@ public class RefundQueryFactory {
                 QueryContext.of(sortKey, sortDirection, pageRequest, false);
 
         return new RefundSearchCriteria(
-                statuses, null, searchField, params.searchWord(), dateRange, dateField, queryContext);
+                statuses,
+                null,
+                searchField,
+                params.searchWord(),
+                dateRange,
+                dateField,
+                queryContext);
     }
 
     private List<RefundStatus> parseStatuses(List<String> statuses) {

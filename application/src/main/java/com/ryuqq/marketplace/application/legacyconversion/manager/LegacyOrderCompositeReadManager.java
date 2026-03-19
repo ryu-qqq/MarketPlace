@@ -26,7 +26,8 @@ public class LegacyOrderCompositeReadManager {
      * @throws IllegalStateException 해당 주문이 존재하지 않는 경우
      */
     public LegacyOrderCompositeResult fetchOrderComposite(long legacyOrderId) {
-        return queryPort.fetchOrderComposite(legacyOrderId)
+        return queryPort
+                .fetchOrderComposite(legacyOrderId)
                 .orElseThrow(
                         () ->
                                 new IllegalStateException(

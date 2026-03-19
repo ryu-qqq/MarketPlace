@@ -16,10 +16,11 @@ import org.junit.jupiter.api.Test;
  * 레거시 luxurydb EXTERNAL_ORDER_PK_ID 패턴으로 네이버 주문 조회 가능 여부 검증.
  *
  * <p>패턴별 테스트:
+ *
  * <ul>
- *   <li>16_16 패턴: orderId_productOrderId → productOrderId로 상세 조회</li>
- *   <li>16자리 단독: orderId → orderId로 productOrderId 목록 조회 후 상세 조회</li>
- *   <li>15자리 (구형): 셀릭 초기 주문번호 → 조회 가능 여부 확인</li>
+ *   <li>16_16 패턴: orderId_productOrderId → productOrderId로 상세 조회
+ *   <li>16자리 단독: orderId → orderId로 productOrderId 목록 조회 후 상세 조회
+ *   <li>15자리 (구형): 셀릭 초기 주문번호 → 조회 가능 여부 확인
  * </ul>
  */
 @Tag("external-integration")
@@ -124,8 +125,9 @@ class NaverOrderLegacyMappingTest {
 
     private void queryProductOrderDetail(
             HttpClient httpClient, String token, List<String> productOrderIds) throws Exception {
-        String body = objectMapper.writeValueAsString(
-                java.util.Map.of("productOrderIds", productOrderIds));
+        String body =
+                objectMapper.writeValueAsString(
+                        java.util.Map.of("productOrderIds", productOrderIds));
 
         HttpRequest req =
                 HttpRequest.newBuilder()

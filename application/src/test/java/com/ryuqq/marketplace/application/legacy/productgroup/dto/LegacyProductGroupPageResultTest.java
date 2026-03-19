@@ -67,10 +67,11 @@ class LegacyProductGroupPageResultTest {
         @DisplayName("여러 아이템과 totalElements를 정상적으로 보유한다")
         void of_MultipleItems_ReturnsCorrectTotalElements() {
             // given
-            List<LegacyProductGroupDetailResult> items = List.of(
-                    LegacyProductGroupQueryFixtures.detailResult(1L),
-                    LegacyProductGroupQueryFixtures.detailResult(2L),
-                    LegacyProductGroupQueryFixtures.detailResult(3L));
+            List<LegacyProductGroupDetailResult> items =
+                    List.of(
+                            LegacyProductGroupQueryFixtures.detailResult(1L),
+                            LegacyProductGroupQueryFixtures.detailResult(2L),
+                            LegacyProductGroupQueryFixtures.detailResult(3L));
 
             // when
             LegacyProductGroupPageResult result =

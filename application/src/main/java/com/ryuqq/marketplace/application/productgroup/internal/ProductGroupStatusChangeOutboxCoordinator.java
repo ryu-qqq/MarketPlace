@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 상품 그룹 상태 변경 후 외부 연동 Outbox 일괄 처리 코디네이터.
  *
- * <p>상태별로 적절한 Outbox Coordinator에 위임합니다. 이미 조회된 ProductGroup 객체를 그대로 전달하여
- * soft delete 필터에 의한 재조회 실패를 방지합니다.
+ * <p>상태별로 적절한 Outbox Coordinator에 위임합니다. 이미 조회된 ProductGroup 객체를 그대로 전달하여 soft delete 필터에 의한 재조회
+ * 실패를 방지합니다.
  */
 @Component
 public class ProductGroupStatusChangeOutboxCoordinator {

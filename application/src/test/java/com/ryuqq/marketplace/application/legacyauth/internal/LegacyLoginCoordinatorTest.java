@@ -42,8 +42,7 @@ class LegacyLoginCoordinatorTest {
             LegacySellerAuthResult authResult =
                     new LegacySellerAuthResult(1L, EMAIL, "hash", "SELLER", "APPROVED");
             given(sellerAuthValidator.validateAndGet(EMAIL, PASSWORD)).willReturn(authResult);
-            given(tokenIssuanceFacade.issueAndCache(EMAIL, 1L, "SELLER"))
-                    .willReturn(ACCESS_TOKEN);
+            given(tokenIssuanceFacade.issueAndCache(EMAIL, 1L, "SELLER")).willReturn(ACCESS_TOKEN);
 
             String result = coordinator.login(EMAIL, PASSWORD);
 

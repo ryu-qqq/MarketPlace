@@ -5,7 +5,8 @@ import java.util.List;
 /** 교환 건의 소유권이 일치하지 않는 경우 예외. */
 public class ExchangeOwnershipMismatchException extends ExchangeException {
 
-    private static final ExchangeErrorCode ERROR_CODE = ExchangeErrorCode.EXCHANGE_OWNERSHIP_MISMATCH;
+    private static final ExchangeErrorCode ERROR_CODE =
+            ExchangeErrorCode.EXCHANGE_OWNERSHIP_MISMATCH;
 
     public ExchangeOwnershipMismatchException() {
         super(ERROR_CODE);

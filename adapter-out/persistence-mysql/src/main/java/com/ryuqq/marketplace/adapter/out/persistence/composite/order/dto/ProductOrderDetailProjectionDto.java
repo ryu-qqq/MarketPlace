@@ -3,8 +3,8 @@ package com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto;
 import java.time.Instant;
 
 /**
- * 상품주문(productOrder) 상세 프로젝션. order_items JOIN orders LEFT JOIN payments 결과.
- * 리스트 프로젝션({@link ProductOrderListProjectionDto})과 동일한 구조.
+ * 상품주문(productOrder) 상세 프로젝션. order_items JOIN orders LEFT JOIN payments 결과. 리스트 프로젝션({@link
+ * ProductOrderListProjectionDto})과 동일한 구조.
  */
 public record ProductOrderDetailProjectionDto(
         // -- orders 테이블 --

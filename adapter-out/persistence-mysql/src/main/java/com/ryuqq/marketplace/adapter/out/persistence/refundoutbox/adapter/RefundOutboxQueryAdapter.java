@@ -35,8 +35,7 @@ public class RefundOutboxQueryAdapter implements RefundOutboxQueryPort {
 
     @Override
     public List<RefundOutbox> findProcessingTimeoutOutboxes(Instant timeoutBefore, int batchSize) {
-        return queryDslRepository
-                .findProcessingTimeoutOutboxes(timeoutBefore, batchSize).stream()
+        return queryDslRepository.findProcessingTimeoutOutboxes(timeoutBefore, batchSize).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
@@ -47,8 +46,6 @@ public class RefundOutboxQueryAdapter implements RefundOutboxQueryPort {
                 .findById(outboxId)
                 .map(mapper::toDomain)
                 .orElseThrow(
-                        () ->
-                                new IllegalStateException(
-                                        "RefundOutbox를 찾을 수 없습니다. id=" + outboxId));
+                        () -> new IllegalStateException("RefundOutbox를 찾을 수 없습니다. id=" + outboxId));
     }
 }

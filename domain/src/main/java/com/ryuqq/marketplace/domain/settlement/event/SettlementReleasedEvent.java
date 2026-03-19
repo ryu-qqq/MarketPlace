@@ -5,6 +5,5 @@ import com.ryuqq.marketplace.domain.settlement.id.SettlementId;
 import java.time.Instant;
 
 /** 정산 보류 해제 이벤트. */
-public record SettlementReleasedEvent(
-        SettlementId settlementId, String orderId, long sellerId, Instant occurredAt)
+public record SettlementReleasedEvent(SettlementId settlementId, long sellerId, Instant occurredAt)
         implements DomainEvent {}

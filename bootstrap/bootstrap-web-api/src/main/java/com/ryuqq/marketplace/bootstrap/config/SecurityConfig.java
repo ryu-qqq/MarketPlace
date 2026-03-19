@@ -193,8 +193,7 @@ public class SecurityConfig {
                 // 1. LegacyJwtAuthenticationFilter: 레거시 HS256 JWT → SecurityContext
                 // (/api/v1/legacy/** 전용, 가장 먼저 실행)
                 .addFilterBefore(
-                        legacyJwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class)
+                        legacyJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 // 2. ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal
                 // 경로 전용)
                 .addFilterBefore(

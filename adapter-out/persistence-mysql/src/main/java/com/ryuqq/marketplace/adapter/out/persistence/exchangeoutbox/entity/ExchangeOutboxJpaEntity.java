@@ -60,9 +60,19 @@ public class ExchangeOutboxJpaEntity {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private ExchangeOutboxJpaEntity(
-            Long id, String orderItemId, String outboxType, String status, String payload,
-            int retryCount, int maxRetry, Instant createdAt, Instant updatedAt,
-            Instant processedAt, String errorMessage, long version, String idempotencyKey) {
+            Long id,
+            String orderItemId,
+            String outboxType,
+            String status,
+            String payload,
+            int retryCount,
+            int maxRetry,
+            Instant createdAt,
+            Instant updatedAt,
+            Instant processedAt,
+            String errorMessage,
+            long version,
+            String idempotencyKey) {
         this.id = id;
         this.orderItemId = orderItemId;
         this.outboxType = outboxType;
@@ -80,25 +90,84 @@ public class ExchangeOutboxJpaEntity {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static ExchangeOutboxJpaEntity create(
-            Long id, String orderItemId, String outboxType, String status, String payload,
-            int retryCount, int maxRetry, Instant createdAt, Instant updatedAt,
-            Instant processedAt, String errorMessage, long version, String idempotencyKey) {
+            Long id,
+            String orderItemId,
+            String outboxType,
+            String status,
+            String payload,
+            int retryCount,
+            int maxRetry,
+            Instant createdAt,
+            Instant updatedAt,
+            Instant processedAt,
+            String errorMessage,
+            long version,
+            String idempotencyKey) {
         return new ExchangeOutboxJpaEntity(
-                id, orderItemId, outboxType, status, payload, retryCount, maxRetry,
-                createdAt, updatedAt, processedAt, errorMessage, version, idempotencyKey);
+                id,
+                orderItemId,
+                outboxType,
+                status,
+                payload,
+                retryCount,
+                maxRetry,
+                createdAt,
+                updatedAt,
+                processedAt,
+                errorMessage,
+                version,
+                idempotencyKey);
     }
 
-    public Long getId() { return id; }
-    public String getOrderItemId() { return orderItemId; }
-    public String getOutboxType() { return outboxType; }
-    public String getStatus() { return status; }
-    public String getPayload() { return payload; }
-    public int getRetryCount() { return retryCount; }
-    public int getMaxRetry() { return maxRetry; }
-    public Instant getCreatedAt() { return createdAt; }
-    public Instant getUpdatedAt() { return updatedAt; }
-    public Instant getProcessedAt() { return processedAt; }
-    public String getErrorMessage() { return errorMessage; }
-    public long getVersion() { return version; }
-    public String getIdempotencyKey() { return idempotencyKey; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getOrderItemId() {
+        return orderItemId;
+    }
+
+    public String getOutboxType() {
+        return outboxType;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public int getRetryCount() {
+        return retryCount;
+    }
+
+    public int getMaxRetry() {
+        return maxRetry;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Instant getProcessedAt() {
+        return processedAt;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public String getIdempotencyKey() {
+        return idempotencyKey;
+    }
 }

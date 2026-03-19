@@ -51,8 +51,7 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 → 내부 도메인 객체 변환 Factory.
  *
- * <p>순수 변환 로직만 담당합니다. DB 조회/저장 없음.
- * LegacyOrderCompositeResult + 채널/상태/내부ID 정보를 받아 도메인 객체를 조립합니다.
+ * <p>순수 변환 로직만 담당합니다. DB 조회/저장 없음. LegacyOrderCompositeResult + 채널/상태/내부ID 정보를 받아 도메인 객체를 조립합니다.
  */
 @Component
 @SuppressWarnings("PMD.ExcessiveImports")
@@ -64,13 +63,13 @@ public class LegacyOrderConversionFactory {
     /**
      * 레거시 주문 데이터로부터 전체 변환 번들을 생성합니다.
      *
-     * @param composite        luxurydb 복합 조회 결과
-     * @param channel          채널 식별 결과
+     * @param composite luxurydb 복합 조회 결과
+     * @param channel 채널 식별 결과
      * @param statusResolution 상태 매핑 결과
-     * @param externalOrderNo  결정된 외부 주문번호
-     * @param legacyPaymentId  레거시 결제 ID
-     * @param resolvedIds      내부 ID 변환 결과
-     * @param now              현재 시각
+     * @param externalOrderNo 결정된 외부 주문번호
+     * @param legacyPaymentId 레거시 결제 ID
+     * @param resolvedIds 내부 ID 변환 결과
+     * @param now 현재 시각
      * @return 변환 번들 (Order + Cancel/Refund + Mapping)
      */
     public LegacyOrderConversionBundle create(
@@ -86,28 +85,41 @@ public class LegacyOrderConversionFactory {
         String orderItemId = UUID.randomUUID().toString();
         OrderNumber orderNumber = OrderNumber.generate();
 
-        Order order = buildOrder(orderId, orderItemId, orderNumber, composite, channel,
-                statusResolution, externalOrderNo, resolvedIds, now);
+        Order order =
+                buildOrder(
+                        orderId,
+                        orderItemId,
+                        orderNumber,
+                        composite,
+                        channel,
+                        statusResolution,
+                        externalOrderNo,
+                        resolvedIds,
+                        now);
 
-        Shipment shipment = statusResolution.needsShipment()
-                ? buildShipment(orderItemId, statusResolution, now)
-                : null;
+        Shipment shipment =
+                statusResolution.needsShipment()
+                        ? buildShipment(orderItemId, statusResolution, now)
+                        : null;
 
-        Cancel cancel = statusResolution.hasCancel()
-                ? buildCancel(orderItemId, composite, statusResolution, now)
-                : null;
+        Cancel cancel =
+                statusResolution.hasCancel()
+                        ? buildCancel(orderItemId, composite, statusResolution, now)
+                        : null;
 
-        RefundClaim refundClaim = statusResolution.hasRefund()
-                ? buildRefund(orderItemId, composite, statusResolution, now)
-                : null;
+        RefundClaim refundClaim =
+                statusResolution.hasRefund()
+                        ? buildRefund(orderItemId, composite, statusResolution, now)
+                        : null;
 
-        LegacyOrderIdMapping mapping = LegacyOrderIdMapping.forNew(
-                composite.legacyOrderId(),
-                legacyPaymentId,
-                orderId,
-                channel.salesChannelId(),
-                channel.channelName(),
-                now);
+        LegacyOrderIdMapping mapping =
+                LegacyOrderIdMapping.forNew(
+                        composite.legacyOrderId(),
+                        legacyPaymentId,
+                        orderId,
+                        channel.salesChannelId(),
+                        channel.channelName(),
+                        now);
 
         return new LegacyOrderConversionBundle(order, shipment, cancel, refundClaim, mapping);
     }
@@ -128,21 +140,26 @@ public class LegacyOrderConversionFactory {
         OrderId id = OrderId.forNew(orderId);
         BuyerInfo buyerInfo = buildBuyerInfo(composite);
         PaymentInfo paymentInfo = buildPaymentInfo(composite);
-        ExternalOrderReference externalRef = ExternalOrderReference.of(
-                channel.salesChannelId(),
-                DEFAULT_SHOP_ID,
-                channel.channelName(),
-                channel.channelName(),
-                externalOrderNo,
-                composite.orderDate());
+        ExternalOrderReference externalRef =
+                ExternalOrderReference.of(
+                        channel.salesChannelId(),
+                        DEFAULT_SHOP_ID,
+                        channel.channelName(),
+                        channel.channelName(),
+                        externalOrderNo,
+                        composite.orderDate());
 
-        OrderItem orderItem = buildOrderItem(
-                orderItemId, orderNumber, composite, statusResolution, resolvedIds);
+        OrderItem orderItem =
+                buildOrderItem(orderItemId, orderNumber, composite, statusResolution, resolvedIds);
 
         return Order.reconstitute(
-                id, orderNumber,
-                buyerInfo, paymentInfo, externalRef,
-                composite.orderDate(), now,
+                id,
+                orderNumber,
+                buyerInfo,
+                paymentInfo,
+                externalRef,
+                composite.orderDate(),
+                now,
                 List.of(orderItem));
     }
 
@@ -157,40 +174,54 @@ public class LegacyOrderConversionFactory {
         OrderItemNumber itemNumber = OrderItemNumber.generate(orderNumber, 1);
 
         // 내부 ID 사용 (변환된 값), seller_name/brand_name 스냅샷
-        InternalProductReference internalProduct = InternalProductReference.of(
-                resolvedIds.internalProductGroupId(),
-                resolvedIds.internalProductId(),
-                null,
-                null,
-                null,
-                composite.productGroupName(),
-                resolvedIds.brandName(),
-                resolvedIds.sellerName(),
-                composite.mainImageUrl());
+        InternalProductReference internalProduct =
+                InternalProductReference.of(
+                        resolvedIds.internalProductGroupId(),
+                        resolvedIds.internalProductId(),
+                        null,
+                        null,
+                        null,
+                        composite.productGroupName(),
+                        resolvedIds.brandName(),
+                        resolvedIds.sellerName(),
+                        composite.mainImageUrl());
 
-        String externalProductId = composite.externalOrderPkId() != null
-                ? composite.externalOrderPkId()
-                : String.valueOf(composite.legacyProductId());
+        String externalProductId =
+                composite.externalOrderPkId() != null
+                        ? composite.externalOrderPkId()
+                        : String.valueOf(composite.legacyProductId());
 
-        String externalOptionName = composite.optionValues() != null && !composite.optionValues().isEmpty()
-                ? String.join(", ", composite.optionValues())
-                : null;
+        String externalOptionName =
+                composite.optionValues() != null && !composite.optionValues().isEmpty()
+                        ? String.join(", ", composite.optionValues())
+                        : null;
 
-        ExternalProductSnapshot externalProduct = ExternalProductSnapshot.of(
-                externalProductId, null,
-                composite.productGroupName(), externalOptionName,
-                composite.mainImageUrl());
+        ExternalProductSnapshot externalProduct =
+                ExternalProductSnapshot.of(
+                        externalProductId,
+                        null,
+                        composite.productGroupName(),
+                        externalOptionName,
+                        composite.mainImageUrl());
 
         Money unitPrice = Money.of((int) composite.currentPrice());
         Money totalAmount = unitPrice.multiply(composite.quantity());
-        ExternalOrderItemPrice price = ExternalOrderItemPrice.of(
-                unitPrice, composite.quantity(), totalAmount, Money.zero(), totalAmount);
+        ExternalOrderItemPrice price =
+                ExternalOrderItemPrice.of(
+                        unitPrice, composite.quantity(), totalAmount, Money.zero(), totalAmount);
 
         ReceiverInfo receiverInfo = buildReceiverInfo(composite);
         OrderItemStatus itemStatus = resolveOrderItemStatus(statusResolution);
 
-        return OrderItem.reconstitute(id, itemNumber, internalProduct, externalProduct,
-                price, receiverInfo, itemStatus, List.of());
+        return OrderItem.reconstitute(
+                id,
+                itemNumber,
+                internalProduct,
+                externalProduct,
+                price,
+                receiverInfo,
+                itemStatus,
+                List.of());
     }
 
     private OrderItemStatus resolveOrderItemStatus(
@@ -250,17 +281,30 @@ public class LegacyOrderConversionFactory {
         CancelReason reason = new CancelReason(CancelReasonType.OTHER, "레거시 이관 데이터");
         CancelStatus cancelStatus = statusResolution.cancelStatus();
 
-        Instant processedAt = (cancelStatus == CancelStatus.APPROVED
-                || cancelStatus == CancelStatus.COMPLETED) ? now : null;
+        Instant processedAt =
+                (cancelStatus == CancelStatus.APPROVED || cancelStatus == CancelStatus.COMPLETED)
+                        ? now
+                        : null;
         Instant completedAt = cancelStatus == CancelStatus.COMPLETED ? now : null;
         String processedBy = cancelStatus != CancelStatus.REQUESTED ? LEGACY_ACTOR : null;
 
         return Cancel.reconstitute(
-                cancelId, cancelNumber, OrderItemId.of(orderItemId),
-                composite.legacySellerId(), composite.quantity(),
-                CancelType.BUYER_CANCEL, cancelStatus, reason, null,
-                LEGACY_ACTOR, processedBy,
-                now, processedAt, completedAt, now, now);
+                cancelId,
+                cancelNumber,
+                OrderItemId.of(orderItemId),
+                composite.legacySellerId(),
+                composite.quantity(),
+                CancelType.BUYER_CANCEL,
+                cancelStatus,
+                reason,
+                null,
+                LEGACY_ACTOR,
+                processedBy,
+                now,
+                processedAt,
+                completedAt,
+                now,
+                now);
     }
 
     // === RefundClaim 빌드 ===
@@ -281,11 +325,23 @@ public class LegacyOrderConversionFactory {
         String processedBy = refundStatus != RefundStatus.REQUESTED ? LEGACY_ACTOR : null;
 
         return RefundClaim.reconstitute(
-                refundId, refundNumber, OrderItemId.of(orderItemId),
-                composite.legacySellerId(), composite.quantity(),
-                refundStatus, reason, null, null, null,
-                LEGACY_ACTOR, processedBy,
-                now, processedAt, completedAt, now, now);
+                refundId,
+                refundNumber,
+                OrderItemId.of(orderItemId),
+                composite.legacySellerId(),
+                composite.quantity(),
+                refundStatus,
+                reason,
+                null,
+                null,
+                null,
+                LEGACY_ACTOR,
+                processedBy,
+                now,
+                processedAt,
+                completedAt,
+                now,
+                now);
     }
 
     // === VO 빌드 ===
@@ -300,7 +356,8 @@ public class LegacyOrderConversionFactory {
 
     private PaymentInfo buildPaymentInfo(LegacyOrderCompositeResult composite) {
         return PaymentInfo.of(
-                PaymentNumber.of("LEGACY-" + composite.legacyPaymentId() + "-" + composite.legacyOrderId()),
+                PaymentNumber.of(
+                        "LEGACY-" + composite.legacyPaymentId() + "-" + composite.legacyOrderId()),
                 "LEGACY",
                 Money.of((int) composite.orderAmount()),
                 composite.orderDate());
@@ -308,12 +365,16 @@ public class LegacyOrderConversionFactory {
 
     private ReceiverInfo buildReceiverInfo(LegacyOrderCompositeResult composite) {
         String name = composite.receiverName() != null ? composite.receiverName() : "미상";
-        Address address = Address.of(
-                composite.receiverZipCode() != null ? composite.receiverZipCode() : "00000",
-                composite.receiverAddress() != null ? composite.receiverAddress() : "주소 없음",
-                composite.receiverAddressDetail());
-        return ReceiverInfo.of(name, buildSafePhoneNumber(composite.receiverPhone()),
-                address, composite.deliveryRequest());
+        Address address =
+                Address.of(
+                        composite.receiverZipCode() != null ? composite.receiverZipCode() : "00000",
+                        composite.receiverAddress() != null ? composite.receiverAddress() : "주소 없음",
+                        composite.receiverAddressDetail());
+        return ReceiverInfo.of(
+                name,
+                buildSafePhoneNumber(composite.receiverPhone()),
+                address,
+                composite.deliveryRequest());
     }
 
     private PhoneNumber buildSafePhoneNumber(String rawPhone) {

@@ -6,7 +6,6 @@ import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult.PaymentInfo;
-import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult.SettlementInfo;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.OrderInfo;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.ProductOrderInfo;
@@ -62,8 +61,7 @@ public class ShipmentAssembler {
                 toOrderInfo(detailData.order()),
                 toProductOrderInfo(detailData.item()),
                 toReceiverInfo(detailData.item()),
-                toPaymentInfo(detailData.payment()),
-                toSettlementInfo(detailData.item()));
+                toPaymentInfo(detailData.payment()));
     }
 
     /**
@@ -136,8 +134,6 @@ public class ShipmentAssembler {
                 item.orderItemId(),
                 item.productGroupId(),
                 item.productId(),
-                item.sellerId(),
-                item.brandId(),
                 item.skuCode(),
                 item.productGroupName(),
                 item.brandName(),
@@ -178,16 +174,5 @@ public class ShipmentAssembler {
                 payment.paymentAmount(),
                 payment.paidAt(),
                 payment.canceledAt());
-    }
-
-    private SettlementInfo toSettlementInfo(OrderItemResult item) {
-        return new SettlementInfo(
-                item.commissionRate(),
-                item.fee(),
-                item.expectationSettlementAmount(),
-                item.settlementAmount(),
-                item.shareRatio(),
-                item.expectedSettlementDay(),
-                item.settlementDay());
     }
 }

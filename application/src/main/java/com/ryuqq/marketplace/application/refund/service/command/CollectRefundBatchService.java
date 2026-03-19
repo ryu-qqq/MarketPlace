@@ -47,9 +47,7 @@ public class CollectRefundBatchService implements CollectRefundBatchUseCase {
                 batchResult.addSuccess(claim, bundle.outbox(), bundle.history());
             } catch (Exception e) {
                 log.warn(
-                        "환불 수거 완료 실패: refundClaimId={}, error={}",
-                        claim.idValue(),
-                        e.getMessage());
+                        "환불 수거 완료 실패: refundClaimId={}, error={}", claim.idValue(), e.getMessage());
                 batchResult.addFailure(claim.idValue(), e.getMessage());
             }
         }

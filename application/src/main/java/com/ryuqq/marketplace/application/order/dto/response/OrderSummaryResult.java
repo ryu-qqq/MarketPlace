@@ -10,8 +10,4 @@ package com.ryuqq.marketplace.application.order.dto.response;
  * @param returned 반품완료 수량
  */
 public record OrderSummaryResult(
-        long ready,
-        long confirmed,
-        long cancelled,
-        long returnRequested,
-        long returned) {}
+        long ready, long confirmed, long cancelled, long returnRequested, long returned) {}

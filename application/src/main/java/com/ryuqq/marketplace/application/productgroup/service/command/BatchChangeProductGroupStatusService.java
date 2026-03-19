@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 /**
  * BatchChangeProductGroupStatusService - 상품 그룹 배치 상태 변경 Service.
  *
- * <p>sellerId 조건으로 조회하여 소유권을 검증하고, 일괄 상태 변경을 수행합니다. 상태 변경 후 외부 연동 Outbox
- * 처리는 ProductGroupStatusChangeOutboxCoordinator에 위임합니다.
+ * <p>sellerId 조건으로 조회하여 소유권을 검증하고, 일괄 상태 변경을 수행합니다. 상태 변경 후 외부 연동 Outbox 처리는
+ * ProductGroupStatusChangeOutboxCoordinator에 위임합니다.
  */
 @Service
 public class BatchChangeProductGroupStatusService implements BatchChangeProductGroupStatusUseCase {

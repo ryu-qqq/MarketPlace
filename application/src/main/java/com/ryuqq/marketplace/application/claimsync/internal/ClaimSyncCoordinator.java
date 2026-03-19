@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 /**
  * 클레임 동기화 전체 흐름을 조율하는 코디네이터.
  *
- * <p>외부 클레임 목록을 순회하며 검증(ClaimSyncValidator) → 처리(ClaimSyncProcessor) 단계를 조율합니다.
- * 각 클레임 처리는 독립적으로 예외를 처리하여, 하나의 실패가 전체 배치를 중단시키지 않습니다.
+ * <p>외부 클레임 목록을 순회하며 검증(ClaimSyncValidator) → 처리(ClaimSyncProcessor) 단계를 조율합니다. 각 클레임 처리는 독립적으로 예외를
+ * 처리하여, 하나의 실패가 전체 배치를 중단시키지 않습니다.
  */
 @Component
 public class ClaimSyncCoordinator {
@@ -60,7 +60,8 @@ public class ClaimSyncCoordinator {
                 }
             } catch (Exception e) {
                 log.error(
-                        "클레임 동기화 실패: salesChannelId={}, externalProductOrderId={}, claimType={}, claimStatus={}",
+                        "클레임 동기화 실패: salesChannelId={}, externalProductOrderId={}, claimType={},"
+                                + " claimStatus={}",
                         salesChannelId,
                         claim.externalProductOrderId(),
                         claim.claimType(),
@@ -70,6 +71,7 @@ public class ClaimSyncCoordinator {
             }
         }
 
-        return new ClaimSyncResult(claims.size(), cancelSynced, refundSynced, exchangeSynced, skipped, failed);
+        return new ClaimSyncResult(
+                claims.size(), cancelSynced, refundSynced, exchangeSynced, skipped, failed);
     }
 }

@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelDetailApi
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse.BatchResultItemApiResponse;
@@ -17,16 +18,15 @@ import com.ryuqq.marketplace.application.cancel.dto.command.RejectCancelBatchCom
 import com.ryuqq.marketplace.application.cancel.dto.command.SellerCancelBatchCommand;
 import com.ryuqq.marketplace.application.cancel.dto.command.SellerCancelBatchCommand.SellerCancelItem;
 import com.ryuqq.marketplace.application.cancel.dto.query.CancelSearchParams;
-import com.ryuqq.marketplace.application.claimhistory.dto.command.AddClaimHistoryMemoCommand;
-import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
-import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelDetailResult;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelListResult;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelPageResult;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelSummaryResult;
+import com.ryuqq.marketplace.application.claimhistory.dto.command.AddClaimHistoryMemoCommand;
 import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryResult;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReasonType;
+import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +37,7 @@ import org.springframework.stereotype.Component;
  * Cancel API Mapper.
  *
  * <p>V4 간극 패턴:
+ *
  * <ul>
  *   <li>orderId = 내부 orderItemId (프론트에겐 "주문 ID")
  *   <li>legacyOrderId 제외
@@ -79,7 +80,10 @@ public class CancelApiMapper {
     }
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(
-            String cancelId, AddClaimHistoryMemoApiRequest request, long sellerId, String actorName) {
+            String cancelId,
+            AddClaimHistoryMemoApiRequest request,
+            long sellerId,
+            String actorName) {
         return new AddClaimHistoryMemoCommand(
                 ClaimType.CANCEL, cancelId, request.message(), String.valueOf(sellerId), actorName);
     }

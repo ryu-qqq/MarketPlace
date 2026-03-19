@@ -23,7 +23,8 @@ public class ExchangeOutboxReadManager {
     }
 
     @Transactional(readOnly = true)
-    public List<ExchangeOutbox> findProcessingTimeoutOutboxes(Instant timeoutBefore, int batchSize) {
+    public List<ExchangeOutbox> findProcessingTimeoutOutboxes(
+            Instant timeoutBefore, int batchSize) {
         return queryPort.findProcessingTimeoutOutboxes(timeoutBefore, batchSize);
     }
 

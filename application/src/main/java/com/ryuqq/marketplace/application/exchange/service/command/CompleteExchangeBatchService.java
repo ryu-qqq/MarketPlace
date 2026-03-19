@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,16 +61,14 @@ public class CompleteExchangeBatchService implements CompleteExchangeBatchUseCas
                 batchResult.addSuccess(claim, history);
 
                 Optional<OrderItem> orderItem =
-                        orderItemReadManager.findById(claim.orderItemIdValue());
-                orderItem.ifPresent(oi -> {
-                    oi.completeReturn(command.processedBy(), commandFactory.now());
-                    returnedItems.add(oi);
-                });
+                        orderItemReadManager.findById(OrderItemId.of(claim.orderItemIdValue()));
+                orderItem.ifPresent(
+                        oi -> {
+                            oi.completeReturn(command.processedBy(), commandFactory.now());
+                            returnedItems.add(oi);
+                        });
             } catch (Exception e) {
-                log.warn(
-                        "교환 완료 실패: exchangeClaimId={}, error={}",
-                        claim.idValue(),
-                        e.getMessage());
+                log.warn("교환 완료 실패: exchangeClaimId={}, error={}", claim.idValue(), e.getMessage());
                 batchResult.addFailure(claim.idValue(), e.getMessage());
             }
         }

@@ -53,7 +53,9 @@ public class RefundConditionBuilder {
         if (!criteria.hasHoldFilter()) {
             return null;
         }
-        return criteria.isHold() ? refundClaim.holdReason.isNotNull() : refundClaim.holdReason.isNull();
+        return criteria.isHold()
+                ? refundClaim.holdReason.isNotNull()
+                : refundClaim.holdReason.isNull();
     }
 
     public BooleanExpression searchCondition(RefundSearchCriteria criteria) {

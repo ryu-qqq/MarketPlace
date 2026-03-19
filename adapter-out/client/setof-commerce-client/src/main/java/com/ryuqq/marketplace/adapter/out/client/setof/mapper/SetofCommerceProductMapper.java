@@ -42,13 +42,13 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
+@SuppressWarnings("PMD.GodClass")
 public class SetofCommerceProductMapper {
 
     /**
      * 상품 등록 요청 변환.
      *
-     * <p>등록 시 productGroupId, productId를 보내지 않습니다.
-     * 세토프 서버에서 auto_increment로 ID를 생성합니다.
+     * <p>등록 시 productGroupId, productId를 보내지 않습니다. 세토프 서버에서 auto_increment로 ID를 생성합니다.
      *
      * @param bundle 상품 그룹 상세 번들
      * @param externalCategoryId 세토프 카테고리 ID
@@ -347,8 +347,7 @@ public class SetofCommerceProductMapper {
                                         product.currentPriceValue(),
                                         product.stockQuantity(),
                                         product.sortOrder(),
-                                        mapSelectedOptions(
-                                                product, optionGroups, optionValueMap)))
+                                        mapSelectedOptions(product, optionGroups, optionValueMap)))
                 .toList();
     }
 
@@ -565,13 +564,13 @@ public class SetofCommerceProductMapper {
     // ── 옵션명 기반 productId 매칭 ──
 
     /**
-     * 내부 product와 기존 세토프 product를 옵션명 조합 또는 SKU 코드로 매칭하여
-     * 내부 productId → 세토프 productId 매핑을 생성합니다.
+     * 내부 product와 기존 세토프 product를 옵션명 조합 또는 SKU 코드로 매칭하여 내부 productId → 세토프 productId 매핑을 생성합니다.
      *
      * <p>매칭 우선순위:
+     *
      * <ol>
-     *   <li>SKU 코드 일치</li>
-     *   <li>옵션명 조합(optionGroupName:optionValueName) 일치</li>
+     *   <li>SKU 코드 일치
+     *   <li>옵션명 조합(optionGroupName:optionValueName) 일치
      * </ol>
      *
      * @param products 내부 상품 목록
@@ -626,9 +625,7 @@ public class SetofCommerceProductMapper {
         return matchMap;
     }
 
-    /**
-     * 기존 세토프 상품의 selectedOptions를 정렬된 옵션 키 문자열로 변환합니다.
-     */
+    /** 기존 세토프 상품의 selectedOptions를 정렬된 옵션 키 문자열로 변환합니다. */
     private String buildExternalOptionKey(
             List<SetofProductGroupDetailResponse.SelectedOptionResponse> selectedOptions) {
         if (selectedOptions == null || selectedOptions.isEmpty()) {
@@ -640,9 +637,7 @@ public class SetofCommerceProductMapper {
                 .collect(Collectors.joining("|"));
     }
 
-    /**
-     * 내부 상품의 옵션 매핑을 정렬된 옵션 키 문자열로 변환합니다.
-     */
+    /** 내부 상품의 옵션 매핑을 정렬된 옵션 키 문자열로 변환합니다. */
     private String buildInternalOptionKey(
             Product product,
             List<SellerOptionGroup> optionGroups,

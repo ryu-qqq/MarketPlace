@@ -10,7 +10,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,7 +54,10 @@ class LegacyProductGroupQueryControllerRestDocsTest {
     @Autowired private ObjectMapper objectMapper;
 
     @MockitoBean private LegacyProductQueryUseCase legacyProductQueryUseCase;
-    @MockitoBean private LegacySearchProductGroupByOffsetUseCase legacySearchProductGroupByOffsetUseCase;
+
+    @MockitoBean
+    private LegacySearchProductGroupByOffsetUseCase legacySearchProductGroupByOffsetUseCase;
+
     @MockitoBean private LegacyProductGroupQueryApiMapper legacyProductGroupQueryApiMapper;
     @MockitoBean private MarketAccessChecker accessChecker;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
@@ -80,20 +82,27 @@ class LegacyProductGroupQueryControllerRestDocsTest {
             given(legacyProductGroupQueryApiMapper.toSearchParams(any()))
                     .willReturn(LegacyProductGroupApiFixtures.legacySearchParams());
             given(legacySearchProductGroupByOffsetUseCase.execute(any())).willReturn(pageResult);
-            given(legacyProductGroupQueryApiMapper.toListResponse(any()))
-                    .willReturn(listResponse);
+            given(legacyProductGroupQueryApiMapper.toListResponse(any())).willReturn(listResponse);
 
             // when & then
             mockMvc.perform(
                             RestDocumentationRequestBuilders.get(LIST_URL)
-                                    .param("sellerId", String.valueOf(LegacyProductGroupApiFixtures.DEFAULT_SELLER_ID))
-                                    .param("brandId", String.valueOf(LegacyProductGroupApiFixtures.DEFAULT_BRAND_ID))
+                                    .param(
+                                            "sellerId",
+                                            String.valueOf(
+                                                    LegacyProductGroupApiFixtures
+                                                            .DEFAULT_SELLER_ID))
+                                    .param(
+                                            "brandId",
+                                            String.valueOf(
+                                                    LegacyProductGroupApiFixtures.DEFAULT_BRAND_ID))
                                     .param("page", "0")
                                     .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content").isArray())
-                    .andExpect(jsonPath("$.data.content[0].productGroup.productGroupId")
-                            .value(LegacyProductGroupApiFixtures.DEFAULT_PRODUCT_GROUP_ID))
+                    .andExpect(
+                            jsonPath("$.data.content[0].productGroup.productGroupId")
+                                    .value(LegacyProductGroupApiFixtures.DEFAULT_PRODUCT_GROUP_ID))
                     .andExpect(jsonPath("$.data.totalElements").value(1))
                     .andExpect(jsonPath("$.response.status").value(200))
                     .andDo(
@@ -118,10 +127,12 @@ class LegacyProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.content")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("상품그룹 목록"),
-                                            fieldWithPath("data.content[].productGroup.productGroupId")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.productGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("상품그룹 ID"),
-                                            fieldWithPath("data.content[].productGroup.productGroupName")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.productGroupName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("상품그룹명"),
                                             fieldWithPath("data.content[].productGroup.sellerId")
@@ -136,34 +147,43 @@ class LegacyProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].productGroup.optionType")
                                                     .type(JsonFieldType.STRING)
                                                     .description("옵션 타입"),
-                                            fieldWithPath("data.content[].productGroup.managementType")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.managementType")
                                                     .type(JsonFieldType.STRING)
                                                     .description("관리유형"),
                                             fieldWithPath("data.content[].productGroup.brand.id")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("브랜드 ID"),
-                                            fieldWithPath("data.content[].productGroup.brand.brandName")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.brand.brandName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("브랜드명"),
-                                            fieldWithPath("data.content[].productGroup.price.regularPrice")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.price.regularPrice")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("정상가"),
-                                            fieldWithPath("data.content[].productGroup.price.salePrice")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.price.salePrice")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("판매가"),
-                                            fieldWithPath("data.content[].productGroup.price.discountRate")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.price.discountRate")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("할인율"),
-                                            fieldWithPath("data.content[].productGroup.productGroupMainImageUrl")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.productGroupMainImageUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("메인 이미지 URL"),
-                                            fieldWithPath("data.content[].productGroup.categoryFullName")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.categoryFullName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("카테고리 전체 경로"),
-                                            fieldWithPath("data.content[].productGroup.productStatus.soldOutYn")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.productStatus.soldOutYn")
                                                     .type(JsonFieldType.STRING)
                                                     .description("품절 여부"),
-                                            fieldWithPath("data.content[].productGroup.productStatus.displayYn")
+                                            fieldWithPath(
+                                                            "data.content[].productGroup.productStatus.displayYn")
                                                     .type(JsonFieldType.STRING)
                                                     .description("진열 여부"),
                                             fieldWithPath("data.content[].productGroup.insertDate")

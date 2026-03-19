@@ -1,14 +1,13 @@
 package com.ryuqq.marketplace.application.exchange.assembler;
 
 import com.ryuqq.marketplace.application.claimhistory.assembler.ClaimHistoryAssembler;
-import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailResult;
-import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailResult.AmountAdjustmentResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailResult.ExchangeOptionResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeListResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangePageResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeSummaryResult;
+import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.common.vo.PageMeta;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
 import com.ryuqq.marketplace.domain.exchange.vo.AmountAdjustment;

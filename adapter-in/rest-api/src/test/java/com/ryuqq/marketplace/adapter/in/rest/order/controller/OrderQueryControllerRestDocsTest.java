@@ -8,7 +8,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
@@ -287,7 +286,9 @@ class OrderQueryControllerRestDocsTest {
                             RestDocumentationRequestBuilders.get(
                                     BASE_URL + OrderAdminEndpoints.ORDER_ITEM_ID, ORDER_ITEM_ID))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.orderId").value(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID))
+                    .andExpect(
+                            jsonPath("$.data.orderId")
+                                    .value(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID))
                     .andExpect(jsonPath("$.data.buyerInfo").exists())
                     .andExpect(jsonPath("$.data.orderProduct").exists())
                     .andExpect(jsonPath("$.data.orderHistories").isArray())
@@ -362,5 +363,4 @@ class OrderQueryControllerRestDocsTest {
                                                     .description("요청 ID"))));
         }
     }
-
 }

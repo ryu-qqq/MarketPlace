@@ -26,10 +26,16 @@ class NaverProductCategoryCheckTest {
 
         long originProductNo = 13198454659L;
 
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(NaverAuthHelper.BASE_URL + "/v2/products/origin-products/" + originProductNo))
-                .header("Authorization", "Bearer " + token)
-                .GET().build();
+        HttpRequest req =
+                HttpRequest.newBuilder()
+                        .uri(
+                                URI.create(
+                                        NaverAuthHelper.BASE_URL
+                                                + "/v2/products/origin-products/"
+                                                + originProductNo))
+                        .header("Authorization", "Bearer " + token)
+                        .GET()
+                        .build();
 
         HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
         System.out.println("Status: " + resp.statusCode());
@@ -62,10 +68,14 @@ class NaverProductCategoryCheckTest {
         if (combinations.isArray() && combinations.size() > 0) {
             System.out.println("optionCombinations: " + combinations.size() + "건");
             for (JsonNode c : combinations) {
-                System.out.printf("  id=%s | %s/%s | SKU=%s | stock=%d | price=%d%n",
-                        c.path("id").asText(), c.path("optionName1").asText(),
-                        c.path("optionName2").asText(), c.path("sellerManagerCode").asText(),
-                        c.path("stockQuantity").asInt(), c.path("price").asInt());
+                System.out.printf(
+                        "  id=%s | %s/%s | SKU=%s | stock=%d | price=%d%n",
+                        c.path("id").asText(),
+                        c.path("optionName1").asText(),
+                        c.path("optionName2").asText(),
+                        c.path("sellerManagerCode").asText(),
+                        c.path("stockQuantity").asInt(),
+                        c.path("price").asInt());
             }
         } else {
             System.out.println("optionCombinations: 없음");
@@ -76,8 +86,10 @@ class NaverProductCategoryCheckTest {
         if (optionCustom.isArray() && optionCustom.size() > 0) {
             System.out.println("optionCustom: " + optionCustom.size() + "건");
             for (JsonNode c : optionCustom) {
-                System.out.printf("  id=%s | groupName=%s | usable=%s%n",
-                        c.path("id").asText(), c.path("groupName").asText(),
+                System.out.printf(
+                        "  id=%s | groupName=%s | usable=%s%n",
+                        c.path("id").asText(),
+                        c.path("groupName").asText(),
                         c.path("usable").asText());
             }
         } else {
@@ -93,7 +105,8 @@ class NaverProductCategoryCheckTest {
         // groupNames
         JsonNode groupNames = optionInfo.path("optionCombinationGroupNames");
         if (!groupNames.isMissingNode()) {
-            System.out.printf("optionCombinationGroupNames: [%s, %s]%n",
+            System.out.printf(
+                    "optionCombinationGroupNames: [%s, %s]%n",
                     groupNames.path("optionGroupName1").asText(""),
                     groupNames.path("optionGroupName2").asText(""));
         }

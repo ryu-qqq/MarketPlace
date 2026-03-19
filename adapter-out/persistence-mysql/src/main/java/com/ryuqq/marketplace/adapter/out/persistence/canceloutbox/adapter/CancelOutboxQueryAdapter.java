@@ -35,8 +35,7 @@ public class CancelOutboxQueryAdapter implements CancelOutboxQueryPort {
 
     @Override
     public List<CancelOutbox> findProcessingTimeoutOutboxes(Instant timeoutBefore, int batchSize) {
-        return queryDslRepository
-                .findProcessingTimeoutOutboxes(timeoutBefore, batchSize).stream()
+        return queryDslRepository.findProcessingTimeoutOutboxes(timeoutBefore, batchSize).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
@@ -47,8 +46,6 @@ public class CancelOutboxQueryAdapter implements CancelOutboxQueryPort {
                 .findById(outboxId)
                 .map(mapper::toDomain)
                 .orElseThrow(
-                        () ->
-                                new IllegalStateException(
-                                        "CancelOutbox를 찾을 수 없습니다. id=" + outboxId));
+                        () -> new IllegalStateException("CancelOutbox를 찾을 수 없습니다. id=" + outboxId));
     }
 }

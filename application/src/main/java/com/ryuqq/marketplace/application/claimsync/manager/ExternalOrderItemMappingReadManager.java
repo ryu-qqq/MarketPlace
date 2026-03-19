@@ -27,7 +27,8 @@ public class ExternalOrderItemMappingReadManager {
     @Transactional(readOnly = true)
     public ExternalOrderItemMapping getMapping(long salesChannelId, String externalProductOrderId) {
         return queryPort
-                .findBySalesChannelIdAndExternalProductOrderId(salesChannelId, externalProductOrderId)
+                .findBySalesChannelIdAndExternalProductOrderId(
+                        salesChannelId, externalProductOrderId)
                 .orElse(null);
     }
 }

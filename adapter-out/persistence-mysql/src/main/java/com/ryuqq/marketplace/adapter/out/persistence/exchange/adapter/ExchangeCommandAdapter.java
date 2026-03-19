@@ -15,8 +15,7 @@ public class ExchangeCommandAdapter implements ExchangeCommandPort {
     private final ExchangePersistenceMapper mapper;
 
     public ExchangeCommandAdapter(
-            ExchangeClaimJpaRepository claimRepository,
-            ExchangePersistenceMapper mapper) {
+            ExchangeClaimJpaRepository claimRepository, ExchangePersistenceMapper mapper) {
         this.claimRepository = claimRepository;
         this.mapper = mapper;
     }

@@ -14,8 +14,7 @@ public class RefundCommandAdapter implements RefundCommandPort {
     private final RefundPersistenceMapper mapper;
 
     public RefundCommandAdapter(
-            RefundClaimJpaRepository claimRepository,
-            RefundPersistenceMapper mapper) {
+            RefundClaimJpaRepository claimRepository, RefundPersistenceMapper mapper) {
         this.claimRepository = claimRepository;
         this.mapper = mapper;
     }

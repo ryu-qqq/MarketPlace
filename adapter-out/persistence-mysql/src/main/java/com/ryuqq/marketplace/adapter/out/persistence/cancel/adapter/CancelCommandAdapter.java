@@ -14,7 +14,8 @@ public class CancelCommandAdapter implements CancelCommandPort {
     private final CancelJpaRepository cancelRepository;
     private final CancelJpaEntityMapper mapper;
 
-    public CancelCommandAdapter(CancelJpaRepository cancelRepository, CancelJpaEntityMapper mapper) {
+    public CancelCommandAdapter(
+            CancelJpaRepository cancelRepository, CancelJpaEntityMapper mapper) {
         this.cancelRepository = cancelRepository;
         this.mapper = mapper;
     }

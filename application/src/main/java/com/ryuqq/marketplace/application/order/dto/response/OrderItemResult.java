@@ -1,7 +1,5 @@
 package com.ryuqq.marketplace.application.order.dto.response;
 
-import java.time.Instant;
-
 /**
  * 주문 상품 조회 결과.
  *

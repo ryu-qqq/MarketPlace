@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.cancel.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.cancel.condition.CancelConditionBuilder;
@@ -9,7 +10,6 @@ import com.ryuqq.marketplace.domain.cancel.query.CancelSearchCriteria;
 import com.ryuqq.marketplace.domain.cancel.query.CancelSortKey;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
-import com.querydsl.core.Tuple;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;

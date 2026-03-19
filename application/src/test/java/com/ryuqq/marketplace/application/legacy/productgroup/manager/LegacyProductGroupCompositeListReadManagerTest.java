@@ -37,9 +37,10 @@ class LegacyProductGroupCompositeListReadManagerTest {
             // given
             LegacyProductGroupSearchCriteria criteria =
                     LegacyProductGroupQueryFixtures.defaultCriteria();
-            List<LegacyProductGroupDetailBundle> expected = List.of(
-                    LegacyProductGroupQueryFixtures.detailBundle(1L),
-                    LegacyProductGroupQueryFixtures.detailBundle(2L));
+            List<LegacyProductGroupDetailBundle> expected =
+                    List.of(
+                            LegacyProductGroupQueryFixtures.detailBundle(1L),
+                            LegacyProductGroupQueryFixtures.detailBundle(2L));
 
             given(compositeListQueryPort.searchProductGroups(criteria)).willReturn(expected);
 
@@ -76,8 +77,8 @@ class LegacyProductGroupCompositeListReadManagerTest {
             List<Long> categoryIds = List.of(200L, 201L, 202L);
             LegacyProductGroupSearchCriteria criteria =
                     LegacyProductGroupQueryFixtures.criteriaWithCategoryIds(categoryIds);
-            List<LegacyProductGroupDetailBundle> expected = List.of(
-                    LegacyProductGroupQueryFixtures.detailBundle(1L));
+            List<LegacyProductGroupDetailBundle> expected =
+                    List.of(LegacyProductGroupQueryFixtures.detailBundle(1L));
 
             given(compositeListQueryPort.searchProductGroups(criteria)).willReturn(expected);
 

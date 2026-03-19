@@ -20,7 +20,7 @@ public enum ExchangeStatus {
     private static final Set<ExchangeStatus> SHIPPABLE = EnumSet.of(PREPARING);
     private static final Set<ExchangeStatus> COMPLETABLE = EnumSet.of(SHIPPING);
     private static final Set<ExchangeStatus> REJECTABLE =
-            EnumSet.of(REQUESTED, COLLECTED, PREPARING);
+            EnumSet.of(REQUESTED, COLLECTING, COLLECTED, PREPARING);
     private static final Set<ExchangeStatus> CANCELLABLE = EnumSet.of(REQUESTED, COLLECTING);
     private static final Set<ExchangeStatus> ACTIVE =
             EnumSet.of(REQUESTED, COLLECTING, COLLECTED, PREPARING, SHIPPING);
@@ -28,6 +28,16 @@ public enum ExchangeStatus {
     /** 진행 중인 상태인지 확인. COMPLETED/REJECTED/CANCELLED는 종료 상태. */
     public boolean isActive() {
         return ACTIVE.contains(this);
+    }
+
+    /** 정상 완료 상태인지 확인. */
+    public boolean isCompleted() {
+        return this == COMPLETED;
+    }
+
+    /** 종료 상태인지 확인. */
+    public boolean isTerminal() {
+        return !isActive();
     }
 
     public boolean canTransitionTo(ExchangeStatus target) {

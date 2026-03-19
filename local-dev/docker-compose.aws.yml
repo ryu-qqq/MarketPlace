@@ -38,6 +38,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: stage
       SERVER_PORT: 8080
+      JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -Dpersistence.legacy.enabled=true"
 
       # Database (Stage RDS via SSM Port Forwarding - localhost:13308)
       DB_HOST: host.docker.internal
@@ -64,6 +65,18 @@ services:
       FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
       FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
 
+      # SQS Queue URLs (dummy for local)
+      SQS_QUEUES_INTELLIGENCE_ORCHESTRATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-orchestration"
+      SQS_QUEUES_INTELLIGENCE_DESCRIPTION_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-description"
+      SQS_QUEUES_INTELLIGENCE_OPTION_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-option"
+      SQS_QUEUES_INTELLIGENCE_NOTICE_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-notice"
+      SQS_QUEUES_INTELLIGENCE_AGGREGATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-aggregation"
+      SQS_QUEUES_OUTBOUND_SYNC: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-outbound-sync"
+      SQS_QUEUES_CANCEL_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-cancel-outbox"
+      SQS_QUEUES_REFUND_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-refund-outbox"
+      SQS_QUEUES_EXCHANGE_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-exchange-outbox"
+      SQS_QUEUES_SHIPMENT_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-shipment-outbox"
+
       # OpenTelemetry disabled (local)
       OTEL_JAVAAGENT_ENABLED: "false"
 
@@ -88,6 +101,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: stage
       SERVER_PORT: 8081
+      JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -Dpersistence.legacy.enabled=true"
 
       # Database (Stage RDS via SSM Port Forwarding - localhost:13308)
       DB_HOST: host.docker.internal
@@ -113,6 +127,18 @@ services:
       FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
       FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
 
+      # SQS Queue URLs (dummy for local)
+      SQS_QUEUES_INTELLIGENCE_ORCHESTRATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-orchestration"
+      SQS_QUEUES_INTELLIGENCE_DESCRIPTION_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-description"
+      SQS_QUEUES_INTELLIGENCE_OPTION_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-option"
+      SQS_QUEUES_INTELLIGENCE_NOTICE_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-notice"
+      SQS_QUEUES_INTELLIGENCE_AGGREGATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-aggregation"
+      SQS_QUEUES_OUTBOUND_SYNC: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-outbound-sync"
+      SQS_QUEUES_CANCEL_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-cancel-outbox"
+      SQS_QUEUES_REFUND_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-refund-outbox"
+      SQS_QUEUES_EXCHANGE_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-exchange-outbox"
+      SQS_QUEUES_SHIPMENT_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-shipment-outbox"
+
       # OpenTelemetry disabled (local)
       OTEL_JAVAAGENT_ENABLED: "false"
 
@@ -137,6 +163,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: stage
       SERVER_PORT: 8082
+      JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -Dpersistence.legacy.enabled=true"
 
       # Database (Stage RDS via SSM Port Forwarding - localhost:13308)
       DB_HOST: host.docker.internal
@@ -163,9 +190,16 @@ services:
       FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
 
       # SQS Queue URLs (dummy for local - no SQS in local)
-      SQS_INSPECTION_SCORING_URL: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-scoring"
-      SQS_INSPECTION_ENHANCEMENT_URL: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-enhancement"
-      SQS_INSPECTION_VERIFICATION_URL: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-verification"
+      SQS_QUEUES_INTELLIGENCE_ORCHESTRATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-orchestration"
+      SQS_QUEUES_INTELLIGENCE_DESCRIPTION_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-description"
+      SQS_QUEUES_INTELLIGENCE_OPTION_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-option"
+      SQS_QUEUES_INTELLIGENCE_NOTICE_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-notice"
+      SQS_QUEUES_INTELLIGENCE_AGGREGATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-aggregation"
+      SQS_QUEUES_OUTBOUND_SYNC: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-outbound-sync"
+      SQS_QUEUES_CANCEL_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-cancel-outbox"
+      SQS_QUEUES_REFUND_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-refund-outbox"
+      SQS_QUEUES_EXCHANGE_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-exchange-outbox"
+      SQS_QUEUES_SHIPMENT_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-shipment-outbox"
 
       # OpenTelemetry disabled (local)
       OTEL_JAVAAGENT_ENABLED: "false"

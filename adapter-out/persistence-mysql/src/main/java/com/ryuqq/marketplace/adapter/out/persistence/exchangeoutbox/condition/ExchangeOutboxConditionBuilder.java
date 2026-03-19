@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExchangeOutboxConditionBuilder {
 
-    private static final QExchangeOutboxJpaEntity outbox = QExchangeOutboxJpaEntity.exchangeOutboxJpaEntity;
+    private static final QExchangeOutboxJpaEntity outbox =
+            QExchangeOutboxJpaEntity.exchangeOutboxJpaEntity;
 
     public BooleanExpression statusPending() {
         return outbox.status.eq("PENDING");

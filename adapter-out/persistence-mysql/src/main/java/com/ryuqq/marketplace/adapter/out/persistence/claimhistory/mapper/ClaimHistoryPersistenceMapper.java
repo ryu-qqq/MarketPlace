@@ -32,10 +32,11 @@ public class ClaimHistoryPersistenceMapper {
     }
 
     public ClaimHistory toDomain(ClaimHistoryJpaEntity entity) {
-        Actor actor = new Actor(
-                ActorType.valueOf(entity.getActorType()),
-                entity.getActorId(),
-                entity.getActorName());
+        Actor actor =
+                new Actor(
+                        ActorType.valueOf(entity.getActorType()),
+                        entity.getActorId(),
+                        entity.getActorName());
 
         return ClaimHistory.reconstitute(
                 ClaimHistoryId.of(entity.getId()),

@@ -31,8 +31,7 @@ public class GetExchangeDetailService implements GetExchangeDetailUseCase {
 
     @Override
     public ExchangeDetailResult execute(String exchangeClaimId) {
-        ExchangeClaim claim =
-                exchangeReadManager.getById(ExchangeClaimId.of(exchangeClaimId));
+        ExchangeClaim claim = exchangeReadManager.getById(ExchangeClaimId.of(exchangeClaimId));
         List<ClaimHistory> histories =
                 historyReadManager.findByClaimId(ClaimType.EXCHANGE, exchangeClaimId);
         return assembler.toDetailResult(claim, histories);

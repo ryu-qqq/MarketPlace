@@ -90,8 +90,7 @@ class OrderCommandAdapterTest {
             given(mapper.toPaymentEntity(order, generatedPaymentId)).willReturn(paymentEntity);
             given(mapper.toOrderItemEntities(order.items(), order.idValue()))
                     .willReturn(List.of(itemEntity));
-            given(mapper.collectAllItemHistoryEntities(order))
-                    .willReturn(List.of(historyEntity));
+            given(mapper.collectAllItemHistoryEntities(order)).willReturn(List.of(historyEntity));
 
             // when
             commandAdapter.persist(order);
@@ -103,8 +102,8 @@ class OrderCommandAdapterTest {
 
         @Test
         @DisplayName(
-                "OrderJpaRepository, PaymentJpaRepository, ItemRepository, ItemHistoryRepository가 각각"
-                        + " 호출됩니다")
+                "OrderJpaRepository, PaymentJpaRepository, ItemRepository, ItemHistoryRepository가"
+                        + " 각각 호출됩니다")
         void persist_CallsAllRepositories() {
             // given
             Order order = OrderFixtures.newOrder();
@@ -123,8 +122,7 @@ class OrderCommandAdapterTest {
             given(mapper.toPaymentEntity(order, generatedPaymentId)).willReturn(paymentEntity);
             given(mapper.toOrderItemEntities(order.items(), order.idValue()))
                     .willReturn(List.of(itemEntity));
-            given(mapper.collectAllItemHistoryEntities(order))
-                    .willReturn(List.of(historyEntity));
+            given(mapper.collectAllItemHistoryEntities(order)).willReturn(List.of(historyEntity));
 
             // when
             commandAdapter.persist(order);

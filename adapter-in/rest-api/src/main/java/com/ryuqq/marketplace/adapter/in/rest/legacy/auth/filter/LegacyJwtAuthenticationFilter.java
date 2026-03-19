@@ -61,26 +61,38 @@ public class LegacyJwtAuthenticationFilter extends OncePerRequestFilter {
 
         Optional<String> token = resolveToken(request);
 
-        if (token.isPresent()) {
-            String jwt = token.get();
-            String email = null;
+        if (token.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            if (tokenManager.isValid(jwt)) {
-                email = tokenManager.extractSubject(jwt);
-            } else if (tokenManager.isExpired(jwt)) {
-                email = tokenManager.extractSubject(jwt);
-                if (!tryRefreshAuthentication(email)) {
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-            }
+        String jwt = token.get();
+        String email = resolveEmail(jwt);
 
-            if (email != null) {
-                setAuthentication(email);
-            }
+        if (email != null && !canAuthenticate(jwt, email)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (email != null) {
+            setAuthentication(email);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String resolveEmail(String jwt) {
+        if (tokenManager.isValid(jwt) || tokenManager.isExpired(jwt)) {
+            return tokenManager.extractSubject(jwt);
+        }
+        return null;
+    }
+
+    private boolean canAuthenticate(String jwt, String email) {
+        if (tokenManager.isValid(jwt)) {
+            return true;
+        }
+        return tokenManager.isExpired(jwt) && tryRefreshAuthentication(email);
     }
 
     private boolean tryRefreshAuthentication(String email) {
@@ -100,8 +112,9 @@ public class LegacyJwtAuthenticationFilter extends OncePerRequestFilter {
                                     new SimpleGrantedAuthority(authResult.roleType())));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // 셀러 조회 실패 시 인증 없이 진행 → Spring Security가 401 처리
+            logger.debug("레거시 셀러 인증 실패: " + e.getMessage());
         }
     }
 

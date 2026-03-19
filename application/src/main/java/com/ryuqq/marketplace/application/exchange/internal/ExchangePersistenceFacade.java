@@ -87,8 +87,7 @@ public class ExchangePersistenceFacade {
 
     /** 신규 생성 시 Claim + History 저장 (Outbox 불필요). */
     @Transactional
-    public void persistAllWithHistories(
-            List<ExchangeClaim> claims, List<ClaimHistory> histories) {
+    public void persistAllWithHistories(List<ExchangeClaim> claims, List<ClaimHistory> histories) {
         exchangeCommandManager.persistAll(claims);
         historyCommandManager.persistAll(histories);
     }
@@ -96,9 +95,7 @@ public class ExchangePersistenceFacade {
     /** Claim + History + OrderItem 상태 변경 저장 (요청/완료 시). */
     @Transactional
     public void persistAllWithHistoriesAndOrderItems(
-            List<ExchangeClaim> claims,
-            List<ClaimHistory> histories,
-            List<OrderItem> orderItems) {
+            List<ExchangeClaim> claims, List<ClaimHistory> histories, List<OrderItem> orderItems) {
         exchangeCommandManager.persistAll(claims);
         historyCommandManager.persistAll(histories);
         orderItemCommandManager.persistAll(orderItems);
@@ -107,9 +104,7 @@ public class ExchangePersistenceFacade {
     /** Claim + History + OrderItem 상태 변경 저장 (완료 시). */
     @Transactional
     public void persistClaimsWithHistoriesAndOrderItems(
-            List<ExchangeClaim> claims,
-            List<ClaimHistory> histories,
-            List<OrderItem> orderItems) {
+            List<ExchangeClaim> claims, List<ClaimHistory> histories, List<OrderItem> orderItems) {
         exchangeCommandManager.persistAll(claims);
         historyCommandManager.persistAll(histories);
         orderItemCommandManager.persistAll(orderItems);

@@ -88,7 +88,8 @@ class CancelTest {
             // then
             assertThat(cancel.id()).isEqualTo(id);
             assertThat(cancel.cancelNumber()).isEqualTo(number);
-            assertThat(cancel.orderItemId()).isEqualTo(OrderItemId.of("01940001-0000-7000-8000-000000000001"));
+            assertThat(cancel.orderItemId())
+                    .isEqualTo(OrderItemId.of("01940001-0000-7000-8000-000000000001"));
             assertThat(cancel.cancelQty()).isEqualTo(2);
             assertThat(cancel.requestedBy()).isEqualTo("buyer@marketplace.com");
             assertThat(cancel.requestedAt()).isEqualTo(now);
@@ -541,7 +542,8 @@ class CancelTest {
             Cancel cancel = CancelFixtures.requestedCancel();
 
             // then
-            assertThat(cancel.orderItemId()).isEqualTo(OrderItemId.of("01940001-0000-7000-8000-000000000001"));
+            assertThat(cancel.orderItemId())
+                    .isEqualTo(OrderItemId.of("01940001-0000-7000-8000-000000000001"));
             assertThat(cancel.cancelQty()).isEqualTo(2);
         }
     }

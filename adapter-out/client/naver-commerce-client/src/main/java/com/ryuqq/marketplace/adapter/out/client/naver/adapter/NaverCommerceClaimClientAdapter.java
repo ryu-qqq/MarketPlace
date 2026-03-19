@@ -20,12 +20,10 @@ import org.springframework.stereotype.Component;
 /**
  * 네이버 커머스 클레임 폴링 클라이언트 어댑터.
  *
- * <p>SalesChannelClaimClient를 구현하여 네이버 커머스 클레임 변경 내역을 조회합니다.
- * 2-phase 폴링(last-changed-statuses → product-orders/query)으로 동작하며,
- * claimType이 존재하는 변경건만 필터링합니다.
+ * <p>SalesChannelClaimClient를 구현하여 네이버 커머스 클레임 변경 내역을 조회합니다. 2-phase 폴링(last-changed-statuses →
+ * product-orders/query)으로 동작하며, claimType이 존재하는 변경건만 필터링합니다.
  *
- * <p>Phase 1: getLastChangedStatusesAll()로 전체 변경 내역 조회 후 클레임 변경건 필터링.
- * Phase 2: 필터링된 상품주문번호로 상세 조회.
+ * <p>Phase 1: getLastChangedStatusesAll()로 전체 변경 내역 조회 후 클레임 변경건 필터링. Phase 2: 필터링된 상품주문번호로 상세 조회.
  * Phase 3: NaverCommerceClaimMapper로 ExternalClaimPayload 변환.
  */
 @Component
@@ -93,8 +91,7 @@ public class NaverCommerceClaimClientAdapter implements SalesChannelClaimClient 
         List<ExternalClaimPayload> result =
                 claimMapper.toExternalClaimPayloads(claimChanges, details);
 
-        log.info(
-                "네이버 클레임 {}건 변환 완료: salesChannelId={}", result.size(), salesChannelId);
+        log.info("네이버 클레임 {}건 변환 완료: salesChannelId={}", result.size(), salesChannelId);
 
         return result;
     }
@@ -116,9 +113,7 @@ public class NaverCommerceClaimClientAdapter implements SalesChannelClaimClient 
                     .forEach(claimStatuses::add);
 
             moreSequence =
-                    response.data().more() != null
-                            ? response.data().more().moreSequence()
-                            : null;
+                    response.data().more() != null ? response.data().more().moreSequence() : null;
 
         } while (moreSequence != null);
 
@@ -126,8 +121,7 @@ public class NaverCommerceClaimClientAdapter implements SalesChannelClaimClient 
     }
 
     private boolean isClaimChange(NaverLastChangedStatus status) {
-        return status.claimType() != null
-                && CLAIM_CHANGE_TYPES.contains(status.lastChangedType());
+        return status.claimType() != null && CLAIM_CHANGE_TYPES.contains(status.lastChangedType());
     }
 
     private List<NaverProductOrderDetail> queryProductOrderDetails(List<String> productOrderIds) {
@@ -137,8 +131,7 @@ public class NaverCommerceClaimClientAdapter implements SalesChannelClaimClient 
             List<String> batch =
                     productOrderIds.subList(
                             i, Math.min(i + MAX_BATCH_SIZE, productOrderIds.size()));
-            NaverProductOrderDetailResponse response =
-                    orderClientAdapter.queryProductOrders(batch);
+            NaverProductOrderDetailResponse response = orderClientAdapter.queryProductOrders(batch);
             allDetails.addAll(response.data());
         }
 

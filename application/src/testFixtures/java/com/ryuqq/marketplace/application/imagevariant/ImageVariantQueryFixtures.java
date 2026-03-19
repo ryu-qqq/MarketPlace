@@ -28,17 +28,26 @@ public final class ImageVariantQueryFixtures {
 
     public static ImageVariantResult imageVariantResult() {
         return new ImageVariantResult(
-                ImageVariantType.SMALL_WEBP, DEFAULT_RESULT_ASSET_ID, DEFAULT_VARIANT_URL, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                ImageVariantType.SMALL_WEBP,
+                DEFAULT_RESULT_ASSET_ID,
+                DEFAULT_VARIANT_URL,
+                DEFAULT_WIDTH,
+                DEFAULT_HEIGHT);
     }
 
     public static ImageVariantResult imageVariantResult(ImageVariantType variantType) {
         return new ImageVariantResult(
-                variantType, DEFAULT_RESULT_ASSET_ID, DEFAULT_VARIANT_URL, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                variantType,
+                DEFAULT_RESULT_ASSET_ID,
+                DEFAULT_VARIANT_URL,
+                DEFAULT_WIDTH,
+                DEFAULT_HEIGHT);
     }
 
     public static ImageVariantResult imageVariantResult(
             String variantUrl, Integer width, Integer height) {
-        return new ImageVariantResult(ImageVariantType.SMALL_WEBP, DEFAULT_RESULT_ASSET_ID, variantUrl, width, height);
+        return new ImageVariantResult(
+                ImageVariantType.SMALL_WEBP, DEFAULT_RESULT_ASSET_ID, variantUrl, width, height);
     }
 
     public static ImageVariantResult mediumWebpResult() {

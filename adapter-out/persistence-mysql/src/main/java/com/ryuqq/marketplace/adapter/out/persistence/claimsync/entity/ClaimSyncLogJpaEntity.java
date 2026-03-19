@@ -11,8 +11,7 @@ import java.time.Instant;
 /**
  * 클레임 동기화 로그 JPA 엔티티.
  *
- * <p>claim_sync_logs 테이블과 매핑됩니다.
- * 외부 클레임 상태를 내부 클레임으로 처리한 이력을 기록합니다.
+ * <p>claim_sync_logs 테이블과 매핑됩니다. 외부 클레임 상태를 내부 클레임으로 처리한 이력을 기록합니다.
  */
 @Entity
 @Table(name = "claim_sync_logs")

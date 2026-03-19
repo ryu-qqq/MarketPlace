@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExchangeConditionBuilder {
 
-    private static final QExchangeClaimJpaEntity exchange = QExchangeClaimJpaEntity.exchangeClaimJpaEntity;
+    private static final QExchangeClaimJpaEntity exchange =
+            QExchangeClaimJpaEntity.exchangeClaimJpaEntity;
 
     public BooleanExpression idEq(String id) {
         return id != null ? exchange.id.eq(id) : null;

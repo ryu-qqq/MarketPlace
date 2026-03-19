@@ -191,44 +191,144 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             Instant createdAt,
             Instant updatedAt) {
         return new OrderItemJpaEntity(
-                id, orderItemNumber, orderId,
-                productGroupId, productId, skuCode,
-                productGroupName, brandName, sellerName, mainImageUrl,
-                externalProductId, externalOptionId,
-                externalProductName, externalOptionName, externalImageUrl,
-                unitPrice, quantity, totalAmount, discountAmount, paymentAmount,
-                receiverName, receiverPhone, receiverZipcode,
-                receiverAddress, receiverAddressDetail, deliveryRequest,
-                orderItemStatus, createdAt, updatedAt);
+                id,
+                orderItemNumber,
+                orderId,
+                productGroupId,
+                productId,
+                skuCode,
+                productGroupName,
+                brandName,
+                sellerName,
+                mainImageUrl,
+                externalProductId,
+                externalOptionId,
+                externalProductName,
+                externalOptionName,
+                externalImageUrl,
+                unitPrice,
+                quantity,
+                totalAmount,
+                discountAmount,
+                paymentAmount,
+                receiverName,
+                receiverPhone,
+                receiverZipcode,
+                receiverAddress,
+                receiverAddressDetail,
+                deliveryRequest,
+                orderItemStatus,
+                createdAt,
+                updatedAt);
     }
 
-    public String getId() { return id; }
-    public String getOrderItemNumber() { return orderItemNumber; }
-    public String getOrderId() { return orderId; }
-    public long getProductGroupId() { return productGroupId; }
-    public long getProductId() { return productId; }
-    public String getSkuCode() { return skuCode; }
-    public String getProductGroupName() { return productGroupName; }
-    public String getBrandName() { return brandName; }
-    public String getSellerName() { return sellerName; }
-    public String getMainImageUrl() { return mainImageUrl; }
-    public String getExternalProductId() { return externalProductId; }
-    public String getExternalOptionId() { return externalOptionId; }
-    public String getExternalProductName() { return externalProductName; }
-    public String getExternalOptionName() { return externalOptionName; }
-    public String getExternalImageUrl() { return externalImageUrl; }
-    public int getUnitPrice() { return unitPrice; }
-    public int getQuantity() { return quantity; }
-    public int getTotalAmount() { return totalAmount; }
-    public int getDiscountAmount() { return discountAmount; }
-    public int getPaymentAmount() { return paymentAmount; }
-    public String getReceiverName() { return receiverName; }
-    public String getReceiverPhone() { return receiverPhone; }
-    public String getReceiverZipcode() { return receiverZipcode; }
-    public String getReceiverAddress() { return receiverAddress; }
-    public String getReceiverAddressDetail() { return receiverAddressDetail; }
-    public String getDeliveryRequest() { return deliveryRequest; }
-    public String getOrderItemStatus() { return orderItemStatus; }
+    public String getId() {
+        return id;
+    }
+
+    public String getOrderItemNumber() {
+        return orderItemNumber;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public long getProductGroupId() {
+        return productGroupId;
+    }
+
+    public long getProductId() {
+        return productId;
+    }
+
+    public String getSkuCode() {
+        return skuCode;
+    }
+
+    public String getProductGroupName() {
+        return productGroupName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public String getMainImageUrl() {
+        return mainImageUrl;
+    }
+
+    public String getExternalProductId() {
+        return externalProductId;
+    }
+
+    public String getExternalOptionId() {
+        return externalOptionId;
+    }
+
+    public String getExternalProductName() {
+        return externalProductName;
+    }
+
+    public String getExternalOptionName() {
+        return externalOptionName;
+    }
+
+    public String getExternalImageUrl() {
+        return externalImageUrl;
+    }
+
+    public int getUnitPrice() {
+        return unitPrice;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public int getTotalAmount() {
+        return totalAmount;
+    }
+
+    public int getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public int getPaymentAmount() {
+        return paymentAmount;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public String getReceiverZipcode() {
+        return receiverZipcode;
+    }
+
+    public String getReceiverAddress() {
+        return receiverAddress;
+    }
+
+    public String getReceiverAddressDetail() {
+        return receiverAddressDetail;
+    }
+
+    public String getDeliveryRequest() {
+        return deliveryRequest;
+    }
+
+    public String getOrderItemStatus() {
+        return orderItemStatus;
+    }
 
     public void updateOrderItemStatus(String orderItemStatus) {
         this.orderItemStatus = orderItemStatus;

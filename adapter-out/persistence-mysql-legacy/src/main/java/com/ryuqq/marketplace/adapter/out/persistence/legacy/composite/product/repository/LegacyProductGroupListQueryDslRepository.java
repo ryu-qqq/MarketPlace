@@ -72,7 +72,8 @@ public class LegacyProductGroupListQueryDslRepository {
     /**
      * Phase 2: 상품그룹 ID 목록으로 상세 정보를 조회합니다.
      *
-     * <p>product_group + seller + brand + category + product_delivery + product_group_image(MAIN) JOIN
+     * <p>product_group + seller + brand + category + product_delivery + product_group_image(MAIN)
+     * JOIN
      *
      * @param productGroupIds 상품그룹 ID 목록
      * @return flat projection DTO 목록
@@ -112,8 +113,7 @@ public class LegacyProductGroupListQueryDslRepository {
      * @param productGroupIds 상품그룹 ID 목록
      * @return flat projection DTO 목록
      */
-    public List<LegacyProductOptionQueryDto> fetchProductsWithOptions(
-            List<Long> productGroupIds) {
+    public List<LegacyProductOptionQueryDto> fetchProductsWithOptions(List<Long> productGroupIds) {
         if (productGroupIds == null || productGroupIds.isEmpty()) {
             return List.of();
         }

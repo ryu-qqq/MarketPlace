@@ -39,7 +39,8 @@ public class OrderItemHistory {
             String changedBy,
             String reason,
             Instant changedAt) {
-        return new OrderItemHistory(null, orderItemId, fromStatus, toStatus, changedBy, reason, changedAt);
+        return new OrderItemHistory(
+                null, orderItemId, fromStatus, toStatus, changedBy, reason, changedAt);
     }
 
     public static OrderItemHistory reconstitute(
@@ -50,15 +51,39 @@ public class OrderItemHistory {
             String changedBy,
             String reason,
             Instant changedAt) {
-        return new OrderItemHistory(id, orderItemId, fromStatus, toStatus, changedBy, reason, changedAt);
+        return new OrderItemHistory(
+                id, orderItemId, fromStatus, toStatus, changedBy, reason, changedAt);
     }
 
-    public Long id() { return id; }
-    public OrderItemId orderItemId() { return orderItemId; }
-    public String orderItemIdValue() { return orderItemId.value(); }
-    public OrderItemStatus fromStatus() { return fromStatus; }
-    public OrderItemStatus toStatus() { return toStatus; }
-    public String changedBy() { return changedBy; }
-    public String reason() { return reason; }
-    public Instant changedAt() { return changedAt; }
+    public Long id() {
+        return id;
+    }
+
+    public OrderItemId orderItemId() {
+        return orderItemId;
+    }
+
+    public String orderItemIdValue() {
+        return orderItemId.value();
+    }
+
+    public OrderItemStatus fromStatus() {
+        return fromStatus;
+    }
+
+    public OrderItemStatus toStatus() {
+        return toStatus;
+    }
+
+    public String changedBy() {
+        return changedBy;
+    }
+
+    public String reason() {
+        return reason;
+    }
+
+    public Instant changedAt() {
+        return changedAt;
+    }
 }

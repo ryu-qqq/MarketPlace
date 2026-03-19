@@ -34,11 +34,12 @@ public final class CancelJpaEntityFixtures {
     // ===== Entity Fixtures =====
 
     /** BUYER_CANCEL / REQUESTED 상태 Entity 생성. */
-    public static CancelJpaEntity requestedEntity(String cancelId, String orderItemId, long sellerId) {
+    public static CancelJpaEntity requestedEntity(
+            String cancelId, String orderItemId, long sellerId) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(
                 cancelId,
-                DEFAULT_CANCEL_NUMBER,
+                "CAN-" + cancelId,
                 orderItemId,
                 sellerId,
                 DEFAULT_CANCEL_QTY,
@@ -61,11 +62,12 @@ public final class CancelJpaEntityFixtures {
     }
 
     /** SELLER_CANCEL / APPROVED 상태 Entity 생성. */
-    public static CancelJpaEntity approvedEntity(String cancelId, String orderItemId, long sellerId) {
+    public static CancelJpaEntity approvedEntity(
+            String cancelId, String orderItemId, long sellerId) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(
                 cancelId,
-                DEFAULT_CANCEL_NUMBER,
+                "CAN-" + cancelId,
                 orderItemId,
                 sellerId,
                 DEFAULT_CANCEL_QTY,
@@ -88,11 +90,12 @@ public final class CancelJpaEntityFixtures {
     }
 
     /** BUYER_CANCEL / REJECTED 상태 Entity 생성. */
-    public static CancelJpaEntity rejectedEntity(String cancelId, String orderItemId, long sellerId) {
+    public static CancelJpaEntity rejectedEntity(
+            String cancelId, String orderItemId, long sellerId) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(
                 cancelId,
-                DEFAULT_CANCEL_NUMBER,
+                "CAN-" + cancelId,
                 orderItemId,
                 sellerId,
                 DEFAULT_CANCEL_QTY,
@@ -115,11 +118,12 @@ public final class CancelJpaEntityFixtures {
     }
 
     /** 상태를 직접 지정하는 범용 Entity 생성. */
-    public static CancelJpaEntity entityWithStatus(String cancelId, String orderItemId, String status) {
+    public static CancelJpaEntity entityWithStatus(
+            String cancelId, String orderItemId, String status) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(
                 cancelId,
-                DEFAULT_CANCEL_NUMBER,
+                "CAN-" + cancelId,
                 orderItemId,
                 DEFAULT_SELLER_ID,
                 DEFAULT_CANCEL_QTY,

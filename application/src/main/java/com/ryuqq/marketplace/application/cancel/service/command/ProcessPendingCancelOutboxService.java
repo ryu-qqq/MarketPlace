@@ -19,8 +19,7 @@ public class ProcessPendingCancelOutboxService implements ProcessPendingCancelOu
     private final CancelOutboxRelayProcessor relayProcessor;
 
     public ProcessPendingCancelOutboxService(
-            CancelOutboxReadManager outboxReadManager,
-            CancelOutboxRelayProcessor relayProcessor) {
+            CancelOutboxReadManager outboxReadManager, CancelOutboxRelayProcessor relayProcessor) {
         this.outboxReadManager = outboxReadManager;
         this.relayProcessor = relayProcessor;
     }

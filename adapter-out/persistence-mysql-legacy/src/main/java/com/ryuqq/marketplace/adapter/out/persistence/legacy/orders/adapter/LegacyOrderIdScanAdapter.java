@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 ID 커서 기반 스캔 Adapter.
  *
- * <p>{@link LegacyOrderIdScanPort} 구현체.
- * orders 테이블에서 활성 주문 엔트리(orderId + paymentId)를 커서 기반으로 스캔합니다.
+ * <p>{@link LegacyOrderIdScanPort} 구현체. orders 테이블에서 활성 주문 엔트리(orderId + paymentId)를 커서 기반으로 스캔합니다.
  *
  * @author ryu-qqq
  * @since 1.0.0

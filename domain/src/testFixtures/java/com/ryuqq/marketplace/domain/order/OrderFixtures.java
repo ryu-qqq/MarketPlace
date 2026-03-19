@@ -160,7 +160,6 @@ public final class OrderFixtures {
                 defaultExternalOrderItemPrice(),
                 defaultReceiverInfo(),
                 OrderItemStatus.READY,
-                null,
                 List.of());
     }
 
@@ -173,7 +172,6 @@ public final class OrderFixtures {
                 defaultExternalOrderItemPrice(),
                 defaultReceiverInfo(),
                 OrderItemStatus.CONFIRMED,
-                null,
                 List.of());
     }
 
@@ -186,7 +184,6 @@ public final class OrderFixtures {
                 defaultExternalOrderItemPrice(),
                 defaultReceiverInfo(),
                 status,
-                null,
                 List.of());
     }
 

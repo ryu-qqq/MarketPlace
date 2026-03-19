@@ -1,7 +1,5 @@
 package com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto;
 
-import java.time.Instant;
-
 /** 주문 상품 프로젝션 (order_items 전체 필드). */
 public record OrderItemProjectionDto(
         String orderItemId,

@@ -88,3 +88,10 @@ docs/reference/naver_*
 
 # Auto-generated guides (AI/documentation artifacts)
 docs/guide/
+
+# Node modules
+node_modules/
+naver_api_docs/node_modules/
+
+# Playwright MCP logs
+.playwright-mcp/

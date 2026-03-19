@@ -39,7 +39,13 @@ public class CancelQueryFactory {
                 QueryContext.of(sortKey, sortDirection, pageRequest, false);
 
         return new CancelSearchCriteria(
-                statuses, types, searchField, params.searchWord(), dateRange, dateField, queryContext);
+                statuses,
+                types,
+                searchField,
+                params.searchWord(),
+                dateRange,
+                dateField,
+                queryContext);
     }
 
     private List<CancelStatus> parseStatuses(List<String> statuses) {

@@ -53,8 +53,7 @@ public class LegacySearchProductGroupByOffsetService
         if (params.categoryIds() == null || params.categoryIds().isEmpty()) {
             return params;
         }
-        List<Long> expandedIds =
-                categoryReadManager.expandWithDescendants(params.categoryIds());
+        List<Long> expandedIds = categoryReadManager.expandWithDescendants(params.categoryIds());
         return params.withCategoryIds(expandedIds);
     }
 }

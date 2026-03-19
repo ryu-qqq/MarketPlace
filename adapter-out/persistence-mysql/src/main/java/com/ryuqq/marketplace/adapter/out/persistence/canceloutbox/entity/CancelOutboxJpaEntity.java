@@ -104,21 +104,70 @@ public class CancelOutboxJpaEntity {
             long version,
             String idempotencyKey) {
         return new CancelOutboxJpaEntity(
-                id, orderItemId, outboxType, status, payload, retryCount, maxRetry,
-                createdAt, updatedAt, processedAt, errorMessage, version, idempotencyKey);
+                id,
+                orderItemId,
+                outboxType,
+                status,
+                payload,
+                retryCount,
+                maxRetry,
+                createdAt,
+                updatedAt,
+                processedAt,
+                errorMessage,
+                version,
+                idempotencyKey);
     }
 
-    public Long getId() { return id; }
-    public String getOrderItemId() { return orderItemId; }
-    public String getOutboxType() { return outboxType; }
-    public String getStatus() { return status; }
-    public String getPayload() { return payload; }
-    public int getRetryCount() { return retryCount; }
-    public int getMaxRetry() { return maxRetry; }
-    public Instant getCreatedAt() { return createdAt; }
-    public Instant getUpdatedAt() { return updatedAt; }
-    public Instant getProcessedAt() { return processedAt; }
-    public String getErrorMessage() { return errorMessage; }
-    public long getVersion() { return version; }
-    public String getIdempotencyKey() { return idempotencyKey; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getOrderItemId() {
+        return orderItemId;
+    }
+
+    public String getOutboxType() {
+        return outboxType;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public int getRetryCount() {
+        return retryCount;
+    }
+
+    public int getMaxRetry() {
+        return maxRetry;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Instant getProcessedAt() {
+        return processedAt;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public String getIdempotencyKey() {
+        return idempotencyKey;
+    }
 }

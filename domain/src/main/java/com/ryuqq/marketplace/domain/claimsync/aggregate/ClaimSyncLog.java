@@ -101,14 +101,43 @@ public class ClaimSyncLog {
         }
     }
 
-    public ClaimSyncLogId id() { return id; }
-    public long idValue() { return id.value(); }
-    public long salesChannelId() { return salesChannelId; }
-    public String externalProductOrderId() { return externalProductOrderId; }
-    public String externalClaimType() { return externalClaimType; }
-    public String externalClaimStatus() { return externalClaimStatus; }
-    public String internalClaimType() { return internalClaimType; }
-    public long internalClaimId() { return internalClaimId; }
-    public ClaimSyncAction action() { return action; }
-    public Instant syncedAt() { return syncedAt; }
+    public ClaimSyncLogId id() {
+        return id;
+    }
+
+    public long idValue() {
+        return id.value();
+    }
+
+    public long salesChannelId() {
+        return salesChannelId;
+    }
+
+    public String externalProductOrderId() {
+        return externalProductOrderId;
+    }
+
+    public String externalClaimType() {
+        return externalClaimType;
+    }
+
+    public String externalClaimStatus() {
+        return externalClaimStatus;
+    }
+
+    public String internalClaimType() {
+        return internalClaimType;
+    }
+
+    public long internalClaimId() {
+        return internalClaimId;
+    }
+
+    public ClaimSyncAction action() {
+        return action;
+    }
+
+    public Instant syncedAt() {
+        return syncedAt;
+    }
 }

@@ -15,8 +15,7 @@ public class ClaimSyncLogReadManager {
     }
 
     /**
-     * 동일한 (salesChannelId, externalProductOrderId, claimType, claimStatus) 조합이
-     * 이미 처리되었는지 확인합니다.
+     * 동일한 (salesChannelId, externalProductOrderId, claimType, claimStatus) 조합이 이미 처리되었는지 확인합니다.
      *
      * @param salesChannelId 판매채널 ID
      * @param externalProductOrderId 외부 주문상품번호

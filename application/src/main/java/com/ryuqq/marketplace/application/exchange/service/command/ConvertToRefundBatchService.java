@@ -21,14 +21,12 @@ import org.springframework.stereotype.Service;
 /**
  * 교환 건 환불 전환 일괄 처리 서비스.
  *
- * <p>교환 건을 취소하고 환불 요청을 생성합니다 (크로스 도메인).
- * Exchange는 CANCELLED 처리, Refund는 신규 생성됩니다.
+ * <p>교환 건을 취소하고 환불 요청을 생성합니다 (크로스 도메인). Exchange는 CANCELLED 처리, Refund는 신규 생성됩니다.
  */
 @Service
 public class ConvertToRefundBatchService implements ConvertToRefundBatchUseCase {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(ConvertToRefundBatchService.class);
+    private static final Logger log = LoggerFactory.getLogger(ConvertToRefundBatchService.class);
 
     private final ExchangeBatchValidator validator;
     private final ExchangeCommandFactory commandFactory;

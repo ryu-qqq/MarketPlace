@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 시딩 스케줄러.
  *
- * <p>luxurydb의 모든 활성 주문에 대해 PENDING outbox 엔트리를 생성합니다. 기존
- * LegacyOrderConversionScheduler가 PENDING 건을 처리하여 내부 주문으로 변환합니다.
+ * <p>luxurydb의 모든 활성 주문에 대해 PENDING outbox 엔트리를 생성합니다. 기존 LegacyOrderConversionScheduler가 PENDING
+ * 건을 처리하여 내부 주문으로 변환합니다.
  *
  * <p>기본 비활성화 (matchIfMissing=false). 명시적으로 enabled: true 설정 필요.
  *

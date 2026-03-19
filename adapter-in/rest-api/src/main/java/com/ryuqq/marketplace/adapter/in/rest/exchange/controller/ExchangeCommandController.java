@@ -37,8 +37,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "교환 명령", description = "교환 명령 API")
 @RestController
 @RequestMapping(ExchangeAdminEndpoints.EXCHANGES)
+@SuppressWarnings("PMD.TooManyMethods")
 public class ExchangeCommandController {
 
     private final RequestExchangeBatchUseCase requestExchangeBatchUseCase;
@@ -96,7 +97,8 @@ public class ExchangeCommandController {
     @PostMapping(ExchangeAdminEndpoints.REQUEST_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> requestBatch(
             @RequestBody @Valid RequestExchangeBatchApiRequest request) {
-        long sellerId = accessChecker.resolveCurrentSellerId();
+        Long sellerIdOrNull = accessChecker.resolveSellerIdOrNull();
+        long sellerId = sellerIdOrNull != null ? sellerIdOrNull : 0L;
         String requestedBy = resolveCurrentUsername();
         BatchProcessingResult<String> result =
                 requestExchangeBatchUseCase.execute(
@@ -223,7 +225,8 @@ public class ExchangeCommandController {
     public ResponseEntity<ApiResponse<ClaimHistoryMemoApiResponse>> addMemo(
             @PathVariable String exchangeClaimId,
             @RequestBody @Valid AddClaimHistoryMemoApiRequest request) {
-        long sellerId = accessChecker.resolveCurrentSellerId();
+        Long sellerIdOrNull = accessChecker.resolveSellerIdOrNull();
+        long sellerId = sellerIdOrNull != null ? sellerIdOrNull : 0L;
         String actorName = resolveCurrentUsername();
         AddClaimHistoryMemoCommand command =
                 mapper.toAddMemoCommand(exchangeClaimId, request, sellerId, actorName);

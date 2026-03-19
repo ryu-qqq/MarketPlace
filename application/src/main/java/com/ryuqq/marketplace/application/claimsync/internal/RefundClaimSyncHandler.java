@@ -9,7 +9,6 @@ import com.ryuqq.marketplace.application.refund.manager.RefundReadManager;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.common.vo.Money;
-import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
@@ -60,19 +59,27 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
 
     @Override
     public ClaimSyncAction resolve(ExternalClaimPayload claim, OrderItemId orderItemId) {
-        Optional<RefundClaim> existingRefund = refundReadManager.findByOrderItemId(orderItemId.value());
+        Optional<RefundClaim> existingRefund =
+                refundReadManager.findByOrderItemId(orderItemId.value());
         return resolveRefund(claim, existingRefund);
     }
 
     @Override
-    public long execute(ClaimSyncAction action, ExternalClaimPayload claim,
-                        OrderItemId orderItemId, long sellerId) {
+    public long execute(
+            ClaimSyncAction action,
+            ExternalClaimPayload claim,
+            OrderItemId orderItemId,
+            long sellerId) {
         return switch (action) {
             case REFUND_CREATED -> createRefund(claim, orderItemId, sellerId);
-            case REFUND_COLLECTING -> startCollecting(refundReadManager.findByOrderItemId(orderItemId.value()).get());
-            case REFUND_COLLECTED -> completeCollection(refundReadManager.findByOrderItemId(orderItemId.value()).get());
+            case REFUND_COLLECTING ->
+                    startCollecting(refundReadManager.findByOrderItemId(orderItemId.value()).get());
+            case REFUND_COLLECTED ->
+                    completeCollection(
+                            refundReadManager.findByOrderItemId(orderItemId.value()).get());
             case REFUND_COMPLETED -> completeRefund(claim, orderItemId, sellerId);
-            case REFUND_REJECTED -> rejectRefund(refundReadManager.findByOrderItemId(orderItemId.value()).get());
+            case REFUND_REJECTED ->
+                    rejectRefund(refundReadManager.findByOrderItemId(orderItemId.value()).get());
             default -> 0L;
         };
     }
@@ -81,9 +88,10 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
             ExternalClaimPayload external, Optional<RefundClaim> existingRefund) {
         String claimStatus = external.claimStatus();
         return switch (claimStatus) {
-            case "RETURN_REQUEST" -> existingRefund.isEmpty()
-                    ? ClaimSyncAction.REFUND_CREATED
-                    : ClaimSyncAction.SKIPPED;
+            case "RETURN_REQUEST" ->
+                    existingRefund.isEmpty()
+                            ? ClaimSyncAction.REFUND_CREATED
+                            : ClaimSyncAction.SKIPPED;
             case "COLLECTING" -> {
                 if (existingRefund.isEmpty()) {
                     yield ClaimSyncAction.REFUND_CREATED;
@@ -120,16 +128,23 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         };
     }
 
-    private long createRefund(
-            ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId) {
+    private long createRefund(ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId) {
         Instant now = timeProvider.now();
         RefundClaimId refundClaimId = RefundClaimId.forNew(UUID.randomUUID().toString());
         RefundClaimNumber claimNumber = RefundClaimNumber.generate();
         int refundQty = resolveQty(claim.requestQuantity());
         RefundReason reason = resolveDefaultRefundReason(claim);
 
-        RefundClaim refundClaim = RefundClaim.forNew(
-                refundClaimId, claimNumber, orderItemId, sellerId, refundQty, reason, SYNC_ACTOR, now);
+        RefundClaim refundClaim =
+                RefundClaim.forNew(
+                        refundClaimId,
+                        claimNumber,
+                        orderItemId,
+                        sellerId,
+                        refundQty,
+                        reason,
+                        SYNC_ACTOR,
+                        now);
 
         refundCommandManager.persist(refundClaim);
         requestReturnOrderItem(orderItemId, "환불 요청 동기화", now);
@@ -154,7 +169,8 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
             ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId) {
         Instant now = timeProvider.now();
         RefundInfo refundInfo = RefundInfo.fullRefund(Money.zero(), "UNKNOWN", now);
-        Optional<RefundClaim> existingRefund = refundReadManager.findByOrderItemId(orderItemId.value());
+        Optional<RefundClaim> existingRefund =
+                refundReadManager.findByOrderItemId(orderItemId.value());
 
         if (existingRefund.isPresent()) {
             RefundClaim refundClaim = existingRefund.get();
@@ -170,8 +186,16 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         int refundQty = resolveQty(claim.requestQuantity());
         RefundReason reason = resolveDefaultRefundReason(claim);
 
-        RefundClaim refundClaim = RefundClaim.forNew(
-                refundClaimId, claimNumber, orderItemId, sellerId, refundQty, reason, SYNC_ACTOR, now);
+        RefundClaim refundClaim =
+                RefundClaim.forNew(
+                        refundClaimId,
+                        claimNumber,
+                        orderItemId,
+                        sellerId,
+                        refundQty,
+                        reason,
+                        SYNC_ACTOR,
+                        now);
         refundClaim.startCollecting(SYNC_ACTOR, now);
         refundClaim.completeCollection(SYNC_ACTOR, now);
         refundClaim.complete(refundInfo, SYNC_ACTOR, now);
@@ -199,21 +223,27 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
     }
 
     private void requestReturnOrderItem(OrderItemId orderItemId, String reason, Instant now) {
-        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
-            if (item.status().canTransitionTo(OrderItemStatus.RETURN_REQUESTED)) {
-                item.requestReturn(SYNC_ACTOR, reason, now);
-                orderItemCommandManager.persistAll(java.util.List.of(item));
-            }
-        });
+        orderItemReadManager
+                .findById(orderItemId)
+                .ifPresent(
+                        item -> {
+                            if (item.status().canTransitionTo(OrderItemStatus.RETURN_REQUESTED)) {
+                                item.requestReturn(SYNC_ACTOR, reason, now);
+                                orderItemCommandManager.persistAll(java.util.List.of(item));
+                            }
+                        });
     }
 
     private void completeReturnOrderItem(OrderItemId orderItemId, Instant now) {
-        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
-            if (item.status().canTransitionTo(OrderItemStatus.RETURNED)) {
-                item.completeReturn(SYNC_ACTOR, now);
-                orderItemCommandManager.persistAll(java.util.List.of(item));
-            }
-        });
+        orderItemReadManager
+                .findById(orderItemId)
+                .ifPresent(
+                        item -> {
+                            if (item.status().canTransitionTo(OrderItemStatus.RETURNED)) {
+                                item.completeReturn(SYNC_ACTOR, now);
+                                orderItemCommandManager.persistAll(java.util.List.of(item));
+                            }
+                        });
     }
 
     private RefundReasonType parseRefundReasonType(String rawReason) {

@@ -7,5 +7,8 @@ import java.time.Instant;
 
 /** 교환 상품 재배송 시작 이벤트. */
 public record ExchangeShippingEvent(
-        ExchangeClaimId exchangeClaimId, OrderItemId orderItemId, String linkedOrderId, Instant occurredAt)
+        ExchangeClaimId exchangeClaimId,
+        OrderItemId orderItemId,
+        String linkedOrderId,
+        Instant occurredAt)
         implements DomainEvent {}

@@ -283,8 +283,7 @@ class ShipmentCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("orderId")
-                                                    .description("주문 ID")),
+                                            parameterWithName("orderId").description("주문 ID")),
                                     requestFields(
                                             fieldWithPath("trackingNumber")
                                                     .type(JsonFieldType.STRING)

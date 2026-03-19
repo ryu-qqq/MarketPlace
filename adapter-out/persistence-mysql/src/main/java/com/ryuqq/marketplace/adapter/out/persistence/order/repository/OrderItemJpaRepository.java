@@ -13,6 +13,8 @@ public interface OrderItemJpaRepository extends JpaRepository<OrderItemJpaEntity
      *
      * @return [orderItemStatus, count] 쌍의 Object 배열 목록
      */
-    @Query("SELECT e.orderItemStatus, COUNT(e) FROM OrderItemJpaEntity e GROUP BY e.orderItemStatus")
+    @Query(
+            "SELECT e.orderItemStatus, COUNT(e) FROM OrderItemJpaEntity e GROUP BY"
+                    + " e.orderItemStatus")
     List<Object[]> countGroupByStatus();
 }

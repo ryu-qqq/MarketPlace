@@ -101,7 +101,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
             // Step 1: POST - 발주확인 배치 (orderItemId 기반)
             given().spec(givenSuperAdmin())
-                    .body(Map.of("orderItemIds", List.of(itemId1, itemId2)))
+                    .body(Map.of("orderIds", List.of(itemId1, itemId2)))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -133,7 +133,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
             given().spec(givenSuperAdmin())
                     .body(
                             Map.of(
-                                    "orderItemIds",
+                                    "orderIds",
                                     List.of(itemId1, "01940001-0000-7000-8000-000000000999")))
                     .when()
                     .post(CONFIRM_BATCH)
@@ -147,7 +147,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-3] 발주확인 - 빈 목록 요청 시 400 Bad Request")
         void confirmBatch_EmptyList_Returns400() {
             given().spec(givenSuperAdmin())
-                    .body(Map.of("orderItemIds", List.of()))
+                    .body(Map.of("orderIds", List.of()))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -168,7 +168,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
             // Step 1: 발주확인
             given().spec(givenSuperAdmin())
-                    .body(Map.of("orderItemIds", List.of(itemId)))
+                    .body(Map.of("orderIds", List.of(itemId)))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -177,7 +177,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
             // Step 2: 송장등록 배치
             Map<String, Object> shipItem = new HashMap<>();
-            shipItem.put("orderItemId", itemId);
+            shipItem.put("orderId", itemId);
             shipItem.put("trackingNumber", "1234567890");
             shipItem.put("courierCode", "CJ");
             shipItem.put("courierName", "CJ대한통운");
@@ -214,7 +214,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
             // Step 1: 발주확인 배치
             given().spec(givenSuperAdmin())
-                    .body(Map.of("orderItemIds", List.of(itemId1, itemId2)))
+                    .body(Map.of("orderIds", List.of(itemId1, itemId2)))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -223,14 +223,14 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
             // Step 2: 송장등록 배치 (2건)
             Map<String, Object> item1 = new HashMap<>();
-            item1.put("orderItemId", itemId1);
+            item1.put("orderId", itemId1);
             item1.put("trackingNumber", "TRK-001");
             item1.put("courierCode", "CJ");
             item1.put("courierName", "CJ대한통운");
             item1.put("shipmentMethodType", "COURIER");
 
             Map<String, Object> item2 = new HashMap<>();
-            item2.put("orderItemId", itemId2);
+            item2.put("orderId", itemId2);
             item2.put("trackingNumber", "TRK-002");
             item2.put("courierCode", "LOTTE");
             item2.put("courierName", "롯데택배");
@@ -260,7 +260,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
 
             // Step 1: 발주확인
             given().spec(givenSuperAdmin())
-                    .body(Map.of("orderItemIds", List.of(orderItemId)))
+                    .body(Map.of("orderIds", List.of(orderItemId)))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -362,7 +362,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @DisplayName("[AUTH-1] 비인증 요청으로 발주확인 시도 - 401")
         void confirmBatch_Unauthenticated_Returns401() {
             given().spec(givenUnauthenticated())
-                    .body(Map.of("orderItemIds", List.of("01940001-0000-7000-8000-000000000001")))
+                    .body(Map.of("orderIds", List.of("01940001-0000-7000-8000-000000000001")))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -383,7 +383,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @DisplayName("[AUTH-3] 권한 없는 사용자 발주확인 시도 - 403")
         void confirmBatch_NoPermission_Returns403() {
             given().spec(givenSellerUser("org-001", "product-group:write"))
-                    .body(Map.of("orderItemIds", List.of("01940001-0000-7000-8000-000000000001")))
+                    .body(Map.of("orderIds", List.of("01940001-0000-7000-8000-000000000001")))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()

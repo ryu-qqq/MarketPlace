@@ -16,6 +16,7 @@ import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
 import com.ryuqq.marketplace.domain.refund.outbox.vo.RefundOutboxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
  * </ul>
  */
 @Component
+@ConditionalOnBean(NaverCommerceReturnClientAdapter.class)
 public class NaverRefundClaimSyncStrategy implements RefundClaimSyncStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(NaverRefundClaimSyncStrategy.class);
@@ -64,6 +66,13 @@ public class NaverRefundClaimSyncStrategy implements RefundClaimSyncStrategy {
                             NaverReturnRejectRequest request =
                                     new NaverReturnRejectRequest("판매자 거절");
                             yield returnClient.rejectReturn(externalProductOrderId, request);
+                        }
+                        case COLLECT -> {
+                            // 수거 완료는 내부 상태 변경만 수행 → 성공으로 처리
+                            log.info(
+                                    "환불 수거 완료 - 네이버 API 호출 없이 완료: orderItemId={}",
+                                    outbox.orderItemIdValue());
+                            yield null;
                         }
                         case COMPLETE -> {
                             // 환불 완료는 네이버 자동 처리 → 성공으로 처리

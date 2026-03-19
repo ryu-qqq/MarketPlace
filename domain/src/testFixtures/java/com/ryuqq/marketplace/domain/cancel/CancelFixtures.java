@@ -3,6 +3,10 @@ package com.ryuqq.marketplace.domain.cancel;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.cancel.id.CancelId;
 import com.ryuqq.marketplace.domain.cancel.id.CancelNumber;
+import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
+import com.ryuqq.marketplace.domain.cancel.outbox.id.CancelOutboxId;
+import com.ryuqq.marketplace.domain.cancel.outbox.vo.CancelOutboxStatus;
+import com.ryuqq.marketplace.domain.cancel.outbox.vo.CancelOutboxType;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReason;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReasonType;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelRefundInfo;
@@ -206,5 +210,84 @@ public final class CancelFixtures {
                 null,
                 requestedAt,
                 cancelledAt);
+    }
+
+    // ===== CancelOutbox ID Fixtures =====
+
+    public static CancelOutboxId defaultCancelOutboxId() {
+        return CancelOutboxId.of(1L);
+    }
+
+    public static CancelOutboxId newCancelOutboxId() {
+        return CancelOutboxId.forNew();
+    }
+
+    // ===== CancelOutbox Aggregate Fixtures =====
+
+    public static CancelOutbox newCancelOutbox() {
+        return CancelOutbox.forNew(
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                CancelOutboxType.APPROVE,
+                "{\"status\":\"APPROVED\"}",
+                CommonVoFixtures.now());
+    }
+
+    public static CancelOutbox newCancelOutbox(CancelOutboxType outboxType) {
+        return CancelOutbox.forNew(
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                outboxType,
+                "{\"status\":\"APPROVED\"}",
+                CommonVoFixtures.now());
+    }
+
+    public static CancelOutbox pendingCancelOutbox() {
+        Instant now = CommonVoFixtures.now();
+        return CancelOutbox.reconstitute(
+                defaultCancelOutboxId(),
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                CancelOutboxType.APPROVE,
+                CancelOutboxStatus.PENDING,
+                "{\"status\":\"APPROVED\"}",
+                0,
+                3,
+                now,
+                now,
+                null,
+                null,
+                0L,
+                "COBO:" + DEFAULT_ORDER_ITEM_ID + ":APPROVE:" + now.toEpochMilli());
+    }
+
+    public static CancelOutbox processingCancelOutbox() {
+        Instant now = CommonVoFixtures.now();
+        CancelOutbox outbox = pendingCancelOutbox();
+        outbox.startProcessing(now);
+        return outbox;
+    }
+
+    public static CancelOutbox completedCancelOutbox() {
+        Instant now = CommonVoFixtures.now();
+        CancelOutbox outbox = processingCancelOutbox();
+        outbox.complete(now);
+        return outbox;
+    }
+
+    public static CancelOutbox failedCancelOutbox() {
+        Instant now = CommonVoFixtures.now();
+        Instant createdAt = CommonVoFixtures.yesterday();
+        return CancelOutbox.reconstitute(
+                defaultCancelOutboxId(),
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                CancelOutboxType.APPROVE,
+                CancelOutboxStatus.FAILED,
+                "{\"status\":\"APPROVED\"}",
+                3,
+                3,
+                createdAt,
+                now,
+                now,
+                "외부 API 오류",
+                1L,
+                "COBO:" + DEFAULT_ORDER_ITEM_ID + ":APPROVE:" + createdAt.toEpochMilli());
     }
 }

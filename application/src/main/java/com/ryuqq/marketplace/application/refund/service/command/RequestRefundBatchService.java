@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceFacade
 import com.ryuqq.marketplace.application.refund.port.in.command.RequestRefundBatchUseCase;
 import com.ryuqq.marketplace.application.refund.validator.RefundBatchValidator;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +22,7 @@ import org.springframework.stereotype.Service;
 /**
  * 환불 요청 일괄 처리 서비스.
  *
- * <p>환불 요청 시 OrderItem을 RETURN_REQUESTED로 전환합니다.
- * 해당 OrderItem에 진행 중인 Refund/Exchange가 있으면 스킵합니다.
+ * <p>환불 요청 시 OrderItem을 RETURN_REQUESTED로 전환합니다. 해당 OrderItem에 진행 중인 Refund/Exchange가 있으면 스킵합니다.
  */
 @Service
 public class RequestRefundBatchService implements RequestRefundBatchUseCase {
@@ -63,14 +63,18 @@ public class RequestRefundBatchService implements RequestRefundBatchUseCase {
                 batchResult.addSuccess(bundle.claim(), bundle.outbox(), bundle.history());
 
                 Optional<OrderItem> orderItem =
-                        orderItemReadManager.findById(item.orderItemId());
-                orderItem.ifPresent(oi -> {
-                    if (oi.status().canTransitionTo(
-                            com.ryuqq.marketplace.domain.order.vo.OrderItemStatus.RETURN_REQUESTED)) {
-                        oi.requestReturn(command.requestedBy(), "환불 요청", commandFactory.now());
-                        returnRequestedItems.add(oi);
-                    }
-                });
+                        orderItemReadManager.findById(OrderItemId.of(item.orderItemId()));
+                orderItem.ifPresent(
+                        oi -> {
+                            if (oi.status()
+                                    .canTransitionTo(
+                                            com.ryuqq.marketplace.domain.order.vo.OrderItemStatus
+                                                    .RETURN_REQUESTED)) {
+                                oi.requestReturn(
+                                        command.requestedBy(), "환불 요청", commandFactory.now());
+                                returnRequestedItems.add(oi);
+                            }
+                        });
             } catch (Exception e) {
                 log.warn(
                         "환불 요청 생성 실패: orderItemId={}, error={}",
@@ -82,8 +86,10 @@ public class RequestRefundBatchService implements RequestRefundBatchUseCase {
 
         if (batchResult.hasSuccessItems()) {
             persistenceFacade.persistAllWithOutboxesAndHistoriesAndOrderItems(
-                    batchResult.claims(), batchResult.outboxes(),
-                    batchResult.histories(), returnRequestedItems);
+                    batchResult.claims(),
+                    batchResult.outboxes(),
+                    batchResult.histories(),
+                    returnRequestedItems);
         }
 
         return batchResult.toBatchProcessingResult();

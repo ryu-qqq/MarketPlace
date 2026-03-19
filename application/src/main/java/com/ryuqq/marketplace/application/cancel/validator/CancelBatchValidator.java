@@ -9,9 +9,8 @@ import org.springframework.stereotype.Component;
 /**
  * 취소 배치 요청 검증기.
  *
- * <p>cancelIds를 IN절로 일괄 조회하고 소유권(sellerId) 검증을 수행합니다. sellerId가 null이면 슈퍼어드민으로
- * 간주하여 전체 접근을 허용합니다. 요청한 ID와 조회된 ID가 불일치하면 소유권 위반 또는 존재하지 않는 건으로 판단하여 예외를
- * 던집니다.
+ * <p>cancelIds를 IN절로 일괄 조회하고 소유권(sellerId) 검증을 수행합니다. sellerId가 null이면 슈퍼어드민으로 간주하여 전체 접근을 허용합니다.
+ * 요청한 ID와 조회된 ID가 불일치하면 소유권 위반 또는 존재하지 않는 건으로 판단하여 예외를 던집니다.
  */
 @Component
 public class CancelBatchValidator {

@@ -5,8 +5,7 @@ public record LegacyOrderConversionOutboxId(Long value) {
 
     public static LegacyOrderConversionOutboxId of(Long value) {
         if (value == null) {
-            throw new IllegalArgumentException(
-                    "LegacyOrderConversionOutboxId 값은 null일 수 없습니다");
+            throw new IllegalArgumentException("LegacyOrderConversionOutboxId 값은 null일 수 없습니다");
         }
         return new LegacyOrderConversionOutboxId(value);
     }

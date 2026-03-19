@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 복합 조회 Mapper.
  *
- * <p>flat QueryDto + optionValues → {@link LegacyOrderCompositeResult} 변환.
- * nullable 필드에 대한 null-safe 처리를 담당합니다.
+ * <p>flat QueryDto + optionValues → {@link LegacyOrderCompositeResult} 변환. nullable 필드에 대한
+ * null-safe 처리를 담당합니다.
  *
  * @author ryu-qqq
  * @since 1.0.0
@@ -29,9 +29,7 @@ public class LegacyOrderCompositeMapper {
     public LegacyOrderCompositeResult toResult(
             LegacyOrderCompositeQueryDto dto, List<String> optionValues) {
         Instant orderDate =
-                dto.orderDate() != null
-                        ? dto.orderDate().toInstant(ZoneOffset.UTC)
-                        : null;
+                dto.orderDate() != null ? dto.orderDate().toInstant(ZoneOffset.UTC) : null;
 
         return new LegacyOrderCompositeResult(
                 dto.legacyOrderId() != null ? dto.legacyOrderId() : 0L,

@@ -17,6 +17,7 @@ import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
 import com.ryuqq.marketplace.domain.cancel.outbox.vo.CancelOutboxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
  * </ul>
  */
 @Component
+@ConditionalOnBean(NaverCommerceCancelClientAdapter.class)
 public class NaverCancelClaimSyncStrategy implements CancelClaimSyncStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(NaverCancelClaimSyncStrategy.class);

@@ -68,7 +68,6 @@ class CancelExceptionTest {
             assertThat(code.getHttpStatus()).isEqualTo(400);
             assertThat(code.getMessage()).contains("취소할 수 없는");
         }
-
     }
 
     @Nested

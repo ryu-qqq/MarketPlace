@@ -17,15 +17,23 @@ public record RequestRefundBatchApiRequest(
 
     @Schema(description = "환불 요청 개별 항목")
     public record RefundRequestItemApiRequest(
-            @Schema(description = "주문 ID (프론트: orderId = 내부 orderItemId)", example = "01940001-0000-7000-8000-000000000001", requiredMode = Schema.RequiredMode.REQUIRED)
+            @Schema(
+                            description = "주문 ID (프론트: orderId = 내부 orderItemId)",
+                            example = "01940001-0000-7000-8000-000000000001",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank
                     String orderId,
-            @Schema(description = "환불 수량", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+            @Schema(
+                            description = "환불 수량",
+                            example = "1",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @Positive
                     int refundQty,
-            @Schema(description = "환불 사유 유형", example = "CHANGE_OF_MIND", requiredMode = Schema.RequiredMode.REQUIRED)
+            @Schema(
+                            description = "환불 사유 유형",
+                            example = "CHANGE_OF_MIND",
+                            requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank
                     String reasonType,
-            @Schema(description = "환불 상세 사유", example = "단순 변심입니다")
-                    String reasonDetail) {}
+            @Schema(description = "환불 상세 사유", example = "단순 변심입니다") String reasonDetail) {}
 }

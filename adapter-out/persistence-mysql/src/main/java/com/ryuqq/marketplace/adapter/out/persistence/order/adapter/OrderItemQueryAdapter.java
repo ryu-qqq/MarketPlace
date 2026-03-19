@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.order.mapper.OrderJpaEntity
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJpaRepository;
 import com.ryuqq.marketplace.application.order.port.out.query.OrderItemQueryPort;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.EnumMap;
 import java.util.List;
@@ -24,8 +25,9 @@ public class OrderItemQueryAdapter implements OrderItemQueryPort {
     }
 
     @Override
-    public List<OrderItem> findAllByIds(List<String> orderItemIds) {
-        return itemRepository.findAllById(orderItemIds).stream().map(mapper::toOrderItem).toList();
+    public List<OrderItem> findAllByIds(List<OrderItemId> orderItemIds) {
+        List<String> ids = orderItemIds.stream().map(OrderItemId::value).toList();
+        return itemRepository.findAllById(ids).stream().map(mapper::toOrderItem).toList();
     }
 
     @Override

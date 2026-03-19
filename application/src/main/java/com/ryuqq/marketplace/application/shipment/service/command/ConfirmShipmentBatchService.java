@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ConfirmShipmentBatchUseCase;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,9 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
 
     @Override
     public BatchProcessingResult<String> execute(ConfirmShipmentBatchCommand command) {
-        List<OrderItem> orderItems = orderItemReadManager.findAllByIds(command.orderItemIds());
+        List<OrderItemId> orderItemIds =
+                command.orderItemIds().stream().map(OrderItemId::of).toList();
+        List<OrderItem> orderItems = orderItemReadManager.findAllByIds(orderItemIds);
         Instant now = Instant.now();
 
         List<BatchItemResult<String>> results = new ArrayList<>();

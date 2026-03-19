@@ -13,7 +13,11 @@ import com.ryuqq.marketplace.domain.imagevariant.vo.ImageVariantType;
  * @param height 높이
  */
 public record ImageVariantResult(
-        ImageVariantType variantType, String resultAssetId, String variantUrl, Integer width, Integer height) {
+        ImageVariantType variantType,
+        String resultAssetId,
+        String variantUrl,
+        Integer width,
+        Integer height) {
 
     public static ImageVariantResult from(ImageVariant variant) {
         return new ImageVariantResult(

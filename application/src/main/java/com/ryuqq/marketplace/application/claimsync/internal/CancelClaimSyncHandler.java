@@ -6,6 +6,8 @@ import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPay
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
+import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.cancel.id.CancelId;
 import com.ryuqq.marketplace.domain.cancel.id.CancelNumber;
@@ -16,8 +18,8 @@ import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.common.vo.Money;
-import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Component;
  * <p>CANCEL, ADMIN_CANCEL 유형의 클레임에 대해 액션 결정과 실행을 캡슐화합니다.
  */
 @Component
+@SuppressWarnings("PMD.GodClass")
 public class CancelClaimSyncHandler implements ClaimSyncHandler {
 
     private static final String SYNC_ACTOR = "system-claim-sync";
@@ -37,6 +40,8 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     private final CancelCommandManager cancelCommandManager;
     private final OrderItemReadManager orderItemReadManager;
     private final OrderItemCommandManager orderItemCommandManager;
+    private final ShipmentReadManager shipmentReadManager;
+    private final ShipmentCommandManager shipmentCommandManager;
     private final TimeProvider timeProvider;
 
     public CancelClaimSyncHandler(
@@ -44,11 +49,15 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             CancelCommandManager cancelCommandManager,
             OrderItemReadManager orderItemReadManager,
             OrderItemCommandManager orderItemCommandManager,
+            ShipmentReadManager shipmentReadManager,
+            ShipmentCommandManager shipmentCommandManager,
             TimeProvider timeProvider) {
         this.cancelReadManager = cancelReadManager;
         this.cancelCommandManager = cancelCommandManager;
         this.orderItemReadManager = orderItemReadManager;
         this.orderItemCommandManager = orderItemCommandManager;
+        this.shipmentReadManager = shipmentReadManager;
+        this.shipmentCommandManager = shipmentCommandManager;
         this.timeProvider = timeProvider;
     }
 
@@ -68,13 +77,18 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     }
 
     @Override
-    public long execute(ClaimSyncAction action, ExternalClaimPayload claim,
-                        OrderItemId orderItemId, long sellerId) {
+    public long execute(
+            ClaimSyncAction action,
+            ExternalClaimPayload claim,
+            OrderItemId orderItemId,
+            long sellerId) {
         return switch (action) {
             case CANCEL_CREATED -> createCancel(claim, orderItemId, sellerId);
-            case CANCEL_APPROVED -> approveCancel(cancelReadManager.findByOrderItemId(orderItemId).get());
+            case CANCEL_APPROVED ->
+                    approveCancel(cancelReadManager.findByOrderItemId(orderItemId).get());
             case CANCEL_COMPLETED -> completeCancel(claim, orderItemId, sellerId);
-            case CANCEL_WITHDRAWN -> withdrawCancel(cancelReadManager.findByOrderItemId(orderItemId).get());
+            case CANCEL_WITHDRAWN ->
+                    withdrawCancel(cancelReadManager.findByOrderItemId(orderItemId).get());
             default -> 0L;
         };
     }
@@ -83,9 +97,10 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             ExternalClaimPayload external, Optional<Cancel> existingCancel) {
         String claimStatus = external.claimStatus();
         return switch (claimStatus) {
-            case "CANCEL_REQUEST" -> existingCancel.isEmpty()
-                    ? ClaimSyncAction.CANCEL_CREATED
-                    : ClaimSyncAction.SKIPPED;
+            case "CANCEL_REQUEST" ->
+                    existingCancel.isEmpty()
+                            ? ClaimSyncAction.CANCEL_CREATED
+                            : ClaimSyncAction.SKIPPED;
             case "CANCELING" -> {
                 if (existingCancel.isEmpty()) {
                     yield ClaimSyncAction.CANCEL_CREATED;
@@ -120,9 +135,10 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             ExternalClaimPayload external, Optional<Cancel> existingCancel) {
         String claimStatus = external.claimStatus();
         return switch (claimStatus) {
-            case "ADMIN_CANCELING" -> existingCancel.isEmpty()
-                    ? ClaimSyncAction.CANCEL_CREATED
-                    : ClaimSyncAction.SKIPPED;
+            case "ADMIN_CANCELING" ->
+                    existingCancel.isEmpty()
+                            ? ClaimSyncAction.CANCEL_CREATED
+                            : ClaimSyncAction.SKIPPED;
             case "ADMIN_CANCEL_DONE" -> {
                 if (existingCancel.isEmpty()) {
                     yield ClaimSyncAction.CANCEL_COMPLETED;
@@ -143,8 +159,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         };
     }
 
-    private long createCancel(
-            ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId) {
+    private long createCancel(ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId) {
         Instant now = timeProvider.now();
         CancelId cancelId = CancelId.generate();
         CancelNumber cancelNumber = CancelNumber.generate();
@@ -153,12 +168,28 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
 
         Cancel cancel;
         if ("ADMIN_CANCEL".equals(claim.claimType())) {
-            cancel = Cancel.forSellerCancel(
-                    cancelId, cancelNumber, orderItemId, sellerId, cancelQty, reason, SYNC_ACTOR, now);
+            cancel =
+                    Cancel.forSellerCancel(
+                            cancelId,
+                            cancelNumber,
+                            orderItemId,
+                            sellerId,
+                            cancelQty,
+                            reason,
+                            SYNC_ACTOR,
+                            now);
             cancelOrderItem(orderItemId, "관리자 취소 동기화", now);
         } else {
-            cancel = Cancel.forBuyerCancel(
-                    cancelId, cancelNumber, orderItemId, sellerId, cancelQty, reason, SYNC_ACTOR, now);
+            cancel =
+                    Cancel.forBuyerCancel(
+                            cancelId,
+                            cancelNumber,
+                            orderItemId,
+                            sellerId,
+                            cancelQty,
+                            reason,
+                            SYNC_ACTOR,
+                            now);
         }
 
         cancelCommandManager.persist(cancel);
@@ -176,7 +207,8 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     private long completeCancel(
             ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId) {
         Instant now = timeProvider.now();
-        CancelRefundInfo refundInfo = CancelRefundInfo.of(Money.zero(), "UNKNOWN", "PENDING", now, null);
+        CancelRefundInfo refundInfo =
+                CancelRefundInfo.of(Money.zero(), "UNKNOWN", "PENDING", now, null);
         Optional<Cancel> existingCancel = cancelReadManager.findByOrderItemId(orderItemId);
 
         if (existingCancel.isPresent()) {
@@ -195,11 +227,27 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
 
         Cancel cancel;
         if ("ADMIN_CANCEL".equals(claim.claimType())) {
-            cancel = Cancel.forSellerCancel(
-                    cancelId, cancelNumber, orderItemId, sellerId, cancelQty, reason, SYNC_ACTOR, now);
+            cancel =
+                    Cancel.forSellerCancel(
+                            cancelId,
+                            cancelNumber,
+                            orderItemId,
+                            sellerId,
+                            cancelQty,
+                            reason,
+                            SYNC_ACTOR,
+                            now);
         } else {
-            cancel = Cancel.forBuyerCancel(
-                    cancelId, cancelNumber, orderItemId, sellerId, cancelQty, reason, SYNC_ACTOR, now);
+            cancel =
+                    Cancel.forBuyerCancel(
+                            cancelId,
+                            cancelNumber,
+                            orderItemId,
+                            sellerId,
+                            cancelQty,
+                            reason,
+                            SYNC_ACTOR,
+                            now);
             cancel.approve(SYNC_ACTOR, now);
         }
         cancel.complete(refundInfo, SYNC_ACTOR, now);
@@ -215,15 +263,33 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         return 0L;
     }
 
-    /** OrderItem을 CANCELLED로 전환합니다. 이미 취소 상태이면 무시합니다. */
+    /** OrderItem을 CANCELLED로 전환하고, 연결된 Shipment가 PREPARING이면 함께 취소합니다. */
     private void cancelOrderItem(OrderItemId orderItemId, String reason, Instant now) {
-        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
-            if (item.status().canTransitionTo(
-                    com.ryuqq.marketplace.domain.order.vo.OrderItemStatus.CANCELLED)) {
-                item.cancel(SYNC_ACTOR, reason, now);
-                orderItemCommandManager.persistAll(List.of(item));
-            }
-        });
+        orderItemReadManager
+                .findById(orderItemId)
+                .ifPresent(
+                        item -> {
+                            if (item.status()
+                                    .canTransitionTo(
+                                            com.ryuqq.marketplace.domain.order.vo.OrderItemStatus
+                                                    .CANCELLED)) {
+                                item.cancel(SYNC_ACTOR, reason, now);
+                                orderItemCommandManager.persistAll(List.of(item));
+                                cancelAssociatedShipment(orderItemId, now);
+                            }
+                        });
+    }
+
+    private void cancelAssociatedShipment(OrderItemId orderItemId, Instant now) {
+        shipmentReadManager
+                .findByOrderItemId(orderItemId)
+                .ifPresent(
+                        shipment -> {
+                            if (shipment.status() == ShipmentStatus.PREPARING) {
+                                shipment.cancel(now);
+                                shipmentCommandManager.persist(shipment);
+                            }
+                        });
     }
 
     private int resolveQty(Integer requestQuantity) {
@@ -233,9 +299,12 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     private CancelReason resolveDefaultCancelReason(ExternalClaimPayload claim) {
         String rawReason = claim.claimReason();
         CancelReasonType reasonType = parseCancelReasonType(rawReason);
-        String detail = (reasonType == CancelReasonType.OTHER)
-                ? (claim.claimDetailedReason() != null ? claim.claimDetailedReason() : "외부 채널 취소")
-                : null;
+        String detail =
+                (reasonType == CancelReasonType.OTHER)
+                        ? (claim.claimDetailedReason() != null
+                                ? claim.claimDetailedReason()
+                                : "외부 채널 취소")
+                        : null;
         return new CancelReason(reasonType, detail);
     }
 

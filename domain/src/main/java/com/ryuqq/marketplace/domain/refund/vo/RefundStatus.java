@@ -25,6 +25,16 @@ public enum RefundStatus {
         return ACTIVE.contains(this);
     }
 
+    /** 정상 완료 상태인지 확인. */
+    public boolean isCompleted() {
+        return this == COMPLETED;
+    }
+
+    /** 종료 상태인지 확인. */
+    public boolean isTerminal() {
+        return !isActive();
+    }
+
     public boolean canTransitionTo(RefundStatus target) {
         return getAllowedFrom(target).contains(this);
     }

@@ -43,15 +43,13 @@ class LegacySearchProductGroupByOffsetServiceTest {
         @DisplayName("카테고리 ID 없는 파라미터로 목록을 조회하고 PageResult를 반환한다")
         void execute_ParamsWithoutCategoryId_ReturnsPageResult() {
             // given
-            LegacyProductGroupSearchParams params =
-                    LegacyProductGroupQueryFixtures.searchParams();
+            LegacyProductGroupSearchParams params = LegacyProductGroupQueryFixtures.searchParams();
             LegacyProductGroupSearchCriteria criteria =
                     LegacyProductGroupQueryFixtures.defaultCriteria();
-            List<LegacyProductGroupDetailBundle> bundles = List.of(
-                    LegacyProductGroupQueryFixtures.detailBundle(1L));
+            List<LegacyProductGroupDetailBundle> bundles =
+                    List.of(LegacyProductGroupQueryFixtures.detailBundle(1L));
             long totalElements = 1L;
-            LegacyProductGroupPageResult expected =
-                    LegacyProductGroupQueryFixtures.pageResult();
+            LegacyProductGroupPageResult expected = LegacyProductGroupQueryFixtures.pageResult();
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
             given(readFacade.getBundles(criteria)).willReturn(bundles);
@@ -68,15 +66,16 @@ class LegacySearchProductGroupByOffsetServiceTest {
             then(queryFactory).should().createCriteria(params);
             then(readFacade).should().getBundles(criteria);
             then(readFacade).should().count(criteria);
-            then(assembler).should().toPageResult(bundles, totalElements, criteria.page(), criteria.size());
+            then(assembler)
+                    .should()
+                    .toPageResult(bundles, totalElements, criteria.page(), criteria.size());
         }
 
         @Test
         @DisplayName("카테고리 ID가 없으면 CategoryReadManager를 호출하지 않는다")
         void execute_ParamsWithoutCategoryId_SkipsCategoryExpansion() {
             // given
-            LegacyProductGroupSearchParams params =
-                    LegacyProductGroupQueryFixtures.searchParams();
+            LegacyProductGroupSearchParams params = LegacyProductGroupQueryFixtures.searchParams();
             LegacyProductGroupSearchCriteria criteria =
                     LegacyProductGroupQueryFixtures.defaultCriteria();
             List<LegacyProductGroupDetailBundle> bundles = List.of();
@@ -85,7 +84,8 @@ class LegacySearchProductGroupByOffsetServiceTest {
             given(readFacade.getBundles(criteria)).willReturn(bundles);
             given(readFacade.count(criteria)).willReturn(0L);
             given(assembler.toPageResult(bundles, 0L, criteria.page(), criteria.size()))
-                    .willReturn(LegacyProductGroupPageResult.empty(criteria.page(), criteria.size()));
+                    .willReturn(
+                            LegacyProductGroupPageResult.empty(criteria.page(), criteria.size()));
 
             // when
             sut.execute(params);
@@ -106,11 +106,10 @@ class LegacySearchProductGroupByOffsetServiceTest {
                     params.withCategoryIds(expandedCategoryIds);
             LegacyProductGroupSearchCriteria criteria =
                     LegacyProductGroupQueryFixtures.criteriaWithCategoryIds(expandedCategoryIds);
-            List<LegacyProductGroupDetailBundle> bundles = List.of(
-                    LegacyProductGroupQueryFixtures.detailBundle(1L));
+            List<LegacyProductGroupDetailBundle> bundles =
+                    List.of(LegacyProductGroupQueryFixtures.detailBundle(1L));
             long totalElements = 1L;
-            LegacyProductGroupPageResult expected =
-                    LegacyProductGroupQueryFixtures.pageResult();
+            LegacyProductGroupPageResult expected = LegacyProductGroupQueryFixtures.pageResult();
 
             given(categoryReadManager.expandWithDescendants(originalCategoryIds))
                     .willReturn(expandedCategoryIds);
@@ -148,7 +147,8 @@ class LegacySearchProductGroupByOffsetServiceTest {
             given(readFacade.getBundles(criteria)).willReturn(List.of());
             given(readFacade.count(criteria)).willReturn(0L);
             given(assembler.toPageResult(List.of(), 0L, criteria.page(), criteria.size()))
-                    .willReturn(LegacyProductGroupPageResult.empty(criteria.page(), criteria.size()));
+                    .willReturn(
+                            LegacyProductGroupPageResult.empty(criteria.page(), criteria.size()));
 
             // when
             sut.execute(params);
@@ -162,8 +162,7 @@ class LegacySearchProductGroupByOffsetServiceTest {
         @DisplayName("결과가 없으면 empty PageResult를 반환한다")
         void execute_EmptyResult_ReturnsEmptyPageResult() {
             // given
-            LegacyProductGroupSearchParams params =
-                    LegacyProductGroupQueryFixtures.searchParams();
+            LegacyProductGroupSearchParams params = LegacyProductGroupQueryFixtures.searchParams();
             LegacyProductGroupSearchCriteria criteria =
                     LegacyProductGroupQueryFixtures.defaultCriteria();
             LegacyProductGroupPageResult expected =

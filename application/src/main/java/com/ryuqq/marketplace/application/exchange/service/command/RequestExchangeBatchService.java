@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.exchange.port.in.command.RequestExchang
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +22,7 @@ import org.springframework.stereotype.Service;
 /**
  * 교환 요청 일괄 처리 서비스.
  *
- * <p>교환 요청 시 OrderItem을 RETURN_REQUESTED로 전환합니다.
- * 해당 OrderItem에 진행 중인 Refund/Exchange가 있으면 스킵합니다.
+ * <p>교환 요청 시 OrderItem을 RETURN_REQUESTED로 전환합니다. 해당 OrderItem에 진행 중인 Refund/Exchange가 있으면 스킵합니다.
  */
 @Service
 public class RequestExchangeBatchService implements RequestExchangeBatchUseCase {
@@ -63,11 +63,12 @@ public class RequestExchangeBatchService implements RequestExchangeBatchUseCase 
                 batchResult.addSuccess(bundle.claim(), bundle.history());
 
                 Optional<OrderItem> orderItem =
-                        orderItemReadManager.findById(item.orderItemId());
-                orderItem.ifPresent(oi -> {
-                    oi.requestReturn(command.requestedBy(), "교환 요청", commandFactory.now());
-                    returnRequestedItems.add(oi);
-                });
+                        orderItemReadManager.findById(OrderItemId.of(item.orderItemId()));
+                orderItem.ifPresent(
+                        oi -> {
+                            oi.requestReturn(command.requestedBy(), "교환 요청", commandFactory.now());
+                            returnRequestedItems.add(oi);
+                        });
             } catch (Exception e) {
                 log.warn(
                         "교환 요청 생성 실패: orderItemId={}, error={}",

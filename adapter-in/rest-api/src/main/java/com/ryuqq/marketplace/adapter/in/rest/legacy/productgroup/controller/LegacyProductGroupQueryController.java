@@ -46,13 +46,11 @@ public class LegacyProductGroupQueryController {
         this.legacyProductGroupQueryApiMapper = legacyProductGroupQueryApiMapper;
     }
 
-    @Operation(
-            summary = "레거시 상품그룹 목록 조회",
-            description = "세토프 어드민 호환 형식으로 상품그룹 목록을 조회합니다.")
+    @Operation(summary = "레거시 상품그룹 목록 조회", description = "세토프 어드민 호환 형식으로 상품그룹 목록을 조회합니다.")
     @RequirePermission(value = "legacy:product-group:read", description = "레거시 상품그룹 목록 조회")
     @GetMapping(PRODUCTS_GROUP)
-    public ResponseEntity<LegacyApiResponse<LegacyProductGroupListApiResponse>>
-            searchProductGroups(@ModelAttribute LegacySearchProductGroupByOffsetApiRequest request) {
+    public ResponseEntity<LegacyApiResponse<LegacyProductGroupListApiResponse>> searchProductGroups(
+            @ModelAttribute LegacySearchProductGroupByOffsetApiRequest request) {
         LegacyProductGroupSearchParams params =
                 legacyProductGroupQueryApiMapper.toSearchParams(request);
         LegacyProductGroupPageResult pageResult =

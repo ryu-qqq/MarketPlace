@@ -446,11 +446,7 @@ public final class OrderApiFixtures {
                         DEFAULT_SKU_CODE,
                         List.of()),
                 new OrderListApiResponseV4.ExternalOrderInfoApiResponse(
-                        10L,
-                        DEFAULT_SHOP_CODE,
-                        "EXT-ORDER-001",
-                        "",
-                        "2026-01-01T09:00:00+09:00"),
+                        10L, DEFAULT_SHOP_CODE, "EXT-ORDER-001", "", "2026-01-01T09:00:00+09:00"),
                 new OrderListApiResponseV4.CancelSummaryV4ApiResponse(false, 0, 1, null),
                 new OrderListApiResponseV4.ClaimSummaryV4ApiResponse(false, 0, 0, 1, null));
     }
@@ -520,5 +516,4 @@ public final class OrderApiFixtures {
                 List.of(claimInfoApiResponse()),
                 List.of(timeLineApiResponse()));
     }
-
 }

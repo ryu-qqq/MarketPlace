@@ -21,7 +21,6 @@ import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultAp
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse.BatchResultItemApiResponse;
 import com.ryuqq.marketplace.application.claimhistory.dto.command.AddClaimHistoryMemoCommand;
 import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryResult;
-import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.ApproveExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.CollectExchangeBatchCommand;
@@ -38,6 +37,7 @@ import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailRes
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeListResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangePageResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeSummaryResult;
+import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -49,6 +49,7 @@ import org.springframework.stereotype.Component;
  * Exchange API Mapper.
  *
  * <p>V4 간극 패턴:
+ *
  * <ul>
  *   <li>orderId = 내부 orderItemId (프론트에겐 "주문 ID")
  *   <li>legacyOrderId 제외
@@ -124,20 +125,22 @@ public class ExchangeApiMapper {
 
     public CompleteExchangeBatchCommand toCompleteCommand(
             CompleteExchangeBatchApiRequest request, String processedBy, Long sellerId) {
-        return new CompleteExchangeBatchCommand(
-                request.exchangeClaimIds(), processedBy, sellerId);
+        return new CompleteExchangeBatchCommand(request.exchangeClaimIds(), processedBy, sellerId);
     }
 
     public ConvertToRefundBatchCommand toConvertToRefundCommand(
             ConvertToRefundBatchApiRequest request, String processedBy, Long sellerId) {
-        return new ConvertToRefundBatchCommand(
-                request.exchangeClaimIds(), processedBy, sellerId);
+        return new ConvertToRefundBatchCommand(request.exchangeClaimIds(), processedBy, sellerId);
     }
 
     public HoldExchangeBatchCommand toHoldCommand(
             HoldExchangeBatchApiRequest request, String processedBy, Long sellerId) {
         return new HoldExchangeBatchCommand(
-                request.exchangeClaimIds(), request.isHold(), request.memo(), processedBy, sellerId);
+                request.exchangeClaimIds(),
+                request.isHold(),
+                request.memo(),
+                processedBy,
+                sellerId);
     }
 
     // ==================== Query 변환 ====================
@@ -283,9 +286,16 @@ public class ExchangeApiMapper {
     }
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(
-            String exchangeClaimId, AddClaimHistoryMemoApiRequest request, long sellerId, String actorName) {
+            String exchangeClaimId,
+            AddClaimHistoryMemoApiRequest request,
+            long sellerId,
+            String actorName) {
         return new AddClaimHistoryMemoCommand(
-                ClaimType.EXCHANGE, exchangeClaimId, request.message(), String.valueOf(sellerId), actorName);
+                ClaimType.EXCHANGE,
+                exchangeClaimId,
+                request.message(),
+                String.valueOf(sellerId),
+                actorName);
     }
 
     // ==================== 유틸 ====================

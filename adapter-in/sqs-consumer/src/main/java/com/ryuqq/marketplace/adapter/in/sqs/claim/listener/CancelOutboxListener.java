@@ -33,8 +33,7 @@ public class CancelOutboxListener {
     private final Counter successCounter;
     private final Counter errorCounter;
 
-    public CancelOutboxListener(
-            ExecuteCancelOutboxUseCase useCase, MeterRegistry meterRegistry) {
+    public CancelOutboxListener(ExecuteCancelOutboxUseCase useCase, MeterRegistry meterRegistry) {
         this.useCase = useCase;
         this.meterRegistry = meterRegistry;
         this.durationTimer =

@@ -31,7 +31,9 @@ public class LegacySellerAuthCompositeReadManager {
     public LegacySellerAuthResult getByEmail(String email) {
         return queryPort
                 .findByEmail(email)
-                .orElseThrow(() -> SellerAdminNotFoundException.withMessage(
-                        "레거시 셀러 인증 정보 미발견: email=" + email));
+                .orElseThrow(
+                        () ->
+                                SellerAdminNotFoundException.withMessage(
+                                        "레거시 셀러 인증 정보 미발견: email=" + email));
     }
 }

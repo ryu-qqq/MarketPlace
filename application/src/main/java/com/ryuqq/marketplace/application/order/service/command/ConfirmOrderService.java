@@ -1,12 +1,13 @@
 package com.ryuqq.marketplace.application.order.service.command;
 
-import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.order.dto.command.OrderItemStatusCommand;
+import com.ryuqq.marketplace.application.order.factory.OrderCommandFactory;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.order.port.in.command.ConfirmOrderUseCase;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
-import java.time.Instant;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -18,24 +19,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class ConfirmOrderService implements ConfirmOrderUseCase {
 
+    private final OrderCommandFactory factory;
     private final OrderItemReadManager readManager;
     private final OrderItemCommandManager commandManager;
-    private final TimeProvider timeProvider;
 
     public ConfirmOrderService(
+            OrderCommandFactory factory,
             OrderItemReadManager readManager,
-            OrderItemCommandManager commandManager,
-            TimeProvider timeProvider) {
+            OrderItemCommandManager commandManager) {
+        this.factory = factory;
         this.readManager = readManager;
         this.commandManager = commandManager;
-        this.timeProvider = timeProvider;
     }
 
     @Override
     public void execute(OrderItemStatusCommand command) {
-        Instant now = timeProvider.now();
-        List<OrderItem> orderItems = readManager.findAllByIds(command.orderItemIds());
-        orderItems.forEach(item -> item.confirm(command.changedBy(), now));
-        commandManager.updateAll(orderItems);
+        StatusChangeContext<List<OrderItemId>> ctx = factory.createStatusChangeContext(command);
+        List<OrderItem> orderItems = readManager.findAllByIds(ctx.id());
+        orderItems.forEach(item -> item.confirm(command.changedBy(), ctx.changedAt()));
+        commandManager.persistAll(orderItems);
     }
 }

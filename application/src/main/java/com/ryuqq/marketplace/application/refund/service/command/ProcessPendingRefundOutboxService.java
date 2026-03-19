@@ -19,8 +19,7 @@ public class ProcessPendingRefundOutboxService implements ProcessPendingRefundOu
     private final RefundOutboxRelayProcessor relayProcessor;
 
     public ProcessPendingRefundOutboxService(
-            RefundOutboxReadManager outboxReadManager,
-            RefundOutboxRelayProcessor relayProcessor) {
+            RefundOutboxReadManager outboxReadManager, RefundOutboxRelayProcessor relayProcessor) {
         this.outboxReadManager = outboxReadManager;
         this.relayProcessor = relayProcessor;
     }

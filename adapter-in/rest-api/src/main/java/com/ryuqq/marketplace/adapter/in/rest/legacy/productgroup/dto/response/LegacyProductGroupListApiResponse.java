@@ -7,8 +7,8 @@ import java.util.List;
 /**
  * 레거시 상품그룹 목록 조회 응답 DTO.
  *
- * <p>세토프 어드민의 CustomPageable&lt;ProductGroupDetailResponse&gt; 호환 형식입니다.
- * content 내부가 productGroup + products nested 구조입니다.
+ * <p>세토프 어드민의 CustomPageable&lt;ProductGroupDetailResponse&gt; 호환 형식입니다. content 내부가 productGroup +
+ * products nested 구조입니다.
  *
  * <p>API-DTO-003: Response DTO 설계 규칙.
  */
@@ -25,10 +25,7 @@ public record LegacyProductGroupListApiResponse(
         @Schema(description = "이전 페이지 존재 여부") boolean hasPrevious) {
 
     public static LegacyProductGroupListApiResponse of(
-            List<LegacyProductGroupDetailItem> content,
-            long totalElements,
-            int page,
-            int size) {
+            List<LegacyProductGroupDetailItem> content, long totalElements, int page, int size) {
         int totalPages = size > 0 ? (int) Math.ceil((double) totalElements / size) : 0;
         boolean isFirst = page == 0;
         boolean isLast = page >= totalPages - 1;
@@ -36,7 +33,14 @@ public record LegacyProductGroupListApiResponse(
         boolean hasPreviousPage = page > 0;
 
         return new LegacyProductGroupListApiResponse(
-                content, totalElements, totalPages, size, page, isFirst, isLast, hasNextPage,
+                content,
+                totalElements,
+                totalPages,
+                size,
+                page,
+                isFirst,
+                isLast,
+                hasNextPage,
                 hasPreviousPage);
     }
 
@@ -44,7 +48,14 @@ public record LegacyProductGroupListApiResponse(
     @Schema(description = "상품그룹 상세 아이템")
     public record LegacyProductGroupDetailItem(
             @Schema(description = "상품그룹 정보") LegacyProductGroupInfo productGroup,
-            @Schema(description = "SKU 목록") List<LegacyProductItem> products) {}
+            @Schema(description = "SKU 목록") List<LegacyProductItem> products) {
+
+        public LegacyProductGroupDetailItem(
+                LegacyProductGroupInfo productGroup, List<LegacyProductItem> products) {
+            this.productGroup = productGroup;
+            this.products = products != null ? List.copyOf(products) : List.of();
+        }
+    }
 
     /** 레거시 ProductGroupInfo 호환. */
     @Schema(description = "상품그룹 정보")
@@ -86,15 +97,11 @@ public record LegacyProductGroupListApiResponse(
         public static LegacyProductStatusInfo of(String status) {
             boolean soldOut = "SOLD_OUT".equals(status);
             boolean hidden = "HIDDEN".equals(status);
-            return new LegacyProductStatusInfo(
-                    soldOut ? "Y" : "N",
-                    hidden ? "N" : "Y");
+            return new LegacyProductStatusInfo(soldOut ? "Y" : "N", hidden ? "N" : "Y");
         }
 
         public static LegacyProductStatusInfo of(boolean soldOut, boolean displayed) {
-            return new LegacyProductStatusInfo(
-                    soldOut ? "Y" : "N",
-                    displayed ? "Y" : "N");
+            return new LegacyProductStatusInfo(soldOut ? "Y" : "N", displayed ? "Y" : "N");
         }
     }
 

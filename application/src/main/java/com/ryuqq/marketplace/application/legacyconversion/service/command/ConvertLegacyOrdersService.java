@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 /**
  * PENDING 상태 레거시 주문 변환 Outbox 처리 서비스.
  *
- * <p>스케줄러에 의해 주기적으로 호출되며, PENDING 상태의 Outbox를 배치 조회하여 {@link LegacyOrderConversionCoordinator}에 위임합니다.
+ * <p>스케줄러에 의해 주기적으로 호출되며, PENDING 상태의 Outbox를 배치 조회하여 {@link LegacyOrderConversionCoordinator}에
+ * 위임합니다.
  */
 @Service
 public class ConvertLegacyOrdersService implements ConvertLegacyOrdersUseCase {

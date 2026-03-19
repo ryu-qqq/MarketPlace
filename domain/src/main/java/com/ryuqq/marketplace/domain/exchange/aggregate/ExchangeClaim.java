@@ -319,28 +319,95 @@ public class ExchangeClaim {
         return Collections.unmodifiableList(polled);
     }
 
-    public boolean isHold() { return holdInfo != null; }
+    public boolean isHold() {
+        return holdInfo != null;
+    }
 
-    public ExchangeClaimId id() { return id; }
-    public String idValue() { return id.value(); }
-    public ExchangeClaimNumber claimNumber() { return claimNumber; }
-    public String claimNumberValue() { return claimNumber.value(); }
-    public OrderItemId orderItemId() { return orderItemId; }
-    public String orderItemIdValue() { return orderItemId.value(); }
-    public long sellerId() { return sellerId; }
-    public int exchangeQty() { return exchangeQty; }
-    public ExchangeStatus status() { return status; }
-    public ExchangeReason reason() { return reason; }
-    public ExchangeOption exchangeOption() { return exchangeOption; }
-    public AmountAdjustment amountAdjustment() { return amountAdjustment; }
-    public ClaimShipment collectShipment() { return collectShipment; }
-    public HoldInfo holdInfo() { return holdInfo; }
-    public String linkedOrderId() { return linkedOrderId; }
-    public String requestedBy() { return requestedBy; }
-    public String processedBy() { return processedBy; }
-    public Instant requestedAt() { return requestedAt; }
-    public Instant processedAt() { return processedAt; }
-    public Instant completedAt() { return completedAt; }
-    public Instant createdAt() { return createdAt; }
-    public Instant updatedAt() { return updatedAt; }
+    public ExchangeClaimId id() {
+        return id;
+    }
+
+    public String idValue() {
+        return id.value();
+    }
+
+    public ExchangeClaimNumber claimNumber() {
+        return claimNumber;
+    }
+
+    public String claimNumberValue() {
+        return claimNumber.value();
+    }
+
+    public OrderItemId orderItemId() {
+        return orderItemId;
+    }
+
+    public String orderItemIdValue() {
+        return orderItemId.value();
+    }
+
+    public long sellerId() {
+        return sellerId;
+    }
+
+    public int exchangeQty() {
+        return exchangeQty;
+    }
+
+    public ExchangeStatus status() {
+        return status;
+    }
+
+    public ExchangeReason reason() {
+        return reason;
+    }
+
+    public ExchangeOption exchangeOption() {
+        return exchangeOption;
+    }
+
+    public AmountAdjustment amountAdjustment() {
+        return amountAdjustment;
+    }
+
+    public ClaimShipment collectShipment() {
+        return collectShipment;
+    }
+
+    public HoldInfo holdInfo() {
+        return holdInfo;
+    }
+
+    public String linkedOrderId() {
+        return linkedOrderId;
+    }
+
+    public String requestedBy() {
+        return requestedBy;
+    }
+
+    public String processedBy() {
+        return processedBy;
+    }
+
+    public Instant requestedAt() {
+        return requestedAt;
+    }
+
+    public Instant processedAt() {
+        return processedAt;
+    }
+
+    public Instant completedAt() {
+        return completedAt;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
 }

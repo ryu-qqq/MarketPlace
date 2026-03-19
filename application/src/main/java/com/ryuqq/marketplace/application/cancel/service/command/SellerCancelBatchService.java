@@ -9,7 +9,11 @@ import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceFacade
 import com.ryuqq.marketplace.application.cancel.port.in.command.SellerCancelBatchUseCase;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
+import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,20 +34,24 @@ public class SellerCancelBatchService implements SellerCancelBatchUseCase {
     private final CancelCommandFactory commandFactory;
     private final CancelPersistenceFacade persistenceFacade;
     private final OrderItemReadManager orderItemReadManager;
+    private final ShipmentReadManager shipmentReadManager;
 
     public SellerCancelBatchService(
             CancelCommandFactory commandFactory,
             CancelPersistenceFacade persistenceFacade,
-            OrderItemReadManager orderItemReadManager) {
+            OrderItemReadManager orderItemReadManager,
+            ShipmentReadManager shipmentReadManager) {
         this.commandFactory = commandFactory;
         this.persistenceFacade = persistenceFacade;
         this.orderItemReadManager = orderItemReadManager;
+        this.shipmentReadManager = shipmentReadManager;
     }
 
     @Override
     public BatchProcessingResult<String> execute(SellerCancelBatchCommand command) {
         CancelBatchResult batchResult = CancelBatchResult.create("SELLER_CANCEL");
         List<OrderItem> cancelledItems = new ArrayList<>();
+        List<OrderItemId> cancelledOrderItemIds = new ArrayList<>();
 
         for (SellerCancelItem item : command.items()) {
             try {
@@ -53,11 +61,13 @@ public class SellerCancelBatchService implements SellerCancelBatchUseCase {
                 batchResult.addSuccess(bundle.cancel(), bundle.outbox(), bundle.history());
 
                 Optional<OrderItem> orderItem =
-                        orderItemReadManager.findById(item.orderItemId());
-                orderItem.ifPresent(oi -> {
-                    oi.cancel(command.requestedBy(), "판매자 취소", commandFactory.now());
-                    cancelledItems.add(oi);
-                });
+                        orderItemReadManager.findById(OrderItemId.of(item.orderItemId()));
+                orderItem.ifPresent(
+                        oi -> {
+                            oi.cancel(command.requestedBy(), "판매자 취소", commandFactory.now());
+                            cancelledItems.add(oi);
+                            cancelledOrderItemIds.add(OrderItemId.of(item.orderItemId()));
+                        });
             } catch (Exception e) {
                 log.warn(
                         "판매자 취소 생성 실패: orderItemId={}, error={}",
@@ -68,11 +78,32 @@ public class SellerCancelBatchService implements SellerCancelBatchUseCase {
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistAllWithOutboxesAndHistoriesAndOrderItems(
-                    batchResult.cancels(), batchResult.outboxes(),
-                    batchResult.histories(), cancelledItems);
+            List<Shipment> cancelledShipments =
+                    cancelAssociatedShipments(cancelledOrderItemIds, commandFactory.now());
+            persistenceFacade.persistAllWithOutboxesAndHistoriesAndOrderItemsAndShipments(
+                    batchResult.cancels(),
+                    batchResult.outboxes(),
+                    batchResult.histories(),
+                    cancelledItems,
+                    cancelledShipments);
         }
 
         return batchResult.toBatchProcessingResult();
+    }
+
+    private List<Shipment> cancelAssociatedShipments(
+            List<OrderItemId> orderItemIds, java.time.Instant now) {
+        if (orderItemIds.isEmpty()) {
+            return List.of();
+        }
+        List<Shipment> shipments = shipmentReadManager.findByOrderItemIds(orderItemIds);
+        List<Shipment> cancelled = new ArrayList<>();
+        for (Shipment shipment : shipments) {
+            if (shipment.status() == ShipmentStatus.PREPARING) {
+                shipment.cancel(now);
+                cancelled.add(shipment);
+            }
+        }
+        return cancelled;
     }
 }

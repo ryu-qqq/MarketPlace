@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * 레거시 상품그룹 목록 조회 파라미터.
  *
- * <p>Adapter-In에서 전달받은 검색 조건을 담는 Application 레이어 DTO입니다.
- * 카테고리 확장 전 원본 categoryId와 확장 후 categoryIds를 모두 보유합니다.
+ * <p>Adapter-In에서 전달받은 검색 조건을 담는 Application 레이어 DTO입니다. 카테고리 확장 전 원본 categoryId와 확장 후 categoryIds를
+ * 모두 보유합니다.
  *
  * @param sellerId 판매자 ID (null이면 전체)
  * @param brandId 브랜드 ID (null이면 전체)
@@ -63,8 +63,7 @@ public record LegacyProductGroupSearchParams(
             LocalDateTime endDate,
             int page,
             int size) {
-        List<Long> initialCategoryIds =
-                categoryId != null ? List.of(categoryId) : List.of();
+        List<Long> initialCategoryIds = categoryId != null ? List.of(categoryId) : List.of();
         return new LegacyProductGroupSearchParams(
                 sellerId,
                 brandId,

@@ -72,6 +72,42 @@ public final class OrderItemJpaEntityFixtures {
         return IntStream.range(0, count).mapToObj(i -> defaultItem(orderId)).toList();
     }
 
+    /** CONFIRMED 상태의 주문 상품 Entity 생성. 교환/환불 테스트용. */
+    public static OrderItemJpaEntity confirmedItem(String orderId) {
+        Instant now = Instant.now();
+        String itemId = UUID.randomUUID().toString();
+        return OrderItemJpaEntity.create(
+                itemId,
+                "ORD-20240101-0001-001",
+                orderId,
+                DEFAULT_PRODUCT_GROUP_ID,
+                DEFAULT_PRODUCT_ID,
+                DEFAULT_SKU_CODE,
+                null,
+                null,
+                null,
+                null,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
+                DEFAULT_EXTERNAL_OPTION_ID,
+                DEFAULT_EXTERNAL_PRODUCT_NAME,
+                DEFAULT_EXTERNAL_OPTION_NAME,
+                DEFAULT_EXTERNAL_IMAGE_URL,
+                DEFAULT_UNIT_PRICE,
+                DEFAULT_QUANTITY,
+                DEFAULT_TOTAL_AMOUNT,
+                DEFAULT_DISCOUNT_AMOUNT,
+                DEFAULT_PAYMENT_AMOUNT,
+                DEFAULT_RECEIVER_NAME,
+                DEFAULT_RECEIVER_PHONE,
+                DEFAULT_RECEIVER_ZIPCODE,
+                DEFAULT_RECEIVER_ADDRESS,
+                DEFAULT_RECEIVER_ADDRESS_DETAIL,
+                DEFAULT_DELIVERY_REQUEST,
+                "CONFIRMED",
+                now,
+                now);
+    }
+
     /** 가격을 지정한 주문 상품 Entity 생성. */
     public static OrderItemJpaEntity itemWithPrice(String orderId, int unitPrice, int quantity) {
         Instant now = Instant.now();

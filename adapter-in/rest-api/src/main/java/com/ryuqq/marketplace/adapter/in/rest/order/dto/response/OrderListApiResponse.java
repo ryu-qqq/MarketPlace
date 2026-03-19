@@ -82,8 +82,7 @@ public record OrderListApiResponse(
 
     /** 배송 상태. */
     @Schema(description = "배송 상태")
-    public record DeliveryApiResponse(
-            @Schema(description = "주문 상품 상태") String orderItemStatus) {}
+    public record DeliveryApiResponse(@Schema(description = "주문 상품 상태") String orderItemStatus) {}
 
     /** 취소 요약 (배송 전 취소). */
     @Schema(description = "취소 요약")

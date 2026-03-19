@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
 import com.ryuqq.marketplace.application.auth.port.out.client.AuthClient;
 import com.ryuqq.marketplace.application.brandmapping.port.out.query.BrandMappingQueryPort;
 import com.ryuqq.marketplace.application.categorymapping.port.out.query.CategoryMappingQueryPort;
+import com.ryuqq.marketplace.application.claimsync.port.out.client.SalesChannelClaimClient;
 import com.ryuqq.marketplace.application.common.dto.command.ExternalDownloadRequest;
 import com.ryuqq.marketplace.application.common.dto.command.PresignedUploadUrlRequest;
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadResponse;
@@ -21,6 +22,15 @@ import com.ryuqq.marketplace.application.imagetransform.port.out.client.ImageTra
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
+import com.ryuqq.marketplace.application.legacyauth.dto.result.LegacySellerAuthResult;
+import com.ryuqq.marketplace.application.legacyauth.dto.result.LegacyTokenResult;
+import com.ryuqq.marketplace.application.legacyauth.manager.LegacySellerAuthCompositeReadManager;
+import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenCacheReadManager;
+import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenManager;
+import com.ryuqq.marketplace.application.legacyauth.port.out.LegacySellerAuthCompositeQueryPort;
+import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenCacheCommandPort;
+import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenCacheQueryPort;
+import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenClient;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyProductIdMappingReadManager;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyConversionOutboxCommandPort;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyProductIdMappingCommandPort;
@@ -59,7 +69,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -678,6 +687,108 @@ public class StubExternalClientConfig {
         };
     }
 
+    // ===== ClaimSync 외부 채널 클라이언트 Stub =====
+
+    @Bean
+    @Primary
+    public SalesChannelClaimClient stubSalesChannelClaimClient() {
+        return new SalesChannelClaimClient() {
+            @Override
+            public boolean supports(String channelCode) {
+                return true;
+            }
+
+            @Override
+            public java.util.List<
+                            com.ryuqq.marketplace.application.claimsync.dto.external
+                                    .ExternalClaimPayload>
+                    fetchClaimChanges(
+                            long salesChannelId,
+                            long shopId,
+                            com.ryuqq.marketplace.domain.shop.vo.ShopCredentials credentials,
+                            java.time.Instant fromTime,
+                            java.time.Instant toTime) {
+                return Collections.emptyList();
+            }
+        };
+    }
+
+    // ===== LegacyAuth Stubs =====
+
+    @Bean
+    @Primary
+    public LegacyTokenClient stubLegacyTokenClient() {
+        return new LegacyTokenClient() {
+            @Override
+            public LegacyTokenResult generateToken(String email, long sellerId, String roleType) {
+                return new LegacyTokenResult(
+                        "stub-legacy-access-token", "stub-legacy-refresh-token", email, 3600L);
+            }
+
+            @Override
+            public String extractSubject(String token) {
+                return "stub@example.com";
+            }
+
+            @Override
+            public boolean isValid(String token) {
+                return true;
+            }
+
+            @Override
+            public boolean isExpired(String token) {
+                return false;
+            }
+        };
+    }
+
+    /**
+     * LegacyTokenManager는 @ConditionalOnBean(LegacyTokenClient.class)로 선언되어 있으나 TestConfiguration
+     * 로딩 순서 문제로 자동 생성이 안 될 수 있습니다. 명시적으로 등록하여 SecurityConfig의 legacyJwtAuthenticationFilter 의존성을
+     * 충족합니다.
+     */
+    @Bean
+    @Primary
+    public LegacyTokenManager stubLegacyTokenManager(LegacyTokenClient legacyTokenClient) {
+        return new LegacyTokenManager(legacyTokenClient);
+    }
+
+    @Bean
+    @Primary
+    public LegacySellerAuthCompositeQueryPort stubLegacySellerAuthCompositeQueryPort() {
+        return email ->
+                java.util.Optional.of(
+                        new LegacySellerAuthResult(10L, email, "stub-hash", "MASTER", "APPROVED"));
+    }
+
+    @Bean
+    @Primary
+    public LegacySellerAuthCompositeReadManager stubLegacySellerAuthCompositeReadManager(
+            LegacySellerAuthCompositeQueryPort queryPort) {
+        return new LegacySellerAuthCompositeReadManager(queryPort);
+    }
+
+    @Bean
+    @Primary
+    public LegacyTokenCacheQueryPort stubLegacyTokenCacheQueryPort() {
+        return email -> java.util.Optional.empty();
+    }
+
+    @Bean
+    @Primary
+    public LegacyTokenCacheCommandPort stubLegacyTokenCacheCommandPort() {
+        return (email, refreshToken, expiresInSeconds) -> {
+            // stub: no-op
+        };
+    }
+
+    @Bean
+    @Primary
+    public LegacyTokenCacheReadManager stubLegacyTokenCacheReadManager(
+            LegacyTokenCacheQueryPort cacheQueryPort) {
+        return new LegacyTokenCacheReadManager(cacheQueryPort);
+    }
+
     // ===== ImageVariantSync Stubs =====
 
     @Bean
@@ -696,6 +807,78 @@ public class StubExternalClientConfig {
     public com.ryuqq.marketplace.application.common.port.out.InternalImageUrlChecker
             stubInternalImageUrlChecker() {
         return url -> false;
+    }
+
+    // ===== Naver Commerce Adapter Stubs (ConditionalOnProperty 회피) =====
+    // NaverCancelClaimSyncStrategy / NaverRefundClaimSyncStrategy 가 @Component로 선언되어
+    // ConditionalOnProperty 없이 항상 등록되려 하므로, 의존 Adapter stub을 제공합니다.
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.adapter.out.client.naver.adapter.NaverCommerceCancelClientAdapter
+            stubNaverCommerceCancelClientAdapter() {
+        return new com.ryuqq.marketplace.adapter.out.client.naver.adapter
+                .NaverCommerceCancelClientAdapter(null, null) {
+            @Override
+            public com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse
+                    requestCancel(
+                            String productOrderId,
+                            com.ryuqq.marketplace.adapter.out.client.naver.dto.order
+                                            .NaverCancelRequest
+                                    request) {
+                return null;
+            }
+
+            @Override
+            public com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse
+                    approveCancel(String productOrderId) {
+                return null;
+            }
+        };
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.adapter.out.client.naver.adapter.NaverCommerceReturnClientAdapter
+            stubNaverCommerceReturnClientAdapter() {
+        return new com.ryuqq.marketplace.adapter.out.client.naver.adapter
+                .NaverCommerceReturnClientAdapter(null, null) {
+            @Override
+            public com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse
+                    requestReturn(
+                            String productOrderId,
+                            com.ryuqq.marketplace.adapter.out.client.naver.dto.order
+                                            .NaverReturnRequest
+                                    request) {
+                return null;
+            }
+
+            @Override
+            public com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse
+                    approveReturn(String productOrderId) {
+                return null;
+            }
+
+            @Override
+            public com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse
+                    rejectReturn(
+                            String productOrderId,
+                            com.ryuqq.marketplace.adapter.out.client.naver.dto.order
+                                            .NaverReturnRejectRequest
+                                    request) {
+                return null;
+            }
+
+            @Override
+            public void holdbackReturn(String productOrderId) {
+                // stub: no-op
+            }
+
+            @Override
+            public void releaseReturnHoldback(String productOrderId) {
+                // stub: no-op
+            }
+        };
     }
 
     // ===== InboundOrder 외부 채널 클라이언트 Stub =====

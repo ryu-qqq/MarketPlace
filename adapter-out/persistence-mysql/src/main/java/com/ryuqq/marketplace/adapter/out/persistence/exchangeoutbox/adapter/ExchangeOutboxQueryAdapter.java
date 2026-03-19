@@ -34,9 +34,9 @@ public class ExchangeOutboxQueryAdapter implements ExchangeOutboxQueryPort {
     }
 
     @Override
-    public List<ExchangeOutbox> findProcessingTimeoutOutboxes(Instant timeoutBefore, int batchSize) {
-        return queryDslRepository
-                .findProcessingTimeoutOutboxes(timeoutBefore, batchSize).stream()
+    public List<ExchangeOutbox> findProcessingTimeoutOutboxes(
+            Instant timeoutBefore, int batchSize) {
+        return queryDslRepository.findProcessingTimeoutOutboxes(timeoutBefore, batchSize).stream()
                 .map(mapper::toDomain)
                 .toList();
     }

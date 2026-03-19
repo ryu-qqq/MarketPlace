@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 셀러 인증 정보 복합 조회 Adapter.
  *
- * <p>{@link LegacySellerAuthCompositeQueryPort}의 구현체.
- * Repository에서 QueryDto로 조회 → Mapper에서 Application DTO로 변환.
+ * <p>{@link LegacySellerAuthCompositeQueryPort}의 구현체. Repository에서 QueryDto로 조회 → Mapper에서
+ * Application DTO로 변환.
  */
 @Component
 public class LegacySellerAuthCompositeQueryAdapter implements LegacySellerAuthCompositeQueryPort {

@@ -21,7 +21,8 @@ class ExchangeOptionTest {
         @DisplayName("유효한 파라미터로 생성한다")
         void createWithValidParams() {
             // when
-            ExchangeOption option = new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 2);
+            ExchangeOption option =
+                    new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 2);
 
             // then
             assertThat(option.originalProductId()).isEqualTo(1000L);
@@ -63,7 +64,10 @@ class ExchangeOptionTest {
         @DisplayName("quantity가 0이면 예외가 발생한다")
         void createWithZeroQuantity_ThrowsException() {
             // when & then
-            assertThatThrownBy(() -> new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 0))
+            assertThatThrownBy(
+                            () ->
+                                    new ExchangeOption(
+                                            1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 0))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("수량은 1 이상이어야 합니다");
         }
@@ -72,7 +76,10 @@ class ExchangeOptionTest {
         @DisplayName("quantity가 음수이면 예외가 발생한다")
         void createWithNegativeQuantity_ThrowsException() {
             // when & then
-            assertThatThrownBy(() -> new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", -1))
+            assertThatThrownBy(
+                            () ->
+                                    new ExchangeOption(
+                                            1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", -1))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("수량은 1 이상이어야 합니다");
         }
@@ -86,8 +93,10 @@ class ExchangeOptionTest {
         @DisplayName("같은 값이면 동일하다")
         void sameValuesAreEqual() {
             // given
-            ExchangeOption option1 = new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1);
-            ExchangeOption option2 = new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1);
+            ExchangeOption option1 =
+                    new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1);
+            ExchangeOption option2 =
+                    new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1);
 
             // then
             assertThat(option1).isEqualTo(option2);
@@ -98,8 +107,10 @@ class ExchangeOptionTest {
         @DisplayName("targetSkuCode가 다르면 동일하지 않다")
         void differentTargetSkuCodeIsNotEqual() {
             // given
-            ExchangeOption option1 = new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1);
-            ExchangeOption option2 = new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-BLUE-XL", 1);
+            ExchangeOption option1 =
+                    new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1);
+            ExchangeOption option2 =
+                    new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-BLUE-XL", 1);
 
             // then
             assertThat(option1).isNotEqualTo(option2);
@@ -109,8 +120,10 @@ class ExchangeOptionTest {
         @DisplayName("quantity가 다르면 동일하지 않다")
         void differentQuantityIsNotEqual() {
             // given
-            ExchangeOption option1 = new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1);
-            ExchangeOption option2 = new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 2);
+            ExchangeOption option1 =
+                    new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1);
+            ExchangeOption option2 =
+                    new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 2);
 
             // then
             assertThat(option1).isNotEqualTo(option2);

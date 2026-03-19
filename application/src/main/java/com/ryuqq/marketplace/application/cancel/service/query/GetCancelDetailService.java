@@ -32,8 +32,7 @@ public class GetCancelDetailService implements GetCancelDetailUseCase {
     @Override
     public CancelDetailResult execute(String cancelId) {
         Cancel cancel = cancelReadManager.getById(CancelId.of(cancelId));
-        List<ClaimHistory> histories =
-                historyReadManager.findByClaimId(ClaimType.CANCEL, cancelId);
+        List<ClaimHistory> histories = historyReadManager.findByClaimId(ClaimType.CANCEL, cancelId);
         return assembler.toDetailResult(cancel, histories);
     }
 }

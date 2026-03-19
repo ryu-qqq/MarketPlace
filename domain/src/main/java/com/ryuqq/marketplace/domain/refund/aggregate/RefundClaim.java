@@ -95,9 +95,23 @@ public class RefundClaim {
         validateRefundQty(refundQty);
         RefundClaim claim =
                 new RefundClaim(
-                        id, claimNumber, orderItemId, sellerId, refundQty,
-                        RefundStatus.REQUESTED, reason, null, null, null,
-                        requestedBy, null, now, null, null, now, now);
+                        id,
+                        claimNumber,
+                        orderItemId,
+                        sellerId,
+                        refundQty,
+                        RefundStatus.REQUESTED,
+                        reason,
+                        null,
+                        null,
+                        null,
+                        requestedBy,
+                        null,
+                        now,
+                        null,
+                        null,
+                        now,
+                        now);
         claim.registerEvent(new RefundClaimCreatedEvent(id, orderItemId, now));
         return claim;
     }
@@ -121,10 +135,23 @@ public class RefundClaim {
             Instant createdAt,
             Instant updatedAt) {
         return new RefundClaim(
-                id, claimNumber, orderItemId, sellerId, refundQty,
-                status, reason, refundInfo, collectShipment, holdInfo,
-                requestedBy, processedBy, requestedAt, processedAt, completedAt,
-                createdAt, updatedAt);
+                id,
+                claimNumber,
+                orderItemId,
+                sellerId,
+                refundQty,
+                status,
+                reason,
+                refundInfo,
+                collectShipment,
+                holdInfo,
+                requestedBy,
+                processedBy,
+                requestedAt,
+                processedAt,
+                completedAt,
+                createdAt,
+                updatedAt);
     }
 
     public void startCollecting(String processedBy, Instant now) {
@@ -136,7 +163,8 @@ public class RefundClaim {
         this.updatedAt = now;
         registerEvent(new RefundCollectingEvent(id, orderItemId, now));
         registerEvent(
-                new RefundClaimStatusChangedEvent(id, orderItemId, from, RefundStatus.COLLECTING, now));
+                new RefundClaimStatusChangedEvent(
+                        id, orderItemId, from, RefundStatus.COLLECTING, now));
     }
 
     public void completeCollection(String processedBy, Instant now) {
@@ -147,7 +175,8 @@ public class RefundClaim {
         this.updatedAt = now;
         registerEvent(new RefundCollectedEvent(id, orderItemId, now));
         registerEvent(
-                new RefundClaimStatusChangedEvent(id, orderItemId, from, RefundStatus.COLLECTED, now));
+                new RefundClaimStatusChangedEvent(
+                        id, orderItemId, from, RefundStatus.COLLECTED, now));
     }
 
     public void complete(RefundInfo refundInfo, String processedBy, Instant now) {
@@ -160,7 +189,8 @@ public class RefundClaim {
         this.updatedAt = now;
         registerEvent(new RefundCompletedEvent(id, orderItemId, now));
         registerEvent(
-                new RefundClaimStatusChangedEvent(id, orderItemId, from, RefundStatus.COMPLETED, now));
+                new RefundClaimStatusChangedEvent(
+                        id, orderItemId, from, RefundStatus.COMPLETED, now));
     }
 
     public void reject(String processedBy, Instant now) {
@@ -172,7 +202,8 @@ public class RefundClaim {
         this.updatedAt = now;
         registerEvent(new RefundRejectedEvent(id, orderItemId, now));
         registerEvent(
-                new RefundClaimStatusChangedEvent(id, orderItemId, from, RefundStatus.REJECTED, now));
+                new RefundClaimStatusChangedEvent(
+                        id, orderItemId, from, RefundStatus.REJECTED, now));
     }
 
     public void cancel(Instant now) {
@@ -182,7 +213,8 @@ public class RefundClaim {
         this.updatedAt = now;
         registerEvent(new RefundCancelledEvent(id, orderItemId, now));
         registerEvent(
-                new RefundClaimStatusChangedEvent(id, orderItemId, from, RefundStatus.CANCELLED, now));
+                new RefundClaimStatusChangedEvent(
+                        id, orderItemId, from, RefundStatus.CANCELLED, now));
     }
 
     public void hold(String holdReason, Instant now) {
@@ -220,8 +252,7 @@ public class RefundClaim {
 
     private static void validateRefundQty(int refundQty) {
         if (refundQty <= 0) {
-            throw new RefundException(
-                    RefundErrorCode.INVALID_REFUND_QTY, "환불 수량은 1 이상이어야 합니다");
+            throw new RefundException(RefundErrorCode.INVALID_REFUND_QTY, "환불 수량은 1 이상이어야 합니다");
         }
     }
 
@@ -239,24 +270,83 @@ public class RefundClaim {
         return holdInfo != null;
     }
 
-    public RefundClaimId id() { return id; }
-    public String idValue() { return id.value(); }
-    public RefundClaimNumber claimNumber() { return claimNumber; }
-    public String claimNumberValue() { return claimNumber.value(); }
-    public OrderItemId orderItemId() { return orderItemId; }
-    public String orderItemIdValue() { return orderItemId.value(); }
-    public long sellerId() { return sellerId; }
-    public int refundQty() { return refundQty; }
-    public RefundStatus status() { return status; }
-    public RefundReason reason() { return reason; }
-    public RefundInfo refundInfo() { return refundInfo; }
-    public ClaimShipment collectShipment() { return collectShipment; }
-    public HoldInfo holdInfo() { return holdInfo; }
-    public String requestedBy() { return requestedBy; }
-    public String processedBy() { return processedBy; }
-    public Instant requestedAt() { return requestedAt; }
-    public Instant processedAt() { return processedAt; }
-    public Instant completedAt() { return completedAt; }
-    public Instant createdAt() { return createdAt; }
-    public Instant updatedAt() { return updatedAt; }
+    public RefundClaimId id() {
+        return id;
+    }
+
+    public String idValue() {
+        return id.value();
+    }
+
+    public RefundClaimNumber claimNumber() {
+        return claimNumber;
+    }
+
+    public String claimNumberValue() {
+        return claimNumber.value();
+    }
+
+    public OrderItemId orderItemId() {
+        return orderItemId;
+    }
+
+    public String orderItemIdValue() {
+        return orderItemId.value();
+    }
+
+    public long sellerId() {
+        return sellerId;
+    }
+
+    public int refundQty() {
+        return refundQty;
+    }
+
+    public RefundStatus status() {
+        return status;
+    }
+
+    public RefundReason reason() {
+        return reason;
+    }
+
+    public RefundInfo refundInfo() {
+        return refundInfo;
+    }
+
+    public ClaimShipment collectShipment() {
+        return collectShipment;
+    }
+
+    public HoldInfo holdInfo() {
+        return holdInfo;
+    }
+
+    public String requestedBy() {
+        return requestedBy;
+    }
+
+    public String processedBy() {
+        return processedBy;
+    }
+
+    public Instant requestedAt() {
+        return requestedAt;
+    }
+
+    public Instant processedAt() {
+        return processedAt;
+    }
+
+    public Instant completedAt() {
+        return completedAt;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
 }

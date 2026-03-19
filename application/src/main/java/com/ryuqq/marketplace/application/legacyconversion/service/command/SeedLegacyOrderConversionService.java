@@ -26,7 +26,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class SeedLegacyOrderConversionService implements SeedLegacyOrderConversionUseCase {
 
-    private static final Logger log = LoggerFactory.getLogger(SeedLegacyOrderConversionService.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(SeedLegacyOrderConversionService.class);
 
     private final LegacyOrderIdScanPort scanPort;
     private final LegacyOrderIdMappingReadManager mappingReadManager;
@@ -43,7 +44,8 @@ public class SeedLegacyOrderConversionService implements SeedLegacyOrderConversi
 
     @Override
     public SeedLegacyOrderConversionResult execute(long cursorAfterOrderId, int batchSize) {
-        List<LegacyOrderScanEntry> entries = scanPort.findActiveOrderEntries(cursorAfterOrderId, batchSize);
+        List<LegacyOrderScanEntry> entries =
+                scanPort.findActiveOrderEntries(cursorAfterOrderId, batchSize);
 
         if (entries.isEmpty()) {
             log.info("전체 스캔 완료, 더 이상 활성 주문 없음");
@@ -74,6 +76,7 @@ public class SeedLegacyOrderConversionService implements SeedLegacyOrderConversi
                 skipped,
                 lastCursor);
 
-        return SeedLegacyOrderConversionResult.of(entries.size(), newEntries.size(), skipped, lastCursor);
+        return SeedLegacyOrderConversionResult.of(
+                entries.size(), newEntries.size(), skipped, lastCursor);
     }
 }

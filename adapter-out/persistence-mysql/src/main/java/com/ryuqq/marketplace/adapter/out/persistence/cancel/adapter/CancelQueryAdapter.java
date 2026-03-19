@@ -39,16 +39,12 @@ public class CancelQueryAdapter implements CancelQueryPort {
     @Override
     public List<Cancel> findByOrderItemIds(List<OrderItemId> orderItemIds) {
         List<String> ids = orderItemIds.stream().map(OrderItemId::value).toList();
-        return cancelRepository.findByOrderItemIds(ids).stream()
-                .map(mapper::toDomain)
-                .toList();
+        return cancelRepository.findByOrderItemIds(ids).stream().map(mapper::toDomain).toList();
     }
 
     @Override
     public List<Cancel> findByCriteria(CancelSearchCriteria criteria) {
-        return cancelRepository.findByCriteria(criteria).stream()
-                .map(mapper::toDomain)
-                .toList();
+        return cancelRepository.findByCriteria(criteria).stream().map(mapper::toDomain).toList();
     }
 
     @Override

@@ -25,9 +25,7 @@ public record LegacySearchProductGroupByOffsetApiRequest(
         @Parameter(description = "판매자 ID") Long sellerId,
         @Parameter(description = "품절 여부 (Y/N)") String soldOutYn,
         @Parameter(description = "노출 여부 (Y/N)") String displayYn,
-        @Parameter(
-                        description =
-                                "검색 유형 (PRODUCT_GROUP_NAME, PRODUCT_GROUP_ID, INSERT_OPERATOR 등)")
+        @Parameter(description = "검색 유형 (PRODUCT_GROUP_NAME, PRODUCT_GROUP_ID, INSERT_OPERATOR 등)")
                 String searchKeyword,
         @Parameter(description = "검색어") String searchWord,
         @Parameter(description = "최소 판매가") Long minSalePrice,

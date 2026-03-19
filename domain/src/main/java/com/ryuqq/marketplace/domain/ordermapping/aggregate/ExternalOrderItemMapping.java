@@ -87,13 +87,39 @@ public class ExternalOrderItemMapping {
         }
     }
 
-    public ExternalOrderItemMappingId id() { return id; }
-    public long idValue() { return id.value(); }
-    public long salesChannelId() { return salesChannelId; }
-    public String channelCode() { return channelCode; }
-    public String externalOrderId() { return externalOrderId; }
-    public String externalProductOrderId() { return externalProductOrderId; }
-    public OrderItemId orderItemId() { return orderItemId; }
-    public String orderItemIdValue() { return orderItemId.value(); }
-    public Instant createdAt() { return createdAt; }
+    public ExternalOrderItemMappingId id() {
+        return id;
+    }
+
+    public long idValue() {
+        return id.value();
+    }
+
+    public long salesChannelId() {
+        return salesChannelId;
+    }
+
+    public String channelCode() {
+        return channelCode;
+    }
+
+    public String externalOrderId() {
+        return externalOrderId;
+    }
+
+    public String externalProductOrderId() {
+        return externalProductOrderId;
+    }
+
+    public OrderItemId orderItemId() {
+        return orderItemId;
+    }
+
+    public String orderItemIdValue() {
+        return orderItemId.value();
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
 }

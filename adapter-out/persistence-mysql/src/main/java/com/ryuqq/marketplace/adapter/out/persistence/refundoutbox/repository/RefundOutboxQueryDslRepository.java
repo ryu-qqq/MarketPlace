@@ -12,7 +12,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RefundOutboxQueryDslRepository {
 
-    private static final QRefundOutboxJpaEntity outbox = QRefundOutboxJpaEntity.refundOutboxJpaEntity;
+    private static final QRefundOutboxJpaEntity outbox =
+            QRefundOutboxJpaEntity.refundOutboxJpaEntity;
     private static final long MAX_FETCH_SIZE = 1000L;
 
     private final JPAQueryFactory queryFactory;
@@ -28,7 +29,9 @@ public class RefundOutboxQueryDslRepository {
         long limit = Math.min(batchSize, MAX_FETCH_SIZE);
         return queryFactory
                 .selectFrom(outbox)
-                .where(conditionBuilder.statusPending(), conditionBuilder.createdAtBefore(beforeTime))
+                .where(
+                        conditionBuilder.statusPending(),
+                        conditionBuilder.createdAtBefore(beforeTime))
                 .orderBy(outbox.createdAt.asc())
                 .limit(limit)
                 .fetch();

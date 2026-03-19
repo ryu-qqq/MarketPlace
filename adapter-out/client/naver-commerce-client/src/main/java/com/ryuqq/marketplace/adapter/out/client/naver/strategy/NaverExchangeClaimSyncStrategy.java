@@ -18,6 +18,7 @@ import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
 import com.ryuqq.marketplace.domain.exchange.outbox.vo.ExchangeOutboxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,10 +33,10 @@ import org.springframework.stereotype.Component;
  * </ul>
  */
 @Component
+@ConditionalOnBean(NaverCommerceExchangeClientAdapter.class)
 public class NaverExchangeClaimSyncStrategy implements ExchangeClaimSyncStrategy {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(NaverExchangeClaimSyncStrategy.class);
+    private static final Logger log = LoggerFactory.getLogger(NaverExchangeClaimSyncStrategy.class);
 
     private final NaverCommerceExchangeClientAdapter exchangeClient;
     private final ExternalOrderItemMappingQueryPort mappingQueryPort;
@@ -67,8 +68,7 @@ public class NaverExchangeClaimSyncStrategy implements ExchangeClaimSyncStrategy
                             NaverExchangeReDeliveryRequest request =
                                     new NaverExchangeReDeliveryRequest(
                                             "DELIVERY", deliveryCompany, trackingNumber);
-                            yield exchangeClient.reDeliverExchange(
-                                    externalProductOrderId, request);
+                            yield exchangeClient.reDeliverExchange(externalProductOrderId, request);
                         }
                         case REJECT -> {
                             NaverExchangeRejectRequest request =

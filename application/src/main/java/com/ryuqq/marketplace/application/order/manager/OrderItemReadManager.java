@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.order.manager;
 
 import com.ryuqq.marketplace.application.order.port.out.query.OrderItemQueryPort;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.List;
 import java.util.Map;
@@ -20,12 +21,12 @@ public class OrderItemReadManager {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderItem> findAllByIds(List<String> orderItemIds) {
+    public List<OrderItem> findAllByIds(List<OrderItemId> orderItemIds) {
         return queryPort.findAllByIds(orderItemIds);
     }
 
     @Transactional(readOnly = true)
-    public Optional<OrderItem> findById(String orderItemId) {
+    public Optional<OrderItem> findById(OrderItemId orderItemId) {
         return queryPort.findAllByIds(List.of(orderItemId)).stream().findFirst();
     }
 

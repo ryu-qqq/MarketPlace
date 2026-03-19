@@ -96,7 +96,8 @@ public final class RefundClaimJpaEntityFixtures {
     }
 
     /** REQUESTED 상태 Entity 생성 (ID + orderItemId + sellerId 지정). */
-    public static RefundClaimJpaEntity requestedEntity(String id, String orderItemId, long sellerId) {
+    public static RefundClaimJpaEntity requestedEntity(
+            String id, String orderItemId, long sellerId) {
         Instant now = Instant.now();
         return RefundClaimJpaEntity.create(
                 id,

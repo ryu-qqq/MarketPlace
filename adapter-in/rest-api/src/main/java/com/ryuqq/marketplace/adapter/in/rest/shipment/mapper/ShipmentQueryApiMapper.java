@@ -168,5 +168,4 @@ public class ShipmentQueryApiMapper {
                 DateTimeFormatUtils.formatIso8601(info.paidAt()),
                 DateTimeFormatUtils.formatIso8601(info.canceledAt()));
     }
-
 }

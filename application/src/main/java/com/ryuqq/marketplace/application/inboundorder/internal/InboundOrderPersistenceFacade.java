@@ -54,9 +54,8 @@ public class InboundOrderPersistenceFacade {
     /**
      * InboundOrder의 아이템과 Order의 아이템을 인덱스 기반으로 매칭하여 ExternalOrderItemMapping 목록을 생성한다.
      *
-     * <p>매칭 보장 근거:
-     * - InboundOrderConversionFactory: inbound.items().stream().map(...).toList() 순서 유지
-     * - OrderCommandFactory: for 루프로 command.items().get(i) 순서대로 OrderItem 생성
+     * <p>매칭 보장 근거: - InboundOrderConversionFactory: inbound.items().stream().map(...).toList() 순서
+     * 유지 - OrderCommandFactory: for 루프로 command.items().get(i) 순서대로 OrderItem 생성
      */
     private List<ExternalOrderItemMapping> createMappings(
             Order order, InboundOrder inboundOrder, Instant now) {

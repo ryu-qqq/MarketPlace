@@ -4,10 +4,12 @@ import com.ryuqq.marketplace.application.cancel.manager.CancelCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxCommandManager;
 import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
+import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,16 +26,19 @@ public class CancelPersistenceFacade {
     private final CancelOutboxCommandManager outboxCommandManager;
     private final ClaimHistoryCommandManager historyCommandManager;
     private final OrderItemCommandManager orderItemCommandManager;
+    private final ShipmentCommandManager shipmentCommandManager;
 
     public CancelPersistenceFacade(
             CancelCommandManager cancelCommandManager,
             CancelOutboxCommandManager outboxCommandManager,
             ClaimHistoryCommandManager historyCommandManager,
-            OrderItemCommandManager orderItemCommandManager) {
+            OrderItemCommandManager orderItemCommandManager,
+            ShipmentCommandManager shipmentCommandManager) {
         this.cancelCommandManager = cancelCommandManager;
         this.outboxCommandManager = outboxCommandManager;
         this.historyCommandManager = historyCommandManager;
         this.orderItemCommandManager = orderItemCommandManager;
+        this.shipmentCommandManager = shipmentCommandManager;
     }
 
     /** Cancel + Outbox 단건 저장. */
@@ -53,9 +58,7 @@ public class CancelPersistenceFacade {
     /** Cancel + Outbox + History 일괄 저장 (신규 생성 시). */
     @Transactional
     public void persistAllWithOutboxesAndHistories(
-            List<Cancel> cancels,
-            List<CancelOutbox> outboxes,
-            List<ClaimHistory> histories) {
+            List<Cancel> cancels, List<CancelOutbox> outboxes, List<ClaimHistory> histories) {
         cancelCommandManager.persistAll(cancels);
         outboxCommandManager.persistAll(outboxes);
         historyCommandManager.persistAll(histories);
@@ -68,10 +71,25 @@ public class CancelPersistenceFacade {
             List<CancelOutbox> outboxes,
             List<ClaimHistory> histories,
             List<OrderItem> orderItems) {
+        persistAllWithOutboxesAndHistoriesAndOrderItemsAndShipments(
+                cancels, outboxes, histories, orderItems, List.of());
+    }
+
+    /** Cancel + Outbox + History + OrderItem + Shipment 일괄 저장 (신규 생성 + OrderItem/Shipment 취소). */
+    @Transactional
+    public void persistAllWithOutboxesAndHistoriesAndOrderItemsAndShipments(
+            List<Cancel> cancels,
+            List<CancelOutbox> outboxes,
+            List<ClaimHistory> histories,
+            List<OrderItem> orderItems,
+            List<Shipment> cancelledShipments) {
         cancelCommandManager.persistAll(cancels);
         outboxCommandManager.persistAll(outboxes);
         historyCommandManager.persistAll(histories);
         orderItemCommandManager.persistAll(orderItems);
+        if (!cancelledShipments.isEmpty()) {
+            shipmentCommandManager.persistAll(cancelledShipments);
+        }
     }
 
     /** Cancel만 일괄 저장 + Outbox 일괄 저장 (승인/거절 시). */
@@ -84,9 +102,7 @@ public class CancelPersistenceFacade {
     /** Cancel + Outbox + History 일괄 저장 (승인/거절 시). */
     @Transactional
     public void persistCancelsWithOutboxesAndHistories(
-            List<Cancel> cancels,
-            List<CancelOutbox> outboxes,
-            List<ClaimHistory> histories) {
+            List<Cancel> cancels, List<CancelOutbox> outboxes, List<ClaimHistory> histories) {
         cancelCommandManager.persistAll(cancels);
         outboxCommandManager.persistAll(outboxes);
         historyCommandManager.persistAll(histories);
@@ -99,9 +115,24 @@ public class CancelPersistenceFacade {
             List<CancelOutbox> outboxes,
             List<ClaimHistory> histories,
             List<OrderItem> orderItems) {
+        persistCancelsWithOutboxesAndHistoriesAndOrderItemsAndShipments(
+                cancels, outboxes, histories, orderItems, List.of());
+    }
+
+    /** Cancel + Outbox + History + OrderItem + Shipment 일괄 저장 (승인 시 OrderItem/Shipment 취소). */
+    @Transactional
+    public void persistCancelsWithOutboxesAndHistoriesAndOrderItemsAndShipments(
+            List<Cancel> cancels,
+            List<CancelOutbox> outboxes,
+            List<ClaimHistory> histories,
+            List<OrderItem> orderItems,
+            List<Shipment> cancelledShipments) {
         cancelCommandManager.persistAll(cancels);
         outboxCommandManager.persistAll(outboxes);
         historyCommandManager.persistAll(histories);
         orderItemCommandManager.persistAll(orderItems);
+        if (!cancelledShipments.isEmpty()) {
+            shipmentCommandManager.persistAll(cancelledShipments);
+        }
     }
 }

@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CancelOutboxConditionBuilder {
 
-    private static final QCancelOutboxJpaEntity outbox = QCancelOutboxJpaEntity.cancelOutboxJpaEntity;
+    private static final QCancelOutboxJpaEntity outbox =
+            QCancelOutboxJpaEntity.cancelOutboxJpaEntity;
 
     public BooleanExpression statusPending() {
         return outbox.status.eq("PENDING");

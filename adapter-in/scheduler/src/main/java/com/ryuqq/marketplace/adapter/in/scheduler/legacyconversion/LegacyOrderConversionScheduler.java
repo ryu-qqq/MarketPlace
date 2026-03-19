@@ -24,8 +24,7 @@ import org.springframework.stereotype.Component;
         matchIfMissing = false)
 public class LegacyOrderConversionScheduler {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(LegacyOrderConversionScheduler.class);
+    private static final Logger log = LoggerFactory.getLogger(LegacyOrderConversionScheduler.class);
 
     private final ConvertLegacyOrdersUseCase convertUseCase;
     private final RecoverLegacyOrderConversionTimeoutUseCase recoverTimeoutUseCase;

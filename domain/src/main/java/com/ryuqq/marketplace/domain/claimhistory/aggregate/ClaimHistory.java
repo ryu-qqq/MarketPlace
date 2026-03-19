@@ -48,7 +48,8 @@ public class ClaimHistory {
             Instant now) {
         String title = resolveStatusChangeTitle(toStatus);
         String message = fromStatus + " → " + toStatus;
-        return new ClaimHistory(id, claimType, claimId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
+        return new ClaimHistory(
+                id, claimType, claimId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
     }
 
     /** 수기 메모 이력 생성. */
@@ -59,7 +60,8 @@ public class ClaimHistory {
             String message,
             Actor actor,
             Instant now) {
-        return new ClaimHistory(id, claimType, claimId, ClaimHistoryType.MANUAL, "CS 메모", message, actor, now);
+        return new ClaimHistory(
+                id, claimType, claimId, ClaimHistoryType.MANUAL, "CS 메모", message, actor, now);
     }
 
     /** DB에서 복원. */
@@ -72,7 +74,8 @@ public class ClaimHistory {
             String message,
             Actor actor,
             Instant createdAt) {
-        return new ClaimHistory(id, claimType, claimId, historyType, title, message, actor, createdAt);
+        return new ClaimHistory(
+                id, claimType, claimId, historyType, title, message, actor, createdAt);
     }
 
     private static String resolveStatusChangeTitle(String toStatus) {
@@ -90,13 +93,39 @@ public class ClaimHistory {
         };
     }
 
-    public ClaimHistoryId id() { return id; }
-    public String idValue() { return id.value(); }
-    public ClaimType claimType() { return claimType; }
-    public String claimId() { return claimId; }
-    public ClaimHistoryType historyType() { return historyType; }
-    public String title() { return title; }
-    public String message() { return message; }
-    public Actor actor() { return actor; }
-    public Instant createdAt() { return createdAt; }
+    public ClaimHistoryId id() {
+        return id;
+    }
+
+    public String idValue() {
+        return id.value();
+    }
+
+    public ClaimType claimType() {
+        return claimType;
+    }
+
+    public String claimId() {
+        return claimId;
+    }
+
+    public ClaimHistoryType historyType() {
+        return historyType;
+    }
+
+    public String title() {
+        return title;
+    }
+
+    public String message() {
+        return message;
+    }
+
+    public Actor actor() {
+        return actor;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
 }

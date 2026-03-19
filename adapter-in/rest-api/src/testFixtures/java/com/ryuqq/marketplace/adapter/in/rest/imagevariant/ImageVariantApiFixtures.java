@@ -56,10 +56,18 @@ public final class ImageVariantApiFixtures {
 
     public static ImageVariantResult imageVariantResult(ImageVariantType type) {
         return switch (type) {
-            case SMALL_WEBP -> new ImageVariantResult(type, DEFAULT_RESULT_ASSET_ID, DEFAULT_SMALL_URL, 300, 300);
-            case MEDIUM_WEBP -> new ImageVariantResult(type, DEFAULT_RESULT_ASSET_ID, DEFAULT_MEDIUM_URL, 600, 600);
-            case LARGE_WEBP -> new ImageVariantResult(type, DEFAULT_RESULT_ASSET_ID, DEFAULT_LARGE_URL, 1200, 1200);
-            case ORIGINAL_WEBP -> new ImageVariantResult(type, DEFAULT_RESULT_ASSET_ID, DEFAULT_ORIGINAL_URL, null, null);
+            case SMALL_WEBP ->
+                    new ImageVariantResult(
+                            type, DEFAULT_RESULT_ASSET_ID, DEFAULT_SMALL_URL, 300, 300);
+            case MEDIUM_WEBP ->
+                    new ImageVariantResult(
+                            type, DEFAULT_RESULT_ASSET_ID, DEFAULT_MEDIUM_URL, 600, 600);
+            case LARGE_WEBP ->
+                    new ImageVariantResult(
+                            type, DEFAULT_RESULT_ASSET_ID, DEFAULT_LARGE_URL, 1200, 1200);
+            case ORIGINAL_WEBP ->
+                    new ImageVariantResult(
+                            type, DEFAULT_RESULT_ASSET_ID, DEFAULT_ORIGINAL_URL, null, null);
         };
     }
 

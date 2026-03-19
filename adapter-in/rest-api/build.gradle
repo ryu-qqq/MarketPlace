@@ -61,6 +61,7 @@ dependencies {
     testImplementation libs.spring.restdocs.mockmvc
     testImplementation libs.archunit.junit5
     testImplementation testFixtures(project(":domain"))
+    testImplementation testFixtures(project(":application"))
 
     // ========================================
     // Test Fixtures Dependencies

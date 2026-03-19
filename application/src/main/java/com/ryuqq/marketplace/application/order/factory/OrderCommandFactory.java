@@ -1,9 +1,13 @@
 package com.ryuqq.marketplace.application.order.factory;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.dto.command.CreateOrderCommand;
 import com.ryuqq.marketplace.application.order.dto.command.CreateOrderItemCommand;
+import com.ryuqq.marketplace.application.order.dto.command.OrderItemCancelCommand;
+import com.ryuqq.marketplace.application.order.dto.command.OrderItemStatusCommand;
+import com.ryuqq.marketplace.application.order.dto.command.StartClaimCommand;
 import com.ryuqq.marketplace.domain.common.vo.Address;
 import com.ryuqq.marketplace.domain.common.vo.Email;
 import com.ryuqq.marketplace.domain.common.vo.Money;
@@ -85,13 +89,31 @@ public class OrderCommandFactory {
         }
 
         return Order.forNew(
-                orderId,
-                orderNumber,
-                buyerInfo,
-                paymentInfo,
-                externalOrderRef,
-                items,
-                now);
+                orderId, orderNumber, buyerInfo, paymentInfo, externalOrderRef, items, now);
+    }
+
+    /** 취소 Command → StatusChangeContext 생성. */
+    public StatusChangeContext<List<OrderItemId>> createCancelContext(
+            OrderItemCancelCommand command) {
+        return new StatusChangeContext<>(
+                toOrderItemIds(command.orderItemIds()), timeProvider.now());
+    }
+
+    /** 상태 변경 Command → StatusChangeContext 생성. (확정/발주/출고/배송완료/교환완료/환불완료) */
+    public StatusChangeContext<List<OrderItemId>> createStatusChangeContext(
+            OrderItemStatusCommand command) {
+        return new StatusChangeContext<>(
+                toOrderItemIds(command.orderItemIds()), timeProvider.now());
+    }
+
+    /** 클레임 시작 Command → StatusChangeContext 생성. */
+    public StatusChangeContext<List<OrderItemId>> createClaimContext(StartClaimCommand command) {
+        return new StatusChangeContext<>(
+                toOrderItemIds(command.orderItemIds()), timeProvider.now());
+    }
+
+    private List<OrderItemId> toOrderItemIds(List<String> ids) {
+        return ids.stream().map(OrderItemId::of).toList();
     }
 
     private OrderItem createOrderItem(

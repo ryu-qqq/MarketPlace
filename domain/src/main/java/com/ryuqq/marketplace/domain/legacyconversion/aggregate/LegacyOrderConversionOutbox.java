@@ -7,8 +7,8 @@ import java.time.Instant;
 /**
  * 레거시 주문 변환 Outbox Aggregate.
  *
- * <p>레거시 주문(orders) 단위로 생성되며, 스케줄러에 의해 내부 주문으로 변환됩니다. legacyOrderId +
- * legacyPaymentId를 저장하고, 변환 시점에 luxurydb에서 최신 데이터를 조회합니다.
+ * <p>레거시 주문(orders) 단위로 생성되며, 스케줄러에 의해 내부 주문으로 변환됩니다. legacyOrderId + legacyPaymentId를 저장하고, 변환 시점에
+ * luxurydb에서 최신 데이터를 조회합니다.
  */
 public class LegacyOrderConversionOutbox {
 
@@ -127,8 +127,7 @@ public class LegacyOrderConversionOutbox {
 
     public void recoverFromTimeout(Instant now) {
         if (this.status != LegacyConversionOutboxStatus.PROCESSING) {
-            throw new IllegalStateException(
-                    "타임아웃 복구는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
+            throw new IllegalStateException("타임아웃 복구는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
         }
         this.status = LegacyConversionOutboxStatus.PENDING;
         this.updatedAt = now;

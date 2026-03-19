@@ -20,8 +20,7 @@ public class ExchangeBatchValidator {
     private final RefundReadManager refundReadManager;
 
     public ExchangeBatchValidator(
-            ExchangeReadManager exchangeReadManager,
-            RefundReadManager refundReadManager) {
+            ExchangeReadManager exchangeReadManager, RefundReadManager refundReadManager) {
         this.exchangeReadManager = exchangeReadManager;
         this.refundReadManager = refundReadManager;
     }
@@ -42,13 +41,16 @@ public class ExchangeBatchValidator {
 
     /** 해당 OrderItem에 진행 중인 Refund/Exchange 클레임이 있는지 확인. */
     public boolean hasActiveClaim(String orderItemId) {
-        boolean hasActiveRefund = refundReadManager.findByOrderItemId(orderItemId)
-                .filter(r -> r.status().isActive())
-                .isPresent();
+        boolean hasActiveRefund =
+                refundReadManager
+                        .findByOrderItemId(orderItemId)
+                        .filter(r -> r.status().isActive())
+                        .isPresent();
         if (hasActiveRefund) {
             return true;
         }
-        return exchangeReadManager.findByOrderItemId(OrderItemId.of(orderItemId))
+        return exchangeReadManager
+                .findByOrderItemId(OrderItemId.of(orderItemId))
                 .filter(e -> e.status().isActive())
                 .isPresent();
     }

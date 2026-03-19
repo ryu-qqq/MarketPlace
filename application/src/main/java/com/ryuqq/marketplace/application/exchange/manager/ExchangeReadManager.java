@@ -23,9 +23,7 @@ public class ExchangeReadManager {
 
     @Transactional(readOnly = true)
     public ExchangeClaim getById(ExchangeClaimId id) {
-        return queryPort
-                .findById(id)
-                .orElseThrow(() -> new ExchangeNotFoundException(id.value()));
+        return queryPort.findById(id).orElseThrow(() -> new ExchangeNotFoundException(id.value()));
     }
 
     @Transactional(readOnly = true)

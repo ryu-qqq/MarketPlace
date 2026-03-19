@@ -22,15 +22,17 @@ class NaverDeleteProductsTest {
         String token = NaverAuthHelper.getAccessToken(http, om);
 
         // 검색해서 77288 관련 상품 전부 확인
-        String searchBody = "{\"searchKeywordType\":\"TITLE\",\"searchKeyword\":\"디즈니 엘사 겨울왕국 부츠\"}";
-        HttpResponse<String> searchResp = http.send(
-                HttpRequest.newBuilder()
-                        .uri(URI.create(NaverAuthHelper.BASE_URL + "/v1/products/search"))
-                        .header("Authorization", "Bearer " + token)
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(searchBody))
-                        .build(),
-                HttpResponse.BodyHandlers.ofString());
+        String searchBody =
+                "{\"searchKeywordType\":\"TITLE\",\"searchKeyword\":\"디즈니 엘사 겨울왕국 부츠\"}";
+        HttpResponse<String> searchResp =
+                http.send(
+                        HttpRequest.newBuilder()
+                                .uri(URI.create(NaverAuthHelper.BASE_URL + "/v1/products/search"))
+                                .header("Authorization", "Bearer " + token)
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(searchBody))
+                                .build(),
+                        HttpResponse.BodyHandlers.ofString());
 
         JsonNode contents = om.readTree(searchResp.body()).path("contents");
         System.out.println("검색 결과: " + contents.size() + "건");
@@ -40,12 +42,18 @@ class NaverDeleteProductsTest {
             long originNo = item.path("originProductNo").asLong();
             System.out.printf("  originNo=%d%n", originNo);
             if (originNo != keepOriginNo && originNo > 0) {
-                HttpResponse<String> delResp = http.send(
-                        HttpRequest.newBuilder()
-                                .uri(URI.create(NaverAuthHelper.BASE_URL + "/v2/products/origin-products/" + originNo))
-                                .header("Authorization", "Bearer " + token)
-                                .DELETE().build(),
-                        HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> delResp =
+                        http.send(
+                                HttpRequest.newBuilder()
+                                        .uri(
+                                                URI.create(
+                                                        NaverAuthHelper.BASE_URL
+                                                                + "/v2/products/origin-products/"
+                                                                + originNo))
+                                        .header("Authorization", "Bearer " + token)
+                                        .DELETE()
+                                        .build(),
+                                HttpResponse.BodyHandlers.ofString());
                 System.out.printf("  → 삭제 %d: status=%d%n", originNo, delResp.statusCode());
             } else if (originNo == keepOriginNo) {
                 System.out.println("  → 유지 (원래 상품)");

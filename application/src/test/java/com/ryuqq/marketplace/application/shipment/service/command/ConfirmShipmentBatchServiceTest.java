@@ -14,6 +14,7 @@ import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
 import com.ryuqq.marketplace.domain.order.OrderFixtures;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -54,7 +55,11 @@ class ConfirmShipmentBatchServiceTest {
                     new ConfirmShipmentBatchCommand(
                             List.of(ORDER_ITEM_ID_1, ORDER_ITEM_ID_2), null);
 
-            given(orderItemReadManager.findAllByIds(List.of(ORDER_ITEM_ID_1, ORDER_ITEM_ID_2)))
+            given(
+                            orderItemReadManager.findAllByIds(
+                                    List.of(
+                                            OrderItemId.of(ORDER_ITEM_ID_1),
+                                            OrderItemId.of(ORDER_ITEM_ID_2))))
                     .willReturn(List.of(item1, item2));
             given(commandFactory.createConfirmBundle(any()))
                     .willReturn(
@@ -79,7 +84,7 @@ class ConfirmShipmentBatchServiceTest {
             ConfirmShipmentBatchCommand command =
                     new ConfirmShipmentBatchCommand(List.of(ORDER_ITEM_ID_1), null);
 
-            given(orderItemReadManager.findAllByIds(List.of(ORDER_ITEM_ID_1)))
+            given(orderItemReadManager.findAllByIds(List.of(OrderItemId.of(ORDER_ITEM_ID_1))))
                     .willReturn(List.of(item1));
 
             // when
@@ -102,7 +107,7 @@ class ConfirmShipmentBatchServiceTest {
             ConfirmShipmentBatchCommand command =
                     new ConfirmShipmentBatchCommand(List.of(ORDER_ITEM_ID_1), 999L);
 
-            given(orderItemReadManager.findAllByIds(List.of(ORDER_ITEM_ID_1)))
+            given(orderItemReadManager.findAllByIds(List.of(OrderItemId.of(ORDER_ITEM_ID_1))))
                     .willReturn(List.of(item1));
 
             // when
@@ -125,7 +130,7 @@ class ConfirmShipmentBatchServiceTest {
             ConfirmShipmentBatchCommand command =
                     new ConfirmShipmentBatchCommand(List.of(ORDER_ITEM_ID_1), null);
 
-            given(orderItemReadManager.findAllByIds(List.of(ORDER_ITEM_ID_1)))
+            given(orderItemReadManager.findAllByIds(List.of(OrderItemId.of(ORDER_ITEM_ID_1))))
                     .willReturn(List.of(item1));
             given(commandFactory.createConfirmBundle(any()))
                     .willReturn(new ConfirmShipmentBundle(List.of(), List.of(), List.of(item1)));
@@ -145,7 +150,7 @@ class ConfirmShipmentBatchServiceTest {
             // given
             ConfirmShipmentBatchCommand command = new ConfirmShipmentBatchCommand(List.of(), null);
 
-            given(orderItemReadManager.findAllByIds(List.of())).willReturn(List.of());
+            given(orderItemReadManager.findAllByIds(List.<OrderItemId>of())).willReturn(List.of());
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);

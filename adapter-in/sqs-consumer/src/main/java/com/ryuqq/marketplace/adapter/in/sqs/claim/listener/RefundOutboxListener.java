@@ -33,8 +33,7 @@ public class RefundOutboxListener {
     private final Counter successCounter;
     private final Counter errorCounter;
 
-    public RefundOutboxListener(
-            ExecuteRefundOutboxUseCase useCase, MeterRegistry meterRegistry) {
+    public RefundOutboxListener(ExecuteRefundOutboxUseCase useCase, MeterRegistry meterRegistry) {
         this.useCase = useCase;
         this.meterRegistry = meterRegistry;
         this.durationTimer =

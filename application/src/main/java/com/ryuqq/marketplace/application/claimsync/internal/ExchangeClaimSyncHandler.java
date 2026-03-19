@@ -18,7 +18,6 @@ import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
-import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.time.Instant;
@@ -33,6 +32,7 @@ import org.springframework.stereotype.Component;
  * <p>EXCHANGE 유형의 클레임에 대해 액션 결정과 실행을 캡슐화합니다.
  */
 @Component
+@SuppressWarnings("PMD.GodClass")
 public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
 
     private static final String SYNC_ACTOR = "system-claim-sync";
@@ -68,19 +68,22 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
     }
 
     @Override
-    public long execute(ClaimSyncAction action, ExternalClaimPayload claim,
-                        OrderItemId orderItemId, long sellerId) {
+    public long execute(
+            ClaimSyncAction action,
+            ExternalClaimPayload claim,
+            OrderItemId orderItemId,
+            long sellerId) {
         return switch (action) {
             case EXCHANGE_CREATED -> createExchange(claim, orderItemId, sellerId);
-            case EXCHANGE_COLLECTING -> startCollecting(
-                    exchangeReadManager.findByOrderItemId(orderItemId).get());
-            case EXCHANGE_COLLECTED -> completeCollection(
-                    exchangeReadManager.findByOrderItemId(orderItemId).get());
-            case EXCHANGE_SHIPPING -> startShipping(
-                    exchangeReadManager.findByOrderItemId(orderItemId).get());
+            case EXCHANGE_COLLECTING ->
+                    startCollecting(exchangeReadManager.findByOrderItemId(orderItemId).get());
+            case EXCHANGE_COLLECTED ->
+                    completeCollection(exchangeReadManager.findByOrderItemId(orderItemId).get());
+            case EXCHANGE_SHIPPING ->
+                    startShipping(exchangeReadManager.findByOrderItemId(orderItemId).get());
             case EXCHANGE_COMPLETED -> completeExchange(claim, orderItemId, sellerId);
-            case EXCHANGE_REJECTED -> rejectExchange(
-                    exchangeReadManager.findByOrderItemId(orderItemId).get());
+            case EXCHANGE_REJECTED ->
+                    rejectExchange(exchangeReadManager.findByOrderItemId(orderItemId).get());
             default -> 0L;
         };
     }
@@ -89,9 +92,8 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             ExternalClaimPayload external, Optional<ExchangeClaim> existing) {
         String claimStatus = external.claimStatus();
         return switch (claimStatus) {
-            case "EXCHANGE_REQUEST" -> existing.isEmpty()
-                    ? ClaimSyncAction.EXCHANGE_CREATED
-                    : ClaimSyncAction.SKIPPED;
+            case "EXCHANGE_REQUEST" ->
+                    existing.isEmpty() ? ClaimSyncAction.EXCHANGE_CREATED : ClaimSyncAction.SKIPPED;
             case "COLLECTING" -> {
                 if (existing.isEmpty()) {
                     yield ClaimSyncAction.EXCHANGE_CREATED;
@@ -124,10 +126,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
                     yield ClaimSyncAction.EXCHANGE_COMPLETED;
                 }
                 ExchangeStatus currentStatus = existing.get().status();
-                if (currentStatus == ExchangeStatus.SHIPPING) {
-                    yield ClaimSyncAction.EXCHANGE_COMPLETED;
-                }
-                if (currentStatus == ExchangeStatus.COMPLETED) {
+                if (!currentStatus.isActive()) {
                     yield ClaimSyncAction.SKIPPED;
                 }
                 yield ClaimSyncAction.EXCHANGE_COMPLETED;
@@ -149,15 +148,25 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         ExchangeClaimNumber claimNumber = ExchangeClaimNumber.generate();
         int exchangeQty = resolveQty(claim.requestQuantity());
         ExchangeReason reason = resolveDefaultExchangeReason(claim);
-        ExchangeOption exchangeOption = new ExchangeOption(
-                0L, "UNKNOWN", 0L, 0L, "UNKNOWN", exchangeQty);
-        AmountAdjustment amountAdjustment = AmountAdjustment.calculate(
-                Money.zero(), Money.zero(), Money.zero(), Money.zero(), FeePayer.BUYER);
+        ExchangeOption exchangeOption =
+                new ExchangeOption(0L, "UNKNOWN", 0L, 0L, "UNKNOWN", exchangeQty);
+        AmountAdjustment amountAdjustment =
+                AmountAdjustment.calculate(
+                        Money.zero(), Money.zero(), Money.zero(), Money.zero(), FeePayer.BUYER);
 
-        ExchangeClaim exchangeClaim = ExchangeClaim.forNew(
-                exchangeClaimId, claimNumber, orderItemId, sellerId,
-                exchangeQty, reason, exchangeOption, amountAdjustment, null,
-                SYNC_ACTOR, now);
+        ExchangeClaim exchangeClaim =
+                ExchangeClaim.forNew(
+                        exchangeClaimId,
+                        claimNumber,
+                        orderItemId,
+                        sellerId,
+                        exchangeQty,
+                        reason,
+                        exchangeOption,
+                        amountAdjustment,
+                        null,
+                        SYNC_ACTOR,
+                        now);
 
         exchangeCommandManager.persist(exchangeClaim);
         requestReturnOrderItem(orderItemId, "교환 요청 동기화", now);
@@ -196,7 +205,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
 
         if (existing.isPresent()) {
             ExchangeClaim exchangeClaim = existing.get();
-            exchangeClaim.complete(SYNC_ACTOR, now);
+            fastForwardToComplete(exchangeClaim, now);
             exchangeCommandManager.persist(exchangeClaim);
             completeReturnOrderItem(orderItemId, now);
             return 0L;
@@ -207,15 +216,25 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         ExchangeClaimNumber claimNumber = ExchangeClaimNumber.generate();
         int exchangeQty = resolveQty(claim.requestQuantity());
         ExchangeReason reason = resolveDefaultExchangeReason(claim);
-        ExchangeOption exchangeOption = new ExchangeOption(
-                0L, "UNKNOWN", 0L, 0L, "UNKNOWN", exchangeQty);
-        AmountAdjustment amountAdjustment = AmountAdjustment.calculate(
-                Money.zero(), Money.zero(), Money.zero(), Money.zero(), FeePayer.BUYER);
+        ExchangeOption exchangeOption =
+                new ExchangeOption(0L, "UNKNOWN", 0L, 0L, "UNKNOWN", exchangeQty);
+        AmountAdjustment amountAdjustment =
+                AmountAdjustment.calculate(
+                        Money.zero(), Money.zero(), Money.zero(), Money.zero(), FeePayer.BUYER);
 
-        ExchangeClaim exchangeClaim = ExchangeClaim.forNew(
-                exchangeClaimId, claimNumber, orderItemId, sellerId,
-                exchangeQty, reason, exchangeOption, amountAdjustment, null,
-                SYNC_ACTOR, now);
+        ExchangeClaim exchangeClaim =
+                ExchangeClaim.forNew(
+                        exchangeClaimId,
+                        claimNumber,
+                        orderItemId,
+                        sellerId,
+                        exchangeQty,
+                        reason,
+                        exchangeOption,
+                        amountAdjustment,
+                        null,
+                        SYNC_ACTOR,
+                        now);
         exchangeClaim.startCollecting(SYNC_ACTOR, now);
         exchangeClaim.completeCollection(SYNC_ACTOR, now);
         exchangeClaim.startPreparing(SYNC_ACTOR, now);
@@ -226,6 +245,27 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         requestReturnOrderItem(orderItemId, "교환 완료 동기화", now);
         completeReturnOrderItem(orderItemId, now);
         return 0L;
+    }
+
+    private void fastForwardToComplete(ExchangeClaim exchangeClaim, Instant now) {
+        ExchangeStatus current = exchangeClaim.status();
+        if (current == ExchangeStatus.REQUESTED) {
+            exchangeClaim.startCollecting(SYNC_ACTOR, now);
+            current = ExchangeStatus.COLLECTING;
+        }
+        if (current == ExchangeStatus.COLLECTING) {
+            exchangeClaim.completeCollection(SYNC_ACTOR, now);
+            current = ExchangeStatus.COLLECTED;
+        }
+        if (current == ExchangeStatus.COLLECTED) {
+            exchangeClaim.startPreparing(SYNC_ACTOR, now);
+            current = ExchangeStatus.PREPARING;
+        }
+        if (current == ExchangeStatus.PREPARING) {
+            String linkedOrderId = "SYNC-" + UUID.randomUUID();
+            exchangeClaim.startShipping(linkedOrderId, SYNC_ACTOR, now);
+        }
+        exchangeClaim.complete(SYNC_ACTOR, now);
     }
 
     private long rejectExchange(ExchangeClaim exchangeClaim) {
@@ -242,28 +282,35 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
     private ExchangeReason resolveDefaultExchangeReason(ExternalClaimPayload claim) {
         String rawReason = claim.claimReason();
         ExchangeReasonType reasonType = parseExchangeReasonType(rawReason);
-        String detail = (claim.claimDetailedReason() != null && !claim.claimDetailedReason().isBlank())
-                ? claim.claimDetailedReason()
-                : "외부 채널 교환";
+        String detail =
+                (claim.claimDetailedReason() != null && !claim.claimDetailedReason().isBlank())
+                        ? claim.claimDetailedReason()
+                        : "외부 채널 교환";
         return new ExchangeReason(reasonType, detail);
     }
 
     private void requestReturnOrderItem(OrderItemId orderItemId, String reason, Instant now) {
-        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
-            if (item.status().canTransitionTo(OrderItemStatus.RETURN_REQUESTED)) {
-                item.requestReturn(SYNC_ACTOR, reason, now);
-                orderItemCommandManager.persistAll(List.of(item));
-            }
-        });
+        orderItemReadManager
+                .findById(orderItemId)
+                .ifPresent(
+                        item -> {
+                            if (item.status().canTransitionTo(OrderItemStatus.RETURN_REQUESTED)) {
+                                item.requestReturn(SYNC_ACTOR, reason, now);
+                                orderItemCommandManager.persistAll(List.of(item));
+                            }
+                        });
     }
 
     private void completeReturnOrderItem(OrderItemId orderItemId, Instant now) {
-        orderItemReadManager.findById(orderItemId.value()).ifPresent(item -> {
-            if (item.status().canTransitionTo(OrderItemStatus.RETURNED)) {
-                item.completeReturn(SYNC_ACTOR, now);
-                orderItemCommandManager.persistAll(List.of(item));
-            }
-        });
+        orderItemReadManager
+                .findById(orderItemId)
+                .ifPresent(
+                        item -> {
+                            if (item.status().canTransitionTo(OrderItemStatus.RETURNED)) {
+                                item.completeReturn(SYNC_ACTOR, now);
+                                orderItemCommandManager.persistAll(List.of(item));
+                            }
+                        });
     }
 
     private ExchangeReasonType parseExchangeReasonType(String rawReason) {

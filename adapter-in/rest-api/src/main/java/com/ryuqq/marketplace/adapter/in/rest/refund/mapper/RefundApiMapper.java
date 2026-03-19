@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.refund.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.HoldRefundBatchApiRequest;
@@ -13,11 +14,9 @@ import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundListApiRe
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse.BatchResultItemApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.application.claimhistory.dto.command.AddClaimHistoryMemoCommand;
 import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryResult;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
-import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.application.refund.dto.command.ApproveRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.dto.command.HoldRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.dto.command.RejectRefundBatchCommand;
@@ -28,6 +27,7 @@ import com.ryuqq.marketplace.application.refund.dto.response.RefundDetailResult;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundListResult;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundPageResult;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundSummaryResult;
+import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReasonType;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component;
  * Refund API Mapper.
  *
  * <p>V4 간극 패턴:
+ *
  * <ul>
  *   <li>orderId = 내부 orderItemId (프론트에겐 "주문 ID")
  *   <li>legacyOrderId 제외
@@ -88,9 +89,16 @@ public class RefundApiMapper {
     }
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(
-            String refundClaimId, AddClaimHistoryMemoApiRequest request, long sellerId, String actorName) {
+            String refundClaimId,
+            AddClaimHistoryMemoApiRequest request,
+            long sellerId,
+            String actorName) {
         return new AddClaimHistoryMemoCommand(
-                ClaimType.REFUND, refundClaimId, request.message(), String.valueOf(sellerId), actorName);
+                ClaimType.REFUND,
+                refundClaimId,
+                request.message(),
+                String.valueOf(sellerId),
+                actorName);
     }
 
     // ==================== Query 변환 ====================
@@ -113,8 +121,12 @@ public class RefundApiMapper {
 
     public RefundSummaryApiResponse toSummaryResponse(RefundSummaryResult result) {
         return new RefundSummaryApiResponse(
-                result.requested(), result.collecting(), result.collected(),
-                result.completed(), result.rejected(), result.cancelled());
+                result.requested(),
+                result.collecting(),
+                result.collected(),
+                result.completed(),
+                result.rejected(),
+                result.cancelled());
     }
 
     public PageApiResponse<RefundListApiResponse> toPageResponse(RefundPageResult result) {

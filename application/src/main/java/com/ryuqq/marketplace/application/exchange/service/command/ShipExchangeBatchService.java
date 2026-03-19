@@ -39,8 +39,7 @@ public class ShipExchangeBatchService implements ShipExchangeBatchUseCase {
 
     @Override
     public BatchProcessingResult<String> execute(ShipExchangeBatchCommand command) {
-        List<String> claimIds =
-                command.items().stream().map(ShipItem::exchangeClaimId).toList();
+        List<String> claimIds = command.items().stream().map(ShipItem::exchangeClaimId).toList();
         List<ExchangeClaim> claims = validator.validateAndGet(claimIds, command.sellerId());
 
         Map<String, ShipItem> itemMap =
@@ -51,7 +50,8 @@ public class ShipExchangeBatchService implements ShipExchangeBatchUseCase {
         for (ExchangeClaim claim : claims) {
             try {
                 ShipItem item = itemMap.get(claim.idValue());
-                claim.startShipping(item.linkedOrderId(), command.processedBy(), commandFactory.now());
+                claim.startShipping(
+                        item.linkedOrderId(), command.processedBy(), commandFactory.now());
                 OutboxWithHistory bundle =
                         commandFactory.createShipBundle(
                                 claim,
@@ -61,9 +61,7 @@ public class ShipExchangeBatchService implements ShipExchangeBatchUseCase {
                 batchResult.addSuccess(claim, bundle.outbox(), bundle.history());
             } catch (Exception e) {
                 log.warn(
-                        "교환 재배송 실패: exchangeClaimId={}, error={}",
-                        claim.idValue(),
-                        e.getMessage());
+                        "교환 재배송 실패: exchangeClaimId={}, error={}", claim.idValue(), e.getMessage());
                 batchResult.addFailure(claim.idValue(), e.getMessage());
             }
         }

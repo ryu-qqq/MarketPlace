@@ -1,0 +1,23 @@
+CREATE TABLE settlements (
+    id                      VARCHAR(36) NOT NULL,
+    seller_id               BIGINT      NOT NULL,
+    settlement_status       VARCHAR(30) NOT NULL DEFAULT 'CALCULATING',
+    period_start_date       DATE        NOT NULL,
+    period_end_date         DATE        NOT NULL,
+    settlement_cycle        VARCHAR(20) NOT NULL,
+    total_sales_amount      INT         NOT NULL DEFAULT 0,
+    total_commission_amount INT         NOT NULL DEFAULT 0,
+    total_reversal_amount   INT         NOT NULL DEFAULT 0,
+    net_settlement_amount   INT         NOT NULL DEFAULT 0,
+    entry_count             INT         NOT NULL DEFAULT 0,
+    hold_reason             VARCHAR(500) NULL,
+    hold_at                 TIMESTAMP    NULL,
+    expected_settlement_day DATE         NULL,
+    settlement_day          DATE         NULL,
+    created_at              TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at              TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    INDEX idx_stl_seller_status (seller_id, settlement_status),
+    INDEX idx_stl_period (period_start_date, period_end_date),
+    UNIQUE INDEX uk_stl_seller_period (seller_id, period_start_date, period_end_date)
+);

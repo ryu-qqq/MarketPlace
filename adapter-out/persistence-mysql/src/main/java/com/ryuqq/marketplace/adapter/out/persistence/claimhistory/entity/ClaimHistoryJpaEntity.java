@@ -9,8 +9,7 @@ import java.time.Instant;
 /**
  * 클레임 이력 JPA 엔티티.
  *
- * <p>claim_histories 테이블과 매핑됩니다.
- * Cancel/Refund/Exchange 3개 클레임 타입의 상태 변경 및 수기 메모 이력을 기록합니다.
+ * <p>claim_histories 테이블과 매핑됩니다. Cancel/Refund/Exchange 3개 클레임 타입의 상태 변경 및 수기 메모 이력을 기록합니다.
  */
 @Entity
 @Table(name = "claim_histories")
@@ -85,8 +84,16 @@ public class ClaimHistoryJpaEntity {
             String actorName,
             Instant createdAt) {
         return new ClaimHistoryJpaEntity(
-                id, claimType, claimId, historyType, title, message,
-                actorType, actorId, actorName, createdAt);
+                id,
+                claimType,
+                claimId,
+                historyType,
+                title,
+                message,
+                actorType,
+                actorId,
+                actorName,
+                createdAt);
     }
 
     public String getId() {

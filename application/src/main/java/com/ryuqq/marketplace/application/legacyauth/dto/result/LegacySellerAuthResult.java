@@ -12,11 +12,7 @@ package com.ryuqq.marketplace.application.legacyauth.dto.result;
  * @param approvalStatus 승인 상태 (seller.APPROVAL_STATUS: APPROVED, PENDING 등)
  */
 public record LegacySellerAuthResult(
-        long sellerId,
-        String email,
-        String passwordHash,
-        String roleType,
-        String approvalStatus) {
+        long sellerId, String email, String passwordHash, String roleType, String approvalStatus) {
 
     public boolean isApproved() {
         return "APPROVED".equals(approvalStatus);

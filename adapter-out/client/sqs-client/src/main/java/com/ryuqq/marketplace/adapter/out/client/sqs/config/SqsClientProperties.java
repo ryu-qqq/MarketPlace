@@ -55,6 +55,9 @@ public class SqsClientProperties {
         private String refundOutbox;
         private String exchangeOutbox;
 
+        // Shipment outbox queue
+        private String shipmentOutbox;
+
         public String getIntelligenceOrchestration() {
             return intelligenceOrchestration;
         }
@@ -125,6 +128,14 @@ public class SqsClientProperties {
 
         public void setExchangeOutbox(String exchangeOutbox) {
             this.exchangeOutbox = exchangeOutbox;
+        }
+
+        public String getShipmentOutbox() {
+            return shipmentOutbox;
+        }
+
+        public void setShipmentOutbox(String shipmentOutbox) {
+            this.shipmentOutbox = shipmentOutbox;
         }
     }
 }

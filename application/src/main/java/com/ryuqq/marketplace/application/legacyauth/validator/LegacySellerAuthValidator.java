@@ -31,7 +31,8 @@ public class LegacySellerAuthValidator {
      * @param email 관리자 이메일
      * @param rawPassword 평문 비밀번호
      * @return 검증된 셀러 인증 정보
-     * @throws com.ryuqq.marketplace.domain.selleradmin.exception.SellerAdminNotFoundException 셀러 미발견 시
+     * @throws com.ryuqq.marketplace.domain.selleradmin.exception.SellerAdminNotFoundException 셀러
+     *     미발견 시
      * @throws SellerAdminNotApprovedException 미승인 셀러 시
      * @throws SellerAdminInvalidPasswordException 비밀번호 불일치 시
      */

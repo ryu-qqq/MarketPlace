@@ -8,6 +8,4 @@ import java.util.List;
  * @param orderItemIds 대상 주문상품 ID 목록
  * @param changedBy 변경자
  */
-public record OrderItemStatusCommand(
-        List<String> orderItemIds,
-        String changedBy) {}
+public record OrderItemStatusCommand(List<String> orderItemIds, String changedBy) {}

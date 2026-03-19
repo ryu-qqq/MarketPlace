@@ -1,11 +1,11 @@
 package com.ryuqq.marketplace.application.legacy.shared.assembler;
 
+import com.ryuqq.marketplace.application.legacy.productgroup.dto.response.LegacyProductGroupPageResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductCompositeResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult.DeliveryInfo;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult.ImageInfo;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupCompositeResult.NoticeInfo;
-import com.ryuqq.marketplace.application.legacy.productgroup.dto.response.LegacyProductGroupPageResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyDeliveryResult;
@@ -34,10 +34,7 @@ public class LegacyProductGroupAssembler {
      * @return 레거시 상품그룹 페이징 결과
      */
     public LegacyProductGroupPageResult toPageResult(
-            List<LegacyProductGroupDetailBundle> bundles,
-            long totalElements,
-            int page,
-            int size) {
+            List<LegacyProductGroupDetailBundle> bundles, long totalElements, int page, int size) {
         if (bundles == null || bundles.isEmpty()) {
             return LegacyProductGroupPageResult.empty(page, size);
         }

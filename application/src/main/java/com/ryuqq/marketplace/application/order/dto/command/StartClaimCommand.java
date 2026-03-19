@@ -9,7 +9,4 @@ import java.util.List;
  * @param reason 클레임 사유
  * @param changedBy 변경자
  */
-public record StartClaimCommand(
-        List<String> orderItemIds,
-        String reason,
-        String changedBy) {}
+public record StartClaimCommand(List<String> orderItemIds, String reason, String changedBy) {}

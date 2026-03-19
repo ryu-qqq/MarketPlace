@@ -563,8 +563,8 @@ public class OrderCompositeQueryDslRepository {
     /**
      * 주문 히스토리 목록 조회.
      *
-     * <p>order_item_histories 테이블을 기준으로 조회합니다.
-     * orderId에 속한 order_items의 ID를 서브쿼리로 추출하여 histories를 조회합니다.
+     * <p>order_item_histories 테이블을 기준으로 조회합니다. orderId에 속한 order_items의 ID를 서브쿼리로 추출하여 histories를
+     * 조회합니다.
      */
     public List<OrderHistoryProjectionDto> findOrderHistories(String orderId) {
         return queryFactory

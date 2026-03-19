@@ -22,9 +22,7 @@ public class ClaimHistoryQueryDslRepository {
     public List<ClaimHistoryJpaEntity> findByClaimTypeAndClaimId(String claimType, String claimId) {
         return queryFactory
                 .selectFrom(claimHistory)
-                .where(
-                        claimHistory.claimType.eq(claimType),
-                        claimHistory.claimId.eq(claimId))
+                .where(claimHistory.claimType.eq(claimType), claimHistory.claimId.eq(claimId))
                 .orderBy(claimHistory.createdAt.asc())
                 .fetch();
     }
@@ -33,9 +31,7 @@ public class ClaimHistoryQueryDslRepository {
             String claimType, List<String> claimIds) {
         return queryFactory
                 .selectFrom(claimHistory)
-                .where(
-                        claimHistory.claimType.eq(claimType),
-                        claimHistory.claimId.in(claimIds))
+                .where(claimHistory.claimType.eq(claimType), claimHistory.claimId.in(claimIds))
                 .orderBy(claimHistory.createdAt.asc())
                 .fetch();
     }

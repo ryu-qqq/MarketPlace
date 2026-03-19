@@ -24,15 +24,14 @@ public class ClaimHistoryQueryAdapter implements ClaimHistoryQueryPort {
 
     @Override
     public List<ClaimHistory> findByClaimTypeAndClaimId(ClaimType claimType, String claimId) {
-        return claimHistoryRepository
-                .findByClaimTypeAndClaimId(claimType.name(), claimId)
-                .stream()
+        return claimHistoryRepository.findByClaimTypeAndClaimId(claimType.name(), claimId).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
 
     @Override
-    public List<ClaimHistory> findByClaimTypeAndClaimIds(ClaimType claimType, List<String> claimIds) {
+    public List<ClaimHistory> findByClaimTypeAndClaimIds(
+            ClaimType claimType, List<String> claimIds) {
         return claimHistoryRepository
                 .findByClaimTypeAndClaimIds(claimType.name(), claimIds)
                 .stream()

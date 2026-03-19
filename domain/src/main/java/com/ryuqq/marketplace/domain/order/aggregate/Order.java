@@ -55,13 +55,7 @@ public class Order {
             Instant now) {
         Order order =
                 new Order(
-                        id,
-                        orderNumber,
-                        buyerInfo,
-                        paymentInfo,
-                        externalOrderReference,
-                        now,
-                        now);
+                        id, orderNumber, buyerInfo, paymentInfo, externalOrderReference, now, now);
         if (items == null || items.isEmpty()) {
             throw new OrderException(OrderErrorCode.EMPTY_ORDER_ITEMS, "주문 상품은 최소 1개 이상이어야 합니다");
         }

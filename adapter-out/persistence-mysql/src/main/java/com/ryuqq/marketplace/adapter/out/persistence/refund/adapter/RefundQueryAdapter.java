@@ -36,27 +36,39 @@ public class RefundQueryAdapter implements RefundQueryPort {
     public Optional<RefundClaim> findById(RefundClaimId id) {
         return repository
                 .findById(id.value())
-                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())));
+                .map(
+                        entity ->
+                                mapper.toDomain(
+                                        entity, resolveClaimShipment(entity.getClaimShipmentId())));
     }
 
     @Override
     public Optional<RefundClaim> findByOrderItemId(String orderItemId) {
         return repository
                 .findByOrderItemId(orderItemId)
-                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())));
+                .map(
+                        entity ->
+                                mapper.toDomain(
+                                        entity, resolveClaimShipment(entity.getClaimShipmentId())));
     }
 
     @Override
     public List<RefundClaim> findByOrderItemIds(List<String> orderItemIds) {
         return repository.findByOrderItemIds(orderItemIds).stream()
-                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())))
+                .map(
+                        entity ->
+                                mapper.toDomain(
+                                        entity, resolveClaimShipment(entity.getClaimShipmentId())))
                 .toList();
     }
 
     @Override
     public List<RefundClaim> findByCriteria(RefundSearchCriteria criteria) {
         return repository.findByCriteria(criteria).stream()
-                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())))
+                .map(
+                        entity ->
+                                mapper.toDomain(
+                                        entity, resolveClaimShipment(entity.getClaimShipmentId())))
                 .toList();
     }
 
@@ -73,7 +85,10 @@ public class RefundQueryAdapter implements RefundQueryPort {
     @Override
     public List<RefundClaim> findByIdIn(List<String> refundClaimIds, Long sellerId) {
         return repository.findByIdIn(refundClaimIds, sellerId).stream()
-                .map(entity -> mapper.toDomain(entity, resolveClaimShipment(entity.getClaimShipmentId())))
+                .map(
+                        entity ->
+                                mapper.toDomain(
+                                        entity, resolveClaimShipment(entity.getClaimShipmentId())))
                 .toList();
     }
 

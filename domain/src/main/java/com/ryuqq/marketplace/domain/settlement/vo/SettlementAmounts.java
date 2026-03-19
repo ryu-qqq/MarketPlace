@@ -1,64 +1,46 @@
 package com.ryuqq.marketplace.domain.settlement.vo;
 
 import com.ryuqq.marketplace.domain.common.vo.Money;
-import java.util.List;
 
-/** 정산 금액 정보 Value Object. */
+/**
+ * 정산 집계 금액 정보.
+ *
+ * <p>Entry 집계 기반: netSettlementAmount = totalSalesAmount - totalCommissionAmount -
+ * totalReversalAmount.
+ */
 public record SettlementAmounts(
-        Money salesAmount,
-        List<SettlementDeduction> deductions,
-        Money feeAmount,
-        int feeRate,
-        Money expectedSettlementAmount,
-        Money settlementAmount) {
+        Money totalSalesAmount,
+        Money totalCommissionAmount,
+        Money totalReversalAmount,
+        Money netSettlementAmount) {
 
     public SettlementAmounts {
-        if (salesAmount == null) {
-            throw new IllegalArgumentException("판매 금액은 null일 수 없습니다");
+        if (totalSalesAmount == null) {
+            throw new IllegalArgumentException("총 판매 금액은 null일 수 없습니다");
         }
-        if (feeAmount == null) {
-            throw new IllegalArgumentException("수수료 금액은 null일 수 없습니다");
+        if (totalCommissionAmount == null) {
+            throw new IllegalArgumentException("총 수수료 금액은 null일 수 없습니다");
         }
-        if (feeRate < 0) {
-            throw new IllegalArgumentException("수수료율은 0 이상이어야 합니다");
+        if (totalReversalAmount == null) {
+            throw new IllegalArgumentException("총 역분개 금액은 null일 수 없습니다");
         }
-        if (expectedSettlementAmount == null) {
-            throw new IllegalArgumentException("예상 정산 금액은 null일 수 없습니다");
+        if (netSettlementAmount == null) {
+            throw new IllegalArgumentException("순 정산 금액은 null일 수 없습니다");
         }
-        if (settlementAmount == null) {
-            throw new IllegalArgumentException("정산 금액은 null일 수 없습니다");
-        }
-        deductions = deductions != null ? List.copyOf(deductions) : List.of();
     }
 
-    /** 전체 차감 금액 합계. */
-    public Money totalDeductionAmount() {
-        Money total = Money.zero();
-        for (SettlementDeduction deduction : deductions) {
-            total = total.add(deduction.amount());
-        }
-        return total;
+    /** Entry 집계 결과로 생성. */
+    public static SettlementAmounts of(
+            Money totalSalesAmount,
+            Money totalCommissionAmount,
+            Money totalReversalAmount,
+            Money netSettlementAmount) {
+        return new SettlementAmounts(
+                totalSalesAmount, totalCommissionAmount, totalReversalAmount, netSettlementAmount);
     }
 
-    /** 셀러 부담 차감 금액 합계. */
-    public Money sellerDeductionAmount() {
-        Money total = Money.zero();
-        for (SettlementDeduction deduction : deductions) {
-            if (deduction.payer() == DeductionPayer.SELLER) {
-                total = total.add(deduction.amount());
-            }
-        }
-        return total;
-    }
-
-    /** 플랫폼 부담 차감 금액 합계. */
-    public Money platformDeductionAmount() {
-        Money total = Money.zero();
-        for (SettlementDeduction deduction : deductions) {
-            if (deduction.payer() == DeductionPayer.PLATFORM) {
-                total = total.add(deduction.amount());
-            }
-        }
-        return total;
+    /** 빈 금액으로 생성. */
+    public static SettlementAmounts zero() {
+        return new SettlementAmounts(Money.zero(), Money.zero(), Money.zero(), Money.zero());
     }
 }

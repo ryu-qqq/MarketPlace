@@ -116,8 +116,7 @@ public class CancelOutbox {
     /** 처리 시작. PENDING → PROCESSING. */
     public void startProcessing(Instant now) {
         if (!status.isPending()) {
-            throw new IllegalStateException(
-                    "PENDING 상태에서만 처리를 시작할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PENDING 상태에서만 처리를 시작할 수 있습니다. 현재 상태: " + status);
         }
         this.status = CancelOutboxStatus.PROCESSING;
         this.updatedAt = now;
@@ -126,8 +125,7 @@ public class CancelOutbox {
     /** 처리 완료. PROCESSING → COMPLETED. */
     public void complete(Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "PROCESSING 상태에서만 완료할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PROCESSING 상태에서만 완료할 수 있습니다. 현재 상태: " + status);
         }
         this.status = CancelOutboxStatus.COMPLETED;
         this.processedAt = now;
@@ -138,8 +136,7 @@ public class CancelOutbox {
     /** 처리 실패 및 재시도. 최대 재시도 초과 시 FAILED. */
     public void failAndRetry(String errorMessage, Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
         }
         this.retryCount++;
         this.errorMessage = errorMessage;
@@ -156,8 +153,7 @@ public class CancelOutbox {
     /** 즉시 실패 처리 (재시도 없이). */
     public void fail(String errorMessage, Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
         }
         this.status = CancelOutboxStatus.FAILED;
         this.errorMessage = errorMessage;
@@ -177,8 +173,7 @@ public class CancelOutbox {
     /** FAILED → PENDING 수동 재처리. */
     public void retry(Instant now) {
         if (!status.isFailed()) {
-            throw new IllegalStateException(
-                    "FAILED 상태에서만 재처리할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("FAILED 상태에서만 재처리할 수 있습니다. 현재 상태: " + status);
         }
         this.status = CancelOutboxStatus.PENDING;
         this.retryCount = 0;
@@ -189,8 +184,7 @@ public class CancelOutbox {
     /** PROCESSING 타임아웃 복구. */
     public void recoverFromTimeout(Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "타임아웃 복구는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
+            throw new IllegalStateException("타임아웃 복구는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
         }
         this.status = CancelOutboxStatus.PENDING;
         this.updatedAt = now;

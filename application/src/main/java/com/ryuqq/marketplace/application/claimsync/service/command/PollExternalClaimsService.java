@@ -8,12 +8,12 @@ import com.ryuqq.marketplace.application.claimsync.port.out.client.SalesChannelC
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.saleschannel.manager.SalesChannelReadManager;
 import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
-import java.util.List;
 import com.ryuqq.marketplace.domain.saleschannel.aggregate.SalesChannel;
 import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

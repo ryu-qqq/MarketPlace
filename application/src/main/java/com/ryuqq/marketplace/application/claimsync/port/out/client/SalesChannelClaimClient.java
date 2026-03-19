@@ -2,7 +2,6 @@ package com.ryuqq.marketplace.application.claimsync.port.out.client;
 
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
-
 import java.time.Instant;
 import java.util.List;
 

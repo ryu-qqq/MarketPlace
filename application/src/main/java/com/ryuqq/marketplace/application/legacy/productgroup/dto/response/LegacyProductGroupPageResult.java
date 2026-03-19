@@ -14,16 +14,10 @@ import java.util.List;
  * @param size 페이지 크기
  */
 public record LegacyProductGroupPageResult(
-        List<LegacyProductGroupDetailResult> items,
-        long totalElements,
-        int page,
-        int size) {
+        List<LegacyProductGroupDetailResult> items, long totalElements, int page, int size) {
 
     public static LegacyProductGroupPageResult of(
-            List<LegacyProductGroupDetailResult> items,
-            long totalElements,
-            int page,
-            int size) {
+            List<LegacyProductGroupDetailResult> items, long totalElements, int page, int size) {
         return new LegacyProductGroupPageResult(items, totalElements, page, size);
     }
 

@@ -116,8 +116,7 @@ public class RefundOutbox {
     /** 처리 시작. PENDING → PROCESSING. */
     public void startProcessing(Instant now) {
         if (!status.isPending()) {
-            throw new IllegalStateException(
-                    "PENDING 상태에서만 처리를 시작할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PENDING 상태에서만 처리를 시작할 수 있습니다. 현재 상태: " + status);
         }
         this.status = RefundOutboxStatus.PROCESSING;
         this.updatedAt = now;
@@ -126,8 +125,7 @@ public class RefundOutbox {
     /** 처리 완료. PROCESSING → COMPLETED. */
     public void complete(Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "PROCESSING 상태에서만 완료할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PROCESSING 상태에서만 완료할 수 있습니다. 현재 상태: " + status);
         }
         this.status = RefundOutboxStatus.COMPLETED;
         this.processedAt = now;
@@ -138,8 +136,7 @@ public class RefundOutbox {
     /** 처리 실패 및 재시도. 최대 재시도 초과 시 FAILED. */
     public void failAndRetry(String errorMessage, Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
         }
         this.retryCount++;
         this.errorMessage = errorMessage;
@@ -156,8 +153,7 @@ public class RefundOutbox {
     /** 즉시 실패 처리 (재시도 없이). */
     public void fail(String errorMessage, Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("PROCESSING 상태에서만 실패 처리할 수 있습니다. 현재 상태: " + status);
         }
         this.status = RefundOutboxStatus.FAILED;
         this.errorMessage = errorMessage;
@@ -177,8 +173,7 @@ public class RefundOutbox {
     /** FAILED → PENDING 수동 재처리. */
     public void retry(Instant now) {
         if (!status.isFailed()) {
-            throw new IllegalStateException(
-                    "FAILED 상태에서만 재처리할 수 있습니다. 현재 상태: " + status);
+            throw new IllegalStateException("FAILED 상태에서만 재처리할 수 있습니다. 현재 상태: " + status);
         }
         this.status = RefundOutboxStatus.PENDING;
         this.retryCount = 0;
@@ -189,8 +184,7 @@ public class RefundOutbox {
     /** PROCESSING 타임아웃 복구. */
     public void recoverFromTimeout(Instant now) {
         if (!status.isProcessing()) {
-            throw new IllegalStateException(
-                    "타임아웃 복구는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
+            throw new IllegalStateException("타임아웃 복구는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
         }
         this.status = RefundOutboxStatus.PENDING;
         this.updatedAt = now;
@@ -205,29 +199,87 @@ public class RefundOutbox {
         return status.isPending();
     }
 
-    public RefundOutboxId id() { return id; }
-    public Long idValue() { return id.value(); }
-    public OrderItemId orderItemId() { return orderItemId; }
-    public String orderItemIdValue() { return orderItemId.value(); }
-    public RefundOutboxType outboxType() { return outboxType; }
-    public RefundOutboxStatus status() { return status; }
-    public String payload() { return payload; }
-    public int retryCount() { return retryCount; }
-    public int maxRetry() { return maxRetry; }
-    public Instant createdAt() { return createdAt; }
-    public Instant updatedAt() { return updatedAt; }
-    public Instant processedAt() { return processedAt; }
-    public String errorMessage() { return errorMessage; }
-    public long version() { return version; }
+    public RefundOutboxId id() {
+        return id;
+    }
+
+    public Long idValue() {
+        return id.value();
+    }
+
+    public OrderItemId orderItemId() {
+        return orderItemId;
+    }
+
+    public String orderItemIdValue() {
+        return orderItemId.value();
+    }
+
+    public RefundOutboxType outboxType() {
+        return outboxType;
+    }
+
+    public RefundOutboxStatus status() {
+        return status;
+    }
+
+    public String payload() {
+        return payload;
+    }
+
+    public int retryCount() {
+        return retryCount;
+    }
+
+    public int maxRetry() {
+        return maxRetry;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
+
+    public Instant processedAt() {
+        return processedAt;
+    }
+
+    public String errorMessage() {
+        return errorMessage;
+    }
+
+    public long version() {
+        return version;
+    }
 
     public void refreshVersion(long version) {
         this.version = version;
     }
 
-    public RefundOutboxIdempotencyKey idempotencyKey() { return idempotencyKey; }
-    public String idempotencyKeyValue() { return idempotencyKey.value(); }
-    public boolean isPending() { return status.isPending(); }
-    public boolean isProcessing() { return status.isProcessing(); }
-    public boolean isCompleted() { return status.isCompleted(); }
-    public boolean isFailed() { return status.isFailed(); }
+    public RefundOutboxIdempotencyKey idempotencyKey() {
+        return idempotencyKey;
+    }
+
+    public String idempotencyKeyValue() {
+        return idempotencyKey.value();
+    }
+
+    public boolean isPending() {
+        return status.isPending();
+    }
+
+    public boolean isProcessing() {
+        return status.isProcessing();
+    }
+
+    public boolean isCompleted() {
+        return status.isCompleted();
+    }
+
+    public boolean isFailed() {
+        return status.isFailed();
+    }
 }

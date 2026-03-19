@@ -136,8 +136,8 @@ public class OrderJpaEntityMapper {
                 history.changedBy(),
                 history.reason(),
                 history.changedAt(),
-                null,
-                null);
+                history.changedAt(),
+                history.changedAt());
     }
 
     public List<OrderItemHistoryJpaEntity> toOrderItemHistoryEntities(
@@ -251,7 +251,6 @@ public class OrderJpaEntityMapper {
                         Money.of(entity.getPaymentAmount())),
                 resolveReceiverInfo(entity),
                 OrderItemStatus.valueOf(entity.getOrderItemStatus()),
-                null,
                 histories);
     }
 

@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.application.claimsync.internal;
 
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
-import com.ryuqq.marketplace.application.claimsync.internal.ClaimSyncHandler;
 import com.ryuqq.marketplace.application.claimsync.manager.ClaimSyncLogCommandManager;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
@@ -25,11 +24,12 @@ import org.springframework.stereotype.Component;
  * 클레임 동기화 단건 처리 컴포넌트.
  *
  * <p>매핑이 확인된 클레임에 대해 다음 단계를 처리합니다:
+ *
  * <ol>
- *   <li>외부 클레임 유형 → 내부 유형 변환 (ExternalClaimType 도메인 VO 사용)</li>
- *   <li>InternalClaimType 기반으로 적절한 ClaimSyncHandler 라우팅</li>
- *   <li>핸들러를 통한 액션 결정 및 실행</li>
- *   <li>동기화 로그 기록</li>
+ *   <li>외부 클레임 유형 → 내부 유형 변환 (ExternalClaimType 도메인 VO 사용)
+ *   <li>InternalClaimType 기반으로 적절한 ClaimSyncHandler 라우팅
+ *   <li>핸들러를 통한 액션 결정 및 실행
+ *   <li>동기화 로그 기록
  * </ol>
  */
 @Component
@@ -47,8 +47,9 @@ public class ClaimSyncProcessor {
             OrderItemReadManager orderItemReadManager,
             ClaimSyncLogCommandManager syncLogCommandManager,
             TimeProvider timeProvider) {
-        this.handlers = handlerList.stream()
-                .collect(Collectors.toMap(ClaimSyncHandler::supportedType, h -> h));
+        this.handlers =
+                handlerList.stream()
+                        .collect(Collectors.toMap(ClaimSyncHandler::supportedType, h -> h));
         this.orderItemReadManager = orderItemReadManager;
         this.syncLogCommandManager = syncLogCommandManager;
         this.timeProvider = timeProvider;
@@ -63,9 +64,7 @@ public class ClaimSyncProcessor {
      * @return 처리 결과
      */
     public ClaimSyncOutcome process(
-            ExternalClaimPayload claim,
-            ExternalOrderItemMapping mapping,
-            long salesChannelId) {
+            ExternalClaimPayload claim, ExternalOrderItemMapping mapping, long salesChannelId) {
 
         OrderItemId orderItemId = mapping.orderItemId();
         ExternalClaimType externalType = ExternalClaimType.fromString(claim.claimType());
@@ -103,7 +102,7 @@ public class ClaimSyncProcessor {
     }
 
     private long resolveSellerId(OrderItemId orderItemId) {
-        Optional<OrderItem> orderItem = orderItemReadManager.findById(orderItemId.value());
+        Optional<OrderItem> orderItem = orderItemReadManager.findById(orderItemId);
         if (orderItem.isPresent()) {
             return orderItem.get().sellerId();
         }
@@ -117,15 +116,16 @@ public class ClaimSyncProcessor {
             InternalClaimType internalType,
             long internalClaimId,
             ClaimSyncAction action) {
-        ClaimSyncLog syncLog = ClaimSyncLog.forNew(
-                salesChannelId,
-                claim.externalProductOrderId(),
-                claim.claimType(),
-                claim.claimStatus(),
-                internalType.name(),
-                internalClaimId,
-                action,
-                timeProvider.now());
+        ClaimSyncLog syncLog =
+                ClaimSyncLog.forNew(
+                        salesChannelId,
+                        claim.externalProductOrderId(),
+                        claim.claimType(),
+                        claim.claimStatus(),
+                        internalType.name(),
+                        internalClaimId,
+                        action,
+                        timeProvider.now());
         syncLogCommandManager.record(syncLog);
     }
 }

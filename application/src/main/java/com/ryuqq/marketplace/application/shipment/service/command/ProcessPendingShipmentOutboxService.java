@@ -2,28 +2,27 @@ package com.ryuqq.marketplace.application.shipment.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.application.shipment.dto.command.ProcessPendingShipmentOutboxCommand;
-import com.ryuqq.marketplace.application.shipment.internal.ShipmentOutboxProcessor;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentOutboxRelayProcessor;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ProcessPendingShipmentOutboxUseCase;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
 import java.util.List;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-/**
- * 대기 중인 배송 아웃박스 처리 서비스.
- *
- * <p>PENDING 상태의 배송 아웃박스를 조회하여 외부 채널에 상태를 동기화합니다.
- */
+/** PENDING 배송 아웃박스를 조회하여 SQS로 발행하는 서비스. */
 @Service
+@ConditionalOnProperty(prefix = "sqs.queues", name = "shipment-outbox")
 public class ProcessPendingShipmentOutboxService implements ProcessPendingShipmentOutboxUseCase {
 
     private final ShipmentOutboxReadManager outboxReadManager;
-    private final ShipmentOutboxProcessor outboxProcessor;
+    private final ShipmentOutboxRelayProcessor relayProcessor;
 
     public ProcessPendingShipmentOutboxService(
-            ShipmentOutboxReadManager outboxReadManager, ShipmentOutboxProcessor outboxProcessor) {
+            ShipmentOutboxReadManager outboxReadManager,
+            ShipmentOutboxRelayProcessor relayProcessor) {
         this.outboxReadManager = outboxReadManager;
-        this.outboxProcessor = outboxProcessor;
+        this.relayProcessor = relayProcessor;
     }
 
     @Override
@@ -36,7 +35,7 @@ public class ProcessPendingShipmentOutboxService implements ProcessPendingShipme
         int failedCount = 0;
 
         for (ShipmentOutbox outbox : outboxes) {
-            boolean success = outboxProcessor.processOutbox(outbox);
+            boolean success = relayProcessor.relay(outbox);
             if (success) {
                 successCount++;
             } else {

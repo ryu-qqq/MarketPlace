@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.domain.shipment.query.ShipmentSearchCriteria;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,11 @@ public class ShipmentReadManager {
     @Transactional(readOnly = true)
     public Shipment getById(ShipmentId id) {
         return queryPort.findById(id).orElseThrow(() -> new ShipmentNotFoundException(id.value()));
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Shipment> findByOrderItemId(OrderItemId orderItemId) {
+        return queryPort.findByOrderItemId(orderItemId);
     }
 
     @Transactional(readOnly = true)

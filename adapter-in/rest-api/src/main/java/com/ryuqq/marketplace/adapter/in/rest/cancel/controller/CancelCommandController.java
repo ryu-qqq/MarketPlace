@@ -14,6 +14,7 @@ import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultAp
 import com.ryuqq.marketplace.application.cancel.port.in.command.ApproveCancelBatchUseCase;
 import com.ryuqq.marketplace.application.cancel.port.in.command.RejectCancelBatchUseCase;
 import com.ryuqq.marketplace.application.cancel.port.in.command.SellerCancelBatchUseCase;
+import com.ryuqq.marketplace.application.cancel.port.in.query.GetCancelDetailUseCase;
 import com.ryuqq.marketplace.application.claimhistory.dto.command.AddClaimHistoryMemoCommand;
 import com.ryuqq.marketplace.application.claimhistory.port.in.command.AddClaimHistoryMemoUseCase;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
@@ -41,6 +42,7 @@ public class CancelCommandController {
     private final ApproveCancelBatchUseCase approveCancelBatchUseCase;
     private final RejectCancelBatchUseCase rejectCancelBatchUseCase;
     private final AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase;
+    private final GetCancelDetailUseCase getCancelDetailUseCase;
     private final CancelApiMapper mapper;
     private final MarketAccessChecker accessChecker;
 
@@ -49,12 +51,14 @@ public class CancelCommandController {
             ApproveCancelBatchUseCase approveCancelBatchUseCase,
             RejectCancelBatchUseCase rejectCancelBatchUseCase,
             AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase,
+            GetCancelDetailUseCase getCancelDetailUseCase,
             CancelApiMapper mapper,
             MarketAccessChecker accessChecker) {
         this.sellerCancelBatchUseCase = sellerCancelBatchUseCase;
         this.approveCancelBatchUseCase = approveCancelBatchUseCase;
         this.rejectCancelBatchUseCase = rejectCancelBatchUseCase;
         this.addClaimHistoryMemoUseCase = addClaimHistoryMemoUseCase;
+        this.getCancelDetailUseCase = getCancelDetailUseCase;
         this.mapper = mapper;
         this.accessChecker = accessChecker;
     }
@@ -65,7 +69,8 @@ public class CancelCommandController {
     @PostMapping(CancelAdminEndpoints.SELLER_CANCEL_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> sellerCancelBatch(
             @RequestBody @Valid SellerCancelBatchApiRequest request) {
-        long sellerId = accessChecker.resolveCurrentSellerId();
+        Long sellerIdOrNull = accessChecker.resolveSellerIdOrNull();
+        long sellerId = sellerIdOrNull != null ? sellerIdOrNull : 0L;
         String requestedBy = resolveCurrentUsername();
         BatchProcessingResult<String> result =
                 sellerCancelBatchUseCase.execute(
@@ -108,10 +113,12 @@ public class CancelCommandController {
     public ResponseEntity<ApiResponse<ClaimHistoryMemoApiResponse>> addMemo(
             @PathVariable String cancelId,
             @RequestBody @Valid AddClaimHistoryMemoApiRequest request) {
-        long sellerId = accessChecker.resolveCurrentSellerId();
+        getCancelDetailUseCase.execute(cancelId);
+        Long sellerId = accessChecker.resolveSellerIdOrNull();
         String actorName = resolveCurrentUsername();
+        long actorId = sellerId != null ? sellerId : 0L;
         AddClaimHistoryMemoCommand command =
-                mapper.toAddMemoCommand(cancelId, request, sellerId, actorName);
+                mapper.toAddMemoCommand(cancelId, request, actorId, actorName);
         String historyId = addClaimHistoryMemoUseCase.execute(command);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(new ClaimHistoryMemoApiResponse(historyId)));

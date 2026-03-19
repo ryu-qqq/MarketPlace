@@ -4,5 +4,4 @@ import com.ryuqq.marketplace.adapter.out.persistence.claimsync.entity.ClaimSyncL
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /** 클레임 동기화 로그 JPA Repository. */
-public interface ClaimSyncLogJpaRepository
-        extends JpaRepository<ClaimSyncLogJpaEntity, Long> {}
+public interface ClaimSyncLogJpaRepository extends JpaRepository<ClaimSyncLogJpaEntity, Long> {}

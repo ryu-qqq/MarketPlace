@@ -35,7 +35,8 @@ public class RejectRefundBatchService implements RejectRefundBatchUseCase {
 
     @Override
     public BatchProcessingResult<String> execute(RejectRefundBatchCommand command) {
-        List<RefundClaim> claims = validator.validateAndGet(command.refundClaimIds(), command.sellerId());
+        List<RefundClaim> claims =
+                validator.validateAndGet(command.refundClaimIds(), command.sellerId());
 
         RefundBatchResult batchResult = RefundBatchResult.create("REJECT");
         for (RefundClaim claim : claims) {

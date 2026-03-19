@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RefundOutboxConditionBuilder {
 
-    private static final QRefundOutboxJpaEntity outbox = QRefundOutboxJpaEntity.refundOutboxJpaEntity;
+    private static final QRefundOutboxJpaEntity outbox =
+            QRefundOutboxJpaEntity.refundOutboxJpaEntity;
 
     public BooleanExpression statusPending() {
         return outbox.status.eq("PENDING");

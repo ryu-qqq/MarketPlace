@@ -90,8 +90,12 @@ public class OrderQueryApiMapper {
 
     public OrderListApiResponseV4 toListResponseV4(ProductOrderListResult result) {
         return new OrderListApiResponseV4(
-                nullToEmpty(result.productOrder() != null ? result.productOrder().orderItemId() : null),
-                nullToEmpty(result.productOrder() != null ? result.productOrder().orderItemNumber() : null),
+                nullToEmpty(
+                        result.productOrder() != null ? result.productOrder().orderItemId() : null),
+                nullToEmpty(
+                        result.productOrder() != null
+                                ? result.productOrder().orderItemNumber()
+                                : null),
                 toBuyerInfoV4(result.order()),
                 toPaymentDetailV4(result.payment(), result.order()),
                 toReceiverInfoV4(result.receiver()),
@@ -133,8 +137,12 @@ public class OrderQueryApiMapper {
 
     public OrderDetailApiResponseV4 toDetailResponseV4(ProductOrderDetailResult result) {
         return new OrderDetailApiResponseV4(
-                nullToEmpty(result.productOrder() != null ? result.productOrder().orderItemId() : null),
-                nullToEmpty(result.productOrder() != null ? result.productOrder().orderItemNumber() : null),
+                nullToEmpty(
+                        result.productOrder() != null ? result.productOrder().orderItemId() : null),
+                nullToEmpty(
+                        result.productOrder() != null
+                                ? result.productOrder().orderItemNumber()
+                                : null),
                 toBuyerInfoV4(result.order()),
                 toPaymentDetailV4(result.payment(), result.order()),
                 toReceiverInfoV4(result.receiver()),
@@ -416,10 +424,7 @@ public class OrderQueryApiMapper {
             return new OrderListApiResponseV4.PaymentShipmentInfoApiResponse("", "", "", "");
         }
         return new OrderListApiResponseV4.PaymentShipmentInfoApiResponse(
-                nullToEmpty(delivery.orderItemStatus()),
-                "",
-                "",
-                "");
+                nullToEmpty(delivery.orderItemStatus()), "", "", "");
     }
 
     private OrderListApiResponseV4.OrderProductApiResponse toOrderProductV4(
