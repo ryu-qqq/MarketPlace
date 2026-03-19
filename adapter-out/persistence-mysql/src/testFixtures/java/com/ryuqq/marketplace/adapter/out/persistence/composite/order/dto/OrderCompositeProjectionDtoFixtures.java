@@ -6,7 +6,7 @@ import java.time.Instant;
  * Order Composite Projection DTO 테스트 Fixtures.
  *
  * <p>PaymentProjectionDto, ProductOrderListProjectionDto, ProductOrderDetailProjectionDto 생성용.
- * paymentId(String), paymentNumber 필드 변경 이후 기준.
+ * sellerId/brandId/배송/정산 필드 제거 이후 기준.
  */
 public final class OrderCompositeProjectionDtoFixtures {
 
@@ -28,8 +28,6 @@ public final class OrderCompositeProjectionDtoFixtures {
     public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
     public static final long DEFAULT_PRODUCT_GROUP_ID = 100L;
     public static final long DEFAULT_PRODUCT_ID = 200L;
-    public static final long DEFAULT_SELLER_ID = 10L;
-    public static final long DEFAULT_BRAND_ID = 50L;
     public static final String DEFAULT_SKU_CODE = "SKU-001";
     public static final String DEFAULT_PRODUCT_GROUP_NAME = "테스트 상품";
     public static final String DEFAULT_BRAND_NAME = "테스트 브랜드";
@@ -51,7 +49,7 @@ public final class OrderCompositeProjectionDtoFixtures {
     public static final String DEFAULT_RECEIVER_ADDRESS = "서울시 강남구 테헤란로 123";
     public static final String DEFAULT_RECEIVER_ADDRESS_DETAIL = "4층 401호";
     public static final String DEFAULT_DELIVERY_REQUEST = "부재시 경비실에 맡겨주세요";
-    public static final String DEFAULT_DELIVERY_STATUS = "READY";
+    public static final String DEFAULT_ORDER_ITEM_STATUS = "READY";
 
     // payment 필드 (String ID, paymentNumber 포함)
     public static final String DEFAULT_PAYMENT_ID = "01944b2a-aaaa-7fff-8888-000000000001";
@@ -137,8 +135,6 @@ public final class OrderCompositeProjectionDtoFixtures {
                 "ORD-20260218-0001-001",
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,
-                DEFAULT_SELLER_ID,
-                DEFAULT_BRAND_ID,
                 DEFAULT_SKU_CODE,
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_BRAND_NAME,
@@ -160,10 +156,7 @@ public final class OrderCompositeProjectionDtoFixtures {
                 DEFAULT_RECEIVER_ADDRESS,
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
-                DEFAULT_DELIVERY_STATUS,
-                null,
-                null,
-                null,
+                DEFAULT_ORDER_ITEM_STATUS,
                 DEFAULT_PAYMENT_ID,
                 DEFAULT_PAYMENT_NUMBER,
                 DEFAULT_PAYMENT_STATUS,
@@ -196,8 +189,6 @@ public final class OrderCompositeProjectionDtoFixtures {
                 "ORD-20260218-0001-001",
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,
-                DEFAULT_SELLER_ID,
-                DEFAULT_BRAND_ID,
                 DEFAULT_SKU_CODE,
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_BRAND_NAME,
@@ -219,10 +210,7 @@ public final class OrderCompositeProjectionDtoFixtures {
                 DEFAULT_RECEIVER_ADDRESS,
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
-                DEFAULT_DELIVERY_STATUS,
-                null,
-                null,
-                null,
+                DEFAULT_ORDER_ITEM_STATUS,
                 null,
                 null,
                 null,
@@ -259,8 +247,6 @@ public final class OrderCompositeProjectionDtoFixtures {
                 "ORD-20260218-0001-001",
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,
-                DEFAULT_SELLER_ID,
-                DEFAULT_BRAND_ID,
                 DEFAULT_SKU_CODE,
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_BRAND_NAME,
@@ -282,19 +268,7 @@ public final class OrderCompositeProjectionDtoFixtures {
                 DEFAULT_RECEIVER_ADDRESS,
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
-                DEFAULT_DELIVERY_STATUS,
-                null,
-                null,
-                null,
-                // 정산 필드
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
-                null,
-                // payment 필드
+                DEFAULT_ORDER_ITEM_STATUS,
                 DEFAULT_PAYMENT_ID,
                 DEFAULT_PAYMENT_NUMBER,
                 DEFAULT_PAYMENT_STATUS,
@@ -327,8 +301,6 @@ public final class OrderCompositeProjectionDtoFixtures {
                 "ORD-20260218-0001-001",
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,
-                DEFAULT_SELLER_ID,
-                DEFAULT_BRAND_ID,
                 DEFAULT_SKU_CODE,
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_BRAND_NAME,
@@ -350,19 +322,7 @@ public final class OrderCompositeProjectionDtoFixtures {
                 DEFAULT_RECEIVER_ADDRESS,
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
-                DEFAULT_DELIVERY_STATUS,
-                null,
-                null,
-                null,
-                // 정산 필드
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
-                null,
-                // payment 필드 (모두 null)
+                DEFAULT_ORDER_ITEM_STATUS,
                 null,
                 null,
                 null,

@@ -2,12 +2,17 @@ package com.ryuqq.marketplace.application.legacyconversion.internal;
 
 import com.ryuqq.marketplace.application.legacyconversion.dto.bundle.LegacyOrderConversionBundle;
 import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrderCompositeResult;
+import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrderResolvedIds;
 import com.ryuqq.marketplace.application.legacyconversion.factory.LegacyOrderConversionFactory;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyOrderCompositeReadManager;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyOrderConversionOutboxCommandManager;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyOrderIdMappingReadManager;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyProductIdMappingReadManager;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacySellerIdMappingReadManager;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderConversionOutbox;
+import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
 import java.time.Instant;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -19,6 +24,7 @@ import org.springframework.stereotype.Component;
  *
  * <ul>
  *   <li>조회 Phase: outbox 상태 변경, 중복 체크, luxurydb 조회 (각각 별도 트랜잭션)
+ *   <li>ID 변환 Phase: legacy_product_id_mappings + legacy_seller_id_mapping 조회
  *   <li>변환 Phase: Factory에서 도메인 객체 조립 (트랜잭션 없음, 순수 로직)
  *   <li>저장 Phase: PersistenceFacade에서 Order+Cancel/Refund+Mapping 원자적 저장
  *   <li>완료 Phase: outbox 완료 처리
@@ -36,6 +42,8 @@ public class LegacyOrderConversionCoordinator {
     private final LegacyOrderPersistenceFacade persistenceFacade;
     private final LegacyOrderConversionOutboxCommandManager outboxCommandManager;
     private final LegacyOrderIdMappingReadManager mappingReadManager;
+    private final LegacyProductIdMappingReadManager productIdMappingReadManager;
+    private final LegacySellerIdMappingReadManager sellerIdMappingReadManager;
 
     public LegacyOrderConversionCoordinator(
             LegacyOrderCompositeReadManager compositeReadManager,
@@ -44,7 +52,9 @@ public class LegacyOrderConversionCoordinator {
             LegacyOrderConversionFactory conversionFactory,
             LegacyOrderPersistenceFacade persistenceFacade,
             LegacyOrderConversionOutboxCommandManager outboxCommandManager,
-            LegacyOrderIdMappingReadManager mappingReadManager) {
+            LegacyOrderIdMappingReadManager mappingReadManager,
+            LegacyProductIdMappingReadManager productIdMappingReadManager,
+            LegacySellerIdMappingReadManager sellerIdMappingReadManager) {
         this.compositeReadManager = compositeReadManager;
         this.channelResolver = channelResolver;
         this.statusMapper = statusMapper;
@@ -52,13 +62,10 @@ public class LegacyOrderConversionCoordinator {
         this.persistenceFacade = persistenceFacade;
         this.outboxCommandManager = outboxCommandManager;
         this.mappingReadManager = mappingReadManager;
+        this.productIdMappingReadManager = productIdMappingReadManager;
+        this.sellerIdMappingReadManager = sellerIdMappingReadManager;
     }
 
-    /**
-     * 단일 Outbox 엔트리를 변환 처리합니다.
-     *
-     * @param outbox 처리할 Outbox
-     */
     public void convert(LegacyOrderConversionOutbox outbox) {
         Instant now = Instant.now();
         long legacyOrderId = outbox.legacyOrderId();
@@ -95,15 +102,18 @@ public class LegacyOrderConversionCoordinator {
             String externalOrderNo = channelResolver.resolveExternalOrderNo(
                     composite.externalOrderPkId(), legacyOrderId);
 
-            // 6. 도메인 객체 조립 (순수 변환, 트랜잭션 없음)
+            // 6. 내부 ID 변환
+            LegacyOrderResolvedIds resolvedIds = resolveInternalIds(composite);
+
+            // 7. 도메인 객체 조립 (순수 변환, 트랜잭션 없음)
             LegacyOrderConversionBundle bundle = conversionFactory.create(
                     composite, channel, statusResolution, externalOrderNo,
-                    outbox.legacyPaymentId(), now);
+                    outbox.legacyPaymentId(), resolvedIds, now);
 
-            // 7. 원자적 저장 (Order + Cancel/Refund + Mapping)
+            // 8. 원자적 저장 (Order + Cancel/Refund + Mapping)
             persistenceFacade.persist(bundle);
 
-            // 8. 완료
+            // 9. 완료
             completeOutbox(outbox, now);
 
             log.info("레거시 주문 이관 완료: legacyOrderId={} → internalOrderId={}, channel={}",
@@ -113,6 +123,36 @@ public class LegacyOrderConversionCoordinator {
             log.error("레거시 주문 이관 실패: legacyOrderId={}", legacyOrderId, e);
             outboxCommandManager.failInNewTransaction(outbox, truncateMessage(e.getMessage()), Instant.now());
         }
+    }
+
+    /**
+     * 레거시 ID → 내부 ID 변환.
+     *
+     * <p>legacy_product_id_mappings에서 상품 매핑을 조회하고,
+     * legacy_seller_id_mapping에서 셀러명을 조회합니다.
+     * 매핑이 없으면 레거시 ID를 그대로 사용합니다.
+     */
+    private LegacyOrderResolvedIds resolveInternalIds(LegacyOrderCompositeResult composite) {
+        // 상품 ID 변환
+        Optional<LegacyProductIdMapping> productMapping =
+                productIdMappingReadManager.findByLegacyProductId(composite.legacyProductId());
+
+        long internalProductGroupId = productMapping
+                .map(LegacyProductIdMapping::internalProductGroupId)
+                .orElse(composite.productGroupId());
+
+        long internalProductId = productMapping
+                .map(LegacyProductIdMapping::internalProductId)
+                .orElse(composite.legacyProductId());
+
+        // 셀러명 조회
+        String sellerName = sellerIdMappingReadManager.findSellerNameByLegacySellerId(composite.legacySellerId())
+                .orElse(null);
+
+        // 브랜드명은 luxurydb 스냅샷에 별도 컬럼이 없어 null (추후 보강 가능)
+        String brandName = null;
+
+        return new LegacyOrderResolvedIds(internalProductGroupId, internalProductId, sellerName, brandName);
     }
 
     private void completeOutbox(LegacyOrderConversionOutbox outbox, Instant now) {

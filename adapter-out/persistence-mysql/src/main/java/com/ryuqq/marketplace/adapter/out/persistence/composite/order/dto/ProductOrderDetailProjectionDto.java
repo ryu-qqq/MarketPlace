@@ -3,8 +3,8 @@ package com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto;
 import java.time.Instant;
 
 /**
- * 상품주문(productOrder) 상세 프로젝션. order_items JOIN orders LEFT JOIN payments 결과 + settlement 정산 필드 포함.
- * 리스트 프로젝션({@link ProductOrderListProjectionDto})에 정산 7개 필드가 추가된 구조.
+ * 상품주문(productOrder) 상세 프로젝션. order_items JOIN orders LEFT JOIN payments 결과.
+ * 리스트 프로젝션({@link ProductOrderListProjectionDto})과 동일한 구조.
  */
 public record ProductOrderDetailProjectionDto(
         // -- orders 테이블 --
@@ -27,8 +27,6 @@ public record ProductOrderDetailProjectionDto(
         String orderItemNumber,
         long productGroupId,
         long productId,
-        long sellerId,
-        long brandId,
         String skuCode,
         String productGroupName,
         String brandName,
@@ -50,18 +48,7 @@ public record ProductOrderDetailProjectionDto(
         String receiverAddress,
         String receiverAddressDetail,
         String deliveryRequest,
-        String deliveryStatus,
-        String shipmentCompanyCode,
-        String invoice,
-        Instant shipmentCompletedDate,
-        // -- order_items 정산 필드 --
-        int commissionRate,
-        int fee,
-        int expectationSettlementAmount,
-        int settlementAmount,
-        int shareRatio,
-        Instant expectedSettlementDay,
-        Instant settlementDay,
+        String orderItemStatus,
         // -- payments 테이블 (LEFT JOIN) --
         String paymentId,
         String paymentNumber,

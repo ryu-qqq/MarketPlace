@@ -13,8 +13,6 @@ public final class OrderItemJpaEntityFixtures {
 
     public static final long DEFAULT_PRODUCT_GROUP_ID = 1000L;
     public static final long DEFAULT_PRODUCT_ID = 2000L;
-    public static final long DEFAULT_SELLER_ID = 10L;
-    public static final long DEFAULT_BRAND_ID = 50L;
     public static final String DEFAULT_SKU_CODE = "SKU-001";
     public static final String DEFAULT_EXTERNAL_PRODUCT_ID = "EXT-PROD-001";
     public static final String DEFAULT_EXTERNAL_OPTION_ID = "EXT-OPT-001";
@@ -43,8 +41,6 @@ public final class OrderItemJpaEntityFixtures {
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,
-                DEFAULT_SELLER_ID,
-                DEFAULT_BRAND_ID,
                 DEFAULT_SKU_CODE,
                 null,
                 null,
@@ -67,16 +63,6 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
                 "READY",
-                null,
-                null,
-                null,
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
-                null,
                 now,
                 now);
     }
@@ -97,8 +83,6 @@ public final class OrderItemJpaEntityFixtures {
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 DEFAULT_PRODUCT_ID,
-                DEFAULT_SELLER_ID,
-                DEFAULT_BRAND_ID,
                 DEFAULT_SKU_CODE,
                 null,
                 null,
@@ -121,16 +105,6 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
                 "READY",
-                null,
-                null,
-                null,
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
-                null,
                 now,
                 now);
     }

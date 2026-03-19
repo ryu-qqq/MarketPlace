@@ -106,8 +106,6 @@ public class OrderCompositeMapper {
                 dto.orderId(),
                 dto.productGroupId(),
                 dto.productId(),
-                dto.sellerId(),
-                dto.brandId(),
                 dto.skuCode(),
                 dto.productGroupName(),
                 dto.brandName(),
@@ -129,17 +127,7 @@ public class OrderCompositeMapper {
                 dto.receiverAddress(),
                 dto.receiverAddressDetail(),
                 dto.deliveryRequest(),
-                dto.deliveryStatus(),
-                dto.shipmentCompanyCode(),
-                dto.invoice(),
-                dto.shipmentCompletedDate(),
-                dto.commissionRate(),
-                dto.fee(),
-                dto.expectationSettlementAmount(),
-                dto.settlementAmount(),
-                dto.shareRatio(),
-                dto.expectedSettlementDay(),
-                dto.settlementDay());
+                dto.orderItemStatus());
     }
 
     public OrderHistoryResult toHistoryResult(OrderHistoryProjectionDto dto) {
@@ -181,8 +169,6 @@ public class OrderCompositeMapper {
                         dto.orderId(),
                         dto.productGroupId(),
                         dto.productId(),
-                        dto.sellerId(),
-                        dto.brandId(),
                         dto.skuCode(),
                         dto.productGroupName(),
                         dto.brandName(),
@@ -204,17 +190,7 @@ public class OrderCompositeMapper {
                         dto.receiverAddress(),
                         dto.receiverAddressDetail(),
                         dto.deliveryRequest(),
-                        dto.deliveryStatus(),
-                        dto.shipmentCompanyCode(),
-                        dto.invoice(),
-                        dto.shipmentCompletedDate(),
-                        dto.commissionRate(),
-                        dto.fee(),
-                        dto.expectationSettlementAmount(),
-                        dto.settlementAmount(),
-                        dto.shareRatio(),
-                        dto.expectedSettlementDay(),
-                        dto.settlementDay());
+                        dto.orderItemStatus());
 
         OrderListResult order =
                 new OrderListResult(
@@ -255,7 +231,7 @@ public class OrderCompositeMapper {
         return new ProductOrderDetailData(item, order, payment);
     }
 
-    /** ProductOrderListProjectionDto → OrderItemResult (리스트 조회용, 정산 필드 미포함). */
+    /** ProductOrderListProjectionDto → OrderItemResult (리스트 조회용). */
     public OrderItemResult toItemResultFromProjection(ProductOrderListProjectionDto dto) {
         return new OrderItemResult(
                 dto.orderItemId() != null ? dto.orderItemId() : "",
@@ -263,8 +239,6 @@ public class OrderCompositeMapper {
                 dto.orderId(),
                 dto.productGroupId(),
                 dto.productId(),
-                dto.sellerId(),
-                dto.brandId(),
                 dto.skuCode(),
                 dto.productGroupName(),
                 dto.brandName(),
@@ -286,17 +260,7 @@ public class OrderCompositeMapper {
                 dto.receiverAddress(),
                 dto.receiverAddressDetail(),
                 dto.deliveryRequest(),
-                dto.deliveryStatus(),
-                dto.shipmentCompanyCode(),
-                dto.invoice(),
-                dto.shipmentCompletedDate(),
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
-                null);
+                dto.orderItemStatus());
     }
 
     public OrderClaimResult toClaimResult(OrderClaimProjectionDto dto) {

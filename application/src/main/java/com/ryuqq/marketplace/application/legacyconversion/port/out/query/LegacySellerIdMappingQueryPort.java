@@ -12,4 +12,12 @@ public interface LegacySellerIdMappingQueryPort {
      * @return 내부 셀러 ID (market sellers.id)
      */
     Optional<Long> findInternalSellerIdByLegacySellerId(long legacySellerId);
+
+    /**
+     * 레거시 셀러 ID로 셀러명 조회.
+     *
+     * @param legacySellerId luxurydb seller.seller_id
+     * @return 셀러명
+     */
+    Optional<String> findSellerNameByLegacySellerId(long legacySellerId);
 }

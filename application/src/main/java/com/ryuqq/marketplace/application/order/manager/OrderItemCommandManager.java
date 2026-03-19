@@ -20,4 +20,9 @@ public class OrderItemCommandManager {
     public void persistAll(List<OrderItem> orderItems) {
         commandPort.persistAll(orderItems);
     }
+
+    @Transactional
+    public void updateAll(List<OrderItem> orderItems) {
+        commandPort.updateAll(orderItems);
+    }
 }

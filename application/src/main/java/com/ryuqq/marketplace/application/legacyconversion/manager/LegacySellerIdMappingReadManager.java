@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.legacyconversion.manager;
 
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacySellerIdMappingQueryPort;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,5 +32,16 @@ public class LegacySellerIdMappingReadManager {
                         () ->
                                 new IllegalStateException(
                                         "레거시 셀러 매핑 미발견: legacySellerId=" + legacySellerId));
+    }
+
+    /**
+     * 레거시 셀러 ID로 셀러명 조회.
+     *
+     * @param legacySellerId luxurydb seller.seller_id
+     * @return 셀러명 Optional
+     */
+    @Transactional(readOnly = true)
+    public Optional<String> findSellerNameByLegacySellerId(long legacySellerId) {
+        return queryPort.findSellerNameByLegacySellerId(legacySellerId);
     }
 }

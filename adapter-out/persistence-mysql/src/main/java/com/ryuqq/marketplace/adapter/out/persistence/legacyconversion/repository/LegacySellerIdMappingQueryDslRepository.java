@@ -35,4 +35,20 @@ public class LegacySellerIdMappingQueryDslRepository {
                         .fetchOne();
         return Optional.ofNullable(internalSellerId);
     }
+
+    /**
+     * 레거시 셀러 ID로 셀러명 조회.
+     *
+     * @param legacySellerId luxurydb seller.seller_id
+     * @return 셀러명 Optional
+     */
+    public Optional<String> findSellerNameByLegacySellerId(long legacySellerId) {
+        String sellerName =
+                queryFactory
+                        .select(legacySellerIdMappingJpaEntity.sellerName)
+                        .from(legacySellerIdMappingJpaEntity)
+                        .where(legacySellerIdMappingJpaEntity.legacySellerId.eq(legacySellerId))
+                        .fetchOne();
+        return Optional.ofNullable(sellerName);
+    }
 }

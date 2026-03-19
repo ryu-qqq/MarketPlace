@@ -7,4 +7,6 @@ import java.util.List;
 public interface OrderItemCommandPort {
 
     void persistAll(List<OrderItem> orderItems);
+
+    void updateAll(List<OrderItem> orderItems);
 }

@@ -89,8 +89,6 @@ public class OrderJpaEntityMapper {
                 orderId,
                 item.internalProduct().productGroupId(),
                 item.internalProduct().productId(),
-                item.internalProduct().sellerId(),
-                item.internalProduct().brandId(),
                 item.internalProduct().skuCode(),
                 item.internalProduct().productGroupName(),
                 item.internalProduct().brandName(),
@@ -121,16 +119,6 @@ public class OrderJpaEntityMapper {
                         : null,
                 item.receiverInfo().deliveryRequest(),
                 item.status().name(),
-                null,
-                null,
-                null,
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
-                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -242,8 +230,8 @@ public class OrderJpaEntityMapper {
                 InternalProductReference.of(
                         entity.getProductGroupId(),
                         entity.getProductId(),
-                        entity.getSellerId(),
-                        entity.getBrandId(),
+                        null,
+                        null,
                         entity.getSkuCode(),
                         entity.getProductGroupName(),
                         entity.getBrandName(),
@@ -262,7 +250,7 @@ public class OrderJpaEntityMapper {
                         Money.of(entity.getDiscountAmount()),
                         Money.of(entity.getPaymentAmount())),
                 resolveReceiverInfo(entity),
-                OrderItemStatus.valueOf(entity.getDeliveryStatus()),
+                OrderItemStatus.valueOf(entity.getOrderItemStatus()),
                 null,
                 histories);
     }

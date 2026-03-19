@@ -8,7 +8,6 @@ import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
-import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult.SettlementInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.CancelSummary;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ClaimSummary;
@@ -17,10 +16,13 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResu
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.PaymentInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ProductOrderInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ReceiverInfo;
+import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
 import com.ryuqq.marketplace.domain.common.vo.PageMeta;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +44,18 @@ public class OrderAssembler {
     /** 완료된 클레임 상태 집합. */
     private static final Set<String> COMPLETED_CLAIM_STATUSES =
             Set.of("COMPLETED", "REFUNDED", "EXCHANGED");
+
+    /**
+     * 주문상품 상태별 카운트 → OrderSummaryResult 변환.
+     */
+    public OrderSummaryResult toSummaryResult(Map<OrderItemStatus, Long> statusCounts) {
+        return new OrderSummaryResult(
+                statusCounts.getOrDefault(OrderItemStatus.READY, 0L),
+                statusCounts.getOrDefault(OrderItemStatus.CONFIRMED, 0L),
+                statusCounts.getOrDefault(OrderItemStatus.CANCELLED, 0L),
+                statusCounts.getOrDefault(OrderItemStatus.RETURN_REQUESTED, 0L),
+                statusCounts.getOrDefault(OrderItemStatus.RETURNED, 0L));
+    }
 
     // ==================== V5 상품주문 리스트 조립 ====================
 
@@ -89,8 +103,6 @@ public class OrderAssembler {
         CancelSummary cancelSummary = toCancelSummary(bundle.cancels(), item.quantity());
         ClaimSummary claimSummary = toClaimSummary(bundle.claims(), item.quantity());
 
-        SettlementInfo settlement = toSettlementInfo(item);
-
         return new ProductOrderDetailResult(
                 orderInfo,
                 productOrderInfo,
@@ -99,7 +111,6 @@ public class OrderAssembler {
                 deliveryInfo,
                 cancelSummary,
                 claimSummary,
-                settlement,
                 bundle.cancels(),
                 bundle.claims(),
                 bundle.histories());
@@ -118,17 +129,6 @@ public class OrderAssembler {
                 payment.paymentAmount(),
                 payment.paidAt(),
                 payment.canceledAt());
-    }
-
-    private SettlementInfo toSettlementInfo(OrderItemResult item) {
-        return new SettlementInfo(
-                item.commissionRate(),
-                item.fee(),
-                item.expectationSettlementAmount(),
-                item.settlementAmount(),
-                item.shareRatio(),
-                item.expectedSettlementDay(),
-                item.settlementDay());
     }
 
     // ==================== V5 상품주문 리스트 조립 (private) ====================
@@ -189,8 +189,6 @@ public class OrderAssembler {
                 item.orderItemNumber(),
                 item.productGroupId(),
                 item.productId(),
-                item.sellerId(),
-                item.brandId(),
                 item.skuCode(),
                 item.productGroupName(),
                 item.brandName(),
@@ -234,11 +232,7 @@ public class OrderAssembler {
     }
 
     private DeliveryInfo toDeliveryInfo(OrderItemResult item) {
-        return new DeliveryInfo(
-                item.deliveryStatus(),
-                item.shipmentCompanyCode(),
-                item.invoice(),
-                item.shipmentCompletedDate());
+        return new DeliveryInfo(item.orderItemStatus());
     }
 
     /**

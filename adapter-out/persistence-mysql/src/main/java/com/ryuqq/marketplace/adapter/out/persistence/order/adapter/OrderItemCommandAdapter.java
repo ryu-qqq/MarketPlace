@@ -28,9 +28,18 @@ public class OrderItemCommandAdapter implements OrderItemCommandPort {
     @Override
     public void persistAll(List<OrderItem> orderItems) {
         for (OrderItem item : orderItems) {
+            itemRepository.save(mapper.toOrderItemEntity(item, item.idValue()));
+            itemHistoryRepository.saveAll(
+                    mapper.toOrderItemHistoryEntities(item.histories()));
+        }
+    }
+
+    @Override
+    public void updateAll(List<OrderItem> orderItems) {
+        for (OrderItem item : orderItems) {
             itemRepository
                     .findById(item.idValue())
-                    .ifPresent(entity -> entity.updateDeliveryStatus(item.status().name()));
+                    .ifPresent(entity -> entity.updateOrderItemStatus(item.status().name()));
             itemHistoryRepository.saveAll(
                     mapper.toOrderItemHistoryEntities(item.histories()));
         }

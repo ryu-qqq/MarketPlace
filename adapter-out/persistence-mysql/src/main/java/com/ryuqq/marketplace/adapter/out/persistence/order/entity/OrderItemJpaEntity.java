@@ -28,12 +28,6 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "product_id", nullable = false)
     private long productId;
 
-    @Column(name = "seller_id", nullable = false)
-    private long sellerId;
-
-    @Column(name = "brand_id", nullable = false)
-    private long brandId;
-
     @Column(name = "sku_code", length = 50)
     private String skuCode;
 
@@ -97,38 +91,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "delivery_request", length = 500)
     private String deliveryRequest;
 
-    @Column(name = "delivery_status", nullable = false, length = 20)
-    private String deliveryStatus;
-
-    @Column(name = "shipment_company_code", length = 50)
-    private String shipmentCompanyCode;
-
-    @Column(name = "invoice", length = 100)
-    private String invoice;
-
-    @Column(name = "shipment_completed_date")
-    private Instant shipmentCompletedDate;
-
-    @Column(name = "commission_rate", nullable = false)
-    private int commissionRate;
-
-    @Column(name = "fee", nullable = false)
-    private int fee;
-
-    @Column(name = "expectation_settlement_amount", nullable = false)
-    private int expectationSettlementAmount;
-
-    @Column(name = "settlement_amount", nullable = false)
-    private int settlementAmount;
-
-    @Column(name = "share_ratio", nullable = false)
-    private int shareRatio;
-
-    @Column(name = "expected_settlement_day")
-    private Instant expectedSettlementDay;
-
-    @Column(name = "settlement_day")
-    private Instant settlementDay;
+    @Column(name = "order_item_status", nullable = false, length = 20)
+    private String orderItemStatus;
 
     protected OrderItemJpaEntity() {
         super();
@@ -141,8 +105,6 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String orderId,
             long productGroupId,
             long productId,
-            long sellerId,
-            long brandId,
             String skuCode,
             String productGroupName,
             String brandName,
@@ -164,17 +126,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String receiverAddress,
             String receiverAddressDetail,
             String deliveryRequest,
-            String deliveryStatus,
-            String shipmentCompanyCode,
-            String invoice,
-            Instant shipmentCompletedDate,
-            int commissionRate,
-            int fee,
-            int expectationSettlementAmount,
-            int settlementAmount,
-            int shareRatio,
-            Instant expectedSettlementDay,
-            Instant settlementDay,
+            String orderItemStatus,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
@@ -183,8 +135,6 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.orderId = orderId;
         this.productGroupId = productGroupId;
         this.productId = productId;
-        this.sellerId = sellerId;
-        this.brandId = brandId;
         this.skuCode = skuCode;
         this.productGroupName = productGroupName;
         this.brandName = brandName;
@@ -206,17 +156,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.receiverAddress = receiverAddress;
         this.receiverAddressDetail = receiverAddressDetail;
         this.deliveryRequest = deliveryRequest;
-        this.deliveryStatus = deliveryStatus;
-        this.shipmentCompanyCode = shipmentCompanyCode;
-        this.invoice = invoice;
-        this.shipmentCompletedDate = shipmentCompletedDate;
-        this.commissionRate = commissionRate;
-        this.fee = fee;
-        this.expectationSettlementAmount = expectationSettlementAmount;
-        this.settlementAmount = settlementAmount;
-        this.shareRatio = shareRatio;
-        this.expectedSettlementDay = expectedSettlementDay;
-        this.settlementDay = settlementDay;
+        this.orderItemStatus = orderItemStatus;
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -226,8 +166,6 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String orderId,
             long productGroupId,
             long productId,
-            long sellerId,
-            long brandId,
             String skuCode,
             String productGroupName,
             String brandName,
@@ -249,220 +187,50 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String receiverAddress,
             String receiverAddressDetail,
             String deliveryRequest,
-            String deliveryStatus,
-            String shipmentCompanyCode,
-            String invoice,
-            Instant shipmentCompletedDate,
-            int commissionRate,
-            int fee,
-            int expectationSettlementAmount,
-            int settlementAmount,
-            int shareRatio,
-            Instant expectedSettlementDay,
-            Instant settlementDay,
+            String orderItemStatus,
             Instant createdAt,
             Instant updatedAt) {
         return new OrderItemJpaEntity(
-                id,
-                orderItemNumber,
-                orderId,
-                productGroupId,
-                productId,
-                sellerId,
-                brandId,
-                skuCode,
-                productGroupName,
-                brandName,
-                sellerName,
-                mainImageUrl,
-                externalProductId,
-                externalOptionId,
-                externalProductName,
-                externalOptionName,
-                externalImageUrl,
-                unitPrice,
-                quantity,
-                totalAmount,
-                discountAmount,
-                paymentAmount,
-                receiverName,
-                receiverPhone,
-                receiverZipcode,
-                receiverAddress,
-                receiverAddressDetail,
-                deliveryRequest,
-                deliveryStatus,
-                shipmentCompanyCode,
-                invoice,
-                shipmentCompletedDate,
-                commissionRate,
-                fee,
-                expectationSettlementAmount,
-                settlementAmount,
-                shareRatio,
-                expectedSettlementDay,
-                settlementDay,
-                createdAt,
-                updatedAt);
+                id, orderItemNumber, orderId,
+                productGroupId, productId, skuCode,
+                productGroupName, brandName, sellerName, mainImageUrl,
+                externalProductId, externalOptionId,
+                externalProductName, externalOptionName, externalImageUrl,
+                unitPrice, quantity, totalAmount, discountAmount, paymentAmount,
+                receiverName, receiverPhone, receiverZipcode,
+                receiverAddress, receiverAddressDetail, deliveryRequest,
+                orderItemStatus, createdAt, updatedAt);
     }
 
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public String getOrderItemNumber() { return orderItemNumber; }
+    public String getOrderId() { return orderId; }
+    public long getProductGroupId() { return productGroupId; }
+    public long getProductId() { return productId; }
+    public String getSkuCode() { return skuCode; }
+    public String getProductGroupName() { return productGroupName; }
+    public String getBrandName() { return brandName; }
+    public String getSellerName() { return sellerName; }
+    public String getMainImageUrl() { return mainImageUrl; }
+    public String getExternalProductId() { return externalProductId; }
+    public String getExternalOptionId() { return externalOptionId; }
+    public String getExternalProductName() { return externalProductName; }
+    public String getExternalOptionName() { return externalOptionName; }
+    public String getExternalImageUrl() { return externalImageUrl; }
+    public int getUnitPrice() { return unitPrice; }
+    public int getQuantity() { return quantity; }
+    public int getTotalAmount() { return totalAmount; }
+    public int getDiscountAmount() { return discountAmount; }
+    public int getPaymentAmount() { return paymentAmount; }
+    public String getReceiverName() { return receiverName; }
+    public String getReceiverPhone() { return receiverPhone; }
+    public String getReceiverZipcode() { return receiverZipcode; }
+    public String getReceiverAddress() { return receiverAddress; }
+    public String getReceiverAddressDetail() { return receiverAddressDetail; }
+    public String getDeliveryRequest() { return deliveryRequest; }
+    public String getOrderItemStatus() { return orderItemStatus; }
 
-    public String getOrderItemNumber() {
-        return orderItemNumber;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public long getProductGroupId() {
-        return productGroupId;
-    }
-
-    public long getProductId() {
-        return productId;
-    }
-
-    public long getSellerId() {
-        return sellerId;
-    }
-
-    public long getBrandId() {
-        return brandId;
-    }
-
-    public String getSkuCode() {
-        return skuCode;
-    }
-
-    public String getExternalProductId() {
-        return externalProductId;
-    }
-
-    public String getExternalOptionId() {
-        return externalOptionId;
-    }
-
-    public String getExternalProductName() {
-        return externalProductName;
-    }
-
-    public String getExternalOptionName() {
-        return externalOptionName;
-    }
-
-    public String getExternalImageUrl() {
-        return externalImageUrl;
-    }
-
-    public int getUnitPrice() {
-        return unitPrice;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public int getTotalAmount() {
-        return totalAmount;
-    }
-
-    public int getDiscountAmount() {
-        return discountAmount;
-    }
-
-    public int getPaymentAmount() {
-        return paymentAmount;
-    }
-
-    public String getReceiverName() {
-        return receiverName;
-    }
-
-    public String getReceiverPhone() {
-        return receiverPhone;
-    }
-
-    public String getReceiverZipcode() {
-        return receiverZipcode;
-    }
-
-    public String getReceiverAddress() {
-        return receiverAddress;
-    }
-
-    public String getReceiverAddressDetail() {
-        return receiverAddressDetail;
-    }
-
-    public String getDeliveryRequest() {
-        return deliveryRequest;
-    }
-
-    public String getProductGroupName() {
-        return productGroupName;
-    }
-
-    public String getBrandName() {
-        return brandName;
-    }
-
-    public String getSellerName() {
-        return sellerName;
-    }
-
-    public String getMainImageUrl() {
-        return mainImageUrl;
-    }
-
-    public String getDeliveryStatus() {
-        return deliveryStatus;
-    }
-
-    public String getShipmentCompanyCode() {
-        return shipmentCompanyCode;
-    }
-
-    public String getInvoice() {
-        return invoice;
-    }
-
-    public Instant getShipmentCompletedDate() {
-        return shipmentCompletedDate;
-    }
-
-    public int getCommissionRate() {
-        return commissionRate;
-    }
-
-    public int getFee() {
-        return fee;
-    }
-
-    public int getExpectationSettlementAmount() {
-        return expectationSettlementAmount;
-    }
-
-    public int getSettlementAmount() {
-        return settlementAmount;
-    }
-
-    public int getShareRatio() {
-        return shareRatio;
-    }
-
-    public Instant getExpectedSettlementDay() {
-        return expectedSettlementDay;
-    }
-
-    public Instant getSettlementDay() {
-        return settlementDay;
-    }
-
-    public void updateDeliveryStatus(String deliveryStatus) {
-        this.deliveryStatus = deliveryStatus;
+    public void updateOrderItemStatus(String orderItemStatus) {
+        this.orderItemStatus = orderItemStatus;
     }
 }

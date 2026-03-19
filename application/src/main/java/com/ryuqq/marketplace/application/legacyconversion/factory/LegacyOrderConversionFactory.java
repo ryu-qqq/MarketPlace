@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.legacyconversion.factory;
 
 import com.ryuqq.marketplace.application.legacyconversion.dto.bundle.LegacyOrderConversionBundle;
 import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrderCompositeResult;
+import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrderResolvedIds;
 import com.ryuqq.marketplace.application.legacyconversion.internal.LegacyOrderChannelResolver;
 import com.ryuqq.marketplace.application.legacyconversion.internal.LegacyOrderStatusMapper;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
@@ -47,7 +48,7 @@ import org.springframework.stereotype.Component;
  * 레거시 주문 → 내부 도메인 객체 변환 Factory.
  *
  * <p>순수 변환 로직만 담당합니다. DB 조회/저장 없음.
- * LegacyOrderCompositeResult + 채널/상태 정보를 받아 도메인 객체를 조립합니다.
+ * LegacyOrderCompositeResult + 채널/상태/내부ID 정보를 받아 도메인 객체를 조립합니다.
  */
 @Component
 @SuppressWarnings("PMD.ExcessiveImports")
@@ -59,12 +60,13 @@ public class LegacyOrderConversionFactory {
     /**
      * 레거시 주문 데이터로부터 전체 변환 번들을 생성합니다.
      *
-     * @param composite       luxurydb 복합 조회 결과
-     * @param channel         채널 식별 결과
+     * @param composite        luxurydb 복합 조회 결과
+     * @param channel          채널 식별 결과
      * @param statusResolution 상태 매핑 결과
-     * @param externalOrderNo 결정된 외부 주문번호
-     * @param legacyPaymentId 레거시 결제 ID
-     * @param now             현재 시각
+     * @param externalOrderNo  결정된 외부 주문번호
+     * @param legacyPaymentId  레거시 결제 ID
+     * @param resolvedIds      내부 ID 변환 결과
+     * @param now              현재 시각
      * @return 변환 번들 (Order + Cancel/Refund + Mapping)
      */
     public LegacyOrderConversionBundle create(
@@ -73,6 +75,7 @@ public class LegacyOrderConversionFactory {
             LegacyOrderStatusMapper.OrderStatusResolution statusResolution,
             String externalOrderNo,
             long legacyPaymentId,
+            LegacyOrderResolvedIds resolvedIds,
             Instant now) {
 
         String orderId = UUID.randomUUID().toString();
@@ -80,7 +83,7 @@ public class LegacyOrderConversionFactory {
         OrderNumber orderNumber = OrderNumber.generate();
 
         Order order = buildOrder(orderId, orderItemId, orderNumber, composite, channel,
-                statusResolution, externalOrderNo, now);
+                statusResolution, externalOrderNo, resolvedIds, now);
 
         Cancel cancel = statusResolution.hasCancel()
                 ? buildCancel(orderItemId, composite, statusResolution, now)
@@ -111,6 +114,7 @@ public class LegacyOrderConversionFactory {
             LegacyOrderChannelResolver.ChannelResolution channel,
             LegacyOrderStatusMapper.OrderStatusResolution statusResolution,
             String externalOrderNo,
+            LegacyOrderResolvedIds resolvedIds,
             Instant now) {
 
         OrderId id = OrderId.forNew(orderId);
@@ -124,7 +128,8 @@ public class LegacyOrderConversionFactory {
                 externalOrderNo,
                 composite.orderDate());
 
-        OrderItem orderItem = buildOrderItem(orderItemId, orderNumber, composite, statusResolution);
+        OrderItem orderItem = buildOrderItem(
+                orderItemId, orderNumber, composite, statusResolution, resolvedIds);
 
         return Order.reconstitute(
                 id, orderNumber,
@@ -137,16 +142,23 @@ public class LegacyOrderConversionFactory {
             String orderItemId,
             OrderNumber orderNumber,
             LegacyOrderCompositeResult composite,
-            LegacyOrderStatusMapper.OrderStatusResolution statusResolution) {
+            LegacyOrderStatusMapper.OrderStatusResolution statusResolution,
+            LegacyOrderResolvedIds resolvedIds) {
 
         OrderItemId id = OrderItemId.forNew(orderItemId);
         OrderItemNumber itemNumber = OrderItemNumber.generate(orderNumber, 1);
 
+        // 내부 ID 사용 (변환된 값), seller_name/brand_name 스냅샷
         InternalProductReference internalProduct = InternalProductReference.of(
-                composite.productGroupId(), composite.legacyProductId(),
-                composite.legacySellerId(), composite.brandId(),
-                null, composite.productGroupName(),
-                null, null, composite.mainImageUrl());
+                resolvedIds.internalProductGroupId(),
+                resolvedIds.internalProductId(),
+                null,
+                null,
+                null,
+                composite.productGroupName(),
+                resolvedIds.brandName(),
+                resolvedIds.sellerName(),
+                composite.mainImageUrl());
 
         String externalProductId = composite.externalOrderPkId() != null
                 ? composite.externalOrderPkId()
@@ -170,7 +182,7 @@ public class LegacyOrderConversionFactory {
         OrderItemStatus itemStatus = resolveOrderItemStatus(statusResolution);
 
         return OrderItem.reconstitute(id, itemNumber, internalProduct, externalProduct,
-                price, receiverInfo, itemStatus, null, java.util.List.of());
+                price, receiverInfo, itemStatus, null, List.of());
     }
 
     private OrderItemStatus resolveOrderItemStatus(
@@ -255,7 +267,7 @@ public class LegacyOrderConversionFactory {
 
     private PaymentInfo buildPaymentInfo(LegacyOrderCompositeResult composite) {
         return PaymentInfo.of(
-                PaymentNumber.of("LEGACY-" + composite.legacyPaymentId()),
+                PaymentNumber.of("LEGACY-" + composite.legacyPaymentId() + "-" + composite.legacyOrderId()),
                 "LEGACY",
                 Money.of((int) composite.orderAmount()),
                 composite.orderDate());

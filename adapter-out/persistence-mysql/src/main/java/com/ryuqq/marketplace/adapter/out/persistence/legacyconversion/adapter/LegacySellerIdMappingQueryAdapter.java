@@ -26,4 +26,9 @@ public class LegacySellerIdMappingQueryAdapter implements LegacySellerIdMappingQ
     public Optional<Long> findInternalSellerIdByLegacySellerId(long legacySellerId) {
         return queryDslRepository.findInternalSellerIdByLegacySellerId(legacySellerId);
     }
+
+    @Override
+    public Optional<String> findSellerNameByLegacySellerId(long legacySellerId) {
+        return queryDslRepository.findSellerNameByLegacySellerId(legacySellerId);
+    }
 }
