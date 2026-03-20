@@ -4,15 +4,15 @@ import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.Legac
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.repository.LegacyProductGroupImageJpaRepository;
 import com.ryuqq.marketplace.application.legacy.productgroupimage.port.out.command.LegacyProductImageCommandPort;
-import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand;
 import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
  * 레거시 상품그룹 이미지 저장 Adapter.
  *
- * <p>표준 커맨드의 images를 luxurydb product_group_image 테이블에 저장합니다.
+ * <p>표준 도메인 객체(ProductGroupImage)를 레거시 Entity로 변환하여 luxurydb에 저장합니다.
  * 기존 이미지 soft delete 후 새 이미지를 insert하는 replace-all 패턴.
  */
 @Component
@@ -36,19 +36,19 @@ public class LegacyProductImageCommandAdapter implements LegacyProductImageComma
     }
 
     @Override
-    public void update(UpdateProductGroupImagesCommand command) {
-        repository.softDeleteAllByProductGroupId(command.productGroupId());
+    public void replaceAll(long productGroupId, List<ProductGroupImage> images) {
+        repository.softDeleteAllByProductGroupId(productGroupId);
 
         List<LegacyProductGroupImageEntity> entities =
-                command.images().stream()
+                images.stream()
                         .map(
                                 img ->
                                         LegacyProductGroupImageEntity.create(
                                                 null,
-                                                command.productGroupId(),
-                                                img.imageType(),
-                                                img.originUrl(),
-                                                img.originUrl(),
+                                                productGroupId,
+                                                img.imageTypeName(),
+                                                img.originUrlValue(),
+                                                img.originUrlValue(),
                                                 img.sortOrder(),
                                                 "N"))
                         .toList();

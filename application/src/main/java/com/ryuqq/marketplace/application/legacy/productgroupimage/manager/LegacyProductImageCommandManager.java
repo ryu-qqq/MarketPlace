@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.legacy.productgroupimage.manager;
 
 import com.ryuqq.marketplace.application.legacy.productgroupimage.port.out.command.LegacyProductImageCommandPort;
-import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand;
 import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ public class LegacyProductImageCommandManager {
     }
 
     @Transactional
-    public void update(UpdateProductGroupImagesCommand command) {
-        commandPort.update(command);
+    public void replaceAll(long productGroupId, List<ProductGroupImage> images) {
+        commandPort.replaceAll(productGroupId, images);
     }
 }
