@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.seller.service.command;
 
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerUpdateBundle;
 import com.ryuqq.marketplace.application.seller.dto.command.UpdateSellerFullCommand;
 import com.ryuqq.marketplace.application.seller.factory.SellerCommandFactory;
+import com.ryuqq.marketplace.application.seller.internal.SellerUpdateBundle;
 import com.ryuqq.marketplace.application.seller.internal.SellerUpdateCoordinator;
 import com.ryuqq.marketplace.application.seller.port.in.command.UpdateSellerFullUseCase;
 import org.springframework.stereotype.Service;

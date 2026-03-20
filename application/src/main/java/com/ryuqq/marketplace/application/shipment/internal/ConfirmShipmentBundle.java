@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.application.shipment.dto.command;
+package com.ryuqq.marketplace.application.shipment.internal;
 
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;

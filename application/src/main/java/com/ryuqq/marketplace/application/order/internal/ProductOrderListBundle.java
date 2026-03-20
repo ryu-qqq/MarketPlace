@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.application.order.dto.composite;
+package com.ryuqq.marketplace.application.order.internal;
 
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;

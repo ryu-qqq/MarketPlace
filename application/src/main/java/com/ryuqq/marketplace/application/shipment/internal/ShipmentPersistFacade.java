@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.application.shipment.internal;
 
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
-import com.ryuqq.marketplace.application.shipment.dto.command.ConfirmShipmentBundle;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxCommandManager;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;

@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.application.cancel.dto;
+package com.ryuqq.marketplace.application.cancel.internal;
 
 import com.ryuqq.marketplace.application.common.dto.result.BatchItemResult;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;

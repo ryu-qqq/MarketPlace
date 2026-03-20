@@ -4,9 +4,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.seller.SellerCommandFixtures;
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerUpdateBundle;
 import com.ryuqq.marketplace.application.seller.dto.command.UpdateSellerFullCommand;
 import com.ryuqq.marketplace.application.seller.factory.SellerCommandFactory;
+import com.ryuqq.marketplace.application.seller.internal.SellerUpdateBundle;
 import com.ryuqq.marketplace.application.seller.internal.SellerUpdateCoordinator;
 import com.ryuqq.marketplace.domain.seller.SellerFixtures;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;

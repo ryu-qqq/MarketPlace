@@ -1,10 +1,10 @@
 package com.ryuqq.marketplace.application.refund.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
-import com.ryuqq.marketplace.application.refund.dto.RefundBatchResult;
 import com.ryuqq.marketplace.application.refund.dto.command.HoldRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.refund.internal.RefundBatchResult;
 import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceBundle;
 import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceFacade;
 import com.ryuqq.marketplace.application.refund.port.in.command.HoldRefundBatchUseCase;

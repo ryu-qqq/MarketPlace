@@ -1,7 +1,5 @@
 package com.ryuqq.marketplace.application.order.assembler;
 
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailBundle;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderListBundle;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
@@ -18,6 +16,8 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResu
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ProductOrderInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ReceiverInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderDetailBundle;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderListBundle;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.common.vo.PageMeta;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;

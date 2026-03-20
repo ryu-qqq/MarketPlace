@@ -1,11 +1,11 @@
 package com.ryuqq.marketplace.application.order.service.query;
 
 import com.ryuqq.marketplace.application.order.assembler.OrderAssembler;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderListBundle;
 import com.ryuqq.marketplace.application.order.dto.query.OrderSearchParams;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
 import com.ryuqq.marketplace.application.order.factory.OrderQueryFactory;
 import com.ryuqq.marketplace.application.order.internal.OrderReadFacade;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderListBundle;
 import com.ryuqq.marketplace.application.order.port.in.query.GetProductOrderListUseCase;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import org.springframework.stereotype.Service;

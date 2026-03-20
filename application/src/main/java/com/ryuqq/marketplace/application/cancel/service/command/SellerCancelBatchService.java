@@ -1,10 +1,10 @@
 package com.ryuqq.marketplace.application.cancel.service.command;
 
-import com.ryuqq.marketplace.application.cancel.dto.CancelBatchResult;
 import com.ryuqq.marketplace.application.cancel.dto.command.SellerCancelBatchCommand;
 import com.ryuqq.marketplace.application.cancel.dto.command.SellerCancelBatchCommand.SellerCancelItem;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory.CancelBundle;
+import com.ryuqq.marketplace.application.cancel.internal.CancelBatchResult;
 import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceBundle;
 import com.ryuqq.marketplace.application.cancel.internal.CancelPersistenceFacade;
 import com.ryuqq.marketplace.application.cancel.port.in.command.SellerCancelBatchUseCase;

@@ -1,8 +1,6 @@
 package com.ryuqq.marketplace.application.order.internal;
 
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailBundle;
 import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailData;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderListBundle;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;

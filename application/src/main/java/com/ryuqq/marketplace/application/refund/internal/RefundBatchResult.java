@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.application.refund.dto;
+package com.ryuqq.marketplace.application.refund.internal;
 
 import com.ryuqq.marketplace.application.common.dto.result.BatchItemResult;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;

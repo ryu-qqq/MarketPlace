@@ -1,7 +1,5 @@
 package com.ryuqq.marketplace.application.order;
 
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailBundle;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderListBundle;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;
@@ -9,6 +7,8 @@ import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderDetailBundle;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderListBundle;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.time.Instant;
 import java.util.EnumMap;

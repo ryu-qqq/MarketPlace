@@ -1,8 +1,6 @@
 package com.ryuqq.marketplace.application.seller.internal;
 
 import com.ryuqq.marketplace.application.outboundseller.manager.OutboundSellerOutboxCommandManager;
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerRegistrationBundle;
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerUpdateBundle;
 import com.ryuqq.marketplace.application.seller.manager.SellerBusinessInfoCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerCommandManager;
 import com.ryuqq.marketplace.application.seller.manager.SellerContractCommandManager;

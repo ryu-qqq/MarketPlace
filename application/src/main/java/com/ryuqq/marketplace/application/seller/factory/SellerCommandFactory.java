@@ -2,12 +2,12 @@ package com.ryuqq.marketplace.application.seller.factory;
 
 import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerRegistrationBundle;
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerUpdateBundle;
 import com.ryuqq.marketplace.application.seller.dto.command.RegisterSellerCommand;
 import com.ryuqq.marketplace.application.seller.dto.command.UpdateSellerBusinessInfoCommand;
 import com.ryuqq.marketplace.application.seller.dto.command.UpdateSellerCommand;
 import com.ryuqq.marketplace.application.seller.dto.command.UpdateSellerFullCommand;
+import com.ryuqq.marketplace.application.seller.internal.SellerRegistrationBundle;
+import com.ryuqq.marketplace.application.seller.internal.SellerUpdateBundle;
 import com.ryuqq.marketplace.domain.common.vo.Address;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerBusinessInfo;

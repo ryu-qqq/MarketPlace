@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.application.seller.dto.bundle;
+package com.ryuqq.marketplace.application.seller.internal;
 
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.aggregate.SellerBusinessInfo;

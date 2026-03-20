@@ -3,8 +3,6 @@ package com.ryuqq.marketplace.application.order.assembler;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.application.order.OrderQueryFixtures;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailBundle;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderListBundle;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
@@ -16,6 +14,8 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResu
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ClaimSummary;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.PaymentInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderDetailBundle;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderListBundle;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.List;
 import java.util.Map;
