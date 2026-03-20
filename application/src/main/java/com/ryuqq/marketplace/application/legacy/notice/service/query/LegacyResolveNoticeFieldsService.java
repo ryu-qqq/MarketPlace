@@ -17,13 +17,14 @@ import org.springframework.stereotype.Service;
 /**
  * 레거시 상품그룹의 고시정보 카테고리 해석 서비스.
  *
- * <p>레거시 productGroupId → 레거시 categoryId → 내부 categoryId → NoticeCategory 해석.
- * 매핑 실패 시 CLOTHING 카테고리를 기본값으로 사용합니다.
+ * <p>레거시 productGroupId → 레거시 categoryId → 내부 categoryId → NoticeCategory 해석. 매핑 실패 시 CLOTHING
+ * 카테고리를 기본값으로 사용합니다.
  */
 @Service
 public class LegacyResolveNoticeFieldsService implements LegacyResolveNoticeFieldsUseCase {
 
-    private static final Logger log = LoggerFactory.getLogger(LegacyResolveNoticeFieldsService.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(LegacyResolveNoticeFieldsService.class);
     private static final long SETOF_SOURCE_ID = 2L;
     private static final CategoryGroup DEFAULT_CATEGORY_GROUP = CategoryGroup.CLOTHING;
 

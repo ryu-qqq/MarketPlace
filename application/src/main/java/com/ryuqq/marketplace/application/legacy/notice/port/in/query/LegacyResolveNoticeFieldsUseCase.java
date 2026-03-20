@@ -5,8 +5,8 @@ import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 /**
  * 레거시 상품그룹의 고시정보 카테고리 및 필드 해석 UseCase.
  *
- * <p>레거시 productGroupId → 레거시 카테고리 → 내부 카테고리 → NoticeCategory 해석.
- * 매핑 실패 시에도 반드시 NoticeCategory를 반환합니다 (기본 카테고리 사용).
+ * <p>레거시 productGroupId → 레거시 카테고리 → 내부 카테고리 → NoticeCategory 해석. 매핑 실패 시에도 반드시 NoticeCategory를
+ * 반환합니다 (기본 카테고리 사용).
  */
 public interface LegacyResolveNoticeFieldsUseCase {
 
