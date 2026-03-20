@@ -4,15 +4,11 @@ import com.ryuqq.marketplace.application.legacy.description.dto.command.LegacyUp
 import com.ryuqq.marketplace.application.legacy.description.manager.LegacyDescriptionImageCommandManager;
 import com.ryuqq.marketplace.application.legacy.description.manager.LegacyProductDescriptionCommandManager;
 import com.ryuqq.marketplace.application.legacy.description.manager.LegacyProductGroupDescriptionReadManager;
-import com.ryuqq.marketplace.application.legacy.productgroup.manager.LegacyProductGroupCommandManager;
-import com.ryuqq.marketplace.application.legacy.productgroup.manager.LegacyProductGroupReadManager;
 import com.ryuqq.marketplace.application.legacy.shared.factory.LegacyProductGroupCommandFactory;
-import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyDescriptionImage;
-import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroup;
-import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroupDescription;
+import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyDescriptionImage;
+import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyDescriptionImageDiff;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
+import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyDescriptionImageDiff;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -29,22 +25,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class LegacyDescriptionCommandCoordinator {
 
-    private final LegacyProductGroupReadManager productGroupReadManager;
-    private final LegacyProductGroupCommandManager productGroupCommandManager;
     private final LegacyProductDescriptionCommandManager descriptionCommandManager;
     private final LegacyDescriptionImageCommandManager imageCommandManager;
     private final LegacyProductGroupDescriptionReadManager descriptionReadManager;
     private final LegacyProductGroupCommandFactory commandFactory;
 
     public LegacyDescriptionCommandCoordinator(
-            LegacyProductGroupReadManager productGroupReadManager,
-            LegacyProductGroupCommandManager productGroupCommandManager,
             LegacyProductDescriptionCommandManager descriptionCommandManager,
             LegacyDescriptionImageCommandManager imageCommandManager,
             LegacyProductGroupDescriptionReadManager descriptionReadManager,
             LegacyProductGroupCommandFactory commandFactory) {
-        this.productGroupReadManager = productGroupReadManager;
-        this.productGroupCommandManager = productGroupCommandManager;
         this.descriptionCommandManager = descriptionCommandManager;
         this.imageCommandManager = imageCommandManager;
         this.descriptionReadManager = descriptionReadManager;
@@ -93,10 +83,6 @@ public class LegacyDescriptionCommandCoordinator {
         if (!diff.added().isEmpty()) {
             imageCommandManager.persistAll(diff.added());
         }
-
-        LegacyProductGroup productGroup = productGroupReadManager.getById(groupId);
-        productGroup.updateDescription(new LegacyProductDescription(content), changedAt);
-        productGroupCommandManager.persist(productGroup);
 
         return contentChanged;
     }

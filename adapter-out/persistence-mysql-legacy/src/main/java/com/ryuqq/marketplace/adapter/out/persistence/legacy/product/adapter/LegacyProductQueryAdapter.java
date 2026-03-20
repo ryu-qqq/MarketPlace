@@ -4,7 +4,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.Legac
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductOptionEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductStockEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.repository.LegacyProductGroupQueryDslRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.repository.LegacyProductGroupQueryDslRepository;
 import com.ryuqq.marketplace.application.legacy.product.port.out.query.LegacyProductQueryPort;
 import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
 import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductOption;

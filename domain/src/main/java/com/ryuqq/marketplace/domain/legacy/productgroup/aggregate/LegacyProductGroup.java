@@ -1,10 +1,7 @@
 package com.ryuqq.marketplace.domain.legacy.productgroup.aggregate;
 
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDelivery;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductGroupUpdateData;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ManagementType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
@@ -14,7 +11,7 @@ import java.time.Instant;
 /**
  * 레거시(세토프) 상품 그룹 Aggregate Root.
  *
- * <p>세토프 DB의 product_group 테이블에 대응하며, 고시정보(notice), 배송정보(delivery), 상세설명(description)을 VO로 포함합니다.
+ * <p>세토프 DB의 product_group 테이블에 대응합니다. 고시정보, 배송정보, 상세설명은 별도 Aggregate로 분리되었습니다.
  */
 public class LegacyProductGroup {
 
@@ -32,9 +29,6 @@ public class LegacyProductGroup {
     private ProductCondition productCondition;
     private Origin origin;
     private String styleCode;
-    private LegacyProductNotice notice;
-    private LegacyProductDelivery delivery;
-    private LegacyProductDescription description;
     private final Instant createdAt;
     private Instant updatedAt;
 
@@ -53,9 +47,6 @@ public class LegacyProductGroup {
             ProductCondition productCondition,
             Origin origin,
             String styleCode,
-            LegacyProductNotice notice,
-            LegacyProductDelivery delivery,
-            LegacyProductDescription description,
             Instant createdAt,
             Instant updatedAt) {
         this.id = id;
@@ -72,9 +63,6 @@ public class LegacyProductGroup {
         this.productCondition = productCondition;
         this.origin = origin;
         this.styleCode = styleCode;
-        this.notice = notice;
-        this.delivery = delivery;
-        this.description = description;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -93,10 +81,7 @@ public class LegacyProductGroup {
             String displayYn,
             ProductCondition productCondition,
             Origin origin,
-            String styleCode,
-            LegacyProductNotice notice,
-            LegacyProductDelivery delivery,
-            LegacyProductDescription description) {
+            String styleCode) {
         Instant now = Instant.now();
         return new LegacyProductGroup(
                 LegacyProductGroupId.forNew(),
@@ -113,9 +98,6 @@ public class LegacyProductGroup {
                 productCondition,
                 origin,
                 styleCode,
-                notice,
-                delivery,
-                description,
                 now,
                 now);
     }
@@ -136,9 +118,6 @@ public class LegacyProductGroup {
             ProductCondition productCondition,
             Origin origin,
             String styleCode,
-            LegacyProductNotice notice,
-            LegacyProductDelivery delivery,
-            LegacyProductDescription description,
             Instant createdAt,
             Instant updatedAt) {
         return new LegacyProductGroup(
@@ -156,9 +135,6 @@ public class LegacyProductGroup {
                 productCondition,
                 origin,
                 styleCode,
-                notice,
-                delivery,
-                description,
                 createdAt,
                 updatedAt);
     }
@@ -180,24 +156,6 @@ public class LegacyProductGroup {
     public void markSoldOut(Instant changedAt) {
         this.soldOutYn = "Y";
         this.displayYn = "N";
-        this.updatedAt = changedAt;
-    }
-
-    /** 고시정보 수정. */
-    public void updateNotice(LegacyProductNotice notice, Instant changedAt) {
-        this.notice = notice;
-        this.updatedAt = changedAt;
-    }
-
-    /** 상세설명 수정. */
-    public void updateDescription(LegacyProductDescription description, Instant changedAt) {
-        this.description = description;
-        this.updatedAt = changedAt;
-    }
-
-    /** 배송/반품정보 수정. */
-    public void updateDelivery(LegacyProductDelivery delivery, Instant changedAt) {
-        this.delivery = delivery;
         this.updatedAt = changedAt;
     }
 
@@ -278,18 +236,6 @@ public class LegacyProductGroup {
 
     public String styleCode() {
         return styleCode;
-    }
-
-    public LegacyProductNotice notice() {
-        return notice;
-    }
-
-    public LegacyProductDelivery delivery() {
-        return delivery;
-    }
-
-    public LegacyProductDescription description() {
-        return description;
     }
 
     public Instant createdAt() {

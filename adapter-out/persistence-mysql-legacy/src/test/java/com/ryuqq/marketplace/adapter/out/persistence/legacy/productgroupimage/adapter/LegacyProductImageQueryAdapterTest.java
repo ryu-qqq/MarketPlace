@@ -1,0 +1,106 @@
+package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.adapter;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.repository.LegacyProductGroupQueryDslRepository;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
+import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
+import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
+import com.ryuqq.marketplace.domain.legacy.productimage.vo.ProductGroupImageType;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+/**
+ * LegacyProductImageQueryAdapterTest - 레거시 상품 이미지 Query Adapter 단위 테스트.
+ *
+ * <p>PER-ADP-002: QueryAdapter는 QueryDslRepository를 사용합니다.
+ *
+ * @author ryu-qqq
+ * @since 1.0.0
+ */
+@Tag("unit")
+@ExtendWith(MockitoExtension.class)
+@DisplayName("LegacyProductImageQueryAdapter 단위 테스트")
+class LegacyProductImageQueryAdapterTest {
+
+    @Mock private LegacyProductGroupQueryDslRepository queryDslRepository;
+
+    @Mock private LegacyProductCommandEntityMapper mapper;
+
+    @InjectMocks private LegacyProductImageQueryAdapter queryAdapter;
+
+    private LegacyProductGroupImageEntity buildImageEntity() {
+        return LegacyProductGroupImageEntity.create(
+                1L,
+                1L,
+                "MAIN",
+                "https://cdn.example.com/image.jpg",
+                "https://origin.example.com/image.jpg",
+                1L,
+                "N");
+    }
+
+    private LegacyProductImage buildImageDomain() {
+        return LegacyProductImage.reconstitute(
+                1L,
+                1L,
+                ProductGroupImageType.MAIN,
+                "https://cdn.example.com/image.jpg",
+                "https://origin.example.com/image.jpg",
+                1,
+                DeletionStatus.active());
+    }
+
+    @Nested
+    @DisplayName("findByProductGroupId 메서드 테스트")
+    class FindByProductGroupIdTest {
+
+        @Test
+        @DisplayName("상품그룹 ID로 조회 시 이미지 목록을 반환합니다")
+        void findByProductGroupId_WithExistingId_ReturnsImages() {
+            // given
+            LegacyProductGroupId productGroupId = LegacyProductGroupId.of(1L);
+            LegacyProductGroupImageEntity entity = buildImageEntity();
+            LegacyProductImage domain = buildImageDomain();
+
+            given(queryDslRepository.findImagesByProductGroupId(1L)).willReturn(List.of(entity));
+            given(mapper.toImageDomain(entity)).willReturn(domain);
+
+            // when
+            List<LegacyProductImage> results = queryAdapter.findByProductGroupId(productGroupId);
+
+            // then
+            assertThat(results).hasSize(1);
+            assertThat(results.get(0).imageType()).isEqualTo(ProductGroupImageType.MAIN);
+            then(queryDslRepository).should().findImagesByProductGroupId(1L);
+            then(mapper).should().toImageDomain(entity);
+        }
+
+        @Test
+        @DisplayName("이미지가 없는 상품그룹 ID로 조회 시 빈 목록을 반환합니다")
+        void findByProductGroupId_WithNoImages_ReturnsEmptyList() {
+            // given
+            LegacyProductGroupId productGroupId = LegacyProductGroupId.of(999L);
+
+            given(queryDslRepository.findImagesByProductGroupId(999L)).willReturn(List.of());
+
+            // when
+            List<LegacyProductImage> results = queryAdapter.findByProductGroupId(productGroupId);
+
+            // then
+            assertThat(results).isEmpty();
+            then(queryDslRepository).should().findImagesByProductGroupId(999L);
+        }
+    }
+}

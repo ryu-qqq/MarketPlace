@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.seller.ad
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.seller.mapper.LegacySellerCompositeMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.seller.repository.LegacySellerCompositeQueryDslRepository;
-import com.ryuqq.marketplace.application.legacyseller.port.out.LegacySellerCompositionQueryPort;
+import com.ryuqq.marketplace.application.legacy.seller.port.out.LegacySellerCompositionQueryPort;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
 import java.util.Optional;
 import org.springframework.stereotype.Component;

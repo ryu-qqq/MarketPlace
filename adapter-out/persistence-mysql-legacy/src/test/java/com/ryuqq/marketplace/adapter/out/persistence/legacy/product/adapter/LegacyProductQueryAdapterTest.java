@@ -10,7 +10,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.Legac
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductOptionEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductStockEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.repository.LegacyProductGroupQueryDslRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.repository.LegacyProductGroupQueryDslRepository;
 import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.legacy.optiondetail.id.LegacyOptionDetailId;
 import com.ryuqq.marketplace.domain.legacy.optiongroup.id.LegacyOptionGroupId;

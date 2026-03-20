@@ -1,22 +1,15 @@
 package com.ryuqq.marketplace.application.legacy.shared.factory;
 
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyRegisterProductGroupCommand;
-import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyRegisterProductGroupCommand.DeliveryCommand;
-import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyRegisterProductGroupCommand.NoticeCommand;
 import com.ryuqq.marketplace.application.legacy.shared.dto.bundle.LegacyProductRegistrationBundle;
 import com.ryuqq.marketplace.application.legacy.shared.dto.bundle.LegacyProductRegistrationBundle.ImageEntry;
 import com.ryuqq.marketplace.application.legacy.shared.dto.bundle.LegacyProductRegistrationBundle.OptionEntry;
 import com.ryuqq.marketplace.application.legacy.shared.dto.bundle.LegacyProductRegistrationBundle.SkuEntry;
 import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroup;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDelivery;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ManagementType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ProductCondition;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ReturnMethod;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ShipmentCompanyCode;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -48,34 +41,7 @@ public class LegacyProductBundleFactory {
                 command.displayYn(),
                 ProductCondition.valueOf(command.productCondition()),
                 Origin.valueOf(command.origin()),
-                command.styleCode(),
-                toNotice(command.notice()),
-                toDelivery(command.delivery()),
-                new LegacyProductDescription(command.detailDescription()));
-    }
-
-    private LegacyProductNotice toNotice(NoticeCommand notice) {
-        return new LegacyProductNotice(
-                notice.material(),
-                notice.color(),
-                notice.size(),
-                notice.maker(),
-                notice.origin(),
-                notice.washingMethod(),
-                notice.yearMonthDay(),
-                notice.assuranceStandard(),
-                notice.asPhone());
-    }
-
-    private LegacyProductDelivery toDelivery(DeliveryCommand delivery) {
-        return new LegacyProductDelivery(
-                delivery.deliveryArea(),
-                delivery.deliveryFee(),
-                delivery.deliveryPeriodAverage(),
-                ReturnMethod.valueOf(delivery.returnMethodDomestic()),
-                ShipmentCompanyCode.valueOf(delivery.returnCourierDomestic()),
-                delivery.returnChargeDomestic(),
-                delivery.returnExchangeAreaDomestic());
+                command.styleCode());
     }
 
     private List<ImageEntry> toImageEntries(LegacyRegisterProductGroupCommand command) {

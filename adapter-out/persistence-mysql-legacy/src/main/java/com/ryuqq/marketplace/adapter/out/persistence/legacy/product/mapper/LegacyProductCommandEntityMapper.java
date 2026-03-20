@@ -1,25 +1,25 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyDescriptionImageEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductDeliveryEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyDescriptionImageEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.LegacyProductDeliveryEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductGroupDetailDescriptionEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductGroupEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductGroupImageEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductNoticeEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyProductGroupDetailDescriptionEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.LegacyProductGroupEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.entity.LegacyProductNoticeEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductOptionEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductStockEntity;
 import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
 import com.ryuqq.marketplace.domain.legacy.product.id.LegacyProductId;
 import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductOption;
-import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyDescriptionImage;
+import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyDescriptionImage;
 import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroup;
-import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroupDescription;
+import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDelivery;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
+import com.ryuqq.marketplace.domain.legacy.productdelivery.aggregate.LegacyProductDelivery;
+import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyProductDescription;
+import com.ryuqq.marketplace.domain.legacy.productnotice.aggregate.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ManagementType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
@@ -72,9 +72,6 @@ public class LegacyProductCommandEntityMapper {
                 ProductCondition.valueOf(entity.getProductCondition()),
                 Origin.valueOf(entity.getOrigin()),
                 entity.getStyleCode(),
-                null,
-                null,
-                null,
                 toInstant(entity.getInsertDate()),
                 toInstant(entity.getUpdateDate()));
     }

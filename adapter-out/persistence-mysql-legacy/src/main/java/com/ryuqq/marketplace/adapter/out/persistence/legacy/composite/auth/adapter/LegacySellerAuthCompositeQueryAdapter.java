@@ -2,8 +2,8 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.auth.adap
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.auth.mapper.LegacySellerAuthCompositeMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.auth.repository.LegacySellerAuthCompositeQueryDslRepository;
-import com.ryuqq.marketplace.application.legacyauth.dto.result.LegacySellerAuthResult;
-import com.ryuqq.marketplace.application.legacyauth.port.out.LegacySellerAuthCompositeQueryPort;
+import com.ryuqq.marketplace.application.legacy.auth.dto.result.LegacySellerAuthResult;
+import com.ryuqq.marketplace.application.legacy.auth.port.out.LegacySellerAuthCompositeQueryPort;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 

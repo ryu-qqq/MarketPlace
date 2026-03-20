@@ -1,6 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.composite.product.repository;
 
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.QLegacyProductGroupEntity.legacyProductGroupEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.QLegacyProductGroupEntity.legacyProductGroupEntity;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ryuqq.marketplace.domain.legacy.productgroup.query.LegacyProductGroupSearchCriteria;
