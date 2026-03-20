@@ -42,4 +42,20 @@ public interface LegacyTokenClient {
      * @return 만료되었으면 true
      */
     boolean isExpired(String token);
+
+    /**
+     * 토큰에서 셀러 ID를 추출합니다. 만료된 토큰도 추출 가능.
+     *
+     * @param token JWT 토큰
+     * @return 셀러 ID
+     */
+    long extractSellerId(String token);
+
+    /**
+     * 토큰에서 역할을 추출합니다. 만료된 토큰도 추출 가능.
+     *
+     * @param token JWT 토큰
+     * @return 역할 (MASTER, SELLER)
+     */
+    String extractRole(String token);
 }

@@ -81,6 +81,19 @@ public class LegacyJwtTokenProvider implements LegacyTokenClient {
         }
     }
 
+    @Override
+    public long extractSellerId(String token) {
+        Claims claims = parseClaimsAllowExpired(token);
+        Number sellerId = claims.get(SELLER_ID_CLAIM, Number.class);
+        return sellerId != null ? sellerId.longValue() : 0L;
+    }
+
+    @Override
+    public String extractRole(String token) {
+        Claims claims = parseClaimsAllowExpired(token);
+        return claims.get(ROLE_CLAIM, String.class);
+    }
+
     private String buildToken(String email, long sellerId, String roleType, Date now, long expireTimeMs) {
         Date expiry = new Date(now.getTime() + expireTimeMs);
         return Jwts.builder()
@@ -99,5 +112,13 @@ public class LegacyJwtTokenProvider implements LegacyTokenClient {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    private Claims parseClaimsAllowExpired(String token) {
+        try {
+            return parseClaims(token);
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 }

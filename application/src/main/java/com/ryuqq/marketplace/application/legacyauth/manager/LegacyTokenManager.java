@@ -29,4 +29,12 @@ public class LegacyTokenManager {
     public boolean isExpired(String token) {
         return tokenClient.isExpired(token);
     }
+
+    public long extractSellerId(String token) {
+        return tokenClient.extractSellerId(token);
+    }
+
+    public String extractRole(String token) {
+        return tokenClient.extractRole(token);
+    }
 }

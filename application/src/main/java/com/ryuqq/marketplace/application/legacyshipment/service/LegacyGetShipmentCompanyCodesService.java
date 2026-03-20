@@ -1,9 +1,12 @@
 package com.ryuqq.marketplace.application.legacyshipment.service;
 
 import com.ryuqq.marketplace.application.legacycommoncode.manager.LegacyCommonCodeReadManager;
-import com.ryuqq.marketplace.application.legacyshipment.assembler.LegacyShipmentAssembler;
-import com.ryuqq.marketplace.application.legacyshipment.dto.response.LegacyShipmentCompanyCodeResult;
 import com.ryuqq.marketplace.application.legacyshipment.port.in.LegacyGetShipmentCompanyCodesUseCase;
+import com.ryuqq.marketplace.domain.commoncode.aggregate.CommonCode;
+import com.ryuqq.marketplace.domain.commoncode.id.CommonCodeId;
+import com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId;
+import com.ryuqq.marketplace.domain.legacy.commoncode.aggregate.LegacyCommonCode;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -14,18 +17,29 @@ public class LegacyGetShipmentCompanyCodesService implements LegacyGetShipmentCo
     private static final Long SHIPMENT_COMPANY_CODE_GROUP_ID = 2L;
 
     private final LegacyCommonCodeReadManager legacyCommonCodeReadManager;
-    private final LegacyShipmentAssembler legacyShipmentAssembler;
 
     public LegacyGetShipmentCompanyCodesService(
-            LegacyCommonCodeReadManager legacyCommonCodeReadManager,
-            LegacyShipmentAssembler legacyShipmentAssembler) {
+            LegacyCommonCodeReadManager legacyCommonCodeReadManager) {
         this.legacyCommonCodeReadManager = legacyCommonCodeReadManager;
-        this.legacyShipmentAssembler = legacyShipmentAssembler;
     }
 
     @Override
-    public List<LegacyShipmentCompanyCodeResult> execute() {
-        return legacyShipmentAssembler.toCompanyCodeResults(
-                legacyCommonCodeReadManager.getByCodeGroupId(SHIPMENT_COMPANY_CODE_GROUP_ID));
+    public List<CommonCode> execute() {
+        return legacyCommonCodeReadManager.getByCodeGroupId(SHIPMENT_COMPANY_CODE_GROUP_ID).stream()
+                .map(this::toCommonCode)
+                .toList();
+    }
+
+    private CommonCode toCommonCode(LegacyCommonCode legacy) {
+        return CommonCode.reconstitute(
+                CommonCodeId.of(legacy.id()),
+                CommonCodeTypeId.of(legacy.codeGroupId()),
+                legacy.codeDetail(),
+                legacy.codeDetailDisplayName(),
+                legacy.displayOrder() != null ? legacy.displayOrder() : 0,
+                true,
+                null,
+                Instant.now(),
+                Instant.now());
     }
 }
