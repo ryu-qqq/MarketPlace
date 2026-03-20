@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.legacy.productgroup.factory;
 
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
-import com.ryuqq.marketplace.application.legacy.description.dto.command.LegacyUpdateDescriptionCommand;
-import com.ryuqq.marketplace.application.legacy.image.dto.command.LegacyUpdateImagesCommand;
+import com.ryuqq.marketplace.application.legacy.productgroupdescription.dto.command.LegacyUpdateDescriptionCommand;
+import com.ryuqq.marketplace.application.legacy.productgroupimage.dto.command.LegacyUpdateImagesCommand;
 import com.ryuqq.marketplace.application.legacy.product.dto.command.LegacyUpdateProductsCommand;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.bundle.LegacyProductGroupUpdateBundle;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyUpdateProductGroupCommand;
@@ -11,9 +11,9 @@ import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyU
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyUpdateProductGroupCommand.ProductGroupDetailsCommand;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyUpdateProductGroupCommand.UpdateStatusCommand;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDelivery;
+import com.ryuqq.marketplace.domain.legacy.productdelivery.aggregate.LegacyProductDelivery;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductGroupUpdateData;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
+import com.ryuqq.marketplace.domain.legacy.productnotice.aggregate.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ManagementType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;

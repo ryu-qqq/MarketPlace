@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.adapt
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.entity.LegacyProductNoticeEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.repository.LegacyProductNoticeJpaRepository;
-import com.ryuqq.marketplace.application.legacy.notice.port.out.command.LegacyProductNoticeCommandPort;
+import com.ryuqq.marketplace.application.legacy.productnotice.port.out.command.LegacyProductNoticeCommandPort;
 import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;

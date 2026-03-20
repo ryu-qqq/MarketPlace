@@ -5,7 +5,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescript
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.repository.LegacyDescriptionImageJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.repository.LegacyProductGroupDetailDescriptionJpaRepository;
-import com.ryuqq.marketplace.application.legacy.description.port.out.query.LegacyProductGroupDescriptionReadPort;
+import com.ryuqq.marketplace.application.legacy.productgroupdescription.port.out.query.LegacyProductGroupDescriptionReadPort;
 import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
 import java.util.List;
 import java.util.Optional;

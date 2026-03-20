@@ -5,7 +5,7 @@ import static com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.Leg
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.dto.request.LegacyCreateProductImageRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.mapper.LegacyImageCommandApiMapper;
-import com.ryuqq.marketplace.application.legacy.image.port.in.command.LegacyProductUpdateImagesUseCase;
+import com.ryuqq.marketplace.application.legacy.productgroupimage.port.in.command.LegacyProductUpdateImagesUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

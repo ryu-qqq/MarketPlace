@@ -5,7 +5,7 @@ import static com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildes
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildescription.dto.request.LegacyUpdateProductDescriptionRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildescription.mapper.LegacyDescriptionCommandApiMapper;
-import com.ryuqq.marketplace.application.legacy.description.port.in.command.LegacyProductUpdateDescriptionUseCase;
+import com.ryuqq.marketplace.application.legacy.productgroupdescription.port.in.command.LegacyProductUpdateDescriptionUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

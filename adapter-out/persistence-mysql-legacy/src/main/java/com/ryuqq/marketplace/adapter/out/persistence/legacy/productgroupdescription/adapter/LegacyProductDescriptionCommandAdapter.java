@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescrip
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.repository.LegacyProductGroupDetailDescriptionJpaRepository;
-import com.ryuqq.marketplace.application.legacy.description.port.out.command.LegacyProductDescriptionCommandPort;
+import com.ryuqq.marketplace.application.legacy.productgroupdescription.port.out.command.LegacyProductDescriptionCommandPort;
 import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyProductDescription;

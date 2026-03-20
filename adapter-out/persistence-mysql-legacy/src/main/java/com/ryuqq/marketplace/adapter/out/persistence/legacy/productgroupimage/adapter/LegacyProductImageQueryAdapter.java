@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.a
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.repository.LegacyProductGroupQueryDslRepository;
-import com.ryuqq.marketplace.application.legacy.image.port.out.query.LegacyProductImageQueryPort;
+import com.ryuqq.marketplace.application.legacy.productgroupimage.port.out.query.LegacyProductImageQueryPort;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
 import java.util.List;

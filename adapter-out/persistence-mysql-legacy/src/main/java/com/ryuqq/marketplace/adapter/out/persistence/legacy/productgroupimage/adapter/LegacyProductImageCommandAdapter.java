@@ -3,7 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.a
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.repository.LegacyProductGroupImageJpaRepository;
-import com.ryuqq.marketplace.application.legacy.image.port.out.command.LegacyProductImageCommandPort;
+import com.ryuqq.marketplace.application.legacy.productgroupimage.port.out.command.LegacyProductImageCommandPort;
 import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
 import java.util.List;
 import org.springframework.stereotype.Component;

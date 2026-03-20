@@ -1,12 +1,12 @@
 package com.ryuqq.marketplace.application.legacy.productgroup.dto.bundle;
 
-import com.ryuqq.marketplace.application.legacy.description.dto.command.LegacyUpdateDescriptionCommand;
-import com.ryuqq.marketplace.application.legacy.image.dto.command.LegacyUpdateImagesCommand;
+import com.ryuqq.marketplace.application.legacy.productgroupdescription.dto.command.LegacyUpdateDescriptionCommand;
+import com.ryuqq.marketplace.application.legacy.productgroupimage.dto.command.LegacyUpdateImagesCommand;
 import com.ryuqq.marketplace.application.legacy.product.dto.command.LegacyUpdateProductsCommand;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDelivery;
+import com.ryuqq.marketplace.domain.legacy.productdelivery.aggregate.LegacyProductDelivery;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductGroupUpdateData;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
+import com.ryuqq.marketplace.domain.legacy.productnotice.aggregate.LegacyProductNotice;
 import java.time.Instant;
 
 /**

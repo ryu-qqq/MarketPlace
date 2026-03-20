@@ -1,7 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.productnotice.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productnotice.dto.request.LegacyCreateProductNoticeRequest;
-import com.ryuqq.marketplace.application.legacy.notice.dto.command.LegacyUpdateNoticeCommand;
+import com.ryuqq.marketplace.application.legacy.productnotice.dto.command.LegacyUpdateNoticeCommand;
 import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 고시정보 Request → 표준 UpdateProductNoticeCommand 변환 매퍼.
  *
- * <p>레거시 flat 필드(material, color, size...) + NoticeCategory를 받아서
- * 표준 (noticeCategoryId + entries) 구조로 변환합니다.
+ * <p>레거시 flat 필드(material, color, size...) + NoticeCategory를 받아서 표준 (noticeCategoryId + entries)
+ * 구조로 변환합니다.
  */
 @Component
 public class LegacyNoticeCommandApiMapper {
@@ -28,8 +28,7 @@ public class LegacyNoticeCommandApiMapper {
     private static final String DEFAULT_NOTICE_VALUE = "상세설명 참고";
 
     private record FieldMapping(
-            String fieldCode,
-            Function<LegacyCreateProductNoticeRequest, String> extractor) {}
+            String fieldCode, Function<LegacyCreateProductNoticeRequest, String> extractor) {}
 
     private static final List<FieldMapping> FIELD_MAPPINGS =
             List.of(
@@ -66,8 +65,7 @@ public class LegacyNoticeCommandApiMapper {
     }
 
     /**
-     * 레거시 요청 + NoticeCategory → 표준 UpdateProductNoticeCommand 변환.
-     * 새 스키마 전환 시 사용 예정.
+     * 레거시 요청 + NoticeCategory → 표준 UpdateProductNoticeCommand 변환. 새 스키마 전환 시 사용 예정.
      *
      * @param productGroupId 상품그룹 ID
      * @param request 레거시 고시정보 요청 (flat 필드)
@@ -85,12 +83,10 @@ public class LegacyNoticeCommandApiMapper {
         for (NoticeField field : noticeCategory.fields()) {
             String fieldCode = field.fieldCodeValue();
             String value = legacyValues.getOrDefault(fieldCode, DEFAULT_NOTICE_VALUE);
-            entries.add(
-                    new UpdateProductNoticeCommand.NoticeEntryCommand(field.idValue(), value));
+            entries.add(new UpdateProductNoticeCommand.NoticeEntryCommand(field.idValue(), value));
         }
 
-        return new UpdateProductNoticeCommand(
-                productGroupId, noticeCategory.idValue(), entries);
+        return new UpdateProductNoticeCommand(productGroupId, noticeCategory.idValue(), entries);
     }
 
     private Map<String, String> extractLegacyValues(

@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.legacy.productgroup.internal;
 
-import com.ryuqq.marketplace.application.legacy.description.internal.LegacyDescriptionCommandCoordinator;
-import com.ryuqq.marketplace.application.legacy.image.internal.LegacyImageCommandCoordinator;
-import com.ryuqq.marketplace.application.legacy.notice.internal.LegacyNoticeCommandCoordinator;
+import com.ryuqq.marketplace.application.legacy.productgroupdescription.internal.LegacyDescriptionCommandCoordinator;
+import com.ryuqq.marketplace.application.legacy.productgroupimage.internal.LegacyImageCommandCoordinator;
+import com.ryuqq.marketplace.application.legacy.productnotice.internal.LegacyNoticeCommandCoordinator;
 import com.ryuqq.marketplace.application.legacy.product.internal.LegacyDeliveryCommandCoordinator;
 import com.ryuqq.marketplace.application.legacy.product.internal.LegacyOptionUpdateCoordinator;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.bundle.LegacyProductGroupUpdateBundle;
