@@ -318,22 +318,22 @@ public class StubExternalClientConfig {
 
             @Override
             public String registerProduct(
-                    com.ryuqq.marketplace.application.productgroup.dto.composite
-                                    .ProductGroupDetailBundle
-                            bundle,
+                    com.ryuqq.marketplace.application.productgroup.dto.response
+                                    .ProductGroupSyncData
+                            syncData,
                     Long externalCategoryId,
                     Long externalBrandId,
                     com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel
                             channel,
                     com.ryuqq.marketplace.domain.shop.aggregate.Shop shop) {
-                return "stub-external-product-" + bundle.group().idValue();
+                return "stub-external-product-" + syncData.queryResult().id();
             }
 
             @Override
             public void updateProduct(
-                    com.ryuqq.marketplace.application.productgroup.dto.composite
-                                    .ProductGroupDetailBundle
-                            bundle,
+                    com.ryuqq.marketplace.application.productgroup.dto.response
+                                    .ProductGroupSyncData
+                            syncData,
                     Long externalCategoryId,
                     Long externalBrandId,
                     String externalProductId,

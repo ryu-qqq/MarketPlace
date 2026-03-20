@@ -2,11 +2,11 @@ package com.ryuqq.marketplace.adapter.out.client.naver.mapper;
 
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OriginAreaInfo;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.ProductInfoProvidedNotice;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
-import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
-import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNoticeEntry;
+import com.ryuqq.marketplace.application.notice.dto.response.NoticeCategoryResult;
+import com.ryuqq.marketplace.application.notice.dto.response.NoticeFieldResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
+import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeEntryResult;
+import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ final class NaverNoticeMapper {
     private static final String MADE_IN_FIELD_CODE = "made_in";
     private static final String NOTICE_DEFAULT_VALUE = "상품 상세 참조";
 
-    /** 우리 NoticeCategory.code → 네이버 productInfoProvidedNoticeType 매핑. */
+    /** 우리 NoticeCategory.code -> 네이버 productInfoProvidedNoticeType 매핑. */
     private static final Map<String, String> NAVER_NOTICE_TYPE_MAP =
             Map.ofEntries(
                     Map.entry("CLOTHING", "WEAR"),
@@ -104,20 +104,20 @@ final class NaverNoticeMapper {
 
     private NaverNoticeMapper() {}
 
-    static ProductInfoProvidedNotice mapNotice(ProductGroupDetailBundle bundle) {
-        if (bundle.notice().isEmpty()) {
+    static ProductInfoProvidedNotice mapNotice(ProductGroupSyncData syncData) {
+        if (syncData.notice().isEmpty()) {
             return null;
         }
 
-        ProductNotice notice = bundle.notice().get();
-        NoticeCategory category = bundle.noticeCategory().orElse(null);
+        ProductNoticeResult notice = syncData.notice().get();
+        NoticeCategoryResult category = syncData.noticeCategory().orElse(null);
 
         String noticeType = resolveNaverNoticeType(category);
 
         Map<Long, String> fieldCodeMap = buildFieldCodeMap(category);
         Map<Long, String> fieldNameMap = buildFieldNameMap(category);
 
-        List<ProductNoticeEntry> entries = notice.entries();
+        List<ProductNoticeEntryResult> entries = notice.entries();
         if (entries.isEmpty()) {
             return null;
         }
@@ -128,16 +128,16 @@ final class NaverNoticeMapper {
         return ProductInfoProvidedNotice.of(noticeType, contents);
     }
 
-    static OriginAreaInfo mapOriginAreaInfo(ProductGroupDetailBundle bundle) {
-        if (bundle.notice().isEmpty() || bundle.noticeCategory().isEmpty()) {
+    static OriginAreaInfo mapOriginAreaInfo(ProductGroupSyncData syncData) {
+        if (syncData.notice().isEmpty() || syncData.noticeCategory().isEmpty()) {
             return new OriginAreaInfo(ORIGIN_AREA_IMPORT, ORIGIN_AREA_CONTENT);
         }
 
-        NoticeCategory category = bundle.noticeCategory().get();
+        NoticeCategoryResult category = syncData.noticeCategory().get();
         Long madeInFieldId = null;
-        for (NoticeField field : category.fields()) {
-            if (MADE_IN_FIELD_CODE.equals(field.fieldCodeValue())) {
-                madeInFieldId = field.idValue();
+        for (NoticeFieldResult field : category.fields()) {
+            if (MADE_IN_FIELD_CODE.equals(field.fieldCode())) {
+                madeInFieldId = field.id();
                 break;
             }
         }
@@ -146,10 +146,10 @@ final class NaverNoticeMapper {
             return new OriginAreaInfo(ORIGIN_AREA_IMPORT, ORIGIN_AREA_CONTENT);
         }
 
-        ProductNotice notice = bundle.notice().get();
-        for (ProductNoticeEntry entry : notice.entries()) {
-            if (madeInFieldId.equals(entry.noticeFieldIdValue())) {
-                String originValue = entry.fieldValueValue();
+        ProductNoticeResult notice = syncData.notice().get();
+        for (ProductNoticeEntryResult entry : notice.entries()) {
+            if (madeInFieldId.equals(entry.noticeFieldId())) {
+                String originValue = entry.fieldValue();
                 if (originValue != null && !originValue.isBlank()) {
                     return new OriginAreaInfo(ORIGIN_AREA_IMPORT, originValue);
                 }
@@ -162,7 +162,7 @@ final class NaverNoticeMapper {
 
     private static Map<String, String> buildNoticeContents(
             String noticeType,
-            List<ProductNoticeEntry> entries,
+            List<ProductNoticeEntryResult> entries,
             Map<Long, String> fieldCodeMap,
             Map<Long, String> fieldNameMap) {
 
@@ -175,9 +175,9 @@ final class NaverNoticeMapper {
         contents.put("compensationProcedure", NOTICE_DEFAULT_VALUE);
         contents.put("troubleShootingContents", NOTICE_DEFAULT_VALUE);
 
-        for (ProductNoticeEntry entry : entries) {
-            String fieldCode = fieldCodeMap.get(entry.noticeFieldIdValue());
-            String value = entry.fieldValueValue();
+        for (ProductNoticeEntryResult entry : entries) {
+            String fieldCode = fieldCodeMap.get(entry.noticeFieldId());
+            String value = entry.fieldValue();
 
             if (value == null || value.isBlank()) {
                 value = NOTICE_DEFAULT_VALUE;
@@ -293,31 +293,31 @@ final class NaverNoticeMapper {
         contents.putIfAbsent("afterServiceDirector", NOTICE_DEFAULT_VALUE);
     }
 
-    private static String resolveNaverNoticeType(NoticeCategory category) {
+    private static String resolveNaverNoticeType(NoticeCategoryResult category) {
         if (category == null) {
             return DEFAULT_NOTICE_TYPE;
         }
-        return NAVER_NOTICE_TYPE_MAP.getOrDefault(category.codeValue(), DEFAULT_NOTICE_TYPE);
+        return NAVER_NOTICE_TYPE_MAP.getOrDefault(category.code(), DEFAULT_NOTICE_TYPE);
     }
 
-    private static Map<Long, String> buildFieldCodeMap(NoticeCategory category) {
+    private static Map<Long, String> buildFieldCodeMap(NoticeCategoryResult category) {
         if (category == null) {
             return Map.of();
         }
         Map<Long, String> map = new HashMap<>();
-        for (NoticeField field : category.fields()) {
-            map.put(field.idValue(), field.fieldCodeValue());
+        for (NoticeFieldResult field : category.fields()) {
+            map.put(field.id(), field.fieldCode());
         }
         return map;
     }
 
-    private static Map<Long, String> buildFieldNameMap(NoticeCategory category) {
+    private static Map<Long, String> buildFieldNameMap(NoticeCategoryResult category) {
         if (category == null) {
             return Map.of();
         }
         Map<Long, String> map = new HashMap<>();
-        for (NoticeField field : category.fields()) {
-            map.put(field.idValue(), field.fieldNameValue());
+        for (NoticeFieldResult field : category.fields()) {
+            map.put(field.id(), field.fieldName());
         }
         return map;
     }

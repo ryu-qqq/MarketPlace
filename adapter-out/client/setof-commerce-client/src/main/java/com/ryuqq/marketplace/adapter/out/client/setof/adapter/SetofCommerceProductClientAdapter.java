@@ -8,7 +8,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProduc
 import com.ryuqq.marketplace.adapter.out.client.setof.strategy.SetofProductUpdateExecutorProvider;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
@@ -26,7 +26,7 @@ import org.springframework.web.client.RestClient;
 /**
  * 세토프 커머스 상품 등록/수정/삭제 클라이언트 어댑터.
  *
- * <p>ProductGroupDetailBundle → Setof 요청 DTO 변환 후 POST/PUT API 호출. 인증은 RestClient
+ * <p>ProductGroupSyncData → Setof 요청 DTO 변환 후 POST/PUT API 호출. 인증은 RestClient
  * defaultHeader(X-Service-Token)로 자동 처리됩니다.
  */
 @Component
@@ -60,7 +60,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
 
     @Override
     public String registerProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
@@ -70,14 +70,16 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
 
         SetofProductGroupRegistrationRequest request =
                 mapper.toRegistrationRequest(
-                        bundle, externalCategoryId, externalBrandId, externalSellerId);
+                        syncData, externalCategoryId, externalBrandId, externalSellerId);
+
+        Long productGroupId = syncData.queryResult().id();
 
         try {
             return circuitBreaker.executeSupplier(
                     () -> {
                         log.info(
                                 "세토프 커머스 상품 등록 요청: productGroupId={}, categoryId={}",
-                                bundle.group().idValue(),
+                                productGroupId,
                                 externalCategoryId);
 
                         SetofProductGroupRegistrationResponse response =
@@ -92,13 +94,13 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
                         if (response == null || response.productGroupId() == null) {
                             throw new IllegalStateException(
                                     "세토프 커머스 상품 등록 응답이 null입니다: productGroupId="
-                                            + bundle.group().idValue());
+                                            + productGroupId);
                         }
 
                         log.info(
                                 "세토프 커머스 상품 등록 성공: productGroupId={},"
                                         + " externalProductGroupId={}",
-                                bundle.group().idValue(),
+                                productGroupId,
                                 response.productGroupId());
 
                         return String.valueOf(response.productGroupId());
@@ -111,16 +113,18 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
 
     @Override
     public void updateProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
             SellerSalesChannel channel,
             Set<ChangedArea> changedAreas) {
 
+        Long productGroupId = syncData.queryResult().id();
+
         log.info(
                 "세토프 커머스 상품 수정 요청: productGroupId={}, externalProductId={}, changedAreas={}",
-                bundle.group().idValue(),
+                productGroupId,
                 externalProductId,
                 changedAreas);
 
@@ -130,7 +134,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
         updateExecutorProvider
                 .resolve(changedAreas)
                 .execute(
-                        bundle,
+                        syncData,
                         externalCategoryId,
                         externalBrandId,
                         externalProductId,
@@ -140,7 +144,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
 
         log.info(
                 "세토프 커머스 상품 수정 성공: productGroupId={}, externalProductId={}",
-                bundle.group().idValue(),
+                productGroupId,
                 externalProductId);
     }
 

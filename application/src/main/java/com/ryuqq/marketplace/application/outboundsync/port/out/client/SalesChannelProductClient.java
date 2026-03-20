@@ -1,7 +1,7 @@
 package com.ryuqq.marketplace.application.outboundsync.port.out.client;
 
 import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
@@ -20,7 +20,7 @@ public interface SalesChannelProductClient {
     /**
      * 외부 채널에 상품을 등록합니다.
      *
-     * @param bundle 상품 그룹 상세 번들
+     * @param syncData 상품 그룹 동기화 데이터
      * @param externalCategoryId 외부 채널 카테고리 ID
      * @param externalBrandId 외부 채널 브랜드 ID (nullable, 선택 필드)
      * @param channel 셀러 판매채널 (인증 정보 포함)
@@ -28,7 +28,7 @@ public interface SalesChannelProductClient {
      * @return 외부 상품 ID (String)
      */
     String registerProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
@@ -40,13 +40,13 @@ public interface SalesChannelProductClient {
      * <p>기본 구현은 resolvedImages를 무시하고 기존 메서드를 호출합니다. 이미지 업로드가 필요한 채널(네이버 등)에서 오버라이드합니다.
      */
     default String registerProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
             Shop shop,
             ResolvedExternalImages resolvedImages) {
-        return registerProduct(bundle, externalCategoryId, externalBrandId, channel, shop);
+        return registerProduct(syncData, externalCategoryId, externalBrandId, channel, shop);
     }
 
     /**
@@ -55,7 +55,7 @@ public interface SalesChannelProductClient {
      * <p>changedAreas가 비어있으면 전체 수정(Full Replacement)으로 동작합니다. 채널 어댑터는 changedAreas 기반으로 전체 수정 또는 부분
      * 수정을 내부적으로 결정합니다.
      *
-     * @param bundle 상품 그룹 상세 번들 (최신 데이터)
+     * @param syncData 상품 그룹 동기화 데이터 (최신 데이터)
      * @param externalCategoryId 외부 채널 카테고리 ID
      * @param externalBrandId 외부 채널 브랜드 ID (nullable, 선택 필드)
      * @param externalProductId 외부 상품 ID
@@ -63,7 +63,7 @@ public interface SalesChannelProductClient {
      * @param changedAreas 변경된 영역 집합 (비어있으면 전체 수정)
      */
     void updateProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
@@ -76,7 +76,7 @@ public interface SalesChannelProductClient {
      * <p>기본 구현은 resolvedImages를 무시하고 기존 메서드를 호출합니다.
      */
     default void updateProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
@@ -84,7 +84,7 @@ public interface SalesChannelProductClient {
             Set<ChangedArea> changedAreas,
             ResolvedExternalImages resolvedImages) {
         updateProduct(
-                bundle,
+                syncData,
                 externalCategoryId,
                 externalBrandId,
                 externalProductId,

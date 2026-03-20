@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecuti
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
@@ -72,9 +73,11 @@ public class SetofUpdateProductStrategy implements OutboundSyncExecutionStrategy
                             bundle.queryResult().categoryId(),
                             bundle.queryResult().brandId());
 
+            ProductGroupSyncData syncData = ProductGroupSyncData.from(bundle);
+
             productClientManager.updateProduct(
                     SETOF_CHANNEL_CODE,
-                    bundle,
+                    syncData,
                     Long.parseLong(mapping.externalCategoryCode()),
                     Long.parseLong(mapping.externalBrandCode()),
                     outboundProduct.externalProductId(),

@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductDetailResp
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
@@ -117,7 +118,7 @@ class NaverOptionUpdateTest {
                                 new SkuStock("SKU-WH-L", 16000, 6)));
 
         NaverProductRegistrationRequest registerReq =
-                mapper.toRegistrationRequest(registerBundle, NAVER_CATEGORY_ID, null);
+                mapper.toRegistrationRequest(ProductGroupSyncData.from(registerBundle), NAVER_CATEGORY_ID, null);
 
         String registerJson = objectMapper.writeValueAsString(registerReq);
         HttpResponse<String> registerResp =
@@ -175,7 +176,7 @@ class NaverOptionUpdateTest {
 
         NaverProductRegistrationRequest updateReq =
                 mapper.toUpdateRequest(
-                        updateBundle,
+                        ProductGroupSyncData.from(updateBundle),
                         NAVER_CATEGORY_ID,
                         null,
                         existingProduct,
@@ -249,7 +250,7 @@ class NaverOptionUpdateTest {
 
         NaverProductRegistrationRequest addOptionReq =
                 mapper.toUpdateRequest(
-                        addOptionBundle,
+                        ProductGroupSyncData.from(addOptionBundle),
                         NAVER_CATEGORY_ID,
                         null,
                         afterPriceUpdate,
@@ -316,7 +317,7 @@ class NaverOptionUpdateTest {
 
         NaverProductRegistrationRequest removeOptionReq =
                 mapper.toUpdateRequest(
-                        removeOptionBundle,
+                        ProductGroupSyncData.from(removeOptionBundle),
                         NAVER_CATEGORY_ID,
                         null,
                         afterAddOption,

@@ -13,20 +13,18 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrati
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.ProductInfoProvidedNotice;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.SmartstoreChannelProduct;
 import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerCsSyncResult;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
-import com.ryuqq.marketplace.domain.product.aggregate.Product;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
-import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
-import com.ryuqq.marketplace.domain.seller.aggregate.SellerCs;
 import java.util.List;
 import java.util.Set;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
- * ProductGroupDetailBundle → NaverProductRegistrationRequest 변환 매퍼.
+ * ProductGroupSyncData -> NaverProductRegistrationRequest 변환 매퍼.
  *
  * <p>각 영역별 변환은 전용 매퍼에 위임하고, 이 클래스는 전체 조립만 담당합니다.
  *
@@ -45,21 +43,25 @@ public class NaverCommerceProductMapper {
 
     /** 상품 등록 요청 변환. */
     public NaverProductRegistrationRequest toRegistrationRequest(
-            ProductGroupDetailBundle bundle, Long externalCategoryId, Long externalBrandId) {
-        Images images = NaverImageMapper.mapImages(bundle.group().images());
-        OptionInfo optionInfo = NaverOptionMapper.mapOptionInfo(bundle.group(), bundle.products());
-        return buildRequest(bundle, externalCategoryId, externalBrandId, images, optionInfo);
+            ProductGroupSyncData syncData, Long externalCategoryId, Long externalBrandId) {
+        Images images = NaverImageMapper.mapImages(syncData.images());
+        OptionInfo optionInfo =
+                NaverOptionMapper.mapOptionInfo(
+                        syncData.optionGroups(), syncData.products(), syncData.soldout());
+        return buildRequest(syncData, externalCategoryId, externalBrandId, images, optionInfo);
     }
 
     /** 상품 등록 요청 변환 (외부 채널 이미지 URL 사용). */
     public NaverProductRegistrationRequest toRegistrationRequest(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             ResolvedExternalImages resolvedImages) {
-        Images images = resolveImages(bundle, resolvedImages);
-        OptionInfo optionInfo = NaverOptionMapper.mapOptionInfo(bundle.group(), bundle.products());
-        return buildRequest(bundle, externalCategoryId, externalBrandId, images, optionInfo);
+        Images images = resolveImages(syncData, resolvedImages);
+        OptionInfo optionInfo =
+                NaverOptionMapper.mapOptionInfo(
+                        syncData.optionGroups(), syncData.products(), syncData.soldout());
+        return buildRequest(syncData, externalCategoryId, externalBrandId, images, optionInfo);
     }
 
     /**
@@ -68,62 +70,64 @@ public class NaverCommerceProductMapper {
      * <p>기존 네이버 상품의 옵션 combination ID를 매칭하여 옵션 구조를 유지합니다.
      */
     public NaverProductRegistrationRequest toUpdateRequest(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             NaverProductDetailResponse existingProduct,
             Set<ChangedArea> changedAreas) {
-        Images images = NaverImageMapper.mapImages(bundle.group().images());
-        OptionInfo optionInfo = resolveOptionInfoForUpdate(bundle, existingProduct, changedAreas);
-        return buildRequest(bundle, externalCategoryId, externalBrandId, images, optionInfo);
+        Images images = NaverImageMapper.mapImages(syncData.images());
+        OptionInfo optionInfo =
+                resolveOptionInfoForUpdate(syncData, existingProduct, changedAreas);
+        return buildRequest(syncData, externalCategoryId, externalBrandId, images, optionInfo);
     }
 
     /** 상품 수정 요청 변환 (외부 채널 이미지 URL 사용). */
     public NaverProductRegistrationRequest toUpdateRequest(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             ResolvedExternalImages resolvedImages,
             NaverProductDetailResponse existingProduct,
             Set<ChangedArea> changedAreas) {
-        Images images = resolveImages(bundle, resolvedImages);
-        OptionInfo optionInfo = resolveOptionInfoForUpdate(bundle, existingProduct, changedAreas);
-        return buildRequest(bundle, externalCategoryId, externalBrandId, images, optionInfo);
+        Images images = resolveImages(syncData, resolvedImages);
+        OptionInfo optionInfo =
+                resolveOptionInfoForUpdate(syncData, existingProduct, changedAreas);
+        return buildRequest(syncData, externalCategoryId, externalBrandId, images, optionInfo);
     }
 
     private OptionInfo resolveOptionInfoForUpdate(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             NaverProductDetailResponse existingProduct,
             Set<ChangedArea> changedAreas) {
 
-        ProductGroup group = bundle.group();
-        List<Product> products = bundle.products();
-
         // 기존 상품 정보가 없으면 등록 모드로 폴백
         if (existingProduct == null) {
-            return NaverOptionMapper.mapOptionInfo(group, products);
+            return NaverOptionMapper.mapOptionInfo(
+                        syncData.optionGroups(), syncData.products(), syncData.soldout());
         }
 
         // 옵션이 있는 상품: 기존 combination ID 매칭
-        return NaverOptionMapper.mapOptionInfoForUpdate(group, products, existingProduct);
+        return NaverOptionMapper.mapOptionInfoForUpdate(
+                syncData.optionGroups(), syncData.products(), existingProduct, syncData.soldout());
     }
 
     private NaverProductRegistrationRequest buildRequest(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             Images images,
             OptionInfo optionInfo) {
 
-        ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
-        List<Product> products = bundle.products();
+        ProductGroupDetailCompositeQueryResult queryResult = syncData.queryResult();
+        List<ProductResult> products = syncData.products();
 
         DeliveryInfo deliveryInfo =
                 NaverDeliveryMapper.mapDeliveryInfo(queryResult.shippingPolicy());
 
-        AfterServiceInfo afterServiceInfo = mapAfterServiceInfo(bundle.sellerCs().orElse(null));
-        OriginAreaInfo originAreaInfo = NaverNoticeMapper.mapOriginAreaInfo(bundle);
-        ProductInfoProvidedNotice notice = NaverNoticeMapper.mapNotice(bundle);
+        AfterServiceInfo afterServiceInfo =
+                mapAfterServiceInfo(syncData.sellerCs().orElse(null));
+        OriginAreaInfo originAreaInfo = NaverNoticeMapper.mapOriginAreaInfo(syncData);
+        ProductInfoProvidedNotice notice = NaverNoticeMapper.mapNotice(syncData);
 
         String manufacturerName = queryResult.brandName();
 
@@ -143,14 +147,14 @@ public class NaverCommerceProductMapper {
                         certExclude,
                         notice);
 
-        String detailContent = mapDetailContent(bundle);
+        String detailContent = mapDetailContent(syncData);
 
         int representativePrice = resolveRepresentativePrice(products);
         int totalStock =
-                bundle.group().status().isSoldout()
+                syncData.soldout()
                         ? 0
-                        : products.stream().mapToInt(Product::stockQuantity).sum();
-        String naverStatusType = mapNaverStatusType(bundle.group());
+                        : products.stream().mapToInt(ProductResult::stockQuantity).sum();
+        String naverStatusType = mapNaverStatusType(syncData);
 
         OriginProduct originProduct =
                 new OriginProduct(
@@ -172,13 +176,13 @@ public class NaverCommerceProductMapper {
     }
 
     private Images resolveImages(
-            ProductGroupDetailBundle bundle, ResolvedExternalImages resolvedImages) {
+            ProductGroupSyncData syncData, ResolvedExternalImages resolvedImages) {
         return resolvedImages != null && !resolvedImages.isEmpty()
                 ? NaverImageMapper.mapExternalImages(resolvedImages)
-                : NaverImageMapper.mapImages(bundle.group().images());
+                : NaverImageMapper.mapImages(syncData.images());
     }
 
-    private AfterServiceInfo mapAfterServiceInfo(SellerCs sellerCs) {
+    private AfterServiceInfo mapAfterServiceInfo(SellerCsSyncResult sellerCs) {
         if (sellerCs == null) {
             return new AfterServiceInfo(DEFAULT_AS_PHONE, DEFAULT_AS_GUIDE);
         }
@@ -192,31 +196,27 @@ public class NaverCommerceProductMapper {
         return new AfterServiceInfo(phone, DEFAULT_AS_GUIDE);
     }
 
-    private String mapDetailContent(ProductGroupDetailBundle bundle) {
-        return bundle.description()
-                .map(
-                        desc -> {
-                            String content = desc.contentValue();
-                            return (content != null && !content.isBlank()) ? content : "";
-                        })
+    private String mapDetailContent(ProductGroupSyncData syncData) {
+        return syncData.descriptionContent()
+                .map(content -> (content != null && !content.isBlank()) ? content : "")
                 .orElse("");
     }
 
-    private int resolveRepresentativePrice(List<Product> products) {
-        return products.stream().mapToInt(Product::currentPriceValue).min().orElse(0);
+    private int resolveRepresentativePrice(List<ProductResult> products) {
+        return products.stream().mapToInt(ProductResult::currentPrice).min().orElse(0);
     }
 
     /**
-     * 내부 상품 상태 → 네이버 statusType 매핑.
+     * 내부 상품 상태 -> 네이버 statusType 매핑.
      *
      * <p>네이버 수정 API에서는 SALE, SUSPENSION만 입력 가능합니다. OUTOFSTOCK(품절)은 stockQuantity=0일 때 네이버가 자동으로
      * 설정하므로, SOLD_OUT은 SALE로 보내고 재고를 0으로 전송합니다.
      */
-    private String mapNaverStatusType(ProductGroup group) {
-        ProductGroupStatus status = group.status();
+    private String mapNaverStatusType(ProductGroupSyncData syncData) {
+        String status = syncData.status();
         return switch (status) {
-            case ACTIVE, SOLD_OUT -> "SALE";
-            case INACTIVE -> "SUSPENSION";
+            case "ACTIVE", "SOLD_OUT" -> "SALE";
+            case "INACTIVE" -> "SUSPENSION";
             default -> "SALE";
         };
     }

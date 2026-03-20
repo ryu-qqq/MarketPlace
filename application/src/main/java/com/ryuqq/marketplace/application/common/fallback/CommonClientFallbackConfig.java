@@ -11,7 +11,7 @@ import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrder
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
 import com.ryuqq.marketplace.application.order.port.out.query.OrderQueryPort;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
@@ -181,7 +181,7 @@ public class CommonClientFallbackConfig {
 
             @Override
             public String registerProduct(
-                    ProductGroupDetailBundle bundle,
+                    ProductGroupSyncData syncData,
                     Long externalCategoryId,
                     Long externalBrandId,
                     SellerSalesChannel channel,
@@ -191,7 +191,7 @@ public class CommonClientFallbackConfig {
 
             @Override
             public void updateProduct(
-                    ProductGroupDetailBundle bundle,
+                    ProductGroupSyncData syncData,
                     Long externalCategoryId,
                     Long externalBrandId,
                     String externalProductId,

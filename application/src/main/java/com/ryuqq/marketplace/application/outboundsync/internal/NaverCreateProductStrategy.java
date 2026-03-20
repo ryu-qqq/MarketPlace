@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecuti
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
@@ -66,6 +67,8 @@ public class NaverCreateProductStrategy implements OutboundSyncExecutionStrategy
                     outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
                             productGroupId, salesChannelId);
 
+            ProductGroupSyncData syncData = ProductGroupSyncData.from(bundle);
+
             ResolvedExternalImages resolvedImages =
                     outboundImageSyncCoordinator.syncImages(
                             outboundProduct.idValue(), NAVER_CHANNEL_CODE, bundle.group().images());
@@ -79,7 +82,7 @@ public class NaverCreateProductStrategy implements OutboundSyncExecutionStrategy
             String externalProductId =
                     productClientManager.registerProduct(
                             NAVER_CHANNEL_CODE,
-                            bundle,
+                            syncData,
                             Long.parseLong(mapping.externalCategoryCode()),
                             Long.parseLong(mapping.externalBrandCode()),
                             context.sellerSalesChannel(),

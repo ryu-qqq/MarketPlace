@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductDetailResp
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
@@ -98,7 +99,7 @@ class NaverSoldOutTest {
         ProductGroupDetailBundle soldOutBundle = buildBundle(ProductGroupStatus.SOLD_OUT);
         NaverProductRegistrationRequest soldOutReq =
                 mapper.toUpdateRequest(
-                        soldOutBundle,
+                        ProductGroupSyncData.from(soldOutBundle),
                         NAVER_CATEGORY_ID,
                         null,
                         existing,
@@ -144,7 +145,7 @@ class NaverSoldOutTest {
         ProductGroupDetailBundle activeBundle = buildBundle(ProductGroupStatus.ACTIVE);
         NaverProductRegistrationRequest activeReq =
                 mapper.toUpdateRequest(
-                        activeBundle, NAVER_CATEGORY_ID, null, after, Set.of(ChangedArea.STATUS));
+                        ProductGroupSyncData.from(activeBundle), NAVER_CATEGORY_ID, null, after, Set.of(ChangedArea.STATUS));
         HttpResponse<String> restoreResp =
                 putJson(
                         http,

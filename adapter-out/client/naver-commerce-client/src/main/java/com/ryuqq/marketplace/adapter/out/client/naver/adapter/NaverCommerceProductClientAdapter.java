@@ -12,7 +12,7 @@ import com.ryuqq.marketplace.application.outboundproduct.dto.vo.ExternalProductE
 import com.ryuqq.marketplace.application.outboundproduct.port.out.client.SalesChannelProductSearchClient;
 import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
@@ -32,7 +32,7 @@ import org.springframework.web.client.RestClient;
 /**
  * 네이버 커머스 상품 등록/수정 클라이언트 어댑터.
  *
- * <p>ProductGroupDetailBundle → NaverProductRegistrationRequest 변환 후 POST/PUT API 호출.
+ * <p>ProductGroupSyncData -> NaverProductRegistrationRequest 변환 후 POST/PUT API 호출.
  */
 @Component
 @Qualifier("naverProductClient")
@@ -66,20 +66,20 @@ public class NaverCommerceProductClientAdapter
 
     @Override
     public String registerProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
             Shop shop) {
 
         NaverProductRegistrationRequest request =
-                mapper.toRegistrationRequest(bundle, externalCategoryId, externalBrandId);
-        return executeRegister(request, bundle.group().idValue(), externalCategoryId);
+                mapper.toRegistrationRequest(syncData, externalCategoryId, externalBrandId);
+        return executeRegister(request, syncData.queryResult().id(), externalCategoryId);
     }
 
     @Override
     public String registerProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
@@ -88,13 +88,13 @@ public class NaverCommerceProductClientAdapter
 
         NaverProductRegistrationRequest request =
                 mapper.toRegistrationRequest(
-                        bundle, externalCategoryId, externalBrandId, resolvedImages);
-        return executeRegister(request, bundle.group().idValue(), externalCategoryId);
+                        syncData, externalCategoryId, externalBrandId, resolvedImages);
+        return executeRegister(request, syncData.queryResult().id(), externalCategoryId);
     }
 
     @Override
     public void updateProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
@@ -104,13 +104,13 @@ public class NaverCommerceProductClientAdapter
         NaverProductDetailResponse existing = fetchExistingProduct(externalProductId);
         NaverProductRegistrationRequest request =
                 mapper.toUpdateRequest(
-                        bundle, externalCategoryId, externalBrandId, existing, changedAreas);
-        executeUpdate(request, bundle.group().idValue(), externalProductId);
+                        syncData, externalCategoryId, externalBrandId, existing, changedAreas);
+        executeUpdate(request, syncData.queryResult().id(), externalProductId);
     }
 
     @Override
     public void updateProduct(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
@@ -121,13 +121,13 @@ public class NaverCommerceProductClientAdapter
         NaverProductDetailResponse existing = fetchExistingProduct(externalProductId);
         NaverProductRegistrationRequest request =
                 mapper.toUpdateRequest(
-                        bundle,
+                        syncData,
                         externalCategoryId,
                         externalBrandId,
                         resolvedImages,
                         existing,
                         changedAreas);
-        executeUpdate(request, bundle.group().idValue(), externalProductId);
+        executeUpdate(request, syncData.queryResult().id(), externalProductId);
     }
 
     @Override

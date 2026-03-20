@@ -12,7 +12,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupBasic
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductsUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.util.Set;
@@ -73,7 +73,7 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
 
     @Override
     public void execute(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
@@ -95,63 +95,63 @@ public class SetofPartialProductUpdateExecutor implements SetofProductUpdateExec
                 changedAreas);
 
         if (changedAreas.contains(ChangedArea.BASIC_INFO)) {
-            updateBasicInfo(bundle, externalCategoryId, externalBrandId, externalProductId);
+            updateBasicInfo(syncData, externalCategoryId, externalBrandId, externalProductId);
         }
 
         if (containsAny(changedAreas, ChangedArea.PRICE, ChangedArea.STOCK, ChangedArea.OPTION)) {
-            updateProducts(bundle, externalId, existingProduct);
+            updateProducts(syncData, externalId, existingProduct);
         }
 
         if (changedAreas.contains(ChangedArea.IMAGE)) {
-            updateImages(bundle, externalId);
+            updateImages(syncData, externalId);
         }
 
         if (changedAreas.contains(ChangedArea.DESCRIPTION)) {
-            updateDescription(bundle, externalId);
+            updateDescription(syncData, externalId);
         }
 
         if (changedAreas.contains(ChangedArea.NOTICE)) {
-            updateNotice(bundle, externalId);
+            updateNotice(syncData, externalId);
         }
 
         log.info("세토프 부분 수정 완료: externalProductId={}", externalProductId);
     }
 
     private void updateBasicInfo(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId) {
         SetofProductGroupBasicInfoUpdateRequest request =
-                mapper.toBasicInfoUpdateRequest(bundle, externalCategoryId, externalBrandId);
+                mapper.toBasicInfoUpdateRequest(syncData, externalCategoryId, externalBrandId);
         basicInfoAdapter.updateBasicInfo(externalProductId, request);
     }
 
     private void updateProducts(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalId,
             SetofProductGroupDetailResponse existingProduct) {
         SetofProductsUpdateRequest request =
                 mapper.toProductsUpdateRequest(
-                        bundle.products(), bundle.group().sellerOptionGroups(), existingProduct);
+                        syncData.products(), syncData.optionGroups(), existingProduct);
         productAdapter.updateProducts(externalId, request);
     }
 
-    private void updateImages(ProductGroupDetailBundle bundle, Long externalId) {
-        SetofImagesRequest request = mapper.toImagesRequest(bundle.group().images());
+    private void updateImages(ProductGroupSyncData syncData, Long externalId) {
+        SetofImagesRequest request = mapper.toImagesRequest(syncData.images());
         imageAdapter.updateImages(externalId, request);
     }
 
-    private void updateDescription(ProductGroupDetailBundle bundle, Long externalId) {
-        SetofDescriptionRequest request = mapper.toDescriptionRequest(bundle);
+    private void updateDescription(ProductGroupSyncData syncData, Long externalId) {
+        SetofDescriptionRequest request = mapper.toDescriptionRequest(syncData);
         if (request != null) {
             descriptionAdapter.updateDescription(externalId, request);
         }
     }
 
-    private void updateNotice(ProductGroupDetailBundle bundle, Long externalId) {
+    private void updateNotice(ProductGroupSyncData syncData, Long externalId) {
         SetofNoticeRequest request =
-                bundle.notice().map(notice -> mapper.toNoticeRequest(notice, null)).orElse(null);
+                syncData.notice().map(notice -> mapper.toNoticeRequest(notice, null)).orElse(null);
         if (request != null) {
             noticeAdapter.updateNotice(externalId, request);
         }

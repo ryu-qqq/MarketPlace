@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.strategy;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -10,6 +11,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdat
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.product.ProductFixtures;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
@@ -72,7 +74,7 @@ class SetofFullProductUpdateExecutorTest {
         @DisplayName("전체 수정 요청을 PUT으로 호출한다")
         void executeSendsFullUpdateRequest() {
             // given
-            var bundle = createBundle();
+            var syncData = createSyncData();
             Long externalCategoryId = 500L;
             Long externalBrandId = 600L;
             String externalProductId = "12345";
@@ -81,7 +83,11 @@ class SetofFullProductUpdateExecutorTest {
                     new SetofProductGroupUpdateRequest(
                             "테스트", null, null, null, null, null, 0, 0, null, null, null, null,
                             null);
-            given(mapper.toUpdateRequest(bundle, externalCategoryId, externalBrandId, null))
+            given(mapper.toUpdateRequest(
+                            any(ProductGroupSyncData.class),
+                            eq(externalCategoryId),
+                            eq(externalBrandId),
+                            eq(null)))
                     .willReturn(updateRequest);
 
             var requestHeadersUriSpec = mock(RestClient.RequestBodyUriSpec.class);
@@ -102,7 +108,7 @@ class SetofFullProductUpdateExecutorTest {
 
             // when
             sut.execute(
-                    bundle,
+                    syncData,
                     externalCategoryId,
                     externalBrandId,
                     externalProductId,
@@ -111,12 +117,17 @@ class SetofFullProductUpdateExecutorTest {
                     null);
 
             // then
-            verify(mapper).toUpdateRequest(bundle, externalCategoryId, externalBrandId, null);
+            verify(mapper)
+                    .toUpdateRequest(
+                            any(ProductGroupSyncData.class),
+                            eq(externalCategoryId),
+                            eq(externalBrandId),
+                            eq(null));
             verify(restClient).put();
         }
     }
 
-    private ProductGroupDetailBundle createBundle() {
+    private ProductGroupSyncData createSyncData() {
         var queryResult =
                 new ProductGroupDetailCompositeQueryResult(
                         1L,
@@ -135,7 +146,7 @@ class SetofFullProductUpdateExecutorTest {
                         Instant.now(),
                         null,
                         null);
-        return new ProductGroupDetailBundle(
+        var bundle = new ProductGroupDetailBundle(
                 queryResult,
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
@@ -144,5 +155,6 @@ class SetofFullProductUpdateExecutorTest {
                 Optional.empty(),
                 Optional.empty(),
                 Map.of());
+        return ProductGroupSyncData.from(bundle);
     }
 }

@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.application.outboundsync.manager;
 
 import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
@@ -34,18 +34,18 @@ public class SalesChannelProductClientManager {
 
     public String registerProduct(
             String channelCode,
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
             Shop shop) {
         return resolve(channelCode)
-                .registerProduct(bundle, externalCategoryId, externalBrandId, channel, shop);
+                .registerProduct(syncData, externalCategoryId, externalBrandId, channel, shop);
     }
 
     public String registerProduct(
             String channelCode,
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             SellerSalesChannel channel,
@@ -53,12 +53,12 @@ public class SalesChannelProductClientManager {
             ResolvedExternalImages resolvedImages) {
         return resolve(channelCode)
                 .registerProduct(
-                        bundle, externalCategoryId, externalBrandId, channel, shop, resolvedImages);
+                        syncData, externalCategoryId, externalBrandId, channel, shop, resolvedImages);
     }
 
     public void updateProduct(
             String channelCode,
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
@@ -66,7 +66,7 @@ public class SalesChannelProductClientManager {
             Set<ChangedArea> changedAreas) {
         resolve(channelCode)
                 .updateProduct(
-                        bundle,
+                        syncData,
                         externalCategoryId,
                         externalBrandId,
                         externalProductId,
@@ -76,7 +76,7 @@ public class SalesChannelProductClientManager {
 
     public void updateProduct(
             String channelCode,
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
@@ -85,7 +85,7 @@ public class SalesChannelProductClientManager {
             ResolvedExternalImages resolvedImages) {
         resolve(channelCode)
                 .updateProduct(
-                        bundle,
+                        syncData,
                         externalCategoryId,
                         externalBrandId,
                         externalProductId,

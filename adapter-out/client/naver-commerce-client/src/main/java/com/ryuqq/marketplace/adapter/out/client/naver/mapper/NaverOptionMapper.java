@@ -5,12 +5,10 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrati
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo.OptionCombination;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo.OptionCombinationGroupNames;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OptionInfo.OptionCustom;
-import com.ryuqq.marketplace.domain.product.aggregate.Product;
-import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionValue;
-import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
+import com.ryuqq.marketplace.application.product.dto.response.ProductOptionMappingResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionGroupResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionValueResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,15 +29,16 @@ final class NaverOptionMapper {
     private NaverOptionMapper() {}
 
     /** 등록용: ID 없이 전송 (네이버가 자동 부여). */
-    static OptionInfo mapOptionInfo(ProductGroup group, List<Product> products) {
-        List<SellerOptionGroup> optionGroups = group.sellerOptionGroups();
+    static OptionInfo mapOptionInfo(
+            List<SellerOptionGroupResult> optionGroups,
+            List<ProductResult> products,
+            boolean soldOut) {
         if (optionGroups.isEmpty()) {
             return null;
         }
 
-        boolean soldOut = group.status().isSoldout();
-        List<SellerOptionGroup> combinationGroups = resolveCombinationGroups(optionGroups);
-        List<SellerOptionGroup> customGroups = resolveCustomGroups(optionGroups);
+        List<SellerOptionGroupResult> combinationGroups = resolveCombinationGroups(optionGroups);
+        List<SellerOptionGroupResult> customGroups = resolveCustomGroups(optionGroups);
 
         OptionCombinationGroupNames groupNames =
                 combinationGroups.isEmpty() ? null : buildGroupNames(combinationGroups);
@@ -68,18 +67,17 @@ final class NaverOptionMapper {
      * 삭제됩니다.
      */
     static OptionInfo mapOptionInfoForUpdate(
-            ProductGroup group,
-            List<Product> products,
-            NaverProductDetailResponse existingProduct) {
+            List<SellerOptionGroupResult> optionGroups,
+            List<ProductResult> products,
+            NaverProductDetailResponse existingProduct,
+            boolean soldOut) {
 
-        List<SellerOptionGroup> optionGroups = group.sellerOptionGroups();
         if (optionGroups.isEmpty()) {
             return null;
         }
 
-        boolean soldOut = group.status().isSoldout();
-        List<SellerOptionGroup> combinationGroups = resolveCombinationGroups(optionGroups);
-        List<SellerOptionGroup> customGroups = resolveCustomGroups(optionGroups);
+        List<SellerOptionGroupResult> combinationGroups = resolveCombinationGroups(optionGroups);
+        List<SellerOptionGroupResult> customGroups = resolveCustomGroups(optionGroups);
 
         OptionCombinationGroupNames groupNames =
                 combinationGroups.isEmpty() ? null : buildGroupNames(combinationGroups);
@@ -102,43 +100,42 @@ final class NaverOptionMapper {
      *
      * <p>PREDEFINED 그룹 + FREE_INPUT이면서 옵션값 2개 이상인 그룹 (선택형으로 전송).
      */
-    private static List<SellerOptionGroup> resolveCombinationGroups(
-            List<SellerOptionGroup> optionGroups) {
+    private static List<SellerOptionGroupResult> resolveCombinationGroups(
+            List<SellerOptionGroupResult> optionGroups) {
         return optionGroups.stream()
                 .filter(
                         g ->
-                                g.inputType() == OptionInputType.PREDEFINED
-                                        || (g.inputType() == OptionInputType.FREE_INPUT
-                                                && g.optionValueCount() >= 2))
+                                "PREDEFINED".equals(g.inputType())
+                                        || ("FREE_INPUT".equals(g.inputType())
+                                                && g.optionValues().size() >= 2))
                 .toList();
     }
 
     /**
      * optionCustom으로 보낼 그룹을 결정합니다.
      *
-     * <p>모든 FREE_INPUT 그룹은 optionCustom으로도 보냅니다. 옵션값이 여러 개인 경우 combination + custom 양쪽 모두 전송되어,
-     * 구매자가 선택형 값을 고르면서 동시에 자유입력란도 사용할 수 있습니다.
+     * <p>모든 FREE_INPUT 그룹은 optionCustom으로도 보냅니다.
      */
-    private static List<SellerOptionGroup> resolveCustomGroups(
-            List<SellerOptionGroup> optionGroups) {
+    private static List<SellerOptionGroupResult> resolveCustomGroups(
+            List<SellerOptionGroupResult> optionGroups) {
         return optionGroups.stream()
-                .filter(g -> g.inputType() == OptionInputType.FREE_INPUT)
+                .filter(g -> "FREE_INPUT".equals(g.inputType()))
                 .toList();
     }
 
     // === PREDEFINED 옵션 (optionCombinations) ===
 
     private static List<OptionCombination> buildCombinations(
-            List<SellerOptionGroup> predefinedGroups,
-            List<Product> products,
+            List<SellerOptionGroupResult> predefinedGroups,
+            List<ProductResult> products,
             Map<String, Long> skuToNaverId,
             boolean soldOut) {
 
-        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(predefinedGroups);
+        Map<Long, SellerOptionValueResult> optionValueMap = buildOptionValueMap(predefinedGroups);
         int basePrice = resolveBasePrice(products);
         List<OptionCombination> combinations = new ArrayList<>();
 
-        for (Product product : products) {
+        for (ProductResult product : products) {
             List<String> optionNames =
                     resolveOptionNames(product, predefinedGroups, optionValueMap);
             if (optionNames.isEmpty()) {
@@ -147,7 +144,7 @@ final class NaverOptionMapper {
             Long naverId =
                     skuToNaverId != null
                             ? matchNaverIdBySkuOrOptionKey(
-                                    product.skuCodeValue(), optionNames, skuToNaverId, Map.of())
+                                    product.skuCode(), optionNames, skuToNaverId, Map.of())
                             : null;
             combinations.add(buildCombination(naverId, optionNames, product, basePrice, soldOut));
         }
@@ -156,12 +153,12 @@ final class NaverOptionMapper {
     }
 
     private static List<OptionCombination> buildCombinationsForUpdate(
-            List<SellerOptionGroup> predefinedGroups,
-            List<Product> products,
+            List<SellerOptionGroupResult> predefinedGroups,
+            List<ProductResult> products,
             NaverProductDetailResponse existingProduct,
             boolean soldOut) {
 
-        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(predefinedGroups);
+        Map<Long, SellerOptionValueResult> optionValueMap = buildOptionValueMap(predefinedGroups);
         int basePrice = resolveBasePrice(products);
 
         List<NaverProductDetailResponse.OptionCombination> existingCombinations =
@@ -180,7 +177,7 @@ final class NaverOptionMapper {
 
         List<OptionCombination> combinations = new ArrayList<>();
 
-        for (Product product : products) {
+        for (ProductResult product : products) {
             List<String> optionNames =
                     resolveOptionNames(product, predefinedGroups, optionValueMap);
             if (optionNames.isEmpty()) {
@@ -188,7 +185,7 @@ final class NaverOptionMapper {
             }
             Long naverId =
                     matchNaverIdBySkuOrOptionKey(
-                            product.skuCodeValue(), optionNames, skuToNaverId, optionKeyToNaverId);
+                            product.skuCode(), optionNames, skuToNaverId, optionKeyToNaverId);
             combinations.add(buildCombination(naverId, optionNames, product, basePrice, soldOut));
         }
 
@@ -198,7 +195,8 @@ final class NaverOptionMapper {
     // === FREE_INPUT 옵션 (optionCustom) ===
 
     /** 등록용: groupName 전송. 옵션값 여러개인 경우 combination과 이름 중복 방지를 위해 접미사 추가. */
-    private static List<OptionCustom> buildOptionCustom(List<SellerOptionGroup> freeInputGroups) {
+    private static List<OptionCustom> buildOptionCustom(
+            List<SellerOptionGroupResult> freeInputGroups) {
         return freeInputGroups.stream()
                 .map(g -> new OptionCustom(null, resolveCustomGroupName(g), true))
                 .toList();
@@ -206,7 +204,8 @@ final class NaverOptionMapper {
 
     /** 수정용: 기존 네이버 optionCustom ID 매칭. */
     private static List<OptionCustom> buildOptionCustomForUpdate(
-            List<SellerOptionGroup> freeInputGroups, NaverProductDetailResponse existingProduct) {
+            List<SellerOptionGroupResult> freeInputGroups,
+            NaverProductDetailResponse existingProduct) {
 
         Map<String, Long> existingCustomByName = resolveExistingOptionCustom(existingProduct);
 
@@ -220,7 +219,7 @@ final class NaverOptionMapper {
                 .toList();
     }
 
-    /** 기존 네이버 optionCustom에서 groupName → id 매핑 추출. */
+    /** 기존 네이버 optionCustom에서 groupName -> id 매핑 추출. */
     private static Map<String, Long> resolveExistingOptionCustom(
             NaverProductDetailResponse existingProduct) {
         if (existingProduct == null
@@ -247,11 +246,11 @@ final class NaverOptionMapper {
      *
      * <p>옵션값이 2개 이상이면 combination에도 같은 이름이 들어가므로, 네이버 중복 방지를 위해 "(자유입력)" 접미사를 추가합니다.
      */
-    private static String resolveCustomGroupName(SellerOptionGroup group) {
-        if (group.optionValueCount() >= 2) {
-            return group.optionGroupNameValue() + "(자유입력)";
+    private static String resolveCustomGroupName(SellerOptionGroupResult group) {
+        if (group.optionValues().size() >= 2) {
+            return group.optionGroupName() + "(자유입력)";
         }
-        return group.optionGroupNameValue();
+        return group.optionGroupName();
     }
 
     // === 공통 유틸 ===
@@ -308,8 +307,9 @@ final class NaverOptionMapper {
      * <p>price는 대표가격(salePrice) 대비 차액입니다. 네이버 API에서 옵션 price는 절대 가격이 아닌 추가/할인 금액입니다.
      */
     private static OptionCombination buildCombination(
-            Long id, List<String> optionNames, Product product, int basePrice, boolean soldOut) {
-        int priceDiff = product.currentPriceValue() - basePrice;
+            Long id, List<String> optionNames, ProductResult product, int basePrice,
+            boolean soldOut) {
+        int priceDiff = product.currentPrice() - basePrice;
         int stock = soldOut ? 0 : product.stockQuantity();
         return new OptionCombination(
                 id,
@@ -318,49 +318,49 @@ final class NaverOptionMapper {
                 optionNames.size() > 2 ? optionNames.get(2) : null,
                 stock,
                 priceDiff,
-                product.skuCodeValue(),
+                product.skuCode(),
                 product.stockQuantity() > 0);
     }
 
-    private static int resolveBasePrice(List<Product> products) {
-        return products.stream().mapToInt(Product::currentPriceValue).min().orElse(0);
+    private static int resolveBasePrice(List<ProductResult> products) {
+        return products.stream().mapToInt(ProductResult::currentPrice).min().orElse(0);
     }
 
     private static OptionCombinationGroupNames buildGroupNames(
-            List<SellerOptionGroup> optionGroups) {
+            List<SellerOptionGroupResult> optionGroups) {
         List<String> names =
-                optionGroups.stream().map(SellerOptionGroup::optionGroupNameValue).toList();
+                optionGroups.stream().map(SellerOptionGroupResult::optionGroupName).toList();
         return OptionCombinationGroupNames.of(names);
     }
 
-    private static Map<Long, SellerOptionValue> buildOptionValueMap(
-            List<SellerOptionGroup> optionGroups) {
-        Map<Long, SellerOptionValue> map = new HashMap<>();
-        for (SellerOptionGroup group : optionGroups) {
-            for (SellerOptionValue value : group.optionValues()) {
-                map.put(value.idValue(), value);
+    private static Map<Long, SellerOptionValueResult> buildOptionValueMap(
+            List<SellerOptionGroupResult> optionGroups) {
+        Map<Long, SellerOptionValueResult> map = new HashMap<>();
+        for (SellerOptionGroupResult group : optionGroups) {
+            for (SellerOptionValueResult value : group.optionValues()) {
+                map.put(value.id(), value);
             }
         }
         return map;
     }
 
     private static List<String> resolveOptionNames(
-            Product product,
-            List<SellerOptionGroup> optionGroups,
-            Map<Long, SellerOptionValue> optionValueMap) {
+            ProductResult product,
+            List<SellerOptionGroupResult> optionGroups,
+            Map<Long, SellerOptionValueResult> optionValueMap) {
 
         Map<Long, String> mappingByGroupId = new HashMap<>();
-        for (ProductOptionMapping mapping : product.optionMappings()) {
-            SellerOptionValue value = optionValueMap.get(mapping.sellerOptionValueIdValue());
+        for (ProductOptionMappingResult mapping : product.optionMappings()) {
+            SellerOptionValueResult value = optionValueMap.get(mapping.sellerOptionValueId());
             if (value != null) {
                 mappingByGroupId.put(
-                        value.sellerOptionGroupIdValue(), value.optionValueNameValue());
+                        value.sellerOptionGroupId(), value.optionValueName());
             }
         }
 
         List<String> names = new ArrayList<>();
-        for (SellerOptionGroup group : optionGroups) {
-            String name = mappingByGroupId.get(group.idValue());
+        for (SellerOptionGroupResult group : optionGroups) {
+            String name = mappingByGroupId.get(group.id());
             if (name != null) {
                 names.add(name);
             }

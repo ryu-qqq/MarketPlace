@@ -16,17 +16,16 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegis
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest.SelectedOptionRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductsUpdateRequest;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.notice.dto.response.NoticeFieldResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductOptionMappingResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
-import com.ryuqq.marketplace.domain.product.aggregate.Product;
-import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
-import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionValue;
-import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
-import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
-import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNoticeEntry;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
+import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionGroupResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.SellerOptionValueResult;
+import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductGroupImageResult;
+import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeEntryResult;
+import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
- * ProductGroupDetailBundle → Setof Commerce 요청 DTO 변환 매퍼.
+ * ProductGroupSyncData -> Setof Commerce 요청 DTO 변환 매퍼.
  *
  * <p>세토프 커머스 v2 Admin API 스펙에 맞춰 변환합니다.
  */
@@ -50,21 +49,20 @@ public class SetofCommerceProductMapper {
      *
      * <p>등록 시 productGroupId, productId를 보내지 않습니다. 세토프 서버에서 auto_increment로 ID를 생성합니다.
      *
-     * @param bundle 상품 그룹 상세 번들
+     * @param syncData 상품 그룹 동기화 데이터
      * @param externalCategoryId 세토프 카테고리 ID
      * @param externalBrandId 세토프 브랜드 ID (nullable)
      * @param externalSellerId 세토프 셀러 ID (shop.accountId)
      * @return 세토프 상품 등록 요청 DTO
      */
     public SetofProductGroupRegistrationRequest toRegistrationRequest(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             long externalSellerId) {
 
-        ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
-        ProductGroup group = bundle.group();
-        List<Product> products = bundle.products();
+        ProductGroupDetailCompositeQueryResult queryResult = syncData.queryResult();
+        List<ProductResult> products = syncData.products();
 
         int representativeRegularPrice = computeMinRegularPrice(products);
         int representativeCurrentPrice = computeMinCurrentPrice(products);
@@ -82,11 +80,11 @@ public class SetofCommerceProductMapper {
                 queryResult.optionType(),
                 representativeRegularPrice,
                 representativeCurrentPrice,
-                mapImages(group.images()),
-                mapOptionGroups(group.sellerOptionGroups()),
-                mapProducts(products, group.sellerOptionGroups()),
-                mapDescription(bundle),
-                mapNotice(bundle));
+                mapImages(syncData.images()),
+                mapOptionGroups(syncData.optionGroups()),
+                mapProducts(products, syncData.optionGroups()),
+                mapDescription(syncData),
+                mapNotice(syncData));
     }
 
     /**
@@ -94,21 +92,20 @@ public class SetofCommerceProductMapper {
      *
      * <p>기존 세토프 상품 조회 결과를 기반으로 옵션명 매칭하여 productId를 할당합니다.
      *
-     * @param bundle 상품 그룹 상세 번들
+     * @param syncData 상품 그룹 동기화 데이터
      * @param externalCategoryId 세토프 카테고리 ID
      * @param externalBrandId 세토프 브랜드 ID (nullable)
      * @param existingProduct 기존 세토프 상품 조회 결과 (nullable)
      * @return 세토프 상품 수정 요청 DTO
      */
     public SetofProductGroupUpdateRequest toUpdateRequest(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             SetofProductGroupDetailResponse existingProduct) {
 
-        ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
-        ProductGroup group = bundle.group();
-        List<Product> products = bundle.products();
+        ProductGroupDetailCompositeQueryResult queryResult = syncData.queryResult();
+        List<ProductResult> products = syncData.products();
 
         int representativeRegularPrice = computeMinRegularPrice(products);
         int representativeCurrentPrice = computeMinCurrentPrice(products);
@@ -124,11 +121,11 @@ public class SetofCommerceProductMapper {
                 queryResult.optionType(),
                 representativeRegularPrice,
                 representativeCurrentPrice,
-                mapUpdateImages(group.images()),
-                mapUpdateOptionGroups(group.sellerOptionGroups()),
-                mapUpdateProducts(products, group.sellerOptionGroups(), existingProduct),
-                mapUpdateDescription(bundle),
-                mapUpdateNotice(bundle));
+                mapUpdateImages(syncData.images()),
+                mapUpdateOptionGroups(syncData.optionGroups()),
+                mapUpdateProducts(products, syncData.optionGroups(), existingProduct),
+                mapUpdateDescription(syncData),
+                mapUpdateNotice(syncData));
     }
 
     /**
@@ -146,15 +143,15 @@ public class SetofCommerceProductMapper {
     /**
      * 상품 그룹 기본 정보 수정 요청 변환.
      *
-     * @param bundle 상품 그룹 상세 번들
+     * @param syncData 상품 그룹 동기화 데이터
      * @param externalCategoryId 세토프 카테고리 ID
      * @param externalBrandId 세토프 브랜드 ID
      * @return 기본 정보 수정 요청 DTO
      */
     public SetofProductGroupBasicInfoUpdateRequest toBasicInfoUpdateRequest(
-            ProductGroupDetailBundle bundle, Long externalCategoryId, Long externalBrandId) {
+            ProductGroupSyncData syncData, Long externalCategoryId, Long externalBrandId) {
 
-        ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
+        ProductGroupDetailCompositeQueryResult queryResult = syncData.queryResult();
 
         return new SetofProductGroupBasicInfoUpdateRequest(
                 queryResult.productGroupName(),
@@ -177,8 +174,8 @@ public class SetofCommerceProductMapper {
      * @return 상품 + 옵션 일괄 수정 요청 DTO
      */
     public SetofProductsUpdateRequest toProductsUpdateRequest(
-            List<Product> products,
-            List<SellerOptionGroup> optionGroups,
+            List<ProductResult> products,
+            List<SellerOptionGroupResult> optionGroups,
             SetofProductGroupDetailResponse existingProduct) {
 
         List<SetofProductsUpdateRequest.OptionGroupRequest> optionGroupRequests =
@@ -186,22 +183,22 @@ public class SetofCommerceProductMapper {
                         .map(
                                 og ->
                                         new SetofProductsUpdateRequest.OptionGroupRequest(
-                                                og.idValue(),
-                                                og.optionGroupNameValue(),
+                                                og.id(),
+                                                og.optionGroupName(),
                                                 og.sortOrder(),
                                                 og.optionValues().stream()
                                                         .map(
                                                                 ov ->
                                                                         new SetofProductsUpdateRequest
                                                                                 .OptionValueRequest(
-                                                                                ov.idValue(),
+                                                                                ov.id(),
                                                                                 ov
-                                                                                        .optionValueNameValue(),
+                                                                                        .optionValueName(),
                                                                                 ov.sortOrder()))
                                                         .toList()))
                         .toList();
 
-        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
+        Map<Long, SellerOptionValueResult> optionValueMap = buildOptionValueMap(optionGroups);
         Map<Long, Long> productIdMatchMap =
                 buildProductIdMatchMap(products, optionGroups, existingProduct);
 
@@ -211,26 +208,26 @@ public class SetofCommerceProductMapper {
                                 product -> {
                                     Long productId =
                                             productIdMatchMap.getOrDefault(
-                                                    product.idValue(), product.idValue());
+                                                    product.id(), product.id());
                                     Map<Long, String> mappingByGroupId =
                                             buildMappingByGroupId(product, optionValueMap);
                                     List<SetofProductsUpdateRequest.SelectedOptionRequest>
                                             selectedOptions = new ArrayList<>();
-                                    for (SellerOptionGroup group : optionGroups) {
-                                        String valueName = mappingByGroupId.get(group.idValue());
+                                    for (SellerOptionGroupResult group : optionGroups) {
+                                        String valueName = mappingByGroupId.get(group.id());
                                         if (valueName != null) {
                                             selectedOptions.add(
                                                     new SetofProductsUpdateRequest
                                                             .SelectedOptionRequest(
-                                                            group.optionGroupNameValue(),
+                                                            group.optionGroupName(),
                                                             valueName));
                                         }
                                     }
                                     return new SetofProductsUpdateRequest.ProductRequest(
                                             productId,
-                                            product.skuCodeValue(),
-                                            product.regularPriceValue(),
-                                            product.currentPriceValue(),
+                                            product.skuCode(),
+                                            product.regularPrice(),
+                                            product.currentPrice(),
                                             product.stockQuantity(),
                                             product.sortOrder(),
                                             selectedOptions);
@@ -243,12 +240,12 @@ public class SetofCommerceProductMapper {
     /**
      * 상세설명 요청 변환.
      *
-     * @param bundle 상품 그룹 상세 번들
+     * @param syncData 상품 그룹 동기화 데이터
      * @return 상세설명 요청 DTO (없으면 null)
      */
-    public SetofDescriptionRequest toDescriptionRequest(ProductGroupDetailBundle bundle) {
-        return bundle.description()
-                .map(desc -> new SetofDescriptionRequest(desc.contentValue(), null))
+    public SetofDescriptionRequest toDescriptionRequest(ProductGroupSyncData syncData) {
+        return syncData.descriptionContent()
+                .map(content -> new SetofDescriptionRequest(content, null))
                 .orElse(null);
     }
 
@@ -258,13 +255,13 @@ public class SetofCommerceProductMapper {
      * @param images 이미지 목록
      * @return 이미지 요청 DTO
      */
-    public SetofImagesRequest toImagesRequest(List<ProductGroupImage> images) {
+    public SetofImagesRequest toImagesRequest(List<ProductGroupImageResult> images) {
         List<SetofImagesRequest.ImageRequest> imageRequests =
                 images.stream()
                         .map(
                                 image ->
                                         new SetofImagesRequest.ImageRequest(
-                                                image.imageTypeName(),
+                                                image.imageType(),
                                                 resolveImageUrl(image),
                                                 image.sortOrder()))
                         .toList();
@@ -274,14 +271,14 @@ public class SetofCommerceProductMapper {
     /**
      * 고시정보 요청 변환.
      *
-     * <p>fieldName은 noticeFieldId → fieldName 매핑이 필요합니다. 매핑이 없으면 빈 문자열로 대체합니다.
+     * <p>fieldName은 noticeFieldId -> fieldName 매핑이 필요합니다. 매핑이 없으면 빈 문자열로 대체합니다.
      *
      * @param notice 고시정보
-     * @param noticeFieldNameMap noticeFieldId → fieldName 매핑 (nullable)
+     * @param noticeFieldNameMap noticeFieldId -> fieldName 매핑 (nullable)
      * @return 고시정보 요청 DTO (없으면 null)
      */
     public SetofNoticeRequest toNoticeRequest(
-            ProductNotice notice, Map<Long, String> noticeFieldNameMap) {
+            ProductNoticeResult notice, Map<Long, String> noticeFieldNameMap) {
         if (notice == null) {
             return null;
         }
@@ -293,58 +290,58 @@ public class SetofCommerceProductMapper {
                         .map(
                                 entry ->
                                         new SetofNoticeRequest.NoticeEntryRequest(
-                                                entry.noticeFieldIdValue(),
+                                                entry.noticeFieldId(),
                                                 fieldNameMap.getOrDefault(
-                                                        entry.noticeFieldIdValue(), ""),
-                                                entry.fieldValueValue()))
+                                                        entry.noticeFieldId(), ""),
+                                                entry.fieldValue()))
                         .toList();
 
         return new SetofNoticeRequest(entries);
     }
 
-    // ── Registration 내부 매핑 메서드 ──
+    // -- Registration 내부 매핑 메서드 --
 
-    private List<ImageRequest> mapImages(List<ProductGroupImage> groupImages) {
+    private List<ImageRequest> mapImages(List<ProductGroupImageResult> groupImages) {
         return groupImages.stream()
                 .map(
                         image ->
                                 new ImageRequest(
-                                        image.imageTypeName(),
+                                        image.imageType(),
                                         resolveImageUrl(image),
                                         image.sortOrder()))
                 .toList();
     }
 
-    private List<OptionGroupRequest> mapOptionGroups(List<SellerOptionGroup> optionGroups) {
+    private List<OptionGroupRequest> mapOptionGroups(List<SellerOptionGroupResult> optionGroups) {
         return optionGroups.stream()
                 .map(
                         og ->
                                 new OptionGroupRequest(
-                                        og.optionGroupNameValue(),
+                                        og.optionGroupName(),
                                         og.sortOrder(),
                                         og.optionValues().stream()
                                                 .map(
                                                         ov ->
                                                                 new OptionValueRequest(
-                                                                        ov.optionValueNameValue(),
+                                                                        ov.optionValueName(),
                                                                         ov.sortOrder()))
                                                 .toList()))
                 .toList();
     }
 
     private List<ProductRequest> mapProducts(
-            List<Product> products, List<SellerOptionGroup> optionGroups) {
+            List<ProductResult> products, List<SellerOptionGroupResult> optionGroups) {
 
-        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
+        Map<Long, SellerOptionValueResult> optionValueMap = buildOptionValueMap(optionGroups);
 
         return products.stream()
                 .map(
                         product ->
                                 new ProductRequest(
                                         null,
-                                        product.skuCodeValue(),
-                                        product.regularPriceValue(),
-                                        product.currentPriceValue(),
+                                        product.skuCode(),
+                                        product.regularPrice(),
+                                        product.currentPrice(),
                                         product.stockQuantity(),
                                         product.sortOrder(),
                                         mapSelectedOptions(product, optionGroups, optionValueMap)))
@@ -352,35 +349,35 @@ public class SetofCommerceProductMapper {
     }
 
     private List<SelectedOptionRequest> mapSelectedOptions(
-            Product product,
-            List<SellerOptionGroup> optionGroups,
-            Map<Long, SellerOptionValue> optionValueMap) {
+            ProductResult product,
+            List<SellerOptionGroupResult> optionGroups,
+            Map<Long, SellerOptionValueResult> optionValueMap) {
 
         Map<Long, String> mappingByGroupId = buildMappingByGroupId(product, optionValueMap);
 
         List<SelectedOptionRequest> selectedOptions = new ArrayList<>();
-        for (SellerOptionGroup group : optionGroups) {
-            String valueName = mappingByGroupId.get(group.idValue());
+        for (SellerOptionGroupResult group : optionGroups) {
+            String valueName = mappingByGroupId.get(group.id());
             if (valueName != null) {
                 selectedOptions.add(
-                        new SelectedOptionRequest(group.optionGroupNameValue(), valueName));
+                        new SelectedOptionRequest(group.optionGroupName(), valueName));
             }
         }
         return selectedOptions;
     }
 
-    private DescriptionRequest mapDescription(ProductGroupDetailBundle bundle) {
-        return bundle.description()
-                .map(desc -> new DescriptionRequest(desc.contentValue(), null))
+    private DescriptionRequest mapDescription(ProductGroupSyncData syncData) {
+        return syncData.descriptionContent()
+                .map(content -> new DescriptionRequest(content, null))
                 .orElse(null);
     }
 
-    private NoticeRequest mapNotice(ProductGroupDetailBundle bundle) {
-        return bundle.notice()
+    private NoticeRequest mapNotice(ProductGroupSyncData syncData) {
+        return syncData.notice()
                 .map(
                         notice -> {
                             Map<Long, String> fieldNameMap =
-                                    bundle.noticeCategory()
+                                    syncData.noticeCategory()
                                             .map(
                                                     nc ->
                                                             nc.fields().stream()
@@ -388,18 +385,19 @@ public class SetofCommerceProductMapper {
                                                                             java.util.stream
                                                                                     .Collectors
                                                                                     .toMap(
-                                                                                            NoticeField
-                                                                                                    ::idValue,
-                                                                                            NoticeField
-                                                                                                    ::fieldNameValue)))
+                                                                                            NoticeFieldResult
+                                                                                                    ::id,
+                                                                                            NoticeFieldResult
+                                                                                                    ::fieldName)))
                                             .orElse(Map.of());
                             return convertNotice(notice, fieldNameMap);
                         })
                 .orElse(null);
     }
 
-    private NoticeRequest convertNotice(ProductNotice notice, Map<Long, String> fieldNameMap) {
-        List<ProductNoticeEntry> entries = notice.entries();
+    private NoticeRequest convertNotice(
+            ProductNoticeResult notice, Map<Long, String> fieldNameMap) {
+        List<ProductNoticeEntryResult> entries = notice.entries();
         if (entries.isEmpty()) {
             return null;
         }
@@ -409,45 +407,45 @@ public class SetofCommerceProductMapper {
                         .map(
                                 entry ->
                                         new NoticeEntryRequest(
-                                                entry.noticeFieldIdValue(),
+                                                entry.noticeFieldId(),
                                                 fieldNameMap.getOrDefault(
-                                                        entry.noticeFieldIdValue(), "기타"),
-                                                entry.fieldValueValue()))
+                                                        entry.noticeFieldId(), "기타"),
+                                                entry.fieldValue()))
                         .toList();
 
         return new NoticeRequest(entryRequests);
     }
 
-    // ── Update 내부 매핑 메서드 ──
+    // -- Update 내부 매핑 메서드 --
 
     private List<SetofProductGroupUpdateRequest.ImageRequest> mapUpdateImages(
-            List<ProductGroupImage> groupImages) {
+            List<ProductGroupImageResult> groupImages) {
         return groupImages.stream()
                 .map(
                         image ->
                                 new SetofProductGroupUpdateRequest.ImageRequest(
-                                        image.imageTypeName(),
+                                        image.imageType(),
                                         resolveImageUrl(image),
                                         image.sortOrder()))
                 .toList();
     }
 
     private List<SetofProductGroupUpdateRequest.OptionGroupRequest> mapUpdateOptionGroups(
-            List<SellerOptionGroup> optionGroups) {
+            List<SellerOptionGroupResult> optionGroups) {
         return optionGroups.stream()
                 .map(
                         og ->
                                 new SetofProductGroupUpdateRequest.OptionGroupRequest(
-                                        og.idValue(),
-                                        og.optionGroupNameValue(),
+                                        og.id(),
+                                        og.optionGroupName(),
                                         og.sortOrder(),
                                         og.optionValues().stream()
                                                 .map(
                                                         ov ->
                                                                 new SetofProductGroupUpdateRequest
                                                                         .OptionValueRequest(
-                                                                        ov.idValue(),
-                                                                        ov.optionValueNameValue(),
+                                                                        ov.id(),
+                                                                        ov.optionValueName(),
                                                                         ov.sortOrder()))
                                                 .toList()))
                 .toList();
@@ -459,11 +457,11 @@ public class SetofCommerceProductMapper {
      * <p>기존 세토프 상품의 옵션명 조합 또는 SKU 코드로 매칭하여 세토프 productId를 할당합니다.
      */
     private List<SetofProductGroupUpdateRequest.ProductRequest> mapUpdateProducts(
-            List<Product> products,
-            List<SellerOptionGroup> optionGroups,
+            List<ProductResult> products,
+            List<SellerOptionGroupResult> optionGroups,
             SetofProductGroupDetailResponse existingProduct) {
 
-        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
+        Map<Long, SellerOptionValueResult> optionValueMap = buildOptionValueMap(optionGroups);
         Map<Long, Long> productIdMatchMap =
                 buildProductIdMatchMap(products, optionGroups, existingProduct);
 
@@ -472,12 +470,12 @@ public class SetofCommerceProductMapper {
                         product -> {
                             Long productId =
                                     productIdMatchMap.getOrDefault(
-                                            product.idValue(), product.idValue());
+                                            product.id(), product.id());
                             return new SetofProductGroupUpdateRequest.ProductRequest(
                                     productId,
-                                    product.skuCodeValue(),
-                                    product.regularPriceValue(),
-                                    product.currentPriceValue(),
+                                    product.skuCode(),
+                                    product.regularPrice(),
+                                    product.currentPrice(),
                                     product.stockQuantity(),
                                     product.sortOrder(),
                                     mapUpdateSelectedOptions(
@@ -487,42 +485,42 @@ public class SetofCommerceProductMapper {
     }
 
     private List<SetofProductGroupUpdateRequest.SelectedOptionRequest> mapUpdateSelectedOptions(
-            Product product,
-            List<SellerOptionGroup> optionGroups,
-            Map<Long, SellerOptionValue> optionValueMap) {
+            ProductResult product,
+            List<SellerOptionGroupResult> optionGroups,
+            Map<Long, SellerOptionValueResult> optionValueMap) {
 
         Map<Long, String> mappingByGroupId = buildMappingByGroupId(product, optionValueMap);
 
         List<SetofProductGroupUpdateRequest.SelectedOptionRequest> selectedOptions =
                 new ArrayList<>();
-        for (SellerOptionGroup group : optionGroups) {
-            String valueName = mappingByGroupId.get(group.idValue());
+        for (SellerOptionGroupResult group : optionGroups) {
+            String valueName = mappingByGroupId.get(group.id());
             if (valueName != null) {
                 selectedOptions.add(
                         new SetofProductGroupUpdateRequest.SelectedOptionRequest(
-                                group.optionGroupNameValue(), valueName));
+                                group.optionGroupName(), valueName));
             }
         }
         return selectedOptions;
     }
 
     private SetofProductGroupUpdateRequest.DescriptionRequest mapUpdateDescription(
-            ProductGroupDetailBundle bundle) {
-        return bundle.description()
+            ProductGroupSyncData syncData) {
+        return syncData.descriptionContent()
                 .map(
-                        desc ->
+                        content ->
                                 new SetofProductGroupUpdateRequest.DescriptionRequest(
-                                        desc.contentValue(), null))
+                                        content, null))
                 .orElse(null);
     }
 
     private SetofProductGroupUpdateRequest.NoticeRequest mapUpdateNotice(
-            ProductGroupDetailBundle bundle) {
-        return bundle.notice()
+            ProductGroupSyncData syncData) {
+        return syncData.notice()
                 .map(
                         notice -> {
                             Map<Long, String> fieldNameMap =
-                                    bundle.noticeCategory()
+                                    syncData.noticeCategory()
                                             .map(
                                                     nc ->
                                                             nc.fields().stream()
@@ -530,10 +528,10 @@ public class SetofCommerceProductMapper {
                                                                             java.util.stream
                                                                                     .Collectors
                                                                                     .toMap(
-                                                                                            NoticeField
-                                                                                                    ::idValue,
-                                                                                            NoticeField
-                                                                                                    ::fieldNameValue)))
+                                                                                            NoticeFieldResult
+                                                                                                    ::id,
+                                                                                            NoticeFieldResult
+                                                                                                    ::fieldName)))
                                             .orElse(Map.of());
                             return convertUpdateNotice(notice, fieldNameMap);
                         })
@@ -541,8 +539,8 @@ public class SetofCommerceProductMapper {
     }
 
     private SetofProductGroupUpdateRequest.NoticeRequest convertUpdateNotice(
-            ProductNotice notice, Map<Long, String> fieldNameMap) {
-        List<ProductNoticeEntry> entries = notice.entries();
+            ProductNoticeResult notice, Map<Long, String> fieldNameMap) {
+        List<ProductNoticeEntryResult> entries = notice.entries();
         if (entries.isEmpty()) {
             return null;
         }
@@ -552,19 +550,19 @@ public class SetofCommerceProductMapper {
                         .map(
                                 entry ->
                                         new SetofProductGroupUpdateRequest.NoticeEntryRequest(
-                                                entry.noticeFieldIdValue(),
+                                                entry.noticeFieldId(),
                                                 fieldNameMap.getOrDefault(
-                                                        entry.noticeFieldIdValue(), "기타"),
-                                                entry.fieldValueValue()))
+                                                        entry.noticeFieldId(), "기타"),
+                                                entry.fieldValue()))
                         .toList();
 
         return new SetofProductGroupUpdateRequest.NoticeRequest(entryRequests);
     }
 
-    // ── 옵션명 기반 productId 매칭 ──
+    // -- 옵션명 기반 productId 매칭 --
 
     /**
-     * 내부 product와 기존 세토프 product를 옵션명 조합 또는 SKU 코드로 매칭하여 내부 productId → 세토프 productId 매핑을 생성합니다.
+     * 내부 product와 기존 세토프 product를 옵션명 조합 또는 SKU 코드로 매칭하여 내부 productId -> 세토프 productId 매핑을 생성합니다.
      *
      * <p>매칭 우선순위:
      *
@@ -576,18 +574,18 @@ public class SetofCommerceProductMapper {
      * @param products 내부 상품 목록
      * @param optionGroups 옵션 그룹 목록
      * @param existingProduct 기존 세토프 상품 조회 결과 (nullable)
-     * @return 내부 productId → 세토프 productId 매핑
+     * @return 내부 productId -> 세토프 productId 매핑
      */
     private Map<Long, Long> buildProductIdMatchMap(
-            List<Product> products,
-            List<SellerOptionGroup> optionGroups,
+            List<ProductResult> products,
+            List<SellerOptionGroupResult> optionGroups,
             SetofProductGroupDetailResponse existingProduct) {
 
         if (existingProduct == null || existingProduct.products() == null) {
             return Map.of();
         }
 
-        // 기존 세토프 product를 SKU 코드 → setofProductId, 옵션명 조합 → setofProductId로 인덱싱
+        // 기존 세토프 product를 SKU 코드 -> setofProductId, 옵션명 조합 -> setofProductId로 인덱싱
         Map<String, Long> skuToSetofId = new HashMap<>();
         Map<String, Long> optionKeyToSetofId = new HashMap<>();
 
@@ -603,13 +601,13 @@ public class SetofCommerceProductMapper {
 
         // 내부 product를 순회하며 매칭
         Map<Long, Long> matchMap = new HashMap<>();
-        Map<Long, SellerOptionValue> optionValueMap = buildOptionValueMap(optionGroups);
+        Map<Long, SellerOptionValueResult> optionValueMap = buildOptionValueMap(optionGroups);
 
-        for (Product product : products) {
+        for (ProductResult product : products) {
             // 우선순위 1: SKU 코드
             Long setofId = null;
-            if (product.skuCodeValue() != null && !product.skuCodeValue().isBlank()) {
-                setofId = skuToSetofId.get(product.skuCodeValue());
+            if (product.skuCode() != null && !product.skuCode().isBlank()) {
+                setofId = skuToSetofId.get(product.skuCode());
             }
             // 우선순위 2: 옵션명 조합
             if (setofId == null) {
@@ -619,7 +617,7 @@ public class SetofCommerceProductMapper {
                 }
             }
             if (setofId != null) {
-                matchMap.put(product.idValue(), setofId);
+                matchMap.put(product.id(), setofId);
             }
         }
         return matchMap;
@@ -639,52 +637,53 @@ public class SetofCommerceProductMapper {
 
     /** 내부 상품의 옵션 매핑을 정렬된 옵션 키 문자열로 변환합니다. */
     private String buildInternalOptionKey(
-            Product product,
-            List<SellerOptionGroup> optionGroups,
-            Map<Long, SellerOptionValue> optionValueMap) {
+            ProductResult product,
+            List<SellerOptionGroupResult> optionGroups,
+            Map<Long, SellerOptionValueResult> optionValueMap) {
         Map<Long, String> mappingByGroupId = buildMappingByGroupId(product, optionValueMap);
         return optionGroups.stream()
-                .filter(g -> mappingByGroupId.containsKey(g.idValue()))
-                .map(g -> g.optionGroupNameValue() + ":" + mappingByGroupId.get(g.idValue()))
+                .filter(g -> mappingByGroupId.containsKey(g.id()))
+                .map(g -> g.optionGroupName() + ":" + mappingByGroupId.get(g.id()))
                 .sorted()
                 .collect(Collectors.joining("|"));
     }
 
-    // ── 공통 유틸리티 ──
+    // -- 공통 유틸리티 --
 
-    private String resolveImageUrl(ProductGroupImage image) {
-        String uploaded = image.uploadedUrlValue();
-        return uploaded != null ? uploaded : image.originUrlValue();
+    private String resolveImageUrl(ProductGroupImageResult image) {
+        String uploaded = image.uploadedUrl();
+        return uploaded != null ? uploaded : image.originUrl();
     }
 
     private Map<Long, String> buildMappingByGroupId(
-            Product product, Map<Long, SellerOptionValue> optionValueMap) {
+            ProductResult product, Map<Long, SellerOptionValueResult> optionValueMap) {
         Map<Long, String> mappingByGroupId = new HashMap<>();
-        for (ProductOptionMapping mapping : product.optionMappings()) {
-            SellerOptionValue value = optionValueMap.get(mapping.sellerOptionValueIdValue());
+        for (ProductOptionMappingResult mapping : product.optionMappings()) {
+            SellerOptionValueResult value = optionValueMap.get(mapping.sellerOptionValueId());
             if (value != null) {
                 mappingByGroupId.put(
-                        value.sellerOptionGroupIdValue(), value.optionValueNameValue());
+                        value.sellerOptionGroupId(), value.optionValueName());
             }
         }
         return mappingByGroupId;
     }
 
-    private Map<Long, SellerOptionValue> buildOptionValueMap(List<SellerOptionGroup> optionGroups) {
-        Map<Long, SellerOptionValue> map = new HashMap<>();
-        for (SellerOptionGroup group : optionGroups) {
-            for (SellerOptionValue value : group.optionValues()) {
-                map.put(value.idValue(), value);
+    private Map<Long, SellerOptionValueResult> buildOptionValueMap(
+            List<SellerOptionGroupResult> optionGroups) {
+        Map<Long, SellerOptionValueResult> map = new HashMap<>();
+        for (SellerOptionGroupResult group : optionGroups) {
+            for (SellerOptionValueResult value : group.optionValues()) {
+                map.put(value.id(), value);
             }
         }
         return map;
     }
 
-    private int computeMinRegularPrice(List<Product> products) {
-        return products.stream().mapToInt(Product::regularPriceValue).min().orElse(0);
+    private int computeMinRegularPrice(List<ProductResult> products) {
+        return products.stream().mapToInt(ProductResult::regularPrice).min().orElse(0);
     }
 
-    private int computeMinCurrentPrice(List<Product> products) {
-        return products.stream().mapToInt(Product::currentPriceValue).min().orElse(0);
+    private int computeMinCurrentPrice(List<ProductResult> products) {
+        return products.stream().mapToInt(ProductResult::currentPrice).min().orElse(0);
     }
 }
