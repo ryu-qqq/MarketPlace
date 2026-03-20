@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult
 import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.ConvertToRefundBatchCommand;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.ConvertToRefundBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
@@ -54,11 +55,8 @@ public class ConvertToRefundBatchService implements ConvertToRefundBatchUseCase 
 
         for (ExchangeClaim claim : claims) {
             try {
-                String fromStatus = claim.status().name();
-                claim.cancel(commandFactory.now());
                 ClaimHistory history =
-                        commandFactory.createConvertToRefundHistory(
-                                claim, fromStatus, command.processedBy());
+                        commandFactory.createConvertToRefundBundle(claim, command.processedBy());
                 batchResult.addSuccess(claim, history);
 
                 refundItems.add(
@@ -77,8 +75,9 @@ public class ConvertToRefundBatchService implements ConvertToRefundBatchUseCase 
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistClaimsWithHistories(
-                    batchResult.claims(), batchResult.histories());
+            persistenceFacade.persistAll(
+                    ExchangePersistenceBundle.withoutOutboxes(
+                            batchResult.claims(), batchResult.histories()));
         }
 
         if (!refundItems.isEmpty()) {

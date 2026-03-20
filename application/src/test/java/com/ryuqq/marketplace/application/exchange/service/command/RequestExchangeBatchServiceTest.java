@@ -1,16 +1,18 @@
 package com.ryuqq.marketplace.application.exchange.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.exchange.ExchangeCommandFixtures;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand.ExchangeRequestItem;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory.ExchangeClaimWithHistory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
@@ -18,6 +20,7 @@ import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.exchange.ExchangeFixtures;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -60,6 +63,8 @@ class RequestExchangeBatchServiceTest {
                             commandFactory.createExchangeRequest(
                                     item, command.requestedBy(), command.sellerId()))
                     .willReturn(bundle);
+            given(commandFactory.createRequestOrderItemContext(item.orderItemId()))
+                    .willReturn(new StatusChangeContext<>(OrderItemId.of(item.orderItemId()), Instant.now()));
             given(orderItemReadManager.findById(OrderItemId.of(item.orderItemId())))
                     .willReturn(Optional.empty());
 
@@ -70,9 +75,7 @@ class RequestExchangeBatchServiceTest {
             assertThat(result).isNotNull();
             assertThat(result.successCount()).isEqualTo(1);
             assertThat(result.failureCount()).isEqualTo(0);
-            then(persistenceFacade)
-                    .should()
-                    .persistAllWithHistoriesAndOrderItems(anyList(), anyList(), anyList());
+            then(persistenceFacade).should().persistAll(any(ExchangePersistenceBundle.class));
         }
 
         @Test

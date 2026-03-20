@@ -1,12 +1,14 @@
 package com.ryuqq.marketplace.application.exchange.service.command;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
-import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.exchange.dto.command.RecoverTimeoutExchangeOutboxCommand;
+import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxCommandManager;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxReadManager;
 import com.ryuqq.marketplace.application.exchange.port.in.command.RecoverTimeoutExchangeOutboxUseCase;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,22 +23,24 @@ public class RecoverTimeoutExchangeOutboxService implements RecoverTimeoutExchan
 
     private final ExchangeOutboxReadManager outboxReadManager;
     private final ExchangeOutboxCommandManager outboxCommandManager;
-    private final TimeProvider timeProvider;
+    private final ExchangeCommandFactory commandFactory;
 
     public RecoverTimeoutExchangeOutboxService(
             ExchangeOutboxReadManager outboxReadManager,
             ExchangeOutboxCommandManager outboxCommandManager,
-            TimeProvider timeProvider) {
+            ExchangeCommandFactory commandFactory) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
-        this.timeProvider = timeProvider;
+        this.commandFactory = commandFactory;
     }
 
     @Override
     public SchedulerBatchProcessingResult execute(RecoverTimeoutExchangeOutboxCommand command) {
+        Instant timeoutThreshold =
+                commandFactory.calculateTimeoutThreshold(command.timeoutSeconds());
         List<ExchangeOutbox> outboxes =
                 outboxReadManager.findProcessingTimeoutOutboxes(
-                        command.timeoutThreshold(), command.batchSize());
+                        timeoutThreshold, command.batchSize());
 
         int total = outboxes.size();
         int success = 0;
@@ -44,7 +48,9 @@ public class RecoverTimeoutExchangeOutboxService implements RecoverTimeoutExchan
 
         for (ExchangeOutbox outbox : outboxes) {
             try {
-                outbox.recoverFromTimeout(timeProvider.now());
+                StatusChangeContext<Long> ctx =
+                        commandFactory.createOutboxChangeContext(outbox.idValue());
+                outbox.recoverFromTimeout(ctx.changedAt());
                 outboxCommandManager.persist(outbox);
                 success++;
             } catch (Exception e) {

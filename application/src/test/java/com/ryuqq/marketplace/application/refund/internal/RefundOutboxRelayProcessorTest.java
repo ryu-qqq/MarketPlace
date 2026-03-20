@@ -6,11 +6,14 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxReadManager;
 import com.ryuqq.marketplace.application.refund.port.out.client.RefundOutboxPublishClient;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
 import com.ryuqq.marketplace.domain.refund.outbox.vo.RefundOutboxType;
+import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -32,6 +35,7 @@ class RefundOutboxRelayProcessorTest {
     @Mock private RefundOutboxReadManager outboxReadManager;
     @Mock private RefundOutboxPublishClient publishClient;
     @Mock private ObjectMapper objectMapper;
+    @Mock private RefundCommandFactory commandFactory;
 
     @Nested
     @DisplayName("relay() - Outbox SQS 발행")
@@ -42,9 +46,12 @@ class RefundOutboxRelayProcessorTest {
         void relay_Success_ReturnsTrue() throws Exception {
             // given
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
+            Instant now = Instant.now();
             given(outbox.idValue()).willReturn(1L);
             given(outbox.orderItemIdValue()).willReturn("01940001-0000-7000-8000-000000000001");
             given(outbox.outboxType()).willReturn(RefundOutboxType.REQUEST);
+            given(commandFactory.createOutboxChangeContext(1L))
+                    .willReturn(new StatusChangeContext<>(1L, now));
             given(objectMapper.writeValueAsString(Mockito.any())).willReturn("{\"outboxId\":1}");
 
             // when
@@ -63,9 +70,12 @@ class RefundOutboxRelayProcessorTest {
             // given
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
+            Instant now = Instant.now();
             given(outbox.idValue()).willReturn(1L);
             given(outbox.orderItemIdValue()).willReturn("01940001-0000-7000-8000-000000000001");
             given(outbox.outboxType()).willReturn(RefundOutboxType.REQUEST);
+            given(commandFactory.createOutboxChangeContext(1L))
+                    .willReturn(new StatusChangeContext<>(1L, now));
             given(objectMapper.writeValueAsString(Mockito.any())).willReturn("{\"outboxId\":1}");
             willThrow(new RuntimeException("SQS 연결 실패"))
                     .given(publishClient)
@@ -89,8 +99,11 @@ class RefundOutboxRelayProcessorTest {
             // given
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
+            Instant now = Instant.now();
             given(outbox.idValue()).willReturn(1L);
             given(outbox.orderItemIdValue()).willReturn("01940001-0000-7000-8000-000000000001");
+            given(commandFactory.createOutboxChangeContext(1L))
+                    .willReturn(new StatusChangeContext<>(1L, now));
             willThrow(new RuntimeException("DB 저장 실패")).given(outboxCommandManager).persist(outbox);
             given(outboxReadManager.getById(1L)).willReturn(freshOutbox);
 

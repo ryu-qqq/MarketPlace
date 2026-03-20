@@ -2,10 +2,12 @@ package com.ryuqq.marketplace.application.exchange.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.ProcessPendingExchangeOutboxCommand;
+import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangeOutboxRelayProcessor;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxReadManager;
 import com.ryuqq.marketplace.application.exchange.port.in.command.ProcessPendingExchangeOutboxUseCase;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -17,18 +19,22 @@ public class ProcessPendingExchangeOutboxService implements ProcessPendingExchan
 
     private final ExchangeOutboxReadManager outboxReadManager;
     private final ExchangeOutboxRelayProcessor relayProcessor;
+    private final ExchangeCommandFactory commandFactory;
 
     public ProcessPendingExchangeOutboxService(
             ExchangeOutboxReadManager outboxReadManager,
-            ExchangeOutboxRelayProcessor relayProcessor) {
+            ExchangeOutboxRelayProcessor relayProcessor,
+            ExchangeCommandFactory commandFactory) {
         this.outboxReadManager = outboxReadManager;
         this.relayProcessor = relayProcessor;
+        this.commandFactory = commandFactory;
     }
 
     @Override
     public SchedulerBatchProcessingResult execute(ProcessPendingExchangeOutboxCommand command) {
+        Instant beforeTime = commandFactory.calculatePendingThreshold(command.delaySeconds());
         List<ExchangeOutbox> outboxes =
-                outboxReadManager.findPendingOutboxes(command.beforeTime(), command.batchSize());
+                outboxReadManager.findPendingOutboxes(beforeTime, command.batchSize());
 
         int total = outboxes.size();
         int successCount = 0;

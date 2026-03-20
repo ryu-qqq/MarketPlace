@@ -1,16 +1,17 @@
 package com.ryuqq.marketplace.application.refund.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
-import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.refund.RefundCommandFixtures;
 import com.ryuqq.marketplace.application.refund.dto.command.RecoverTimeoutRefundOutboxCommand;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxReadManager;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
@@ -34,7 +35,7 @@ class RecoverTimeoutRefundOutboxServiceTest {
 
     @Mock private RefundOutboxReadManager outboxReadManager;
     @Mock private RefundOutboxCommandManager outboxCommandManager;
-    @Mock private TimeProvider timeProvider;
+    @Mock private RefundCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - 타임아웃 환불 아웃박스 복구")
@@ -47,11 +48,17 @@ class RecoverTimeoutRefundOutboxServiceTest {
             RecoverTimeoutRefundOutboxCommand command =
                     RefundCommandFixtures.recoverTimeoutOutboxCommand();
             RefundOutbox outbox = org.mockito.Mockito.mock(RefundOutbox.class);
+            Long outboxId = 1L;
+            Instant timeoutThreshold = Instant.now().minusSeconds(300);
             Instant now = Instant.now();
 
-            given(outboxReadManager.findProcessingTimeoutOutboxes(any(), anyInt()))
+            given(commandFactory.calculateTimeoutThreshold(command.timeoutSeconds()))
+                    .willReturn(timeoutThreshold);
+            given(outboxReadManager.findProcessingTimeoutOutboxes(eq(timeoutThreshold), anyInt()))
                     .willReturn(List.of(outbox));
-            given(timeProvider.now()).willReturn(now);
+            given(outbox.idValue()).willReturn(outboxId);
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             SchedulerBatchProcessingResult result = sut.execute(command);
@@ -70,11 +77,17 @@ class RecoverTimeoutRefundOutboxServiceTest {
             RecoverTimeoutRefundOutboxCommand command =
                     RefundCommandFixtures.recoverTimeoutOutboxCommand();
             RefundOutbox outbox = org.mockito.Mockito.mock(RefundOutbox.class);
+            Long outboxId = 1L;
+            Instant timeoutThreshold = Instant.now().minusSeconds(300);
             Instant now = Instant.now();
 
-            given(outboxReadManager.findProcessingTimeoutOutboxes(any(), anyInt()))
+            given(commandFactory.calculateTimeoutThreshold(command.timeoutSeconds()))
+                    .willReturn(timeoutThreshold);
+            given(outboxReadManager.findProcessingTimeoutOutboxes(eq(timeoutThreshold), anyInt()))
                     .willReturn(List.of(outbox));
-            given(timeProvider.now()).willReturn(now);
+            given(outbox.idValue()).willReturn(outboxId);
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
             willThrow(new RuntimeException("복구 실패")).given(outbox).recoverFromTimeout(now);
 
             // when
@@ -93,8 +106,11 @@ class RecoverTimeoutRefundOutboxServiceTest {
             // given
             RecoverTimeoutRefundOutboxCommand command =
                     RefundCommandFixtures.recoverTimeoutOutboxCommand();
+            Instant timeoutThreshold = Instant.now().minusSeconds(300);
 
-            given(outboxReadManager.findProcessingTimeoutOutboxes(any(), anyInt()))
+            given(commandFactory.calculateTimeoutThreshold(command.timeoutSeconds()))
+                    .willReturn(timeoutThreshold);
+            given(outboxReadManager.findProcessingTimeoutOutboxes(eq(timeoutThreshold), anyInt()))
                     .willReturn(List.of());
 
             // when

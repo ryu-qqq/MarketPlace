@@ -2,10 +2,12 @@ package com.ryuqq.marketplace.application.refund.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.application.refund.dto.command.ProcessPendingRefundOutboxCommand;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.internal.RefundOutboxRelayProcessor;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxReadManager;
 import com.ryuqq.marketplace.application.refund.port.in.command.ProcessPendingRefundOutboxUseCase;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -17,17 +19,22 @@ public class ProcessPendingRefundOutboxService implements ProcessPendingRefundOu
 
     private final RefundOutboxReadManager outboxReadManager;
     private final RefundOutboxRelayProcessor relayProcessor;
+    private final RefundCommandFactory commandFactory;
 
     public ProcessPendingRefundOutboxService(
-            RefundOutboxReadManager outboxReadManager, RefundOutboxRelayProcessor relayProcessor) {
+            RefundOutboxReadManager outboxReadManager,
+            RefundOutboxRelayProcessor relayProcessor,
+            RefundCommandFactory commandFactory) {
         this.outboxReadManager = outboxReadManager;
         this.relayProcessor = relayProcessor;
+        this.commandFactory = commandFactory;
     }
 
     @Override
     public SchedulerBatchProcessingResult execute(ProcessPendingRefundOutboxCommand command) {
+        Instant beforeTime = commandFactory.calculatePendingThreshold(command.delaySeconds());
         List<RefundOutbox> outboxes =
-                outboxReadManager.findPendingOutboxes(command.beforeTime(), command.batchSize());
+                outboxReadManager.findPendingOutboxes(beforeTime, command.batchSize());
 
         int total = outboxes.size();
         int successCount = 0;

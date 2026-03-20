@@ -36,56 +36,12 @@ class RefundPersistenceFacadeTest {
     @Mock private OrderItemCommandManager orderItemCommandManager;
 
     @Nested
-    @DisplayName("persistWithOutbox() - 단건 RefundClaim + Outbox 저장")
-    class PersistWithOutboxTest {
+    @DisplayName("persistAll() - RefundPersistenceBundle 일괄 저장")
+    class PersistAllTest {
 
         @Test
-        @DisplayName("RefundClaim과 RefundOutbox를 함께 저장한다")
-        void persistWithOutbox_SavesClaimAndOutbox() {
-            // given
-            RefundClaim claim = RefundFixtures.requestedRefundClaim();
-            RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
-
-            // when
-            sut.persistWithOutbox(claim, outbox);
-
-            // then
-            then(refundCommandManager).should().persist(claim);
-            then(outboxCommandManager).should().persist(outbox);
-            then(historyCommandManager).shouldHaveNoInteractions();
-            then(orderItemCommandManager).shouldHaveNoInteractions();
-        }
-    }
-
-    @Nested
-    @DisplayName("persistAllWithOutboxes() - RefundClaim 목록 + Outbox 목록 저장")
-    class PersistAllWithOutboxesTest {
-
-        @Test
-        @DisplayName("RefundClaim 목록과 RefundOutbox 목록을 일괄 저장한다")
-        void persistAllWithOutboxes_SavesAllClaimsAndOutboxes() {
-            // given
-            List<RefundClaim> claims = List.of(RefundFixtures.requestedRefundClaim());
-            RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
-            List<RefundOutbox> outboxes = List.of(outbox);
-
-            // when
-            sut.persistAllWithOutboxes(claims, outboxes);
-
-            // then
-            then(refundCommandManager).should().persistAll(claims);
-            then(outboxCommandManager).should().persistAll(outboxes);
-            then(historyCommandManager).shouldHaveNoInteractions();
-        }
-    }
-
-    @Nested
-    @DisplayName("persistAllWithOutboxesAndHistories() - RefundClaim + Outbox + History 저장")
-    class PersistAllWithOutboxesAndHistoriesTest {
-
-        @Test
-        @DisplayName("RefundClaim, Outbox, History를 일괄 저장한다")
-        void persistAllWithOutboxesAndHistories_SavesAll() {
+        @DisplayName("claims, outboxes, histories만 있는 번들을 저장한다")
+        void persistAll_WithoutOrderItems_SavesClaimsOutboxesHistories() {
             // given
             List<RefundClaim> claims = List.of(RefundFixtures.requestedRefundClaim());
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
@@ -93,8 +49,10 @@ class RefundPersistenceFacadeTest {
             List<ClaimHistory> histories =
                     List.of(ClaimHistoryFixtures.refundStatusChangeHistory());
 
+            RefundPersistenceBundle bundle = RefundPersistenceBundle.of(claims, outboxes, histories);
+
             // when
-            sut.persistAllWithOutboxesAndHistories(claims, outboxes, histories);
+            sut.persistAll(bundle);
 
             // then
             then(refundCommandManager).should().persistAll(claims);
@@ -102,43 +60,31 @@ class RefundPersistenceFacadeTest {
             then(historyCommandManager).should().persistAll(histories);
             then(orderItemCommandManager).shouldHaveNoInteractions();
         }
-    }
-
-    @Nested
-    @DisplayName(
-            "persistClaimsWithOutboxesAndHistories() - 승인/거절 시 RefundClaim + Outbox + History 저장")
-    class PersistClaimsWithOutboxesAndHistoriesTest {
 
         @Test
-        @DisplayName("승인/거절용 RefundClaim, Outbox, History를 저장한다")
-        void persistClaimsWithOutboxesAndHistories_SavesAll() {
+        @DisplayName("histories가 비어있으면 historyCommandManager를 호출하지 않는다")
+        void persistAll_EmptyHistories_SkipsHistoryManager() {
             // given
-            List<RefundClaim> claims = List.of(RefundFixtures.collectingRefundClaim());
+            List<RefundClaim> claims = List.of(RefundFixtures.requestedRefundClaim());
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             List<RefundOutbox> outboxes = List.of(outbox);
-            List<ClaimHistory> histories =
-                    List.of(ClaimHistoryFixtures.refundStatusChangeHistory());
+
+            RefundPersistenceBundle bundle =
+                    RefundPersistenceBundle.of(claims, outboxes, List.of());
 
             // when
-            sut.persistClaimsWithOutboxesAndHistories(claims, outboxes, histories);
+            sut.persistAll(bundle);
 
             // then
             then(refundCommandManager).should().persistAll(claims);
             then(outboxCommandManager).should().persistAll(outboxes);
-            then(historyCommandManager).should().persistAll(histories);
+            then(historyCommandManager).shouldHaveNoInteractions();
             then(orderItemCommandManager).shouldHaveNoInteractions();
         }
-    }
-
-    @Nested
-    @DisplayName(
-            "persistAllWithOutboxesAndHistoriesAndOrderItems() - RefundClaim + Outbox + History +"
-                    + " OrderItem 저장")
-    class PersistAllWithOutboxesAndHistoriesAndOrderItemsTest {
 
         @Test
-        @DisplayName("RefundClaim, Outbox, History, OrderItem을 모두 일괄 저장한다")
-        void persistAllWithOutboxesAndHistoriesAndOrderItems_SavesAll() {
+        @DisplayName("OrderItem이 포함된 번들을 저장한다")
+        void persistAll_WithOrderItems_SavesAll() {
             // given
             List<RefundClaim> claims = List.of(RefundFixtures.requestedRefundClaim());
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
@@ -148,9 +94,11 @@ class RefundPersistenceFacadeTest {
             OrderItem orderItem = Mockito.mock(OrderItem.class);
             List<OrderItem> orderItems = List.of(orderItem);
 
+            RefundPersistenceBundle bundle =
+                    RefundPersistenceBundle.withOrderItems(claims, outboxes, histories, orderItems);
+
             // when
-            sut.persistAllWithOutboxesAndHistoriesAndOrderItems(
-                    claims, outboxes, histories, orderItems);
+            sut.persistAll(bundle);
 
             // then
             then(refundCommandManager).should().persistAll(claims);

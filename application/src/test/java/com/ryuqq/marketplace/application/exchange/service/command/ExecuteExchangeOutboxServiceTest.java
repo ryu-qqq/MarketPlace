@@ -5,14 +5,17 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.when;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.exchange.ExchangeCommandFixtures;
 import com.ryuqq.marketplace.application.exchange.dto.command.ExecuteExchangeOutboxCommand;
+import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxCommandManager;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxReadManager;
 import com.ryuqq.marketplace.application.exchange.port.out.client.ExchangeClaimSyncStrategy;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
+import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -33,6 +36,7 @@ class ExecuteExchangeOutboxServiceTest {
     @Mock private ExchangeOutboxReadManager outboxReadManager;
     @Mock private ExchangeOutboxCommandManager outboxCommandManager;
     @Mock private ExchangeClaimSyncStrategy claimSyncStrategy;
+    @Mock private ExchangeCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - 교환 Outbox 실행")
@@ -43,21 +47,23 @@ class ExecuteExchangeOutboxServiceTest {
         void execute_SyncSuccess_CompletesOutbox() {
             // given
             Long outboxId = 1L;
+            Instant now = Instant.now();
             ExecuteExchangeOutboxCommand command =
                     ExchangeCommandFixtures.executeExchangeOutboxCommand(outboxId, "COLLECT");
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             ExchangeOutbox freshOutbox = Mockito.mock(ExchangeOutbox.class);
 
             given(outbox.idValue()).willReturn(outboxId);
-            // thenReturn 체이닝: 첫 번째 호출에 outbox, 이후 호출에 freshOutbox
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(claimSyncStrategy.execute(outbox)).willReturn(OutboxSyncResult.success());
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             sut.execute(command);
 
             // then
-            then(freshOutbox).should().complete(Mockito.any());
+            then(freshOutbox).should().complete(now);
             then(outboxCommandManager).should().persist(freshOutbox);
         }
 
@@ -66,6 +72,7 @@ class ExecuteExchangeOutboxServiceTest {
         void execute_SyncFailure_RecordsFailure() {
             // given
             Long outboxId = 2L;
+            Instant now = Instant.now();
             ExecuteExchangeOutboxCommand command =
                     ExchangeCommandFixtures.executeExchangeOutboxCommand(outboxId, "COLLECT");
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
@@ -75,6 +82,8 @@ class ExecuteExchangeOutboxServiceTest {
             given(outbox.idValue()).willReturn(outboxId);
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(claimSyncStrategy.execute(outbox)).willReturn(failureResult);
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             sut.execute(command);
@@ -82,7 +91,7 @@ class ExecuteExchangeOutboxServiceTest {
             // then
             then(freshOutbox)
                     .should()
-                    .recordFailure(Mockito.eq(true), Mockito.eq("외부 API 오류"), Mockito.any());
+                    .recordFailure(Mockito.eq(true), Mockito.eq("외부 API 오류"), Mockito.eq(now));
             then(outboxCommandManager).should().persist(freshOutbox);
         }
 
@@ -91,6 +100,7 @@ class ExecuteExchangeOutboxServiceTest {
         void execute_ExternalServiceUnavailable_DefersRetry() {
             // given
             Long outboxId = 3L;
+            Instant now = Instant.now();
             ExecuteExchangeOutboxCommand command =
                     ExchangeCommandFixtures.executeExchangeOutboxCommand(outboxId, "COLLECT");
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
@@ -100,12 +110,14 @@ class ExecuteExchangeOutboxServiceTest {
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(claimSyncStrategy.execute(outbox))
                     .willThrow(new ExternalServiceUnavailableException("서비스 일시 장애"));
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             sut.execute(command);
 
             // then
-            then(freshOutbox).should().recoverFromTimeout(Mockito.any());
+            then(freshOutbox).should().recoverFromTimeout(now);
             then(outboxCommandManager).should().persist(freshOutbox);
         }
 
@@ -114,6 +126,7 @@ class ExecuteExchangeOutboxServiceTest {
         void execute_UnexpectedException_RecordsRetryableFailure() {
             // given
             Long outboxId = 4L;
+            Instant now = Instant.now();
             ExecuteExchangeOutboxCommand command =
                     ExchangeCommandFixtures.executeExchangeOutboxCommand(outboxId, "COLLECT");
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
@@ -122,6 +135,8 @@ class ExecuteExchangeOutboxServiceTest {
             given(outbox.idValue()).willReturn(outboxId);
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             willThrow(new RuntimeException("예기치 않은 오류")).given(claimSyncStrategy).execute(outbox);
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             sut.execute(command);
@@ -129,7 +144,7 @@ class ExecuteExchangeOutboxServiceTest {
             // then
             then(freshOutbox)
                     .should()
-                    .recordFailure(Mockito.eq(true), Mockito.contains("실행 중 예외"), Mockito.any());
+                    .recordFailure(Mockito.eq(true), Mockito.contains("실행 중 예외"), Mockito.eq(now));
             then(outboxCommandManager).should().persist(freshOutbox);
         }
     }

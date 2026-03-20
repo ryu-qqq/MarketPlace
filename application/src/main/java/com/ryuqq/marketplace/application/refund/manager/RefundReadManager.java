@@ -5,7 +5,9 @@ import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
 import com.ryuqq.marketplace.domain.refund.exception.RefundNotFoundException;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimId;
 import com.ryuqq.marketplace.domain.refund.query.RefundSearchCriteria;
+import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,5 +45,10 @@ public class RefundReadManager {
     @Transactional(readOnly = true)
     public Optional<RefundClaim> findByOrderItemId(String orderItemId) {
         return queryPort.findByOrderItemId(orderItemId);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<RefundStatus, Long> countByStatus() {
+        return queryPort.countByStatus();
     }
 }

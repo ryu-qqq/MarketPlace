@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.exchange.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -10,13 +11,13 @@ import com.ryuqq.marketplace.application.exchange.ExchangeCommandFixtures;
 import com.ryuqq.marketplace.application.exchange.dto.command.ShipExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.exchange.ExchangeFixtures;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
-import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -58,10 +59,10 @@ class ShipExchangeBatchServiceTest {
 
             given(validator.validateAndGet(claimIds, command.sellerId()))
                     .willReturn(List.of(claim));
-            given(commandFactory.now()).willReturn(Instant.now());
             given(
                             commandFactory.createShipBundle(
                                     claim,
+                                    item.linkedOrderId(),
                                     item.deliveryCompany(),
                                     item.trackingNumber(),
                                     command.processedBy()))
@@ -74,9 +75,7 @@ class ShipExchangeBatchServiceTest {
             assertThat(result).isNotNull();
             assertThat(result.successCount()).isEqualTo(1);
             assertThat(result.failureCount()).isEqualTo(0);
-            then(persistenceFacade)
-                    .should()
-                    .persistClaimsWithOutboxesAndHistories(anyList(), anyList(), anyList());
+            then(persistenceFacade).should().persistAll(any(ExchangePersistenceBundle.class));
         }
 
         @Test

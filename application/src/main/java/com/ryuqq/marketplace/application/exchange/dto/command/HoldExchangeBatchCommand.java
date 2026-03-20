@@ -8,9 +8,4 @@ public record HoldExchangeBatchCommand(
         boolean isHold,
         String memo,
         String processedBy,
-        Long sellerId) {
-
-    public String operationName() {
-        return isHold ? "HOLD" : "RELEASE_HOLD";
-    }
-}
+        Long sellerId) {}

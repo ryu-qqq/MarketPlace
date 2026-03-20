@@ -2,12 +2,10 @@ package com.ryuqq.marketplace.application.legacyauth.manager;
 
 import com.ryuqq.marketplace.application.legacyauth.dto.result.LegacyTokenResult;
 import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 /** 레거시 토큰 발급/검증 Manager. */
 @Component
-@ConditionalOnBean(LegacyTokenClient.class)
 public class LegacyTokenManager {
 
     private final LegacyTokenClient tokenClient;

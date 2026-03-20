@@ -1,9 +1,11 @@
 package com.ryuqq.marketplace.application.refund.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.refund.RefundCommandFixtures;
@@ -11,6 +13,7 @@ import com.ryuqq.marketplace.application.refund.dto.command.RequestRefundBatchCo
 import com.ryuqq.marketplace.application.refund.dto.command.RequestRefundBatchCommand.RefundRequestItem;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory.RefundBundle;
+import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceBundle;
 import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceFacade;
 import com.ryuqq.marketplace.application.refund.validator.RefundBatchValidator;
 import com.ryuqq.marketplace.domain.claimhistory.ClaimHistoryFixtures;
@@ -140,19 +143,14 @@ class RequestRefundBatchServiceTest {
                                     com.ryuqq.marketplace.domain.order.vo.OrderItemStatus
                                             .RETURN_REQUESTED))
                     .willReturn(true);
-            given(commandFactory.now()).willReturn(Instant.now());
+            given(commandFactory.createRequestOrderItemContext(item.orderItemId()))
+                    .willReturn(new StatusChangeContext<>(OrderItemId.of(item.orderItemId()), Instant.now()));
 
             // when
             sut.execute(command);
 
             // then
-            then(persistenceFacade)
-                    .should()
-                    .persistAllWithOutboxesAndHistoriesAndOrderItems(
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList());
+            then(persistenceFacade).should().persistAll(any(RefundPersistenceBundle.class));
         }
     }
 }

@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.application.legacyauth.facade;
 import com.ryuqq.marketplace.application.legacyauth.dto.result.LegacyTokenResult;
 import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenCacheCommandManager;
 import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenManager;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
  * <p>토큰 발급 + 리프레시 토큰 캐시 저장을 묶어 처리합니다. 트랜잭션은 걸지 않음 — 나중에 저장소가 Redis에서 DB로 변경될 때 트랜잭션 추가 예정.
  */
 @Component
-@ConditionalOnBean(LegacyTokenManager.class)
 public class LegacyTokenIssuanceFacade {
 
     private final LegacyTokenManager tokenManager;

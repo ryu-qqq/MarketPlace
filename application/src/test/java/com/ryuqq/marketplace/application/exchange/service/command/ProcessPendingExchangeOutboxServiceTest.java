@@ -9,9 +9,11 @@ import static org.mockito.BDDMockito.then;
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.application.exchange.ExchangeCommandFixtures;
 import com.ryuqq.marketplace.application.exchange.dto.command.ProcessPendingExchangeOutboxCommand;
+import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangeOutboxRelayProcessor;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxReadManager;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +34,7 @@ class ProcessPendingExchangeOutboxServiceTest {
 
     @Mock private ExchangeOutboxReadManager outboxReadManager;
     @Mock private ExchangeOutboxRelayProcessor relayProcessor;
+    @Mock private ExchangeCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - PENDING 교환 아웃박스 처리")
@@ -45,8 +48,11 @@ class ProcessPendingExchangeOutboxServiceTest {
                     ExchangeCommandFixtures.processPendingOutboxCommand();
             ExchangeOutbox outbox1 = Mockito.mock(ExchangeOutbox.class);
             ExchangeOutbox outbox2 = Mockito.mock(ExchangeOutbox.class);
+            Instant threshold = Instant.now().minusSeconds(command.delaySeconds());
 
-            given(outboxReadManager.findPendingOutboxes(any(), anyInt()))
+            given(commandFactory.calculatePendingThreshold(command.delaySeconds()))
+                    .willReturn(threshold);
+            given(outboxReadManager.findPendingOutboxes(threshold, command.batchSize()))
                     .willReturn(List.of(outbox1, outbox2));
             given(relayProcessor.relay(outbox1)).willReturn(true);
             given(relayProcessor.relay(outbox2)).willReturn(true);
@@ -68,8 +74,11 @@ class ProcessPendingExchangeOutboxServiceTest {
                     ExchangeCommandFixtures.processPendingOutboxCommand();
             ExchangeOutbox outbox1 = Mockito.mock(ExchangeOutbox.class);
             ExchangeOutbox outbox2 = Mockito.mock(ExchangeOutbox.class);
+            Instant threshold = Instant.now().minusSeconds(command.delaySeconds());
 
-            given(outboxReadManager.findPendingOutboxes(any(), anyInt()))
+            given(commandFactory.calculatePendingThreshold(command.delaySeconds()))
+                    .willReturn(threshold);
+            given(outboxReadManager.findPendingOutboxes(threshold, command.batchSize()))
                     .willReturn(List.of(outbox1, outbox2));
             given(relayProcessor.relay(outbox1)).willReturn(true);
             given(relayProcessor.relay(outbox2)).willReturn(false);
@@ -89,8 +98,12 @@ class ProcessPendingExchangeOutboxServiceTest {
             // given
             ProcessPendingExchangeOutboxCommand command =
                     ExchangeCommandFixtures.processPendingOutboxCommand();
+            Instant threshold = Instant.now().minusSeconds(command.delaySeconds());
 
-            given(outboxReadManager.findPendingOutboxes(any(), anyInt())).willReturn(List.of());
+            given(commandFactory.calculatePendingThreshold(command.delaySeconds()))
+                    .willReturn(threshold);
+            given(outboxReadManager.findPendingOutboxes(threshold, command.batchSize()))
+                    .willReturn(List.of());
 
             // when
             SchedulerBatchProcessingResult result = sut.execute(command);

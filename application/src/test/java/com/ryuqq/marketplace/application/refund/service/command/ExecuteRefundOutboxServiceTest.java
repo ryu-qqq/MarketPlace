@@ -5,14 +5,17 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.when;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.refund.RefundCommandFixtures;
 import com.ryuqq.marketplace.application.refund.dto.command.ExecuteRefundOutboxCommand;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxReadManager;
 import com.ryuqq.marketplace.application.refund.port.out.client.RefundClaimSyncStrategy;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
+import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -33,6 +36,7 @@ class ExecuteRefundOutboxServiceTest {
     @Mock private RefundOutboxReadManager outboxReadManager;
     @Mock private RefundOutboxCommandManager outboxCommandManager;
     @Mock private RefundClaimSyncStrategy claimSyncStrategy;
+    @Mock private RefundCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - 환불 Outbox 실행")
@@ -47,10 +51,13 @@ class ExecuteRefundOutboxServiceTest {
                     RefundCommandFixtures.executeRefundOutboxCommand(outboxId, "REQUEST");
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
+            Instant now = Instant.now();
 
-            given(outbox.idValue()).willReturn(outboxId);
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
+            given(outbox.idValue()).willReturn(outboxId);
             given(claimSyncStrategy.execute(outbox)).willReturn(OutboxSyncResult.success());
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             sut.execute(command);
@@ -70,10 +77,13 @@ class ExecuteRefundOutboxServiceTest {
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
             OutboxSyncResult failureResult = OutboxSyncResult.failure(true, "외부 API 오류");
+            Instant now = Instant.now();
 
-            given(outbox.idValue()).willReturn(outboxId);
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
+            given(outbox.idValue()).willReturn(outboxId);
             given(claimSyncStrategy.execute(outbox)).willReturn(failureResult);
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             sut.execute(command);
@@ -94,11 +104,14 @@ class ExecuteRefundOutboxServiceTest {
                     RefundCommandFixtures.executeRefundOutboxCommand(outboxId, "REQUEST");
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
+            Instant now = Instant.now();
 
-            given(outbox.idValue()).willReturn(outboxId);
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
+            given(outbox.idValue()).willReturn(outboxId);
             given(claimSyncStrategy.execute(outbox))
                     .willThrow(new ExternalServiceUnavailableException("서비스 일시 장애"));
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             sut.execute(command);
@@ -117,10 +130,13 @@ class ExecuteRefundOutboxServiceTest {
                     RefundCommandFixtures.executeRefundOutboxCommand(outboxId, "REQUEST");
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
+            Instant now = Instant.now();
 
-            given(outbox.idValue()).willReturn(outboxId);
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
+            given(outbox.idValue()).willReturn(outboxId);
             willThrow(new RuntimeException("예기치 않은 오류")).given(claimSyncStrategy).execute(outbox);
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             sut.execute(command);

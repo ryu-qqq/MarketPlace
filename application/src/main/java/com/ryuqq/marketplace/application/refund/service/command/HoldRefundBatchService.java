@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.refund.dto.RefundBatchResult;
 import com.ryuqq.marketplace.application.refund.dto.command.HoldRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceBundle;
 import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceFacade;
 import com.ryuqq.marketplace.application.refund.port.in.command.HoldRefundBatchUseCase;
 import com.ryuqq.marketplace.application.refund.validator.RefundBatchValidator;
@@ -38,16 +39,17 @@ public class HoldRefundBatchService implements HoldRefundBatchUseCase {
         List<RefundClaim> claims =
                 validator.validateAndGet(command.refundClaimIds(), command.sellerId());
 
-        RefundBatchResult batchResult = RefundBatchResult.create(command.operationName());
+        String operationName = command.isHold() ? "HOLD" : "RELEASE_HOLD";
+        RefundBatchResult batchResult = RefundBatchResult.create(operationName);
 
         for (RefundClaim claim : claims) {
             try {
                 OutboxWithHistory bundle;
                 if (command.isHold()) {
-                    claim.hold(command.memo(), commandFactory.now());
-                    bundle = commandFactory.createHoldBundle(claim, command.processedBy());
+                    bundle =
+                            commandFactory.createHoldBundle(
+                                    claim, command.memo(), command.processedBy());
                 } else {
-                    claim.releaseHold(commandFactory.now());
                     bundle = commandFactory.createReleaseHoldBundle(claim, command.processedBy());
                 }
                 batchResult.addSuccess(claim, bundle.outbox(), bundle.history());
@@ -62,8 +64,9 @@ public class HoldRefundBatchService implements HoldRefundBatchUseCase {
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistClaimsWithOutboxesAndHistories(
-                    batchResult.claims(), batchResult.outboxes(), batchResult.histories());
+            persistenceFacade.persistAll(
+                    RefundPersistenceBundle.of(
+                            batchResult.claims(), batchResult.outboxes(), batchResult.histories()));
         }
 
         return batchResult.toBatchProcessingResult();

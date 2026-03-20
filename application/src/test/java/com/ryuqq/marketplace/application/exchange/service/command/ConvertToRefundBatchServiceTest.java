@@ -10,13 +10,13 @@ import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult
 import com.ryuqq.marketplace.application.exchange.ExchangeCommandFixtures;
 import com.ryuqq.marketplace.application.exchange.dto.command.ConvertToRefundBatchCommand;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
 import com.ryuqq.marketplace.application.refund.port.in.command.RequestRefundBatchUseCase;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.exchange.ExchangeFixtures;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
-import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,10 +54,7 @@ class ConvertToRefundBatchServiceTest {
 
             given(validator.validateAndGet(command.exchangeClaimIds(), command.sellerId()))
                     .willReturn(List.of(claim));
-            given(commandFactory.now()).willReturn(Instant.now());
-            given(
-                            commandFactory.createConvertToRefundHistory(
-                                    claim, claim.status().name(), command.processedBy()))
+            given(commandFactory.createConvertToRefundBundle(claim, command.processedBy()))
                     .willReturn(history);
 
             // when
@@ -67,7 +64,7 @@ class ConvertToRefundBatchServiceTest {
             assertThat(result).isNotNull();
             assertThat(result.successCount()).isEqualTo(1);
             assertThat(result.failureCount()).isEqualTo(0);
-            then(persistenceFacade).should().persistClaimsWithHistories(anyList(), anyList());
+            then(persistenceFacade).should().persistAll(any(ExchangePersistenceBundle.class));
             then(requestRefundBatchUseCase).should().execute(any());
         }
 

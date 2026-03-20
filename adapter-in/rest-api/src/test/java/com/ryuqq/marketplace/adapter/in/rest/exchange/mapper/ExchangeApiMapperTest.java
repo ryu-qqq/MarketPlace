@@ -320,7 +320,6 @@ class ExchangeApiMapperTest {
 
             // then
             assertThat(command.isHold()).isFalse();
-            assertThat(command.operationName()).isEqualTo("RELEASE_HOLD");
         }
     }
 

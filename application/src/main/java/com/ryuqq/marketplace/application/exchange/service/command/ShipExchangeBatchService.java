@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.application.exchange.dto.command.ShipExchangeBatchC
 import com.ryuqq.marketplace.application.exchange.dto.command.ShipExchangeBatchCommand.ShipItem;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.ShipExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
@@ -50,11 +51,10 @@ public class ShipExchangeBatchService implements ShipExchangeBatchUseCase {
         for (ExchangeClaim claim : claims) {
             try {
                 ShipItem item = itemMap.get(claim.idValue());
-                claim.startShipping(
-                        item.linkedOrderId(), command.processedBy(), commandFactory.now());
                 OutboxWithHistory bundle =
                         commandFactory.createShipBundle(
                                 claim,
+                                item.linkedOrderId(),
                                 item.deliveryCompany(),
                                 item.trackingNumber(),
                                 command.processedBy());
@@ -67,8 +67,9 @@ public class ShipExchangeBatchService implements ShipExchangeBatchUseCase {
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistClaimsWithOutboxesAndHistories(
-                    batchResult.claims(), batchResult.outboxes(), batchResult.histories());
+            persistenceFacade.persistAll(
+                    ExchangePersistenceBundle.of(
+                            batchResult.claims(), batchResult.outboxes(), batchResult.histories()));
         }
 
         return batchResult.toBatchProcessingResult();

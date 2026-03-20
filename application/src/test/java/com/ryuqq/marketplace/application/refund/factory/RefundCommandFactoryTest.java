@@ -78,7 +78,7 @@ class RefundCommandFactoryTest {
     class CreateApproveBundleTest {
 
         @Test
-        @DisplayName("승인 시 RefundOutbox와 ClaimHistory 번들을 생성한다")
+        @DisplayName("승인 시 claim 상태를 변경하고 RefundOutbox와 ClaimHistory 번들을 생성한다")
         void createApproveBundle_ValidClaim_ReturnsOutboxWithHistory() {
             // given
             RefundClaim claim = RefundFixtures.requestedRefundClaim();
@@ -104,6 +104,7 @@ class RefundCommandFactoryTest {
             assertThat(bundle).isNotNull();
             assertThat(bundle.outbox()).isNotNull();
             assertThat(bundle.history()).isEqualTo(history);
+            assertThat(claim.status().name()).isEqualTo("COLLECTING");
         }
     }
 
@@ -112,7 +113,7 @@ class RefundCommandFactoryTest {
     class CreateRejectBundleTest {
 
         @Test
-        @DisplayName("거절 시 RefundOutbox와 ClaimHistory 번들을 생성한다")
+        @DisplayName("거절 시 claim 상태를 변경하고 RefundOutbox와 ClaimHistory 번들을 생성한다")
         void createRejectBundle_ValidClaim_ReturnsOutboxWithHistory() {
             // given
             RefundClaim claim = RefundFixtures.requestedRefundClaim();
@@ -138,6 +139,7 @@ class RefundCommandFactoryTest {
             assertThat(bundle).isNotNull();
             assertThat(bundle.outbox()).isNotNull();
             assertThat(bundle.history()).isEqualTo(history);
+            assertThat(claim.status().name()).isEqualTo("REJECTED");
         }
     }
 
@@ -146,7 +148,7 @@ class RefundCommandFactoryTest {
     class CreateCollectBundleTest {
 
         @Test
-        @DisplayName("수거 완료 시 RefundOutbox와 ClaimHistory 번들을 생성한다")
+        @DisplayName("수거 완료 시 claim 상태를 변경하고 RefundOutbox와 ClaimHistory 번들을 생성한다")
         void createCollectBundle_ValidClaim_ReturnsOutboxWithHistory() {
             // given
             RefundClaim claim = RefundFixtures.collectingRefundClaim();
@@ -172,25 +174,7 @@ class RefundCommandFactoryTest {
             assertThat(bundle).isNotNull();
             assertThat(bundle.outbox()).isNotNull();
             assertThat(bundle.history()).isEqualTo(history);
-        }
-    }
-
-    @Nested
-    @DisplayName("now() - 현재 시간 반환")
-    class NowTest {
-
-        @Test
-        @DisplayName("TimeProvider에서 현재 시간을 반환한다")
-        void now_ReturnsCurrentInstant() {
-            // given
-            Instant expected = Instant.now();
-            given(timeProvider.now()).willReturn(expected);
-
-            // when
-            Instant result = sut.now();
-
-            // then
-            assertThat(result).isEqualTo(expected);
+            assertThat(claim.status().name()).isEqualTo("COLLECTED");
         }
     }
 }

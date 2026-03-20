@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.refund.factory;
 
 import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.refund.dto.command.RequestRefundBatchCommand.RefundRequestItem;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
@@ -67,9 +68,16 @@ public class RefundCommandFactory {
         return new RefundBundle(claim, outbox, history);
     }
 
-    /** 승인 시 RefundOutbox + ClaimHistory 생성. */
+    /** 환불 요청 시 OrderItem 상태 전환에 필요한 시간 컨텍스트. */
+    public StatusChangeContext<OrderItemId> createRequestOrderItemContext(String orderItemId) {
+        return new StatusChangeContext<>(OrderItemId.of(orderItemId), timeProvider.now());
+    }
+
+    /** 승인 시 claim 상태 변경 + RefundOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createApproveBundle(RefundClaim claim, String processedBy) {
-        RefundOutbox outbox = createApproveOutbox(claim);
+        Instant now = timeProvider.now();
+        claim.startCollecting(processedBy, now);
+        RefundOutbox outbox = createOutbox(claim, RefundOutboxType.APPROVE, now);
         ClaimHistory history =
                 historyFactory.createStatusChange(
                         ClaimType.REFUND,
@@ -81,9 +89,10 @@ public class RefundCommandFactory {
         return new OutboxWithHistory(outbox, history);
     }
 
-    /** 수거 완료 시 RefundOutbox + ClaimHistory 생성. */
+    /** 수거 완료 시 claim 상태 변경 + RefundOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createCollectBundle(RefundClaim claim, String processedBy) {
         Instant now = timeProvider.now();
+        claim.completeCollection(processedBy, now);
         RefundOutbox outbox =
                 RefundOutbox.forNew(
                         claim.orderItemId(),
@@ -101,9 +110,10 @@ public class RefundCommandFactory {
         return new OutboxWithHistory(outbox, history);
     }
 
-    /** 보류 시 RefundOutbox + ClaimHistory 생성. */
-    public OutboxWithHistory createHoldBundle(RefundClaim claim, String processedBy) {
+    /** 보류 시 claim 상태 변경 + RefundOutbox + ClaimHistory 생성. */
+    public OutboxWithHistory createHoldBundle(RefundClaim claim, String memo, String processedBy) {
         Instant now = timeProvider.now();
+        claim.hold(memo, now);
         RefundOutbox outbox =
                 RefundOutbox.forNew(
                         claim.orderItemId(),
@@ -121,9 +131,10 @@ public class RefundCommandFactory {
         return new OutboxWithHistory(outbox, history);
     }
 
-    /** 보류 해제 시 RefundOutbox + ClaimHistory 생성. */
+    /** 보류 해제 시 claim 상태 변경 + RefundOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createReleaseHoldBundle(RefundClaim claim, String processedBy) {
         Instant now = timeProvider.now();
+        claim.releaseHold(now);
         RefundOutbox outbox =
                 RefundOutbox.forNew(
                         claim.orderItemId(),
@@ -141,9 +152,16 @@ public class RefundCommandFactory {
         return new OutboxWithHistory(outbox, history);
     }
 
-    /** 거절 시 RefundOutbox + ClaimHistory 생성. */
+    /** 거절 시 claim 상태 변경 + RefundOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createRejectBundle(RefundClaim claim, String processedBy) {
-        RefundOutbox outbox = createRejectOutbox(claim);
+        Instant now = timeProvider.now();
+        claim.reject(processedBy, now);
+        RefundOutbox outbox =
+                RefundOutbox.forNew(
+                        claim.orderItemId(),
+                        RefundOutboxType.REJECT,
+                        RefundOutboxPayloadBuilder.rejectPayload(claim.idValue()),
+                        now);
         ClaimHistory history =
                 historyFactory.createStatusChange(
                         ClaimType.REFUND,
@@ -155,26 +173,31 @@ public class RefundCommandFactory {
         return new OutboxWithHistory(outbox, history);
     }
 
-    public Instant now() {
-        return timeProvider.now();
+    /** 아웃박스 상태 변경에 필요한 시간 컨텍스트 생성. */
+    public StatusChangeContext<Long> createOutboxChangeContext(Long outboxId) {
+        return new StatusChangeContext<>(outboxId, timeProvider.now());
     }
 
-    private RefundOutbox createApproveOutbox(RefundClaim claim) {
-        Instant now = timeProvider.now();
-        return RefundOutbox.forNew(
-                claim.orderItemId(),
-                RefundOutboxType.APPROVE,
-                RefundOutboxPayloadBuilder.approvePayload(claim.idValue()),
-                now);
+    /** PENDING 아웃박스 조회 기준 시간 계산. */
+    public Instant calculatePendingThreshold(int delaySeconds) {
+        return timeProvider.now().minusSeconds(delaySeconds);
     }
 
-    private RefundOutbox createRejectOutbox(RefundClaim claim) {
-        Instant now = timeProvider.now();
-        return RefundOutbox.forNew(
-                claim.orderItemId(),
-                RefundOutboxType.REJECT,
-                RefundOutboxPayloadBuilder.rejectPayload(claim.idValue()),
-                now);
+    /** 타임아웃 아웃박스 조회 기준 시간 계산. */
+    public Instant calculateTimeoutThreshold(long timeoutSeconds) {
+        return timeProvider.now().minusSeconds(timeoutSeconds);
+    }
+
+    private RefundOutbox createOutbox(RefundClaim claim, RefundOutboxType type, Instant now) {
+        String payload =
+                switch (type) {
+                    case APPROVE ->
+                            RefundOutboxPayloadBuilder.approvePayload(claim.idValue());
+                    case REJECT ->
+                            RefundOutboxPayloadBuilder.rejectPayload(claim.idValue());
+                    default -> throw new IllegalArgumentException("지원하지 않는 타입: " + type);
+                };
+        return RefundOutbox.forNew(claim.orderItemId(), type, payload, now);
     }
 
     /** RefundClaim + RefundOutbox + ClaimHistory 묶음 (환불 요청용). */

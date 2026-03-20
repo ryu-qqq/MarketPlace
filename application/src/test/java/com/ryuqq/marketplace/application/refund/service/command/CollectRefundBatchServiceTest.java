@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.refund.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -9,6 +10,7 @@ import com.ryuqq.marketplace.application.refund.RefundCommandFixtures;
 import com.ryuqq.marketplace.application.refund.dto.command.CollectRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceBundle;
 import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceFacade;
 import com.ryuqq.marketplace.application.refund.validator.RefundBatchValidator;
 import com.ryuqq.marketplace.domain.claimhistory.ClaimHistoryFixtures;
@@ -16,7 +18,6 @@ import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.refund.RefundFixtures;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
-import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,7 +55,6 @@ class CollectRefundBatchServiceTest {
 
             given(validator.validateAndGet(command.refundClaimIds(), command.sellerId()))
                     .willReturn(List.of(claim));
-            given(commandFactory.now()).willReturn(Instant.now());
             given(commandFactory.createCollectBundle(claim, command.processedBy()))
                     .willReturn(bundle);
 
@@ -66,12 +66,7 @@ class CollectRefundBatchServiceTest {
             assertThat(result.totalCount()).isEqualTo(1);
             assertThat(result.successCount()).isEqualTo(1);
             assertThat(result.failureCount()).isEqualTo(0);
-            then(persistenceFacade)
-                    .should()
-                    .persistClaimsWithOutboxesAndHistories(
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList());
+            then(persistenceFacade).should().persistAll(any(RefundPersistenceBundle.class));
         }
 
         @Test

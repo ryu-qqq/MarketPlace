@@ -72,17 +72,19 @@ class ExchangeCommandFactoryTest {
     }
 
     @Nested
-    @DisplayName("createApproveHistory() - 승인 이력 생성")
-    class CreateApproveHistoryTest {
+    @DisplayName("createApproveBundle() - 승인 번들 생성")
+    class CreateApproveBundleTest {
 
         @Test
-        @DisplayName("ExchangeClaim으로 승인 ClaimHistory를 생성한다")
-        void createApproveHistory_ValidClaim_ReturnsHistory() {
+        @DisplayName("ExchangeClaim 상태 변경 + ClaimHistory를 생성한다")
+        void createApproveBundle_ValidClaim_ReturnsHistory() {
             // given
             ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
             String processedBy = "admin@marketplace.com";
+            Instant now = CommonVoFixtures.now();
             ClaimHistory expectedHistory = Mockito.mock(ClaimHistory.class);
 
+            given(timeProvider.now()).willReturn(now);
             given(
                             historyFactory.createStatusChange(
                                     org.mockito.ArgumentMatchers.any(),
@@ -94,7 +96,7 @@ class ExchangeCommandFactoryTest {
                     .willReturn(expectedHistory);
 
             // when
-            ClaimHistory result = sut.createApproveHistory(claim, processedBy);
+            ClaimHistory result = sut.createApproveBundle(claim, processedBy);
 
             // then
             assertThat(result).isEqualTo(expectedHistory);
@@ -106,7 +108,7 @@ class ExchangeCommandFactoryTest {
     class CreateCollectBundleTest {
 
         @Test
-        @DisplayName("수거 완료 시 Outbox와 History를 포함한 번들을 생성한다")
+        @DisplayName("수거 완료 시 claim 상태 변경 + Outbox + History 번들을 생성한다")
         void createCollectBundle_ValidClaim_ReturnsBundle() {
             // given
             ExchangeClaim claim = ExchangeFixtures.collectingExchangeClaim();
@@ -140,11 +142,10 @@ class ExchangeCommandFactoryTest {
     class CreateRejectBundleTest {
 
         @Test
-        @DisplayName("거절 시 Outbox와 History를 포함한 번들을 생성한다")
+        @DisplayName("거절 시 claim 상태 변경 + Outbox + History 번들을 생성한다")
         void createRejectBundle_ValidClaim_ReturnsBundle() {
             // given
             ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
-            String fromStatus = claim.status().name();
             String processedBy = "admin@marketplace.com";
             Instant now = CommonVoFixtures.now();
             ClaimHistory history = Mockito.mock(ClaimHistory.class);
@@ -154,38 +155,19 @@ class ExchangeCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     org.mockito.ArgumentMatchers.any(),
                                     org.mockito.ArgumentMatchers.anyString(),
-                                    org.mockito.ArgumentMatchers.eq(fromStatus),
+                                    org.mockito.ArgumentMatchers.eq("REQUESTED"),
                                     org.mockito.ArgumentMatchers.eq("REJECTED"),
                                     org.mockito.ArgumentMatchers.anyString(),
                                     org.mockito.ArgumentMatchers.anyString()))
                     .willReturn(history);
 
             // when
-            OutboxWithHistory result = sut.createRejectBundle(claim, fromStatus, processedBy);
+            OutboxWithHistory result = sut.createRejectBundle(claim, processedBy);
 
             // then
             assertThat(result).isNotNull();
             assertThat(result.outbox()).isNotNull();
             assertThat(result.history()).isEqualTo(history);
-        }
-    }
-
-    @Nested
-    @DisplayName("now() - 현재 시간 반환")
-    class NowTest {
-
-        @Test
-        @DisplayName("TimeProvider를 통해 현재 시간을 반환한다")
-        void now_ReturnsCurrentTime() {
-            // given
-            Instant expected = CommonVoFixtures.now();
-            given(timeProvider.now()).willReturn(expected);
-
-            // when
-            Instant result = sut.now();
-
-            // then
-            assertThat(result).isEqualTo(expected);
         }
     }
 }

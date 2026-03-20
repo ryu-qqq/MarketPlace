@@ -1,17 +1,19 @@
 package com.ryuqq.marketplace.application.refund.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.application.refund.RefundCommandFixtures;
 import com.ryuqq.marketplace.application.refund.dto.command.ProcessPendingRefundOutboxCommand;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.internal.RefundOutboxRelayProcessor;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxReadManager;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,6 +33,7 @@ class ProcessPendingRefundOutboxServiceTest {
 
     @Mock private RefundOutboxReadManager outboxReadManager;
     @Mock private RefundOutboxRelayProcessor relayProcessor;
+    @Mock private RefundCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - PENDING 환불 아웃박스 처리")
@@ -44,8 +47,11 @@ class ProcessPendingRefundOutboxServiceTest {
                     RefundCommandFixtures.processPendingOutboxCommand();
             RefundOutbox outbox1 = org.mockito.Mockito.mock(RefundOutbox.class);
             RefundOutbox outbox2 = org.mockito.Mockito.mock(RefundOutbox.class);
+            Instant threshold = Instant.now();
 
-            given(outboxReadManager.findPendingOutboxes(any(), anyInt()))
+            given(commandFactory.calculatePendingThreshold(command.delaySeconds()))
+                    .willReturn(threshold);
+            given(outboxReadManager.findPendingOutboxes(eq(threshold), anyInt()))
                     .willReturn(List.of(outbox1, outbox2));
             given(relayProcessor.relay(outbox1)).willReturn(true);
             given(relayProcessor.relay(outbox2)).willReturn(true);
@@ -67,8 +73,11 @@ class ProcessPendingRefundOutboxServiceTest {
                     RefundCommandFixtures.processPendingOutboxCommand();
             RefundOutbox outbox1 = org.mockito.Mockito.mock(RefundOutbox.class);
             RefundOutbox outbox2 = org.mockito.Mockito.mock(RefundOutbox.class);
+            Instant threshold = Instant.now();
 
-            given(outboxReadManager.findPendingOutboxes(any(), anyInt()))
+            given(commandFactory.calculatePendingThreshold(command.delaySeconds()))
+                    .willReturn(threshold);
+            given(outboxReadManager.findPendingOutboxes(eq(threshold), anyInt()))
                     .willReturn(List.of(outbox1, outbox2));
             given(relayProcessor.relay(outbox1)).willReturn(true);
             given(relayProcessor.relay(outbox2)).willReturn(false);
@@ -88,8 +97,12 @@ class ProcessPendingRefundOutboxServiceTest {
             // given
             ProcessPendingRefundOutboxCommand command =
                     RefundCommandFixtures.processPendingOutboxCommand();
+            Instant threshold = Instant.now();
 
-            given(outboxReadManager.findPendingOutboxes(any(), anyInt())).willReturn(List.of());
+            given(commandFactory.calculatePendingThreshold(command.delaySeconds()))
+                    .willReturn(threshold);
+            given(outboxReadManager.findPendingOutboxes(eq(threshold), anyInt()))
+                    .willReturn(List.of());
 
             // when
             SchedulerBatchProcessingResult result = sut.execute(command);

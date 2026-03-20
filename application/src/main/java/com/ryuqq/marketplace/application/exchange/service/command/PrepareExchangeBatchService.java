@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult
 import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.PrepareExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.PrepareExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
@@ -45,9 +46,8 @@ public class PrepareExchangeBatchService implements PrepareExchangeBatchUseCase 
         ExchangeBatchResult batchResult = ExchangeBatchResult.create("PREPARE");
         for (ExchangeClaim claim : claims) {
             try {
-                claim.startPreparing(command.processedBy(), commandFactory.now());
                 ClaimHistory history =
-                        commandFactory.createPrepareHistory(claim, command.processedBy());
+                        commandFactory.createPrepareBundle(claim, command.processedBy());
                 batchResult.addSuccess(claim, history);
             } catch (Exception e) {
                 log.warn(
@@ -59,8 +59,9 @@ public class PrepareExchangeBatchService implements PrepareExchangeBatchUseCase 
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistClaimsWithHistories(
-                    batchResult.claims(), batchResult.histories());
+            persistenceFacade.persistAll(
+                    ExchangePersistenceBundle.withoutOutboxes(
+                            batchResult.claims(), batchResult.histories()));
         }
 
         return batchResult.toBatchProcessingResult();

@@ -2,11 +2,12 @@ package com.ryuqq.marketplace.application.refund.internal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxReadManager;
 import com.ryuqq.marketplace.application.refund.port.out.client.RefundOutboxPublishClient;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
-import java.time.Instant;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,16 +29,19 @@ public class RefundOutboxRelayProcessor {
     private final RefundOutboxReadManager outboxReadManager;
     private final RefundOutboxPublishClient publishClient;
     private final ObjectMapper objectMapper;
+    private final RefundCommandFactory commandFactory;
 
     public RefundOutboxRelayProcessor(
             RefundOutboxCommandManager outboxCommandManager,
             RefundOutboxReadManager outboxReadManager,
             RefundOutboxPublishClient publishClient,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            RefundCommandFactory commandFactory) {
         this.outboxCommandManager = outboxCommandManager;
         this.outboxReadManager = outboxReadManager;
         this.publishClient = publishClient;
         this.objectMapper = objectMapper;
+        this.commandFactory = commandFactory;
     }
 
     /**
@@ -49,9 +53,10 @@ public class RefundOutboxRelayProcessor {
      * @return 성공 여부
      */
     public boolean relay(RefundOutbox outbox) {
-        Instant now = Instant.now();
+        StatusChangeContext<Long> ctx =
+                commandFactory.createOutboxChangeContext(outbox.idValue());
         try {
-            outbox.startProcessing(now);
+            outbox.startProcessing(ctx.changedAt());
             outboxCommandManager.persist(outbox);
 
             String messageBody = buildMessageBody(outbox);
@@ -71,8 +76,10 @@ public class RefundOutboxRelayProcessor {
                     e.getMessage(),
                     e);
             try {
-                RefundOutbox freshOutbox = outboxReadManager.getById(outbox.idValue());
-                freshOutbox.recordFailure(true, "Relay 실패: " + e.getMessage(), Instant.now());
+                StatusChangeContext<Long> failCtx =
+                        commandFactory.createOutboxChangeContext(outbox.idValue());
+                RefundOutbox freshOutbox = outboxReadManager.getById(failCtx.id());
+                freshOutbox.recordFailure(true, "Relay 실패: " + e.getMessage(), failCtx.changedAt());
                 outboxCommandManager.persist(freshOutbox);
             } catch (Exception reReadEx) {
                 log.warn(

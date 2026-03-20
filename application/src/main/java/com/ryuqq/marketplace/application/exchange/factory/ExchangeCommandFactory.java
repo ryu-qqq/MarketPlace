@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.exchange.factory;
 
 import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand.ExchangeRequestItem;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
@@ -72,8 +73,20 @@ public class ExchangeCommandFactory {
         return new ExchangeClaimWithHistory(claim, history);
     }
 
-    /** 승인 시 ClaimHistory 생성 (Outbox 없음). */
-    public ClaimHistory createApproveHistory(ExchangeClaim claim, String processedBy) {
+    /** 교환 요청 시 OrderItem 상태 전환에 필요한 시간 컨텍스트. */
+    public StatusChangeContext<OrderItemId> createRequestOrderItemContext(String orderItemId) {
+        return new StatusChangeContext<>(OrderItemId.of(orderItemId), timeProvider.now());
+    }
+
+    /** 교환 완료 시 OrderItem 상태 전환에 필요한 시간 컨텍스트. */
+    public StatusChangeContext<OrderItemId> createCompleteOrderItemContext(String orderItemId) {
+        return new StatusChangeContext<>(OrderItemId.of(orderItemId), timeProvider.now());
+    }
+
+    /** 승인 시 claim 상태 변경 + ClaimHistory 생성 (Outbox 없음). */
+    public ClaimHistory createApproveBundle(ExchangeClaim claim, String processedBy) {
+        Instant now = timeProvider.now();
+        claim.startCollecting(processedBy, now);
         return historyFactory.createStatusChange(
                 ClaimType.EXCHANGE,
                 claim.idValue(),
@@ -83,8 +96,10 @@ public class ExchangeCommandFactory {
                 processedBy);
     }
 
-    /** 수거 완료 시 ExchangeOutbox + ClaimHistory 생성. */
+    /** 수거 완료 시 claim 상태 변경 + ExchangeOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createCollectBundle(ExchangeClaim claim, String processedBy) {
+        Instant now = timeProvider.now();
+        claim.completeCollection(processedBy, now);
         ExchangeOutbox outbox = createCollectOutbox(claim);
         ClaimHistory history =
                 historyFactory.createStatusChange(
@@ -97,8 +112,10 @@ public class ExchangeCommandFactory {
         return new OutboxWithHistory(outbox, history);
     }
 
-    /** 준비 완료 시 ClaimHistory 생성 (Outbox 없음). */
-    public ClaimHistory createPrepareHistory(ExchangeClaim claim, String processedBy) {
+    /** 준비 완료 시 claim 상태 변경 + ClaimHistory 생성 (Outbox 없음). */
+    public ClaimHistory createPrepareBundle(ExchangeClaim claim, String processedBy) {
+        Instant now = timeProvider.now();
+        claim.startPreparing(processedBy, now);
         return historyFactory.createStatusChange(
                 ClaimType.EXCHANGE,
                 claim.idValue(),
@@ -108,12 +125,15 @@ public class ExchangeCommandFactory {
                 processedBy);
     }
 
-    /** 재배송 시 ExchangeOutbox + ClaimHistory 생성. */
+    /** 재배송 시 claim 상태 변경 + ExchangeOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createShipBundle(
             ExchangeClaim claim,
+            String linkedOrderId,
             String deliveryCompany,
             String trackingNumber,
             String processedBy) {
+        Instant now = timeProvider.now();
+        claim.startShipping(linkedOrderId, processedBy, now);
         ExchangeOutbox outbox = createShipOutbox(claim, deliveryCompany, trackingNumber);
         ClaimHistory history =
                 historyFactory.createStatusChange(
@@ -126,8 +146,10 @@ public class ExchangeCommandFactory {
         return new OutboxWithHistory(outbox, history);
     }
 
-    /** 완료 시 ClaimHistory 생성 (Outbox 없음). */
-    public ClaimHistory createCompleteHistory(ExchangeClaim claim, String processedBy) {
+    /** 완료 시 claim 상태 변경 + ClaimHistory 생성 (Outbox 없음). */
+    public ClaimHistory createCompleteBundle(ExchangeClaim claim, String processedBy) {
+        Instant now = timeProvider.now();
+        claim.complete(processedBy, now);
         return historyFactory.createStatusChange(
                 ClaimType.EXCHANGE,
                 claim.idValue(),
@@ -137,9 +159,11 @@ public class ExchangeCommandFactory {
                 processedBy);
     }
 
-    /** 거절 시 ExchangeOutbox + ClaimHistory 생성 (fromStatus 동적). */
-    public OutboxWithHistory createRejectBundle(
-            ExchangeClaim claim, String fromStatus, String processedBy) {
+    /** 거절 시 claim 상태 변경 + ExchangeOutbox + ClaimHistory 생성 (fromStatus 동적). */
+    public OutboxWithHistory createRejectBundle(ExchangeClaim claim, String processedBy) {
+        Instant now = timeProvider.now();
+        String fromStatus = claim.status().name();
+        claim.reject(processedBy, now);
         ExchangeOutbox outbox = createRejectOutbox(claim);
         ClaimHistory history =
                 historyFactory.createStatusChange(
@@ -152,9 +176,11 @@ public class ExchangeCommandFactory {
         return new OutboxWithHistory(outbox, history);
     }
 
-    /** 보류 시 ExchangeOutbox + ClaimHistory 생성. */
-    public OutboxWithHistory createHoldBundle(ExchangeClaim claim, String processedBy) {
+    /** 보류 시 claim 상태 변경 + ExchangeOutbox + ClaimHistory 생성. */
+    public OutboxWithHistory createHoldBundle(ExchangeClaim claim, String memo, String processedBy) {
         Instant now = timeProvider.now();
+        String fromStatus = claim.status().name();
+        claim.hold(memo, now);
         ExchangeOutbox outbox =
                 ExchangeOutbox.forNew(
                         claim.orderItemId(),
@@ -165,16 +191,17 @@ public class ExchangeCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.EXCHANGE,
                         claim.idValue(),
-                        claim.status().name(),
+                        fromStatus,
                         "HOLD",
                         processedBy,
                         processedBy);
         return new OutboxWithHistory(outbox, history);
     }
 
-    /** 보류 해제 시 ExchangeOutbox + ClaimHistory 생성. */
+    /** 보류 해제 시 claim 상태 변경 + ExchangeOutbox + ClaimHistory 생성. */
     public OutboxWithHistory createReleaseHoldBundle(ExchangeClaim claim, String processedBy) {
         Instant now = timeProvider.now();
+        claim.releaseHold(now);
         ExchangeOutbox outbox =
                 ExchangeOutbox.forNew(
                         claim.orderItemId(),
@@ -192,9 +219,11 @@ public class ExchangeCommandFactory {
         return new OutboxWithHistory(outbox, history);
     }
 
-    /** 환불 전환 시 ClaimHistory 생성 (fromStatus 동적, Outbox 없음). */
-    public ClaimHistory createConvertToRefundHistory(
-            ExchangeClaim claim, String fromStatus, String processedBy) {
+    /** 환불 전환 시 claim 상태 변경 + ClaimHistory 생성 (Outbox 없음). */
+    public ClaimHistory createConvertToRefundBundle(ExchangeClaim claim, String processedBy) {
+        Instant now = timeProvider.now();
+        String fromStatus = claim.status().name();
+        claim.cancel(now);
         return historyFactory.createStatusChange(
                 ClaimType.EXCHANGE,
                 claim.idValue(),
@@ -204,8 +233,19 @@ public class ExchangeCommandFactory {
                 processedBy);
     }
 
-    public Instant now() {
-        return timeProvider.now();
+    /** 아웃박스 상태 변경에 필요한 시간 컨텍스트 생성. */
+    public StatusChangeContext<Long> createOutboxChangeContext(Long outboxId) {
+        return new StatusChangeContext<>(outboxId, timeProvider.now());
+    }
+
+    /** PENDING 아웃박스 조회 기준 시간 계산. */
+    public Instant calculatePendingThreshold(int delaySeconds) {
+        return timeProvider.now().minusSeconds(delaySeconds);
+    }
+
+    /** 타임아웃 아웃박스 조회 기준 시간 계산. */
+    public Instant calculateTimeoutThreshold(long timeoutSeconds) {
+        return timeProvider.now().minusSeconds(timeoutSeconds);
     }
 
     private ExchangeOutbox createCollectOutbox(ExchangeClaim claim) {
@@ -240,7 +280,7 @@ public class ExchangeCommandFactory {
     /** ExchangeClaim + ClaimHistory 묶음 (교환 요청용). */
     public record ExchangeClaimWithHistory(ExchangeClaim claim, ClaimHistory history) {}
 
-    /** ExchangeOutbox + ClaimHistory 묶음 (수거/재배송/거절용). */
+    /** ExchangeOutbox + ClaimHistory 묶음 (수거/재배송/거절/보류용). */
     public record OutboxWithHistory(ExchangeOutbox outbox, ClaimHistory history) {}
 
     /** 교환 아웃박스 페이로드 빌더. */

@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.refund.dto.RefundBatchResult;
 import com.ryuqq.marketplace.application.refund.dto.command.CollectRefundBatchCommand;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceBundle;
 import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceFacade;
 import com.ryuqq.marketplace.application.refund.port.in.command.CollectRefundBatchUseCase;
 import com.ryuqq.marketplace.application.refund.validator.RefundBatchValidator;
@@ -41,7 +42,6 @@ public class CollectRefundBatchService implements CollectRefundBatchUseCase {
         RefundBatchResult batchResult = RefundBatchResult.create("COLLECT");
         for (RefundClaim claim : claims) {
             try {
-                claim.completeCollection(command.processedBy(), commandFactory.now());
                 OutboxWithHistory bundle =
                         commandFactory.createCollectBundle(claim, command.processedBy());
                 batchResult.addSuccess(claim, bundle.outbox(), bundle.history());
@@ -53,8 +53,9 @@ public class CollectRefundBatchService implements CollectRefundBatchUseCase {
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistClaimsWithOutboxesAndHistories(
-                    batchResult.claims(), batchResult.outboxes(), batchResult.histories());
+            persistenceFacade.persistAll(
+                    RefundPersistenceBundle.of(
+                            batchResult.claims(), batchResult.outboxes(), batchResult.histories()));
         }
 
         return batchResult.toBatchProcessingResult();

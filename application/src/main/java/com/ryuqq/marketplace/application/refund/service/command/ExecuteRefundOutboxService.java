@@ -1,14 +1,15 @@
 package com.ryuqq.marketplace.application.refund.service.command;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.refund.dto.command.ExecuteRefundOutboxCommand;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxReadManager;
 import com.ryuqq.marketplace.application.refund.port.in.command.ExecuteRefundOutboxUseCase;
 import com.ryuqq.marketplace.application.refund.port.out.client.RefundClaimSyncStrategy;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
-import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,14 +32,17 @@ public class ExecuteRefundOutboxService implements ExecuteRefundOutboxUseCase {
     private final RefundOutboxReadManager outboxReadManager;
     private final RefundOutboxCommandManager outboxCommandManager;
     private final RefundClaimSyncStrategy claimSyncStrategy;
+    private final RefundCommandFactory commandFactory;
 
     public ExecuteRefundOutboxService(
             RefundOutboxReadManager outboxReadManager,
             RefundOutboxCommandManager outboxCommandManager,
-            RefundClaimSyncStrategy claimSyncStrategy) {
+            RefundClaimSyncStrategy claimSyncStrategy,
+            RefundCommandFactory commandFactory) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
         this.claimSyncStrategy = claimSyncStrategy;
+        this.commandFactory = commandFactory;
     }
 
     @Override
@@ -71,8 +75,10 @@ public class ExecuteRefundOutboxService implements ExecuteRefundOutboxUseCase {
     }
 
     private void handleSuccess(RefundOutbox outbox) {
-        RefundOutbox fresh = outboxReadManager.getById(outbox.idValue());
-        fresh.complete(Instant.now());
+        StatusChangeContext<Long> ctx =
+                commandFactory.createOutboxChangeContext(outbox.idValue());
+        RefundOutbox fresh = outboxReadManager.getById(ctx.id());
+        fresh.complete(ctx.changedAt());
         outboxCommandManager.persist(fresh);
     }
 
@@ -82,8 +88,10 @@ public class ExecuteRefundOutboxService implements ExecuteRefundOutboxUseCase {
 
     private void handleDeferRetry(RefundOutbox outbox) {
         try {
-            RefundOutbox fresh = outboxReadManager.getById(outbox.idValue());
-            fresh.recoverFromTimeout(Instant.now());
+            StatusChangeContext<Long> ctx =
+                    commandFactory.createOutboxChangeContext(outbox.idValue());
+            RefundOutbox fresh = outboxReadManager.getById(ctx.id());
+            fresh.recoverFromTimeout(ctx.changedAt());
             outboxCommandManager.persist(fresh);
         } catch (Exception e) {
             log.warn("환불 Outbox deferRetry 실패: outboxId={}", outbox.idValue());
@@ -92,8 +100,10 @@ public class ExecuteRefundOutboxService implements ExecuteRefundOutboxUseCase {
 
     private void persistFailureWithReRead(Long outboxId, boolean retryable, String errorMessage) {
         try {
-            RefundOutbox fresh = outboxReadManager.getById(outboxId);
-            fresh.recordFailure(retryable, errorMessage, Instant.now());
+            StatusChangeContext<Long> ctx =
+                    commandFactory.createOutboxChangeContext(outboxId);
+            RefundOutbox fresh = outboxReadManager.getById(ctx.id());
+            fresh.recordFailure(retryable, errorMessage, ctx.changedAt());
             outboxCommandManager.persist(fresh);
         } catch (Exception e) {
             log.warn(

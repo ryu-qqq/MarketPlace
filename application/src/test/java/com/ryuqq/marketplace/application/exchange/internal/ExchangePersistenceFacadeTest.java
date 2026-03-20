@@ -35,18 +35,19 @@ class ExchangePersistenceFacadeTest {
     @Mock private OrderItemCommandManager orderItemCommandManager;
 
     @Nested
-    @DisplayName("persistClaimsWithHistories() - Claim + History 저장")
-    class PersistClaimsWithHistoriesTest {
+    @DisplayName("persistAll() - Bundle 기반 일괄 저장")
+    class PersistAllTest {
 
         @Test
-        @DisplayName("Claim 목록과 History 목록을 함께 저장한다")
-        void persistClaimsWithHistories_SavesClaimsAndHistories() {
+        @DisplayName("Claim + History만 있는 Bundle을 저장한다")
+        void persistAll_WithoutOutboxes_SavesClaimsAndHistories() {
             // given
             List<ExchangeClaim> claims = List.of(ExchangeFixtures.requestedExchangeClaim());
             List<ClaimHistory> histories = List.of(Mockito.mock(ClaimHistory.class));
+            ExchangePersistenceBundle bundle = ExchangePersistenceBundle.withoutOutboxes(claims, histories);
 
             // when
-            sut.persistClaimsWithHistories(claims, histories);
+            sut.persistAll(bundle);
 
             // then
             then(exchangeCommandManager).should().persistAll(claims);
@@ -54,22 +55,18 @@ class ExchangePersistenceFacadeTest {
             then(outboxCommandManager).shouldHaveNoInteractions();
             then(orderItemCommandManager).shouldHaveNoInteractions();
         }
-    }
-
-    @Nested
-    @DisplayName("persistClaimsWithOutboxesAndHistories() - Claim + Outbox + History 저장")
-    class PersistClaimsWithOutboxesAndHistoriesTest {
 
         @Test
-        @DisplayName("Claim, Outbox, History 목록을 함께 저장한다")
-        void persistClaimsWithOutboxesAndHistories_SavesAll() {
+        @DisplayName("Claim + Outbox + History Bundle을 저장한다")
+        void persistAll_WithOutboxes_SavesAll() {
             // given
             List<ExchangeClaim> claims = List.of(ExchangeFixtures.collectingExchangeClaim());
             List<ExchangeOutbox> outboxes = List.of(Mockito.mock(ExchangeOutbox.class));
             List<ClaimHistory> histories = List.of(Mockito.mock(ClaimHistory.class));
+            ExchangePersistenceBundle bundle = ExchangePersistenceBundle.of(claims, outboxes, histories);
 
             // when
-            sut.persistClaimsWithOutboxesAndHistories(claims, outboxes, histories);
+            sut.persistAll(bundle);
 
             // then
             then(exchangeCommandManager).should().persistAll(claims);
@@ -77,22 +74,18 @@ class ExchangePersistenceFacadeTest {
             then(historyCommandManager).should().persistAll(histories);
             then(orderItemCommandManager).shouldHaveNoInteractions();
         }
-    }
-
-    @Nested
-    @DisplayName("persistAllWithHistoriesAndOrderItems() - Claim + History + OrderItem 저장")
-    class PersistAllWithHistoriesAndOrderItemsTest {
 
         @Test
-        @DisplayName("Claim, History, OrderItem 목록을 함께 저장한다")
-        void persistAllWithHistoriesAndOrderItems_SavesAll() {
+        @DisplayName("Claim + History + OrderItem Bundle을 저장한다")
+        void persistAll_WithOrderItems_SavesAll() {
             // given
             List<ExchangeClaim> claims = List.of(ExchangeFixtures.newExchangeClaim());
             List<ClaimHistory> histories = List.of(Mockito.mock(ClaimHistory.class));
             List<OrderItem> orderItems = List.of(Mockito.mock(OrderItem.class));
+            ExchangePersistenceBundle bundle = ExchangePersistenceBundle.withOrderItems(claims, histories, orderItems);
 
             // when
-            sut.persistAllWithHistoriesAndOrderItems(claims, histories, orderItems);
+            sut.persistAll(bundle);
 
             // then
             then(exchangeCommandManager).should().persistAll(claims);
@@ -100,49 +93,21 @@ class ExchangePersistenceFacadeTest {
             then(orderItemCommandManager).should().persistAll(orderItems);
             then(outboxCommandManager).shouldHaveNoInteractions();
         }
-    }
-
-    @Nested
-    @DisplayName("persistClaimsWithHistoriesAndOrderItems() - Claim + History + OrderItem 업데이트 저장")
-    class PersistClaimsWithHistoriesAndOrderItemsTest {
 
         @Test
-        @DisplayName("완료 처리 시 Claim, History, OrderItem을 함께 저장한다")
-        void persistClaimsWithHistoriesAndOrderItems_SavesAll() {
+        @DisplayName("빈 Outbox/History/OrderItem은 Manager 호출을 건너뛴다")
+        void persistAll_EmptyCollections_SkipsEmptyManagers() {
             // given
-            List<ExchangeClaim> claims = List.of(ExchangeFixtures.shippingExchangeClaim());
-            List<ClaimHistory> histories = List.of(Mockito.mock(ClaimHistory.class));
-            List<OrderItem> orderItems = List.of(Mockito.mock(OrderItem.class));
+            List<ExchangeClaim> claims = List.of(ExchangeFixtures.requestedExchangeClaim());
+            ExchangePersistenceBundle bundle = new ExchangePersistenceBundle(claims, List.of(), List.of(), List.of());
 
             // when
-            sut.persistClaimsWithHistoriesAndOrderItems(claims, histories, orderItems);
+            sut.persistAll(bundle);
 
             // then
             then(exchangeCommandManager).should().persistAll(claims);
-            then(historyCommandManager).should().persistAll(histories);
-            then(orderItemCommandManager).should().persistAll(orderItems);
             then(outboxCommandManager).shouldHaveNoInteractions();
-        }
-    }
-
-    @Nested
-    @DisplayName("persistAllWithHistories() - 신규 Claim + History 저장")
-    class PersistAllWithHistoriesTest {
-
-        @Test
-        @DisplayName("신규 Claim과 History를 함께 저장한다")
-        void persistAllWithHistories_SavesClaimsAndHistories() {
-            // given
-            List<ExchangeClaim> claims = List.of(ExchangeFixtures.newExchangeClaim());
-            List<ClaimHistory> histories = List.of(Mockito.mock(ClaimHistory.class));
-
-            // when
-            sut.persistAllWithHistories(claims, histories);
-
-            // then
-            then(exchangeCommandManager).should().persistAll(claims);
-            then(historyCommandManager).should().persistAll(histories);
-            then(outboxCommandManager).shouldHaveNoInteractions();
+            then(historyCommandManager).shouldHaveNoInteractions();
             then(orderItemCommandManager).shouldHaveNoInteractions();
         }
     }

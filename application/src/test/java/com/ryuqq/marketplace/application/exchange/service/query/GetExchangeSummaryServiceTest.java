@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.then;
 import com.ryuqq.marketplace.application.exchange.ExchangeQueryFixtures;
 import com.ryuqq.marketplace.application.exchange.assembler.ExchangeAssembler;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeSummaryResult;
-import com.ryuqq.marketplace.application.exchange.port.out.query.ExchangeQueryPort;
+import com.ryuqq.marketplace.application.exchange.manager.ExchangeReadManager;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ class GetExchangeSummaryServiceTest {
 
     @InjectMocks private GetExchangeSummaryService sut;
 
-    @Mock private ExchangeQueryPort exchangeQueryPort;
+    @Mock private ExchangeReadManager exchangeReadManager;
     @Mock private ExchangeAssembler assembler;
 
     @Nested
@@ -44,7 +44,7 @@ class GetExchangeSummaryServiceTest {
                             ExchangeStatus.COMPLETED, 10L);
             ExchangeSummaryResult expectedResult = ExchangeQueryFixtures.exchangeSummaryResult();
 
-            given(exchangeQueryPort.countByStatus()).willReturn(statusCounts);
+            given(exchangeReadManager.countByStatus()).willReturn(statusCounts);
             given(assembler.toSummaryResult(statusCounts)).willReturn(expectedResult);
 
             // when
@@ -53,7 +53,7 @@ class GetExchangeSummaryServiceTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result).isEqualTo(expectedResult);
-            then(exchangeQueryPort).should().countByStatus();
+            then(exchangeReadManager).should().countByStatus();
             then(assembler).should().toSummaryResult(statusCounts);
         }
 
@@ -64,7 +64,7 @@ class GetExchangeSummaryServiceTest {
             Map<ExchangeStatus, Long> emptyStatusCounts = Map.of();
             ExchangeSummaryResult emptyResult = ExchangeQueryFixtures.emptySummaryResult();
 
-            given(exchangeQueryPort.countByStatus()).willReturn(emptyStatusCounts);
+            given(exchangeReadManager.countByStatus()).willReturn(emptyStatusCounts);
             given(assembler.toSummaryResult(emptyStatusCounts)).willReturn(emptyResult);
 
             // when

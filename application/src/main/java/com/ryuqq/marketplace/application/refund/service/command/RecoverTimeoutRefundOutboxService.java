@@ -1,12 +1,14 @@
 package com.ryuqq.marketplace.application.refund.service.command;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
-import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.refund.dto.command.RecoverTimeoutRefundOutboxCommand;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxReadManager;
 import com.ryuqq.marketplace.application.refund.port.in.command.RecoverTimeoutRefundOutboxUseCase;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,22 +23,24 @@ public class RecoverTimeoutRefundOutboxService implements RecoverTimeoutRefundOu
 
     private final RefundOutboxReadManager outboxReadManager;
     private final RefundOutboxCommandManager outboxCommandManager;
-    private final TimeProvider timeProvider;
+    private final RefundCommandFactory commandFactory;
 
     public RecoverTimeoutRefundOutboxService(
             RefundOutboxReadManager outboxReadManager,
             RefundOutboxCommandManager outboxCommandManager,
-            TimeProvider timeProvider) {
+            RefundCommandFactory commandFactory) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
-        this.timeProvider = timeProvider;
+        this.commandFactory = commandFactory;
     }
 
     @Override
     public SchedulerBatchProcessingResult execute(RecoverTimeoutRefundOutboxCommand command) {
+        Instant timeoutThreshold =
+                commandFactory.calculateTimeoutThreshold(command.timeoutSeconds());
         List<RefundOutbox> outboxes =
                 outboxReadManager.findProcessingTimeoutOutboxes(
-                        command.timeoutThreshold(), command.batchSize());
+                        timeoutThreshold, command.batchSize());
 
         int total = outboxes.size();
         int success = 0;
@@ -44,7 +48,9 @@ public class RecoverTimeoutRefundOutboxService implements RecoverTimeoutRefundOu
 
         for (RefundOutbox outbox : outboxes) {
             try {
-                outbox.recoverFromTimeout(timeProvider.now());
+                StatusChangeContext<Long> ctx =
+                        commandFactory.createOutboxChangeContext(outbox.idValue());
+                outbox.recoverFromTimeout(ctx.changedAt());
                 outboxCommandManager.persist(outbox);
                 success++;
             } catch (Exception e) {

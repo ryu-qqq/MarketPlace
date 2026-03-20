@@ -1,11 +1,13 @@
 package com.ryuqq.marketplace.application.exchange.service.command;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand.ExchangeRequestItem;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory.ExchangeClaimWithHistory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.RequestExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
@@ -62,11 +64,13 @@ public class RequestExchangeBatchService implements RequestExchangeBatchUseCase 
                                 item, command.requestedBy(), command.sellerId());
                 batchResult.addSuccess(bundle.claim(), bundle.history());
 
+                StatusChangeContext<OrderItemId> ctx =
+                        commandFactory.createRequestOrderItemContext(item.orderItemId());
                 Optional<OrderItem> orderItem =
-                        orderItemReadManager.findById(OrderItemId.of(item.orderItemId()));
+                        orderItemReadManager.findById(ctx.id());
                 orderItem.ifPresent(
                         oi -> {
-                            oi.requestReturn(command.requestedBy(), "교환 요청", commandFactory.now());
+                            oi.requestReturn(command.requestedBy(), "교환 요청", ctx.changedAt());
                             returnRequestedItems.add(oi);
                         });
             } catch (Exception e) {
@@ -79,8 +83,9 @@ public class RequestExchangeBatchService implements RequestExchangeBatchUseCase 
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistAllWithHistoriesAndOrderItems(
-                    batchResult.claims(), batchResult.histories(), returnRequestedItems);
+            persistenceFacade.persistAll(
+                    ExchangePersistenceBundle.withOrderItems(
+                            batchResult.claims(), batchResult.histories(), returnRequestedItems));
         }
 
         return batchResult.toBatchProcessingResult();

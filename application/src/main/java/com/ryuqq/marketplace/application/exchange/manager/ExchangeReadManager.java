@@ -5,8 +5,10 @@ import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
 import com.ryuqq.marketplace.domain.exchange.exception.ExchangeNotFoundException;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimId;
 import com.ryuqq.marketplace.domain.exchange.query.ExchangeSearchCriteria;
+import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,5 +46,10 @@ public class ExchangeReadManager {
     @Transactional(readOnly = true)
     public long countByCriteria(ExchangeSearchCriteria criteria) {
         return queryPort.countByCriteria(criteria);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<ExchangeStatus, Long> countByStatus() {
+        return queryPort.countByStatus();
     }
 }

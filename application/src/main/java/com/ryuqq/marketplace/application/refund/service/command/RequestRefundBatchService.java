@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.refund.service.command;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.refund.dto.RefundBatchResult;
@@ -7,6 +8,7 @@ import com.ryuqq.marketplace.application.refund.dto.command.RequestRefundBatchCo
 import com.ryuqq.marketplace.application.refund.dto.command.RequestRefundBatchCommand.RefundRequestItem;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory.RefundBundle;
+import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceBundle;
 import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceFacade;
 import com.ryuqq.marketplace.application.refund.port.in.command.RequestRefundBatchUseCase;
 import com.ryuqq.marketplace.application.refund.validator.RefundBatchValidator;
@@ -70,8 +72,11 @@ public class RequestRefundBatchService implements RequestRefundBatchUseCase {
                                     .canTransitionTo(
                                             com.ryuqq.marketplace.domain.order.vo.OrderItemStatus
                                                     .RETURN_REQUESTED)) {
+                                StatusChangeContext<OrderItemId> ctx =
+                                        commandFactory.createRequestOrderItemContext(
+                                                item.orderItemId());
                                 oi.requestReturn(
-                                        command.requestedBy(), "환불 요청", commandFactory.now());
+                                        command.requestedBy(), "환불 요청", ctx.changedAt());
                                 returnRequestedItems.add(oi);
                             }
                         });
@@ -85,11 +90,12 @@ public class RequestRefundBatchService implements RequestRefundBatchUseCase {
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistAllWithOutboxesAndHistoriesAndOrderItems(
-                    batchResult.claims(),
-                    batchResult.outboxes(),
-                    batchResult.histories(),
-                    returnRequestedItems);
+            persistenceFacade.persistAll(
+                    RefundPersistenceBundle.withOrderItems(
+                            batchResult.claims(),
+                            batchResult.outboxes(),
+                            batchResult.histories(),
+                            returnRequestedItems));
         }
 
         return batchResult.toBatchProcessingResult();

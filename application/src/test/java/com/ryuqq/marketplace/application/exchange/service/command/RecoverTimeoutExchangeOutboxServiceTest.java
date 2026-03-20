@@ -7,10 +7,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
-import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.exchange.ExchangeCommandFixtures;
 import com.ryuqq.marketplace.application.exchange.dto.command.RecoverTimeoutExchangeOutboxCommand;
+import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxCommandManager;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxReadManager;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
@@ -35,7 +36,7 @@ class RecoverTimeoutExchangeOutboxServiceTest {
 
     @Mock private ExchangeOutboxReadManager outboxReadManager;
     @Mock private ExchangeOutboxCommandManager outboxCommandManager;
-    @Mock private TimeProvider timeProvider;
+    @Mock private ExchangeCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - 타임아웃 교환 아웃박스 복구")
@@ -49,10 +50,16 @@ class RecoverTimeoutExchangeOutboxServiceTest {
                     ExchangeCommandFixtures.recoverTimeoutOutboxCommand();
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             Instant now = Instant.now();
+            Instant threshold = now.minusSeconds(command.timeoutSeconds());
+            Long outboxId = 1L;
 
-            given(outboxReadManager.findProcessingTimeoutOutboxes(any(), anyInt()))
+            given(outbox.idValue()).willReturn(outboxId);
+            given(commandFactory.calculateTimeoutThreshold(command.timeoutSeconds()))
+                    .willReturn(threshold);
+            given(outboxReadManager.findProcessingTimeoutOutboxes(threshold, command.batchSize()))
                     .willReturn(List.of(outbox));
-            given(timeProvider.now()).willReturn(now);
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
 
             // when
             SchedulerBatchProcessingResult result = sut.execute(command);
@@ -72,10 +79,16 @@ class RecoverTimeoutExchangeOutboxServiceTest {
                     ExchangeCommandFixtures.recoverTimeoutOutboxCommand();
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             Instant now = Instant.now();
+            Instant threshold = now.minusSeconds(command.timeoutSeconds());
+            Long outboxId = 1L;
 
-            given(outboxReadManager.findProcessingTimeoutOutboxes(any(), anyInt()))
+            given(outbox.idValue()).willReturn(outboxId);
+            given(commandFactory.calculateTimeoutThreshold(command.timeoutSeconds()))
+                    .willReturn(threshold);
+            given(outboxReadManager.findProcessingTimeoutOutboxes(threshold, command.batchSize()))
                     .willReturn(List.of(outbox));
-            given(timeProvider.now()).willReturn(now);
+            given(commandFactory.createOutboxChangeContext(outboxId))
+                    .willReturn(new StatusChangeContext<>(outboxId, now));
             willThrow(new RuntimeException("복구 실패")).given(outbox).recoverFromTimeout(now);
 
             // when
@@ -94,8 +107,11 @@ class RecoverTimeoutExchangeOutboxServiceTest {
             // given
             RecoverTimeoutExchangeOutboxCommand command =
                     ExchangeCommandFixtures.recoverTimeoutOutboxCommand();
+            Instant threshold = Instant.now().minusSeconds(command.timeoutSeconds());
 
-            given(outboxReadManager.findProcessingTimeoutOutboxes(any(), anyInt()))
+            given(commandFactory.calculateTimeoutThreshold(command.timeoutSeconds()))
+                    .willReturn(threshold);
+            given(outboxReadManager.findProcessingTimeoutOutboxes(threshold, command.batchSize()))
                     .willReturn(List.of());
 
             // when

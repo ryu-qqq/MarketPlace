@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult
 import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.ApproveExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.ApproveExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
@@ -45,9 +46,8 @@ public class ApproveExchangeBatchService implements ApproveExchangeBatchUseCase 
         ExchangeBatchResult batchResult = ExchangeBatchResult.create("APPROVE");
         for (ExchangeClaim claim : claims) {
             try {
-                claim.startCollecting(command.processedBy(), commandFactory.now());
                 ClaimHistory history =
-                        commandFactory.createApproveHistory(claim, command.processedBy());
+                        commandFactory.createApproveBundle(claim, command.processedBy());
                 batchResult.addSuccess(claim, history);
             } catch (Exception e) {
                 log.warn("교환 승인 실패: exchangeClaimId={}, error={}", claim.idValue(), e.getMessage());
@@ -56,8 +56,9 @@ public class ApproveExchangeBatchService implements ApproveExchangeBatchUseCase 
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistClaimsWithHistories(
-                    batchResult.claims(), batchResult.histories());
+            persistenceFacade.persistAll(
+                    ExchangePersistenceBundle.withoutOutboxes(
+                            batchResult.claims(), batchResult.histories()));
         }
 
         return batchResult.toBatchProcessingResult();

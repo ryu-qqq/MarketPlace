@@ -2,11 +2,12 @@ package com.ryuqq.marketplace.application.exchange.internal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
+import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxCommandManager;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxReadManager;
 import com.ryuqq.marketplace.application.exchange.port.out.client.ExchangeOutboxPublishClient;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
-import java.time.Instant;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,16 +29,19 @@ public class ExchangeOutboxRelayProcessor {
     private final ExchangeOutboxReadManager outboxReadManager;
     private final ExchangeOutboxPublishClient publishClient;
     private final ObjectMapper objectMapper;
+    private final ExchangeCommandFactory commandFactory;
 
     public ExchangeOutboxRelayProcessor(
             ExchangeOutboxCommandManager outboxCommandManager,
             ExchangeOutboxReadManager outboxReadManager,
             ExchangeOutboxPublishClient publishClient,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            ExchangeCommandFactory commandFactory) {
         this.outboxCommandManager = outboxCommandManager;
         this.outboxReadManager = outboxReadManager;
         this.publishClient = publishClient;
         this.objectMapper = objectMapper;
+        this.commandFactory = commandFactory;
     }
 
     /**
@@ -49,9 +53,10 @@ public class ExchangeOutboxRelayProcessor {
      * @return 성공 여부
      */
     public boolean relay(ExchangeOutbox outbox) {
-        Instant now = Instant.now();
+        StatusChangeContext<Long> ctx =
+                commandFactory.createOutboxChangeContext(outbox.idValue());
         try {
-            outbox.startProcessing(now);
+            outbox.startProcessing(ctx.changedAt());
             outboxCommandManager.persist(outbox);
 
             String messageBody = buildMessageBody(outbox);
@@ -71,8 +76,10 @@ public class ExchangeOutboxRelayProcessor {
                     e.getMessage(),
                     e);
             try {
-                ExchangeOutbox freshOutbox = outboxReadManager.getById(outbox.idValue());
-                freshOutbox.recordFailure(true, "Relay 실패: " + e.getMessage(), Instant.now());
+                StatusChangeContext<Long> failCtx =
+                        commandFactory.createOutboxChangeContext(outbox.idValue());
+                ExchangeOutbox freshOutbox = outboxReadManager.getById(failCtx.id());
+                freshOutbox.recordFailure(true, "Relay 실패: " + e.getMessage(), failCtx.changedAt());
                 outboxCommandManager.persist(freshOutbox);
             } catch (Exception reReadEx) {
                 log.warn(

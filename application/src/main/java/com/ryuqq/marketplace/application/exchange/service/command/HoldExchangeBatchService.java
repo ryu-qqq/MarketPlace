@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.HoldExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.HoldExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
@@ -38,16 +39,15 @@ public class HoldExchangeBatchService implements HoldExchangeBatchUseCase {
         List<ExchangeClaim> claims =
                 validator.validateAndGet(command.exchangeClaimIds(), command.sellerId());
 
-        ExchangeBatchResult batchResult = ExchangeBatchResult.create(command.operationName());
+        ExchangeBatchResult batchResult =
+                ExchangeBatchResult.create(command.isHold() ? "HOLD" : "RELEASE_HOLD");
 
         for (ExchangeClaim claim : claims) {
             try {
                 OutboxWithHistory bundle;
                 if (command.isHold()) {
-                    claim.hold(command.memo(), commandFactory.now());
-                    bundle = commandFactory.createHoldBundle(claim, command.processedBy());
+                    bundle = commandFactory.createHoldBundle(claim, command.memo(), command.processedBy());
                 } else {
-                    claim.releaseHold(commandFactory.now());
                     bundle = commandFactory.createReleaseHoldBundle(claim, command.processedBy());
                 }
                 batchResult.addSuccess(claim, bundle.outbox(), bundle.history());
@@ -62,8 +62,9 @@ public class HoldExchangeBatchService implements HoldExchangeBatchUseCase {
         }
 
         if (batchResult.hasSuccessItems()) {
-            persistenceFacade.persistClaimsWithOutboxesAndHistories(
-                    batchResult.claims(), batchResult.outboxes(), batchResult.histories());
+            persistenceFacade.persistAll(
+                    ExchangePersistenceBundle.of(
+                            batchResult.claims(), batchResult.outboxes(), batchResult.histories()));
         }
 
         return batchResult.toBatchProcessingResult();
