@@ -1,9 +1,9 @@
 package com.ryuqq.marketplace.application.seller.service.query;
 
 import com.ryuqq.marketplace.application.seller.assembler.SellerCompositeAssembler;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerAdminCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerFullCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerPolicyCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerFullCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPolicyCompositeResult;
 import com.ryuqq.marketplace.application.seller.manager.SellerCompositionReadManager;
 import com.ryuqq.marketplace.application.seller.port.in.query.GetSellerForAdminUseCase;
 import org.springframework.stereotype.Service;

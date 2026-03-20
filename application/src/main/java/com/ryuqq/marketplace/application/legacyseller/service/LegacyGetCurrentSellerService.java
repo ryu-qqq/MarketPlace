@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.application.legacyseller.service;
 
 import com.ryuqq.marketplace.application.legacyseller.dto.response.LegacySellerResult;
 import com.ryuqq.marketplace.application.legacyseller.port.in.LegacyGetCurrentSellerUseCase;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
 import com.ryuqq.marketplace.application.seller.manager.SellerCompositionReadManager;
 import org.springframework.stereotype.Service;
 

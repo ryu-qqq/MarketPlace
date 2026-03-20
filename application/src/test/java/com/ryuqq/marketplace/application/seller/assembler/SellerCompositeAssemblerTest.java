@@ -2,9 +2,9 @@ package com.ryuqq.marketplace.application.seller.assembler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerAdminCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerFullCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerPolicyCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerFullCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPolicyCompositeResult;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;

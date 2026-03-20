@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.application.seller.dto.composite;
+package com.ryuqq.marketplace.application.seller.dto.response;
 
 import java.time.Instant;
 
