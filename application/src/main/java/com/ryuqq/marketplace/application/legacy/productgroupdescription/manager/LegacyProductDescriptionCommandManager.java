@@ -1,13 +1,14 @@
 package com.ryuqq.marketplace.application.legacy.productgroupdescription.manager;
 
 import com.ryuqq.marketplace.application.legacy.productgroupdescription.port.out.command.LegacyProductDescriptionCommandPort;
+import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
 import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyProductDescription;
+import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-/** 세토프 상세설명 Command Manager. */
+/** 레거시 상세설명 Command Manager. */
 @Component
 public class LegacyProductDescriptionCommandManager {
 
@@ -22,9 +23,13 @@ public class LegacyProductDescriptionCommandManager {
         commandPort.persist(productGroupId, description);
     }
 
-    /** content/cdnPath/publishStatus를 포함한 상세설명 저장. */
     @Transactional
     public void persistDescription(LegacyProductGroupDescription description) {
         commandPort.persistDescription(description);
+    }
+
+    @Transactional
+    public void update(UpdateProductGroupDescriptionCommand command) {
+        commandPort.update(command);
     }
 }

@@ -39,7 +39,7 @@ public class LegacyProductGroupImageCommandController {
             @PathVariable long productGroupId,
             @Valid @RequestBody List<LegacyCreateProductImageRequest> request) {
         legacyProductUpdateImagesUseCase.execute(
-                legacyImageCommandApiMapper.toLegacyUpdateImagesCommand(productGroupId, request));
+                legacyImageCommandApiMapper.toImagesCommand(productGroupId, request));
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 }

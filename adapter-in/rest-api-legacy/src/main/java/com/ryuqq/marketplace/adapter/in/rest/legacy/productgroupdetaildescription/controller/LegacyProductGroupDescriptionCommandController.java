@@ -38,8 +38,7 @@ public class LegacyProductGroupDescriptionCommandController {
             @PathVariable long productGroupId,
             @Valid @RequestBody LegacyUpdateProductDescriptionRequest request) {
         legacyProductUpdateDescriptionUseCase.execute(
-                legacyDescriptionCommandApiMapper.toLegacyUpdateDescriptionCommand(
-                        productGroupId, request));
+                legacyDescriptionCommandApiMapper.toDescriptionCommand(productGroupId, request));
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 }
