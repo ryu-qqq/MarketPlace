@@ -1,12 +1,12 @@
 package com.ryuqq.marketplace.application.legacy.notice.manager;
 
 import com.ryuqq.marketplace.application.legacy.notice.port.out.command.LegacyProductNoticeCommandPort;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
+import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-/** 세토프 고시정보 Command Manager. */
+/** 레거시 상품 고시정보 저장 매니저. */
 @Component
 public class LegacyProductNoticeCommandManager {
 
@@ -17,7 +17,7 @@ public class LegacyProductNoticeCommandManager {
     }
 
     @Transactional
-    public void persist(LegacyProductGroupId productGroupId, LegacyProductNotice notice) {
-        commandPort.persist(productGroupId, notice);
+    public void update(UpdateProductNoticeCommand command, NoticeCategory noticeCategory) {
+        commandPort.update(command, noticeCategory);
     }
 }
