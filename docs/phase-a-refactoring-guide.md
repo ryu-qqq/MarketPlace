@@ -84,6 +84,18 @@ long sellerId = LegacyAuthContextHolder.getSellerId();
 String email = LegacyAuthContextHolder.getEmail();
 ```
 
+### 6. 레거시 API는 반드시 luxurydb에 저장 — 표준 UseCase 직접 호출 금지
+```java
+// ✅ 올바름 — 레거시 UseCase 호출 (luxurydb에 저장)
+private final LegacyProductUpdateNoticeUseCase legacyUseCase;
+legacyUseCase.execute(standardCommand);
+
+// ❌ 금지 — 표준 UseCase 호출 (새 스키마에 저장됨!)
+private final UpdateProductNoticeUseCase useCase;
+useCase.execute(standardCommand);
+```
+레거시 UseCase가 **표준 커맨드를 입력으로 받되**, 내부에서 luxurydb에 저장 + ConversionOutbox 생성.
+
 ---
 
 ## 미래 전환 시나리오

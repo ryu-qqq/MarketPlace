@@ -16,7 +16,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-/** 세토프 어드민용 레거시 고시정보 수정 API 컨트롤러. */
+/**
+ * 세토프 어드민용 레거시 고시정보 수정 API 컨트롤러.
+ *
+ * <p>레거시 flat 필드를 레거시 커맨드로 변환하여 luxurydb에 저장합니다.
+ * 새 스키마 전환 시 LegacyResolveNoticeFieldsUseCase + 표준 커맨드 조립으로 변경 예정.
+ */
 @Tag(name = "세토프 어드민용 레거시 - 고시정보", description = "세토프 어드민용 레거시 고시정보 엔드포인트.")
 @RestController
 public class LegacyNoticeCommandController {
