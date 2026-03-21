@@ -212,6 +212,10 @@ data "aws_ssm_parameter" "legacy_db_password" {
   name = "/${var.project_name}/stage/legacy-db-password"
 }
 
+data "aws_ssm_parameter" "sellic_api_key" {
+  name = "/${var.project_name}/sellic/api-key"
+}
+
 # ========================================
 # Locals
 # ========================================

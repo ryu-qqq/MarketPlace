@@ -418,6 +418,9 @@ module "ecs_service" {
     { name = "SENTRY_DSN", value = local.sentry_dsn },
     # Setof Commerce
     { name = "SETOF_COMMERCE_BASE_URL", value = "http://setof-commerce-web-api-admin-stage.connectly.local:8081" },
+    # Sellic Commerce
+    { name = "SELLIC_COMMERCE_BASE_URL", value = "http://api.sellic.co.kr" },
+    { name = "SELLIC_COMMERCE_CUSTOMER_ID", value = "1012" },
     # Naver Commerce
     { name = "NAVER_COMMERCE_CLIENT_ID", value = data.aws_ssm_parameter.naver_commerce_client_id.value },
     # Legacy DB
@@ -434,7 +437,8 @@ module "ecs_service" {
     { name = "NAVER_COMMERCE_CLIENT_SECRET", valueFrom = data.aws_ssm_parameter.naver_commerce_client_secret.arn },
     { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn },
     { name = "ANTHROPIC_API_KEY", valueFrom = data.aws_ssm_parameter.anthropic_api_key.arn },
-    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
+    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn },
+    { name = "SELLIC_COMMERCE_API_KEY", valueFrom = data.aws_ssm_parameter.sellic_api_key.arn }
   ]
 
   # Health Check

@@ -25,8 +25,6 @@ spring:
       - classpath:rest-api.yml
       - classpath:persistence.yml
       - classpath:persistence-prod.yml
-      - optional:classpath:persistence-legacy.yml
-      - optional:classpath:persistence-legacy-prod.yml
       - classpath:redis.yml
       - classpath:redis-prod.yml
       - classpath:authhub.yml
@@ -35,6 +33,7 @@ spring:
       - classpath:fileflow-prod.yml
       - classpath:naver-commerce.yml
       - classpath:setof-commerce.yml
+      - optional:classpath:sellic-commerce.yml
 
 # ===============================================
 # Sentry Configuration (Production Only)

@@ -11,6 +11,7 @@ include 'application'
 // ========================================
 // Inbound Adapters (Driving)
 include 'adapter-in:rest-api'
+include 'adapter-in:rest-api-legacy'
 include 'adapter-in:scheduler'
 include 'adapter-in:sqs-consumer'
 
@@ -25,11 +26,13 @@ include 'adapter-out:client:sqs-client'
 include 'adapter-out:client:spring-ai-client'
 include 'adapter-out:client:naver-commerce-client'
 include 'adapter-out:client:setof-commerce-client'
+include 'adapter-out:client:sellic-commerce-client'
 
 // ========================================
 // Bootstrap Modules (Runnable Applications)
 // ========================================
 include 'bootstrap:bootstrap-web-api'
+include 'bootstrap:bootstrap-legacy-api'
 include 'bootstrap:bootstrap-scheduler'
 include 'bootstrap:bootstrap-worker'
 
@@ -45,6 +48,7 @@ project(':domain').projectDir = file('domain')
 project(':application').projectDir = file('application')
 
 project(':adapter-in:rest-api').projectDir = file('adapter-in/rest-api')
+project(':adapter-in:rest-api-legacy').projectDir = file('adapter-in/rest-api-legacy')
 project(':adapter-in:scheduler').projectDir = file('adapter-in/scheduler')
 project(':adapter-in:sqs-consumer').projectDir = file('adapter-in/sqs-consumer')
 project(':adapter-out:persistence-mysql').projectDir = file('adapter-out/persistence-mysql')
@@ -59,6 +63,7 @@ project(':adapter-out:client:naver-commerce-client').projectDir = file('adapter-
 project(':adapter-out:client:setof-commerce-client').projectDir = file('adapter-out/client/setof-commerce-client')
 
 project(':bootstrap:bootstrap-web-api').projectDir = file('bootstrap/bootstrap-web-api')
+project(':bootstrap:bootstrap-legacy-api').projectDir = file('bootstrap/bootstrap-legacy-api')
 project(':bootstrap:bootstrap-scheduler').projectDir = file('bootstrap/bootstrap-scheduler')
 project(':bootstrap:bootstrap-worker').projectDir = file('bootstrap/bootstrap-worker')
 

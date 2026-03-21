@@ -242,8 +242,19 @@ scheduler:
         # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
         timeout-seconds: 300
 
-    # LegacyConversion 벌크 시딩 스케줄러
-    legacy-conversion-seeder:
+    # LegacyOrderConversion 주문 변환 스케줄러
+    legacy-order-conversion:
+      enabled: false
+      cron: "0 */5 * * * *"
+      timezone: Asia/Seoul
+
+    # LegacyOrderConversion 타임아웃 복구
+    legacy-order-conversion-timeout:
+      cron: "0 */10 * * * *"
+      timezone: Asia/Seoul
+
+    # LegacyOrderConversion 벌크 시딩 스케줄러
+    legacy-order-conversion-seeder:
       enabled: false
       # Cron: 30분마다
       cron: "0 */30 * * * *"
@@ -348,6 +359,31 @@ scheduler:
         batch-size: 50
         # 타임아웃 기준 (PROCESSING 상태에서 N초 경과 시 복구)
         timeout-seconds: 300
+
+    # QnaOutbox 처리 스케줄러 (QnA 답변 외부 동기화)
+    qna-outbox:
+      # PENDING 처리 (SQS 발행)
+      process-pending:
+        enabled: false
+        cron: "0 */3 * * * *"
+        timezone: Asia/Seoul
+        batch-size: 100
+        delay-seconds: 30
+
+      # 타임아웃 복구
+      recover-timeout:
+        enabled: false
+        cron: "0 */10 * * * *"
+        timezone: Asia/Seoul
+        batch-size: 50
+        timeout-seconds: 300
+
+    # InboundQna 폴링 스케줄러 (외부 QnA 수집)
+    inbound-qna-polling:
+      enabled: false
+      cron: "0 */5 * * * *"
+      timezone: Asia/Seoul
+      batch-size: 100
 
     # SellerAdminEmailOutbox 처리 스케줄러
     seller-admin-email-outbox:

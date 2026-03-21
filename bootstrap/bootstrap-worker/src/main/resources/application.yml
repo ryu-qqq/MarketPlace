@@ -32,6 +32,7 @@ spring:
       - classpath:authhub.yml
       - optional:classpath:naver-commerce.yml
       - optional:classpath:setof-commerce.yml
+      - optional:classpath:sellic-commerce.yml
       - classpath:spring-ai-client.yml
       - optional:classpath:spring-ai-client-${spring.profiles.active:local}.yml
 

@@ -35,8 +35,6 @@ spring:
       - classpath:rest-api.yml
       - classpath:persistence.yml
       - classpath:persistence-stage.yml
-      - optional:classpath:persistence-legacy.yml
-      - optional:classpath:persistence-legacy-stage.yml
       - classpath:redis.yml
       - classpath:redis-stage.yml
       - classpath:authhub.yml
@@ -45,6 +43,7 @@ spring:
       - classpath:fileflow-stage.yml
       - classpath:naver-commerce.yml
       - classpath:setof-commerce.yml
+      - optional:classpath:sellic-commerce.yml
 
 management:
   endpoints:

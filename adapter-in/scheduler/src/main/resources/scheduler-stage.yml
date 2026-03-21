@@ -112,16 +112,16 @@ scheduler:
         batch-size: 50
         timeout-seconds: 180
 
-    legacy-conversion:
+    legacy-order-conversion:
       # Stage: 운영과 동일 (5초마다)
       enabled: true
       cron: "*/5 * * * * *"
 
-    legacy-conversion-timeout:
+    legacy-order-conversion-timeout:
       # Stage: 운영과 동일 (1분마다)
       cron: "0 */1 * * * *"
 
-    legacy-conversion-seeder:
+    legacy-order-conversion-seeder:
       # Stage: 운영과 동일 (전체 시딩)
       enabled: true
       cron: "0 */1 * * * *"
@@ -230,3 +230,24 @@ scheduler:
         timezone: "Asia/Seoul"
         batch-size: 20
         timeout-seconds: 60
+
+    qna-outbox:
+      process-pending:
+        enabled: true
+        cron: "*/5 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 50
+        delay-seconds: 5
+
+      recover-timeout:
+        enabled: true
+        cron: "*/30 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 20
+        timeout-seconds: 60
+
+    inbound-qna-polling:
+      enabled: true
+      cron: "*/30 * * * * *"
+      timezone: "Asia/Seoul"
+      batch-size: 100

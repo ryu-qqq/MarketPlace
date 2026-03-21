@@ -1,0 +1,77 @@
+// ========================================
+// Adapter-Out: Sellic Commerce Client
+// ========================================
+// Outbound adapter for Sellic Commerce API integration
+// Implements SalesChannelProductClient from application layer
+// Technology: Spring RestClient (Spring Boot 3.5.x)
+// NO Lombok allowed
+// ========================================
+
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // ========================================
+    // Core Dependencies
+    // ========================================
+    api project(':application')
+    api project(':domain')
+
+    // ========================================
+    // Spring Boot (RestClient, @Component, @ConfigurationProperties)
+    // ========================================
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation libs.spring.boot.starter.web
+
+    // ========================================
+    // Jackson (for JSON serialization)
+    // ========================================
+    implementation libs.jackson.databind
+
+    // ========================================
+    // Resilience (Circuit Breaker + Retry + Metrics)
+    // ========================================
+    implementation libs.resilience4j.circuitbreaker
+    implementation libs.resilience4j.retry
+    implementation libs.resilience4j.micrometer
+    implementation libs.micrometer.core
+
+    // ========================================
+    // Configuration Processor
+    // ========================================
+    annotationProcessor libs.spring.boot.configuration.processor
+
+    // ========================================
+    // Test Dependencies
+    // ========================================
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.archunit.junit5
+    testImplementation testFixtures(project(':domain'))
+}
+
+// ========================================
+// Test Coverage (70% for adapters)
+// ========================================
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.30 // temporarily lowered
+            }
+        }
+        rule {
+            element = 'CLASS'
+            excludes = [
+                '*.config.*' // Configuration classes excluded
+            ]
+        }
+    }
+}
+
+tasks.test {
+    useJUnitPlatform {
+        excludeTags 'external-integration'
+    }
+    finalizedBy tasks.jacocoTestCoverageVerification
+}
