@@ -193,12 +193,18 @@ scheduler:
         stuck-seconds: 300
 
     # InboundOrder 외부 주문 폴링 스케줄러 (SalesChannel별)
+    # 세토프(id=1)는 웹훅으로 수신하므로 폴링 불필요
     inbound-order-polling:
       enabled: true
       entries:
-        - sales-channel-id: 1
+        - sales-channel-id: 2
           enabled: true
-          cron: "0 */5 * * * *"
+          cron: "0 0 * * * *"
+          timezone: Asia/Seoul
+          batch-size: 500
+        - sales-channel-id: 16
+          enabled: true
+          cron: "0 0 10,13,15,17,19 * * *"
           timezone: Asia/Seoul
           batch-size: 500
 

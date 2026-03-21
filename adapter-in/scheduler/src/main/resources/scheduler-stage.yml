@@ -130,9 +130,14 @@ scheduler:
 
     inbound-order-polling:
       entries:
-        - sales-channel-id: 1
+        - sales-channel-id: 2
           enabled: true
-          cron: "*/5 * * * * *"
+          cron: "0 0 * * * *"
+          timezone: Asia/Seoul
+          batch-size: 300
+        - sales-channel-id: 16
+          enabled: true
+          cron: "0 0 10,13,15,17,19 * * *"
           timezone: Asia/Seoul
           batch-size: 300
 
