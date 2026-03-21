@@ -3,6 +3,11 @@ package com.ryuqq.marketplace.integration.config;
 import com.ryuqq.authhub.sdk.auth.TokenResolver;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.adapter.OutboundSyncOutboxCommandAdapter;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.adapter.OutboundSyncOutboxQueryAdapter;
+import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
+import com.ryuqq.marketplace.application.qna.port.out.client.QnaAnswerSyncStrategy;
+import com.ryuqq.marketplace.application.qna.port.out.client.QnaOutboxPublishClient;
+import org.mockito.Mockito;
+import org.redisson.api.RedissonClient;
 import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.dto.response.MyInfoResult;
 import com.ryuqq.marketplace.application.auth.dto.response.RefreshResult;
@@ -21,16 +26,19 @@ import com.ryuqq.marketplace.application.imagetransform.dto.response.ImageTransf
 import com.ryuqq.marketplace.application.imagetransform.port.out.client.ImageTransformClient;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
+import com.ryuqq.marketplace.application.legacy.auth.dto.result.LegacySellerAuthResult;
+import com.ryuqq.marketplace.application.legacy.auth.dto.result.LegacyTokenResult;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacySellerAuthCompositeReadManager;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenCacheReadManager;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenManager;
+import com.ryuqq.marketplace.application.legacy.auth.port.out.LegacySellerAuthCompositeQueryPort;
+import com.ryuqq.marketplace.application.legacy.auth.port.out.LegacyTokenCacheCommandPort;
+import com.ryuqq.marketplace.application.legacy.auth.port.out.LegacyTokenCacheQueryPort;
+import com.ryuqq.marketplace.application.legacy.auth.port.out.LegacyTokenClient;
+import com.ryuqq.marketplace.application.legacy.auth.port.in.LegacyLoginUseCase;
+import com.ryuqq.marketplace.application.legacy.order.dto.result.LegacyOrderUpdateResult;
+import com.ryuqq.marketplace.application.legacy.order.port.in.command.LegacyOrderUpdateUseCase;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
-import com.ryuqq.marketplace.application.legacyauth.dto.result.LegacySellerAuthResult;
-import com.ryuqq.marketplace.application.legacyauth.dto.result.LegacyTokenResult;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacySellerAuthCompositeReadManager;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenCacheReadManager;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenManager;
-import com.ryuqq.marketplace.application.legacyauth.port.out.LegacySellerAuthCompositeQueryPort;
-import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenCacheCommandPort;
-import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenCacheQueryPort;
-import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenClient;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyProductIdMappingReadManager;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyConversionOutboxCommandPort;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.command.LegacyProductIdMappingCommandPort;
@@ -89,6 +97,20 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @TestConfiguration
 @EnableAsync
 public class StubExternalClientConfig {
+
+    // ===== 인프라 Stubs =====
+
+    /**
+     * RedissonClient mock stub.
+     *
+     * <p>테스트 환경에서는 Redis 서버가 없으므로 Mockito mock으로 대체합니다.
+     * RedissonConfig의 @ConditionalOnMissingBean이 이 stub bean을 감지하여 실제 연결을 건너뜁니다.
+     */
+    @Bean
+    @Primary
+    public RedissonClient stubRedissonClient() {
+        return Mockito.mock(RedissonClient.class);
+    }
 
     // ===== SDK 인프라 Stubs =====
 
@@ -318,8 +340,7 @@ public class StubExternalClientConfig {
 
             @Override
             public String registerProduct(
-                    com.ryuqq.marketplace.application.productgroup.dto.response
-                                    .ProductGroupSyncData
+                    com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData
                             syncData,
                     Long externalCategoryId,
                     Long externalBrandId,
@@ -331,8 +352,7 @@ public class StubExternalClientConfig {
 
             @Override
             public void updateProduct(
-                    com.ryuqq.marketplace.application.productgroup.dto.response
-                                    .ProductGroupSyncData
+                    com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData
                             syncData,
                     Long externalCategoryId,
                     Long externalBrandId,
@@ -717,7 +737,7 @@ public class StubExternalClientConfig {
 
     @Bean
     @Primary
-    public com.ryuqq.marketplace.application.legacyauth.port.out.LegacyPasswordEncoder
+    public com.ryuqq.marketplace.application.legacy.auth.port.out.LegacyPasswordEncoder
             stubLegacyPasswordEncoder() {
         return (rawPassword, encodedPassword) ->
                 rawPassword != null && rawPassword.equals(encodedPassword);
@@ -746,6 +766,16 @@ public class StubExternalClientConfig {
             @Override
             public boolean isExpired(String token) {
                 return false;
+            }
+
+            @Override
+            public long extractSellerId(String token) {
+                return 10L;
+            }
+
+            @Override
+            public String extractRole(String token) {
+                return "MASTER";
             }
         };
     }
@@ -797,6 +827,183 @@ public class StubExternalClientConfig {
         return new LegacyTokenCacheReadManager(cacheQueryPort);
     }
 
+    /**
+     * LegacyLoginUseCase stub.
+     *
+     * <p>MarketPlaceApplication의 @ComponentScan이 application.legacy.* 패키지를 제외하므로
+     * LegacyLoginService 빈이 등록되지 않습니다.
+     * rest-api-legacy 모듈의 LegacyAuthController 의존성 충족을 위해 명시적으로 stub을 등록합니다.
+     */
+    @Bean
+    @Primary
+    public LegacyLoginUseCase stubLegacyLoginUseCase() {
+        return command -> "stub-legacy-token";
+    }
+
+    /**
+     * LegacyOrderUpdateUseCase stub.
+     *
+     * <p>MarketPlaceApplication의 @ComponentScan이 application.legacy.* 패키지를 제외하므로
+     * rest-api-legacy 모듈의 LegacyOrderCommandController 의존성 충족을 위해 등록합니다.
+     */
+    @Bean
+    @Primary
+    public LegacyOrderUpdateUseCase stubLegacyOrderUpdateUseCase() {
+        return command -> new LegacyOrderUpdateResult(
+                command.orderId(), 0L, "UNKNOWN", "UNKNOWN", "stub", "stub");
+    }
+
+    /**
+     * 레거시 UseCase 일괄 Mock stubs.
+     *
+     * <p>MarketPlaceApplication의 @ComponentScan이 application.legacy.* 패키지를 제외하므로
+     * rest-api-legacy 모듈의 레거시 컨트롤러들이 의존하는 UseCase들을 Mockito mock으로 일괄 등록합니다.
+     */
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.order.port.in.query.LegacyOrderQueryUseCase stubLegacyOrderQueryUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.order.port.in.query.LegacyOrderQueryUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.order.port.in.query.LegacyOrderListQueryUseCase stubLegacyOrderListQueryUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.order.port.in.query.LegacyOrderListQueryUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.seller.port.in.LegacyGetCurrentSellerUseCase stubLegacyGetCurrentSellerUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.seller.port.in.LegacyGetCurrentSellerUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductGroupFullRegisterUseCase stubLegacyProductGroupFullRegisterUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductGroupFullRegisterUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductGroupFullUpdateUseCase stubLegacyProductGroupFullUpdateUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductGroupFullUpdateUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductMarkOutOfStockUseCase stubLegacyProductMarkOutOfStockUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductMarkOutOfStockUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductUpdateDisplayStatusUseCase stubLegacyProductUpdateDisplayStatusUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductUpdateDisplayStatusUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productcontext.port.in.query.ResolveLegacyProductContextUseCase stubResolveLegacyProductContextUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productcontext.port.in.query.ResolveLegacyProductContextUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductUpdatePriceUseCase stubLegacyProductUpdatePriceUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductUpdatePriceUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.product.port.in.command.LegacyProductUpdateOptionsUseCase stubLegacyProductUpdateOptionsUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.product.port.in.command.LegacyProductUpdateOptionsUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.product.port.in.command.LegacyProductUpdateStockUseCase stubLegacyProductUpdateStockUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.product.port.in.command.LegacyProductUpdateStockUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.LegacyProductQueryUseCase stubLegacyProductQueryUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.LegacyProductQueryUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productgroupdescription.port.in.command.LegacyProductUpdateDescriptionUseCase stubLegacyProductUpdateDescriptionUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productgroupdescription.port.in.command.LegacyProductUpdateDescriptionUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productgroupimage.port.in.command.LegacyProductUpdateImagesUseCase stubLegacyProductUpdateImagesUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productgroupimage.port.in.command.LegacyProductUpdateImagesUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productnotice.port.in.command.LegacyProductUpdateNoticeUseCase stubLegacyProductUpdateNoticeUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productnotice.port.in.command.LegacyProductUpdateNoticeUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.qna.port.in.query.LegacyQnaListQueryUseCase stubLegacyQnaListQueryUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.qna.port.in.query.LegacyQnaListQueryUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.qna.port.in.query.LegacyQnaDetailQueryUseCase stubLegacyQnaDetailQueryUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.qna.port.in.query.LegacyQnaDetailQueryUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.qna.port.in.command.LegacyQnaAnswerUseCase stubLegacyQnaAnswerUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.qna.port.in.command.LegacyQnaAnswerUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.qna.port.in.command.LegacyQnaAnswerUpdateUseCase stubLegacyQnaAnswerUpdateUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.qna.port.in.command.LegacyQnaAnswerUpdateUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.shipment.port.in.LegacyGetShipmentCompanyCodesUseCase stubLegacyGetShipmentCompanyCodesUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.shipment.port.in.LegacyGetShipmentCompanyCodesUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.session.port.in.command.LegacyGetPresignedUrlUseCase stubLegacyGetPresignedUrlUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.session.port.in.command.LegacyGetPresignedUrlUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productnotice.port.in.query.LegacyResolveNoticeFieldsUseCase stubLegacyResolveNoticeFieldsUseCase() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productnotice.port.in.query.LegacyResolveNoticeFieldsUseCase.class);
+    }
+
+    /**
+     * LegacyNoticeCategoryResolver stub.
+     *
+     * <p>MarketPlaceApplication의 @ComponentScan이 application.legacy.* 패키지를 제외하므로
+     * LegacyNoticeCategoryResolver @Component가 스캔되지 않습니다.
+     * rest-api-legacy 모듈의 LegacyProductGroupCommandApiMapper 의존성 충족을 위해 mock으로 등록합니다.
+     */
+    @Bean
+    @Primary
+    public com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyNoticeCategoryResolver stubLegacyNoticeCategoryResolver() {
+        return Mockito.mock(com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyNoticeCategoryResolver.class);
+    }
+
     // ===== ImageVariantSync Stubs =====
 
     @Bean
@@ -826,7 +1033,7 @@ public class StubExternalClientConfig {
     public com.ryuqq.marketplace.adapter.out.client.naver.adapter.NaverCommerceCancelClientAdapter
             stubNaverCommerceCancelClientAdapter() {
         return new com.ryuqq.marketplace.adapter.out.client.naver.adapter
-                .NaverCommerceCancelClientAdapter(null, null) {
+                .NaverCommerceCancelClientAdapter(null) {
             @Override
             public com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse
                     requestCancel(
@@ -850,7 +1057,7 @@ public class StubExternalClientConfig {
     public com.ryuqq.marketplace.adapter.out.client.naver.adapter.NaverCommerceReturnClientAdapter
             stubNaverCommerceReturnClientAdapter() {
         return new com.ryuqq.marketplace.adapter.out.client.naver.adapter
-                .NaverCommerceReturnClientAdapter(null, null) {
+                .NaverCommerceReturnClientAdapter(null) {
             @Override
             public com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimResponse
                     requestReturn(
@@ -887,6 +1094,32 @@ public class StubExternalClientConfig {
                 // stub: no-op
             }
         };
+    }
+
+    // ===== QnA 포트 Stubs =====
+
+    /**
+     * QnaOutboxPublishClient no-op stub.
+     *
+     * <p>QnaOutboxRelayProcessor가 의존하며, 테스트 환경에서는 SQS 발행이 불필요합니다.
+     */
+    @Bean
+    @Primary
+    public QnaOutboxPublishClient stubQnaOutboxPublishClient() {
+        return messageBody -> {
+            // stub: no-op
+        };
+    }
+
+    /**
+     * QnaAnswerSyncStrategy no-op stub.
+     *
+     * <p>ExecuteQnaOutboxService가 의존하며, 테스트 환경에서는 외부 동기화가 불필요합니다.
+     */
+    @Bean
+    @Primary
+    public QnaAnswerSyncStrategy stubQnaAnswerSyncStrategy() {
+        return outbox -> OutboxSyncResult.success();
     }
 
     // ===== InboundOrder 외부 채널 클라이언트 Stub =====

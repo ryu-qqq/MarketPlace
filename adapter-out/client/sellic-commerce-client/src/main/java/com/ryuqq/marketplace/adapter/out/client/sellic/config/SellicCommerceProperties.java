@@ -11,10 +11,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "sellic-commerce")
 public class SellicCommerceProperties {
 
+    private boolean enabled = false;
     private String baseUrl;
     private String customerId;
     private String apiKey;
     private Timeout timeout = new Timeout();
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public String getBaseUrl() {
         return baseUrl;

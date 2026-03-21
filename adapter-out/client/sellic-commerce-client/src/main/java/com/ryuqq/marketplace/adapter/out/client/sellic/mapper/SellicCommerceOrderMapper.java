@@ -116,6 +116,11 @@ public class SellicCommerceOrderMapper {
             return null;
         }
         try {
+            // ISO 8601 형식 (실제 API 응답: 2026-03-19T11:50:49.000+09:00)
+            if (dateTimeStr.contains("T")) {
+                return java.time.OffsetDateTime.parse(dateTimeStr).toInstant();
+            }
+            // 문서 형식 (YYYY-MM-DD HH:mm:ss)
             LocalDateTime ldt = LocalDateTime.parse(dateTimeStr, SELLIC_DATE_FORMAT);
             return ldt.atZone(KST).toInstant();
         } catch (Exception e) {

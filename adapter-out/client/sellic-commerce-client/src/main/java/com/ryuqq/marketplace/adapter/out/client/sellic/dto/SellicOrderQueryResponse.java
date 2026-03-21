@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.client.sellic.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public record SellicOrderQueryResponse(
     /**
      * 셀릭 주문 개별 데이터.
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record SellicOrderData(
             @JsonProperty("IDX") Integer idx,
             @JsonProperty("ORDER_ID") String orderId,

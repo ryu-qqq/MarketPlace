@@ -75,3 +75,15 @@ tasks.test {
     }
     finalizedBy tasks.jacocoTestCoverageVerification
 }
+
+// ========================================
+// External Integration Test Task
+// Run with: ./gradlew :adapter-out:client:sellic-commerce-client:externalIntegrationTest
+// ========================================
+tasks.register('externalIntegrationTest', Test) {
+    description = 'Runs external integration tests that require a live Sellic Commerce server'
+    group = 'verification'
+    useJUnitPlatform {
+        includeTags 'external-integration'
+    }
+}

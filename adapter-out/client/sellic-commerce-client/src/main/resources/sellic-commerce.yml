@@ -8,6 +8,7 @@
 # ============================================================
 
 sellic-commerce:
+  enabled: false
   base-url: ${SELLIC_COMMERCE_BASE_URL:http://api.sellic.co.kr}
   customer-id: ${SELLIC_COMMERCE_CUSTOMER_ID:}
   api-key: ${SELLIC_COMMERCE_API_KEY:}
