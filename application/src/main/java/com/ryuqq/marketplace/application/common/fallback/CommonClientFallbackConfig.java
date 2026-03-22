@@ -206,4 +206,13 @@ public class CommonClientFallbackConfig {
             }
         };
     }
+
+    @Bean
+    @ConditionalOnMissingBean
+    com.ryuqq.marketplace.application.legacy.order.port.out.command.LegacyShipmentCommandPort
+            noOpLegacyShipmentCommandPort() {
+        return (orderId, invoiceNo, courierCode, shipmentType) -> {
+            throw new UnsupportedOperationException("LegacyShipmentCommandPort not available");
+        };
+    }
 }
