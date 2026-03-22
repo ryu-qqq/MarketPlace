@@ -37,6 +37,9 @@ locals {
   # Shipment Outbox queue
   shipment_outbox_queue_name = "${var.environment}-${var.project_name}-shipment-outbox"
 
+  # QnA Outbox queue
+  qna_outbox_queue_name = "${var.environment}-${var.project_name}-qna-outbox"
+
   # New Intelligence Pipeline queues
   intelligence_queue_names = {
     orchestration       = "${var.environment}-${var.project_name}-intelligence-orchestration"
@@ -272,6 +275,41 @@ resource "aws_sqs_queue" "shipment_outbox" {
 }
 
 # ========================================
+# QnA Outbox Queue (DLQ)
+# ========================================
+resource "aws_sqs_queue" "qna_outbox_dlq" {
+  name                      = "${local.qna_outbox_queue_name}-dlq"
+  message_retention_seconds = 1209600 # 14 days
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.qna_outbox_queue_name}-dlq"
+    Purpose = "Dead letter queue for QnA outbox"
+  })
+}
+
+# ========================================
+# QnA Outbox Queue
+# ========================================
+resource "aws_sqs_queue" "qna_outbox" {
+  name                       = local.qna_outbox_queue_name
+  visibility_timeout_seconds = 300    # 5 minutes
+  message_retention_seconds  = 345600 # 4 days
+  receive_wait_time_seconds  = 20     # Long polling
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.qna_outbox_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.qna_outbox_queue_name
+    Purpose = "QnA outbox message relay"
+  })
+}
+
+# ========================================
 # Intelligence Pipeline: Orchestration Queue
 # ========================================
 resource "aws_sqs_queue" "intelligence_orchestration_dlq" {
@@ -466,6 +504,9 @@ resource "aws_iam_policy" "sqs_access" {
           # Shipment Outbox queue
           aws_sqs_queue.shipment_outbox.arn,
           aws_sqs_queue.shipment_outbox_dlq.arn,
+          # QnA Outbox queue
+          aws_sqs_queue.qna_outbox.arn,
+          aws_sqs_queue.qna_outbox_dlq.arn,
           # Intelligence pipeline queues
           aws_sqs_queue.intelligence_orchestration.arn,
           aws_sqs_queue.intelligence_orchestration_dlq.arn,
@@ -618,6 +659,28 @@ resource "aws_ssm_parameter" "shipment_outbox_dlq_url" {
   tags  = local.common_tags
 }
 
+# QnA Outbox Queue
+resource "aws_ssm_parameter" "qna_outbox_queue_url" {
+  name  = "/${var.project_name}/sqs/qna-outbox-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.qna_outbox.url
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "qna_outbox_queue_arn" {
+  name  = "/${var.project_name}/sqs/qna-outbox-queue-arn"
+  type  = "String"
+  value = aws_sqs_queue.qna_outbox.arn
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "qna_outbox_dlq_url" {
+  name  = "/${var.project_name}/sqs/qna-outbox-dlq-url"
+  type  = "String"
+  value = aws_sqs_queue.qna_outbox_dlq.url
+  tags  = local.common_tags
+}
+
 # ========================================
 # SSM Parameters: Intelligence Pipeline
 # ========================================
@@ -741,6 +804,26 @@ resource "aws_cloudwatch_metric_alarm" "outbound_sync_dlq_messages" {
 
   dimensions = {
     QueueName = aws_sqs_queue.outbound_sync_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
+# QnA Outbox DLQ Alarm
+resource "aws_cloudwatch_metric_alarm" "qna_outbox_dlq_messages" {
+  alarm_name          = "${var.project_name}-qna-outbox-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in QnA outbox DLQ (stage)"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.qna_outbox_dlq.name
   }
 
   tags = local.common_tags
@@ -916,6 +999,16 @@ output "outbound_sync_queue_url" {
 output "outbound_sync_queue_arn" {
   description = "OutboundSync queue ARN"
   value       = aws_sqs_queue.outbound_sync.arn
+}
+
+output "qna_outbox_queue_url" {
+  description = "QnA outbox queue URL"
+  value       = aws_sqs_queue.qna_outbox.url
+}
+
+output "qna_outbox_queue_arn" {
+  description = "QnA outbox queue ARN"
+  value       = aws_sqs_queue.qna_outbox.arn
 }
 
 output "shipment_outbox_queue_url" {

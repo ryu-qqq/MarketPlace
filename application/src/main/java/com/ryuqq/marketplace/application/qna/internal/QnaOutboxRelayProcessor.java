@@ -7,12 +7,12 @@ import com.ryuqq.marketplace.domain.qna.outbox.aggregate.QnaOutbox;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /** QnA 아웃박스 릴레이 프로세서. PENDING → PROCESSING → SQS 발행. */
 @Component
-@ConditionalOnBean(QnaOutboxPublishClient.class)
+@ConditionalOnProperty(prefix = "sqs.queues", name = "qna-outbox")
 public class QnaOutboxRelayProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(QnaOutboxRelayProcessor.class);

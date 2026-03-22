@@ -472,6 +472,8 @@ module "ecs_service" {
     { name = "SQS_INTELLIGENCE_AGGREGATION_URL", value = local.sqs_intelligence_aggregation_queue_url },
     # Shipment Outbox SQS
     { name = "SQS_SHIPMENT_OUTBOX_URL", value = local.sqs_shipment_outbox_queue_url },
+    # QnA Outbox SQS
+    { name = "SQS_QNA_OUTBOX_URL", value = local.sqs_qna_outbox_queue_url },
     # Sentry
     { name = "SENTRY_DSN", value = local.sentry_dsn },
     # Legacy DB (same host, different schema)
