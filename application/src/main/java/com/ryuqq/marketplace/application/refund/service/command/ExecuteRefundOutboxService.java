@@ -92,7 +92,7 @@ public class ExecuteRefundOutboxService implements ExecuteRefundOutboxUseCase {
             RefundOutbox fresh = outboxReadManager.getById(ctx.id());
             fresh.recoverFromTimeout(ctx.changedAt());
             outboxCommandManager.persist(fresh);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("환불 Outbox deferRetry 실패: outboxId={}", outbox.idValue());
         }
     }

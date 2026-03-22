@@ -99,7 +99,7 @@ public class SetofCancelClaimSyncStrategy implements CancelClaimSyncStrategy {
         try {
             JsonNode node = objectMapper.readTree(payload);
             return node.has("rejectReason") ? node.get("rejectReason").asText() : "거부 사유 없음";
-        } catch (Exception e) {
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             return "거부 사유 없음";
         }
     }

@@ -80,7 +80,7 @@ public class NaverCommerceApiExecutor {
                 });
     }
 
-    private Retry buildRetry() {
+    private static Retry buildRetry() {
         RetryConfig retryConfig =
                 RetryConfig.custom()
                         .maxAttempts(MAX_ATTEMPTS)

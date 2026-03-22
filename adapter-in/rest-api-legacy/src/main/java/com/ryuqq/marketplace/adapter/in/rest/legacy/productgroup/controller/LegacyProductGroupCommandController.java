@@ -14,7 +14,6 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.Leg
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyUpdateDisplayYnRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.LegacyUpdateProductGroupRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyCreateProductGroupResponse;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.mapper.LegacyInboundApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.mapper.LegacyProductGroupCommandApiMapper;
 import com.ryuqq.marketplace.application.legacy.productcontext.dto.result.LegacyProductContext;
 import com.ryuqq.marketplace.application.legacy.productcontext.port.in.query.ResolveLegacyProductContextUseCase;
@@ -56,7 +55,6 @@ public class LegacyProductGroupCommandController {
     private final LegacyProductUpdateDisplayStatusUseCase legacyProductUpdateDisplayStatusUseCase;
     private final LegacyProductUpdatePriceUseCase legacyProductUpdatePriceUseCase;
     private final LegacyProductMarkOutOfStockUseCase legacyProductMarkOutOfStockUseCase;
-    private final LegacyInboundApiMapper legacyInboundApiMapper;
     private final LegacyProductGroupCommandApiMapper legacyProductGroupCommandApiMapper;
     private final LegacyProductCommandApiMapper legacyProductCommandApiMapper;
 
@@ -67,7 +65,6 @@ public class LegacyProductGroupCommandController {
             LegacyProductUpdateDisplayStatusUseCase legacyProductUpdateDisplayStatusUseCase,
             LegacyProductUpdatePriceUseCase legacyProductUpdatePriceUseCase,
             LegacyProductMarkOutOfStockUseCase legacyProductMarkOutOfStockUseCase,
-            LegacyInboundApiMapper legacyInboundApiMapper,
             LegacyProductGroupCommandApiMapper legacyProductGroupCommandApiMapper,
             LegacyProductCommandApiMapper legacyProductCommandApiMapper) {
         this.resolveLegacyProductContextUseCase = resolveLegacyProductContextUseCase;
@@ -76,7 +73,6 @@ public class LegacyProductGroupCommandController {
         this.legacyProductUpdateDisplayStatusUseCase = legacyProductUpdateDisplayStatusUseCase;
         this.legacyProductUpdatePriceUseCase = legacyProductUpdatePriceUseCase;
         this.legacyProductMarkOutOfStockUseCase = legacyProductMarkOutOfStockUseCase;
-        this.legacyInboundApiMapper = legacyInboundApiMapper;
         this.legacyProductGroupCommandApiMapper = legacyProductGroupCommandApiMapper;
         this.legacyProductCommandApiMapper = legacyProductCommandApiMapper;
     }

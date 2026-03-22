@@ -88,7 +88,7 @@ public class ExecuteCancelOutboxService implements ExecuteCancelOutboxUseCase {
             CancelOutbox fresh = outboxReadManager.getById(outbox.idValue());
             fresh.recoverFromTimeout(commandFactory.now());
             outboxCommandManager.persist(fresh);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("취소 Outbox deferRetry 실패: outboxId={}", outbox.idValue());
         }
     }

@@ -13,8 +13,7 @@ import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductG
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -327,11 +326,6 @@ public class SellicCommerceProductMapper {
 
     private List<SellicProductStock> resolveProductStocks(
             List<ProductResult> products, List<SellerOptionGroupResult> optionGroups) {
-
-        Map<Long, String> optionValueNameMap =
-                optionGroups.stream()
-                        .flatMap(g -> g.optionValues().stream())
-                        .collect(Collectors.toMap(v -> v.id(), v -> v.optionValueName()));
 
         List<SellicProductStock> stocks = new ArrayList<>();
 

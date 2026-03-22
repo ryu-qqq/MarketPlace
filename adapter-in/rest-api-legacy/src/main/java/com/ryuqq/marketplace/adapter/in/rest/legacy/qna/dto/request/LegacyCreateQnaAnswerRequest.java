@@ -14,4 +14,9 @@ public record LegacyCreateQnaAnswerRequest(
         @NotNull(message = "qnaId는 필수입니다") long qnaId,
         @Valid LegacyQnaContentsRequest qnaContents,
         @Size(max = 3, message = "질문 답변에 등록 할 수 있는 사진은 최대 3장입니다.")
-                List<LegacyQnaImageRequest> qnaImages) {}
+                List<LegacyQnaImageRequest> qnaImages) {
+
+    public LegacyCreateQnaAnswerRequest {
+        qnaImages = qnaImages != null ? List.copyOf(qnaImages) : List.of();
+    }
+}

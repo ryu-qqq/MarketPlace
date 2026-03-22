@@ -81,19 +81,21 @@
     <!-- ========================================
          DTO/Response 내부 표현 노출 (의도된 동작)
          Record/DTO는 데이터 컨테이너이므로 내부 리스트 반환이 정상
+         Inner record ($로 구분) 포함
          ======================================== -->
     <Match>
         <Or>
-            <Class name="~.*Response"/>
-            <Class name="~.*Command"/>
-            <Class name="~.*Query"/>
-            <Class name="~.*DTO"/>
-            <Class name="~.*Dto"/>
-            <Class name="~.*Result"/>
-            <Class name="~.*Bundle"/>
-            <Class name="~.*Params"/>
-            <Class name="~.*Context"/>
-            <Class name="~.*Data"/>
+            <Class name="~.*Response(\$.*)?"/>
+            <Class name="~.*Request(\$.*)?"/>
+            <Class name="~.*Command(\$.*)?"/>
+            <Class name="~.*Query(\$.*)?"/>
+            <Class name="~.*DTO(\$.*)?"/>
+            <Class name="~.*Dto(\$.*)?"/>
+            <Class name="~.*Result(\$.*)?"/>
+            <Class name="~.*Bundle(\$.*)?"/>
+            <Class name="~.*Params(\$.*)?"/>
+            <Class name="~.*Context(\$.*)?"/>
+            <Class name="~.*Data(\$.*)?"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
     </Match>
@@ -124,6 +126,7 @@
             <Class name="~.*Repository"/>
             <Class name="~.*Processor"/>
             <Class name="~.*Creator"/>
+            <Class name="~.*Client"/>
             <Class name="~.*Consumer"/>
             <Class name="~.*Mapper"/>
             <Class name="~.*Coordinator"/>
@@ -238,8 +241,8 @@
          ======================================== -->
     <Match>
         <Or>
-            <Class name="~.*ApiRequest"/>
-            <Class name="~.*SearchApiRequest"/>
+            <Class name="~.*ApiRequest(\$.*)?"/>
+            <Class name="~.*SearchApiRequest(\$.*)?"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
     </Match>
