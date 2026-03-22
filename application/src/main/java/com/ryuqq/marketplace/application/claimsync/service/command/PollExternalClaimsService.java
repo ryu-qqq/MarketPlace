@@ -16,10 +16,12 @@ import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
 /** 외부몰 클레임 폴링 서비스 — Shop 기반. */
 @Service
+@ConditionalOnBean(SalesChannelClaimClient.class)
 public class PollExternalClaimsService implements PollExternalClaimsUseCase {
 
     private static final Logger log = LoggerFactory.getLogger(PollExternalClaimsService.class);

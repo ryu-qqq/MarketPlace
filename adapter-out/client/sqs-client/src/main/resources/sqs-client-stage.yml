@@ -14,3 +14,4 @@ sqs:
     refund-outbox: ${SQS_REFUND_OUTBOX_URL:}
     exchange-outbox: ${SQS_EXCHANGE_OUTBOX_URL:}
     qna-outbox: ${SQS_QNA_OUTBOX_URL:}
+    shipment-outbox: ${SQS_SHIPMENT_OUTBOX_URL:}

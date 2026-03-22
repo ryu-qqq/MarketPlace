@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
  * legacy_product_id_mappings → internal_product_group_id 경로로 매핑합니다.
  */
 @Component
+@ConditionalOnBean(LegacyProductIdMappingReadManager.class)
 public class ExternalProductInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(ExternalProductInitializer.class);
