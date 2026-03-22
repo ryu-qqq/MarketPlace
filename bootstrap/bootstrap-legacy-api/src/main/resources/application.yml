@@ -125,7 +125,6 @@ spring:
   config:
     activate:
       on-profile: stage
-  config:
     import:
       - classpath:persistence.yml
       - classpath:persistence-stage.yml
@@ -143,7 +142,6 @@ spring:
   config:
     activate:
       on-profile: prod
-  config:
     import:
       - classpath:persistence.yml
       - classpath:persistence-prod.yml
