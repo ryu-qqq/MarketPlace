@@ -42,8 +42,10 @@ public class LegacyJwtTokenProvider implements LegacyTokenClient {
     public LegacyTokenResult generateToken(String email, long sellerId, String roleType) {
         Date now = new Date();
 
-        String accessToken = buildToken(email, sellerId, roleType, now, properties.getAccessTokenExpireTime());
-        String refreshToken = buildToken(email, sellerId, roleType, now, properties.getRefreshTokenExpireTime());
+        String accessToken =
+                buildToken(email, sellerId, roleType, now, properties.getAccessTokenExpireTime());
+        String refreshToken =
+                buildToken(email, sellerId, roleType, now, properties.getRefreshTokenExpireTime());
 
         long refreshExpiresInSeconds = properties.getRefreshTokenExpireTime() / 1000;
 
@@ -94,7 +96,8 @@ public class LegacyJwtTokenProvider implements LegacyTokenClient {
         return claims.get(ROLE_CLAIM, String.class);
     }
 
-    private String buildToken(String email, long sellerId, String roleType, Date now, long expireTimeMs) {
+    private String buildToken(
+            String email, long sellerId, String roleType, Date now, long expireTimeMs) {
         Date expiry = new Date(now.getTime() + expireTimeMs);
         return Jwts.builder()
                 .setSubject(email)
@@ -107,11 +110,7 @@ public class LegacyJwtTokenProvider implements LegacyTokenClient {
     }
 
     private Claims parseClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
     private Claims parseClaimsAllowExpired(String token) {

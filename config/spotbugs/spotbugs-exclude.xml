@@ -127,6 +127,7 @@
             <Class name="~.*Processor"/>
             <Class name="~.*Creator"/>
             <Class name="~.*Client"/>
+            <Class name="~.*Provider"/>
             <Class name="~.*Consumer"/>
             <Class name="~.*Mapper"/>
             <Class name="~.*Coordinator"/>
@@ -155,6 +156,11 @@
     <Match>
         <Class name="~.*JwtTokenProvider.*"/>
         <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+
+    <Match>
+        <Class name="~.*JwtTokenProvider.*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
 
     <!-- ========================================
