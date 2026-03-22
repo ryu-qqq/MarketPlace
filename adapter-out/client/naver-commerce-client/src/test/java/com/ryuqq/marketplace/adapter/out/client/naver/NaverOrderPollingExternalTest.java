@@ -164,7 +164,9 @@ class NaverOrderPollingExternalTest {
 
             JsonNode root = objectMapper.readTree(resp.body());
             JsonNode data = root.get("data");
-            if (data == null) break;
+            if (data == null) {
+                break;
+            }
 
             JsonNode statuses = data.get("lastChangeStatuses");
             if (statuses != null && statuses.isArray()) {
