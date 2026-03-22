@@ -132,7 +132,7 @@ scheduler:
       entries:
         - sales-channel-id: 2
           enabled: true
-          cron: "0 0 * * * *"
+          cron: "0 */1 * * * *"
           timezone: Asia/Seoul
           batch-size: 300
         - sales-channel-id: 16
