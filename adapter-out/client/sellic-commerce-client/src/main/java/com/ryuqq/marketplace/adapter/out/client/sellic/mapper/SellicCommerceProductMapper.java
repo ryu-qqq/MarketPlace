@@ -13,7 +13,6 @@ import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductG
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
