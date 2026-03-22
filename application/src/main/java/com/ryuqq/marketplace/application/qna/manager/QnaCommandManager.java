@@ -15,7 +15,7 @@ public class QnaCommandManager {
     }
 
     @Transactional
-    public void persist(Qna qna) {
-        commandPort.persist(qna);
+    public long persist(Qna qna) {
+        return commandPort.persist(qna);
     }
 }

@@ -9,8 +9,11 @@ import com.ryuqq.marketplace.domain.inboundqna.vo.InboundQnaStatus;
 import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag("unit")
+@DisplayName("InboundQna Aggregate 단위 테스트")
 class InboundQnaTest {
 
     @Nested

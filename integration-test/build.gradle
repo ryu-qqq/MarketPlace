@@ -81,6 +81,18 @@ dependencies {
     // H2 Database
     testRuntimeOnly 'com.h2database:h2:2.2.224'
 
+    // Testcontainers (version catalog 사용 — setof-commerce와 동일)
+    testImplementation libs.testcontainers.junit
+    testImplementation libs.testcontainers.redis
+    testImplementation libs.testcontainers.mysql
+    testImplementation("org.testcontainers:testcontainers:${libs.versions.testcontainers.get()}")
+
+    // MySQL Driver (Testcontainers용)
+    testRuntimeOnly 'com.mysql:mysql-connector-j'
+
+    // Commons Pool2 (Lettuce Connection Pool)
+    testImplementation libs.commons.pool2
+
     // Flyway (레거시 Flyway stub 빈 제공을 위해 필요)
     testImplementation libs.flyway.core
 
@@ -109,5 +121,28 @@ tasks.named('test') {
         showStandardStreams = false
     }
 
+    // Testcontainers Docker 접근을 위한 환경변수
+    environment 'DOCKER_HOST', "unix://${System.getProperty('user.home')}/.docker/run/docker.sock"
+    environment 'TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE', '/var/run/docker.sock'
+
     maxParallelForks = 1
+}
+
+tasks.register('containerE2ETest', Test) {
+    useJUnitPlatform {
+        includeTags 'container'
+    }
+    systemProperty 'spring.profiles.active', 'test'
+
+    // Testcontainers Docker 접근을 위한 환경변수
+    environment 'DOCKER_HOST', "unix://${System.getProperty('user.home')}/.docker/run/docker.sock"
+    environment 'TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE', '/var/run/docker.sock'
+
+    maxParallelForks = 1
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = false
+    }
 }

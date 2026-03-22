@@ -28,12 +28,13 @@ public class QnaCommandAdapter implements QnaCommandPort {
     }
 
     @Override
-    public void persist(Qna qna) {
+    public long persist(Qna qna) {
         QnaJpaEntity qnaEntity = mapper.toEntity(qna);
         QnaJpaEntity saved = qnaRepository.save(qnaEntity);
 
         List<QnaReplyJpaEntity> replyEntities =
                 mapper.toReplyEntities(qna.replies(), saved.getId());
         replyRepository.saveAll(replyEntities);
+        return saved.getId();
     }
 }

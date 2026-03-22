@@ -4,5 +4,5 @@ import com.ryuqq.marketplace.domain.qna.aggregate.Qna;
 
 /** Qna 저장 포트. */
 public interface QnaCommandPort {
-    void persist(Qna qna);
+    long persist(Qna qna);
 }

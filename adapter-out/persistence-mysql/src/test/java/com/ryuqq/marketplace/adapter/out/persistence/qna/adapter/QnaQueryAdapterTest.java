@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.qna.entity.QnaReplyJpaEntit
 import com.ryuqq.marketplace.adapter.out.persistence.qna.mapper.QnaJpaEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.qna.repository.QnaQueryDslRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.qna.repository.QnaReplyJpaRepository;
+import com.ryuqq.marketplace.application.qna.dto.query.QnaSearchCondition;
 import com.ryuqq.marketplace.domain.qna.QnaFixtures;
 import com.ryuqq.marketplace.domain.qna.aggregate.Qna;
 import com.ryuqq.marketplace.domain.qna.vo.QnaStatus;
@@ -280,6 +281,152 @@ class QnaQueryAdapterTest {
 
             // then
             assertThat(count).isEqualTo(0L);
+        }
+    }
+
+    // ========================================================================
+    // 4. search 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("search 메서드 테스트")
+    class SearchTest {
+
+        @Test
+        @DisplayName("조건에 맞는 Qna 목록을 반환합니다")
+        void search_WithCondition_ReturnsQnaList() {
+            // given
+            QnaSearchCondition condition = new QnaSearchCondition(
+                    QnaFixtures.DEFAULT_SELLER_ID, null, null, null, null, null, null, 10);
+            QnaJpaEntity entity = QnaJpaEntityFixtures.pendingEntity(1L);
+            Qna domain = QnaFixtures.pendingQna(1L);
+
+            given(queryDslRepository.search(condition)).willReturn(List.of(entity));
+            given(replyRepository.findByQnaIdIn(List.of(1L))).willReturn(List.of());
+            given(mapper.toDomain(entity, List.of())).willReturn(domain);
+
+            // when
+            List<Qna> result = queryAdapter.search(condition);
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0)).isEqualTo(domain);
+        }
+
+        @Test
+        @DisplayName("조회 결과가 없을 때 빈 목록을 반환합니다")
+        void search_WhenNoResults_ReturnsEmptyList() {
+            // given
+            QnaSearchCondition condition = new QnaSearchCondition(
+                    9999L, null, null, null, null, null, null, 10);
+
+            given(queryDslRepository.search(condition)).willReturn(List.of());
+
+            // when
+            List<Qna> result = queryAdapter.search(condition);
+
+            // then
+            assertThat(result).isEmpty();
+            then(replyRepository).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("조회 결과가 없을 때 ReplyRepository는 호출되지 않습니다")
+        void search_WhenNoResults_DoesNotCallReplyRepository() {
+            // given
+            QnaSearchCondition condition = new QnaSearchCondition(
+                    9999L, null, null, null, null, null, null, 10);
+
+            given(queryDslRepository.search(condition)).willReturn(List.of());
+
+            // when
+            queryAdapter.search(condition);
+
+            // then
+            then(replyRepository).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("여러 Qna 조회 시 Reply를 일괄 조회합니다")
+        void search_WithMultipleQnas_FetchesRepliesInBatch() {
+            // given
+            QnaSearchCondition condition = new QnaSearchCondition(
+                    QnaFixtures.DEFAULT_SELLER_ID, null, null, null, null, null, null, 10);
+            QnaJpaEntity entity1 = QnaJpaEntityFixtures.pendingEntity(1L);
+            QnaJpaEntity entity2 = QnaJpaEntityFixtures.answeredEntity(2L);
+            QnaReplyJpaEntity replyEntity = QnaJpaEntityFixtures.sellerReplyEntity(1L, 2L);
+            Qna domain1 = QnaFixtures.pendingQna(1L);
+            Qna domain2 = QnaFixtures.answeredQna(2L);
+
+            given(queryDslRepository.search(condition)).willReturn(List.of(entity1, entity2));
+            given(replyRepository.findByQnaIdIn(List.of(1L, 2L))).willReturn(List.of(replyEntity));
+            given(mapper.toDomain(entity1, List.of())).willReturn(domain1);
+            given(mapper.toDomain(entity2, List.of(replyEntity))).willReturn(domain2);
+
+            // when
+            List<Qna> result = queryAdapter.search(condition);
+
+            // then
+            assertThat(result).hasSize(2);
+            then(replyRepository).should().findByQnaIdIn(List.of(1L, 2L));
+        }
+    }
+
+    // ========================================================================
+    // 5. countByCondition 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("countByCondition 메서드 테스트")
+    class CountByConditionTest {
+
+        @Test
+        @DisplayName("조건에 맞는 총 개수를 반환합니다")
+        void countByCondition_WithCondition_ReturnsCount() {
+            // given
+            QnaSearchCondition condition = new QnaSearchCondition(
+                    QnaFixtures.DEFAULT_SELLER_ID, null, null, null, null, null, null, 10);
+
+            given(queryDslRepository.countByCondition(condition)).willReturn(5L);
+
+            // when
+            long count = queryAdapter.countByCondition(condition);
+
+            // then
+            assertThat(count).isEqualTo(5L);
+        }
+
+        @Test
+        @DisplayName("데이터가 없을 때 0을 반환합니다")
+        void countByCondition_WhenNoData_ReturnsZero() {
+            // given
+            QnaSearchCondition condition = new QnaSearchCondition(
+                    9999L, null, null, null, null, null, null, 10);
+
+            given(queryDslRepository.countByCondition(condition)).willReturn(0L);
+
+            // when
+            long count = queryAdapter.countByCondition(condition);
+
+            // then
+            assertThat(count).isZero();
+        }
+
+        @Test
+        @DisplayName("Repository가 정확히 한 번 호출됩니다")
+        void countByCondition_CallsRepositoryOnce() {
+            // given
+            QnaSearchCondition condition = new QnaSearchCondition(
+                    QnaFixtures.DEFAULT_SELLER_ID,
+                    QnaStatus.PENDING, null, null, null, null, null, 10);
+
+            given(queryDslRepository.countByCondition(condition)).willReturn(3L);
+
+            // when
+            queryAdapter.countByCondition(condition);
+
+            // then
+            then(queryDslRepository).should().countByCondition(condition);
         }
     }
 }

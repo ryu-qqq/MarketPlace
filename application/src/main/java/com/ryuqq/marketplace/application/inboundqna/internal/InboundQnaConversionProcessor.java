@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.application.inboundqna.internal;
 import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductIdResolver;
 import com.ryuqq.marketplace.application.inboundqna.manager.InboundQnaCommandManager;
 import com.ryuqq.marketplace.application.qna.manager.QnaCommandManager;
-import com.ryuqq.marketplace.application.qna.manager.QnaReadManager;
 import com.ryuqq.marketplace.domain.inboundqna.aggregate.InboundQna;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.qna.aggregate.Qna;
@@ -27,17 +26,14 @@ public class InboundQnaConversionProcessor {
 
     private final InboundProductIdResolver productIdResolver;
     private final QnaCommandManager qnaCommandManager;
-    private final QnaReadManager qnaReadManager;
     private final InboundQnaCommandManager inboundQnaCommandManager;
 
     public InboundQnaConversionProcessor(
             InboundProductIdResolver productIdResolver,
             QnaCommandManager qnaCommandManager,
-            QnaReadManager qnaReadManager,
             InboundQnaCommandManager inboundQnaCommandManager) {
         this.productIdResolver = productIdResolver;
         this.qnaCommandManager = qnaCommandManager;
-        this.qnaReadManager = qnaReadManager;
         this.inboundQnaCommandManager = inboundQnaCommandManager;
     }
 
@@ -87,16 +83,15 @@ public class InboundQnaConversionProcessor {
                             inboundQna.questionAuthor(),
                             now);
 
-            qnaCommandManager.persist(qna);
+            long savedQnaId = qnaCommandManager.persist(qna);
 
-            Qna saved = qnaReadManager.getById(qna.idValue());
-            inboundQna.markConverted(saved.idValue(), now);
+            inboundQna.markConverted(savedQnaId, now);
             inboundQnaCommandManager.persist(inboundQna);
 
             log.debug(
                     "InboundQna 변환 완료: inboundQnaId={}, qnaId={}",
                     inboundQna.idValue(),
-                    saved.idValue());
+                    savedQnaId);
 
         } catch (Exception e) {
             log.warn(
