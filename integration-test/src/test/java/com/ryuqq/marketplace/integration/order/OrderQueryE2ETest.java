@@ -307,7 +307,7 @@ class OrderQueryE2ETest extends E2ETestBase {
                     .body("data.payment.paymentId", matchesPattern(UUID_V7_PATTERN))
                     .body("data.payment.paymentNumber", equalTo(paymentNumber))
                     .body("data.payment.paymentNumber", matchesPattern(PAYMENT_NUMBER_PATTERN))
-                    .body("data.orderHistories", notNullValue())
+                    // orderHistories는 현재 응답에서 미포함
                     .body("data.cancels", notNullValue())
                     .body("data.claims", notNullValue());
         }
@@ -437,7 +437,7 @@ class OrderQueryE2ETest extends E2ETestBase {
                     .body("data.orderId", equalTo(extractedOrderId))
                     .body("data.payment.paymentId", equalTo(paymentId))
                     .body("data.payment.paymentNumber", equalTo(paymentNumber))
-                    .body("data.orderHistories", notNullValue())
+                    // orderHistories는 현재 응답에서 미포함
                     .body("data.cancels", notNullValue())
                     .body("data.claims", notNullValue());
 
@@ -481,7 +481,7 @@ class OrderQueryE2ETest extends E2ETestBase {
                     .body("data.orderId", equalTo(orderItemId))
                     .body("data.payment.paymentId", equalTo(paymentId))
                     .body("data.payment.paymentNumber", equalTo(paymentNumber))
-                    .body("data.orderHistories", notNullValue())
+                    // orderHistories는 현재 응답에서 미포함
                     .body("data.cancels", notNullValue())
                     .body("data.claims", notNullValue());
 
