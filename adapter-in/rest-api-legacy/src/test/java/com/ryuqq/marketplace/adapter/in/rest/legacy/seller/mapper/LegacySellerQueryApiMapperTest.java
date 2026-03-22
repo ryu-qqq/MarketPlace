@@ -30,7 +30,8 @@ class LegacySellerQueryApiMapperTest {
         @DisplayName("SellerAdminCompositeResult를 LegacySellerResponse로 변환한다")
         void toSellerResponse_ConvertsResult_ReturnsResponse() {
             // given
-            SellerAdminCompositeResult result = LegacySellerApiFixtures.sellerAdminCompositeResult();
+            SellerAdminCompositeResult result =
+                    LegacySellerApiFixtures.sellerAdminCompositeResult();
 
             // when
             LegacySellerResponse response = mapper.toSellerResponse(result);
@@ -47,7 +48,8 @@ class LegacySellerQueryApiMapperTest {
         void toSellerResponse_MapsSellerIdCorrectly() {
             // given
             SellerAdminCompositeResult result =
-                    LegacySellerApiFixtures.sellerAdminCompositeResult(99L, "다른 셀러", "999-99-99999");
+                    LegacySellerApiFixtures.sellerAdminCompositeResult(
+                            99L, "다른 셀러", "999-99-99999");
 
             // when
             LegacySellerResponse response = mapper.toSellerResponse(result);

@@ -48,6 +48,23 @@ public class LegacyQnaAnswerEntity extends LegacyBaseEntity {
 
     protected LegacyQnaAnswerEntity() {}
 
+    public static LegacyQnaAnswerEntity create(
+            long qnaId, String title, String content, String writerType) {
+        LegacyQnaAnswerEntity entity = new LegacyQnaAnswerEntity();
+        entity.qnaId = qnaId;
+        entity.title = title;
+        entity.content = content;
+        entity.qnaWriterType = writerType;
+        entity.qnaStatus = "CLOSED";
+        entity.deleteYn = "N";
+        return entity;
+    }
+
+    public void updateContents(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
     public Long getId() {
         return id;
     }

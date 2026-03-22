@@ -1,8 +1,7 @@
 package com.ryuqq.marketplace.application.legacy.productgroupdescription.manager;
 
 import com.ryuqq.marketplace.application.legacy.productgroupdescription.port.out.command.LegacyDescriptionImageCommandPort;
-import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyDescriptionImage;
-import java.util.List;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.DescriptionImage;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +16,7 @@ public class LegacyDescriptionImageCommandManager {
     }
 
     @Transactional
-    public void persistAll(List<LegacyDescriptionImage> images) {
-        commandPort.persistAll(images);
-    }
-
-    @Transactional
-    public void softDeleteAll(List<LegacyDescriptionImage> images) {
-        commandPort.softDeleteAll(images);
+    public Long persist(DescriptionImage image) {
+        return commandPort.persist(image);
     }
 }

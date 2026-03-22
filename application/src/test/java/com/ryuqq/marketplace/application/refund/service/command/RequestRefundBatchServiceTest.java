@@ -144,7 +144,9 @@ class RequestRefundBatchServiceTest {
                                             .RETURN_REQUESTED))
                     .willReturn(true);
             given(commandFactory.createRequestOrderItemContext(item.orderItemId()))
-                    .willReturn(new StatusChangeContext<>(OrderItemId.of(item.orderItemId()), Instant.now()));
+                    .willReturn(
+                            new StatusChangeContext<>(
+                                    OrderItemId.of(item.orderItemId()), Instant.now()));
 
             // when
             sut.execute(command);

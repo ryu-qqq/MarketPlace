@@ -118,9 +118,7 @@ final class NaverOptionMapper {
      */
     private static List<SellerOptionGroupResult> resolveCustomGroups(
             List<SellerOptionGroupResult> optionGroups) {
-        return optionGroups.stream()
-                .filter(g -> "FREE_INPUT".equals(g.inputType()))
-                .toList();
+        return optionGroups.stream().filter(g -> "FREE_INPUT".equals(g.inputType())).toList();
     }
 
     // === PREDEFINED 옵션 (optionCombinations) ===
@@ -307,7 +305,10 @@ final class NaverOptionMapper {
      * <p>price는 대표가격(salePrice) 대비 차액입니다. 네이버 API에서 옵션 price는 절대 가격이 아닌 추가/할인 금액입니다.
      */
     private static OptionCombination buildCombination(
-            Long id, List<String> optionNames, ProductResult product, int basePrice,
+            Long id,
+            List<String> optionNames,
+            ProductResult product,
+            int basePrice,
             boolean soldOut) {
         int priceDiff = product.currentPrice() - basePrice;
         int stock = soldOut ? 0 : product.stockQuantity();
@@ -353,8 +354,7 @@ final class NaverOptionMapper {
         for (ProductOptionMappingResult mapping : product.optionMappings()) {
             SellerOptionValueResult value = optionValueMap.get(mapping.sellerOptionValueId());
             if (value != null) {
-                mappingByGroupId.put(
-                        value.sellerOptionGroupId(), value.optionValueName());
+                mappingByGroupId.put(value.sellerOptionGroupId(), value.optionValueName());
             }
         }
 

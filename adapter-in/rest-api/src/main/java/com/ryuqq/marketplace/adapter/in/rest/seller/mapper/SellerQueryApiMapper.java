@@ -7,9 +7,9 @@ import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerApiRespon
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerPublicProfileApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
+import com.ryuqq.marketplace.application.seller.dto.query.SellerSearchParams;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerFullCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.query.SellerSearchParams;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerPageResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerPublicProfileResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerResult;

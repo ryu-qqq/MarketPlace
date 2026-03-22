@@ -19,33 +19,51 @@ public final class LegacyShipmentApiFixtures {
 
     public static final long SHIPMENT_CODE_TYPE_ID = 2L;
     public static final String DEFAULT_COMPANY_NAME_CJ = "CJ대한통운";
-    public static final String DEFAULT_COMPANY_CODE_CJ = "04";
+    public static final String DEFAULT_COMPANY_CODE_CJ = "CJ_LOGISTICS";
     public static final String DEFAULT_COMPANY_NAME_LOTTE = "롯데택배";
-    public static final String DEFAULT_COMPANY_CODE_LOTTE = "08";
+    public static final String DEFAULT_COMPANY_CODE_LOTTE = "LOTTE_LOGISTICS";
     public static final String DEFAULT_COMPANY_NAME_HANJIN = "한진택배";
-    public static final String DEFAULT_COMPANY_CODE_HANJIN = "05";
+    public static final String DEFAULT_COMPANY_CODE_HANJIN = "HANJIN_EXPRESS";
 
     // ===== CommonCode Fixtures =====
 
     public static CommonCode cjCommonCode() {
         return CommonCode.reconstitute(
-                CommonCodeId.of(1L), CommonCodeTypeId.of(SHIPMENT_CODE_TYPE_ID),
-                DEFAULT_COMPANY_CODE_CJ, DEFAULT_COMPANY_NAME_CJ,
-                1, true, null, Instant.now(), Instant.now());
+                CommonCodeId.of(1L),
+                CommonCodeTypeId.of(SHIPMENT_CODE_TYPE_ID),
+                DEFAULT_COMPANY_CODE_CJ,
+                DEFAULT_COMPANY_NAME_CJ,
+                1,
+                true,
+                null,
+                Instant.now(),
+                Instant.now());
     }
 
     public static CommonCode lotteCommonCode() {
         return CommonCode.reconstitute(
-                CommonCodeId.of(2L), CommonCodeTypeId.of(SHIPMENT_CODE_TYPE_ID),
-                DEFAULT_COMPANY_CODE_LOTTE, DEFAULT_COMPANY_NAME_LOTTE,
-                2, true, null, Instant.now(), Instant.now());
+                CommonCodeId.of(2L),
+                CommonCodeTypeId.of(SHIPMENT_CODE_TYPE_ID),
+                DEFAULT_COMPANY_CODE_LOTTE,
+                DEFAULT_COMPANY_NAME_LOTTE,
+                2,
+                true,
+                null,
+                Instant.now(),
+                Instant.now());
     }
 
     public static CommonCode hanjinCommonCode() {
         return CommonCode.reconstitute(
-                CommonCodeId.of(3L), CommonCodeTypeId.of(SHIPMENT_CODE_TYPE_ID),
-                DEFAULT_COMPANY_CODE_HANJIN, DEFAULT_COMPANY_NAME_HANJIN,
-                3, true, null, Instant.now(), Instant.now());
+                CommonCodeId.of(3L),
+                CommonCodeTypeId.of(SHIPMENT_CODE_TYPE_ID),
+                DEFAULT_COMPANY_CODE_HANJIN,
+                DEFAULT_COMPANY_NAME_HANJIN,
+                3,
+                true,
+                null,
+                Instant.now(),
+                Instant.now());
     }
 
     public static List<CommonCode> commonCodes() {

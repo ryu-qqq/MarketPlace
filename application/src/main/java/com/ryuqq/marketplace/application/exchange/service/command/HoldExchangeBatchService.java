@@ -1,10 +1,10 @@
 package com.ryuqq.marketplace.application.exchange.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
-import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.HoldExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory.OutboxWithHistory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.HoldExchangeBatchUseCase;
@@ -46,7 +46,9 @@ public class HoldExchangeBatchService implements HoldExchangeBatchUseCase {
             try {
                 OutboxWithHistory bundle;
                 if (command.isHold()) {
-                    bundle = commandFactory.createHoldBundle(claim, command.memo(), command.processedBy());
+                    bundle =
+                            commandFactory.createHoldBundle(
+                                    claim, command.memo(), command.processedBy());
                 } else {
                     bundle = commandFactory.createReleaseHoldBundle(claim, command.processedBy());
                 }

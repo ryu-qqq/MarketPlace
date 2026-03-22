@@ -12,17 +12,43 @@ public class NaverCommerceException extends RuntimeException {
 
     private final int statusCode;
     private final String responseBody;
+    private final ErrorType errorType;
+    private final boolean retryable;
 
-    public NaverCommerceException(int statusCode, String responseBody) {
+    public enum ErrorType {
+        SERVER_ERROR(true),
+        RATE_LIMIT(true),
+        NETWORK(true),
+        BAD_REQUEST(false),
+        CLIENT_ERROR(false),
+        CIRCUIT_OPEN(false),
+        UNKNOWN(false);
+
+        private final boolean retryable;
+
+        ErrorType(boolean retryable) {
+            this.retryable = retryable;
+        }
+
+        public boolean isRetryable() {
+            return retryable;
+        }
+    }
+
+    public NaverCommerceException(int statusCode, String responseBody, ErrorType errorType) {
         super(String.format("네이버 커머스 API 오류 [%d]: %s", statusCode, responseBody));
         this.statusCode = statusCode;
         this.responseBody = responseBody;
+        this.errorType = errorType;
+        this.retryable = errorType.isRetryable();
     }
 
-    public NaverCommerceException(String message, Throwable cause) {
+    public NaverCommerceException(String message, Throwable cause, ErrorType errorType) {
         super(message, cause);
         this.statusCode = 0;
         this.responseBody = null;
+        this.errorType = errorType;
+        this.retryable = errorType.isRetryable();
     }
 
     public int statusCode() {
@@ -31,5 +57,13 @@ public class NaverCommerceException extends RuntimeException {
 
     public String responseBody() {
         return responseBody;
+    }
+
+    public ErrorType errorType() {
+        return errorType;
+    }
+
+    public boolean isRetryable() {
+        return retryable;
     }
 }

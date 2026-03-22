@@ -75,8 +75,7 @@ public class ExecuteExchangeOutboxService implements ExecuteExchangeOutboxUseCas
     }
 
     private void handleSuccess(ExchangeOutbox outbox) {
-        StatusChangeContext<Long> ctx =
-                commandFactory.createOutboxChangeContext(outbox.idValue());
+        StatusChangeContext<Long> ctx = commandFactory.createOutboxChangeContext(outbox.idValue());
         ExchangeOutbox fresh = outboxReadManager.getById(ctx.id());
         fresh.complete(ctx.changedAt());
         outboxCommandManager.persist(fresh);
@@ -100,8 +99,7 @@ public class ExecuteExchangeOutboxService implements ExecuteExchangeOutboxUseCas
 
     private void persistFailureWithReRead(Long outboxId, boolean retryable, String errorMessage) {
         try {
-            StatusChangeContext<Long> ctx =
-                    commandFactory.createOutboxChangeContext(outboxId);
+            StatusChangeContext<Long> ctx = commandFactory.createOutboxChangeContext(outboxId);
             ExchangeOutbox fresh = outboxReadManager.getById(ctx.id());
             fresh.recordFailure(retryable, errorMessage, ctx.changedAt());
             outboxCommandManager.persist(fresh);

@@ -43,7 +43,7 @@ public class LegacyNoticeCommandController {
     }
 
     @Operation(summary = "레거시 고시정보 수정", description = "세토프 어드민용 레거시 상품그룹의 고시정보를 수정합니다.")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("@legacyAccess.isProductOwnerOrMaster(#productGroupId)")
     @PutMapping(NOTICE)
     public ResponseEntity<LegacyApiResponse<Long>> updateProductNotice(
             @PathVariable long productGroupId,

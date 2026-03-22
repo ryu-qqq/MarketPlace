@@ -1,14 +1,16 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.adapter;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyProductGroupDetailDescriptionEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.mapper.LegacyProductGroupDescriptionEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.repository.LegacyProductGroupDetailDescriptionJpaRepository;
-import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyProductDescription;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionHtml;
+import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -33,7 +35,7 @@ class LegacyProductDescriptionCommandAdapterTest {
 
     @Mock private LegacyProductGroupDetailDescriptionJpaRepository repository;
 
-    @Mock private LegacyProductCommandEntityMapper mapper;
+    @Mock private LegacyProductGroupDescriptionEntityMapper mapper;
 
     @InjectMocks private LegacyProductDescriptionCommandAdapter commandAdapter;
 
@@ -42,48 +44,27 @@ class LegacyProductDescriptionCommandAdapterTest {
     class PersistTest {
 
         @Test
-        @DisplayName("상품 상세설명을 저장합니다")
-        void persist_WithValidDescription_SavesSuccessfully() {
+        @DisplayName("상품 상세설명을 저장하고 productGroupId를 반환합니다")
+        void persist_WithValidDescription_ReturnsProductGroupId() {
             // given
-            LegacyProductGroupId productGroupId = LegacyProductGroupId.of(1L);
-            LegacyProductDescription description = new LegacyProductDescription("<p>상세설명</p>");
-            LegacyProductGroupDetailDescriptionEntity entity =
-                    LegacyProductGroupDetailDescriptionEntity.create(1L, "<p>상세설명</p>");
-
-            given(mapper.toEntity(productGroupId, description)).willReturn(entity);
-            given(repository.save(entity)).willReturn(entity);
-
-            // when
-            commandAdapter.persist(productGroupId, description);
-
-            // then
-            then(mapper).should().toEntity(productGroupId, description);
-            then(repository).should().save(entity);
-        }
-    }
-
-    @Nested
-    @DisplayName("persistDescription 메서드 테스트")
-    class PersistDescriptionTest {
-
-        @Test
-        @DisplayName("LegacyProductGroupDescription 전체를 저장합니다")
-        void persistDescription_WithValidGroupDescription_SavesSuccessfully() {
-            // given
-            LegacyProductGroupDescription description =
-                    LegacyProductGroupDescription.forNew(1L, "<p>컨텐츠</p>");
+            ProductGroupDescription description =
+                    ProductGroupDescription.forNew(
+                            ProductGroupId.of(1L),
+                            DescriptionHtml.of("<p>상세설명</p>"),
+                            Instant.now());
             LegacyProductGroupDetailDescriptionEntity entity =
                     LegacyProductGroupDetailDescriptionEntity.createFull(
-                            1L, "<p>컨텐츠</p>", null, "PENDING");
+                            1L, "<p>상세설명</p>", null, "PENDING");
 
-            given(mapper.toDescriptionEntity(description)).willReturn(entity);
+            given(mapper.toEntity(description)).willReturn(entity);
             given(repository.save(entity)).willReturn(entity);
 
             // when
-            commandAdapter.persistDescription(description);
+            Long result = commandAdapter.persist(description);
 
             // then
-            then(mapper).should().toDescriptionEntity(description);
+            assertThat(result).isEqualTo(1L);
+            then(mapper).should().toEntity(description);
             then(repository).should().save(entity);
         }
     }

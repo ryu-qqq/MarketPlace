@@ -1,7 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.common.security;
 
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenCacheReadManager;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenManager;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenCacheReadManager;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenManager;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +18,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * 레거시 JWT 인증 필터.
  *
- * <p>/api/v1/legacy/** 경로에만 적용. HS256 JWT 서명을 검증하고 claims에서 인증 정보를 추출하여
- * {@link LegacyAuthContextHolder}와 {@link SecurityContextHolder}에 세팅합니다.
+ * <p>/api/v1/legacy/** 경로에만 적용. HS256 JWT 서명을 검증하고 claims에서 인증 정보를 추출하여 {@link
+ * LegacyAuthContextHolder}와 {@link SecurityContextHolder}에 세팅합니다.
  *
- * <p>DB 조회 없이 JWT 서명 검증만으로 인증을 처리합니다.
- * AccessToken 만료 시 Redis의 RefreshToken으로 자동 인증 (레거시 호환).
+ * <p>DB 조회 없이 JWT 서명 검증만으로 인증을 처리합니다. AccessToken 만료 시 Redis의 RefreshToken으로 자동 인증 (레거시 호환).
  */
 public class LegacyJwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -36,8 +35,7 @@ public class LegacyJwtAuthenticationFilter extends OncePerRequestFilter {
     private final LegacyTokenCacheReadManager tokenCacheReadManager;
 
     public LegacyJwtAuthenticationFilter(
-            LegacyTokenManager tokenManager,
-            LegacyTokenCacheReadManager tokenCacheReadManager) {
+            LegacyTokenManager tokenManager, LegacyTokenCacheReadManager tokenCacheReadManager) {
         this.tokenManager = tokenManager;
         this.tokenCacheReadManager = tokenCacheReadManager;
     }

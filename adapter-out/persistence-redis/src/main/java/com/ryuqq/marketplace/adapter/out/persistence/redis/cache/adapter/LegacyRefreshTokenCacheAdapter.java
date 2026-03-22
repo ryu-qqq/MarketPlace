@@ -1,7 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.redis.cache.adapter;
 
-import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenCacheCommandPort;
-import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenCacheQueryPort;
+import com.ryuqq.marketplace.application.legacy.auth.port.out.LegacyTokenCacheCommandPort;
+import com.ryuqq.marketplace.application.legacy.auth.port.out.LegacyTokenCacheQueryPort;
 import java.time.Duration;
 import java.util.Optional;
 import org.springframework.data.redis.core.RedisTemplate;

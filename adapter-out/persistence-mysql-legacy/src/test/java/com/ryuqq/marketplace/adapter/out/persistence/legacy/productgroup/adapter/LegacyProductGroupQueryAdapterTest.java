@@ -77,9 +77,6 @@ class LegacyProductGroupQueryAdapterTest {
                 Origin.KR,
                 "STYLE001",
                 null,
-                null,
-                null,
-                null,
                 null);
     }
 

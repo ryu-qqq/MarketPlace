@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -45,10 +46,13 @@ public class LegacyJpaConfig {
     }
 
     @Bean(initMethod = "migrate")
-    public Flyway legacyFlyway(@Qualifier("legacyDataSource") DataSource dataSource) {
+    public Flyway legacyFlyway(
+            @Qualifier("legacyDataSource") DataSource dataSource,
+            @Value("${persistence.legacy.flyway.locations:classpath:db/legacy-migration}")
+                    String locations) {
         return Flyway.configure()
                 .dataSource(dataSource)
-                .locations("classpath:db/legacy-migration")
+                .locations(locations)
                 .table("flyway_schema_history_legacy")
                 .baselineOnMigrate(true)
                 .validateOnMigrate(true)
@@ -62,13 +66,14 @@ public class LegacyJpaConfig {
     public LocalContainerEntityManagerFactoryBean legacyEntityManagerFactory(
             @Qualifier("legacyDataSource") DataSource dataSource,
             EntityManagerFactoryBuilder builder,
-            @Qualifier("legacyFlyway") Flyway legacyFlyway) {
+            @Qualifier("legacyFlyway") Flyway legacyFlyway,
+            @Value("${persistence.legacy.jpa.ddl-auto:none}") String ddlAuto) {
         return builder.dataSource(dataSource)
                 .packages("com.ryuqq.marketplace.adapter.out.persistence.legacy")
                 .persistenceUnit("legacy")
                 .properties(
                         Map.of(
-                                "hibernate.hbm2ddl.auto", "none",
+                                "hibernate.hbm2ddl.auto", ddlAuto,
                                 "hibernate.show_sql", "false",
                                 "hibernate.physical_naming_strategy",
                                         "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"))

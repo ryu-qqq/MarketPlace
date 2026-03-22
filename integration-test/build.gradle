@@ -18,6 +18,18 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'org.flywaydb') {
+            // flyway-mysql:11.7.2 가 flyway-core:10.10.0 으로 다운그레이드되어
+            // UrlUtils.isSecretManagerUrl API 불일치 발생 → 11.7.2 로 통일
+            details.useVersion '11.7.2'
+            details.because 'flyway-mysql:11.7.2 requires flyway-core:11.7.2'
+        }
+    }
+}
+
+
 dependencies {
     // Spring Boot Test (전체 애플리케이션 컨텍스트)
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -35,12 +47,18 @@ dependencies {
 
     // Adapter-In (REST API 컨트롤러)
     testImplementation project(':adapter-in:rest-api')
+    testImplementation project(':adapter-in:rest-api-legacy')
+
+    // Bootstrap (Legacy API)
+    testImplementation project(':bootstrap:bootstrap-legacy-api')
 
     // Adapter-Out (영속성)
     testImplementation project(':adapter-out:persistence-mysql')
+    testImplementation project(':adapter-out:persistence-mysql-legacy')
     testImplementation project(':adapter-out:persistence-redis')
     testImplementation project(':adapter-out:client:authhub-client')
     testImplementation project(':adapter-out:client:naver-commerce-client')
+    testImplementation project(':adapter-out:client:fileflow-client')
 
     // AuthHub SDK (TokenResolver stub 제공을 위해 직접 의존)
     testImplementation libs.authhub.sdk.core
@@ -62,6 +80,12 @@ dependencies {
 
     // H2 Database
     testRuntimeOnly 'com.h2database:h2:2.2.224'
+
+    // Flyway (레거시 Flyway stub 빈 제공을 위해 필요)
+    testImplementation libs.flyway.core
+
+    // Redisson (레거시 API 테스트 - RedissonClient stub 제공을 위해 필요)
+    testImplementation libs.redisson.spring.boot.starter
 
     // testFixtures
     testImplementation testFixtures(project(':adapter-out:persistence-mysql'))

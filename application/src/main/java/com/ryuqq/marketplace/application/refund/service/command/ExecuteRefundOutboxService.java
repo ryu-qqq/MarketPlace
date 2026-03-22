@@ -75,8 +75,7 @@ public class ExecuteRefundOutboxService implements ExecuteRefundOutboxUseCase {
     }
 
     private void handleSuccess(RefundOutbox outbox) {
-        StatusChangeContext<Long> ctx =
-                commandFactory.createOutboxChangeContext(outbox.idValue());
+        StatusChangeContext<Long> ctx = commandFactory.createOutboxChangeContext(outbox.idValue());
         RefundOutbox fresh = outboxReadManager.getById(ctx.id());
         fresh.complete(ctx.changedAt());
         outboxCommandManager.persist(fresh);
@@ -100,8 +99,7 @@ public class ExecuteRefundOutboxService implements ExecuteRefundOutboxUseCase {
 
     private void persistFailureWithReRead(Long outboxId, boolean retryable, String errorMessage) {
         try {
-            StatusChangeContext<Long> ctx =
-                    commandFactory.createOutboxChangeContext(outboxId);
+            StatusChangeContext<Long> ctx = commandFactory.createOutboxChangeContext(outboxId);
             RefundOutbox fresh = outboxReadManager.getById(ctx.id());
             fresh.recordFailure(retryable, errorMessage, ctx.changedAt());
             outboxCommandManager.persist(fresh);

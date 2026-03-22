@@ -30,9 +30,10 @@ dependencies {
     implementation libs.jackson.databind
 
     // ========================================
-    // Resilience (Circuit Breaker + Metrics)
+    // Resilience (Circuit Breaker + Retry + Metrics)
     // ========================================
     implementation libs.resilience4j.circuitbreaker
+    implementation libs.resilience4j.retry
     implementation libs.resilience4j.micrometer
     implementation libs.micrometer.core
 

@@ -13,3 +13,4 @@ sqs:
     cancel-outbox: ${SQS_CANCEL_OUTBOX_URL}
     refund-outbox: ${SQS_REFUND_OUTBOX_URL}
     exchange-outbox: ${SQS_EXCHANGE_OUTBOX_URL}
+    qna-outbox: ${SQS_QNA_OUTBOX_URL}

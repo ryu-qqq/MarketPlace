@@ -49,7 +49,8 @@ class RefundPersistenceFacadeTest {
             List<ClaimHistory> histories =
                     List.of(ClaimHistoryFixtures.refundStatusChangeHistory());
 
-            RefundPersistenceBundle bundle = RefundPersistenceBundle.of(claims, outboxes, histories);
+            RefundPersistenceBundle bundle =
+                    RefundPersistenceBundle.of(claims, outboxes, histories);
 
             // when
             sut.persistAll(bundle);

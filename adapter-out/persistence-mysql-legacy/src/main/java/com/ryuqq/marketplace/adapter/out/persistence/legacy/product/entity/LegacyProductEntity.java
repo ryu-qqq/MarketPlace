@@ -11,10 +11,7 @@ import jakarta.persistence.Table;
 /**
  * LegacyProductEntity - 레거시 상품 엔티티.
  *
- * <p>레거시 DB의 product 테이블 매핑.
- *
- * @author ryu-qqq
- * @since 1.0.0
+ * <p>레거시 DB의 product 테이블 매핑. stock_quantity 포함.
  */
 @Entity
 @Table(name = "product")
@@ -34,35 +31,44 @@ public class LegacyProductEntity extends LegacyBaseEntity {
     @Column(name = "DISPLAY_YN")
     private String displayYn;
 
+    @Column(name = "STOCK_QUANTITY")
+    private Integer stockQuantity;
+
     @Column(name = "delete_yn")
     private String deleteYn;
 
     protected LegacyProductEntity() {}
 
-    private LegacyProductEntity(Long productGroupId, String soldOutYn, String displayYn) {
-        this.productGroupId = productGroupId;
-        this.soldOutYn = soldOutYn;
-        this.displayYn = displayYn;
-        this.deleteYn = "N";
-    }
-
     private LegacyProductEntity(
-            Long id, Long productGroupId, String soldOutYn, String displayYn, String deleteYn) {
+            Long id,
+            Long productGroupId,
+            String soldOutYn,
+            String displayYn,
+            Integer stockQuantity,
+            String deleteYn) {
         this.id = id;
         this.productGroupId = productGroupId;
         this.soldOutYn = soldOutYn;
         this.displayYn = displayYn;
+        this.stockQuantity = stockQuantity;
         this.deleteYn = deleteYn;
     }
 
     public static LegacyProductEntity create(
-            long productGroupId, String soldOutYn, String displayYn) {
-        return new LegacyProductEntity(productGroupId, soldOutYn, displayYn);
+            long productGroupId, String soldOutYn, String displayYn, int stockQuantity) {
+        return new LegacyProductEntity(
+                null, productGroupId, soldOutYn, displayYn, stockQuantity, "N");
     }
 
     public static LegacyProductEntity create(
-            Long id, long productGroupId, String soldOutYn, String displayYn, String deleteYn) {
-        return new LegacyProductEntity(id, productGroupId, soldOutYn, displayYn, deleteYn);
+            Long id,
+            long productGroupId,
+            String soldOutYn,
+            String displayYn,
+            int stockQuantity,
+            String deleteYn) {
+        return new LegacyProductEntity(
+                id, productGroupId, soldOutYn, displayYn, stockQuantity, deleteYn);
     }
 
     public Long getId() {
@@ -79,6 +85,10 @@ public class LegacyProductEntity extends LegacyBaseEntity {
 
     public String getDisplayYn() {
         return displayYn;
+    }
+
+    public Integer getStockQuantity() {
+        return stockQuantity;
     }
 
     public String getDeleteYn() {

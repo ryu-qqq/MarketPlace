@@ -1,10 +1,9 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.mapper.LegacyProductGroupDescriptionEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.repository.LegacyDescriptionImageJpaRepository;
 import com.ryuqq.marketplace.application.legacy.productgroupdescription.port.out.command.LegacyDescriptionImageCommandPort;
-import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyDescriptionImage;
-import java.util.List;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.DescriptionImage;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,22 +15,17 @@ import org.springframework.stereotype.Component;
 public class LegacyDescriptionImageCommandAdapter implements LegacyDescriptionImageCommandPort {
 
     private final LegacyDescriptionImageJpaRepository repository;
-    private final LegacyProductCommandEntityMapper mapper;
+    private final LegacyProductGroupDescriptionEntityMapper mapper;
 
     public LegacyDescriptionImageCommandAdapter(
             LegacyDescriptionImageJpaRepository repository,
-            LegacyProductCommandEntityMapper mapper) {
+            LegacyProductGroupDescriptionEntityMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
 
     @Override
-    public void persistAll(List<LegacyDescriptionImage> images) {
-        repository.saveAll(images.stream().map(mapper::toImageEntity).toList());
-    }
-
-    @Override
-    public void softDeleteAll(List<LegacyDescriptionImage> images) {
-        repository.saveAll(images.stream().map(mapper::toImageEntity).toList());
+    public Long persist(DescriptionImage image) {
+        return repository.save(mapper.toImageEntity(image)).getId();
     }
 }

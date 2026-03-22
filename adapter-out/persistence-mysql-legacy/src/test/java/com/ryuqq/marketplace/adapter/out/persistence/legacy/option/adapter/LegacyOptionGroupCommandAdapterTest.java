@@ -4,12 +4,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.LegacyOptionGroupEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.LegacyOptionGroupEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.mapper.LegacyOptionCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.repository.LegacyOptionGroupJpaRepository;
-import com.ryuqq.marketplace.domain.legacy.optiongroup.aggregate.LegacyOptionGroup;
-import com.ryuqq.marketplace.domain.legacy.optiongroup.vo.LegacyOptionName;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionGroupName;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -34,8 +37,6 @@ class LegacyOptionGroupCommandAdapterTest {
 
     @Mock private LegacyOptionGroupJpaRepository repository;
 
-    @Mock private LegacyOptionCommandEntityMapper mapper;
-
     @InjectMocks private LegacyOptionGroupCommandAdapter commandAdapter;
 
     // ========================================================================
@@ -50,39 +51,47 @@ class LegacyOptionGroupCommandAdapterTest {
         @DisplayName("옵션 그룹을 저장하고 ID를 반환합니다")
         void persist_WithValidOptionGroup_ReturnsSavedId() {
             // given
-            LegacyOptionGroup optionGroup = LegacyOptionGroup.forNew(LegacyOptionName.COLOR);
+            SellerOptionGroup optionGroup =
+                    SellerOptionGroup.forNew(
+                            ProductGroupId.of(1L),
+                            OptionGroupName.of("색상"),
+                            OptionInputType.PREDEFINED,
+                            0,
+                            List.of());
 
-            LegacyOptionGroupEntity entity = LegacyOptionGroupEntityFixtures.defaultEntity();
             LegacyOptionGroupEntity savedEntity =
-                    LegacyOptionGroupEntityFixtures.entityWithName("COLOR");
+                    LegacyOptionGroupEntity.create(1L, 1L, "색상", "N");
 
-            given(mapper.toEntity(optionGroup)).willReturn(entity);
-            given(repository.save(entity)).willReturn(savedEntity);
+            given(repository.save(any())).willReturn(savedEntity);
 
             // when
             Long result = commandAdapter.persist(optionGroup);
 
             // then
-            then(mapper).should().toEntity(optionGroup);
-            then(repository).should().save(entity);
+            then(repository).should().save(any());
         }
 
         @Test
         @DisplayName("Mapper와 Repository가 순서대로 호출됩니다")
         void persist_CallsMapperThenRepository() {
             // given
-            LegacyOptionGroup optionGroup = LegacyOptionGroup.forNew(LegacyOptionName.SIZE);
-            LegacyOptionGroupEntity entity = LegacyOptionGroupEntityFixtures.sizeEntity();
+            SellerOptionGroup optionGroup =
+                    SellerOptionGroup.forNew(
+                            ProductGroupId.of(2L),
+                            OptionGroupName.of("사이즈"),
+                            OptionInputType.PREDEFINED,
+                            0,
+                            List.of());
 
-            given(mapper.toEntity(optionGroup)).willReturn(entity);
+            LegacyOptionGroupEntity entity = LegacyOptionGroupEntity.create(2L, "사이즈");
+
             given(repository.save(any())).willReturn(entity);
 
             // when
             commandAdapter.persist(optionGroup);
 
             // then
-            then(mapper).should().toEntity(optionGroup);
-            then(repository).should().save(entity);
+            then(repository).should().save(any());
         }
     }
 }

@@ -176,7 +176,7 @@ class LegacyProductCommandEntityMapperFullTest {
         @DisplayName("LegacyProductEntity로 LegacyProduct 도메인을 복원합니다")
         void toProductDomain_WithValidEntity_ReturnsValidDomain() {
             // given
-            LegacyProductEntity entity = LegacyProductEntity.create(10L, 1L, "N", "Y", "N");
+            LegacyProductEntity entity = LegacyProductEntity.create(10L, 1L, "N", "Y", 5, "N");
             int stockQuantity = 5;
             List<LegacyProductOption> options = List.of();
 
@@ -540,10 +540,10 @@ class LegacyProductCommandEntityMapperFullTest {
         @DisplayName("LegacyProductGroupEntity로 LegacyProductGroup 도메인을 복원합니다")
         void toDomain_WithValidEntity_ReturnsValidDomain() {
             // given
-            com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity
+            com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity
                             .LegacyProductGroupEntity
                     entity =
-                            com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity
+                            com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity
                                     .LegacyProductGroupEntity.create(
                                     1L,
                                     "테스트 상품",

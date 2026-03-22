@@ -53,8 +53,7 @@ public class RefundOutboxRelayProcessor {
      * @return 성공 여부
      */
     public boolean relay(RefundOutbox outbox) {
-        StatusChangeContext<Long> ctx =
-                commandFactory.createOutboxChangeContext(outbox.idValue());
+        StatusChangeContext<Long> ctx = commandFactory.createOutboxChangeContext(outbox.idValue());
         try {
             outbox.startProcessing(ctx.changedAt());
             outboxCommandManager.persist(outbox);

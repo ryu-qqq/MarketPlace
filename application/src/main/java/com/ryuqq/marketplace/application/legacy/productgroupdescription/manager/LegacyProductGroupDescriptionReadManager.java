@@ -1,7 +1,9 @@
 package com.ryuqq.marketplace.application.legacy.productgroupdescription.manager;
 
 import com.ryuqq.marketplace.application.legacy.productgroupdescription.port.out.query.LegacyProductGroupDescriptionReadPort;
-import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
+import com.ryuqq.marketplace.domain.productgroup.exception.ProductGroupDescriptionNotFoundException;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +18,11 @@ public class LegacyProductGroupDescriptionReadManager {
         this.readPort = readPort;
     }
 
-    /** productGroupId로 상세설명 조회. 존재하지 않으면 신규 생성 대상. */
     @Transactional(readOnly = true)
-    public LegacyProductGroupDescription getByProductGroupId(long productGroupId) {
+    public ProductGroupDescription getByProductGroupId(long productGroupId) {
         return readPort.findByProductGroupId(productGroupId)
-                .orElseGet(() -> LegacyProductGroupDescription.forNew(productGroupId, null));
+                .orElseThrow(
+                        () -> new ProductGroupDescriptionNotFoundException(
+                                ProductGroupId.of(productGroupId)));
     }
 }

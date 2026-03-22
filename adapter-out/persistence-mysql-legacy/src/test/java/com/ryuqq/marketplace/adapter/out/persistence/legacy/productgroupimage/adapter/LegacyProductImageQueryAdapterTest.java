@@ -5,12 +5,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.repository.LegacyProductGroupQueryDslRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.mapper.LegacyProductGroupImageEntityMapper;
 import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
-import com.ryuqq.marketplace.domain.legacy.productimage.vo.ProductGroupImageType;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
+import com.ryuqq.marketplace.domain.productgroupimage.id.ProductGroupImageId;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +38,7 @@ class LegacyProductImageQueryAdapterTest {
 
     @Mock private LegacyProductGroupQueryDslRepository queryDslRepository;
 
-    @Mock private LegacyProductCommandEntityMapper mapper;
+    @Mock private LegacyProductGroupImageEntityMapper mapper;
 
     @InjectMocks private LegacyProductImageQueryAdapter queryAdapter;
 
@@ -44,20 +46,20 @@ class LegacyProductImageQueryAdapterTest {
         return LegacyProductGroupImageEntity.create(
                 1L,
                 1L,
-                "MAIN",
+                "THUMBNAIL",
                 "https://cdn.example.com/image.jpg",
                 "https://origin.example.com/image.jpg",
                 1L,
                 "N");
     }
 
-    private LegacyProductImage buildImageDomain() {
-        return LegacyProductImage.reconstitute(
-                1L,
-                1L,
-                ProductGroupImageType.MAIN,
-                "https://cdn.example.com/image.jpg",
-                "https://origin.example.com/image.jpg",
+    private ProductGroupImage buildImageDomain() {
+        return ProductGroupImage.reconstitute(
+                ProductGroupImageId.of(1L),
+                ProductGroupId.of(1L),
+                ImageUrl.of("https://origin.example.com/image.jpg"),
+                ImageUrl.of("https://cdn.example.com/image.jpg"),
+                ImageType.THUMBNAIL,
                 1,
                 DeletionStatus.active());
     }
@@ -70,33 +72,33 @@ class LegacyProductImageQueryAdapterTest {
         @DisplayName("상품그룹 ID로 조회 시 이미지 목록을 반환합니다")
         void findByProductGroupId_WithExistingId_ReturnsImages() {
             // given
-            LegacyProductGroupId productGroupId = LegacyProductGroupId.of(1L);
+            long productGroupId = 1L;
             LegacyProductGroupImageEntity entity = buildImageEntity();
-            LegacyProductImage domain = buildImageDomain();
+            ProductGroupImage domain = buildImageDomain();
 
             given(queryDslRepository.findImagesByProductGroupId(1L)).willReturn(List.of(entity));
-            given(mapper.toImageDomain(entity)).willReturn(domain);
+            given(mapper.toDomain(entity)).willReturn(domain);
 
             // when
-            List<LegacyProductImage> results = queryAdapter.findByProductGroupId(productGroupId);
+            List<ProductGroupImage> results = queryAdapter.findByProductGroupId(productGroupId);
 
             // then
             assertThat(results).hasSize(1);
-            assertThat(results.get(0).imageType()).isEqualTo(ProductGroupImageType.MAIN);
+            assertThat(results.get(0).imageType()).isEqualTo(ImageType.THUMBNAIL);
             then(queryDslRepository).should().findImagesByProductGroupId(1L);
-            then(mapper).should().toImageDomain(entity);
+            then(mapper).should().toDomain(entity);
         }
 
         @Test
         @DisplayName("이미지가 없는 상품그룹 ID로 조회 시 빈 목록을 반환합니다")
         void findByProductGroupId_WithNoImages_ReturnsEmptyList() {
             // given
-            LegacyProductGroupId productGroupId = LegacyProductGroupId.of(999L);
+            long productGroupId = 999L;
 
             given(queryDslRepository.findImagesByProductGroupId(999L)).willReturn(List.of());
 
             // when
-            List<LegacyProductImage> results = queryAdapter.findByProductGroupId(productGroupId);
+            List<ProductGroupImage> results = queryAdapter.findByProductGroupId(productGroupId);
 
             // then
             assertThat(results).isEmpty();

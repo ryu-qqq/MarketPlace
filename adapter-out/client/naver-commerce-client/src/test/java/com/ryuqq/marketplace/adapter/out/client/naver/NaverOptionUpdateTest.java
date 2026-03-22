@@ -9,8 +9,8 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductDetailResp
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionGroupId;
@@ -118,7 +118,8 @@ class NaverOptionUpdateTest {
                                 new SkuStock("SKU-WH-L", 16000, 6)));
 
         NaverProductRegistrationRequest registerReq =
-                mapper.toRegistrationRequest(ProductGroupSyncData.from(registerBundle), NAVER_CATEGORY_ID, null);
+                mapper.toRegistrationRequest(
+                        ProductGroupSyncData.from(registerBundle), NAVER_CATEGORY_ID, null);
 
         String registerJson = objectMapper.writeValueAsString(registerReq);
         HttpResponse<String> registerResp =

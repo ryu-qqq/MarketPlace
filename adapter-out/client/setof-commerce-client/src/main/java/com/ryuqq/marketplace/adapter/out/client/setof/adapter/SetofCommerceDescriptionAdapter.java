@@ -1,20 +1,16 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofDescriptionRequest;
-import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 
 /**
  * 세토프 커머스 상품 그룹 상세설명 어댑터.
  *
- * <p>상세설명 등록/수정 엔드포인트를 호출합니다.
+ * <p>상세설명 등록/수정 엔드포인트를 호출합니다. HTTP 호출은 {@link SetofCommerceApiClient}에 위임합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
@@ -23,13 +19,10 @@ public class SetofCommerceDescriptionAdapter {
     private static final Logger log =
             LoggerFactory.getLogger(SetofCommerceDescriptionAdapter.class);
 
-    private final RestClient restClient;
-    private final CircuitBreaker circuitBreaker;
+    private final SetofCommerceApiClient apiClient;
 
-    public SetofCommerceDescriptionAdapter(
-            RestClient setofCommerceRestClient, CircuitBreaker setofCommerceCircuitBreaker) {
-        this.restClient = setofCommerceRestClient;
-        this.circuitBreaker = setofCommerceCircuitBreaker;
+    public SetofCommerceDescriptionAdapter(SetofCommerceApiClient apiClient) {
+        this.apiClient = apiClient;
     }
 
     /**
@@ -41,27 +34,9 @@ public class SetofCommerceDescriptionAdapter {
      * @param request 상세설명 등록 요청
      */
     public void registerDescription(Long productGroupId, SetofDescriptionRequest request) {
-        try {
-            circuitBreaker.executeRunnable(
-                    () -> {
-                        log.info("세토프 커머스 상세설명 등록 요청: productGroupId={}", productGroupId);
-
-                        restClient
-                                .post()
-                                .uri(
-                                        "/api/v2/admin/product-groups/{productGroupId}/description",
-                                        productGroupId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(request)
-                                .retrieve()
-                                .toBodilessEntity();
-
-                        log.info("세토프 커머스 상세설명 등록 성공: productGroupId={}", productGroupId);
-                    });
-        } catch (CallNotPermittedException e) {
-            throw new ExternalServiceUnavailableException(
-                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
-        }
+        log.info("세토프 커머스 상세설명 등록: productGroupId={}", productGroupId);
+        apiClient.registerDescription(productGroupId, request);
+        log.info("세토프 커머스 상세설명 등록 성공: productGroupId={}", productGroupId);
     }
 
     /**
@@ -73,26 +48,8 @@ public class SetofCommerceDescriptionAdapter {
      * @param request 상세설명 수정 요청
      */
     public void updateDescription(Long productGroupId, SetofDescriptionRequest request) {
-        try {
-            circuitBreaker.executeRunnable(
-                    () -> {
-                        log.info("세토프 커머스 상세설명 수정 요청: productGroupId={}", productGroupId);
-
-                        restClient
-                                .put()
-                                .uri(
-                                        "/api/v2/admin/product-groups/{productGroupId}/description",
-                                        productGroupId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(request)
-                                .retrieve()
-                                .toBodilessEntity();
-
-                        log.info("세토프 커머스 상세설명 수정 성공: productGroupId={}", productGroupId);
-                    });
-        } catch (CallNotPermittedException e) {
-            throw new ExternalServiceUnavailableException(
-                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
-        }
+        log.info("세토프 커머스 상세설명 수정: productGroupId={}", productGroupId);
+        apiClient.updateDescription(productGroupId, request);
+        log.info("세토프 커머스 상세설명 수정 성공: productGroupId={}", productGroupId);
     }
 }

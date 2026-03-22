@@ -1,7 +1,9 @@
 package com.ryuqq.marketplace.application.shipment.internal;
 
+import com.ryuqq.marketplace.application.common.util.OutboxPayloadUtils;
 import com.ryuqq.marketplace.application.shipment.dto.command.ShipBatchCommand.ShipBatchItem;
 import com.ryuqq.marketplace.application.shipment.dto.command.ShipSingleCommand;
+import java.util.Map;
 
 /**
  * 배송 아웃박스 페이로드 빌더.
@@ -19,29 +21,18 @@ public final class ShipmentOutboxPayloadBuilder {
     }
 
     public static String shipPayload(ShipBatchItem item) {
-        return "{\"trackingNumber\":\""
-                + escape(item.trackingNumber())
-                + "\",\"courierCode\":\""
-                + escape(item.courierCode())
-                + "\",\"courierName\":\""
-                + escape(item.courierName())
-                + "\"}";
+        return OutboxPayloadUtils.mapToJson(
+                Map.of(
+                        "trackingNumber", item.trackingNumber(),
+                        "courierCode", item.courierCode(),
+                        "courierName", item.courierName()));
     }
 
     public static String shipPayload(ShipSingleCommand command) {
-        return "{\"trackingNumber\":\""
-                + escape(command.trackingNumber())
-                + "\",\"courierCode\":\""
-                + escape(command.courierCode())
-                + "\",\"courierName\":\""
-                + escape(command.courierName())
-                + "\"}";
-    }
-
-    private static String escape(String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+        return OutboxPayloadUtils.mapToJson(
+                Map.of(
+                        "trackingNumber", command.trackingNumber(),
+                        "courierCode", command.courierCode(),
+                        "courierName", command.courierName()));
     }
 }

@@ -2,11 +2,11 @@ package com.ryuqq.marketplace.application.exchange.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
-import com.ryuqq.marketplace.application.exchange.dto.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand.ExchangeRequestItem;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory;
 import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory.ExchangeClaimWithHistory;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangeBatchResult;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.port.in.command.RequestExchangeBatchUseCase;
@@ -66,8 +66,7 @@ public class RequestExchangeBatchService implements RequestExchangeBatchUseCase 
 
                 StatusChangeContext<OrderItemId> ctx =
                         commandFactory.createRequestOrderItemContext(item.orderItemId());
-                Optional<OrderItem> orderItem =
-                        orderItemReadManager.findById(ctx.id());
+                Optional<OrderItem> orderItem = orderItemReadManager.findById(ctx.id());
                 orderItem.ifPresent(
                         oi -> {
                             oi.requestReturn(command.requestedBy(), "교환 요청", ctx.changedAt());

@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.domain.inboundorder.aggregate.InboundOrderItem;
 import com.ryuqq.marketplace.domain.inboundorder.id.InboundOrderId;
 import com.ryuqq.marketplace.domain.inboundorder.id.InboundOrderItemId;
 import com.ryuqq.marketplace.domain.inboundorder.vo.InboundOrderStatus;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -63,8 +64,8 @@ public class InboundOrderJpaEntityMapper {
                 item.resolvedSkuCode(),
                 item.resolvedProductGroupName(),
                 item.isMapped(),
-                null,
-                null);
+                Instant.now(),
+                Instant.now());
     }
 
     public List<InboundOrderItemJpaEntity> toItemEntities(

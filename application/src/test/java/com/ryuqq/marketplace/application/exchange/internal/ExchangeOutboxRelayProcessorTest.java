@@ -93,7 +93,8 @@ class ExchangeOutboxRelayProcessorTest {
             assertThat(result).isFalse();
             then(freshOutbox)
                     .should()
-                    .recordFailure(Mockito.eq(true), Mockito.contains("Relay 실패"), Mockito.eq(failNow));
+                    .recordFailure(
+                            Mockito.eq(true), Mockito.contains("Relay 실패"), Mockito.eq(failNow));
             then(outboxCommandManager).should().persist(freshOutbox);
         }
 

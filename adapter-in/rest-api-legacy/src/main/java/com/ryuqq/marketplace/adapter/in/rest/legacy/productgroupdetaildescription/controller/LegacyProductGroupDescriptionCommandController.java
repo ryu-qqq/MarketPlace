@@ -32,7 +32,7 @@ public class LegacyProductGroupDescriptionCommandController {
     }
 
     @Operation(summary = "레거시 상품그룹 상세설명 수정", description = "세토프 어드민용 레거시 상품그룹의 상세설명을 수정합니다.")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("@legacyAccess.isProductOwnerOrMaster(#productGroupId)")
     @PutMapping(DETAIL_DESCRIPTION)
     public ResponseEntity<LegacyApiResponse<Long>> updateDetailDescription(
             @PathVariable long productGroupId,

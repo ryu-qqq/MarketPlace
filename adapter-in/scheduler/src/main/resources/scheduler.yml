@@ -390,6 +390,15 @@ scheduler:
       cron: "0 */5 * * * *"
       timezone: Asia/Seoul
       batch-size: 100
+      sales-channel-ids:
+        - 2
+
+    # InboundQna RECEIVED 재변환 스케줄러
+    inbound-qna-retry:
+      enabled: false
+      cron: "0 */10 * * * *"
+      timezone: Asia/Seoul
+      batch-size: 100
 
     # SellerAdminEmailOutbox 처리 스케줄러
     seller-admin-email-outbox:

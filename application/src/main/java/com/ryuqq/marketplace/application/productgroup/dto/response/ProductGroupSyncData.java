@@ -9,7 +9,6 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductGroupImageResult;
 import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerCsSyncResult;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -60,13 +59,18 @@ public record ProductGroupSyncData(
     public static ProductGroupSyncData from(ProductGroupDetailBundle bundle) {
         List<ProductGroupImageResult> imageResults =
                 bundle.group().images().stream()
-                        .map(image -> {
-                            ProductGroupImageResult base = ProductGroupImageResult.from(image);
-                            List<ImageVariantResult> variants =
-                                    bundle.variantsByImageId()
-                                            .getOrDefault(image.idValue(), List.of());
-                            return variants.isEmpty() ? base : base.withVariants(variants);
-                        })
+                        .map(
+                                image -> {
+                                    ProductGroupImageResult base =
+                                            ProductGroupImageResult.from(image);
+                                    Long imageId = image.idValue();
+                                    List<ImageVariantResult> variants =
+                                            imageId != null
+                                                    ? bundle.variantsByImageId()
+                                                            .getOrDefault(imageId, List.of())
+                                                    : List.of();
+                                    return variants.isEmpty() ? base : base.withVariants(variants);
+                                })
                         .toList();
 
         List<SellerOptionGroupResult> optionGroupResults =
@@ -77,26 +81,30 @@ public record ProductGroupSyncData(
         List<ProductResult> productResults =
                 bundle.products().stream().map(ProductResult::from).toList();
 
-        Optional<ProductNoticeResult> noticeResult =
-                bundle.notice().map(ProductNoticeResult::from);
+        Optional<ProductNoticeResult> noticeResult = bundle.notice().map(ProductNoticeResult::from);
 
         Optional<NoticeCategoryResult> noticeCategoryResult =
-                bundle.noticeCategory().map(nc -> new NoticeCategoryResult(
-                        nc.idValue(),
-                        nc.codeValue(),
-                        nc.nameKo(),
-                        nc.nameEn(),
-                        nc.targetCategoryGroup().name(),
-                        nc.isActive(),
-                        nc.fields().stream()
-                                .map(f -> new NoticeFieldResult(
-                                        f.idValue(),
-                                        f.fieldCodeValue(),
-                                        f.fieldNameValue(),
-                                        f.isRequired(),
-                                        f.sortOrder()))
-                                .toList(),
-                        nc.createdAt()));
+                bundle.noticeCategory()
+                        .map(
+                                nc ->
+                                        new NoticeCategoryResult(
+                                                nc.idValue(),
+                                                nc.codeValue(),
+                                                nc.nameKo(),
+                                                nc.nameEn(),
+                                                nc.targetCategoryGroup().name(),
+                                                nc.isActive(),
+                                                nc.fields().stream()
+                                                        .map(
+                                                                f ->
+                                                                        new NoticeFieldResult(
+                                                                                f.idValue(),
+                                                                                f.fieldCodeValue(),
+                                                                                f.fieldNameValue(),
+                                                                                f.isRequired(),
+                                                                                f.sortOrder()))
+                                                        .toList(),
+                                                nc.createdAt()));
 
         Optional<SellerCsSyncResult> sellerCsResult =
                 bundle.sellerCs().map(SellerCsSyncResult::from);

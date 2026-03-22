@@ -9,8 +9,8 @@ import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerDetailApi
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerPublicProfileApiResponse;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerFullCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.response.SellerPolicyCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerPageResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPolicyCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerPublicProfileResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerResult;
 import java.math.BigDecimal;

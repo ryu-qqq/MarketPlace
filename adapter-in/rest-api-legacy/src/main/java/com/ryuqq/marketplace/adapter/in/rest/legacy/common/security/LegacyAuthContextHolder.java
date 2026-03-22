@@ -3,8 +3,8 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.common.security;
 /**
  * 레거시 인증 컨텍스트 ThreadLocal 홀더.
  *
- * <p>{@link LegacyJwtAuthenticationFilter}가 JWT claims를 파싱하여 세팅하고,
- * Controller에서 {@code LegacyAuthContextHolder.getContext()}로 조회합니다.
+ * <p>{@link LegacyJwtAuthenticationFilter}가 JWT claims를 파싱하여 세팅하고, Controller에서 {@code
+ * LegacyAuthContextHolder.getContext()}로 조회합니다.
  *
  * <p>표준 API의 {@code UserContextHolder}와 동일한 패턴입니다.
  */

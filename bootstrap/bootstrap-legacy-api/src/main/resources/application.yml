@@ -1,0 +1,164 @@
+# ===============================================
+# Legacy API Application Configuration
+# ===============================================
+# 레거시(세토프) 호환 REST API 전용 서버
+# 별도 포트(8081)에서 기동
+# ===============================================
+
+server:
+  port: 8081
+  forward-headers-strategy: framework
+  tomcat:
+    threads:
+      min-spare: 5
+      max: 100
+    connection-timeout: 20s
+    keep-alive-timeout: 60s
+    accept-count: 50
+    max-connections: 4096
+  shutdown: graceful
+
+# ===============================================
+# Spring Configuration
+# ===============================================
+spring:
+  application:
+    name: marketplace-legacy-api
+
+  profiles:
+    active: local
+
+  config:
+    import:
+      - classpath:persistence.yml
+      - optional:classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-${spring.profiles.active:local}.yml
+      - classpath:redis.yml
+      - classpath:authhub.yml
+      - classpath:fileflow.yml
+
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss
+    time-zone: Asia/Seoul
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+      FAIL_ON_EMPTY_BEANS: false
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+    default-property-inclusion: non_null
+
+  web:
+    locale: ko_KR
+    locale-resolver: fixed
+
+  mvc:
+    contentnegotiation:
+      favor-parameter: false
+      favor-path-extension: false
+
+# ===============================================
+# Legacy 모듈 활성화 (항상 true)
+# ===============================================
+persistence:
+  legacy:
+    enabled: true
+
+# ===============================================
+# Management & Actuator
+# ===============================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+
+  endpoint:
+    health:
+      show-details: when-authorized
+
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active:local}
+
+# ===============================================
+# Sentry
+# ===============================================
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: ${spring.profiles.active:local}
+  release: ${APP_VERSION:unknown}
+  traces-sample-rate: 1.0
+  enable-tracing: true
+  ignored-exceptions-for-type:
+    - org.springframework.web.servlet.resource.NoResourceFoundException
+    - org.springframework.security.access.AccessDeniedException
+
+# ===============================================
+# Profile-Specific Configurations
+# ===============================================
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+server:
+  tomcat:
+    threads:
+      max: 30
+
+sentry:
+  dsn: ""
+
+---
+spring:
+  config:
+    activate:
+      on-profile: stage
+  config:
+    import:
+      - classpath:persistence.yml
+      - classpath:persistence-stage.yml
+      - optional:classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-stage.yml
+      - classpath:redis.yml
+      - classpath:redis-stage.yml
+      - classpath:authhub.yml
+      - classpath:authhub-stage.yml
+      - classpath:fileflow.yml
+      - classpath:fileflow-stage.yml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  config:
+    import:
+      - classpath:persistence.yml
+      - classpath:persistence-prod.yml
+      - optional:classpath:persistence-legacy.yml
+      - optional:classpath:persistence-legacy-prod.yml
+      - classpath:redis.yml
+      - classpath:redis-prod.yml
+      - classpath:authhub.yml
+      - classpath:authhub-prod.yml
+      - classpath:fileflow.yml
+      - classpath:fileflow-prod.yml
+
+server:
+  tomcat:
+    threads:
+      max: 100
+  lifecycle:
+    timeout-per-shutdown-phase: 30s

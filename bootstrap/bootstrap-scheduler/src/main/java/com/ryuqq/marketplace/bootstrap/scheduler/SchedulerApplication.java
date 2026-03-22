@@ -25,7 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
             "com.ryuqq.marketplace.application",
             "com.ryuqq.marketplace.adapter.out"
         },
-        excludeName = {"com.ryuqq.marketplace.application.legacyauth"})
+        excludeName = {"com.ryuqq.marketplace.application.legacy.auth"})
 @ComponentScan(
         basePackages = {
             "com.ryuqq.marketplace.bootstrap.scheduler",

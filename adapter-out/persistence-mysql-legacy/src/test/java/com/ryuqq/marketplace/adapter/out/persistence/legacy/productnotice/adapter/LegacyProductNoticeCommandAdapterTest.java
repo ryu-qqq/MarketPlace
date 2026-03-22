@@ -1,13 +1,10 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.adapter;
 
-import static org.mockito.BDDMockito.given;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.entity.LegacyProductNoticeEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.repository.LegacyProductNoticeJpaRepository;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productnotice.aggregate.LegacyProductNotice;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -32,8 +29,6 @@ class LegacyProductNoticeCommandAdapterTest {
 
     @Mock private LegacyProductNoticeJpaRepository repository;
 
-    @Mock private LegacyProductCommandEntityMapper mapper;
-
     @InjectMocks private LegacyProductNoticeCommandAdapter commandAdapter;
 
     @Nested
@@ -44,34 +39,24 @@ class LegacyProductNoticeCommandAdapterTest {
         @DisplayName("고시정보를 저장합니다")
         void persist_WithValidNotice_SavesSuccessfully() {
             // given
-            LegacyProductGroupId productGroupId = LegacyProductGroupId.of(1L);
-            LegacyProductNotice notice =
-                    new LegacyProductNotice(
-                            "면 100%",
-                            "블랙", "M", "삼성", "한국", "물세탁", "2024-01-01", "KC인증", "1588-1234");
-
-            LegacyProductNoticeEntity entity =
-                    LegacyProductNoticeEntity.create(
-                            1L,
-                            "면 100%",
-                            "블랙",
-                            "M",
-                            "삼성",
-                            "한국",
-                            "물세탁",
-                            "2024-01-01",
-                            "KC인증",
-                            "1588-1234");
-
-            given(mapper.toEntity(productGroupId, notice)).willReturn(entity);
-            given(repository.save(entity)).willReturn(entity);
+            long productGroupId = 1L;
+            Map<String, String> flatFields =
+                    Map.of(
+                            "material", "면 100%",
+                            "color", "블랙",
+                            "size", "M",
+                            "manufacturer", "삼성",
+                            "made_in", "한국",
+                            "wash_care", "물세탁",
+                            "release_date", "2024-01-01",
+                            "quality_assurance", "KC인증",
+                            "cs_info", "1588-1234");
 
             // when
-            commandAdapter.persist(productGroupId, notice);
+            commandAdapter.persist(productGroupId, flatFields);
 
             // then
-            then(mapper).should().toEntity(productGroupId, notice);
-            then(repository).should().save(entity);
+            then(repository).should().save(any());
         }
     }
 }

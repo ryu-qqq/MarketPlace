@@ -8,8 +8,8 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrati
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.OriginProduct;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest.ProductInfoProvidedNotice;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
@@ -202,7 +202,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             assertThat(result).isNotNull();
             assertThat(result.originProduct()).isNotNull();
@@ -229,7 +232,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             DeliveryInfo delivery = result.originProduct().deliveryInfo();
             assertThat(delivery.deliveryFee().deliveryFeeType()).isEqualTo("FREE");
@@ -245,7 +251,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(paidShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             DeliveryInfo delivery = result.originProduct().deliveryInfo();
             assertThat(delivery.deliveryFee().deliveryFeeType()).isEqualTo("PAID");
@@ -262,7 +271,10 @@ class NaverCommerceProductMapperTest {
                             conditionalFreeShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             DeliveryInfo delivery = result.originProduct().deliveryInfo();
             assertThat(delivery.deliveryFee().deliveryFeeType()).isEqualTo("CONDITIONAL_FREE");
@@ -278,7 +290,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             DeliveryInfo delivery = result.originProduct().deliveryInfo();
             assertThat(delivery.deliveryCompany()).isEqualTo("CJGLS");
@@ -291,7 +306,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(paidShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             DeliveryInfo delivery = result.originProduct().deliveryInfo();
             assertThat(delivery.deliveryFeeByArea()).isNotNull();
@@ -306,7 +324,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(paidShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             DeliveryInfo delivery = result.originProduct().deliveryInfo();
             assertThat(delivery.claimDeliveryInfo()).isNotNull();
@@ -327,7 +348,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             DetailAttribute detailAttr = result.originProduct().detailAttribute();
             assertThat(detailAttr.productCertificationInfos()).isNull();
@@ -346,7 +370,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             assertThat(result.originProduct().detailAttribute().productInfoProvidedNotice())
                     .isNull();
@@ -365,7 +392,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.of(notice), Optional.of(category));
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             ProductInfoProvidedNotice noticeResult =
                     result.originProduct().detailAttribute().productInfoProvidedNotice();
@@ -384,7 +414,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.of(notice), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             ProductInfoProvidedNotice noticeResult =
                     result.originProduct().detailAttribute().productInfoProvidedNotice();
@@ -417,7 +450,10 @@ class NaverCommerceProductMapperTest {
                             Optional.of(sellerCs));
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             assertThat(
                             result.originProduct()
@@ -444,7 +480,10 @@ class NaverCommerceProductMapperTest {
                             Optional.of(sellerCs));
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             assertThat(
                             result.originProduct()
@@ -461,7 +500,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             assertThat(
                             result.originProduct()
@@ -509,7 +551,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.of(notice), Optional.of(category));
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             // 원산지 content는 entries 첫 번째의 fieldValue
             assertThat(result.originProduct().detailAttribute().originAreaInfo().content())
@@ -525,7 +570,10 @@ class NaverCommerceProductMapperTest {
                     createBundle(freeShippingPolicy(), Optional.empty(), Optional.empty());
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             assertThat(result.originProduct().detailAttribute().originAreaInfo().content())
                     .isEqualTo("상세설명에 표시");
@@ -551,7 +599,10 @@ class NaverCommerceProductMapperTest {
                             Optional.of(category));
 
             NaverProductRegistrationRequest result =
-                    sut.toRegistrationRequest(ProductGroupSyncData.from(bundle), EXTERNAL_CATEGORY_ID, EXTERNAL_BRAND_ID);
+                    sut.toRegistrationRequest(
+                            ProductGroupSyncData.from(bundle),
+                            EXTERNAL_CATEGORY_ID,
+                            EXTERNAL_BRAND_ID);
 
             OriginProduct origin = result.originProduct();
 

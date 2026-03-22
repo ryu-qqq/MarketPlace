@@ -4,12 +4,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.LegacyOptionDetailEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.LegacyOptionDetailEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.mapper.LegacyOptionCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.repository.LegacyOptionDetailJpaRepository;
-import com.ryuqq.marketplace.domain.legacy.optiondetail.aggregate.LegacyOptionDetail;
-import com.ryuqq.marketplace.domain.legacy.optiongroup.id.LegacyOptionGroupId;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionValue;
+import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
+import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionValueName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -34,8 +35,6 @@ class LegacyOptionDetailCommandAdapterTest {
 
     @Mock private LegacyOptionDetailJpaRepository repository;
 
-    @Mock private LegacyOptionCommandEntityMapper mapper;
-
     @InjectMocks private LegacyOptionDetailCommandAdapter commandAdapter;
 
     // ========================================================================
@@ -50,42 +49,50 @@ class LegacyOptionDetailCommandAdapterTest {
         @DisplayName("옵션 상세를 저장하고 ID를 반환합니다")
         void persist_WithValidOptionDetail_ReturnsSavedId() {
             // given
-            LegacyOptionDetail optionDetail =
-                    LegacyOptionDetail.forNew(LegacyOptionGroupId.of(1L), "RED");
+            SellerOptionValue optionValue =
+                    SellerOptionValue.reconstitute(
+                            SellerOptionValueId.of(1L),
+                            SellerOptionGroupId.of(1L),
+                            OptionValueName.of("RED"),
+                            null,
+                            0,
+                            DeletionStatus.active());
 
-            LegacyOptionDetailEntity entity = LegacyOptionDetailEntityFixtures.defaultEntity();
             LegacyOptionDetailEntity savedEntity =
-                    LegacyOptionDetailEntityFixtures.entityWithGroupIdAndValue(1L, "RED");
+                    LegacyOptionDetailEntity.create(1L, "RED");
 
-            given(mapper.toEntity(optionDetail)).willReturn(entity);
-            given(repository.save(entity)).willReturn(savedEntity);
+            given(repository.save(any())).willReturn(savedEntity);
 
             // when
-            commandAdapter.persist(optionDetail);
+            commandAdapter.persist(optionValue);
 
             // then
-            then(mapper).should().toEntity(optionDetail);
-            then(repository).should().save(entity);
+            then(repository).should().save(any());
         }
 
         @Test
         @DisplayName("다른 옵션 값으로도 저장이 가능합니다")
         void persist_WithDifferentOptionValue_SavesSuccessfully() {
             // given
-            LegacyOptionDetail optionDetail =
-                    LegacyOptionDetail.forNew(LegacyOptionGroupId.of(2L), "BLUE");
+            SellerOptionValue optionValue =
+                    SellerOptionValue.reconstitute(
+                            SellerOptionValueId.of(2L),
+                            SellerOptionGroupId.of(2L),
+                            OptionValueName.of("BLUE"),
+                            null,
+                            0,
+                            DeletionStatus.active());
 
             LegacyOptionDetailEntity entity =
-                    LegacyOptionDetailEntityFixtures.entityWithGroupIdAndValue(2L, "BLUE");
+                    LegacyOptionDetailEntity.create(2L, "BLUE");
 
-            given(mapper.toEntity(optionDetail)).willReturn(entity);
             given(repository.save(any())).willReturn(entity);
 
             // when
-            commandAdapter.persist(optionDetail);
+            commandAdapter.persist(optionValue);
 
             // then
-            then(repository).should().save(entity);
+            then(repository).should().save(any());
         }
     }
 }

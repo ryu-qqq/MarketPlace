@@ -2,8 +2,8 @@ package com.ryuqq.marketplace.bootstrap.legacy.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyJwtAuthenticationFilter;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenCacheReadManager;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenManager;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenCacheReadManager;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenManager;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
@@ -24,8 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Legacy API 전용 Spring Security 설정.
  *
- * <p>레거시 HS256 JWT 인증만 처리합니다. Gateway 인증 필터는 포함하지 않습니다.
- * JWT 서명 검증 통과 시 claims를 신뢰하여 DB 조회 없이 인증을 처리합니다.
+ * <p>레거시 HS256 JWT 인증만 처리합니다. Gateway 인증 필터는 포함하지 않습니다. JWT 서명 검증 통과 시 claims를 신뢰하여 DB 조회 없이 인증을
+ * 처리합니다.
  */
 @Configuration
 @EnableWebSecurity

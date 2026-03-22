@@ -126,6 +126,27 @@ public class LegacyProductGroupQueryDslRepository {
         return Optional.ofNullable(result);
     }
 
+    public List<LegacyOptionGroupEntity> findOptionGroupsByProductGroupId(long productGroupId) {
+        return queryFactory
+                .selectFrom(legacyOptionGroupEntity)
+                .where(
+                        legacyOptionGroupEntity.productGroupId.eq(productGroupId),
+                        legacyOptionGroupEntity.deleteYn.eq("N"))
+                .fetch();
+    }
+
+    public List<LegacyOptionDetailEntity> findOptionDetailsByGroupIds(List<Long> optionGroupIds) {
+        if (optionGroupIds.isEmpty()) {
+            return List.of();
+        }
+        return queryFactory
+                .selectFrom(legacyOptionDetailEntity)
+                .where(
+                        legacyOptionDetailEntity.optionGroupId.in(optionGroupIds),
+                        legacyOptionDetailEntity.deleteYn.eq("N"))
+                .fetch();
+    }
+
     public List<LegacyOptionGroupEntity> findOptionGroupsByIds(List<Long> optionGroupIds) {
         if (optionGroupIds.isEmpty()) {
             return List.of();

@@ -33,17 +33,46 @@ public final class LegacySellerApiFixtures {
             long sellerId, String sellerName, String bizNo) {
         return new SellerAdminCompositeResult(
                 new SellerAdminCompositeResult.SellerInfo(
-                        sellerId, sellerName, sellerName, "", "", true, Instant.now(), Instant.now()),
+                        sellerId,
+                        sellerName,
+                        sellerName,
+                        "",
+                        "",
+                        true,
+                        Instant.now(),
+                        Instant.now()),
                 new SellerAdminCompositeResult.BusinessInfo(
                         1L, bizNo, "테스트 회사", "대표자", "2024-통신-0001", "12345", "서울시", "강남구"),
                 new SellerAdminCompositeResult.CsInfo(
-                        1L, "02-1234-5678", "010-1234-5678", "cs@test.com", "09:00", "18:00", "월~금", ""),
+                        1L,
+                        "02-1234-5678",
+                        "010-1234-5678",
+                        "cs@test.com",
+                        "09:00",
+                        "18:00",
+                        "월~금",
+                        ""),
                 new SellerAdminCompositeResult.ContractInfo(
-                        1L, BigDecimal.TEN, LocalDate.now(), LocalDate.now().plusYears(1),
-                        "ACTIVE", "", Instant.now(), Instant.now()),
+                        1L,
+                        BigDecimal.TEN,
+                        LocalDate.now(),
+                        LocalDate.now().plusYears(1),
+                        "ACTIVE",
+                        "",
+                        Instant.now(),
+                        Instant.now()),
                 new SellerAdminCompositeResult.SettlementInfo(
-                        1L, "004", "국민은행", "1234567890", "테스트", "MONTHLY",
-                        15, true, Instant.now(), Instant.now(), Instant.now()));
+                        1L,
+                        "004",
+                        "국민은행",
+                        "1234567890",
+                        "테스트",
+                        "MONTHLY",
+                        15,
+                        true,
+                        Instant.now(),
+                        Instant.now(),
+                        Instant.now()));
     }
 
     // ===== API Response Fixtures =====

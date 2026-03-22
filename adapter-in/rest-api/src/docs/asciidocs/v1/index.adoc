@@ -152,6 +152,9 @@ API Gateway에서 JWT를 검증한 뒤 아래 헤더를 전달합니다.
 
 |`file:write`
 |파일 업로드 URL 발급 / 업로드 완료 처리
+
+|`qna:read` / `qna:write`
+|QnA 조회 / 답변·종결
 |===
 
 === 공통 응답 형식
@@ -320,6 +323,11 @@ include::image-variant/image-variant.adoc[]
 include::upload-session/upload-session.adoc[]
 
 
+== QnA (문의)
+
+include::qna/qna.adoc[]
+
+
 == 배송 (Shipment)
 
 include::shipment/shipment.adoc[]
@@ -330,26 +338,6 @@ include::shipment/shipment.adoc[]
 include::inbound-product/inbound-product.adoc[]
 
 
-== 레거시 상품 그룹 (Legacy Product Group)
-
-include::legacy-product-group/legacy-product-group.adoc[]
-
-
-== 레거시 고시정보 (Legacy Notice)
-
-include::legacy-notice/legacy-notice.adoc[]
-
-
-== 레거시 상세설명 (Legacy Description)
-
-include::legacy-description/legacy-description.adoc[]
-
-
-== 레거시 이미지 (Legacy Image)
-
-include::legacy-image/legacy-image.adoc[]
-
-
 == 인바운드 브랜드 매핑 (Inbound Brand Mapping)
 
 include::inbound-brand-mapping/inbound-brand-mapping.adoc[]
@@ -358,28 +346,3 @@ include::inbound-brand-mapping/inbound-brand-mapping.adoc[]
 == 인바운드 카테고리 매핑 (Inbound Category Mapping)
 
 include::inbound-category-mapping/inbound-category-mapping.adoc[]
-
-
-== 레거시 인증 (Legacy Auth)
-
-include::legacy-auth/legacy-auth.adoc[]
-
-
-== 레거시 셀러 (Legacy Seller)
-
-include::legacy-seller/legacy-seller.adoc[]
-
-
-== 레거시 배송 (Legacy Shipment)
-
-include::legacy-shipment/legacy-shipment.adoc[]
-
-
-== 레거시 주문 (Legacy Order)
-
-include::legacy-order/legacy-order.adoc[]
-
-
-== 레거시 Q&A (Legacy QnA)
-
-include::legacy-qna/legacy-qna.adoc[]

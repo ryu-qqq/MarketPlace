@@ -1,0 +1,109 @@
+// ========================================
+// Bootstrap: Legacy API Application
+// ========================================
+// 레거시(세토프) 호환 REST API 전용 서버
+// 별도 포트(8081)에서 기동
+// 독립 인증 체계 (HS256 JWT)
+// NO Lombok allowed
+// ========================================
+
+import java.time.Instant
+
+plugins {
+    id 'java'
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+}
+
+dependencies {
+    // ========================================
+    // Core Modules
+    // ========================================
+    implementation project(':domain')
+    implementation project(':application')
+
+    // ========================================
+    // Adapters
+    // ========================================
+    // Inbound - Legacy REST API만
+    implementation project(':adapter-in:rest-api-legacy')
+
+    // Outbound
+    implementation project(':adapter-out:persistence-mysql')
+    implementation project(':adapter-out:persistence-mysql-legacy')
+    implementation project(':adapter-out:persistence-redis')
+    implementation project(':adapter-out:client:authhub-client')
+    implementation project(':adapter-out:client:fileflow-client')
+
+    // ========================================
+    // Spring Boot Starters
+    // ========================================
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.data.jpa
+    implementation libs.spring.boot.starter.validation
+    implementation libs.spring.boot.starter.security
+    implementation libs.spring.boot.starter.actuator
+
+    // AuthHub SDK Spring Boot Starter (AccessChecker, @RequirePermission)
+    implementation libs.authhub.sdk.spring.boot.starter
+
+
+    // FileFlow SDK Spring Boot Starter (Presigned URL)
+    implementation libs.fileflow.sdk.spring.boot.starter
+
+    // Configuration Processing
+    annotationProcessor libs.spring.boot.configuration.processor
+
+    // ========================================
+    // Observability
+    // ========================================
+    implementation libs.observability.adapter
+    implementation libs.sentry.spring.boot
+    implementation libs.micrometer.prometheus
+    implementation libs.logstash.logback.encoder
+
+    // ========================================
+    // Database
+    // ========================================
+    runtimeOnly libs.mysql.connector
+    runtimeOnly libs.flyway.mysql
+
+    // ========================================
+    // AWS SDK
+    // ========================================
+    implementation platform(libs.aws.bom)
+
+    // ========================================
+    // Test Dependencies
+    // ========================================
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.security.test
+}
+
+// ========================================
+// Spring Boot Configuration
+// ========================================
+tasks.bootJar {
+    archiveFileName = "${project.rootProject.name}-legacy-api.jar"
+
+    manifest {
+        attributes(
+            'Implementation-Title': "${project.rootProject.name}-legacy-api",
+            'Implementation-Version': project.version,
+            'Built-By': System.getProperty('user.name'),
+            'Built-JDK': System.getProperty('java.version'),
+            'Build-Timestamp': Instant.now().toString()
+        )
+    }
+}
+
+// ========================================
+// Application Run Configuration
+// ========================================
+tasks.bootRun {
+    jvmArgs = [
+        '-Xms256m',
+        '-Xmx512m',
+        '-XX:+UseG1GC'
+    ]
+}

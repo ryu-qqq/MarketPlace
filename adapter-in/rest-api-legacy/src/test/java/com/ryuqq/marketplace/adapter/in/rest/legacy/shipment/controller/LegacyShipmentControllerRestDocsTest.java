@@ -16,7 +16,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.LegacyShipmentApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.mapper.LegacyShipmentQueryApiMapper;
-import com.ryuqq.marketplace.application.legacyshipment.port.in.LegacyGetShipmentCompanyCodesUseCase;
+import com.ryuqq.marketplace.application.legacy.shipment.port.in.LegacyGetShipmentCompanyCodesUseCase;
 import com.ryuqq.marketplace.domain.commoncode.aggregate.CommonCode;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;

@@ -1,17 +1,17 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.adapter;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.mapper.LegacyProductGroupImageEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.repository.LegacyProductGroupImageJpaRepository;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
-import com.ryuqq.marketplace.domain.legacy.productimage.vo.ProductGroupImageType;
-import java.util.List;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -36,78 +36,56 @@ class LegacyProductImageCommandAdapterTest {
 
     @Mock private LegacyProductGroupImageJpaRepository repository;
 
-    @Mock private LegacyProductCommandEntityMapper mapper;
+    @Mock private LegacyProductGroupImageEntityMapper mapper;
 
     @InjectMocks private LegacyProductImageCommandAdapter commandAdapter;
 
-    private LegacyProductImage buildImage() {
-        return LegacyProductImage.forNew(
-                LegacyProductGroupId.of(1L),
-                ProductGroupImageType.MAIN,
-                "https://cdn.example.com/image.jpg",
-                "https://origin.example.com/image.jpg",
+    private ProductGroupImage buildImage() {
+        return ProductGroupImage.forNew(
+                ProductGroupId.of(1L),
+                ImageUrl.of("https://origin.example.com/image.jpg"),
+                ImageType.THUMBNAIL,
                 1);
     }
 
     @Nested
-    @DisplayName("persistAll 메서드 테스트")
-    class PersistAllTest {
+    @DisplayName("persist 메서드 테스트")
+    class PersistTest {
 
         @Test
-        @DisplayName("여러 상품 이미지를 일괄 저장합니다")
-        void persistAll_WithMultipleImages_SavesAll() {
+        @DisplayName("상품 이미지를 단건 저장하고 ID를 반환합니다")
+        void persist_WithValidImage_ReturnsId() {
             // given
-            LegacyProductImage image1 = buildImage();
-            LegacyProductImage image2 =
-                    LegacyProductImage.forNew(
-                            LegacyProductGroupId.of(1L),
-                            ProductGroupImageType.DETAIL,
-                            "https://cdn.example.com/detail.jpg",
-                            "https://origin.example.com/detail.jpg",
-                            2);
-            List<LegacyProductImage> images = List.of(image1, image2);
-
-            LegacyProductGroupImageEntity entity1 =
+            ProductGroupImage image = buildImage();
+            LegacyProductGroupImageEntity entity =
                     LegacyProductGroupImageEntity.create(
                             null,
                             1L,
                             "MAIN",
-                            "https://cdn.example.com/image.jpg",
+                            "https://origin.example.com/image.jpg",
                             "https://origin.example.com/image.jpg",
                             1L,
                             "N");
-            LegacyProductGroupImageEntity entity2 =
+            LegacyProductGroupImageEntity savedEntity =
                     LegacyProductGroupImageEntity.create(
-                            null,
+                            100L,
                             1L,
-                            "DETAIL",
-                            "https://cdn.example.com/detail.jpg",
-                            "https://origin.example.com/detail.jpg",
-                            2L,
+                            "MAIN",
+                            "https://origin.example.com/image.jpg",
+                            "https://origin.example.com/image.jpg",
+                            1L,
                             "N");
 
-            given(mapper.toEntity(image1)).willReturn(entity1);
-            given(mapper.toEntity(image2)).willReturn(entity2);
-            given(repository.saveAll(anyList())).willReturn(List.of(entity1, entity2));
+            given(mapper.toEntity(image)).willReturn(entity);
+            given(repository.save(entity)).willReturn(savedEntity);
 
             // when
-            commandAdapter.persistAll(images);
+            Long result = commandAdapter.persist(image);
 
             // then
-            then(repository).should().saveAll(anyList());
-        }
-
-        @Test
-        @DisplayName("빈 목록 저장 시 saveAll이 호출됩니다")
-        void persistAll_WithEmptyList_CallsSaveAll() {
-            // given
-            given(repository.saveAll(any())).willReturn(List.of());
-
-            // when
-            commandAdapter.persistAll(List.of());
-
-            // then
-            then(repository).should().saveAll(any());
+            assertThat(result).isEqualTo(100L);
+            then(mapper).should().toEntity(image);
+            then(repository).should().save(entity);
         }
     }
 }

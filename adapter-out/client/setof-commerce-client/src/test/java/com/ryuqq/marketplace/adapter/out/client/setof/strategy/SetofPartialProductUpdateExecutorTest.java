@@ -101,7 +101,9 @@ class SetofPartialProductUpdateExecutorTest {
             var syncData = createSyncData();
             var request =
                     new SetofProductGroupBasicInfoUpdateRequest("테스트", 600L, 500L, null, null);
-            given(mapper.toBasicInfoUpdateRequest(any(ProductGroupSyncData.class), eq(500L), eq(600L)))
+            given(
+                            mapper.toBasicInfoUpdateRequest(
+                                    any(ProductGroupSyncData.class), eq(500L), eq(600L)))
                     .willReturn(request);
 
             sut.execute(
@@ -281,7 +283,9 @@ class SetofPartialProductUpdateExecutorTest {
             var productsRequest = new SetofProductsUpdateRequest(List.of(), List.of());
             var imagesRequest = new SetofImagesRequest(List.of());
 
-            given(mapper.toBasicInfoUpdateRequest(any(ProductGroupSyncData.class), eq(500L), eq(600L)))
+            given(
+                            mapper.toBasicInfoUpdateRequest(
+                                    any(ProductGroupSyncData.class), eq(500L), eq(600L)))
                     .willReturn(basicInfoRequest);
             given(mapper.toProductsUpdateRequest(any(), any(), eq(null)))
                     .willReturn(productsRequest);

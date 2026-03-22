@@ -60,7 +60,9 @@ class CompleteExchangeBatchServiceTest {
             given(commandFactory.createCompleteBundle(claim, command.processedBy()))
                     .willReturn(history);
             given(commandFactory.createCompleteOrderItemContext(claim.orderItemIdValue()))
-                    .willReturn(new StatusChangeContext<>(OrderItemId.of(claim.orderItemIdValue()), Instant.now()));
+                    .willReturn(
+                            new StatusChangeContext<>(
+                                    OrderItemId.of(claim.orderItemIdValue()), Instant.now()));
             given(orderItemReadManager.findById(OrderItemId.of(claim.orderItemIdValue())))
                     .willReturn(Optional.empty());
 

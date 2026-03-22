@@ -53,7 +53,12 @@ public class SalesChannelProductClientManager {
             ResolvedExternalImages resolvedImages) {
         return resolve(channelCode)
                 .registerProduct(
-                        syncData, externalCategoryId, externalBrandId, channel, shop, resolvedImages);
+                        syncData,
+                        externalCategoryId,
+                        externalBrandId,
+                        channel,
+                        shop,
+                        resolvedImages);
     }
 
     public void updateProduct(

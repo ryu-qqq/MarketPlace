@@ -25,10 +25,11 @@ class LegacyOptionEntityFactoryTest {
         @DisplayName("create 메서드로 옵션 그룹 엔티티를 생성합니다")
         void create_WithOptionName_CreatesEntity() {
             // when
-            LegacyOptionGroupEntity entity = LegacyOptionGroupEntity.create("색상");
+            LegacyOptionGroupEntity entity = LegacyOptionGroupEntity.create(1L, "색상");
 
             // then
             assertThat(entity.getId()).isNull();
+            assertThat(entity.getProductGroupId()).isEqualTo(1L);
             assertThat(entity.getOptionName()).isEqualTo("색상");
             assertThat(entity.getDeleteYn()).isEqualTo("N");
         }
@@ -37,9 +38,10 @@ class LegacyOptionEntityFactoryTest {
         @DisplayName("다른 옵션 그룹명으로 엔티티를 생성합니다")
         void create_WithDifferentOptionName_CreatesEntity() {
             // when
-            LegacyOptionGroupEntity entity = LegacyOptionGroupEntity.create("사이즈");
+            LegacyOptionGroupEntity entity = LegacyOptionGroupEntity.create(2L, "사이즈");
 
             // then
+            assertThat(entity.getProductGroupId()).isEqualTo(2L);
             assertThat(entity.getOptionName()).isEqualTo("사이즈");
             assertThat(entity.getDeleteYn()).isEqualTo("N");
         }

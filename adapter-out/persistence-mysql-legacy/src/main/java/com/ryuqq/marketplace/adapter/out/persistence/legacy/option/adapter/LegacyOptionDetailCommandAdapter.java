@@ -1,33 +1,30 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.option.adapter;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.LegacyOptionDetailEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.mapper.LegacyOptionCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.repository.LegacyOptionDetailJpaRepository;
 import com.ryuqq.marketplace.application.legacy.product.port.out.command.LegacyOptionDetailCommandPort;
-import com.ryuqq.marketplace.domain.legacy.optiondetail.aggregate.LegacyOptionDetail;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionValue;
 import org.springframework.stereotype.Component;
 
 /**
- * 세토프 DB option_detail INSERT Adapter.
+ * 세토프 DB option_detail Command Adapter.
  *
- * <p>PER-ADP-001: CommandAdapter는 JpaRepository만 사용.
+ * <p>표준 SellerOptionValue → LegacyOptionDetailEntity 변환 후 저장.
  */
 @Component
 public class LegacyOptionDetailCommandAdapter implements LegacyOptionDetailCommandPort {
 
     private final LegacyOptionDetailJpaRepository repository;
-    private final LegacyOptionCommandEntityMapper mapper;
 
-    public LegacyOptionDetailCommandAdapter(
-            LegacyOptionDetailJpaRepository repository, LegacyOptionCommandEntityMapper mapper) {
+    public LegacyOptionDetailCommandAdapter(LegacyOptionDetailJpaRepository repository) {
         this.repository = repository;
-        this.mapper = mapper;
     }
 
     @Override
-    public Long persist(LegacyOptionDetail optionDetail) {
-        LegacyOptionDetailEntity entity = mapper.toEntity(optionDetail);
-        LegacyOptionDetailEntity saved = repository.save(entity);
-        return saved.getId();
+    public Long persist(SellerOptionValue optionValue) {
+        LegacyOptionDetailEntity entity = LegacyOptionDetailEntity.create(
+                optionValue.sellerOptionGroupIdValue(),
+                optionValue.optionValueNameValue());
+        return repository.save(entity).getId();
     }
 }

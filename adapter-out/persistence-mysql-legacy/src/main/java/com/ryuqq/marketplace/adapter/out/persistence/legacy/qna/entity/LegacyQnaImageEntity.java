@@ -45,6 +45,22 @@ public class LegacyQnaImageEntity extends LegacyBaseEntity {
 
     protected LegacyQnaImageEntity() {}
 
+    public static LegacyQnaImageEntity create(
+            Long qnaId, Long qnaAnswerId, String issueType, String imageUrl, int displayOrder) {
+        LegacyQnaImageEntity entity = new LegacyQnaImageEntity();
+        entity.qnaId = qnaId;
+        entity.qnaAnswerId = qnaAnswerId;
+        entity.qnaIssueType = issueType;
+        entity.imageUrl = imageUrl;
+        entity.displayOrder = (long) displayOrder;
+        entity.deleteYn = "N";
+        return entity;
+    }
+
+    public void softDelete() {
+        this.deleteYn = "Y";
+    }
+
     public Long getId() {
         return id;
     }

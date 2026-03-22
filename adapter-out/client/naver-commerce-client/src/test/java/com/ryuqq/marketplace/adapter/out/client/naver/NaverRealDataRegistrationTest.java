@@ -9,8 +9,8 @@ import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProduc
 import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImage;
 import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
@@ -104,7 +104,8 @@ class NaverRealDataRegistrationTest {
     void convertOnly_PrintsRequestJson() throws Exception {
         ProductGroupDetailBundle bundle = buildBundleFromStageData();
         NaverProductRegistrationRequest request =
-                mapper.toRegistrationRequest(ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, NAVER_BRAND_ID);
+                mapper.toRegistrationRequest(
+                        ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, NAVER_BRAND_ID);
 
         String json = objectMapper.writeValueAsString(request);
         System.out.println("=== 변환된 네이버 등록 요청 JSON ===");
@@ -163,7 +164,10 @@ class NaverRealDataRegistrationTest {
         // 2. Mapper 변환 (업로드된 pstatic URL 사용)
         NaverProductRegistrationRequest request =
                 mapper.toRegistrationRequest(
-                        ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, NAVER_BRAND_ID, resolvedImages);
+                        ProductGroupSyncData.from(bundle),
+                        NAVER_CATEGORY_ID,
+                        NAVER_BRAND_ID,
+                        resolvedImages);
 
         String requestJson = objectMapper.writeValueAsString(request);
         System.out.println("=== 등록 요청 JSON ===");

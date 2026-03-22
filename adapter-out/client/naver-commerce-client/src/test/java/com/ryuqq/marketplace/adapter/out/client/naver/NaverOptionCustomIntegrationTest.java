@@ -9,8 +9,8 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductDetailResp
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.canonicaloption.id.CanonicalOptionGroupId;
@@ -156,7 +156,8 @@ class NaverOptionCustomIntegrationTest {
 
         // FREE_INPUT만 있는 경우: optionCombinations 없이 optionCustom만
         NaverProductRegistrationRequest req =
-                mapper.toRegistrationRequest(ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
+                mapper.toRegistrationRequest(
+                        ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
         String json = objectMapper.writeValueAsString(req);
         System.out.println("  요청 JSON (optionInfo 부분):");
         JsonNode reqNode = objectMapper.readTree(json);
@@ -247,7 +248,8 @@ class NaverOptionCustomIntegrationTest {
                                 new SkuProduct("SKU-D-L", 45000, 8, Map.of(1L, 2, 2L, 0))));
 
         NaverProductRegistrationRequest req =
-                mapper.toRegistrationRequest(ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
+                mapper.toRegistrationRequest(
+                        ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
         String json = objectMapper.writeValueAsString(req);
         System.out.println("  요청 JSON (optionInfo 부분):");
         JsonNode reqNode = objectMapper.readTree(json);
@@ -338,7 +340,8 @@ class NaverOptionCustomIntegrationTest {
                         List.of(new SkuProduct("SKU-E-1", 55000, 20, Map.of(1L, 0, 2L, 0))));
 
         NaverProductRegistrationRequest req =
-                mapper.toRegistrationRequest(ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
+                mapper.toRegistrationRequest(
+                        ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
         String json = objectMapper.writeValueAsString(req);
         System.out.println("  요청 JSON (optionInfo 부분):");
         JsonNode reqNode = objectMapper.readTree(json);
@@ -376,7 +379,8 @@ class NaverOptionCustomIntegrationTest {
             HttpClient http, String token, ProductGroupDetailBundle bundle, String scenario)
             throws Exception {
         NaverProductRegistrationRequest req =
-                mapper.toRegistrationRequest(ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
+                mapper.toRegistrationRequest(
+                        ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
         String json = objectMapper.writeValueAsString(req);
 
         HttpResponse<String> resp =

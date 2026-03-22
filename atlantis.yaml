@@ -74,6 +74,14 @@ projects:
       when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
       enabled: true
 
+  # ECS Service for legacy-api (Legacy admin REST API, port 8081)
+  - name: marketplace-ecs-legacy-api-prod
+    dir: terraform/environments/prod/ecs-legacy-api
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars", "../../../shared-*.tf"]
+      enabled: true
+
   # ============================================================================
   # STAGE
   # ============================================================================
@@ -121,6 +129,14 @@ projects:
   # ECS Service for worker (stage, SQS consumer)
   - name: marketplace-ecs-worker-stage
     dir: terraform/environments/stage/ecs-worker
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "*.tfvars"]
+      enabled: true
+
+  # ECS Service for legacy-api (stage, Legacy admin REST API, port 8081)
+  - name: marketplace-ecs-legacy-api-stage
+    dir: terraform/environments/stage/ecs-legacy-api
     workspace: default
     autoplan:
       when_modified: ["*.tf", "*.tfvars"]

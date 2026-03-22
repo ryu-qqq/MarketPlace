@@ -38,6 +38,7 @@ dependencies {
     // Resilience (Circuit Breaker + Metrics)
     // ========================================
     implementation libs.resilience4j.circuitbreaker
+    implementation libs.resilience4j.retry
     implementation libs.resilience4j.micrometer
     implementation libs.micrometer.core
 

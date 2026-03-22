@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.LegacyImageApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.dto.request.LegacyCreateProductImageRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.mapper.LegacyImageCommandApiMapper;
@@ -55,6 +56,7 @@ class LegacyProductGroupImageCommandControllerRestDocsTest {
     @MockitoBean private LegacyProductUpdateImagesUseCase legacyProductUpdateImagesUseCase;
     @MockitoBean private LegacyImageCommandApiMapper legacyImageCommandApiMapper;
     @MockitoBean private MarketAccessChecker accessChecker;
+    @MockitoBean private LegacyAccessChecker legacyAccessChecker;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @Nested

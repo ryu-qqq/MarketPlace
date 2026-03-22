@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * 교환 퍼시스트 파라미터 객체.
  *
- * <p>ExchangeClaim + ExchangeOutbox + ClaimHistory + OrderItem을 하나로 묶어 PersistenceFacade에 전달합니다. 빈 목록은
- * List.of()로 전달하여 null-safe를 보장합니다.
+ * <p>ExchangeClaim + ExchangeOutbox + ClaimHistory + OrderItem을 하나로 묶어 PersistenceFacade에 전달합니다. 빈
+ * 목록은 List.of()로 전달하여 null-safe를 보장합니다.
  */
 public record ExchangePersistenceBundle(
         List<ExchangeClaim> claims,
@@ -20,7 +20,9 @@ public record ExchangePersistenceBundle(
 
     /** ExchangeClaim + Outbox + History만 저장 (승인/수거/재배송/거절/보류 등). */
     public static ExchangePersistenceBundle of(
-            List<ExchangeClaim> claims, List<ExchangeOutbox> outboxes, List<ClaimHistory> histories) {
+            List<ExchangeClaim> claims,
+            List<ExchangeOutbox> outboxes,
+            List<ClaimHistory> histories) {
         return new ExchangePersistenceBundle(claims, outboxes, histories, List.of());
     }
 
@@ -32,9 +34,7 @@ public record ExchangePersistenceBundle(
 
     /** ExchangeClaim + History + OrderItem 전체 저장 (교환 요청/완료 시). */
     public static ExchangePersistenceBundle withOrderItems(
-            List<ExchangeClaim> claims,
-            List<ClaimHistory> histories,
-            List<OrderItem> orderItems) {
+            List<ExchangeClaim> claims, List<ClaimHistory> histories, List<OrderItem> orderItems) {
         return new ExchangePersistenceBundle(claims, List.of(), histories, orderItems);
     }
 }

@@ -1,88 +1,85 @@
 package com.ryuqq.marketplace.application.legacy.productgroupdescription.internal;
 
-import com.ryuqq.marketplace.application.legacy.productgroupdescription.dto.command.LegacyUpdateDescriptionCommand;
 import com.ryuqq.marketplace.application.legacy.productgroupdescription.manager.LegacyDescriptionImageCommandManager;
 import com.ryuqq.marketplace.application.legacy.productgroupdescription.manager.LegacyProductDescriptionCommandManager;
 import com.ryuqq.marketplace.application.legacy.productgroupdescription.manager.LegacyProductGroupDescriptionReadManager;
-import com.ryuqq.marketplace.application.legacy.shared.factory.LegacyProductGroupCommandFactory;
-import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyDescriptionImage;
-import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyDescriptionImageDiff;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
+import com.ryuqq.marketplace.application.productgroupdescription.dto.command.RegisterProductGroupDescriptionCommand;
+import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
+import com.ryuqq.marketplace.application.productgroupdescription.factory.ProductGroupDescriptionCommandFactory;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.DescriptionImage;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionImageDiff;
+import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionUpdateData;
 import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 레거시 상세설명 Coordinator.
+ * 레거시 상세설명 Command Coordinator.
  *
- * <p>내부 DescriptionCommandCoordinator와 동일한 패턴으로 상세설명 등록/수정 라이프사이클을 관리합니다. HTML에서 이미지를 추출하고, 수정 시
- * originUrl 기반 image diff를 계산합니다.
- *
- * <p>APP-TIM-001: TimeProvider 직접 사용 금지 - Factory.now()로 시각을 얻습니다.
+ * <p>표준 도메인 객체 기반으로 레거시 DB(luxurydb)에 저장합니다.
+ * 이미지 업로드 Outbox는 생성하지 않습니다 — 레거시 컨버전 과정에서 처리됩니다.
  */
 @Component
 public class LegacyDescriptionCommandCoordinator {
 
+    private final ProductGroupDescriptionCommandFactory descriptionCommandFactory;
+    private final LegacyProductGroupDescriptionReadManager descriptionReadManager;
     private final LegacyProductDescriptionCommandManager descriptionCommandManager;
     private final LegacyDescriptionImageCommandManager imageCommandManager;
-    private final LegacyProductGroupDescriptionReadManager descriptionReadManager;
-    private final LegacyProductGroupCommandFactory commandFactory;
+    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
 
     public LegacyDescriptionCommandCoordinator(
+            ProductGroupDescriptionCommandFactory descriptionCommandFactory,
+            LegacyProductGroupDescriptionReadManager descriptionReadManager,
             LegacyProductDescriptionCommandManager descriptionCommandManager,
             LegacyDescriptionImageCommandManager imageCommandManager,
-            LegacyProductGroupDescriptionReadManager descriptionReadManager,
-            LegacyProductGroupCommandFactory commandFactory) {
+            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
+        this.descriptionCommandFactory = descriptionCommandFactory;
+        this.descriptionReadManager = descriptionReadManager;
         this.descriptionCommandManager = descriptionCommandManager;
         this.imageCommandManager = imageCommandManager;
-        this.descriptionReadManager = descriptionReadManager;
-        this.commandFactory = commandFactory;
+        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
     }
 
-    /** 상세설명 등록 (상품그룹 등록 시 사용). HTML에서 이미지를 추출하여 함께 저장합니다. */
-    public void register(LegacyProductGroupId groupId, String content) {
-        LegacyProductGroupDescription description =
-                LegacyProductGroupDescription.forNew(groupId.value(), content);
-        List<LegacyDescriptionImage> images =
-                commandFactory.extractDescriptionImages(groupId.value(), content);
+    /** 상세설명 등록 (상품그룹 등록 시 사용). Command → 표준 도메인 생성 → persist. */
+    @Transactional
+    public void register(RegisterProductGroupDescriptionCommand command) {
+        ProductGroupDescription description = descriptionCommandFactory.create(command);
+        descriptionCommandManager.persist(description);
 
-        descriptionCommandManager.persistDescription(description);
-        if (!images.isEmpty()) {
-            imageCommandManager.persistAll(images);
+        for (DescriptionImage image : description.images()) {
+            imageCommandManager.persist(image);
         }
     }
 
     /**
-     * Command 기반 상세설명 수정. Factory로 이미지 추출 및 시각 생성, 도메인 diff 계산 후 persist합니다.
+     * 수정 Command 기반: 기존 Description 조회 → diff → 저장 + ConversionOutbox.
      *
-     * @param command 상세설명 수정 Command
+     * @param command 상세 설명 수정 Command
      * @return 텍스트 콘텐츠가 실제 변경되었으면 true (AI 재검수 판단용)
      */
-    public boolean update(LegacyUpdateDescriptionCommand command) {
-        LegacyProductGroupId groupId = LegacyProductGroupId.of(command.productGroupId());
-        String content = command.detailDescription();
-        Instant changedAt = commandFactory.now();
+    @Transactional
+    public boolean update(UpdateProductGroupDescriptionCommand command) {
+        ProductGroupDescription existing =
+                descriptionReadManager.getByProductGroupId(command.productGroupId());
 
-        LegacyProductGroupDescription existing =
-                descriptionReadManager.getByProductGroupId(groupId.value());
+        boolean contentChanged = !command.content().equals(existing.contentValue());
 
-        boolean contentChanged = !Objects.equals(existing.content(), content);
+        DescriptionUpdateData updateData = descriptionCommandFactory.createUpdateData(command);
+        DescriptionImageDiff diff = existing.update(updateData);
 
-        List<LegacyDescriptionImage> newImages =
-                commandFactory.extractDescriptionImages(groupId.value(), content);
+        descriptionCommandManager.persist(existing);
 
-        LegacyDescriptionImageDiff diff = existing.update(content, newImages, changedAt);
-
-        descriptionCommandManager.persistDescription(existing);
-
-        if (!diff.removed().isEmpty()) {
-            imageCommandManager.softDeleteAll(diff.removed());
+        for (DescriptionImage image : diff.removed()) {
+            imageCommandManager.persist(image);
         }
-        if (!diff.added().isEmpty()) {
-            imageCommandManager.persistAll(diff.added());
+        for (DescriptionImage image : diff.added()) {
+            imageCommandManager.persist(image);
         }
+
+        conversionOutboxCommandManager.createIfNoPending(command.productGroupId(), Instant.now());
 
         return contentChanged;
     }

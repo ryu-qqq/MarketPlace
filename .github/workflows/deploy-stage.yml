@@ -107,6 +107,19 @@ jobs:
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
 
+  build-legacy-api:
+    name: Build legacy-api
+    needs: test
+    uses: ryu-qqq/Infrastructure/.github/workflows/reusable-build-docker.yml@main
+    with:
+      ecr-repository: marketplace-legacy-api-stage
+      component: legacy-api
+      dockerfile: bootstrap/bootstrap-legacy-api/Dockerfile
+      gradle-task: ":bootstrap:bootstrap-legacy-api:bootJar"
+      timeout-minutes: 30
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+
   # ============================================================================
   # 배포 Jobs (병렬 실행)
   # ============================================================================
@@ -143,17 +156,29 @@ jobs:
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
 
+  deploy-legacy-api:
+    name: Deploy legacy-api
+    needs: build-legacy-api
+    uses: ryu-qqq/Infrastructure/.github/workflows/reusable-deploy-ecs.yml@main
+    with:
+      ecs-cluster: marketplace-cluster-stage
+      ecs-service: marketplace-legacy-api-stage
+      image-uri: ${{ needs.build-legacy-api.outputs.image-uri }}
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+
   # ============================================================================
   # Terraform Image Tag 업데이트 (자동화)
   # ============================================================================
   update-terraform-tags:
     name: Update Terraform Image Tags (Stage)
-    needs: [build-web-api, build-scheduler, build-worker]
+    needs: [build-web-api, build-scheduler, build-worker, build-legacy-api]
     uses: ./.github/workflows/terraform-apply-stage.yml
     with:
       web-api-image-tag: ${{ needs.build-web-api.outputs.image-tag }}
       scheduler-image-tag: ${{ needs.build-scheduler.outputs.image-tag }}
       worker-image-tag: ${{ needs.build-worker.outputs.image-tag }}
+      legacy-api-image-tag: ${{ needs.build-legacy-api.outputs.image-tag }}
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
 
@@ -162,7 +187,7 @@ jobs:
   # ============================================================================
   summary:
     name: Deployment Summary
-    needs: [deploy-web-api, deploy-scheduler, deploy-worker, update-terraform-tags]
+    needs: [deploy-web-api, deploy-scheduler, deploy-worker, deploy-legacy-api, update-terraform-tags]
     runs-on: ubuntu-latest
     if: always()
 
@@ -176,6 +201,7 @@ jobs:
           echo "| web-api | ${{ needs.deploy-web-api.result == 'success' && '✅ Deployed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| scheduler | ${{ needs.deploy-scheduler.result == 'success' && '✅ Deployed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| worker | ${{ needs.deploy-worker.result == 'success' && '✅ Deployed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| legacy-api | ${{ needs.deploy-legacy-api.result == 'success' && '✅ Deployed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| terraform-tags | ${{ needs.update-terraform-tags.result == 'success' && '✅ Updated' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Environment**: Stage" >> $GITHUB_STEP_SUMMARY

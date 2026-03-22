@@ -1,58 +1,33 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.mapper.LegacyProductGroupImageEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.repository.LegacyProductGroupImageJpaRepository;
 import com.ryuqq.marketplace.application.legacy.productgroupimage.port.out.command.LegacyProductImageCommandPort;
-import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
 import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
-import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
  * 레거시 상품그룹 이미지 저장 Adapter.
  *
- * <p>표준 도메인 객체(ProductGroupImage)를 레거시 Entity로 변환하여 luxurydb에 저장합니다.
- * 기존 이미지 soft delete 후 새 이미지를 insert하는 replace-all 패턴.
+ * <p>PER-ADP-001: CommandAdapter는 JpaRepository만 사용.
  */
 @Component
 public class LegacyProductImageCommandAdapter implements LegacyProductImageCommandPort {
 
     private final LegacyProductGroupImageJpaRepository repository;
-    private final LegacyProductCommandEntityMapper mapper;
+    private final LegacyProductGroupImageEntityMapper mapper;
 
     public LegacyProductImageCommandAdapter(
             LegacyProductGroupImageJpaRepository repository,
-            LegacyProductCommandEntityMapper mapper) {
+            LegacyProductGroupImageEntityMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
 
     @Override
-    public void persistAll(List<LegacyProductImage> images) {
-        List<LegacyProductGroupImageEntity> entities =
-                images.stream().map(mapper::toEntity).toList();
-        repository.saveAll(entities);
-    }
-
-    @Override
-    public void replaceAll(long productGroupId, List<ProductGroupImage> images) {
-        repository.softDeleteAllByProductGroupId(productGroupId);
-
-        List<LegacyProductGroupImageEntity> entities =
-                images.stream()
-                        .map(
-                                img ->
-                                        LegacyProductGroupImageEntity.create(
-                                                null,
-                                                productGroupId,
-                                                img.imageTypeName(),
-                                                img.originUrlValue(),
-                                                img.originUrlValue(),
-                                                img.sortOrder(),
-                                                "N"))
-                        .toList();
-
-        repository.saveAll(entities);
+    public Long persist(ProductGroupImage image) {
+        LegacyProductGroupImageEntity entity = mapper.toEntity(image);
+        return repository.save(entity).getId();
     }
 }

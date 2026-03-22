@@ -58,6 +58,9 @@ public class SqsClientProperties {
         // Shipment outbox queue
         private String shipmentOutbox;
 
+        // QnA outbox queue
+        private String qnaOutbox;
+
         public String getIntelligenceOrchestration() {
             return intelligenceOrchestration;
         }
@@ -136,6 +139,14 @@ public class SqsClientProperties {
 
         public void setShipmentOutbox(String shipmentOutbox) {
             this.shipmentOutbox = shipmentOutbox;
+        }
+
+        public String getQnaOutbox() {
+            return qnaOutbox;
+        }
+
+        public void setQnaOutbox(String qnaOutbox) {
+            this.qnaOutbox = qnaOutbox;
         }
     }
 }

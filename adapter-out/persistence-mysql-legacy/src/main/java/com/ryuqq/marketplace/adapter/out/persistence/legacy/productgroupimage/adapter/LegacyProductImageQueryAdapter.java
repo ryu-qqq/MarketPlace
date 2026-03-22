@@ -1,10 +1,9 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.repository.LegacyProductGroupQueryDslRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.mapper.LegacyProductGroupImageEntityMapper;
 import com.ryuqq.marketplace.application.legacy.productgroupimage.port.out.query.LegacyProductImageQueryPort;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -17,19 +16,19 @@ import org.springframework.stereotype.Component;
 public class LegacyProductImageQueryAdapter implements LegacyProductImageQueryPort {
 
     private final LegacyProductGroupQueryDslRepository queryDslRepository;
-    private final LegacyProductCommandEntityMapper mapper;
+    private final LegacyProductGroupImageEntityMapper mapper;
 
     public LegacyProductImageQueryAdapter(
             LegacyProductGroupQueryDslRepository queryDslRepository,
-            LegacyProductCommandEntityMapper mapper) {
+            LegacyProductGroupImageEntityMapper mapper) {
         this.queryDslRepository = queryDslRepository;
         this.mapper = mapper;
     }
 
     @Override
-    public List<LegacyProductImage> findByProductGroupId(LegacyProductGroupId productGroupId) {
-        return queryDslRepository.findImagesByProductGroupId(productGroupId.value()).stream()
-                .map(mapper::toImageDomain)
+    public List<ProductGroupImage> findByProductGroupId(long productGroupId) {
+        return queryDslRepository.findImagesByProductGroupId(productGroupId).stream()
+                .map(mapper::toDomain)
                 .toList();
     }
 }

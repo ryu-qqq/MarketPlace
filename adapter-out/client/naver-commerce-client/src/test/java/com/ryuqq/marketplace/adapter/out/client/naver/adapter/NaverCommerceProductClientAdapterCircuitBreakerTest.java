@@ -2,15 +2,13 @@ package com.ryuqq.marketplace.adapter.out.client.naver.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
-import com.ryuqq.marketplace.adapter.out.client.naver.auth.NaverCommerceTokenManager;
+import com.ryuqq.marketplace.adapter.out.client.naver.client.NaverCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.naver.config.NaverCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProductMapper;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.domain.sellersaleschannel.SellerSalesChannelFixtures;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,46 +17,63 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.RestClient;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-@DisplayName("NaverCommerceProductClientAdapter Circuit Breaker 테스트")
+@DisplayName("NaverCommerceProductClientAdapter 테스트")
 class NaverCommerceProductClientAdapterCircuitBreakerTest {
 
-    @Mock private RestClient restClient;
-    @Mock private NaverCommerceTokenManager tokenManager;
+    @Mock private NaverCommerceApiClient apiClient;
     @Mock private NaverCommerceProductMapper mapper;
+    @Mock private NaverCommerceProperties properties;
 
-    private CircuitBreaker circuitBreaker;
     private NaverCommerceProductClientAdapter sut;
 
     @BeforeEach
     void setUp() {
-        CircuitBreakerConfig config =
-                CircuitBreakerConfig.custom()
-                        .failureRateThreshold(50)
-                        .slidingWindowSize(2)
-                        .minimumNumberOfCalls(2)
-                        .permittedNumberOfCallsInHalfOpenState(1)
-                        .build();
-
-        circuitBreaker = CircuitBreakerRegistry.of(config).circuitBreaker("test-naver-product");
-
-        sut =
-                new NaverCommerceProductClientAdapter(
-                        restClient, tokenManager, mapper, circuitBreaker);
+        sut = new NaverCommerceProductClientAdapter(apiClient, mapper, properties);
     }
 
     @Nested
-    @DisplayName("deleteProduct() - Circuit Breaker OPEN 시 예외 변환")
-    class DeleteProductCircuitBreakerTest {
+    @DisplayName("deleteProduct() - enabled=false 시 스킵")
+    class DeleteProductDisabledTest {
 
         @Test
-        @DisplayName("CB OPEN 상태에서 deleteProduct() 호출 시 ExternalServiceUnavailableException이 발생한다")
-        void deleteProduct_WhenCircuitBreakerOpen_ThrowsExternalServiceUnavailableException() {
+        @DisplayName("enabled=false 상태에서 deleteProduct() 호출 시 API를 호출하지 않는다")
+        void deleteProduct_WhenDisabled_DoesNotCallApi() {
             // given
-            circuitBreaker.transitionToOpenState();
+            when(properties.isEnabled()).thenReturn(false);
+
+            // when & then (예외 없이 정상 종료)
+            sut.deleteProduct("12345", SellerSalesChannelFixtures.connectedSellerSalesChannel());
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteProduct() - ApiClient 위임")
+    class DeleteProductApiClientTest {
+
+        @Test
+        @DisplayName("enabled=true 상태에서 deleteProduct() 호출 시 ApiClient.deleteProduct()를 호출한다")
+        void deleteProduct_WhenEnabled_CallsApiClient() {
+            // given
+            when(properties.isEnabled()).thenReturn(true);
+
+            // when
+            sut.deleteProduct("12345", SellerSalesChannelFixtures.connectedSellerSalesChannel());
+
+            // then: apiClient.deleteProduct("12345") 호출됨 (Mockito 기본 동작으로 예외 없음)
+        }
+
+        @Test
+        @DisplayName("ApiClient에서 ExternalServiceUnavailableException 발생 시 그대로 전파된다")
+        void deleteProduct_WhenApiClientThrowsUnavailable_Propagates() {
+            // given
+            when(properties.isEnabled()).thenReturn(true);
+            org.mockito.Mockito.doThrow(
+                            new ExternalServiceUnavailableException("Circuit Breaker OPEN", null))
+                    .when(apiClient)
+                    .deleteProduct("12345");
 
             // when & then
             assertThatThrownBy(
@@ -69,25 +84,6 @@ class NaverCommerceProductClientAdapterCircuitBreakerTest {
                                                     .connectedSellerSalesChannel()))
                     .isInstanceOf(ExternalServiceUnavailableException.class)
                     .hasMessageContaining("Circuit Breaker OPEN");
-        }
-
-        @Test
-        @DisplayName(
-                "CB OPEN 상태에서 발생하는 ExternalServiceUnavailableException의 원인은"
-                        + " CallNotPermittedException이다")
-        void deleteProduct_WhenCircuitBreakerOpen_CauseIsCallNotPermittedException() {
-            // given
-            circuitBreaker.transitionToOpenState();
-
-            // when & then
-            assertThatThrownBy(
-                            () ->
-                                    sut.deleteProduct(
-                                            "12345",
-                                            SellerSalesChannelFixtures
-                                                    .connectedSellerSalesChannel()))
-                    .isInstanceOf(ExternalServiceUnavailableException.class)
-                    .hasCauseInstanceOf(CallNotPermittedException.class);
         }
     }
 

@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.commoncode.adapter;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.commoncode.mapper.LegacyCommonCodeEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.commoncode.repository.LegacyCommonCodeQueryDslRepository;
-import com.ryuqq.marketplace.application.legacycommoncode.port.out.query.LegacyCommonCodeQueryPort;
+import com.ryuqq.marketplace.application.legacy.commoncode.port.out.query.LegacyCommonCodeQueryPort;
 import com.ryuqq.marketplace.domain.legacy.commoncode.aggregate.LegacyCommonCode;
 import java.util.List;
 import org.springframework.stereotype.Component;

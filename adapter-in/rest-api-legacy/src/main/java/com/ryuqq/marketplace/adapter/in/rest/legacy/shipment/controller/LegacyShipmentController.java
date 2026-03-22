@@ -5,7 +5,7 @@ import static com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.LegacyShipme
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.dto.response.LegacyShipmentCompanyCodeResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.shipment.mapper.LegacyShipmentQueryApiMapper;
-import com.ryuqq.marketplace.application.legacyshipment.port.in.LegacyGetShipmentCompanyCodesUseCase;
+import com.ryuqq.marketplace.application.legacy.shipment.port.in.LegacyGetShipmentCompanyCodesUseCase;
 import com.ryuqq.marketplace.domain.commoncode.aggregate.CommonCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

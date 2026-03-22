@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.strategy;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
@@ -10,15 +11,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 
 /**
  * 세토프 전체 수정 실행기.
  *
  * <p>PUT /api/v2/admin/product-groups/{productGroupId}로 모든 필드를 전체 교체합니다. changedAreas가 비어있거나 변경 영역이
- * 임계값 이상일 때 사용됩니다.
+ * 임계값 이상일 때 사용됩니다. HTTP 호출은 {@link SetofCommerceApiClient}에 위임합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
@@ -29,12 +28,12 @@ public class SetofFullProductUpdateExecutor implements SetofProductUpdateExecuto
 
     private static final Logger log = LoggerFactory.getLogger(SetofFullProductUpdateExecutor.class);
 
-    private final RestClient restClient;
+    private final SetofCommerceApiClient apiClient;
     private final SetofCommerceProductMapper mapper;
 
     public SetofFullProductUpdateExecutor(
-            RestClient setofCommerceRestClient, SetofCommerceProductMapper mapper) {
-        this.restClient = setofCommerceRestClient;
+            SetofCommerceApiClient apiClient, SetofCommerceProductMapper mapper) {
+        this.apiClient = apiClient;
         this.mapper = mapper;
     }
 
@@ -63,13 +62,7 @@ public class SetofFullProductUpdateExecutor implements SetofProductUpdateExecuto
                 externalProductId,
                 syncData.queryResult().id());
 
-        restClient
-                .put()
-                .uri("/api/v2/admin/product-groups/{productGroupId}", externalProductId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
+        apiClient.updateProduct(externalProductId, request);
 
         log.info("세토프 전체 수정 성공: externalProductId={}", externalProductId);
     }

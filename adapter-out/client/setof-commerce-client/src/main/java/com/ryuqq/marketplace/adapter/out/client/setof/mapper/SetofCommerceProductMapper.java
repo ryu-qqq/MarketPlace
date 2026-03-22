@@ -219,8 +219,7 @@ public class SetofCommerceProductMapper {
                                             selectedOptions.add(
                                                     new SetofProductsUpdateRequest
                                                             .SelectedOptionRequest(
-                                                            group.optionGroupName(),
-                                                            valueName));
+                                                            group.optionGroupName(), valueName));
                                         }
                                     }
                                     return new SetofProductsUpdateRequest.ProductRequest(
@@ -359,8 +358,7 @@ public class SetofCommerceProductMapper {
         for (SellerOptionGroupResult group : optionGroups) {
             String valueName = mappingByGroupId.get(group.id());
             if (valueName != null) {
-                selectedOptions.add(
-                        new SelectedOptionRequest(group.optionGroupName(), valueName));
+                selectedOptions.add(new SelectedOptionRequest(group.optionGroupName(), valueName));
             }
         }
         return selectedOptions;
@@ -469,8 +467,7 @@ public class SetofCommerceProductMapper {
                 .map(
                         product -> {
                             Long productId =
-                                    productIdMatchMap.getOrDefault(
-                                            product.id(), product.id());
+                                    productIdMatchMap.getOrDefault(product.id(), product.id());
                             return new SetofProductGroupUpdateRequest.ProductRequest(
                                     productId,
                                     product.skuCode(),
@@ -661,8 +658,7 @@ public class SetofCommerceProductMapper {
         for (ProductOptionMappingResult mapping : product.optionMappings()) {
             SellerOptionValueResult value = optionValueMap.get(mapping.sellerOptionValueId());
             if (value != null) {
-                mappingByGroupId.put(
-                        value.sellerOptionGroupId(), value.optionValueName());
+                mappingByGroupId.put(value.sellerOptionGroupId(), value.optionValueName());
             }
         }
         return mappingByGroupId;

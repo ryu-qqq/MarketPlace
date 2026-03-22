@@ -47,8 +47,11 @@ public final class LegacySessionApiFixtures {
 
     public static PresignedUrlResponse presignedUrlResponse() {
         return new PresignedUrlResponse(
-                DEFAULT_SESSION_ID, DEFAULT_PRESIGNED_URL, DEFAULT_OBJECT_KEY,
-                Instant.now().plusSeconds(3600), "");
+                DEFAULT_SESSION_ID,
+                DEFAULT_PRESIGNED_URL,
+                DEFAULT_OBJECT_KEY,
+                Instant.now().plusSeconds(3600),
+                "");
     }
 
     // ===== Response Fixtures =====

@@ -121,6 +121,35 @@ module "ecr_worker" {
 }
 
 # ========================================
+# ECR Repository: legacy-api
+# ========================================
+module "ecr_legacy_api" {
+  source = "git::https://github.com/ryu-qqq/Infrastructure.git//terraform/modules/ecr?ref=main"
+
+  name                 = "${var.project_name}-legacy-api-${var.environment}"
+  image_tag_mutability = "IMMUTABLE"
+  scan_on_push         = true
+
+  kms_key_arn  = "arn:aws:kms:ap-northeast-2:646886795421:key/086b1677-614f-46ba-863e-23c215fb5010"
+  force_delete = true
+
+  enable_lifecycle_policy    = true
+  max_image_count            = 30
+  lifecycle_tag_prefixes     = ["v", "prod", "latest"]
+  untagged_image_expiry_days = 7
+
+  create_ssm_parameter = true
+
+  environment  = local.common_tags.environment
+  service_name = "${var.project_name}-legacy-api"
+  team         = local.common_tags.team
+  owner        = local.common_tags.owner
+  cost_center  = local.common_tags.cost_center
+  project      = local.common_tags.project
+  data_class   = local.common_tags.data_class
+}
+
+# ========================================
 # Outputs
 # ========================================
 output "web_api_repository_url" {
@@ -151,4 +180,14 @@ output "worker_repository_url" {
 output "worker_repository_arn" {
   description = "ECR repository ARN for worker"
   value       = module.ecr_worker.repository_arn
+}
+
+output "legacy_api_repository_url" {
+  description = "ECR repository URL for legacy-api"
+  value       = module.ecr_legacy_api.repository_url
+}
+
+output "legacy_api_repository_arn" {
+  description = "ECR repository ARN for legacy-api"
+  value       = module.ecr_legacy_api.repository_arn
 }

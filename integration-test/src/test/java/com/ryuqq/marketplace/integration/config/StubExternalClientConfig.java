@@ -951,30 +951,6 @@ public class StubExternalClientConfig {
 
     @Bean
     @Primary
-    public com.ryuqq.marketplace.application.legacy.qna.port.in.query.LegacyQnaListQueryUseCase stubLegacyQnaListQueryUseCase() {
-        return Mockito.mock(com.ryuqq.marketplace.application.legacy.qna.port.in.query.LegacyQnaListQueryUseCase.class);
-    }
-
-    @Bean
-    @Primary
-    public com.ryuqq.marketplace.application.legacy.qna.port.in.query.LegacyQnaDetailQueryUseCase stubLegacyQnaDetailQueryUseCase() {
-        return Mockito.mock(com.ryuqq.marketplace.application.legacy.qna.port.in.query.LegacyQnaDetailQueryUseCase.class);
-    }
-
-    @Bean
-    @Primary
-    public com.ryuqq.marketplace.application.legacy.qna.port.in.command.LegacyQnaAnswerUseCase stubLegacyQnaAnswerUseCase() {
-        return Mockito.mock(com.ryuqq.marketplace.application.legacy.qna.port.in.command.LegacyQnaAnswerUseCase.class);
-    }
-
-    @Bean
-    @Primary
-    public com.ryuqq.marketplace.application.legacy.qna.port.in.command.LegacyQnaAnswerUpdateUseCase stubLegacyQnaAnswerUpdateUseCase() {
-        return Mockito.mock(com.ryuqq.marketplace.application.legacy.qna.port.in.command.LegacyQnaAnswerUpdateUseCase.class);
-    }
-
-    @Bean
-    @Primary
     public com.ryuqq.marketplace.application.legacy.shipment.port.in.LegacyGetShipmentCompanyCodesUseCase stubLegacyGetShipmentCompanyCodesUseCase() {
         return Mockito.mock(com.ryuqq.marketplace.application.legacy.shipment.port.in.LegacyGetShipmentCompanyCodesUseCase.class);
     }

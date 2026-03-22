@@ -7,3 +7,4 @@ sqs:
     cancel-outbox: ""
     refund-outbox: ""
     exchange-outbox: ""
+    qna-outbox: ""

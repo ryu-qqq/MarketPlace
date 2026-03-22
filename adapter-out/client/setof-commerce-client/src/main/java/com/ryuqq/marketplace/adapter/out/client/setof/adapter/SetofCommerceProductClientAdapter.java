@@ -1,33 +1,29 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
 import com.ryuqq.marketplace.adapter.out.client.setof.strategy.SetofProductUpdateExecutorProvider;
-import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 
 /**
  * 세토프 커머스 상품 등록/수정/삭제 클라이언트 어댑터.
  *
- * <p>ProductGroupSyncData → Setof 요청 DTO 변환 후 POST/PUT API 호출. 인증은 RestClient
- * defaultHeader(X-Service-Token)로 자동 처리됩니다.
+ * <p>ProductGroupSyncData → Setof 요청 DTO 변환 후 ApiClient를 통해 API 호출. HTTP 호출은 {@link
+ * SetofCommerceApiClient}에 위임합니다.
  */
 @Component
 @Qualifier("setofProductClient")
@@ -37,20 +33,17 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
     private static final Logger log =
             LoggerFactory.getLogger(SetofCommerceProductClientAdapter.class);
 
-    private final RestClient restClient;
+    private final SetofCommerceApiClient apiClient;
     private final SetofCommerceProductMapper mapper;
     private final SetofProductUpdateExecutorProvider updateExecutorProvider;
-    private final CircuitBreaker circuitBreaker;
 
     public SetofCommerceProductClientAdapter(
-            RestClient setofCommerceRestClient,
+            SetofCommerceApiClient apiClient,
             SetofCommerceProductMapper mapper,
-            SetofProductUpdateExecutorProvider updateExecutorProvider,
-            CircuitBreaker setofCommerceCircuitBreaker) {
-        this.restClient = setofCommerceRestClient;
+            SetofProductUpdateExecutorProvider updateExecutorProvider) {
+        this.apiClient = apiClient;
         this.mapper = mapper;
         this.updateExecutorProvider = updateExecutorProvider;
-        this.circuitBreaker = setofCommerceCircuitBreaker;
     }
 
     @Override
@@ -74,41 +67,24 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
 
         Long productGroupId = syncData.queryResult().id();
 
-        try {
-            return circuitBreaker.executeSupplier(
-                    () -> {
-                        log.info(
-                                "세토프 커머스 상품 등록 요청: productGroupId={}, categoryId={}",
-                                productGroupId,
-                                externalCategoryId);
+        log.info(
+                "세토프 커머스 상품 등록 요청: productGroupId={}, categoryId={}",
+                productGroupId,
+                externalCategoryId);
 
-                        SetofProductGroupRegistrationResponse response =
-                                restClient
-                                        .post()
-                                        .uri("/api/v2/admin/product-groups")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .body(request)
-                                        .retrieve()
-                                        .body(SetofProductGroupRegistrationResponse.class);
+        SetofProductGroupRegistrationResponse response = apiClient.registerProduct(request);
 
-                        if (response == null || response.productGroupId() == null) {
-                            throw new IllegalStateException(
-                                    "세토프 커머스 상품 등록 응답이 null입니다: productGroupId="
-                                            + productGroupId);
-                        }
-
-                        log.info(
-                                "세토프 커머스 상품 등록 성공: productGroupId={},"
-                                        + " externalProductGroupId={}",
-                                productGroupId,
-                                response.productGroupId());
-
-                        return String.valueOf(response.productGroupId());
-                    });
-        } catch (CallNotPermittedException e) {
-            throw new ExternalServiceUnavailableException(
-                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
+        if (response == null || response.productGroupId() == null) {
+            throw new IllegalStateException(
+                    "세토프 커머스 상품 등록 응답이 null입니다: productGroupId=" + productGroupId);
         }
+
+        log.info(
+                "세토프 커머스 상품 등록 성공: productGroupId={}, externalProductGroupId={}",
+                productGroupId,
+                response.productGroupId());
+
+        return String.valueOf(response.productGroupId());
     }
 
     @Override
@@ -150,29 +126,12 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
 
     @Override
     public void deleteProduct(String externalProductId, SellerSalesChannel channel) {
-        try {
-            circuitBreaker.executeRunnable(
-                    () -> {
-                        log.info("세토프 커머스 상품 삭제(판매중지) 요청: externalProductId={}", externalProductId);
+        log.info("세토프 커머스 상품 삭제(판매중지) 요청: externalProductId={}", externalProductId);
 
-                        SetofProductGroupUpdateRequest deleteRequest = mapper.toDeleteRequest();
+        SetofProductGroupUpdateRequest deleteRequest = mapper.toDeleteRequest();
+        apiClient.updateProduct(externalProductId, deleteRequest);
 
-                        restClient
-                                .put()
-                                .uri(
-                                        "/api/v2/admin/product-groups/{productGroupId}",
-                                        externalProductId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(deleteRequest)
-                                .retrieve()
-                                .toBodilessEntity();
-
-                        log.info("세토프 커머스 상품 삭제(판매중지) 성공: externalProductId={}", externalProductId);
-                    });
-        } catch (CallNotPermittedException e) {
-            throw new ExternalServiceUnavailableException(
-                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
-        }
+        log.info("세토프 커머스 상품 삭제(판매중지) 성공: externalProductId={}", externalProductId);
     }
 
     /**
@@ -186,28 +145,17 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
      */
     private SetofProductGroupDetailResponse fetchExistingProduct(String externalProductId) {
         try {
-            return circuitBreaker.executeSupplier(
-                    () -> {
-                        log.info("세토프 커머스 기존 상품 조회: externalProductId={}", externalProductId);
+            log.info("세토프 커머스 기존 상품 조회: externalProductId={}", externalProductId);
+            SetofProductGroupDetailResponse response = apiClient.getProduct(externalProductId);
 
-                        SetofProductGroupDetailResponse response =
-                                restClient
-                                        .get()
-                                        .uri(
-                                                "/api/v2/admin/product-groups/{productGroupId}",
-                                                externalProductId)
-                                        .retrieve()
-                                        .body(SetofProductGroupDetailResponse.class);
+            log.info(
+                    "세토프 커머스 기존 상품 조회 성공: externalProductId={}, productsCount={}",
+                    externalProductId,
+                    response != null && response.products() != null
+                            ? response.products().size()
+                            : 0);
 
-                        log.info(
-                                "세토프 커머스 기존 상품 조회 성공: externalProductId={}, productsCount={}",
-                                externalProductId,
-                                response != null && response.products() != null
-                                        ? response.products().size()
-                                        : 0);
-
-                        return response;
-                    });
+            return response;
         } catch (Exception e) {
             log.warn(
                     "세토프 커머스 기존 상품 조회 실패 (수정은 계속 진행): externalProductId={}, error={}",

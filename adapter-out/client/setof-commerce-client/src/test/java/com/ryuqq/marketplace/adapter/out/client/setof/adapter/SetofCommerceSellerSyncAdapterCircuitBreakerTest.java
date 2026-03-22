@@ -1,11 +1,15 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
@@ -17,77 +21,68 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.RestClient;
 
+/**
+ * SetofCommerceSellerSyncAdapter CB 예외 전파 테스트.
+ *
+ * <p>CB 동작은 ApiExecutor에서 처리. Adapter는 ExternalServiceUnavailableException이 전파되는지만 검증.
+ */
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
 @DisplayName("SetofCommerceSellerSyncAdapter Circuit Breaker 테스트")
 class SetofCommerceSellerSyncAdapterCircuitBreakerTest {
 
-    @Mock private RestClient restClient;
+    @Mock private SetofCommerceApiClient apiClient;
     @Mock private SellerReadManager sellerReadManager;
     @Mock private SetofCommerceSellerSyncMapper mapper;
+    @Mock private Seller seller;
 
-    private CircuitBreaker circuitBreaker;
     private SetofCommerceSellerSyncAdapter sut;
 
     @BeforeEach
     void setUp() {
-        CircuitBreakerConfig config =
-                CircuitBreakerConfig.custom()
-                        .failureRateThreshold(50)
-                        .slidingWindowSize(2)
-                        .minimumNumberOfCalls(2)
-                        .permittedNumberOfCallsInHalfOpenState(1)
-                        .build();
-
-        circuitBreaker = CircuitBreakerRegistry.of(config).circuitBreaker("test-setof-seller-sync");
-
-        sut =
-                new SetofCommerceSellerSyncAdapter(
-                        restClient, sellerReadManager, mapper, circuitBreaker);
+        sut = new SetofCommerceSellerSyncAdapter(apiClient, sellerReadManager, mapper);
     }
 
     @Nested
-    @DisplayName("createSeller() - Circuit Breaker OPEN 시 예외 변환")
+    @DisplayName("createSeller() - ApiClient가 ExternalServiceUnavailableException 던질 때")
     class CreateSellerCircuitBreakerTest {
 
         @Test
-        @DisplayName("CB OPEN 상태에서 createSeller() 호출 시 ExternalServiceUnavailableException이 발생한다")
-        void createSeller_WhenCircuitBreakerOpen_ThrowsExternalServiceUnavailableException() {
+        @DisplayName("createSeller() 호출 시 ExternalServiceUnavailableException이 전파된다")
+        void createSeller_WhenApiClientThrows_PropagatesException() {
             // given
-            circuitBreaker.transitionToOpenState();
+            given(sellerReadManager.getById(any())).willReturn(seller);
+            given(mapper.toSellerRequest(any())).willReturn(null);
+            given(apiClient.createSeller(any()))
+                    .willThrow(
+                            new ExternalServiceUnavailableException(
+                                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)",
+                                    new RuntimeException()));
 
             // when & then
             assertThatThrownBy(() -> sut.createSeller(1L))
                     .isInstanceOf(ExternalServiceUnavailableException.class)
                     .hasMessageContaining("Circuit Breaker OPEN");
         }
-
-        @Test
-        @DisplayName(
-                "CB OPEN 상태에서 발생하는 ExternalServiceUnavailableException의 원인은"
-                        + " CallNotPermittedException이다")
-        void createSeller_WhenCircuitBreakerOpen_CauseIsCallNotPermittedException() {
-            // given
-            circuitBreaker.transitionToOpenState();
-
-            // when & then
-            assertThatThrownBy(() -> sut.createSeller(1L))
-                    .isInstanceOf(ExternalServiceUnavailableException.class)
-                    .hasCauseInstanceOf(CallNotPermittedException.class);
-        }
     }
 
     @Nested
-    @DisplayName("updateSeller() - Circuit Breaker OPEN 시 예외 변환")
+    @DisplayName("updateSeller() - ApiClient가 ExternalServiceUnavailableException 던질 때")
     class UpdateSellerCircuitBreakerTest {
 
         @Test
-        @DisplayName("CB OPEN 상태에서 updateSeller() 호출 시 ExternalServiceUnavailableException이 발생한다")
-        void updateSeller_WhenCircuitBreakerOpen_ThrowsExternalServiceUnavailableException() {
+        @DisplayName("updateSeller() 호출 시 ExternalServiceUnavailableException이 전파된다")
+        void updateSeller_WhenApiClientThrows_PropagatesException() {
             // given
-            circuitBreaker.transitionToOpenState();
+            given(sellerReadManager.getById(any())).willReturn(seller);
+            given(mapper.toSellerRequest(any())).willReturn(null);
+            willThrow(
+                            new ExternalServiceUnavailableException(
+                                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)",
+                                    new RuntimeException()))
+                    .given(apiClient)
+                    .updateSeller(any(), any());
 
             // when & then
             assertThatThrownBy(() -> sut.updateSeller(1L))

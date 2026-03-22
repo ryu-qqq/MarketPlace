@@ -19,7 +19,7 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAuthCo
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.LegacySellerApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.dto.response.LegacySellerResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.mapper.LegacySellerQueryApiMapper;
-import com.ryuqq.marketplace.application.legacyseller.port.in.LegacyGetCurrentSellerUseCase;
+import com.ryuqq.marketplace.application.legacy.seller.port.in.LegacyGetCurrentSellerUseCase;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -67,14 +67,17 @@ class LegacySellerControllerRestDocsTest {
             // given
             LegacyAuthContextHolder.setContext(
                     new LegacyAuthContext(
-                            LegacySellerApiFixtures.DEFAULT_SELLER_ID, "seller@test.com", "SELLER"));
+                            LegacySellerApiFixtures.DEFAULT_SELLER_ID,
+                            "seller@test.com",
+                            "SELLER"));
 
             SellerAdminCompositeResult result =
                     LegacySellerApiFixtures.sellerAdminCompositeResult();
             LegacySellerResponse response = LegacySellerApiFixtures.sellerResponse();
 
-            given(legacyGetCurrentSellerUseCase.execute(
-                    eq(LegacySellerApiFixtures.DEFAULT_SELLER_ID)))
+            given(
+                            legacyGetCurrentSellerUseCase.execute(
+                                    eq(LegacySellerApiFixtures.DEFAULT_SELLER_ID)))
                     .willReturn(result);
             given(legacySellerQueryApiMapper.toSellerResponse(result)).willReturn(response);
 
@@ -122,7 +125,8 @@ class LegacySellerControllerRestDocsTest {
                     new LegacyAuthContext(99L, "other@test.com", "SELLER"));
 
             SellerAdminCompositeResult result =
-                    LegacySellerApiFixtures.sellerAdminCompositeResult(99L, "다른 셀러", "999-99-99999");
+                    LegacySellerApiFixtures.sellerAdminCompositeResult(
+                            99L, "다른 셀러", "999-99-99999");
             LegacySellerResponse response =
                     LegacySellerApiFixtures.sellerResponse(99L, "다른 셀러", "999-99-99999");
 

@@ -67,29 +67,31 @@ class SetofCommerceProductMapperTest {
             List<Product> products,
             Optional<ProductGroupDescription> description,
             Optional<ProductNotice> notice) {
-        ProductGroupDetailBundle bundle = new ProductGroupDetailBundle(
-                createQueryResult(null, null),
-                group,
-                products,
-                description,
-                notice,
-                Optional.empty(),
-                Optional.empty(),
-                Map.of());
+        ProductGroupDetailBundle bundle =
+                new ProductGroupDetailBundle(
+                        createQueryResult(null, null),
+                        group,
+                        products,
+                        description,
+                        notice,
+                        Optional.empty(),
+                        Optional.empty(),
+                        Map.of());
         return ProductGroupSyncData.from(bundle);
     }
 
     private ProductGroupSyncData createSyncDataWithPolicies(
             ShippingPolicyResult shippingPolicy, RefundPolicyResult refundPolicy) {
-        ProductGroupDetailBundle bundle = new ProductGroupDetailBundle(
-                createQueryResult(shippingPolicy, refundPolicy),
-                ProductGroupFixtures.activeProductGroup(),
-                List.of(ProductFixtures.activeProduct()),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Map.of());
+        ProductGroupDetailBundle bundle =
+                new ProductGroupDetailBundle(
+                        createQueryResult(shippingPolicy, refundPolicy),
+                        ProductGroupFixtures.activeProductGroup(),
+                        List.of(ProductFixtures.activeProduct()),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Map.of());
         return ProductGroupSyncData.from(bundle);
     }
 
@@ -368,15 +370,15 @@ class SetofCommerceProductMapperTest {
         @DisplayName("옵션이 있는 상품 그룹을 변환한다")
         void convertsProductsWithOptions() {
             var group = ProductGroupFixtures.newProductGroupWithSingleOption();
-            var syncData = createSyncData(
-                    group,
-                    List.of(ProductFixtures.activeProduct()),
-                    Optional.empty(),
-                    Optional.empty());
+            var syncData =
+                    createSyncData(
+                            group,
+                            List.of(ProductFixtures.activeProduct()),
+                            Optional.empty(),
+                            Optional.empty());
 
             SetofProductsUpdateRequest result =
-                    sut.toProductsUpdateRequest(
-                            syncData.products(), syncData.optionGroups(), null);
+                    sut.toProductsUpdateRequest(syncData.products(), syncData.optionGroups(), null);
 
             assertThat(result.optionGroups()).hasSize(1);
             assertThat(result.optionGroups().get(0).optionGroupName()).isEqualTo("색상");
@@ -480,8 +482,7 @@ class SetofCommerceProductMapperTest {
                             Optional.empty(),
                             Optional.empty());
 
-            SetofProductGroupUpdateRequest result =
-                    sut.toUpdateRequest(syncData, 500L, 600L, null);
+            SetofProductGroupUpdateRequest result = sut.toUpdateRequest(syncData, 500L, 600L, null);
 
             assertThat(result).isNotNull();
             assertThat(result.productGroupName()).isEqualTo("테스트 상품 그룹");
@@ -502,8 +503,7 @@ class SetofCommerceProductMapperTest {
                             Optional.of(ProductGroupFixtures.defaultProductGroupDescription()),
                             Optional.of(ProductNoticeFixtures.newProductNotice()));
 
-            SetofProductGroupUpdateRequest result =
-                    sut.toUpdateRequest(syncData, 500L, 600L, null);
+            SetofProductGroupUpdateRequest result = sut.toUpdateRequest(syncData, 500L, 600L, null);
 
             assertThat(result.images()).isNotEmpty();
             assertThat(result.optionGroups()).hasSize(1);

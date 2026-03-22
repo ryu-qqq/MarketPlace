@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.exchange.factory;
 import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.common.util.OutboxPayloadUtils;
 import com.ryuqq.marketplace.application.exchange.dto.command.RequestExchangeBatchCommand.ExchangeRequestItem;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
@@ -15,6 +16,7 @@ import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
 
@@ -177,7 +179,8 @@ public class ExchangeCommandFactory {
     }
 
     /** 보류 시 claim 상태 변경 + ExchangeOutbox + ClaimHistory 생성. */
-    public OutboxWithHistory createHoldBundle(ExchangeClaim claim, String memo, String processedBy) {
+    public OutboxWithHistory createHoldBundle(
+            ExchangeClaim claim, String memo, String processedBy) {
         Instant now = timeProvider.now();
         String fromStatus = claim.status().name();
         claim.hold(memo, now);
@@ -289,30 +292,32 @@ public class ExchangeCommandFactory {
         private ExchangeOutboxPayloadBuilder() {}
 
         static String collectPayload(String exchangeClaimId) {
-            return "{\"exchangeClaimId\":\"" + exchangeClaimId + "\",\"action\":\"COLLECT\"}";
+            return OutboxPayloadUtils.mapToJson(
+                    Map.of("exchangeClaimId", exchangeClaimId, "action", "COLLECT"));
         }
 
         static String shipPayload(
                 String exchangeClaimId, String deliveryCompany, String trackingNumber) {
-            return "{\"exchangeClaimId\":\""
-                    + exchangeClaimId
-                    + "\",\"deliveryCompany\":\""
-                    + deliveryCompany
-                    + "\",\"trackingNumber\":\""
-                    + trackingNumber
-                    + "\"}";
+            return OutboxPayloadUtils.mapToJson(
+                    Map.of(
+                            "exchangeClaimId", exchangeClaimId,
+                            "deliveryCompany", deliveryCompany,
+                            "trackingNumber", trackingNumber));
         }
 
         static String rejectPayload(String exchangeClaimId) {
-            return "{\"exchangeClaimId\":\"" + exchangeClaimId + "\",\"action\":\"REJECT\"}";
+            return OutboxPayloadUtils.mapToJson(
+                    Map.of("exchangeClaimId", exchangeClaimId, "action", "REJECT"));
         }
 
         static String holdPayload(String exchangeClaimId) {
-            return "{\"exchangeClaimId\":\"" + exchangeClaimId + "\",\"action\":\"HOLD\"}";
+            return OutboxPayloadUtils.mapToJson(
+                    Map.of("exchangeClaimId", exchangeClaimId, "action", "HOLD"));
         }
 
         static String releaseHoldPayload(String exchangeClaimId) {
-            return "{\"exchangeClaimId\":\"" + exchangeClaimId + "\",\"action\":\"RELEASE_HOLD\"}";
+            return OutboxPayloadUtils.mapToJson(
+                    Map.of("exchangeClaimId", exchangeClaimId, "action", "RELEASE_HOLD"));
         }
     }
 }

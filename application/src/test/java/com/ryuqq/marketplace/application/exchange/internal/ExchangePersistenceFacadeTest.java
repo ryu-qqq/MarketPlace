@@ -44,7 +44,8 @@ class ExchangePersistenceFacadeTest {
             // given
             List<ExchangeClaim> claims = List.of(ExchangeFixtures.requestedExchangeClaim());
             List<ClaimHistory> histories = List.of(Mockito.mock(ClaimHistory.class));
-            ExchangePersistenceBundle bundle = ExchangePersistenceBundle.withoutOutboxes(claims, histories);
+            ExchangePersistenceBundle bundle =
+                    ExchangePersistenceBundle.withoutOutboxes(claims, histories);
 
             // when
             sut.persistAll(bundle);
@@ -63,7 +64,8 @@ class ExchangePersistenceFacadeTest {
             List<ExchangeClaim> claims = List.of(ExchangeFixtures.collectingExchangeClaim());
             List<ExchangeOutbox> outboxes = List.of(Mockito.mock(ExchangeOutbox.class));
             List<ClaimHistory> histories = List.of(Mockito.mock(ClaimHistory.class));
-            ExchangePersistenceBundle bundle = ExchangePersistenceBundle.of(claims, outboxes, histories);
+            ExchangePersistenceBundle bundle =
+                    ExchangePersistenceBundle.of(claims, outboxes, histories);
 
             // when
             sut.persistAll(bundle);
@@ -82,7 +84,8 @@ class ExchangePersistenceFacadeTest {
             List<ExchangeClaim> claims = List.of(ExchangeFixtures.newExchangeClaim());
             List<ClaimHistory> histories = List.of(Mockito.mock(ClaimHistory.class));
             List<OrderItem> orderItems = List.of(Mockito.mock(OrderItem.class));
-            ExchangePersistenceBundle bundle = ExchangePersistenceBundle.withOrderItems(claims, histories, orderItems);
+            ExchangePersistenceBundle bundle =
+                    ExchangePersistenceBundle.withOrderItems(claims, histories, orderItems);
 
             // when
             sut.persistAll(bundle);
@@ -99,7 +102,8 @@ class ExchangePersistenceFacadeTest {
         void persistAll_EmptyCollections_SkipsEmptyManagers() {
             // given
             List<ExchangeClaim> claims = List.of(ExchangeFixtures.requestedExchangeClaim());
-            ExchangePersistenceBundle bundle = new ExchangePersistenceBundle(claims, List.of(), List.of(), List.of());
+            ExchangePersistenceBundle bundle =
+                    new ExchangePersistenceBundle(claims, List.of(), List.of(), List.of());
 
             // when
             sut.persistAll(bundle);

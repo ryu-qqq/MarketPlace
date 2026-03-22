@@ -76,8 +76,7 @@ public class NaverCommerceProductMapper {
             NaverProductDetailResponse existingProduct,
             Set<ChangedArea> changedAreas) {
         Images images = NaverImageMapper.mapImages(syncData.images());
-        OptionInfo optionInfo =
-                resolveOptionInfoForUpdate(syncData, existingProduct, changedAreas);
+        OptionInfo optionInfo = resolveOptionInfoForUpdate(syncData, existingProduct, changedAreas);
         return buildRequest(syncData, externalCategoryId, externalBrandId, images, optionInfo);
     }
 
@@ -90,8 +89,7 @@ public class NaverCommerceProductMapper {
             NaverProductDetailResponse existingProduct,
             Set<ChangedArea> changedAreas) {
         Images images = resolveImages(syncData, resolvedImages);
-        OptionInfo optionInfo =
-                resolveOptionInfoForUpdate(syncData, existingProduct, changedAreas);
+        OptionInfo optionInfo = resolveOptionInfoForUpdate(syncData, existingProduct, changedAreas);
         return buildRequest(syncData, externalCategoryId, externalBrandId, images, optionInfo);
     }
 
@@ -103,7 +101,7 @@ public class NaverCommerceProductMapper {
         // 기존 상품 정보가 없으면 등록 모드로 폴백
         if (existingProduct == null) {
             return NaverOptionMapper.mapOptionInfo(
-                        syncData.optionGroups(), syncData.products(), syncData.soldout());
+                    syncData.optionGroups(), syncData.products(), syncData.soldout());
         }
 
         // 옵션이 있는 상품: 기존 combination ID 매칭
@@ -124,8 +122,7 @@ public class NaverCommerceProductMapper {
         DeliveryInfo deliveryInfo =
                 NaverDeliveryMapper.mapDeliveryInfo(queryResult.shippingPolicy());
 
-        AfterServiceInfo afterServiceInfo =
-                mapAfterServiceInfo(syncData.sellerCs().orElse(null));
+        AfterServiceInfo afterServiceInfo = mapAfterServiceInfo(syncData.sellerCs().orElse(null));
         OriginAreaInfo originAreaInfo = NaverNoticeMapper.mapOriginAreaInfo(syncData);
         ProductInfoProvidedNotice notice = NaverNoticeMapper.mapNotice(syncData);
 

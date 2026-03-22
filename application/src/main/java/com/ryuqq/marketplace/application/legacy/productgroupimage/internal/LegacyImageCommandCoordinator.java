@@ -1,68 +1,70 @@
 package com.ryuqq.marketplace.application.legacy.productgroupimage.internal;
 
-import com.ryuqq.marketplace.application.legacy.productgroupimage.dto.command.LegacyUpdateImagesCommand;
 import com.ryuqq.marketplace.application.legacy.productgroupimage.manager.LegacyProductImageCommandManager;
 import com.ryuqq.marketplace.application.legacy.productgroupimage.manager.LegacyProductImageReadManager;
-import com.ryuqq.marketplace.application.legacy.shared.factory.LegacyProductGroupCommandFactory;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
-import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImages;
-import com.ryuqq.marketplace.domain.legacy.productimage.vo.LegacyImageDiff;
-import java.util.List;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
+import com.ryuqq.marketplace.application.productgroupimage.dto.command.RegisterProductGroupImagesCommand;
+import com.ryuqq.marketplace.application.productgroupimage.dto.command.UpdateProductGroupImagesCommand;
+import com.ryuqq.marketplace.application.productgroupimage.factory.ProductGroupImageFactory;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
+import com.ryuqq.marketplace.domain.productgroupimage.vo.ProductGroupImageDiff;
+import com.ryuqq.marketplace.domain.productgroupimage.vo.ProductGroupImageUpdateData;
+import com.ryuqq.marketplace.domain.productgroupimage.vo.ProductGroupImages;
+import java.time.Instant;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 레거시 이미지 Coordinator.
+ * 레거시 이미지 Command Coordinator.
  *
- * <p>이미지 등록 및 diff 기반 업데이트 라이프사이클을 관리합니다. Factory로 도메인 객체를 생성하고, 기존 이미지와 diff 후 persist합니다.
+ * <p>표준 도메인 객체 기반으로 레거시 DB(luxurydb)에 저장합니다.
+ * 이미지 업로드 Outbox는 생성하지 않습니다 — 레거시 컨버전 과정에서 처리됩니다.
  */
 @Component
 public class LegacyImageCommandCoordinator {
 
-    private final LegacyProductGroupCommandFactory commandFactory;
+    private final ProductGroupImageFactory imageFactory;
     private final LegacyProductImageReadManager imageReadManager;
     private final LegacyProductImageCommandManager imageCommandManager;
+    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
 
     public LegacyImageCommandCoordinator(
-            LegacyProductGroupCommandFactory commandFactory,
+            ProductGroupImageFactory imageFactory,
             LegacyProductImageReadManager imageReadManager,
-            LegacyProductImageCommandManager imageCommandManager) {
-        this.commandFactory = commandFactory;
+            LegacyProductImageCommandManager imageCommandManager,
+            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
+        this.imageFactory = imageFactory;
         this.imageReadManager = imageReadManager;
         this.imageCommandManager = imageCommandManager;
+        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
     }
 
-    /** 이미지 일괄 등록. */
-    public void register(List<LegacyProductImage> images) {
-        imageCommandManager.persistAll(images);
-    }
-
-    /**
-     * 이미지 수정 Command 기반: Factory로 도메인 객체 생성 → 기존 이미지 로드 → diff → persist.
-     *
-     * @param command 이미지 수정 Command
-     */
+    /** 이미지 등록 (상품그룹 등록 시 사용). Command → 표준 도메인 생성 → persist. */
     @Transactional
-    public void update(LegacyUpdateImagesCommand command) {
-        LegacyProductGroupId groupId = LegacyProductGroupId.of(command.productGroupId());
-        List<LegacyProductImage> newImages =
-                commandFactory.createImagesForUpdate(groupId, command.images());
-
-        LegacyProductImages existing = imageReadManager.getByProductGroupId(groupId);
-        LegacyImageDiff diff = existing.update(newImages, commandFactory.now());
-        persist(diff);
+    public void register(RegisterProductGroupImagesCommand command) {
+        ProductGroupId productGroupId = ProductGroupId.of(command.productGroupId());
+        ProductGroupImages images =
+                imageFactory.createFromImageRegistration(productGroupId, command.images());
+        for (ProductGroupImage image : images.toList()) {
+            imageCommandManager.persist(image);
+        }
     }
 
-    /**
-     * diff 결과 persist.
-     *
-     * <p>added는 신규 INSERT, allDirtyImages(retained + removed)는 dirty check로 DB 반영됩니다.
-     */
-    private void persist(LegacyImageDiff diff) {
-        if (!diff.hasNoChanges()) {
-            imageCommandManager.persistAll(diff.added());
-            imageCommandManager.persistAll(diff.allDirtyImages());
+    /** 이미지 수정 (단독 수정 시 사용). 기존 로드 → diff → persist + ConversionOutbox. */
+    @Transactional
+    public void update(UpdateProductGroupImagesCommand command) {
+        ProductGroupImageUpdateData updateData = imageFactory.createUpdateData(command);
+        ProductGroupImages existing = imageReadManager.getByProductGroupId(command.productGroupId());
+        ProductGroupImageDiff diff = existing.update(updateData);
+
+        for (ProductGroupImage image : diff.removed()) {
+            imageCommandManager.persist(image);
         }
+        for (ProductGroupImage image : diff.added()) {
+            imageCommandManager.persist(image);
+        }
+
+        conversionOutboxCommandManager.createIfNoPending(command.productGroupId(), Instant.now());
     }
 }

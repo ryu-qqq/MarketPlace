@@ -1,8 +1,7 @@
 package com.ryuqq.marketplace.application.legacy.productgroupimage.manager;
 
 import com.ryuqq.marketplace.application.legacy.productgroupimage.port.out.query.LegacyProductImageQueryPort;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImages;
+import com.ryuqq.marketplace.domain.productgroupimage.vo.ProductGroupImages;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +16,7 @@ public class LegacyProductImageReadManager {
     }
 
     @Transactional(readOnly = true)
-    public LegacyProductImages getByProductGroupId(LegacyProductGroupId productGroupId) {
-        return new LegacyProductImages(queryPort.findByProductGroupId(productGroupId));
+    public ProductGroupImages getByProductGroupId(long productGroupId) {
+        return ProductGroupImages.reconstitute(queryPort.findByProductGroupId(productGroupId));
     }
 }

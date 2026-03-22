@@ -64,7 +64,9 @@ class RequestExchangeBatchServiceTest {
                                     item, command.requestedBy(), command.sellerId()))
                     .willReturn(bundle);
             given(commandFactory.createRequestOrderItemContext(item.orderItemId()))
-                    .willReturn(new StatusChangeContext<>(OrderItemId.of(item.orderItemId()), Instant.now()));
+                    .willReturn(
+                            new StatusChangeContext<>(
+                                    OrderItemId.of(item.orderItemId()), Instant.now()));
             given(orderItemReadManager.findById(OrderItemId.of(item.orderItemId())))
                     .willReturn(Optional.empty());
 

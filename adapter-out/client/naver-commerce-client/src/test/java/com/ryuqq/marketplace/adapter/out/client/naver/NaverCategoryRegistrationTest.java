@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
-import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
@@ -180,7 +180,8 @@ class NaverCategoryRegistrationTest {
             try {
                 ProductGroupDetailBundle bundle = buildBundle(tc);
                 NaverProductRegistrationRequest request =
-                        mapper.toRegistrationRequest(ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
+                        mapper.toRegistrationRequest(
+                                ProductGroupSyncData.from(bundle), NAVER_CATEGORY_ID, null);
 
                 String json = objectMapper.writeValueAsString(request);
                 HttpResponse<String> resp =
@@ -222,7 +223,8 @@ class NaverCategoryRegistrationTest {
                             25000,
                             firstCase.fields);
             NaverProductRegistrationRequest updateRequest =
-                    mapper.toRegistrationRequest(ProductGroupSyncData.from(updatedBundle), NAVER_CATEGORY_ID, null);
+                    mapper.toRegistrationRequest(
+                            ProductGroupSyncData.from(updatedBundle), NAVER_CATEGORY_ID, null);
 
             String updateJson = objectMapper.writeValueAsString(updateRequest);
             HttpResponse<String> updateResp =

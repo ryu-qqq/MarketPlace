@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
@@ -30,8 +30,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.web.client.RestClient;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +38,7 @@ class SetofFullProductUpdateExecutorTest {
 
     @InjectMocks private SetofFullProductUpdateExecutor sut;
 
-    @Mock private RestClient restClient;
+    @Mock private SetofCommerceApiClient apiClient;
     @Mock private SetofCommerceProductMapper mapper;
 
     @Nested
@@ -71,7 +69,7 @@ class SetofFullProductUpdateExecutorTest {
     class ExecuteTest {
 
         @Test
-        @DisplayName("전체 수정 요청을 PUT으로 호출한다")
+        @DisplayName("전체 수정 요청을 ApiClient.updateProduct()로 호출한다")
         void executeSendsFullUpdateRequest() {
             // given
             var syncData = createSyncData();
@@ -83,28 +81,13 @@ class SetofFullProductUpdateExecutorTest {
                     new SetofProductGroupUpdateRequest(
                             "테스트", null, null, null, null, null, 0, 0, null, null, null, null,
                             null);
-            given(mapper.toUpdateRequest(
-                            any(ProductGroupSyncData.class),
-                            eq(externalCategoryId),
-                            eq(externalBrandId),
-                            eq(null)))
-                    .willReturn(updateRequest);
-
-            var requestHeadersUriSpec = mock(RestClient.RequestBodyUriSpec.class);
-            var requestBodySpec = mock(RestClient.RequestBodySpec.class);
-            var responseSpec = mock(RestClient.ResponseSpec.class);
-
-            given(restClient.put()).willReturn(requestHeadersUriSpec);
             given(
-                            requestHeadersUriSpec.uri(
-                                    eq("/api/v2/admin/product-groups/{productGroupId}"),
-                                    eq(externalProductId)))
-                    .willReturn(requestBodySpec);
-            given(requestBodySpec.contentType(MediaType.APPLICATION_JSON))
-                    .willReturn(requestBodySpec);
-            given(requestBodySpec.body(updateRequest)).willReturn(requestBodySpec);
-            given(requestBodySpec.retrieve()).willReturn(responseSpec);
-            given(responseSpec.toBodilessEntity()).willReturn(null);
+                            mapper.toUpdateRequest(
+                                    any(ProductGroupSyncData.class),
+                                    eq(externalCategoryId),
+                                    eq(externalBrandId),
+                                    eq(null)))
+                    .willReturn(updateRequest);
 
             // when
             sut.execute(
@@ -123,7 +106,7 @@ class SetofFullProductUpdateExecutorTest {
                             eq(externalCategoryId),
                             eq(externalBrandId),
                             eq(null));
-            verify(restClient).put();
+            verify(apiClient).updateProduct(eq(externalProductId), eq(updateRequest));
         }
     }
 
@@ -146,15 +129,16 @@ class SetofFullProductUpdateExecutorTest {
                         Instant.now(),
                         null,
                         null);
-        var bundle = new ProductGroupDetailBundle(
-                queryResult,
-                ProductGroupFixtures.activeProductGroup(),
-                List.of(ProductFixtures.activeProduct()),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Map.of());
+        var bundle =
+                new ProductGroupDetailBundle(
+                        queryResult,
+                        ProductGroupFixtures.activeProductGroup(),
+                        List.of(ProductFixtures.activeProduct()),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Map.of());
         return ProductGroupSyncData.from(bundle);
     }
 }

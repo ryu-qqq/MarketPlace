@@ -6,7 +6,7 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAuthContextHolder;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.dto.response.LegacySellerResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.mapper.LegacySellerQueryApiMapper;
-import com.ryuqq.marketplace.application.legacyseller.port.in.LegacyGetCurrentSellerUseCase;
+import com.ryuqq.marketplace.application.legacy.seller.port.in.LegacyGetCurrentSellerUseCase;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

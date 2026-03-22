@@ -19,15 +19,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productnotice.LegacyNoticeApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productnotice.dto.request.LegacyCreateProductNoticeRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productnotice.mapper.LegacyNoticeCommandApiMapper;
-import com.ryuqq.marketplace.application.legacy.productnotice.dto.command.LegacyUpdateNoticeCommand;
 import com.ryuqq.marketplace.application.legacy.productnotice.port.in.command.LegacyProductUpdateNoticeUseCase;
+import com.ryuqq.marketplace.application.legacy.productnotice.port.in.query.LegacyResolveNoticeFieldsUseCase;
+import com.ryuqq.marketplace.application.productnotice.dto.command.UpdateProductNoticeCommand;
+import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -51,9 +56,11 @@ class LegacyNoticeCommandControllerRestDocsTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
+    @MockitoBean private LegacyResolveNoticeFieldsUseCase legacyResolveNoticeFieldsUseCase;
     @MockitoBean private LegacyProductUpdateNoticeUseCase legacyProductUpdateNoticeUseCase;
     @MockitoBean private LegacyNoticeCommandApiMapper legacyNoticeCommandApiMapper;
     @MockitoBean private MarketAccessChecker accessChecker;
+    @MockitoBean private LegacyAccessChecker legacyAccessChecker;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @Nested
@@ -65,11 +72,15 @@ class LegacyNoticeCommandControllerRestDocsTest {
         void updateProductNotice_Success() throws Exception {
             // given
             LegacyCreateProductNoticeRequest request = LegacyNoticeApiFixtures.request();
-            LegacyUpdateNoticeCommand command = LegacyNoticeApiFixtures.command(PRODUCT_GROUP_ID);
+            NoticeCategory mockNoticeCategory = Mockito.mock(NoticeCategory.class);
+            UpdateProductNoticeCommand command =
+                    new UpdateProductNoticeCommand(PRODUCT_GROUP_ID, 1L, List.of());
 
-            given(legacyNoticeCommandApiMapper.toLegacyNoticeCommand(anyLong(), any()))
+            given(legacyResolveNoticeFieldsUseCase.execute(anyLong()))
+                    .willReturn(mockNoticeCategory);
+            given(legacyNoticeCommandApiMapper.toUpdateNoticeCommand(anyLong(), any(), any()))
                     .willReturn(command);
-            doNothing().when(legacyProductUpdateNoticeUseCase).execute(any());
+            doNothing().when(legacyProductUpdateNoticeUseCase).execute(any(), any());
 
             // when & then
             mockMvc.perform(
@@ -142,12 +153,15 @@ class LegacyNoticeCommandControllerRestDocsTest {
         void updateProductNotice_WithNullFields_Success() throws Exception {
             // given
             LegacyCreateProductNoticeRequest request = LegacyNoticeApiFixtures.requestWithNulls();
-            LegacyUpdateNoticeCommand command =
-                    LegacyNoticeApiFixtures.commandWithEmptyValues(PRODUCT_GROUP_ID);
+            NoticeCategory mockNoticeCategory = Mockito.mock(NoticeCategory.class);
+            UpdateProductNoticeCommand command =
+                    new UpdateProductNoticeCommand(PRODUCT_GROUP_ID, 1L, List.of());
 
-            given(legacyNoticeCommandApiMapper.toLegacyNoticeCommand(anyLong(), any()))
+            given(legacyResolveNoticeFieldsUseCase.execute(anyLong()))
+                    .willReturn(mockNoticeCategory);
+            given(legacyNoticeCommandApiMapper.toUpdateNoticeCommand(anyLong(), any(), any()))
                     .willReturn(command);
-            doNothing().when(legacyProductUpdateNoticeUseCase).execute(any());
+            doNothing().when(legacyProductUpdateNoticeUseCase).execute(any(), any());
 
             // when & then
             mockMvc.perform(

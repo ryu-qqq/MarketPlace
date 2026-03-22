@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.naver.config;
 
 import com.ryuqq.marketplace.adapter.out.client.naver.exception.NaverCommerceBadRequestException;
 import com.ryuqq.marketplace.adapter.out.client.naver.exception.NaverCommerceClientException;
+import com.ryuqq.marketplace.adapter.out.client.naver.exception.NaverCommerceNetworkException;
 import com.ryuqq.marketplace.adapter.out.client.naver.exception.NaverCommerceRateLimitException;
 import com.ryuqq.marketplace.adapter.out.client.naver.exception.NaverCommerceServerException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -27,8 +28,8 @@ import org.springframework.context.annotation.Configuration;
  *   <li>OPEN 상태에서 60초 대기 후 HALF_OPEN
  *   <li>HALF_OPEN에서 5건 시도 후 복구 판정
  *   <li>Sliding window: 최근 20건 기준 (COUNT_BASED)
- *   <li>{@link NaverCommerceServerException}(5xx), {@link NaverCommerceRateLimitException}(429)만
- *       실패로 기록
+ *   <li>{@link NaverCommerceServerException}(5xx), {@link NaverCommerceRateLimitException}(429),
+ *       {@link NaverCommerceNetworkException}(타임아웃/연결실패)만 실패로 기록
  *   <li>{@link NaverCommerceBadRequestException}(400), {@link NaverCommerceClientException}(4xx)은
  *       무시
  * </ul>
@@ -80,7 +81,8 @@ public class NaverCommerceCircuitBreakerConfig {
                         .waitDurationInOpenState(WAIT_DURATION_IN_OPEN)
                         .recordExceptions(
                                 NaverCommerceServerException.class,
-                                NaverCommerceRateLimitException.class)
+                                NaverCommerceRateLimitException.class,
+                                NaverCommerceNetworkException.class)
                         .ignoreExceptions(
                                 NaverCommerceBadRequestException.class,
                                 NaverCommerceClientException.class)

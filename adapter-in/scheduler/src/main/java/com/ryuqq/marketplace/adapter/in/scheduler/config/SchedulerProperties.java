@@ -34,7 +34,10 @@ public record SchedulerProperties(Jobs jobs) {
             ShipmentOutbox shipmentOutbox,
             CancelOutbox cancelOutbox,
             RefundOutbox refundOutbox,
-            ExchangeOutbox exchangeOutbox) {}
+            ExchangeOutbox exchangeOutbox,
+            QnaOutbox qnaOutbox,
+            InboundQnaPolling inboundQnaPolling,
+            InboundQnaRetry inboundQnaRetry) {}
 
     public record OutboundSyncOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
@@ -107,6 +110,17 @@ public record SchedulerProperties(Jobs jobs) {
     public record RefundOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 
     public record ExchangeOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record QnaOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record InboundQnaPolling(
+            boolean enabled,
+            String cron,
+            String timezone,
+            int batchSize,
+            List<Long> salesChannelIds) {}
+
+    public record InboundQnaRetry(boolean enabled, String cron, String timezone, int batchSize) {}
 
     public record ImageVariantSyncOutbox(ImageVariantSyncProcessPending processPending) {}
 

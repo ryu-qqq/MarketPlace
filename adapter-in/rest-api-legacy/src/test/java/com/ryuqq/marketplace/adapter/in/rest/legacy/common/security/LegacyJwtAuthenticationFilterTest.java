@@ -5,8 +5,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenCacheReadManager;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenManager;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenCacheReadManager;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenManager;
 import jakarta.servlet.FilterChain;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;

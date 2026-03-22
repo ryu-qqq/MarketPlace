@@ -1,10 +1,7 @@
 package com.ryuqq.marketplace.application.legacy.productgroupdescription.manager;
 
 import com.ryuqq.marketplace.application.legacy.productgroupdescription.port.out.command.LegacyProductDescriptionCommandPort;
-import com.ryuqq.marketplace.application.productgroupdescription.dto.command.UpdateProductGroupDescriptionCommand;
-import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
-import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyProductDescription;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +16,7 @@ public class LegacyProductDescriptionCommandManager {
     }
 
     @Transactional
-    public void persist(LegacyProductGroupId productGroupId, LegacyProductDescription description) {
-        commandPort.persist(productGroupId, description);
-    }
-
-    @Transactional
-    public void persistDescription(LegacyProductGroupDescription description) {
-        commandPort.persistDescription(description);
-    }
-
-    @Transactional
-    public void update(UpdateProductGroupDescriptionCommand command) {
-        commandPort.update(command);
+    public Long persist(ProductGroupDescription description) {
+        return commandPort.persist(description);
     }
 }

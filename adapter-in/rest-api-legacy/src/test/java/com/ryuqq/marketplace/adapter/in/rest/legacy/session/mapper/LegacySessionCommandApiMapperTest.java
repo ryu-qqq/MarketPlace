@@ -75,8 +75,7 @@ class LegacySessionCommandApiMapperTest {
             assertThat(response.sessionId()).isEqualTo(LegacySessionApiFixtures.DEFAULT_SESSION_ID);
             assertThat(response.preSignedUrl())
                     .isEqualTo(LegacySessionApiFixtures.DEFAULT_PRESIGNED_URL);
-            assertThat(response.objectKey())
-                    .isEqualTo(LegacySessionApiFixtures.DEFAULT_OBJECT_KEY);
+            assertThat(response.objectKey()).isEqualTo(LegacySessionApiFixtures.DEFAULT_OBJECT_KEY);
         }
     }
 }

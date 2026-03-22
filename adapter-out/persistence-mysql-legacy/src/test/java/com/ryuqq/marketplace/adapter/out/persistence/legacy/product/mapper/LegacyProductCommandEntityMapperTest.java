@@ -57,9 +57,6 @@ class LegacyProductCommandEntityMapperTest {
                 Origin.KR,
                 "STYLE001",
                 null,
-                null,
-                null,
-                null,
                 null);
     }
 
@@ -115,9 +112,6 @@ class LegacyProductCommandEntityMapperTest {
                             "Y",
                             ProductCondition.NEW,
                             Origin.KR,
-                            null,
-                            null,
-                            null,
                             null);
 
             // when
@@ -146,10 +140,7 @@ class LegacyProductCommandEntityMapperTest {
                             "Y",
                             ProductCondition.NEW,
                             Origin.KR,
-                            "STYLE001",
-                            null,
-                            null,
-                            null);
+                            "STYLE001");
 
             // when
             LegacyProductGroupEntity entity = mapper.toEntity(domain);

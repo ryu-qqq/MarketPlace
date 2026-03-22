@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.cancel.factory;
 import com.ryuqq.marketplace.application.cancel.dto.command.SellerCancelBatchCommand.SellerCancelItem;
 import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.common.util.OutboxPayloadUtils;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.cancel.id.CancelId;
 import com.ryuqq.marketplace.domain.cancel.id.CancelNumber;
@@ -136,37 +137,16 @@ public class CancelCommandFactory {
         private CancelOutboxPayloadBuilder() {}
 
         static String sellerCancelPayload(String cancelId, int cancelQty) {
-            return mapToJson(Map.of("cancelId", cancelId, "cancelQty", cancelQty));
+            return OutboxPayloadUtils.mapToJson(
+                    Map.of("cancelId", cancelId, "cancelQty", cancelQty));
         }
 
         static String approvePayload(String cancelId) {
-            return mapToJson(Map.of("cancelId", cancelId, "action", "APPROVE"));
+            return OutboxPayloadUtils.mapToJson(Map.of("cancelId", cancelId, "action", "APPROVE"));
         }
 
         static String rejectPayload(String cancelId) {
-            return mapToJson(Map.of("cancelId", cancelId, "action", "REJECT"));
-        }
-
-        private static String mapToJson(Map<String, Object> map) {
-            StringBuilder sb = new StringBuilder("{");
-            boolean first = true;
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                if (!first) sb.append(",");
-                sb.append("\"").append(escapeJson(entry.getKey())).append("\":");
-                Object value = entry.getValue();
-                if (value instanceof String s) {
-                    sb.append("\"").append(escapeJson(s)).append("\"");
-                } else {
-                    sb.append(value);
-                }
-                first = false;
-            }
-            sb.append("}");
-            return sb.toString();
-        }
-
-        private static String escapeJson(String value) {
-            return value.replace("\\", "\\\\").replace("\"", "\\\"");
+            return OutboxPayloadUtils.mapToJson(Map.of("cancelId", cancelId, "action", "REJECT"));
         }
     }
 }

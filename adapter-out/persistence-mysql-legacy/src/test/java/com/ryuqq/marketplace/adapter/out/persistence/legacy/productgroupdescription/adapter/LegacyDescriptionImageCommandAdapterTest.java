@@ -1,15 +1,17 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.adapter;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyDescriptionImageEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.mapper.LegacyProductGroupDescriptionEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.repository.LegacyDescriptionImageJpaRepository;
-import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyDescriptionImage;
-import java.util.List;
+import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.DescriptionImage;
+import com.ryuqq.marketplace.domain.productgroup.id.DescriptionImageId;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupDescriptionId;
+import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -34,12 +36,18 @@ class LegacyDescriptionImageCommandAdapterTest {
 
     @Mock private LegacyDescriptionImageJpaRepository repository;
 
-    @Mock private LegacyProductCommandEntityMapper mapper;
+    @Mock private LegacyProductGroupDescriptionEntityMapper mapper;
 
     @InjectMocks private LegacyDescriptionImageCommandAdapter commandAdapter;
 
-    private LegacyDescriptionImage buildImage() {
-        return LegacyDescriptionImage.forNew(1L, "https://origin.example.com/img.jpg", 1);
+    private DescriptionImage buildImage() {
+        return DescriptionImage.reconstitute(
+                DescriptionImageId.of(1L),
+                ProductGroupDescriptionId.of(1L),
+                ImageUrl.of("https://origin.example.com/img.jpg"),
+                null,
+                1,
+                DeletionStatus.active());
     }
 
     private LegacyDescriptionImageEntity buildEntity() {
@@ -48,80 +56,29 @@ class LegacyDescriptionImageCommandAdapterTest {
     }
 
     @Nested
-    @DisplayName("persistAll 메서드 테스트")
-    class PersistAllTest {
+    @DisplayName("persist 메서드 테스트")
+    class PersistTest {
 
         @Test
-        @DisplayName("여러 상세설명 이미지를 일괄 저장합니다")
-        void persistAll_WithMultipleImages_SavesAll() {
+        @DisplayName("상세설명 이미지를 단건 저장하고 ID를 반환합니다")
+        void persist_WithValidImage_ReturnsId() {
             // given
-            LegacyDescriptionImage image1 = buildImage();
-            LegacyDescriptionImage image2 =
-                    LegacyDescriptionImage.forNew(1L, "https://origin.example.com/img2.jpg", 2);
-            List<LegacyDescriptionImage> images = List.of(image1, image2);
-
-            LegacyDescriptionImageEntity entity1 = buildEntity();
-            LegacyDescriptionImageEntity entity2 =
-                    LegacyDescriptionImageEntity.create(
-                            null, 1L, "https://origin.example.com/img2.jpg", null, 2, false, null);
-
-            given(mapper.toImageEntity(image1)).willReturn(entity1);
-            given(mapper.toImageEntity(image2)).willReturn(entity2);
-            given(repository.saveAll(anyList())).willReturn(List.of(entity1, entity2));
-
-            // when
-            commandAdapter.persistAll(images);
-
-            // then
-            then(repository).should().saveAll(anyList());
-        }
-
-        @Test
-        @DisplayName("빈 목록 저장 시 saveAll이 호출됩니다")
-        void persistAll_WithEmptyList_CallsSaveAll() {
-            // given
-            given(repository.saveAll(any())).willReturn(List.of());
-
-            // when
-            commandAdapter.persistAll(List.of());
-
-            // then
-            then(repository).should().saveAll(any());
-        }
-    }
-
-    @Nested
-    @DisplayName("softDeleteAll 메서드 테스트")
-    class SoftDeleteAllTest {
-
-        @Test
-        @DisplayName("여러 상세설명 이미지를 소프트 삭제합니다")
-        void softDeleteAll_WithMultipleImages_SoftDeletesAll() {
-            // given
-            LegacyDescriptionImage image = buildImage();
+            DescriptionImage image = buildImage();
             LegacyDescriptionImageEntity entity = buildEntity();
+            LegacyDescriptionImageEntity savedEntity =
+                    LegacyDescriptionImageEntity.create(
+                            100L, 1L, "https://origin.example.com/img.jpg", null, 1, false, null);
 
             given(mapper.toImageEntity(image)).willReturn(entity);
-            given(repository.saveAll(anyList())).willReturn(List.of(entity));
+            given(repository.save(entity)).willReturn(savedEntity);
 
             // when
-            commandAdapter.softDeleteAll(List.of(image));
+            Long result = commandAdapter.persist(image);
 
             // then
-            then(repository).should().saveAll(anyList());
-        }
-
-        @Test
-        @DisplayName("빈 목록 소프트 삭제 시 saveAll이 호출됩니다")
-        void softDeleteAll_WithEmptyList_CallsSaveAll() {
-            // given
-            given(repository.saveAll(any())).willReturn(List.of());
-
-            // when
-            commandAdapter.softDeleteAll(List.of());
-
-            // then
-            then(repository).should().saveAll(any());
+            assertThat(result).isEqualTo(100L);
+            then(mapper).should().toImageEntity(image);
+            then(repository).should().save(entity);
         }
     }
 }

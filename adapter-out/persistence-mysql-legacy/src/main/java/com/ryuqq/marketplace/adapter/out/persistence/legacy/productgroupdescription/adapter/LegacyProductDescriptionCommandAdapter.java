@@ -1,15 +1,13 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.mapper.LegacyProductGroupDescriptionEntityMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.repository.LegacyProductGroupDetailDescriptionJpaRepository;
 import com.ryuqq.marketplace.application.legacy.productgroupdescription.port.out.command.LegacyProductDescriptionCommandPort;
-import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyProductDescription;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
 import org.springframework.stereotype.Component;
 
 /**
- * 세토프 DB product_group_detail_description INSERT Adapter.
+ * 세토프 DB product_group_detail_description Command Adapter.
  *
  * <p>PER-ADP-001: CommandAdapter는 JpaRepository만 사용.
  */
@@ -17,22 +15,17 @@ import org.springframework.stereotype.Component;
 public class LegacyProductDescriptionCommandAdapter implements LegacyProductDescriptionCommandPort {
 
     private final LegacyProductGroupDetailDescriptionJpaRepository repository;
-    private final LegacyProductCommandEntityMapper mapper;
+    private final LegacyProductGroupDescriptionEntityMapper mapper;
 
     public LegacyProductDescriptionCommandAdapter(
             LegacyProductGroupDetailDescriptionJpaRepository repository,
-            LegacyProductCommandEntityMapper mapper) {
+            LegacyProductGroupDescriptionEntityMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
 
     @Override
-    public void persist(LegacyProductGroupId productGroupId, LegacyProductDescription description) {
-        repository.save(mapper.toEntity(productGroupId, description));
-    }
-
-    @Override
-    public void persistDescription(LegacyProductGroupDescription description) {
-        repository.save(mapper.toDescriptionEntity(description));
+    public Long persist(ProductGroupDescription description) {
+        return repository.save(mapper.toEntity(description)).getProductGroupId();
     }
 }

@@ -1,10 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.naver.adapter;
 
-import com.ryuqq.marketplace.adapter.out.client.naver.auth.NaverCommerceTokenManager;
+import com.ryuqq.marketplace.adapter.out.client.naver.client.NaverCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverImageUploadResponse;
-import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -21,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClient;
 
 /**
  * 네이버 커머스 이미지 업로드 클라이언트 어댑터.
@@ -39,20 +35,12 @@ public class NaverCommerceImageClientAdapter {
     private static final Logger log =
             LoggerFactory.getLogger(NaverCommerceImageClientAdapter.class);
 
-    private static final String UPLOAD_URI = "/v1/product-images/upload";
     private static final String FIELD_NAME = "imageFiles";
 
-    private final RestClient restClient;
-    private final NaverCommerceTokenManager tokenManager;
-    private final CircuitBreaker circuitBreaker;
+    private final NaverCommerceApiClient apiClient;
 
-    public NaverCommerceImageClientAdapter(
-            RestClient naverCommerceRestClient,
-            NaverCommerceTokenManager tokenManager,
-            CircuitBreaker naverCommerceCircuitBreaker) {
-        this.restClient = naverCommerceRestClient;
-        this.tokenManager = tokenManager;
-        this.circuitBreaker = naverCommerceCircuitBreaker;
+    public NaverCommerceImageClientAdapter(NaverCommerceApiClient apiClient) {
+        this.apiClient = apiClient;
     }
 
     /**
@@ -80,7 +68,7 @@ public class NaverCommerceImageClientAdapter {
         List<ImageData> downloadedImages = downloadImages(imageUrls);
         MultiValueMap<String, Object> body = buildMultipartBody(downloadedImages);
 
-        NaverImageUploadResponse response = executeUpload(body);
+        NaverImageUploadResponse response = apiClient.uploadImages(body);
 
         List<String> uploadedUrls =
                 response.images().stream()
@@ -119,41 +107,11 @@ public class NaverCommerceImageClientAdapter {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add(FIELD_NAME, buildFilePart(imageBytes, filename, contentType));
 
-        NaverImageUploadResponse response = executeUpload(body);
+        NaverImageUploadResponse response = apiClient.uploadImages(body);
 
         String uploadedUrl = response.images().get(0).url();
         log.info("네이버 이미지 업로드 성공: {} → {}", filename, uploadedUrl);
         return uploadedUrl;
-    }
-
-    private NaverImageUploadResponse executeUpload(MultiValueMap<String, Object> body) {
-        try {
-            return circuitBreaker.executeSupplier(
-                    () -> {
-                        String token = tokenManager.getAccessToken();
-
-                        NaverImageUploadResponse response =
-                                restClient
-                                        .post()
-                                        .uri(UPLOAD_URI)
-                                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                                        .header("Authorization", "Bearer " + token)
-                                        .body(body)
-                                        .retrieve()
-                                        .body(NaverImageUploadResponse.class);
-
-                        if (response == null
-                                || response.images() == null
-                                || response.images().isEmpty()) {
-                            throw new NaverImageUploadException("네이버 이미지 업로드 응답이 비어있습니다");
-                        }
-
-                        return response;
-                    });
-        } catch (CallNotPermittedException e) {
-            throw new ExternalServiceUnavailableException(
-                    "네이버 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
-        }
     }
 
     private MultiValueMap<String, Object> buildMultipartBody(List<ImageData> images) {
@@ -195,7 +153,7 @@ public class NaverCommerceImageClientAdapter {
 
                 String filename = extractFilename(imageUrl);
                 String responseContentType = conn.getContentType();
-                String contentType =
+                String resolvedContentType =
                         responseContentType != null && responseContentType.startsWith("image/")
                                 ? normalizeContentType(responseContentType.split(";")[0].trim())
                                 : guessContentType(filename);
@@ -204,9 +162,9 @@ public class NaverCommerceImageClientAdapter {
                         "이미지 다운로드 완료: url={}, size={}bytes, type={}",
                         maskUrl(imageUrl),
                         bytes.length,
-                        contentType);
+                        resolvedContentType);
 
-                return new ImageData(bytes, filename, contentType);
+                return new ImageData(bytes, filename, resolvedContentType);
             } finally {
                 conn.disconnect();
             }

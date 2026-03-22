@@ -1,0 +1,67 @@
+[[qna-search]]
+=== QnA 목록 조회
+
+셀러 소유자 또는 `qna:read` 권한
+
+==== HTTP Request
+include::{snippets}/qna/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/qna/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/qna/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/qna/search/response-fields.adoc[]
+
+
+[[qna-get-detail]]
+=== QnA 상세 조회
+
+셀러 소유자 또는 `qna:read` 권한
+
+==== HTTP Request
+include::{snippets}/qna/get-detail/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/qna/get-detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/qna/get-detail/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/qna/get-detail/response-fields.adoc[]
+
+
+[[qna-answer]]
+=== QnA 답변 등록
+
+셀러 소유자 또는 `qna:write` 권한
+
+==== HTTP Request
+include::{snippets}/qna/answer/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/qna/answer/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/qna/answer/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/qna/answer/http-response.adoc[]
+
+
+[[qna-close]]
+=== QnA 종결
+
+셀러 소유자 또는 `qna:write` 권한
+
+==== HTTP Request
+include::{snippets}/qna/close/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/qna/close/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/qna/close/http-response.adoc[]

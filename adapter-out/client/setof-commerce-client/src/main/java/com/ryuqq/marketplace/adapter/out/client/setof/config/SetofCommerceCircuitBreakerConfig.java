@@ -2,6 +2,8 @@ package com.ryuqq.marketplace.adapter.out.client.setof.config;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceBadRequestException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceClientException;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceNetworkException;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceRateLimitException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceServerException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -26,7 +28,8 @@ import org.springframework.context.annotation.Configuration;
  *   <li>OPEN 상태에서 60초 대기 후 HALF_OPEN
  *   <li>HALF_OPEN에서 5건 시도 후 복구 판정
  *   <li>Sliding window: 최근 20건 기준 (COUNT_BASED)
- *   <li>{@link SetofCommerceServerException}(5xx)만 실패로 기록
+ *   <li>{@link SetofCommerceServerException}(5xx), {@link SetofCommerceRateLimitException}(429),
+ *       {@link SetofCommerceNetworkException}(타임아웃)은 실패로 기록
  *   <li>{@link SetofCommerceBadRequestException}(400), {@link SetofCommerceClientException}(4xx)은
  *       무시
  * </ul>
@@ -76,7 +79,10 @@ public class SetofCommerceCircuitBreakerConfig {
                         .minimumNumberOfCalls(MINIMUM_NUMBER_OF_CALLS)
                         .permittedNumberOfCallsInHalfOpenState(PERMITTED_CALLS_IN_HALF_OPEN)
                         .waitDurationInOpenState(WAIT_DURATION_IN_OPEN)
-                        .recordExceptions(SetofCommerceServerException.class)
+                        .recordExceptions(
+                                SetofCommerceServerException.class,
+                                SetofCommerceRateLimitException.class,
+                                SetofCommerceNetworkException.class)
                         .ignoreExceptions(
                                 SetofCommerceBadRequestException.class,
                                 SetofCommerceClientException.class)

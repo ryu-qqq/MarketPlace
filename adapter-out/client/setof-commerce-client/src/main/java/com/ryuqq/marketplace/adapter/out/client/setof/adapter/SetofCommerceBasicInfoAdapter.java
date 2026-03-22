@@ -1,20 +1,17 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupBasicInfoUpdateRequest;
-import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 
 /**
  * 세토프 커머스 상품 그룹 기본 정보 수정 어댑터.
  *
- * <p>PATCH /api/v2/admin/product-groups/{productGroupId}/basic-info
+ * <p>PATCH /api/v2/admin/product-groups/{productGroupId}/basic-info HTTP 호출은 {@link
+ * SetofCommerceApiClient}에 위임합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
@@ -22,13 +19,10 @@ public class SetofCommerceBasicInfoAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceBasicInfoAdapter.class);
 
-    private final RestClient restClient;
-    private final CircuitBreaker circuitBreaker;
+    private final SetofCommerceApiClient apiClient;
 
-    public SetofCommerceBasicInfoAdapter(
-            RestClient setofCommerceRestClient, CircuitBreaker setofCommerceCircuitBreaker) {
-        this.restClient = setofCommerceRestClient;
-        this.circuitBreaker = setofCommerceCircuitBreaker;
+    public SetofCommerceBasicInfoAdapter(SetofCommerceApiClient apiClient) {
+        this.apiClient = apiClient;
     }
 
     /**
@@ -39,30 +33,8 @@ public class SetofCommerceBasicInfoAdapter {
      */
     public void updateBasicInfo(
             String externalProductGroupId, SetofProductGroupBasicInfoUpdateRequest request) {
-        try {
-            circuitBreaker.executeRunnable(
-                    () -> {
-                        log.info(
-                                "세토프 커머스 상품 그룹 기본정보 수정 요청: externalProductGroupId={}",
-                                externalProductGroupId);
-
-                        restClient
-                                .patch()
-                                .uri(
-                                        "/api/v2/admin/product-groups/{productGroupId}/basic-info",
-                                        externalProductGroupId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(request)
-                                .retrieve()
-                                .toBodilessEntity();
-
-                        log.info(
-                                "세토프 커머스 상품 그룹 기본정보 수정 성공: externalProductGroupId={}",
-                                externalProductGroupId);
-                    });
-        } catch (CallNotPermittedException e) {
-            throw new ExternalServiceUnavailableException(
-                    "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)", e);
-        }
+        log.info("세토프 커머스 상품 그룹 기본정보 수정: externalProductGroupId={}", externalProductGroupId);
+        apiClient.updateBasicInfo(externalProductGroupId, request);
+        log.info("세토프 커머스 상품 그룹 기본정보 수정 성공: externalProductGroupId={}", externalProductGroupId);
     }
 }

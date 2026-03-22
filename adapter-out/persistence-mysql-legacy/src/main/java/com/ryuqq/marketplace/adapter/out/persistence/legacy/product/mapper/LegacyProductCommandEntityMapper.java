@@ -89,6 +89,7 @@ public class LegacyProductCommandEntityMapper {
                 data.productGroupIdValue(),
                 data.soldOutYn(),
                 data.displayYn(),
+                data.stockQuantity(),
                 data.isDeleted() ? "Y" : "N");
     }
 

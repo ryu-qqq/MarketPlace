@@ -108,4 +108,8 @@ public class LegacyOrderEntity extends LegacyBaseEntity {
     public String getDeleteYn() {
         return deleteYn;
     }
+
+    public void updateOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 }

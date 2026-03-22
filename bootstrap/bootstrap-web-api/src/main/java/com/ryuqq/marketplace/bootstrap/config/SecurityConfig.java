@@ -2,10 +2,6 @@ package com.ryuqq.marketplace.bootstrap.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.authhub.sdk.filter.GatewayAuthenticationFilter;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.auth.filter.LegacyJwtAuthenticationFilter;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacySellerAuthCompositeReadManager;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenCacheReadManager;
-import com.ryuqq.marketplace.application.legacyauth.manager.LegacyTokenManager;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
@@ -36,26 +32,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *   <li>CORS/CSRF 처리도 Gateway 레벨에서 수행
  * </ul>
  *
- * <p>GatewayAuthenticationFilter (AuthHub SDK 제공):
- *
- * <ul>
- *   <li>X-User-Id, X-User-Roles, X-User-Permissions 등 헤더 파싱
- *   <li>UserContext를 ThreadLocal에 저장
- * </ul>
- *
- * <p>GatewaySecurityBridgeFilter:
- *
- * <ul>
- *   <li>UserContextHolder → SecurityContextHolder 브릿지
- *   <li>Spring Security URL 기반 접근 제어와 AuthHub SDK 메서드 기반 접근 제어 연동
- * </ul>
- *
- * <p>ServiceTokenAuthenticationFilter:
- *
- * <ul>
- *   <li>{@code /api/v1/market/internal/**} 경로에 대해 X-Service-Token 헤더 검증
- *   <li>내부 서비스 간 통신 (CrawlingHub 등) 전용 인증
- * </ul>
+ * <p>Legacy API는 별도 서버(bootstrap-legacy-api)로 분리되었습니다.
  *
  * @author ryu-qqq
  * @since 1.0.0
@@ -82,23 +59,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public LegacyJwtAuthenticationFilter legacyJwtAuthenticationFilter(
-            LegacyTokenManager legacyTokenManager,
-            LegacySellerAuthCompositeReadManager legacySellerAuthCompositeReadManager,
-            LegacyTokenCacheReadManager legacyTokenCacheReadManager) {
-        return new LegacyJwtAuthenticationFilter(
-                legacyTokenManager,
-                legacySellerAuthCompositeReadManager,
-                legacyTokenCacheReadManager);
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             GatewayAuthenticationFilter gatewayAuthenticationFilter,
             GatewaySecurityBridgeFilter gatewaySecurityBridgeFilter,
             ServiceTokenAuthenticationFilter serviceTokenAuthenticationFilter,
-            LegacyJwtAuthenticationFilter legacyJwtAuthenticationFilter,
             ObjectMapper objectMapper)
             throws Exception {
         http
@@ -146,6 +111,11 @@ public class SecurityConfig {
                                         .requestMatchers("/api/v1/market/public/**")
                                         .permitAll()
 
+                                        // 내부 웹훅 (VPC 내부 통신, 인증 불필요)
+                                        .requestMatchers(
+                                                "/api/v1/market/internal/webhooks/**")
+                                        .permitAll()
+
                                         // 셀러 입점 신청 / 관리자 가입 신청 (인증 없이 누구나 가능)
                                         .requestMatchers(
                                                 HttpMethod.POST,
@@ -162,15 +132,6 @@ public class SecurityConfig {
                                         // 내부 서비스 간 통신 (X-Service-Token 인증)
                                         .requestMatchers("/api/v1/market/internal/**")
                                         .hasAuthority("ROLE_INTERNAL_SERVICE")
-
-                                        // 레거시 인증 (토큰 발급은 인증 없이 허용)
-                                        .requestMatchers("/api/v1/legacy/auth/**")
-                                        .permitAll()
-
-                                        // 레거시 API (LegacyJwtAuthenticationFilter 또는
-                                        // GatewayAuthenticationFilter로 인증)
-                                        .requestMatchers("/api/v1/legacy/**")
-                                        .authenticated()
 
                                         // Actuator
                                         .requestMatchers("/actuator/**")
@@ -190,19 +151,15 @@ public class SecurityConfig {
                                         .anyRequest()
                                         .authenticated())
 
-                // 1. LegacyJwtAuthenticationFilter: 레거시 HS256 JWT → SecurityContext
-                // (/api/v1/legacy/** 전용, 가장 먼저 실행)
-                .addFilterBefore(
-                        legacyJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                // 2. ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal
+                // 1. ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal
                 // 경로 전용)
                 .addFilterBefore(
                         serviceTokenAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
-                // 3. GatewayAuthenticationFilter: X-User-* 헤더 → UserContext (ThreadLocal)
+                // 2. GatewayAuthenticationFilter: X-User-* 헤더 → UserContext (ThreadLocal)
                 .addFilterBefore(
                         gatewayAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                // 4. GatewaySecurityBridgeFilter: UserContext → SecurityContext
+                // 3. GatewaySecurityBridgeFilter: UserContext → SecurityContext
                 // (이미 SecurityContext가 있으면 스킵)
                 .addFilterAfter(gatewaySecurityBridgeFilter, GatewayAuthenticationFilter.class);
 

@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.application.exchange.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -13,7 +13,10 @@ import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceBundle;
 import com.ryuqq.marketplace.application.exchange.internal.ExchangePersistenceFacade;
 import com.ryuqq.marketplace.application.exchange.validator.ExchangeBatchValidator;
-import com.ryuqq.marketplace.application.refund.port.in.command.RequestRefundBatchUseCase;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
+import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory.RefundBundle;
+import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceBundle;
+import com.ryuqq.marketplace.application.refund.internal.RefundPersistenceFacade;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.exchange.ExchangeFixtures;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
@@ -38,7 +41,8 @@ class ConvertToRefundBatchServiceTest {
     @Mock private ExchangeBatchValidator validator;
     @Mock private ExchangeCommandFactory commandFactory;
     @Mock private ExchangePersistenceFacade persistenceFacade;
-    @Mock private RequestRefundBatchUseCase requestRefundBatchUseCase;
+    @Mock private RefundCommandFactory refundCommandFactory;
+    @Mock private RefundPersistenceFacade refundPersistenceFacade;
 
     @Nested
     @DisplayName("execute() - 교환→환불 전환 일괄 처리")
@@ -50,12 +54,28 @@ class ConvertToRefundBatchServiceTest {
             // given
             ConvertToRefundBatchCommand command = ExchangeCommandFixtures.convertToRefundCommand();
             ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
-            ClaimHistory history = Mockito.mock(ClaimHistory.class);
+            ClaimHistory exchangeHistory = Mockito.mock(ClaimHistory.class);
+            RefundBundle refundBundle = Mockito.mock(RefundBundle.class);
 
             given(validator.validateAndGet(command.exchangeClaimIds(), command.sellerId()))
                     .willReturn(List.of(claim));
             given(commandFactory.createConvertToRefundBundle(claim, command.processedBy()))
-                    .willReturn(history);
+                    .willReturn(exchangeHistory);
+            given(
+                            refundCommandFactory.createRefundRequest(
+                                    any(), eq(command.processedBy()), eq(claim.sellerId())))
+                    .willReturn(refundBundle);
+            given(refundBundle.claim())
+                    .willReturn(
+                            Mockito.mock(
+                                    com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim
+                                            .class));
+            given(refundBundle.outbox())
+                    .willReturn(
+                            Mockito.mock(
+                                    com.ryuqq.marketplace.domain.refund.outbox.aggregate
+                                            .RefundOutbox.class));
+            given(refundBundle.history()).willReturn(Mockito.mock(ClaimHistory.class));
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);
@@ -65,7 +85,7 @@ class ConvertToRefundBatchServiceTest {
             assertThat(result.successCount()).isEqualTo(1);
             assertThat(result.failureCount()).isEqualTo(0);
             then(persistenceFacade).should().persistAll(any(ExchangePersistenceBundle.class));
-            then(requestRefundBatchUseCase).should().execute(any());
+            then(refundPersistenceFacade).should().persistAll(any(RefundPersistenceBundle.class));
         }
 
         @Test
@@ -83,7 +103,7 @@ class ConvertToRefundBatchServiceTest {
             // then
             assertThat(result.successCount()).isEqualTo(0);
             then(persistenceFacade).shouldHaveNoInteractions();
-            then(requestRefundBatchUseCase).shouldHaveNoInteractions();
+            then(refundPersistenceFacade).shouldHaveNoInteractions();
         }
     }
 }

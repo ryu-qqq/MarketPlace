@@ -2,7 +2,11 @@ package com.ryuqq.marketplace.adapter.out.client.setof.config;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceBadRequestException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceClientException;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceNetworkException;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceRateLimitException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceServerException;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -10,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
 /**
@@ -20,9 +25,11 @@ import org.springframework.web.client.RestClient;
  * <p>HTTP 상태별 예외 변환:
  *
  * <ul>
- *   <li>400 → {@link SetofCommerceBadRequestException} (CB 무시)
- *   <li>5xx → {@link SetofCommerceServerException} (CB 기록)
- *   <li>기타 4xx → {@link SetofCommerceClientException} (CB 무시)
+ *   <li>400 → {@link SetofCommerceBadRequestException} (CB 무시, retryable=false)
+ *   <li>429 → {@link SetofCommerceRateLimitException} (CB 기록, retryable=true)
+ *   <li>5xx → {@link SetofCommerceServerException} (CB 기록, retryable=true)
+ *   <li>기타 4xx → {@link SetofCommerceClientException} (CB 무시, retryable=false)
+ *   <li>타임아웃/연결 실패 → {@link SetofCommerceNetworkException} (CB 기록, retryable=true)
  * </ul>
  *
  * @author ryu-qqq
@@ -65,10 +72,25 @@ public class SetofCommerceClientConfig {
                             if (statusCode == 400) {
                                 throw new SetofCommerceBadRequestException(body);
                             }
+                            if (statusCode == 429) {
+                                throw new SetofCommerceRateLimitException(body);
+                            }
                             if (statusCode >= 500) {
                                 throw new SetofCommerceServerException(statusCode, body);
                             }
                             throw new SetofCommerceClientException(statusCode, body);
+                        })
+                .requestInterceptor(
+                        (request, body, execution) -> {
+                            try {
+                                return execution.execute(request, body);
+                            } catch (SocketTimeoutException e) {
+                                throw new SetofCommerceNetworkException(
+                                        "세토프 커머스 API 타임아웃: " + request.getURI(), e);
+                            } catch (IOException e) {
+                                throw new SetofCommerceNetworkException(
+                                        "세토프 커머스 API 연결 실패: " + request.getURI(), e);
+                            }
                         })
                 .build();
     }

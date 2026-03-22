@@ -1,7 +1,7 @@
 package com.ryuqq.marketplace.application.legacy.product.manager;
 
 import com.ryuqq.marketplace.application.legacy.product.port.out.command.LegacyOptionGroupCommandPort;
-import com.ryuqq.marketplace.domain.legacy.optiongroup.aggregate.LegacyOptionGroup;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +16,7 @@ public class LegacyOptionGroupCommandManager {
     }
 
     @Transactional
-    public Long persist(LegacyOptionGroup optionGroup) {
+    public Long persist(SellerOptionGroup optionGroup) {
         return commandPort.persist(optionGroup);
     }
 }
