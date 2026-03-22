@@ -67,4 +67,19 @@ public class LegacyOrderConversionOutboxQueryDslRepository {
                 .limit(limit)
                 .fetch();
     }
+
+    /**
+     * 해당 legacyOrderId에 대한 Outbox 존재 여부 확인.
+     *
+     * @param legacyOrderId 레거시 주문 ID
+     * @return 존재 여부
+     */
+    public boolean existsByLegacyOrderId(long legacyOrderId) {
+        return queryFactory
+                        .selectOne()
+                        .from(legacyOrderConversionOutboxJpaEntity)
+                        .where(conditionBuilder.legacyOrderIdEq(legacyOrderId))
+                        .fetchFirst()
+                != null;
+    }
 }

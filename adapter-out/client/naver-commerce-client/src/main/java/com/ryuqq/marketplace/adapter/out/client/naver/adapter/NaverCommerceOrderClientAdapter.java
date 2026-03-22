@@ -179,6 +179,7 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
     }
 
     private String formatForNaver(Instant instant) {
-        return instant.atZone(KST).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        return instant.atZone(KST)
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
     }
 }

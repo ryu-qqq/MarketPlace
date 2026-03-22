@@ -21,15 +21,15 @@ public record OrderDetailApiResponseV4(
         @Schema(description = "수령인 정보") OrderListApiResponseV4.ReceiverInfoApiResponse receiverInfo,
         @Schema(description = "배송 정보")
                 OrderListApiResponseV4.PaymentShipmentInfoApiResponse paymentShipmentInfo,
-        @Schema(description = "주문 상품 정보")
-                OrderListApiResponseV4.OrderProductApiResponse orderProduct,
+        @Schema(description = "주문 상품 정보 목록")
+                List<OrderListApiResponseV4.OrderProductApiResponse> orderProducts,
         @Schema(description = "외부몰 주문 정보 (자사몰이면 null)")
                 OrderListApiResponseV4.ExternalOrderInfoApiResponse externalOrderInfo,
         @Schema(description = "취소 요약 (없으면 null)")
                 OrderListApiResponseV4.CancelSummaryV4ApiResponse cancel,
         @Schema(description = "클레임 요약 (없으면 null)")
                 OrderListApiResponseV4.ClaimSummaryV4ApiResponse claim,
-        @Schema(description = "주문 상태 변경 이력") List<OrderHistoryItemApiResponse> orderHistories,
+        @Schema(description = "주문 상태 변경 이력") List<OrderHistoryItemApiResponse> histories,
         @Schema(description = "취소 ID 목록") List<String> cancelIds,
         @Schema(description = "취소 상세 목록 (최근 3개)") List<CancelItemApiResponse> cancels,
         @Schema(description = "클레임 ID 목록") List<String> claimIds,

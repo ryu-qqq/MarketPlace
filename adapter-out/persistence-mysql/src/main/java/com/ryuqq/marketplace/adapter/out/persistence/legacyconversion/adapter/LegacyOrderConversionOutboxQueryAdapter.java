@@ -45,4 +45,9 @@ public class LegacyOrderConversionOutboxQueryAdapter
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public boolean existsByLegacyOrderId(long legacyOrderId) {
+        return queryDslRepository.existsByLegacyOrderId(legacyOrderId);
+    }
 }

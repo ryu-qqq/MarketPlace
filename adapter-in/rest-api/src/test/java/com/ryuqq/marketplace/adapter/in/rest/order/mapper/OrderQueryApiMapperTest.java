@@ -326,7 +326,7 @@ class OrderQueryApiMapperTest {
             assertThat(response).isNotNull();
             assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID);
             assertThat(response.buyerInfo()).isNotNull();
-            assertThat(response.orderHistories()).isNotEmpty();
+            assertThat(response.histories()).isNotEmpty();
             assertThat(response.cancelIds()).isNotEmpty();
             assertThat(response.cancels()).isNotEmpty();
             assertThat(response.claimIds()).isNotEmpty();

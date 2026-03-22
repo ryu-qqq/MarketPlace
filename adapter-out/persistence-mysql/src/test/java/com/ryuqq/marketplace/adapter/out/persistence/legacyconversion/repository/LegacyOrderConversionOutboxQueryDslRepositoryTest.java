@@ -191,4 +191,35 @@ class LegacyOrderConversionOutboxQueryDslRepositoryTest {
             assertThat(result).hasSize(2);
         }
     }
+
+    @Nested
+    @DisplayName("existsByLegacyOrderId")
+    class ExistsByLegacyOrderIdTest {
+
+        @Test
+        @DisplayName("해당 legacyOrderId의 Outbox가 존재하면 true를 반환합니다")
+        void existsByLegacyOrderId_WithExistingOutbox_ReturnsTrue() {
+            // given
+            long legacyOrderId = 99999L;
+            persist(
+                    LegacyOrderConversionOutboxJpaEntityFixtures.newPendingEntityWithOrderId(
+                            legacyOrderId));
+
+            // when
+            boolean result = repository().existsByLegacyOrderId(legacyOrderId);
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        @DisplayName("해당 legacyOrderId의 Outbox가 없으면 false를 반환합니다")
+        void existsByLegacyOrderId_WithNoOutbox_ReturnsFalse() {
+            // when
+            boolean result = repository().existsByLegacyOrderId(88888L);
+
+            // then
+            assertThat(result).isFalse();
+        }
+    }
 }

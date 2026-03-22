@@ -50,7 +50,7 @@ class NaverOrderPollingExternalTest {
 
         // 1. 최근 7일 변경 주문 ID 수집
         Instant toTime = Instant.now();
-        Instant fromTime = toTime.minus(7, ChronoUnit.DAYS);
+        Instant fromTime = toTime.minus(1, ChronoUnit.DAYS);
 
         String fromStr = formatForNaver(fromTime);
         String toStr = formatForNaver(toTime);
@@ -139,9 +139,9 @@ class NaverOrderPollingExternalTest {
                                     + "/v1/pay-order/seller/product-orders/last-changed-statuses"
                                     + "?lastChangedType=PAYED"
                                     + "&lastChangedFrom="
-                                    + fromStr
+                                    + java.net.URLEncoder.encode(fromStr, "UTF-8")
                                     + "&lastChangedTo="
-                                    + toStr
+                                    + java.net.URLEncoder.encode(toStr, "UTF-8")
                                     + "&limitCount=300");
 
             if (moreSequence != null) {
@@ -159,6 +159,7 @@ class NaverOrderPollingExternalTest {
 
             if (resp.statusCode() != 200) {
                 System.out.println("last-changed-statuses 실패: " + resp.statusCode());
+                System.out.println("응답: " + resp.body());
                 break;
             }
 
@@ -222,6 +223,7 @@ class NaverOrderPollingExternalTest {
     }
 
     private String formatForNaver(Instant instant) {
-        return instant.atZone(KST).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        return instant.atZone(KST)
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
     }
 }

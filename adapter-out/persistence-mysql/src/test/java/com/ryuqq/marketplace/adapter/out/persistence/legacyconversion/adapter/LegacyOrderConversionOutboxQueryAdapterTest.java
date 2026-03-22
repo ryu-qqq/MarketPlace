@@ -174,4 +174,42 @@ class LegacyOrderConversionOutboxQueryAdapterTest {
             assertThat(result).isEmpty();
         }
     }
+
+    // ========================================================================
+    // 3. existsByLegacyOrderId 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("existsByLegacyOrderId 메서드 테스트")
+    class ExistsByLegacyOrderIdTest {
+
+        @Test
+        @DisplayName("Outbox가 존재하면 true를 반환합니다")
+        void existsByLegacyOrderId_WithExistingOutbox_ReturnsTrue() {
+            // given
+            long legacyOrderId = 10001L;
+            given(queryDslRepository.existsByLegacyOrderId(legacyOrderId)).willReturn(true);
+
+            // when
+            boolean result = queryAdapter.existsByLegacyOrderId(legacyOrderId);
+
+            // then
+            assertThat(result).isTrue();
+            then(queryDslRepository).should().existsByLegacyOrderId(legacyOrderId);
+        }
+
+        @Test
+        @DisplayName("Outbox가 없으면 false를 반환합니다")
+        void existsByLegacyOrderId_WithNoOutbox_ReturnsFalse() {
+            // given
+            long legacyOrderId = 10001L;
+            given(queryDslRepository.existsByLegacyOrderId(legacyOrderId)).willReturn(false);
+
+            // when
+            boolean result = queryAdapter.existsByLegacyOrderId(legacyOrderId);
+
+            // then
+            assertThat(result).isFalse();
+        }
+    }
 }

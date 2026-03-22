@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class PollExternalOrdersService implements PollExternalOrdersUseCase {
 
     private static final Logger log = LoggerFactory.getLogger(PollExternalOrdersService.class);
-    private static final Duration DEFAULT_LOOKBACK = Duration.ofDays(7);
+    private static final Duration DEFAULT_LOOKBACK = Duration.ofHours(24);
 
     private final SalesChannelReadManager salesChannelReadManager;
     private final ShopReadManager shopReadManager;

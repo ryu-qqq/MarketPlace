@@ -147,7 +147,7 @@ public class OrderQueryApiMapper {
                 toPaymentDetailV4(result.payment(), result.order()),
                 toReceiverInfoV4(result.receiver()),
                 toPaymentShipmentInfoV4(result.delivery()),
-                toOrderProductV4(result.order(), result.productOrder()),
+                List.of(toOrderProductV4(result.order(), result.productOrder())),
                 toExternalOrderInfoV4(result.order()),
                 toCancelSummaryV4(result.cancel()),
                 toClaimSummaryV4(result.claim()),

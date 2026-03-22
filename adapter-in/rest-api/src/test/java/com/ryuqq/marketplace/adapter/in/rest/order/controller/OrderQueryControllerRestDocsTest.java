@@ -290,8 +290,8 @@ class OrderQueryControllerRestDocsTest {
                             jsonPath("$.data.orderId")
                                     .value(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID))
                     .andExpect(jsonPath("$.data.buyerInfo").exists())
-                    .andExpect(jsonPath("$.data.orderProduct").exists())
-                    .andExpect(jsonPath("$.data.orderHistories").isArray())
+                    .andExpect(jsonPath("$.data.orderProducts").isArray())
+                    .andExpect(jsonPath("$.data.histories").isArray())
                     .andExpect(jsonPath("$.data.cancelIds").isArray())
                     .andExpect(jsonPath("$.data.cancels").isArray())
                     .andExpect(jsonPath("$.data.claimIds").isArray())
@@ -324,9 +324,9 @@ class OrderQueryControllerRestDocsTest {
                                             fieldWithPath("data.paymentShipmentInfo")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("배송 정보"),
-                                            fieldWithPath("data.orderProduct")
-                                                    .type(JsonFieldType.OBJECT)
-                                                    .description("주문 상품 정보"),
+                                            fieldWithPath("data.orderProducts")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("주문 상품 정보 목록"),
                                             fieldWithPath("data.externalOrderInfo")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("외부몰 주문 정보")
@@ -339,7 +339,7 @@ class OrderQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("클레임 요약")
                                                     .optional(),
-                                            fieldWithPath("data.orderHistories")
+                                            fieldWithPath("data.histories")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("주문 상태 변경 이력"),
                                             fieldWithPath("data.cancelIds")

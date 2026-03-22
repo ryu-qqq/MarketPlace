@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.shipment.service.command;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.ArgumentMatchers.any;
 
 import com.ryuqq.marketplace.application.claimsync.ClaimSyncFixtures;
 import com.ryuqq.marketplace.application.claimsync.manager.ExternalOrderItemMappingReadManager;
@@ -84,7 +84,8 @@ class ExecuteShipmentOutboxServiceTest {
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
-            given(strategy.execute(outbox)).willReturn(OutboxSyncResult.failure(true, "외부 API 응답 오류"));
+            given(strategy.execute(outbox))
+                    .willReturn(OutboxSyncResult.failure(true, "외부 API 응답 오류"));
 
             // when
             sut.execute(command);

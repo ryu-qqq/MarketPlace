@@ -62,9 +62,7 @@ class ShipmentOutboxRelayProcessorTest {
             ShipmentOutbox freshOutbox = ShipmentOutboxFixtures.processingShipmentOutbox();
 
             given(outboxReadManager.getById(outbox.idValue())).willReturn(freshOutbox);
-            willThrow(new RuntimeException("SQS 연결 실패"))
-                    .given(publishClient)
-                    .publish(anyString());
+            willThrow(new RuntimeException("SQS 연결 실패")).given(publishClient).publish(anyString());
 
             // when
             boolean result = sut.relay(outbox);
@@ -80,9 +78,7 @@ class ShipmentOutboxRelayProcessorTest {
             // given
             ShipmentOutbox outbox = ShipmentOutboxFixtures.pendingShipmentOutbox();
 
-            willThrow(new RuntimeException("SQS 연결 실패"))
-                    .given(publishClient)
-                    .publish(anyString());
+            willThrow(new RuntimeException("SQS 연결 실패")).given(publishClient).publish(anyString());
             given(outboxReadManager.getById(outbox.idValue()))
                     .willThrow(new RuntimeException("DB 연결 실패"));
 

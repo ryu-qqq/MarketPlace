@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.application.legacyconversion.service.command;
 
 import com.ryuqq.marketplace.application.legacyconversion.dto.result.SeedLegacyOrderConversionResult;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyOrderConversionOutboxCommandManager;
-import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyOrderIdMappingReadManager;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyOrderConversionOutboxReadManager;
 import com.ryuqq.marketplace.application.legacyconversion.port.in.command.SeedLegacyOrderConversionUseCase;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyOrderIdScanPort;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyOrderScanEntry;
@@ -30,15 +30,15 @@ public class SeedLegacyOrderConversionService implements SeedLegacyOrderConversi
             LoggerFactory.getLogger(SeedLegacyOrderConversionService.class);
 
     private final LegacyOrderIdScanPort scanPort;
-    private final LegacyOrderIdMappingReadManager mappingReadManager;
+    private final LegacyOrderConversionOutboxReadManager outboxReadManager;
     private final LegacyOrderConversionOutboxCommandManager outboxCommandManager;
 
     public SeedLegacyOrderConversionService(
             LegacyOrderIdScanPort scanPort,
-            LegacyOrderIdMappingReadManager mappingReadManager,
+            LegacyOrderConversionOutboxReadManager outboxReadManager,
             LegacyOrderConversionOutboxCommandManager outboxCommandManager) {
         this.scanPort = scanPort;
-        this.mappingReadManager = mappingReadManager;
+        this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
     }
 
@@ -54,7 +54,7 @@ public class SeedLegacyOrderConversionService implements SeedLegacyOrderConversi
 
         List<LegacyOrderScanEntry> newEntries = new ArrayList<>();
         for (LegacyOrderScanEntry entry : entries) {
-            if (!mappingReadManager.existsByLegacyOrderId(entry.orderId())) {
+            if (!outboxReadManager.existsByLegacyOrderId(entry.orderId())) {
                 newEntries.add(entry);
             }
         }

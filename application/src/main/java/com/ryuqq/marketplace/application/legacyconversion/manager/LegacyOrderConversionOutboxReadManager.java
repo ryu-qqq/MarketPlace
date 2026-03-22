@@ -40,4 +40,14 @@ public class LegacyOrderConversionOutboxReadManager {
             Instant timeoutThreshold, int limit) {
         return queryPort.findProcessingTimeoutOutboxes(timeoutThreshold, limit);
     }
+
+    /**
+     * 해당 legacyOrderId에 대한 Outbox가 존재하는지 확인.
+     *
+     * @param legacyOrderId 레거시 주문 ID
+     * @return 존재 여부
+     */
+    public boolean existsByLegacyOrderId(long legacyOrderId) {
+        return queryPort.existsByLegacyOrderId(legacyOrderId);
+    }
 }
