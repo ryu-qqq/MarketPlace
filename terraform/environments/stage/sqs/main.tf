@@ -34,6 +34,9 @@ locals {
   # OutboundSync queue
   outbound_sync_queue_name = "${var.environment}-${var.project_name}-outbound-sync"
 
+  # Shipment Outbox queue
+  shipment_outbox_queue_name = "${var.environment}-${var.project_name}-shipment-outbox"
+
   # New Intelligence Pipeline queues
   intelligence_queue_names = {
     orchestration       = "${var.environment}-${var.project_name}-intelligence-orchestration"
@@ -234,6 +237,41 @@ resource "aws_sqs_queue" "outbound_sync" {
 }
 
 # ========================================
+# Shipment Outbox Queue (DLQ)
+# ========================================
+resource "aws_sqs_queue" "shipment_outbox_dlq" {
+  name                      = "${local.shipment_outbox_queue_name}-dlq"
+  message_retention_seconds = 1209600 # 14 days
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.shipment_outbox_queue_name}-dlq"
+    Purpose = "Dead letter queue for shipment outbox"
+  })
+}
+
+# ========================================
+# Shipment Outbox Queue
+# ========================================
+resource "aws_sqs_queue" "shipment_outbox" {
+  name                       = local.shipment_outbox_queue_name
+  visibility_timeout_seconds = 300    # 5 minutes
+  message_retention_seconds  = 345600 # 4 days
+  receive_wait_time_seconds  = 20     # Long polling
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.shipment_outbox_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.shipment_outbox_queue_name
+    Purpose = "Shipment outbox message relay"
+  })
+}
+
+# ========================================
 # Intelligence Pipeline: Orchestration Queue
 # ========================================
 resource "aws_sqs_queue" "intelligence_orchestration_dlq" {
@@ -425,6 +463,9 @@ resource "aws_iam_policy" "sqs_access" {
           # OutboundSync queue
           aws_sqs_queue.outbound_sync.arn,
           aws_sqs_queue.outbound_sync_dlq.arn,
+          # Shipment Outbox queue
+          aws_sqs_queue.shipment_outbox.arn,
+          aws_sqs_queue.shipment_outbox_dlq.arn,
           # Intelligence pipeline queues
           aws_sqs_queue.intelligence_orchestration.arn,
           aws_sqs_queue.intelligence_orchestration_dlq.arn,
@@ -555,6 +596,28 @@ resource "aws_ssm_parameter" "outbound_sync_dlq_url" {
   tags  = local.common_tags
 }
 
+# Shipment Outbox Queue
+resource "aws_ssm_parameter" "shipment_outbox_queue_url" {
+  name  = "/${var.project_name}/sqs/shipment-outbox-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.shipment_outbox.url
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "shipment_outbox_queue_arn" {
+  name  = "/${var.project_name}/sqs/shipment-outbox-queue-arn"
+  type  = "String"
+  value = aws_sqs_queue.shipment_outbox.arn
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "shipment_outbox_dlq_url" {
+  name  = "/${var.project_name}/sqs/shipment-outbox-dlq-url"
+  type  = "String"
+  value = aws_sqs_queue.shipment_outbox_dlq.url
+  tags  = local.common_tags
+}
+
 # ========================================
 # SSM Parameters: Intelligence Pipeline
 # ========================================
@@ -678,6 +741,26 @@ resource "aws_cloudwatch_metric_alarm" "outbound_sync_dlq_messages" {
 
   dimensions = {
     QueueName = aws_sqs_queue.outbound_sync_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
+# Shipment Outbox DLQ Alarm
+resource "aws_cloudwatch_metric_alarm" "shipment_outbox_dlq_messages" {
+  alarm_name          = "${var.project_name}-shipment-outbox-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in shipment outbox DLQ (stage)"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.shipment_outbox_dlq.name
   }
 
   tags = local.common_tags
@@ -833,6 +916,16 @@ output "outbound_sync_queue_url" {
 output "outbound_sync_queue_arn" {
   description = "OutboundSync queue ARN"
   value       = aws_sqs_queue.outbound_sync.arn
+}
+
+output "shipment_outbox_queue_url" {
+  description = "Shipment outbox queue URL"
+  value       = aws_sqs_queue.shipment_outbox.url
+}
+
+output "shipment_outbox_queue_arn" {
+  description = "Shipment outbox queue ARN"
+  value       = aws_sqs_queue.shipment_outbox.arn
 }
 
 # Intelligence Pipeline Outputs
