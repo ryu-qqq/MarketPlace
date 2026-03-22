@@ -38,6 +38,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @Tag("e2e")
 @Tag("sellic")
 @DisplayName("셀릭 주문 폴링 → InboundOrder → Order 변환 E2E 테스트")
+@org.junit.jupiter.api.Disabled("Testcontainers 전환 후 활성화 — SalesChannel/Shop 시딩 필요")
 class SellicOrderPollingE2ETest extends E2ETestBase {
 
     private static final long SALES_CHANNEL_ID = 1L;
