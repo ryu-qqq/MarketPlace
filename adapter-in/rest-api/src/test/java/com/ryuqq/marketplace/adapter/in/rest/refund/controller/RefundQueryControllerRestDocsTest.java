@@ -56,6 +56,11 @@ class RefundQueryControllerRestDocsTest {
     @MockitoBean private GetRefundListUseCase getRefundListUseCase;
     @MockitoBean private GetRefundDetailUseCase getRefundDetailUseCase;
     @MockitoBean private RefundApiMapper mapper;
+
+    @MockitoBean
+    private com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher
+            claimOrderEnricher;
+
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @MockitoBean
@@ -126,13 +131,12 @@ class RefundQueryControllerRestDocsTest {
         @DisplayName("환불 목록 조회 성공")
         void getList_Success() throws Exception {
             // given
-            PageApiResponse<RefundListApiResponse> pageResponse =
-                    RefundApiFixtures.pageApiResponse(2);
+            PageApiResponse<?> pageResponse = RefundApiFixtures.pageApiResponse(2);
 
             given(getRefundListUseCase.execute(any()))
                     .willReturn(RefundApiFixtures.pageResult(2, 0, 20));
             given(mapper.toSearchParams(any())).willReturn(null);
-            given(mapper.toPageResponse(any())).willReturn(pageResponse);
+            given(mapper.toPageResponseV4(any(), any())).willReturn((PageApiResponse) pageResponse);
 
             // when & then
             mockMvc.perform(
@@ -273,13 +277,13 @@ class RefundQueryControllerRestDocsTest {
         @DisplayName("환불 목록 조회 - 결과 없음")
         void getList_Empty() throws Exception {
             // given
-            PageApiResponse<RefundListApiResponse> emptyPageResponse =
-                    PageApiResponse.of(java.util.List.of(), 0, 20, 0);
+            PageApiResponse<?> emptyPageResponse = PageApiResponse.of(java.util.List.of(), 0, 20, 0);
 
             given(getRefundListUseCase.execute(any()))
                     .willReturn(RefundApiFixtures.emptyPageResult());
             given(mapper.toSearchParams(any())).willReturn(null);
-            given(mapper.toPageResponse(any())).willReturn(emptyPageResponse);
+            given(mapper.toPageResponseV4(any(), any()))
+                    .willReturn((PageApiResponse) emptyPageResponse);
 
             // when & then
             mockMvc.perform(

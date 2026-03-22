@@ -3,6 +3,8 @@ package com.ryuqq.marketplace.adapter.in.rest.refund.mapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.HoldRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RefundSearchApiRequest;
@@ -115,6 +117,48 @@ public class RefundApiMapper {
                 request.sortDirection(),
                 request.resolvedPage(),
                 request.resolvedSize());
+    }
+
+    // ==================== V4 Response 변환 (프론트 중첩 구조) ====================
+
+    public PageApiResponse<ClaimListItemApiResponseV4> toPageResponseV4(
+            RefundPageResult result, ClaimOrderEnricher enricher) {
+        List<String> orderItemIds =
+                result.refunds().stream().map(RefundListResult::orderItemId).toList();
+        ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(orderItemIds);
+
+        List<ClaimListItemApiResponseV4> responses =
+                result.refunds().stream().map(r -> toListResponseV4(r, enricher, ctx)).toList();
+        return PageApiResponse.of(
+                responses,
+                result.pageMeta().page(),
+                result.pageMeta().size(),
+                result.pageMeta().totalElements());
+    }
+
+    private ClaimListItemApiResponseV4 toListResponseV4(
+            RefundListResult r, ClaimOrderEnricher enricher, ClaimOrderEnricher.OrderContext ctx) {
+        String itemId = r.orderItemId();
+        return new ClaimListItemApiResponseV4(
+                enricher.toOrderProductV4(itemId, ctx),
+                enricher.toClaimInfoV4(
+                        r.refundClaimId(),
+                        r.claimNumber(),
+                        r.refundStatus(),
+                        r.refundQty(),
+                        r.reasonType(),
+                        r.reasonDetail(),
+                        r.originalAmount(),
+                        r.finalAmount(),
+                        r.refundMethod(),
+                        "",
+                        false,
+                        r.requestedAt(),
+                        r.requestedAt()),
+                enricher.toBuyerInfoV4(itemId, ctx),
+                enricher.toPaymentV4(itemId, ctx),
+                enricher.toReceiverInfoV4(itemId, ctx),
+                enricher.toExternalOrderInfoV4(itemId, ctx));
     }
 
     // ==================== Response 변환 ====================

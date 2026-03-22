@@ -1,5 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.cancel.mapper;
 
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.ApproveCancelBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.CancelSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.RejectCancelBatchApiRequest;
@@ -103,6 +105,48 @@ public class CancelApiMapper {
                 request.sortDirection(),
                 request.resolvedPage(),
                 request.resolvedSize());
+    }
+
+    // ==================== V4 Response 변환 (프론트 중첩 구조) ====================
+
+    public PageApiResponse<ClaimListItemApiResponseV4> toPageResponseV4(
+            CancelPageResult result, ClaimOrderEnricher enricher) {
+        List<String> orderItemIds =
+                result.cancels().stream().map(CancelListResult::orderItemId).toList();
+        ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(orderItemIds);
+
+        List<ClaimListItemApiResponseV4> responses =
+                result.cancels().stream().map(r -> toListResponseV4(r, enricher, ctx)).toList();
+        return PageApiResponse.of(
+                responses,
+                result.pageMeta().page(),
+                result.pageMeta().size(),
+                result.pageMeta().totalElements());
+    }
+
+    private ClaimListItemApiResponseV4 toListResponseV4(
+            CancelListResult r, ClaimOrderEnricher enricher, ClaimOrderEnricher.OrderContext ctx) {
+        String itemId = r.orderItemId();
+        return new ClaimListItemApiResponseV4(
+                enricher.toOrderProductV4(itemId, ctx),
+                enricher.toClaimInfoV4(
+                        r.cancelId(),
+                        r.cancelNumber(),
+                        r.cancelStatus(),
+                        r.cancelQty(),
+                        r.reasonType(),
+                        r.reasonDetail(),
+                        r.refundAmount(),
+                        r.refundAmount(),
+                        r.refundMethod(),
+                        "",
+                        false,
+                        r.requestedAt(),
+                        r.requestedAt()),
+                enricher.toBuyerInfoV4(itemId, ctx),
+                enricher.toPaymentV4(itemId, ctx),
+                enricher.toReceiverInfoV4(itemId, ctx),
+                enricher.toExternalOrderInfoV4(itemId, ctx));
     }
 
     // ==================== Response 변환 ====================

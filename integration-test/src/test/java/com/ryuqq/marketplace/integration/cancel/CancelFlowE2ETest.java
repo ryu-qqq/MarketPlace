@@ -132,7 +132,7 @@ class CancelFlowE2ETest extends E2ETestBase {
                             .when()
                             .get(CANCELS)
                             .jsonPath()
-                            .getString("data.content[0].cancelId");
+                            .getString("data.content[0].claimInfo.claimId");
 
             assertThat(cancelId).isNotNull();
 

@@ -182,7 +182,7 @@ class RefundQueryE2ETest extends E2ETestBase {
                     .get(REFUNDS)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.content.refundStatus", everyItem(equalTo("REQUESTED")));
+                    .body("data.content.claimInfo.status", everyItem(equalTo("REQUESTED")));
         }
 
         @Test

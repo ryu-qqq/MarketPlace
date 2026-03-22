@@ -58,6 +58,11 @@ class CancelQueryControllerRestDocsTest {
     @MockitoBean private GetCancelListUseCase getCancelListUseCase;
     @MockitoBean private GetCancelDetailUseCase getCancelDetailUseCase;
     @MockitoBean private CancelApiMapper mapper;
+
+    @MockitoBean
+    private com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher
+            claimOrderEnricher;
+
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @Nested
@@ -120,14 +125,11 @@ class CancelQueryControllerRestDocsTest {
         void getList_ValidRequest_Returns200WithPage() throws Exception {
             // given
             CancelPageResult pageResult = CancelApiFixtures.pageResult(3, 0, 20);
-            PageApiResponse<
-                            com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response
-                                    .CancelListApiResponse>
-                    pageResponse = CancelApiFixtures.pageApiResponse(3);
+            PageApiResponse<?> pageResponse = CancelApiFixtures.pageApiResponse(3);
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getCancelListUseCase.execute(any())).willReturn(pageResult);
-            given(mapper.toPageResponse(any(CancelPageResult.class))).willReturn(pageResponse);
+            given(mapper.toPageResponseV4(any(), any())).willReturn((PageApiResponse) pageResponse);
 
             // when & then
             mockMvc.perform(
@@ -270,14 +272,11 @@ class CancelQueryControllerRestDocsTest {
         void getList_WithStatusFilter_Returns200() throws Exception {
             // given
             CancelPageResult pageResult = CancelApiFixtures.pageResult(1, 0, 20);
-            PageApiResponse<
-                            com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response
-                                    .CancelListApiResponse>
-                    pageResponse = CancelApiFixtures.pageApiResponse(1);
+            PageApiResponse<?> pageResponse = CancelApiFixtures.pageApiResponse(1);
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getCancelListUseCase.execute(any())).willReturn(pageResult);
-            given(mapper.toPageResponse(any(CancelPageResult.class))).willReturn(pageResponse);
+            given(mapper.toPageResponseV4(any(), any())).willReturn((PageApiResponse) pageResponse);
 
             // when & then
             mockMvc.perform(
@@ -294,14 +293,11 @@ class CancelQueryControllerRestDocsTest {
         void getList_EmptyResult_Returns200WithEmptyPage() throws Exception {
             // given
             CancelPageResult emptyResult = CancelApiFixtures.emptyPageResult();
-            PageApiResponse<
-                            com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response
-                                    .CancelListApiResponse>
-                    emptyResponse = PageApiResponse.of(List.of(), 0, 20, 0);
+            PageApiResponse<?> emptyResponse = PageApiResponse.of(List.of(), 0, 20, 0);
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getCancelListUseCase.execute(any())).willReturn(emptyResult);
-            given(mapper.toPageResponse(any(CancelPageResult.class))).willReturn(emptyResponse);
+            given(mapper.toPageResponseV4(any(), any())).willReturn((PageApiResponse) emptyResponse);
 
             // when & then
             mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL))

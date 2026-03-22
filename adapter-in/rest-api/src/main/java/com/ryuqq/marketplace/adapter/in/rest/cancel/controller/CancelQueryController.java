@@ -4,11 +4,12 @@ import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.CancelAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.CancelSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.mapper.CancelApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelDetailResult;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelPageResult;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelSummaryResult;
@@ -34,16 +35,19 @@ public class CancelQueryController {
     private final GetCancelListUseCase getCancelListUseCase;
     private final GetCancelDetailUseCase getCancelDetailUseCase;
     private final CancelApiMapper mapper;
+    private final ClaimOrderEnricher enricher;
 
     public CancelQueryController(
             GetCancelSummaryUseCase getCancelSummaryUseCase,
             GetCancelListUseCase getCancelListUseCase,
             GetCancelDetailUseCase getCancelDetailUseCase,
-            CancelApiMapper mapper) {
+            CancelApiMapper mapper,
+            ClaimOrderEnricher enricher) {
         this.getCancelSummaryUseCase = getCancelSummaryUseCase;
         this.getCancelListUseCase = getCancelListUseCase;
         this.getCancelDetailUseCase = getCancelDetailUseCase;
         this.mapper = mapper;
+        this.enricher = enricher;
     }
 
     @Operation(summary = "취소 상태별 요약 조회", description = "취소 상태별 건수를 요약 조회합니다.")
@@ -59,10 +63,10 @@ public class CancelQueryController {
     @PreAuthorize("@access.hasPermission('cancel:read')")
     @RequirePermission(value = "cancel:read", description = "취소 목록 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<PageApiResponse<CancelListApiResponse>>> getList(
+    public ResponseEntity<ApiResponse<PageApiResponse<ClaimListItemApiResponseV4>>> getList(
             CancelSearchApiRequest request) {
         CancelPageResult result = getCancelListUseCase.execute(mapper.toSearchParams(request));
-        return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponse(result)));
+        return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponseV4(result, enricher)));
     }
 
     @Operation(summary = "취소 상세 조회", description = "취소 건의 상세 정보를 조회합니다.")

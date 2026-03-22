@@ -3,10 +3,11 @@ package com.ryuqq.marketplace.adapter.in.rest.refund.controller;
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.adapter.in.rest.refund.RefundAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RefundSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.refund.mapper.RefundApiMapper;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundDetailResult;
@@ -34,16 +35,19 @@ public class RefundQueryController {
     private final GetRefundListUseCase getRefundListUseCase;
     private final GetRefundDetailUseCase getRefundDetailUseCase;
     private final RefundApiMapper mapper;
+    private final ClaimOrderEnricher enricher;
 
     public RefundQueryController(
             GetRefundSummaryUseCase getRefundSummaryUseCase,
             GetRefundListUseCase getRefundListUseCase,
             GetRefundDetailUseCase getRefundDetailUseCase,
-            RefundApiMapper mapper) {
+            RefundApiMapper mapper,
+            ClaimOrderEnricher enricher) {
         this.getRefundSummaryUseCase = getRefundSummaryUseCase;
         this.getRefundListUseCase = getRefundListUseCase;
         this.getRefundDetailUseCase = getRefundDetailUseCase;
         this.mapper = mapper;
+        this.enricher = enricher;
     }
 
     @Operation(summary = "환불 상태별 요약 조회", description = "환불 상태별 건수를 요약 조회합니다.")
@@ -59,10 +63,10 @@ public class RefundQueryController {
     @PreAuthorize("@access.hasPermission('refund:read')")
     @RequirePermission(value = "refund:read", description = "환불 목록 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<PageApiResponse<RefundListApiResponse>>> getList(
+    public ResponseEntity<ApiResponse<PageApiResponse<ClaimListItemApiResponseV4>>> getList(
             RefundSearchApiRequest request) {
         RefundPageResult result = getRefundListUseCase.execute(mapper.toSearchParams(request));
-        return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponse(result)));
+        return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponseV4(result, enricher)));
     }
 
     @Operation(summary = "환불 상세 조회", description = "환불 건의 상세 정보를 조회합니다.")

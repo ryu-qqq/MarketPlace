@@ -3,10 +3,11 @@ package com.ryuqq.marketplace.adapter.in.rest.exchange.controller;
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.ExchangeAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ExchangeSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.mapper.ExchangeApiMapper;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailResult;
@@ -34,16 +35,19 @@ public class ExchangeQueryController {
     private final GetExchangeListUseCase getExchangeListUseCase;
     private final GetExchangeDetailUseCase getExchangeDetailUseCase;
     private final ExchangeApiMapper mapper;
+    private final ClaimOrderEnricher enricher;
 
     public ExchangeQueryController(
             GetExchangeSummaryUseCase getExchangeSummaryUseCase,
             GetExchangeListUseCase getExchangeListUseCase,
             GetExchangeDetailUseCase getExchangeDetailUseCase,
-            ExchangeApiMapper mapper) {
+            ExchangeApiMapper mapper,
+            ClaimOrderEnricher enricher) {
         this.getExchangeSummaryUseCase = getExchangeSummaryUseCase;
         this.getExchangeListUseCase = getExchangeListUseCase;
         this.getExchangeDetailUseCase = getExchangeDetailUseCase;
         this.mapper = mapper;
+        this.enricher = enricher;
     }
 
     @Operation(summary = "교환 상태별 요약 조회", description = "교환 상태별 건수를 요약 조회합니다.")
@@ -59,10 +63,10 @@ public class ExchangeQueryController {
     @PreAuthorize("@access.hasPermission('exchange:read')")
     @RequirePermission(value = "exchange:read", description = "교환 목록 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<PageApiResponse<ExchangeListApiResponse>>> getList(
+    public ResponseEntity<ApiResponse<PageApiResponse<ClaimListItemApiResponseV4>>> getList(
             ExchangeSearchApiRequest request) {
         ExchangePageResult result = getExchangeListUseCase.execute(mapper.toSearchParams(request));
-        return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponse(result)));
+        return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponseV4(result, enricher)));
     }
 
     @Operation(summary = "교환 상세 조회", description = "교환 건의 상세 정보를 조회합니다.")

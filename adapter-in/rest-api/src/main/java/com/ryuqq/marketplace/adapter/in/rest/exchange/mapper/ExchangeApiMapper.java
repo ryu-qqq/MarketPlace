@@ -3,6 +3,8 @@ package com.ryuqq.marketplace.adapter.in.rest.exchange.mapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ApproveExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CollectExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CompleteExchangeBatchApiRequest;
@@ -157,6 +159,48 @@ public class ExchangeApiMapper {
                 request.sortDirection(),
                 request.resolvedPage(),
                 request.resolvedSize());
+    }
+
+    // ==================== V4 Response 변환 (프론트 중첩 구조) ====================
+
+    public PageApiResponse<ClaimListItemApiResponseV4> toPageResponseV4(
+            ExchangePageResult result, ClaimOrderEnricher enricher) {
+        List<String> orderItemIds =
+                result.exchanges().stream().map(ExchangeListResult::orderItemId).toList();
+        ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(orderItemIds);
+
+        List<ClaimListItemApiResponseV4> responses =
+                result.exchanges().stream().map(r -> toListResponseV4(r, enricher, ctx)).toList();
+        return PageApiResponse.of(
+                responses,
+                result.pageMeta().page(),
+                result.pageMeta().size(),
+                result.pageMeta().totalElements());
+    }
+
+    private ClaimListItemApiResponseV4 toListResponseV4(
+            ExchangeListResult r, ClaimOrderEnricher enricher, ClaimOrderEnricher.OrderContext ctx) {
+        String itemId = r.orderItemId();
+        return new ClaimListItemApiResponseV4(
+                enricher.toOrderProductV4(itemId, ctx),
+                enricher.toClaimInfoV4(
+                        r.exchangeClaimId(),
+                        r.claimNumber(),
+                        r.exchangeStatus(),
+                        r.exchangeQty(),
+                        r.reasonType(),
+                        r.reasonDetail(),
+                        null,
+                        null,
+                        "",
+                        "",
+                        false,
+                        r.requestedAt(),
+                        r.requestedAt()),
+                enricher.toBuyerInfoV4(itemId, ctx),
+                enricher.toPaymentV4(itemId, ctx),
+                enricher.toReceiverInfoV4(itemId, ctx),
+                enricher.toExternalOrderInfoV4(itemId, ctx));
     }
 
     // ==================== Response 변환 ====================
