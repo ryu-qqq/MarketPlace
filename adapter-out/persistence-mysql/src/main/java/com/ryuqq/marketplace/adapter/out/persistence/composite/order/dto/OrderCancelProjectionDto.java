@@ -2,17 +2,16 @@ package com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto;
 
 import java.time.Instant;
 
-/** 주문 취소 프로젝션. */
+/** 주문 취소 프로젝션. cancels 테이블에서 조회. */
 public record OrderCancelProjectionDto(
-        Long cancelId,
+        String cancelId,
         String orderItemId,
         String cancelNumber,
         String cancelStatus,
         int quantity,
         String reasonType,
         String reasonDetail,
-        int originalAmount,
-        int refundAmount,
+        Integer refundAmount,
         String refundMethod,
         Instant refundedAt,
         Instant requestedAt,

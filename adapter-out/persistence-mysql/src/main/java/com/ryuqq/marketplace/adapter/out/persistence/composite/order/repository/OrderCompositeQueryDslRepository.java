@@ -1,11 +1,12 @@
 package com.ryuqq.marketplace.adapter.out.persistence.composite.order.repository;
 
-import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderCancelJpaEntity.orderCancelJpaEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderClaimJpaEntity.orderClaimJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.cancel.entity.QCancelJpaEntity.cancelJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.exchange.entity.QExchangeClaimJpaEntity.exchangeClaimJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemHistoryJpaEntity.orderItemHistoryJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemJpaEntity.orderItemJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderJpaEntity.orderJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QPaymentJpaEntity.paymentJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.refund.entity.QRefundClaimJpaEntity.refundClaimJpaEntity;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -20,6 +21,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto.Payment
 import com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto.ProductOrderDetailProjectionDto;
 import com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto.ProductOrderListProjectionDto;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -195,112 +197,118 @@ public class OrderCompositeQueryDslRepository {
 
     /** 상품주문 단건 취소 목록 조회. */
     public List<OrderCancelProjectionDto> findCancelsByOrderItemId(String orderItemId) {
-        return queryFactory
-                .select(
-                        Projections.constructor(
-                                OrderCancelProjectionDto.class,
-                                orderCancelJpaEntity.id,
-                                orderCancelJpaEntity.orderItemId,
-                                orderCancelJpaEntity.cancelNumber,
-                                orderCancelJpaEntity.cancelStatus,
-                                orderCancelJpaEntity.quantity,
-                                orderCancelJpaEntity.reasonType,
-                                orderCancelJpaEntity.reasonDetail,
-                                orderCancelJpaEntity.originalAmount,
-                                orderCancelJpaEntity.refundAmount,
-                                orderCancelJpaEntity.refundMethod,
-                                orderCancelJpaEntity.refundedAt,
-                                orderCancelJpaEntity.requestedAt,
-                                orderCancelJpaEntity.completedAt))
-                .from(orderCancelJpaEntity)
-                .where(orderCancelJpaEntity.orderItemId.eq(orderItemId))
-                .orderBy(orderCancelJpaEntity.requestedAt.desc())
-                .fetch();
+        return findCancelsByCondition(cancelJpaEntity.orderItemId.eq(orderItemId));
     }
 
-    /** 상품주문 단건 클레임 목록 조회. */
+    /** 상품주문 단건 클레임 목록 조회 (refund_claims + exchange_claims UNION). */
     public List<OrderClaimProjectionDto> findClaimsByOrderItemId(String orderItemId) {
-        return queryFactory
-                .select(
-                        Projections.constructor(
-                                OrderClaimProjectionDto.class,
-                                orderClaimJpaEntity.id,
-                                orderClaimJpaEntity.orderItemId,
-                                orderClaimJpaEntity.claimNumber,
-                                orderClaimJpaEntity.claimType,
-                                orderClaimJpaEntity.claimStatus,
-                                orderClaimJpaEntity.quantity,
-                                orderClaimJpaEntity.reasonType,
-                                orderClaimJpaEntity.reasonDetail,
-                                orderClaimJpaEntity.collectMethod,
-                                orderClaimJpaEntity.originalAmount,
-                                orderClaimJpaEntity.deductionAmount,
-                                orderClaimJpaEntity.deductionReason,
-                                orderClaimJpaEntity.refundAmount,
-                                orderClaimJpaEntity.refundMethod,
-                                orderClaimJpaEntity.refundedAt,
-                                orderClaimJpaEntity.requestedAt,
-                                orderClaimJpaEntity.completedAt,
-                                orderClaimJpaEntity.rejectedAt))
-                .from(orderClaimJpaEntity)
-                .where(orderClaimJpaEntity.orderItemId.eq(orderItemId))
-                .orderBy(orderClaimJpaEntity.requestedAt.desc())
-                .fetch();
+        List<OrderClaimProjectionDto> refunds = findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.eq(orderItemId));
+        List<OrderClaimProjectionDto> exchanges = findExchangeClaimsByCondition(exchangeClaimJpaEntity.orderItemId.eq(orderItemId));
+        return mergeAndSortClaims(refunds, exchanges);
     }
 
     /** 주문상품 ID 목록 기반 취소 일괄 조회. */
     public List<OrderCancelProjectionDto> findCancelsByOrderItemIds(List<String> orderItemIds) {
+        return findCancelsByCondition(cancelJpaEntity.orderItemId.in(orderItemIds));
+    }
+
+    /** 주문상품 ID 목록 기반 클레임 일괄 조회 (refund_claims + exchange_claims UNION). */
+    public List<OrderClaimProjectionDto> findClaimsByOrderItemIds(List<String> orderItemIds) {
+        List<OrderClaimProjectionDto> refunds = findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.in(orderItemIds));
+        List<OrderClaimProjectionDto> exchanges = findExchangeClaimsByCondition(exchangeClaimJpaEntity.orderItemId.in(orderItemIds));
+        return mergeAndSortClaims(refunds, exchanges);
+    }
+
+    private List<OrderCancelProjectionDto> findCancelsByCondition(com.querydsl.core.types.Predicate condition) {
         return queryFactory
                 .select(
                         Projections.constructor(
                                 OrderCancelProjectionDto.class,
-                                orderCancelJpaEntity.id,
-                                orderCancelJpaEntity.orderItemId,
-                                orderCancelJpaEntity.cancelNumber,
-                                orderCancelJpaEntity.cancelStatus,
-                                orderCancelJpaEntity.quantity,
-                                orderCancelJpaEntity.reasonType,
-                                orderCancelJpaEntity.reasonDetail,
-                                orderCancelJpaEntity.originalAmount,
-                                orderCancelJpaEntity.refundAmount,
-                                orderCancelJpaEntity.refundMethod,
-                                orderCancelJpaEntity.refundedAt,
-                                orderCancelJpaEntity.requestedAt,
-                                orderCancelJpaEntity.completedAt))
-                .from(orderCancelJpaEntity)
-                .where(orderCancelJpaEntity.orderItemId.in(orderItemIds))
-                .orderBy(orderCancelJpaEntity.requestedAt.desc())
+                                cancelJpaEntity.id,
+                                cancelJpaEntity.orderItemId,
+                                cancelJpaEntity.cancelNumber,
+                                cancelJpaEntity.cancelStatus,
+                                cancelJpaEntity.cancelQty,
+                                cancelJpaEntity.reasonType,
+                                cancelJpaEntity.reasonDetail,
+                                cancelJpaEntity.refundAmount,
+                                cancelJpaEntity.refundMethod,
+                                cancelJpaEntity.refundedAt,
+                                cancelJpaEntity.requestedAt,
+                                cancelJpaEntity.completedAt))
+                .from(cancelJpaEntity)
+                .where(condition)
+                .orderBy(cancelJpaEntity.requestedAt.desc())
                 .fetch();
     }
 
-    /** 주문상품 ID 목록 기반 클레임 일괄 조회. */
-    public List<OrderClaimProjectionDto> findClaimsByOrderItemIds(List<String> orderItemIds) {
+    private List<OrderClaimProjectionDto> findRefundClaimsByCondition(com.querydsl.core.types.Predicate condition) {
         return queryFactory
                 .select(
                         Projections.constructor(
                                 OrderClaimProjectionDto.class,
-                                orderClaimJpaEntity.id,
-                                orderClaimJpaEntity.orderItemId,
-                                orderClaimJpaEntity.claimNumber,
-                                orderClaimJpaEntity.claimType,
-                                orderClaimJpaEntity.claimStatus,
-                                orderClaimJpaEntity.quantity,
-                                orderClaimJpaEntity.reasonType,
-                                orderClaimJpaEntity.reasonDetail,
-                                orderClaimJpaEntity.collectMethod,
-                                orderClaimJpaEntity.originalAmount,
-                                orderClaimJpaEntity.deductionAmount,
-                                orderClaimJpaEntity.deductionReason,
-                                orderClaimJpaEntity.refundAmount,
-                                orderClaimJpaEntity.refundMethod,
-                                orderClaimJpaEntity.refundedAt,
-                                orderClaimJpaEntity.requestedAt,
-                                orderClaimJpaEntity.completedAt,
-                                orderClaimJpaEntity.rejectedAt))
-                .from(orderClaimJpaEntity)
-                .where(orderClaimJpaEntity.orderItemId.in(orderItemIds))
-                .orderBy(orderClaimJpaEntity.requestedAt.desc())
+                                refundClaimJpaEntity.id,
+                                refundClaimJpaEntity.orderItemId,
+                                refundClaimJpaEntity.claimNumber,
+                                com.querydsl.core.types.dsl.Expressions.constant("REFUND"),
+                                refundClaimJpaEntity.refundStatus,
+                                refundClaimJpaEntity.refundQty,
+                                refundClaimJpaEntity.reasonType,
+                                refundClaimJpaEntity.reasonDetail,
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(String.class),
+                                refundClaimJpaEntity.originalAmount,
+                                refundClaimJpaEntity.deductionAmount,
+                                refundClaimJpaEntity.deductionReason,
+                                refundClaimJpaEntity.finalAmount,
+                                refundClaimJpaEntity.refundMethod,
+                                refundClaimJpaEntity.refundedAt,
+                                refundClaimJpaEntity.requestedAt,
+                                refundClaimJpaEntity.completedAt,
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(Instant.class)))
+                .from(refundClaimJpaEntity)
+                .where(condition)
+                .orderBy(refundClaimJpaEntity.requestedAt.desc())
                 .fetch();
+    }
+
+    private List<OrderClaimProjectionDto> findExchangeClaimsByCondition(com.querydsl.core.types.Predicate condition) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                OrderClaimProjectionDto.class,
+                                exchangeClaimJpaEntity.id,
+                                exchangeClaimJpaEntity.orderItemId,
+                                exchangeClaimJpaEntity.claimNumber,
+                                com.querydsl.core.types.dsl.Expressions.constant("EXCHANGE"),
+                                exchangeClaimJpaEntity.exchangeStatus,
+                                exchangeClaimJpaEntity.exchangeQty,
+                                exchangeClaimJpaEntity.reasonType,
+                                exchangeClaimJpaEntity.reasonDetail,
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(String.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(Integer.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(Integer.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(String.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(Integer.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(String.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(Instant.class),
+                                exchangeClaimJpaEntity.requestedAt,
+                                exchangeClaimJpaEntity.completedAt,
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(Instant.class)))
+                .from(exchangeClaimJpaEntity)
+                .where(condition)
+                .orderBy(exchangeClaimJpaEntity.requestedAt.desc())
+                .fetch();
+    }
+
+    private List<OrderClaimProjectionDto> mergeAndSortClaims(
+            List<OrderClaimProjectionDto> refunds, List<OrderClaimProjectionDto> exchanges) {
+        List<OrderClaimProjectionDto> merged = new java.util.ArrayList<>(refunds.size() + exchanges.size());
+        merged.addAll(refunds);
+        merged.addAll(exchanges);
+        merged.sort(java.util.Comparator.comparing(
+                OrderClaimProjectionDto::requestedAt,
+                java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())));
+        return merged;
     }
 
     /** 주문 ID 목록으로 주문 기본정보 일괄 조회 (orders + payments LEFT JOIN). */
@@ -587,58 +595,25 @@ public class OrderCompositeQueryDslRepository {
                 .fetch();
     }
 
-    /** 주문 취소 목록 조회. */
+    /** 주문 취소 목록 조회 (orderId 기반 — order_items 서브쿼리). */
     public List<OrderCancelProjectionDto> findOrderCancels(String orderId) {
-        return queryFactory
-                .select(
-                        Projections.constructor(
-                                OrderCancelProjectionDto.class,
-                                orderCancelJpaEntity.id,
-                                orderCancelJpaEntity.orderItemId,
-                                orderCancelJpaEntity.cancelNumber,
-                                orderCancelJpaEntity.cancelStatus,
-                                orderCancelJpaEntity.quantity,
-                                orderCancelJpaEntity.reasonType,
-                                orderCancelJpaEntity.reasonDetail,
-                                orderCancelJpaEntity.originalAmount,
-                                orderCancelJpaEntity.refundAmount,
-                                orderCancelJpaEntity.refundMethod,
-                                orderCancelJpaEntity.refundedAt,
-                                orderCancelJpaEntity.requestedAt,
-                                orderCancelJpaEntity.completedAt))
-                .from(orderCancelJpaEntity)
-                .where(conditionBuilder.cancelOrderIdEq(orderId))
-                .orderBy(orderCancelJpaEntity.requestedAt.desc())
-                .fetch();
+        return findCancelsByCondition(
+                cancelJpaEntity.orderItemId.in(
+                        JPAExpressions.select(orderItemJpaEntity.id)
+                                .from(orderItemJpaEntity)
+                                .where(orderItemJpaEntity.orderId.eq(orderId))));
     }
 
-    /** 주문 클레임 목록 조회. */
+    /** 주문 클레임 목록 조회 (orderId 기반 — order_items 서브쿼리). */
     public List<OrderClaimProjectionDto> findOrderClaims(String orderId) {
-        return queryFactory
-                .select(
-                        Projections.constructor(
-                                OrderClaimProjectionDto.class,
-                                orderClaimJpaEntity.id,
-                                orderClaimJpaEntity.orderItemId,
-                                orderClaimJpaEntity.claimNumber,
-                                orderClaimJpaEntity.claimType,
-                                orderClaimJpaEntity.claimStatus,
-                                orderClaimJpaEntity.quantity,
-                                orderClaimJpaEntity.reasonType,
-                                orderClaimJpaEntity.reasonDetail,
-                                orderClaimJpaEntity.collectMethod,
-                                orderClaimJpaEntity.originalAmount,
-                                orderClaimJpaEntity.deductionAmount,
-                                orderClaimJpaEntity.deductionReason,
-                                orderClaimJpaEntity.refundAmount,
-                                orderClaimJpaEntity.refundMethod,
-                                orderClaimJpaEntity.refundedAt,
-                                orderClaimJpaEntity.requestedAt,
-                                orderClaimJpaEntity.completedAt,
-                                orderClaimJpaEntity.rejectedAt))
-                .from(orderClaimJpaEntity)
-                .where(conditionBuilder.claimOrderIdEq(orderId))
-                .orderBy(orderClaimJpaEntity.requestedAt.desc())
-                .fetch();
+        com.querydsl.core.types.dsl.StringPath subQuery =
+                orderItemJpaEntity.id;
+        var itemIds =
+                JPAExpressions.select(subQuery)
+                        .from(orderItemJpaEntity)
+                        .where(orderItemJpaEntity.orderId.eq(orderId));
+        List<OrderClaimProjectionDto> refunds = findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.in(itemIds));
+        List<OrderClaimProjectionDto> exchanges = findExchangeClaimsByCondition(exchangeClaimJpaEntity.orderItemId.in(itemIds));
+        return mergeAndSortClaims(refunds, exchanges);
     }
 }

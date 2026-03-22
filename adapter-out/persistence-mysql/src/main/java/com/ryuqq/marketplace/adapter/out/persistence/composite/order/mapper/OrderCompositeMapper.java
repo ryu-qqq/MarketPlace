@@ -142,15 +142,15 @@ public class OrderCompositeMapper {
 
     public OrderCancelResult toCancelResult(OrderCancelProjectionDto dto) {
         return new OrderCancelResult(
-                dto.cancelId() != null ? dto.cancelId() : 0L,
+                dto.cancelId() != null ? dto.cancelId() : "",
                 dto.orderItemId(),
                 dto.cancelNumber(),
                 dto.cancelStatus(),
                 dto.quantity(),
                 dto.reasonType(),
                 dto.reasonDetail(),
-                dto.originalAmount(),
-                dto.refundAmount(),
+                0,
+                dto.refundAmount() != null ? dto.refundAmount() : 0,
                 dto.refundMethod(),
                 dto.refundedAt(),
                 dto.requestedAt(),
@@ -265,7 +265,7 @@ public class OrderCompositeMapper {
 
     public OrderClaimResult toClaimResult(OrderClaimProjectionDto dto) {
         return new OrderClaimResult(
-                dto.claimId() != null ? dto.claimId() : 0L,
+                dto.claimId() != null ? dto.claimId() : "",
                 dto.orderItemId(),
                 dto.claimNumber(),
                 dto.claimType(),
@@ -274,10 +274,10 @@ public class OrderCompositeMapper {
                 dto.reasonType(),
                 dto.reasonDetail(),
                 dto.collectMethod(),
-                dto.originalAmount(),
-                dto.deductionAmount(),
+                dto.originalAmount() != null ? dto.originalAmount() : 0,
+                dto.deductionAmount() != null ? dto.deductionAmount() : 0,
                 dto.deductionReason(),
-                dto.refundAmount(),
+                dto.refundAmount() != null ? dto.refundAmount() : 0,
                 dto.refundMethod(),
                 dto.refundedAt(),
                 dto.requestedAt(),

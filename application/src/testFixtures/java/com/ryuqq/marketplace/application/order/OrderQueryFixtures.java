@@ -131,7 +131,7 @@ public final class OrderQueryFixtures {
 
     public static OrderCancelResult completedCancelResult(String orderItemId) {
         return new OrderCancelResult(
-                1L,
+                "1",
                 orderItemId,
                 "CANCEL-20260218-0001",
                 "COMPLETED",
@@ -148,7 +148,7 @@ public final class OrderQueryFixtures {
 
     public static OrderCancelResult requestedCancelResult(String orderItemId) {
         return new OrderCancelResult(
-                2L,
+                "2",
                 orderItemId,
                 "CANCEL-20260218-0002",
                 "REQUESTED",
@@ -167,7 +167,7 @@ public final class OrderQueryFixtures {
 
     public static OrderClaimResult completedClaimResult(String orderItemId) {
         return new OrderClaimResult(
-                1L,
+                "1",
                 orderItemId,
                 "CLAIM-20260218-0001",
                 "REFUND",
@@ -189,7 +189,7 @@ public final class OrderQueryFixtures {
 
     public static OrderClaimResult requestedClaimResult(String orderItemId) {
         return new OrderClaimResult(
-                2L,
+                "2",
                 orderItemId,
                 "CLAIM-20260218-0002",
                 "REFUND",

@@ -1,7 +1,5 @@
 package com.ryuqq.marketplace.adapter.out.persistence.composite.order.condition;
 
-import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderCancelJpaEntity.orderCancelJpaEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderClaimJpaEntity.orderClaimJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemHistoryJpaEntity.orderItemHistoryJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemJpaEntity.orderItemJpaEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderJpaEntity.orderJpaEntity;
@@ -38,14 +36,6 @@ public class OrderCompositeConditionBuilder {
     /** order_item_histories ↔ order_items 조인 조건 (orderItemId 기준). */
     public BooleanExpression itemHistoryOrderItemIdEq(String orderItemId) {
         return orderItemHistoryJpaEntity.orderItemId.eq(orderItemId);
-    }
-
-    public BooleanExpression cancelOrderIdEq(String orderId) {
-        return orderCancelJpaEntity.orderId.eq(orderId);
-    }
-
-    public BooleanExpression claimOrderIdEq(String orderId) {
-        return orderClaimJpaEntity.orderId.eq(orderId);
     }
 
     // ===== 필터 조건 =====

@@ -20,7 +20,7 @@ import java.time.Instant;
  * @param completedAt 완료일시
  */
 public record OrderCancelResult(
-        long cancelId,
+        String cancelId,
         String orderItemId,
         String cancelNumber,
         String cancelStatus,

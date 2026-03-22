@@ -227,7 +227,7 @@ public final class OrderApiFixtures {
     public static OrderCancelResult cancelResult() {
         Instant now = Instant.parse("2026-01-01T00:00:00Z");
         return new OrderCancelResult(
-                3001L,
+                "3001",
                 DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_CANCEL_NUMBER,
                 "COMPLETED",
@@ -245,7 +245,7 @@ public final class OrderApiFixtures {
     public static OrderClaimResult claimResult() {
         Instant now = Instant.parse("2026-01-01T00:00:00Z");
         return new OrderClaimResult(
-                4001L,
+                "4001",
                 DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_CLAIM_NUMBER,
                 "REFUND",
