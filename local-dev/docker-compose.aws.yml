@@ -139,6 +139,15 @@ services:
       SQS_QUEUES_EXCHANGE_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-exchange-outbox"
       SQS_QUEUES_SHIPMENT_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-shipment-outbox"
 
+      # Naver Commerce
+      NAVER_COMMERCE_CLIENT_ID: "${NAVER_COMMERCE_CLIENT_ID}"
+      NAVER_COMMERCE_CLIENT_SECRET: "${NAVER_COMMERCE_CLIENT_SECRET}"
+
+      # Sellic Commerce
+      SELLIC_COMMERCE_BASE_URL: "${SELLIC_COMMERCE_BASE_URL}"
+      SELLIC_COMMERCE_CUSTOMER_ID: "${SELLIC_COMMERCE_CUSTOMER_ID}"
+      SELLIC_COMMERCE_API_KEY: "${SELLIC_COMMERCE_API_KEY}"
+
       # OpenTelemetry disabled (local)
       OTEL_JAVAAGENT_ENABLED: "false"
 
