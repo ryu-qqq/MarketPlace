@@ -49,3 +49,8 @@ server:
 marketplace:
   internal:
     service-token: test-service-token
+
+# Legacy JWT 설정 (테스트용)
+legacy:
+  token:
+    secret: test-legacy-jwt-secret-key-must-be-at-least-256-bits-long-for-hs256
