@@ -88,7 +88,13 @@ public record ClaimListItemApiResponseV4(
     public record CollectShipmentV4(
             @Schema(description = "택배사 코드") String carrierCode,
             @Schema(description = "송장번호") String trackingNumber,
-            @Schema(description = "수거 완료 일시") String completedAt) {}
+            @Schema(description = "수거 완료 일시") String completedAt,
+            @Schema(description = "배송비 정보") FeeInfoV4 feeInfo) {}
+
+    @Schema(description = "배송비 정보 (V4)")
+    public record FeeInfoV4(
+            @Schema(description = "배송비 부담 주체 (BUYER, SELLER)") String payer,
+            @Schema(description = "배송비 금액") int amount) {}
 
     @Schema(description = "구매자 정보 (V4)")
     public record BuyerInfoV4(
