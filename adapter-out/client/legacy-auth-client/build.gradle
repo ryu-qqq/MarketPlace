@@ -29,5 +29,7 @@ dependencies {
     // Spring Boot (for @Component, @ConfigurationProperties)
     // ========================================
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'jakarta.annotation:jakarta.annotation-api'
     annotationProcessor libs.spring.boot.configuration.processor
 }

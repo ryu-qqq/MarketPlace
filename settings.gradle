@@ -27,6 +27,7 @@ include 'adapter-out:client:spring-ai-client'
 include 'adapter-out:client:naver-commerce-client'
 include 'adapter-out:client:setof-commerce-client'
 include 'adapter-out:client:sellic-commerce-client'
+include 'adapter-out:client:legacy-auth-client'
 
 // ========================================
 // Bootstrap Modules (Runnable Applications)
@@ -61,6 +62,8 @@ project(':adapter-out:client:sqs-client').projectDir = file('adapter-out/client/
 project(':adapter-out:client:spring-ai-client').projectDir = file('adapter-out/client/spring-ai-client')
 project(':adapter-out:client:naver-commerce-client').projectDir = file('adapter-out/client/naver-commerce-client')
 project(':adapter-out:client:setof-commerce-client').projectDir = file('adapter-out/client/setof-commerce-client')
+project(':adapter-out:client:legacy-auth-client').projectDir = file('adapter-out/client/legacy-auth-client')
+project(':adapter-out:client:sellic-commerce-client').projectDir = file('adapter-out/client/sellic-commerce-client')
 
 project(':bootstrap:bootstrap-web-api').projectDir = file('bootstrap/bootstrap-web-api')
 project(':bootstrap:bootstrap-legacy-api').projectDir = file('bootstrap/bootstrap-legacy-api')

@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.adapter.out.client.legacyauth.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.legacyauth.config.LegacyJwtProperties;
-import com.ryuqq.marketplace.application.legacyauth.dto.result.LegacyTokenResult;
-import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyTokenClient;
+import com.ryuqq.marketplace.application.legacy.auth.dto.result.LegacyTokenResult;
+import com.ryuqq.marketplace.application.legacy.auth.port.out.LegacyTokenClient;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

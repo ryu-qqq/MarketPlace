@@ -58,6 +58,13 @@ data "aws_ssm_parameter" "fileflow_service_token" {
   name = "/shared/security/service-token-secret"
 }
 
+# ========================================
+# Legacy JWT Secret
+# ========================================
+data "aws_ssm_parameter" "legacy_jwt_secret" {
+  name = "/marketplace/legacy/jwt-secret"
+}
+
 # VPC data source
 data "aws_vpc" "main" {
   id = local.vpc_id
@@ -424,7 +431,8 @@ module "ecs_service" {
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
-    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
+    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn },
+    { name = "LEGACY_TOKEN_SECRET", valueFrom = data.aws_ssm_parameter.legacy_jwt_secret.arn }
   ]
 
   # Health Check

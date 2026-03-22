@@ -1,6 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.client.legacyauth.adapter;
 
-import com.ryuqq.marketplace.application.legacyauth.port.out.LegacyPasswordEncoder;
+import com.ryuqq.marketplace.application.legacy.auth.port.out.LegacyPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
