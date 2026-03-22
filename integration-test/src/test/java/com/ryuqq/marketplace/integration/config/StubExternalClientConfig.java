@@ -874,7 +874,21 @@ public class StubExternalClientConfig {
     @Bean
     @Primary
     public com.ryuqq.marketplace.application.legacy.seller.port.in.LegacyGetCurrentSellerUseCase stubLegacyGetCurrentSellerUseCase() {
-        return Mockito.mock(com.ryuqq.marketplace.application.legacy.seller.port.in.LegacyGetCurrentSellerUseCase.class);
+        return sellerId -> {
+            if (sellerId == 10L) {
+                java.time.Instant now = java.time.Instant.now();
+                return new com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult(
+                        new com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult.SellerInfo(
+                                10L, "스텁 셀러", "스텁 스토어", null, null, true, now, now),
+                        new com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult.BusinessInfo(
+                                null, "123-45-67890", "스텁 회사", "대표자", null, null, null, null),
+                        new com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult.CsInfo(
+                                null, null, null, null, null, null, null, null),
+                        null,
+                        null);
+            }
+            throw new com.ryuqq.marketplace.domain.seller.exception.SellerNotFoundException(sellerId);
+        };
     }
 
     @Bean
@@ -958,7 +972,12 @@ public class StubExternalClientConfig {
     @Bean
     @Primary
     public com.ryuqq.marketplace.application.legacy.session.port.in.command.LegacyGetPresignedUrlUseCase stubLegacyGetPresignedUrlUseCase() {
-        return Mockito.mock(com.ryuqq.marketplace.application.legacy.session.port.in.command.LegacyGetPresignedUrlUseCase.class);
+        return request -> new com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse(
+                java.util.UUID.randomUUID().toString(),
+                "https://s3.stub.example.com/presigned-url",
+                "uploads/" + request.filename(),
+                java.time.Instant.now().plusSeconds(3600),
+                "https://cdn.stub.example.com/uploads/" + request.filename());
     }
 
     @Bean
