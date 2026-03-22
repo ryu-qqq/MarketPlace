@@ -128,12 +128,7 @@ data "aws_ssm_parameter" "authhub_service_token" {
   name = "/authhub/stage/security/service-token-secret"
 }
 
-# ========================================
-# FileFlow Configuration
-# ========================================
-data "aws_ssm_parameter" "fileflow_service_token" {
-  name = "/shared/security/service-token-secret"
-}
+# FileFlow: fileflow_service_token은 main.tf에서 선언
 
 # ========================================
 # Sentry Configuration
