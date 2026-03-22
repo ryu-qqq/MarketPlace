@@ -60,7 +60,7 @@ class SellicOrderPollingE2ETest extends E2ETestBase {
         cleanUp();
         seedSalesChannelAndShop();
 
-        given(orderClient.supports(any())).willReturn(true);
+        given(orderClient.channelCode()).willReturn("SELLIC");
         given(orderClient.fetchNewOrders(anyLong(), anyLong(), any(), any(), any()))
                 .willReturn(buildSellicMockOrders());
     }

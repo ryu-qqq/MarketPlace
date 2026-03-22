@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrder
 import com.ryuqq.marketplace.application.inboundorder.dto.result.InboundOrderPollingResult;
 import com.ryuqq.marketplace.application.inboundorder.internal.InboundOrderReceiveCoordinator;
 import com.ryuqq.marketplace.application.inboundorder.manager.InboundOrderReadManager;
+import com.ryuqq.marketplace.application.inboundorder.manager.SalesChannelOrderClientManager;
 import com.ryuqq.marketplace.application.inboundorder.port.in.command.PollExternalOrdersUseCase;
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
 import com.ryuqq.marketplace.application.saleschannel.manager.SalesChannelReadManager;
@@ -28,19 +29,19 @@ public class PollExternalOrdersService implements PollExternalOrdersUseCase {
     private final SalesChannelReadManager salesChannelReadManager;
     private final ShopReadManager shopReadManager;
     private final InboundOrderReadManager inboundOrderReadManager;
-    private final SalesChannelOrderClient orderClient;
+    private final SalesChannelOrderClientManager orderClientManager;
     private final InboundOrderReceiveCoordinator coordinator;
 
     public PollExternalOrdersService(
             SalesChannelReadManager salesChannelReadManager,
             ShopReadManager shopReadManager,
             InboundOrderReadManager inboundOrderReadManager,
-            SalesChannelOrderClient orderClient,
+            SalesChannelOrderClientManager orderClientManager,
             InboundOrderReceiveCoordinator coordinator) {
         this.salesChannelReadManager = salesChannelReadManager;
         this.shopReadManager = shopReadManager;
         this.inboundOrderReadManager = inboundOrderReadManager;
-        this.orderClient = orderClient;
+        this.orderClientManager = orderClientManager;
         this.coordinator = coordinator;
     }
 
@@ -54,10 +55,12 @@ public class PollExternalOrdersService implements PollExternalOrdersUseCase {
 
         String channelCode = salesChannel.channelName();
 
-        if (!orderClient.supports(channelCode)) {
+        if (!orderClientManager.supports(channelCode)) {
             log.warn("지원하지 않는 채널코드: channelCode={}", channelCode);
             return totalResult;
         }
+
+        SalesChannelOrderClient orderClient = orderClientManager.getClient(channelCode);
 
         List<Shop> shops = shopReadManager.findActiveBySalesChannelId(salesChannelId);
         if (shops.isEmpty()) {

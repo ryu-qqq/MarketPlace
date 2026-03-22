@@ -24,8 +24,8 @@ public class SetofCommerceOrderClientAdapter implements SalesChannelOrderClient 
             LoggerFactory.getLogger(SetofCommerceOrderClientAdapter.class);
 
     @Override
-    public boolean supports(String channelCode) {
-        return "SETOF".equals(channelCode);
+    public String channelCode() {
+        return "SETOF";
     }
 
     @Override

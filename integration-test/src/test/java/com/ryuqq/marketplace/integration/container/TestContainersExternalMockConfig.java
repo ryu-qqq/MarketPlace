@@ -725,8 +725,8 @@ public class TestContainersExternalMockConfig {
     public SalesChannelOrderClient stubSalesChannelOrderClient() {
         return new SalesChannelOrderClient() {
             @Override
-            public boolean supports(String channelCode) {
-                return true;
+            public String channelCode() {
+                return "STUB";
             }
 
             @Override

@@ -50,8 +50,8 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
     }
 
     @Override
-    public boolean supports(String channelCode) {
-        return "NAVER".equals(channelCode);
+    public String channelCode() {
+        return "NAVER";
     }
 
     @Override

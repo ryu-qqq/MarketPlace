@@ -8,7 +8,8 @@ import java.util.List;
 /** 외부 판매채널 주문 조회 클라이언트. */
 public interface SalesChannelOrderClient {
 
-    boolean supports(String channelCode);
+    /** 이 클라이언트가 담당하는 판매채널 코드. */
+    String channelCode();
 
     List<ExternalOrderPayload> fetchNewOrders(
             long salesChannelId,

@@ -43,8 +43,8 @@ public class SellicCommerceOrderClientAdapter implements SalesChannelOrderClient
     }
 
     @Override
-    public boolean supports(String channelCode) {
-        return "SELLIC".equals(channelCode);
+    public String channelCode() {
+        return "SELLIC";
     }
 
     @Override

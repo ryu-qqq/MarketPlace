@@ -154,8 +154,8 @@ public class CommonClientFallbackConfig {
     SalesChannelOrderClient noOpSalesChannelOrderClient() {
         return new SalesChannelOrderClient() {
             @Override
-            public boolean supports(String channelCode) {
-                return false;
+            public String channelCode() {
+                return "NOOP";
             }
 
             @Override
