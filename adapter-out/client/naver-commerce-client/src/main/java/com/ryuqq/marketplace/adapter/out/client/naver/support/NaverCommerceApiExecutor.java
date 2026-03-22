@@ -11,7 +11,6 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
-import java.time.Duration;
 import java.util.function.Supplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -84,7 +83,6 @@ public class NaverCommerceApiExecutor {
         RetryConfig retryConfig =
                 RetryConfig.custom()
                         .maxAttempts(MAX_ATTEMPTS)
-                        .waitDuration(Duration.ofMillis(INITIAL_BACKOFF_MILLIS))
                         .intervalFunction(
                                 attempt -> INITIAL_BACKOFF_MILLIS * (long) Math.pow(2, attempt - 1))
                         .retryExceptions(
