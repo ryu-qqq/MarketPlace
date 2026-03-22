@@ -5,6 +5,7 @@ package com.ryuqq.marketplace.adapter.out.client.sellic.exception;
  *
  * <p>HTTP 상태 코드, 응답 본문, 재시도 가능 여부를 포함합니다.
  */
+@SuppressWarnings("PMD.DataClass")
 public class SellicCommerceException extends RuntimeException {
 
     private final int statusCode;

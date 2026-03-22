@@ -8,6 +8,7 @@ package com.ryuqq.marketplace.adapter.out.client.naver.exception;
  * @author ryu-qqq
  * @since 1.0.0
  */
+@SuppressWarnings("PMD.DataClass")
 public class NaverCommerceException extends RuntimeException {
 
     private final int statusCode;
