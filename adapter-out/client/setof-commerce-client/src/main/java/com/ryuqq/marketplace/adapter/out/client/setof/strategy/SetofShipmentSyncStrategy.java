@@ -42,6 +42,11 @@ public class SetofShipmentSyncStrategy implements ShipmentSyncStrategy {
     }
 
     @Override
+    public String channelCode() {
+        return "SETOF";
+    }
+
+    @Override
     public OutboxSyncResult execute(ShipmentOutbox outbox) {
         ShipmentOutboxType type = outbox.outboxType();
 

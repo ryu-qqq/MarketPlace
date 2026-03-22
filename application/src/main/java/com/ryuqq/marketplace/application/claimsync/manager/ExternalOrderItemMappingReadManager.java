@@ -31,4 +31,15 @@ public class ExternalOrderItemMappingReadManager {
                         salesChannelId, externalProductOrderId)
                 .orElse(null);
     }
+
+    /**
+     * 내부 orderItemId로 외부 매핑을 조회합니다.
+     *
+     * @param orderItemId 내부 주문상품 ID
+     * @return 매핑 정보, 없으면 null
+     */
+    @Transactional(readOnly = true)
+    public ExternalOrderItemMapping findByOrderItemId(String orderItemId) {
+        return queryPort.findByOrderItemId(orderItemId).orElse(null);
+    }
 }

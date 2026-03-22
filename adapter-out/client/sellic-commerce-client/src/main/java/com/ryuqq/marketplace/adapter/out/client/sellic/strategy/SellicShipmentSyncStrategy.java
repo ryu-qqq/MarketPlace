@@ -59,6 +59,11 @@ public class SellicShipmentSyncStrategy implements ShipmentSyncStrategy {
     }
 
     @Override
+    public String channelCode() {
+        return "SELLIC";
+    }
+
+    @Override
     public OutboxSyncResult execute(ShipmentOutbox outbox) {
         ShipmentOutboxType type = outbox.outboxType();
 

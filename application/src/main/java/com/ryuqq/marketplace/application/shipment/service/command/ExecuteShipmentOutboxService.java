@@ -1,12 +1,15 @@
 package com.ryuqq.marketplace.application.shipment.service.command;
 
+import com.ryuqq.marketplace.application.claimsync.manager.ExternalOrderItemMappingReadManager;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.shipment.dto.command.ExecuteShipmentOutboxCommand;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentSyncStrategyProvider;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ExecuteShipmentOutboxUseCase;
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentSyncStrategy;
+import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
 import java.time.Instant;
 import org.slf4j.Logger;
@@ -17,7 +20,8 @@ import org.springframework.stereotype.Service;
 /**
  * 배송 Outbox 실행 서비스.
  *
- * <p>SQS Consumer에서 수신한 배송 Outbox를 처리합니다. Strategy 패턴으로 외부 API를 호출하고, 결과에 따라 Outbox 상태를 업데이트합니다.
+ * <p>SQS Consumer에서 수신한 배송 Outbox를 처리합니다. orderItemId로 ExternalOrderItemMapping을 조회하여 채널 코드를 식별하고,
+ * ShipmentSyncStrategyProvider를 통해 O(1)로 라우팅합니다.
  *
  * <p><strong>트랜잭션 전략</strong>: {@code @Transactional} 없음. 외부 API 호출이 포함되므로 상태 변경마다 별도 트랜잭션(Manager
  * 레벨)으로 커밋합니다. 낙관적 락 충돌 방지를 위해 re-read 패턴을 적용합니다.
@@ -30,15 +34,18 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
 
     private final ShipmentOutboxReadManager outboxReadManager;
     private final ShipmentOutboxCommandManager outboxCommandManager;
-    private final ShipmentSyncStrategy syncStrategy;
+    private final ShipmentSyncStrategyProvider strategyProvider;
+    private final ExternalOrderItemMappingReadManager mappingReadManager;
 
     public ExecuteShipmentOutboxService(
             ShipmentOutboxReadManager outboxReadManager,
             ShipmentOutboxCommandManager outboxCommandManager,
-            ShipmentSyncStrategy syncStrategy) {
+            ShipmentSyncStrategyProvider strategyProvider,
+            ExternalOrderItemMappingReadManager mappingReadManager) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
-        this.syncStrategy = syncStrategy;
+        this.strategyProvider = strategyProvider;
+        this.mappingReadManager = mappingReadManager;
     }
 
     @Override
@@ -46,7 +53,9 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
         ShipmentOutbox outbox = outboxReadManager.getById(command.outboxId());
 
         try {
-            OutboxSyncResult result = syncStrategy.execute(outbox);
+            String channelCode = resolveChannelCode(outbox);
+            ShipmentSyncStrategy strategy = strategyProvider.getStrategy(channelCode);
+            OutboxSyncResult result = strategy.execute(outbox);
 
             if (result.isSuccess()) {
                 handleSuccess(outbox);
@@ -68,6 +77,16 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
                     e);
             persistFailureWithReRead(outbox.idValue(), true, "실행 중 예외: " + e.getMessage());
         }
+    }
+
+    private String resolveChannelCode(ShipmentOutbox outbox) {
+        ExternalOrderItemMapping mapping =
+                mappingReadManager.findByOrderItemId(outbox.orderItemIdValue());
+        if (mapping == null) {
+            throw new IllegalStateException(
+                    "외부 주문 매핑을 찾을 수 없습니다: orderItemId=" + outbox.orderItemIdValue());
+        }
+        return mapping.channelCode();
     }
 
     private void handleSuccess(ShipmentOutbox outbox) {

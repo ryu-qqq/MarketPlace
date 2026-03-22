@@ -36,7 +36,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         excludeFilters =
                 @ComponentScan.Filter(
                         type = FilterType.REGEX,
-                        pattern = "com\\.ryuqq\\.marketplace\\.application\\.legacyauth\\..*"))
+                        pattern = {
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacy\\.auth\\..*",
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacyauth\\..*"
+                        }))
 @EnableJpaRepositories(
         basePackages = "com.ryuqq.marketplace.adapter.out.persistence",
         excludeFilters =

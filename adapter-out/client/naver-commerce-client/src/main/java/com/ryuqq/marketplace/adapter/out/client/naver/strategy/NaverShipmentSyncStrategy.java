@@ -57,6 +57,11 @@ public class NaverShipmentSyncStrategy implements ShipmentSyncStrategy {
     }
 
     @Override
+    public String channelCode() {
+        return "NAVER";
+    }
+
+    @Override
     public OutboxSyncResult execute(ShipmentOutbox outbox) {
         String externalProductOrderId = resolveExternalProductOrderId(outbox.orderItemIdValue());
         ShipmentOutboxType type = outbox.outboxType();

@@ -11,10 +11,12 @@ import com.ryuqq.marketplace.domain.qna.outbox.aggregate.QnaOutbox;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
 /** QnA 아웃박스 실행 서비스. SQS Consumer에서 호출하여 실제 외부 API를 호출합니다. */
 @Service
+@ConditionalOnBean(QnaAnswerSyncStrategy.class)
 public class ExecuteQnaOutboxService implements ExecuteQnaOutboxUseCase {
 
     private static final Logger log = LoggerFactory.getLogger(ExecuteQnaOutboxService.class);

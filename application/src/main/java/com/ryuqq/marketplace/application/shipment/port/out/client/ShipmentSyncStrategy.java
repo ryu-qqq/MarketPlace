@@ -10,5 +10,8 @@ import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
  */
 public interface ShipmentSyncStrategy {
 
+    /** 이 전략이 담당하는 판매채널 코드. */
+    String channelCode();
+
     OutboxSyncResult execute(ShipmentOutbox outbox);
 }
