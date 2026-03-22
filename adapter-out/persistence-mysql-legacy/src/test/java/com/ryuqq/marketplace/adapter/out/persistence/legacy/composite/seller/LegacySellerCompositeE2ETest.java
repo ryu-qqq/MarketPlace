@@ -69,8 +69,7 @@ class LegacySellerCompositeE2ETest {
             long sellerId = helper.setupFullSellerData();
 
             // when
-            Optional<SellerAdminCompositeResult> result =
-                    adapter.findAdminCompositeById(sellerId);
+            Optional<SellerAdminCompositeResult> result = adapter.findAdminCompositeById(sellerId);
 
             // then
             assertThat(result).isPresent();
@@ -113,14 +112,12 @@ class LegacySellerCompositeE2ETest {
             // given
             helper.insertSeller(20L, "최소 셀러", null, null, 0.0);
             helper.insertBusinessInfo(
-                    20L, null, null, null, null,
-                    null, null, null, null, null, null,
-                    null, null, null);
+                    20L, null, null, null, null, null, null, null, null, null, null, null, null,
+                    null);
             helper.flushAndClear();
 
             // when
-            Optional<SellerAdminCompositeResult> result =
-                    adapter.findAdminCompositeById(20L);
+            Optional<SellerAdminCompositeResult> result = adapter.findAdminCompositeById(20L);
 
             // then
             assertThat(result).isPresent();
@@ -137,8 +134,7 @@ class LegacySellerCompositeE2ETest {
         @DisplayName("존재하지 않는 ID — 빈 Optional 반환")
         void nonExistentId_ReturnsEmpty() {
             // when
-            Optional<SellerAdminCompositeResult> result =
-                    adapter.findAdminCompositeById(99999L);
+            Optional<SellerAdminCompositeResult> result = adapter.findAdminCompositeById(99999L);
 
             // then
             assertThat(result).isEmpty();
@@ -152,8 +148,7 @@ class LegacySellerCompositeE2ETest {
             helper.flushAndClear();
 
             // when
-            Optional<SellerAdminCompositeResult> result =
-                    adapter.findAdminCompositeById(30L);
+            Optional<SellerAdminCompositeResult> result = adapter.findAdminCompositeById(30L);
 
             // then
             assertThat(result).isEmpty();

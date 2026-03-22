@@ -19,10 +19,12 @@ class InboundQnaExceptionTest {
         @DisplayName("에러 코드로 예외를 생성한다")
         void createWithErrorCode() {
             // when
-            InboundQnaException exception = new InboundQnaException(InboundQnaErrorCode.INBOUND_QNA_NOT_FOUND);
+            InboundQnaException exception =
+                    new InboundQnaException(InboundQnaErrorCode.INBOUND_QNA_NOT_FOUND);
 
             // then
-            assertThat(exception.getErrorCode()).isEqualTo(InboundQnaErrorCode.INBOUND_QNA_NOT_FOUND);
+            assertThat(exception.getErrorCode())
+                    .isEqualTo(InboundQnaErrorCode.INBOUND_QNA_NOT_FOUND);
             assertThat(exception.getMessage()).isNotBlank();
         }
 
@@ -30,10 +32,13 @@ class InboundQnaExceptionTest {
         @DisplayName("에러 코드와 상세 메시지로 예외를 생성한다")
         void createWithErrorCodeAndDetail() {
             // when
-            InboundQnaException exception = new InboundQnaException(InboundQnaErrorCode.INBOUND_QNA_NOT_FOUND, "inboundQnaId=100");
+            InboundQnaException exception =
+                    new InboundQnaException(
+                            InboundQnaErrorCode.INBOUND_QNA_NOT_FOUND, "inboundQnaId=100");
 
             // then
-            assertThat(exception.getErrorCode()).isEqualTo(InboundQnaErrorCode.INBOUND_QNA_NOT_FOUND);
+            assertThat(exception.getErrorCode())
+                    .isEqualTo(InboundQnaErrorCode.INBOUND_QNA_NOT_FOUND);
         }
 
         @Test
@@ -43,10 +48,12 @@ class InboundQnaExceptionTest {
             RuntimeException cause = new RuntimeException("원인 예외");
 
             // when
-            InboundQnaException exception = new InboundQnaException(InboundQnaErrorCode.INVALID_STATUS_TRANSITION, cause);
+            InboundQnaException exception =
+                    new InboundQnaException(InboundQnaErrorCode.INVALID_STATUS_TRANSITION, cause);
 
             // then
-            assertThat(exception.getErrorCode()).isEqualTo(InboundQnaErrorCode.INVALID_STATUS_TRANSITION);
+            assertThat(exception.getErrorCode())
+                    .isEqualTo(InboundQnaErrorCode.INVALID_STATUS_TRANSITION);
             assertThat(exception.getCause()).isEqualTo(cause);
         }
     }

@@ -14,10 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookApiFixtures;
-import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
+import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookApiFixtures;
+import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCancelledWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.response.ClaimSyncWebhookResponse;
 import com.ryuqq.marketplace.adapter.in.rest.internal.mapper.InternalWebhookApiMapper;
@@ -73,7 +73,8 @@ class OrderCancelledWebhookControllerRestDocsTest {
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.post(InternalWebhookEndpoints.CANCELLED)
+                            RestDocumentationRequestBuilders.post(
+                                            InternalWebhookEndpoints.CANCELLED)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -143,14 +144,16 @@ class OrderCancelledWebhookControllerRestDocsTest {
         @DisplayName("externalOrderId가 blank이면 400을 반환한다")
         void handleOrderCancelled_BlankOrderId_Returns400() throws Exception {
             // given
-            OrderCancelledWebhookRequest request = new OrderCancelledWebhookRequest(
-                    InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
-                    "",
-                    List.of(InternalWebhookApiFixtures.cancelledItemRequest()));
+            OrderCancelledWebhookRequest request =
+                    new OrderCancelledWebhookRequest(
+                            InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            "",
+                            List.of(InternalWebhookApiFixtures.cancelledItemRequest()));
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.post(InternalWebhookEndpoints.CANCELLED)
+                            RestDocumentationRequestBuilders.post(
+                                            InternalWebhookEndpoints.CANCELLED)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -160,14 +163,16 @@ class OrderCancelledWebhookControllerRestDocsTest {
         @DisplayName("items가 빈 배열이면 400을 반환한다")
         void handleOrderCancelled_EmptyItems_Returns400() throws Exception {
             // given
-            OrderCancelledWebhookRequest request = new OrderCancelledWebhookRequest(
-                    InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
-                    InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_ID,
-                    List.of());
+            OrderCancelledWebhookRequest request =
+                    new OrderCancelledWebhookRequest(
+                            InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_ID,
+                            List.of());
 
             // when & then
             mockMvc.perform(
-                            RestDocumentationRequestBuilders.post(InternalWebhookEndpoints.CANCELLED)
+                            RestDocumentationRequestBuilders.post(
+                                            InternalWebhookEndpoints.CANCELLED)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());

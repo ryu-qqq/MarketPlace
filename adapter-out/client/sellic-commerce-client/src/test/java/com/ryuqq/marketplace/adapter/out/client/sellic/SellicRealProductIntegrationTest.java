@@ -153,7 +153,8 @@ class SellicRealProductIntegrationTest {
 
         String body = httpResponse.body();
         if (body == null || !body.trim().startsWith("{")) {
-            return new SellicApiResponse("error", "HTTP " + httpResponse.statusCode() + ": " + body, null);
+            return new SellicApiResponse(
+                    "error", "HTTP " + httpResponse.statusCode() + ": " + body, null);
         }
         return objectMapper.readValue(body, SellicApiResponse.class);
     }
@@ -164,53 +165,119 @@ class SellicRealProductIntegrationTest {
 
         ProductGroupDetailCompositeQueryResult queryResult =
                 new ProductGroupDetailCompositeQueryResult(
-                        99999L, 25L, "테스트 셀러", 421L, "TESTBRAND",
-                        52L, "테스트 카테고리", "패션의류 > 여성의류 > 티셔츠", "52",
-                        "[테스트] 셀릭 API 연동 테스트 상품", "COMBINATION", "ACTIVE",
-                        now, now, null, null);
+                        99999L,
+                        25L,
+                        "테스트 셀러",
+                        421L,
+                        "TESTBRAND",
+                        52L,
+                        "테스트 카테고리",
+                        "패션의류 > 여성의류 > 티셔츠",
+                        "52",
+                        "[테스트] 셀릭 API 연동 테스트 상품",
+                        "COMBINATION",
+                        "ACTIVE",
+                        now,
+                        now,
+                        null,
+                        null);
 
-        List<ProductGroupImageResult> images = List.of(
-                new ProductGroupImageResult(
-                        1L,
-                        "https://stage-cdn.set-of.com/public/2026/03/019ce630-e584-7c2b-8b1e-1e38864f7f4e.jpg",
-                        "https://stage-cdn.set-of.com/public/2026/03/019ce630-e584-7c2b-8b1e-1e38864f7f4e.jpg",
-                        "THUMBNAIL", 0, List.of()));
+        List<ProductGroupImageResult> images =
+                List.of(
+                        new ProductGroupImageResult(
+                                1L,
+                                "https://stage-cdn.set-of.com/public/2026/03/019ce630-e584-7c2b-8b1e-1e38864f7f4e.jpg",
+                                "https://stage-cdn.set-of.com/public/2026/03/019ce630-e584-7c2b-8b1e-1e38864f7f4e.jpg",
+                                "THUMBNAIL",
+                                0,
+                                List.of()));
 
-        List<SellerOptionGroupResult> optionGroups = List.of(
-                new SellerOptionGroupResult(1L, "사이즈", null, "SELECT", 0,
-                        List.of(
-                                new SellerOptionValueResult(10L, 1L, "S", null, 0),
-                                new SellerOptionValueResult(11L, 1L, "M", null, 1),
-                                new SellerOptionValueResult(12L, 1L, "L", null, 2))),
-                new SellerOptionGroupResult(2L, "색상", null, "SELECT", 1,
-                        List.of(
-                                new SellerOptionValueResult(20L, 2L, "블랙", null, 0),
-                                new SellerOptionValueResult(21L, 2L, "화이트", null, 1))));
+        List<SellerOptionGroupResult> optionGroups =
+                List.of(
+                        new SellerOptionGroupResult(
+                                1L,
+                                "사이즈",
+                                null,
+                                "SELECT",
+                                0,
+                                List.of(
+                                        new SellerOptionValueResult(10L, 1L, "S", null, 0),
+                                        new SellerOptionValueResult(11L, 1L, "M", null, 1),
+                                        new SellerOptionValueResult(12L, 1L, "L", null, 2))),
+                        new SellerOptionGroupResult(
+                                2L,
+                                "색상",
+                                null,
+                                "SELECT",
+                                1,
+                                List.of(
+                                        new SellerOptionValueResult(20L, 2L, "블랙", null, 0),
+                                        new SellerOptionValueResult(21L, 2L, "화이트", null, 1))));
 
-        List<ProductResult> products = List.of(
-                new ProductResult(1001L, 99999L, "SKU-001", 50000, 39000, 39000, 22, 10,
-                        "ACTIVE", 0,
-                        List.of(
-                                new ProductOptionMappingResult(1L, 1001L, 10L, "사이즈", "S"),
-                                new ProductOptionMappingResult(2L, 1001L, 20L, "색상", "블랙")),
-                        now, now),
-                new ProductResult(1002L, 99999L, "SKU-002", 50000, 39000, 39000, 22, 15,
-                        "ACTIVE", 1,
-                        List.of(
-                                new ProductOptionMappingResult(3L, 1002L, 11L, "사이즈", "M"),
-                                new ProductOptionMappingResult(4L, 1002L, 20L, "색상", "블랙")),
-                        now, now),
-                new ProductResult(1003L, 99999L, "SKU-003", 50000, 39000, 39000, 22, 20,
-                        "ACTIVE", 2,
-                        List.of(
-                                new ProductOptionMappingResult(5L, 1003L, 12L, "사이즈", "L"),
-                                new ProductOptionMappingResult(6L, 1003L, 21L, "색상", "화이트")),
-                        now, now));
+        List<ProductResult> products =
+                List.of(
+                        new ProductResult(
+                                1001L,
+                                99999L,
+                                "SKU-001",
+                                50000,
+                                39000,
+                                39000,
+                                22,
+                                10,
+                                "ACTIVE",
+                                0,
+                                List.of(
+                                        new ProductOptionMappingResult(1L, 1001L, 10L, "사이즈", "S"),
+                                        new ProductOptionMappingResult(2L, 1001L, 20L, "색상", "블랙")),
+                                now,
+                                now),
+                        new ProductResult(
+                                1002L,
+                                99999L,
+                                "SKU-002",
+                                50000,
+                                39000,
+                                39000,
+                                22,
+                                15,
+                                "ACTIVE",
+                                1,
+                                List.of(
+                                        new ProductOptionMappingResult(3L, 1002L, 11L, "사이즈", "M"),
+                                        new ProductOptionMappingResult(4L, 1002L, 20L, "색상", "블랙")),
+                                now,
+                                now),
+                        new ProductResult(
+                                1003L,
+                                99999L,
+                                "SKU-003",
+                                50000,
+                                39000,
+                                39000,
+                                22,
+                                20,
+                                "ACTIVE",
+                                2,
+                                List.of(
+                                        new ProductOptionMappingResult(5L, 1003L, 12L, "사이즈", "L"),
+                                        new ProductOptionMappingResult(
+                                                6L, 1003L, 21L, "색상", "화이트")),
+                                now,
+                                now));
 
         return new ProductGroupSyncData(
-                queryResult, images, optionGroups, "ACTIVE", false, products,
+                queryResult,
+                images,
+                optionGroups,
+                "ACTIVE",
+                false,
+                products,
                 Optional.of("<p>셀릭 API 연동 테스트 상품입니다.</p>"),
-                Optional.empty(), Optional.empty(), Optional.empty(), Map.of());
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 
     /** 수정용 테스트 SyncData (상품명, 가격 변경). */
@@ -219,52 +286,118 @@ class SellicRealProductIntegrationTest {
 
         ProductGroupDetailCompositeQueryResult queryResult =
                 new ProductGroupDetailCompositeQueryResult(
-                        99999L, 25L, "테스트 셀러", 421L, "TESTBRAND",
-                        52L, "테스트 카테고리", "패션의류 > 여성의류 > 티셔츠", "52",
-                        "[테스트] 셀릭 API 연동 테스트 상품 (수정됨)", "COMBINATION", "ACTIVE",
-                        now, now, null, null);
+                        99999L,
+                        25L,
+                        "테스트 셀러",
+                        421L,
+                        "TESTBRAND",
+                        52L,
+                        "테스트 카테고리",
+                        "패션의류 > 여성의류 > 티셔츠",
+                        "52",
+                        "[테스트] 셀릭 API 연동 테스트 상품 (수정됨)",
+                        "COMBINATION",
+                        "ACTIVE",
+                        now,
+                        now,
+                        null,
+                        null);
 
-        List<ProductGroupImageResult> images = List.of(
-                new ProductGroupImageResult(
-                        1L,
-                        "https://stage-cdn.set-of.com/public/2026/03/019ce630-e584-7c2b-8b1e-1e38864f7f4e.jpg",
-                        "https://stage-cdn.set-of.com/public/2026/03/019ce630-e584-7c2b-8b1e-1e38864f7f4e.jpg",
-                        "THUMBNAIL", 0, List.of()));
+        List<ProductGroupImageResult> images =
+                List.of(
+                        new ProductGroupImageResult(
+                                1L,
+                                "https://stage-cdn.set-of.com/public/2026/03/019ce630-e584-7c2b-8b1e-1e38864f7f4e.jpg",
+                                "https://stage-cdn.set-of.com/public/2026/03/019ce630-e584-7c2b-8b1e-1e38864f7f4e.jpg",
+                                "THUMBNAIL",
+                                0,
+                                List.of()));
 
-        List<SellerOptionGroupResult> optionGroups = List.of(
-                new SellerOptionGroupResult(1L, "사이즈", null, "SELECT", 0,
-                        List.of(
-                                new SellerOptionValueResult(10L, 1L, "S", null, 0),
-                                new SellerOptionValueResult(11L, 1L, "M", null, 1),
-                                new SellerOptionValueResult(12L, 1L, "L", null, 2))),
-                new SellerOptionGroupResult(2L, "색상", null, "SELECT", 1,
-                        List.of(
-                                new SellerOptionValueResult(20L, 2L, "블랙", null, 0),
-                                new SellerOptionValueResult(21L, 2L, "화이트", null, 1))));
+        List<SellerOptionGroupResult> optionGroups =
+                List.of(
+                        new SellerOptionGroupResult(
+                                1L,
+                                "사이즈",
+                                null,
+                                "SELECT",
+                                0,
+                                List.of(
+                                        new SellerOptionValueResult(10L, 1L, "S", null, 0),
+                                        new SellerOptionValueResult(11L, 1L, "M", null, 1),
+                                        new SellerOptionValueResult(12L, 1L, "L", null, 2))),
+                        new SellerOptionGroupResult(
+                                2L,
+                                "색상",
+                                null,
+                                "SELECT",
+                                1,
+                                List.of(
+                                        new SellerOptionValueResult(20L, 2L, "블랙", null, 0),
+                                        new SellerOptionValueResult(21L, 2L, "화이트", null, 1))));
 
-        List<ProductResult> products = List.of(
-                new ProductResult(1001L, 99999L, "SKU-001", 55000, 42000, 42000, 24, 5,
-                        "ACTIVE", 0,
-                        List.of(
-                                new ProductOptionMappingResult(1L, 1001L, 10L, "사이즈", "S"),
-                                new ProductOptionMappingResult(2L, 1001L, 20L, "색상", "블랙")),
-                        now, now),
-                new ProductResult(1002L, 99999L, "SKU-002", 55000, 42000, 42000, 24, 8,
-                        "ACTIVE", 1,
-                        List.of(
-                                new ProductOptionMappingResult(3L, 1002L, 11L, "사이즈", "M"),
-                                new ProductOptionMappingResult(4L, 1002L, 20L, "색상", "블랙")),
-                        now, now),
-                new ProductResult(1003L, 99999L, "SKU-003", 55000, 42000, 42000, 24, 12,
-                        "ACTIVE", 2,
-                        List.of(
-                                new ProductOptionMappingResult(5L, 1003L, 12L, "사이즈", "L"),
-                                new ProductOptionMappingResult(6L, 1003L, 21L, "색상", "화이트")),
-                        now, now));
+        List<ProductResult> products =
+                List.of(
+                        new ProductResult(
+                                1001L,
+                                99999L,
+                                "SKU-001",
+                                55000,
+                                42000,
+                                42000,
+                                24,
+                                5,
+                                "ACTIVE",
+                                0,
+                                List.of(
+                                        new ProductOptionMappingResult(1L, 1001L, 10L, "사이즈", "S"),
+                                        new ProductOptionMappingResult(2L, 1001L, 20L, "색상", "블랙")),
+                                now,
+                                now),
+                        new ProductResult(
+                                1002L,
+                                99999L,
+                                "SKU-002",
+                                55000,
+                                42000,
+                                42000,
+                                24,
+                                8,
+                                "ACTIVE",
+                                1,
+                                List.of(
+                                        new ProductOptionMappingResult(3L, 1002L, 11L, "사이즈", "M"),
+                                        new ProductOptionMappingResult(4L, 1002L, 20L, "색상", "블랙")),
+                                now,
+                                now),
+                        new ProductResult(
+                                1003L,
+                                99999L,
+                                "SKU-003",
+                                55000,
+                                42000,
+                                42000,
+                                24,
+                                12,
+                                "ACTIVE",
+                                2,
+                                List.of(
+                                        new ProductOptionMappingResult(5L, 1003L, 12L, "사이즈", "L"),
+                                        new ProductOptionMappingResult(
+                                                6L, 1003L, 21L, "색상", "화이트")),
+                                now,
+                                now));
 
         return new ProductGroupSyncData(
-                queryResult, images, optionGroups, "ACTIVE", false, products,
+                queryResult,
+                images,
+                optionGroups,
+                "ACTIVE",
+                false,
+                products,
                 Optional.of("<p>셀릭 API 연동 테스트 상품 (수정됨).</p>"),
-                Optional.empty(), Optional.empty(), Optional.empty(), Map.of());
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 }

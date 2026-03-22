@@ -5,12 +5,10 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.ryuqq.marketplace.adapter.out.persistence.qna.QnaJpaEntityFixtures;
-import com.ryuqq.marketplace.adapter.out.persistence.qna.entity.QnaJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.qna.repository.QnaJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.qna.repository.QnaReplyJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.qnaoutbox.repository.QnaOutboxJpaRepository;
 import com.ryuqq.marketplace.integration.container.ContainerLegacyE2ETestBase;
-import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,13 +20,14 @@ import org.springframework.http.HttpStatus;
 /**
  * 레거시 QnA Query Testcontainers E2E 테스트.
  *
- * <p>MySQL 실제 컨테이너 기반으로 레거시 QnA 조회 API를 검증합니다.
- * H2 기반 LegacyQnAQueryE2ETest의 Testcontainers 전환 버전입니다.
+ * <p>MySQL 실제 컨테이너 기반으로 레거시 QnA 조회 API를 검증합니다. H2 기반 LegacyQnAQueryE2ETest의 Testcontainers 전환
+ * 버전입니다.
  *
  * <p>테스트 대상:
+ *
  * <ul>
- *   <li>LQ1~LQ5: GET /api/v1/legacy/qnas - QnA 목록 조회</li>
- *   <li>LQ6~LQ9: GET /api/v1/legacy/qna/{qnaId} - QnA 단건 상세 조회</li>
+ *   <li>LQ1~LQ5: GET /api/v1/legacy/qnas - QnA 목록 조회
+ *   <li>LQ6~LQ9: GET /api/v1/legacy/qna/{qnaId} - QnA 단건 상세 조회
  * </ul>
  */
 @Tag("e2e")

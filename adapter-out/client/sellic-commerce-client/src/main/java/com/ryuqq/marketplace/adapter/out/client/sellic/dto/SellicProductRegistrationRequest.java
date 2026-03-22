@@ -68,9 +68,7 @@ public record SellicProductRegistrationRequest(
         @JsonProperty("option_name4") String optionName4,
         @JsonProperty("product_stocks") List<SellicProductStock> productStocks) {
 
-    /**
-     * 셀릭 상품 옵션/재고 항목.
-     */
+    /** 셀릭 상품 옵션/재고 항목. */
     public record SellicProductStock(
             @JsonProperty("present_stock") Integer presentStock,
             @JsonProperty("option_item1") String optionItem1,

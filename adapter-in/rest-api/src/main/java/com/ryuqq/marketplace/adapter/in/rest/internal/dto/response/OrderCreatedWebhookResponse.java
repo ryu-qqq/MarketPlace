@@ -16,6 +16,10 @@ public record OrderCreatedWebhookResponse(
 
     public static OrderCreatedWebhookResponse from(InboundOrderPollingResult result) {
         return new OrderCreatedWebhookResponse(
-                result.total(), result.created(), result.pending(), result.duplicated(), result.failed());
+                result.total(),
+                result.created(),
+                result.pending(),
+                result.duplicated(),
+                result.failed());
     }
 }

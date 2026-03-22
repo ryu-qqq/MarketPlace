@@ -7,12 +7,12 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyO
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductFetchResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.dto.response.LegacyProductStatusResponse;
 import com.ryuqq.marketplace.application.legacy.product.dto.command.LegacyUpdatePriceCommand;
-import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
-import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
-import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyOptionMappingResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyProductResult;
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
+import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
+import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,18 +32,25 @@ public class LegacyProductCommandApiMapper {
     /** LegacyCreateOptionRequest 목록 → UpdateProductsCommand. */
     public UpdateProductsCommand toUpdateProductsCommand(
             long productGroupId, List<LegacyCreateOptionRequest> request) {
-        List<UpdateProductsCommand.ProductData> products = request.stream()
-                .map(opt -> new UpdateProductsCommand.ProductData(
-                        opt.productId(),
-                        null,
-                        0,
-                        0,
-                        opt.quantity(),
-                        0,
-                        opt.options().stream()
-                                .map(d -> new SelectedOption(d.optionName(), d.optionValue()))
-                                .toList()))
-                .toList();
+        List<UpdateProductsCommand.ProductData> products =
+                request.stream()
+                        .map(
+                                opt ->
+                                        new UpdateProductsCommand.ProductData(
+                                                opt.productId(),
+                                                null,
+                                                0,
+                                                0,
+                                                opt.quantity(),
+                                                0,
+                                                opt.options().stream()
+                                                        .map(
+                                                                d ->
+                                                                        new SelectedOption(
+                                                                                d.optionName(),
+                                                                                d.optionValue()))
+                                                        .toList()))
+                        .toList();
 
         return new UpdateProductsCommand(productGroupId, List.of(), products);
     }

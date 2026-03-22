@@ -29,7 +29,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         excludeFilters =
                 @org.springframework.context.annotation.ComponentScan.Filter(
                         type = org.springframework.context.annotation.FilterType.REGEX,
-                        pattern = "com\\.ryuqq\\.marketplace\\.adapter\\.out\\.persistence\\.legacy\\..*"))
+                        pattern =
+                                "com\\.ryuqq\\.marketplace\\.adapter\\.out\\.persistence\\.legacy\\..*"))
 public class LegacyApiApplication {
 
     public static void main(String[] args) {

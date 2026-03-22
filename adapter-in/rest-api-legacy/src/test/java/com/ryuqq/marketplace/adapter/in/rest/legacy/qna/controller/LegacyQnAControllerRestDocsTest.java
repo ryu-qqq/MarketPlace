@@ -89,14 +89,21 @@ class LegacyQnAControllerRestDocsTest {
         @DisplayName("QnA ID로 상세 조회 성공")
         void fetchQna_Success() throws Exception {
             // given
-            QnaResult result = new QnaResult(
-                    LegacyQnAApiFixtures.DEFAULT_QNA_ID,
-                    1L, 100L, null,
-                    QnaType.PRODUCT, null,
-                    LegacyQnAApiFixtures.DEFAULT_TITLE,
-                    LegacyQnAApiFixtures.DEFAULT_CONTENT,
-                    "홍길동", QnaStatus.PENDING,
-                    List.of(), Instant.now(), Instant.now());
+            QnaResult result =
+                    new QnaResult(
+                            LegacyQnAApiFixtures.DEFAULT_QNA_ID,
+                            1L,
+                            100L,
+                            null,
+                            QnaType.PRODUCT,
+                            null,
+                            LegacyQnAApiFixtures.DEFAULT_TITLE,
+                            LegacyQnAApiFixtures.DEFAULT_CONTENT,
+                            "홍길동",
+                            QnaStatus.PENDING,
+                            List.of(),
+                            Instant.now(),
+                            Instant.now());
             LegacyDetailQnaResponse response = LegacyQnAApiFixtures.detailQnaResponse();
 
             given(qnaDetailUseCase.execute(anyLong())).willReturn(result);
@@ -244,11 +251,13 @@ class LegacyQnAControllerRestDocsTest {
                                             fieldWithPath("data.answerQnas[].qnaImages")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("답변 이미지 목록"),
-                                            fieldWithPath("data.answerQnas[].qnaImages[].qnaIssueType")
+                                            fieldWithPath(
+                                                            "data.answerQnas[].qnaImages[].qnaIssueType")
                                                     .type(JsonFieldType.STRING)
                                                     .description("이미지 이슈 유형")
                                                     .optional(),
-                                            fieldWithPath("data.answerQnas[].qnaImages[].qnaImageId")
+                                            fieldWithPath(
+                                                            "data.answerQnas[].qnaImages[].qnaImageId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("QnA 이미지 ID")
                                                     .optional(),
@@ -256,14 +265,16 @@ class LegacyQnAControllerRestDocsTest {
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("QnA ID")
                                                     .optional(),
-                                            fieldWithPath("data.answerQnas[].qnaImages[].qnaAnswerId")
+                                            fieldWithPath(
+                                                            "data.answerQnas[].qnaImages[].qnaAnswerId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("QnA 답변 ID")
                                                     .optional(),
                                             fieldWithPath("data.answerQnas[].qnaImages[].imageUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("이미지 URL"),
-                                            fieldWithPath("data.answerQnas[].qnaImages[].displayOrder")
+                                            fieldWithPath(
+                                                            "data.answerQnas[].qnaImages[].displayOrder")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("노출 순서"),
                                             fieldWithPath("data.answerQnas[].insertOperator")
@@ -295,22 +306,40 @@ class LegacyQnAControllerRestDocsTest {
         @DisplayName("QnA 목록 페이징 조회 성공")
         void getQnas_Success() throws Exception {
             // given
-            QnaListResult listResult = new QnaListResult(
-                    List.of(new QnaResult(
-                            LegacyQnAApiFixtures.DEFAULT_QNA_ID,
-                            1L, 100L, null,
-                            QnaType.PRODUCT, null,
-                            LegacyQnAApiFixtures.DEFAULT_TITLE,
-                            LegacyQnAApiFixtures.DEFAULT_CONTENT,
-                            "홍길동", QnaStatus.PENDING,
-                            List.of(), Instant.now(), Instant.now())),
-                    1L, 0, 20);
+            QnaListResult listResult =
+                    new QnaListResult(
+                            List.of(
+                                    new QnaResult(
+                                            LegacyQnAApiFixtures.DEFAULT_QNA_ID,
+                                            1L,
+                                            100L,
+                                            null,
+                                            QnaType.PRODUCT,
+                                            null,
+                                            LegacyQnAApiFixtures.DEFAULT_TITLE,
+                                            LegacyQnAApiFixtures.DEFAULT_CONTENT,
+                                            "홍길동",
+                                            QnaStatus.PENDING,
+                                            List.of(),
+                                            Instant.now(),
+                                            Instant.now())),
+                            1L,
+                            0,
+                            20);
             List<LegacyFetchQnaResponse> responses =
                     List.of(LegacyQnAApiFixtures.fetchQnaResponse());
 
             given(queryApiMapper.toSearchCondition(any(), anyInt()))
-                    .willReturn(new QnaSearchCondition(1L, QnaStatus.PENDING, QnaType.PRODUCT,
-                            null, null, null, null, 20));
+                    .willReturn(
+                            new QnaSearchCondition(
+                                    1L,
+                                    QnaStatus.PENDING,
+                                    QnaType.PRODUCT,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    20));
             given(qnaListUseCase.execute(any(QnaSearchCondition.class))).willReturn(listResult);
             given(queryApiMapper.toFetchResponses(any())).willReturn(responses);
 
@@ -526,8 +555,9 @@ class LegacyQnAControllerRestDocsTest {
             QnaListResult emptyResult = new QnaListResult(List.of(), 0L, 0, 20);
 
             given(queryApiMapper.toSearchCondition(any(), anyInt()))
-                    .willReturn(new QnaSearchCondition(
-                            null, null, QnaType.PRODUCT, null, null, null, null, 20));
+                    .willReturn(
+                            new QnaSearchCondition(
+                                    null, null, QnaType.PRODUCT, null, null, null, null, 20));
             given(qnaListUseCase.execute(any(QnaSearchCondition.class))).willReturn(emptyResult);
             given(queryApiMapper.toFetchResponses(any())).willReturn(List.of());
 
@@ -551,22 +581,24 @@ class LegacyQnAControllerRestDocsTest {
         void replyQna_Success() throws Exception {
             // given
             LegacyCreateQnaAnswerRequest request = LegacyQnAApiFixtures.createAnswerRequest();
-            QnaReplyResult replyResult = new QnaReplyResult(
-                    LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
-                    null,
-                    "답변 내용입니다.",
-                    "SELLER",
-                    QnaReplyType.SELLER_ANSWER,
-                    Instant.now());
+            QnaReplyResult replyResult =
+                    new QnaReplyResult(
+                            LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
+                            null,
+                            "답변 내용입니다.",
+                            "SELLER",
+                            QnaReplyType.SELLER_ANSWER,
+                            Instant.now());
             LegacyCreateQnaAnswerResponse response = LegacyQnAApiFixtures.createQnaAnswerResponse();
 
             given(commandApiMapper.toAnswerCommand(any()))
-                    .willReturn(new AnswerQnaCommand(
-                            LegacyQnAApiFixtures.DEFAULT_QNA_ID,
-                            "답변 제목",
-                            "답변 내용입니다.",
-                            "SELLER",
-                            null));
+                    .willReturn(
+                            new AnswerQnaCommand(
+                                    LegacyQnAApiFixtures.DEFAULT_QNA_ID,
+                                    "답변 제목",
+                                    "답변 내용입니다.",
+                                    "SELLER",
+                                    null));
             given(answerQnaUseCase.execute(any())).willReturn(replyResult);
             given(commandApiMapper.toCreateAnswerResponse(anyLong(), any())).willReturn(response);
 
@@ -674,20 +706,22 @@ class LegacyQnAControllerRestDocsTest {
         void updateReplyQna_Success() throws Exception {
             // given
             LegacyUpdateQnaAnswerRequest request = LegacyQnAApiFixtures.updateAnswerRequest();
-            QnaReplyResult replyResult = new QnaReplyResult(
-                    LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
-                    null,
-                    "수정된 답변 내용입니다.",
-                    "SELLER",
-                    QnaReplyType.SELLER_ANSWER,
-                    Instant.now());
+            QnaReplyResult replyResult =
+                    new QnaReplyResult(
+                            LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
+                            null,
+                            "수정된 답변 내용입니다.",
+                            "SELLER",
+                            QnaReplyType.SELLER_ANSWER,
+                            Instant.now());
             LegacyCreateQnaAnswerResponse response = LegacyQnAApiFixtures.createQnaAnswerResponse();
 
             given(commandApiMapper.toUpdateCommand(any()))
-                    .willReturn(new UpdateQnaReplyCommand(
-                            LegacyQnAApiFixtures.DEFAULT_QNA_ID,
-                            LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
-                            "수정된 답변 내용입니다."));
+                    .willReturn(
+                            new UpdateQnaReplyCommand(
+                                    LegacyQnAApiFixtures.DEFAULT_QNA_ID,
+                                    LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
+                                    "수정된 답변 내용입니다."));
             given(updateQnaReplyUseCase.execute(any())).willReturn(replyResult);
             given(commandApiMapper.toCreateAnswerResponse(anyLong(), any())).willReturn(response);
 

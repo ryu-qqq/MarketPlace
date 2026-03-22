@@ -25,10 +25,20 @@ class NaverCommerceQnaMapperTest {
         void convertsCustomerInquiry() {
             var inquiry =
                     new NaverCustomerInquiry(
-                            100L, "배송", "배송 문의", "언제 도착하나요?",
-                            "2026-03-20T10:00:00", null, null, null,
-                            false, "ORD001", "PROD001", "상품명",
-                            "customer1", "홍길동");
+                            100L,
+                            "배송",
+                            "배송 문의",
+                            "언제 도착하나요?",
+                            "2026-03-20T10:00:00",
+                            null,
+                            null,
+                            null,
+                            false,
+                            "ORD001",
+                            "PROD001",
+                            "상품명",
+                            "customer1",
+                            "홍길동");
 
             ExternalQnaPayload result = sut.toExternalPayload(inquiry);
 
@@ -45,10 +55,8 @@ class NaverCommerceQnaMapperTest {
         void unknownCategoryMappedToEtc() {
             var inquiry =
                     new NaverCustomerInquiry(
-                            200L, "기타문의", "제목", "내용",
-                            null, null, null, null,
-                            false, null, null, null,
-                            null, "작성자");
+                            200L, "기타문의", "제목", "내용", null, null, null, null, false, null, null,
+                            null, null, "작성자");
 
             ExternalQnaPayload result = sut.toExternalPayload(inquiry);
 
@@ -60,10 +68,20 @@ class NaverCommerceQnaMapperTest {
         void refundCategory() {
             var inquiry =
                     new NaverCustomerInquiry(
-                            300L, "반품", "반품 문의", "반품하고 싶어요",
-                            null, null, null, null,
-                            false, null, null, null,
-                            null, "작성자");
+                            300L,
+                            "반품",
+                            "반품 문의",
+                            "반품하고 싶어요",
+                            null,
+                            null,
+                            null,
+                            null,
+                            false,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "작성자");
 
             ExternalQnaPayload result = sut.toExternalPayload(inquiry);
 
@@ -75,10 +93,8 @@ class NaverCommerceQnaMapperTest {
         void exchangeCategory() {
             var inquiry =
                     new NaverCustomerInquiry(
-                            400L, "교환", "교환 문의", "교환 원해요",
-                            null, null, null, null,
-                            false, null, null, null,
-                            null, "작성자");
+                            400L, "교환", "교환 문의", "교환 원해요", null, null, null, null, false, null,
+                            null, null, null, "작성자");
 
             ExternalQnaPayload result = sut.toExternalPayload(inquiry);
 
@@ -95,8 +111,14 @@ class NaverCommerceQnaMapperTest {
         void convertsProductQna() {
             var qna =
                     new NaverProductQna(
-                            500L, 12345L, "테스트 상품", "사이즈 문의입니다",
-                            null, false, "user***", "2026-03-20");
+                            500L,
+                            12345L,
+                            "테스트 상품",
+                            "사이즈 문의입니다",
+                            null,
+                            false,
+                            "user***",
+                            "2026-03-20");
 
             ExternalQnaPayload result = sut.toExternalPayload(qna);
 

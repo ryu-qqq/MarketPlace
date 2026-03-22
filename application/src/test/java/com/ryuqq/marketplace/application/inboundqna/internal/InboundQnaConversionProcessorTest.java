@@ -75,7 +75,9 @@ class InboundQnaConversionProcessorTest {
             sut.convert(inboundQna, externalProductId, null);
 
             // then
-            then(productIdResolver).should().resolve(inboundQna.salesChannelId(), externalProductId);
+            then(productIdResolver)
+                    .should()
+                    .resolve(inboundQna.salesChannelId(), externalProductId);
             then(qnaCommandManager).should().persist(any(Qna.class));
         }
 
@@ -94,7 +96,8 @@ class InboundQnaConversionProcessorTest {
         }
 
         @Test
-        @DisplayName("productIdResolver 조회 실패 시 productGroupId=0으로 qnaCommandManager.persist()를 호출한다")
+        @DisplayName(
+                "productIdResolver 조회 실패 시 productGroupId=0으로 qnaCommandManager.persist()를 호출한다")
         void convert_ProductIdResolutionFails_StillCallsQnaCommandManagerPersist() {
             // given
             InboundQna inboundQna = InboundQnaFixtures.receivedInboundQna(1L);

@@ -37,7 +37,9 @@ class PollExternalQnasServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PollExternalQnasService(List.of(qnaClient), readManager, commandManager, conversionProcessor);
+        sut =
+                new PollExternalQnasService(
+                        List.of(qnaClient), readManager, commandManager, conversionProcessor);
     }
 
     @Nested
@@ -95,7 +97,8 @@ class PollExternalQnasServiceTest {
                             "PRODUCT",
                             "사이즈가 어떻게 되나요?",
                             "구매자A",
-                            null, null,
+                            null,
+                            null,
                             "{\"externalQnaId\":\"EXT-QNA-NEW-001\"}");
 
             given(qnaClient.supports(String.valueOf(salesChannelId))).willReturn(true);
@@ -131,7 +134,8 @@ class PollExternalQnasServiceTest {
                             "PRODUCT",
                             "사이즈가 어떻게 되나요?",
                             "구매자A",
-                            null, null,
+                            null,
+                            null,
                             "{\"externalQnaId\":\"EXT-QNA-001\"}");
 
             given(qnaClient.supports(String.valueOf(salesChannelId))).willReturn(true);
@@ -165,7 +169,8 @@ class PollExternalQnasServiceTest {
                             "PRODUCT",
                             "색상이 몇 가지 있나요?",
                             "구매자B",
-                            null, null,
+                            null,
+                            null,
                             "{\"externalQnaId\":\"EXT-QNA-NEW-001\"}");
             ExternalQnaPayload duplicatePayload =
                     new ExternalQnaPayload(
@@ -173,7 +178,8 @@ class PollExternalQnasServiceTest {
                             "PRODUCT",
                             "사이즈가 어떻게 되나요?",
                             "구매자A",
-                            null, null,
+                            null,
+                            null,
                             "{\"externalQnaId\":\"EXT-QNA-001\"}");
 
             given(qnaClient.supports(String.valueOf(salesChannelId))).willReturn(true);
@@ -218,7 +224,8 @@ class PollExternalQnasServiceTest {
                             "UNKNOWN_TYPE",
                             "배송은 언제 오나요?",
                             "구매자C",
-                            null, null,
+                            null,
+                            null,
                             "{\"externalQnaId\":\"EXT-QNA-UNKNOWN-001\"}");
 
             given(qnaClient.supports(String.valueOf(salesChannelId))).willReturn(true);

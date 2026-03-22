@@ -14,10 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookApiFixtures;
-import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
+import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookApiFixtures;
+import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdrawnWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.response.ClaimSyncWebhookResponse;
 import com.ryuqq.marketplace.adapter.in.rest.internal.mapper.InternalWebhookApiMapper;
@@ -131,10 +131,11 @@ class ReturnWithdrawnWebhookControllerRestDocsTest {
         @DisplayName("externalOrderId가 blank이면 400을 반환한다")
         void handleReturnWithdrawn_BlankOrderId_Returns400() throws Exception {
             // given
-            ReturnWithdrawnWebhookRequest request = new ReturnWithdrawnWebhookRequest(
-                    InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
-                    "",
-                    List.of(InternalWebhookApiFixtures.returnWithdrawnItemRequest()));
+            ReturnWithdrawnWebhookRequest request =
+                    new ReturnWithdrawnWebhookRequest(
+                            InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            "",
+                            List.of(InternalWebhookApiFixtures.returnWithdrawnItemRequest()));
 
             // when & then
             mockMvc.perform(
@@ -149,10 +150,11 @@ class ReturnWithdrawnWebhookControllerRestDocsTest {
         @DisplayName("items가 빈 배열이면 400을 반환한다")
         void handleReturnWithdrawn_EmptyItems_Returns400() throws Exception {
             // given
-            ReturnWithdrawnWebhookRequest request = new ReturnWithdrawnWebhookRequest(
-                    InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
-                    InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_ID,
-                    List.of());
+            ReturnWithdrawnWebhookRequest request =
+                    new ReturnWithdrawnWebhookRequest(
+                            InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_ID,
+                            List.of());
 
             // when & then
             mockMvc.perform(

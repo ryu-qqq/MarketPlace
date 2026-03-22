@@ -70,8 +70,7 @@ class LegacyProductGroupCommandControllerRestDocsTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
-    @MockitoBean
-    private ResolveLegacyProductContextUseCase resolveLegacyProductContextUseCase;
+    @MockitoBean private ResolveLegacyProductContextUseCase resolveLegacyProductContextUseCase;
 
     @MockitoBean
     private LegacyProductGroupFullRegisterUseCase legacyProductGroupFullRegisterUseCase;
@@ -333,7 +332,9 @@ class LegacyProductGroupCommandControllerRestDocsTest {
                             LegacyProductGroupApiFixtures.DEFAULT_REGULAR_PRICE,
                             LegacyProductGroupApiFixtures.DEFAULT_CURRENT_PRICE);
 
-            doNothing().when(legacyProductUpdatePriceUseCase).execute(anyLong(), anyLong(), anyLong());
+            doNothing()
+                    .when(legacyProductUpdatePriceUseCase)
+                    .execute(anyLong(), anyLong(), anyLong());
 
             // when & then
             mockMvc.perform(

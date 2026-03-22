@@ -6,8 +6,7 @@ import java.util.List;
 /**
  * 레거시 상품그룹 등록 번들.
  *
- * <p>Command에서 변환된 raw 데이터를 묶어 Coordinator로 전달합니다.
- * 도메인 객체 생성은 Coordinator 내부에서 처리됩니다.
+ * <p>Command에서 변환된 raw 데이터를 묶어 Coordinator로 전달합니다. 도메인 객체 생성은 Coordinator 내부에서 처리됩니다.
  *
  * @param sellerId 셀러 ID
  * @param brandId 브랜드 ID

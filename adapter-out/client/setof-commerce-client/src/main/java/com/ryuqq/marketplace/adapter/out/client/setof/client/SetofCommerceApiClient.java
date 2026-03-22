@@ -321,8 +321,7 @@ public class SetofCommerceApiClient {
      * <p>PUT /api/v2/admin/image-variants/sync
      */
     public void syncImageVariants(SetofImageVariantSyncRequest request) {
-        log.info(
-                "세토프 커머스 이미지 Variant 동기화 요청: sourceImageId={}", request.sourceImageId());
+        log.info("세토프 커머스 이미지 Variant 동기화 요청: sourceImageId={}", request.sourceImageId());
         executor.execute(
                 () ->
                         restClient
@@ -385,9 +384,7 @@ public class SetofCommerceApiClient {
                 () ->
                         restClient
                                 .post()
-                                .uri(
-                                        "/api/v2/admin/seller-addresses/sellers/{sellerId}",
-                                        sellerId)
+                                .uri("/api/v2/admin/seller-addresses/sellers/{sellerId}", sellerId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -448,9 +445,7 @@ public class SetofCommerceApiClient {
                 () ->
                         restClient
                                 .post()
-                                .uri(
-                                        "/api/v2/admin/sellers/{sellerId}/refund-policies",
-                                        sellerId)
+                                .uri("/api/v2/admin/sellers/{sellerId}/refund-policies", sellerId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -492,9 +487,7 @@ public class SetofCommerceApiClient {
                 () ->
                         restClient
                                 .post()
-                                .uri(
-                                        "/api/v2/admin/sellers/{sellerId}/shipping-policies",
-                                        sellerId)
+                                .uri("/api/v2/admin/sellers/{sellerId}/shipping-policies", sellerId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()

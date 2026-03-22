@@ -23,7 +23,9 @@ public final class OutboxPayloadUtils {
         StringBuilder sb = new StringBuilder("{");
         boolean first = true;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            if (!first) sb.append(",");
+            if (!first) {
+                sb.append(",");
+            }
             sb.append("\"").append(escapeJson(entry.getKey())).append("\":");
             Object value = entry.getValue();
             if (value instanceof String s) {

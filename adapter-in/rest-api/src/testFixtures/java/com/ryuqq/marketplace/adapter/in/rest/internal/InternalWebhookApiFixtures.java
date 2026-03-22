@@ -90,10 +90,7 @@ public final class InternalWebhookApiFixtures {
 
     public static CancelledItemRequest cancelledItemRequest() {
         return new CancelledItemRequest(
-                DEFAULT_EXTERNAL_PRODUCT_ORDER_ID,
-                "고객 변심",
-                "다른 상품으로 구매 예정",
-                1);
+                DEFAULT_EXTERNAL_PRODUCT_ORDER_ID, "고객 변심", "다른 상품으로 구매 예정", 1);
     }
 
     // ===== ReturnRequestedWebhookRequest =====

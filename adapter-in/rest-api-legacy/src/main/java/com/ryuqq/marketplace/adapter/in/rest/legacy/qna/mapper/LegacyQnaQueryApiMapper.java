@@ -24,8 +24,7 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 QnA 조회 API Mapper.
  *
- * <p>표준 QnaResult → 레거시 Response 변환.
- * 부족한 필드는 하드코딩/빈값으로 채움.
+ * <p>표준 QnaResult → 레거시 Response 변환. 부족한 필드는 하드코딩/빈값으로 채움.
  */
 @Component
 public class LegacyQnaQueryApiMapper {
@@ -37,10 +36,10 @@ public class LegacyQnaQueryApiMapper {
     public QnaSearchCondition toSearchCondition(LegacyQnaSearchRequest request, int size) {
         QnaStatus status = parseStatus(request.qnaStatus());
         QnaType qnaType = parseQnaType(request.qnaType());
-        Instant fromDate = request.startDate() != null
-                ? request.startDate().atZone(KST).toInstant() : null;
-        Instant toDate = request.endDate() != null
-                ? request.endDate().atZone(KST).toInstant() : null;
+        Instant fromDate =
+                request.startDate() != null ? request.startDate().atZone(KST).toInstant() : null;
+        Instant toDate =
+                request.endDate() != null ? request.endDate().atZone(KST).toInstant() : null;
 
         return new QnaSearchCondition(
                 request.sellerId(),
@@ -55,29 +54,30 @@ public class LegacyQnaQueryApiMapper {
 
     public LegacyDetailQnaResponse toDetailResponse(QnaResult result) {
         LegacyFetchQnaResponse qna = toFetchResponse(result);
-        Set<LegacyAnswerQnaResponse> answers = result.replies().stream()
-                .filter(r -> r.replyType() == QnaReplyType.SELLER_ANSWER)
-                .map(this::toAnswerResponse)
-                .collect(Collectors.toSet());
+        Set<LegacyAnswerQnaResponse> answers =
+                result.replies().stream()
+                        .filter(r -> r.replyType() == QnaReplyType.SELLER_ANSWER)
+                        .map(this::toAnswerResponse)
+                        .collect(Collectors.toSet());
         return new LegacyDetailQnaResponse(qna, answers);
     }
 
     public LegacyFetchQnaResponse toFetchResponse(QnaResult result) {
-        LegacyQnaContentsResponse contents = new LegacyQnaContentsResponse(
-                nullToEmpty(result.questionTitle()),
-                nullToEmpty(result.questionContent()));
+        LegacyQnaContentsResponse contents =
+                new LegacyQnaContentsResponse(
+                        nullToEmpty(result.questionTitle()), nullToEmpty(result.questionContent()));
 
-        LegacyUserInfoQnaResponse userInfo = new LegacyUserInfoQnaResponse(
-                "", null, nullToEmpty(result.questionAuthor()), "", "", null);
+        LegacyUserInfoQnaResponse userInfo =
+                new LegacyUserInfoQnaResponse(
+                        "", null, nullToEmpty(result.questionAuthor()), "", "", null);
 
         LegacyQnaTargetResponse target;
         if (result.orderId() != null) {
-            target = LegacyQnaTargetResponse.order(
-                    result.productGroupId(), "", "", "",
-                    0L, result.orderId(), "");
+            target =
+                    LegacyQnaTargetResponse.order(
+                            result.productGroupId(), "", "", "", 0L, result.orderId(), "");
         } else {
-            target = LegacyQnaTargetResponse.product(
-                    result.productGroupId(), "", "", "");
+            target = LegacyQnaTargetResponse.product(result.productGroupId(), "", "", "");
         }
 
         return new LegacyFetchQnaResponse(
@@ -100,8 +100,8 @@ public class LegacyQnaQueryApiMapper {
     }
 
     private LegacyAnswerQnaResponse toAnswerResponse(QnaReplyResult reply) {
-        LegacyQnaContentsResponse contents = new LegacyQnaContentsResponse(
-                "", nullToEmpty(reply.content()));
+        LegacyQnaContentsResponse contents =
+                new LegacyQnaContentsResponse("", nullToEmpty(reply.content()));
 
         return new LegacyAnswerQnaResponse(
                 reply.replyId(),

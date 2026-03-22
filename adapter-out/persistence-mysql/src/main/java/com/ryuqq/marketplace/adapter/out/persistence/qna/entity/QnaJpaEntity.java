@@ -110,15 +110,47 @@ public class QnaJpaEntity extends BaseAuditEntity {
         PENDING, ANSWERED, CLOSED
     }
 
-    public Long getId() { return id; }
-    public long getSellerId() { return sellerId; }
-    public long getProductGroupId() { return productGroupId; }
-    public Long getOrderId() { return orderId; }
-    public String getQnaType() { return qnaType; }
-    public long getSalesChannelId() { return salesChannelId; }
-    public String getExternalQnaId() { return externalQnaId; }
-    public String getQuestionTitle() { return questionTitle; }
-    public String getQuestionContent() { return questionContent; }
-    public String getQuestionAuthor() { return questionAuthor; }
-    public Status getStatus() { return status; }
+    public Long getId() {
+        return id;
+    }
+
+    public long getSellerId() {
+        return sellerId;
+    }
+
+    public long getProductGroupId() {
+        return productGroupId;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public String getQnaType() {
+        return qnaType;
+    }
+
+    public long getSalesChannelId() {
+        return salesChannelId;
+    }
+
+    public String getExternalQnaId() {
+        return externalQnaId;
+    }
+
+    public String getQuestionTitle() {
+        return questionTitle;
+    }
+
+    public String getQuestionContent() {
+        return questionContent;
+    }
+
+    public String getQuestionAuthor() {
+        return questionAuthor;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
 }

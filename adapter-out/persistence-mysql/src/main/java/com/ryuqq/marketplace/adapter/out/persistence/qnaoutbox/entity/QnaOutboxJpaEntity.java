@@ -99,19 +99,59 @@ public class QnaOutboxJpaEntity extends BaseAuditEntity {
                 processedAt, errorMessage, version, idempotencyKey);
     }
 
-    public enum Status { PENDING, PROCESSING, COMPLETED, FAILED }
+    public enum Status {
+        PENDING, PROCESSING, COMPLETED, FAILED
+    }
 
-    public Long getId() { return id; }
-    public long getQnaId() { return qnaId; }
-    public long getSalesChannelId() { return salesChannelId; }
-    public String getExternalQnaId() { return externalQnaId; }
-    public String getOutboxType() { return outboxType; }
-    public Status getStatus() { return status; }
-    public String getPayload() { return payload; }
-    public int getRetryCount() { return retryCount; }
-    public int getMaxRetry() { return maxRetry; }
-    public Instant getProcessedAt() { return processedAt; }
-    public String getErrorMessage() { return errorMessage; }
-    public long getVersion() { return version; }
-    public String getIdempotencyKey() { return idempotencyKey; }
+    public Long getId() {
+        return id;
+    }
+
+    public long getQnaId() {
+        return qnaId;
+    }
+
+    public long getSalesChannelId() {
+        return salesChannelId;
+    }
+
+    public String getExternalQnaId() {
+        return externalQnaId;
+    }
+
+    public String getOutboxType() {
+        return outboxType;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public int getRetryCount() {
+        return retryCount;
+    }
+
+    public int getMaxRetry() {
+        return maxRetry;
+    }
+
+    public Instant getProcessedAt() {
+        return processedAt;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public String getIdempotencyKey() {
+        return idempotencyKey;
+    }
 }

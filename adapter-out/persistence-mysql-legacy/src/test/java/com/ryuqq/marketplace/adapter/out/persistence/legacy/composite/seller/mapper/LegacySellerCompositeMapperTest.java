@@ -32,11 +32,24 @@ class LegacySellerCompositeMapperTest {
             // given
             LegacySellerCompositeQueryDto dto =
                     new LegacySellerCompositeQueryDto(
-                            10L, "테스트 셀러", "logo.png", "셀러 설명", 15.5,
-                            "123-45-67890", "테스트 회사", "홍길동", "2025-001",
-                            "06123", "서울시 강남구", "4층",
-                            "국민은행", "1234567890", "홍길동",
-                            "02-1234-5678", "010-1234-5678", "cs@test.com");
+                            10L,
+                            "테스트 셀러",
+                            "logo.png",
+                            "셀러 설명",
+                            15.5,
+                            "123-45-67890",
+                            "테스트 회사",
+                            "홍길동",
+                            "2025-001",
+                            "06123",
+                            "서울시 강남구",
+                            "4층",
+                            "국민은행",
+                            "1234567890",
+                            "홍길동",
+                            "02-1234-5678",
+                            "010-1234-5678",
+                            "cs@test.com");
 
             // when
             SellerAdminCompositeResult result = mapper.toResult(dto);
@@ -74,11 +87,8 @@ class LegacySellerCompositeMapperTest {
             // given
             LegacySellerCompositeQueryDto dto =
                     new LegacySellerCompositeQueryDto(
-                            10L, "셀러", null, null, null,
-                            null, null, null, null,
-                            null, null, null,
-                            null, null, null,
-                            null, null, null);
+                            10L, "셀러", null, null, null, null, null, null, null, null, null, null,
+                            null, null, null, null, null, null);
 
             // when
             SellerAdminCompositeResult result = mapper.toResult(dto);
@@ -97,11 +107,8 @@ class LegacySellerCompositeMapperTest {
             // given
             LegacySellerCompositeQueryDto dto =
                     new LegacySellerCompositeQueryDto(
-                            10L, "셀러", null, null, null,
-                            null, null, null, null,
-                            null, null, null,
-                            null, null, null,
-                            null, null, null);
+                            10L, "셀러", null, null, null, null, null, null, null, null, null, null,
+                            null, null, null, null, null, null);
 
             // when
             SellerAdminCompositeResult result = mapper.toResult(dto);

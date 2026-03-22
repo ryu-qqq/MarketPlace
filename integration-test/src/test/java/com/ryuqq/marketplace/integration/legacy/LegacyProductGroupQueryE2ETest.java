@@ -12,10 +12,11 @@ import org.springframework.http.HttpStatus;
  * <p>테스트 대상: GET /api/v1/legacy/product/group/{productGroupId} - 레거시 상품그룹 상세 조회
  *
  * <p>접근 제어: {@code @PreAuthorize("@legacyAccess.isProductOwnerOrMaster(#productGroupId)")}
+ *
  * <ul>
- *   <li>MASTER 역할: 모든 상품그룹 접근 가능</li>
- *   <li>SELLER 역할: 본인 소유 상품그룹만 접근 가능</li>
- *   <li>미인증: 401 반환</li>
+ *   <li>MASTER 역할: 모든 상품그룹 접근 가능
+ *   <li>SELLER 역할: 본인 소유 상품그룹만 접근 가능
+ *   <li>미인증: 401 반환
  * </ul>
  */
 @Tag("e2e")
@@ -40,12 +41,13 @@ class LegacyProductGroupQueryE2ETest extends LegacyE2ETestBase {
             // when & then
             // MASTER 역할이므로 LegacyAccessChecker.isProductOwnerOrMaster() → true
             // 실제 데이터가 없으므로 UseCase에서 예외 발생 가능하지만 403은 아님
-            int statusCode = givenLegacyAuth()
-                    .when()
-                    .get(PRODUCT_GROUP_URL + "/{productGroupId}", anyProductGroupId)
-                    .then()
-                    .extract()
-                    .statusCode();
+            int statusCode =
+                    givenLegacyAuth()
+                            .when()
+                            .get(PRODUCT_GROUP_URL + "/{productGroupId}", anyProductGroupId)
+                            .then()
+                            .extract()
+                            .statusCode();
 
             // 403(접근 거부)이 아니면 권한 검사 통과
             assert statusCode != HttpStatus.FORBIDDEN.value()

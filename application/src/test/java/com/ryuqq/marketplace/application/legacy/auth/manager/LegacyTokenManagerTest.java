@@ -48,7 +48,8 @@ class LegacyTokenManagerTest {
             assertThat(result.accessToken()).isEqualTo(LegacyAuthFixtures.DEFAULT_ACCESS_TOKEN);
             assertThat(result.refreshToken()).isEqualTo(LegacyAuthFixtures.DEFAULT_REFRESH_TOKEN);
             assertThat(result.email()).isEqualTo(email);
-            assertThat(result.expiresInSeconds()).isEqualTo(LegacyAuthFixtures.DEFAULT_EXPIRES_IN_SECONDS);
+            assertThat(result.expiresInSeconds())
+                    .isEqualTo(LegacyAuthFixtures.DEFAULT_EXPIRES_IN_SECONDS);
             then(tokenClient).should().generateToken(email, sellerId, roleType);
         }
     }

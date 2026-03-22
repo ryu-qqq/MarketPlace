@@ -25,17 +25,17 @@ public class LegacyDeliveryCommandCoordinator {
 
     /** 배송정보 등록 (상품그룹 등록 시 사용). DeliveryCommand → 레거시 도메인 변환 후 저장. */
     public void register(
-            long productGroupId,
-            LegacyRegisterProductGroupCommand.DeliveryCommand command) {
+            long productGroupId, LegacyRegisterProductGroupCommand.DeliveryCommand command) {
         LegacyProductGroupId groupId = LegacyProductGroupId.of(productGroupId);
-        LegacyProductDelivery delivery = new LegacyProductDelivery(
-                command.deliveryArea(),
-                command.deliveryFee(),
-                command.deliveryPeriodAverage(),
-                ReturnMethod.valueOf(command.returnMethodDomestic()),
-                ShipmentCompanyCode.valueOf(command.returnCourierDomestic()),
-                command.returnChargeDomestic(),
-                command.returnExchangeAreaDomestic());
+        LegacyProductDelivery delivery =
+                new LegacyProductDelivery(
+                        command.deliveryArea(),
+                        command.deliveryFee(),
+                        command.deliveryPeriodAverage(),
+                        ReturnMethod.valueOf(command.returnMethodDomestic()),
+                        ShipmentCompanyCode.valueOf(command.returnCourierDomestic()),
+                        command.returnChargeDomestic(),
+                        command.returnExchangeAreaDomestic());
         deliveryCommandManager.persist(groupId, delivery);
     }
 

@@ -6,7 +6,6 @@ import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductOptionEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.repository.LegacyProductOptionJpaRepository;
-import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
@@ -37,9 +36,7 @@ class LegacyProductOptionCommandAdapterTest {
     @InjectMocks private LegacyProductOptionCommandAdapter commandAdapter;
 
     private ProductOptionMapping buildProductOptionMapping() {
-        return ProductOptionMapping.forNew(
-                ProductId.of(1L),
-                SellerOptionValueId.of(100L));
+        return ProductOptionMapping.forNew(ProductId.of(1L), SellerOptionValueId.of(100L));
     }
 
     @Nested

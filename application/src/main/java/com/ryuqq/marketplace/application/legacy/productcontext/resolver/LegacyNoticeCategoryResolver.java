@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 카테고리 ID → NoticeCategory 리졸버.
  *
- * <p>레거시 categoryId → internalCategoryId → NoticeCategory 해석.
- * 매핑 실패 시 CLOTHING 카테고리를 기본값으로 사용합니다.
+ * <p>레거시 categoryId → internalCategoryId → NoticeCategory 해석. 매핑 실패 시 CLOTHING 카테고리를 기본값으로 사용합니다.
  */
 @Component
 public class LegacyNoticeCategoryResolver {

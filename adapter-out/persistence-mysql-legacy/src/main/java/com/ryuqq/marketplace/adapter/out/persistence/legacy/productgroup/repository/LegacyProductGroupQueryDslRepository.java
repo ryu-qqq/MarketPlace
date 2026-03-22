@@ -2,26 +2,26 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.reposi
 
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.QLegacyOptionDetailEntity.legacyOptionDetailEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.QLegacyOptionGroupEntity.legacyOptionGroupEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.QLegacyProductDeliveryEntity.legacyProductDeliveryEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.QLegacyProductEntity.legacyProductEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.QLegacyProductGroupDetailDescriptionEntity.legacyProductGroupDetailDescriptionEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.QLegacyProductGroupEntity.legacyProductGroupEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.QLegacyProductGroupImageEntity.legacyProductGroupImageEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.entity.QLegacyProductNoticeEntity.legacyProductNoticeEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.QLegacyProductOptionEntity.legacyProductOptionEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.QLegacyProductStockEntity.legacyProductStockEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.QLegacyProductDeliveryEntity.legacyProductDeliveryEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.QLegacyProductGroupEntity.legacyProductGroupEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.QLegacyProductGroupDetailDescriptionEntity.legacyProductGroupDetailDescriptionEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.QLegacyProductGroupImageEntity.legacyProductGroupImageEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.entity.QLegacyProductNoticeEntity.legacyProductNoticeEntity;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.LegacyOptionDetailEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.LegacyOptionGroupEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.LegacyProductDeliveryEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyProductGroupDetailDescriptionEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.LegacyProductGroupEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.entity.LegacyProductNoticeEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductOptionEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductStockEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.LegacyProductDeliveryEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.LegacyProductGroupEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyProductGroupDetailDescriptionEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.entity.LegacyProductNoticeEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Qualifier;

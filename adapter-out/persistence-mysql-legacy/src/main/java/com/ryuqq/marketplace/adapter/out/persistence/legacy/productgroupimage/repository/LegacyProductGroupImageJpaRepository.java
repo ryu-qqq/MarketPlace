@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.repository;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

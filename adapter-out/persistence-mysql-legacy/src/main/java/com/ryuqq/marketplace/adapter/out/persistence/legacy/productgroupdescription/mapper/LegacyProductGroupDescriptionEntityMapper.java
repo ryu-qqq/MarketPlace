@@ -24,9 +24,7 @@ public class LegacyProductGroupDescriptionEntityMapper {
                 description.productGroupIdValue(),
                 description.contentValue(),
                 description.cdnPathValue(),
-                description.publishStatus() != null
-                        ? description.publishStatus().name()
-                        : null);
+                description.publishStatus() != null ? description.publishStatus().name() : null);
     }
 
     public LegacyDescriptionImageEntity toImageEntity(DescriptionImage image) {
@@ -43,8 +41,7 @@ public class LegacyProductGroupDescriptionEntityMapper {
     public ProductGroupDescription toDomain(
             LegacyProductGroupDetailDescriptionEntity desc,
             List<LegacyDescriptionImageEntity> imageEntities) {
-        List<DescriptionImage> images =
-                imageEntities.stream().map(this::toImageDomain).toList();
+        List<DescriptionImage> images = imageEntities.stream().map(this::toImageDomain).toList();
 
         return ProductGroupDescription.reconstitute(
                 ProductGroupDescriptionId.of(desc.getProductGroupId()),

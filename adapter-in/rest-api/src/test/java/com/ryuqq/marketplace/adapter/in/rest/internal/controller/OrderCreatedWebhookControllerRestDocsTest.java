@@ -14,13 +14,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCreatedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.response.OrderCreatedWebhookResponse;
 import com.ryuqq.marketplace.adapter.in.rest.internal.mapper.InternalWebhookApiMapper;
-import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
-import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundorder.dto.result.InboundOrderPollingResult;
 import com.ryuqq.marketplace.application.inboundorder.port.in.command.ReceiveOrderCreatedWebhookUseCase;
@@ -227,18 +227,20 @@ class OrderCreatedWebhookControllerRestDocsTest {
         @DisplayName("externalOrderNo가 blank이면 400을 반환한다")
         void handleOrderCreated_BlankOrderNo_Returns400() throws Exception {
             // given
-            OrderCreatedWebhookRequest request = new OrderCreatedWebhookRequest(
-                    InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
-                    InternalWebhookApiFixtures.DEFAULT_SHOP_ID,
-                    "",
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    0,
-                    null,
-                    java.util.List.of(InternalWebhookApiFixtures.orderCreatedItemRequest()));
+            OrderCreatedWebhookRequest request =
+                    new OrderCreatedWebhookRequest(
+                            InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            InternalWebhookApiFixtures.DEFAULT_SHOP_ID,
+                            "",
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            0,
+                            null,
+                            java.util.List.of(
+                                    InternalWebhookApiFixtures.orderCreatedItemRequest()));
 
             // when & then
             mockMvc.perform(
@@ -252,18 +254,19 @@ class OrderCreatedWebhookControllerRestDocsTest {
         @DisplayName("items가 빈 배열이면 400을 반환한다")
         void handleOrderCreated_EmptyItems_Returns400() throws Exception {
             // given
-            OrderCreatedWebhookRequest request = new OrderCreatedWebhookRequest(
-                    InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
-                    InternalWebhookApiFixtures.DEFAULT_SHOP_ID,
-                    InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_NO,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    0,
-                    null,
-                    java.util.List.of());
+            OrderCreatedWebhookRequest request =
+                    new OrderCreatedWebhookRequest(
+                            InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            InternalWebhookApiFixtures.DEFAULT_SHOP_ID,
+                            InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_NO,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            0,
+                            null,
+                            java.util.List.of());
 
             // when & then
             mockMvc.perform(

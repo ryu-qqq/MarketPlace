@@ -5,12 +5,10 @@ import com.ryuqq.marketplace.application.legacy.product.manager.LegacyProductOpt
 import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
 import com.ryuqq.marketplace.application.product.factory.ProductCommandFactory;
 import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
-import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
 import com.ryuqq.marketplace.domain.product.vo.ProductCreationData;
-import com.ryuqq.marketplace.domain.product.vo.SkuCode;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import java.time.Instant;
@@ -22,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 레거시 Product(SKU) Command Coordinator.
  *
- * <p>표준 ProductCommandCoordinator와 동일한 패턴.
- * 옵션 resolve된 SellerOptionValueId를 받아 Product + OptionMapping 저장.
+ * <p>표준 ProductCommandCoordinator와 동일한 패턴. 옵션 resolve된 SellerOptionValueId를 받아 Product +
+ * OptionMapping 저장.
  */
 @Component
 public class LegacyProductCommandCoordinator {

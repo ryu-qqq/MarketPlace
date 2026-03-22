@@ -28,9 +28,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class InternalWebhookApiMapper {
 
-    /**
-     * 주문 생성 요청 → ExternalOrderPayload 변환.
-     */
+    /** 주문 생성 요청 → ExternalOrderPayload 변환. */
     public ExternalOrderPayload toExternalOrderPayload(OrderCreatedWebhookRequest request) {
         List<ExternalOrderItemPayload> items =
                 request.items().stream().map(this::toExternalOrderItemPayload).toList();
@@ -47,28 +45,25 @@ public class InternalWebhookApiMapper {
                 items);
     }
 
-    /**
-     * 취소 요청 → ExternalClaimPayload 목록 변환.
-     */
-    public List<ExternalClaimPayload> toExternalClaimPayloads(OrderCancelledWebhookRequest request) {
+    /** 취소 요청 → ExternalClaimPayload 목록 변환. */
+    public List<ExternalClaimPayload> toExternalClaimPayloads(
+            OrderCancelledWebhookRequest request) {
         return request.items().stream()
                 .map(item -> toCancelClaimPayload(request.externalOrderId(), item))
                 .toList();
     }
 
-    /**
-     * 반품 요청 → ExternalClaimPayload 목록 변환.
-     */
-    public List<ExternalClaimPayload> toExternalClaimPayloads(ReturnRequestedWebhookRequest request) {
+    /** 반품 요청 → ExternalClaimPayload 목록 변환. */
+    public List<ExternalClaimPayload> toExternalClaimPayloads(
+            ReturnRequestedWebhookRequest request) {
         return request.items().stream()
                 .map(item -> toReturnRequestClaimPayload(request.externalOrderId(), item))
                 .toList();
     }
 
-    /**
-     * 반품 철회 → ExternalClaimPayload 목록 변환.
-     */
-    public List<ExternalClaimPayload> toExternalClaimPayloads(ReturnWithdrawnWebhookRequest request) {
+    /** 반품 철회 → ExternalClaimPayload 목록 변환. */
+    public List<ExternalClaimPayload> toExternalClaimPayloads(
+            ReturnWithdrawnWebhookRequest request) {
         return request.items().stream()
                 .map(item -> toReturnWithdrawnClaimPayload(request.externalOrderId(), item))
                 .toList();

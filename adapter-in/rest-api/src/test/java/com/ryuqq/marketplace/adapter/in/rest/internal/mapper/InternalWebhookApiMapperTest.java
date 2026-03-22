@@ -43,8 +43,7 @@ class InternalWebhookApiMapperTest {
             // then
             assertThat(result.externalOrderNo())
                     .isEqualTo(InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_NO);
-            assertThat(result.orderedAt())
-                    .isEqualTo(InternalWebhookApiFixtures.DEFAULT_ORDERED_AT);
+            assertThat(result.orderedAt()).isEqualTo(InternalWebhookApiFixtures.DEFAULT_ORDERED_AT);
             assertThat(result.buyerName()).isEqualTo("홍길동");
             assertThat(result.buyerEmail()).isEqualTo("buyer@example.com");
             assertThat(result.buyerPhone()).isEqualTo("010-1234-5678");
@@ -112,15 +111,17 @@ class InternalWebhookApiMapperTest {
         @DisplayName("여러 취소 아이템이 각각 ExternalClaimPayload로 변환된다")
         void toExternalClaimPayloads_MultipleItems_ReturnsMultiplePayloads() {
             // given
-            List<OrderCancelledWebhookRequest.CancelledItemRequest> items = List.of(
-                    new OrderCancelledWebhookRequest.CancelledItemRequest(
-                            "EXT-PROD-ORDER-001", "고객 변심", null, 1),
-                    new OrderCancelledWebhookRequest.CancelledItemRequest(
-                            "EXT-PROD-ORDER-002", "단순 변심", null, 2));
-            OrderCancelledWebhookRequest request = new OrderCancelledWebhookRequest(
-                    InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
-                    InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_ID,
-                    items);
+            List<OrderCancelledWebhookRequest.CancelledItemRequest> items =
+                    List.of(
+                            new OrderCancelledWebhookRequest.CancelledItemRequest(
+                                    "EXT-PROD-ORDER-001", "고객 변심", null, 1),
+                            new OrderCancelledWebhookRequest.CancelledItemRequest(
+                                    "EXT-PROD-ORDER-002", "단순 변심", null, 2));
+            OrderCancelledWebhookRequest request =
+                    new OrderCancelledWebhookRequest(
+                            InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_ID,
+                            items);
 
             // when
             List<ExternalClaimPayload> result = mapper.toExternalClaimPayloads(request);

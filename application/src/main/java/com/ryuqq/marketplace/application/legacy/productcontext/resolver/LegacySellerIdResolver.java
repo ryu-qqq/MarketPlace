@@ -21,7 +21,8 @@ public class LegacySellerIdResolver {
         return sellerIdMappingQueryPort
                 .findInternalSellerIdByLegacySellerId(legacySellerId)
                 .orElseThrow(
-                        () -> new IllegalStateException(
-                                "레거시 셀러 ID 매핑을 찾을 수 없습니다: " + legacySellerId));
+                        () ->
+                                new IllegalStateException(
+                                        "레거시 셀러 ID 매핑을 찾을 수 없습니다: " + legacySellerId));
     }
 }

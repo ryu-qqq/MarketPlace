@@ -33,8 +33,7 @@ class NaverImageMapperTest {
         @Test
         @DisplayName("THUMBNAIL 타입이 representativeImage로 매핑된다")
         void thumbnailIsRepresentative() {
-            var images = List.of(
-                    imageResult("origin.jpg", "uploaded.jpg", "THUMBNAIL", 1));
+            var images = List.of(imageResult("origin.jpg", "uploaded.jpg", "THUMBNAIL", 1));
 
             Images result = NaverImageMapper.mapImages(images);
 
@@ -45,8 +44,7 @@ class NaverImageMapperTest {
         @Test
         @DisplayName("uploadedUrl이 null이면 originUrl 사용")
         void fallbackToOriginUrl() {
-            var images = List.of(
-                    imageResult("origin.jpg", null, "THUMBNAIL", 1));
+            var images = List.of(imageResult("origin.jpg", null, "THUMBNAIL", 1));
 
             Images result = NaverImageMapper.mapImages(images);
 
@@ -56,9 +54,10 @@ class NaverImageMapperTest {
         @Test
         @DisplayName("THUMBNAIL이 없으면 첫 번째 이미지가 대표 이미지")
         void firstImageAsRepresentativeWhenNoThumbnail() {
-            var images = List.of(
-                    imageResult("detail1.jpg", null, "DETAIL", 1),
-                    imageResult("detail2.jpg", null, "DETAIL", 2));
+            var images =
+                    List.of(
+                            imageResult("detail1.jpg", null, "DETAIL", 1),
+                            imageResult("detail2.jpg", null, "DETAIL", 2));
 
             Images result = NaverImageMapper.mapImages(images);
 
@@ -69,10 +68,11 @@ class NaverImageMapperTest {
         @Test
         @DisplayName("DETAIL 타입은 optionalImages로 매핑된다")
         void detailIsOptional() {
-            var images = List.of(
-                    imageResult("thumb.jpg", null, "THUMBNAIL", 1),
-                    imageResult("detail1.jpg", null, "DETAIL", 2),
-                    imageResult("detail2.jpg", null, "DETAIL", 3));
+            var images =
+                    List.of(
+                            imageResult("thumb.jpg", null, "THUMBNAIL", 1),
+                            imageResult("detail1.jpg", null, "DETAIL", 2),
+                            imageResult("detail2.jpg", null, "DETAIL", 3));
 
             Images result = NaverImageMapper.mapImages(images);
 
@@ -82,8 +82,7 @@ class NaverImageMapperTest {
         @Test
         @DisplayName("옵셔널 이미지가 없으면 null")
         void noOptionalImagesReturnsNull() {
-            var images = List.of(
-                    imageResult("thumb.jpg", null, "THUMBNAIL", 1));
+            var images = List.of(imageResult("thumb.jpg", null, "THUMBNAIL", 1));
 
             Images result = NaverImageMapper.mapImages(images);
 
@@ -98,8 +97,11 @@ class NaverImageMapperTest {
         @Test
         @DisplayName("썸네일 URL이 representativeImage로 매핑된다")
         void thumbnailUrlIsRepresentative() {
-            var resolved = ResolvedExternalImages.of(List.of(
-                    new ResolvedExternalImage("naver-thumb.jpg", ImageType.THUMBNAIL, 1)));
+            var resolved =
+                    ResolvedExternalImages.of(
+                            List.of(
+                                    new ResolvedExternalImage(
+                                            "naver-thumb.jpg", ImageType.THUMBNAIL, 1)));
 
             Images result = NaverImageMapper.mapExternalImages(resolved);
 
@@ -110,10 +112,15 @@ class NaverImageMapperTest {
         @Test
         @DisplayName("상세 이미지 URL이 optionalImages로 매핑된다")
         void detailUrlsAreOptional() {
-            var resolved = ResolvedExternalImages.of(List.of(
-                    new ResolvedExternalImage("naver-thumb.jpg", ImageType.THUMBNAIL, 1),
-                    new ResolvedExternalImage("naver-detail1.jpg", ImageType.DETAIL, 2),
-                    new ResolvedExternalImage("naver-detail2.jpg", ImageType.DETAIL, 3)));
+            var resolved =
+                    ResolvedExternalImages.of(
+                            List.of(
+                                    new ResolvedExternalImage(
+                                            "naver-thumb.jpg", ImageType.THUMBNAIL, 1),
+                                    new ResolvedExternalImage(
+                                            "naver-detail1.jpg", ImageType.DETAIL, 2),
+                                    new ResolvedExternalImage(
+                                            "naver-detail2.jpg", ImageType.DETAIL, 3)));
 
             Images result = NaverImageMapper.mapExternalImages(resolved);
 
@@ -123,8 +130,11 @@ class NaverImageMapperTest {
         @Test
         @DisplayName("썸네일이 없으면 representativeImage는 null")
         void noThumbnailReturnsNullRepresentative() {
-            var resolved = ResolvedExternalImages.of(List.of(
-                    new ResolvedExternalImage("naver-detail.jpg", ImageType.DETAIL, 1)));
+            var resolved =
+                    ResolvedExternalImages.of(
+                            List.of(
+                                    new ResolvedExternalImage(
+                                            "naver-detail.jpg", ImageType.DETAIL, 1)));
 
             Images result = NaverImageMapper.mapExternalImages(resolved);
 

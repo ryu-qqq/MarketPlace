@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * LegacyRegisterProductGroupCommand → LegacyProductRegistrationBundle 변환 팩토리.
  *
- * <p>Command를 경량 엔트리로 분해하여 번들로 조립합니다.
- * 도메인 객체 생성은 Coordinator에서 처리됩니다.
+ * <p>Command를 경량 엔트리로 분해하여 번들로 조립합니다. 도메인 객체 생성은 Coordinator에서 처리됩니다.
  */
 @Component
 public class LegacyProductBundleFactory {

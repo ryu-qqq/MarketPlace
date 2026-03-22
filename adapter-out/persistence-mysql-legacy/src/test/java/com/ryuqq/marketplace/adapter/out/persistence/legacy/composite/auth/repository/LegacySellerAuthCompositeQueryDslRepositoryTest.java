@@ -46,8 +46,8 @@ class LegacySellerAuthCompositeQueryDslRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        repository = new LegacySellerAuthCompositeQueryDslRepository(
-                new JPAQueryFactory(entityManager));
+        repository =
+                new LegacySellerAuthCompositeQueryDslRepository(new JPAQueryFactory(entityManager));
         helper = new LegacyCompositeSellerTestHelper(entityManager);
     }
 
@@ -78,8 +78,7 @@ class LegacySellerAuthCompositeQueryDslRepositoryTest {
         @DisplayName("존재하지 않는 이메일로 조회 시 빈 Optional을 반환합니다")
         void findByEmail_WithNonExistentEmail_ReturnsEmpty() {
             // when
-            Optional<LegacySellerAuthQueryDto> result =
-                    repository.findByEmail("unknown@test.com");
+            Optional<LegacySellerAuthQueryDto> result = repository.findByEmail("unknown@test.com");
 
             // then
             assertThat(result).isEmpty();
@@ -96,8 +95,7 @@ class LegacySellerAuthCompositeQueryDslRepositoryTest {
             helper.flushAndClear();
 
             // when
-            Optional<LegacySellerAuthQueryDto> result =
-                    repository.findByEmail("seller@test.com");
+            Optional<LegacySellerAuthQueryDto> result = repository.findByEmail("seller@test.com");
 
             // then
             assertThat(result).isPresent();
@@ -116,8 +114,7 @@ class LegacySellerAuthCompositeQueryDslRepositoryTest {
             helper.flushAndClear();
 
             // when
-            Optional<LegacySellerAuthQueryDto> result =
-                    repository.findByEmail("pending@test.com");
+            Optional<LegacySellerAuthQueryDto> result = repository.findByEmail("pending@test.com");
 
             // then
             assertThat(result).isPresent();
@@ -138,8 +135,7 @@ class LegacySellerAuthCompositeQueryDslRepositoryTest {
             helper.flushAndClear();
 
             // when
-            Optional<LegacySellerAuthQueryDto> result =
-                    repository.findByEmail("admin2@test.com");
+            Optional<LegacySellerAuthQueryDto> result = repository.findByEmail("admin2@test.com");
 
             // then
             assertThat(result).isPresent();

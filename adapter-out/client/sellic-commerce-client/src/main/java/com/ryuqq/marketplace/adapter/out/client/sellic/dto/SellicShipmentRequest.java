@@ -15,9 +15,7 @@ public record SellicShipmentRequest(
         @JsonProperty("api_key") String apiKey,
         @JsonProperty("ships") List<SellicShipEntry> ships) {
 
-    /**
-     * 개별 송장 항목.
-     */
+    /** 개별 송장 항목. */
     public record SellicShipEntry(
             @JsonProperty("order_id") Integer orderId,
             @JsonProperty("delivery") Integer delivery,

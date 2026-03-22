@@ -155,8 +155,7 @@ class LegacyProductGroupCommandApiMapperTest {
             NoticeCategory noticeCategory = org.mockito.Mockito.mock(NoticeCategory.class);
             org.mockito.BDDMockito.given(noticeCategory.id())
                     .willReturn(com.ryuqq.marketplace.domain.notice.id.NoticeCategoryId.of(1L));
-            given(legacyNoticeCategoryResolver.resolve(anyLong()))
-                    .willReturn(noticeCategory);
+            given(legacyNoticeCategoryResolver.resolve(anyLong())).willReturn(noticeCategory);
 
             // when
             var command = mapper.toNoticeCommand(productGroupId, null);

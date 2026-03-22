@@ -66,11 +66,31 @@ public class QnaReplyJpaEntity {
         return new QnaReplyJpaEntity(id, qnaId, parentReplyId, content, authorName, replyType, createdAt);
     }
 
-    public Long getId() { return id; }
-    public long getQnaId() { return qnaId; }
-    public Long getParentReplyId() { return parentReplyId; }
-    public String getContent() { return content; }
-    public String getAuthorName() { return authorName; }
-    public String getReplyType() { return replyType; }
-    public Instant getCreatedAt() { return createdAt; }
+    public Long getId() {
+        return id;
+    }
+
+    public long getQnaId() {
+        return qnaId;
+    }
+
+    public Long getParentReplyId() {
+        return parentReplyId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public String getReplyType() {
+        return replyType;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }

@@ -18,7 +18,6 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.mapper.LegacyIn
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.mapper.LegacyProductGroupCommandApiMapper;
 import com.ryuqq.marketplace.application.legacy.productcontext.dto.result.LegacyProductContext;
 import com.ryuqq.marketplace.application.legacy.productcontext.port.in.query.ResolveLegacyProductContextUseCase;
-import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductGroupFullRegisterUseCase;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductGroupFullUpdateUseCase;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductMarkOutOfStockUseCase;
@@ -90,8 +89,9 @@ public class LegacyProductGroupCommandController {
     public ResponseEntity<LegacyApiResponse<LegacyCreateProductGroupResponse>>
             registerProductGroupFull(@Valid @RequestBody LegacyCreateProductGroupRequest request) {
 
-        LegacyProductContext context = resolveLegacyProductContextUseCase.resolve(
-                legacyProductGroupCommandApiMapper.toResolveContextCommand(request));
+        LegacyProductContext context =
+                resolveLegacyProductContextUseCase.resolve(
+                        legacyProductGroupCommandApiMapper.toResolveContextCommand(request));
 
         RegisterProductGroupCommand command =
                 legacyProductGroupCommandApiMapper.toRegisterCommand(request, context);
@@ -112,9 +112,10 @@ public class LegacyProductGroupCommandController {
             @Parameter(description = "수정할 상품그룹 ID") @PathVariable long productGroupId,
             @Valid @RequestBody LegacyUpdateProductGroupRequest request) {
 
-        LegacyProductContext context = resolveLegacyProductContextUseCase.resolve(
-                legacyProductGroupCommandApiMapper.toResolveContextCommand(
-                        productGroupId, request));
+        LegacyProductContext context =
+                resolveLegacyProductContextUseCase.resolve(
+                        legacyProductGroupCommandApiMapper.toResolveContextCommand(
+                                productGroupId, request));
 
         legacyProductGroupFullUpdateUseCase.execute(
                 legacyProductGroupCommandApiMapper.toUpdateFullCommand(

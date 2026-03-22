@@ -86,8 +86,7 @@ public class NaverCommerceApiExecutor {
                         .maxAttempts(MAX_ATTEMPTS)
                         .waitDuration(Duration.ofMillis(INITIAL_BACKOFF_MILLIS))
                         .intervalFunction(
-                                attempt ->
-                                        INITIAL_BACKOFF_MILLIS * (long) Math.pow(2, attempt - 1))
+                                attempt -> INITIAL_BACKOFF_MILLIS * (long) Math.pow(2, attempt - 1))
                         .retryExceptions(
                                 NaverCommerceServerException.class,
                                 NaverCommerceRateLimitException.class,

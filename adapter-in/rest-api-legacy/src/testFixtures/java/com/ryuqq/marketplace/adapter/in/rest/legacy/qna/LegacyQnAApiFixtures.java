@@ -48,24 +48,30 @@ public final class LegacyQnAApiFixtures {
 
     public static LegacyQnaSearchRequest searchRequest() {
         return new LegacyQnaSearchRequest(
-                DEFAULT_QNA_STATUS, DEFAULT_QNA_TYPE, "GENERAL", "N",
-                null, 1L, null, null, null);
+                DEFAULT_QNA_STATUS, DEFAULT_QNA_TYPE, "GENERAL", "N", null, 1L, null, null, null);
     }
 
     public static LegacyCreateQnaAnswerRequest createAnswerRequest() {
         return new LegacyCreateQnaAnswerRequest(
                 DEFAULT_QNA_ID,
                 new LegacyQnaContentsRequest("답변 제목", "답변 내용입니다."),
-                List.of(new LegacyQnaImageRequest(
-                        null, DEFAULT_QNA_ID, null, DEFAULT_IMAGE_URL, 1)));
+                List.of(
+                        new LegacyQnaImageRequest(
+                                null, DEFAULT_QNA_ID, null, DEFAULT_IMAGE_URL, 1)));
     }
 
     public static LegacyUpdateQnaAnswerRequest updateAnswerRequest() {
         return new LegacyUpdateQnaAnswerRequest(
-                DEFAULT_QNA_ANSWER_ID, DEFAULT_QNA_ID,
+                DEFAULT_QNA_ANSWER_ID,
+                DEFAULT_QNA_ID,
                 new LegacyQnaContentsRequest("수정된 답변 제목", "수정된 답변 내용입니다."),
-                List.of(new LegacyQnaImageRequest(
-                        101L, DEFAULT_QNA_ID, DEFAULT_QNA_ANSWER_ID, DEFAULT_IMAGE_URL, 1)));
+                List.of(
+                        new LegacyQnaImageRequest(
+                                101L,
+                                DEFAULT_QNA_ID,
+                                DEFAULT_QNA_ANSWER_ID,
+                                DEFAULT_IMAGE_URL,
+                                1)));
     }
 
     // ===== Application Result Fixtures =====
@@ -76,33 +82,52 @@ public final class LegacyQnAApiFixtures {
 
     public static QnaResult qnaResult(long qnaId) {
         return new QnaResult(
-                qnaId, 1L, 100L, null, QnaType.PRODUCT,
+                qnaId,
+                1L,
+                100L,
+                null,
+                QnaType.PRODUCT,
                 new QnaSource(1L, "EXT-QNA-001"),
-                DEFAULT_TITLE, DEFAULT_CONTENT, DEFAULT_AUTHOR,
-                QnaStatus.PENDING, List.of(),
-                DEFAULT_CREATED_AT, DEFAULT_UPDATED_AT);
+                DEFAULT_TITLE,
+                DEFAULT_CONTENT,
+                DEFAULT_AUTHOR,
+                QnaStatus.PENDING,
+                List.of(),
+                DEFAULT_CREATED_AT,
+                DEFAULT_UPDATED_AT);
     }
 
     public static QnaResult qnaResultWithReply(long qnaId) {
         return new QnaResult(
-                qnaId, 1L, 100L, null, QnaType.PRODUCT,
+                qnaId,
+                1L,
+                100L,
+                null,
+                QnaType.PRODUCT,
                 new QnaSource(1L, "EXT-QNA-001"),
-                DEFAULT_TITLE, DEFAULT_CONTENT, DEFAULT_AUTHOR,
-                QnaStatus.ANSWERED, List.of(replyResult()),
-                DEFAULT_CREATED_AT, DEFAULT_UPDATED_AT);
+                DEFAULT_TITLE,
+                DEFAULT_CONTENT,
+                DEFAULT_AUTHOR,
+                QnaStatus.ANSWERED,
+                List.of(replyResult()),
+                DEFAULT_CREATED_AT,
+                DEFAULT_UPDATED_AT);
     }
 
     public static QnaReplyResult replyResult() {
         return new QnaReplyResult(
-                DEFAULT_QNA_ANSWER_ID, null, "답변 내용입니다.",
-                "판매자A", QnaReplyType.SELLER_ANSWER, DEFAULT_CREATED_AT);
+                DEFAULT_QNA_ANSWER_ID,
+                null,
+                "답변 내용입니다.",
+                "판매자A",
+                QnaReplyType.SELLER_ANSWER,
+                DEFAULT_CREATED_AT);
     }
 
     // ===== API Response Fixtures =====
 
     public static LegacyQnaImageResponse qnaImageResponse() {
-        return new LegacyQnaImageResponse(
-                null, 201L, DEFAULT_QNA_ID, null, DEFAULT_IMAGE_URL, 1);
+        return new LegacyQnaImageResponse(null, 201L, DEFAULT_QNA_ID, null, DEFAULT_IMAGE_URL, 1);
     }
 
     public static LegacyFetchQnaResponse fetchQnaResponse() {
@@ -113,7 +138,11 @@ public final class LegacyQnAApiFixtures {
         return new LegacyFetchQnaResponse(
                 qnaId,
                 new LegacyQnaContentsResponse(DEFAULT_TITLE, DEFAULT_CONTENT),
-                "N", DEFAULT_QNA_STATUS, DEFAULT_QNA_TYPE, "GENERAL", "",
+                "N",
+                DEFAULT_QNA_STATUS,
+                DEFAULT_QNA_TYPE,
+                "GENERAL",
+                "",
                 new LegacyUserInfoQnaResponse("", null, DEFAULT_AUTHOR, "", "", null),
                 LegacyQnaTargetResponse.product(100L, "", "", ""),
                 List.of(qnaImageResponse()),
@@ -127,16 +156,22 @@ public final class LegacyQnAApiFixtures {
 
     public static LegacyCreateQnaAnswerResponse createQnaAnswerResponse() {
         return new LegacyCreateQnaAnswerResponse(
-                DEFAULT_QNA_ID, DEFAULT_QNA_ANSWER_ID,
-                "SELLER_ANSWER", "CLOSED",
+                DEFAULT_QNA_ID,
+                DEFAULT_QNA_ANSWER_ID,
+                "SELLER_ANSWER",
+                "CLOSED",
                 List.of(qnaImageResponse()));
     }
 
     public static LegacyAnswerQnaResponse answerQnaResponse() {
         return new LegacyAnswerQnaResponse(
-                DEFAULT_QNA_ANSWER_ID, null, "SELLER",
+                DEFAULT_QNA_ANSWER_ID,
+                null,
+                "SELLER",
                 new LegacyQnaContentsResponse("", "답변 내용입니다."),
-                List.of(qnaImageResponse()), "판매자A", "판매자A",
+                List.of(qnaImageResponse()),
+                "판매자A",
+                "판매자A",
                 LocalDateTime.of(2025, 2, 10, 10, 30, 0),
                 LocalDateTime.of(2025, 2, 10, 10, 30, 0));
     }

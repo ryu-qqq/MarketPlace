@@ -3,11 +3,11 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.ada
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.LegacyProductDeliveryEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.LegacyProductDeliveryEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.repository.LegacyProductDeliveryJpaRepository;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productdelivery.aggregate.LegacyProductDelivery;
+import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ReturnMethod;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ShipmentCompanyCode;
 import org.junit.jupiter.api.DisplayName;

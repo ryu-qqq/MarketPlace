@@ -21,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 레거시 상품그룹 등록 Coordinator.
  *
- * <p>표준 FullProductGroupRegistrationCoordinator와 동일한 패턴.
- * 동일한 Bundle, 동일한 흐름. Port만 레거시입니다.
+ * <p>표준 FullProductGroupRegistrationCoordinator와 동일한 패턴. 동일한 Bundle, 동일한 흐름. Port만 레거시입니다.
  */
 @Component
 public class LegacyProductRegistrationCoordinator {
@@ -56,13 +55,14 @@ public class LegacyProductRegistrationCoordinator {
     public LegacyProductGroupSaveResult register(ProductGroupRegistrationBundle bundle) {
 
         // 1. ProductGroup
-        long regularPrice = bundle.products().isEmpty() ? 0L
-                : bundle.products().getFirst().regularPrice();
-        long currentPrice = bundle.products().isEmpty() ? 0L
-                : bundle.products().getFirst().currentPrice();
+        long regularPrice =
+                bundle.products().isEmpty() ? 0L : bundle.products().getFirst().regularPrice();
+        long currentPrice =
+                bundle.products().isEmpty() ? 0L : bundle.products().getFirst().currentPrice();
 
-        Long productGroupId = productGroupCommandCoordinator.register(
-                bundle.productGroup(), regularPrice, currentPrice);
+        Long productGroupId =
+                productGroupCommandCoordinator.register(
+                        bundle.productGroup(), regularPrice, currentPrice);
 
         // 2. Notice
         noticeCommandManager.register(
@@ -85,12 +85,13 @@ public class LegacyProductRegistrationCoordinator {
                                 productGroupId, bundle.optionType(), bundle.optionGroups()));
 
         // 6. Products → 이름 기반 옵션 resolve 후 등록
-        List<Long> productIds = productCommandCoordinator.registerWithOptionResolve(
-                productGroupId,
-                bundle.products(),
-                bundle.optionGroups(),
-                allOptionValueIds,
-                bundle.createdAt());
+        List<Long> productIds =
+                productCommandCoordinator.registerWithOptionResolve(
+                        productGroupId,
+                        bundle.products(),
+                        bundle.optionGroups(),
+                        allOptionValueIds,
+                        bundle.createdAt());
 
         // 7. ConversionOutbox
         LegacyConversionOutbox outbox =

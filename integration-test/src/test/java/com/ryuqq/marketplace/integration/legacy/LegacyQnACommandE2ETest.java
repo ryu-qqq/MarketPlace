@@ -180,10 +180,14 @@ class LegacyQnACommandE2ETest extends LegacyE2ETestBase {
         @DisplayName("[LC6] ANSWERED QnA의 답변 내용 수정 -> 200, reply content 변경 확인")
         void updateReply_ExistingReply_Returns200AndContentUpdated() {
             var qna = qnaRepository.save(QnaJpaEntityFixtures.answeredEntity());
-            var reply = qnaReplyRepository.save(QnaJpaEntityFixtures.sellerReplyEntity(null, qna.getId()));
+            var reply =
+                    qnaReplyRepository.save(
+                            QnaJpaEntityFixtures.sellerReplyEntity(null, qna.getId()));
 
             givenLegacyAuth()
-                    .body(createUpdateRequest(reply.getId(), qna.getId(), "수정된 답변 제목", "수정된 답변 내용입니다."))
+                    .body(
+                            createUpdateRequest(
+                                    reply.getId(), qna.getId(), "수정된 답변 제목", "수정된 답변 내용입니다."))
                     .when()
                     .put(QNA_REPLY)
                     .then()
@@ -192,10 +196,11 @@ class LegacyQnACommandE2ETest extends LegacyE2ETestBase {
                     .body("data.qnaAnswerId", notNullValue());
 
             // DB 검증: reply content 변경
-            var updatedReply = qnaReplyRepository.findByQnaId(qna.getId()).stream()
-                    .filter(r -> r.getId().equals(reply.getId()))
-                    .findFirst()
-                    .orElseThrow();
+            var updatedReply =
+                    qnaReplyRepository.findByQnaId(qna.getId()).stream()
+                            .filter(r -> r.getId().equals(reply.getId()))
+                            .findFirst()
+                            .orElseThrow();
             assertThat(updatedReply.getContent()).isEqualTo("수정된 답변 내용입니다.");
         }
     }
@@ -258,20 +263,25 @@ class LegacyQnACommandE2ETest extends LegacyE2ETestBase {
     private Map<String, Object> createAnswerRequest(long qnaId, String title, String content) {
         return Map.of(
                 "qnaId", qnaId,
-                "qnaContents", Map.of(
-                        "title", title,
-                        "content", content),
+                "qnaContents",
+                        Map.of(
+                                "title", title,
+                                "content", content),
                 "qnaImages", List.of());
     }
 
     private Map<String, Object> createUpdateRequest(
             long qnaAnswerId, long qnaId, String title, String content) {
         return Map.of(
-                "qnaAnswerId", qnaAnswerId,
-                "qnaId", qnaId,
-                "qnaContents", Map.of(
+                "qnaAnswerId",
+                qnaAnswerId,
+                "qnaId",
+                qnaId,
+                "qnaContents",
+                Map.of(
                         "title", title,
                         "content", content),
-                "qnaImages", List.of());
+                "qnaImages",
+                List.of());
     }
 }

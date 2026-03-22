@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 /**
  * 세토프 커머스 이미지 Variant 동기화 어댑터.
  *
- * <p>이미지 변환 완료 후 Variant 정보를 세토프 Sync API로 동기화합니다. HTTP 호출은 {@link SetofCommerceApiClient}에
- * 위임합니다.
+ * <p>이미지 변환 완료 후 Variant 정보를 세토프 Sync API로 동기화합니다. HTTP 호출은 {@link SetofCommerceApiClient}에 위임합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")

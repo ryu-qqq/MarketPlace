@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Test;
 /**
  * 네이버 실제 API 주문 조회 → Mapper 변환 → ExternalOrderPayload 검증 테스트.
  *
- * <p>실행: {@code NAVER_CLIENT_ID=... NAVER_CLIENT_SECRET=...
- * ./gradlew :adapter-out:client:naver-commerce-client:externalIntegrationTest --tests
+ * <p>실행: {@code NAVER_CLIENT_ID=... NAVER_CLIENT_SECRET=... ./gradlew
+ * :adapter-out:client:naver-commerce-client:externalIntegrationTest --tests
  * "*NaverOrderPollingExternalTest*"}
  */
 @Tag("external-integration")
@@ -70,8 +70,8 @@ class NaverOrderPollingExternalTest {
         List<NaverProductOrderDetail> allDetails = new ArrayList<>();
         int batchSize = 300;
         for (int i = 0; i < productOrderIds.size(); i += batchSize) {
-            List<String> batch = productOrderIds.subList(
-                    i, Math.min(i + batchSize, productOrderIds.size()));
+            List<String> batch =
+                    productOrderIds.subList(i, Math.min(i + batchSize, productOrderIds.size()));
             List<NaverProductOrderDetail> details = queryProductOrders(token, batch);
             allDetails.addAll(details);
         }
@@ -101,11 +101,17 @@ class NaverOrderPollingExternalTest {
             assertThat(order.items()).as("아이템").isNotEmpty();
 
             for (ExternalOrderItemPayload item : order.items()) {
-                System.out.println("    - [" + item.externalProductOrderId() + "] "
-                        + item.externalProductName()
-                        + " | 수량: " + item.quantity()
-                        + " | 결제: " + item.paymentAmount()
-                        + " | 수취인: " + item.receiverName());
+                System.out.println(
+                        "    - ["
+                                + item.externalProductOrderId()
+                                + "] "
+                                + item.externalProductName()
+                                + " | 수량: "
+                                + item.quantity()
+                                + " | 결제: "
+                                + item.paymentAmount()
+                                + " | 수취인: "
+                                + item.receiverName());
 
                 assertThat(item.externalProductOrderId()).as("외부 상품주문 ID").isNotBlank();
                 assertThat(item.quantity()).as("수량").isGreaterThan(0);
@@ -121,29 +127,33 @@ class NaverOrderPollingExternalTest {
 
     // ===== Helper =====
 
-    private List<String> pollChangedProductOrderIds(
-            String token, String fromStr, String toStr) throws Exception {
+    private List<String> pollChangedProductOrderIds(String token, String fromStr, String toStr)
+            throws Exception {
         List<String> allIds = new ArrayList<>();
         String moreSequence = null;
 
         do {
-            StringBuilder uriBuilder = new StringBuilder(
-                    NaverAuthHelper.BASE_URL
-                            + "/v1/pay-order/seller/product-orders/last-changed-statuses"
-                            + "?lastChangedType=PAYED"
-                            + "&lastChangedFrom=" + fromStr
-                            + "&lastChangedTo=" + toStr
-                            + "&limitCount=300");
+            StringBuilder uriBuilder =
+                    new StringBuilder(
+                            NaverAuthHelper.BASE_URL
+                                    + "/v1/pay-order/seller/product-orders/last-changed-statuses"
+                                    + "?lastChangedType=PAYED"
+                                    + "&lastChangedFrom="
+                                    + fromStr
+                                    + "&lastChangedTo="
+                                    + toStr
+                                    + "&limitCount=300");
 
             if (moreSequence != null) {
                 uriBuilder.append("&moreSequence=").append(moreSequence);
             }
 
-            HttpRequest req = HttpRequest.newBuilder()
-                    .uri(URI.create(uriBuilder.toString()))
-                    .header("Authorization", "Bearer " + token)
-                    .GET()
-                    .build();
+            HttpRequest req =
+                    HttpRequest.newBuilder()
+                            .uri(URI.create(uriBuilder.toString()))
+                            .header("Authorization", "Bearer " + token)
+                            .GET()
+                            .build();
 
             HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
 
@@ -164,9 +174,10 @@ class NaverOrderPollingExternalTest {
             }
 
             JsonNode more = data.get("more");
-            moreSequence = (more != null && more.has("moreSequence"))
-                    ? more.get("moreSequence").asText()
-                    : null;
+            moreSequence =
+                    (more != null && more.has("moreSequence"))
+                            ? more.get("moreSequence").asText()
+                            : null;
         } while (moreSequence != null);
 
         return allIds;
@@ -175,16 +186,18 @@ class NaverOrderPollingExternalTest {
     @SuppressWarnings("unchecked")
     private List<NaverProductOrderDetail> queryProductOrders(
             String token, List<String> productOrderIds) throws Exception {
-        String body = objectMapper.writeValueAsString(
-                Map.of("productOrderIds", productOrderIds));
+        String body = objectMapper.writeValueAsString(Map.of("productOrderIds", productOrderIds));
 
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(
-                        NaverAuthHelper.BASE_URL + "/v1/pay-order/seller/product-orders/query"))
-                .header("Authorization", "Bearer " + token)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body))
-                .build();
+        HttpRequest req =
+                HttpRequest.newBuilder()
+                        .uri(
+                                URI.create(
+                                        NaverAuthHelper.BASE_URL
+                                                + "/v1/pay-order/seller/product-orders/query"))
+                        .header("Authorization", "Bearer " + token)
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                        .build();
 
         HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
 

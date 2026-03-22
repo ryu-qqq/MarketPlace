@@ -25,8 +25,8 @@ import org.junit.jupiter.api.TestMethodOrder;
  *
  * <p>테스트 상품 등록 → 주문 폴링 → 발주확인 → 송장등록 → 취소/반품/교환 시나리오를 실제 네이버 API로 검증합니다.
  *
- * <p>실행: {@code NAVER_CLIENT_ID=... NAVER_CLIENT_SECRET=...
- * ./gradlew :adapter-out:client:naver-commerce-client:externalIntegrationTest --tests
+ * <p>실행: {@code NAVER_CLIENT_ID=... NAVER_CLIENT_SECRET=... ./gradlew
+ * :adapter-out:client:naver-commerce-client:externalIntegrationTest --tests
  * "*NaverOmsScenarioTest*"}
  */
 @Tag("external-integration")
@@ -58,52 +58,93 @@ class NaverOmsScenarioTest {
     @DisplayName("1. 테스트 상품 등록 (100원, '테스트 상품 주문하지마세요')")
     void registerTestProduct() throws Exception {
         // 최소 필수 필드로 상품 등록
-        String requestJson = objectMapper.writeValueAsString(Map.of(
-                "originProduct", Map.ofEntries(
-                        Map.entry("statusType", "SALE"),
-                        Map.entry("saleType", "NEW"),
-                        Map.entry("leafCategoryId", String.valueOf(CATEGORY_ID)),
-                        Map.entry("name", "[테스트] OMS 시나리오 테스트 상품 - 주문하지마세요"),
-                        Map.entry("salePrice", 100),
-                        Map.entry("stockQuantity", 999),
-                        Map.entry("images", Map.of(
-                                "representativeImage", Map.of(
-                                        "url", "https://shop-phinf.pstatic.net/20250107_131/1736220241952imrJw_JPEG/20493846848437712_1555581227.jpg"))),
-                        Map.entry("detailContent",
-                                "<p>OMS 시나리오 테스트용 상품입니다. 주문하지 마세요.</p>"),
-                        Map.entry("deliveryInfo", Map.of(
-                                "deliveryType", "DELIVERY",
-                                "deliveryAttributeType", "NORMAL",
-                                "deliveryCompany", "CJGLS",
-                                "deliveryFee", Map.of(
-                                        "deliveryFeeType", "FREE",
-                                        "baseFee", 0),
-                                "claimDeliveryInfo", Map.of(
-                                        "returnDeliveryFee", 3000,
-                                        "exchangeDeliveryFee", 6000))),
-                        Map.entry("detailAttribute", Map.of(
-                                "afterServiceInfo", Map.of(
-                                        "afterServiceTelephoneNumber", "01012345678",
-                                        "afterServiceGuideContent", "테스트용"),
-                                "originAreaInfo", Map.of(
-                                        "originAreaCode", "03",
-                                        "content", "중국"),
-                                "minorPurchasable", false,
-                                "productInfoProvidedNotice", Map.of(
-                                        "productInfoProvidedNoticeType", "ETC",
-                                        "etc", Map.of(
-                                                "returnCostReason", "테스트",
-                                                "noRefundReason", "테스트",
-                                                "qualityAssuranceStandard", "테스트",
-                                                "compensationProcedure", "테스트",
-                                                "troubleShootingContents", "테스트",
-                                                "itemName", "테스트 상품",
-                                                "modelName", "테스트",
-                                                "manufacturer", "테스트 제조사",
-                                                "customerServicePhoneNumber", "01012345678"))))),
-                "smartstoreChannelProduct", Map.of(
-                        "channelProductDisplayStatusType", "ON",
-                        "naverShoppingRegistration", true)));
+        String requestJson =
+                objectMapper.writeValueAsString(
+                        Map.of(
+                                "originProduct",
+                                        Map.ofEntries(
+                                                Map.entry("statusType", "SALE"),
+                                                Map.entry("saleType", "NEW"),
+                                                Map.entry(
+                                                        "leafCategoryId",
+                                                        String.valueOf(CATEGORY_ID)),
+                                                Map.entry(
+                                                        "name", "[테스트] OMS 시나리오 테스트 상품 - 주문하지마세요"),
+                                                Map.entry("salePrice", 100),
+                                                Map.entry("stockQuantity", 999),
+                                                Map.entry(
+                                                        "images",
+                                                        Map.of(
+                                                                "representativeImage",
+                                                                Map.of(
+                                                                        "url",
+                                                                        "https://shop-phinf.pstatic.net/20250107_131/1736220241952imrJw_JPEG/20493846848437712_1555581227.jpg"))),
+                                                Map.entry(
+                                                        "detailContent",
+                                                        "<p>OMS 시나리오 테스트용 상품입니다. 주문하지 마세요.</p>"),
+                                                Map.entry(
+                                                        "deliveryInfo",
+                                                        Map.of(
+                                                                "deliveryType", "DELIVERY",
+                                                                "deliveryAttributeType", "NORMAL",
+                                                                "deliveryCompany", "CJGLS",
+                                                                "deliveryFee",
+                                                                        Map.of(
+                                                                                "deliveryFeeType",
+                                                                                "FREE",
+                                                                                "baseFee",
+                                                                                0),
+                                                                "claimDeliveryInfo",
+                                                                        Map.of(
+                                                                                "returnDeliveryFee",
+                                                                                        3000,
+                                                                                "exchangeDeliveryFee",
+                                                                                        6000))),
+                                                Map.entry(
+                                                        "detailAttribute",
+                                                        Map.of(
+                                                                "afterServiceInfo",
+                                                                        Map.of(
+                                                                                "afterServiceTelephoneNumber",
+                                                                                        "01012345678",
+                                                                                "afterServiceGuideContent",
+                                                                                        "테스트용"),
+                                                                "originAreaInfo",
+                                                                        Map.of(
+                                                                                "originAreaCode",
+                                                                                        "03",
+                                                                                "content", "중국"),
+                                                                "minorPurchasable", false,
+                                                                "productInfoProvidedNotice",
+                                                                        Map.of(
+                                                                                "productInfoProvidedNoticeType",
+                                                                                "ETC",
+                                                                                "etc",
+                                                                                Map.of(
+                                                                                        "returnCostReason",
+                                                                                                "테스트",
+                                                                                        "noRefundReason",
+                                                                                                "테스트",
+                                                                                        "qualityAssuranceStandard",
+                                                                                                "테스트",
+                                                                                        "compensationProcedure",
+                                                                                                "테스트",
+                                                                                        "troubleShootingContents",
+                                                                                                "테스트",
+                                                                                        "itemName",
+                                                                                                "테스트 상품",
+                                                                                        "modelName",
+                                                                                                "테스트",
+                                                                                        "manufacturer",
+                                                                                                "테스트 제조사",
+                                                                                        "customerServicePhoneNumber",
+                                                                                                "01012345678"))))),
+                                "smartstoreChannelProduct",
+                                        Map.of(
+                                                "channelProductDisplayStatusType",
+                                                "ON",
+                                                "naverShoppingRegistration",
+                                                true)));
 
         System.out.println("=== 상품 등록 요청 ===");
 
@@ -135,11 +176,14 @@ class NaverOmsScenarioTest {
         String fromStr = formatForNaver(from);
         String toStr = formatForNaver(now);
 
-        String url = "/v1/pay-order/seller/product-orders/last-changed-statuses"
-                + "?lastChangedType=PAYED"
-                + "&lastChangedFrom=" + java.net.URLEncoder.encode(fromStr, "UTF-8")
-                + "&lastChangedTo=" + java.net.URLEncoder.encode(toStr, "UTF-8")
-                + "&limitCount=50";
+        String url =
+                "/v1/pay-order/seller/product-orders/last-changed-statuses"
+                        + "?lastChangedType=PAYED"
+                        + "&lastChangedFrom="
+                        + java.net.URLEncoder.encode(fromStr, "UTF-8")
+                        + "&lastChangedTo="
+                        + java.net.URLEncoder.encode(toStr, "UTF-8")
+                        + "&limitCount=50";
 
         HttpResponse<String> response = callNaverApi("GET", url, null);
 
@@ -154,9 +198,13 @@ class NaverOmsScenarioTest {
             if (statuses.isArray()) {
                 for (int i = 0; i < Math.min(statuses.size(), 5); i++) {
                     JsonNode s = statuses.get(i);
-                    System.out.println("  - productOrderId: " + s.path("productOrderId").asText()
-                            + " | status: " + s.path("productOrderStatus").asText()
-                            + " | changed: " + s.path("lastChangedType").asText());
+                    System.out.println(
+                            "  - productOrderId: "
+                                    + s.path("productOrderId").asText()
+                                    + " | status: "
+                                    + s.path("productOrderStatus").asText()
+                                    + " | changed: "
+                                    + s.path("lastChangedType").asText());
                 }
             }
         } else {
@@ -181,27 +229,32 @@ class NaverOmsScenarioTest {
         }
 
         // 3-1. 발주확인
-        String confirmJson = objectMapper.writeValueAsString(Map.of(
-                "productOrderIds", List.of(productOrderId)));
+        String confirmJson =
+                objectMapper.writeValueAsString(Map.of("productOrderIds", List.of(productOrderId)));
 
-        HttpResponse<String> confirmResponse = callNaverApi(
-                "POST", "/v1/pay-order/seller/product-orders/confirm", confirmJson);
+        HttpResponse<String> confirmResponse =
+                callNaverApi("POST", "/v1/pay-order/seller/product-orders/confirm", confirmJson);
 
         System.out.println("=== 발주확인 ===");
         System.out.println("Status: " + confirmResponse.statusCode());
         System.out.println("Body: " + confirmResponse.body());
 
         // 3-2. 발송처리 (배송완료된 운송장 사용)
-        String dispatchJson = objectMapper.writeValueAsString(Map.of(
-                "dispatchProductOrders", List.of(Map.of(
-                        "productOrderId", productOrderId,
-                        "deliveryMethod", "DELIVERY",
-                        "deliveryCompanyCode", "CJLOGISTICS",
-                        "trackingNumber", "505836445860",
-                        "dispatchDate", formatForNaver(java.time.Instant.now())))));
+        String dispatchJson =
+                objectMapper.writeValueAsString(
+                        Map.of(
+                                "dispatchProductOrders",
+                                List.of(
+                                        Map.of(
+                                                "productOrderId", productOrderId,
+                                                "deliveryMethod", "DELIVERY",
+                                                "deliveryCompanyCode", "CJLOGISTICS",
+                                                "trackingNumber", "505836445860",
+                                                "dispatchDate",
+                                                        formatForNaver(java.time.Instant.now())))));
 
-        HttpResponse<String> dispatchResponse = callNaverApi(
-                "POST", "/v1/pay-order/seller/product-orders/dispatch", dispatchJson);
+        HttpResponse<String> dispatchResponse =
+                callNaverApi("POST", "/v1/pay-order/seller/product-orders/dispatch", dispatchJson);
 
         System.out.println("=== 발송처리 ===");
         System.out.println("Status: " + dispatchResponse.statusCode());
@@ -219,15 +272,21 @@ class NaverOmsScenarioTest {
             return;
         }
 
-        String cancelJson = objectMapper.writeValueAsString(Map.of(
-                "productOrderId", productOrderId,
-                "cancelReason", Map.of(
-                        "code", "INTENT_CHANGED",
-                        "detailedReason", "OMS 시나리오 테스트 - 판매자 취소")));
+        String cancelJson =
+                objectMapper.writeValueAsString(
+                        Map.of(
+                                "productOrderId",
+                                productOrderId,
+                                "cancelReason",
+                                Map.of(
+                                        "code", "INTENT_CHANGED",
+                                        "detailedReason", "OMS 시나리오 테스트 - 판매자 취소")));
 
-        HttpResponse<String> response = callNaverApi(
-                "POST", "/v1/pay-order/seller/product-orders/"
-                        + productOrderId + "/cancel", cancelJson);
+        HttpResponse<String> response =
+                callNaverApi(
+                        "POST",
+                        "/v1/pay-order/seller/product-orders/" + productOrderId + "/cancel",
+                        cancelJson);
 
         System.out.println("=== 취소 요청 ===");
         System.out.println("Status: " + response.statusCode());
@@ -245,28 +304,42 @@ class NaverOmsScenarioTest {
         System.out.println("[OK] 토큰: " + token.substring(0, 20) + "...");
 
         // 5-2. 판매자 정보 조회
-        HttpResponse<String> sellerResponse = callNaverApi(
-                "GET", "/v1/seller/get", null);
-        System.out.println("[" + (sellerResponse.statusCode() == 200 ? "OK" : "FAIL")
-                + "] 판매자 정보: " + sellerResponse.statusCode());
+        HttpResponse<String> sellerResponse = callNaverApi("GET", "/v1/seller/get", null);
+        System.out.println(
+                "["
+                        + (sellerResponse.statusCode() == 200 ? "OK" : "FAIL")
+                        + "] 판매자 정보: "
+                        + sellerResponse.statusCode());
 
         // 5-3. 상품 목록 조회
-        HttpResponse<String> productResponse = callNaverApi(
-                "GET", "/v2/products/search?page=1&size=1", null);
-        System.out.println("[" + (productResponse.statusCode() == 200 ? "OK" : "FAIL")
-                + "] 상품 조회: " + productResponse.statusCode());
+        HttpResponse<String> productResponse =
+                callNaverApi("GET", "/v2/products/search?page=1&size=1", null);
+        System.out.println(
+                "["
+                        + (productResponse.statusCode() == 200 ? "OK" : "FAIL")
+                        + "] 상품 조회: "
+                        + productResponse.statusCode());
 
         // 5-4. 주문 조회 (조건형)
         String now = formatForNaver(java.time.Instant.now());
-        String weekAgo = formatForNaver(java.time.Instant.now().minus(java.time.Duration.ofDays(7)));
-        HttpResponse<String> orderResponse = callNaverApi(
-                "GET", "/v1/pay-order/seller/product-orders/last-changed-statuses"
-                        + "?lastChangedType=PAYED"
-                        + "&lastChangedFrom=" + java.net.URLEncoder.encode(weekAgo, "UTF-8")
-                        + "&lastChangedTo=" + java.net.URLEncoder.encode(now, "UTF-8")
-                        + "&limitCount=1", null);
-        System.out.println("[" + (orderResponse.statusCode() == 200 ? "OK" : "FAIL")
-                + "] 주문 조회: " + orderResponse.statusCode());
+        String weekAgo =
+                formatForNaver(java.time.Instant.now().minus(java.time.Duration.ofDays(7)));
+        HttpResponse<String> orderResponse =
+                callNaverApi(
+                        "GET",
+                        "/v1/pay-order/seller/product-orders/last-changed-statuses"
+                                + "?lastChangedType=PAYED"
+                                + "&lastChangedFrom="
+                                + java.net.URLEncoder.encode(weekAgo, "UTF-8")
+                                + "&lastChangedTo="
+                                + java.net.URLEncoder.encode(now, "UTF-8")
+                                + "&limitCount=1",
+                        null);
+        System.out.println(
+                "["
+                        + (orderResponse.statusCode() == 200 ? "OK" : "FAIL")
+                        + "] 주문 조회: "
+                        + orderResponse.statusCode());
 
         System.out.println("\n[DONE] API 연결 검증 완료");
     }
@@ -275,9 +348,10 @@ class NaverOmsScenarioTest {
 
     private HttpResponse<String> callNaverApi(String method, String path, String body)
             throws Exception {
-        HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + path))
-                .header("Authorization", "Bearer " + token);
+        HttpRequest.Builder builder =
+                HttpRequest.newBuilder()
+                        .uri(URI.create(BASE_URL + path))
+                        .header("Authorization", "Bearer " + token);
 
         if ("POST".equals(method)) {
             builder.header("Content-Type", "application/json")

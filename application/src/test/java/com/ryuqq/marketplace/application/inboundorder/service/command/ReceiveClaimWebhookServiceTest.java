@@ -36,8 +36,7 @@ class ReceiveClaimWebhookServiceTest {
         void execute_CancelClaimPayloads_DelegatesToCoordinatorAndReturnsResult() {
             // given
             long salesChannelId = 1L;
-            List<ExternalClaimPayload> payloads =
-                    List.of(ClaimSyncFixtures.cancelRequestPayload());
+            List<ExternalClaimPayload> payloads = List.of(ClaimSyncFixtures.cancelRequestPayload());
             ClaimSyncResult expected = ClaimSyncFixtures.resultWithCancel(1, 1);
 
             given(coordinator.syncAll(payloads, salesChannelId)).willReturn(expected);
@@ -57,8 +56,7 @@ class ReceiveClaimWebhookServiceTest {
         void execute_ReturnClaimPayloads_DelegatesToCoordinatorAndReturnsResult() {
             // given
             long salesChannelId = 1L;
-            List<ExternalClaimPayload> payloads =
-                    List.of(ClaimSyncFixtures.returnRequestPayload());
+            List<ExternalClaimPayload> payloads = List.of(ClaimSyncFixtures.returnRequestPayload());
             ClaimSyncResult expected = ClaimSyncFixtures.resultWithRefund(1, 1);
 
             given(coordinator.syncAll(payloads, salesChannelId)).willReturn(expected);
@@ -115,10 +113,11 @@ class ReceiveClaimWebhookServiceTest {
         void execute_MixedClaimPayloads_ReturnsAggregatedResult() {
             // given
             long salesChannelId = 1L;
-            List<ExternalClaimPayload> payloads = List.of(
-                    ClaimSyncFixtures.cancelRequestPayload(),
-                    ClaimSyncFixtures.returnRequestPayload(),
-                    ClaimSyncFixtures.exchangeRequestPayload());
+            List<ExternalClaimPayload> payloads =
+                    List.of(
+                            ClaimSyncFixtures.cancelRequestPayload(),
+                            ClaimSyncFixtures.returnRequestPayload(),
+                            ClaimSyncFixtures.exchangeRequestPayload());
             ClaimSyncResult expected = ClaimSyncFixtures.fullResult(3, 1, 1, 1, 0, 0);
 
             given(coordinator.syncAll(payloads, salesChannelId)).willReturn(expected);

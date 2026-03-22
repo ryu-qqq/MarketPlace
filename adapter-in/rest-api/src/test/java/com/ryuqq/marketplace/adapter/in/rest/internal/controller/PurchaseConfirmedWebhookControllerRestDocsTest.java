@@ -14,10 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookApiFixtures;
-import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
+import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookApiFixtures;
+import com.ryuqq.marketplace.adapter.in.rest.internal.InternalWebhookEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.PurchaseConfirmedWebhookRequest;
 import com.ryuqq.marketplace.application.inboundorder.port.in.command.ReceivePurchaseConfirmedWebhookUseCase;
 import java.util.List;
@@ -45,7 +45,9 @@ class PurchaseConfirmedWebhookControllerRestDocsTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
-    @MockitoBean private ReceivePurchaseConfirmedWebhookUseCase receivePurchaseConfirmedWebhookUseCase;
+    @MockitoBean
+    private ReceivePurchaseConfirmedWebhookUseCase receivePurchaseConfirmedWebhookUseCase;
+
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
     @MockitoBean private MarketAccessChecker accessChecker;
 
@@ -60,9 +62,7 @@ class PurchaseConfirmedWebhookControllerRestDocsTest {
             PurchaseConfirmedWebhookRequest request =
                     InternalWebhookApiFixtures.purchaseConfirmedRequest();
 
-            willDoNothing()
-                    .given(receivePurchaseConfirmedWebhookUseCase)
-                    .execute(anyLong(), any());
+            willDoNothing().given(receivePurchaseConfirmedWebhookUseCase).execute(anyLong(), any());
 
             // when & then
             mockMvc.perform(
@@ -107,10 +107,11 @@ class PurchaseConfirmedWebhookControllerRestDocsTest {
         @DisplayName("externalOrderId가 blank이면 400을 반환한다")
         void handlePurchaseConfirmed_BlankOrderId_Returns400() throws Exception {
             // given
-            PurchaseConfirmedWebhookRequest request = new PurchaseConfirmedWebhookRequest(
-                    InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
-                    "",
-                    List.of(InternalWebhookApiFixtures.purchaseConfirmedItemRequest()));
+            PurchaseConfirmedWebhookRequest request =
+                    new PurchaseConfirmedWebhookRequest(
+                            InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            "",
+                            List.of(InternalWebhookApiFixtures.purchaseConfirmedItemRequest()));
 
             // when & then
             mockMvc.perform(
@@ -125,10 +126,11 @@ class PurchaseConfirmedWebhookControllerRestDocsTest {
         @DisplayName("items가 빈 배열이면 400을 반환한다")
         void handlePurchaseConfirmed_EmptyItems_Returns400() throws Exception {
             // given
-            PurchaseConfirmedWebhookRequest request = new PurchaseConfirmedWebhookRequest(
-                    InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
-                    InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_ID,
-                    List.of());
+            PurchaseConfirmedWebhookRequest request =
+                    new PurchaseConfirmedWebhookRequest(
+                            InternalWebhookApiFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            InternalWebhookApiFixtures.DEFAULT_EXTERNAL_ORDER_ID,
+                            List.of());
 
             // when & then
             mockMvc.perform(

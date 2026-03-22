@@ -100,7 +100,8 @@ class GetQnaListServiceTest {
         @DisplayName("검색 조건으로 조회 시 size를 limit으로 사용한다")
         void execute_ByCondition_UsesConditionSizeAsLimit() {
             // given
-            QnaSearchCondition condition = QnaQueryFixtures.searchCondition(1L, QnaStatus.PENDING, 15);
+            QnaSearchCondition condition =
+                    QnaQueryFixtures.searchCondition(1L, QnaStatus.PENDING, 15);
             given(readManager.search(condition)).willReturn(List.of());
             given(readManager.countByCondition(condition)).willReturn(0L);
 

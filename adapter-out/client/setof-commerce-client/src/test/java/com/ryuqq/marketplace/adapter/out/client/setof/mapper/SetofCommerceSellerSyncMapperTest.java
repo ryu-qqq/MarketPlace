@@ -10,7 +10,6 @@ import com.ryuqq.marketplace.domain.refundpolicy.RefundPolicyFixtures;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.seller.SellerFixtures;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
-import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.selleraddress.SellerAddressFixtures;
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddress;
 import com.ryuqq.marketplace.domain.shippingpolicy.ShippingPolicyFixtures;

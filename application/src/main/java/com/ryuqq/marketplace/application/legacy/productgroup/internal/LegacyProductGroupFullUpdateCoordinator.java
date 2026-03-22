@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 레거시 상품그룹 전체 수정 Coordinator.
  *
- * <p>표준 ProductGroupUpdateBundle을 받아 soft delete + 재등록 패턴으로 처리합니다.
- * Update 타입을 Register 타입으로 변환하여 하위 Coordinator에 위임합니다.
+ * <p>표준 ProductGroupUpdateBundle을 받아 soft delete + 재등록 패턴으로 처리합니다. Update 타입을 Register 타입으로 변환하여 하위
+ * Coordinator에 위임합니다.
  */
 @Component
 public class LegacyProductGroupFullUpdateCoordinator {
@@ -57,10 +57,14 @@ public class LegacyProductGroupFullUpdateCoordinator {
         long productGroupId = bundle.basicInfoUpdateData().productGroupId().value();
 
         // 1. ProductGroup 기본정보
-        long regularPrice = bundle.productEntries().isEmpty() ? 0L
-                : bundle.productEntries().getFirst().regularPrice();
-        long currentPrice = bundle.productEntries().isEmpty() ? 0L
-                : bundle.productEntries().getFirst().currentPrice();
+        long regularPrice =
+                bundle.productEntries().isEmpty()
+                        ? 0L
+                        : bundle.productEntries().getFirst().regularPrice();
+        long currentPrice =
+                bundle.productEntries().isEmpty()
+                        ? 0L
+                        : bundle.productEntries().getFirst().currentPrice();
 
         productGroupCommandCoordinator.update(
                 bundle.basicInfoUpdateData(), regularPrice, currentPrice);
@@ -71,8 +75,10 @@ public class LegacyProductGroupFullUpdateCoordinator {
                         productGroupId,
                         bundle.noticeCommand().noticeCategoryId(),
                         bundle.noticeCommand().entries().stream()
-                                .map(e -> new RegisterProductNoticeCommand.NoticeEntryCommand(
-                                        e.noticeFieldId(), e.fieldValue()))
+                                .map(
+                                        e ->
+                                                new RegisterProductNoticeCommand.NoticeEntryCommand(
+                                                        e.noticeFieldId(), e.fieldValue()))
                                 .toList()));
 
         // 3. Description
@@ -105,16 +111,22 @@ public class LegacyProductGroupFullUpdateCoordinator {
             long productGroupId, UpdateSellerOptionGroupsCommand updateCmd) {
         List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> groups =
                 updateCmd.optionGroups().stream()
-                        .map(g -> new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
-                                g.optionGroupName(),
-                                g.canonicalOptionGroupId(),
-                                g.inputType(),
-                                g.optionValues().stream()
-                                        .map(v -> new RegisterSellerOptionGroupsCommand.OptionValueCommand(
-                                                v.optionValueName(),
-                                                v.canonicalOptionValueId(),
-                                                v.sortOrder()))
-                                        .toList()))
+                        .map(
+                                g ->
+                                        new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
+                                                g.optionGroupName(),
+                                                g.canonicalOptionGroupId(),
+                                                g.inputType(),
+                                                g.optionValues().stream()
+                                                        .map(
+                                                                v ->
+                                                                        new RegisterSellerOptionGroupsCommand
+                                                                                .OptionValueCommand(
+                                                                                v.optionValueName(),
+                                                                                v
+                                                                                        .canonicalOptionValueId(),
+                                                                                v.sortOrder()))
+                                                        .toList()))
                         .toList();
         return new RegisterSellerOptionGroupsCommand(productGroupId, "COMBINATION", groups);
     }
@@ -122,13 +134,15 @@ public class LegacyProductGroupFullUpdateCoordinator {
     private List<RegisterProductsCommand.ProductData> toProductDataList(
             List<ProductDiffUpdateEntry> entries) {
         return entries.stream()
-                .map(e -> new RegisterProductsCommand.ProductData(
-                        e.skuCode(),
-                        e.regularPrice(),
-                        e.currentPrice(),
-                        e.stockQuantity(),
-                        e.sortOrder(),
-                        e.selectedOptions()))
+                .map(
+                        e ->
+                                new RegisterProductsCommand.ProductData(
+                                        e.skuCode(),
+                                        e.regularPrice(),
+                                        e.currentPrice(),
+                                        e.stockQuantity(),
+                                        e.sortOrder(),
+                                        e.selectedOptions()))
                 .toList();
     }
 }

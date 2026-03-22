@@ -90,9 +90,19 @@ class SellicOrderPollingE2ETest extends E2ETestBase {
 
         shopRepository.save(
                 ShopJpaEntity.create(
-                        null, savedChannelId, "셀릭", "sellic-default", "ACTIVE",
-                        "SELLIC", "test-api-key", null, null, "1012",
-                        now, now, null));
+                        null,
+                        savedChannelId,
+                        "셀릭",
+                        "sellic-default",
+                        "ACTIVE",
+                        "SELLIC",
+                        "test-api-key",
+                        null,
+                        null,
+                        "1012",
+                        now,
+                        now,
+                        null));
     }
 
     @Test
@@ -119,8 +129,11 @@ class SellicOrderPollingE2ETest extends E2ETestBase {
         assertThat(inboundItems).as("InboundOrderItem이 생성되어야 한다").isNotEmpty();
 
         for (InboundOrderItemJpaEntity item : inboundItems) {
-            System.out.println("  - externalProductOrderId: " + item.getExternalProductOrderId()
-                    + ", productName: " + item.getExternalProductName());
+            System.out.println(
+                    "  - externalProductOrderId: "
+                            + item.getExternalProductOrderId()
+                            + ", productName: "
+                            + item.getExternalProductName());
         }
 
         // Order 변환 여부 확인 (상품 매핑이 없으면 PENDING_MAPPING 상태)
@@ -152,44 +165,87 @@ class SellicOrderPollingE2ETest extends E2ETestBase {
         assertThat(secondCount).as("재폴링 시 InboundOrder 증가하면 안 된다").isEqualTo(firstCount);
     }
 
-    /**
-     * 셀릭 API 실제 응답 기반 Mock 주문 데이터 (2026-03-21 조회).
-     */
+    /** 셀릭 API 실제 응답 기반 Mock 주문 데이터 (2026-03-21 조회). */
     private List<ExternalOrderPayload> buildSellicMockOrders() {
         Instant orderedAt = Instant.parse("2026-03-19T02:50:49Z");
 
         ExternalOrderPayload order1 =
                 new ExternalOrderPayload(
-                        "2026031994396341", orderedAt,
-                        "하경훈", null, "010-9450-8522", null, 12900, orderedAt,
-                        List.of(new ExternalOrderItemPayload(
-                                "75236646", "1599405", null,
-                                "[고스티] 주토피아 - 주디 - 교통경찰 카드커버",
-                                "DEFAULT_ONE: Without Chip", null,
-                                14900, 1, 14900, 2000, 12900,
-                                "하경훈", "010-9450-8522", "42278",
-                                "대구광역시 수성구 달구벌대로 3280", null, null)));
+                        "2026031994396341",
+                        orderedAt,
+                        "하경훈",
+                        null,
+                        "010-9450-8522",
+                        null,
+                        12900,
+                        orderedAt,
+                        List.of(
+                                new ExternalOrderItemPayload(
+                                        "75236646",
+                                        "1599405",
+                                        null,
+                                        "[고스티] 주토피아 - 주디 - 교통경찰 카드커버",
+                                        "DEFAULT_ONE: Without Chip",
+                                        null,
+                                        14900,
+                                        1,
+                                        14900,
+                                        2000,
+                                        12900,
+                                        "하경훈",
+                                        "010-9450-8522",
+                                        "42278",
+                                        "대구광역시 수성구 달구벌대로 3280",
+                                        null,
+                                        null)));
 
         ExternalOrderPayload order2 =
                 new ExternalOrderPayload(
-                        "2026032012345678", Instant.parse("2026-03-20T05:30:00Z"),
-                        "김테스트", null, "010-1234-5678", null, 45000,
+                        "2026032012345678",
+                        Instant.parse("2026-03-20T05:30:00Z"),
+                        "김테스트",
+                        null,
+                        "010-1234-5678",
+                        null,
+                        45000,
                         Instant.parse("2026-03-20T05:31:00Z"),
                         List.of(
                                 new ExternalOrderItemPayload(
-                                        "75236700", "1599500", null,
+                                        "75236700",
+                                        "1599500",
+                                        null,
                                         "[테스트] 디즈니 미키마우스 폰케이스",
-                                        "색상: 블랙", null,
-                                        25000, 1, 25000, 0, 25000,
-                                        "김테스트", "010-1234-5678", "06234",
-                                        "서울시 강남구 테헤란로 123", "4층", "문 앞에 놔주세요"),
+                                        "색상: 블랙",
+                                        null,
+                                        25000,
+                                        1,
+                                        25000,
+                                        0,
+                                        25000,
+                                        "김테스트",
+                                        "010-1234-5678",
+                                        "06234",
+                                        "서울시 강남구 테헤란로 123",
+                                        "4층",
+                                        "문 앞에 놔주세요"),
                                 new ExternalOrderItemPayload(
-                                        "75236701", "1599501", null,
+                                        "75236701",
+                                        "1599501",
+                                        null,
                                         "[테스트] 디즈니 미니마우스 에어팟케이스",
-                                        "색상: 화이트", null,
-                                        20000, 1, 20000, 0, 20000,
-                                        "김테스트", "010-1234-5678", "06234",
-                                        "서울시 강남구 테헤란로 123", "4층", "문 앞에 놔주세요")));
+                                        "색상: 화이트",
+                                        null,
+                                        20000,
+                                        1,
+                                        20000,
+                                        0,
+                                        20000,
+                                        "김테스트",
+                                        "010-1234-5678",
+                                        "06234",
+                                        "서울시 강남구 테헤란로 123",
+                                        "4층",
+                                        "문 앞에 놔주세요")));
 
         return List.of(order1, order2);
     }

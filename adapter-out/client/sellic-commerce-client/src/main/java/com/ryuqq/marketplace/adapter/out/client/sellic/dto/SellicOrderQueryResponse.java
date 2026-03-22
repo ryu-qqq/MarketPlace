@@ -18,9 +18,7 @@ public record SellicOrderQueryResponse(
         return "success".equalsIgnoreCase(result);
     }
 
-    /**
-     * 셀릭 주문 개별 데이터.
-     */
+    /** 셀릭 주문 개별 데이터. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record SellicOrderData(
             @JsonProperty("IDX") Integer idx,

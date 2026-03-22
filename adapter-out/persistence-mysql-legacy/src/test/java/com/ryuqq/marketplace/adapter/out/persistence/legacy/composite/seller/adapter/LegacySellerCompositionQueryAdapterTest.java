@@ -37,11 +37,24 @@ class LegacySellerCompositionQueryAdapterTest {
 
     private LegacySellerCompositeQueryDto buildDto(long sellerId) {
         return new LegacySellerCompositeQueryDto(
-                sellerId, "테스트 셀러", "logo.png", "설명", 10.0,
-                "123-45-67890", "테스트 회사", "홍길동", "2025-001",
-                "06123", "서울시 강남구", "4층",
-                "국민은행", "1234567890", "홍길동",
-                "02-1234-5678", "010-1234-5678", "cs@test.com");
+                sellerId,
+                "테스트 셀러",
+                "logo.png",
+                "설명",
+                10.0,
+                "123-45-67890",
+                "테스트 회사",
+                "홍길동",
+                "2025-001",
+                "06123",
+                "서울시 강남구",
+                "4층",
+                "국민은행",
+                "1234567890",
+                "홍길동",
+                "02-1234-5678",
+                "010-1234-5678",
+                "cs@test.com");
     }
 
     private SellerAdminCompositeResult buildResult(long sellerId) {
@@ -49,14 +62,30 @@ class LegacySellerCompositionQueryAdapterTest {
                 new SellerAdminCompositeResult.SellerInfo(
                         sellerId, "테스트 셀러", "테스트 셀러", "logo.png", "설명", true, null, null),
                 new SellerAdminCompositeResult.BusinessInfo(
-                        sellerId, "123-45-67890", "테스트 회사", "홍길동", "2025-001",
-                        "06123", "서울시 강남구", "4층"),
+                        sellerId,
+                        "123-45-67890",
+                        "테스트 회사",
+                        "홍길동",
+                        "2025-001",
+                        "06123",
+                        "서울시 강남구",
+                        "4층"),
                 new SellerAdminCompositeResult.CsInfo(
                         sellerId, "02-1234-5678", "010-1234-5678", "cs@test.com", "", "", "", ""),
                 new SellerAdminCompositeResult.ContractInfo(
                         sellerId, BigDecimal.TEN, null, null, "", "", null, null),
                 new SellerAdminCompositeResult.SettlementInfo(
-                        sellerId, "", "국민은행", "1234567890", "홍길동", "", null, false, null, null, null));
+                        sellerId,
+                        "",
+                        "국민은행",
+                        "1234567890",
+                        "홍길동",
+                        "",
+                        null,
+                        false,
+                        null,
+                        null,
+                        null));
     }
 
     @Nested
@@ -75,8 +104,7 @@ class LegacySellerCompositionQueryAdapterTest {
             given(mapper.toResult(dto)).willReturn(expectedResult);
 
             // when
-            Optional<SellerAdminCompositeResult> result =
-                    adapter.findAdminCompositeById(sellerId);
+            Optional<SellerAdminCompositeResult> result = adapter.findAdminCompositeById(sellerId);
 
             // then
             assertThat(result).isPresent();

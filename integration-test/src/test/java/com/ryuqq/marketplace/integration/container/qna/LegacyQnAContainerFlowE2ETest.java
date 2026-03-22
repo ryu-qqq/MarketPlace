@@ -25,16 +25,17 @@ import org.springframework.http.HttpStatus;
 /**
  * 레거시 QnA 전체 플로우 Testcontainers E2E 테스트.
  *
- * <p>MySQL 실제 컨테이너 기반으로 레거시 QnA 전체 라이프사이클을 검증합니다.
- * H2 기반 LegacyQnAFlowE2ETest의 Testcontainers 전환 버전입니다.
+ * <p>MySQL 실제 컨테이너 기반으로 레거시 QnA 전체 라이프사이클을 검증합니다. H2 기반 LegacyQnAFlowE2ETest의 Testcontainers 전환
+ * 버전입니다.
  *
  * <p>테스트 대상:
+ *
  * <ul>
- *   <li>FLOW-1: 시딩 → 목록 조회 → 답변 등록 → 상세 조회로 답변 확인</li>
- *   <li>FLOW-2: 다건 QnA 생성 → 각각 답변 → 목록 재조회로 ANSWERED 확인</li>
- *   <li>FLOW-3: 답변 등록 → Outbox 확인 → 답변 수정 → 수정 내용 확인</li>
- *   <li>FLOW-4: 다양한 QnA 타입 생성 → 목록 조회로 전체 확인</li>
- *   <li>FLOW-5: 목록 페이징 + totalCount 정합성</li>
+ *   <li>FLOW-1: 시딩 → 목록 조회 → 답변 등록 → 상세 조회로 답변 확인
+ *   <li>FLOW-2: 다건 QnA 생성 → 각각 답변 → 목록 재조회로 ANSWERED 확인
+ *   <li>FLOW-3: 답변 등록 → Outbox 확인 → 답변 수정 → 수정 내용 확인
+ *   <li>FLOW-4: 다양한 QnA 타입 생성 → 목록 조회로 전체 확인
+ *   <li>FLOW-5: 목록 페이징 + totalCount 정합성
  * </ul>
  */
 @Tag("e2e")
@@ -68,7 +69,8 @@ class LegacyQnAContainerFlowE2ETest extends ContainerLegacyE2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[FLOW-1] QnA DB 시딩 → 목록 조회 PENDING 확인 → 답변 등록 → 상세 조회 ANSWERED + answerQnas 확인")
+        @DisplayName(
+                "[FLOW-1] QnA DB 시딩 → 목록 조회 PENDING 확인 → 답변 등록 → 상세 조회 ANSWERED + answerQnas 확인")
         void qnaFullLifecycle_SeedToAnswer_AllStepsVerified() {
             var qna = qnaRepository.save(QnaJpaEntityFixtures.pendingEntity());
 
@@ -166,15 +168,16 @@ class LegacyQnAContainerFlowE2ETest extends ContainerLegacyE2ETestBase {
         void answerQna_ThenUpdate_ContentUpdated() {
             var qna = qnaRepository.save(QnaJpaEntityFixtures.pendingEntity());
 
-            long qnaAnswerId = givenLegacyAuth()
-                    .body(createAnswerRequest(qna.getId(), "1차 답변 제목", "1차 답변 내용입니다."))
-                    .when()
-                    .post(QNA_REPLY)
-                    .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .extract()
-                    .jsonPath()
-                    .getLong("data.qnaAnswerId");
+            long qnaAnswerId =
+                    givenLegacyAuth()
+                            .body(createAnswerRequest(qna.getId(), "1차 답변 제목", "1차 답변 내용입니다."))
+                            .when()
+                            .post(QNA_REPLY)
+                            .then()
+                            .statusCode(HttpStatus.OK.value())
+                            .extract()
+                            .jsonPath()
+                            .getLong("data.qnaAnswerId");
 
             List<QnaOutboxJpaEntity> outboxes = qnaOutboxRepository.findAll();
             assertThat(outboxes).hasSize(1);
@@ -203,23 +206,53 @@ class LegacyQnAContainerFlowE2ETest extends ContainerLegacyE2ETestBase {
         @DisplayName("[FLOW-4] PRODUCT/SHIPPING/ORDER 타입 QnA 각 1건 생성 → DB qnaType 다양성 확인")
         void multipleQnaTypes_CreateAndSearch_ReturnsAll() {
             Instant now = Instant.now();
-            qnaRepository.save(QnaJpaEntity.create(
-                    null, SELLER_ID, 100L, null, "PRODUCT", 1L,
-                    "EXT-FLOW4-PRODUCT-001", "상품 문의",
-                    "상품 관련 문의입니다.", "구매자A",
-                    QnaJpaEntity.Status.PENDING, now, now));
+            qnaRepository.save(
+                    QnaJpaEntity.create(
+                            null,
+                            SELLER_ID,
+                            100L,
+                            null,
+                            "PRODUCT",
+                            1L,
+                            "EXT-FLOW4-PRODUCT-001",
+                            "상품 문의",
+                            "상품 관련 문의입니다.",
+                            "구매자A",
+                            QnaJpaEntity.Status.PENDING,
+                            now,
+                            now));
 
-            qnaRepository.save(QnaJpaEntity.create(
-                    null, SELLER_ID, 100L, null, "SHIPPING", 1L,
-                    "EXT-FLOW4-SHIPPING-001", "배송 문의",
-                    "배송 관련 문의입니다.", "구매자B",
-                    QnaJpaEntity.Status.PENDING, now, now));
+            qnaRepository.save(
+                    QnaJpaEntity.create(
+                            null,
+                            SELLER_ID,
+                            100L,
+                            null,
+                            "SHIPPING",
+                            1L,
+                            "EXT-FLOW4-SHIPPING-001",
+                            "배송 문의",
+                            "배송 관련 문의입니다.",
+                            "구매자B",
+                            QnaJpaEntity.Status.PENDING,
+                            now,
+                            now));
 
-            qnaRepository.save(QnaJpaEntity.create(
-                    null, SELLER_ID, 100L, null, "ORDER", 1L,
-                    "EXT-FLOW4-ORDER-001", "주문 문의",
-                    "주문 관련 문의입니다.", "구매자C",
-                    QnaJpaEntity.Status.PENDING, now, now));
+            qnaRepository.save(
+                    QnaJpaEntity.create(
+                            null,
+                            SELLER_ID,
+                            100L,
+                            null,
+                            "ORDER",
+                            1L,
+                            "EXT-FLOW4-ORDER-001",
+                            "주문 문의",
+                            "주문 관련 문의입니다.",
+                            "구매자C",
+                            QnaJpaEntity.Status.PENDING,
+                            now,
+                            now));
 
             givenLegacyAuth()
                     .queryParam("qnaType", "PRODUCT")
@@ -268,20 +301,25 @@ class LegacyQnAContainerFlowE2ETest extends ContainerLegacyE2ETestBase {
     private Map<String, Object> createAnswerRequest(long qnaId, String title, String content) {
         return Map.of(
                 "qnaId", qnaId,
-                "qnaContents", Map.of(
-                        "title", title,
-                        "content", content),
+                "qnaContents",
+                        Map.of(
+                                "title", title,
+                                "content", content),
                 "qnaImages", List.of());
     }
 
     private Map<String, Object> createUpdateRequest(
             long qnaAnswerId, long qnaId, String title, String content) {
         return Map.of(
-                "qnaAnswerId", qnaAnswerId,
-                "qnaId", qnaId,
-                "qnaContents", Map.of(
+                "qnaAnswerId",
+                qnaAnswerId,
+                "qnaId",
+                qnaId,
+                "qnaContents",
+                Map.of(
                         "title", title,
                         "content", content),
-                "qnaImages", List.of());
+                "qnaImages",
+                List.of());
     }
 }

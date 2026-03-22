@@ -2,7 +2,6 @@ package com.ryuqq.marketplace.adapter.out.client.naver.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverDeliveryInfo;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderDetail;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderOrder;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverShippingAddress;
@@ -32,7 +31,14 @@ class NaverCommerceOrderMapperTest {
                 "12345",
                 "MOBILE",
                 "신용카드",
-                null, null, null, null, null, null, null, null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 
     private NaverProductOrderDetail.ProductOrderInfo createProductOrderInfo(
@@ -41,34 +47,62 @@ class NaverCommerceOrderMapperTest {
                 new NaverShippingAddress(
                         "김철수", "010-9999-8888", null, "12345", "서울시 강남구", "101동", "ROAD", true);
         return new NaverProductOrderDetail.ProductOrderInfo(
-                productOrderId,       // 1  productOrderId
-                "PAYED",              // 2  productOrderStatus
-                null, null, null,     // 3-5  claimStatus, claimType, claimId
-                null, null, null,     // 6-8  placeOrderDate, placeOrderStatus, decisionDate
-                null, null,           // 9-10 productClass, groupProductId
-                "PROD001", null,      // 11-12 productId, originalProductId
-                "테스트 상품", "옵션A",  // 13-14 productName, productOption
-                "OPT001", null,       // 15-16 optionCode, optionPrice
-                null, null,           // 17-18 sellerProductCode, optionManageCode
-                null, null,           // 19-20 itemNo, mallId
-                quantity, null, null, // 21-23 quantity, initialQuantity, remainQuantity
-                unitPrice,            // 24 unitPrice
+                productOrderId, // 1  productOrderId
+                "PAYED", // 2  productOrderStatus
+                null,
+                null,
+                null, // 3-5  claimStatus, claimType, claimId
+                null,
+                null,
+                null, // 6-8  placeOrderDate, placeOrderStatus, decisionDate
+                null,
+                null, // 9-10 productClass, groupProductId
+                "PROD001",
+                null, // 11-12 productId, originalProductId
+                "테스트 상품",
+                "옵션A", // 13-14 productName, productOption
+                "OPT001",
+                null, // 15-16 optionCode, optionPrice
+                null,
+                null, // 17-18 sellerProductCode, optionManageCode
+                null,
+                null, // 19-20 itemNo, mallId
+                quantity,
+                null,
+                null, // 21-23 quantity, initialQuantity, remainQuantity
+                unitPrice, // 24 unitPrice
                 unitPrice * quantity, // 25 totalProductAmount
-                null, null,           // 26-27 initialProductAmount, remainProductAmount
-                0,                    // 28 productDiscountAmount
+                null,
+                null, // 26-27 initialProductAmount, remainProductAmount
+                0, // 28 productDiscountAmount
                 unitPrice * quantity, // 29 totalPaymentAmount
-                null, null,           // 30-31 initialPaymentAmount, remainPaymentAmount
-                null, null, null,     // 32-34 sellerBurdenDiscountAmount, deliveryFeeAmount, deliveryDiscountAmount
-                null, null, null,     // 35-37 deliveryPolicyType, shippingFeeType, packageNumber
-                null, null, null,     // 38-40 expectedDeliveryMethod, expectedDeliveryCompany, deliveryAttributeType
-                null, null,           // 41-42 shippingStartDate, shippingDueDate
-                null, null, null, null, // 43-46 commissionRatingType, paymentCommission, saleCommission, channelCommission
-                null, null, null,     // 47-49 expectedSettlementAmount, inflowPath, taxType
-                addr,                 // 50 shippingAddress
-                "부재시 경비실",        // 51 shippingMemo
-                null,                 // 52 freeGift
-                null,                 // 53 currentClaim
-                null);                // 54 completedClaims
+                null,
+                null, // 30-31 initialPaymentAmount, remainPaymentAmount
+                null,
+                null,
+                null, // 32-34 sellerBurdenDiscountAmount, deliveryFeeAmount, deliveryDiscountAmount
+                null,
+                null,
+                null, // 35-37 deliveryPolicyType, shippingFeeType, packageNumber
+                null,
+                null,
+                null, // 38-40 expectedDeliveryMethod, expectedDeliveryCompany,
+                // deliveryAttributeType
+                null,
+                null, // 41-42 shippingStartDate, shippingDueDate
+                null,
+                null,
+                null,
+                null, // 43-46 commissionRatingType, paymentCommission, saleCommission,
+                // channelCommission
+                null,
+                null,
+                null, // 47-49 expectedSettlementAmount, inflowPath, taxType
+                addr, // 50 shippingAddress
+                "부재시 경비실", // 51 shippingMemo
+                null, // 52 freeGift
+                null, // 53 currentClaim
+                null); // 54 completedClaims
     }
 
     private NaverProductOrderDetail createDetail(
@@ -144,35 +178,34 @@ class NaverCommerceOrderMapperTest {
         void nullShippingAddress() {
             NaverProductOrderDetail.ProductOrderInfo po =
                     new NaverProductOrderDetail.ProductOrderInfo(
-                            "PO001", "PAYED",       // 1-2
-                            null, null, null,       // 3-5
-                            null, null, null,       // 6-8
-                            null, null,             // 9-10
-                            "PROD001", null,        // 11-12
-                            "상품명", null,           // 13-14
-                            null, null,             // 15-16
-                            null, null,             // 17-18
-                            null, null,             // 19-20
-                            1, null, null,          // 21-23
-                            10000, 10000,           // 24-25
-                            null, null,             // 26-27
-                            0, 10000,               // 28-29
-                            null, null,             // 30-31
-                            null, null, null,       // 32-34
-                            null, null, null,       // 35-37
-                            null, null, null,       // 38-40
-                            null, null,             // 41-42
+                            "PO001", "PAYED", // 1-2
+                            null, null, null, // 3-5
+                            null, null, null, // 6-8
+                            null, null, // 9-10
+                            "PROD001", null, // 11-12
+                            "상품명", null, // 13-14
+                            null, null, // 15-16
+                            null, null, // 17-18
+                            null, null, // 19-20
+                            1, null, null, // 21-23
+                            10000, 10000, // 24-25
+                            null, null, // 26-27
+                            0, 10000, // 28-29
+                            null, null, // 30-31
+                            null, null, null, // 32-34
+                            null, null, null, // 35-37
+                            null, null, null, // 38-40
+                            null, null, // 41-42
                             null, null, null, null, // 43-46
-                            null, null, null,       // 47-49
-                            null,                   // 50 shippingAddress
-                            null,                   // 51 shippingMemo
-                            null,                   // 52 freeGift
-                            null,                   // 53 currentClaim
-                            null);                  // 54 completedClaims
+                            null, null, null, // 47-49
+                            null, // 50 shippingAddress
+                            null, // 51 shippingMemo
+                            null, // 52 freeGift
+                            null, // 53 currentClaim
+                            null); // 54 completedClaims
             var detail = new NaverProductOrderDetail(createOrder("ORD001"), po, null);
 
-            List<ExternalOrderPayload> result =
-                    sut.toExternalOrderPayloads(List.of(detail));
+            List<ExternalOrderPayload> result = sut.toExternalOrderPayloads(List.of(detail));
 
             var item = result.get(0).items().get(0);
             assertThat(item.receiverName()).isNull();

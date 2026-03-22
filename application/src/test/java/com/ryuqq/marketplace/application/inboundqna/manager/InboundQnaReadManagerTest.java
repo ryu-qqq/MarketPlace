@@ -75,7 +75,8 @@ class InboundQnaReadManagerTest {
                     .willReturn(true);
 
             // when
-            boolean result = sut.existsBySalesChannelIdAndExternalQnaId(salesChannelId, externalQnaId);
+            boolean result =
+                    sut.existsBySalesChannelIdAndExternalQnaId(salesChannelId, externalQnaId);
 
             // then
             assertThat(result).isTrue();
@@ -91,7 +92,8 @@ class InboundQnaReadManagerTest {
                     .willReturn(false);
 
             // when
-            boolean result = sut.existsBySalesChannelIdAndExternalQnaId(salesChannelId, externalQnaId);
+            boolean result =
+                    sut.existsBySalesChannelIdAndExternalQnaId(salesChannelId, externalQnaId);
 
             // then
             assertThat(result).isFalse();
@@ -125,8 +127,7 @@ class InboundQnaReadManagerTest {
         void findByStatus_NoResults_ReturnsEmptyList() {
             // given
             int limit = 10;
-            given(queryPort.findByStatus(InboundQnaStatus.RECEIVED, limit))
-                    .willReturn(List.of());
+            given(queryPort.findByStatus(InboundQnaStatus.RECEIVED, limit)).willReturn(List.of());
 
             // when
             List<InboundQna> result = sut.findByStatus(InboundQnaStatus.RECEIVED, limit);

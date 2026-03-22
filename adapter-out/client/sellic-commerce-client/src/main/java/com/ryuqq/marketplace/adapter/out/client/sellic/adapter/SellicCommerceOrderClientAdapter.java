@@ -88,10 +88,7 @@ public class SellicCommerceOrderClientAdapter implements SalesChannelOrderClient
 
         List<ExternalOrderPayload> payloads = mapper.toExternalOrderPayloads(response.datas());
 
-        log.info(
-                "셀릭 커머스 주문 폴링 완료: 원본={}건, 변환={}건",
-                response.datas().size(),
-                payloads.size());
+        log.info("셀릭 커머스 주문 폴링 완료: 원본={}건, 변환={}건", response.datas().size(), payloads.size());
 
         return payloads;
     }

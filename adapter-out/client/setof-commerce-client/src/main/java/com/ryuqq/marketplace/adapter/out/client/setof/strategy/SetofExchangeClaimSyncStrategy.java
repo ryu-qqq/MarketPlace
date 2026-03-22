@@ -12,8 +12,7 @@ import org.springframework.stereotype.Component;
 /**
  * 세토프 커머스 교환 클레임 동기화 전략.
  *
- * <p>세토프 자사몰은 교환 전용 API를 제공하지 않습니다. 교환은 내부적으로 반품 + 재주문으로 처리되므로
- * 모든 교환 Outbox는 성공으로 처리합니다.
+ * <p>세토프 자사몰은 교환 전용 API를 제공하지 않습니다. 교환은 내부적으로 반품 + 재주문으로 처리되므로 모든 교환 Outbox는 성공으로 처리합니다.
  */
 @Component
 @ConditionalOnProperty(

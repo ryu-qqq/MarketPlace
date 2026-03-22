@@ -64,8 +64,7 @@ public class LegacyProductCommandController {
             @Valid @RequestBody List<LegacyUpdateProductStockRequest> request) {
 
         legacyProductUpdateStockUseCase.execute(
-                productGroupId,
-                legacyProductCommandApiMapper.toUpdateStockCommands(request));
+                productGroupId, legacyProductCommandApiMapper.toUpdateStockCommands(request));
         return ResponseEntity.ok(LegacyApiResponse.of(productGroupId));
     }
 }

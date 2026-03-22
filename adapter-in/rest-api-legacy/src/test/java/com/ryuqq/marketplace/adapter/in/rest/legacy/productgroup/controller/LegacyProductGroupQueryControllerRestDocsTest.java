@@ -6,10 +6,10 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -122,55 +122,70 @@ class LegacyProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.productGroup.price.currentPrice")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("현재가"),
-                                            fieldWithPath("data.productGroup.price.directDiscountPrice")
+                                            fieldWithPath(
+                                                            "data.productGroup.price.directDiscountPrice")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("직접 할인 금액"),
-                                            fieldWithPath("data.productGroup.price.directDiscountRate")
+                                            fieldWithPath(
+                                                            "data.productGroup.price.directDiscountRate")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("직접 할인율"),
                                             fieldWithPath("data.productGroup.price.discountRate")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("할인율"),
-                                            fieldWithPath("data.productGroup.clothesDetailInfo.productCondition")
+                                            fieldWithPath(
+                                                            "data.productGroup.clothesDetailInfo.productCondition")
                                                     .type(JsonFieldType.STRING)
                                                     .description("상품 상태"),
-                                            fieldWithPath("data.productGroup.clothesDetailInfo.origin")
+                                            fieldWithPath(
+                                                            "data.productGroup.clothesDetailInfo.origin")
                                                     .type(JsonFieldType.STRING)
                                                     .description("원산지"),
-                                            fieldWithPath("data.productGroup.clothesDetailInfo.styleCode")
+                                            fieldWithPath(
+                                                            "data.productGroup.clothesDetailInfo.styleCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("스타일 코드"),
-                                            fieldWithPath("data.productGroup.deliveryNotice.deliveryArea")
+                                            fieldWithPath(
+                                                            "data.productGroup.deliveryNotice.deliveryArea")
                                                     .type(JsonFieldType.STRING)
                                                     .description("배송 가능 지역"),
-                                            fieldWithPath("data.productGroup.deliveryNotice.deliveryFee")
+                                            fieldWithPath(
+                                                            "data.productGroup.deliveryNotice.deliveryFee")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("배송비"),
-                                            fieldWithPath("data.productGroup.deliveryNotice.deliveryPeriodAverage")
+                                            fieldWithPath(
+                                                            "data.productGroup.deliveryNotice.deliveryPeriodAverage")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("평균 배송 소요일"),
-                                            fieldWithPath("data.productGroup.refundNotice.returnMethodDomestic")
+                                            fieldWithPath(
+                                                            "data.productGroup.refundNotice.returnMethodDomestic")
                                                     .type(JsonFieldType.STRING)
                                                     .description("국내 반품 방법"),
-                                            fieldWithPath("data.productGroup.refundNotice.returnCourierDomestic")
+                                            fieldWithPath(
+                                                            "data.productGroup.refundNotice.returnCourierDomestic")
                                                     .type(JsonFieldType.STRING)
                                                     .description("국내 반품 택배사"),
-                                            fieldWithPath("data.productGroup.refundNotice.returnChargeDomestic")
+                                            fieldWithPath(
+                                                            "data.productGroup.refundNotice.returnChargeDomestic")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("국내 반품비"),
-                                            fieldWithPath("data.productGroup.refundNotice.returnExchangeAreaDomestic")
+                                            fieldWithPath(
+                                                            "data.productGroup.refundNotice.returnExchangeAreaDomestic")
                                                     .type(JsonFieldType.STRING)
                                                     .description("국내 반품/교환지"),
-                                            fieldWithPath("data.productGroup.productGroupMainImageUrl")
+                                            fieldWithPath(
+                                                            "data.productGroup.productGroupMainImageUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("메인 이미지 URL"),
                                             fieldWithPath("data.productGroup.categoryFullName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("카테고리 전체 경로"),
-                                            fieldWithPath("data.productGroup.productStatus.soldOutYn")
+                                            fieldWithPath(
+                                                            "data.productGroup.productStatus.soldOutYn")
                                                     .type(JsonFieldType.STRING)
                                                     .description("품절 여부"),
-                                            fieldWithPath("data.productGroup.productStatus.displayYn")
+                                            fieldWithPath(
+                                                            "data.productGroup.productStatus.displayYn")
                                                     .type(JsonFieldType.STRING)
                                                     .description("진열 여부"),
                                             fieldWithPath("data.productGroup.insertDate")
@@ -209,7 +224,8 @@ class LegacyProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.products[].options[].optionGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("옵션 그룹 ID"),
-                                            fieldWithPath("data.products[].options[].optionDetailId")
+                                            fieldWithPath(
+                                                            "data.products[].options[].optionDetailId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("옵션 상세 ID"),
                                             fieldWithPath("data.products[].options[].optionName")
@@ -254,7 +270,8 @@ class LegacyProductGroupQueryControllerRestDocsTest {
                                             fieldWithPath("data.productGroupImages[].type")
                                                     .type(JsonFieldType.STRING)
                                                     .description("이미지 타입"),
-                                            fieldWithPath("data.productGroupImages[].productImageUrl")
+                                            fieldWithPath(
+                                                            "data.productGroupImages[].productImageUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("이미지 URL"),
                                             fieldWithPath("data.detailDescription")

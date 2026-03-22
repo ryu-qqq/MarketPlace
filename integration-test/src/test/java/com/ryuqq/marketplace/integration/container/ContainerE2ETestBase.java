@@ -23,11 +23,12 @@ import org.springframework.test.context.DynamicPropertySource;
  * <p>MySQL + Redis Testcontainers 컨테이너를 사용하는 통합 테스트의 공통 설정입니다.
  *
  * <p>특징:
+ *
  * <ul>
- *   <li>실제 MySQL 컨테이너 사용 (H2 대체)</li>
- *   <li>실제 Redis 컨테이너 사용 (Redisson Mock 불필요)</li>
- *   <li>외부 API 클라이언트만 Mock (TestContainersExternalMockConfig)</li>
- *   <li>JVM당 1회 컨테이너 기동 (TestContainersConfig 싱글톤)</li>
+ *   <li>실제 MySQL 컨테이너 사용 (H2 대체)
+ *   <li>실제 Redis 컨테이너 사용 (Redisson Mock 불필요)
+ *   <li>외부 API 클라이언트만 Mock (TestContainersExternalMockConfig)
+ *   <li>JVM당 1회 컨테이너 기동 (TestContainersConfig 싱글톤)
  * </ul>
  *
  * @author ryu-qqq
@@ -38,18 +39,14 @@ import org.springframework.test.context.DynamicPropertySource;
 @SpringBootTest(
         classes = TestContainersWebApplication.class,
         webEnvironment = RANDOM_PORT,
-        properties = {
-            "spring.main.allow-bean-definition-overriding=true"
-        })
+        properties = {"spring.main.allow-bean-definition-overriding=true"})
 @Import(TestContainersExternalMockConfig.class)
 @ActiveProfiles("test")
 public abstract class ContainerE2ETestBase {
 
-    @LocalServerPort
-    protected int port;
+    @LocalServerPort protected int port;
 
-    @Autowired
-    private ResolveSellerIdByOrganizationService resolveSellerIdService;
+    @Autowired private ResolveSellerIdByOrganizationService resolveSellerIdService;
 
     private static final String BASE_PATH = "/api/v1/market";
 
@@ -68,9 +65,7 @@ public abstract class ContainerE2ETestBase {
 
     // ===== 인증 컨텍스트 헬퍼 메서드 =====
 
-    /**
-     * SUPER_ADMIN 인증 헤더를 포함한 요청 시작.
-     */
+    /** SUPER_ADMIN 인증 헤더를 포함한 요청 시작. */
     protected RequestSpecification givenSuperAdmin() {
         return given().contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -99,9 +94,7 @@ public abstract class ContainerE2ETestBase {
                 .header("X-User-Email", "seller@example.com");
     }
 
-    /**
-     * 인증만 된 사용자 요청 시작 (특별한 권한 없음).
-     */
+    /** 인증만 된 사용자 요청 시작 (특별한 권한 없음). */
     protected RequestSpecification givenAuthenticatedUser() {
         return given().contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -127,9 +120,7 @@ public abstract class ContainerE2ETestBase {
                 .header("X-User-Email", "user@example.com");
     }
 
-    /**
-     * 비인증 요청 시작 (인증 헤더 없음).
-     */
+    /** 비인증 요청 시작 (인증 헤더 없음). */
     protected RequestSpecification givenUnauthenticated() {
         return given().contentType(ContentType.JSON).accept(ContentType.JSON);
     }

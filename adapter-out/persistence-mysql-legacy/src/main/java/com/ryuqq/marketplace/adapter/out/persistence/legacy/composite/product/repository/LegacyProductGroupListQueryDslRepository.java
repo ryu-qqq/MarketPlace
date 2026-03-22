@@ -4,12 +4,12 @@ import static com.ryuqq.marketplace.adapter.out.persistence.legacy.brand.entity.
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.category.entity.QLegacyCategoryEntity.legacyCategoryEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.QLegacyOptionDetailEntity.legacyOptionDetailEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.QLegacyOptionGroupEntity.legacyOptionGroupEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.QLegacyProductDeliveryEntity.legacyProductDeliveryEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.QLegacyProductEntity.legacyProductEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.QLegacyProductGroupEntity.legacyProductGroupEntity;
-import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.QLegacyProductGroupImageEntity.legacyProductGroupImageEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.QLegacyProductOptionEntity.legacyProductOptionEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.QLegacyProductStockEntity.legacyProductStockEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.QLegacyProductDeliveryEntity.legacyProductDeliveryEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.QLegacyProductGroupEntity.legacyProductGroupEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.QLegacyProductGroupImageEntity.legacyProductGroupImageEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.seller.entity.QLegacySellerEntity.legacySellerEntity;
 
 import com.querydsl.core.types.ConstructorExpression;

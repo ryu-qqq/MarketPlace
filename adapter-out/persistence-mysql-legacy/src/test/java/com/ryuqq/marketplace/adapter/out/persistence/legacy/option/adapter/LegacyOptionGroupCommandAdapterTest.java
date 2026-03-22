@@ -6,10 +6,8 @@ import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.entity.LegacyOptionGroupEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.option.repository.LegacyOptionGroupJpaRepository;
-import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.SellerOptionGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
 import java.util.List;
@@ -59,8 +57,7 @@ class LegacyOptionGroupCommandAdapterTest {
                             0,
                             List.of());
 
-            LegacyOptionGroupEntity savedEntity =
-                    LegacyOptionGroupEntity.create(1L, 1L, "색상", "N");
+            LegacyOptionGroupEntity savedEntity = LegacyOptionGroupEntity.create(1L, 1L, "색상", "N");
 
             given(repository.save(any())).willReturn(savedEntity);
 

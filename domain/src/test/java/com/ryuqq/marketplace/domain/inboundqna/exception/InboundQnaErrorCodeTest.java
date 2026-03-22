@@ -26,8 +26,10 @@ class InboundQnaErrorCodeTest {
         @Test
         @DisplayName("INVALID_STATUS_TRANSITION는 400 상태 코드를 가진다")
         void invalidStatusTransitionHas400() {
-            assertThat(InboundQnaErrorCode.INVALID_STATUS_TRANSITION.getCode()).isEqualTo("IBQ-002");
-            assertThat(InboundQnaErrorCode.INVALID_STATUS_TRANSITION.getHttpStatus()).isEqualTo(400);
+            assertThat(InboundQnaErrorCode.INVALID_STATUS_TRANSITION.getCode())
+                    .isEqualTo("IBQ-002");
+            assertThat(InboundQnaErrorCode.INVALID_STATUS_TRANSITION.getHttpStatus())
+                    .isEqualTo(400);
             assertThat(InboundQnaErrorCode.INVALID_STATUS_TRANSITION.getMessage()).isNotBlank();
         }
 

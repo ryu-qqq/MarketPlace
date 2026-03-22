@@ -123,8 +123,9 @@ class LegacyQnaQueryApiMapperTest {
         @DisplayName("qnaStatus가 null이면 status는 null로 매핑된다")
         void toSearchCondition_NullStatus_MapsToNull() {
             // given
-            LegacyQnaSearchRequest request = new LegacyQnaSearchRequest(
-                    null, "PRODUCT", null, null, null, 1L, null, null, null);
+            LegacyQnaSearchRequest request =
+                    new LegacyQnaSearchRequest(
+                            null, "PRODUCT", null, null, null, 1L, null, null, null);
 
             // when
             QnaSearchCondition condition = mapper.toSearchCondition(request, 20);
@@ -185,20 +186,21 @@ class LegacyQnaQueryApiMapperTest {
         @DisplayName("null title/content는 빈 문자열로 변환된다")
         void toDetailResponse_NullContents_ConvertedToEmpty() {
             // given
-            QnaResult result = new QnaResult(
-                    LegacyQnAApiFixtures.DEFAULT_QNA_ID,
-                    1L,
-                    100L,
-                    null,
-                    QnaType.PRODUCT,
-                    null,
-                    null,
-                    null,
-                    null,
-                    QnaStatus.PENDING,
-                    List.of(),
-                    null,
-                    null);
+            QnaResult result =
+                    new QnaResult(
+                            LegacyQnAApiFixtures.DEFAULT_QNA_ID,
+                            1L,
+                            100L,
+                            null,
+                            QnaType.PRODUCT,
+                            null,
+                            null,
+                            null,
+                            null,
+                            QnaStatus.PENDING,
+                            List.of(),
+                            null,
+                            null);
 
             // when
             LegacyDetailQnaResponse response = mapper.toDetailResponse(result);
@@ -275,20 +277,21 @@ class LegacyQnaQueryApiMapperTest {
         @DisplayName("questionAuthor가 null이면 userName은 빈 문자열로 변환된다")
         void toFetchResponse_NullAuthor_ReturnsEmptyUserName() {
             // given
-            QnaResult result = new QnaResult(
-                    LegacyQnAApiFixtures.DEFAULT_QNA_ID,
-                    1L,
-                    100L,
-                    null,
-                    QnaType.PRODUCT,
-                    null,
-                    LegacyQnAApiFixtures.DEFAULT_TITLE,
-                    LegacyQnAApiFixtures.DEFAULT_CONTENT,
-                    null,
-                    QnaStatus.PENDING,
-                    List.of(),
-                    null,
-                    null);
+            QnaResult result =
+                    new QnaResult(
+                            LegacyQnAApiFixtures.DEFAULT_QNA_ID,
+                            1L,
+                            100L,
+                            null,
+                            QnaType.PRODUCT,
+                            null,
+                            LegacyQnAApiFixtures.DEFAULT_TITLE,
+                            LegacyQnAApiFixtures.DEFAULT_CONTENT,
+                            null,
+                            QnaStatus.PENDING,
+                            List.of(),
+                            null,
+                            null);
 
             // when
             LegacyFetchQnaResponse response = mapper.toFetchResponse(result);

@@ -10,15 +10,15 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupdetaildescriptio
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroupimage.mapper.LegacyImageCommandApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productnotice.dto.request.LegacyCreateProductNoticeRequest;
 import com.ryuqq.marketplace.application.legacy.productcontext.dto.command.LegacyDeliveryData;
-import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyNoticeCategoryResolver;
-import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.legacy.productcontext.dto.command.LegacyRefundData;
 import com.ryuqq.marketplace.application.legacy.productcontext.dto.command.ResolveLegacyProductContextCommand;
 import com.ryuqq.marketplace.application.legacy.productcontext.dto.result.LegacyProductContext;
+import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyNoticeCategoryResolver;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyMarkOutOfStockCommand;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyUpdateDisplayStatusCommand;
 import com.ryuqq.marketplace.application.legacy.shared.dto.response.LegacyProductRegistrationResult;
 import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
+import com.ryuqq.marketplace.application.product.dto.command.SelectedOption;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.RegisterProductGroupCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
@@ -218,21 +218,22 @@ public class LegacyProductGroupCommandApiMapper {
     }
 
     /**
-     * LegacyCreateProductGroupRequest + LegacyProductContext → RegisterProductGroupCommand (표준 커맨드).
+     * LegacyCreateProductGroupRequest + LegacyProductContext → RegisterProductGroupCommand (표준
+     * 커맨드).
      *
-     * <p>레거시 API 요청을 표준 등록 커맨드로 변환합니다. LegacyProductContext에서 리졸빙된
-     * 표준 ID와 정책 ID를 사용합니다.
+     * <p>레거시 API 요청을 표준 등록 커맨드로 변환합니다. LegacyProductContext에서 리졸빙된 표준 ID와 정책 ID를 사용합니다.
      */
     public RegisterProductGroupCommand toRegisterCommand(
             LegacyCreateProductGroupRequest request, LegacyProductContext context) {
 
         List<RegisterProductGroupCommand.ImageCommand> images =
                 IntStream.range(0, request.productImageList().size())
-                        .mapToObj(i -> {
-                            var img = request.productImageList().get(i);
-                            return new RegisterProductGroupCommand.ImageCommand(
-                                    img.type(), img.originUrl(), i);
-                        })
+                        .mapToObj(
+                                i -> {
+                                    var img = request.productImageList().get(i);
+                                    return new RegisterProductGroupCommand.ImageCommand(
+                                            img.type(), img.originUrl(), i);
+                                })
                         .toList();
 
         List<RegisterProductGroupCommand.OptionGroupCommand> optionGroups =
@@ -240,13 +241,15 @@ public class LegacyProductGroupCommandApiMapper {
 
         List<RegisterProductGroupCommand.ProductCommand> products =
                 request.productOptions().stream()
-                        .map(opt -> new RegisterProductGroupCommand.ProductCommand(
-                                "",
-                                (int) request.price().regularPrice(),
-                                (int) request.price().currentPrice(),
-                                opt.quantity(),
-                                0,
-                                List.of()))
+                        .map(
+                                opt ->
+                                        new RegisterProductGroupCommand.ProductCommand(
+                                                "",
+                                                (int) request.price().regularPrice(),
+                                                (int) request.price().currentPrice(),
+                                                opt.quantity(),
+                                                0,
+                                                List.of()))
                         .toList();
 
         RegisterProductGroupCommand.DescriptionCommand description =
@@ -289,19 +292,25 @@ public class LegacyProductGroupCommandApiMapper {
             List<String> uniqueValues = entry.getValue().stream().distinct().toList();
             List<RegisterProductGroupCommand.OptionValueCommand> valueCommands =
                     IntStream.range(0, uniqueValues.size())
-                            .mapToObj(i -> new RegisterProductGroupCommand.OptionValueCommand(
-                                    uniqueValues.get(i), null, i))
+                            .mapToObj(
+                                    i ->
+                                            new RegisterProductGroupCommand.OptionValueCommand(
+                                                    uniqueValues.get(i), null, i))
                             .toList();
-            result.add(new RegisterProductGroupCommand.OptionGroupCommand(
-                    entry.getKey(), null, "SELECT", valueCommands));
+            result.add(
+                    new RegisterProductGroupCommand.OptionGroupCommand(
+                            entry.getKey(), null, "SELECT", valueCommands));
         }
         return result;
     }
 
     private RegisterProductGroupCommand.NoticeCommand toRegisterNoticeCommand(
             LegacyCreateProductNoticeRequest request, NoticeCategory noticeCategory) {
-        Map<String, Long> fieldCodeToId = noticeCategory.fields().stream()
-                .collect(Collectors.toMap(NoticeField::fieldCodeValue, NoticeField::idValue));
+        Map<String, Long> fieldCodeToId =
+                noticeCategory.fields().stream()
+                        .collect(
+                                Collectors.toMap(
+                                        NoticeField::fieldCodeValue, NoticeField::idValue));
 
         List<RegisterProductGroupCommand.NoticeEntryCommand> entries = new ArrayList<>();
         addRegisterNoticeEntry(entries, fieldCodeToId, "material", request.material());
@@ -311,7 +320,8 @@ public class LegacyProductGroupCommandApiMapper {
         addRegisterNoticeEntry(entries, fieldCodeToId, "made_in", request.origin());
         addRegisterNoticeEntry(entries, fieldCodeToId, "wash_care", request.washingMethod());
         addRegisterNoticeEntry(entries, fieldCodeToId, "release_date", request.yearMonth());
-        addRegisterNoticeEntry(entries, fieldCodeToId, "quality_assurance", request.assuranceStandard());
+        addRegisterNoticeEntry(
+                entries, fieldCodeToId, "quality_assurance", request.assuranceStandard());
         addRegisterNoticeEntry(entries, fieldCodeToId, "cs_info", request.asPhone());
 
         return new RegisterProductGroupCommand.NoticeCommand(noticeCategory.idValue(), entries);
@@ -340,7 +350,8 @@ public class LegacyProductGroupCommandApiMapper {
     }
 
     /**
-     * LegacyUpdateProductGroupRequest + LegacyProductContext → UpdateProductGroupFullCommand (표준 커맨드).
+     * LegacyUpdateProductGroupRequest + LegacyProductContext → UpdateProductGroupFullCommand (표준
+     * 커맨드).
      */
     public UpdateProductGroupFullCommand toUpdateFullCommand(
             long productGroupId,
@@ -352,11 +363,12 @@ public class LegacyProductGroupCommandApiMapper {
         List<UpdateProductGroupFullCommand.ImageCommand> images =
                 updateStatus.imageStatus() && request.productImageList() != null
                         ? IntStream.range(0, request.productImageList().size())
-                                .mapToObj(i -> {
-                                    var img = request.productImageList().get(i);
-                                    return new UpdateProductGroupFullCommand.ImageCommand(
-                                            img.type(), img.originUrl(), i);
-                                })
+                                .mapToObj(
+                                        i -> {
+                                            var img = request.productImageList().get(i);
+                                            return new UpdateProductGroupFullCommand.ImageCommand(
+                                                    img.type(), img.originUrl(), i);
+                                        })
                                 .toList()
                         : List.of();
 
@@ -368,17 +380,24 @@ public class LegacyProductGroupCommandApiMapper {
         List<UpdateProductGroupFullCommand.ProductCommand> products =
                 updateStatus.stockOptionStatus() && request.productOptions() != null
                         ? request.productOptions().stream()
-                                .map(opt -> new UpdateProductGroupFullCommand.ProductCommand(
-                                        opt.productId(),
-                                        "",
-                                        0,
-                                        0,
-                                        opt.quantity(),
-                                        0,
-                                        opt.options().stream()
-                                                .map(d -> new SelectedOption(
-                                                        d.optionName(), d.optionValue()))
-                                                .toList()))
+                                .map(
+                                        opt ->
+                                                new UpdateProductGroupFullCommand.ProductCommand(
+                                                        opt.productId(),
+                                                        "",
+                                                        0,
+                                                        0,
+                                                        opt.quantity(),
+                                                        0,
+                                                        opt.options().stream()
+                                                                .map(
+                                                                        d ->
+                                                                                new SelectedOption(
+                                                                                        d
+                                                                                                .optionName(),
+                                                                                        d
+                                                                                                .optionValue()))
+                                                                .toList()))
                                 .toList()
                         : List.of();
 
@@ -424,19 +443,25 @@ public class LegacyProductGroupCommandApiMapper {
             List<String> uniqueValues = entry.getValue().stream().distinct().toList();
             List<UpdateProductGroupFullCommand.OptionValueCommand> valueCommands =
                     IntStream.range(0, uniqueValues.size())
-                            .mapToObj(i -> new UpdateProductGroupFullCommand.OptionValueCommand(
-                                    null, uniqueValues.get(i), null, i))
+                            .mapToObj(
+                                    i ->
+                                            new UpdateProductGroupFullCommand.OptionValueCommand(
+                                                    null, uniqueValues.get(i), null, i))
                             .toList();
-            result.add(new UpdateProductGroupFullCommand.OptionGroupCommand(
-                    null, entry.getKey(), null, "PREDEFINED", valueCommands));
+            result.add(
+                    new UpdateProductGroupFullCommand.OptionGroupCommand(
+                            null, entry.getKey(), null, "PREDEFINED", valueCommands));
         }
         return result;
     }
 
     private UpdateProductGroupFullCommand.NoticeCommand toUpdateNoticeCommand(
             LegacyCreateProductNoticeRequest request, NoticeCategory noticeCategory) {
-        Map<String, Long> fieldCodeToId = noticeCategory.fields().stream()
-                .collect(Collectors.toMap(NoticeField::fieldCodeValue, NoticeField::idValue));
+        Map<String, Long> fieldCodeToId =
+                noticeCategory.fields().stream()
+                        .collect(
+                                Collectors.toMap(
+                                        NoticeField::fieldCodeValue, NoticeField::idValue));
 
         List<UpdateProductGroupFullCommand.NoticeEntryCommand> entries = new ArrayList<>();
         addUpdateNoticeEntry(entries, fieldCodeToId, "material", request.material());
@@ -446,7 +471,8 @@ public class LegacyProductGroupCommandApiMapper {
         addUpdateNoticeEntry(entries, fieldCodeToId, "made_in", request.origin());
         addUpdateNoticeEntry(entries, fieldCodeToId, "wash_care", request.washingMethod());
         addUpdateNoticeEntry(entries, fieldCodeToId, "release_date", request.yearMonth());
-        addUpdateNoticeEntry(entries, fieldCodeToId, "quality_assurance", request.assuranceStandard());
+        addUpdateNoticeEntry(
+                entries, fieldCodeToId, "quality_assurance", request.assuranceStandard());
         addUpdateNoticeEntry(entries, fieldCodeToId, "cs_info", request.asPhone());
 
         return new UpdateProductGroupFullCommand.NoticeCommand(noticeCategory.idValue(), entries);

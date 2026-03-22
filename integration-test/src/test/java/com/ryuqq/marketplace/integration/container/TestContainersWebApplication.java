@@ -9,9 +9,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 /**
  * Testcontainers E2E 테스트용 Spring Boot Application.
  *
- * <p>MarketPlaceApplication과 동일한 ComponentScan 범위를 유지하되,
- * Redis Adapter를 포함(excludeFilter에서 redis 제외)합니다.
- * Testcontainers로 실제 Redis를 기동하므로 Redis 관련 빈을 활성화합니다.
+ * <p>MarketPlaceApplication과 동일한 ComponentScan 범위를 유지하되, Redis Adapter를 포함(excludeFilter에서 redis
+ * 제외)합니다. Testcontainers로 실제 Redis를 기동하므로 Redis 관련 빈을 활성화합니다.
  *
  * @author ryu-qqq
  * @since 1.0.0

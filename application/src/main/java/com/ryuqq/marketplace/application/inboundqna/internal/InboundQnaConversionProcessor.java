@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * RECEIVED 상태 InboundQna를 내부 Qna로 변환하는 프로세서.
  *
- * <p>externalProductId가 있으면 InboundProductIdResolver를 통해 내부 productGroupId를 역조회합니다.
- * 조회 실패 또는 externalProductId 부재 시 productGroupId=0, sellerId=0으로 생성합니다.
+ * <p>externalProductId가 있으면 InboundProductIdResolver를 통해 내부 productGroupId를 역조회합니다. 조회 실패 또는
+ * externalProductId 부재 시 productGroupId=0, sellerId=0으로 생성합니다.
  */
 @Component
 public class InboundQnaConversionProcessor {
@@ -56,11 +56,13 @@ public class InboundQnaConversionProcessor {
             if (externalProductId != null && !externalProductId.isBlank()) {
                 try {
                     ProductGroupId resolved =
-                            productIdResolver.resolve(inboundQna.salesChannelId(), externalProductId);
+                            productIdResolver.resolve(
+                                    inboundQna.salesChannelId(), externalProductId);
                     productGroupId = resolved.value();
                 } catch (Exception e) {
                     log.warn(
-                            "externalProductId 역조회 실패 — productGroupId=0으로 저장: inboundQnaId={}, externalProductId={}",
+                            "externalProductId 역조회 실패 — productGroupId=0으로 저장: inboundQnaId={},"
+                                    + " externalProductId={}",
                             inboundQna.idValue(),
                             externalProductId);
                 }

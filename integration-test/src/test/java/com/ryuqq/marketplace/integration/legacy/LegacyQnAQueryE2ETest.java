@@ -5,11 +5,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.ryuqq.marketplace.adapter.out.persistence.qna.QnaJpaEntityFixtures;
-import com.ryuqq.marketplace.adapter.out.persistence.qna.entity.QnaJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.qna.repository.QnaJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.qna.repository.QnaReplyJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.qnaoutbox.repository.QnaOutboxJpaRepository;
-import java.time.Instant;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

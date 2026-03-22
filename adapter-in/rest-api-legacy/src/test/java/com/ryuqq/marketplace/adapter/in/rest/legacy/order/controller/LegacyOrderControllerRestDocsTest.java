@@ -16,8 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.LegacyOrderApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.LegacyOrderEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.request.LegacyUpdateOrderRequest;

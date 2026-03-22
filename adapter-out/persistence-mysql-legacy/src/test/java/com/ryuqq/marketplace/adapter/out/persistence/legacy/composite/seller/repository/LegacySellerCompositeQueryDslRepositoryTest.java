@@ -46,8 +46,8 @@ class LegacySellerCompositeQueryDslRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        repository = new LegacySellerCompositeQueryDslRepository(
-                new JPAQueryFactory(entityManager));
+        repository =
+                new LegacySellerCompositeQueryDslRepository(new JPAQueryFactory(entityManager));
         helper = new LegacyCompositeSellerTestHelper(entityManager);
     }
 
@@ -112,9 +112,20 @@ class LegacySellerCompositeQueryDslRepositoryTest {
             helper.insertBusinessInfo(10L);
             helper.insertSeller(11L, "셀러B", null, null, 20.0);
             helper.insertBusinessInfo(
-                    11L, "999-99-99999", "B회사", "이순신", "2025-002",
-                    "12345", "부산시", "3층", "신한은행", "9999999",
-                    "이순신", "051-111-2222", "010-9999-8888", "b@test.com");
+                    11L,
+                    "999-99-99999",
+                    "B회사",
+                    "이순신",
+                    "2025-002",
+                    "12345",
+                    "부산시",
+                    "3층",
+                    "신한은행",
+                    "9999999",
+                    "이순신",
+                    "051-111-2222",
+                    "010-9999-8888",
+                    "b@test.com");
             helper.flushAndClear();
 
             // when

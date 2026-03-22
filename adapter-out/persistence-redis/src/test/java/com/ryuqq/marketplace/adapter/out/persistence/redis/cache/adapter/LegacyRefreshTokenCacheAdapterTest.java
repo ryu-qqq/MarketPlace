@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.redis.cache.adapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+
 import java.time.Duration;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,7 +71,10 @@ class LegacyRefreshTokenCacheAdapterTest {
             // then
             then(valueOperations)
                     .should()
-                    .set(KEY_PREFIX + TEST_EMAIL, TEST_TOKEN, Duration.ofSeconds(EXPIRES_IN_SECONDS));
+                    .set(
+                            KEY_PREFIX + TEST_EMAIL,
+                            TEST_TOKEN,
+                            Duration.ofSeconds(EXPIRES_IN_SECONDS));
         }
 
         @Test

@@ -43,12 +43,13 @@ class ReceiveOrderCreatedWebhookServiceTest {
             long salesChannelId = 1L;
             long shopId = 10L;
             Instant now = Instant.now();
-            List<ExternalOrderPayload> payloads = List.of(ExternalOrderPayloadFixtures.defaultPayload());
-            InboundOrderPollingResult expected =
-                    InboundOrderPollingResult.of(1, 1, 0, 0, 0);
+            List<ExternalOrderPayload> payloads =
+                    List.of(ExternalOrderPayloadFixtures.defaultPayload());
+            InboundOrderPollingResult expected = InboundOrderPollingResult.of(1, 1, 0, 0, 0);
 
             given(timeProvider.now()).willReturn(now);
-            given(coordinator.receiveAll(payloads, salesChannelId, shopId, now)).willReturn(expected);
+            given(coordinator.receiveAll(payloads, salesChannelId, shopId, now))
+                    .willReturn(expected);
 
             // when
             InboundOrderPollingResult result = sut.execute(payloads, salesChannelId, shopId);
@@ -81,7 +82,10 @@ class ReceiveOrderCreatedWebhookServiceTest {
             // then
             assertThat(result.total()).isEqualTo(0);
             assertThat(result.created()).isEqualTo(0);
-            then(coordinator).should().receiveAll(eq(emptyPayloads), eq(salesChannelId), eq(shopId), any(Instant.class));
+            then(coordinator)
+                    .should()
+                    .receiveAll(
+                            eq(emptyPayloads), eq(salesChannelId), eq(shopId), any(Instant.class));
         }
 
         @Test
@@ -91,15 +95,16 @@ class ReceiveOrderCreatedWebhookServiceTest {
             long salesChannelId = 2L;
             long shopId = 20L;
             Instant now = Instant.now();
-            List<ExternalOrderPayload> payloads = List.of(
-                    ExternalOrderPayloadFixtures.payload("NAVER-ORD-001"),
-                    ExternalOrderPayloadFixtures.payload("NAVER-ORD-002"),
-                    ExternalOrderPayloadFixtures.payload("NAVER-ORD-003"));
-            InboundOrderPollingResult expected =
-                    InboundOrderPollingResult.of(3, 2, 1, 0, 0);
+            List<ExternalOrderPayload> payloads =
+                    List.of(
+                            ExternalOrderPayloadFixtures.payload("NAVER-ORD-001"),
+                            ExternalOrderPayloadFixtures.payload("NAVER-ORD-002"),
+                            ExternalOrderPayloadFixtures.payload("NAVER-ORD-003"));
+            InboundOrderPollingResult expected = InboundOrderPollingResult.of(3, 2, 1, 0, 0);
 
             given(timeProvider.now()).willReturn(now);
-            given(coordinator.receiveAll(payloads, salesChannelId, shopId, now)).willReturn(expected);
+            given(coordinator.receiveAll(payloads, salesChannelId, shopId, now))
+                    .willReturn(expected);
 
             // when
             InboundOrderPollingResult result = sut.execute(payloads, salesChannelId, shopId);
@@ -117,14 +122,15 @@ class ReceiveOrderCreatedWebhookServiceTest {
             long salesChannelId = 1L;
             long shopId = 10L;
             Instant now = Instant.now();
-            List<ExternalOrderPayload> payloads = List.of(
-                    ExternalOrderPayloadFixtures.defaultPayload(),
-                    ExternalOrderPayloadFixtures.defaultPayload());
-            InboundOrderPollingResult expected =
-                    InboundOrderPollingResult.of(2, 1, 0, 1, 0);
+            List<ExternalOrderPayload> payloads =
+                    List.of(
+                            ExternalOrderPayloadFixtures.defaultPayload(),
+                            ExternalOrderPayloadFixtures.defaultPayload());
+            InboundOrderPollingResult expected = InboundOrderPollingResult.of(2, 1, 0, 1, 0);
 
             given(timeProvider.now()).willReturn(now);
-            given(coordinator.receiveAll(payloads, salesChannelId, shopId, now)).willReturn(expected);
+            given(coordinator.receiveAll(payloads, salesChannelId, shopId, now))
+                    .willReturn(expected);
 
             // when
             InboundOrderPollingResult result = sut.execute(payloads, salesChannelId, shopId);

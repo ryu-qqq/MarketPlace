@@ -27,11 +27,9 @@ public class LegacyProductCommandAdapter implements LegacyProductCommandPort {
 
     @Override
     public Long persist(Product product) {
-        LegacyProductEntity entity = LegacyProductEntity.create(
-                product.productGroupIdValue(),
-                "N",
-                "Y",
-                product.stockQuantity());
+        LegacyProductEntity entity =
+                LegacyProductEntity.create(
+                        product.productGroupIdValue(), "N", "Y", product.stockQuantity());
         return productRepository.save(entity).getId();
     }
 

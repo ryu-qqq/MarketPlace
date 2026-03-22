@@ -53,13 +53,10 @@ public class SetofShipmentSyncStrategy implements ShipmentSyncStrategy {
                 }
                 case SHIP -> {
                     log.info(
-                            "세토프 운송장 등록 - 세토프 자체 배송 관리: orderItemId={}",
-                            outbox.orderItemIdValue());
+                            "세토프 운송장 등록 - 세토프 자체 배송 관리: orderItemId={}", outbox.orderItemIdValue());
                 }
                 case DELIVER -> {
-                    log.info(
-                            "세토프 배송완료 - 자동 처리: orderItemId={}",
-                            outbox.orderItemIdValue());
+                    log.info("세토프 배송완료 - 자동 처리: orderItemId={}", outbox.orderItemIdValue());
                 }
                 case CANCEL -> {
                     log.info(

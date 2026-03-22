@@ -39,7 +39,8 @@ public class AnswerQnaService implements AnswerQnaUseCase {
     public QnaReplyResult execute(AnswerQnaCommand command) {
         Instant now = Instant.now();
         Qna qna = readManager.getById(command.qnaId());
-        QnaReply reply = qna.answer(command.content(), command.authorName(), command.parentReplyId(), now);
+        QnaReply reply =
+                qna.answer(command.content(), command.authorName(), command.parentReplyId(), now);
         commandManager.persist(qna);
 
         QnaOutbox outbox =
@@ -57,11 +58,14 @@ public class AnswerQnaService implements AnswerQnaUseCase {
 
         // persist 후 재조회하여 auto-generated ID를 포함한 최신 reply 반환
         Qna persisted = readManager.getById(command.qnaId());
-        QnaReply savedReply = persisted.replies().stream()
-                .filter(r -> r.content().equals(reply.content())
-                        && r.authorName().equals(reply.authorName()))
-                .reduce((first, second) -> second)
-                .orElse(reply);
+        QnaReply savedReply =
+                persisted.replies().stream()
+                        .filter(
+                                r ->
+                                        r.content().equals(reply.content())
+                                                && r.authorName().equals(reply.authorName()))
+                        .reduce((first, second) -> second)
+                        .orElse(reply);
 
         return new QnaReplyResult(
                 savedReply.idValue(),

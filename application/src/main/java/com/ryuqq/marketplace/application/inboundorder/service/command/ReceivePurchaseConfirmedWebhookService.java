@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service;
 /**
  * 구매 확정 웹훅 수신 서비스.
  *
- * <p>ExternalOrderItemMapping을 통해 내부 orderItemId를 역조회한 뒤,
- * 확정 가능한(READY) 주문상품만 필터링하여 ConfirmOrderUseCase에 위임합니다.
- * 이미 CONFIRMED 상태인 항목은 무시하여 멱등성을 보장합니다.
+ * <p>ExternalOrderItemMapping을 통해 내부 orderItemId를 역조회한 뒤, 확정 가능한(READY) 주문상품만 필터링하여
+ * ConfirmOrderUseCase에 위임합니다. 이미 CONFIRMED 상태인 항목은 무시하여 멱등성을 보장합니다.
  */
 @Service
-public class ReceivePurchaseConfirmedWebhookService implements ReceivePurchaseConfirmedWebhookUseCase {
+public class ReceivePurchaseConfirmedWebhookService
+        implements ReceivePurchaseConfirmedWebhookUseCase {
 
     private static final Logger log =
             LoggerFactory.getLogger(ReceivePurchaseConfirmedWebhookService.class);
@@ -43,11 +43,12 @@ public class ReceivePurchaseConfirmedWebhookService implements ReceivePurchaseCo
 
     @Override
     public void execute(long salesChannelId, List<String> externalProductOrderIds) {
-        List<OrderItemId> orderItemIds = externalProductOrderIds.stream()
-                .map(extId -> mappingReadManager.getMapping(salesChannelId, extId))
-                .filter(Objects::nonNull)
-                .map(ExternalOrderItemMapping::orderItemId)
-                .toList();
+        List<OrderItemId> orderItemIds =
+                externalProductOrderIds.stream()
+                        .map(extId -> mappingReadManager.getMapping(salesChannelId, extId))
+                        .filter(Objects::nonNull)
+                        .map(ExternalOrderItemMapping::orderItemId)
+                        .toList();
 
         if (orderItemIds.isEmpty()) {
             log.info(
@@ -59,15 +60,14 @@ public class ReceivePurchaseConfirmedWebhookService implements ReceivePurchaseCo
 
         List<OrderItem> orderItems = orderItemReadManager.findAllByIds(orderItemIds);
 
-        List<String> confirmableIds = orderItems.stream()
-                .filter(OrderItem::isConfirmable)
-                .map(item -> item.id().value())
-                .toList();
+        List<String> confirmableIds =
+                orderItems.stream()
+                        .filter(OrderItem::isConfirmable)
+                        .map(item -> item.id().value())
+                        .toList();
 
         if (confirmableIds.isEmpty()) {
-            log.info(
-                    "구매 확정 웹훅: 확정 가능한 주문상품 없음 (이미 확정됨), salesChannelId={}",
-                    salesChannelId);
+            log.info("구매 확정 웹훅: 확정 가능한 주문상품 없음 (이미 확정됨), salesChannelId={}", salesChannelId);
             return;
         }
 

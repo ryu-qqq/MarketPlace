@@ -46,8 +46,8 @@ class LegacyProductCompositeQueryDslRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        repository = new LegacyProductCompositeQueryDslRepository(
-                new JPAQueryFactory(entityManager));
+        repository =
+                new LegacyProductCompositeQueryDslRepository(new JPAQueryFactory(entityManager));
         helper = new LegacyCompositeProductTestHelper(entityManager);
     }
 
@@ -62,8 +62,7 @@ class LegacyProductCompositeQueryDslRepositoryTest {
             long pgId = helper.setupFullProductGroupData();
 
             // when
-            List<LegacyProductOptionQueryDto> rows =
-                    repository.fetchProductsWithOptions(pgId);
+            List<LegacyProductOptionQueryDto> rows = repository.fetchProductsWithOptions(pgId);
 
             // then
             assertThat(rows).hasSize(2); // 2개 옵션 → 2행
@@ -86,8 +85,7 @@ class LegacyProductCompositeQueryDslRepositoryTest {
             helper.flushAndClear();
 
             // when
-            List<LegacyProductOptionQueryDto> rows =
-                    repository.fetchProductsWithOptions(pgId);
+            List<LegacyProductOptionQueryDto> rows = repository.fetchProductsWithOptions(pgId);
 
             // then
             assertThat(rows).hasSize(1);
@@ -111,7 +109,8 @@ class LegacyProductCompositeQueryDslRepositoryTest {
             // 삭제된 상품은 Native SQL로 삽입
             entityManager
                     .createNativeQuery(
-                            "INSERT INTO product (product_group_id, sold_out_yn, display_yn, delete_yn) VALUES (?, ?, ?, ?)")
+                            "INSERT INTO product (product_group_id, sold_out_yn, display_yn,"
+                                    + " delete_yn) VALUES (?, ?, ?, ?)")
                     .setParameter(1, pgId)
                     .setParameter(2, "N")
                     .setParameter(3, "Y")
@@ -120,8 +119,7 @@ class LegacyProductCompositeQueryDslRepositoryTest {
             helper.flushAndClear();
 
             // when
-            List<LegacyProductOptionQueryDto> rows =
-                    repository.fetchProductsWithOptions(pgId);
+            List<LegacyProductOptionQueryDto> rows = repository.fetchProductsWithOptions(pgId);
 
             // then
             assertThat(rows).hasSize(1);
@@ -132,8 +130,7 @@ class LegacyProductCompositeQueryDslRepositoryTest {
         @DisplayName("존재하지 않는 상품그룹 ID로 조회 시 빈 목록을 반환합니다")
         void fetchProductsWithOptions_WithNonExistentId_ReturnsEmptyList() {
             // when
-            List<LegacyProductOptionQueryDto> rows =
-                    repository.fetchProductsWithOptions(99999L);
+            List<LegacyProductOptionQueryDto> rows = repository.fetchProductsWithOptions(99999L);
 
             // then
             assertThat(rows).isEmpty();
@@ -160,8 +157,7 @@ class LegacyProductCompositeQueryDslRepositoryTest {
             helper.flushAndClear();
 
             // when
-            List<LegacyProductOptionQueryDto> rows =
-                    repository.fetchProductsWithOptions(pgId);
+            List<LegacyProductOptionQueryDto> rows = repository.fetchProductsWithOptions(pgId);
 
             // then
             assertThat(rows).hasSize(2); // product1(옵션1행) + product2(옵션없음1행)

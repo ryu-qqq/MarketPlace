@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 /**
  * 셀릭 주문 응답 → ExternalOrderPayload 변환 매퍼.
  *
- * <p>셀릭 API는 주문 아이템 단위로 응답합니다 (1주문 N아이템 → N행). ORDER_ID(쇼핑몰주문번호) 기준으로 그룹핑하여
- * ExternalOrderPayload로 변환합니다.
+ * <p>셀릭 API는 주문 아이템 단위로 응답합니다 (1주문 N아이템 → N행). ORDER_ID(쇼핑몰주문번호) 기준으로 그룹핑하여 ExternalOrderPayload로
+ * 변환합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
@@ -57,9 +57,7 @@ public class SellicCommerceOrderMapper {
         Instant createdAt = parseDateTime(first.createdAt());
 
         int totalPayment =
-                items.stream()
-                        .mapToInt(d -> d.paymentPrice() != null ? d.paymentPrice() : 0)
-                        .sum();
+                items.stream().mapToInt(d -> d.paymentPrice() != null ? d.paymentPrice() : 0).sum();
 
         List<ExternalOrderItemPayload> itemPayloads =
                 items.stream().map(this::toItemPayload).toList();

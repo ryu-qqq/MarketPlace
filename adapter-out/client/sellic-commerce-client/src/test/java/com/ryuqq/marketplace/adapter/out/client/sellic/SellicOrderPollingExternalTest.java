@@ -20,8 +20,8 @@ import org.junit.jupiter.api.Test;
 /**
  * 셀릭 실제 API 주문 조회 → Mapper 변환 → ExternalOrderPayload 검증 테스트.
  *
- * <p>실행: {@code ./gradlew :adapter-out:client:sellic-commerce-client:externalIntegrationTest --tests
- * "*SellicOrderPollingExternalTest*"}
+ * <p>실행: {@code ./gradlew :adapter-out:client:sellic-commerce-client:externalIntegrationTest
+ * --tests "*SellicOrderPollingExternalTest*"}
  */
 @Tag("external-integration")
 @DisplayName("셀릭 실제 주문 조회 → Mapper 변환 검증")
@@ -41,21 +41,26 @@ class SellicOrderPollingExternalTest {
     @DisplayName("셀릭 주문 조회 → ExternalOrderPayload 변환 검증")
     void fetchAndConvertOrders() throws Exception {
         // 1. 셀릭 API 호출
-        String requestJson = objectMapper.writeValueAsString(
-                new java.util.LinkedHashMap<>() {{
-                    put("customer_id", CUSTOMER_ID);
-                    put("api_key", API_KEY);
-                    put("s_date", "2026-03-01");
-                    put("e_date", "2026-03-21");
-                }});
+        String requestJson =
+                objectMapper.writeValueAsString(
+                        new java.util.LinkedHashMap<>() {
+                            {
+                                put("customer_id", CUSTOMER_ID);
+                                put("api_key", API_KEY);
+                                put("s_date", "2026-03-01");
+                                put("e_date", "2026-03-21");
+                            }
+                        });
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/openapi/get_order"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestJson))
-                .build();
+        HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create(BASE_URL + "/openapi/get_order"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(requestJson))
+                        .build();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response =
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertThat(response.statusCode()).as("HTTP 200").isEqualTo(200);
 
@@ -69,7 +74,8 @@ class SellicOrderPollingExternalTest {
         System.out.println("총 건수: " + sellicResponse.datas().size());
 
         // 2. Mapper 변환
-        List<ExternalOrderPayload> payloads = mapper.toExternalOrderPayloads(sellicResponse.datas());
+        List<ExternalOrderPayload> payloads =
+                mapper.toExternalOrderPayloads(sellicResponse.datas());
 
         System.out.println("\n=== ExternalOrderPayload 변환 결과 ===");
         System.out.println("변환된 주문 수: " + payloads.size());
@@ -91,12 +97,19 @@ class SellicOrderPollingExternalTest {
             assertThat(order.items()).as("아이템").isNotEmpty();
 
             for (ExternalOrderItemPayload item : order.items()) {
-                System.out.println("    - [" + item.externalProductOrderId() + "] "
-                        + item.externalProductName()
-                        + " | 옵션: " + item.externalOptionName()
-                        + " | 수량: " + item.quantity()
-                        + " | 결제: " + item.paymentAmount()
-                        + " | 수취인: " + item.receiverName());
+                System.out.println(
+                        "    - ["
+                                + item.externalProductOrderId()
+                                + "] "
+                                + item.externalProductName()
+                                + " | 옵션: "
+                                + item.externalOptionName()
+                                + " | 수량: "
+                                + item.quantity()
+                                + " | 결제: "
+                                + item.paymentAmount()
+                                + " | 수취인: "
+                                + item.receiverName());
 
                 assertThat(item.externalProductOrderId()).as("외부 상품주문 ID").isNotBlank();
                 assertThat(item.externalProductName()).as("상품명").isNotBlank();

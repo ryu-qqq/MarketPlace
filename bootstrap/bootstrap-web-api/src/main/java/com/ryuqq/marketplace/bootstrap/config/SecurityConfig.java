@@ -112,8 +112,7 @@ public class SecurityConfig {
                                         .permitAll()
 
                                         // 내부 웹훅 (VPC 내부 통신, 인증 불필요)
-                                        .requestMatchers(
-                                                "/api/v1/market/internal/webhooks/**")
+                                        .requestMatchers("/api/v1/market/internal/webhooks/**")
                                         .permitAll()
 
                                         // 셀러 입점 신청 / 관리자 가입 신청 (인증 없이 누구나 가능)

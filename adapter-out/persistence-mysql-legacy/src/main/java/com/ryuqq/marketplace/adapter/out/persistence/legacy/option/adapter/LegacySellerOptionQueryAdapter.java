@@ -29,8 +29,7 @@ public class LegacySellerOptionQueryAdapter implements LegacySellerOptionQueryPo
 
     private final LegacyProductGroupQueryDslRepository queryDslRepository;
 
-    public LegacySellerOptionQueryAdapter(
-            LegacyProductGroupQueryDslRepository queryDslRepository) {
+    public LegacySellerOptionQueryAdapter(LegacyProductGroupQueryDslRepository queryDslRepository) {
         this.queryDslRepository = queryDslRepository;
     }
 
@@ -52,26 +51,29 @@ public class LegacySellerOptionQueryAdapter implements LegacySellerOptionQueryPo
         for (LegacyOptionDetailEntity detail : detailEntities) {
             valuesByGroupId
                     .computeIfAbsent(detail.getOptionGroupId(), k -> new ArrayList<>())
-                    .add(SellerOptionValue.reconstitute(
-                            SellerOptionValueId.of(detail.getId()),
-                            SellerOptionGroupId.of(detail.getOptionGroupId()),
-                            OptionValueName.of(detail.getOptionValue()),
-                            null,
-                            sortOrder++,
-                            DeletionStatus.active()));
+                    .add(
+                            SellerOptionValue.reconstitute(
+                                    SellerOptionValueId.of(detail.getId()),
+                                    SellerOptionGroupId.of(detail.getOptionGroupId()),
+                                    OptionValueName.of(detail.getOptionValue()),
+                                    null,
+                                    sortOrder++,
+                                    DeletionStatus.active()));
         }
 
         int groupSortOrder = 0;
         return groupEntities.stream()
-                .map(group -> SellerOptionGroup.reconstitute(
-                        SellerOptionGroupId.of(group.getId()),
-                        ProductGroupId.of(group.getProductGroupId()),
-                        OptionGroupName.of(group.getOptionName()),
-                        null,
-                        OptionInputType.PREDEFINED,
-                        groupSortOrder,
-                        valuesByGroupId.getOrDefault(group.getId(), List.of()),
-                        DeletionStatus.active()))
+                .map(
+                        group ->
+                                SellerOptionGroup.reconstitute(
+                                        SellerOptionGroupId.of(group.getId()),
+                                        ProductGroupId.of(group.getProductGroupId()),
+                                        OptionGroupName.of(group.getOptionName()),
+                                        null,
+                                        OptionInputType.PREDEFINED,
+                                        groupSortOrder,
+                                        valuesByGroupId.getOrDefault(group.getId(), List.of()),
+                                        DeletionStatus.active()))
                 .toList();
     }
 }

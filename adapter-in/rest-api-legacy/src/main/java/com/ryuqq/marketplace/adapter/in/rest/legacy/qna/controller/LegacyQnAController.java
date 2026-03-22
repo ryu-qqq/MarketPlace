@@ -93,8 +93,7 @@ public class LegacyQnAController {
         List<LegacyFetchQnaResponse> responses =
                 queryApiMapper.toFetchResponses(listResult.items());
 
-        Long lastDomainId = responses.isEmpty() ? null
-                : responses.getLast().qnaId();
+        Long lastDomainId = responses.isEmpty() ? null : responses.getLast().qnaId();
 
         Pageable resolvedPageable = PageRequest.of(0, pageable.getPageSize());
         LegacyCustomPageable<LegacyFetchQnaResponse> page =

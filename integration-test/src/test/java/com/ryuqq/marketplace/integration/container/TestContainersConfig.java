@@ -13,7 +13,8 @@ import org.testcontainers.utility.DockerImageName;
  *
  * <p>MySQL + Redis 컨테이너를 JVM 수명 동안 한 번만 기동하고 모든 테스트에서 공유합니다.
  *
- * @see <a href="https://java.testcontainers.org/test_framework_integration/manual_lifecycle_control/#singleton-containers">
+ * @see <a
+ *     href="https://java.testcontainers.org/test_framework_integration/manual_lifecycle_control/#singleton-containers">
  *     Singleton Containers</a>
  */
 public final class TestContainersConfig {
@@ -77,7 +78,9 @@ public final class TestContainersConfig {
 
         // JPA
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create");
-        registry.add("spring.jpa.properties.hibernate.dialect", () -> "org.hibernate.dialect.MySQLDialect");
+        registry.add(
+                "spring.jpa.properties.hibernate.dialect",
+                () -> "org.hibernate.dialect.MySQLDialect");
         registry.add("spring.jpa.open-in-view", () -> "false");
         registry.add("spring.flyway.enabled", () -> "false");
 

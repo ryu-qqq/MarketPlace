@@ -54,8 +54,7 @@ class NaverCommerceImageClientAdapterCircuitBreakerTest {
     class UploadFromUrlsCircuitBreakerTest {
 
         @Test
-        @DisplayName(
-                "ApiClient에서 ExternalServiceUnavailableException 발생 시 uploadBytes에서도 전파된다")
+        @DisplayName("ApiClient에서 ExternalServiceUnavailableException 발생 시 uploadBytes에서도 전파된다")
         void uploadFromUrls_WhenApiClientThrowsUnavailable_PropagatesViaUploadBytes() {
             // given
             when(apiClient.uploadImages(any()))

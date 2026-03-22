@@ -5,8 +5,8 @@ import jakarta.persistence.EntityManager;
 /**
  * Composite Seller / Auth 통합 테스트용 데이터 셋업 헬퍼.
  *
- * <p>Seller, SellerBusinessInfo, Administrator, AdminAuthGroup, AuthGroup 엔티티는
- * 모두 읽기 전용(팩토리 메서드 없음)이므로 Native SQL로 삽입합니다.
+ * <p>Seller, SellerBusinessInfo, Administrator, AdminAuthGroup, AuthGroup 엔티티는 모두 읽기 전용(팩토리 메서드
+ * 없음)이므로 Native SQL로 삽입합니다.
  */
 public final class LegacyCompositeSellerTestHelper {
 
@@ -31,8 +31,8 @@ public final class LegacyCompositeSellerTestHelper {
             String description,
             double commissionRate) {
         em.createNativeQuery(
-                        "INSERT INTO seller (seller_id, seller_name, seller_logo_url, seller_description, commission_rate) "
-                                + "VALUES (?, ?, ?, ?, ?)")
+                        "INSERT INTO seller (seller_id, seller_name, seller_logo_url,"
+                                + " seller_description, commission_rate) VALUES (?, ?, ?, ?, ?)")
                 .setParameter(1, sellerId)
                 .setParameter(2, sellerName)
                 .setParameter(3, logoUrl)
@@ -77,12 +77,12 @@ public final class LegacyCompositeSellerTestHelper {
             String csPhoneNumber,
             String csEmail) {
         em.createNativeQuery(
-                        "INSERT INTO seller_business_info "
-                                + "(seller_id, registration_number, company_name, representative, "
-                                + "sale_report_number, business_address_zip_code, business_address_line1, "
-                                + "business_address_line2, bank_name, account_number, account_holder_name, "
-                                + "cs_number, cs_phone_number, cs_email) "
-                                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                        "INSERT INTO seller_business_info (seller_id, registration_number,"
+                            + " company_name, representative, sale_report_number,"
+                            + " business_address_zip_code, business_address_line1,"
+                            + " business_address_line2, bank_name, account_number,"
+                            + " account_holder_name, cs_number, cs_phone_number, cs_email) VALUES"
+                            + " (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
                 .setParameter(1, sellerId)
                 .setParameter(2, registrationNumber)
                 .setParameter(3, companyName)
@@ -106,9 +106,9 @@ public final class LegacyCompositeSellerTestHelper {
     public void insertAdministrator(
             long adminId, long sellerId, String email, String passwordHash, String approvalStatus) {
         em.createNativeQuery(
-                        "INSERT INTO administrators "
-                                + "(admin_id, seller_id, email, password_hash, full_name, phone_number, approval_status, delete_yn) "
-                                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+                        "INSERT INTO administrators (admin_id, seller_id, email, password_hash,"
+                            + " full_name, phone_number, approval_status, delete_yn) VALUES (?, ?,"
+                            + " ?, ?, ?, ?, ?, ?)")
                 .setParameter(1, adminId)
                 .setParameter(2, sellerId)
                 .setParameter(3, email)
@@ -132,7 +132,8 @@ public final class LegacyCompositeSellerTestHelper {
     /** AdminAuthGroup 매핑 레코드를 삽입합니다. */
     public void insertAdminAuthGroup(long adminId, long authGroupId) {
         em.createNativeQuery(
-                        "INSERT INTO admin_auth_group (admin_id, auth_group_id, delete_yn) VALUES (?, ?, ?)")
+                        "INSERT INTO admin_auth_group (admin_id, auth_group_id, delete_yn) VALUES"
+                                + " (?, ?, ?)")
                 .setParameter(1, adminId)
                 .setParameter(2, authGroupId)
                 .setParameter(3, "N")

@@ -52,7 +52,9 @@ class ReceivePurchaseConfirmedWebhookServiceTest {
             OrderItemId orderItemId = mapping.orderItemId();
             OrderItem readyOrderItem = OrderFixtures.reconstitutedOrderItem();
 
-            given(mappingReadManager.getMapping(DEFAULT_SALES_CHANNEL_ID, DEFAULT_EXTERNAL_PRODUCT_ORDER_ID))
+            given(
+                            mappingReadManager.getMapping(
+                                    DEFAULT_SALES_CHANNEL_ID, DEFAULT_EXTERNAL_PRODUCT_ORDER_ID))
                     .willReturn(mapping);
             given(orderItemReadManager.findAllByIds(List.of(orderItemId)))
                     .willReturn(List.of(readyOrderItem));
@@ -90,7 +92,9 @@ class ReceivePurchaseConfirmedWebhookServiceTest {
             OrderItemId orderItemId = mapping.orderItemId();
             OrderItem confirmedOrderItem = OrderFixtures.confirmedOrderItem();
 
-            given(mappingReadManager.getMapping(DEFAULT_SALES_CHANNEL_ID, DEFAULT_EXTERNAL_PRODUCT_ORDER_ID))
+            given(
+                            mappingReadManager.getMapping(
+                                    DEFAULT_SALES_CHANNEL_ID, DEFAULT_EXTERNAL_PRODUCT_ORDER_ID))
                     .willReturn(mapping);
             given(orderItemReadManager.findAllByIds(List.of(orderItemId)))
                     .willReturn(List.of(confirmedOrderItem));
@@ -125,10 +129,12 @@ class ReceivePurchaseConfirmedWebhookServiceTest {
             String extId2 = "EXT-PO-002";
             List<String> externalProductOrderIds = List.of(extId1, extId2);
 
-            ExternalOrderItemMapping mapping1 = ClaimSyncFixtures.mappingWithOrderItemId(
-                    "01940001-0000-7000-8000-000000000001");
-            ExternalOrderItemMapping mapping2 = ClaimSyncFixtures.mappingWithOrderItemId(
-                    "01940001-0000-7000-8000-000000000002");
+            ExternalOrderItemMapping mapping1 =
+                    ClaimSyncFixtures.mappingWithOrderItemId(
+                            "01940001-0000-7000-8000-000000000001");
+            ExternalOrderItemMapping mapping2 =
+                    ClaimSyncFixtures.mappingWithOrderItemId(
+                            "01940001-0000-7000-8000-000000000002");
 
             OrderItem readyItem = OrderFixtures.reconstitutedOrderItem();
             OrderItem confirmedItem = OrderFixtures.confirmedOrderItem();
@@ -137,8 +143,9 @@ class ReceivePurchaseConfirmedWebhookServiceTest {
                     .willReturn(mapping1);
             given(mappingReadManager.getMapping(DEFAULT_SALES_CHANNEL_ID, extId2))
                     .willReturn(mapping2);
-            given(orderItemReadManager.findAllByIds(
-                    List.of(mapping1.orderItemId(), mapping2.orderItemId())))
+            given(
+                            orderItemReadManager.findAllByIds(
+                                    List.of(mapping1.orderItemId(), mapping2.orderItemId())))
                     .willReturn(List.of(readyItem, confirmedItem));
 
             // when
@@ -156,10 +163,11 @@ class ReceivePurchaseConfirmedWebhookServiceTest {
             ExternalOrderItemMapping mapping = ClaimSyncFixtures.defaultMapping();
             OrderItemId orderItemId = mapping.orderItemId();
 
-            given(mappingReadManager.getMapping(DEFAULT_SALES_CHANNEL_ID, DEFAULT_EXTERNAL_PRODUCT_ORDER_ID))
+            given(
+                            mappingReadManager.getMapping(
+                                    DEFAULT_SALES_CHANNEL_ID, DEFAULT_EXTERNAL_PRODUCT_ORDER_ID))
                     .willReturn(mapping);
-            given(orderItemReadManager.findAllByIds(List.of(orderItemId)))
-                    .willReturn(List.of());
+            given(orderItemReadManager.findAllByIds(List.of(orderItemId))).willReturn(List.of());
 
             // when
             sut.execute(DEFAULT_SALES_CHANNEL_ID, externalProductOrderIds);

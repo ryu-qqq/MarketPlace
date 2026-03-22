@@ -106,8 +106,7 @@ class SellicShipmentSyncStrategyTest {
             var outbox = mockOutbox(ShipmentOutboxType.SHIP, payload);
             var mapping = mockMapping("999");
 
-            given(mappingQueryPort.findByOrderItemId("OI-001"))
-                    .willReturn(Optional.of(mapping));
+            given(mappingQueryPort.findByOrderItemId("OI-001")).willReturn(Optional.of(mapping));
             given(properties.getCustomerId()).willReturn("test-customer");
             given(properties.getApiKey()).willReturn("test-key");
             given(apiClient.registerShipment(any()))
@@ -126,8 +125,7 @@ class SellicShipmentSyncStrategyTest {
             var outbox = mockOutbox(ShipmentOutboxType.SHIP, payload);
             var mapping = mockMapping("999");
 
-            given(mappingQueryPort.findByOrderItemId("OI-001"))
-                    .willReturn(Optional.of(mapping));
+            given(mappingQueryPort.findByOrderItemId("OI-001")).willReturn(Optional.of(mapping));
             given(properties.getCustomerId()).willReturn("test-customer");
             given(properties.getApiKey()).willReturn("test-key");
             given(apiClient.registerShipment(any()))
@@ -146,8 +144,7 @@ class SellicShipmentSyncStrategyTest {
             var outbox = mockOutbox(ShipmentOutboxType.SHIP, payload);
             var mapping = mockMapping("999");
 
-            given(mappingQueryPort.findByOrderItemId("OI-001"))
-                    .willReturn(Optional.of(mapping));
+            given(mappingQueryPort.findByOrderItemId("OI-001")).willReturn(Optional.of(mapping));
             given(properties.getCustomerId()).willReturn("test-customer");
             given(properties.getApiKey()).willReturn("test-key");
             given(apiClient.registerShipment(any()))
@@ -165,8 +162,7 @@ class SellicShipmentSyncStrategyTest {
             String payload = "{\"trackingNumber\":\"12345\",\"courierCode\":\"CJ\"}";
             var outbox = mockOutbox(ShipmentOutboxType.SHIP, payload);
 
-            given(mappingQueryPort.findByOrderItemId("OI-001"))
-                    .willReturn(Optional.empty());
+            given(mappingQueryPort.findByOrderItemId("OI-001")).willReturn(Optional.empty());
 
             OutboxSyncResult result = sut.execute(outbox);
 

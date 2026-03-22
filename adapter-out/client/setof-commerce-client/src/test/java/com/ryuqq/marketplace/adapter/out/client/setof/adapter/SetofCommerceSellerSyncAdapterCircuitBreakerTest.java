@@ -10,9 +10,6 @@ import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSeller
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

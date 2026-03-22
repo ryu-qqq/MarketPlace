@@ -24,13 +24,14 @@ import org.springframework.http.HttpStatus;
 /**
  * 레거시 QnA Command Testcontainers E2E 테스트.
  *
- * <p>MySQL 실제 컨테이너 기반으로 레거시 QnA 커맨드 API를 검증합니다.
- * H2 기반 LegacyQnACommandE2ETest의 Testcontainers 전환 버전입니다.
+ * <p>MySQL 실제 컨테이너 기반으로 레거시 QnA 커맨드 API를 검증합니다. H2 기반 LegacyQnACommandE2ETest의 Testcontainers 전환
+ * 버전입니다.
  *
  * <p>테스트 대상:
+ *
  * <ul>
- *   <li>LC1~LC5: POST /api/v1/legacy/qna/reply - QnA 답변 등록</li>
- *   <li>LC6~LC9: PUT /api/v1/legacy/qna/reply - QnA 답변 수정</li>
+ *   <li>LC1~LC5: POST /api/v1/legacy/qna/reply - QnA 답변 등록
+ *   <li>LC6~LC9: PUT /api/v1/legacy/qna/reply - QnA 답변 수정
  * </ul>
  */
 @Tag("e2e")
@@ -168,11 +169,14 @@ class LegacyQnAContainerCommandE2ETest extends ContainerLegacyE2ETestBase {
         @DisplayName("[LC6] ANSWERED QnA 답변 수정 → 200, reply content 변경 확인")
         void updateReply_ExistingReply_Returns200AndContentUpdated() {
             var qna = qnaRepository.save(QnaJpaEntityFixtures.answeredEntity());
-            var reply = qnaReplyRepository.save(
-                    QnaJpaEntityFixtures.sellerReplyEntity(null, qna.getId()));
+            var reply =
+                    qnaReplyRepository.save(
+                            QnaJpaEntityFixtures.sellerReplyEntity(null, qna.getId()));
 
             givenLegacyAuth()
-                    .body(createUpdateRequest(reply.getId(), qna.getId(), "수정된 답변 제목", "수정된 답변 내용입니다."))
+                    .body(
+                            createUpdateRequest(
+                                    reply.getId(), qna.getId(), "수정된 답변 제목", "수정된 답변 내용입니다."))
                     .when()
                     .put(QNA_REPLY)
                     .then()
@@ -180,10 +184,11 @@ class LegacyQnAContainerCommandE2ETest extends ContainerLegacyE2ETestBase {
                     .body("data.qnaId", equalTo(qna.getId().intValue()))
                     .body("data.qnaAnswerId", notNullValue());
 
-            var updatedReply = qnaReplyRepository.findByQnaId(qna.getId()).stream()
-                    .filter(r -> r.getId().equals(reply.getId()))
-                    .findFirst()
-                    .orElseThrow();
+            var updatedReply =
+                    qnaReplyRepository.findByQnaId(qna.getId()).stream()
+                            .filter(r -> r.getId().equals(reply.getId()))
+                            .findFirst()
+                            .orElseThrow();
             assertThat(updatedReply.getContent()).isEqualTo("수정된 답변 내용입니다.");
         }
     }
@@ -246,20 +251,25 @@ class LegacyQnAContainerCommandE2ETest extends ContainerLegacyE2ETestBase {
     private Map<String, Object> createAnswerRequest(long qnaId, String title, String content) {
         return Map.of(
                 "qnaId", qnaId,
-                "qnaContents", Map.of(
-                        "title", title,
-                        "content", content),
+                "qnaContents",
+                        Map.of(
+                                "title", title,
+                                "content", content),
                 "qnaImages", List.of());
     }
 
     private Map<String, Object> createUpdateRequest(
             long qnaAnswerId, long qnaId, String title, String content) {
         return Map.of(
-                "qnaAnswerId", qnaAnswerId,
-                "qnaId", qnaId,
-                "qnaContents", Map.of(
+                "qnaAnswerId",
+                qnaAnswerId,
+                "qnaId",
+                qnaId,
+                "qnaContents",
+                Map.of(
                         "title", title,
                         "content", content),
-                "qnaImages", List.of());
+                "qnaImages",
+                List.of());
     }
 }

@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.LegacyQnAApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.request.LegacyCreateQnaAnswerRequest;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.request.LegacyQnaContentsRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.request.LegacyUpdateQnaAnswerRequest;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyCreateQnaAnswerResponse;
 import com.ryuqq.marketplace.application.qna.dto.command.AnswerQnaCommand;
@@ -126,13 +125,14 @@ class LegacyQnaCommandApiMapperTest {
         @DisplayName("qnaId와 QnaReplyResult를 받아 응답 DTO로 변환한다")
         void toCreateAnswerResponse_ConvertsResult_ReturnsResponse() {
             // given
-            QnaReplyResult replyResult = new QnaReplyResult(
-                    LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
-                    null,
-                    "답변 내용입니다.",
-                    "SELLER",
-                    QnaReplyType.SELLER_ANSWER,
-                    Instant.now());
+            QnaReplyResult replyResult =
+                    new QnaReplyResult(
+                            LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
+                            null,
+                            "답변 내용입니다.",
+                            "SELLER",
+                            QnaReplyType.SELLER_ANSWER,
+                            Instant.now());
 
             // when
             LegacyCreateQnaAnswerResponse response =
@@ -140,20 +140,22 @@ class LegacyQnaCommandApiMapperTest {
 
             // then
             assertThat(response.qnaId()).isEqualTo(LegacyQnAApiFixtures.DEFAULT_QNA_ID);
-            assertThat(response.qnaAnswerId()).isEqualTo(LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID);
+            assertThat(response.qnaAnswerId())
+                    .isEqualTo(LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID);
         }
 
         @Test
         @DisplayName("replyType이 null이면 qnaType은 빈 문자열로 변환된다")
         void toCreateAnswerResponse_NullReplyType_ReturnsEmptyQnaType() {
             // given
-            QnaReplyResult replyResult = new QnaReplyResult(
-                    LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
-                    null,
-                    "답변 내용입니다.",
-                    "SELLER",
-                    null,
-                    Instant.now());
+            QnaReplyResult replyResult =
+                    new QnaReplyResult(
+                            LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
+                            null,
+                            "답변 내용입니다.",
+                            "SELLER",
+                            null,
+                            Instant.now());
 
             // when
             LegacyCreateQnaAnswerResponse response =
@@ -167,13 +169,14 @@ class LegacyQnaCommandApiMapperTest {
         @DisplayName("qnaImages는 항상 빈 리스트로 반환된다")
         void toCreateAnswerResponse_QnaImages_IsEmpty() {
             // given
-            QnaReplyResult replyResult = new QnaReplyResult(
-                    LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
-                    null,
-                    "답변 내용입니다.",
-                    "SELLER",
-                    QnaReplyType.SELLER_ANSWER,
-                    Instant.now());
+            QnaReplyResult replyResult =
+                    new QnaReplyResult(
+                            LegacyQnAApiFixtures.DEFAULT_QNA_ANSWER_ID,
+                            null,
+                            "답변 내용입니다.",
+                            "SELLER",
+                            QnaReplyType.SELLER_ANSWER,
+                            Instant.now());
 
             // when
             LegacyCreateQnaAnswerResponse response =

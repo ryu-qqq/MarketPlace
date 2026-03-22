@@ -62,10 +62,7 @@ public class SetofRefundClaimSyncStrategy implements RefundClaimSyncStrategy {
                     claimClient.rejectRefund(refundClaimId, reason);
                 }
                 case REQUEST, APPROVE, COLLECT -> {
-                    log.info(
-                            "세토프 환불 {} - 내부 처리만: orderItemId={}",
-                            type,
-                            outbox.orderItemIdValue());
+                    log.info("세토프 환불 {} - 내부 처리만: orderItemId={}", type, outbox.orderItemIdValue());
                 }
                 case HOLD, RELEASE_HOLD -> {
                     log.info(
@@ -107,8 +104,7 @@ public class SetofRefundClaimSyncStrategy implements RefundClaimSyncStrategy {
             JsonNode node = objectMapper.readTree(payload);
             return node.get("refundClaimId").asText();
         } catch (Exception e) {
-            throw new IllegalStateException(
-                    "refundClaimId를 payload에서 추출할 수 없습니다: " + payload, e);
+            throw new IllegalStateException("refundClaimId를 payload에서 추출할 수 없습니다: " + payload, e);
         }
     }
 

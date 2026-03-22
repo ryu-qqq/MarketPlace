@@ -43,8 +43,7 @@ class LegacyAuthE2ETest extends LegacyE2ETestBase {
             Map<String, Object> request = validAuthRequest();
 
             // when & then
-            given()
-                    .contentType(ContentType.JSON)
+            given().contentType(ContentType.JSON)
                     .accept(ContentType.JSON)
                     .body(request)
                     .when()
@@ -64,8 +63,7 @@ class LegacyAuthE2ETest extends LegacyE2ETestBase {
             Map<String, Object> request = Map.of("password", "stub-hash", "roleType", "MASTER");
 
             // when & then
-            given()
-                    .contentType(ContentType.JSON)
+            given().contentType(ContentType.JSON)
                     .accept(ContentType.JSON)
                     .body(request)
                     .when()
@@ -83,8 +81,7 @@ class LegacyAuthE2ETest extends LegacyE2ETestBase {
                     Map.of("userId", "stub@example.com", "roleType", "MASTER");
 
             // when & then
-            given()
-                    .contentType(ContentType.JSON)
+            given().contentType(ContentType.JSON)
                     .accept(ContentType.JSON)
                     .body(request)
                     .when()
@@ -102,8 +99,7 @@ class LegacyAuthE2ETest extends LegacyE2ETestBase {
                     Map.of("userId", "stub@example.com", "password", "stub-hash");
 
             // when & then
-            given()
-                    .contentType(ContentType.JSON)
+            given().contentType(ContentType.JSON)
                     .accept(ContentType.JSON)
                     .body(request)
                     .when()
@@ -121,8 +117,7 @@ class LegacyAuthE2ETest extends LegacyE2ETestBase {
                     Map.of("userId", "", "password", "stub-hash", "roleType", "MASTER");
 
             // when & then
-            given()
-                    .contentType(ContentType.JSON)
+            given().contentType(ContentType.JSON)
                     .accept(ContentType.JSON)
                     .body(request)
                     .when()

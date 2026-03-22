@@ -21,6 +21,7 @@ import org.springframework.test.context.TestPropertySource;
  * <p>REST Assured를 사용한 레거시 API End-to-End 통합 테스트의 공통 설정을 제공합니다.
  *
  * <p>특징:
+ *
  * <ul>
  *   <li>LegacyApiApplication 컨텍스트 로드
  *   <li>H2 In-Memory Database 사용 (test 프로파일)
@@ -41,11 +42,11 @@ import org.springframework.test.context.TestPropertySource;
             // bootstrap-legacy-api의 config.import(redis.yml, authhub.yml 등) 오버라이드
             // 외부 서비스 AutoConfiguration 비활성화
             "spring.autoconfigure.exclude="
-                    + "org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration,"
-                    + "org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration,"
-                    + "org.redisson.spring.starter.RedissonAutoConfigurationV2,"
-                    + "com.ryuqq.authhub.sdk.autoconfigure.AuthHubAutoConfiguration,"
-                    + "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowAutoConfiguration"
+                + "org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration,"
+                + "org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration,"
+                + "org.redisson.spring.starter.RedissonAutoConfigurationV2,"
+                + "com.ryuqq.authhub.sdk.autoconfigure.AuthHubAutoConfiguration,"
+                + "com.ryuqq.fileflow.sdk.autoconfigure.FileFlowAutoConfiguration"
         })
 @Import({StubExternalClientConfig.class, LegacyStubConfig.class})
 @ActiveProfiles("test")
@@ -81,13 +82,12 @@ public abstract class LegacyE2ETestBase {
     /**
      * 레거시 인증 헤더를 포함한 요청 시작.
      *
-     * <p>LegacyJwtAuthenticationFilter가 Authorization: Bearer 헤더를 파싱하여
-     * LegacyAuthContextHolder에 sellerId=10, role=MASTER, email=stub@example.com 를 세팅합니다.
-     * StubLegacyTokenClient가 모든 토큰을 valid로 처리합니다.
+     * <p>LegacyJwtAuthenticationFilter가 Authorization: Bearer 헤더를 파싱하여 LegacyAuthContextHolder에
+     * sellerId=10, role=MASTER, email=stub@example.com 를 세팅합니다. StubLegacyTokenClient가 모든 토큰을
+     * valid로 처리합니다.
      */
     protected RequestSpecification givenLegacyAuth() {
-        return given()
-                .contentType(ContentType.JSON)
+        return given().contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .header("Authorization", "Bearer " + STUB_TOKEN);
     }
@@ -95,8 +95,8 @@ public abstract class LegacyE2ETestBase {
     /**
      * 비인증 요청 시작 (인증 헤더 없음).
      *
-     * <p>LegacySecurityConfig의 anyRequest().authenticated() 규칙에 의해
-     * /api/v1/legacy/auth/** 외 경로는 401 Unauthorized를 반환합니다.
+     * <p>LegacySecurityConfig의 anyRequest().authenticated() 규칙에 의해 /api/v1/legacy/auth/** 외 경로는 401
+     * Unauthorized를 반환합니다.
      */
     protected RequestSpecification givenUnauthenticated() {
         return given().contentType(ContentType.JSON).accept(ContentType.JSON);

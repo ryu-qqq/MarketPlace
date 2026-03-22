@@ -16,8 +16,8 @@ import org.springframework.http.HttpStatus;
  *
  * <p>인증 필요 엔드포인트. Stub 토큰 기반 인증 시 sellerId=10 이 사용됩니다.
  *
- * <p>LegacyGetCurrentSellerUseCase는 StubExternalClientConfig에서 stub으로 등록되며, sellerId=10 에 대해
- * stub 응답을 반환합니다.
+ * <p>LegacyGetCurrentSellerUseCase는 StubExternalClientConfig에서 stub으로 등록되며, sellerId=10 에 대해 stub
+ * 응답을 반환합니다.
  *
  * @author ryu-qqq
  * @since 1.0.0

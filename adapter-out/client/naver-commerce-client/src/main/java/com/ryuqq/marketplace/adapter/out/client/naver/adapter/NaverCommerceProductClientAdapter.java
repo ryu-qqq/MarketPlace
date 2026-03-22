@@ -10,8 +10,8 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.NaverProductSearchResp
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceProductMapper;
 import com.ryuqq.marketplace.application.outboundproduct.dto.vo.ExternalProductEntry;
 import com.ryuqq.marketplace.application.outboundproduct.port.out.client.SalesChannelProductSearchClient;
-import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.outboundproductimage.dto.ResolvedExternalImages;
+import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
@@ -28,8 +28,8 @@ import org.springframework.stereotype.Component;
 /**
  * 네이버 커머스 상품 등록/수정 클라이언트 어댑터.
  *
- * <p>ProductGroupSyncData → NaverProductRegistrationRequest 변환 후 {@link NaverCommerceApiClient}를
- * 통해 API 호출합니다.
+ * <p>ProductGroupSyncData → NaverProductRegistrationRequest 변환 후 {@link NaverCommerceApiClient}를 통해
+ * API 호출합니다.
  */
 @Component
 @Qualifier("naverProductClient")
@@ -67,7 +67,9 @@ public class NaverCommerceProductClientAdapter
             Shop shop) {
 
         if (!properties.isEnabled()) {
-            log.info("NaverCommerceClient disabled. 상품 등록 스킵: productGroupId={}", syncData.queryResult().id());
+            log.info(
+                    "NaverCommerceClient disabled. 상품 등록 스킵: productGroupId={}",
+                    syncData.queryResult().id());
             return null;
         }
 
@@ -86,7 +88,9 @@ public class NaverCommerceProductClientAdapter
             ResolvedExternalImages resolvedImages) {
 
         if (!properties.isEnabled()) {
-            log.info("NaverCommerceClient disabled. 상품 등록(이미지) 스킵: productGroupId={}", syncData.queryResult().id());
+            log.info(
+                    "NaverCommerceClient disabled. 상품 등록(이미지) 스킵: productGroupId={}",
+                    syncData.queryResult().id());
             return null;
         }
 
@@ -106,7 +110,9 @@ public class NaverCommerceProductClientAdapter
             Set<ChangedArea> changedAreas) {
 
         if (!properties.isEnabled()) {
-            log.info("NaverCommerceClient disabled. 상품 수정 스킵: externalProductId={}", externalProductId);
+            log.info(
+                    "NaverCommerceClient disabled. 상품 수정 스킵: externalProductId={}",
+                    externalProductId);
             return;
         }
 
@@ -132,7 +138,9 @@ public class NaverCommerceProductClientAdapter
             ResolvedExternalImages resolvedImages) {
 
         if (!properties.isEnabled()) {
-            log.info("NaverCommerceClient disabled. 상품 수정(이미지) 스킵: externalProductId={}", externalProductId);
+            log.info(
+                    "NaverCommerceClient disabled. 상품 수정(이미지) 스킵: externalProductId={}",
+                    externalProductId);
             return;
         }
 
@@ -155,7 +163,9 @@ public class NaverCommerceProductClientAdapter
     @Override
     public void deleteProduct(String externalProductId, SellerSalesChannel channel) {
         if (!properties.isEnabled()) {
-            log.info("NaverCommerceClient disabled. 상품 삭제 스킵: externalProductId={}", externalProductId);
+            log.info(
+                    "NaverCommerceClient disabled. 상품 삭제 스킵: externalProductId={}",
+                    externalProductId);
             return;
         }
 
@@ -204,10 +214,7 @@ public class NaverCommerceProductClientAdapter
 
     private String executeRegister(
             NaverProductRegistrationRequest request, Long productGroupId, Long categoryId) {
-        log.info(
-                "네이버 커머스 상품 등록 요청: productGroupId={}, categoryId={}",
-                productGroupId,
-                categoryId);
+        log.info("네이버 커머스 상품 등록 요청: productGroupId={}, categoryId={}", productGroupId, categoryId);
 
         NaverProductRegistrationResponse response = apiClient.registerProduct(request);
 
@@ -230,9 +237,7 @@ public class NaverCommerceProductClientAdapter
         NaverProductDetailResponse response = apiClient.getProductDetail(externalProductId);
 
         if (response == null || response.originProduct() == null) {
-            log.warn(
-                    "네이버 기존 상품 조회 실패, 전체 교체 모드로 진행: externalProductId={}",
-                    externalProductId);
+            log.warn("네이버 기존 상품 조회 실패, 전체 교체 모드로 진행: externalProductId={}", externalProductId);
             return null;
         }
 

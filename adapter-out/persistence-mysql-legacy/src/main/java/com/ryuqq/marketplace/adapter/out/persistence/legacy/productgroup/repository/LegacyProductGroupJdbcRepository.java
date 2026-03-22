@@ -39,14 +39,15 @@ public class LegacyProductGroupJdbcRepository {
                 WHERE product_group_id = :productGroupId
                 """;
 
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("productGroupId", productGroupId)
-                .addValue("productGroupName", productGroupName)
-                .addValue("brandId", brandId)
-                .addValue("categoryId", categoryId)
-                .addValue("optionType", optionType)
-                .addValue("regularPrice", regularPrice)
-                .addValue("currentPrice", currentPrice);
+        MapSqlParameterSource params =
+                new MapSqlParameterSource()
+                        .addValue("productGroupId", productGroupId)
+                        .addValue("productGroupName", productGroupName)
+                        .addValue("brandId", brandId)
+                        .addValue("categoryId", categoryId)
+                        .addValue("optionType", optionType)
+                        .addValue("regularPrice", regularPrice)
+                        .addValue("currentPrice", currentPrice);
 
         jdbcTemplate.update(sql, params);
     }
@@ -70,8 +71,7 @@ public class LegacyProductGroupJdbcRepository {
                 SET SOLD_OUT_YN = 'Y'
                 WHERE product_group_id = :productGroupId
                 """,
-                new MapSqlParameterSource()
-                        .addValue("productGroupId", productGroupId));
+                new MapSqlParameterSource().addValue("productGroupId", productGroupId));
     }
 
     public void updatePrice(long productGroupId, long regularPrice, long currentPrice) {

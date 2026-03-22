@@ -14,8 +14,7 @@ public class ConvertInboundQnaService implements ConvertInboundQnaUseCase {
     private final InboundQnaConversionProcessor conversionProcessor;
 
     public ConvertInboundQnaService(
-            InboundQnaReadManager readManager,
-            InboundQnaConversionProcessor conversionProcessor) {
+            InboundQnaReadManager readManager, InboundQnaConversionProcessor conversionProcessor) {
         this.readManager = readManager;
         this.conversionProcessor = conversionProcessor;
     }

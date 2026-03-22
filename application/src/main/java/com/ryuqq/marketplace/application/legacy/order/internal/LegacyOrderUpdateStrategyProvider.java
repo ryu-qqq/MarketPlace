@@ -17,17 +17,18 @@ public class LegacyOrderUpdateStrategyProvider {
     private final Map<String, LegacyOrderUpdateStrategy> strategyMap;
 
     public LegacyOrderUpdateStrategyProvider(List<LegacyOrderUpdateStrategy> strategies) {
-        this.strategyMap = strategies.stream()
-                .collect(Collectors.toUnmodifiableMap(
-                        LegacyOrderUpdateStrategy::supportedStatus,
-                        Function.identity()));
+        this.strategyMap =
+                strategies.stream()
+                        .collect(
+                                Collectors.toUnmodifiableMap(
+                                        LegacyOrderUpdateStrategy::supportedStatus,
+                                        Function.identity()));
     }
 
     public LegacyOrderUpdateStrategy getStrategy(String orderStatus) {
         LegacyOrderUpdateStrategy strategy = strategyMap.get(orderStatus);
         if (strategy == null) {
-            throw new IllegalArgumentException(
-                    "지원하지 않는 레거시 주문 상태: " + orderStatus);
+            throw new IllegalArgumentException("지원하지 않는 레거시 주문 상태: " + orderStatus);
         }
         return strategy;
     }

@@ -58,8 +58,7 @@ class LegacyOptionDetailCommandAdapterTest {
                             0,
                             DeletionStatus.active());
 
-            LegacyOptionDetailEntity savedEntity =
-                    LegacyOptionDetailEntity.create(1L, "RED");
+            LegacyOptionDetailEntity savedEntity = LegacyOptionDetailEntity.create(1L, "RED");
 
             given(repository.save(any())).willReturn(savedEntity);
 
@@ -83,8 +82,7 @@ class LegacyOptionDetailCommandAdapterTest {
                             0,
                             DeletionStatus.active());
 
-            LegacyOptionDetailEntity entity =
-                    LegacyOptionDetailEntity.create(2L, "BLUE");
+            LegacyOptionDetailEntity entity = LegacyOptionDetailEntity.create(2L, "BLUE");
 
             given(repository.save(any())).willReturn(entity);
 

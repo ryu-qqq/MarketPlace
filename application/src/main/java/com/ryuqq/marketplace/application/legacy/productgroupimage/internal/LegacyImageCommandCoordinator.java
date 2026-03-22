@@ -18,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 레거시 이미지 Command Coordinator.
  *
- * <p>표준 도메인 객체 기반으로 레거시 DB(luxurydb)에 저장합니다.
- * 이미지 업로드 Outbox는 생성하지 않습니다 — 레거시 컨버전 과정에서 처리됩니다.
+ * <p>표준 도메인 객체 기반으로 레거시 DB(luxurydb)에 저장합니다. 이미지 업로드 Outbox는 생성하지 않습니다 — 레거시 컨버전 과정에서 처리됩니다.
  */
 @Component
 public class LegacyImageCommandCoordinator {
@@ -55,7 +54,8 @@ public class LegacyImageCommandCoordinator {
     @Transactional
     public void update(UpdateProductGroupImagesCommand command) {
         ProductGroupImageUpdateData updateData = imageFactory.createUpdateData(command);
-        ProductGroupImages existing = imageReadManager.getByProductGroupId(command.productGroupId());
+        ProductGroupImages existing =
+                imageReadManager.getByProductGroupId(command.productGroupId());
         ProductGroupImageDiff diff = existing.update(updateData);
 
         for (ProductGroupImage image : diff.removed()) {

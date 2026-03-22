@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 레거시 상품 옵션/SKU 수정 서비스.
  *
- * <p>표준 UpdateProductsCommand를 받아 soft delete + 재등록 패턴으로 처리합니다.
- * Update 타입을 Register 타입으로 변환하여 Coordinator에 위임합니다.
+ * <p>표준 UpdateProductsCommand를 받아 soft delete + 재등록 패턴으로 처리합니다. Update 타입을 Register 타입으로 변환하여
+ * Coordinator에 위임합니다.
  */
 @Service
 public class LegacyProductUpdateOptionsService implements LegacyProductUpdateOptionsUseCase {
@@ -58,32 +58,43 @@ public class LegacyProductUpdateOptionsService implements LegacyProductUpdateOpt
         conversionOutboxCommandManager.createIfNoPending(command.productGroupId(), now);
     }
 
-    private RegisterSellerOptionGroupsCommand toRegisterOptionCommand(UpdateProductsCommand command) {
+    private RegisterSellerOptionGroupsCommand toRegisterOptionCommand(
+            UpdateProductsCommand command) {
         List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> groups =
                 command.optionGroups().stream()
-                        .map(g -> new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
-                                g.optionGroupName(),
-                                g.canonicalOptionGroupId(),
-                                g.inputType(),
-                                g.optionValues().stream()
-                                        .map(v -> new RegisterSellerOptionGroupsCommand.OptionValueCommand(
-                                                v.optionValueName(),
-                                                v.canonicalOptionValueId(),
-                                                v.sortOrder()))
-                                        .toList()))
+                        .map(
+                                g ->
+                                        new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
+                                                g.optionGroupName(),
+                                                g.canonicalOptionGroupId(),
+                                                g.inputType(),
+                                                g.optionValues().stream()
+                                                        .map(
+                                                                v ->
+                                                                        new RegisterSellerOptionGroupsCommand
+                                                                                .OptionValueCommand(
+                                                                                v.optionValueName(),
+                                                                                v
+                                                                                        .canonicalOptionValueId(),
+                                                                                v.sortOrder()))
+                                                        .toList()))
                         .toList();
-        return new RegisterSellerOptionGroupsCommand(command.productGroupId(), "COMBINATION", groups);
+        return new RegisterSellerOptionGroupsCommand(
+                command.productGroupId(), "COMBINATION", groups);
     }
 
-    private List<RegisterProductsCommand.ProductData> toProductDataList(UpdateProductsCommand command) {
+    private List<RegisterProductsCommand.ProductData> toProductDataList(
+            UpdateProductsCommand command) {
         return command.products().stream()
-                .map(p -> new RegisterProductsCommand.ProductData(
-                        p.skuCode(),
-                        p.regularPrice(),
-                        p.currentPrice(),
-                        p.stockQuantity(),
-                        p.sortOrder(),
-                        p.selectedOptions()))
+                .map(
+                        p ->
+                                new RegisterProductsCommand.ProductData(
+                                        p.skuCode(),
+                                        p.regularPrice(),
+                                        p.currentPrice(),
+                                        p.stockQuantity(),
+                                        p.sortOrder(),
+                                        p.selectedOptions()))
                 .toList();
     }
 }

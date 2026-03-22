@@ -22,9 +22,9 @@ public class LegacyOptionDetailCommandAdapter implements LegacyOptionDetailComma
 
     @Override
     public Long persist(SellerOptionValue optionValue) {
-        LegacyOptionDetailEntity entity = LegacyOptionDetailEntity.create(
-                optionValue.sellerOptionGroupIdValue(),
-                optionValue.optionValueNameValue());
+        LegacyOptionDetailEntity entity =
+                LegacyOptionDetailEntity.create(
+                        optionValue.sellerOptionGroupIdValue(), optionValue.optionValueNameValue());
         return repository.save(entity).getId();
     }
 }

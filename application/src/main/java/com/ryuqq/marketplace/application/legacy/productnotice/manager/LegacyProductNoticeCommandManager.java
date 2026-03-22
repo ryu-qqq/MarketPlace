@@ -29,8 +29,7 @@ public class LegacyProductNoticeCommandManager {
     @Transactional
     public void register(RegisterProductNoticeCommand command) {
         NoticeCategory noticeCategory =
-                noticeCategoryReadManager.getById(
-                        NoticeCategoryId.of(command.noticeCategoryId()));
+                noticeCategoryReadManager.getById(NoticeCategoryId.of(command.noticeCategoryId()));
 
         Map<Long, String> entries = new HashMap<>();
         for (RegisterProductNoticeCommand.NoticeEntryCommand entry : command.entries()) {

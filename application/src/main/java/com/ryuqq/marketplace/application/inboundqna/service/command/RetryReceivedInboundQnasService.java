@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class RetryReceivedInboundQnasService implements RetryReceivedInboundQnasUseCase {
 
-    private static final Logger log = LoggerFactory.getLogger(RetryReceivedInboundQnasService.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(RetryReceivedInboundQnasService.class);
 
     private final InboundQnaReadManager readManager;
     private final InboundQnaConversionProcessor conversionProcessor;
 
     public RetryReceivedInboundQnasService(
-            InboundQnaReadManager readManager,
-            InboundQnaConversionProcessor conversionProcessor) {
+            InboundQnaReadManager readManager, InboundQnaConversionProcessor conversionProcessor) {
         this.readManager = readManager;
         this.conversionProcessor = conversionProcessor;
     }
@@ -48,10 +48,7 @@ public class RetryReceivedInboundQnasService implements RetryReceivedInboundQnas
             }
         }
 
-        log.info(
-                "InboundQna 재변환 완료: total={}, converted={}",
-                receivedQnas.size(),
-                converted);
+        log.info("InboundQna 재변환 완료: total={}, converted={}", receivedQnas.size(), converted);
 
         return converted;
     }

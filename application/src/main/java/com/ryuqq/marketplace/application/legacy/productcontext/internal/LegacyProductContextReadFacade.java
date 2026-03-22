@@ -46,8 +46,7 @@ public class LegacyProductContextReadFacade {
                 defaultPolicyResolver.resolveShippingPolicyId(
                         internalSellerId, command.deliveryData());
         long refundPolicyId =
-                defaultPolicyResolver.resolveRefundPolicyId(
-                        internalSellerId, command.refundData());
+                defaultPolicyResolver.resolveRefundPolicyId(internalSellerId, command.refundData());
 
         NoticeCategory noticeCategory = noticeCategoryResolver.resolve(internalCategoryId);
 

@@ -96,8 +96,21 @@ public class SellicCommerceProductMapper {
                 imageUrls.size() > 15 ? imageUrls.get(15) : null,
                 imageUrls.size() > 16 ? imageUrls.get(16) : null,
                 null,
-                null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 optionNames.size() > 0 ? optionNames.get(0) : "단품",
                 optionNames.size() > 1 ? optionNames.get(1) : null,
                 optionNames.size() > 2 ? optionNames.get(2) : null,
@@ -168,8 +181,21 @@ public class SellicCommerceProductMapper {
                 imageUrls.size() > 15 ? imageUrls.get(15) : null,
                 imageUrls.size() > 16 ? imageUrls.get(16) : null,
                 null,
-                null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 optionNames.size() > 0 ? optionNames.get(0) : "단품",
                 optionNames.size() > 1 ? optionNames.get(1) : null,
                 optionNames.size() > 2 ? optionNames.get(2) : null,
@@ -194,24 +220,63 @@ public class SellicCommerceProductMapper {
         // detailNote(17), marketPrice(18), salePrice(19), image1(20), image7~22(21-36),
         // notifyCode(37), notify1~15(38-52), optionName1~4(53-56), productStocks(57)
         return new SellicProductUpdateRequest(
-                customerId,                     // 1
-                apiKey,                         // 2
-                externalProductId,              // 3
-                null, null, null, null, null,   // 4-8
-                SALE_STATUS_TERMINATED,         // 9
-                null, null, null,               // 10-12
-                null, null, null, null, null,   // 13-17
-                null, null,                     // 18-19
-                null, null, null, null, null,   // 20-24
-                null, null, null, null, null,   // 25-29
-                null, null, null, null, null,   // 30-34
-                null, null,                     // 35-36
-                null,                           // 37
-                null, null, null, null, null,   // 38-42
-                null, null, null, null, null,   // 43-47
-                null, null, null, null, null,   // 48-52
-                null, null, null, null,         // 53-56
-                null);                          // 57
+                customerId, // 1
+                apiKey, // 2
+                externalProductId, // 3
+                null,
+                null,
+                null,
+                null,
+                null, // 4-8
+                SALE_STATUS_TERMINATED, // 9
+                null,
+                null,
+                null, // 10-12
+                null,
+                null,
+                null,
+                null,
+                null, // 13-17
+                null,
+                null, // 18-19
+                null,
+                null,
+                null,
+                null,
+                null, // 20-24
+                null,
+                null,
+                null,
+                null,
+                null, // 25-29
+                null,
+                null,
+                null,
+                null,
+                null, // 30-34
+                null,
+                null, // 35-36
+                null, // 37
+                null,
+                null,
+                null,
+                null,
+                null, // 38-42
+                null,
+                null,
+                null,
+                null,
+                null, // 43-47
+                null,
+                null,
+                null,
+                null,
+                null, // 48-52
+                null,
+                null,
+                null,
+                null, // 53-56
+                null); // 57
     }
 
     /**
@@ -286,10 +351,18 @@ public class SellicCommerceProductMapper {
                                                 ProductOptionMappingResult::optionGroupName))
                                 .toList();
 
-                if (sorted.size() > 0) item1 = sorted.get(0).optionValueName();
-                if (sorted.size() > 1) item2 = sorted.get(1).optionValueName();
-                if (sorted.size() > 2) item3 = sorted.get(2).optionValueName();
-                if (sorted.size() > 3) item4 = sorted.get(3).optionValueName();
+                if (sorted.size() > 0) {
+                    item1 = sorted.get(0).optionValueName();
+                }
+                if (sorted.size() > 1) {
+                    item2 = sorted.get(1).optionValueName();
+                }
+                if (sorted.size() > 2) {
+                    item3 = sorted.get(2).optionValueName();
+                }
+                if (sorted.size() > 3) {
+                    item4 = sorted.get(3).optionValueName();
+                }
             }
 
             if (item1 == null) {
@@ -312,16 +385,10 @@ public class SellicCommerceProductMapper {
     }
 
     private int resolveMarketPrice(List<ProductResult> products) {
-        return products.stream()
-                .mapToInt(ProductResult::regularPrice)
-                .max()
-                .orElse(0);
+        return products.stream().mapToInt(ProductResult::regularPrice).max().orElse(0);
     }
 
     private int resolveSalePrice(List<ProductResult> products) {
-        return products.stream()
-                .mapToInt(ProductResult::currentPrice)
-                .min()
-                .orElse(0);
+        return products.stream().mapToInt(ProductResult::currentPrice).min().orElse(0);
     }
 }

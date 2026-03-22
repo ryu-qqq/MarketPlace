@@ -29,8 +29,7 @@ public class LegacyProductQueryAdapter implements LegacyProductQueryPort {
 
     private final LegacyProductGroupQueryDslRepository queryDslRepository;
 
-    public LegacyProductQueryAdapter(
-            LegacyProductGroupQueryDslRepository queryDslRepository) {
+    public LegacyProductQueryAdapter(LegacyProductGroupQueryDslRepository queryDslRepository) {
         this.queryDslRepository = queryDslRepository;
     }
 
@@ -51,29 +50,35 @@ public class LegacyProductQueryAdapter implements LegacyProductQueryPort {
         for (LegacyProductOptionEntity opt : optionEntities) {
             mappingsByProductId
                     .computeIfAbsent(opt.getProductId(), k -> new ArrayList<>())
-                    .add(ProductOptionMapping.reconstitute(
-                            null,
-                            ProductId.of(opt.getProductId()),
-                            SellerOptionValueId.of(opt.getOptionDetailId()),
-                            DeletionStatus.active()));
+                    .add(
+                            ProductOptionMapping.reconstitute(
+                                    null,
+                                    ProductId.of(opt.getProductId()),
+                                    SellerOptionValueId.of(opt.getOptionDetailId()),
+                                    DeletionStatus.active()));
         }
 
         return productEntities.stream()
-                .map(entity -> Product.reconstitute(
-                        ProductId.of(entity.getId()),
-                        ProductGroupId.of(entity.getProductGroupId()),
-                        SkuCode.of(""),
-                        Money.zero(),
-                        Money.zero(),
-                        Money.zero(),
-                        0,
-                        entity.getStockQuantity() != null ? entity.getStockQuantity() : 0,
-                        "Y".equals(entity.getSoldOutYn())
-                                ? ProductStatus.SOLD_OUT : ProductStatus.ACTIVE,
-                        0,
-                        mappingsByProductId.getOrDefault(entity.getId(), List.of()),
-                        null,
-                        null))
+                .map(
+                        entity ->
+                                Product.reconstitute(
+                                        ProductId.of(entity.getId()),
+                                        ProductGroupId.of(entity.getProductGroupId()),
+                                        SkuCode.of(""),
+                                        Money.zero(),
+                                        Money.zero(),
+                                        Money.zero(),
+                                        0,
+                                        entity.getStockQuantity() != null
+                                                ? entity.getStockQuantity()
+                                                : 0,
+                                        "Y".equals(entity.getSoldOutYn())
+                                                ? ProductStatus.SOLD_OUT
+                                                : ProductStatus.ACTIVE,
+                                        0,
+                                        mappingsByProductId.getOrDefault(entity.getId(), List.of()),
+                                        null,
+                                        null))
                 .toList();
     }
 }

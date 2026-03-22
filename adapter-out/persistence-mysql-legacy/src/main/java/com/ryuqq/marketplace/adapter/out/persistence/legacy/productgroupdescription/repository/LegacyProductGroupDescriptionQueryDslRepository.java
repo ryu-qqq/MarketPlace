@@ -3,9 +3,9 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescrip
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.QLegacyDescriptionImageEntity.legacyDescriptionImageEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.QLegacyProductGroupDetailDescriptionEntity.legacyProductGroupDetailDescriptionEntity;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyDescriptionImageEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyProductGroupDetailDescriptionEntity;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;

@@ -22,7 +22,8 @@ public class LegacyProductGroupDescriptionReadManager {
     public ProductGroupDescription getByProductGroupId(long productGroupId) {
         return readPort.findByProductGroupId(productGroupId)
                 .orElseThrow(
-                        () -> new ProductGroupDescriptionNotFoundException(
-                                ProductGroupId.of(productGroupId)));
+                        () ->
+                                new ProductGroupDescriptionNotFoundException(
+                                        ProductGroupId.of(productGroupId)));
     }
 }

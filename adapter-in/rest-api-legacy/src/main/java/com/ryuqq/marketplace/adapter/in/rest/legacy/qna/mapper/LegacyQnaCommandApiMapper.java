@@ -21,21 +21,13 @@ public class LegacyQnaCommandApiMapper {
         String title = request.qnaContents() != null ? request.qnaContents().title() : "";
         String content = request.qnaContents() != null ? request.qnaContents().content() : "";
 
-        return new AnswerQnaCommand(
-                request.qnaId(),
-                title,
-                content,
-                "SELLER",
-                null);
+        return new AnswerQnaCommand(request.qnaId(), title, content, "SELLER", null);
     }
 
     public UpdateQnaReplyCommand toUpdateCommand(LegacyUpdateQnaAnswerRequest request) {
         String content = request.qnaContents() != null ? request.qnaContents().content() : "";
 
-        return new UpdateQnaReplyCommand(
-                request.qnaId(),
-                request.qnaAnswerId(),
-                content);
+        return new UpdateQnaReplyCommand(request.qnaId(), request.qnaAnswerId(), content);
     }
 
     public LegacyCreateQnaAnswerResponse toCreateAnswerResponse(

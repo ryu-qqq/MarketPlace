@@ -22,8 +22,8 @@ import org.springframework.context.annotation.Primary;
  *   <li>DistributedLockPort: Redis 분산락 stub (테스트 환경에서 Redis 불필요)
  * </ul>
  *
- * <p>RedissonClient, QnaOutboxPublishClient, QnaAnswerSyncStrategy stub은
- * StubExternalClientConfig에서 제공됩니다.
+ * <p>RedissonClient, QnaOutboxPublishClient, QnaAnswerSyncStrategy stub은 StubExternalClientConfig에서
+ * 제공됩니다.
  *
  * <p>레거시 Flyway 마이그레이션은 persistence.legacy.flyway.locations 프로퍼티로 실행을 억제합니다.
  * LegacyE2ETestBase의 @TestPropertySource 에서 설정합니다.
@@ -70,8 +70,8 @@ public class LegacyStubConfig {
     /**
      * DistributedLockPort no-op stub.
      *
-     * <p>테스트 환경에서는 분산락을 항상 성공으로 처리합니다.
-     * LegacyConversionSeederLockManager, LegacyOrderSeederLockManager 등이 의존합니다.
+     * <p>테스트 환경에서는 분산락을 항상 성공으로 처리합니다. LegacyConversionSeederLockManager,
+     * LegacyOrderSeederLockManager 등이 의존합니다.
      */
     @Bean
     @Primary

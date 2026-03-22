@@ -82,8 +82,7 @@ class LegacyProductCommandApiMapperTest {
                     LegacyProductApiFixtures.stockRequests();
 
             // when
-            List<UpdateProductStockCommand> commands =
-                    mapper.toUpdateStockCommands(requests);
+            List<UpdateProductStockCommand> commands = mapper.toUpdateStockCommands(requests);
 
             // then
             assertThat(commands).hasSize(2);
@@ -99,8 +98,7 @@ class LegacyProductCommandApiMapperTest {
         @DisplayName("빈 요청 목록은 빈 commands를 반환한다")
         void toUpdateStockCommands_EmptyRequests_ReturnsEmptyCommands() {
             // when
-            List<UpdateProductStockCommand> commands =
-                    mapper.toUpdateStockCommands(List.of());
+            List<UpdateProductStockCommand> commands = mapper.toUpdateStockCommands(List.of());
 
             // then
             assertThat(commands).isEmpty();

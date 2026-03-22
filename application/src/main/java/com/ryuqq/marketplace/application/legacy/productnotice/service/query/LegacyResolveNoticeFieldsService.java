@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.legacy.productnotice.service.query;
 
 import com.ryuqq.marketplace.application.inboundproduct.internal.InboundProductMappingResolver;
-import com.ryuqq.marketplace.application.legacy.productnotice.port.in.query.LegacyResolveNoticeFieldsUseCase;
 import com.ryuqq.marketplace.application.legacy.productgroup.manager.LegacyProductGroupReadManager;
+import com.ryuqq.marketplace.application.legacy.productnotice.port.in.query.LegacyResolveNoticeFieldsUseCase;
 import com.ryuqq.marketplace.application.notice.manager.NoticeCategoryReadManager;
 import com.ryuqq.marketplace.application.notice.resolver.CategoryNoticeResolver;
 import com.ryuqq.marketplace.domain.category.vo.CategoryGroup;

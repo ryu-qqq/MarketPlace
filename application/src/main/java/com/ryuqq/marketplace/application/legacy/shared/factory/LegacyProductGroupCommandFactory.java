@@ -3,18 +3,18 @@ package com.ryuqq.marketplace.application.legacy.shared.factory;
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
-import com.ryuqq.marketplace.application.legacy.productgroupdescription.dto.command.LegacyUpdateDescriptionCommand;
-import com.ryuqq.marketplace.application.legacy.productgroupimage.dto.command.LegacyUpdateImagesCommand;
-import com.ryuqq.marketplace.application.legacy.productnotice.dto.command.LegacyUpdateNoticeCommand;
 import com.ryuqq.marketplace.application.legacy.product.dto.command.LegacyUpdatePriceCommand;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyMarkOutOfStockCommand;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyUpdateDisplayStatusCommand;
+import com.ryuqq.marketplace.application.legacy.productgroupdescription.dto.command.LegacyUpdateDescriptionCommand;
+import com.ryuqq.marketplace.application.legacy.productgroupimage.dto.command.LegacyUpdateImagesCommand;
+import com.ryuqq.marketplace.application.legacy.productnotice.dto.command.LegacyUpdateNoticeCommand;
 import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyDescriptionImage;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyProductDescription;
-import com.ryuqq.marketplace.domain.legacy.productnotice.aggregate.LegacyProductNotice;
+import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
 import com.ryuqq.marketplace.domain.legacy.productimage.vo.ProductGroupImageType;
+import com.ryuqq.marketplace.domain.legacy.productnotice.aggregate.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionHtml;
 import java.time.Instant;
 import java.util.List;
@@ -120,5 +120,4 @@ public class LegacyProductGroupCommandFactory {
     public Instant now() {
         return timeProvider.now();
     }
-
 }

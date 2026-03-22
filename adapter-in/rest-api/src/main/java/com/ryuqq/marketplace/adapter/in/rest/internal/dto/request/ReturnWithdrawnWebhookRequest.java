@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * 반품 철회 웹훅 요청.
  *
- * <p>구매자가 반품 요청을 취소. ExternalClaimPayload(RETURN/RETURN_REJECT)로 변환되어
- * RefundClaimSyncHandler에서 REFUND_REJECTED 액션으로 처리.
+ * <p>구매자가 반품 요청을 취소. ExternalClaimPayload(RETURN/RETURN_REJECT)로 변환되어 RefundClaimSyncHandler에서
+ * REFUND_REJECTED 액션으로 처리.
  *
  * @param salesChannelId 판매채널 ID
  * @param externalOrderId 외부 주문번호

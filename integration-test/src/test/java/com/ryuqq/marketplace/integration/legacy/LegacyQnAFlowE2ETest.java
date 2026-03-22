@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.integration.legacy;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
 
 import com.ryuqq.marketplace.adapter.out.persistence.qna.QnaJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.qna.entity.QnaJpaEntity;
@@ -73,7 +72,8 @@ class LegacyQnAFlowE2ETest extends LegacyE2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[FLOW-1] QnA DB 시딩 -> 목록 조회 PENDING 확인 -> 답변 등록 -> 상세 조회 ANSWERED + answerQnas 확인")
+        @DisplayName(
+                "[FLOW-1] QnA DB 시딩 -> 목록 조회 PENDING 확인 -> 답변 등록 -> 상세 조회 ANSWERED + answerQnas 확인")
         void qnaFullLifecycle_SeedToAnswer_AllStepsVerified() {
             // Step 1. QnA DB 시딩 (PENDING)
             var qna = qnaRepository.save(QnaJpaEntityFixtures.pendingEntity());
@@ -183,15 +183,16 @@ class LegacyQnAFlowE2ETest extends LegacyE2ETestBase {
             var qna = qnaRepository.save(QnaJpaEntityFixtures.pendingEntity());
 
             // Step 2. 답변 등록
-            long qnaAnswerId = givenLegacyAuth()
-                    .body(createAnswerRequest(qna.getId(), "1차 답변 제목", "1차 답변 내용입니다."))
-                    .when()
-                    .post(QNA_REPLY)
-                    .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .extract()
-                    .jsonPath()
-                    .getLong("data.qnaAnswerId");
+            long qnaAnswerId =
+                    givenLegacyAuth()
+                            .body(createAnswerRequest(qna.getId(), "1차 답변 제목", "1차 답변 내용입니다."))
+                            .when()
+                            .post(QNA_REPLY)
+                            .then()
+                            .statusCode(HttpStatus.OK.value())
+                            .extract()
+                            .jsonPath()
+                            .getLong("data.qnaAnswerId");
 
             // Step 3. Outbox 생성 확인 - PENDING 상태, ANSWER 타입
             List<QnaOutboxJpaEntity> outboxes = qnaOutboxRepository.findAll();
@@ -224,23 +225,53 @@ class LegacyQnAFlowE2ETest extends LegacyE2ETestBase {
         void multipleQnaTypes_CreateAndSearch_ReturnsAll() {
             // Step 1. 다양한 타입 QnA 시딩
             Instant now = Instant.now();
-            qnaRepository.save(QnaJpaEntity.create(
-                    null, SELLER_ID, 100L, null, "PRODUCT", 1L,
-                    "EXT-FLOW4-PRODUCT-001", "상품 문의",
-                    "상품 관련 문의입니다.", "구매자A",
-                    QnaJpaEntity.Status.PENDING, now, now));
+            qnaRepository.save(
+                    QnaJpaEntity.create(
+                            null,
+                            SELLER_ID,
+                            100L,
+                            null,
+                            "PRODUCT",
+                            1L,
+                            "EXT-FLOW4-PRODUCT-001",
+                            "상품 문의",
+                            "상품 관련 문의입니다.",
+                            "구매자A",
+                            QnaJpaEntity.Status.PENDING,
+                            now,
+                            now));
 
-            qnaRepository.save(QnaJpaEntity.create(
-                    null, SELLER_ID, 100L, null, "SHIPPING", 1L,
-                    "EXT-FLOW4-SHIPPING-001", "배송 문의",
-                    "배송 관련 문의입니다.", "구매자B",
-                    QnaJpaEntity.Status.PENDING, now, now));
+            qnaRepository.save(
+                    QnaJpaEntity.create(
+                            null,
+                            SELLER_ID,
+                            100L,
+                            null,
+                            "SHIPPING",
+                            1L,
+                            "EXT-FLOW4-SHIPPING-001",
+                            "배송 문의",
+                            "배송 관련 문의입니다.",
+                            "구매자B",
+                            QnaJpaEntity.Status.PENDING,
+                            now,
+                            now));
 
-            qnaRepository.save(QnaJpaEntity.create(
-                    null, SELLER_ID, 100L, null, "ORDER", 1L,
-                    "EXT-FLOW4-ORDER-001", "주문 문의",
-                    "주문 관련 문의입니다.", "구매자C",
-                    QnaJpaEntity.Status.PENDING, now, now));
+            qnaRepository.save(
+                    QnaJpaEntity.create(
+                            null,
+                            SELLER_ID,
+                            100L,
+                            null,
+                            "ORDER",
+                            1L,
+                            "EXT-FLOW4-ORDER-001",
+                            "주문 문의",
+                            "주문 관련 문의입니다.",
+                            "구매자C",
+                            QnaJpaEntity.Status.PENDING,
+                            now,
+                            now));
 
             // Step 2. 전체 조회 (qnaType 필터 없이) - 3건 확인
             givenLegacyAuth()
@@ -293,20 +324,25 @@ class LegacyQnAFlowE2ETest extends LegacyE2ETestBase {
     private Map<String, Object> createAnswerRequest(long qnaId, String title, String content) {
         return Map.of(
                 "qnaId", qnaId,
-                "qnaContents", Map.of(
-                        "title", title,
-                        "content", content),
+                "qnaContents",
+                        Map.of(
+                                "title", title,
+                                "content", content),
                 "qnaImages", List.of());
     }
 
     private Map<String, Object> createUpdateRequest(
             long qnaAnswerId, long qnaId, String title, String content) {
         return Map.of(
-                "qnaAnswerId", qnaAnswerId,
-                "qnaId", qnaId,
-                "qnaContents", Map.of(
+                "qnaAnswerId",
+                qnaAnswerId,
+                "qnaId",
+                qnaId,
+                "qnaContents",
+                Map.of(
                         "title", title,
                         "content", content),
-                "qnaImages", List.of());
+                "qnaImages",
+                List.of());
     }
 }

@@ -60,9 +60,12 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
     // basePath: /api/v1/market (E2ETestBase에서 설정)
     private static final String WEBHOOK_CREATED = "/internal/webhooks/orders/created";
     private static final String WEBHOOK_CANCELLED = "/internal/webhooks/orders/cancelled";
-    private static final String WEBHOOK_RETURN_REQUESTED = "/internal/webhooks/orders/return-requested";
-    private static final String WEBHOOK_RETURN_WITHDRAWN = "/internal/webhooks/orders/return-withdrawn";
-    private static final String WEBHOOK_PURCHASE_CONFIRMED = "/internal/webhooks/orders/purchase-confirmed";
+    private static final String WEBHOOK_RETURN_REQUESTED =
+            "/internal/webhooks/orders/return-requested";
+    private static final String WEBHOOK_RETURN_WITHDRAWN =
+            "/internal/webhooks/orders/return-withdrawn";
+    private static final String WEBHOOK_PURCHASE_CONFIRMED =
+            "/internal/webhooks/orders/purchase-confirmed";
 
     /** Fixtures의 DEFAULT_SALES_CHANNEL_ID와 동일해야 합니다. */
     private static final long SALES_CHANNEL_ID = 1L;
@@ -104,8 +107,8 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
     /**
      * ExternalOrderItemMapping을 직접 시딩합니다.
      *
-     * <p>ClaimSync 파이프라인은 externalProductOrderId → orderItemId 매핑이 있어야 처리됩니다. ORDER_CREATED 웹훅을
-     * 통해 자동 생성된 경우 이미 매핑이 존재하지만, 매핑이 없는 경우(PENDING_MAPPING 등)를 대비해 직접 시딩합니다.
+     * <p>ClaimSync 파이프라인은 externalProductOrderId → orderItemId 매핑이 있어야 처리됩니다. ORDER_CREATED 웹훅을 통해
+     * 자동 생성된 경우 이미 매핑이 존재하지만, 매핑이 없는 경우(PENDING_MAPPING 등)를 대비해 직접 시딩합니다.
      *
      * @param externalOrderId 외부 주문 번호
      * @param externalProductOrderId 외부 상품주문 번호
@@ -145,7 +148,8 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
 
     // ===== Request Body 생성 헬퍼 =====
 
-    private Map<String, Object> orderCreatedRequest(String externalOrderNo, String externalProductOrderId) {
+    private Map<String, Object> orderCreatedRequest(
+            String externalOrderNo, String externalProductOrderId) {
         Map<String, Object> item = new HashMap<>();
         item.put("externalProductOrderId", externalProductOrderId);
         item.put("externalProductId", "EXT-PROD-001");
@@ -180,46 +184,54 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
         return request;
     }
 
-    private Map<String, Object> purchaseConfirmedRequest(String externalOrderId, String externalProductOrderId) {
+    private Map<String, Object> purchaseConfirmedRequest(
+            String externalOrderId, String externalProductOrderId) {
         return Map.of(
                 "salesChannelId", SALES_CHANNEL_ID,
                 "externalOrderId", externalOrderId,
-                "items", List.of(
-                        Map.of("externalProductOrderId", externalProductOrderId)));
+                "items", List.of(Map.of("externalProductOrderId", externalProductOrderId)));
     }
 
-    private Map<String, Object> orderCancelledRequest(String externalOrderId, String externalProductOrderId) {
+    private Map<String, Object> orderCancelledRequest(
+            String externalOrderId, String externalProductOrderId) {
         return Map.of(
                 "salesChannelId", SALES_CHANNEL_ID,
                 "externalOrderId", externalOrderId,
-                "items", List.of(
-                        Map.of(
-                                "externalProductOrderId", externalProductOrderId,
-                                "cancelReason", "고객 변심",
-                                "cancelDetailedReason", "다른 상품으로 구매 예정",
-                                "cancelQuantity", 1)));
+                "items",
+                        List.of(
+                                Map.of(
+                                        "externalProductOrderId",
+                                        externalProductOrderId,
+                                        "cancelReason",
+                                        "고객 변심",
+                                        "cancelDetailedReason",
+                                        "다른 상품으로 구매 예정",
+                                        "cancelQuantity",
+                                        1)));
     }
 
-    private Map<String, Object> returnRequestedRequest(String externalOrderId, String externalProductOrderId) {
+    private Map<String, Object> returnRequestedRequest(
+            String externalOrderId, String externalProductOrderId) {
         return Map.of(
                 "salesChannelId", SALES_CHANNEL_ID,
                 "externalOrderId", externalOrderId,
-                "items", List.of(
-                        Map.of(
-                                "externalProductOrderId", externalProductOrderId,
-                                "returnReason", "상품 불량",
-                                "returnDetailedReason", "수령 후 파손 확인",
-                                "returnQuantity", 1,
-                                "collectDeliveryCompany", "CJ대한통운",
-                                "collectTrackingNumber", "1234567890123")));
+                "items",
+                        List.of(
+                                Map.of(
+                                        "externalProductOrderId", externalProductOrderId,
+                                        "returnReason", "상품 불량",
+                                        "returnDetailedReason", "수령 후 파손 확인",
+                                        "returnQuantity", 1,
+                                        "collectDeliveryCompany", "CJ대한통운",
+                                        "collectTrackingNumber", "1234567890123")));
     }
 
-    private Map<String, Object> returnWithdrawnRequest(String externalOrderId, String externalProductOrderId) {
+    private Map<String, Object> returnWithdrawnRequest(
+            String externalOrderId, String externalProductOrderId) {
         return Map.of(
                 "salesChannelId", SALES_CHANNEL_ID,
                 "externalOrderId", externalOrderId,
-                "items", List.of(
-                        Map.of("externalProductOrderId", externalProductOrderId)));
+                "items", List.of(Map.of("externalProductOrderId", externalProductOrderId)));
     }
 
     // ===== FLOW-1: 주문 생성 → 구매 확정 =====
@@ -379,7 +391,8 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[FLOW-3-1] CONFIRMED OrderItem에 RETURN_REQUESTED → sellerId 미매핑으로 failed 처리 확인")
+        @DisplayName(
+                "[FLOW-3-1] CONFIRMED OrderItem에 RETURN_REQUESTED → sellerId 미매핑으로 failed 처리 확인")
         void returnRequested_ConfirmedItem_FailsDueToMissingSellerId() {
             // Step 1. CONFIRMED 상태 OrderItem 시딩 (반품은 CONFIRMED 이후만 가능)
             // 참고: OrderItemJpaEntity에 sellerId 컬럼이 없어 reconstitute 시 sellerId=null → NPE
@@ -411,7 +424,9 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[FLOW-3-2] RETURN_REQUESTED 후 RETURN_WITHDRAWN → sellerId 미매핑으로 양쪽 모두 failed 처리 확인")
+        @DisplayName(
+                "[FLOW-3-2] RETURN_REQUESTED 후 RETURN_WITHDRAWN → sellerId 미매핑으로 양쪽 모두 failed 처리"
+                        + " 확인")
         void returnRequested_ThenWithdrawn_BothFailDueToMissingSellerId() {
             // Step 1. CONFIRMED 상태 OrderItem 시딩
             // 참고: OrderItemJpaEntity에 sellerId 컬럼이 없어 reconstitute 시 sellerId=null → NPE
@@ -479,7 +494,8 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
             // given
             String externalOrderNo = "EXT-FLOW4-DUP-001";
             String externalProductOrderId = "EXT-FLOW4-PO-001";
-            Map<String, Object> request = orderCreatedRequest(externalOrderNo, externalProductOrderId);
+            Map<String, Object> request =
+                    orderCreatedRequest(externalOrderNo, externalProductOrderId);
 
             // Step 1. 첫 번째 호출 - 정상 처리
             given().spec(givenUnauthenticated())
@@ -518,15 +534,16 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
         @Tag("P1")
         @DisplayName("[VAL-1] ORDER_CREATED - salesChannelId 없음 → 400 Bad Request")
         void orderCreated_MissingSalesChannelId_Returns400() {
-            Map<String, Object> invalidRequest = Map.of(
-                    "shopId", SHOP_ID,
-                    "externalOrderNo", "EXT-VAL-001",
-                    "orderedAt", "2026-03-21T01:00:00Z",
-                    "buyerName", "홍길동",
-                    "paymentMethod", "CARD",
-                    "totalPaymentAmount", 30000,
-                    "paidAt", "2026-03-21T01:01:00Z",
-                    "items", List.of());
+            Map<String, Object> invalidRequest =
+                    Map.of(
+                            "shopId", SHOP_ID,
+                            "externalOrderNo", "EXT-VAL-001",
+                            "orderedAt", "2026-03-21T01:00:00Z",
+                            "buyerName", "홍길동",
+                            "paymentMethod", "CARD",
+                            "totalPaymentAmount", 30000,
+                            "paidAt", "2026-03-21T01:01:00Z",
+                            "items", List.of());
 
             given().spec(givenUnauthenticated())
                     .body(invalidRequest)
@@ -540,10 +557,14 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
         @Tag("P1")
         @DisplayName("[VAL-2] ORDER_CANCELLED - items 빈 리스트 → 400 Bad Request")
         void orderCancelled_EmptyItems_Returns400() {
-            Map<String, Object> invalidRequest = Map.of(
-                    "salesChannelId", SALES_CHANNEL_ID,
-                    "externalOrderId", "EXT-VAL-002",
-                    "items", List.of());
+            Map<String, Object> invalidRequest =
+                    Map.of(
+                            "salesChannelId",
+                            SALES_CHANNEL_ID,
+                            "externalOrderId",
+                            "EXT-VAL-002",
+                            "items",
+                            List.of());
 
             given().spec(givenUnauthenticated())
                     .body(invalidRequest)
@@ -557,10 +578,14 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
         @Tag("P1")
         @DisplayName("[VAL-3] PURCHASE_CONFIRMED - items 빈 리스트 → 400 Bad Request")
         void purchaseConfirmed_EmptyItems_Returns400() {
-            Map<String, Object> invalidRequest = Map.of(
-                    "salesChannelId", SALES_CHANNEL_ID,
-                    "externalOrderId", "EXT-VAL-003",
-                    "items", List.of());
+            Map<String, Object> invalidRequest =
+                    Map.of(
+                            "salesChannelId",
+                            SALES_CHANNEL_ID,
+                            "externalOrderId",
+                            "EXT-VAL-003",
+                            "items",
+                            List.of());
 
             given().spec(givenUnauthenticated())
                     .body(invalidRequest)

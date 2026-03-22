@@ -27,8 +27,8 @@ import org.springframework.test.context.TestPropertySource;
 /**
  * 레거시 상품그룹 목록 조회 E2E 테스트.
  *
- * <p>CompositeListQueryAdapter → 3-Phase Query → H2 DB 전체 흐름을 실제 객체로 검증합니다.
- * 검색 필터, 페이징, 순서 보장, 상품 그룹핑 등 End-to-End 시나리오를 커버합니다.
+ * <p>CompositeListQueryAdapter → 3-Phase Query → H2 DB 전체 흐름을 실제 객체로 검증합니다. 검색 필터, 페이징, 순서 보장, 상품
+ * 그룹핑 등 End-to-End 시나리오를 커버합니다.
  *
  * @author ryu-qqq
  * @since 1.1.0

@@ -19,8 +19,8 @@ import org.springframework.web.client.RestClient;
 /**
  * Sellic Commerce Client Configuration.
  *
- * <p>RestClient 빈을 생성하고 baseUrl, timeout, 에러 핸들링을 설정합니다. 셀릭은 Body 인증 방식이므로 defaultHeader에 인증
- * 정보를 포함하지 않습니다.
+ * <p>RestClient 빈을 생성하고 baseUrl, timeout, 에러 핸들링을 설정합니다. 셀릭은 Body 인증 방식이므로 defaultHeader에 인증 정보를
+ * 포함하지 않습니다.
  *
  * <p>HTTP 상태별 예외 변환:
  *

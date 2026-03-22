@@ -14,8 +14,8 @@ import org.springframework.http.HttpStatus;
  *
  * <p>테스트 대상: GET /api/v1/legacy/shipment/company-codes - 택배사 코드 목록 조회
  *
- * <p>인증 필요 엔드포인트. 레거시 DB(luxurydb)에서 code_group_id=2 로 조회합니다.
- * H2 테스트 환경에서는 레거시 테이블이 없으므로 빈 목록을 반환합니다.
+ * <p>인증 필요 엔드포인트. 레거시 DB(luxurydb)에서 code_group_id=2 로 조회합니다. H2 테스트 환경에서는 레거시 테이블이 없으므로 빈 목록을
+ * 반환합니다.
  *
  * @author ryu-qqq
  * @since 1.0.0

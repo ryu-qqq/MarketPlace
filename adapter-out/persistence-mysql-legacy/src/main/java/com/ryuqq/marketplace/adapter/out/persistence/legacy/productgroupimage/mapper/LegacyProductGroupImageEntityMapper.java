@@ -3,11 +3,11 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.m
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
 import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import java.time.Instant;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageUrl;
 import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import com.ryuqq.marketplace.domain.productgroupimage.id.ProductGroupImageId;
+import java.time.Instant;
 import org.springframework.stereotype.Component;
 
 /** 레거시 상품그룹 이미지 Entity ↔ 표준 도메인 매퍼. */

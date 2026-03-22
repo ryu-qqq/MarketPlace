@@ -15,8 +15,8 @@ import org.springframework.http.HttpStatus;
  *
  * <p>테스트 대상: POST /api/v1/legacy/image/presigned - Presigned URL 발급
  *
- * <p>인증 필요 엔드포인트. LegacyGetPresignedUrlUseCase는 StubExternalClientConfig에서 stub으로 등록되며,
- * stub Presigned URL을 반환합니다.
+ * <p>인증 필요 엔드포인트. LegacyGetPresignedUrlUseCase는 StubExternalClientConfig에서 stub으로 등록되며, stub
+ * Presigned URL을 반환합니다.
  *
  * @author ryu-qqq
  * @since 1.0.0

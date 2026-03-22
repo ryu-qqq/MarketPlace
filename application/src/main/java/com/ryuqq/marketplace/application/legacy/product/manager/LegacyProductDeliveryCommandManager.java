@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.legacy.product.manager;
 
 import com.ryuqq.marketplace.application.legacy.product.port.out.command.LegacyProductDeliveryCommandPort;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import com.ryuqq.marketplace.domain.legacy.productdelivery.aggregate.LegacyProductDelivery;
+import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

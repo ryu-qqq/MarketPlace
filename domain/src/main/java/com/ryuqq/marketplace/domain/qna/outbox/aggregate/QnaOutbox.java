@@ -105,7 +105,9 @@ public class QnaOutbox {
                 errorMessage, version, QnaOutboxIdempotencyKey.of(idempotencyKey));
     }
 
-    public boolean isNew() { return id.isNew(); }
+    public boolean isNew() {
+        return id.isNew();
+    }
 
     /** PENDING → PROCESSING. */
     public void startProcessing(Instant now) {
@@ -156,8 +158,11 @@ public class QnaOutbox {
 
     /** 외부 API 실패 결과를 반영합니다. */
     public void recordFailure(boolean canRetry, String errorMessage, Instant now) {
-        if (canRetry) { failAndRetry(errorMessage, now); }
-        else { fail(errorMessage, now); }
+        if (canRetry) {
+            failAndRetry(errorMessage, now);
+        } else {
+            fail(errorMessage, now);
+        }
     }
 
     /** PROCESSING 타임아웃 복구. */
@@ -181,26 +186,87 @@ public class QnaOutbox {
         this.errorMessage = null;
     }
 
-    public void refreshVersion(long version) { this.version = version; }
+    public void refreshVersion(long version) {
+        this.version = version;
+    }
 
-    public QnaOutboxId id() { return id; }
-    public Long idValue() { return id.value(); }
-    public QnaId qnaId() { return qnaId; }
-    public Long qnaIdValue() { return qnaId.value(); }
-    public long salesChannelId() { return salesChannelId; }
-    public String externalQnaId() { return externalQnaId; }
-    public QnaOutboxType outboxType() { return outboxType; }
-    public QnaOutboxStatus status() { return status; }
-    public String payload() { return payload; }
-    public int retryCount() { return retryCount; }
-    public int maxRetry() { return maxRetry; }
-    public Instant createdAt() { return createdAt; }
-    public Instant updatedAt() { return updatedAt; }
-    public Instant processedAt() { return processedAt; }
-    public String errorMessage() { return errorMessage; }
-    public long version() { return version; }
-    public QnaOutboxIdempotencyKey idempotencyKey() { return idempotencyKey; }
-    public String idempotencyKeyValue() { return idempotencyKey.value(); }
-    public boolean isPending() { return status.isPending(); }
-    public boolean isProcessing() { return status.isProcessing(); }
+    public QnaOutboxId id() {
+        return id;
+    }
+
+    public Long idValue() {
+        return id.value();
+    }
+
+    public QnaId qnaId() {
+        return qnaId;
+    }
+
+    public Long qnaIdValue() {
+        return qnaId.value();
+    }
+
+    public long salesChannelId() {
+        return salesChannelId;
+    }
+
+    public String externalQnaId() {
+        return externalQnaId;
+    }
+
+    public QnaOutboxType outboxType() {
+        return outboxType;
+    }
+
+    public QnaOutboxStatus status() {
+        return status;
+    }
+
+    public String payload() {
+        return payload;
+    }
+
+    public int retryCount() {
+        return retryCount;
+    }
+
+    public int maxRetry() {
+        return maxRetry;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
+
+    public Instant processedAt() {
+        return processedAt;
+    }
+
+    public String errorMessage() {
+        return errorMessage;
+    }
+
+    public long version() {
+        return version;
+    }
+
+    public QnaOutboxIdempotencyKey idempotencyKey() {
+        return idempotencyKey;
+    }
+
+    public String idempotencyKeyValue() {
+        return idempotencyKey.value();
+    }
+
+    public boolean isPending() {
+        return status.isPending();
+    }
+
+    public boolean isProcessing() {
+        return status.isProcessing();
+    }
 }

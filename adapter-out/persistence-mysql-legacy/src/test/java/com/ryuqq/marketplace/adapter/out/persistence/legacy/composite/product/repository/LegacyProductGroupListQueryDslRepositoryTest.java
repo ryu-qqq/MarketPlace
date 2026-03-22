@@ -104,10 +104,10 @@ class LegacyProductGroupListQueryDslRepositoryTest {
             // 삭제된 상품그룹
             entityManager
                     .createNativeQuery(
-                            "INSERT INTO product_group (product_group_name, seller_id, brand_id, category_id, "
-                                    + "option_type, management_type, regular_price, current_price, sale_price, "
-                                    + "sold_out_yn, display_yn, delete_yn) "
-                                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                            "INSERT INTO product_group (product_group_name, seller_id, brand_id,"
+                                + " category_id, option_type, management_type, regular_price,"
+                                + " current_price, sale_price, sold_out_yn, display_yn, delete_yn)"
+                                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameter(1, "삭제됨")
                     .setParameter(2, 10L)
                     .setParameter(3, 20L)
@@ -334,8 +334,7 @@ class LegacyProductGroupListQueryDslRepositoryTest {
         @DisplayName("빈 ID 목록 입력 시 빈 목록을 반환합니다")
         void fetchProductsWithOptions_WithEmptyIds_ReturnsEmptyList() {
             // when
-            List<LegacyProductOptionQueryDto> rows =
-                    repository.fetchProductsWithOptions(List.of());
+            List<LegacyProductOptionQueryDto> rows = repository.fetchProductsWithOptions(List.of());
 
             // then
             assertThat(rows).isEmpty();
@@ -345,8 +344,7 @@ class LegacyProductGroupListQueryDslRepositoryTest {
         @DisplayName("null ID 목록 입력 시 빈 목록을 반환합니다")
         void fetchProductsWithOptions_WithNullIds_ReturnsEmptyList() {
             // when
-            List<LegacyProductOptionQueryDto> rows =
-                    repository.fetchProductsWithOptions(null);
+            List<LegacyProductOptionQueryDto> rows = repository.fetchProductsWithOptions(null);
 
             // then
             assertThat(rows).isEmpty();
@@ -403,10 +401,10 @@ class LegacyProductGroupListQueryDslRepositoryTest {
 
             entityManager
                     .createNativeQuery(
-                            "INSERT INTO product_group (product_group_name, seller_id, brand_id, category_id, "
-                                    + "option_type, management_type, regular_price, current_price, sale_price, "
-                                    + "sold_out_yn, display_yn, delete_yn) "
-                                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                            "INSERT INTO product_group (product_group_name, seller_id, brand_id,"
+                                + " category_id, option_type, management_type, regular_price,"
+                                + " current_price, sale_price, sold_out_yn, display_yn, delete_yn)"
+                                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameter(1, "삭제됨")
                     .setParameter(2, 10L)
                     .setParameter(3, 20L)

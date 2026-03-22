@@ -20,10 +20,11 @@ import org.springframework.stereotype.Component;
 /**
  * 셀릭 커머스 상품 등록/수정/삭제 클라이언트 어댑터.
  *
- * <p>{@link SalesChannelProductClient} 구현체. ProductGroupSyncData → Sellic 요청 DTO 변환 후 ApiClient를 통해 API
- * 호출합니다.
+ * <p>{@link SalesChannelProductClient} 구현체. ProductGroupSyncData → Sellic 요청 DTO 변환 후 ApiClient를 통해
+ * API 호출합니다.
  *
- * <p>인증: SellerSalesChannel.vendorId() → customer_id, SellerSalesChannel.apiKey() → api_key (Body 인증)
+ * <p>인증: SellerSalesChannel.vendorId() → customer_id, SellerSalesChannel.apiKey() → api_key (Body
+ * 인증)
  */
 @Component
 @Qualifier("sellicProductClient")
@@ -138,7 +139,8 @@ public class SellicCommerceProductClientAdapter implements SalesChannelProductCl
         log.info("셀릭 커머스 상품 삭제(판매종료) 성공: externalProductId={}", externalProductId);
     }
 
-    private void validateResponse(SellicApiResponse response, String operation, Long productGroupId) {
+    private void validateResponse(
+            SellicApiResponse response, String operation, Long productGroupId) {
         if (response == null) {
             throw new IllegalStateException(
                     "셀릭 커머스 상품 " + operation + " 응답이 null: productGroupId=" + productGroupId);

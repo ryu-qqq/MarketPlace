@@ -71,7 +71,8 @@ class InboundQnaConversionE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[CV1] RECEIVED 상태 InboundQna 변환 실행 → 예외 없이 완료")
         void convertInboundQna_ReceivedEntity_CompletesWithoutException() {
-            var inboundQna = inboundQnaRepository.save(InboundQnaJpaEntityFixtures.receivedEntity());
+            var inboundQna =
+                    inboundQnaRepository.save(InboundQnaJpaEntityFixtures.receivedEntity());
 
             convertInboundQnaUseCase.execute(inboundQna.getId());
         }
@@ -85,7 +86,8 @@ class InboundQnaConversionE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[CV2] 변환 성공 후 InboundQna 상태 CONVERTED 전이, internalQnaId != null 확인")
         void convertInboundQna_AfterSuccess_StatusConvertedAndInternalQnaIdSet() {
-            var inboundQna = inboundQnaRepository.save(InboundQnaJpaEntityFixtures.receivedEntity());
+            var inboundQna =
+                    inboundQnaRepository.save(InboundQnaJpaEntityFixtures.receivedEntity());
 
             convertInboundQnaUseCase.execute(inboundQna.getId());
 
@@ -104,7 +106,8 @@ class InboundQnaConversionE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[CV3] 변환 성공 후 qnas 테이블에 1건 생성, internalQnaId와 qnaId 일치 확인")
         void convertInboundQna_AfterSuccess_QnaRecordCreated() {
-            var inboundQna = inboundQnaRepository.save(InboundQnaJpaEntityFixtures.receivedEntity());
+            var inboundQna =
+                    inboundQnaRepository.save(InboundQnaJpaEntityFixtures.receivedEntity());
 
             long qnaCountBefore = qnaRepository.count();
 
@@ -138,10 +141,12 @@ class InboundQnaConversionE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[CV5] 서로 다른 externalQnaId InboundQna 2건 변환 → Qna 각각 독립 생성, 총 2건")
         void convertTwoInboundQnas_DifferentExternalIds_TwoIndependentQnasCreated() {
-            var inbound1 = inboundQnaRepository.save(
-                    InboundQnaJpaEntityFixtures.receivedEntity(1L, "EXT-CV5-001"));
-            var inbound2 = inboundQnaRepository.save(
-                    InboundQnaJpaEntityFixtures.receivedEntity(1L, "EXT-CV5-002"));
+            var inbound1 =
+                    inboundQnaRepository.save(
+                            InboundQnaJpaEntityFixtures.receivedEntity(1L, "EXT-CV5-001"));
+            var inbound2 =
+                    inboundQnaRepository.save(
+                            InboundQnaJpaEntityFixtures.receivedEntity(1L, "EXT-CV5-002"));
 
             convertInboundQnaUseCase.execute(inbound1.getId());
             convertInboundQnaUseCase.execute(inbound2.getId());
@@ -173,9 +178,10 @@ class InboundQnaConversionE2ETest extends E2ETestBase {
             convertInboundQnaUseCase.execute(inbound2.getId());
             convertInboundQnaUseCase.execute(inbound3.getId());
 
-            long convertedCount = inboundQnaRepository.findAll().stream()
-                    .filter(e -> e.getStatus() == InboundQnaJpaEntity.Status.CONVERTED)
-                    .count();
+            long convertedCount =
+                    inboundQnaRepository.findAll().stream()
+                            .filter(e -> e.getStatus() == InboundQnaJpaEntity.Status.CONVERTED)
+                            .count();
             assertThat(convertedCount).isEqualTo(3);
             assertThat(qnaRepository.count()).isEqualTo(3);
         }
@@ -189,12 +195,14 @@ class InboundQnaConversionE2ETest extends E2ETestBase {
         @Tag("P1")
         @DisplayName("[CV7] InboundQna qnaType=PRODUCT 변환 → 생성된 Qna qnaType=PRODUCT 확인")
         void convertInboundQna_QnaTypePreserved() {
-            var inboundQna = inboundQnaRepository.save(InboundQnaJpaEntityFixtures.receivedEntity());
+            var inboundQna =
+                    inboundQnaRepository.save(InboundQnaJpaEntityFixtures.receivedEntity());
 
             convertInboundQnaUseCase.execute(inboundQna.getId());
 
             var updatedInbound = inboundQnaRepository.findById(inboundQna.getId()).orElseThrow();
-            var createdQna = qnaRepository.findById(updatedInbound.getInternalQnaId()).orElseThrow();
+            var createdQna =
+                    qnaRepository.findById(updatedInbound.getInternalQnaId()).orElseThrow();
 
             assertThat(createdQna.getQnaType())
                     .isEqualTo(InboundQnaJpaEntityFixtures.DEFAULT_QNA_TYPE);

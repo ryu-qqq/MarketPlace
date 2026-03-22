@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.application.qna.QnaCommandFixtures;
 import com.ryuqq.marketplace.application.qna.dto.command.UpdateQnaReplyCommand;
 import com.ryuqq.marketplace.application.qna.dto.result.QnaReplyResult;
 import com.ryuqq.marketplace.application.qna.manager.QnaCommandManager;
@@ -42,7 +41,8 @@ class UpdateQnaReplyServiceTest {
             Qna qna = QnaFixtures.answeredQna();
             long replyId = qna.replies().get(0).idValue();
             String updatedContent = "수정된 답변 내용입니다.";
-            UpdateQnaReplyCommand command = new UpdateQnaReplyCommand(qna.idValue(), replyId, updatedContent);
+            UpdateQnaReplyCommand command =
+                    new UpdateQnaReplyCommand(qna.idValue(), replyId, updatedContent);
             given(readManager.getById(command.qnaId())).willReturn(qna);
 
             // when
@@ -60,7 +60,8 @@ class UpdateQnaReplyServiceTest {
             // given
             Qna qna = QnaFixtures.answeredQna();
             long replyId = qna.replies().get(0).idValue();
-            UpdateQnaReplyCommand command = new UpdateQnaReplyCommand(qna.idValue(), replyId, "수정된 내용");
+            UpdateQnaReplyCommand command =
+                    new UpdateQnaReplyCommand(qna.idValue(), replyId, "수정된 내용");
             given(readManager.getById(command.qnaId())).willReturn(qna);
 
             // when
@@ -76,12 +77,12 @@ class UpdateQnaReplyServiceTest {
             // given
             Qna qna = QnaFixtures.answeredQna();
             long nonExistentReplyId = 999L;
-            UpdateQnaReplyCommand command = new UpdateQnaReplyCommand(qna.idValue(), nonExistentReplyId, "수정 내용");
+            UpdateQnaReplyCommand command =
+                    new UpdateQnaReplyCommand(qna.idValue(), nonExistentReplyId, "수정 내용");
             given(readManager.getById(command.qnaId())).willReturn(qna);
 
             // when & then
-            assertThatThrownBy(() -> sut.execute(command))
-                    .isInstanceOf(Exception.class);
+            assertThatThrownBy(() -> sut.execute(command)).isInstanceOf(Exception.class);
         }
 
         @Test
@@ -90,7 +91,8 @@ class UpdateQnaReplyServiceTest {
             // given
             Qna qna = QnaFixtures.answeredQna();
             long replyId = qna.replies().get(0).idValue();
-            UpdateQnaReplyCommand command = new UpdateQnaReplyCommand(qna.idValue(), replyId, "수정된 내용");
+            UpdateQnaReplyCommand command =
+                    new UpdateQnaReplyCommand(qna.idValue(), replyId, "수정된 내용");
             given(readManager.getById(command.qnaId())).willReturn(qna);
 
             // when

@@ -22,11 +22,12 @@ public class LegacyProductOptionCommandAdapter implements LegacyProductOptionCom
 
     @Override
     public void persist(ProductOptionMapping mapping) {
-        LegacyProductOptionEntity entity = LegacyProductOptionEntity.create(
-                mapping.productIdValue(),
-                mapping.sellerOptionValueIdValue(),
-                mapping.sellerOptionValueIdValue(),
-                0L);
+        LegacyProductOptionEntity entity =
+                LegacyProductOptionEntity.create(
+                        mapping.productIdValue(),
+                        mapping.sellerOptionValueIdValue(),
+                        mapping.sellerOptionValueIdValue(),
+                        0L);
         repository.save(entity);
     }
 }

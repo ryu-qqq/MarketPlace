@@ -49,9 +49,12 @@ class SetofCommerceInternalAdapterCircuitBreakerTest {
         @DisplayName("ApiClient가 ExternalServiceUnavailableException을 던지면 그대로 전파된다")
         void updateBasicInfo_WhenApiClientThrows_PropagatesException() {
             SetofCommerceBasicInfoAdapter adapter = new SetofCommerceBasicInfoAdapter(apiClient);
-            willAnswer(invocation -> {
-                throw unavailableException;
-            }).given(apiClient).updateBasicInfo(any(), any());
+            willAnswer(
+                            invocation -> {
+                                throw unavailableException;
+                            })
+                    .given(apiClient)
+                    .updateBasicInfo(any(), any());
 
             assertThatThrownBy(
                             () ->
@@ -78,9 +81,12 @@ class SetofCommerceInternalAdapterCircuitBreakerTest {
         @Test
         @DisplayName("updatePrice() 호출 시 ApiClient 예외가 전파된다")
         void updatePrice_WhenApiClientThrows_PropagatesException() {
-            willAnswer(invocation -> {
-                throw unavailableException;
-            }).given(apiClient).updatePrice(any(), any());
+            willAnswer(
+                            invocation -> {
+                                throw unavailableException;
+                            })
+                    .given(apiClient)
+                    .updatePrice(any(), any());
 
             assertThatThrownBy(
                             () ->
@@ -93,9 +99,12 @@ class SetofCommerceInternalAdapterCircuitBreakerTest {
         @Test
         @DisplayName("updateStock() 호출 시 ApiClient 예외가 전파된다")
         void updateStock_WhenApiClientThrows_PropagatesException() {
-            willAnswer(invocation -> {
-                throw unavailableException;
-            }).given(apiClient).updateStock(any(), any());
+            willAnswer(
+                            invocation -> {
+                                throw unavailableException;
+                            })
+                    .given(apiClient)
+                    .updateStock(any(), any());
 
             assertThatThrownBy(
                             () -> adapter.updateStock(1L, new SetofProductStockUpdateRequest(100)))
@@ -106,9 +115,12 @@ class SetofCommerceInternalAdapterCircuitBreakerTest {
         @Test
         @DisplayName("updateProducts() 호출 시 ApiClient 예외가 전파된다")
         void updateProducts_WhenApiClientThrows_PropagatesException() {
-            willAnswer(invocation -> {
-                throw unavailableException;
-            }).given(apiClient).updateProducts(any(), any());
+            willAnswer(
+                            invocation -> {
+                                throw unavailableException;
+                            })
+                    .given(apiClient)
+                    .updateProducts(any(), any());
 
             assertThatThrownBy(
                             () ->

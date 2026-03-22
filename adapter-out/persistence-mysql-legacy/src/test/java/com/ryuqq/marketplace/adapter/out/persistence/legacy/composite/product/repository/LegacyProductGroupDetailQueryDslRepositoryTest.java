@@ -48,8 +48,8 @@ class LegacyProductGroupDetailQueryDslRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        repository = new LegacyProductGroupDetailQueryDslRepository(
-                new JPAQueryFactory(entityManager));
+        repository =
+                new LegacyProductGroupDetailQueryDslRepository(new JPAQueryFactory(entityManager));
         helper = new LegacyCompositeProductTestHelper(entityManager);
     }
 
@@ -68,8 +68,7 @@ class LegacyProductGroupDetailQueryDslRepositoryTest {
             long pgId = helper.setupFullProductGroupData();
 
             // when
-            Optional<LegacyProductGroupBasicQueryDto> result =
-                    repository.fetchBasicInfo(pgId);
+            Optional<LegacyProductGroupBasicQueryDto> result = repository.fetchBasicInfo(pgId);
 
             // then
             assertThat(result).isPresent();
@@ -107,8 +106,7 @@ class LegacyProductGroupDetailQueryDslRepositoryTest {
             helper.flushAndClear();
 
             // when
-            Optional<LegacyProductGroupBasicQueryDto> result =
-                    repository.fetchBasicInfo(pgId);
+            Optional<LegacyProductGroupBasicQueryDto> result = repository.fetchBasicInfo(pgId);
 
             // then
             assertThat(result).isPresent();
@@ -126,8 +124,7 @@ class LegacyProductGroupDetailQueryDslRepositoryTest {
         @DisplayName("존재하지 않는 상품그룹 ID로 조회 시 빈 Optional을 반환합니다")
         void fetchBasicInfo_WithNonExistentId_ReturnsEmpty() {
             // when
-            Optional<LegacyProductGroupBasicQueryDto> result =
-                    repository.fetchBasicInfo(99999L);
+            Optional<LegacyProductGroupBasicQueryDto> result = repository.fetchBasicInfo(99999L);
 
             // then
             assertThat(result).isEmpty();
@@ -144,10 +141,10 @@ class LegacyProductGroupDetailQueryDslRepositoryTest {
             // 삭제된 상품그룹을 Native SQL로 삽입
             entityManager
                     .createNativeQuery(
-                            "INSERT INTO product_group (product_group_name, seller_id, brand_id, category_id, "
-                                    + "option_type, management_type, regular_price, current_price, sale_price, "
-                                    + "sold_out_yn, display_yn, delete_yn) "
-                                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                            "INSERT INTO product_group (product_group_name, seller_id, brand_id,"
+                                + " category_id, option_type, management_type, regular_price,"
+                                + " current_price, sale_price, sold_out_yn, display_yn, delete_yn)"
+                                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameter(1, "삭제된 상품그룹")
                     .setParameter(2, 15L)
                     .setParameter(3, 25L)
@@ -166,14 +163,14 @@ class LegacyProductGroupDetailQueryDslRepositoryTest {
                     ((Number)
                                     entityManager
                                             .createNativeQuery(
-                                                    "SELECT MAX(product_group_id) FROM product_group")
+                                                    "SELECT MAX(product_group_id) FROM"
+                                                            + " product_group")
                                             .getSingleResult())
                             .longValue();
             helper.flushAndClear();
 
             // when
-            Optional<LegacyProductGroupBasicQueryDto> result =
-                    repository.fetchBasicInfo(deletedId);
+            Optional<LegacyProductGroupBasicQueryDto> result = repository.fetchBasicInfo(deletedId);
 
             // then
             assertThat(result).isEmpty();
@@ -186,8 +183,7 @@ class LegacyProductGroupDetailQueryDslRepositoryTest {
             long pgId = helper.setupFullProductGroupData();
 
             // when
-            Optional<LegacyProductGroupBasicQueryDto> result =
-                    repository.fetchBasicInfo(pgId);
+            Optional<LegacyProductGroupBasicQueryDto> result = repository.fetchBasicInfo(pgId);
 
             // then
             assertThat(result).isPresent();
@@ -254,7 +250,9 @@ class LegacyProductGroupDetailQueryDslRepositoryTest {
             // 삭제된 이미지
             entityManager
                     .createNativeQuery(
-                            "INSERT INTO product_group_image (product_group_id, product_group_image_type, image_url, delete_yn) VALUES (?, ?, ?, ?)")
+                            "INSERT INTO product_group_image (product_group_id,"
+                                + " product_group_image_type, image_url, delete_yn) VALUES (?, ?,"
+                                + " ?, ?)")
                     .setParameter(1, pgId)
                     .setParameter(2, "DETAIL")
                     .setParameter(3, "https://cdn.example.com/deleted.jpg")
@@ -274,8 +272,7 @@ class LegacyProductGroupDetailQueryDslRepositoryTest {
         @DisplayName("존재하지 않는 상품그룹 ID로 조회 시 빈 목록을 반환합니다")
         void fetchImages_WithNonExistentId_ReturnsEmptyList() {
             // when
-            List<LegacyProductGroupImageQueryDto> images =
-                    repository.fetchImages(99999L);
+            List<LegacyProductGroupImageQueryDto> images = repository.fetchImages(99999L);
 
             // then
             assertThat(images).isEmpty();

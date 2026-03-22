@@ -24,8 +24,8 @@ import org.springframework.test.context.TestPropertySource;
 /**
  * 레거시 셀러 인증 Composite 조회 E2E 테스트.
  *
- * <p>Adapter → Mapper → QueryDSL Repository → H2 DB 전체 흐름을 실제 객체로 검증합니다.
- * administrators + admin_auth_group + auth_group + seller 4테이블 JOIN.
+ * <p>Adapter → Mapper → QueryDSL Repository → H2 DB 전체 흐름을 실제 객체로 검증합니다. administrators +
+ * admin_auth_group + auth_group + seller 4테이블 JOIN.
  *
  * @author ryu-qqq
  * @since 1.0.0
@@ -125,8 +125,7 @@ class LegacySellerAuthCompositeE2ETest {
         @DisplayName("존재하지 않는 이메일 — 빈 Optional 반환")
         void nonExistentEmail_ReturnsEmpty() {
             // when
-            Optional<LegacySellerAuthResult> result =
-                    adapter.findByEmail("unknown@test.com");
+            Optional<LegacySellerAuthResult> result = adapter.findByEmail("unknown@test.com");
 
             // then
             assertThat(result).isEmpty();

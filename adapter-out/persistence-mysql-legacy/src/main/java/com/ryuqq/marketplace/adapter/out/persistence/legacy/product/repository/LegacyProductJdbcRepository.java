@@ -19,8 +19,8 @@ public class LegacyProductJdbcRepository {
     }
 
     public void softDeleteByProductGroupId(long productGroupId) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("productGroupId", productGroupId);
+        MapSqlParameterSource params =
+                new MapSqlParameterSource().addValue("productGroupId", productGroupId);
 
         jdbcTemplate.update(
                 """

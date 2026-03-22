@@ -33,7 +33,8 @@ public class LegacyOptionGroupEntity extends LegacyBaseEntity {
 
     protected LegacyOptionGroupEntity() {}
 
-    private LegacyOptionGroupEntity(Long id, Long productGroupId, String optionName, String deleteYn) {
+    private LegacyOptionGroupEntity(
+            Long id, Long productGroupId, String optionName, String deleteYn) {
         this.id = id;
         this.productGroupId = productGroupId;
         this.optionName = optionName;

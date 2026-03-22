@@ -40,36 +40,64 @@ class NaverCommerceClaimMapperTest {
             String productOrderId, NaverClaimInfo currentClaim) {
         var order =
                 new NaverProductOrderOrder(
-                        "ORD001", null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null);
+                        "ORD001", null, null, null, null, null, null, null, null, null, null, null,
+                        null, null, null, null, null);
         var po =
                 new NaverProductOrderDetail.ProductOrderInfo(
-                        productOrderId,         // 1
-                        "PAYED",                // 2
-                        null, null, "CLM001",   // 3-5
-                        null, null, null,       // 6-8
-                        null, null,             // 9-10
-                        "PROD001", null,        // 11-12
-                        "상품", null,            // 13-14
-                        null, null,             // 15-16
-                        null, null,             // 17-18
-                        null, null,             // 19-20
-                        1, null, null,          // 21-23
-                        50000, 50000,           // 24-25
-                        null, null,             // 26-27
-                        0, 50000,               // 28-29
-                        null, null,             // 30-31
-                        null, null, null,       // 32-34
-                        null, null, null,       // 35-37
-                        null, null, null,       // 38-40
-                        null, null,             // 41-42
-                        null, null, null, null, // 43-46
-                        null, null, null,       // 47-49
-                        null,                   // 50 shippingAddress
-                        null,                   // 51 shippingMemo
-                        null,                   // 52 freeGift
-                        currentClaim,           // 53 currentClaim
-                        null);                  // 54 completedClaims
+                        productOrderId, // 1
+                        "PAYED", // 2
+                        null,
+                        null,
+                        "CLM001", // 3-5
+                        null,
+                        null,
+                        null, // 6-8
+                        null,
+                        null, // 9-10
+                        "PROD001",
+                        null, // 11-12
+                        "상품",
+                        null, // 13-14
+                        null,
+                        null, // 15-16
+                        null,
+                        null, // 17-18
+                        null,
+                        null, // 19-20
+                        1,
+                        null,
+                        null, // 21-23
+                        50000,
+                        50000, // 24-25
+                        null,
+                        null, // 26-27
+                        0,
+                        50000, // 28-29
+                        null,
+                        null, // 30-31
+                        null,
+                        null,
+                        null, // 32-34
+                        null,
+                        null,
+                        null, // 35-37
+                        null,
+                        null,
+                        null, // 38-40
+                        null,
+                        null, // 41-42
+                        null,
+                        null,
+                        null,
+                        null, // 43-46
+                        null,
+                        null,
+                        null, // 47-49
+                        null, // 50 shippingAddress
+                        null, // 51 shippingMemo
+                        null, // 52 freeGift
+                        currentClaim, // 53 currentClaim
+                        null); // 54 completedClaims
         return new NaverProductOrderDetail(order, po, null);
     }
 
@@ -83,11 +111,18 @@ class NaverCommerceClaimMapperTest {
                 "단순변심",
                 "사이즈가 안 맞아요",
                 1,
-                null, null, null, null, null, null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 "CJGLS",
                 "1234567890",
                 "COLLECTING",
-                null, null, null);
+                null,
+                null,
+                null);
     }
 
     @Nested

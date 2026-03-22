@@ -41,15 +41,32 @@ class SellicCommerceProductMapperTest {
     private ProductGroupSyncData createSyncData(ProductGroup group, List<Product> products) {
         var queryResult =
                 new ProductGroupDetailCompositeQueryResult(
-                        1L, 1L, "테스트셀러", 100L, "테스트브랜드", 200L,
-                        "테스트카테고리", "상의 > 긴팔", "1/200",
-                        "테스트 상품 그룹", "NONE", "ACTIVE",
-                        Instant.now(), Instant.now(), null, null);
+                        1L,
+                        1L,
+                        "테스트셀러",
+                        100L,
+                        "테스트브랜드",
+                        200L,
+                        "테스트카테고리",
+                        "상의 > 긴팔",
+                        "1/200",
+                        "테스트 상품 그룹",
+                        "NONE",
+                        "ACTIVE",
+                        Instant.now(),
+                        Instant.now(),
+                        null,
+                        null);
         var bundle =
                 new ProductGroupDetailBundle(
-                        queryResult, group, products,
-                        Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Map.of());
+                        queryResult,
+                        group,
+                        products,
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Map.of());
         return ProductGroupSyncData.from(bundle);
     }
 
@@ -128,8 +145,7 @@ class SellicCommerceProductMapperTest {
         @Test
         @DisplayName("삭제 요청은 saleStatus=2004(판매종료)로 설정된다")
         void deleteSetsTerminatedStatus() {
-            SellicProductUpdateRequest result =
-                    sut.toDeleteRequest("EXT001", CUSTOMER_ID, API_KEY);
+            SellicProductUpdateRequest result = sut.toDeleteRequest("EXT001", CUSTOMER_ID, API_KEY);
 
             assertThat(result.customerId()).isEqualTo(CUSTOMER_ID);
             assertThat(result.apiKey()).isEqualTo(API_KEY);

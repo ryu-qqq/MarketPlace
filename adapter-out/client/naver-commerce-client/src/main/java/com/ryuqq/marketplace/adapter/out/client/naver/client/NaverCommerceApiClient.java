@@ -44,8 +44,8 @@ import org.springframework.web.client.RestClient;
 /**
  * 네이버 커머스 HTTP 호출 담당 클라이언트.
  *
- * <p>모든 네이버 커머스 API HTTP 요청을 담당합니다. 토큰 주입, 요청 실행, 응답 파싱 등 HTTP 레벨 관심사만 처리합니다.
- * {@link NaverCommerceApiExecutor}를 통해 CB + Retry가 적용됩니다.
+ * <p>모든 네이버 커머스 API HTTP 요청을 담당합니다. 토큰 주입, 요청 실행, 응답 파싱 등 HTTP 레벨 관심사만 처리합니다. {@link
+ * NaverCommerceApiExecutor}를 통해 CB + Retry가 적용됩니다.
  *
  * @author ryu-qqq
  * @since 1.0.0
@@ -116,8 +116,7 @@ public class NaverCommerceApiClient {
     }
 
     /** 상품을 수정합니다. */
-    public void updateProduct(
-            NaverProductRegistrationRequest request, String originProductNo) {
+    public void updateProduct(NaverProductRegistrationRequest request, String originProductNo) {
         log.info("네이버 커머스 상품 수정 요청: originProductNo={}", originProductNo);
         executor.execute(
                 () -> {
@@ -796,5 +795,4 @@ public class NaverCommerceApiClient {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
     }
-
 }

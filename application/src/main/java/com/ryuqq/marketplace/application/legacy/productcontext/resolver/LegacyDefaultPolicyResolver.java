@@ -59,22 +59,25 @@ public class LegacyDefaultPolicyResolver {
         }
 
         Instant now = Instant.now();
-        ShippingPolicy newPolicy = ShippingPolicy.forNew(
-                sellerId,
-                ShippingPolicyName.of("레거시 배송정책"),
-                true,
-                deliveryData.deliveryFee() == 0 ? ShippingFeeType.FREE : ShippingFeeType.PAID,
-                Money.of((int) deliveryData.deliveryFee()),
-                null,
-                Money.zero(),
-                Money.zero(),
-                Money.zero(),
-                Money.zero(),
-                LeadTime.of(
-                        deliveryData.deliveryPeriodAverage(),
-                        deliveryData.deliveryPeriodAverage(),
-                        LocalTime.of(14, 0)),
-                now);
+        ShippingPolicy newPolicy =
+                ShippingPolicy.forNew(
+                        sellerId,
+                        ShippingPolicyName.of("레거시 배송정책"),
+                        true,
+                        deliveryData.deliveryFee() == 0
+                                ? ShippingFeeType.FREE
+                                : ShippingFeeType.PAID,
+                        Money.of((int) deliveryData.deliveryFee()),
+                        null,
+                        Money.zero(),
+                        Money.zero(),
+                        Money.zero(),
+                        Money.zero(),
+                        LeadTime.of(
+                                deliveryData.deliveryPeriodAverage(),
+                                deliveryData.deliveryPeriodAverage(),
+                                LocalTime.of(14, 0)),
+                        now);
 
         return shippingPolicyCommandManager.persist(newPolicy);
     }
@@ -94,18 +97,19 @@ public class LegacyDefaultPolicyResolver {
         }
 
         Instant now = Instant.now();
-        RefundPolicy newPolicy = RefundPolicy.forNew(
-                sellerId,
-                RefundPolicyName.of("레거시 환불정책"),
-                true,
-                7,
-                7,
-                List.of(),
-                false,
-                false,
-                0,
-                refundData.returnExchangeAreaDomestic(),
-                now);
+        RefundPolicy newPolicy =
+                RefundPolicy.forNew(
+                        sellerId,
+                        RefundPolicyName.of("레거시 환불정책"),
+                        true,
+                        7,
+                        7,
+                        List.of(),
+                        false,
+                        false,
+                        0,
+                        refundData.returnExchangeAreaDomestic(),
+                        now);
 
         return refundPolicyCommandManager.persist(newPolicy);
     }

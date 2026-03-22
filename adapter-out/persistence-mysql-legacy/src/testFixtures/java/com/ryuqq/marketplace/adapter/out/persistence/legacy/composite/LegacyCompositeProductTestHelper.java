@@ -30,7 +30,8 @@ public final class LegacyCompositeProductTestHelper {
     /** Seller 레코드를 Native SQL로 삽입합니다. */
     public void insertSeller(long sellerId, String sellerName) {
         em.createNativeQuery(
-                        "INSERT INTO seller (seller_id, seller_name, commission_rate) VALUES (?, ?, ?)")
+                        "INSERT INTO seller (seller_id, seller_name, commission_rate) VALUES (?, ?,"
+                                + " ?)")
                 .setParameter(1, sellerId)
                 .setParameter(2, sellerName)
                 .setParameter(3, 10.0)
@@ -40,7 +41,8 @@ public final class LegacyCompositeProductTestHelper {
     /** Brand 레코드를 Native SQL로 삽입합니다. */
     public void insertBrand(long brandId, String brandName) {
         em.createNativeQuery(
-                        "INSERT INTO brand (brand_id, brand_name, display_order, display_yn) VALUES (?, ?, ?, ?)")
+                        "INSERT INTO brand (brand_id, brand_name, display_order, display_yn) VALUES"
+                                + " (?, ?, ?, ?)")
                 .setParameter(1, brandId)
                 .setParameter(2, brandName)
                 .setParameter(3, 1)
@@ -51,7 +53,8 @@ public final class LegacyCompositeProductTestHelper {
     /** Category 레코드를 Native SQL로 삽입합니다. */
     public void insertCategory(long categoryId, String categoryName, String path) {
         em.createNativeQuery(
-                        "INSERT INTO category (category_id, category_name, category_depth, parent_category_id, display_yn, path) VALUES (?, ?, ?, ?, ?, ?)")
+                        "INSERT INTO category (category_id, category_name, category_depth,"
+                            + " parent_category_id, display_yn, path) VALUES (?, ?, ?, ?, ?, ?)")
                 .setParameter(1, categoryId)
                 .setParameter(2, categoryName)
                 .setParameter(3, 1)
@@ -99,8 +102,7 @@ public final class LegacyCompositeProductTestHelper {
 
     /** 상품을 persist하고 ID를 반환합니다. */
     public long persistProduct(long productGroupId, String soldOutYn) {
-        LegacyProductEntity entity =
-                LegacyProductEntity.create(productGroupId, soldOutYn, "Y", 0);
+        LegacyProductEntity entity = LegacyProductEntity.create(productGroupId, soldOutYn, "Y", 0);
         em.persist(entity);
         em.flush();
         return entity.getId();
@@ -130,10 +132,8 @@ public final class LegacyCompositeProductTestHelper {
     }
 
     /** 상품 옵션을 persist합니다. */
-    public void persistProductOption(
-            long productId, long optionGroupId, long optionDetailId) {
-        em.persist(
-                LegacyProductOptionEntity.create(productId, optionGroupId, optionDetailId, 0L));
+    public void persistProductOption(long productId, long optionGroupId, long optionDetailId) {
+        em.persist(LegacyProductOptionEntity.create(productId, optionGroupId, optionDetailId, 0L));
         em.flush();
     }
 
@@ -147,8 +147,7 @@ public final class LegacyCompositeProductTestHelper {
 
     /** 상세 설명을 persist합니다. */
     public void persistDescription(long productGroupId, String description) {
-        em.persist(
-                LegacyProductGroupDetailDescriptionEntity.create(productGroupId, description));
+        em.persist(LegacyProductGroupDetailDescriptionEntity.create(productGroupId, description));
         em.flush();
     }
 
@@ -186,8 +185,8 @@ public final class LegacyCompositeProductTestHelper {
     /**
      * 기본 테스트 데이터 세트를 구성합니다.
      *
-     * <p>Seller(10) + Brand(20) + Category(30) + ProductGroup + Product(옵션 2개) + Stock + Delivery
-     * + Description + Notice + Image(MAIN, DETAIL)
+     * <p>Seller(10) + Brand(20) + Category(30) + ProductGroup + Product(옵션 2개) + Stock + Delivery +
+     * Description + Notice + Image(MAIN, DETAIL)
      *
      * @return 생성된 상품그룹 ID
      */

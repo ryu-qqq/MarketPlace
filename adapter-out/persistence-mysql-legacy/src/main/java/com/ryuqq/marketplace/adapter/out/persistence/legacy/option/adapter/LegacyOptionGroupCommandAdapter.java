@@ -22,9 +22,9 @@ public class LegacyOptionGroupCommandAdapter implements LegacyOptionGroupCommand
 
     @Override
     public Long persist(SellerOptionGroup optionGroup) {
-        LegacyOptionGroupEntity entity = LegacyOptionGroupEntity.create(
-                optionGroup.productGroupIdValue(),
-                optionGroup.optionGroupNameValue());
+        LegacyOptionGroupEntity entity =
+                LegacyOptionGroupEntity.create(
+                        optionGroup.productGroupIdValue(), optionGroup.optionGroupNameValue());
         return repository.save(entity).getId();
     }
 }

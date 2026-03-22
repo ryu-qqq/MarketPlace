@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.sellic.strategy;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryuqq.marketplace.adapter.out.client.sellic.adapter.SellicCommerceOrderClientAdapter;
 import com.ryuqq.marketplace.adapter.out.client.sellic.client.SellicCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.sellic.config.SellicCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.sellic.dto.SellicShipmentRequest;
@@ -13,7 +14,6 @@ import com.ryuqq.marketplace.adapter.out.client.sellic.exception.SellicCommerceR
 import com.ryuqq.marketplace.adapter.out.client.sellic.exception.SellicCommerceServerException;
 import com.ryuqq.marketplace.application.claimsync.port.out.query.ExternalOrderItemMappingQueryPort;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
-import com.ryuqq.marketplace.adapter.out.client.sellic.adapter.SellicCommerceOrderClientAdapter;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentSyncStrategy;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
@@ -77,9 +77,7 @@ public class SellicShipmentSyncStrategy implements ShipmentSyncStrategy {
                     log.info("셀릭 배송완료 - 자동 처리: orderItemId={}", outbox.orderItemIdValue());
                 }
                 case CANCEL -> {
-                    log.info(
-                            "셀릭 배송취소 - UI에서 직접 처리: orderItemId={}",
-                            outbox.orderItemIdValue());
+                    log.info("셀릭 배송취소 - UI에서 직접 처리: orderItemId={}", outbox.orderItemIdValue());
                 }
             }
 
@@ -116,18 +114,13 @@ public class SellicShipmentSyncStrategy implements ShipmentSyncStrategy {
 
         SellicShipmentRequest request =
                 new SellicShipmentRequest(
-                        properties.getCustomerId(),
-                        properties.getApiKey(),
-                        List.of(shipEntry));
+                        properties.getCustomerId(), properties.getApiKey(), List.of(shipEntry));
 
         SellicShipmentResponse response = apiClient.registerShipment(request);
 
         if (!response.isSuccess()) {
             throw new IllegalStateException(
-                    "셀릭 송장 등록 실패: orderId="
-                            + sellicOrderId
-                            + ", message="
-                            + response.message());
+                    "셀릭 송장 등록 실패: orderId=" + sellicOrderId + ", message=" + response.message());
         }
 
         log.info(
@@ -145,8 +138,7 @@ public class SellicShipmentSyncStrategy implements ShipmentSyncStrategy {
                 .orElseThrow(
                         () ->
                                 new IllegalStateException(
-                                        "셀릭 외부 주문 매핑을 찾을 수 없습니다. orderItemId="
-                                                + orderItemId));
+                                        "셀릭 외부 주문 매핑을 찾을 수 없습니다. orderItemId=" + orderItemId));
     }
 
     private String extractFromPayload(String payload, String field) {

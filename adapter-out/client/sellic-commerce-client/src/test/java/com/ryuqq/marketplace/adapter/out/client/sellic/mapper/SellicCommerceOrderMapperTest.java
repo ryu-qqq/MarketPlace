@@ -21,44 +21,44 @@ class SellicCommerceOrderMapperTest {
     private SellicOrderData createOrderData(
             int idx, String orderId, String productName, int saleCost, int saleCnt) {
         return new SellicOrderData(
-                idx,                         // 1  IDX
-                orderId,                     // 2  ORDER_ID
-                null,                        // 3  ORDER_SUB_ID
-                null,                        // 4  ORIGINAL_ORDER_ID
-                2000,                        // 5  ORDER_STATUS
-                "2026-03-20 10:00:00",       // 6  ORDER_DATE
-                "2026-03-20 10:01:00",       // 7  CREATED_AT
-                null,                        // 8  ORDER_TYPE
-                "홍길동",                     // 9  USER_NAME
-                "02-1234-5678",              // 10 USER_TEL
-                "010-1234-5678",             // 11 USER_CEL
-                "김철수",                     // 12 RECEIVE_NAME
-                null,                        // 13 RECEIVE_TEL
-                "010-9999-8888",             // 14 RECEIVE_CEL
-                "12345",                     // 15 RECEIVE_ZIPCODE
-                "서울시 강남구 테헤란로",       // 16 RECEIVE_ADDR
-                "부재시 경비실",               // 17 DELV_MSG
-                saleCost,                    // 18 SALE_COST
-                null,                        // 19 MALL_WON_COST
-                saleCnt,                     // 20 SALE_CNT
-                saleCost * saleCnt,          // 21 TOTAL_PRICE
-                null,                        // 22 SETTLEMENT_PRICE
-                saleCost * saleCnt,          // 23 PAYMENT_PRICE
-                0,                           // 24 DELIVERY_FEE
-                100,                         // 25 PRODUCT_ID
-                200,                         // 26 OPTION_CODE
-                null,                        // 27 MALL_PRODUCT_ID
-                productName,                 // 28 PRODUCT_NAME
-                "옵션A",                     // 29 OPTION_NAME
-                "SKU001",                    // 30 OWN_CODE
-                null,                        // 31 SELLIC_PRODUCT_NAME
-                null,                        // 32 OPTION_ITEM
-                null,                        // 33 STOCK_BARCODE
-                null,                        // 34 DELIVERY
-                null,                        // 35 INVOICE
-                null,                        // 36 MALL_ID
-                null,                        // 37 MALL_NAME
-                null);                       // 38 ORDER_CHANNEL
+                idx, // 1  IDX
+                orderId, // 2  ORDER_ID
+                null, // 3  ORDER_SUB_ID
+                null, // 4  ORIGINAL_ORDER_ID
+                2000, // 5  ORDER_STATUS
+                "2026-03-20 10:00:00", // 6  ORDER_DATE
+                "2026-03-20 10:01:00", // 7  CREATED_AT
+                null, // 8  ORDER_TYPE
+                "홍길동", // 9  USER_NAME
+                "02-1234-5678", // 10 USER_TEL
+                "010-1234-5678", // 11 USER_CEL
+                "김철수", // 12 RECEIVE_NAME
+                null, // 13 RECEIVE_TEL
+                "010-9999-8888", // 14 RECEIVE_CEL
+                "12345", // 15 RECEIVE_ZIPCODE
+                "서울시 강남구 테헤란로", // 16 RECEIVE_ADDR
+                "부재시 경비실", // 17 DELV_MSG
+                saleCost, // 18 SALE_COST
+                null, // 19 MALL_WON_COST
+                saleCnt, // 20 SALE_CNT
+                saleCost * saleCnt, // 21 TOTAL_PRICE
+                null, // 22 SETTLEMENT_PRICE
+                saleCost * saleCnt, // 23 PAYMENT_PRICE
+                0, // 24 DELIVERY_FEE
+                100, // 25 PRODUCT_ID
+                200, // 26 OPTION_CODE
+                null, // 27 MALL_PRODUCT_ID
+                productName, // 28 PRODUCT_NAME
+                "옵션A", // 29 OPTION_NAME
+                "SKU001", // 30 OWN_CODE
+                null, // 31 SELLIC_PRODUCT_NAME
+                null, // 32 OPTION_ITEM
+                null, // 33 STOCK_BARCODE
+                null, // 34 DELIVERY
+                null, // 35 INVOICE
+                null, // 36 MALL_ID
+                null, // 37 MALL_NAME
+                null); // 38 ORDER_CHANNEL
     }
 
     @Nested
@@ -121,13 +121,44 @@ class SellicCommerceOrderMapperTest {
         void fallbackToIdxWhenOrderIdNull() {
             var data =
                     new SellicOrderData(
-                            999, null, null, null, 2000,
-                            "2026-03-20 10:00:00", null, null,
-                            "주문자", null, null, "수령인",
-                            null, null, null, null, null,
-                            10000, null, 1, 10000, null, 10000, 0,
-                            100, null, null, "상품", null, null,
-                            null, null, null, null, null, null, null, null);
+                            999,
+                            null,
+                            null,
+                            null,
+                            2000,
+                            "2026-03-20 10:00:00",
+                            null,
+                            null,
+                            "주문자",
+                            null,
+                            null,
+                            "수령인",
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            10000,
+                            null,
+                            1,
+                            10000,
+                            null,
+                            10000,
+                            0,
+                            100,
+                            null,
+                            null,
+                            "상품",
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null);
 
             List<ExternalOrderPayload> result = sut.toExternalOrderPayloads(List.of(data));
 
@@ -139,13 +170,44 @@ class SellicCommerceOrderMapperTest {
         void invalidDateReturnsNull() {
             var data =
                     new SellicOrderData(
-                            1, "ORD001", null, null, 2000,
-                            "invalid-date", null, null,
-                            "주문자", null, null, null,
-                            null, null, null, null, null,
-                            10000, null, 1, 10000, null, 10000, 0,
-                            100, null, null, "상품", null, null,
-                            null, null, null, null, null, null, null, null);
+                            1,
+                            "ORD001",
+                            null,
+                            null,
+                            2000,
+                            "invalid-date",
+                            null,
+                            null,
+                            "주문자",
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            10000,
+                            null,
+                            1,
+                            10000,
+                            null,
+                            10000,
+                            0,
+                            100,
+                            null,
+                            null,
+                            "상품",
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null);
 
             List<ExternalOrderPayload> result = sut.toExternalOrderPayloads(List.of(data));
 

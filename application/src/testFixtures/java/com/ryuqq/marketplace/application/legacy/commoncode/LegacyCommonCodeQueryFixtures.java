@@ -18,8 +18,13 @@ public final class LegacyCommonCodeQueryFixtures {
     // ===== LegacyCommonCode 단건 Fixtures =====
 
     public static LegacyCommonCode legacyCommonCode(
-            Long id, Long codeGroupId, String codeDetail, String displayName, Integer displayOrder) {
-        return LegacyCommonCode.reconstitute(id, codeGroupId, codeDetail, displayName, displayOrder);
+            Long id,
+            Long codeGroupId,
+            String codeDetail,
+            String displayName,
+            Integer displayOrder) {
+        return LegacyCommonCode.reconstitute(
+                id, codeGroupId, codeDetail, displayName, displayOrder);
     }
 
     public static LegacyCommonCode legacyCommonCode(

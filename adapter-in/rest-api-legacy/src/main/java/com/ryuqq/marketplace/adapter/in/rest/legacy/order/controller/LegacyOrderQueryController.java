@@ -76,8 +76,7 @@ public class LegacyOrderQueryController {
             getOrders(@ModelAttribute LegacyOrderSearchRequest request) {
 
         Long effectiveSellerId = legacyAccessChecker.resolveSellerIdOrNull();
-        LegacyOrderSearchParams params =
-                queryApiMapper.toSearchParams(request, effectiveSellerId);
+        LegacyOrderSearchParams params = queryApiMapper.toSearchParams(request, effectiveSellerId);
 
         LegacyOrderPageResult pageResult = orderListQueryUseCase.execute(params);
 

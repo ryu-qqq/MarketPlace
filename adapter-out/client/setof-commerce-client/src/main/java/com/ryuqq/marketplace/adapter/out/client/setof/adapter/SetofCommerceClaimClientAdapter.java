@@ -24,7 +24,8 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
 public class SetofCommerceClaimClientAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(SetofCommerceClaimClientAdapter.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(SetofCommerceClaimClientAdapter.class);
 
     private final SetofCommerceApiClient apiClient;
 

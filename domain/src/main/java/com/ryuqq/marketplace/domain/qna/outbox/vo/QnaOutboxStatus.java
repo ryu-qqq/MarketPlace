@@ -18,10 +18,27 @@ public enum QnaOutboxStatus {
         return description;
     }
 
-    public boolean isPending() { return this == PENDING; }
-    public boolean isProcessing() { return this == PROCESSING; }
-    public boolean isCompleted() { return this == COMPLETED; }
-    public boolean isFailed() { return this == FAILED; }
-    public boolean canProcess() { return this == PENDING; }
-    public boolean isTerminal() { return this == COMPLETED || this == FAILED; }
+    public boolean isPending() {
+        return this == PENDING;
+    }
+
+    public boolean isProcessing() {
+        return this == PROCESSING;
+    }
+
+    public boolean isCompleted() {
+        return this == COMPLETED;
+    }
+
+    public boolean isFailed() {
+        return this == FAILED;
+    }
+
+    public boolean canProcess() {
+        return this == PENDING;
+    }
+
+    public boolean isTerminal() {
+        return this == COMPLETED || this == FAILED;
+    }
 }
