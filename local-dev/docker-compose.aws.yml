@@ -113,8 +113,8 @@ services:
       LEGACY_DB_USERNAME: "${LEGACY_DB_USERNAME}"
       LEGACY_DB_PASSWORD: "${LEGACY_DB_PASSWORD}"
 
-      # Redis (local container)
-      REDIS_HOST: redis
+      # Redis (host machine - 로컬에 이미 떠있는 Redis 사용)
+      REDIS_HOST: host.docker.internal
       REDIS_PORT: 6379
       REDIS_PASSWORD: ""
       REDIS_SSL_ENABLED: "false"
@@ -154,12 +154,13 @@ services:
       # Flyway disabled (stage DB schema already up-to-date)
       SPRING_FLYWAY_ENABLED: "false"
 
+      # Spring AI (dummy - 스케줄러에서 미사용)
+      SPRING_AI_OPENAI_API_KEY: "sk-dummy-local-not-used"
+
     ports:
       - "9081:8081"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    depends_on:
-      - redis
     restart: unless-stopped
 
   worker:

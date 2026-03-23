@@ -29,7 +29,13 @@ public class NaverCommerceOrderMapper {
      */
     public List<ExternalOrderPayload> toExternalOrderPayloads(
             List<NaverProductOrderDetail> details) {
-        return details.stream()
+        // 배송지 미입력 주문 제외 (선물하기 수락 대기 등)
+        List<NaverProductOrderDetail> filtered =
+                details.stream()
+                        .filter(d -> d.productOrder().shippingAddress() != null)
+                        .toList();
+
+        return filtered.stream()
                 .collect(Collectors.groupingBy(d -> d.order().orderId()))
                 .entrySet()
                 .stream()
@@ -64,7 +70,7 @@ public class NaverCommerceOrderMapper {
 
         return new ExternalOrderItemPayload(
                 po.productOrderId(),
-                po.productId(),
+                po.originalProductId() != null ? po.originalProductId() : po.productId(),
                 po.optionCode(),
                 po.productName(),
                 po.productOption(),

@@ -60,10 +60,15 @@ public class OrderCommandFactory {
         OrderId orderId = OrderId.of(idGeneratorPort.generate());
         OrderNumber orderNumber = OrderNumber.generate();
 
+        Email buyerEmail =
+                command.buyerEmail() != null && !command.buyerEmail().isBlank()
+                        ? Email.of(command.buyerEmail())
+                        : Email.of("no-reply@marketplace.internal");
+
         BuyerInfo buyerInfo =
                 BuyerInfo.of(
                         BuyerName.of(command.buyerName()),
-                        Email.of(command.buyerEmail()),
+                        buyerEmail,
                         PhoneNumber.of(command.buyerPhone()));
 
         PaymentNumber paymentNumber = PaymentNumber.generate();
