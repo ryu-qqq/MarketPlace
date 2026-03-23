@@ -80,16 +80,23 @@ public record ClaimListItemApiResponseV4(
     @Schema(description = "환불 정보 (V4)")
     public record RefundInfoV4(
             @Schema(description = "원 금액") int originalAmount,
+            @Schema(description = "차감 금액") int deductionAmount,
+            @Schema(description = "차감 사유") String deductionReason,
             @Schema(description = "최종 환불 금액") int finalAmount,
             @Schema(description = "환불 방식") String refundMethod,
             @Schema(description = "환불 완료 일시") String refundedAt) {}
 
     @Schema(description = "수거 배송 정보 (V4)")
     public record CollectShipmentV4(
-            @Schema(description = "택배사 코드") String carrierCode,
+            @Schema(description = "수거 방법") MethodV4 method,
             @Schema(description = "송장번호") String trackingNumber,
-            @Schema(description = "수거 완료 일시") String completedAt,
-            @Schema(description = "배송비 정보") FeeInfoV4 feeInfo) {}
+            @Schema(description = "배송비 정보") FeeInfoV4 feeInfo,
+            @Schema(description = "수거 완료 일시") String receivedAt) {}
+
+    @Schema(description = "수거 방법 (V4)")
+    public record MethodV4(
+            @Schema(description = "수거 방법 유형 (COURIER, VISIT, QUICK)") String type,
+            @Schema(description = "택배사명") String courierName) {}
 
     @Schema(description = "배송비 정보 (V4)")
     public record FeeInfoV4(

@@ -174,11 +174,16 @@ public class ClaimOrderEnricher {
                 new ReasonV4(nullToEmpty(reasonType), nullToEmpty(reasonDetail)),
                 new RefundInfoV4(
                         originalAmount != null ? originalAmount : 0,
+                        0,
+                        "",
                         finalAmount != null ? finalAmount : 0,
                         nullToEmpty(refundMethod),
                         ""),
-                new CollectShipmentV4("", "", "",
-                        new ClaimListItemApiResponseV4.FeeInfoV4("SELLER", 0)),
+                new CollectShipmentV4(
+                        new ClaimListItemApiResponseV4.MethodV4("", ""),
+                        "",
+                        new ClaimListItemApiResponseV4.FeeInfoV4("SELLER", 0),
+                        ""),
                 nullToEmpty(holdReason),
                 isHold,
                 formatInstant(requestedAt),
