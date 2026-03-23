@@ -16,9 +16,9 @@ class ShipmentSearchFieldTest {
     class FieldNameTest {
 
         @Test
-        @DisplayName("ORDER_ITEM_ID의 fieldName은 orderItemId이다")
-        void orderItemIdFieldName() {
-            assertThat(ShipmentSearchField.ORDER_ITEM_ID.fieldName()).isEqualTo("orderItemId");
+        @DisplayName("ORDER_ID의 fieldName은 orderItemId이다")
+        void orderIdFieldName() {
+            assertThat(ShipmentSearchField.ORDER_ID.fieldName()).isEqualTo("orderItemId");
         }
 
         @Test
@@ -42,14 +42,14 @@ class ShipmentSearchFieldTest {
         @DisplayName("fieldName으로 검색 필드를 찾는다")
         void findByFieldName() {
             assertThat(ShipmentSearchField.fromString("orderItemId"))
-                    .isEqualTo(ShipmentSearchField.ORDER_ITEM_ID);
+                    .isEqualTo(ShipmentSearchField.ORDER_ID);
         }
 
         @Test
         @DisplayName("enum name으로 검색 필드를 찾는다")
         void findByEnumName() {
-            assertThat(ShipmentSearchField.fromString("ORDER_ITEM_ID"))
-                    .isEqualTo(ShipmentSearchField.ORDER_ITEM_ID);
+            assertThat(ShipmentSearchField.fromString("ORDER_ID"))
+                    .isEqualTo(ShipmentSearchField.ORDER_ID);
         }
 
         @Test
@@ -99,13 +99,16 @@ class ShipmentSearchFieldTest {
     class EnumValueTest {
 
         @Test
-        @DisplayName("ShipmentSearchField는 3가지 값이다")
+        @DisplayName("ShipmentSearchField는 6가지 값이다")
         void searchFieldValues() {
             assertThat(ShipmentSearchField.values())
                     .containsExactlyInAnyOrder(
-                            ShipmentSearchField.ORDER_ITEM_ID,
+                            ShipmentSearchField.ORDER_ID,
                             ShipmentSearchField.TRACKING_NUMBER,
-                            ShipmentSearchField.CUSTOMER_NAME);
+                            ShipmentSearchField.CUSTOMER_NAME,
+                            ShipmentSearchField.CUSTOMER_PHONE,
+                            ShipmentSearchField.PRODUCT_NAME,
+                            ShipmentSearchField.SHOP_ORDER_NO);
         }
     }
 }

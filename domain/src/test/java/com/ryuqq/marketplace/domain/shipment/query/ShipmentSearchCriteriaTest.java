@@ -275,7 +275,7 @@ class ShipmentSearchCriteriaTest {
                             null,
                             null,
                             null,
-                            ShipmentSearchField.ORDER_ITEM_ID,
+                            ShipmentSearchField.ORDER_ID,
                             null,
                             null,
                             null,

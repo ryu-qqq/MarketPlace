@@ -201,7 +201,7 @@ class ShipmentConditionBuilderTest {
             // given
             given(criteria.hasSearchCondition()).willReturn(true);
             given(criteria.hasSearchField()).willReturn(true);
-            given(criteria.searchField()).willReturn(ShipmentSearchField.ORDER_ITEM_ID);
+            given(criteria.searchField()).willReturn(ShipmentSearchField.ORDER_ID);
             given(criteria.searchWord()).willReturn("1001");
 
             // when

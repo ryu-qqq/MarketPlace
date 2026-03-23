@@ -1,6 +1,10 @@
 package com.ryuqq.marketplace.adapter.out.persistence.shipment.condition;
 
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemJpaEntity.orderItemJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderJpaEntity.orderJpaEntity;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.QShipmentJpaEntity;
 import com.ryuqq.marketplace.domain.shipment.query.ShipmentDateField;
 import com.ryuqq.marketplace.domain.shipment.query.ShipmentSearchCriteria;
@@ -45,7 +49,7 @@ public class ShipmentConditionBuilder {
             return shipment.trackingNumber.like(word).or(shipment.shipmentNumber.like(word));
         }
         return switch (criteria.searchField()) {
-            case ORDER_ITEM_ID -> {
+            case ORDER_ID -> {
                 String orderItemId =
                         criteria.searchWord() != null ? criteria.searchWord().trim() : null;
                 yield orderItemId != null && !orderItemId.isBlank()
@@ -53,7 +57,32 @@ public class ShipmentConditionBuilder {
                         : null;
             }
             case TRACKING_NUMBER -> shipment.trackingNumber.like(word);
-            case CUSTOMER_NAME -> shipment.shipmentNumber.like(word);
+            case CUSTOMER_NAME ->
+                    shipment.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.buyerName.like(word)));
+            case CUSTOMER_PHONE ->
+                    shipment.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.buyerPhone.like(word)));
+            case PRODUCT_NAME ->
+                    shipment.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .where(orderItemJpaEntity.externalProductName.like(word)));
+            case SHOP_ORDER_NO ->
+                    shipment.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.externalOrderNo.like(word)));
         };
     }
 
