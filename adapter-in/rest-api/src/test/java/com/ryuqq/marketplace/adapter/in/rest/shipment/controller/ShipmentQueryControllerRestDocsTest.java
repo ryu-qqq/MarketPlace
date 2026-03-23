@@ -135,7 +135,8 @@ class ShipmentQueryControllerRestDocsTest {
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getShipmentListUseCase.execute(any())).willReturn(pageResult);
-            given(mapper.toPageResponse(any(ShipmentPageResult.class))).willReturn(pageResponse);
+            given(mapper.toPageResponseV4(any(ShipmentPageResult.class)))
+                    .willReturn((PageApiResponse) pageResponse);
 
             // when & then
             mockMvc.perform(
@@ -396,7 +397,8 @@ class ShipmentQueryControllerRestDocsTest {
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getShipmentListUseCase.execute(any())).willReturn(pageResult);
-            given(mapper.toPageResponse(any(ShipmentPageResult.class))).willReturn(pageResponse);
+            given(mapper.toPageResponseV4(any(ShipmentPageResult.class)))
+                    .willReturn((PageApiResponse) pageResponse);
 
             // when & then
             mockMvc.perform(
@@ -418,7 +420,8 @@ class ShipmentQueryControllerRestDocsTest {
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getShipmentListUseCase.execute(any())).willReturn(emptyResult);
-            given(mapper.toPageResponse(any(ShipmentPageResult.class))).willReturn(emptyResponse);
+            given(mapper.toPageResponseV4(any(ShipmentPageResult.class)))
+                    .willReturn((PageApiResponse) emptyResponse);
 
             // when & then
             mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL))

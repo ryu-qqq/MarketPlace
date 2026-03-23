@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListA
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ProductOrderInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ReceiverInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ShipmentInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentSummaryApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.shipment.dto.query.ShipmentSearchParams;
@@ -87,6 +88,61 @@ public class ShipmentQueryApiMapper {
                 pageResult.pageMeta().page(),
                 pageResult.pageMeta().size(),
                 pageResult.pageMeta().totalElements());
+    }
+
+    public PageApiResponse<ShipmentListApiResponseV4> toPageResponseV4(
+            ShipmentPageResult pageResult) {
+        List<ShipmentListApiResponseV4> responses =
+                pageResult.results().stream().map(this::toResponseV4).toList();
+        return PageApiResponse.of(
+                responses,
+                pageResult.pageMeta().page(),
+                pageResult.pageMeta().size(),
+                pageResult.pageMeta().totalElements());
+    }
+
+    private ShipmentListApiResponseV4 toResponseV4(ShipmentListResult result) {
+        ShipmentListResult.ShipmentInfo s = result.shipment();
+        ShipmentListResult.OrderInfo o = result.order();
+        ShipmentListResult.ProductOrderInfo p = result.productOrder();
+        ShipmentListResult.ReceiverInfo r = result.receiver();
+
+        String addressLine = (r != null)
+                ? ((r.receiverAddress() != null ? r.receiverAddress() : "")
+                        + " " + (r.receiverAddressDetail() != null ? r.receiverAddressDetail() : ""))
+                                .trim()
+                : "";
+
+        return new ShipmentListApiResponseV4(
+                o != null ? nullToEmpty(o.orderNumber()) : "",
+                s != null ? nullToEmpty(s.shipmentNumber()) : "",
+                s != null ? nullToEmpty(s.status()) : "",
+                s != null ? nullToEmpty(s.trackingNumber()) : "",
+                s != null ? nullToEmpty(s.courierCode()) : "",
+                s != null ? DateTimeFormatUtils.formatIso8601(s.orderConfirmedAt()) : "",
+                s != null ? DateTimeFormatUtils.formatIso8601(s.shippedAt()) : "",
+                s != null ? DateTimeFormatUtils.formatIso8601(s.deliveredAt()) : "",
+                s != null ? DateTimeFormatUtils.formatIso8601(s.createdAt()) : "",
+                new ShipmentListApiResponseV4.ShipmentMethodV4(
+                        "COURIER", s != null ? nullToEmpty(s.courierName()) : ""),
+                new ShipmentListApiResponseV4.OrderProductV4(
+                        p != null ? nullToEmpty(p.productGroupName()) : "",
+                        p != null ? nullToEmpty(p.mainImageUrl()) : "",
+                        p != null ? p.quantity() : 0,
+                        List.of()),
+                new ShipmentListApiResponseV4.ReceiverInfoV4(
+                        r != null ? nullToEmpty(r.receiverName()) : "",
+                        r != null ? nullToEmpty(r.receiverPhone()) : "",
+                        addressLine,
+                        r != null ? nullToEmpty(r.receiverZipcode()) : ""),
+                new ShipmentListApiResponseV4.ExternalOrderInfoV4(
+                        o != null ? nullToEmpty(o.shopCode()) : "",
+                        o != null ? nullToEmpty(o.externalOrderNo()) : ""),
+                new ShipmentListApiResponseV4.CancelInfoV4(""));
+    }
+
+    private String nullToEmpty(String value) {
+        return value != null ? value : "";
     }
 
     private ShipmentInfoResponse toShipmentInfoResponse(ShipmentListResult.ShipmentInfo info) {

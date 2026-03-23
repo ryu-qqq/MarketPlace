@@ -6,7 +6,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.ShipmentEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipmentSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.mapper.ShipmentQueryApiMapper;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult;
@@ -61,11 +61,11 @@ public class ShipmentQueryController {
     @PreAuthorize("@access.hasPermission('shipment:read')")
     @RequirePermission(value = "shipment:read", description = "배송 목록 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<PageApiResponse<ShipmentListApiResponse>>> searchShipments(
+    public ResponseEntity<ApiResponse<PageApiResponse<ShipmentListApiResponseV4>>> searchShipments(
             @ParameterObject @Valid ShipmentSearchApiRequest request) {
         ShipmentPageResult pageResult =
                 getShipmentListUseCase.execute(mapper.toSearchParams(request));
-        return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponse(pageResult)));
+        return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponseV4(pageResult)));
     }
 
     @Operation(summary = "배송 상세 조회", description = "배송 상세 정보를 조회합니다.")
