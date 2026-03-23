@@ -7,6 +7,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QPaymen
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.ryuqq.marketplace.domain.order.query.OrderDateField;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchField;
@@ -52,17 +53,16 @@ public class OrderCompositeConditionBuilder {
         if (field == null || word == null || word.isBlank()) {
             return null;
         }
+        String trimmed = word.trim();
         return switch (field) {
-            case ORDER_ID -> orderJpaEntity.id.containsIgnoreCase(word);
-            case ORDER_NUMBER -> orderJpaEntity.orderNumber.containsIgnoreCase(word);
-            case CUSTOMER_NAME -> orderJpaEntity.buyerName.containsIgnoreCase(word);
-            case PRODUCT_NAME ->
+            case ORDER_ID -> orderItemJpaEntity.orderItemNumber.eq(trimmed);
+            case PAYMENT_ID ->
                     orderJpaEntity.id.in(
-                            com.querydsl.jpa.JPAExpressions.select(orderItemJpaEntity.orderId)
-                                    .from(orderItemJpaEntity)
-                                    .where(
-                                            orderItemJpaEntity.externalProductName
-                                                    .containsIgnoreCase(word)));
+                            JPAExpressions.select(paymentJpaEntity.orderId)
+                                    .from(paymentJpaEntity)
+                                    .where(paymentJpaEntity.paymentNumber.eq(trimmed)));
+            case PRODUCT_GROUP_ID -> orderItemJpaEntity.productGroupId.eq(Long.parseLong(trimmed));
+            case BUYER_NAME -> orderJpaEntity.buyerName.containsIgnoreCase(trimmed);
         };
     }
 

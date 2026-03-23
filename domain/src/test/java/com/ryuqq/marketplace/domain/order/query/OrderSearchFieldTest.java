@@ -28,27 +28,27 @@ class OrderSearchFieldTest {
     class FieldNameTest {
 
         @Test
-        @DisplayName("ORDER_ID의 fieldName은 orderId이다")
+        @DisplayName("ORDER_ID의 fieldName은 orderItemNumber이다")
         void orderIdFieldName() {
-            assertThat(OrderSearchField.ORDER_ID.fieldName()).isEqualTo("orderId");
+            assertThat(OrderSearchField.ORDER_ID.fieldName()).isEqualTo("orderItemNumber");
         }
 
         @Test
-        @DisplayName("ORDER_NUMBER의 fieldName은 orderNumber이다")
-        void orderNumberFieldName() {
-            assertThat(OrderSearchField.ORDER_NUMBER.fieldName()).isEqualTo("orderNumber");
+        @DisplayName("PAYMENT_ID의 fieldName은 paymentNumber이다")
+        void paymentIdFieldName() {
+            assertThat(OrderSearchField.PAYMENT_ID.fieldName()).isEqualTo("paymentNumber");
         }
 
         @Test
-        @DisplayName("CUSTOMER_NAME의 fieldName은 customerName이다")
-        void customerNameFieldName() {
-            assertThat(OrderSearchField.CUSTOMER_NAME.fieldName()).isEqualTo("customerName");
+        @DisplayName("PRODUCT_GROUP_ID의 fieldName은 productGroupId이다")
+        void productGroupIdFieldName() {
+            assertThat(OrderSearchField.PRODUCT_GROUP_ID.fieldName()).isEqualTo("productGroupId");
         }
 
         @Test
-        @DisplayName("PRODUCT_NAME의 fieldName은 productName이다")
-        void productNameFieldName() {
-            assertThat(OrderSearchField.PRODUCT_NAME.fieldName()).isEqualTo("productName");
+        @DisplayName("BUYER_NAME의 fieldName은 buyerName이다")
+        void buyerNameFieldName() {
+            assertThat(OrderSearchField.BUYER_NAME.fieldName()).isEqualTo("buyerName");
         }
     }
 
@@ -57,17 +57,24 @@ class OrderSearchFieldTest {
     class FromStringTest {
 
         @Test
-        @DisplayName("fieldName 문자열로 검색 필드를 조회한다")
-        void fromStringByFieldName() {
-            assertThat(OrderSearchField.fromString("orderNumber"))
-                    .isEqualTo(OrderSearchField.ORDER_NUMBER);
+        @DisplayName("enum name 문자열로 검색 필드를 조회한다")
+        void fromStringByEnumName() {
+            assertThat(OrderSearchField.fromString("ORDER_ID"))
+                    .isEqualTo(OrderSearchField.ORDER_ID);
         }
 
         @Test
         @DisplayName("enum name 문자열(대소문자 무시)로 검색 필드를 조회한다")
         void fromStringByEnumNameCaseInsensitive() {
-            assertThat(OrderSearchField.fromString("order_number"))
-                    .isEqualTo(OrderSearchField.ORDER_NUMBER);
+            assertThat(OrderSearchField.fromString("buyer_name"))
+                    .isEqualTo(OrderSearchField.BUYER_NAME);
+        }
+
+        @Test
+        @DisplayName("fieldName 문자열로 검색 필드를 조회한다")
+        void fromStringByFieldName() {
+            assertThat(OrderSearchField.fromString("buyerName"))
+                    .isEqualTo(OrderSearchField.BUYER_NAME);
         }
 
         @Test
@@ -99,9 +106,9 @@ class OrderSearchFieldTest {
             assertThat(OrderSearchField.values())
                     .containsExactly(
                             OrderSearchField.ORDER_ID,
-                            OrderSearchField.ORDER_NUMBER,
-                            OrderSearchField.CUSTOMER_NAME,
-                            OrderSearchField.PRODUCT_NAME);
+                            OrderSearchField.PAYMENT_ID,
+                            OrderSearchField.PRODUCT_GROUP_ID,
+                            OrderSearchField.BUYER_NAME);
         }
     }
 }

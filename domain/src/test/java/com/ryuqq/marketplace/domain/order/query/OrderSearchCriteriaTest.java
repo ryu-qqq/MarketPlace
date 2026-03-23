@@ -28,7 +28,7 @@ class OrderSearchCriteriaTest {
             // given
             List<OrderItemStatus> statuses =
                     List.of(OrderItemStatus.READY, OrderItemStatus.CONFIRMED);
-            OrderSearchField searchField = OrderSearchField.ORDER_NUMBER;
+            OrderSearchField searchField = OrderSearchField.ORDER_ID;
             String searchWord = "ORD-2026";
             DateRange dateRange = DateRange.of(LocalDate.now().minusDays(1), LocalDate.now());
             OrderDateField dateField = OrderDateField.ORDERED;
@@ -44,7 +44,7 @@ class OrderSearchCriteriaTest {
             // then
             assertThat(criteria.statuses())
                     .containsExactly(OrderItemStatus.READY, OrderItemStatus.CONFIRMED);
-            assertThat(criteria.searchField()).isEqualTo(OrderSearchField.ORDER_NUMBER);
+            assertThat(criteria.searchField()).isEqualTo(OrderSearchField.ORDER_ID);
             assertThat(criteria.searchWord()).isEqualTo("ORD-2026");
             assertThat(criteria.dateRange()).isEqualTo(dateRange);
             assertThat(criteria.dateField()).isEqualTo(OrderDateField.ORDERED);
@@ -132,7 +132,7 @@ class OrderSearchCriteriaTest {
             OrderSearchCriteria criteria =
                     OrderSearchCriteria.of(
                             null,
-                            OrderSearchField.ORDER_NUMBER,
+                            OrderSearchField.ORDER_ID,
                             "ORD-2026",
                             null,
                             null,
@@ -181,7 +181,7 @@ class OrderSearchCriteriaTest {
             OrderSearchCriteria criteria =
                     OrderSearchCriteria.of(
                             null,
-                            OrderSearchField.ORDER_NUMBER,
+                            OrderSearchField.ORDER_ID,
                             null,
                             null,
                             null,
