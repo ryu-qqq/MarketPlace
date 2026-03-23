@@ -58,13 +58,13 @@ variable "aws_region" {
 variable "scheduler_cpu" {
   description = "CPU units for scheduler task"
   type        = number
-  default     = 512
+  default     = 1024
 }
 
 variable "scheduler_memory" {
   description = "Memory for scheduler task"
   type        = number
-  default     = 1024
+  default     = 2048
 }
 
 variable "scheduler_desired_count" {
