@@ -115,8 +115,10 @@ public class InboundOrderMappingResolver {
             String productGroupName =
                     productGroup != null ? productGroup.productGroupNameValue() : null;
 
-            // productId 매핑: NONE이면 유일한 product 사용, 그 외는 optionManageCode(=productId)
-            Long productId = resolveProductId(item.externalOptionId(), productGroup);
+            // productId 매핑: optionManageCode → NONE fallback → 옵션명 텍스트 매칭
+            Long productId =
+                    resolveProductId(
+                            item.externalOptionId(), item.externalOptionName(), productGroup);
 
             item.applyMapping(
                     productGroupId, productId, sellerId, brandId, null, productGroupName);
@@ -134,11 +136,13 @@ public class InboundOrderMappingResolver {
     /**
      * productId를 결정합니다.
      *
-     * <p>NONE 옵션 타입: product가 1개이므로 직접 조회하여 매핑.
-     * SINGLE/COMBINATION: optionManageCode(=productId)를 Long.parseLong으로 역매핑.
+     * <p>1순위: optionManageCode(=productId)를 Long.parseLong으로 역매핑.
+     * 2순위: NONE 옵션 타입이면 유일한 product 조회.
+     * 3순위: 옵션명 텍스트로 product 역매핑 (SINGLE/COMBINATION).
      */
-    private Long resolveProductId(String optionManageCode, ProductGroup productGroup) {
-        // 1순위: optionManageCode가 숫자면 productId로 직접 사용 (SINGLE/COMBINATION)
+    private Long resolveProductId(
+            String optionManageCode, String externalOptionName, ProductGroup productGroup) {
+        // 1순위: optionManageCode가 숫자면 productId로 직접 사용
         if (optionManageCode != null && !optionManageCode.isBlank()) {
             try {
                 return Long.parseLong(optionManageCode);
@@ -147,8 +151,12 @@ public class InboundOrderMappingResolver {
             }
         }
 
+        if (productGroup == null) {
+            return null;
+        }
+
         // 2순위: NONE 옵션 타입이면 유일한 product 조회
-        if (productGroup != null && productGroup.optionType() == OptionType.NONE) {
+        if (productGroup.optionType() == OptionType.NONE) {
             List<Product> products =
                     productQueryPort.findByProductGroupId(productGroup.id());
             if (products.size() == 1) {
@@ -156,7 +164,72 @@ public class InboundOrderMappingResolver {
             }
         }
 
+        // 3순위: 옵션명 텍스트로 매칭 (네이버: "DEFAULT_ONE: 모눈" → "모눈"으로 product 역매핑)
+        if (externalOptionName != null && !externalOptionName.isBlank()) {
+            return resolveProductIdByOptionName(externalOptionName, productGroup);
+        }
+
         return null;
+    }
+
+    /**
+     * 옵션명 텍스트로 productId를 역매핑합니다.
+     *
+     * <p>네이버 productOption 형태: "그룹명: 값" 또는 "그룹명1: 값1, 그룹명2: 값2".
+     * ProductGroup의 sellerOptionValues에서 옵션값 이름이 포함된 product를 찾습니다.
+     */
+    private Long resolveProductIdByOptionName(String externalOptionName, ProductGroup productGroup) {
+        // 옵션값 이름 추출: "DEFAULT_ONE: 모눈" → "모눈"
+        String optionValueName = extractOptionValueName(externalOptionName);
+        if (optionValueName == null) {
+            return null;
+        }
+
+        // ProductGroup의 sellerOptionValues에서 일치하는 값의 ID 찾기
+        Long matchedOptionValueId = null;
+        for (var group : productGroup.sellerOptionGroups()) {
+            for (var value : group.optionValues()) {
+                if (optionValueName.equals(value.optionValueName().value())) {
+                    matchedOptionValueId = value.idValue();
+                    break;
+                }
+            }
+            if (matchedOptionValueId != null) break;
+        }
+
+        if (matchedOptionValueId == null) {
+            return null;
+        }
+
+        // 해당 optionValueId를 가진 product 찾기
+        List<Product> products =
+                productQueryPort.findByProductGroupId(productGroup.id());
+        Long targetValueId = matchedOptionValueId;
+        return products.stream()
+                .filter(
+                        p ->
+                                p.optionMappings().stream()
+                                        .anyMatch(
+                                                m ->
+                                                        m.sellerOptionValueId().value()
+                                                                == targetValueId))
+                .map(Product::idValue)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String extractOptionValueName(String externalOptionName) {
+        // "DEFAULT_ONE: 모눈" → "모눈"
+        // "색상: RED, 사이즈: XL" → 첫 번째 값만 ("RED")
+        if (externalOptionName.contains(":")) {
+            String afterColon = externalOptionName.split(":")[1].trim();
+            // 쉼표가 있으면 첫 번째 값만
+            if (afterColon.contains(",")) {
+                return afterColon.split(",")[0].trim();
+            }
+            return afterColon;
+        }
+        return externalOptionName.trim();
     }
 
     private void applyStatusToAll(InboundOrders orders, Instant now) {
