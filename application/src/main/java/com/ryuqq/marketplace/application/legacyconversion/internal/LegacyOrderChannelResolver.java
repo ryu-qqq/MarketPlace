@@ -55,8 +55,11 @@ public class LegacyOrderChannelResolver {
      *
      * <ul>
      *   <li>자사몰: 레거시 orderId 그대로
-     *   <li>외부몰: EXTERNAL_ORDER_PK_ID
+     *   <li>외부몰: EXTERNAL_ORDER_PK_ID에서 상품주문번호 추출
      * </ul>
+     *
+     * <p>네이버 주문의 경우 EXTERNAL_ORDER_PK_ID가 "{주문번호}_{상품주문번호}" 형태로 저장됩니다.
+     * 네이버 API 호출 시 상품주문번호(뒤)가 핵심 식별자이므로 언더스코어 뒤의 값만 추출합니다.
      *
      * @param externalOrderPkId external_order.EXTERNAL_ORDER_PK_ID (nullable)
      * @param legacyOrderId 레거시 주문 ID
@@ -66,6 +69,13 @@ public class LegacyOrderChannelResolver {
         if (externalOrderPkId == null) {
             return String.valueOf(legacyOrderId);
         }
+
+        // 네이버: "{주문번호}_{상품주문번호}" → 상품주문번호만 추출
+        int underscoreIdx = externalOrderPkId.indexOf('_');
+        if (underscoreIdx > 0 && underscoreIdx < externalOrderPkId.length() - 1) {
+            return externalOrderPkId.substring(underscoreIdx + 1);
+        }
+
         return externalOrderPkId;
     }
 
@@ -83,11 +93,18 @@ public class LegacyOrderChannelResolver {
             return new ChannelResolution(2L, "NAVER");
         }
 
-        if (externalOrderPkId.startsWith("OD")) {
+        // "{주문번호}_{상품주문번호}" 형태면 상품주문번호로 패턴 매칭
+        String idForMatching = externalOrderPkId;
+        int underscoreIdx = externalOrderPkId.indexOf('_');
+        if (underscoreIdx > 0 && underscoreIdx < externalOrderPkId.length() - 1) {
+            idForMatching = externalOrderPkId.substring(underscoreIdx + 1);
+        }
+
+        if (idForMatching.startsWith("OD")) {
             return new ChannelResolution(14L, "SSF");
         }
 
-        if (externalOrderPkId.matches("^\\d{8}$")) {
+        if (idForMatching.matches("^\\d{8}$")) {
             return new ChannelResolution(13L, "LF");
         }
 

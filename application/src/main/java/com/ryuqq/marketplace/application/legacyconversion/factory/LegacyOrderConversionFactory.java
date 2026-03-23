@@ -20,6 +20,7 @@ import com.ryuqq.marketplace.domain.common.vo.PhoneNumber;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.aggregate.OrderItemHistory;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.id.OrderItemNumber;
@@ -174,7 +175,8 @@ public class LegacyOrderConversionFactory {
                         composite.orderDate());
 
         OrderItem orderItem =
-                buildOrderItem(orderItemId, orderNumber, composite, statusResolution, resolvedIds);
+                buildOrderItem(
+                        orderItemId, orderNumber, composite, statusResolution, resolvedIds, now);
 
         return Order.reconstitute(
                 id,
@@ -192,7 +194,8 @@ public class LegacyOrderConversionFactory {
             OrderNumber orderNumber,
             LegacyOrderCompositeResult composite,
             LegacyOrderStatusMapper.OrderStatusResolution statusResolution,
-            LegacyOrderResolvedIds resolvedIds) {
+            LegacyOrderResolvedIds resolvedIds,
+            Instant now) {
 
         OrderItemId id = OrderItemId.forNew(orderItemId);
         OrderItemNumber itemNumber = OrderItemNumber.generate(orderNumber, 1);
@@ -236,6 +239,16 @@ public class LegacyOrderConversionFactory {
         ReceiverInfo receiverInfo = buildReceiverInfo(composite);
         OrderItemStatus itemStatus = resolveOrderItemStatus(statusResolution);
 
+        // 이관 이력 1건 생성 (null → 현재 상태)
+        OrderItemHistory migrationHistory =
+                OrderItemHistory.of(
+                        id,
+                        null,
+                        itemStatus,
+                        LEGACY_ACTOR,
+                        "레거시 주문 이관 (legacyOrderId=" + composite.legacyOrderId() + ")",
+                        composite.orderDate() != null ? composite.orderDate() : now);
+
         return OrderItem.reconstitute(
                 id,
                 itemNumber,
@@ -244,7 +257,7 @@ public class LegacyOrderConversionFactory {
                 price,
                 receiverInfo,
                 itemStatus,
-                List.of());
+                List.of(migrationHistory));
     }
 
     private OrderItemStatus resolveOrderItemStatus(
