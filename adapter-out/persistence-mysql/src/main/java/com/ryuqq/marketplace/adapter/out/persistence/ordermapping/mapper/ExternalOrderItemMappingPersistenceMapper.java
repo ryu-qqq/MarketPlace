@@ -18,7 +18,7 @@ public class ExternalOrderItemMappingPersistenceMapper {
                 mapping.externalOrderId(),
                 mapping.externalProductOrderId(),
                 mapping.orderItemId().value(),
-                null);
+                mapping.createdAt());
     }
 
     public ExternalOrderItemMapping toDomain(ExternalOrderItemMappingJpaEntity entity) {
