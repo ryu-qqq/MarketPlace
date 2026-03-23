@@ -1,13 +1,16 @@
 package com.ryuqq.marketplace.application.inboundorder.internal;
 
 import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
+import com.ryuqq.marketplace.application.product.port.out.query.ProductQueryPort;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
 import com.ryuqq.marketplace.domain.inboundorder.aggregate.InboundOrder;
 import com.ryuqq.marketplace.domain.inboundorder.aggregate.InboundOrderItem;
 import com.ryuqq.marketplace.domain.inboundorder.vo.InboundOrders;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
+import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
+import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +30,15 @@ public class InboundOrderMappingResolver {
 
     private final OutboundProductReadManager outboundProductReadManager;
     private final ProductGroupReadManager productGroupReadManager;
+    private final ProductQueryPort productQueryPort;
 
     public InboundOrderMappingResolver(
             OutboundProductReadManager outboundProductReadManager,
-            ProductGroupReadManager productGroupReadManager) {
+            ProductGroupReadManager productGroupReadManager,
+            ProductQueryPort productQueryPort) {
         this.outboundProductReadManager = outboundProductReadManager;
         this.productGroupReadManager = productGroupReadManager;
+        this.productQueryPort = productQueryPort;
     }
 
     /**
@@ -109,8 +115,8 @@ public class InboundOrderMappingResolver {
             String productGroupName =
                     productGroup != null ? productGroup.productGroupNameValue() : null;
 
-            // externalOptionId(=optionManageCode=productId)로 개별 Product(SKU) 매핑
-            Long productId = resolveProductId(item.externalOptionId());
+            // productId 매핑: NONE이면 유일한 product 사용, 그 외는 optionManageCode(=productId)
+            Long productId = resolveProductId(item.externalOptionId(), productGroup);
 
             item.applyMapping(
                     productGroupId, productId, sellerId, brandId, null, productGroupName);
@@ -126,18 +132,30 @@ public class InboundOrderMappingResolver {
     }
 
     /**
-     * optionManageCode에서 productId를 추출합니다.
-     * 네이버 상품 등록 시 sellerManagerCode에 product.id()를 전송하므로,
-     * 주문에서 optionManageCode로 그대로 돌아옵니다.
+     * productId를 결정합니다.
+     *
+     * <p>NONE 옵션 타입: product가 1개이므로 직접 조회하여 매핑.
+     * SINGLE/COMBINATION: optionManageCode(=productId)를 Long.parseLong으로 역매핑.
      */
-    private Long resolveProductId(String optionManageCode) {
+    private Long resolveProductId(String optionManageCode, ProductGroup productGroup) {
+        // 1순위: optionManageCode가 숫자면 productId로 직접 사용 (SINGLE/COMBINATION)
         if (optionManageCode != null && !optionManageCode.isBlank()) {
             try {
                 return Long.parseLong(optionManageCode);
             } catch (NumberFormatException ignored) {
-                // 숫자가 아닌 값이면 매핑 불가
+                // 숫자가 아닌 값이면 무시
             }
         }
+
+        // 2순위: NONE 옵션 타입이면 유일한 product 조회
+        if (productGroup != null && productGroup.optionType() == OptionType.NONE) {
+            List<Product> products =
+                    productQueryPort.findByProductGroupId(productGroup.id());
+            if (products.size() == 1) {
+                return products.getFirst().idValue();
+            }
+        }
+
         return null;
     }
 
