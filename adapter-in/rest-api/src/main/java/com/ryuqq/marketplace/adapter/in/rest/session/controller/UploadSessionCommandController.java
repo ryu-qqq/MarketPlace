@@ -5,7 +5,10 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.session.UploadSessionAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.session.dto.command.CompleteUploadSessionApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.session.dto.command.GenerateUploadUrlApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.session.dto.command.LegacyImagePresignedApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.session.dto.response.GenerateUploadUrlApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.session.dto.response.LegacyImagePresignedApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.session.mapper.LegacyImagePresignedApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.session.mapper.UploadSessionCommandApiMapper;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.uploadsession.port.in.command.CompleteUploadSessionUseCase;
@@ -44,14 +47,17 @@ public class UploadSessionCommandController {
     private final GenerateUploadUrlUseCase generateUploadUrlUseCase;
     private final CompleteUploadSessionUseCase completeUploadSessionUseCase;
     private final UploadSessionCommandApiMapper mapper;
+    private final LegacyImagePresignedApiMapper legacyMapper;
 
     public UploadSessionCommandController(
             GenerateUploadUrlUseCase generateUploadUrlUseCase,
             CompleteUploadSessionUseCase completeUploadSessionUseCase,
-            UploadSessionCommandApiMapper mapper) {
+            UploadSessionCommandApiMapper mapper,
+            LegacyImagePresignedApiMapper legacyMapper) {
         this.generateUploadUrlUseCase = generateUploadUrlUseCase;
         this.completeUploadSessionUseCase = completeUploadSessionUseCase;
         this.mapper = mapper;
+        this.legacyMapper = legacyMapper;
     }
 
     /**
@@ -119,5 +125,22 @@ public class UploadSessionCommandController {
         completeUploadSessionUseCase.execute(mapper.toCompleteCommand(sessionId, request));
 
         return ResponseEntity.ok(ApiResponse.of());
+    }
+
+    /**
+     * 레거시 호환 Presigned URL 발급 API.
+     *
+     * <p>프론트 OMS가 {@code /api/v1/image/presigned}로 호출하는 레거시 호환 엔드포인트.
+     */
+    @Operation(
+            summary = "레거시 호환 Presigned URL 발급",
+            description = "프론트 OMS 호환 Presigned URL을 발급합니다.")
+    @PreAuthorize("@access.authenticated()")
+    @PostMapping(UploadSessionAdminEndpoints.LEGACY_IMAGE_PRESIGNED)
+    public ResponseEntity<ApiResponse<LegacyImagePresignedApiResponse>> legacyGetPresignedUrl(
+            @Valid @RequestBody LegacyImagePresignedApiRequest request) {
+
+        PresignedUrlResponse result = generateUploadUrlUseCase.execute(legacyMapper.toCommand(request));
+        return ResponseEntity.ok(ApiResponse.of(legacyMapper.toResponse(result)));
     }
 }

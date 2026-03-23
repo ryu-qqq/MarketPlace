@@ -23,4 +23,7 @@ public final class UploadSessionAdminEndpoints {
 
     /** 업로드 완료 처리 경로 */
     public static final String COMPLETE = "/{sessionId}/complete";
+
+    /** 레거시 호환 Presigned URL 발급 경로 (프론트 OMS: /api/v1/image/presigned) */
+    public static final String LEGACY_IMAGE_PRESIGNED = "/api/v1/image/presigned";
 }
