@@ -71,7 +71,7 @@ public class NaverCommerceOrderMapper {
         return new ExternalOrderItemPayload(
                 po.productOrderId(),
                 po.originalProductId() != null ? po.originalProductId() : po.productId(),
-                po.optionCode(),
+                po.optionManageCode(),
                 po.productName(),
                 po.productOption(),
                 null,

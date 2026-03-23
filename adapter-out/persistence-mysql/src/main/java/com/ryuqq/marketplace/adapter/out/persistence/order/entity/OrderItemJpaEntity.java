@@ -25,8 +25,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "product_group_id", nullable = false)
     private long productGroupId;
 
-    @Column(name = "product_id", nullable = false)
-    private long productId;
+    @Column(name = "product_id")
+    private Long productId;
 
     @Column(name = "sku_code", length = 50)
     private String skuCode;
@@ -104,7 +104,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String orderItemNumber,
             String orderId,
             long productGroupId,
-            long productId,
+            Long productId,
             String skuCode,
             String productGroupName,
             String brandName,
@@ -165,7 +165,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String orderItemNumber,
             String orderId,
             long productGroupId,
-            long productId,
+            Long productId,
             String skuCode,
             String productGroupName,
             String brandName,
@@ -238,7 +238,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         return productGroupId;
     }
 
-    public long getProductId() {
+    public Long getProductId() {
         return productId;
     }
 

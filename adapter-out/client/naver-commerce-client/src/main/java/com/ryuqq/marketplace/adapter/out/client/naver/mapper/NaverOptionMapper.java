@@ -319,7 +319,7 @@ final class NaverOptionMapper {
                 optionNames.size() > 2 ? optionNames.get(2) : null,
                 stock,
                 priceDiff,
-                product.skuCode(),
+                String.valueOf(product.id()),
                 product.stockQuantity() > 0);
     }
 

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
  * InboundOrder 상품 매핑 해석기.
  *
  * <p>OutboundProduct 역조회를 통해 외부 상품 ID → 내부 상품 매핑을 bulk로 수행합니다.
+ * externalOptionId(=skuCode)를 이용하여 개별 Product(SKU)까지 매핑합니다.
  */
 @Component
 public class InboundOrderMappingResolver {
@@ -108,7 +109,11 @@ public class InboundOrderMappingResolver {
             String productGroupName =
                     productGroup != null ? productGroup.productGroupNameValue() : null;
 
-            item.applyMapping(productGroupId, null, sellerId, brandId, null, productGroupName);
+            // externalOptionId(=optionManageCode=productId)로 개별 Product(SKU) 매핑
+            Long productId = resolveProductId(item.externalOptionId());
+
+            item.applyMapping(
+                    productGroupId, productId, sellerId, brandId, null, productGroupName);
 
             if (resolvedSellerId == null && sellerId != null) {
                 resolvedSellerId = sellerId;
@@ -118,6 +123,22 @@ public class InboundOrderMappingResolver {
         if (resolvedSellerId != null && order.sellerId() == 0L) {
             order.assignSellerId(resolvedSellerId);
         }
+    }
+
+    /**
+     * optionManageCode에서 productId를 추출합니다.
+     * 네이버 상품 등록 시 sellerManagerCode에 product.id()를 전송하므로,
+     * 주문에서 optionManageCode로 그대로 돌아옵니다.
+     */
+    private Long resolveProductId(String optionManageCode) {
+        if (optionManageCode != null && !optionManageCode.isBlank()) {
+            try {
+                return Long.parseLong(optionManageCode);
+            } catch (NumberFormatException ignored) {
+                // 숫자가 아닌 값이면 매핑 불가
+            }
+        }
+        return null;
     }
 
     private void applyStatusToAll(InboundOrders orders, Instant now) {

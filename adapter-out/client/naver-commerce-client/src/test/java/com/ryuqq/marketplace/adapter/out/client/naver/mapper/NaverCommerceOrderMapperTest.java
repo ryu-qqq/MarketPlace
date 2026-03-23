@@ -174,8 +174,8 @@ class NaverCommerceOrderMapperTest {
         }
 
         @Test
-        @DisplayName("배송지 정보가 없어도 null 처리된다")
-        void nullShippingAddress() {
+        @DisplayName("배송지 정보가 없는 주문은 필터링된다 (선물하기 수락 대기 등)")
+        void nullShippingAddressFiltered() {
             NaverProductOrderDetail.ProductOrderInfo po =
                     new NaverProductOrderDetail.ProductOrderInfo(
                             "PO001", "PAYED", // 1-2
@@ -207,9 +207,7 @@ class NaverCommerceOrderMapperTest {
 
             List<ExternalOrderPayload> result = sut.toExternalOrderPayloads(List.of(detail));
 
-            var item = result.get(0).items().get(0);
-            assertThat(item.receiverName()).isNull();
-            assertThat(item.receiverPhone()).isNull();
+            assertThat(result).isEmpty();
         }
     }
 }
