@@ -17,14 +17,26 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 JWT 토큰 Provider.
  *
- * <p>setof-commerce와 동일한 HS256 서명 + 동일한 secret으로 토큰을 발급/검증합니다.
+ * <p>setof-commerce 레거시 어드민과 동일한 HS256 서명 + 동일한 secret + 동일한 claims 구조로 토큰을 발급/검증합니다.
+ *
+ * <p>레거시 토큰 claims 구조:
+ * <pre>
+ * {
+ *   "iss": "setofAdmin",
+ *   "id": 78,           // sellerId
+ *   "sub": "email",
+ *   "aud": "SELLER",    // roleType
+ *   "iat": ...,
+ *   "exp": ...
+ * }
+ * </pre>
  */
 @Component
 @EnableConfigurationProperties(LegacyJwtProperties.class)
 public class LegacyJwtTokenProvider implements LegacyTokenClient {
 
-    private static final String ROLE_CLAIM = "role";
-    private static final String SELLER_ID_CLAIM = "sellerId";
+    private static final String ISSUER = "setofAdmin";
+    private static final String SELLER_ID_CLAIM = "id";
 
     private final LegacyJwtProperties properties;
     private Key key;
@@ -93,16 +105,17 @@ public class LegacyJwtTokenProvider implements LegacyTokenClient {
     @Override
     public String extractRole(String token) {
         Claims claims = parseClaimsAllowExpired(token);
-        return claims.get(ROLE_CLAIM, String.class);
+        return claims.getAudience();
     }
 
     private String buildToken(
             String email, long sellerId, String roleType, Date now, long expireTimeMs) {
         Date expiry = new Date(now.getTime() + expireTimeMs);
         return Jwts.builder()
-                .setSubject(email)
-                .claim(ROLE_CLAIM, roleType)
+                .setIssuer(ISSUER)
                 .claim(SELLER_ID_CLAIM, sellerId)
+                .setSubject(email)
+                .setAudience(roleType)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
