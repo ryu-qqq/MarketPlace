@@ -113,17 +113,16 @@ scheduler:
         timeout-seconds: 180
 
     legacy-order-conversion:
-      # Stage: 운영과 동일 (5초마다)
-      enabled: true
+      # Stage: 임시 비활성화 — 로컬 파악 후 재활성화
+      enabled: false
       cron: "*/5 * * * * *"
 
     legacy-order-conversion-timeout:
-      # Stage: 운영과 동일 (1분마다)
       cron: "0 */1 * * * *"
 
     legacy-order-conversion-seeder:
-      # Stage: 운영과 동일 (전체 시딩)
-      enabled: true
+      # Stage: 임시 비활성화
+      enabled: false
       cron: "0 */1 * * * *"
       batch-size: 200
       max-total: 0
@@ -132,7 +131,7 @@ scheduler:
       entries:
         - sales-channel-id: 2
           enabled: true
-          cron: "0 0 * * * *"
+          cron: "0 */1 * * * *"
           timezone: Asia/Seoul
           batch-size: 300
         - sales-channel-id: 16
