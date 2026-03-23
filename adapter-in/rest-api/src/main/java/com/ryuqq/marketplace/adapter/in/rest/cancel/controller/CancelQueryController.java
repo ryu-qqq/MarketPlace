@@ -8,7 +8,7 @@ import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelSummaryAp
 import com.ryuqq.marketplace.adapter.in.rest.cancel.mapper.CancelApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.CancelListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelDetailResult;
 import com.ryuqq.marketplace.application.cancel.dto.response.CancelPageResult;
@@ -63,7 +63,7 @@ public class CancelQueryController {
     @PreAuthorize("@access.hasPermission('cancel:read')")
     @RequirePermission(value = "cancel:read", description = "취소 목록 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<PageApiResponse<ClaimListItemApiResponseV4>>> getList(
+    public ResponseEntity<ApiResponse<PageApiResponse<CancelListItemApiResponseV4>>> getList(
             CancelSearchApiRequest request) {
         CancelPageResult result = getCancelListUseCase.execute(mapper.toSearchParams(request));
         return ResponseEntity.ok(ApiResponse.of(mapper.toPageResponseV4(result, enricher)));

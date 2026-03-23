@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.cancel.mapper;
 
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.CancelListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.ApproveCancelBatchApiRequest;
@@ -109,13 +110,13 @@ public class CancelApiMapper {
 
     // ==================== V4 Response 변환 (프론트 중첩 구조) ====================
 
-    public PageApiResponse<ClaimListItemApiResponseV4> toPageResponseV4(
+    public PageApiResponse<CancelListItemApiResponseV4> toPageResponseV4(
             CancelPageResult result, ClaimOrderEnricher enricher) {
         List<String> orderItemIds =
                 result.cancels().stream().map(CancelListResult::orderItemId).toList();
         ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(orderItemIds);
 
-        List<ClaimListItemApiResponseV4> responses =
+        List<CancelListItemApiResponseV4> responses =
                 result.cancels().stream().map(r -> toListResponseV4(r, enricher, ctx)).toList();
         return PageApiResponse.of(
                 responses,
@@ -124,25 +125,30 @@ public class CancelApiMapper {
                 result.pageMeta().totalElements());
     }
 
-    private ClaimListItemApiResponseV4 toListResponseV4(
+    private CancelListItemApiResponseV4 toListResponseV4(
             CancelListResult r, ClaimOrderEnricher enricher, ClaimOrderEnricher.OrderContext ctx) {
         String itemId = r.orderItemId();
-        return new ClaimListItemApiResponseV4(
-                enricher.toOrderProductV4(itemId, ctx),
-                enricher.toClaimInfoV4(
-                        r.cancelId(),
-                        r.cancelNumber(),
-                        r.cancelStatus(),
+        ClaimListItemApiResponseV4.OrderProductV4 orderProduct = enricher.toOrderProductV4(itemId, ctx);
+        return new CancelListItemApiResponseV4(
+                orderProduct.orderNumber(),
+                orderProduct,
+                new CancelListItemApiResponseV4.CancelInfoV4(
+                        enricher.nullToEmpty(r.cancelId()),
+                        enricher.nullToEmpty(r.cancelNumber()),
+                        enricher.nullToEmpty(r.cancelType()),
+                        enricher.nullToEmpty(r.cancelStatus()),
                         r.cancelQty(),
-                        r.reasonType(),
-                        r.reasonDetail(),
-                        r.refundAmount(),
-                        r.refundAmount(),
-                        r.refundMethod(),
-                        "",
-                        false,
-                        r.requestedAt(),
-                        r.requestedAt()),
+                        new ClaimListItemApiResponseV4.ReasonV4(
+                                enricher.nullToEmpty(r.reasonType()),
+                                enricher.nullToEmpty(r.reasonDetail())),
+                        new ClaimListItemApiResponseV4.RefundInfoV4(
+                                r.refundAmount() != null ? r.refundAmount() : 0,
+                                0, "",
+                                r.refundAmount() != null ? r.refundAmount() : 0,
+                                enricher.nullToEmpty(r.refundMethod()),
+                                enricher.formatInstant(r.completedAt())),
+                        enricher.formatInstant(r.requestedAt()),
+                        enricher.formatInstant(r.completedAt())),
                 enricher.toBuyerInfoV4(itemId, ctx),
                 enricher.toPaymentV4(itemId, ctx),
                 enricher.toReceiverInfoV4(itemId, ctx),
