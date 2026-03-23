@@ -58,13 +58,13 @@ variable "aws_region" {
 variable "legacy_api_cpu" {
   description = "CPU units for legacy-api task"
   type        = number
-  default     = 512
+  default     = 1024
 }
 
 variable "legacy_api_memory" {
   description = "Memory for legacy-api task"
   type        = number
-  default     = 1024
+  default     = 2048
 }
 
 variable "legacy_api_desired_count" {

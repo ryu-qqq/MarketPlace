@@ -403,7 +403,7 @@ module "ecs_service" {
 
   # Container Environment Variables
   container_environment = [
-    { name = "JAVA_OPTS", value = "-XX:+UseContainerSupport -Xmx512m -Xms256m" },
+    { name = "JAVA_OPTS", value = "-XX:+UseContainerSupport -Xmx1280m -Xms512m" },
     { name = "SPRING_PROFILES_ACTIVE", value = "stage" },
     { name = "DB_HOST", value = local.rds_host },
     { name = "DB_PORT", value = local.rds_port },
@@ -440,7 +440,7 @@ module "ecs_service" {
   health_check_interval     = 30
   health_check_timeout      = 5
   health_check_retries      = 3
-  health_check_start_period = 120
+  health_check_start_period = 180
 
   # Logging
   log_configuration = {
