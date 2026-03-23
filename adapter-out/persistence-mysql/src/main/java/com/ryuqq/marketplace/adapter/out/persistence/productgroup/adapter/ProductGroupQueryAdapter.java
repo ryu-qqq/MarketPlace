@@ -65,6 +65,9 @@ public class ProductGroupQueryAdapter implements ProductGroupQueryPort {
 
     @Override
     public List<ProductGroup> findByIds(List<ProductGroupId> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
         List<Long> rawIds = ids.stream().map(ProductGroupId::value).toList();
         List<ProductGroupJpaEntity> parentEntities = queryDslRepository.findByIds(rawIds);
         return assembleProductGroups(parentEntities);
@@ -72,6 +75,9 @@ public class ProductGroupQueryAdapter implements ProductGroupQueryPort {
 
     @Override
     public List<ProductGroup> findByIdsAndSellerId(List<ProductGroupId> ids, long sellerId) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
         List<Long> rawIds = ids.stream().map(ProductGroupId::value).toList();
         List<ProductGroupJpaEntity> parentEntities =
                 queryDslRepository.findByIdsAndSellerId(rawIds, sellerId);

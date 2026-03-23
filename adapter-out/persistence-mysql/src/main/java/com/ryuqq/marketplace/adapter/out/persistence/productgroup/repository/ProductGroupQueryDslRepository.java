@@ -88,6 +88,9 @@ public class ProductGroupQueryDslRepository {
     }
 
     public List<ProductGroupJpaEntity> findByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
         return queryFactory
                 .selectFrom(productGroup)
                 .where(conditionBuilder.idIn(ids), conditionBuilder.statusNotDeleted())
@@ -116,6 +119,9 @@ public class ProductGroupQueryDslRepository {
 
     public List<ProductGroupImageJpaEntity> findImagesByProductGroupIds(
             List<Long> productGroupIds) {
+        if (productGroupIds == null || productGroupIds.isEmpty()) {
+            return List.of();
+        }
         return queryFactory
                 .selectFrom(productGroupImage)
                 .where(
@@ -137,6 +143,9 @@ public class ProductGroupQueryDslRepository {
 
     public List<SellerOptionGroupJpaEntity> findOptionGroupsByProductGroupIds(
             List<Long> productGroupIds) {
+        if (productGroupIds == null || productGroupIds.isEmpty()) {
+            return List.of();
+        }
         return queryFactory
                 .selectFrom(sellerOptionGroup)
                 .where(

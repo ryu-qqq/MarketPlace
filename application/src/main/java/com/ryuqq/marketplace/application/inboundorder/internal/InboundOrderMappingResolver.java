@@ -71,6 +71,9 @@ public class InboundOrderMappingResolver {
     }
 
     private Map<Long, ProductGroup> buildProductGroupMap(Map<String, OutboundProduct> outboundMap) {
+        if (outboundMap.isEmpty()) {
+            return Map.of();
+        }
         List<ProductGroupId> productGroupIds =
                 outboundMap.values().stream()
                         .map(OutboundProduct::productGroupId)
