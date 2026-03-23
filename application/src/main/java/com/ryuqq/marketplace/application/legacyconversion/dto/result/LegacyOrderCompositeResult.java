@@ -7,7 +7,7 @@ import java.util.List;
  * 레거시 주문 복합 조회 결과 DTO.
  *
  * <p>orders + order_snapshot_product_group + external_order + interlocking_order +
- * payment_snapshot_shipping_address + order_snapshot_option_detail 조합 결과.
+ * payment_snapshot_shipping_address + shipment + order_snapshot_option_detail + orders_history 조합 결과.
  *
  * @param legacyOrderId 레거시 주문 ID
  * @param legacyPaymentId 레거시 결제 ID
@@ -21,6 +21,7 @@ import java.util.List;
  * @param productGroupId 상품그룹 ID (order_snapshot_product_group)
  * @param productGroupName 상품그룹명
  * @param brandId 브랜드 ID
+ * @param brandName 브랜드명
  * @param categoryId 카테고리 ID
  * @param regularPrice 정가
  * @param currentPrice 판매가
@@ -37,6 +38,10 @@ import java.util.List;
  * @param receiverAddress 주소
  * @param receiverAddressDetail 상세주소
  * @param deliveryRequest 배송 요청사항
+ * @param invoiceNo 운송장번호 (shipment 테이블, nullable)
+ * @param companyCode 택배사 코드 (shipment 테이블, nullable)
+ * @param shipmentCreatedAt 배송 레코드 생성 시각 (shipment.INSERT_DATE, nullable)
+ * @param histories 주문 상태 변경 이력 (orders_history 테이블)
  */
 public record LegacyOrderCompositeResult(
         long legacyOrderId,
@@ -67,4 +72,8 @@ public record LegacyOrderCompositeResult(
         String receiverZipCode,
         String receiverAddress,
         String receiverAddressDetail,
-        String deliveryRequest) {}
+        String deliveryRequest,
+        String invoiceNo,
+        String companyCode,
+        Instant shipmentCreatedAt,
+        List<LegacyOrderHistoryEntry> histories) {}

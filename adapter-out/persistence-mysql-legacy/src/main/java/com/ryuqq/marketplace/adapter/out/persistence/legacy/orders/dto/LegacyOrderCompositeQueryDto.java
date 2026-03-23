@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
  * 레거시 주문 복합 조회 flat projection DTO.
  *
  * <p>orders + order_snapshot_product_group + external_order + interlocking_order +
- * payment_snapshot_shipping_address 조인 결과. option_values는 별도 쿼리로 조합됩니다.
+ * payment_snapshot_shipping_address + shipment 조인 결과. option_values는 별도 쿼리로 조합됩니다.
  *
  * <p>QueryDSL Projections.constructor 사용으로 NumberPath&lt;Long&gt; 매핑을 위해 숫자 필드는 래퍼 타입(Long,
  * Integer)을 사용합니다. Mapper에서 null-safe 변환 처리합니다.
@@ -39,6 +39,9 @@ import java.time.LocalDateTime;
  * @param receiverAddress 주소 (nullable)
  * @param receiverAddressDetail 상세주소 (nullable)
  * @param deliveryRequest 배송 요청사항 (nullable)
+ * @param invoiceNo 운송장번호 (nullable, shipment 테이블)
+ * @param companyCode 택배사 코드 (nullable, shipment 테이블)
+ * @param shipmentCreatedAt 배송 레코드 생성일시 (nullable, shipment.INSERT_DATE)
  */
 public record LegacyOrderCompositeQueryDto(
         Long legacyOrderId,
@@ -68,4 +71,7 @@ public record LegacyOrderCompositeQueryDto(
         String receiverZipCode,
         String receiverAddress,
         String receiverAddressDetail,
-        String deliveryRequest) {}
+        String deliveryRequest,
+        String invoiceNo,
+        String companyCode,
+        LocalDateTime shipmentCreatedAt) {}

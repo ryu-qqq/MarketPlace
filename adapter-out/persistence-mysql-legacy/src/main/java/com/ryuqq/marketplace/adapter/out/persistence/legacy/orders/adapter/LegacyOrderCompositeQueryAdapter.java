@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.adapter;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.dto.LegacyOrderCompositeQueryDto;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.dto.LegacyOrderHistoryQueryDto;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.mapper.LegacyOrderCompositeMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.repository.LegacyOrderCompositeQueryDslRepository;
 import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrderCompositeResult;
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 복합 조회 Adapter.
  *
- * <p>{@link LegacyOrderCompositeQueryPort} 구현체. Repository에서 flat DTO 조회 + optionValues 별도 조회 후
- * Mapper로 Application DTO로 변환합니다.
+ * <p>{@link LegacyOrderCompositeQueryPort} 구현체. Repository에서 flat DTO 조회 + optionValues 별도 조회 +
+ * orders_history 별도 조회 후 Mapper로 Application DTO로 변환합니다.
  *
  * @author ryu-qqq
  * @since 1.0.0
@@ -39,7 +40,8 @@ public class LegacyOrderCompositeQueryAdapter implements LegacyOrderCompositeQue
 
         LegacyOrderCompositeQueryDto dto = dtoOpt.get();
         List<String> optionValues = repository.fetchOptionValues(orderId);
+        List<LegacyOrderHistoryQueryDto> histories = repository.fetchOrderHistories(orderId);
 
-        return Optional.of(mapper.toResult(dto, optionValues));
+        return Optional.of(mapper.toResult(dto, optionValues, histories));
     }
 }

@@ -9,6 +9,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyOrderSnapshotProductGroupEntity.legacyOrderSnapshotProductGroupEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyOrderSnapshotProductGroupImageEntity.legacyOrderSnapshotProductGroupImageEntity;
 import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyPaymentSnapshotShippingAddressEntity.legacyPaymentSnapshotShippingAddressEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.legacy.orders.entity.QLegacyShipmentEntity.legacyShipmentEntity;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -70,7 +71,10 @@ public class LegacyOrderApiQueryDslRepository {
                                         legacyPaymentSnapshotShippingAddressEntity.zipCode,
                                         legacyPaymentSnapshotShippingAddressEntity.addressLine1,
                                         legacyPaymentSnapshotShippingAddressEntity.addressLine2,
-                                        legacyPaymentSnapshotShippingAddressEntity.deliveryRequest))
+                                        legacyPaymentSnapshotShippingAddressEntity.deliveryRequest,
+                                        legacyShipmentEntity.invoiceNo,
+                                        legacyShipmentEntity.companyCode,
+                                        legacyShipmentEntity.insertDate))
                         .from(legacyOrderEntity)
                         .innerJoin(legacyOrderSnapshotProductGroupEntity)
                         .on(legacyOrderSnapshotProductGroupEntity.orderId.eq(legacyOrderEntity.id))
@@ -88,6 +92,8 @@ public class LegacyOrderApiQueryDslRepository {
                         .on(
                                 legacyPaymentSnapshotShippingAddressEntity.paymentId.eq(
                                         legacyOrderEntity.paymentId))
+                        .leftJoin(legacyShipmentEntity)
+                        .on(legacyShipmentEntity.orderId.eq(legacyOrderEntity.id))
                         .where(legacyOrderEntity.id.eq(orderId))
                         .orderBy(legacyOrderSnapshotProductGroupImageEntity.id.asc())
                         .limit(1)
@@ -131,7 +137,10 @@ public class LegacyOrderApiQueryDslRepository {
                                 legacyPaymentSnapshotShippingAddressEntity.zipCode,
                                 legacyPaymentSnapshotShippingAddressEntity.addressLine1,
                                 legacyPaymentSnapshotShippingAddressEntity.addressLine2,
-                                legacyPaymentSnapshotShippingAddressEntity.deliveryRequest))
+                                legacyPaymentSnapshotShippingAddressEntity.deliveryRequest,
+                                legacyShipmentEntity.invoiceNo,
+                                legacyShipmentEntity.companyCode,
+                                legacyShipmentEntity.insertDate))
                 .from(legacyOrderEntity)
                 .innerJoin(legacyOrderSnapshotProductGroupEntity)
                 .on(legacyOrderSnapshotProductGroupEntity.orderId.eq(legacyOrderEntity.id))
@@ -147,6 +156,8 @@ public class LegacyOrderApiQueryDslRepository {
                 .on(
                         legacyPaymentSnapshotShippingAddressEntity.paymentId.eq(
                                 legacyOrderEntity.paymentId))
+                .leftJoin(legacyShipmentEntity)
+                .on(legacyShipmentEntity.orderId.eq(legacyOrderEntity.id))
                 .where(where)
                 .orderBy(legacyOrderEntity.id.desc())
                 .limit(params.size())
