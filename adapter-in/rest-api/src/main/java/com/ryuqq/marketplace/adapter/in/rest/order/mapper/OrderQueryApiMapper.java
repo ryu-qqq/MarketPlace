@@ -363,7 +363,7 @@ public class OrderQueryApiMapper {
         if (instant == null) {
             return "";
         }
-        return DateTimeFormatUtils.formatIso8601(instant);
+        return DateTimeFormatUtils.formatDisplay(instant);
     }
 
     private String nullToEmpty(String value) {

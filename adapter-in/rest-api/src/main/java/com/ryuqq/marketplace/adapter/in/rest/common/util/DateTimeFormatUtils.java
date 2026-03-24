@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 public final class DateTimeFormatUtils {
 
     private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final DateTimeFormatter DISPLAY_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private static final ZoneId ZONE_ID = ZoneId.of("Asia/Seoul");
 
@@ -23,6 +25,14 @@ public final class DateTimeFormatUtils {
         }
         ZonedDateTime zonedDateTime = instant.atZone(ZONE_ID);
         return zonedDateTime.format(ISO_FORMATTER);
+    }
+
+    /** yyyy-MM-dd HH:mm:ss 형식으로 포맷합니다 (KST). */
+    public static String formatDisplay(Instant instant) {
+        if (instant == null) {
+            return null;
+        }
+        return instant.atZone(ZONE_ID).format(DISPLAY_FORMATTER);
     }
 
     public static String formatTime(LocalTime time) {
