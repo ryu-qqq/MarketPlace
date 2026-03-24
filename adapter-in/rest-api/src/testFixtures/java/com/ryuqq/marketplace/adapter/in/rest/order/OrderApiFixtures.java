@@ -170,7 +170,7 @@ public final class OrderApiFixtures {
     }
 
     public static DeliveryInfo deliveryInfo() {
-        return new DeliveryInfo(DEFAULT_DELIVERY_STATUS);
+        return new DeliveryInfo(DEFAULT_DELIVERY_STATUS, null);
     }
 
     public static CancelSummary cancelSummaryNone() {
