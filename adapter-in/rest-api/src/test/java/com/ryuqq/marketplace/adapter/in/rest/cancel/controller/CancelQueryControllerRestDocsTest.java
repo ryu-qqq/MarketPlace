@@ -328,20 +328,20 @@ class CancelQueryControllerRestDocsTest {
                             RestDocumentationRequestBuilders.get(
                                     BASE_URL + CancelAdminEndpoints.CANCEL_ID, DEFAULT_CANCEL_ID))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.cancelId").value(DEFAULT_CANCEL_ID))
+                    .andExpect(jsonPath("$.data.cancelInfo.cancelId").value(DEFAULT_CANCEL_ID))
                     .andExpect(
-                            jsonPath("$.data.cancelNumber")
+                            jsonPath("$.data.cancelInfo.cancelNumber")
                                     .value(CancelApiFixtures.DEFAULT_CANCEL_NUMBER))
                     .andExpect(
                             jsonPath("$.data.orderId")
                                     .value(CancelApiFixtures.DEFAULT_ORDER_ITEM_ID))
                     .andExpect(
-                            jsonPath("$.data.cancelType")
+                            jsonPath("$.data.cancelInfo.type")
                                     .value(CancelApiFixtures.DEFAULT_CANCEL_TYPE))
                     .andExpect(
-                            jsonPath("$.data.cancelStatus")
+                            jsonPath("$.data.cancelInfo.status")
                                     .value(CancelApiFixtures.DEFAULT_CANCEL_STATUS))
-                    .andExpect(jsonPath("$.data.refundInfo").exists())
+                    .andExpect(jsonPath("$.data.cancelInfo.refundInfo").exists())
                     .andExpect(jsonPath("$.data.claimHistories").isArray())
                     .andDo(
                             document(
@@ -352,55 +352,42 @@ class CancelQueryControllerRestDocsTest {
                                             parameterWithName("cancelId")
                                                     .description("취소 ID (UUIDv7)")),
                                     relaxedResponseFields(
-                                            fieldWithPath("data.cancelId")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("취소 ID (UUIDv7)"),
-                                            fieldWithPath("data.cancelNumber")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("취소 번호"),
                                             fieldWithPath("data.orderId")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
                                                             "주문 ID (V4: orderId = 내부 orderItemId)"),
-                                            fieldWithPath("data.cancelQty")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("취소 수량"),
-                                            fieldWithPath("data.cancelType")
+                                            fieldWithPath("data.cancelInfo")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("취소 정보"),
+                                            fieldWithPath("data.cancelInfo.cancelId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("취소 ID (UUIDv7)"),
+                                            fieldWithPath("data.cancelInfo.cancelNumber")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("취소 번호"),
+                                            fieldWithPath("data.cancelInfo.type")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
                                                             "취소 유형 (BUYER_CANCEL, SELLER_CANCEL)"),
-                                            fieldWithPath("data.cancelStatus")
+                                            fieldWithPath("data.cancelInfo.status")
                                                     .type(JsonFieldType.STRING)
                                                     .description("취소 상태"),
-                                            fieldWithPath("data.reasonType")
+                                            fieldWithPath("data.cancelInfo.cancelQty")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("취소 수량"),
+                                            fieldWithPath("data.cancelInfo.reason")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("취소 사유 유형"),
-                                            fieldWithPath("data.reasonDetail")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("취소 상세 사유"),
-                                            fieldWithPath("data.refundInfo")
+                                                    .description("취소 사유"),
+                                            fieldWithPath("data.cancelInfo.refundInfo")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("환불 정보")
                                                     .optional(),
-                                            fieldWithPath("data.refundInfo.refundAmount")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("환불 금액")
-                                                    .optional(),
-                                            fieldWithPath("data.refundInfo.refundMethod")
+                                            fieldWithPath("data.cancelInfo.requestedAt")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("환불 방식")
-                                                    .optional(),
-                                            fieldWithPath("data.refundInfo.refundStatus")
+                                                    .description("요청일시 (ISO 8601 +09:00)"),
+                                            fieldWithPath("data.cancelInfo.completedAt")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("환불 상태")
-                                                    .optional(),
-                                            fieldWithPath("data.refundInfo.refundedAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("환불 완료일시")
-                                                    .optional(),
-                                            fieldWithPath("data.refundInfo.pgRefundId")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("PG 환불 ID")
+                                                    .description("완료일시 (ISO 8601 +09:00)")
                                                     .optional(),
                                             fieldWithPath("data.requestedBy")
                                                     .type(JsonFieldType.STRING)
@@ -408,16 +395,9 @@ class CancelQueryControllerRestDocsTest {
                                             fieldWithPath("data.processedBy")
                                                     .type(JsonFieldType.STRING)
                                                     .description("처리자"),
-                                            fieldWithPath("data.requestedAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("요청일시 (ISO 8601 +09:00)"),
                                             fieldWithPath("data.processedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("처리일시 (ISO 8601 +09:00)")
-                                                    .optional(),
-                                            fieldWithPath("data.completedAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("완료일시 (ISO 8601 +09:00)")
                                                     .optional(),
                                             fieldWithPath("data.createdAt")
                                                     .type(JsonFieldType.STRING)
@@ -470,8 +450,8 @@ class CancelQueryControllerRestDocsTest {
                             RestDocumentationRequestBuilders.get(
                                     BASE_URL + CancelAdminEndpoints.CANCEL_ID, DEFAULT_CANCEL_ID))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.cancelId").value(DEFAULT_CANCEL_ID))
-                    .andExpect(jsonPath("$.data.refundInfo").doesNotExist());
+                    .andExpect(jsonPath("$.data.cancelInfo.cancelId").value(DEFAULT_CANCEL_ID))
+                    .andExpect(jsonPath("$.data.cancelInfo.refundInfo").doesNotExist());
         }
     }
 }

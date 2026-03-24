@@ -349,10 +349,10 @@ class CancelApiMapperTest {
 
             // then
             assertThat(response).isNotNull();
-            assertThat(response.cancelId()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_ID);
-            assertThat(response.cancelNumber()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_NUMBER);
+            assertThat(response.cancelInfo().cancelId()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_ID);
+            assertThat(response.cancelInfo().cancelNumber()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_NUMBER);
             assertThat(response.orderId()).isEqualTo(CancelApiFixtures.DEFAULT_ORDER_ITEM_ID);
-            assertThat(response.cancelType()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_TYPE);
+            assertThat(response.cancelInfo().type()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_TYPE);
         }
 
         @Test
@@ -366,11 +366,9 @@ class CancelApiMapperTest {
             CancelDetailApiResponse response = mapper.toDetailResponse(result, null);
 
             // then
-            assertThat(response.refundInfo()).isNotNull();
-            assertThat(response.refundInfo().refundAmount()).isEqualTo(15000);
-            assertThat(response.refundInfo().refundMethod()).isEqualTo("CARD");
-            assertThat(response.refundInfo().refundStatus()).isEqualTo("COMPLETED");
-            assertThat(response.refundInfo().pgRefundId()).isEqualTo("PG-REF-001");
+            assertThat(response.cancelInfo().refundInfo()).isNotNull();
+            assertThat(response.cancelInfo().refundInfo().finalAmount()).isEqualTo(15000);
+            assertThat(response.cancelInfo().refundInfo().refundMethod()).isEqualTo("CARD");
         }
 
         @Test
@@ -385,7 +383,7 @@ class CancelApiMapperTest {
             CancelDetailApiResponse response = mapper.toDetailResponse(result, null);
 
             // then
-            assertThat(response.refundInfo()).isNull();
+            assertThat(response.cancelInfo().refundInfo()).isNull();
         }
 
         @Test
@@ -431,8 +429,8 @@ class CancelApiMapperTest {
             CancelDetailApiResponse response = mapper.toDetailResponse(result, null);
 
             // then
-            assertThat(response.refundInfo().refundedAt()).contains("T");
-            assertThat(response.refundInfo().refundedAt()).contains("+09:00");
+            assertThat(response.cancelInfo().refundInfo().refundedAt()).contains("T");
+            assertThat(response.cancelInfo().refundInfo().refundedAt()).contains("+09:00");
         }
     }
 

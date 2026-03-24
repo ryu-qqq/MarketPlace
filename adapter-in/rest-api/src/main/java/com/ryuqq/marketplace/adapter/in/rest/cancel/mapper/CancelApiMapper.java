@@ -193,32 +193,35 @@ public class CancelApiMapper {
     public CancelDetailApiResponse toDetailResponse(
             CancelDetailResult result,
             ClaimListItemApiResponseV4.PaymentV4 payment) {
-        CancelDetailApiResponse.RefundInfoApiResponse refundInfo = null;
+        ClaimListItemApiResponseV4.RefundInfoV4 refundInfo = null;
         if (result.refundInfo() != null) {
             refundInfo =
-                    new CancelDetailApiResponse.RefundInfoApiResponse(
+                    new ClaimListItemApiResponseV4.RefundInfoV4(
+                            result.refundInfo().refundAmount(),
+                            0, "",
                             result.refundInfo().refundAmount(),
                             nullToEmpty(result.refundInfo().refundMethod()),
-                            nullToEmpty(result.refundInfo().refundStatus()),
-                            formatInstant(result.refundInfo().refundedAt()),
-                            nullToEmpty(result.refundInfo().pgRefundId()));
+                            formatInstant(result.refundInfo().refundedAt()));
         }
 
+        CancelListItemApiResponseV4.CancelInfoV4 cancelInfo =
+                new CancelListItemApiResponseV4.CancelInfoV4(
+                        nullToEmpty(result.cancelId()),
+                        nullToEmpty(result.cancelNumber()),
+                        nullToEmpty(result.cancelType()),
+                        nullToEmpty(result.cancelStatus()),
+                        result.cancelQty(),
+                        nullToEmpty(result.reasonDetail()),
+                        refundInfo,
+                        formatInstant(result.requestedAt()),
+                        formatInstant(result.completedAt()));
+
         return new CancelDetailApiResponse(
-                nullToEmpty(result.cancelId()),
-                nullToEmpty(result.cancelNumber()),
-                nullToEmpty(result.orderItemId()), // V4 간극
-                result.cancelQty(),
-                nullToEmpty(result.cancelType()),
-                nullToEmpty(result.cancelStatus()),
-                nullToEmpty(result.reasonType()),
-                nullToEmpty(result.reasonDetail()),
-                refundInfo,
+                nullToEmpty(result.orderItemId()),
+                cancelInfo,
                 nullToEmpty(result.requestedBy()),
                 nullToEmpty(result.processedBy()),
-                formatInstant(result.requestedAt()),
                 formatInstant(result.processedAt()),
-                formatInstant(result.completedAt()),
                 formatInstant(result.createdAt()),
                 formatInstant(result.updatedAt()),
                 toHistoryResponses(result.histories()),

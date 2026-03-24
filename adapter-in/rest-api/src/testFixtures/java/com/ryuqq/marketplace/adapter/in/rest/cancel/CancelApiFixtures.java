@@ -6,12 +6,13 @@ import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.RejectCancelBatc
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest.SellerCancelItemApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelDetailApiResponse.RefundInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.CancelListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse.ActorApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse.BatchResultItemApiResponse;
@@ -306,20 +307,20 @@ public final class CancelApiFixtures {
 
     public static CancelDetailApiResponse detailApiResponse(String cancelId) {
         return new CancelDetailApiResponse(
-                cancelId,
-                DEFAULT_CANCEL_NUMBER,
                 DEFAULT_ORDER_ITEM_ID,
-                1,
-                DEFAULT_CANCEL_TYPE,
-                DEFAULT_CANCEL_STATUS,
-                DEFAULT_REASON_TYPE,
-                DEFAULT_REASON_DETAIL,
-                new RefundInfoApiResponse(
-                        15000, "CARD", "COMPLETED", DEFAULT_FORMATTED_TIME, "PG-REF-001"),
+                new CancelListItemApiResponseV4.CancelInfoV4(
+                        cancelId,
+                        DEFAULT_CANCEL_NUMBER,
+                        DEFAULT_CANCEL_TYPE,
+                        DEFAULT_CANCEL_STATUS,
+                        1,
+                        DEFAULT_REASON_DETAIL,
+                        new ClaimListItemApiResponseV4.RefundInfoV4(
+                                15000, 0, "", 15000, "CARD", DEFAULT_FORMATTED_TIME),
+                        DEFAULT_FORMATTED_TIME,
+                        DEFAULT_FORMATTED_TIME),
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
-                DEFAULT_FORMATTED_TIME,
-                DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME,
@@ -336,19 +337,19 @@ public final class CancelApiFixtures {
 
     public static CancelDetailApiResponse detailApiResponseWithoutRefund(String cancelId) {
         return new CancelDetailApiResponse(
-                cancelId,
-                DEFAULT_CANCEL_NUMBER,
                 DEFAULT_ORDER_ITEM_ID,
-                1,
-                DEFAULT_CANCEL_TYPE,
-                DEFAULT_CANCEL_STATUS,
-                DEFAULT_REASON_TYPE,
-                DEFAULT_REASON_DETAIL,
-                null,
+                new CancelListItemApiResponseV4.CancelInfoV4(
+                        cancelId,
+                        DEFAULT_CANCEL_NUMBER,
+                        DEFAULT_CANCEL_TYPE,
+                        DEFAULT_CANCEL_STATUS,
+                        1,
+                        DEFAULT_REASON_DETAIL,
+                        null,
+                        DEFAULT_FORMATTED_TIME,
+                        null),
                 DEFAULT_REQUESTED_BY,
                 "",
-                DEFAULT_FORMATTED_TIME,
-                null,
                 null,
                 DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME,
