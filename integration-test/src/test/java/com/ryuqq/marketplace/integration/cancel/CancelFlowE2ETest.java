@@ -145,8 +145,8 @@ class CancelFlowE2ETest extends E2ETestBase {
                     .get(CANCEL_DETAIL, cancelId)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.cancelStatus", equalTo("APPROVED"))
-                    .body("data.cancelType", equalTo("SELLER_CANCEL"));
+                    .body("data.cancelInfo.status", equalTo("APPROVED"))
+                    .body("data.cancelInfo.type", equalTo("SELLER_CANCEL"));
 
             // Step 6. DB 검증
             var updatedItem = orderItemRepository.findById(orderItemId).orElseThrow();
@@ -239,7 +239,7 @@ class CancelFlowE2ETest extends E2ETestBase {
                     .get(CANCEL_DETAIL, "cancel-flow-buyer-001")
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.cancelStatus", equalTo("APPROVED"));
+                    .body("data.cancelInfo.status", equalTo("APPROVED"));
 
             // Step 6. DB 검증 - OrderItem CANCELLED 전환 확인
             var updatedItem = orderItemRepository.findById(orderItemId).orElseThrow();
@@ -286,7 +286,7 @@ class CancelFlowE2ETest extends E2ETestBase {
                     .get(CANCEL_DETAIL, "cancel-reject-flow-001")
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.cancelStatus", equalTo("REJECTED"));
+                    .body("data.cancelInfo.status", equalTo("REJECTED"));
 
             // Step 5. DB 검증 - OrderItem READY 원복 확인
             var updatedItem = orderItemRepository.findById(orderItemId).orElseThrow();

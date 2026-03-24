@@ -262,9 +262,9 @@ class CancelQueryE2ETest extends E2ETestBase {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data", notNullValue())
-                    .body("data.cancelId", equalTo("cancel-detail-001"))
-                    .body("data.cancelStatus", notNullValue())
-                    .body("data.cancelType", notNullValue());
+                    .body("data.cancelInfo.cancelId", equalTo("cancel-detail-001"))
+                    .body("data.cancelInfo.status", notNullValue())
+                    .body("data.cancelInfo.type", notNullValue());
         }
 
         @Test
