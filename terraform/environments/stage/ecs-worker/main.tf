@@ -414,6 +414,8 @@ module "ecs_service" {
     { name = "SQS_INTELLIGENCE_AGGREGATION_URL", value = local.sqs_intelligence_aggregation_queue_url },
     # QnA Outbox SQS
     { name = "SQS_QNA_OUTBOX_URL", value = local.sqs_qna_outbox_queue_url },
+    # Shipment Outbox SQS
+    { name = "SQS_SHIPMENT_OUTBOX_URL", value = local.sqs_shipment_outbox_queue_url },
     # FileFlow
     { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-stage.connectly.local:8080" },
     # Sentry

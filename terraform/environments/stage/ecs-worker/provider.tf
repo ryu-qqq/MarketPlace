@@ -174,6 +174,13 @@ data "aws_ssm_parameter" "sqs_qna_outbox_queue_url" {
 }
 
 # ========================================
+# Shipment Outbox SQS Queue Reference
+# ========================================
+data "aws_ssm_parameter" "sqs_shipment_outbox_queue_url" {
+  name = "/${var.project_name}/sqs/shipment-outbox-queue-url"
+}
+
+# ========================================
 # AuthHub Configuration
 # ========================================
 data "aws_ssm_parameter" "authhub_service_token" {
@@ -261,4 +268,5 @@ locals {
   sqs_intelligence_notice_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_notice_analysis_queue_url.value
   sqs_intelligence_aggregation_queue_url            = data.aws_ssm_parameter.sqs_intelligence_aggregation_queue_url.value
   sqs_qna_outbox_queue_url                          = data.aws_ssm_parameter.sqs_qna_outbox_queue_url.value
+  sqs_shipment_outbox_queue_url                     = data.aws_ssm_parameter.sqs_shipment_outbox_queue_url.value
 }
