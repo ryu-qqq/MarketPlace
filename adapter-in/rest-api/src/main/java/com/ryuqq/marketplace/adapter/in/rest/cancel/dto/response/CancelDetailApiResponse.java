@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
@@ -27,7 +28,8 @@ public record CancelDetailApiResponse(
         @Schema(description = "완료일시") String completedAt,
         @Schema(description = "생성일시") String createdAt,
         @Schema(description = "수정일시") String updatedAt,
-        @Schema(description = "클레임 이력 목록") List<ClaimHistoryApiResponse> claimHistories) {
+        @Schema(description = "클레임 이력 목록") List<ClaimHistoryApiResponse> claimHistories,
+        @Schema(description = "결제 정보") ClaimListItemApiResponseV4.PaymentV4 payment) {
 
     @Schema(description = "환불 정보")
     public record RefundInfoApiResponse(

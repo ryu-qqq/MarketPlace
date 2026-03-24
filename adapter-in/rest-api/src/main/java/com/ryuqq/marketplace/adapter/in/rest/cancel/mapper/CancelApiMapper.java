@@ -130,6 +130,7 @@ public class CancelApiMapper {
         String itemId = r.orderItemId();
         ClaimListItemApiResponseV4.OrderProductV4 orderProduct = enricher.toOrderProductV4(itemId, ctx);
         return new CancelListItemApiResponseV4(
+                orderProduct.orderId(),
                 orderProduct.orderNumber(),
                 orderProduct,
                 new CancelListItemApiResponseV4.CancelInfoV4(
@@ -189,7 +190,9 @@ public class CancelApiMapper {
                 formatInstant(result.completedAt()));
     }
 
-    public CancelDetailApiResponse toDetailResponse(CancelDetailResult result) {
+    public CancelDetailApiResponse toDetailResponse(
+            CancelDetailResult result,
+            ClaimListItemApiResponseV4.PaymentV4 payment) {
         CancelDetailApiResponse.RefundInfoApiResponse refundInfo = null;
         if (result.refundInfo() != null) {
             refundInfo =
@@ -218,7 +221,8 @@ public class CancelApiMapper {
                 formatInstant(result.completedAt()),
                 formatInstant(result.createdAt()),
                 formatInstant(result.updatedAt()),
-                toHistoryResponses(result.histories()));
+                toHistoryResponses(result.histories()),
+                payment);
     }
 
     private List<ClaimHistoryApiResponse> toHistoryResponses(List<ClaimHistoryResult> histories) {

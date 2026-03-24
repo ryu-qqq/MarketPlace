@@ -11,6 +11,7 @@ import java.util.List;
  */
 @Schema(description = "취소 리스트 항목 (V4)")
 public record CancelListItemApiResponseV4(
+        @Schema(description = "주문 ID (UUIDv7)") String orderId,
         @Schema(description = "주문번호") String orderNumber,
         @Schema(description = "주문 상품 정보") ClaimListItemApiResponseV4.OrderProductV4 orderProduct,
         @Schema(description = "취소 정보") CancelInfoV4 cancelInfo,

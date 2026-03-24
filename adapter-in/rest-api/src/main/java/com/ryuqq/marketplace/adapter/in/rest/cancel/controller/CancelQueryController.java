@@ -16,8 +16,10 @@ import com.ryuqq.marketplace.application.cancel.dto.response.CancelSummaryResult
 import com.ryuqq.marketplace.application.cancel.port.in.query.GetCancelDetailUseCase;
 import com.ryuqq.marketplace.application.cancel.port.in.query.GetCancelListUseCase;
 import com.ryuqq.marketplace.application.cancel.port.in.query.GetCancelSummaryUseCase;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +78,10 @@ public class CancelQueryController {
     public ResponseEntity<ApiResponse<CancelDetailApiResponse>> getDetail(
             @PathVariable String cancelId) {
         CancelDetailResult result = getCancelDetailUseCase.execute(cancelId);
-        return ResponseEntity.ok(ApiResponse.of(mapper.toDetailResponse(result)));
+        ClaimOrderEnricher.OrderContext ctx =
+                enricher.loadOrderContext(List.of(result.orderItemId()));
+        ClaimListItemApiResponseV4.PaymentV4 payment =
+                enricher.toPaymentV4(result.orderItemId(), ctx);
+        return ResponseEntity.ok(ApiResponse.of(mapper.toDetailResponse(result, payment)));
     }
 }
