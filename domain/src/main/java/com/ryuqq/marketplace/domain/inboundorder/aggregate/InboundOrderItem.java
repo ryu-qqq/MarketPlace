@@ -211,7 +211,7 @@ public class InboundOrderItem {
         this.resolvedBrandId = brandId;
         this.resolvedSkuCode = skuCode;
         this.resolvedProductGroupName = productGroupName;
-        this.mapped = true;
+        this.mapped = productGroupId != null && productId != null;
     }
 
     public boolean isMapped() {

@@ -10,7 +10,7 @@ import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +137,7 @@ public class InboundOrderMappingResolver {
      * productId를 결정합니다.
      *
      * <p>1순위: optionManageCode(=productId)를 Long.parseLong으로 역매핑.
-     * 2순위: NONE 옵션 타입이면 유일한 product 조회.
+     * 2순위: product가 1개뿐이면 해당 product 사용.
      * 3순위: 옵션명 텍스트로 product 역매핑 (SINGLE/COMBINATION).
      */
     private Long resolveProductId(
@@ -155,13 +155,10 @@ public class InboundOrderMappingResolver {
             return null;
         }
 
-        // 2순위: NONE 옵션 타입이면 유일한 product 조회
-        if (productGroup.optionType() == OptionType.NONE) {
-            List<Product> products =
-                    productQueryPort.findByProductGroupId(productGroup.id());
-            if (products.size() == 1) {
-                return products.getFirst().idValue();
-            }
+        // 2순위: product가 1개뿐이면 해당 product 사용 (NONE/SINGLE 등 옵션 타입 무관)
+        List<Product> products = productQueryPort.findByProductGroupId(productGroup.id());
+        if (products.size() == 1) {
+            return products.getFirst().idValue();
         }
 
         // 3순위: 옵션명 텍스트로 매칭 (네이버: "DEFAULT_ONE: 모눈" → "모눈"으로 product 역매핑)
