@@ -31,6 +31,16 @@ public class OrderItemReadManager {
     }
 
     @Transactional(readOnly = true)
+    public OrderItem getByOrderItemNumber(String orderItemNumber) {
+        return queryPort
+                .findByOrderItemNumber(orderItemNumber)
+                .orElseThrow(
+                        () ->
+                                new com.ryuqq.marketplace.domain.order.exception
+                                        .OrderNotFoundException(orderItemNumber));
+    }
+
+    @Transactional(readOnly = true)
     public Map<OrderItemStatus, Long> countByStatus() {
         return queryPort.countByStatus();
     }

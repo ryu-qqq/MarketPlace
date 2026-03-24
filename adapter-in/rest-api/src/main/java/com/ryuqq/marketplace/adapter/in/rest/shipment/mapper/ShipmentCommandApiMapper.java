@@ -48,6 +48,7 @@ public class ShipmentCommandApiMapper {
 
     private ShipBatchItem toShipBatchItem(ShipBatchItemApiRequest request) {
         return new ShipBatchItem(
+                null, // orderItemId는 Service에서 orderItemNumber로 조회 후 세팅
                 request.orderNumber(),
                 request.trackingNumber(),
                 request.method().courierCode(),

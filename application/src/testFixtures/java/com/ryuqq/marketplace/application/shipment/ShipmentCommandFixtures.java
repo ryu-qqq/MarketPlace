@@ -54,7 +54,9 @@ public final class ShipmentCommandFixtures {
                         .mapToObj(
                                 i ->
                                         new ShipBatchItem(
-                                                "ORD-20260101-" + String.format("%04d", i),
+                                                "01940001-0000-7000-8000-000000000"
+                                                        + String.format("%03d", i),
+                                                "ORD-20260101-" + String.format("%04d", i) + "-001",
                                                 "tracking-" + i,
                                                 DEFAULT_COURIER_CODE,
                                                 "COURIER"))
@@ -62,9 +64,10 @@ public final class ShipmentCommandFixtures {
         return new ShipBatchCommand(items);
     }
 
-    public static ShipBatchItem shipBatchItem(String orderNumber, String trackingNumber) {
+    public static ShipBatchItem shipBatchItem(
+            String orderItemId, String orderItemNumber, String trackingNumber) {
         return new ShipBatchItem(
-                orderNumber, trackingNumber, DEFAULT_COURIER_CODE, "COURIER");
+                orderItemId, orderItemNumber, trackingNumber, DEFAULT_COURIER_CODE, "COURIER");
     }
 
     // ===== ShipSingleCommand =====

@@ -165,6 +165,7 @@ public final class ShipmentApiFixtures {
                         DEFAULT_INSTANT),
                 new ShipmentListResult.ProductOrderInfo(
                         DEFAULT_ORDER_ITEM_ID,
+                        "ORD-20250101-001-001",
                         100L,
                         200L,
                         "SKU-001",
@@ -233,6 +234,7 @@ public final class ShipmentApiFixtures {
                         DEFAULT_INSTANT),
                 new ShipmentListResult.ProductOrderInfo(
                         DEFAULT_ORDER_ITEM_ID,
+                        "ORD-20250101-001-001",
                         100L,
                         200L,
                         "SKU-001",
@@ -293,6 +295,7 @@ public final class ShipmentApiFixtures {
                         DEFAULT_INSTANT),
                 new ShipmentListResult.ProductOrderInfo(
                         DEFAULT_ORDER_ITEM_ID,
+                        "ORD-20250101-001-001",
                         100L,
                         200L,
                         "SKU-001",

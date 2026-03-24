@@ -96,7 +96,7 @@ class ShipmentCommandApiMapperTest {
 
             // then
             ShipBatchCommand.ShipBatchItem firstItem = command.items().get(0);
-            assertThat(firstItem.orderNumber()).isEqualTo("ORD-20260324-0001");
+            assertThat(firstItem.orderItemNumber()).isEqualTo("ORD-20260324-0001");
             assertThat(firstItem.trackingNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_TRACKING_NUMBER);
             assertThat(firstItem.courierCode()).isEqualTo(ShipmentApiFixtures.DEFAULT_COURIER_CODE);
@@ -115,7 +115,7 @@ class ShipmentCommandApiMapperTest {
 
             // then
             ShipBatchCommand.ShipBatchItem secondItem = command.items().get(1);
-            assertThat(secondItem.orderNumber()).isEqualTo("ORD-20260324-0002");
+            assertThat(secondItem.orderItemNumber()).isEqualTo("ORD-20260324-0002");
         }
     }
 

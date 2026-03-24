@@ -5,11 +5,14 @@ import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /** 주문상품 Query Port. */
 public interface OrderItemQueryPort {
 
     List<OrderItem> findAllByIds(List<OrderItemId> orderItemIds);
+
+    Optional<OrderItem> findByOrderItemNumber(String orderItemNumber);
 
     Map<OrderItemStatus, Long> countByStatus();
 }

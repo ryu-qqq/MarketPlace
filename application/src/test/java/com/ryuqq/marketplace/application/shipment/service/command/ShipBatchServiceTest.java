@@ -36,6 +36,7 @@ class ShipBatchServiceTest {
 
     @Mock private ShipmentCommandFactory commandFactory;
     @Mock private ShipmentBatchProcessor batchProcessor;
+    @Mock private com.ryuqq.marketplace.application.order.manager.OrderItemReadManager orderItemReadManager;
 
     @Nested
     @DisplayName("execute() - 송장등록 일괄 처리")
@@ -55,11 +56,19 @@ class ShipBatchServiceTest {
 
             ShipBatchCommand command = ShipmentCommandFixtures.shipBatchCommand(2);
 
+            // orderItemNumber → OrderItem mock
+            for (ShipBatchCommand.ShipBatchItem item : command.items()) {
+                com.ryuqq.marketplace.domain.order.aggregate.OrderItem mockItem =
+                        org.mockito.Mockito.mock(com.ryuqq.marketplace.domain.order.aggregate.OrderItem.class);
+                given(mockItem.id()).willReturn(OrderItemId.of(item.orderItemId()));
+                given(orderItemReadManager.getByOrderItemNumber(item.orderItemNumber())).willReturn(mockItem);
+            }
+
             List<UpdateContext<OrderItemId, ShipmentShipData>> contexts =
                     List.of(
                             new UpdateContext<>(id1, data1, now),
                             new UpdateContext<>(id2, data2, now));
-            given(commandFactory.createShipContexts(command)).willReturn(contexts);
+            given(commandFactory.createShipContexts(any())).willReturn(contexts);
 
             BatchProcessingResult<String> expected =
                     BatchProcessingResult.from(
@@ -89,11 +98,18 @@ class ShipBatchServiceTest {
 
             ShipBatchCommand command = ShipmentCommandFixtures.shipBatchCommand(2);
 
+            for (ShipBatchCommand.ShipBatchItem item : command.items()) {
+                com.ryuqq.marketplace.domain.order.aggregate.OrderItem mockItem =
+                        org.mockito.Mockito.mock(com.ryuqq.marketplace.domain.order.aggregate.OrderItem.class);
+                given(mockItem.id()).willReturn(OrderItemId.of(item.orderItemId()));
+                given(orderItemReadManager.getByOrderItemNumber(item.orderItemNumber())).willReturn(mockItem);
+            }
+
             List<UpdateContext<OrderItemId, ShipmentShipData>> contexts =
                     List.of(
                             new UpdateContext<>(id1, data1, now),
                             new UpdateContext<>(id2, data2, now));
-            given(commandFactory.createShipContexts(command)).willReturn(contexts);
+            given(commandFactory.createShipContexts(any())).willReturn(contexts);
 
             BatchProcessingResult<String> expected =
                     BatchProcessingResult.from(
@@ -126,9 +142,16 @@ class ShipBatchServiceTest {
 
             ShipBatchCommand command = ShipmentCommandFixtures.shipBatchCommand(1);
 
+            for (ShipBatchCommand.ShipBatchItem item : command.items()) {
+                com.ryuqq.marketplace.domain.order.aggregate.OrderItem mockItem =
+                        org.mockito.Mockito.mock(com.ryuqq.marketplace.domain.order.aggregate.OrderItem.class);
+                given(mockItem.id()).willReturn(OrderItemId.of(item.orderItemId()));
+                given(orderItemReadManager.getByOrderItemNumber(item.orderItemNumber())).willReturn(mockItem);
+            }
+
             List<UpdateContext<OrderItemId, ShipmentShipData>> contexts =
                     List.of(new UpdateContext<>(id1, data1, now));
-            given(commandFactory.createShipContexts(command)).willReturn(contexts);
+            given(commandFactory.createShipContexts(any())).willReturn(contexts);
 
             BatchProcessingResult<String> expected =
                     BatchProcessingResult.from(

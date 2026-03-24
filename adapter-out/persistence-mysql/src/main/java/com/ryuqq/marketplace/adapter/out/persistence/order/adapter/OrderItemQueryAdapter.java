@@ -9,6 +9,7 @@ import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /** OrderItem Query Adapter. 주문상품 도메인 객체 조회를 위한 전용 어댑터. */
@@ -28,6 +29,11 @@ public class OrderItemQueryAdapter implements OrderItemQueryPort {
     public List<OrderItem> findAllByIds(List<OrderItemId> orderItemIds) {
         List<String> ids = orderItemIds.stream().map(OrderItemId::value).toList();
         return itemRepository.findAllById(ids).stream().map(mapper::toOrderItem).toList();
+    }
+
+    @Override
+    public Optional<OrderItem> findByOrderItemNumber(String orderItemNumber) {
+        return itemRepository.findByOrderItemNumber(orderItemNumber).map(mapper::toOrderItem);
     }
 
     @Override

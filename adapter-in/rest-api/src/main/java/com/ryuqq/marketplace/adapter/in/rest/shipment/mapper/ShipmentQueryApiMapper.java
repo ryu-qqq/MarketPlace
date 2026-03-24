@@ -116,7 +116,7 @@ public class ShipmentQueryApiMapper {
 
         return new ShipmentListApiResponseV4(
                 p != null ? nullToEmpty(p.orderItemId()) : "",
-                o != null ? nullToEmpty(o.orderNumber()) : "",
+                p != null ? nullToEmpty(p.orderItemNumber()) : "",
                 s != null ? nullToEmpty(s.shipmentNumber()) : "",
                 s != null ? nullToEmpty(s.status()) : "",
                 s != null ? nullToEmpty(s.trackingNumber()) : "",

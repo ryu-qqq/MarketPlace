@@ -132,7 +132,7 @@ class ShipmentBatchProcessorTest {
                     new UpdateContext<>(orderItemId, shipData, changedAt);
 
             ShipBatchItem batchItem =
-                    ShipmentCommandFixtures.shipBatchItem(ORDER_ITEM_ID_1, "1234567890");
+                    ShipmentCommandFixtures.shipBatchItem(ORDER_ITEM_ID_1, "ORD-20260101-0001-001", "1234567890");
             Map<String, ShipBatchItem> itemMap = Map.of(ORDER_ITEM_ID_1, batchItem);
 
             Shipment shipment = ShipmentFixtures.preparingShipment();
@@ -160,7 +160,7 @@ class ShipmentBatchProcessorTest {
                     new UpdateContext<>(orderItemId, shipData, changedAt);
 
             ShipBatchItem batchItem =
-                    ShipmentCommandFixtures.shipBatchItem(ORDER_ITEM_ID_1, "1234567890");
+                    ShipmentCommandFixtures.shipBatchItem(ORDER_ITEM_ID_1, "ORD-20260101-0001-001", "1234567890");
             Map<String, ShipBatchItem> itemMap = Map.of(ORDER_ITEM_ID_1, batchItem);
 
             given(readManager.findByOrderItemIds(List.of(orderItemId))).willReturn(List.of());
@@ -187,7 +187,7 @@ class ShipmentBatchProcessorTest {
                     new UpdateContext<>(orderItemId, shipData, changedAt);
 
             ShipBatchItem batchItem =
-                    ShipmentCommandFixtures.shipBatchItem(ORDER_ITEM_ID_1, "1234567890");
+                    ShipmentCommandFixtures.shipBatchItem(ORDER_ITEM_ID_1, "ORD-20260101-0001-001", "1234567890");
             Map<String, ShipBatchItem> itemMap = Map.of(ORDER_ITEM_ID_1, batchItem);
 
             Shipment shipment = ShipmentFixtures.readyShipment();

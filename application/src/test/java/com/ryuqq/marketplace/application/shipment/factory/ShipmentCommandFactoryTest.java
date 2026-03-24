@@ -35,7 +35,7 @@ class ShipmentCommandFactoryTest {
 
     @Mock private TimeProvider timeProvider;
     @Mock private com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort idGeneratorPort;
-    @Mock private com.ryuqq.marketplace.application.order.manager.OrderReadManager orderReadManager;
+    @Mock private com.ryuqq.marketplace.application.order.manager.OrderItemReadManager orderItemReadManager;
 
     @Nested
     @DisplayName("createConfirmContexts() - 발주확인 배치 컨텍스트 생성")

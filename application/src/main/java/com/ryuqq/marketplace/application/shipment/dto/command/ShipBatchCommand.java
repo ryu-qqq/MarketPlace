@@ -16,13 +16,15 @@ public record ShipBatchCommand(List<ShipBatchItem> items) {
     /**
      * 송장등록 개별 항목.
      *
-     * @param orderNumber 주문번호 (ORD-YYYYMMDD-XXXX)
+     * @param orderItemId 상품주문 ID (Service에서 orderItemNumber로 조회 후 세팅)
+     * @param orderItemNumber 주문상품번호 (ORD-YYYYMMDD-XXXX-NNN)
      * @param trackingNumber 송장번호
      * @param courierCode 택배사 코드
      * @param shipmentMethodType 배송 방법 유형
      */
     public record ShipBatchItem(
-            String orderNumber,
+            String orderItemId,
+            String orderItemNumber,
             String trackingNumber,
             String courierCode,
             String shipmentMethodType) {}

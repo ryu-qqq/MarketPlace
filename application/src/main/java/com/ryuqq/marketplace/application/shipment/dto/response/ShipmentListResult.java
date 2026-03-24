@@ -77,6 +77,7 @@ public record ShipmentListResult(
      * 상품주문 정보.
      *
      * @param orderItemId 주문 상품 ID
+     * @param orderItemNumber 주문 상품 번호
      * @param productGroupId 내부 상품그룹 ID
      * @param productId 내부 상품 ID
      * @param skuCode SKU 코드
@@ -97,6 +98,7 @@ public record ShipmentListResult(
      */
     public record ProductOrderInfo(
             String orderItemId,
+            String orderItemNumber,
             long productGroupId,
             long productId,
             String skuCode,

@@ -114,6 +114,7 @@ public final class ShipmentQueryFixtures {
     public static ProductOrderInfo productOrderInfo() {
         return new ProductOrderInfo(
                 DEFAULT_ORDER_ITEM_ID,
+                "ORD-20260218-0001-001",
                 100L,
                 200L,
                 "SKU-TEST-0001",
