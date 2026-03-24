@@ -5,6 +5,8 @@ public record OrderItemProjectionDto(
         String orderItemId,
         String orderId,
         long productGroupId,
+        Long sellerId,
+        Long brandId,
         long productId,
         String skuCode,
         String productGroupName,

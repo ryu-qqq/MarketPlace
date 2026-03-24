@@ -37,7 +37,7 @@ public final class OrderItemJpaEntityFixtures {
         String itemId = UUID.randomUUID().toString();
         return OrderItemJpaEntity.create(
                 itemId,
-                "ORD-20240101-0001-001",
+                "ORD-20240101-" + itemId.substring(0, 4) + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 1L,
@@ -82,7 +82,7 @@ public final class OrderItemJpaEntityFixtures {
         String itemId = UUID.randomUUID().toString();
         return OrderItemJpaEntity.create(
                 itemId,
-                "ORD-20240101-0001-001",
+                "ORD-20240101-" + itemId.substring(0, 4) + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 1L,
@@ -123,7 +123,7 @@ public final class OrderItemJpaEntityFixtures {
         String itemId = UUID.randomUUID().toString();
         return OrderItemJpaEntity.create(
                 itemId,
-                "ORD-20240101-0001-001",
+                "ORD-20240101-" + itemId.substring(0, 4) + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 1L,

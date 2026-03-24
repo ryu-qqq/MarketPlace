@@ -25,8 +25,10 @@ public record ProductOrderDetailProjectionDto(
         // -- order_items 테이블 --
         String orderItemId,
         String orderItemNumber,
-        long productGroupId,
-        long productId,
+        Long productGroupId,
+        Long sellerId,
+        Long brandId,
+        Long productId,
         String skuCode,
         String productGroupName,
         String brandName,
