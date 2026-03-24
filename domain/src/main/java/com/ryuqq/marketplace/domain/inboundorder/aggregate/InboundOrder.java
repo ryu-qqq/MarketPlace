@@ -183,10 +183,19 @@ public class InboundOrder {
         this.updatedAt = now;
     }
 
+    private static final int MAX_FAILURE_REASON_LENGTH = 200;
+
     public void markFailed(String reason, Instant now) {
-        this.failureReason = reason;
+        this.failureReason = truncate(reason, MAX_FAILURE_REASON_LENGTH);
         this.status = InboundOrderStatus.FAILED;
         this.updatedAt = now;
+    }
+
+    private static String truncate(String value, int maxLength) {
+        if (value == null) {
+            return null;
+        }
+        return value.length() <= maxLength ? value : value.substring(0, maxLength);
     }
 
     public Long idValue() {

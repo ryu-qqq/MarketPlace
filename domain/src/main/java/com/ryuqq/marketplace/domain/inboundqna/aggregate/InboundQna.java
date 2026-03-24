@@ -116,11 +116,16 @@ public class InboundQna {
         this.updatedAt = now;
     }
 
+    private static final int MAX_FAILURE_REASON_LENGTH = 200;
+
     public void markFailed(String reason, Instant now) {
         if (!status.canConvert()) {
             throw new IllegalStateException("현재 상태(" + status + ")에서 FAILED로 전이할 수 없습니다");
         }
-        this.failureReason = reason;
+        this.failureReason =
+                reason != null && reason.length() > MAX_FAILURE_REASON_LENGTH
+                        ? reason.substring(0, MAX_FAILURE_REASON_LENGTH)
+                        : reason;
         this.status = InboundQnaStatus.FAILED;
         this.updatedAt = now;
     }
