@@ -132,7 +132,7 @@ public final class OrderFixtures {
         Money discountAmount = Money.of(0);
         Money paymentAmount = Money.of(20000);
         return ExternalOrderItemPrice.of(
-                unitPrice, quantity, totalAmount, discountAmount, paymentAmount);
+                unitPrice, quantity, totalAmount, discountAmount, Money.zero(), paymentAmount);
     }
 
     // ===== OrderItem Fixtures =====

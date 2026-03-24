@@ -103,6 +103,7 @@ public class OrderJpaEntityMapper {
                 item.price().quantity(),
                 item.price().totalAmount().value(),
                 item.price().discountAmount().value(),
+                item.price().sellerBurdenDiscountAmount().value(),
                 item.price().paymentAmount().value(),
                 item.receiverInfo().receiverName(),
                 item.receiverInfo().receiverPhone() != null
@@ -248,6 +249,7 @@ public class OrderJpaEntityMapper {
                         entity.getQuantity(),
                         Money.of(entity.getTotalAmount()),
                         Money.of(entity.getDiscountAmount()),
+                        Money.of(entity.getSellerBurdenDiscountAmount()),
                         Money.of(entity.getPaymentAmount())),
                 resolveReceiverInfo(entity),
                 OrderItemStatus.valueOf(entity.getOrderItemStatus()),

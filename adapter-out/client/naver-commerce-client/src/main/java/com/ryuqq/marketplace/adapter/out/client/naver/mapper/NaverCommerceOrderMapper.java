@@ -79,6 +79,9 @@ public class NaverCommerceOrderMapper {
                 po.quantity(),
                 po.totalProductAmount(),
                 po.productDiscountAmount(),
+                po.sellerBurdenDiscountAmount() != null
+                        ? po.sellerBurdenDiscountAmount()
+                        : 0,
                 po.totalPaymentAmount(),
                 addr != null ? addr.name() : null,
                 addr != null ? addr.tel1() : null,

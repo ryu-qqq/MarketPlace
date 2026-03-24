@@ -54,6 +54,7 @@ public class InboundOrderFactory {
                                         p.quantity(),
                                         p.totalAmount(),
                                         p.discountAmount(),
+                                        p.sellerBurdenDiscountAmount(),
                                         p.paymentAmount(),
                                         p.receiverName(),
                                         p.receiverPhone(),

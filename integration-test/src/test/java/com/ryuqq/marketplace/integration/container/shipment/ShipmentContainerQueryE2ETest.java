@@ -107,6 +107,7 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
                 OrderItemJpaEntityFixtures.DEFAULT_QUANTITY,
                 OrderItemJpaEntityFixtures.DEFAULT_TOTAL_AMOUNT,
                 OrderItemJpaEntityFixtures.DEFAULT_DISCOUNT_AMOUNT,
+                0,
                 OrderItemJpaEntityFixtures.DEFAULT_PAYMENT_AMOUNT,
                 OrderItemJpaEntityFixtures.DEFAULT_RECEIVER_NAME,
                 OrderItemJpaEntityFixtures.DEFAULT_RECEIVER_PHONE,

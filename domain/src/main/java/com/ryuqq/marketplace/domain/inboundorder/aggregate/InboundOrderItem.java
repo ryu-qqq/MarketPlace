@@ -18,6 +18,7 @@ public class InboundOrderItem {
     private final int quantity;
     private final int totalAmount;
     private final int discountAmount;
+    private final int sellerBurdenDiscountAmount;
     private final int paymentAmount;
 
     private final String receiverName;
@@ -48,6 +49,7 @@ public class InboundOrderItem {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -73,6 +75,7 @@ public class InboundOrderItem {
         this.quantity = quantity;
         this.totalAmount = totalAmount;
         this.discountAmount = discountAmount;
+        this.sellerBurdenDiscountAmount = sellerBurdenDiscountAmount;
         this.paymentAmount = paymentAmount;
         this.receiverName = receiverName;
         this.receiverPhone = receiverPhone;
@@ -101,6 +104,7 @@ public class InboundOrderItem {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -120,6 +124,7 @@ public class InboundOrderItem {
                 quantity,
                 totalAmount,
                 discountAmount,
+                sellerBurdenDiscountAmount,
                 paymentAmount,
                 receiverName,
                 receiverPhone,
@@ -149,6 +154,7 @@ public class InboundOrderItem {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -175,6 +181,7 @@ public class InboundOrderItem {
                 quantity,
                 totalAmount,
                 discountAmount,
+                sellerBurdenDiscountAmount,
                 paymentAmount,
                 receiverName,
                 receiverPhone,
@@ -257,6 +264,10 @@ public class InboundOrderItem {
 
     public int discountAmount() {
         return discountAmount;
+    }
+
+    public int sellerBurdenDiscountAmount() {
+        return sellerBurdenDiscountAmount;
     }
 
     public int paymentAmount() {

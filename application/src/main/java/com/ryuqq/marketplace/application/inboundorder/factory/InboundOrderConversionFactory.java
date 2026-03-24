@@ -87,6 +87,7 @@ public class InboundOrderConversionFactory {
                 item.quantity(),
                 item.totalAmount(),
                 item.discountAmount(),
+                item.sellerBurdenDiscountAmount(),
                 item.paymentAmount(),
                 item.receiverName(),
                 item.receiverPhone(),

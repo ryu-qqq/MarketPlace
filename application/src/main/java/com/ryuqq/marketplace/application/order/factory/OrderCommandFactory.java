@@ -63,7 +63,7 @@ public class OrderCommandFactory {
         Email buyerEmail =
                 command.buyerEmail() != null && !command.buyerEmail().isBlank()
                         ? Email.of(command.buyerEmail())
-                        : Email.of("no-reply@marketplace.internal");
+                        : null;
 
         BuyerInfo buyerInfo =
                 BuyerInfo.of(
@@ -149,6 +149,7 @@ public class OrderCommandFactory {
                         cmd.quantity(),
                         Money.of(cmd.totalAmount()),
                         Money.of(cmd.discountAmount()),
+                        Money.of(cmd.sellerBurdenDiscountAmount()),
                         Money.of(cmd.paymentAmount()));
 
         ReceiverInfo receiverInfo =

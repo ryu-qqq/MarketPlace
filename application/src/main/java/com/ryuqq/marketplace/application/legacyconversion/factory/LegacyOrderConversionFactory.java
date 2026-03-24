@@ -234,7 +234,7 @@ public class LegacyOrderConversionFactory {
         Money totalAmount = unitPrice.multiply(composite.quantity());
         ExternalOrderItemPrice price =
                 ExternalOrderItemPrice.of(
-                        unitPrice, composite.quantity(), totalAmount, Money.zero(), totalAmount);
+                        unitPrice, composite.quantity(), totalAmount, Money.zero(), Money.zero(), totalAmount);
 
         ReceiverInfo receiverInfo = buildReceiverInfo(composite);
         OrderItemStatus itemStatus = resolveOrderItemStatus(statusResolution);

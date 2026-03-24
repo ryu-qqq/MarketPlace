@@ -211,8 +211,8 @@ public class InboundOrderMappingResolver {
                                 p.optionMappings().stream()
                                         .anyMatch(
                                                 m ->
-                                                        m.sellerOptionValueId().value()
-                                                                == targetValueId))
+                                                        targetValueId.equals(
+                                                                m.sellerOptionValueId().value())))
                 .map(Product::idValue)
                 .findFirst()
                 .orElse(null);

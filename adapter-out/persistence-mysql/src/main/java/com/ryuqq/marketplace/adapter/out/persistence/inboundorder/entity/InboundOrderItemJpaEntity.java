@@ -52,6 +52,9 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "discount_amount", nullable = false)
     private int discountAmount;
 
+    @Column(name = "seller_burden_discount_amount", nullable = false)
+    private int sellerBurdenDiscountAmount;
+
     @Column(name = "payment_amount", nullable = false)
     private int paymentAmount;
 
@@ -112,6 +115,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -141,6 +145,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
         this.quantity = quantity;
         this.totalAmount = totalAmount;
         this.discountAmount = discountAmount;
+        this.sellerBurdenDiscountAmount = sellerBurdenDiscountAmount;
         this.paymentAmount = paymentAmount;
         this.receiverName = receiverName;
         this.receiverPhone = receiverPhone;
@@ -171,6 +176,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -200,6 +206,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
                 quantity,
                 totalAmount,
                 discountAmount,
+                sellerBurdenDiscountAmount,
                 paymentAmount,
                 receiverName,
                 receiverPhone,
@@ -264,6 +271,10 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
 
     public int getDiscountAmount() {
         return discountAmount;
+    }
+
+    public int getSellerBurdenDiscountAmount() {
+        return sellerBurdenDiscountAmount;
     }
 
     public int getPaymentAmount() {

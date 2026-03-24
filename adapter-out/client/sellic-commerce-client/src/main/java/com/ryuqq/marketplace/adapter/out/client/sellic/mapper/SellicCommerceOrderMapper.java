@@ -92,6 +92,7 @@ public class SellicCommerceOrderMapper {
                 quantity,
                 totalAmount,
                 Math.max(discountAmount, 0),
+                0,
                 paymentAmount,
                 data.receiveName(),
                 data.receiveCel() != null ? data.receiveCel() : data.receiveTel(),

@@ -70,6 +70,9 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "discount_amount", nullable = false)
     private int discountAmount;
 
+    @Column(name = "seller_burden_discount_amount", nullable = false)
+    private int sellerBurdenDiscountAmount;
+
     @Column(name = "payment_amount", nullable = false)
     private int paymentAmount;
 
@@ -119,6 +122,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -149,6 +153,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.quantity = quantity;
         this.totalAmount = totalAmount;
         this.discountAmount = discountAmount;
+        this.sellerBurdenDiscountAmount = sellerBurdenDiscountAmount;
         this.paymentAmount = paymentAmount;
         this.receiverName = receiverName;
         this.receiverPhone = receiverPhone;
@@ -180,6 +185,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -210,6 +216,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 quantity,
                 totalAmount,
                 discountAmount,
+                sellerBurdenDiscountAmount,
                 paymentAmount,
                 receiverName,
                 receiverPhone,
@@ -296,6 +303,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     public int getDiscountAmount() {
         return discountAmount;
+    }
+
+    public int getSellerBurdenDiscountAmount() {
+        return sellerBurdenDiscountAmount;
     }
 
     public int getPaymentAmount() {

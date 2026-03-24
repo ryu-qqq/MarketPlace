@@ -41,6 +41,7 @@ class ExternalOrderItemPriceTest {
                                             1,
                                             Money.of(10000),
                                             Money.zero(),
+                                            Money.zero(),
                                             Money.of(10000)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("개당 판매가는 필수");
@@ -56,6 +57,7 @@ class ExternalOrderItemPriceTest {
                                             Money.of(10000),
                                             0,
                                             Money.of(10000),
+                                            Money.zero(),
                                             Money.zero(),
                                             Money.of(10000)))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -73,6 +75,7 @@ class ExternalOrderItemPriceTest {
                                             -1,
                                             Money.of(10000),
                                             Money.zero(),
+                                            Money.zero(),
                                             Money.of(10000)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("수량은 1 이상");
@@ -88,6 +91,7 @@ class ExternalOrderItemPriceTest {
                                             Money.of(10000),
                                             1,
                                             null,
+                                            Money.zero(),
                                             Money.zero(),
                                             Money.of(10000)))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -105,6 +109,7 @@ class ExternalOrderItemPriceTest {
                                             1,
                                             Money.of(10000),
                                             Money.zero(),
+                                            Money.zero(),
                                             null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("실결제 금액은 필수");
@@ -116,7 +121,7 @@ class ExternalOrderItemPriceTest {
             // when
             ExternalOrderItemPrice price =
                     ExternalOrderItemPrice.of(
-                            Money.of(10000), 1, Money.of(10000), null, Money.of(10000));
+                            Money.of(10000), 1, Money.of(10000), null, Money.zero(), Money.of(10000));
 
             // then
             assertThat(price.discountAmount()).isEqualTo(Money.zero());
