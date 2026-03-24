@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.shipment.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -47,29 +48,32 @@ class GetShipmentListServiceTest {
     class ExecuteTest {
 
         @Test
-        @DisplayName("배송 목록이 있으면 ShipmentPageResult를 반환한다")
-        void execute_ExistingShipments_ReturnsShipmentPageResult() {
+        @DisplayName("주문 상품이 있으면 ShipmentPageResult를 반환한다")
+        void execute_ExistingOrderItems_ReturnsShipmentPageResult() {
             // given
             ShipmentSearchParams params = ShipmentQueryFixtures.searchParams();
             ShipmentSearchCriteria criteria =
                     org.mockito.Mockito.mock(ShipmentSearchCriteria.class);
+            String orderItemId = "01940001-0000-7000-8000-000000000001";
             Shipment shipment = ShipmentFixtures.preparingShipment();
             OrderItemResult item =
                     OrderQueryFixtures.orderItemResult(
-                            "01940001-0000-7000-8000-000000000001",
-                            OrderQueryFixtures.DEFAULT_ORDER_ID);
+                            orderItemId, OrderQueryFixtures.DEFAULT_ORDER_ID);
             OrderListResult order = OrderQueryFixtures.orderListResult();
             ShipmentListResult listResult = ShipmentQueryFixtures.shipmentListResult();
             ShipmentPageResult expected = ShipmentQueryFixtures.shipmentPageResult();
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readManager.findByCriteria(criteria)).willReturn(List.of(shipment));
-            given(readManager.countByCriteria(criteria)).willReturn(1L);
+            given(readManager.findFulfillmentOrderItemIds(criteria))
+                    .willReturn(List.of(orderItemId));
+            given(readManager.countFulfillment(criteria)).willReturn(1L);
             given(orderReadManager.findOrderItemsByIds(any()))
-                    .willReturn(Map.of(shipment.orderItemIdValue(), item));
+                    .willReturn(Map.of(orderItemId, item));
+            given(readManager.findByOrderItemIds(any())).willReturn(List.of(shipment));
             given(orderReadManager.findOrdersByIds(any()))
                     .willReturn(Map.of(item.orderId(), order));
-            given(assembler.toListResult(shipment, item, order)).willReturn(listResult);
+            given(assembler.toListResult(eq(shipment), eq(item), eq(order), eq(true)))
+                    .willReturn(listResult);
             given(assembler.toPageResult(List.of(listResult), 0, 20, 1L)).willReturn(expected);
 
             // when
@@ -77,14 +81,13 @@ class GetShipmentListServiceTest {
 
             // then
             assertThat(result).isEqualTo(expected);
-            then(queryFactory).should().createCriteria(params);
-            then(readManager).should().findByCriteria(criteria);
-            then(readManager).should().countByCriteria(criteria);
+            then(readManager).should().findFulfillmentOrderItemIds(criteria);
+            then(readManager).should().countFulfillment(criteria);
         }
 
         @Test
-        @DisplayName("배송 목록이 비어있으면 빈 페이지 결과를 반환한다")
-        void execute_EmptyShipments_ReturnsEmptyPageResult() {
+        @DisplayName("주문 상품이 비어있으면 빈 페이지 결과를 반환한다")
+        void execute_EmptyOrderItems_ReturnsEmptyPageResult() {
             // given
             ShipmentSearchParams params = ShipmentQueryFixtures.searchParams();
             ShipmentSearchCriteria criteria =
@@ -92,8 +95,8 @@ class GetShipmentListServiceTest {
             ShipmentPageResult expected = ShipmentQueryFixtures.emptyShipmentPageResult();
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readManager.findByCriteria(criteria)).willReturn(List.of());
-            given(readManager.countByCriteria(criteria)).willReturn(0L);
+            given(readManager.findFulfillmentOrderItemIds(criteria)).willReturn(List.of());
+            given(readManager.countFulfillment(criteria)).willReturn(0L);
             given(assembler.toPageResult(List.of(), 0, 20, 0L)).willReturn(expected);
 
             // when
@@ -105,19 +108,21 @@ class GetShipmentListServiceTest {
         }
 
         @Test
-        @DisplayName("OrderItem 정보가 없는 배송은 결과에서 제외된다")
-        void execute_MissingOrderItem_ExcludesShipment() {
+        @DisplayName("OrderItem 정보가 없는 건은 결과에서 제외된다")
+        void execute_MissingOrderItem_ExcludesFromResult() {
             // given
             ShipmentSearchParams params = ShipmentQueryFixtures.searchParams();
             ShipmentSearchCriteria criteria =
                     org.mockito.Mockito.mock(ShipmentSearchCriteria.class);
-            Shipment shipment = ShipmentFixtures.preparingShipment();
+            String orderItemId = "01940001-0000-7000-8000-000000000001";
             ShipmentPageResult expected = ShipmentQueryFixtures.emptyShipmentPageResult();
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);
-            given(readManager.findByCriteria(criteria)).willReturn(List.of(shipment));
-            given(readManager.countByCriteria(criteria)).willReturn(1L);
+            given(readManager.findFulfillmentOrderItemIds(criteria))
+                    .willReturn(List.of(orderItemId));
+            given(readManager.countFulfillment(criteria)).willReturn(1L);
             given(orderReadManager.findOrderItemsByIds(any())).willReturn(Map.of());
+            given(readManager.findByOrderItemIds(any())).willReturn(List.of());
             given(orderReadManager.findOrdersByIds(any())).willReturn(Map.of());
             given(assembler.toPageResult(List.of(), 0, 20, 1L)).willReturn(expected);
 
