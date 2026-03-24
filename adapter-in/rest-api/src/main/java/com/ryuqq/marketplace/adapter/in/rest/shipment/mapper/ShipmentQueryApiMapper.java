@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListA
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ProductOrderInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ReceiverInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ShipmentInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentSummaryApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
@@ -125,11 +126,7 @@ public class ShipmentQueryApiMapper {
                 s != null ? DateTimeFormatUtils.formatIso8601(s.createdAt()) : "",
                 new ShipmentListApiResponseV4.ShipmentMethodV4(
                         "COURIER", s != null ? nullToEmpty(s.courierName()) : ""),
-                new ShipmentListApiResponseV4.OrderProductV4(
-                        p != null ? nullToEmpty(p.productGroupName()) : "",
-                        p != null ? nullToEmpty(p.mainImageUrl()) : "",
-                        p != null ? p.quantity() : 0,
-                        List.of()),
+                toOrderProductApiResponse(p),
                 new ShipmentListApiResponseV4.ReceiverInfoV4(
                         r != null ? nullToEmpty(r.receiverName()) : "",
                         r != null ? nullToEmpty(r.receiverPhone()) : "",
@@ -139,6 +136,34 @@ public class ShipmentQueryApiMapper {
                         o != null ? nullToEmpty(o.shopCode()) : "",
                         o != null ? nullToEmpty(o.externalOrderNo()) : ""),
                 new ShipmentListApiResponseV4.CancelInfoV4(""));
+    }
+
+    private OrderListApiResponseV4.OrderProductApiResponse toOrderProductApiResponse(
+            ShipmentListResult.ProductOrderInfo p) {
+        if (p == null) {
+            return new OrderListApiResponseV4.OrderProductApiResponse(
+                    "", "", null, null, 0, 0, "", "", "", 0, "", 0, 0, 0, "", "",
+                    List.of());
+        }
+        return new OrderListApiResponseV4.OrderProductApiResponse(
+                nullToEmpty(p.orderItemId()),
+                nullToEmpty(p.productGroupName()),
+                new OrderListApiResponseV4.PriceApiResponse(
+                        p.unitPrice(), p.unitPrice(), p.unitPrice(), p.discountAmount(), 0, 0),
+                new OrderListApiResponseV4.BrandApiResponse(0, nullToEmpty(p.brandName())),
+                p.productGroupId(),
+                p.productId(),
+                nullToEmpty(p.sellerName()),
+                nullToEmpty(p.mainImageUrl()),
+                "",
+                p.quantity(),
+                "",
+                p.unitPrice(),
+                p.paymentAmount(),
+                0,
+                nullToEmpty(p.externalOptionName()),
+                nullToEmpty(p.skuCode()),
+                List.of());
     }
 
     private String nullToEmpty(String value) {
