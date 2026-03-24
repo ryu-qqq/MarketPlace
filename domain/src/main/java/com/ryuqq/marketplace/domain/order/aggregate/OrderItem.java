@@ -24,6 +24,7 @@ public class OrderItem {
     private final ExternalOrderItemPrice price;
     private final ReceiverInfo receiverInfo;
     private OrderItemStatus status;
+    private String externalOrderStatus;
 
     private final List<OrderItemHistory> histories = new ArrayList<>();
 
@@ -34,7 +35,8 @@ public class OrderItem {
             ExternalProductSnapshot externalProduct,
             ExternalOrderItemPrice price,
             ReceiverInfo receiverInfo,
-            OrderItemStatus status) {
+            OrderItemStatus status,
+            String externalOrderStatus) {
         this.id = id;
         this.orderItemNumber = orderItemNumber;
         this.internalProduct = internalProduct;
@@ -42,6 +44,7 @@ public class OrderItem {
         this.price = price;
         this.receiverInfo = receiverInfo;
         this.status = status;
+        this.externalOrderStatus = externalOrderStatus;
     }
 
     public static OrderItem forNew(
@@ -50,7 +53,8 @@ public class OrderItem {
             InternalProductReference internalProduct,
             ExternalProductSnapshot externalProduct,
             ExternalOrderItemPrice price,
-            ReceiverInfo receiverInfo) {
+            ReceiverInfo receiverInfo,
+            String externalOrderStatus) {
         return new OrderItem(
                 id,
                 orderItemNumber,
@@ -58,7 +62,8 @@ public class OrderItem {
                 externalProduct,
                 price,
                 receiverInfo,
-                OrderItemStatus.READY);
+                OrderItemStatus.READY,
+                externalOrderStatus);
     }
 
     public static OrderItem reconstitute(
@@ -69,6 +74,7 @@ public class OrderItem {
             ExternalOrderItemPrice price,
             ReceiverInfo receiverInfo,
             OrderItemStatus status,
+            String externalOrderStatus,
             List<OrderItemHistory> histories) {
         OrderItem item =
                 new OrderItem(
@@ -78,7 +84,8 @@ public class OrderItem {
                         externalProduct,
                         price,
                         receiverInfo,
-                        status);
+                        status,
+                        externalOrderStatus);
         if (histories != null) {
             item.histories.addAll(histories);
         }
@@ -175,6 +182,14 @@ public class OrderItem {
 
     public OrderItemStatus status() {
         return status;
+    }
+
+    public String externalOrderStatus() {
+        return externalOrderStatus;
+    }
+
+    public void updateExternalOrderStatus(String externalOrderStatus) {
+        this.externalOrderStatus = externalOrderStatus;
     }
 
     public List<OrderItemHistory> histories() {

@@ -168,6 +168,7 @@ public class OrderCommandFactory {
                 internalProduct,
                 externalProduct,
                 price,
-                receiverInfo);
+                receiverInfo,
+                null);
     }
 }

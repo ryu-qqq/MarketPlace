@@ -124,7 +124,8 @@ public final class OrderQueryFixtures {
                 "서울시 강남구 테헤란로 1",
                 "101호",
                 "부재시 문앞에 놓아주세요",
-                "PENDING");
+                "PENDING",
+                null);
     }
 
     // ===== OrderCancelResult Fixtures =====

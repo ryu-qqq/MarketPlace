@@ -49,6 +49,7 @@ public record ProductOrderDetailProjectionDto(
         String receiverAddressDetail,
         String deliveryRequest,
         String orderItemStatus,
+        String externalOrderStatus,
         // -- payments 테이블 (LEFT JOIN) --
         String paymentId,
         String paymentNumber,

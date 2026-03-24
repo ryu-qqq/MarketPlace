@@ -21,6 +21,7 @@ package com.ryuqq.marketplace.application.inboundorder.dto.external;
  * @param receiverAddress 주소
  * @param receiverAddressDetail 상세주소
  * @param deliveryRequest 배송 요청사항
+ * @param externalOrderStatus 외부몰 주문 상태 (예: PAYED, DELIVERING)
  */
 @SuppressWarnings("PMD.MethodNamingConventions")
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
@@ -44,4 +45,5 @@ public record ExternalOrderItemPayload(
         String receiverZipCode,
         String receiverAddress,
         String receiverAddressDetail,
-        String deliveryRequest) {}
+        String deliveryRequest,
+        String externalOrderStatus) {}

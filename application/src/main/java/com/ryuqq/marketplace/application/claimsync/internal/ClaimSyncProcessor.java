@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.claimsync.internal;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.claimsync.manager.ClaimSyncLogCommandManager;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.domain.claimsync.aggregate.ClaimSyncLog;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
@@ -39,18 +40,21 @@ public class ClaimSyncProcessor {
 
     private final Map<InternalClaimType, ClaimSyncHandler> handlers;
     private final OrderItemReadManager orderItemReadManager;
+    private final OrderItemCommandManager orderItemCommandManager;
     private final ClaimSyncLogCommandManager syncLogCommandManager;
     private final TimeProvider timeProvider;
 
     public ClaimSyncProcessor(
             List<ClaimSyncHandler> handlerList,
             OrderItemReadManager orderItemReadManager,
+            OrderItemCommandManager orderItemCommandManager,
             ClaimSyncLogCommandManager syncLogCommandManager,
             TimeProvider timeProvider) {
         this.handlers =
                 handlerList.stream()
                         .collect(Collectors.toMap(ClaimSyncHandler::supportedType, h -> h));
         this.orderItemReadManager = orderItemReadManager;
+        this.orderItemCommandManager = orderItemCommandManager;
         this.syncLogCommandManager = syncLogCommandManager;
         this.timeProvider = timeProvider;
     }
@@ -90,6 +94,8 @@ public class ClaimSyncProcessor {
 
         long internalClaimId = handler.execute(action, claim, orderItemId, sellerId);
 
+        updateExternalOrderStatus(claim, orderItemId);
+
         recordSyncLog(claim, salesChannelId, internalType, internalClaimId, action);
 
         log.info(
@@ -99,6 +105,16 @@ public class ClaimSyncProcessor {
                 internalType);
 
         return ClaimSyncOutcome.fromInternalType(internalType);
+    }
+
+    private void updateExternalOrderStatus(ExternalClaimPayload claim, OrderItemId orderItemId) {
+        if (claim.productOrderStatus() == null || claim.productOrderStatus().isBlank()) {
+            return;
+        }
+        orderItemReadManager.findById(orderItemId).ifPresent(item -> {
+            item.updateExternalOrderStatus(claim.productOrderStatus());
+            orderItemCommandManager.persistAll(List.of(item));
+        });
     }
 
     private long resolveSellerId(OrderItemId orderItemId) {

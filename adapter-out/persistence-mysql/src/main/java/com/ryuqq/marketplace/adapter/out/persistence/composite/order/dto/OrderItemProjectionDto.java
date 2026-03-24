@@ -27,4 +27,5 @@ public record OrderItemProjectionDto(
         String receiverAddress,
         String receiverAddressDetail,
         String deliveryRequest,
-        String orderItemStatus) {}
+        String orderItemStatus,
+        String externalOrderStatus) {}

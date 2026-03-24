@@ -127,7 +127,8 @@ public class OrderCompositeMapper {
                 dto.receiverAddress(),
                 dto.receiverAddressDetail(),
                 dto.deliveryRequest(),
-                dto.orderItemStatus());
+                dto.orderItemStatus(),
+                dto.externalOrderStatus());
     }
 
     public OrderHistoryResult toHistoryResult(OrderHistoryProjectionDto dto) {
@@ -190,7 +191,8 @@ public class OrderCompositeMapper {
                         dto.receiverAddress(),
                         dto.receiverAddressDetail(),
                         dto.deliveryRequest(),
-                        dto.orderItemStatus());
+                        dto.orderItemStatus(),
+                dto.externalOrderStatus());
 
         OrderListResult order =
                 new OrderListResult(
@@ -260,7 +262,8 @@ public class OrderCompositeMapper {
                 dto.receiverAddress(),
                 dto.receiverAddressDetail(),
                 dto.deliveryRequest(),
-                dto.orderItemStatus());
+                dto.orderItemStatus(),
+                dto.externalOrderStatus());
     }
 
     public OrderClaimResult toClaimResult(OrderClaimProjectionDto dto) {

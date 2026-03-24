@@ -101,7 +101,7 @@ public class OrderQueryApiMapper {
                 toReceiverInfoV4(result.receiver()),
                 toPaymentShipmentInfoV4(result.delivery()),
                 toOrderProductV4(result.order(), result.productOrder(), result.delivery()),
-                toExternalOrderInfoV4(result.order()),
+                toExternalOrderInfoV4(result.order(), result.delivery()),
                 toCancelSummaryV4(result.cancel()),
                 toClaimSummaryV4(result.claim()));
     }
@@ -148,7 +148,7 @@ public class OrderQueryApiMapper {
                 toReceiverInfoV4(result.receiver()),
                 toPaymentShipmentInfoV4(result.delivery()),
                 List.of(toOrderProductV4(result.order(), result.productOrder(), result.delivery())),
-                toExternalOrderInfoV4(result.order()),
+                toExternalOrderInfoV4(result.order(), result.delivery()),
                 toCancelSummaryV4(result.cancel()),
                 toClaimSummaryV4(result.claim()),
                 toOrderHistoriesV4(result.order(), result.timeLine()),
@@ -491,16 +491,19 @@ public class OrderQueryApiMapper {
     }
 
     private OrderListApiResponseV4.ExternalOrderInfoApiResponse toExternalOrderInfoV4(
-            ProductOrderListResult.OrderInfo order) {
+            ProductOrderListResult.OrderInfo order,
+            ProductOrderListResult.DeliveryInfo delivery) {
         if (order == null
                 || (order.externalOrderNo() == null || order.externalOrderNo().isBlank())) {
             return null;
         }
+        String shopOrderStatus =
+                delivery != null ? nullToEmpty(delivery.externalOrderStatus()) : "";
         return new OrderListApiResponseV4.ExternalOrderInfoApiResponse(
                 order.shopId(),
                 nullToEmpty(order.shopCode()),
                 nullToEmpty(order.externalOrderNo()),
-                "",
+                shopOrderStatus,
                 formatYyyyMmDdHhMmSs(order.externalOrderedAt()));
     }
 

@@ -257,6 +257,7 @@ public class LegacyOrderConversionFactory {
                 price,
                 receiverInfo,
                 itemStatus,
+                null,
                 List.of(migrationHistory));
     }
 

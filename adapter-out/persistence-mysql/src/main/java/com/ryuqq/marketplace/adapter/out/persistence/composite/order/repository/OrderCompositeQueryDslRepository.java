@@ -89,6 +89,7 @@ public class OrderCompositeQueryDslRepository {
                                 orderItemJpaEntity.receiverAddressDetail,
                                 orderItemJpaEntity.deliveryRequest,
                                 orderItemJpaEntity.orderItemStatus,
+                                orderItemJpaEntity.externalOrderStatus,
                                 // payments (LEFT JOIN)
                                 paymentJpaEntity.id,
                                 paymentJpaEntity.paymentNumber,
@@ -395,6 +396,7 @@ public class OrderCompositeQueryDslRepository {
                                 orderItemJpaEntity.receiverAddressDetail,
                                 orderItemJpaEntity.deliveryRequest,
                                 orderItemJpaEntity.orderItemStatus,
+                                orderItemJpaEntity.externalOrderStatus,
                                 // payments (LEFT JOIN)
                                 paymentJpaEntity.id,
                                 paymentJpaEntity.paymentNumber,
@@ -562,7 +564,8 @@ public class OrderCompositeQueryDslRepository {
                                 orderItemJpaEntity.receiverAddress,
                                 orderItemJpaEntity.receiverAddressDetail,
                                 orderItemJpaEntity.deliveryRequest,
-                                orderItemJpaEntity.orderItemStatus))
+                                orderItemJpaEntity.orderItemStatus,
+                                orderItemJpaEntity.externalOrderStatus))
                 .from(orderItemJpaEntity)
                 .where(conditionBuilder.itemOrderIdEq(orderId))
                 .fetch();

@@ -38,7 +38,8 @@ public final class ExternalOrderPayloadFixtures {
                 "06234",
                 "서울시 강남구 테헤란로 123",
                 "456호",
-                "부재 시 문 앞에 놓아주세요");
+                "부재 시 문 앞에 놓아주세요",
+                "PAYED");
     }
 
     /** 외부 상품 ID를 지정한 아이템 페이로드. */
@@ -61,6 +62,7 @@ public final class ExternalOrderPayloadFixtures {
                 "06234",
                 "서울시 강남구 테헤란로 123",
                 "456호",
+                null,
                 null);
     }
 

@@ -103,6 +103,9 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "order_item_status", nullable = false, length = 20)
     private String orderItemStatus;
 
+    @Column(name = "external_order_status", length = 50)
+    private String externalOrderStatus;
+
     protected OrderItemJpaEntity() {
         super();
     }
@@ -139,6 +142,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String receiverAddressDetail,
             String deliveryRequest,
             String orderItemStatus,
+            String externalOrderStatus,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
@@ -172,6 +176,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.receiverAddressDetail = receiverAddressDetail;
         this.deliveryRequest = deliveryRequest;
         this.orderItemStatus = orderItemStatus;
+        this.externalOrderStatus = externalOrderStatus;
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -206,6 +211,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String receiverAddressDetail,
             String deliveryRequest,
             String orderItemStatus,
+            String externalOrderStatus,
             Instant createdAt,
             Instant updatedAt) {
         return new OrderItemJpaEntity(
@@ -239,6 +245,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 receiverAddressDetail,
                 deliveryRequest,
                 orderItemStatus,
+                externalOrderStatus,
                 createdAt,
                 updatedAt);
     }
@@ -363,7 +370,15 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         return orderItemStatus;
     }
 
+    public String getExternalOrderStatus() {
+        return externalOrderStatus;
+    }
+
     public void updateOrderItemStatus(String orderItemStatus) {
         this.orderItemStatus = orderItemStatus;
+    }
+
+    public void updateExternalOrderStatus(String externalOrderStatus) {
+        this.externalOrderStatus = externalOrderStatus;
     }
 }

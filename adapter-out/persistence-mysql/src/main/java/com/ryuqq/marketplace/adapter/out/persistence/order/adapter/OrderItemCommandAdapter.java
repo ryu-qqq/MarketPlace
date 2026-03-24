@@ -31,7 +31,10 @@ public class OrderItemCommandAdapter implements OrderItemCommandPort {
             itemRepository
                     .findById(item.idValue())
                     .ifPresentOrElse(
-                            entity -> entity.updateOrderItemStatus(item.status().name()),
+                            entity -> {
+                                entity.updateOrderItemStatus(item.status().name());
+                                entity.updateExternalOrderStatus(item.externalOrderStatus());
+                            },
                             () ->
                                     itemRepository.save(
                                             mapper.toOrderItemEntity(item, item.idValue())));

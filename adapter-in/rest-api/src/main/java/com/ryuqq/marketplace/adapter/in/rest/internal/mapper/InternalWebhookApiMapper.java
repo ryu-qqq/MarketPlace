@@ -88,7 +88,8 @@ public class InternalWebhookApiMapper {
                 item.receiverZipCode(),
                 item.receiverAddress(),
                 item.receiverAddressDetail(),
-                item.deliveryRequest());
+                item.deliveryRequest(),
+                null);
     }
 
     private ExternalClaimPayload toCancelClaimPayload(

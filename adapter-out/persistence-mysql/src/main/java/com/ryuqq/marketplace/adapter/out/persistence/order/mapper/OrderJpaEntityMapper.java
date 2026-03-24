@@ -122,6 +122,7 @@ public class OrderJpaEntityMapper {
                         : null,
                 item.receiverInfo().deliveryRequest(),
                 item.status().name(),
+                item.externalOrderStatus(),
                 Instant.now(),
                 Instant.now());
     }
@@ -255,6 +256,7 @@ public class OrderJpaEntityMapper {
                         Money.of(entity.getPaymentAmount())),
                 resolveReceiverInfo(entity),
                 OrderItemStatus.valueOf(entity.getOrderItemStatus()),
+                entity.getExternalOrderStatus(),
                 histories);
     }
 

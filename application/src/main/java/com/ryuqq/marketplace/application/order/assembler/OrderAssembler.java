@@ -224,7 +224,7 @@ public class OrderAssembler {
     }
 
     private DeliveryInfo toDeliveryInfo(OrderItemResult item) {
-        return new DeliveryInfo(item.orderItemStatus());
+        return new DeliveryInfo(item.orderItemStatus(), item.externalOrderStatus());
     }
 
     /**

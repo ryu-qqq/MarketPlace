@@ -136,8 +136,9 @@ public record ProductOrderListResult(
      * 배송 정보.
      *
      * @param orderItemStatus 주문 상품 상태
+     * @param externalOrderStatus 외부몰 주문 상태
      */
-    public record DeliveryInfo(String orderItemStatus) {}
+    public record DeliveryInfo(String orderItemStatus, String externalOrderStatus) {}
 
     /**
      * 취소 요약 정보.

@@ -30,6 +30,7 @@ package com.ryuqq.marketplace.application.order.dto.response;
  * @param receiverAddressDetail 수령인 상세주소
  * @param deliveryRequest 배송 요청사항
  * @param orderItemStatus 주문 상품 상태
+ * @param externalOrderStatus 외부몰 주문 상태
  */
 public record OrderItemResult(
         String orderItemId,
@@ -58,4 +59,5 @@ public record OrderItemResult(
         String receiverAddress,
         String receiverAddressDetail,
         String deliveryRequest,
-        String orderItemStatus) {}
+        String orderItemStatus,
+        String externalOrderStatus) {}

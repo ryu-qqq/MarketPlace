@@ -99,7 +99,8 @@ public class SellicCommerceOrderMapper {
                 data.receiveZipcode(),
                 data.receiveAddr(),
                 null,
-                data.deliveryMessage());
+                data.deliveryMessage(),
+                null);
     }
 
     private String resolveOrderKey(SellicOrderData data) {

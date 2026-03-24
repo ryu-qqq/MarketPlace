@@ -88,7 +88,8 @@ public class NaverCommerceOrderMapper {
                 addr != null ? addr.zipCode() : null,
                 addr != null ? addr.baseAddress() : null,
                 addr != null ? addr.detailedAddress() : null,
-                po.shippingMemo());
+                po.shippingMemo(),
+                po.productOrderStatus());
     }
 
     private Instant parseInstant(String dateStr) {
