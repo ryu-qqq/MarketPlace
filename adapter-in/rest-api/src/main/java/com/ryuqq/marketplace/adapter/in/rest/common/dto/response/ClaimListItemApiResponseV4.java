@@ -64,7 +64,7 @@ public record ClaimListItemApiResponseV4(
             @Schema(description = "클레임 번호") String claimNumber,
             @Schema(description = "클레임 상태") String status,
             @Schema(description = "클레임 수량") int qty,
-            @Schema(description = "클레임 사유") ReasonV4 reason,
+            @Schema(description = "클레임 사유") String reason,
             @Schema(description = "환불 정보") RefundInfoV4 refundInfo,
             @Schema(description = "수거 배송 정보") CollectShipmentV4 collectShipment,
             @Schema(description = "보류 사유") String holdReason,

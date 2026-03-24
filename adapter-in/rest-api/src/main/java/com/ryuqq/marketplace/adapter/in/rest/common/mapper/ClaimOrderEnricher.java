@@ -8,7 +8,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemAp
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.OrderProductV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.PaymentV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.PriceV4;
-import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.ReasonV4;
+
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.ReceiverInfoV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.RefundInfoV4;
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
@@ -171,7 +171,7 @@ public class ClaimOrderEnricher {
                 nullToEmpty(claimNumber),
                 nullToEmpty(status),
                 qty,
-                new ReasonV4(nullToEmpty(reasonType), nullToEmpty(reasonDetail)),
+                nullToEmpty(reasonDetail),
                 new RefundInfoV4(
                         originalAmount != null ? originalAmount : 0,
                         0,

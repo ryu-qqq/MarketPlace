@@ -138,9 +138,7 @@ public class CancelApiMapper {
                         enricher.nullToEmpty(r.cancelType()),
                         enricher.nullToEmpty(r.cancelStatus()),
                         r.cancelQty(),
-                        new ClaimListItemApiResponseV4.ReasonV4(
-                                enricher.nullToEmpty(r.reasonType()),
-                                enricher.nullToEmpty(r.reasonDetail())),
+                        enricher.nullToEmpty(r.reasonDetail()),
                         new ClaimListItemApiResponseV4.RefundInfoV4(
                                 r.refundAmount() != null ? r.refundAmount() : 0,
                                 0, "",

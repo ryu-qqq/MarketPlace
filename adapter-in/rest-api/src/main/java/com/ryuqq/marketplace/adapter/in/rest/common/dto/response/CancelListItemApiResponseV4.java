@@ -26,7 +26,7 @@ public record CancelListItemApiResponseV4(
             @Schema(description = "취소 유형 (BUYER_CANCEL, SELLER_CANCEL)") String type,
             @Schema(description = "취소 상태") String status,
             @Schema(description = "취소 수량") int cancelQty,
-            @Schema(description = "취소 사유") ClaimListItemApiResponseV4.ReasonV4 reason,
+            @Schema(description = "취소 사유") String reason,
             @Schema(description = "환불 정보") ClaimListItemApiResponseV4.RefundInfoV4 refundInfo,
             @Schema(description = "요청 일시") String requestedAt,
             @Schema(description = "완료 일시") String completedAt) {}
