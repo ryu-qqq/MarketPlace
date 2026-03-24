@@ -181,6 +181,21 @@ data "aws_ssm_parameter" "sqs_shipment_outbox_queue_url" {
 }
 
 # ========================================
+# Claim Outbox SQS Queue References
+# ========================================
+data "aws_ssm_parameter" "sqs_cancel_outbox_queue_url" {
+  name = "/${var.project_name}/sqs/cancel-outbox-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_refund_outbox_queue_url" {
+  name = "/${var.project_name}/sqs/refund-outbox-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_exchange_outbox_queue_url" {
+  name = "/${var.project_name}/sqs/exchange-outbox-queue-url"
+}
+
+# ========================================
 # AuthHub Configuration
 # ========================================
 data "aws_ssm_parameter" "authhub_service_token" {
@@ -269,4 +284,7 @@ locals {
   sqs_intelligence_aggregation_queue_url            = data.aws_ssm_parameter.sqs_intelligence_aggregation_queue_url.value
   sqs_qna_outbox_queue_url                          = data.aws_ssm_parameter.sqs_qna_outbox_queue_url.value
   sqs_shipment_outbox_queue_url                     = data.aws_ssm_parameter.sqs_shipment_outbox_queue_url.value
+  sqs_cancel_outbox_queue_url                       = data.aws_ssm_parameter.sqs_cancel_outbox_queue_url.value
+  sqs_refund_outbox_queue_url                       = data.aws_ssm_parameter.sqs_refund_outbox_queue_url.value
+  sqs_exchange_outbox_queue_url                     = data.aws_ssm_parameter.sqs_exchange_outbox_queue_url.value
 }

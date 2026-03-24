@@ -19,11 +19,11 @@ sqs:
     shipment-outbox:
       enabled: true
     cancel-outbox:
-      enabled: false
+      enabled: true
     refund-outbox:
-      enabled: false
+      enabled: true
     exchange-outbox:
-      enabled: false
+      enabled: true
     qna-outbox:
       enabled: true
     intelligence-orchestration:

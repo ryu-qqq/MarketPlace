@@ -472,6 +472,10 @@ module "ecs_service" {
     { name = "SQS_INTELLIGENCE_AGGREGATION_URL", value = local.sqs_intelligence_aggregation_queue_url },
     # Shipment Outbox SQS
     { name = "SQS_SHIPMENT_OUTBOX_URL", value = local.sqs_shipment_outbox_queue_url },
+    # Claim Outbox SQS
+    { name = "SQS_CANCEL_OUTBOX_URL", value = local.sqs_cancel_outbox_queue_url },
+    { name = "SQS_REFUND_OUTBOX_URL", value = local.sqs_refund_outbox_queue_url },
+    { name = "SQS_EXCHANGE_OUTBOX_URL", value = local.sqs_exchange_outbox_queue_url },
     # QnA Outbox SQS
     { name = "SQS_QNA_OUTBOX_URL", value = local.sqs_qna_outbox_queue_url },
     # Sentry
