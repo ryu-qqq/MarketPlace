@@ -207,8 +207,9 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     private long completeCancel(
             ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId) {
         Instant now = timeProvider.now();
+        Money refundAmount = resolveRefundAmount(orderItemId);
         CancelRefundInfo refundInfo =
-                CancelRefundInfo.of(Money.zero(), "UNKNOWN", "PENDING", now, null);
+                CancelRefundInfo.of(refundAmount, "EXTERNAL_CHANNEL", "COMPLETED", now, null);
         Optional<Cancel> existingCancel = cancelReadManager.findByOrderItemId(orderItemId);
 
         if (existingCancel.isPresent()) {
@@ -292,6 +293,13 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
                         });
     }
 
+    private Money resolveRefundAmount(OrderItemId orderItemId) {
+        return orderItemReadManager
+                .findById(orderItemId)
+                .map(item -> item.price().paymentAmount())
+                .orElse(Money.zero());
+    }
+
     private int resolveQty(Integer requestQuantity) {
         return (requestQuantity != null && requestQuantity > 0) ? requestQuantity : 1;
     }
@@ -299,12 +307,10 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     private CancelReason resolveDefaultCancelReason(ExternalClaimPayload claim) {
         String rawReason = claim.claimReason();
         CancelReasonType reasonType = parseCancelReasonType(rawReason);
-        String detail =
-                (reasonType == CancelReasonType.OTHER)
-                        ? (claim.claimDetailedReason() != null
-                                ? claim.claimDetailedReason()
-                                : "외부 채널 취소")
-                        : null;
+        String detail = claim.claimDetailedReason();
+        if (detail == null || detail.isBlank()) {
+            detail = rawReason;
+        }
         return new CancelReason(reasonType, detail);
     }
 
@@ -313,12 +319,20 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             return CancelReasonType.OTHER;
         }
         return switch (rawReason) {
+            // 내부 코드
             case "CHANGE_OF_MIND" -> CancelReasonType.CHANGE_OF_MIND;
             case "WRONG_ORDER" -> CancelReasonType.WRONG_ORDER;
             case "FOUND_CHEAPER" -> CancelReasonType.FOUND_CHEAPER;
             case "OUT_OF_STOCK" -> CancelReasonType.OUT_OF_STOCK;
             case "PRODUCT_DISCONTINUED" -> CancelReasonType.PRODUCT_DISCONTINUED;
             case "DELIVERY_TOO_SLOW" -> CancelReasonType.DELIVERY_TOO_SLOW;
+            // 네이버 커머스 코드
+            case "INTENT_CHANGED" -> CancelReasonType.CHANGE_OF_MIND;
+            case "COLOR_AND_SIZE" -> CancelReasonType.WRONG_ORDER;
+            case "PRODUCT_UNSATISFIED" -> CancelReasonType.OTHER;
+            case "DELAYED_DELIVERY" -> CancelReasonType.DELIVERY_TOO_SLOW;
+            case "SOLD_OUT" -> CancelReasonType.OUT_OF_STOCK;
+            case "INCORRECT_INFO" -> CancelReasonType.OTHER;
             default -> CancelReasonType.OTHER;
         };
     }
