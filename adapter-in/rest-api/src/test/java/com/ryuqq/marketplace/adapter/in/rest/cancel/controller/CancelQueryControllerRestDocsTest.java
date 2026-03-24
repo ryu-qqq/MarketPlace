@@ -320,7 +320,7 @@ class CancelQueryControllerRestDocsTest {
                     CancelApiFixtures.detailApiResponse(DEFAULT_CANCEL_ID);
 
             given(getCancelDetailUseCase.execute(DEFAULT_CANCEL_ID)).willReturn(detailResult);
-            given(mapper.toDetailResponse(any(CancelDetailResult.class)))
+            given(mapper.toDetailResponse(any(CancelDetailResult.class), any()))
                     .willReturn(detailResponse);
 
             // when & then
@@ -462,7 +462,7 @@ class CancelQueryControllerRestDocsTest {
                     CancelApiFixtures.detailApiResponseWithoutRefund(DEFAULT_CANCEL_ID);
 
             given(getCancelDetailUseCase.execute(anyString())).willReturn(detailResult);
-            given(mapper.toDetailResponse(any(CancelDetailResult.class)))
+            given(mapper.toDetailResponse(any(CancelDetailResult.class), any()))
                     .willReturn(detailResponse);
 
             // when & then

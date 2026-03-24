@@ -330,7 +330,8 @@ public final class CancelApiFixtures {
                                 "수기 메모",
                                 "수기 메모 내용입니다.",
                                 new ActorApiResponse("SELLER", "1", "seller01"),
-                                DEFAULT_FORMATTED_TIME)));
+                                DEFAULT_FORMATTED_TIME)),
+                null);
     }
 
     public static CancelDetailApiResponse detailApiResponseWithoutRefund(String cancelId) {
@@ -351,7 +352,8 @@ public final class CancelApiFixtures {
                 null,
                 DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME,
-                List.of());
+                List.of(),
+                null);
     }
 
     // ===== BatchResultApiResponse =====
