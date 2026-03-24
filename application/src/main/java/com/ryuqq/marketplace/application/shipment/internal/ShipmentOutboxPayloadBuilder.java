@@ -24,8 +24,7 @@ public final class ShipmentOutboxPayloadBuilder {
         return OutboxPayloadUtils.mapToJson(
                 Map.of(
                         "trackingNumber", item.trackingNumber(),
-                        "courierCode", item.courierCode(),
-                        "courierName", item.courierName()));
+                        "courierCode", item.courierCode()));
     }
 
     public static String shipPayload(ShipSingleCommand command) {

@@ -25,7 +25,8 @@ public class ShipmentCommandApiMapper {
     }
 
     public ShipBatchCommand toShipBatchCommand(ShipBatchApiRequest request) {
-        List<ShipBatchItem> items = request.items().stream().map(this::toShipBatchItem).toList();
+        List<ShipBatchItem> items =
+                request.requests().stream().map(this::toShipBatchItem).toList();
         return new ShipBatchCommand(items);
     }
 
@@ -47,11 +48,10 @@ public class ShipmentCommandApiMapper {
 
     private ShipBatchItem toShipBatchItem(ShipBatchItemApiRequest request) {
         return new ShipBatchItem(
-                request.orderId(),
+                request.orderNumber(),
                 request.trackingNumber(),
-                request.courierCode(),
-                request.courierName(),
-                request.shipmentMethodType());
+                request.method().courierCode(),
+                request.method().type());
     }
 
     private BatchResultItemApiResponse toBatchResultItem(BatchItemResult<String> item) {

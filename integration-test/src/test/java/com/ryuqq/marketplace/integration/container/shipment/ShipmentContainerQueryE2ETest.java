@@ -118,6 +118,7 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
                 OrderItemJpaEntityFixtures.DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 OrderItemJpaEntityFixtures.DEFAULT_DELIVERY_REQUEST,
                 "CONFIRMED",
+                null,
                 now,
                 now);
     }

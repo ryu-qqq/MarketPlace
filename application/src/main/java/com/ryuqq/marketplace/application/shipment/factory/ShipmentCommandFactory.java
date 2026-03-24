@@ -10,6 +10,8 @@ import com.ryuqq.marketplace.application.shipment.dto.command.ShipBatchCommand.S
 import com.ryuqq.marketplace.application.shipment.dto.command.ShipSingleCommand;
 import com.ryuqq.marketplace.application.shipment.internal.ConfirmShipmentBundle;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentOutboxPayloadBuilder;
+import com.ryuqq.marketplace.application.order.manager.OrderReadManager;
+import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
@@ -39,10 +41,15 @@ public class ShipmentCommandFactory {
 
     private final TimeProvider timeProvider;
     private final IdGeneratorPort idGeneratorPort;
+    private final OrderReadManager orderReadManager;
 
-    public ShipmentCommandFactory(TimeProvider timeProvider, IdGeneratorPort idGeneratorPort) {
+    public ShipmentCommandFactory(
+            TimeProvider timeProvider,
+            IdGeneratorPort idGeneratorPort,
+            OrderReadManager orderReadManager) {
         this.timeProvider = timeProvider;
         this.idGeneratorPort = idGeneratorPort;
+        this.orderReadManager = orderReadManager;
     }
 
     /**
@@ -153,10 +160,11 @@ public class ShipmentCommandFactory {
 
     private UpdateContext<OrderItemId, ShipmentShipData> createShipItemContext(
             ShipBatchItem item, Instant changedAt) {
-        OrderItemId orderItemId = OrderItemId.of(item.orderItemId());
+        Order order = orderReadManager.getByOrderNumber(item.orderNumber());
+        OrderItem firstItem = order.items().getFirst();
+        OrderItemId orderItemId = firstItem.id();
         ShipmentMethod method =
-                createShipmentMethod(
-                        item.shipmentMethodType(), item.courierCode(), item.courierName());
+                createShipmentMethod(item.shipmentMethodType(), item.courierCode(), null);
         ShipmentShipData shipData = ShipmentShipData.of(item.trackingNumber(), method);
         return new UpdateContext<>(orderItemId, shipData, changedAt);
     }

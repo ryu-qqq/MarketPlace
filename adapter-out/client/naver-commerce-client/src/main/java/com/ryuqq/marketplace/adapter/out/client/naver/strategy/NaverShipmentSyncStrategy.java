@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -42,6 +43,26 @@ public class NaverShipmentSyncStrategy implements ShipmentSyncStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(NaverShipmentSyncStrategy.class);
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+
+    /** 내부 택배사 코드 → 네이버 deliveryCompanyCode 매핑. */
+    private static final Map<String, String> COURIER_CODE_MAP =
+            Map.ofEntries(
+                    Map.entry("CJ_LOGISTICS", "CJGLS"),
+                    Map.entry("LOGEN", "KGB"),
+                    Map.entry("HANJIN", "HANJIN"),
+                    Map.entry("KOREA_POST", "EPOST"),
+                    Map.entry("LOTTE", "HYUNDAI"),
+                    Map.entry("KYUNGDONG", "KDEXP"),
+                    Map.entry("ILYANG", "ILYANG"),
+                    Map.entry("CHUNIL", "CHUNIL"),
+                    Map.entry("DAESIN", "DAESIN"),
+                    Map.entry("HAPDONG", "HDEXP"),
+                    Map.entry("GS_POSTBOX", "GSPOSTBOX"),
+                    Map.entry("KUNYOUNG", "KUNYOUNG"),
+                    Map.entry("HANDEX", "HANDEX"),
+                    Map.entry("SLX", "SLX"),
+                    Map.entry("HONAMLOGIS", "HONAM"),
+                    Map.entry("IPARCEL", "IPARCEL"));
 
     private final NaverCommerceOrderClientAdapter orderClient;
     private final ExternalOrderItemMappingQueryPort mappingQueryPort;
@@ -125,8 +146,9 @@ public class NaverShipmentSyncStrategy implements ShipmentSyncStrategy {
             String courierCode = node.has("courierCode") ? node.get("courierCode").asText() : null;
             String dispatchDate = formatForNaver(Instant.now());
 
+            String naverCourierCode = toNaverCourierCode(courierCode);
             return new DispatchProductOrder(
-                    externalProductOrderId, "DELIVERY", courierCode, trackingNumber, dispatchDate);
+                    externalProductOrderId, "DELIVERY", naverCourierCode, trackingNumber, dispatchDate);
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new IllegalStateException("배송 Outbox 페이로드 파싱 실패: " + payload, e);
         }
@@ -140,6 +162,13 @@ public class NaverShipmentSyncStrategy implements ShipmentSyncStrategy {
                         () ->
                                 new IllegalStateException(
                                         "외부 상품주문 매핑을 찾을 수 없습니다. orderItemId=" + orderItemId));
+    }
+
+    private String toNaverCourierCode(String internalCode) {
+        if (internalCode == null) {
+            return null;
+        }
+        return COURIER_CODE_MAP.getOrDefault(internalCode, internalCode);
     }
 
     private String formatForNaver(Instant instant) {

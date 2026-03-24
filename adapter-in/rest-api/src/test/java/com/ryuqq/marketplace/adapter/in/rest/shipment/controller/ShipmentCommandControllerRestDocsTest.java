@@ -201,24 +201,28 @@ class ShipmentCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(
-                                            fieldWithPath("items")
+                                            fieldWithPath("requests")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("송장등록 대상 목록"),
-                                            fieldWithPath("items[].orderId")
+                                            fieldWithPath("requests[].orderNumber")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("주문 ID"),
-                                            fieldWithPath("items[].trackingNumber")
+                                                    .description("주문번호"),
+                                            fieldWithPath("requests[].method")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("배송 방법"),
+                                            fieldWithPath("requests[].method.type")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("송장번호"),
-                                            fieldWithPath("items[].courierCode")
+                                                    .description("배송 유형"),
+                                            fieldWithPath("requests[].method.courierCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("택배사 코드"),
-                                            fieldWithPath("items[].courierName")
+                                            fieldWithPath("requests[].trackingNumber")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("택배사명"),
-                                            fieldWithPath("items[].shipmentMethodType")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("배송 방법 유형")),
+                                                    .description("송장번호"),
+                                            fieldWithPath("memo")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description("메모")
+                                                    .optional()),
                                     responseFields(
                                             fieldWithPath("data.totalCount")
                                                     .type(JsonFieldType.NUMBER)

@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ConfirmShipmentBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipBatchApiRequest.ShipBatchItemApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipBatchApiRequest.ShipMethodRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipSingleApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipmentSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
@@ -69,18 +70,16 @@ public final class ShipmentApiFixtures {
     public static ShipBatchApiRequest shipBatchRequest() {
         List<ShipBatchItemApiRequest> items =
                 List.of(
-                        shipBatchItemRequest("01940001-0000-7000-8000-000000000001"),
-                        shipBatchItemRequest("01940001-0000-7000-8000-000000000002"));
-        return new ShipBatchApiRequest(items);
+                        shipBatchItemRequest("ORD-20260324-0001"),
+                        shipBatchItemRequest("ORD-20260324-0002"));
+        return new ShipBatchApiRequest(items, null);
     }
 
-    public static ShipBatchItemApiRequest shipBatchItemRequest(String orderItemId) {
+    public static ShipBatchItemApiRequest shipBatchItemRequest(String orderNumber) {
         return new ShipBatchItemApiRequest(
-                orderItemId,
-                DEFAULT_TRACKING_NUMBER,
-                DEFAULT_COURIER_CODE,
-                DEFAULT_COURIER_NAME,
-                DEFAULT_SHIPMENT_METHOD_TYPE);
+                orderNumber,
+                new ShipMethodRequest(DEFAULT_SHIPMENT_METHOD_TYPE, DEFAULT_COURIER_CODE),
+                DEFAULT_TRACKING_NUMBER);
     }
 
     // ===== ShipSingleApiRequest =====

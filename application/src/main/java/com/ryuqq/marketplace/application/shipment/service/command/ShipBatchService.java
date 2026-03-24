@@ -40,7 +40,7 @@ public class ShipBatchService implements ShipBatchUseCase {
                 commandFactory.createShipContexts(command);
         Map<String, ShipBatchItem> itemMap =
                 command.items().stream()
-                        .collect(Collectors.toMap(ShipBatchItem::orderItemId, Function.identity()));
+                        .collect(Collectors.toMap(ShipBatchItem::orderNumber, Function.identity()));
         return batchProcessor.shipBatch(contexts, itemMap);
     }
 }

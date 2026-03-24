@@ -198,6 +198,7 @@ class SellicOrderPollingE2ETest extends E2ETestBase {
                                         "42278",
                                         "대구광역시 수성구 달구벌대로 3280",
                                         null,
+                                        null,
                                         null)));
 
         ExternalOrderPayload order2 =
@@ -229,7 +230,8 @@ class SellicOrderPollingE2ETest extends E2ETestBase {
                                         "06234",
                                         "서울시 강남구 테헤란로 123",
                                         "4층",
-                                        "문 앞에 놔주세요"),
+                                        "문 앞에 놔주세요",
+                                        null),
                                 new ExternalOrderItemPayload(
                                         "75236701",
                                         "1599501",
@@ -248,7 +250,8 @@ class SellicOrderPollingE2ETest extends E2ETestBase {
                                         "06234",
                                         "서울시 강남구 테헤란로 123",
                                         "4층",
-                                        "문 앞에 놔주세요")));
+                                        "문 앞에 놔주세요",
+                                        null)));
 
         return List.of(order1, order2);
     }

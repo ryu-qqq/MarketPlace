@@ -66,6 +66,7 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
                 "READY",
+                null,
                 now,
                 now);
     }
@@ -110,6 +111,7 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
                 "CONFIRMED",
+                null,
                 now,
                 now);
     }
@@ -150,6 +152,7 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_RECEIVER_ADDRESS_DETAIL,
                 DEFAULT_DELIVERY_REQUEST,
                 "READY",
+                null,
                 now,
                 now);
     }

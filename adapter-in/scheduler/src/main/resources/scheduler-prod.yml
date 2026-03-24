@@ -134,8 +134,8 @@ scheduler:
         timeout-seconds: 300
 
     legacy-conversion:
-      # Prod: 활성화 (5초마다)
-      enabled: true
+      # Prod: 비활성화 (운영 주문 이관 미사용)
+      enabled: false
       cron: "*/5 * * * * *"
 
     legacy-conversion-timeout:
@@ -143,8 +143,8 @@ scheduler:
       cron: "0 */1 * * * *"
 
     legacy-conversion-seeder:
-      # Prod: 활성화 (전체 78K 상품 시딩)
-      enabled: true
+      # Prod: 비활성화 (운영 주문 이관 미사용)
+      enabled: false
       cron: "0 */1 * * * *"
       batch-size: 200
       max-total: 0
@@ -152,8 +152,8 @@ scheduler:
     inbound-order-polling:
       entries:
         - sales-channel-id: 1
-          enabled: true
-          # Prod: 5분마다
+          # Prod: 비활성화 (세토프는 웹훅 기반, 폴링 불필요)
+          enabled: false
           cron: "0 */5 * * * *"
           timezone: Asia/Seoul
           batch-size: 500
