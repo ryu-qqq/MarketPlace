@@ -92,6 +92,8 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
                 "ORD-" + itemId.substring(0, 8) + "-001",
                 orderId,
                 OrderItemJpaEntityFixtures.DEFAULT_PRODUCT_GROUP_ID,
+                1L,
+                5L,
                 OrderItemJpaEntityFixtures.DEFAULT_PRODUCT_ID,
                 OrderItemJpaEntityFixtures.DEFAULT_SKU_CODE,
                 "테스트 상품 그룹",

@@ -103,11 +103,14 @@ public class ClaimSyncProcessor {
 
     private long resolveSellerId(OrderItemId orderItemId) {
         Optional<OrderItem> orderItem = orderItemReadManager.findById(orderItemId);
-        if (orderItem.isPresent()) {
-            return orderItem.get().sellerId();
+        if (orderItem.isEmpty()) {
+            throw new IllegalStateException("sellerId 조회 실패: OrderItem 없음. orderItemId=" + orderItemId.value());
         }
-        log.error("sellerId 조회 실패 - OrderItem 없음. orderItemId={}", orderItemId.value());
-        throw new IllegalStateException("sellerId 조회 실패: orderItemId=" + orderItemId.value());
+        Long sellerId = orderItem.get().internalProduct().sellerId();
+        if (sellerId == null) {
+            throw new IllegalStateException("sellerId가 null. orderItemId=" + orderItemId.value());
+        }
+        return sellerId;
     }
 
     private void recordSyncLog(

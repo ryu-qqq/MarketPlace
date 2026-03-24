@@ -25,6 +25,12 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "product_group_id", nullable = false)
     private long productGroupId;
 
+    @Column(name = "seller_id")
+    private Long sellerId;
+
+    @Column(name = "brand_id")
+    private Long brandId;
+
     @Column(name = "product_id")
     private Long productId;
 
@@ -107,6 +113,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String orderItemNumber,
             String orderId,
             long productGroupId,
+            Long sellerId,
+            Long brandId,
             Long productId,
             String skuCode,
             String productGroupName,
@@ -138,6 +146,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.orderItemNumber = orderItemNumber;
         this.orderId = orderId;
         this.productGroupId = productGroupId;
+        this.sellerId = sellerId;
+        this.brandId = brandId;
         this.productId = productId;
         this.skuCode = skuCode;
         this.productGroupName = productGroupName;
@@ -170,6 +180,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String orderItemNumber,
             String orderId,
             long productGroupId,
+            Long sellerId,
+            Long brandId,
             Long productId,
             String skuCode,
             String productGroupName,
@@ -201,6 +213,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 orderItemNumber,
                 orderId,
                 productGroupId,
+                sellerId,
+                brandId,
                 productId,
                 skuCode,
                 productGroupName,
@@ -243,6 +257,14 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     public long getProductGroupId() {
         return productGroupId;
+    }
+
+    public Long getSellerId() {
+        return sellerId;
+    }
+
+    public Long getBrandId() {
+        return brandId;
     }
 
     public Long getProductId() {
