@@ -167,9 +167,9 @@ public class OrderCompositeMapper {
                 new OrderItemResult(
                         dto.orderItemId() != null ? dto.orderItemId() : "",
                         dto.orderItemNumber() != null ? dto.orderItemNumber() : "",
-                        dto.orderId(),
-                        dto.productGroupId(),
-                        dto.productId(),
+                                dto.orderId(),
+                        dto.productGroupId() != null ? dto.productGroupId() : 0L,
+                        dto.productId() != null ? dto.productId() : 0L,
                         dto.skuCode(),
                         dto.productGroupName(),
                         dto.brandName(),
@@ -192,7 +192,7 @@ public class OrderCompositeMapper {
                         dto.receiverAddressDetail(),
                         dto.deliveryRequest(),
                         dto.orderItemStatus(),
-                dto.externalOrderStatus());
+                        dto.externalOrderStatus());
 
         OrderListResult order =
                 new OrderListResult(
@@ -239,8 +239,8 @@ public class OrderCompositeMapper {
                 dto.orderItemId() != null ? dto.orderItemId() : "",
                 dto.orderItemNumber() != null ? dto.orderItemNumber() : "",
                 dto.orderId(),
-                dto.productGroupId(),
-                dto.productId(),
+                dto.productGroupId() != null ? dto.productGroupId() : 0L,
+                dto.productId() != null ? dto.productId() : 0L,
                 dto.skuCode(),
                 dto.productGroupName(),
                 dto.brandName(),

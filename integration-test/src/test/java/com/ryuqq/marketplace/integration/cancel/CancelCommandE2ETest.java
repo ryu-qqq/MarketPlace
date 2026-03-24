@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import com.ryuqq.marketplace.adapter.out.persistence.cancel.CancelJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.ShipmentJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.cancel.repository.CancelJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.canceloutbox.repository.CancelOutboxJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
@@ -15,6 +16,8 @@ import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemH
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRepository;
 import com.ryuqq.marketplace.integration.E2ETestBase;
+import java.time.Instant;
+import java.util.UUID;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
@@ -55,12 +58,14 @@ class CancelCommandE2ETest extends E2ETestBase {
     @Autowired private OrderItemHistoryJpaRepository orderItemHistoryRepository;
     @Autowired private OrderItemJpaRepository orderItemRepository;
     @Autowired private OrderJpaRepository orderRepository;
+    @Autowired private com.ryuqq.marketplace.adapter.out.persistence.shipment.repository.ShipmentJpaRepository shipmentRepository;
 
     @BeforeEach
     void setUp() {
         claimHistoryRepository.deleteAll();
         cancelOutboxRepository.deleteAll();
         cancelRepository.deleteAll();
+        shipmentRepository.deleteAll();
         orderItemHistoryRepository.deleteAll();
         orderItemRepository.deleteAll();
         orderRepository.deleteAll();
@@ -71,6 +76,7 @@ class CancelCommandE2ETest extends E2ETestBase {
         claimHistoryRepository.deleteAll();
         cancelOutboxRepository.deleteAll();
         cancelRepository.deleteAll();
+        shipmentRepository.deleteAll();
         orderItemHistoryRepository.deleteAll();
         orderItemRepository.deleteAll();
         orderRepository.deleteAll();
@@ -299,6 +305,13 @@ class CancelCommandE2ETest extends E2ETestBase {
             String orderItemId = seedOrderItem("order-rej-001");
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntity("cancel-reject-001", orderItemId, 10L));
+            // 운송장 등록 상태 Shipment 생성 (네이버 정책: SHIPPED 이상이어야 거부 가능)
+            Instant now = Instant.now();
+            shipmentRepository.save(
+                    ShipmentJpaEntity.create(
+                            UUID.randomUUID().toString(), "SHP-REJ-001", orderItemId,
+                            "SHIPPED", "COURIER", "CJ", "CJ대한통운", "1234567890",
+                            now, now, null, now, now, null));
 
             given().spec(givenSuperAdmin())
                     .body(Map.of("cancelIds", List.of("cancel-reject-001")))
@@ -333,9 +346,16 @@ class CancelCommandE2ETest extends E2ETestBase {
         @Tag("P1")
         @DisplayName("[C21-3] APPROVED 상태 Cancel 거절 시도 - 상태 전이 불가 (배치 실패 처리)")
         void rejectBatch_ApprovedCancel_FailsInBatch() {
+            String orderItemId = seedOrderItem("order-rej-app-001");
             cancelRepository.save(
                     CancelJpaEntityFixtures.approvedEntity(
-                            "cancel-approved-001", "order-item-app-001", 10L));
+                            "cancel-approved-001", orderItemId, 10L));
+            Instant now = Instant.now();
+            shipmentRepository.save(
+                    ShipmentJpaEntity.create(
+                            UUID.randomUUID().toString(), "SHP-APP-001", orderItemId,
+                            "SHIPPED", "COURIER", "CJ", "CJ대한통운", "9999999999",
+                            now, now, null, now, now, null));
 
             given().spec(givenSuperAdmin())
                     .body(Map.of("cancelIds", List.of("cancel-approved-001")))

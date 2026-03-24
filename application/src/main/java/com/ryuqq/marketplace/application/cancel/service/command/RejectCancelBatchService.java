@@ -36,7 +36,7 @@ public class RejectCancelBatchService implements RejectCancelBatchUseCase {
 
     @Override
     public BatchProcessingResult<String> execute(RejectCancelBatchCommand command) {
-        List<Cancel> cancels = validator.validateAndGet(command.cancelIds(), command.sellerId());
+        List<Cancel> cancels = validator.validateForReject(command.cancelIds(), command.sellerId());
 
         CancelBatchResult batchResult = CancelBatchResult.create("REJECT");
         for (Cancel cancel : cancels) {

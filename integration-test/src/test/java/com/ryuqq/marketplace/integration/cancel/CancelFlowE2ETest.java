@@ -61,12 +61,14 @@ class CancelFlowE2ETest extends E2ETestBase {
     @Autowired private OrderItemHistoryJpaRepository orderItemHistoryRepository;
     @Autowired private OrderItemJpaRepository orderItemRepository;
     @Autowired private OrderJpaRepository orderRepository;
+    @Autowired private com.ryuqq.marketplace.adapter.out.persistence.shipment.repository.ShipmentJpaRepository shipmentRepository;
 
     @BeforeEach
     void setUp() {
         claimHistoryRepository.deleteAll();
         cancelOutboxRepository.deleteAll();
         cancelRepository.deleteAll();
+        shipmentRepository.deleteAll();
         orderItemHistoryRepository.deleteAll();
         orderItemRepository.deleteAll();
         orderRepository.deleteAll();
@@ -77,6 +79,7 @@ class CancelFlowE2ETest extends E2ETestBase {
         claimHistoryRepository.deleteAll();
         cancelOutboxRepository.deleteAll();
         cancelRepository.deleteAll();
+        shipmentRepository.deleteAll();
         orderItemHistoryRepository.deleteAll();
         orderItemRepository.deleteAll();
         orderRepository.deleteAll();
@@ -259,6 +262,14 @@ class CancelFlowE2ETest extends E2ETestBase {
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntity(
                             "cancel-reject-flow-001", orderItemId, 10L));
+
+            // Step 2-1. Shipment SHIPPED 생성 (네이버 정책: 운송장 등록 후에만 거부 가능)
+            java.time.Instant now = java.time.Instant.now();
+            shipmentRepository.save(
+                    com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.ShipmentJpaEntity.create(
+                            java.util.UUID.randomUUID().toString(), "SHP-FLOW4-001", orderItemId,
+                            "SHIPPED", "COURIER", "CJ", "CJ대한통운", "1234567890",
+                            now, now, null, now, now, null));
 
             // Step 3. 취소 거절
             given().spec(givenSuperAdmin())

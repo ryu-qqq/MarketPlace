@@ -55,7 +55,7 @@ class RejectCancelBatchServiceTest {
             Instant now = Instant.now();
             OutboxWithHistory bundle = new OutboxWithHistory(cancelOutbox, history, now);
 
-            given(validator.validateAndGet(command.cancelIds(), command.sellerId()))
+            given(validator.validateForReject(command.cancelIds(), command.sellerId()))
                     .willReturn(List.of(cancel));
             given(commandFactory.createRejectBundle(cancel, command.processedBy()))
                     .willReturn(bundle);
@@ -77,7 +77,7 @@ class RejectCancelBatchServiceTest {
             // given
             RejectCancelBatchCommand command = CancelCommandFixtures.rejectBatchCommand();
 
-            given(validator.validateAndGet(command.cancelIds(), command.sellerId()))
+            given(validator.validateForReject(command.cancelIds(), command.sellerId()))
                     .willReturn(List.of());
 
             // when
@@ -102,7 +102,7 @@ class RejectCancelBatchServiceTest {
             Instant now = Instant.now();
             OutboxWithHistory bundle = new OutboxWithHistory(cancelOutbox, history, now);
 
-            given(validator.validateAndGet(command.cancelIds(), command.sellerId()))
+            given(validator.validateForReject(command.cancelIds(), command.sellerId()))
                     .willReturn(List.of(validCancel));
             given(commandFactory.createRejectBundle(validCancel, command.processedBy()))
                     .willReturn(bundle);
