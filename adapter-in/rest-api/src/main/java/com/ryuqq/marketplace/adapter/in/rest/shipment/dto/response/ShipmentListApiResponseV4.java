@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Schema(description = "배송 목록 조회 응답 (V4)")
 public record ShipmentListApiResponseV4(
+        @Schema(description = "주문 ID (UUIDv7)") String orderId,
         @Schema(description = "주문번호") String orderNumber,
         @Schema(description = "배송번호") String shipmentNumber,
         @Schema(description = "배송 상태") String status,
