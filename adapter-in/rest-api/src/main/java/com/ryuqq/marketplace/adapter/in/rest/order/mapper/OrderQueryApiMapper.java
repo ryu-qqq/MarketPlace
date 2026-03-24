@@ -100,7 +100,7 @@ public class OrderQueryApiMapper {
                 toPaymentDetailV4(result.payment(), result.order(), result.productOrder()),
                 toReceiverInfoV4(result.receiver()),
                 toPaymentShipmentInfoV4(result.delivery()),
-                toOrderProductV4(result.order(), result.productOrder()),
+                toOrderProductV4(result.order(), result.productOrder(), result.delivery()),
                 toExternalOrderInfoV4(result.order()),
                 toCancelSummaryV4(result.cancel()),
                 toClaimSummaryV4(result.claim()));
@@ -147,7 +147,7 @@ public class OrderQueryApiMapper {
                 toPaymentDetailV4(result.payment(), result.order()),
                 toReceiverInfoV4(result.receiver()),
                 toPaymentShipmentInfoV4(result.delivery()),
-                List.of(toOrderProductV4(result.order(), result.productOrder())),
+                List.of(toOrderProductV4(result.order(), result.productOrder(), result.delivery())),
                 toExternalOrderInfoV4(result.order()),
                 toCancelSummaryV4(result.cancel()),
                 toClaimSummaryV4(result.claim()),
@@ -439,7 +439,8 @@ public class OrderQueryApiMapper {
 
     private OrderListApiResponseV4.OrderProductApiResponse toOrderProductV4(
             ProductOrderListResult.OrderInfo order,
-            ProductOrderListResult.ProductOrderInfo productOrder) {
+            ProductOrderListResult.ProductOrderInfo productOrder,
+            ProductOrderListResult.DeliveryInfo delivery) {
         if (productOrder == null) {
             return new OrderListApiResponseV4.OrderProductApiResponse(
                     "",
@@ -480,7 +481,7 @@ public class OrderQueryApiMapper {
                 nullToEmpty(productOrder.mainImageUrl()),
                 "",
                 productOrder.quantity(),
-                "",
+                delivery != null ? nullToEmpty(delivery.orderItemStatus()) : "",
                 unitPrice,
                 productOrder.totalAmount(),
                 0,
