@@ -57,6 +57,16 @@ public class ShipmentReadManager {
     }
 
     @Transactional(readOnly = true)
+    public List<String> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria) {
+        return queryPort.findFulfillmentOrderItemIds(criteria);
+    }
+
+    @Transactional(readOnly = true)
+    public long countFulfillment(ShipmentSearchCriteria criteria) {
+        return queryPort.countFulfillment(criteria);
+    }
+
+    @Transactional(readOnly = true)
     public Map<ShipmentStatus, Long> countByStatus() {
         return queryPort.countByStatus();
     }

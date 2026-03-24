@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentPageResul
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentQueryFactory;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.application.shipment.port.in.query.GetShipmentListUseCase;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.query.ShipmentSearchCriteria;
 import java.util.ArrayList;
@@ -41,25 +42,31 @@ public class GetShipmentListService implements GetShipmentListUseCase {
     public ShipmentPageResult execute(ShipmentSearchParams params) {
         ShipmentSearchCriteria criteria = queryFactory.createCriteria(params);
 
-        List<Shipment> shipments = readManager.findByCriteria(criteria);
-        long totalElements = readManager.countByCriteria(criteria);
+        // OrderItem 기준 조회 — shipment 없는 신규 주문도 포함
+        List<String> orderItemIds = readManager.findFulfillmentOrderItemIds(criteria);
+        long totalElements = readManager.countFulfillment(criteria);
 
-        if (shipments.isEmpty()) {
+        if (orderItemIds.isEmpty()) {
             return assembler.toPageResult(List.of(), params.page(), params.size(), totalElements);
         }
 
-        List<String> orderItemIds = shipments.stream().map(Shipment::orderItemIdValue).toList();
-
         Map<String, OrderItemResult> itemMap = orderReadManager.findOrderItemsByIds(orderItemIds);
+
+        // OrderItem별 Shipment 조회 (없으면 null)
+        List<OrderItemId> itemIdList =
+                orderItemIds.stream().map(OrderItemId::of).toList();
+        Map<String, Shipment> shipmentMap = new java.util.HashMap<>();
+        for (Shipment s : readManager.findByOrderItemIds(itemIdList)) {
+            shipmentMap.put(s.orderItemIdValue(), s);
+        }
 
         List<String> orderIds =
                 itemMap.values().stream().map(OrderItemResult::orderId).distinct().toList();
-
         Map<String, OrderListResult> orderMap = orderReadManager.findOrdersByIds(orderIds);
 
         List<ShipmentListResult> results = new ArrayList<>();
-        for (Shipment shipment : shipments) {
-            OrderItemResult item = itemMap.get(shipment.orderItemIdValue());
+        for (String orderItemId : orderItemIds) {
+            OrderItemResult item = itemMap.get(orderItemId);
             if (item == null) {
                 continue;
             }
@@ -67,7 +74,8 @@ public class GetShipmentListService implements GetShipmentListUseCase {
             if (order == null) {
                 continue;
             }
-            results.add(assembler.toListResult(shipment, item, order));
+            Shipment shipment = shipmentMap.get(orderItemId);
+            results.add(assembler.toListResult(shipment, item, order, true));
         }
 
         return assembler.toPageResult(results, params.page(), params.size(), totalElements);

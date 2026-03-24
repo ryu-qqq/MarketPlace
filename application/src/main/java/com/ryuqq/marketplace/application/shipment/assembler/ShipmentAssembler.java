@@ -47,6 +47,18 @@ public class ShipmentAssembler {
                 toReceiverInfo(item));
     }
 
+    /** Shipment nullable — 아직 배송 생성 전인 주문. */
+    public ShipmentListResult toListResult(
+            Shipment shipment, OrderItemResult item, OrderListResult order, boolean nullable) {
+        ShipmentInfo shipInfo = shipment != null ? toShipmentInfo(shipment) : emptyShipmentInfo();
+        return new ShipmentListResult(
+                shipInfo, toOrderInfo(order), toProductOrderInfo(item), toReceiverInfo(item));
+    }
+
+    private ShipmentInfo emptyShipmentInfo() {
+        return new ShipmentInfo(null, null, "READY", null, null, null, null, null, null, null);
+    }
+
     /**
      * Shipment + ProductOrderDetailData → ShipmentDetailResult 변환.
      *

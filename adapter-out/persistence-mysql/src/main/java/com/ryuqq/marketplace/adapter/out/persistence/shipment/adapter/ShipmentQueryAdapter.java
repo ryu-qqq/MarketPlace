@@ -54,6 +54,16 @@ public class ShipmentQueryAdapter implements ShipmentQueryPort {
     }
 
     @Override
+    public List<String> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria) {
+        return repository.findFulfillmentOrderItemIds(criteria);
+    }
+
+    @Override
+    public long countFulfillment(ShipmentSearchCriteria criteria) {
+        return repository.countFulfillment(criteria);
+    }
+
+    @Override
     public Map<ShipmentStatus, Long> countByStatus() {
         Map<String, Long> rawCounts = repository.countByStatus();
         Map<ShipmentStatus, Long> result = new EnumMap<>(ShipmentStatus.class);
