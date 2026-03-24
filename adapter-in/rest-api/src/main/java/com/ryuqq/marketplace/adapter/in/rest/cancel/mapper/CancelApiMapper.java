@@ -192,7 +192,10 @@ public class CancelApiMapper {
 
     public CancelDetailApiResponse toDetailResponse(
             CancelDetailResult result,
-            ClaimListItemApiResponseV4.PaymentV4 payment) {
+            ClaimListItemApiResponseV4.OrderProductV4 orderProduct,
+            ClaimListItemApiResponseV4.BuyerInfoV4 buyerInfo,
+            ClaimListItemApiResponseV4.PaymentV4 payment,
+            ClaimListItemApiResponseV4.ReceiverInfoV4 receiverInfo) {
         ClaimListItemApiResponseV4.RefundInfoV4 refundInfo = null;
         if (result.refundInfo() != null) {
             refundInfo =
@@ -218,14 +221,17 @@ public class CancelApiMapper {
 
         return new CancelDetailApiResponse(
                 nullToEmpty(result.orderItemId()),
+                orderProduct,
                 cancelInfo,
+                buyerInfo,
+                payment,
+                receiverInfo,
                 nullToEmpty(result.requestedBy()),
                 nullToEmpty(result.processedBy()),
                 formatInstant(result.processedAt()),
                 formatInstant(result.createdAt()),
                 formatInstant(result.updatedAt()),
-                toHistoryResponses(result.histories()),
-                payment);
+                toHistoryResponses(result.histories()));
     }
 
     private List<ClaimHistoryApiResponse> toHistoryResponses(List<ClaimHistoryResult> histories) {

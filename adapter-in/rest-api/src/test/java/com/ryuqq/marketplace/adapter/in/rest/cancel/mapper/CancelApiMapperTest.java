@@ -345,7 +345,7 @@ class CancelApiMapperTest {
                     CancelApiFixtures.detailResult(CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null);
+            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response).isNotNull();
@@ -363,7 +363,7 @@ class CancelApiMapperTest {
                     CancelApiFixtures.detailResult(CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null);
+            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.cancelInfo().refundInfo()).isNotNull();
@@ -380,7 +380,7 @@ class CancelApiMapperTest {
                             CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null);
+            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.cancelInfo().refundInfo()).isNull();
@@ -394,7 +394,7 @@ class CancelApiMapperTest {
                     CancelApiFixtures.detailResult(CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null);
+            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.claimHistories()).hasSize(1);
@@ -412,7 +412,7 @@ class CancelApiMapperTest {
                             CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null);
+            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.claimHistories()).isEmpty();
@@ -426,7 +426,7 @@ class CancelApiMapperTest {
                     CancelApiFixtures.detailResult(CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null);
+            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.cancelInfo().refundInfo().refundedAt()).contains("T");

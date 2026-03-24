@@ -78,10 +78,16 @@ public class CancelQueryController {
     public ResponseEntity<ApiResponse<CancelDetailApiResponse>> getDetail(
             @PathVariable String cancelId) {
         CancelDetailResult result = getCancelDetailUseCase.execute(cancelId);
+        String itemId = result.orderItemId();
         ClaimOrderEnricher.OrderContext ctx =
-                enricher.loadOrderContext(List.of(result.orderItemId()));
-        ClaimListItemApiResponseV4.PaymentV4 payment =
-                enricher.toPaymentV4(result.orderItemId(), ctx);
-        return ResponseEntity.ok(ApiResponse.of(mapper.toDetailResponse(result, payment)));
+                enricher.loadOrderContext(List.of(itemId));
+        return ResponseEntity.ok(
+                ApiResponse.of(
+                        mapper.toDetailResponse(
+                                result,
+                                enricher.toOrderProductV4(itemId, ctx),
+                                enricher.toBuyerInfoV4(itemId, ctx),
+                                enricher.toPaymentV4(itemId, ctx),
+                                enricher.toReceiverInfoV4(itemId, ctx))));
     }
 }

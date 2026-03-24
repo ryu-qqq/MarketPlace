@@ -308,6 +308,7 @@ public final class CancelApiFixtures {
     public static CancelDetailApiResponse detailApiResponse(String cancelId) {
         return new CancelDetailApiResponse(
                 DEFAULT_ORDER_ITEM_ID,
+                null,
                 new CancelListItemApiResponseV4.CancelInfoV4(
                         cancelId,
                         DEFAULT_CANCEL_NUMBER,
@@ -319,6 +320,9 @@ public final class CancelApiFixtures {
                                 15000, 0, "", 15000, "CARD", DEFAULT_FORMATTED_TIME),
                         DEFAULT_FORMATTED_TIME,
                         DEFAULT_FORMATTED_TIME),
+                null,
+                null,
+                null,
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
                 DEFAULT_FORMATTED_TIME,
@@ -331,13 +335,13 @@ public final class CancelApiFixtures {
                                 "수기 메모",
                                 "수기 메모 내용입니다.",
                                 new ActorApiResponse("SELLER", "1", "seller01"),
-                                DEFAULT_FORMATTED_TIME)),
-                null);
+                                DEFAULT_FORMATTED_TIME)));
     }
 
     public static CancelDetailApiResponse detailApiResponseWithoutRefund(String cancelId) {
         return new CancelDetailApiResponse(
                 DEFAULT_ORDER_ITEM_ID,
+                null,
                 new CancelListItemApiResponseV4.CancelInfoV4(
                         cancelId,
                         DEFAULT_CANCEL_NUMBER,
@@ -348,13 +352,15 @@ public final class CancelApiFixtures {
                         null,
                         DEFAULT_FORMATTED_TIME,
                         null),
+                null,
+                null,
+                null,
                 DEFAULT_REQUESTED_BY,
                 "",
                 null,
                 DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME,
-                List.of(),
-                null);
+                List.of());
     }
 
     // ===== BatchResultApiResponse =====
