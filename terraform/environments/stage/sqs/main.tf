@@ -608,6 +608,13 @@ resource "aws_iam_policy" "sqs_access" {
           # QnA Outbox queue
           aws_sqs_queue.qna_outbox.arn,
           aws_sqs_queue.qna_outbox_dlq.arn,
+          # Claim Outbox queues
+          aws_sqs_queue.cancel_outbox.arn,
+          aws_sqs_queue.cancel_outbox_dlq.arn,
+          aws_sqs_queue.refund_outbox.arn,
+          aws_sqs_queue.refund_outbox_dlq.arn,
+          aws_sqs_queue.exchange_outbox.arn,
+          aws_sqs_queue.exchange_outbox_dlq.arn,
           # Intelligence pipeline queues
           aws_sqs_queue.intelligence_orchestration.arn,
           aws_sqs_queue.intelligence_orchestration_dlq.arn,
