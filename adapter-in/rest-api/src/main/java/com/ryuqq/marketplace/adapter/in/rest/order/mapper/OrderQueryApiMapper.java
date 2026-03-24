@@ -97,7 +97,7 @@ public class OrderQueryApiMapper {
                                 ? result.productOrder().orderItemNumber()
                                 : null),
                 toBuyerInfoV4(result.order()),
-                toPaymentDetailV4(result.payment(), result.order()),
+                toPaymentDetailV4(result.payment(), result.order(), result.productOrder()),
                 toReceiverInfoV4(result.receiver()),
                 toPaymentShipmentInfoV4(result.delivery()),
                 toOrderProductV4(result.order(), result.productOrder()),
@@ -385,10 +385,20 @@ public class OrderQueryApiMapper {
 
     private OrderListApiResponseV4.PaymentDetailApiResponse toPaymentDetailV4(
             ProductOrderListResult.PaymentInfo payment, ProductOrderListResult.OrderInfo order) {
+        return toPaymentDetailV4(payment, order, null);
+    }
+
+    private OrderListApiResponseV4.PaymentDetailApiResponse toPaymentDetailV4(
+            ProductOrderListResult.PaymentInfo payment,
+            ProductOrderListResult.OrderInfo order,
+            ProductOrderListResult.ProductOrderInfo productOrder) {
         if (payment == null) {
             return new OrderListApiResponseV4.PaymentDetailApiResponse(
                     "", "", "", "", "", "", "", 0L, "", 0, 0, 0);
         }
+        // 아이템별 결제금액이 있으면 사용, 없으면 Order 단위 결제금액
+        int itemPaymentAmount =
+                productOrder != null ? productOrder.paymentAmount() : payment.paymentAmount();
         return new OrderListApiResponseV4.PaymentDetailApiResponse(
                 nullToEmpty(payment.paymentId()),
                 nullToEmpty(payment.paymentNumber()),
@@ -399,8 +409,8 @@ public class OrderQueryApiMapper {
                 formatYyyyMmDdHhMmSs(payment.canceledAt()),
                 0L,
                 order != null ? nullToEmpty(order.shopCode()) : "",
-                payment.paymentAmount(),
-                payment.paymentAmount(),
+                itemPaymentAmount,
+                itemPaymentAmount,
                 0);
     }
 
