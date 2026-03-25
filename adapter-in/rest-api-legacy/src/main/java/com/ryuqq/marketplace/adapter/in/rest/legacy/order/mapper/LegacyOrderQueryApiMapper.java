@@ -77,7 +77,7 @@ public class LegacyOrderQueryApiMapper {
                         "",
                         "",
                         formatDate(result.orderDate()),
-                        null,
+                        "",
                         result.userId(),
                         "OUR_MALL",
                         result.orderAmount(),
@@ -95,7 +95,7 @@ public class LegacyOrderQueryApiMapper {
                         nullToEmpty(result.deliveryRequest()));
 
         PaymentShipmentInfo paymentShipmentInfo =
-                new PaymentShipmentInfo("DELIVERY_PENDING", "REFER_DETAIL", "", null);
+                new PaymentShipmentInfo("DELIVERY_PENDING", "REFER_DETAIL", "", "");
 
         double commissionRateDouble = result.commissionRate();
         double fee = result.orderAmount() * commissionRateDouble / 100.0;
