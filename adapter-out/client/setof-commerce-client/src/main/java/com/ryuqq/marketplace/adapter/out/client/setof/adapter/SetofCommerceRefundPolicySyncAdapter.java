@@ -58,7 +58,7 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
             log.info("세토프 커머스 환불정책 등록 요청: sellerId={}, policyId={}", sellerId, policyId);
 
             executeWithTokenRefresh(shop, token -> {
-                apiClient.createRefundPolicy(token, sellerId, request);
+                apiClient.createRefundPolicy(token, request);
                 return null;
             });
             return OutboundSellerSyncResult.ofSuccess();
@@ -81,7 +81,7 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
             log.info("세토프 커머스 환불정책 수정 요청: sellerId={}, policyId={}", sellerId, policyId);
 
             executeWithTokenRefresh(shop, token -> {
-                apiClient.updateRefundPolicy(token, sellerId, policyId, request);
+                apiClient.updateRefundPolicy(token, policyId, request);
                 return null;
             });
             return OutboundSellerSyncResult.ofSuccess();

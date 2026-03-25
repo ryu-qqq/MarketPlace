@@ -29,6 +29,14 @@ public abstract class LegacyBaseEntity {
 
     protected LegacyBaseEntity() {}
 
+    protected void initAuditFields(String operator) {
+        LocalDateTime now = LocalDateTime.now();
+        this.insertOperator = operator;
+        this.updateOperator = operator;
+        this.insertDate = now;
+        this.updateDate = now;
+    }
+
     public String getInsertOperator() {
         return insertOperator;
     }

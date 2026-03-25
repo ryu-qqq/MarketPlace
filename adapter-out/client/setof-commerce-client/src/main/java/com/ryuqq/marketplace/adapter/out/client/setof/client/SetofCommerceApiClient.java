@@ -392,7 +392,10 @@ public class SetofCommerceApiClient {
      * 셀러 등록.
      *
      * <p>POST /api/v2/admin/sellers
+     *
+     * @deprecated 세토프 Admin API에 셀러 Command 엔드포인트가 없음. 데드 코드.
      */
+    @Deprecated
     public SetofSyncApiResponse createSeller(String shopSecret, SetofSellerCreateRequest request) {
         log.info("세토프 커머스 셀러 등록 요청");
         return executor.execute(
@@ -411,7 +414,10 @@ public class SetofCommerceApiClient {
      * 셀러 수정.
      *
      * <p>PUT /api/v2/admin/sellers/{sellerId}
+     *
+     * @deprecated 세토프 Admin API에 셀러 Command 엔드포인트가 없음. 데드 코드.
      */
+    @Deprecated
     public void updateSeller(
             String shopSecret, Long sellerId, SetofSellerSyncRequest request) {
         log.info("세토프 커머스 셀러 수정 요청: sellerId={}", sellerId);
@@ -433,7 +439,10 @@ public class SetofCommerceApiClient {
      * 셀러 주소 등록.
      *
      * <p>POST /api/v2/admin/seller-addresses/sellers/{sellerId}
+     *
+     * @deprecated 세토프 Admin API에 셀러 주소 Command 엔드포인트가 없음. 데드 코드.
      */
+    @Deprecated
     public void createSellerAddress(
             String shopSecret, Long sellerId, SetofSellerAddressSyncRequest request) {
         log.info("세토프 커머스 셀러주소 등록 요청: sellerId={}", sellerId);
@@ -453,7 +462,10 @@ public class SetofCommerceApiClient {
      * 셀러 주소 수정.
      *
      * <p>PUT /api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId}
+     *
+     * @deprecated 세토프 Admin API에 셀러 주소 Command 엔드포인트가 없음. 데드 코드.
      */
+    @Deprecated
     public void updateSellerAddress(
             String shopSecret,
             Long sellerId,
@@ -479,7 +491,10 @@ public class SetofCommerceApiClient {
      * 셀러 주소 삭제.
      *
      * <p>DELETE /api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId}
+     *
+     * @deprecated 세토프 Admin API에 셀러 주소 Command 엔드포인트가 없음. 데드 코드.
      */
+    @Deprecated
     public void deleteSellerAddress(String shopSecret, Long sellerId, Long addressId) {
         log.info("세토프 커머스 셀러주소 삭제 요청: sellerId={}, addressId={}", sellerId, addressId);
         executor.execute(
@@ -500,16 +515,16 @@ public class SetofCommerceApiClient {
     /**
      * 환불 정책 등록.
      *
-     * <p>POST /api/v2/admin/sellers/{sellerId}/refund-policies
+     * <p>POST /api/v2/refund-policies
      */
     public void createRefundPolicy(
-            String shopSecret, Long sellerId, SetofRefundPolicySyncRequest request) {
-        log.info("세토프 커머스 환불정책 등록 요청: sellerId={}", sellerId);
+            String shopSecret, SetofRefundPolicySyncRequest request) {
+        log.info("세토프 커머스 환불정책 등록 요청");
         executor.execute(
                 () ->
                         restClient
                                 .post()
-                                .uri("/api/v2/admin/sellers/{sellerId}/refund-policies", sellerId)
+                                .uri("/api/v2/refund-policies")
                                 .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
@@ -520,22 +535,18 @@ public class SetofCommerceApiClient {
     /**
      * 환불 정책 수정.
      *
-     * <p>PUT /api/v2/admin/sellers/{sellerId}/refund-policies/{policyId}
+     * <p>PUT /api/v2/refund-policies/{policyId}
      */
     public void updateRefundPolicy(
             String shopSecret,
-            Long sellerId,
             Long policyId,
             SetofRefundPolicySyncRequest request) {
-        log.info("세토프 커머스 환불정책 수정 요청: sellerId={}, policyId={}", sellerId, policyId);
+        log.info("세토프 커머스 환불정책 수정 요청: policyId={}", policyId);
         executor.execute(
                 () ->
                         restClient
                                 .put()
-                                .uri(
-                                        "/api/v2/admin/sellers/{sellerId}/refund-policies/{policyId}",
-                                        sellerId,
-                                        policyId)
+                                .uri("/api/v2/refund-policies/{policyId}", policyId)
                                 .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
@@ -548,16 +559,16 @@ public class SetofCommerceApiClient {
     /**
      * 배송 정책 등록.
      *
-     * <p>POST /api/v2/admin/sellers/{sellerId}/shipping-policies
+     * <p>POST /api/v2/shipping-policies
      */
     public void createShippingPolicy(
-            String shopSecret, Long sellerId, SetofShippingPolicySyncRequest request) {
-        log.info("세토프 커머스 배송정책 등록 요청: sellerId={}", sellerId);
+            String shopSecret, SetofShippingPolicySyncRequest request) {
+        log.info("세토프 커머스 배송정책 등록 요청");
         executor.execute(
                 () ->
                         restClient
                                 .post()
-                                .uri("/api/v2/admin/sellers/{sellerId}/shipping-policies", sellerId)
+                                .uri("/api/v2/shipping-policies")
                                 .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
@@ -568,22 +579,18 @@ public class SetofCommerceApiClient {
     /**
      * 배송 정책 수정.
      *
-     * <p>PUT /api/v2/admin/sellers/{sellerId}/shipping-policies/{policyId}
+     * <p>PUT /api/v2/shipping-policies/{policyId}
      */
     public void updateShippingPolicy(
             String shopSecret,
-            Long sellerId,
             Long policyId,
             SetofShippingPolicySyncRequest request) {
-        log.info("세토프 커머스 배송정책 수정 요청: sellerId={}, policyId={}", sellerId, policyId);
+        log.info("세토프 커머스 배송정책 수정 요청: policyId={}", policyId);
         executor.execute(
                 () ->
                         restClient
                                 .put()
-                                .uri(
-                                        "/api/v2/admin/sellers/{sellerId}/shipping-policies/{policyId}",
-                                        sellerId,
-                                        policyId)
+                                .uri("/api/v2/shipping-policies/{policyId}", policyId)
                                 .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
