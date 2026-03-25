@@ -56,10 +56,10 @@ class ShipmentQueryApiMapperTest {
             assertThat(result.statuses()).containsExactly("READY", "PREPARING");
             assertThat(result.searchField()).isEqualTo("shipmentNumber");
             assertThat(result.searchWord()).isEqualTo("SN-001");
-            assertThat(result.page()).isZero();
-            assertThat(result.size()).isEqualTo(20);
-            assertThat(result.sortKey()).isEqualTo("createdAt");
-            assertThat(result.sortDirection()).isEqualTo("DESC");
+            assertThat(result.searchParams().page()).isZero();
+            assertThat(result.searchParams().size()).isEqualTo(20);
+            assertThat(result.searchParams().sortKey()).isEqualTo("createdAt");
+            assertThat(result.searchParams().sortDirection()).isEqualTo("DESC");
         }
 
         @Test
@@ -72,8 +72,8 @@ class ShipmentQueryApiMapperTest {
             ShipmentSearchParams result = mapper.toSearchParams(request);
 
             // then
-            assertThat(result.page()).isZero();
-            assertThat(result.size()).isEqualTo(20);
+            assertThat(result.searchParams().page()).isZero();
+            assertThat(result.searchParams().size()).isEqualTo(20);
         }
 
         @Test
