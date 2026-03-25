@@ -38,7 +38,8 @@ public record SchedulerProperties(Jobs jobs) {
             ExchangeOutbox exchangeOutbox,
             QnaOutbox qnaOutbox,
             InboundQnaPolling inboundQnaPolling,
-            InboundQnaRetry inboundQnaRetry) {}
+            InboundQnaRetry inboundQnaRetry,
+            InboundOrderPolling purchaseConfirmedPolling) {}
 
     public record OutboundSyncOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
