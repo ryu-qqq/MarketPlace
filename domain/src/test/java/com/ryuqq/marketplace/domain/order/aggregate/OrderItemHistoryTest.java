@@ -92,6 +92,7 @@ class OrderItemHistoryTest {
                             OrderItemStatus.CONFIRMED,
                             "admin",
                             null,
+                            0,
                             changedAt);
 
             // then

@@ -258,6 +258,8 @@ public class LegacyOrderConversionFactory {
                 receiverInfo,
                 itemStatus,
                 null,
+                0,
+                0,
                 List.of(migrationHistory));
     }
 

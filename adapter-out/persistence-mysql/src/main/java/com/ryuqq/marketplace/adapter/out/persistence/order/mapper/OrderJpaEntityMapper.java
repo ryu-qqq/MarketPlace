@@ -257,6 +257,8 @@ public class OrderJpaEntityMapper {
                 resolveReceiverInfo(entity),
                 OrderItemStatus.valueOf(entity.getOrderItemStatus()),
                 entity.getExternalOrderStatus(),
+                0,
+                0,
                 histories);
     }
 
@@ -288,6 +290,7 @@ public class OrderJpaEntityMapper {
                 OrderItemStatus.valueOf(entity.getToStatus()),
                 entity.getChangedBy(),
                 entity.getReason(),
+                0,
                 entity.getChangedAt());
     }
 }

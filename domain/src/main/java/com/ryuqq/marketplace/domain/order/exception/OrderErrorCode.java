@@ -9,7 +9,8 @@ public enum OrderErrorCode implements ErrorCode {
     INVALID_ORDER_DATA("ORD-003", 400, "주문 데이터가 유효하지 않습니다"),
     ORDER_ALREADY_CANCELLED("ORD-004", 409, "이미 취소된 주문입니다"),
     ORDER_ALREADY_CONFIRMED("ORD-005", 409, "이미 구매 확정된 주문입니다"),
-    EMPTY_ORDER_ITEMS("ORD-006", 400, "주문 상품은 최소 1개 이상이어야 합니다");
+    EMPTY_ORDER_ITEMS("ORD-006", 400, "주문 상품은 최소 1개 이상이어야 합니다"),
+    INVALID_CANCEL_QUANTITY("ORD-007", 400, "유효하지 않은 취소 수량입니다");
 
     private final String code;
     private final int httpStatus;

@@ -140,6 +140,86 @@ class OrderItemStatusTransitionTest {
     }
 
     @Nested
+    @DisplayName("partialCancel() - 부분 취소")
+    class PartialCancelTest {
+
+        @Test
+        @DisplayName("qty=2 중 1건 부분취소 시 상태는 READY를 유지한다")
+        void partialCancel_KeepsReadyStatus() {
+            OrderItem item = OrderFixtures.defaultOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            item.partialCancel(1, "seller", "부분취소", now);
+
+            assertThat(item.status()).isEqualTo(OrderItemStatus.READY);
+            assertThat(item.cancelledQty()).isEqualTo(1);
+            assertThat(item.remainingCancelableQty()).isEqualTo(1);
+            assertThat(item.isFullyCancelled()).isFalse();
+        }
+
+        @Test
+        @DisplayName("qty=2 전량 취소 시 CANCELLED로 전환된다")
+        void partialCancel_AllQty_TransitionsToCancelled() {
+            OrderItem item = OrderFixtures.defaultOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            item.partialCancel(2, "seller", "전량취소", now);
+
+            assertThat(item.status()).isEqualTo(OrderItemStatus.CANCELLED);
+            assertThat(item.cancelledQty()).isEqualTo(2);
+            assertThat(item.isFullyCancelled()).isTrue();
+        }
+
+        @Test
+        @DisplayName("2회에 걸친 부분취소로 전량 소진 시 CANCELLED 전환")
+        void partialCancel_TwoSteps_TransitionsToCancelled() {
+            OrderItem item = OrderFixtures.defaultOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            item.partialCancel(1, "seller", "1차 부분취소", now);
+            assertThat(item.status()).isEqualTo(OrderItemStatus.READY);
+
+            item.partialCancel(1, "seller", "2차 부분취소", now);
+            assertThat(item.status()).isEqualTo(OrderItemStatus.CANCELLED);
+            assertThat(item.cancelledQty()).isEqualTo(2);
+            assertThat(item.histories()).hasSize(2);
+        }
+
+        @Test
+        @DisplayName("취소 가능 수량을 초과하면 예외가 발생한다")
+        void partialCancel_ExceedsRemaining_ThrowsException() {
+            OrderItem item = OrderFixtures.defaultOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            assertThatThrownBy(() -> item.partialCancel(3, "seller", "초과", now))
+                    .isInstanceOf(OrderException.class);
+        }
+
+        @Test
+        @DisplayName("cancelQty=0 이면 예외가 발생한다")
+        void partialCancel_ZeroQty_ThrowsException() {
+            OrderItem item = OrderFixtures.defaultOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            assertThatThrownBy(() -> item.partialCancel(0, "seller", "0개", now))
+                    .isInstanceOf(OrderException.class);
+        }
+
+        @Test
+        @DisplayName("부분취소 이력에 수량이 기록된다")
+        void partialCancel_RecordsQuantityInHistory() {
+            OrderItem item = OrderFixtures.defaultOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            item.partialCancel(1, "seller", "부분취소", now);
+
+            OrderItemHistory history = item.histories().get(0);
+            assertThat(history.quantity()).isEqualTo(1);
+            assertThat(history.reason()).isEqualTo("부분취소");
+        }
+    }
+
+    @Nested
     @DisplayName("requestReturn() - 반품 요청")
     class RequestReturnTest {
 

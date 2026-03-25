@@ -25,6 +25,8 @@ public class OrderItem {
     private final ReceiverInfo receiverInfo;
     private OrderItemStatus status;
     private String externalOrderStatus;
+    private int cancelledQty;
+    private int returnedQty;
 
     private final List<OrderItemHistory> histories = new ArrayList<>();
 
@@ -36,7 +38,9 @@ public class OrderItem {
             ExternalOrderItemPrice price,
             ReceiverInfo receiverInfo,
             OrderItemStatus status,
-            String externalOrderStatus) {
+            String externalOrderStatus,
+            int cancelledQty,
+            int returnedQty) {
         this.id = id;
         this.orderItemNumber = orderItemNumber;
         this.internalProduct = internalProduct;
@@ -45,6 +49,8 @@ public class OrderItem {
         this.receiverInfo = receiverInfo;
         this.status = status;
         this.externalOrderStatus = externalOrderStatus;
+        this.cancelledQty = cancelledQty;
+        this.returnedQty = returnedQty;
     }
 
     public static OrderItem forNew(
@@ -63,7 +69,9 @@ public class OrderItem {
                 price,
                 receiverInfo,
                 OrderItemStatus.READY,
-                externalOrderStatus);
+                externalOrderStatus,
+                0,
+                0);
     }
 
     public static OrderItem reconstitute(
@@ -75,6 +83,8 @@ public class OrderItem {
             ReceiverInfo receiverInfo,
             OrderItemStatus status,
             String externalOrderStatus,
+            int cancelledQty,
+            int returnedQty,
             List<OrderItemHistory> histories) {
         OrderItem item =
                 new OrderItem(
@@ -85,7 +95,9 @@ public class OrderItem {
                         price,
                         receiverInfo,
                         status,
-                        externalOrderStatus);
+                        externalOrderStatus,
+                        cancelledQty,
+                        returnedQty);
         if (histories != null) {
             item.histories.addAll(histories);
         }
@@ -101,13 +113,66 @@ public class OrderItem {
                         this.id, from, OrderItemStatus.CONFIRMED, changedBy, null, now));
     }
 
+    /**
+     * 전체 취소. 잔여 수량 전부를 취소 처리한다.
+     * 기존 호출부 호환용. 내부적으로 partialCancel(remainingCancelableQty)을 호출한다.
+     */
     public void cancel(String changedBy, String reason, Instant now) {
+        int remaining = remainingCancelableQty();
+        if (remaining <= 0) {
+            validateTransition(OrderItemStatus.CANCELLED);
+        }
+        partialCancel(remaining > 0 ? remaining : quantity(), changedBy, reason, now);
+    }
+
+    /**
+     * 부분 취소. cancelQty만큼 취소하고, 전체 수량 소진 시 CANCELLED 상태로 전환한다.
+     *
+     * @param cancelQty 이번에 취소할 수량
+     */
+    public void partialCancel(int cancelQty, String changedBy, String reason, Instant now) {
+        if (cancelQty <= 0) {
+            throw new OrderException(
+                    OrderErrorCode.INVALID_CANCEL_QUANTITY,
+                    String.format("취소 수량은 1 이상이어야 합니다: %d", cancelQty));
+        }
+        if (cancelQty > remainingCancelableQty()) {
+            throw new OrderException(
+                    OrderErrorCode.INVALID_CANCEL_QUANTITY,
+                    String.format(
+                            "주문상품 %s: 취소 가능 수량(%d)을 초과합니다. 요청=%d",
+                            id.value(), remainingCancelableQty(), cancelQty));
+        }
+
         OrderItemStatus from = this.status;
-        validateTransition(OrderItemStatus.CANCELLED);
-        this.status = OrderItemStatus.CANCELLED;
+        this.cancelledQty += cancelQty;
+
+        if (isFullyCancelled()) {
+            if (from != OrderItemStatus.CANCELLED) {
+                validateTransition(OrderItemStatus.CANCELLED);
+                this.status = OrderItemStatus.CANCELLED;
+            }
+        }
+
         this.histories.add(
                 OrderItemHistory.of(
-                        this.id, from, OrderItemStatus.CANCELLED, changedBy, reason, now));
+                        this.id,
+                        from,
+                        this.status,
+                        changedBy,
+                        reason,
+                        cancelQty,
+                        now));
+    }
+
+    /** 취소 가능한 잔여 수량. */
+    public int remainingCancelableQty() {
+        return quantity() - cancelledQty;
+    }
+
+    /** 전체 수량이 취소되었는지 여부. */
+    public boolean isFullyCancelled() {
+        return cancelledQty >= quantity();
     }
 
     public void requestReturn(String changedBy, String reason, Instant now) {
@@ -190,6 +255,14 @@ public class OrderItem {
 
     public void updateExternalOrderStatus(String externalOrderStatus) {
         this.externalOrderStatus = externalOrderStatus;
+    }
+
+    public int cancelledQty() {
+        return cancelledQty;
+    }
+
+    public int returnedQty() {
+        return returnedQty;
     }
 
     public List<OrderItemHistory> histories() {

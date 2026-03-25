@@ -13,6 +13,7 @@ public class OrderItemHistory {
     private final OrderItemStatus toStatus;
     private final String changedBy;
     private final String reason;
+    private final int quantity;
     private final Instant changedAt;
 
     private OrderItemHistory(
@@ -22,6 +23,7 @@ public class OrderItemHistory {
             OrderItemStatus toStatus,
             String changedBy,
             String reason,
+            int quantity,
             Instant changedAt) {
         this.id = id;
         this.orderItemId = orderItemId;
@@ -29,6 +31,7 @@ public class OrderItemHistory {
         this.toStatus = toStatus;
         this.changedBy = changedBy;
         this.reason = reason;
+        this.quantity = quantity;
         this.changedAt = changedAt;
     }
 
@@ -40,7 +43,19 @@ public class OrderItemHistory {
             String reason,
             Instant changedAt) {
         return new OrderItemHistory(
-                null, orderItemId, fromStatus, toStatus, changedBy, reason, changedAt);
+                null, orderItemId, fromStatus, toStatus, changedBy, reason, 0, changedAt);
+    }
+
+    public static OrderItemHistory of(
+            OrderItemId orderItemId,
+            OrderItemStatus fromStatus,
+            OrderItemStatus toStatus,
+            String changedBy,
+            String reason,
+            int quantity,
+            Instant changedAt) {
+        return new OrderItemHistory(
+                null, orderItemId, fromStatus, toStatus, changedBy, reason, quantity, changedAt);
     }
 
     public static OrderItemHistory reconstitute(
@@ -50,9 +65,10 @@ public class OrderItemHistory {
             OrderItemStatus toStatus,
             String changedBy,
             String reason,
+            int quantity,
             Instant changedAt) {
         return new OrderItemHistory(
-                id, orderItemId, fromStatus, toStatus, changedBy, reason, changedAt);
+                id, orderItemId, fromStatus, toStatus, changedBy, reason, quantity, changedAt);
     }
 
     public Long id() {
@@ -81,6 +97,10 @@ public class OrderItemHistory {
 
     public String reason() {
         return reason;
+    }
+
+    public int quantity() {
+        return quantity;
     }
 
     public Instant changedAt() {

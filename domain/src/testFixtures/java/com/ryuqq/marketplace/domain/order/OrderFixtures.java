@@ -162,6 +162,8 @@ public final class OrderFixtures {
                 defaultReceiverInfo(),
                 OrderItemStatus.READY,
                 null,
+                0,
+                0,
                 List.of());
     }
 
@@ -175,10 +177,16 @@ public final class OrderFixtures {
                 defaultReceiverInfo(),
                 OrderItemStatus.CONFIRMED,
                 null,
+                0,
+                0,
                 List.of());
     }
 
     public static OrderItem reconstitutedOrderItem(long id, OrderItemStatus status) {
+        int cancelledQty =
+                status == OrderItemStatus.CANCELLED
+                        ? defaultExternalOrderItemPrice().quantity()
+                        : 0;
         return OrderItem.reconstitute(
                 OrderItemId.of("01940001-0000-7000-8000-000000000" + String.format("%03d", id)),
                 OrderItemNumber.of("ORD-20240101-0001-" + String.format("%03d", id)),
@@ -188,6 +196,8 @@ public final class OrderFixtures {
                 defaultReceiverInfo(),
                 status,
                 null,
+                cancelledQty,
+                0,
                 List.of());
     }
 
