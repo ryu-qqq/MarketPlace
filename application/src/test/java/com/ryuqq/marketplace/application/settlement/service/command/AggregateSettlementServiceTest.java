@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -127,6 +128,98 @@ class AggregateSettlementServiceTest {
             then(assembler).should().toSettlementAmounts(entries);
             then(commandFactory).should().createAggregateBundle(command, amounts, entries);
             then(persistenceFacade).should().persistWithSettledEntries(settlement, entries);
+        }
+    }
+
+    @Nested
+    @DisplayName("executeAll() - 전체 셀러 일괄 집계")
+    class ExecuteAllTest {
+
+        @Test
+        @DisplayName("CONFIRMED 셀러가 없으면 execute를 호출하지 않는다")
+        void executeAll_NoConfirmedSellers_DoesNotCallExecute() {
+            // given
+            given(entryReadManager.findDistinctSellerIdsByStatus(EntryStatus.CONFIRMED))
+                    .willReturn(List.of());
+
+            // when
+            sut.executeAll();
+
+            // then
+            then(settlementReadManager).shouldHaveNoInteractions();
+            then(commandFactory).shouldHaveNoInteractions();
+            then(persistenceFacade).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("셀러 2명이면 각각 execute가 호출된다")
+        void executeAll_TwoSellers_ExecutesForEach() {
+            // given
+            long sellerId1 = 1L;
+            long sellerId2 = 2L;
+
+            given(entryReadManager.findDistinctSellerIdsByStatus(EntryStatus.CONFIRMED))
+                    .willReturn(List.of(sellerId1, sellerId2));
+
+            // 각 셀러에 대해 findBySellerIdAndPeriod → empty, findBySellerIdAndStatus → empty 로 조기 종료
+            given(settlementReadManager.findBySellerIdAndPeriod(
+                            ArgumentMatchers.anyLong(),
+                            ArgumentMatchers.any(),
+                            ArgumentMatchers.any()))
+                    .willReturn(Optional.empty());
+            given(entryReadManager.findBySellerIdAndStatus(
+                            ArgumentMatchers.anyLong(), ArgumentMatchers.eq(EntryStatus.CONFIRMED)))
+                    .willReturn(List.of());
+
+            // when
+            sut.executeAll();
+
+            // then - 셀러 2명에 대해 각각 조회 호출 확인
+            then(settlementReadManager)
+                    .should(Mockito.times(2))
+                    .findBySellerIdAndPeriod(
+                            ArgumentMatchers.anyLong(),
+                            ArgumentMatchers.any(),
+                            ArgumentMatchers.any());
+        }
+
+        @Test
+        @DisplayName("한 셀러 실패해도 다른 셀러는 계속 진행한다")
+        void executeAll_OneSellerFails_OthersContinue() {
+            // given
+            long failSellerId = 1L;
+            long successSellerId = 2L;
+
+            given(entryReadManager.findDistinctSellerIdsByStatus(EntryStatus.CONFIRMED))
+                    .willReturn(List.of(failSellerId, successSellerId));
+
+            // 첫 번째 셀러: findBySellerIdAndPeriod에서 예외
+            given(settlementReadManager.findBySellerIdAndPeriod(
+                            ArgumentMatchers.eq(failSellerId),
+                            ArgumentMatchers.any(),
+                            ArgumentMatchers.any()))
+                    .willThrow(new RuntimeException("DB 오류"));
+
+            // 두 번째 셀러: 정상 (조기 종료 — entry 없음)
+            given(settlementReadManager.findBySellerIdAndPeriod(
+                            ArgumentMatchers.eq(successSellerId),
+                            ArgumentMatchers.any(),
+                            ArgumentMatchers.any()))
+                    .willReturn(Optional.empty());
+            given(entryReadManager.findBySellerIdAndStatus(
+                            successSellerId, EntryStatus.CONFIRMED))
+                    .willReturn(List.of());
+
+            // when
+            sut.executeAll();
+
+            // then - 두 번째 셀러도 정상적으로 조회 호출됨
+            then(settlementReadManager)
+                    .should()
+                    .findBySellerIdAndPeriod(
+                            ArgumentMatchers.eq(successSellerId),
+                            ArgumentMatchers.any(),
+                            ArgumentMatchers.any());
         }
     }
 }
