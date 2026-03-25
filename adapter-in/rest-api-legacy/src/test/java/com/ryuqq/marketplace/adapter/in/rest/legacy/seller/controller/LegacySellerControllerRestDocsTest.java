@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.seller.controller;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -19,8 +20,8 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAuthCo
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.LegacySellerApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.dto.response.LegacySellerResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.mapper.LegacySellerQueryApiMapper;
-import com.ryuqq.marketplace.application.legacy.seller.port.in.LegacyGetCurrentSellerUseCase;
-import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.legacy.auth.dto.result.LegacySellerAuthResult;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacySellerAuthCompositeReadManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -47,7 +48,7 @@ class LegacySellerControllerRestDocsTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
-    @MockitoBean private LegacyGetCurrentSellerUseCase legacyGetCurrentSellerUseCase;
+    @MockitoBean private LegacySellerAuthCompositeReadManager sellerAuthReadManager;
     @MockitoBean private LegacySellerQueryApiMapper legacySellerQueryApiMapper;
     @MockitoBean private MarketAccessChecker accessChecker;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
@@ -71,13 +72,10 @@ class LegacySellerControllerRestDocsTest {
                             "seller@test.com",
                             "SELLER"));
 
-            SellerAdminCompositeResult result =
-                    LegacySellerApiFixtures.sellerAdminCompositeResult();
+            LegacySellerAuthResult result = LegacySellerApiFixtures.legacySellerAuthResult();
             LegacySellerResponse response = LegacySellerApiFixtures.sellerResponse();
 
-            given(
-                            legacyGetCurrentSellerUseCase.execute(
-                                    eq(LegacySellerApiFixtures.DEFAULT_SELLER_ID)))
+            given(sellerAuthReadManager.getByEmail(eq("seller@test.com")))
                     .willReturn(result);
             given(legacySellerQueryApiMapper.toSellerResponse(result)).willReturn(response);
 
@@ -88,10 +86,10 @@ class LegacySellerControllerRestDocsTest {
                             jsonPath("$.data.sellerId")
                                     .value(LegacySellerApiFixtures.DEFAULT_SELLER_ID))
                     .andExpect(
-                            jsonPath("$.data.sellerName")
-                                    .value(LegacySellerApiFixtures.DEFAULT_SELLER_NAME))
+                            jsonPath("$.data.email")
+                                    .value(LegacySellerApiFixtures.DEFAULT_EMAIL))
                     .andExpect(
-                            jsonPath("$.data.bizNo").value(LegacySellerApiFixtures.DEFAULT_BIZ_NO))
+                            jsonPath("$.data.roleType").value(LegacySellerApiFixtures.DEFAULT_ROLE_TYPE))
                     .andExpect(jsonPath("$.response.status").value(200))
                     .andExpect(jsonPath("$.response.message").value("success"))
                     .andDo(
@@ -103,12 +101,18 @@ class LegacySellerControllerRestDocsTest {
                                             fieldWithPath("data.sellerId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("셀러 ID"),
-                                            fieldWithPath("data.sellerName")
+                                            fieldWithPath("data.email")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("셀러명"),
-                                            fieldWithPath("data.bizNo")
+                                                    .description("이메일"),
+                                            fieldWithPath("data.passwordHash")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("사업자등록번호"),
+                                                    .description("비밀번호 해시"),
+                                            fieldWithPath("data.roleType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("역할 유형"),
+                                            fieldWithPath("data.approvalStatus")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("승인 상태"),
                                             fieldWithPath("response.status")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("응답 상태 코드"),
@@ -124,20 +128,21 @@ class LegacySellerControllerRestDocsTest {
             LegacyAuthContextHolder.setContext(
                     new LegacyAuthContext(99L, "other@test.com", "SELLER"));
 
-            SellerAdminCompositeResult result =
-                    LegacySellerApiFixtures.sellerAdminCompositeResult(
-                            99L, "다른 셀러", "999-99-99999");
+            LegacySellerAuthResult result =
+                    LegacySellerApiFixtures.legacySellerAuthResult(
+                            99L, "other@test.com", "hashed", "ADMIN", "APPROVED");
             LegacySellerResponse response =
-                    LegacySellerApiFixtures.sellerResponse(99L, "다른 셀러", "999-99-99999");
+                    LegacySellerApiFixtures.sellerResponse(
+                            99L, "other@test.com", "hashed", "ADMIN", "APPROVED");
 
-            given(legacyGetCurrentSellerUseCase.execute(eq(99L))).willReturn(result);
+            given(sellerAuthReadManager.getByEmail(eq("other@test.com"))).willReturn(result);
             given(legacySellerQueryApiMapper.toSellerResponse(result)).willReturn(response);
 
             // when & then
             mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.sellerId").value(99L))
-                    .andExpect(jsonPath("$.data.sellerName").value("다른 셀러"));
+                    .andExpect(jsonPath("$.data.email").value("other@test.com"));
         }
     }
 }

@@ -21,6 +21,7 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.Le
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyClothesDetailResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyDeliveryNoticeResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyPriceResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyCrawlProductInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyProductGroupInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyProductImageResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyProductNoticeResponse;
@@ -512,7 +513,11 @@ public final class LegacyProductGroupApiFixtures {
                         LocalDateTime.of(2025, 1, 1, 10, 0, 0),
                         LocalDateTime.of(2025, 1, 2, 10, 0, 0),
                         "admin",
-                        "admin");
+                        "admin",
+                        LegacyCrawlProductInfoResponse.defaultValue(),
+                        0L,
+                        List.of(),
+                        "");
 
         LegacyOptionDto optionDto = new LegacyOptionDto(10L, 100L, "색상", "블랙");
         Set<LegacyOptionDto> options = new LinkedHashSet<>();

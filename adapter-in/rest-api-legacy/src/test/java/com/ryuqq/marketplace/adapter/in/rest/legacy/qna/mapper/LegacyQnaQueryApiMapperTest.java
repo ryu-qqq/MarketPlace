@@ -102,7 +102,7 @@ class LegacyQnaQueryApiMapperTest {
             int size = 20;
 
             // when
-            LegacyQnaSearchParams params = mapper.toSearchParams(request, size);
+            LegacyQnaSearchParams params = mapper.toSearchParams(request, size, null);
 
             // then
             assertThat(params.qnaStatus()).isEqualTo("PENDING");
@@ -122,7 +122,7 @@ class LegacyQnaQueryApiMapperTest {
             LegacyQnaSearchRequest request = LegacyQnAApiFixtures.searchRequest();
 
             // when
-            LegacyQnaSearchParams params = mapper.toSearchParams(request, 50);
+            LegacyQnaSearchParams params = mapper.toSearchParams(request, 50, null);
 
             // then
             assertThat(params.size()).isEqualTo(50);
@@ -137,7 +137,7 @@ class LegacyQnaQueryApiMapperTest {
                             null, "PRODUCT", null, null, null, 1L, null, null, null);
 
             // when
-            LegacyQnaSearchParams params = mapper.toSearchParams(request, 20);
+            LegacyQnaSearchParams params = mapper.toSearchParams(request, 20, null);
 
             // then
             assertThat(params.qnaStatus()).isNull();

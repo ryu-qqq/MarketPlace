@@ -78,6 +78,7 @@ class LegacyQnAControllerRestDocsTest {
     @MockitoBean private LegacyQnaCommandApiMapper commandApiMapper;
     @MockitoBean private MarketAccessChecker accessChecker;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
+    @MockitoBean private com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker legacyAccessChecker;
 
     @Nested
     @DisplayName("QnA 단건 상세 조회 API")
@@ -297,7 +298,7 @@ class LegacyQnAControllerRestDocsTest {
             List<LegacyFetchQnaResponse> responses =
                     List.of(LegacyQnAApiFixtures.fetchQnaResponse());
 
-            given(queryApiMapper.toSearchParams(any(), anyInt()))
+            given(queryApiMapper.toSearchParams(any(), anyInt(), any()))
                     .willReturn(
                             new LegacyQnaSearchParams(
                                     null, "PRODUCT", null, null, null, 1L, null, null, null, 20));
@@ -513,13 +514,13 @@ class LegacyQnAControllerRestDocsTest {
         @DisplayName("빈 QnA 목록 조회 성공")
         void getQnas_EmptyResult_Success() throws Exception {
             // given
-            QnaListResult emptyResult = new QnaListResult(List.of(), 0L, 0, 20);
+            LegacyQnaPageResult emptyResult = new LegacyQnaPageResult(List.of(), 0L, null);
 
-            given(queryApiMapper.toSearchCondition(any(), anyInt()))
+            given(queryApiMapper.toSearchParams(any(), anyInt(), any()))
                     .willReturn(
-                            new QnaSearchCondition(
-                                    null, null, QnaType.PRODUCT, null, null, null, null, 20));
-            given(qnaListUseCase.execute(any(QnaSearchCondition.class))).willReturn(emptyResult);
+                            new LegacyQnaSearchParams(
+                                    null, "PRODUCT", null, null, null, 1L, null, null, null, 20));
+            given(legacyQnaListUseCase.execute(any(LegacyQnaSearchParams.class))).willReturn(emptyResult);
             given(queryApiMapper.toFetchResponses(any())).willReturn(List.of());
 
             // when & then

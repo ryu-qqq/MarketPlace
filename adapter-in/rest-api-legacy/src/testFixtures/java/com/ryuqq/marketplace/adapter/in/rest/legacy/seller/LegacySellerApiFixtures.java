@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.seller;
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.dto.response.LegacySellerResponse;
+import com.ryuqq.marketplace.application.legacy.auth.dto.result.LegacySellerAuthResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -22,8 +23,24 @@ public final class LegacySellerApiFixtures {
     public static final long DEFAULT_SELLER_ID = 1L;
     public static final String DEFAULT_SELLER_NAME = "테스트 셀러";
     public static final String DEFAULT_BIZ_NO = "123-45-67890";
+    public static final String DEFAULT_EMAIL = "test@example.com";
+    public static final String DEFAULT_PASSWORD_HASH = "hashed_password";
+    public static final String DEFAULT_ROLE_TYPE = "ADMIN";
+    public static final String DEFAULT_APPROVAL_STATUS = "APPROVED";
 
     // ===== Application Result Fixtures =====
+
+    public static LegacySellerAuthResult legacySellerAuthResult() {
+        return new LegacySellerAuthResult(
+                DEFAULT_SELLER_ID, DEFAULT_EMAIL, DEFAULT_PASSWORD_HASH,
+                DEFAULT_ROLE_TYPE, DEFAULT_APPROVAL_STATUS);
+    }
+
+    public static LegacySellerAuthResult legacySellerAuthResult(
+            long sellerId, String email, String passwordHash,
+            String roleType, String approvalStatus) {
+        return new LegacySellerAuthResult(sellerId, email, passwordHash, roleType, approvalStatus);
+    }
 
     public static SellerAdminCompositeResult sellerAdminCompositeResult() {
         return sellerAdminCompositeResult(DEFAULT_SELLER_ID, DEFAULT_SELLER_NAME, DEFAULT_BIZ_NO);
@@ -78,11 +95,20 @@ public final class LegacySellerApiFixtures {
     // ===== API Response Fixtures =====
 
     public static LegacySellerResponse sellerResponse() {
-        return new LegacySellerResponse(DEFAULT_SELLER_ID, DEFAULT_SELLER_NAME, DEFAULT_BIZ_NO);
+        return new LegacySellerResponse(
+                DEFAULT_SELLER_ID, DEFAULT_EMAIL, DEFAULT_PASSWORD_HASH,
+                DEFAULT_ROLE_TYPE, DEFAULT_APPROVAL_STATUS);
     }
 
     public static LegacySellerResponse sellerResponse(
             long sellerId, String sellerName, String bizNo) {
-        return new LegacySellerResponse(sellerId, sellerName, bizNo);
+        return new LegacySellerResponse(sellerId, DEFAULT_EMAIL, DEFAULT_PASSWORD_HASH,
+                DEFAULT_ROLE_TYPE, DEFAULT_APPROVAL_STATUS);
+    }
+
+    public static LegacySellerResponse sellerResponse(
+            long sellerId, String email, String passwordHash,
+            String roleType, String approvalStatus) {
+        return new LegacySellerResponse(sellerId, email, passwordHash, roleType, approvalStatus);
     }
 }

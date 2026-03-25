@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.LegacySellerApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.dto.response.LegacySellerResponse;
-import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.legacy.auth.dto.result.LegacySellerAuthResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,29 +27,28 @@ class LegacySellerQueryApiMapperTest {
     class ToSellerResponseTest {
 
         @Test
-        @DisplayName("SellerAdminCompositeResult를 LegacySellerResponse로 변환한다")
+        @DisplayName("LegacySellerAuthResult를 LegacySellerResponse로 변환한다")
         void toSellerResponse_ConvertsResult_ReturnsResponse() {
             // given
-            SellerAdminCompositeResult result =
-                    LegacySellerApiFixtures.sellerAdminCompositeResult();
+            LegacySellerAuthResult result = LegacySellerApiFixtures.legacySellerAuthResult();
 
             // when
             LegacySellerResponse response = mapper.toSellerResponse(result);
 
             // then
             assertThat(response.sellerId()).isEqualTo(LegacySellerApiFixtures.DEFAULT_SELLER_ID);
-            assertThat(response.sellerName())
-                    .isEqualTo(LegacySellerApiFixtures.DEFAULT_SELLER_NAME);
-            assertThat(response.bizNo()).isEqualTo(LegacySellerApiFixtures.DEFAULT_BIZ_NO);
+            assertThat(response.email())
+                    .isEqualTo(LegacySellerApiFixtures.DEFAULT_EMAIL);
+            assertThat(response.approvalStatus()).isEqualTo(LegacySellerApiFixtures.DEFAULT_APPROVAL_STATUS);
         }
 
         @Test
         @DisplayName("sellerId가 Response에 올바르게 매핑된다")
         void toSellerResponse_MapsSellerIdCorrectly() {
             // given
-            SellerAdminCompositeResult result =
-                    LegacySellerApiFixtures.sellerAdminCompositeResult(
-                            99L, "다른 셀러", "999-99-99999");
+            LegacySellerAuthResult result =
+                    LegacySellerApiFixtures.legacySellerAuthResult(
+                            99L, "other@test.com", "hashed", "ADMIN", "APPROVED");
 
             // when
             LegacySellerResponse response = mapper.toSellerResponse(result);
@@ -59,31 +58,33 @@ class LegacySellerQueryApiMapperTest {
         }
 
         @Test
-        @DisplayName("sellerName이 Response에 올바르게 매핑된다")
-        void toSellerResponse_MapsSellerNameCorrectly() {
+        @DisplayName("email이 Response에 올바르게 매핑된다")
+        void toSellerResponse_MapsEmailCorrectly() {
             // given
-            SellerAdminCompositeResult result =
-                    LegacySellerApiFixtures.sellerAdminCompositeResult(1L, "특별 셀러", "000-00-00000");
+            LegacySellerAuthResult result =
+                    LegacySellerApiFixtures.legacySellerAuthResult(
+                            1L, "special@test.com", "hashed", "ADMIN", "APPROVED");
 
             // when
             LegacySellerResponse response = mapper.toSellerResponse(result);
 
             // then
-            assertThat(response.sellerName()).isEqualTo("특별 셀러");
+            assertThat(response.email()).isEqualTo("special@test.com");
         }
 
         @Test
-        @DisplayName("bizNo가 Response에 올바르게 매핑된다")
-        void toSellerResponse_MapsBizNoCorrectly() {
+        @DisplayName("roleType이 Response에 올바르게 매핑된다")
+        void toSellerResponse_MapsRoleTypeCorrectly() {
             // given
-            SellerAdminCompositeResult result =
-                    LegacySellerApiFixtures.sellerAdminCompositeResult(1L, "셀러", "321-54-98765");
+            LegacySellerAuthResult result =
+                    LegacySellerApiFixtures.legacySellerAuthResult(
+                            1L, "test@test.com", "hashed", "SELLER", "APPROVED");
 
             // when
             LegacySellerResponse response = mapper.toSellerResponse(result);
 
             // then
-            assertThat(response.bizNo()).isEqualTo("321-54-98765");
+            assertThat(response.roleType()).isEqualTo("SELLER");
         }
     }
 }

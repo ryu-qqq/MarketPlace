@@ -85,7 +85,7 @@ public final class OrderApiFixtures {
     // ===== SearchOrdersApiRequest =====
 
     public static SearchOrdersApiRequest searchRequest() {
-        return new SearchOrdersApiRequest(null, null, null, null, null, null, null, null, 0, 20);
+        return new SearchOrdersApiRequest(null, null, null, null, null, null, null, null, null, 0, 20);
     }
 
     public static SearchOrdersApiRequest searchRequest(
@@ -95,6 +95,7 @@ public final class OrderApiFixtures {
                 null,
                 null,
                 List.of(status),
+                null,
                 searchField,
                 searchWord,
                 "CREATED_AT",
