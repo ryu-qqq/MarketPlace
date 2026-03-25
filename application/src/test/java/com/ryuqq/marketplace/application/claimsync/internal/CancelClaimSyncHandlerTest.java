@@ -13,6 +13,8 @@ import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPay
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
+import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.cancel.CancelFixtures;
@@ -47,6 +49,8 @@ class CancelClaimSyncHandlerTest {
     @Mock private OrderItemCommandManager orderItemCommandManager;
     @Mock private ShipmentReadManager shipmentReadManager;
     @Mock private ShipmentCommandManager shipmentCommandManager;
+    @Mock private ClaimHistoryFactory historyFactory;
+    @Mock private ClaimHistoryCommandManager historyCommandManager;
     @Mock private TimeProvider timeProvider;
 
     @Nested

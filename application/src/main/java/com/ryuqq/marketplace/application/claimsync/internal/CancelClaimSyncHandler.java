@@ -2,6 +2,8 @@ package com.ryuqq.marketplace.application.claimsync.internal;
 
 import com.ryuqq.marketplace.application.cancel.manager.CancelCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelReadManager;
+import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
+import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
@@ -18,6 +20,7 @@ import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.time.Instant;
@@ -42,6 +45,8 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     private final OrderItemCommandManager orderItemCommandManager;
     private final ShipmentReadManager shipmentReadManager;
     private final ShipmentCommandManager shipmentCommandManager;
+    private final ClaimHistoryFactory historyFactory;
+    private final ClaimHistoryCommandManager historyCommandManager;
     private final TimeProvider timeProvider;
 
     public CancelClaimSyncHandler(
@@ -51,6 +56,8 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             OrderItemCommandManager orderItemCommandManager,
             ShipmentReadManager shipmentReadManager,
             ShipmentCommandManager shipmentCommandManager,
+            ClaimHistoryFactory historyFactory,
+            ClaimHistoryCommandManager historyCommandManager,
             TimeProvider timeProvider) {
         this.cancelReadManager = cancelReadManager;
         this.cancelCommandManager = cancelCommandManager;
@@ -58,6 +65,8 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         this.orderItemCommandManager = orderItemCommandManager;
         this.shipmentReadManager = shipmentReadManager;
         this.shipmentCommandManager = shipmentCommandManager;
+        this.historyFactory = historyFactory;
+        this.historyCommandManager = historyCommandManager;
         this.timeProvider = timeProvider;
     }
 
@@ -212,15 +221,18 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         }
 
         cancelCommandManager.persist(cancel);
+        recordHistory(cancel.idValue(), null, "REQUESTED", cancelQty);
         return 0L;
     }
 
     private long approveCancel(Cancel cancel) {
         Instant now = timeProvider.now();
+        String fromStatus = cancel.status().name();
         cancel.approve(SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
         partialCancelOrderItem(
                 cancel.orderItemId(), cancel.cancelQty(), "취소 승인 동기화", now);
+        recordHistory(cancel.idValue(), fromStatus, "APPROVED", cancel.cancelQty());
         return 0L;
     }
 
@@ -237,9 +249,11 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
 
         if (latestCancel.isPresent()) {
             Cancel cancel = latestCancel.get();
+            String fromStatus = cancel.status().name();
             cancel.complete(refundInfo, SYNC_ACTOR, now);
             cancelCommandManager.persist(cancel);
             partialCancelOrderItem(orderItemId, cancel.cancelQty(), "취소 완료 동기화", now);
+            recordHistory(cancel.idValue(), fromStatus, "COMPLETED", cancel.cancelQty());
             return 0L;
         }
 
@@ -276,14 +290,25 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         cancel.complete(refundInfo, SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
         partialCancelOrderItem(orderItemId, cancelQty, "취소 완료 동기화", now);
+        recordHistory(cancel.idValue(), null, "COMPLETED", cancelQty);
         return 0L;
     }
 
     private long withdrawCancel(Cancel cancel) {
         Instant now = timeProvider.now();
+        String fromStatus = cancel.status().name();
         cancel.withdraw(now);
         cancelCommandManager.persist(cancel);
+        recordHistory(cancel.idValue(), fromStatus, "WITHDRAWN", cancel.cancelQty());
         return 0L;
+    }
+
+    /** 클레임 이력을 생성하고 저장한다. 수량 정보를 message에 포함. */
+    private void recordHistory(String cancelId, String fromStatus, String toStatus, int qty) {
+        String from = fromStatus != null ? fromStatus : "NEW";
+        historyCommandManager.persist(
+                historyFactory.createStatusChangeBySystemWithQty(
+                        ClaimType.CANCEL, cancelId, from, toStatus, qty));
     }
 
     /**

@@ -52,6 +52,22 @@ public class ClaimHistory {
                 id, claimType, claimId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
     }
 
+    /** 상태 변경 이력 생성 (수량 정보 포함). */
+    public static ClaimHistory forStatusChangeWithQty(
+            ClaimHistoryId id,
+            ClaimType claimType,
+            String claimId,
+            String fromStatus,
+            String toStatus,
+            int quantity,
+            Actor actor,
+            Instant now) {
+        String title = resolveStatusChangeTitle(toStatus);
+        String message = fromStatus + " → " + toStatus + " (" + quantity + "건)";
+        return new ClaimHistory(
+                id, claimType, claimId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
+    }
+
     /** 수기 메모 이력 생성. */
     public static ClaimHistory forManual(
             ClaimHistoryId id,

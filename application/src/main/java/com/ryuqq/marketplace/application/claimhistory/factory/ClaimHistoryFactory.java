@@ -48,6 +48,24 @@ public class ClaimHistoryFactory {
                 timeProvider.now());
     }
 
+    /** 시스템에 의한 상태 변경 이력 생성 (수량 정보 포함). */
+    public ClaimHistory createStatusChangeBySystemWithQty(
+            ClaimType claimType,
+            String claimId,
+            String fromStatus,
+            String toStatus,
+            int quantity) {
+        return ClaimHistory.forStatusChangeWithQty(
+                ClaimHistoryId.generate(),
+                claimType,
+                claimId,
+                fromStatus,
+                toStatus,
+                quantity,
+                Actor.system(),
+                timeProvider.now());
+    }
+
     /** 수기 메모 이력 생성. */
     public ClaimHistory createManualMemo(
             ClaimType claimType, String claimId, String message, String actorId, String actorName) {
