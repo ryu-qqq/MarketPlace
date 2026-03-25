@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrder
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +59,7 @@ public class NaverCommerceOrderMapper {
                 order.ordererName(),
                 null,
                 order.ordererTel(),
-                order.paymentMeans(),
+                normalizePaymentMethod(order.paymentMeans()),
                 totalPayment,
                 parseInstant(order.paymentDate()),
                 items);
@@ -90,6 +91,25 @@ public class NaverCommerceOrderMapper {
                 addr != null ? addr.detailedAddress() : null,
                 po.shippingMemo(),
                 po.productOrderStatus());
+    }
+
+    private static final Map<String, String> PAYMENT_METHOD_MAP =
+            Map.ofEntries(
+                    Map.entry("신용카드", "CARD"),
+                    Map.entry("신용카드 간편결제", "CARD_EASY"),
+                    Map.entry("계좌이체", "BANK_TRANSFER"),
+                    Map.entry("계좌 간편결제", "BANK_EASY"),
+                    Map.entry("무통장입금", "VIRTUAL_ACCOUNT"),
+                    Map.entry("포인트/머니결제", "POINT"),
+                    Map.entry("네이버페이", "NAVER_PAY"),
+                    Map.entry("후불결제", "DEFERRED"),
+                    Map.entry("휴대폰결제", "PHONE"));
+
+    private String normalizePaymentMethod(String paymentMeans) {
+        if (paymentMeans == null || paymentMeans.isBlank()) {
+            return "CARD";
+        }
+        return PAYMENT_METHOD_MAP.getOrDefault(paymentMeans, paymentMeans);
     }
 
     private Instant parseInstant(String dateStr) {

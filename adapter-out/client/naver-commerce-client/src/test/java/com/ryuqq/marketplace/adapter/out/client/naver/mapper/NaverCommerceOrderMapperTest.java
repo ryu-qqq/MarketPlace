@@ -129,7 +129,7 @@ class NaverCommerceOrderMapperTest {
             assertThat(order.externalOrderNo()).isEqualTo("ORD001");
             assertThat(order.buyerName()).isEqualTo("홍길동");
             assertThat(order.buyerPhone()).isEqualTo("010-1234-5678");
-            assertThat(order.paymentMethod()).isEqualTo("신용카드");
+            assertThat(order.paymentMethod()).isEqualTo("CARD");
             assertThat(order.orderedAt()).isNotNull();
             assertThat(order.paidAt()).isNotNull();
             assertThat(order.items()).hasSize(1);
