@@ -7,6 +7,8 @@ import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.ApproveCancelBat
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.CancelSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.RejectCancelBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest.CancelReasonApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest.SellerCancelItemApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelSummaryApiResponse;
@@ -139,6 +141,89 @@ class CancelApiMapperTest {
             assertThat(firstItem.reasonType().name())
                     .isEqualTo(CancelApiFixtures.DEFAULT_REASON_TYPE);
             assertThat(firstItem.reasonDetail()).isEqualTo(CancelApiFixtures.DEFAULT_REASON_DETAIL);
+        }
+
+        @Test
+        @DisplayName("reason.reasonDetail이 null이면 memo가 reasonDetail로 사용된다")
+        void toSellerCancelBatchCommand_NullReasonDetail_UsesMemo() {
+            // given
+            List<SellerCancelItemApiRequest> items =
+                    List.of(new SellerCancelItemApiRequest("order-1", 1));
+            CancelReasonApiRequest reason = new CancelReasonApiRequest("OUT_OF_STOCK", null);
+            SellerCancelBatchApiRequest request =
+                    new SellerCancelBatchApiRequest(items, reason, "메모로 대체");
+
+            // when
+            SellerCancelBatchCommand command =
+                    mapper.toSellerCancelBatchCommand(request, "seller01", 100L);
+
+            // then
+            assertThat(command.items().get(0).reasonDetail()).isEqualTo("메모로 대체");
+        }
+
+        @Test
+        @DisplayName("reason.reasonDetail이 있으면 memo보다 우선 사용된다")
+        void toSellerCancelBatchCommand_ReasonDetailPresent_TakesPrecedence() {
+            // given
+            List<SellerCancelItemApiRequest> items =
+                    List.of(new SellerCancelItemApiRequest("order-1", 1));
+            CancelReasonApiRequest reason = new CancelReasonApiRequest("OUT_OF_STOCK", "상세 사유");
+            SellerCancelBatchApiRequest request =
+                    new SellerCancelBatchApiRequest(items, reason, "메모 내용");
+
+            // when
+            SellerCancelBatchCommand command =
+                    mapper.toSellerCancelBatchCommand(request, "seller01", 100L);
+
+            // then
+            assertThat(command.items().get(0).reasonDetail()).isEqualTo("상세 사유");
+        }
+
+        @Test
+        @DisplayName("reason.reasonDetail과 memo 모두 null이면 reasonDetail이 null이다")
+        void toSellerCancelBatchCommand_BothNull_ReasonDetailIsNull() {
+            // given
+            List<SellerCancelItemApiRequest> items =
+                    List.of(new SellerCancelItemApiRequest("order-1", 1));
+            CancelReasonApiRequest reason = new CancelReasonApiRequest("OUT_OF_STOCK", null);
+            SellerCancelBatchApiRequest request =
+                    new SellerCancelBatchApiRequest(items, reason, null);
+
+            // when
+            SellerCancelBatchCommand command =
+                    mapper.toSellerCancelBatchCommand(request, "seller01", 100L);
+
+            // then
+            assertThat(command.items().get(0).reasonDetail()).isNull();
+        }
+
+        @Test
+        @DisplayName("top-level reason이 모든 item에 동일하게 적용된다")
+        void toSellerCancelBatchCommand_ReasonAppliedToAllItems() {
+            // given
+            List<SellerCancelItemApiRequest> items =
+                    List.of(
+                            new SellerCancelItemApiRequest("order-1", 1),
+                            new SellerCancelItemApiRequest("order-2", 2),
+                            new SellerCancelItemApiRequest("order-3", 3));
+            CancelReasonApiRequest reason =
+                    new CancelReasonApiRequest("PRODUCT_DISCONTINUED", "단종 상품");
+            SellerCancelBatchApiRequest request =
+                    new SellerCancelBatchApiRequest(items, reason, null);
+
+            // when
+            SellerCancelBatchCommand command =
+                    mapper.toSellerCancelBatchCommand(request, "seller01", 100L);
+
+            // then
+            assertThat(command.items()).hasSize(3);
+            command.items()
+                    .forEach(
+                            item -> {
+                                assertThat(item.reasonType().name())
+                                        .isEqualTo("PRODUCT_DISCONTINUED");
+                                assertThat(item.reasonDetail()).isEqualTo("단종 상품");
+                            });
         }
     }
 

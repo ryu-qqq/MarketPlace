@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.ApproveCancelBat
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.CancelSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.RejectCancelBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest.CancelReasonApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest.SellerCancelItemApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelListApiResponse;
@@ -54,17 +55,26 @@ public class CancelApiMapper {
 
     public SellerCancelBatchCommand toSellerCancelBatchCommand(
             SellerCancelBatchApiRequest request, String requestedBy, long sellerId) {
+        CancelReasonApiRequest reason = request.reason();
+        CancelReasonType reasonType = CancelReasonType.valueOf(reason.reasonType());
+        String reasonDetail =
+                reason.reasonDetail() != null ? reason.reasonDetail() : request.memo();
         List<SellerCancelItem> items =
-                request.items().stream().map(this::toSellerCancelItem).toList();
+                request.items().stream()
+                        .map(item -> toSellerCancelItem(item, reasonType, reasonDetail))
+                        .toList();
         return new SellerCancelBatchCommand(items, requestedBy, sellerId);
     }
 
-    private SellerCancelItem toSellerCancelItem(SellerCancelItemApiRequest item) {
+    private SellerCancelItem toSellerCancelItem(
+            SellerCancelItemApiRequest item,
+            CancelReasonType reasonType,
+            String reasonDetail) {
         return new SellerCancelItem(
                 item.orderId(), // V4 간극: orderId = 내부 orderItemId
                 item.cancelQty(),
-                CancelReasonType.valueOf(item.reasonType()),
-                item.reasonDetail());
+                reasonType,
+                reasonDetail);
     }
 
     public ApproveCancelBatchCommand toApproveCancelBatchCommand(

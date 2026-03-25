@@ -125,14 +125,21 @@ class CancelCommandControllerRestDocsTest {
                                             fieldWithPath("items[].cancelQty")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("취소 수량"),
-                                            fieldWithPath("items[].reasonType")
+                                            fieldWithPath("reason")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("취소 사유"),
+                                            fieldWithPath("reason.reasonType")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
-                                                            "취소 사유 유형 (OUT_OF_STOCK, CHANGE_OF_MIND"
+                                                            "취소 사유 유형 (OUT_OF_STOCK, PRODUCT_ISSUE"
                                                                     + " 등)"),
-                                            fieldWithPath("items[].reasonDetail")
+                                            fieldWithPath("reason.reasonDetail")
                                                     .type(JsonFieldType.STRING)
                                                     .description("취소 상세 사유")
+                                                    .optional(),
+                                            fieldWithPath("memo")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("메모")
                                                     .optional()),
                                     responseFields(
                                             fieldWithPath("data.totalCount")
@@ -173,7 +180,9 @@ class CancelCommandControllerRestDocsTest {
         @DisplayName("items가 빈 배열이면 400을 반환한다")
         void sellerCancelBatch_EmptyItems_Returns400() throws Exception {
             // given
-            SellerCancelBatchApiRequest request = new SellerCancelBatchApiRequest(List.of());
+            SellerCancelBatchApiRequest request =
+                    new SellerCancelBatchApiRequest(
+                            List.of(), CancelApiFixtures.cancelReasonRequest(), null);
 
             // when & then
             mockMvc.perform(

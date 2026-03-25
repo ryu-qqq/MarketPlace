@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.ApproveCancelBat
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.CancelSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.RejectCancelBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest.CancelReasonApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.SellerCancelBatchApiRequest.SellerCancelItemApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelListApiResponse;
@@ -63,12 +64,16 @@ public final class CancelApiFixtures {
                 List.of(
                         sellerCancelItemRequest("01940001-0000-7000-8000-000000000001"),
                         sellerCancelItemRequest("01940001-0000-7000-8000-000000000002"));
-        return new SellerCancelBatchApiRequest(items);
+        return new SellerCancelBatchApiRequest(
+                items, cancelReasonRequest(), DEFAULT_REASON_DETAIL);
     }
 
     public static SellerCancelItemApiRequest sellerCancelItemRequest(String orderId) {
-        return new SellerCancelItemApiRequest(
-                orderId, 1, DEFAULT_REASON_TYPE, DEFAULT_REASON_DETAIL);
+        return new SellerCancelItemApiRequest(orderId, 1);
+    }
+
+    public static CancelReasonApiRequest cancelReasonRequest() {
+        return new CancelReasonApiRequest(DEFAULT_REASON_TYPE, DEFAULT_REASON_DETAIL);
     }
 
     // ===== ApproveCancelBatchApiRequest =====
