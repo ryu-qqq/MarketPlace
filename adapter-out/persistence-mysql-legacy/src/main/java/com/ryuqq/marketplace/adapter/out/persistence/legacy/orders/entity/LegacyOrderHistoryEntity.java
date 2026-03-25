@@ -50,6 +50,7 @@ public class LegacyOrderHistoryEntity extends LegacyBaseEntity {
         entity.changeReason = changeReason;
         entity.changeDetailReason = changeDetailReason;
         entity.deleteYn = "N";
+        entity.initAuditFields("SYSTEM");
         return entity;
     }
 
