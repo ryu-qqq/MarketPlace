@@ -200,7 +200,6 @@ class SetofCommerceDtoContractTest {
             var request =
                     new SetofProductGroupRegistrationRequest(
                             1L,
-                            10L,
                             100L,
                             200L,
                             300L,
@@ -221,7 +220,6 @@ class SetofCommerceDtoContractTest {
             assertThat(fieldNames(node))
                     .containsExactlyInAnyOrder(
                             "productGroupId",
-                            "sellerId",
                             "brandId",
                             "categoryId",
                             "shippingPolicyId",

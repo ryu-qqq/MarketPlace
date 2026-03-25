@@ -18,6 +18,7 @@ import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
 import com.ryuqq.marketplace.domain.shipment.outbox.vo.ShipmentOutboxType;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -71,7 +72,7 @@ class SellicShipmentSyncStrategyTest {
         void confirmReturnsSuccess() {
             var outbox = mockOutbox(ShipmentOutboxType.CONFIRM, null);
 
-            OutboxSyncResult result = sut.execute(outbox);
+            OutboxSyncResult result = sut.execute(outbox, null);
 
             assertThat(result.isSuccess()).isTrue();
             verifyNoInteractions(apiClient);
@@ -82,7 +83,7 @@ class SellicShipmentSyncStrategyTest {
         void deliverReturnsSuccess() {
             var outbox = mockOutbox(ShipmentOutboxType.DELIVER, null);
 
-            OutboxSyncResult result = sut.execute(outbox);
+            OutboxSyncResult result = sut.execute(outbox, null);
 
             assertThat(result.isSuccess()).isTrue();
             verifyNoInteractions(apiClient);
@@ -93,7 +94,7 @@ class SellicShipmentSyncStrategyTest {
         void cancelReturnsSuccess() {
             var outbox = mockOutbox(ShipmentOutboxType.CANCEL, null);
 
-            OutboxSyncResult result = sut.execute(outbox);
+            OutboxSyncResult result = sut.execute(outbox, null);
 
             assertThat(result.isSuccess()).isTrue();
             verifyNoInteractions(apiClient);
@@ -112,7 +113,7 @@ class SellicShipmentSyncStrategyTest {
             given(apiClient.registerShipment(any()))
                     .willReturn(new SellicShipmentResponse("success", "성공", null));
 
-            OutboxSyncResult result = sut.execute(outbox);
+            OutboxSyncResult result = sut.execute(outbox, null);
 
             assertThat(result.isSuccess()).isTrue();
             verify(apiClient).registerShipment(any());
@@ -131,7 +132,7 @@ class SellicShipmentSyncStrategyTest {
             given(apiClient.registerShipment(any()))
                     .willThrow(new SellicCommerceBadRequestException("잘못된 요청"));
 
-            OutboxSyncResult result = sut.execute(outbox);
+            OutboxSyncResult result = sut.execute(outbox, null);
 
             assertThat(result.isSuccess()).isFalse();
             assertThat(result.retryable()).isFalse();
@@ -150,7 +151,7 @@ class SellicShipmentSyncStrategyTest {
             given(apiClient.registerShipment(any()))
                     .willThrow(new SellicCommerceServerException(500, "서버 에러"));
 
-            OutboxSyncResult result = sut.execute(outbox);
+            OutboxSyncResult result = sut.execute(outbox, null);
 
             assertThat(result.isSuccess()).isFalse();
             assertThat(result.retryable()).isTrue();
@@ -164,7 +165,7 @@ class SellicShipmentSyncStrategyTest {
 
             given(mappingQueryPort.findByOrderItemId("OI-001")).willReturn(Optional.empty());
 
-            OutboxSyncResult result = sut.execute(outbox);
+            OutboxSyncResult result = sut.execute(outbox, null);
 
             assertThat(result.isSuccess()).isFalse();
             assertThat(result.retryable()).isTrue();

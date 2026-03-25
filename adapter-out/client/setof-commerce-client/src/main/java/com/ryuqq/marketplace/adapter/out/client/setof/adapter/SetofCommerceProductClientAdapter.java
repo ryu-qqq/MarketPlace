@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceUnauthorizedException;
 import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofSellerTokenProvider;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest;
@@ -15,6 +16,7 @@ import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.util.Set;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -67,8 +69,6 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
             SellerSalesChannel channel,
             Shop shop) {
 
-        String shopSecret = resolveSellerToken(shop);
-
         SetofProductGroupRegistrationRequest request =
                 mapper.toRegistrationRequest(syncData, externalCategoryId, externalBrandId);
 
@@ -80,7 +80,8 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
                 externalCategoryId);
 
         SetofProductGroupRegistrationResponse response =
-                apiClient.registerProduct(shopSecret, request);
+                executeWithTokenRefresh(
+                        shop, token -> apiClient.registerProduct(token, request));
 
         if (response == null || response.productGroupId() == null) {
             throw new IllegalStateException(
@@ -154,6 +155,38 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
                 return tokenProvider.resolveToken(shop);
             } catch (Exception e) {
                 log.warn("세토프 셀러 토큰 발급 실패, 서비스 토큰으로 폴백: shopId={}", shop.idValue());
+            }
+        }
+        return properties.getServiceToken();
+    }
+
+    /**
+     * 토큰 인증 실패(401) 시 자동으로 토큰을 재발급하고 재시도합니다.
+     *
+     * @param shop Shop 정보
+     * @param apiCall 토큰을 받아 API를 호출하는 함수
+     * @return API 호출 결과
+     */
+    private <T> T executeWithTokenRefresh(Shop shop, Function<String, T> apiCall) {
+        String token = resolveSellerToken(shop);
+        try {
+            return apiCall.apply(token);
+        } catch (SetofCommerceUnauthorizedException e) {
+            log.warn("세토프 토큰 만료, 재발급 시도: shopId={}", shop != null ? shop.idValue() : "null");
+            String refreshedToken = refreshSellerToken(shop);
+            return apiCall.apply(refreshedToken);
+        }
+    }
+
+    /**
+     * 토큰을 재발급합니다. Shop이 없거나 apiKey가 없으면 서비스 토큰을 반환합니다.
+     */
+    private String refreshSellerToken(Shop shop) {
+        if (shop != null && shop.apiKey() != null && !shop.apiKey().isBlank()) {
+            try {
+                return tokenProvider.refreshToken(shop);
+            } catch (Exception e) {
+                log.warn("세토프 셀러 토큰 재발급 실패, 서비스 토큰으로 폴백: shopId={}", shop.idValue());
             }
         }
         return properties.getServiceToken();

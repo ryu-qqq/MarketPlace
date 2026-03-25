@@ -55,12 +55,12 @@ public class SetofRefundClaimSyncStrategy implements RefundClaimSyncStrategy {
             switch (type) {
                 case COMPLETE -> {
                     String refundClaimId = extractRefundClaimId(outbox.payload());
-                    claimClient.completeRefund(refundClaimId);
+                    claimClient.completeRefund(shop, refundClaimId);
                 }
                 case REJECT -> {
                     String refundClaimId = extractRefundClaimId(outbox.payload());
                     String reason = extractRejectReason(outbox.payload());
-                    claimClient.rejectRefund(refundClaimId, reason);
+                    claimClient.rejectRefund(shop, refundClaimId, reason);
                 }
                 case REQUEST, APPROVE, COLLECT -> {
                     log.info("세토프 환불 {} - 내부 처리만: orderItemId={}", type, outbox.orderItemIdValue());

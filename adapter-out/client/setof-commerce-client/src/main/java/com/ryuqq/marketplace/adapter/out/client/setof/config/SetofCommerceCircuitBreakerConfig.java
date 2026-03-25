@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceCli
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceNetworkException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceRateLimitException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceServerException;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceUnauthorizedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.SlidingWindowType;
@@ -30,8 +31,8 @@ import org.springframework.context.annotation.Configuration;
  *   <li>Sliding window: 최근 20건 기준 (COUNT_BASED)
  *   <li>{@link SetofCommerceServerException}(5xx), {@link SetofCommerceRateLimitException}(429),
  *       {@link SetofCommerceNetworkException}(타임아웃)은 실패로 기록
- *   <li>{@link SetofCommerceBadRequestException}(400), {@link SetofCommerceClientException}(4xx)은
- *       무시
+ *   <li>{@link SetofCommerceBadRequestException}(400), {@link SetofCommerceClientException}(4xx),
+ *       {@link SetofCommerceUnauthorizedException}(401)은 무시
  * </ul>
  *
  * @author ryu-qqq
@@ -85,7 +86,8 @@ public class SetofCommerceCircuitBreakerConfig {
                                 SetofCommerceNetworkException.class)
                         .ignoreExceptions(
                                 SetofCommerceBadRequestException.class,
-                                SetofCommerceClientException.class)
+                                SetofCommerceClientException.class,
+                                SetofCommerceUnauthorizedException.class)
                         .build();
 
         CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);

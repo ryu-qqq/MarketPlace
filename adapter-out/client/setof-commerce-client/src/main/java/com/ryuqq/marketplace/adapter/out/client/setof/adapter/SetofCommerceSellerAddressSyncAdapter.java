@@ -3,7 +3,9 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerAddressSyncRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceUnauthorizedException;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
+import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofSellerTokenProvider;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.outboundseller.dto.response.OutboundSellerSyncResult;
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundSellerAddressSyncClient;
@@ -11,6 +13,7 @@ import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressRead
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddress;
 import com.ryuqq.marketplace.domain.selleraddress.id.SellerAddressId;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,16 +31,19 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
     private final SellerAddressReadManager addressReadManager;
     private final SetofCommerceSellerSyncMapper mapper;
     private final SetofCommerceProperties properties;
+    private final SetofSellerTokenProvider tokenProvider;
 
     public SetofCommerceSellerAddressSyncAdapter(
             SetofCommerceApiClient apiClient,
             SellerAddressReadManager addressReadManager,
             SetofCommerceSellerSyncMapper mapper,
-            SetofCommerceProperties properties) {
+            SetofCommerceProperties properties,
+            SetofSellerTokenProvider tokenProvider) {
         this.apiClient = apiClient;
         this.addressReadManager = addressReadManager;
         this.mapper = mapper;
         this.properties = properties;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -48,7 +54,10 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
 
             log.info("세토프 커머스 셀러주소 등록 요청: sellerId={}, addressId={}", sellerId, addressId);
 
-            apiClient.createSellerAddress(properties.getServiceToken(), sellerId, request);
+            executeWithTokenRefresh(shop, token -> {
+                apiClient.createSellerAddress(token, sellerId, request);
+                return null;
+            });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -66,8 +75,10 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
 
             log.info("세토프 커머스 셀러주소 수정 요청: sellerId={}, addressId={}", sellerId, addressId);
 
-            apiClient.updateSellerAddress(
-                    properties.getServiceToken(), sellerId, addressId, request);
+            executeWithTokenRefresh(shop, token -> {
+                apiClient.updateSellerAddress(token, sellerId, addressId, request);
+                return null;
+            });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -82,7 +93,10 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
         try {
             log.info("세토프 커머스 셀러주소 삭제 요청: sellerId={}, addressId={}", sellerId, addressId);
 
-            apiClient.deleteSellerAddress(properties.getServiceToken(), sellerId, addressId);
+            executeWithTokenRefresh(shop, token -> {
+                apiClient.deleteSellerAddress(token, sellerId, addressId);
+                return null;
+            });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -90,5 +104,40 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
             log.error("세토프 커머스 셀러주소 삭제 실패: sellerId={}, addressId={}", sellerId, addressId, e);
             return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
+    }
+
+    // ===== 토큰 처리 =====
+
+    private <T> T executeWithTokenRefresh(Shop shop, Function<String, T> apiCall) {
+        String token = resolveSellerToken(shop);
+        try {
+            return apiCall.apply(token);
+        } catch (SetofCommerceUnauthorizedException e) {
+            log.warn("세토프 토큰 만료, 재발급 시도: shopId={}", shop != null ? shop.idValue() : "null");
+            String refreshedToken = refreshSellerToken(shop);
+            return apiCall.apply(refreshedToken);
+        }
+    }
+
+    private String resolveSellerToken(Shop shop) {
+        if (shop != null && shop.apiKey() != null && !shop.apiKey().isBlank()) {
+            try {
+                return tokenProvider.resolveToken(shop);
+            } catch (Exception e) {
+                log.warn("세토프 셀러 토큰 발급 실패, 서비스 토큰으로 폴백: shopId={}", shop.idValue());
+            }
+        }
+        return properties.getServiceToken();
+    }
+
+    private String refreshSellerToken(Shop shop) {
+        if (shop != null && shop.apiKey() != null && !shop.apiKey().isBlank()) {
+            try {
+                return tokenProvider.refreshToken(shop);
+            } catch (Exception e) {
+                log.warn("세토프 셀러 토큰 재발급 실패, 서비스 토큰으로 폴백: shopId={}", shop.idValue());
+            }
+        }
+        return properties.getServiceToken();
     }
 }

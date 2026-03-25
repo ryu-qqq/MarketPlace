@@ -1,5 +1,8 @@
 package com.ryuqq.marketplace.application.cancel.service.command;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -9,10 +12,15 @@ import com.ryuqq.marketplace.application.cancel.factory.CancelCommandFactory;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxReadManager;
 import com.ryuqq.marketplace.application.cancel.port.out.client.CancelClaimSyncStrategy;
+import com.ryuqq.marketplace.application.claimsync.manager.ExternalOrderItemMappingReadManager;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
+import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -33,6 +41,8 @@ class ExecuteCancelOutboxServiceTest {
     @Mock private CancelOutboxCommandManager outboxCommandManager;
     @Mock private CancelClaimSyncStrategy claimSyncStrategy;
     @Mock private CancelCommandFactory commandFactory;
+    @Mock private ExternalOrderItemMappingReadManager mappingReadManager;
+    @Mock private ShopReadManager shopReadManager;
 
     @Nested
     @DisplayName("execute() - 취소 Outbox 실행")
@@ -45,11 +55,17 @@ class ExecuteCancelOutboxServiceTest {
             ExecuteCancelOutboxCommand command = CancelCommandFixtures.executeCancelOutboxCommand();
             CancelOutbox outbox = org.mockito.Mockito.mock(CancelOutbox.class);
             CancelOutbox freshOutbox = org.mockito.Mockito.mock(CancelOutbox.class);
+            ExternalOrderItemMapping mapping = org.mockito.Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = org.mockito.Mockito.mock(Shop.class);
             OutboxSyncResult successResult = OutboxSyncResult.success();
             Instant now = Instant.now();
 
             given(outboxReadManager.getById(command.outboxId())).willReturn(outbox);
-            given(claimSyncStrategy.execute(outbox)).willReturn(successResult);
+            given(outbox.orderItemIdValue()).willReturn("OI-001");
+            given(mappingReadManager.findByOrderItemId("OI-001")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            given(claimSyncStrategy.execute(outbox, shop)).willReturn(successResult);
             given(outboxReadManager.getById(outbox.idValue())).willReturn(freshOutbox);
             given(commandFactory.now()).willReturn(now);
 
@@ -67,11 +83,17 @@ class ExecuteCancelOutboxServiceTest {
             ExecuteCancelOutboxCommand command = CancelCommandFixtures.executeCancelOutboxCommand();
             CancelOutbox outbox = org.mockito.Mockito.mock(CancelOutbox.class);
             CancelOutbox freshOutbox = org.mockito.Mockito.mock(CancelOutbox.class);
+            ExternalOrderItemMapping mapping = org.mockito.Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = org.mockito.Mockito.mock(Shop.class);
             OutboxSyncResult failResult = OutboxSyncResult.failure(false, "외부 API 오류");
             Instant now = Instant.now();
 
             given(outboxReadManager.getById(command.outboxId())).willReturn(outbox);
-            given(claimSyncStrategy.execute(outbox)).willReturn(failResult);
+            given(outbox.orderItemIdValue()).willReturn("OI-001");
+            given(mappingReadManager.findByOrderItemId("OI-001")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            given(claimSyncStrategy.execute(outbox, shop)).willReturn(failResult);
             given(outboxReadManager.getById(outbox.idValue())).willReturn(freshOutbox);
             given(commandFactory.now()).willReturn(now);
 
@@ -95,10 +117,16 @@ class ExecuteCancelOutboxServiceTest {
             ExecuteCancelOutboxCommand command = CancelCommandFixtures.executeCancelOutboxCommand();
             CancelOutbox outbox = org.mockito.Mockito.mock(CancelOutbox.class);
             CancelOutbox freshOutbox = org.mockito.Mockito.mock(CancelOutbox.class);
+            ExternalOrderItemMapping mapping = org.mockito.Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = org.mockito.Mockito.mock(Shop.class);
             Instant now = Instant.now();
 
             given(outboxReadManager.getById(command.outboxId())).willReturn(outbox);
-            given(claimSyncStrategy.execute(outbox))
+            given(outbox.orderItemIdValue()).willReturn("OI-001");
+            given(mappingReadManager.findByOrderItemId("OI-001")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            given(claimSyncStrategy.execute(outbox, shop))
                     .willThrow(new ExternalServiceUnavailableException("외부 서비스 장애"));
             given(outboxReadManager.getById(outbox.idValue())).willReturn(freshOutbox);
             given(commandFactory.now()).willReturn(now);

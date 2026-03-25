@@ -3,7 +3,9 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofRefundPolicySyncRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceUnauthorizedException;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
+import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofSellerTokenProvider;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.outboundseller.dto.response.OutboundSellerSyncResult;
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundRefundPolicySyncClient;
@@ -12,6 +14,7 @@ import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,16 +32,19 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
     private final RefundPolicyReadManager policyReadManager;
     private final SetofCommerceSellerSyncMapper mapper;
     private final SetofCommerceProperties properties;
+    private final SetofSellerTokenProvider tokenProvider;
 
     public SetofCommerceRefundPolicySyncAdapter(
             SetofCommerceApiClient apiClient,
             RefundPolicyReadManager policyReadManager,
             SetofCommerceSellerSyncMapper mapper,
-            SetofCommerceProperties properties) {
+            SetofCommerceProperties properties,
+            SetofSellerTokenProvider tokenProvider) {
         this.apiClient = apiClient;
         this.policyReadManager = policyReadManager;
         this.mapper = mapper;
         this.properties = properties;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -51,7 +57,10 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
 
             log.info("세토프 커머스 환불정책 등록 요청: sellerId={}, policyId={}", sellerId, policyId);
 
-            apiClient.createRefundPolicy(properties.getServiceToken(), sellerId, request);
+            executeWithTokenRefresh(shop, token -> {
+                apiClient.createRefundPolicy(token, sellerId, request);
+                return null;
+            });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -71,8 +80,10 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
 
             log.info("세토프 커머스 환불정책 수정 요청: sellerId={}, policyId={}", sellerId, policyId);
 
-            apiClient.updateRefundPolicy(
-                    properties.getServiceToken(), sellerId, policyId, request);
+            executeWithTokenRefresh(shop, token -> {
+                apiClient.updateRefundPolicy(token, sellerId, policyId, request);
+                return null;
+            });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -80,5 +91,40 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
             log.error("세토프 커머스 환불정책 수정 실패: sellerId={}, policyId={}", sellerId, policyId, e);
             return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
+    }
+
+    // ===== 토큰 처리 =====
+
+    private <T> T executeWithTokenRefresh(Shop shop, Function<String, T> apiCall) {
+        String token = resolveSellerToken(shop);
+        try {
+            return apiCall.apply(token);
+        } catch (SetofCommerceUnauthorizedException e) {
+            log.warn("세토프 토큰 만료, 재발급 시도: shopId={}", shop != null ? shop.idValue() : "null");
+            String refreshedToken = refreshSellerToken(shop);
+            return apiCall.apply(refreshedToken);
+        }
+    }
+
+    private String resolveSellerToken(Shop shop) {
+        if (shop != null && shop.apiKey() != null && !shop.apiKey().isBlank()) {
+            try {
+                return tokenProvider.resolveToken(shop);
+            } catch (Exception e) {
+                log.warn("세토프 셀러 토큰 발급 실패, 서비스 토큰으로 폴백: shopId={}", shop.idValue());
+            }
+        }
+        return properties.getServiceToken();
+    }
+
+    private String refreshSellerToken(Shop shop) {
+        if (shop != null && shop.apiKey() != null && !shop.apiKey().isBlank()) {
+            try {
+                return tokenProvider.refreshToken(shop);
+            } catch (Exception e) {
+                log.warn("세토프 셀러 토큰 재발급 실패, 서비스 토큰으로 폴백: shopId={}", shop.idValue());
+            }
+        }
+        return properties.getServiceToken();
     }
 }

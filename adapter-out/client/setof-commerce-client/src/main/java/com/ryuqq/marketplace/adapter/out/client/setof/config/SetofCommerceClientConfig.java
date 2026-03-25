@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceCli
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceNetworkException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceRateLimitException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceServerException;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceUnauthorizedException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +25,7 @@ import org.springframework.web.client.RestClient;
  * <p>HTTP 상태별 예외 변환:
  *
  * <ul>
+ *   <li>401 → {@link SetofCommerceUnauthorizedException} (CB 무시, 어댑터에서 토큰 재발급 후 재시도)
  *   <li>400 → {@link SetofCommerceBadRequestException} (CB 무시, retryable=false)
  *   <li>429 → {@link SetofCommerceRateLimitException} (CB 기록, retryable=true)
  *   <li>5xx → {@link SetofCommerceServerException} (CB 기록, retryable=true)
@@ -67,6 +69,9 @@ public class SetofCommerceClientConfig {
                                             response.getBody().readAllBytes(),
                                             StandardCharsets.UTF_8);
 
+                            if (statusCode == 401) {
+                                throw new SetofCommerceUnauthorizedException(body);
+                            }
                             if (statusCode == 400) {
                                 throw new SetofCommerceBadRequestException(body);
                             }

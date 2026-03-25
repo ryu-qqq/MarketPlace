@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.shipment.service.command;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -9,13 +10,17 @@ import com.ryuqq.marketplace.application.claimsync.manager.ExternalOrderItemMapp
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.shipment.dto.command.ExecuteShipmentOutboxCommand;
+import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentSyncStrategyProvider;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentSyncStrategy;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
 import com.ryuqq.marketplace.domain.shipment.outbox.ShipmentOutboxFixtures;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -36,6 +41,8 @@ class ExecuteShipmentOutboxServiceTest {
     @Mock private ShipmentOutboxCommandManager outboxCommandManager;
     @Mock private ShipmentSyncStrategyProvider strategyProvider;
     @Mock private ExternalOrderItemMappingReadManager mappingReadManager;
+    @Mock private ShipmentCommandFactory commandFactory;
+    @Mock private ShopReadManager shopReadManager;
 
     private static final Long OUTBOX_ID = 1L;
     private static final String ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
@@ -62,7 +69,8 @@ class ExecuteShipmentOutboxServiceTest {
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
-            given(strategy.execute(outbox)).willReturn(OutboxSyncResult.success());
+            given(shopReadManager.findActiveBySalesChannelId(anyLong())).willReturn(List.of());
+            given(strategy.execute(any(ShipmentOutbox.class), any())).willReturn(OutboxSyncResult.success());
 
             // when
             sut.execute(command);
@@ -84,7 +92,8 @@ class ExecuteShipmentOutboxServiceTest {
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
-            given(strategy.execute(outbox))
+            given(shopReadManager.findActiveBySalesChannelId(anyLong())).willReturn(List.of());
+            given(strategy.execute(any(ShipmentOutbox.class), any()))
                     .willReturn(OutboxSyncResult.failure(true, "외부 API 응답 오류"));
 
             // when
@@ -107,7 +116,8 @@ class ExecuteShipmentOutboxServiceTest {
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
-            given(strategy.execute(outbox))
+            given(shopReadManager.findActiveBySalesChannelId(anyLong())).willReturn(List.of());
+            given(strategy.execute(any(ShipmentOutbox.class), any()))
                     .willThrow(new ExternalServiceUnavailableException("외부 서비스 일시 장애"));
 
             // when
@@ -130,7 +140,9 @@ class ExecuteShipmentOutboxServiceTest {
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
-            given(strategy.execute(outbox)).willThrow(new RuntimeException("예기치 않은 오류"));
+            given(shopReadManager.findActiveBySalesChannelId(anyLong())).willReturn(List.of());
+            given(strategy.execute(any(ShipmentOutbox.class), any()))
+                    .willThrow(new RuntimeException("예기치 않은 오류"));
 
             // when
             sut.execute(command);
@@ -140,7 +152,7 @@ class ExecuteShipmentOutboxServiceTest {
         }
 
         @Test
-        @DisplayName("외부 주문 매핑이 없으면 IllegalStateException 발생 후 실패 상태로 업데이트한다")
+        @DisplayName("외부 주문 매핑이 없으면 실패 상태로 업데이트한다")
         void execute_MappingNotFound_RecordsFailure() {
             // given
             ExecuteShipmentOutboxCommand command = defaultCommand();

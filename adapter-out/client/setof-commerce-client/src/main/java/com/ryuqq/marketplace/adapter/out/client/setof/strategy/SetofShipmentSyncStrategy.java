@@ -54,8 +54,8 @@ public class SetofShipmentSyncStrategy implements ShipmentSyncStrategy {
         try {
             switch (type) {
                 case CONFIRM -> {
-                    claimClient.confirmOrder(outbox.orderItemIdValue());
-                    claimClient.readyToShip(outbox.orderItemIdValue());
+                    claimClient.confirmOrder(shop, outbox.orderItemIdValue());
+                    claimClient.readyToShip(shop, outbox.orderItemIdValue());
                 }
                 case SHIP -> {
                     log.info(

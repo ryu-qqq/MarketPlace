@@ -53,10 +53,10 @@ public class SetofCancelClaimSyncStrategy implements CancelClaimSyncStrategy {
             String cancelId = extractCancelId(outbox.payload());
 
             switch (type) {
-                case SELLER_CANCEL, APPROVE -> claimClient.approveCancel(cancelId);
+                case SELLER_CANCEL, APPROVE -> claimClient.approveCancel(shop, cancelId);
                 case REJECT -> {
                     String reason = extractRejectReason(outbox.payload());
-                    claimClient.rejectCancel(cancelId, reason);
+                    claimClient.rejectCancel(shop, cancelId, reason);
                 }
             }
 

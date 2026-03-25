@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.application.shipment.dto.command.ShipSingleCommand;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory.ShipSingleContext;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistenceBundle;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.ShipmentFixtures;
@@ -66,7 +67,7 @@ class ShipSingleServiceTest {
             // then
             then(commandFactory).should().createShipSingleContext(command);
             then(readManager).should().getByOrderItemId(orderItemId);
-            then(persistFacade).should().persistWithOutbox(any(Shipment.class), any());
+            then(persistFacade).should().persistAll(any(ShipmentPersistenceBundle.class));
         }
 
         @Test

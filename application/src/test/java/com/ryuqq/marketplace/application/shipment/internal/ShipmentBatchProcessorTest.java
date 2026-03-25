@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.shipment.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -66,9 +67,7 @@ class ShipmentBatchProcessorTest {
             assertThat(result.failureCount()).isZero();
             then(persistFacade)
                     .should()
-                    .persistAllWithOutboxes(
-                            org.mockito.ArgumentMatchers.anyList(),
-                            org.mockito.ArgumentMatchers.anyList());
+                    .persistAll(any(ShipmentPersistenceBundle.class));
         }
 
         @Test

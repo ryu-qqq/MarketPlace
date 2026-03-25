@@ -34,22 +34,22 @@ class ShipmentPersistFacadeTest {
     @Mock private OrderItemCommandManager orderItemCommandManager;
 
     @Nested
-    @DisplayName("persistConfirmBundle() - 발주확인 번들 일괄 저장")
-    class PersistConfirmBundleTest {
+    @DisplayName("persistAll() - ShipmentPersistenceBundle 저장")
+    class PersistAllTest {
 
         @Test
         @DisplayName("Shipment, Outbox, OrderItem을 함께 저장한다")
-        void persistConfirmBundle_ValidBundle_SavesAllComponents() {
+        void persistAll_ValidBundle_SavesAllComponents() {
             // given
             List<Shipment> shipments = List.of(ShipmentFixtures.preparingShipment());
             List<ShipmentOutbox> outboxes = List.of(ShipmentOutboxFixtures.newShipmentOutbox());
             List<OrderItem> orderItems =
                     List.of(OrderFixtures.reconstitutedOrderItem(1L, OrderItemStatus.CONFIRMED));
-            ConfirmShipmentBundle bundle =
-                    new ConfirmShipmentBundle(shipments, outboxes, orderItems);
+            ShipmentPersistenceBundle bundle =
+                    ShipmentPersistenceBundle.of(shipments, outboxes, orderItems);
 
             // when
-            sut.persistConfirmBundle(bundle);
+            sut.persistAll(bundle);
 
             // then
             then(shipmentCommandManager).should().persistAll(shipments);
@@ -58,35 +58,37 @@ class ShipmentPersistFacadeTest {
         }
 
         @Test
-        @DisplayName("빈 번들이어도 각 Manager를 호출한다")
-        void persistConfirmBundle_EmptyBundle_StillCallsManagers() {
+        @DisplayName("빈 번들이면 각 Manager를 호출하지 않는다")
+        void persistAll_EmptyBundle_SkipsManagerCalls() {
             // given
-            ConfirmShipmentBundle bundle =
-                    new ConfirmShipmentBundle(List.of(), List.of(), List.of());
+            ShipmentPersistenceBundle bundle =
+                    ShipmentPersistenceBundle.of(List.of(), List.of(), List.of());
 
             // when
-            sut.persistConfirmBundle(bundle);
+            sut.persistAll(bundle);
 
             // then
-            then(shipmentCommandManager).should().persistAll(List.of());
-            then(outboxCommandManager).should().persistAll(List.of());
-            then(orderItemCommandManager).should().persistAll(List.of());
+            then(shipmentCommandManager).shouldHaveNoInteractions();
+            then(outboxCommandManager).shouldHaveNoInteractions();
+            then(orderItemCommandManager).shouldHaveNoInteractions();
         }
     }
 
     @Nested
-    @DisplayName("persistAllWithOutboxes() - Shipment + Outbox 일괄 저장")
-    class PersistAllWithOutboxesTest {
+    @DisplayName("persistAll() - Shipment + Outbox만 저장")
+    class PersistAllShipmentsAndOutboxesTest {
 
         @Test
         @DisplayName("Shipment 목록과 Outbox 목록을 함께 저장한다")
-        void persistAllWithOutboxes_ValidLists_SavesBothComponents() {
+        void persistAll_ShipmentsAndOutboxes_SavesBothComponents() {
             // given
             List<Shipment> shipments = List.of(ShipmentFixtures.preparingShipment());
             List<ShipmentOutbox> outboxes = List.of(ShipmentOutboxFixtures.newShipmentOutbox());
+            ShipmentPersistenceBundle bundle =
+                    ShipmentPersistenceBundle.ofShipmentsAndOutboxes(shipments, outboxes);
 
             // when
-            sut.persistAllWithOutboxes(shipments, outboxes);
+            sut.persistAll(bundle);
 
             // then
             then(shipmentCommandManager).should().persistAll(shipments);
@@ -96,22 +98,24 @@ class ShipmentPersistFacadeTest {
     }
 
     @Nested
-    @DisplayName("persistWithOutbox() - 단건 Shipment + Outbox 저장")
-    class PersistWithOutboxTest {
+    @DisplayName("persistAll() - 단건 Shipment + Outbox 저장")
+    class PersistAllSingleWithOutboxTest {
 
         @Test
         @DisplayName("단건 Shipment와 단건 Outbox를 함께 저장한다")
-        void persistWithOutbox_ValidPair_SavesBothComponents() {
+        void persistAll_SingleWithOutbox_SavesBothComponents() {
             // given
             Shipment shipment = ShipmentFixtures.shippedShipment();
             ShipmentOutbox outbox = ShipmentOutboxFixtures.newShipmentOutbox();
+            ShipmentPersistenceBundle bundle =
+                    ShipmentPersistenceBundle.ofSingleWithOutbox(shipment, outbox);
 
             // when
-            sut.persistWithOutbox(shipment, outbox);
+            sut.persistAll(bundle);
 
             // then
-            then(shipmentCommandManager).should().persist(shipment);
-            then(outboxCommandManager).should().persist(outbox);
+            then(shipmentCommandManager).should().persistAll(List.of(shipment));
+            then(outboxCommandManager).should().persistAll(List.of(outbox));
             then(orderItemCommandManager).shouldHaveNoInteractions();
         }
     }

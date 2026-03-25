@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceCli
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceNetworkException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceRateLimitException;
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceServerException;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceUnauthorizedException;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -28,7 +29,8 @@ import org.springframework.stereotype.Component;
  *   <li>Retry: maxAttempts=3, initialBackoff=100ms, exponential
  *   <li>retryOn: {@link SetofCommerceServerException}, {@link SetofCommerceRateLimitException},
  *       {@link SetofCommerceNetworkException}
- *   <li>ignoreOn: {@link SetofCommerceBadRequestException}, {@link SetofCommerceClientException}
+ *   <li>ignoreOn: {@link SetofCommerceBadRequestException}, {@link SetofCommerceClientException},
+ *       {@link SetofCommerceUnauthorizedException}
  *   <li>CB OPEN 시: {@link ExternalServiceUnavailableException} 던짐
  * </ul>
  *
@@ -98,7 +100,8 @@ public class SetofCommerceApiExecutor {
                                 SetofCommerceNetworkException.class)
                         .ignoreExceptions(
                                 SetofCommerceBadRequestException.class,
-                                SetofCommerceClientException.class)
+                                SetofCommerceClientException.class,
+                                SetofCommerceUnauthorizedException.class)
                         .build();
 
         return RetryRegistry.of(config).retry(RETRY_NAME);

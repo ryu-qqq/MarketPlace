@@ -12,7 +12,6 @@ import com.ryuqq.marketplace.application.shipment.dto.command.ShipBatchCommand;
 import com.ryuqq.marketplace.application.shipment.dto.command.ShipSingleCommand;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory.ShipSingleContext;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
-import com.ryuqq.marketplace.domain.shipment.vo.ShipmentMethod;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentMethodType;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentShipData;
 import java.time.Instant;
@@ -35,7 +34,6 @@ class ShipmentCommandFactoryTest {
 
     @Mock private TimeProvider timeProvider;
     @Mock private com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort idGeneratorPort;
-    @Mock private com.ryuqq.marketplace.application.order.manager.OrderItemReadManager orderItemReadManager;
 
     @Nested
     @DisplayName("createConfirmContexts() - 발주확인 배치 컨텍스트 생성")
@@ -164,60 +162,4 @@ class ShipmentCommandFactoryTest {
         }
     }
 
-    @Nested
-    @DisplayName("createShipmentMethod() - ShipmentMethod 생성")
-    class CreateShipmentMethodTest {
-
-        @Test
-        @DisplayName("유효한 배송 방법 유형으로 ShipmentMethod를 생성한다")
-        void createShipmentMethod_ValidType_ReturnsShipmentMethod() {
-            // when
-            ShipmentMethod result = sut.createShipmentMethod("QUICK", "QUICK-001", "퀵서비스");
-
-            // then
-            assertThat(result.type()).isEqualTo(ShipmentMethodType.QUICK);
-            assertThat(result.courierCode()).isEqualTo("QUICK-001");
-            assertThat(result.courierName()).isEqualTo("퀵서비스");
-        }
-
-        @Test
-        @DisplayName("null 유형이면 기본값 COURIER를 사용한다")
-        void createShipmentMethod_NullType_DefaultsToCourier() {
-            // when
-            ShipmentMethod result = sut.createShipmentMethod(null, "CJ", "CJ대한통운");
-
-            // then
-            assertThat(result.type()).isEqualTo(ShipmentMethodType.COURIER);
-        }
-
-        @Test
-        @DisplayName("빈 문자열 유형이면 기본값 COURIER를 사용한다")
-        void createShipmentMethod_BlankType_DefaultsToCourier() {
-            // when
-            ShipmentMethod result = sut.createShipmentMethod("  ", "CJ", "CJ대한통운");
-
-            // then
-            assertThat(result.type()).isEqualTo(ShipmentMethodType.COURIER);
-        }
-
-        @Test
-        @DisplayName("알 수 없는 유형이면 기본값 COURIER를 사용한다")
-        void createShipmentMethod_UnknownType_DefaultsToCourier() {
-            // when
-            ShipmentMethod result = sut.createShipmentMethod("UNKNOWN_TYPE", "CJ", "CJ대한통운");
-
-            // then
-            assertThat(result.type()).isEqualTo(ShipmentMethodType.COURIER);
-        }
-
-        @Test
-        @DisplayName("대소문자 구분 없이 배송 방법 유형을 해석한다")
-        void createShipmentMethod_CaseInsensitive_ResolvesCorrectly() {
-            // when
-            ShipmentMethod result = sut.createShipmentMethod("quick", "Q-001", "퀵");
-
-            // then
-            assertThat(result.type()).isEqualTo(ShipmentMethodType.QUICK);
-        }
-    }
 }
