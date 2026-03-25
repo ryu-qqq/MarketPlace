@@ -99,9 +99,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             // when: 2건 판매자 취소
             given().spec(givenSuperAdmin())
                     .body(
-                            Map.of(
-                                    "items",
-                                    List.of(createSellerCancelItem(orderItemId, 2))))
+                            createSellerCancelRequest(orderItemId, 2))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -136,9 +134,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             // when: 2차 잔여 1건 취소
             given().spec(givenSuperAdmin())
                     .body(
-                            Map.of(
-                                    "items",
-                                    List.of(createSellerCancelItem(orderItemId, 1))))
+                            createSellerCancelRequest(orderItemId, 1))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -165,9 +161,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             // 전량 취소
             given().spec(givenSuperAdmin())
                     .body(
-                            Map.of(
-                                    "items",
-                                    List.of(createSellerCancelItem(orderItemId, 2))))
+                            createSellerCancelRequest(orderItemId, 2))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -178,9 +172,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             var response =
                     given().spec(givenSuperAdmin())
                             .body(
-                                    Map.of(
-                                            "items",
-                                            List.of(createSellerCancelItem(orderItemId, 1))))
+                                    createSellerCancelRequest(orderItemId, 1))
                             .when()
                             .post(SELLER_CANCEL_BATCH)
                             .then()
@@ -209,9 +201,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
 
             given().spec(givenSuperAdmin())
                     .body(
-                            Map.of(
-                                    "items",
-                                    List.of(createSellerCancelItem(orderItemId, 2))))
+                            createSellerCancelRequest(orderItemId, 2))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -241,9 +231,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
 
             given().spec(givenSuperAdmin())
                     .body(
-                            Map.of(
-                                    "items",
-                                    List.of(createSellerCancelItem(orderItemId, 2))))
+                            createSellerCancelRequest(orderItemId, 2))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -264,11 +252,11 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
 
     // ===== Helper =====
 
-    private Map<String, Object> createSellerCancelItem(String orderItemId, int cancelQty) {
+    private Map<String, Object> createSellerCancelRequest(String orderItemId, int cancelQty) {
         return Map.of(
-                "orderId", orderItemId,
-                "cancelQty", cancelQty,
-                "reasonType", "OUT_OF_STOCK",
-                "reasonDetail", "재고 소진");
+                "items",
+                List.of(Map.of("orderId", orderItemId, "cancelQty", cancelQty)),
+                "reason",
+                Map.of("reasonType", "OUT_OF_STOCK", "reasonDetail", "재고 소진"));
     }
 }

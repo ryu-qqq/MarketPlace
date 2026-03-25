@@ -21,6 +21,7 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.LegacyProductGr
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.mapper.LegacyProductGroupQueryApiMapper;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.LegacyProductQueryUseCase;
+import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.LegacySearchProductGroupByOffsetUseCase;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,6 +51,7 @@ class LegacyProductGroupQueryControllerRestDocsTest {
     @Autowired private ObjectMapper objectMapper;
 
     @MockitoBean private LegacyProductQueryUseCase legacyProductQueryUseCase;
+    @MockitoBean private LegacySearchProductGroupByOffsetUseCase legacySearchProductGroupByOffsetUseCase;
     @MockitoBean private LegacyProductGroupQueryApiMapper legacyProductGroupQueryApiMapper;
     @MockitoBean private MarketAccessChecker accessChecker;
     @MockitoBean private LegacyAccessChecker legacyAccessChecker;
@@ -188,6 +190,39 @@ class LegacyProductGroupQueryControllerRestDocsTest {
                                                             "data.productGroup.productStatus.displayYn")
                                                     .type(JsonFieldType.STRING)
                                                     .description("진열 여부"),
+                                            fieldWithPath(
+                                                            "data.productGroup.crawlProductInfo.siteName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("크롤링 사이트명"),
+                                            fieldWithPath(
+                                                            "data.productGroup.crawlProductInfo.crawlProductSku")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("크롤링 상품 SKU"),
+                                            fieldWithPath(
+                                                            "data.productGroup.crawlProductInfo.baseLinkUrl")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("크롤링 기본 URL"),
+                                            fieldWithPath(
+                                                            "data.productGroup.crawlProductInfo.status")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("크롤링 상태"),
+                                            fieldWithPath(
+                                                            "data.productGroup.crawlProductInfo.insertDate")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("크롤링 등록일시"),
+                                            fieldWithPath(
+                                                            "data.productGroup.crawlProductInfo.updateDate")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("크롤링 수정일시"),
+                                            fieldWithPath("data.productGroup.crawlProductSku")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("크롤링 상품 SKU"),
+                                            fieldWithPath("data.productGroup.externalProductInfos")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("외부 상품 연동 정보"),
+                                            fieldWithPath("data.productGroup.externalProductUuId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("외부 상품 UUID"),
                                             fieldWithPath("data.productGroup.insertDate")
                                                     .type(JsonFieldType.STRING)
                                                     .description("등록일시"),

@@ -105,7 +105,7 @@ class CancelCommandE2ETest extends E2ETestBase {
             String orderItemId = seedOrderItem("order-sc-001");
 
             given().spec(givenSuperAdmin())
-                    .body(Map.of("items", List.of(createSellerCancelItem(orderItemId))))
+                    .body(createSellerCancelRequest(orderItemId))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -135,8 +135,10 @@ class CancelCommandE2ETest extends E2ETestBase {
                             Map.of(
                                     "items",
                                     List.of(
-                                            createSellerCancelItem(itemId1),
-                                            createSellerCancelItem(itemId2))))
+                                            Map.of("orderId", itemId1, "cancelQty", 1),
+                                            Map.of("orderId", itemId2, "cancelQty", 1)),
+                                    "reason",
+                                    Map.of("reasonType", "OUT_OF_STOCK", "reasonDetail", "재고 소진")))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -168,7 +170,9 @@ class CancelCommandE2ETest extends E2ETestBase {
                     .body(
                             Map.of(
                                     "items",
-                                    List.of(Map.of("cancelQty", 1, "reasonType", "OUT_OF_STOCK"))))
+                                    List.of(Map.of("cancelQty", 1)),
+                                    "reason",
+                                    Map.of("reasonType", "OUT_OF_STOCK")))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -183,14 +187,9 @@ class CancelCommandE2ETest extends E2ETestBase {
                     .body(
                             Map.of(
                                     "items",
-                                    List.of(
-                                            Map.of(
-                                                    "orderId",
-                                                    "any-id",
-                                                    "cancelQty",
-                                                    0,
-                                                    "reasonType",
-                                                    "OUT_OF_STOCK"))))
+                                    List.of(Map.of("orderId", "any-id", "cancelQty", 0)),
+                                    "reason",
+                                    Map.of("reasonType", "OUT_OF_STOCK")))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -203,8 +202,6 @@ class CancelCommandE2ETest extends E2ETestBase {
         void sellerCancelBatch_MissingReasonType_Returns400() {
             given().spec(givenSuperAdmin())
                     .body(Map.of("items", List.of(Map.of("orderId", "any-id", "cancelQty", 1))))
-                    .when()
-                    .post(SELLER_CANCEL_BATCH)
                     .then()
                     .statusCode(HttpStatus.BAD_REQUEST.value());
         }
@@ -429,15 +426,11 @@ class CancelCommandE2ETest extends E2ETestBase {
 
     // ===== Helper 메서드 =====
 
-    private Map<String, Object> createSellerCancelItem(String orderItemId) {
+    private Map<String, Object> createSellerCancelRequest(String orderItemId) {
         return Map.of(
-                "orderId",
-                orderItemId,
-                "cancelQty",
-                1,
-                "reasonType",
-                "OUT_OF_STOCK",
-                "reasonDetail",
-                "재고 소진");
+                "items",
+                List.of(Map.of("orderId", orderItemId, "cancelQty", 1)),
+                "reason",
+                Map.of("reasonType", "OUT_OF_STOCK", "reasonDetail", "재고 소진"));
     }
 }

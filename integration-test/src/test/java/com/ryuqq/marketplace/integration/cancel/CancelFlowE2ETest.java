@@ -111,7 +111,7 @@ class CancelFlowE2ETest extends E2ETestBase {
 
             // Step 2. 판매자 취소 요청
             given().spec(givenSuperAdmin())
-                    .body(Map.of("items", List.of(createSellerCancelItem(orderItemId))))
+                    .body(createSellerCancelRequest(orderItemId))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -176,7 +176,7 @@ class CancelFlowE2ETest extends E2ETestBase {
             String orderItemId = seedOrderItem("order-flow2-001");
 
             given().spec(givenSuperAdmin())
-                    .body(Map.of("items", List.of(createSellerCancelItem(orderItemId))))
+                    .body(createSellerCancelRequest(orderItemId))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -381,7 +381,7 @@ class CancelFlowE2ETest extends E2ETestBase {
 
             // 다른 orgId로 요청 (sellerId가 10이 아닌 셀러)
             given().spec(givenSellerUser("org-other-seller", "cancel:write"))
-                    .body(Map.of("items", List.of(createSellerCancelItem(orderItemId))))
+                    .body(createSellerCancelRequest(orderItemId))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -430,7 +430,7 @@ class CancelFlowE2ETest extends E2ETestBase {
 
             // Step 4. 2차 Cancel — 판매자 취소 API로 잔여 1개 취소 요청
             given().spec(givenSuperAdmin())
-                    .body(Map.of("items", List.of(createSellerCancelItemWithQty(orderItemId, 1))))
+                    .body(createSellerCancelRequestWithQty(orderItemId, 1))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -456,27 +456,19 @@ class CancelFlowE2ETest extends E2ETestBase {
 
     // ===== Helper 메서드 =====
 
-    private Map<String, Object> createSellerCancelItem(String orderItemId) {
+    private Map<String, Object> createSellerCancelRequest(String orderItemId) {
         return Map.of(
-                "orderId",
-                orderItemId,
-                "cancelQty",
-                1,
-                "reasonType",
-                "OUT_OF_STOCK",
-                "reasonDetail",
-                "재고 소진");
+                "items",
+                List.of(Map.of("orderId", orderItemId, "cancelQty", 1)),
+                "reason",
+                Map.of("reasonType", "OUT_OF_STOCK", "reasonDetail", "재고 소진"));
     }
 
-    private Map<String, Object> createSellerCancelItemWithQty(String orderItemId, int cancelQty) {
+    private Map<String, Object> createSellerCancelRequestWithQty(String orderItemId, int cancelQty) {
         return Map.of(
-                "orderId",
-                orderItemId,
-                "cancelQty",
-                cancelQty,
-                "reasonType",
-                "OUT_OF_STOCK",
-                "reasonDetail",
-                "재고 소진");
+                "items",
+                List.of(Map.of("orderId", orderItemId, "cancelQty", cancelQty)),
+                "reason",
+                Map.of("reasonType", "OUT_OF_STOCK", "reasonDetail", "재고 소진"));
     }
 }

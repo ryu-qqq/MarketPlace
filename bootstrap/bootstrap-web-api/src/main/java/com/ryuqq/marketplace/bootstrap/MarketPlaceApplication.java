@@ -34,7 +34,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
                             "com\\.ryuqq\\.marketplace\\.application\\.legacyseller\\..*",
                             "com\\.ryuqq\\.marketplace\\.application\\.legacyshipment\\..*",
                             "com\\.ryuqq\\.marketplace\\.application\\.legacycommoncode\\..*",
-                            "com\\.ryuqq\\.marketplace\\.application\\.legacyauth\\..*"
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacyauth\\..*",
+                            "com\\.ryuqq\\.marketplace\\.adapter\\.in\\.rest\\.legacy\\..*"
                         }))
 @EnableJpaRepositories(
         basePackages = "com.ryuqq.marketplace.adapter.out.persistence",
