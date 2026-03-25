@@ -241,6 +241,10 @@ public class LegacyOrderApiQueryDslRepository {
             where.and(legacyOrderEntity.id.lt(params.lastDomainId()));
         }
 
+        // 세토프 레거시 호환: ORDER_FAILED, ORDER_PROCESSING 자동 제외
+        where.and(
+                legacyOrderEntity.orderStatus.notIn("ORDER_FAILED", "ORDER_PROCESSING"));
+
         if (params.orderStatusList() != null && !params.orderStatusList().isEmpty()) {
             where.and(legacyOrderEntity.orderStatus.in(params.orderStatusList()));
         }
