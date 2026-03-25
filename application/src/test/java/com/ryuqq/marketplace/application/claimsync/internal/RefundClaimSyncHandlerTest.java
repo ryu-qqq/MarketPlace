@@ -15,7 +15,7 @@ import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundReadManager;
-import com.ryuqq.marketplace.application.settlement.entry.port.in.command.CreateReversalEntryUseCase;
+import com.ryuqq.marketplace.application.refund.internal.RefundSettlementProcessor;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.order.OrderFixtures;
@@ -49,7 +49,7 @@ class RefundClaimSyncHandlerTest {
     @Mock private ClaimHistoryFactory historyFactory;
     @Mock private ClaimHistoryCommandManager historyCommandManager;
     @Mock private TimeProvider timeProvider;
-    @Mock private CreateReversalEntryUseCase createReversalEntryUseCase;
+    @Mock private RefundSettlementProcessor refundSettlementProcessor;
 
     @Nested
     @DisplayName("supportedType() 메서드 테스트")

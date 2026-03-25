@@ -8,8 +8,7 @@ import com.ryuqq.marketplace.application.exchange.manager.ExchangeCommandManager
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeReadManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
-import com.ryuqq.marketplace.application.settlement.entry.dto.command.CreateReversalEntryCommand;
-import com.ryuqq.marketplace.application.settlement.entry.port.in.command.CreateReversalEntryUseCase;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangeSettlementProcessor;
 import com.ryuqq.marketplace.domain.claim.vo.FeePayer;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
@@ -51,7 +50,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
     private final ClaimHistoryFactory historyFactory;
     private final ClaimHistoryCommandManager historyCommandManager;
     private final TimeProvider timeProvider;
-    private final CreateReversalEntryUseCase createReversalEntryUseCase;
+    private final ExchangeSettlementProcessor exchangeSettlementProcessor;
 
     public ExchangeClaimSyncHandler(
             ExchangeReadManager exchangeReadManager,
@@ -61,7 +60,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             ClaimHistoryFactory historyFactory,
             ClaimHistoryCommandManager historyCommandManager,
             TimeProvider timeProvider,
-            CreateReversalEntryUseCase createReversalEntryUseCase) {
+            ExchangeSettlementProcessor exchangeSettlementProcessor) {
         this.exchangeReadManager = exchangeReadManager;
         this.exchangeCommandManager = exchangeCommandManager;
         this.orderItemReadManager = orderItemReadManager;
@@ -69,7 +68,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         this.historyFactory = historyFactory;
         this.historyCommandManager = historyCommandManager;
         this.timeProvider = timeProvider;
-        this.createReversalEntryUseCase = createReversalEntryUseCase;
+        this.exchangeSettlementProcessor = exchangeSettlementProcessor;
     }
 
     @Override
@@ -307,21 +306,8 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
     /** 정산 역분개 Entry를 생성한다. 실패해도 클레임 처리를 막지 않는다. */
     private void createReversalEntry(
             OrderItemId orderItemId, long sellerId, String exchangeClaimId) {
-        try {
-            createReversalEntryUseCase.execute(
-                    new CreateReversalEntryCommand(
-                            orderItemId.value(),
-                            sellerId,
-                            exchangeClaimId,
-                            "EXCHANGE",
-                            0,
-                            0));
-        } catch (Exception e) {
-            log.warn(
-                    "정산 역분개 Entry 생성 실패: exchangeClaimId={}, error={}",
-                    exchangeClaimId,
-                    e.getMessage());
-        }
+        exchangeSettlementProcessor.createReversalEntry(
+                orderItemId.value(), sellerId, exchangeClaimId);
     }
 
     /** 클레임 이력을 생성하고 저장한다. 수량 정보를 message에 포함. */

@@ -15,7 +15,7 @@ import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
-import com.ryuqq.marketplace.application.settlement.entry.port.in.command.CreateReversalEntryUseCase;
+import com.ryuqq.marketplace.application.cancel.internal.CancelSettlementProcessor;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.cancel.CancelFixtures;
@@ -59,7 +59,7 @@ class CancelClaimSyncHandlerTest {
     @Mock private ClaimHistoryFactory historyFactory;
     @Mock private ClaimHistoryCommandManager historyCommandManager;
     @Mock private TimeProvider timeProvider;
-    @Mock private CreateReversalEntryUseCase createReversalEntryUseCase;
+    @Mock private CancelSettlementProcessor cancelSettlementProcessor;
 
     @Nested
     @DisplayName("supportedType() 메서드 테스트")

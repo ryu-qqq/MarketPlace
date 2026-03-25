@@ -9,7 +9,7 @@ import com.ryuqq.marketplace.application.order.dto.command.OrderItemStatusComman
 import com.ryuqq.marketplace.application.order.factory.OrderCommandFactory;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
-import com.ryuqq.marketplace.application.settlement.entry.port.in.command.CreateSalesEntryUseCase;
+import com.ryuqq.marketplace.application.order.internal.OrderSettlementProcessor;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.order.OrderFixtures;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
@@ -37,7 +37,7 @@ class ConfirmOrderServiceTest {
     @Mock private OrderCommandFactory factory;
     @Mock private OrderItemReadManager readManager;
     @Mock private OrderItemCommandManager commandManager;
-    @Mock private CreateSalesEntryUseCase createSalesEntryUseCase;
+    @Mock private OrderSettlementProcessor orderSettlementProcessor;
 
     @Nested
     @DisplayName("execute() - 주문상품 구매 확정 처리")
