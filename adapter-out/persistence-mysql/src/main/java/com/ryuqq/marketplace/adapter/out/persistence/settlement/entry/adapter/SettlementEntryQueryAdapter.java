@@ -87,15 +87,15 @@ public class SettlementEntryQueryAdapter implements SettlementEntryQueryPort {
 
     private DailySettlementResult toDailyResult(Tuple tuple) {
         LocalDate date = tuple.get(0, LocalDate.class);
-        Long totalAmount = tuple.get(1, Long.class);
-        Integer orderCount = tuple.get(2, Integer.class);
-        Integer cancelCount = tuple.get(3, Integer.class);
-        Integer refundCount = tuple.get(4, Integer.class);
+        Long entryCount = tuple.get(1, Long.class);
+        Number salesAmount = tuple.get(2, Number.class);
+        Number commissionAmount = tuple.get(3, Number.class);
+        Number settlementAmount = tuple.get(4, Number.class);
         return new DailySettlementResult(
                 date,
-                totalAmount != null ? totalAmount : 0L,
-                orderCount != null ? orderCount : 0,
-                cancelCount != null ? cancelCount : 0,
-                refundCount != null ? refundCount : 0);
+                entryCount != null ? entryCount : 0L,
+                salesAmount != null ? salesAmount.intValue() : 0,
+                commissionAmount != null ? commissionAmount.intValue() : 0,
+                settlementAmount != null ? settlementAmount.intValue() : 0);
     }
 }

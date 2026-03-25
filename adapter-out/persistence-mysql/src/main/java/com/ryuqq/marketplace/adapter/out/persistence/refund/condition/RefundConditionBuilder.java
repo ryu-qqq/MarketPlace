@@ -1,6 +1,10 @@
 package com.ryuqq.marketplace.adapter.out.persistence.refund.condition;
 
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemJpaEntity.orderItemJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderJpaEntity.orderJpaEntity;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.ryuqq.marketplace.adapter.out.persistence.refund.entity.QRefundClaimJpaEntity;
 import com.ryuqq.marketplace.domain.refund.query.RefundDateField;
 import com.ryuqq.marketplace.domain.refund.query.RefundSearchCriteria;
@@ -68,8 +72,32 @@ public class RefundConditionBuilder {
         }
         return switch (criteria.searchField()) {
             case CLAIM_NUMBER -> refundClaim.claimNumber.like(word);
-            case ORDER_NUMBER -> refundClaim.claimNumber.like(word);
-            case CUSTOMER_NAME, CUSTOMER_PHONE, PRODUCT_NAME -> refundClaim.claimNumber.like(word);
+            case ORDER_NUMBER ->
+                    refundClaim.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.orderNumber.like(word)));
+            case CUSTOMER_NAME ->
+                    refundClaim.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.buyerName.like(word)));
+            case CUSTOMER_PHONE ->
+                    refundClaim.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.buyerPhone.like(word)));
+            case PRODUCT_NAME ->
+                    refundClaim.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .where(orderItemJpaEntity.externalProductName.like(word)));
         };
     }
 

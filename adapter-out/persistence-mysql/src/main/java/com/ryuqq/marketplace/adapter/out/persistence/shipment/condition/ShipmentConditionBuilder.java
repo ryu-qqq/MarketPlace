@@ -120,21 +120,22 @@ public class ShipmentConditionBuilder {
         if (!criteria.hasSellerFilter()) {
             return null;
         }
-        // TODO: Order JPA 엔티티 생성 후 서브쿼리 구현
-        return null;
+        return shipment.orderItemId.in(
+                JPAExpressions.select(orderItemJpaEntity.id)
+                        .from(orderItemJpaEntity)
+                        .where(orderItemJpaEntity.sellerId.in(criteria.sellerIds())));
     }
 
-    /**
-     * 외부 주문번호 필터 조건.
-     *
-     * <p>Order Adapter-Out 구현 후 orders 테이블 JOIN으로 활성화 예정.
-     */
     public BooleanExpression shopOrderNosIn(ShipmentSearchCriteria criteria) {
         if (!criteria.hasShopOrderNoFilter()) {
             return null;
         }
-        // TODO: Order JPA 엔티티 생성 후 서브쿼리 구현
-        return null;
+        return shipment.orderItemId.in(
+                JPAExpressions.select(orderItemJpaEntity.id)
+                        .from(orderItemJpaEntity)
+                        .join(orderJpaEntity)
+                        .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                        .where(orderJpaEntity.externalOrderNo.in(criteria.shopOrderNos())));
     }
 
     public BooleanExpression notDeleted() {

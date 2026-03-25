@@ -1,6 +1,10 @@
 package com.ryuqq.marketplace.adapter.out.persistence.cancel.condition;
 
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemJpaEntity.orderItemJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderJpaEntity.orderJpaEntity;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.ryuqq.marketplace.adapter.out.persistence.cancel.entity.QCancelJpaEntity;
 import com.ryuqq.marketplace.domain.cancel.query.CancelDateField;
 import com.ryuqq.marketplace.domain.cancel.query.CancelSearchCriteria;
@@ -67,8 +71,32 @@ public class CancelConditionBuilder {
         }
         return switch (criteria.searchField()) {
             case CANCEL_NUMBER -> cancel.cancelNumber.like(word);
-            case ORDER_NUMBER -> cancel.cancelNumber.like(word);
-            case CUSTOMER_NAME, CUSTOMER_PHONE, PRODUCT_NAME -> cancel.cancelNumber.like(word);
+            case ORDER_NUMBER ->
+                    cancel.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.orderNumber.like(word)));
+            case CUSTOMER_NAME ->
+                    cancel.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.buyerName.like(word)));
+            case CUSTOMER_PHONE ->
+                    cancel.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.buyerPhone.like(word)));
+            case PRODUCT_NAME ->
+                    cancel.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .where(orderItemJpaEntity.externalProductName.like(word)));
         };
     }
 

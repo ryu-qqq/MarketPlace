@@ -96,16 +96,16 @@ public class SettlementEntryQueryDslRepository {
         DateTemplate<LocalDate> dateExpr =
                 Expressions.dateTemplate(
                         LocalDate.class,
-                        "DATE(CONVERT_TZ({0}, '+00:00', '+09:00'))",
+                        "DATE(DATE_ADD({0}, INTERVAL 9 HOUR))",
                         entry.eligibleAt);
 
         return queryFactory
                 .select(
                         dateExpr,
                         entry.count(),
-                        entry.salesAmount.sum(),
-                        entry.commissionAmount.sum(),
-                        entry.settlementAmount.sum())
+                        entry.salesAmount.sum().coalesce(0),
+                        entry.commissionAmount.sum().coalesce(0),
+                        entry.settlementAmount.sum().coalesce(0))
                 .from(entry)
                 .where(dateExpr.goe(startDate), dateExpr.loe(endDate), sellerIdIn(sellerIds))
                 .groupBy(dateExpr)
