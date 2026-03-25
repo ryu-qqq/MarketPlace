@@ -68,13 +68,16 @@ public abstract class ContainerLegacyE2ETestBase {
     static void configureContainers(DynamicPropertyRegistry registry) {
         TestContainersConfig.overrideProperties(registry);
 
-        // 레거시 DataSource도 동일한 MySQL 컨테이너 사용
+        // 레거시 DataSource → 동일 MySQL 컨테이너의 별도 스키마(luxurydb_test) 사용
+        // main DataSource(marketplace_test)와 테이블명 충돌 방지 (orders, shipment 등)
+        String legacyJdbcUrl =
+                TestContainersConfig.MYSQL
+                        .getJdbcUrl()
+                        .replace("marketplace_test", "luxurydb_test");
         registry.add(
                 "persistence.legacy.datasource.driver-class-name",
                 () -> "com.mysql.cj.jdbc.Driver");
-        registry.add(
-                "persistence.legacy.datasource.jdbc-url",
-                () -> TestContainersConfig.MYSQL.getJdbcUrl());
+        registry.add("persistence.legacy.datasource.jdbc-url", () -> legacyJdbcUrl);
         registry.add(
                 "persistence.legacy.datasource.username", TestContainersConfig.MYSQL::getUsername);
         registry.add(

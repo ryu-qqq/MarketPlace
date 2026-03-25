@@ -44,7 +44,7 @@ public class LegacyPaymentEntity extends LegacyBaseEntity {
     @Column(name = "CANCELED_DATE")
     private LocalDateTime canceledDate;
 
-    @Column(name = "DELETE_YN")
+    @Column(name = "delete_yn")
     private String deleteYn;
 
     protected LegacyPaymentEntity() {}

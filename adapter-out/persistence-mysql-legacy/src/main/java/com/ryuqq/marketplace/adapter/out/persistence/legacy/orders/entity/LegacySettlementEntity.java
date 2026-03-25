@@ -43,7 +43,7 @@ public class LegacySettlementEntity extends LegacyBaseEntity {
     @Column(name = "MILEAGE_SELLER_BURDEN_RATIO")
     private long mileageSellerBurdenRatio;
 
-    @Column(name = "DELETE_YN")
+    @Column(name = "delete_yn")
     private String deleteYn;
 
     protected LegacySettlementEntity() {}

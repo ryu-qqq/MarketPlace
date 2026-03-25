@@ -28,13 +28,14 @@ public final class TestContainersConfig {
     public static final MySQLContainer<?> MYSQL =
             new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))
                     .withDatabaseName("marketplace_test")
-                    .withUsername("test")
-                    .withPassword("test")
+                    .withUsername("root")
+                    .withPassword("root")
                     .withCommand(
                             "--character-set-server=utf8mb4",
                             "--collation-server=utf8mb4_unicode_ci",
                             "--lower-case-table-names=1",
                             "--default-time-zone=+00:00")
+                    .withInitScript("testcontainers/init.sql")
                     .withReuse(true);
 
     // ========================================

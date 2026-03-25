@@ -67,7 +67,7 @@ public class LegacyPaymentBillEntity extends LegacyBaseEntity {
     @Column(name = "CARD_NUMBER")
     private String cardNumber;
 
-    @Column(name = "DELETE_YN")
+    @Column(name = "delete_yn")
     private String deleteYn;
 
     protected LegacyPaymentBillEntity() {}
