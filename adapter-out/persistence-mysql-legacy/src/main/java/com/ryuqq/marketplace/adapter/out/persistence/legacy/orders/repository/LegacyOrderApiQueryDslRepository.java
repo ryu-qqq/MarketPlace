@@ -187,14 +187,16 @@ public class LegacyOrderApiQueryDslRepository {
                 .toList();
     }
 
-    /** 검색 조건에 맞는 주문 건수 조회. */
+    /** 검색 조건에 맞는 주문 건수 조회 (스냅샷이 있는 주문만). */
     public long countOrders(LegacyOrderSearchParams params) {
         BooleanBuilder where = buildWhereCondition(params);
 
         Long count =
                 queryFactory
-                        .select(legacyOrderEntity.id.count())
+                        .select(legacyOrderEntity.id.countDistinct())
                         .from(legacyOrderEntity)
+                        .innerJoin(legacyOrderSnapshotProductGroupEntity)
+                        .on(legacyOrderSnapshotProductGroupEntity.orderId.eq(legacyOrderEntity.id))
                         .where(where)
                         .fetchOne();
 
