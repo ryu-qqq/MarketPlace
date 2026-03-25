@@ -80,6 +80,11 @@ public class SettlementEntryQueryAdapter implements SettlementEntryQueryPort {
                 .toList();
     }
 
+    @Override
+    public List<Long> findDistinctSellerIdsByStatus(EntryStatus status) {
+        return repository.findDistinctSellerIdsByStatus(status.name());
+    }
+
     private DailySettlementResult toDailyResult(Tuple tuple) {
         LocalDate date = tuple.get(0, LocalDate.class);
         Long totalAmount = tuple.get(1, Long.class);

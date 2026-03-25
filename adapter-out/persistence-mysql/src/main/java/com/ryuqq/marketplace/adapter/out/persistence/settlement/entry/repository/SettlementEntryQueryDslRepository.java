@@ -113,6 +113,16 @@ public class SettlementEntryQueryDslRepository {
                 .fetch();
     }
 
+    /** 지정 상태의 Entry가 존재하는 셀러 ID 목록 (중복 제거). */
+    public List<Long> findDistinctSellerIdsByStatus(String status) {
+        return queryFactory
+                .select(entry.sellerId)
+                .distinct()
+                .from(entry)
+                .where(entry.entryStatus.eq(status))
+                .fetch();
+    }
+
     private com.querydsl.core.types.dsl.BooleanExpression statusIn(List<String> statuses) {
         if (statuses == null || statuses.isEmpty()) {
             return null;

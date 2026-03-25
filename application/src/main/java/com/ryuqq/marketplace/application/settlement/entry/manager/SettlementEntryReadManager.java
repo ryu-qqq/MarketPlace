@@ -65,4 +65,9 @@ public class SettlementEntryReadManager {
             LocalDate startDate, LocalDate endDate, List<Long> sellerIds) {
         return queryPort.aggregateByDate(startDate, endDate, sellerIds);
     }
+
+    @Transactional(readOnly = true)
+    public List<Long> findDistinctSellerIdsByStatus(EntryStatus status) {
+        return queryPort.findDistinctSellerIdsByStatus(status);
+    }
 }

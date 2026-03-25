@@ -36,4 +36,7 @@ public interface SettlementEntryQueryPort {
     /** 날짜별 Entry 집계 (eligible_at 기준). */
     List<DailySettlementResult> aggregateByDate(
             LocalDate startDate, LocalDate endDate, List<Long> sellerIds);
+
+    /** 지정 상태의 Entry가 존재하는 셀러 ID 목록 (중복 제거). */
+    List<Long> findDistinctSellerIdsByStatus(EntryStatus status);
 }
