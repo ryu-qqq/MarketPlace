@@ -26,10 +26,19 @@ import com.ryuqq.marketplace.domain.shipment.vo.ShipmentShipData;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ShipmentCommandFactory {
+
+    private static final Map<String, String> COURIER_NAME_MAP =
+            Map.of(
+                    "CJ_LOGISTICS", "CJ대한통운",
+                    "HANJIN", "한진택배",
+                    "LOGEN", "로젠택배",
+                    "LOTTE", "롯데택배",
+                    "KOREA_POST", "우체국택배");
 
     private final TimeProvider timeProvider;
     private final IdGeneratorPort idGeneratorPort;
@@ -116,8 +125,15 @@ public class ShipmentCommandFactory {
                 ShipmentMethod.of(
                         ShipmentMethodType.fromString(item.shipmentMethodType()),
                         item.courierCode(),
-                        null);
+                        resolveCourierName(item.courierCode()));
         ShipmentShipData shipData = ShipmentShipData.of(item.trackingNumber(), method);
         return new UpdateContext<>(orderItemId, shipData, changedAt);
+    }
+
+    private String resolveCourierName(String courierCode) {
+        if (courierCode == null) {
+            return null;
+        }
+        return COURIER_NAME_MAP.getOrDefault(courierCode, courierCode);
     }
 }

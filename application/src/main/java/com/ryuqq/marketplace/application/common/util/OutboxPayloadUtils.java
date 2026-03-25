@@ -14,7 +14,7 @@ public final class OutboxPayloadUtils {
     /**
      * Map을 JSON 문자열로 변환합니다.
      *
-     * <p>String 값은 이스케이프 처리 후 따옴표로 감싸고, 숫자 값은 따옴표 없이 출력합니다.
+     * <p>모든 값을 문자열로 처리하여 따옴표로 감쌉니다. 지수 표기법 방지를 위해 Number 타입도 String.valueOf()로 변환합니다.
      *
      * @param map key-value 쌍
      * @return JSON 문자열
@@ -31,7 +31,7 @@ public final class OutboxPayloadUtils {
             if (value instanceof String s) {
                 sb.append("\"").append(escapeJson(s)).append("\"");
             } else {
-                sb.append(value);
+                sb.append("\"").append(String.valueOf(value)).append("\"");
             }
             first = false;
         }

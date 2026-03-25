@@ -329,14 +329,19 @@ public class NaverCommerceApiClient {
         String token = tokenManager.getAccessToken();
         NaverOrderConfirmRequest request = new NaverOrderConfirmRequest(productOrderIds);
         try {
-            restClient
-                    .post()
-                    .uri("/v1/pay-order/seller/product-orders/confirm")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .body(request)
-                    .retrieve()
-                    .toBodilessEntity();
+            org.springframework.http.ResponseEntity<String> response =
+                    restClient
+                            .post()
+                            .uri("/v1/pay-order/seller/product-orders/confirm")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .body(request)
+                            .retrieve()
+                            .toEntity(String.class);
+            log.info(
+                    "네이버 발주 확인 응답: status={}, body={}",
+                    response.getStatusCode(),
+                    response.getBody());
         } catch (ResourceAccessException e) {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
@@ -347,18 +352,22 @@ public class NaverCommerceApiClient {
     public void dispatchOrders(NaverOrderDispatchRequest request) {
         String token = tokenManager.getAccessToken();
         try {
-            restClient
-                    .post()
-                    .uri("/v1/pay-order/seller/product-orders/dispatch")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .body(request)
-                    .retrieve()
-                    .toBodilessEntity();
+            org.springframework.http.ResponseEntity<String> response =
+                    restClient
+                            .post()
+                            .uri("/v1/pay-order/seller/product-orders/dispatch")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .body(request)
+                            .retrieve()
+                            .toEntity(String.class);
+            log.info(
+                    "네이버 발송처리 응답: status={}, body={}",
+                    response.getStatusCode(),
+                    response.getBody());
         } catch (ResourceAccessException e) {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
-        log.info("네이버 발송 처리 완료");
     }
 
     /** 발송 지연을 처리합니다. */
