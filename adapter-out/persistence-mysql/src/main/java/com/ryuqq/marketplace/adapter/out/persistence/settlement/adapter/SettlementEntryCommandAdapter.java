@@ -1,7 +1,7 @@
-package com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.adapter;
+package com.ryuqq.marketplace.adapter.out.persistence.settlement.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.mapper.SettlementEntryJpaEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.repository.SettlementEntryJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.mapper.SettlementEntryJpaEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.repository.SettlementEntryJpaRepository;
 import com.ryuqq.marketplace.application.settlement.entry.port.out.command.SettlementEntryCommandPort;
 import com.ryuqq.marketplace.domain.settlement.entry.aggregate.SettlementEntry;
 import java.util.List;

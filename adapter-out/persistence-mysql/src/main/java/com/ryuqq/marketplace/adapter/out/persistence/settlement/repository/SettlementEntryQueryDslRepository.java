@@ -1,11 +1,12 @@
-package com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.repository;
+package com.ryuqq.marketplace.adapter.out.persistence.settlement.repository;
 
-import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.entity.QSettlementEntryJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.entity.SettlementEntryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.dto.DailySettlementProjectionDto;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.entity.QSettlementEntryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.entity.SettlementEntryJpaEntity;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -91,7 +92,7 @@ public class SettlementEntryQueryDslRepository {
     }
 
     /** 날짜별 Entry 집계 (eligible_at 기준, KST). */
-    public List<Tuple> aggregateByDate(
+    public List<DailySettlementProjectionDto> aggregateByDate(
             LocalDate startDate, LocalDate endDate, List<Long> sellerIds) {
         DateTemplate<LocalDate> dateExpr =
                 Expressions.dateTemplate(
@@ -101,11 +102,13 @@ public class SettlementEntryQueryDslRepository {
 
         return queryFactory
                 .select(
-                        dateExpr,
-                        entry.count(),
-                        entry.salesAmount.sum().coalesce(0),
-                        entry.commissionAmount.sum().coalesce(0),
-                        entry.settlementAmount.sum().coalesce(0))
+                        Projections.constructor(
+                                DailySettlementProjectionDto.class,
+                                dateExpr,
+                                entry.count(),
+                                entry.salesAmount.sum().coalesce(0),
+                                entry.commissionAmount.sum().coalesce(0),
+                                entry.settlementAmount.sum().coalesce(0)))
                 .from(entry)
                 .where(dateExpr.goe(startDate), dateExpr.loe(endDate), sellerIdIn(sellerIds))
                 .groupBy(dateExpr)

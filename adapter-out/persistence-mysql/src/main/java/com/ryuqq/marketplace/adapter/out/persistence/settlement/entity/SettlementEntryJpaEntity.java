@@ -1,4 +1,4 @@
-package com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.entity;
+package com.ryuqq.marketplace.adapter.out.persistence.settlement.entity;
 
 import com.ryuqq.marketplace.adapter.out.persistence.common.entity.BaseAuditEntity;
 import jakarta.persistence.Column;

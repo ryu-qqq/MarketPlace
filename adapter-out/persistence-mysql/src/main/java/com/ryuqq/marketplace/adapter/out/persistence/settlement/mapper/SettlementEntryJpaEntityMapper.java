@@ -1,6 +1,6 @@
-package com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.mapper;
+package com.ryuqq.marketplace.adapter.out.persistence.settlement.mapper;
 
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.entity.SettlementEntryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.entity.SettlementEntryJpaEntity;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.settlement.entry.aggregate.SettlementEntry;
 import com.ryuqq.marketplace.domain.settlement.entry.id.SettlementEntryId;

@@ -1,6 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.settlement;
 
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.entity.SettlementEntryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.entity.SettlementEntryJpaEntity;
 import java.time.Instant;
 
 /** SettlementEntryJpaEntity 테스트 Fixtures. */

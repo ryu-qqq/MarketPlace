@@ -7,10 +7,10 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
 import com.ryuqq.marketplace.adapter.out.persistence.settlement.SettlementEntryJpaEntityFixtures;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.adapter.SettlementEntryCommandAdapter;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.entity.SettlementEntryJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.mapper.SettlementEntryJpaEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.repository.SettlementEntryJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.adapter.SettlementEntryCommandAdapter;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.entity.SettlementEntryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.mapper.SettlementEntryJpaEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.repository.SettlementEntryJpaRepository;
 import com.ryuqq.marketplace.domain.settlement.entry.SettlementEntryFixtures;
 import com.ryuqq.marketplace.domain.settlement.entry.aggregate.SettlementEntry;
 import java.util.List;

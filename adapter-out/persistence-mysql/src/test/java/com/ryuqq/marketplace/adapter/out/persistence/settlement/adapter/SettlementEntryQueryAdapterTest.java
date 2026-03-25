@@ -5,10 +5,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.adapter.out.persistence.settlement.SettlementEntryJpaEntityFixtures;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.adapter.SettlementEntryQueryAdapter;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.entity.SettlementEntryJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.mapper.SettlementEntryJpaEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.repository.SettlementEntryQueryDslRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.adapter.SettlementEntryQueryAdapter;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.entity.SettlementEntryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.mapper.SettlementEntryJpaEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.repository.SettlementEntryQueryDslRepository;
 import com.ryuqq.marketplace.domain.settlement.entry.SettlementEntryFixtures;
 import com.ryuqq.marketplace.domain.settlement.entry.aggregate.SettlementEntry;
 import com.ryuqq.marketplace.domain.settlement.entry.id.SettlementEntryId;

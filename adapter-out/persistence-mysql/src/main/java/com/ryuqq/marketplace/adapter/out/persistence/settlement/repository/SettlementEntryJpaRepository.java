@@ -1,6 +1,6 @@
-package com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.repository;
+package com.ryuqq.marketplace.adapter.out.persistence.settlement.repository;
 
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.entity.SettlementEntryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.entity.SettlementEntryJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /** 정산 원장 JPA Repository (save 용). */

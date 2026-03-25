@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.*;
 
 import com.ryuqq.marketplace.adapter.out.persistence.settlement.SettlementEntryJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.settlement.SettlementJpaEntityFixtures;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.repository.SettlementEntryJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.repository.SettlementEntryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.settlement.repository.SettlementJpaRepository;
 import com.ryuqq.marketplace.integration.E2ETestBase;
 import java.util.List;

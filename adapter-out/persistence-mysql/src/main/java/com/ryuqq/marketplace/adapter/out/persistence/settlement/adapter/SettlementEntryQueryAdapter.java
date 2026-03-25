@@ -1,8 +1,8 @@
-package com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.adapter;
+package com.ryuqq.marketplace.adapter.out.persistence.settlement.adapter;
 
-import com.querydsl.core.Tuple;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.mapper.SettlementEntryJpaEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.entry.repository.SettlementEntryQueryDslRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.dto.DailySettlementProjectionDto;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.mapper.SettlementEntryJpaEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.settlement.repository.SettlementEntryQueryDslRepository;
 import com.ryuqq.marketplace.application.settlement.dto.response.DailySettlementResult;
 import com.ryuqq.marketplace.application.settlement.entry.dto.query.SettlementEntrySearchParams;
 import com.ryuqq.marketplace.application.settlement.entry.port.out.query.SettlementEntryQueryPort;
@@ -85,17 +85,12 @@ public class SettlementEntryQueryAdapter implements SettlementEntryQueryPort {
         return repository.findDistinctSellerIdsByStatus(status.name());
     }
 
-    private DailySettlementResult toDailyResult(Tuple tuple) {
-        LocalDate date = tuple.get(0, LocalDate.class);
-        Long entryCount = tuple.get(1, Long.class);
-        Number salesAmount = tuple.get(2, Number.class);
-        Number commissionAmount = tuple.get(3, Number.class);
-        Number settlementAmount = tuple.get(4, Number.class);
+    private DailySettlementResult toDailyResult(DailySettlementProjectionDto dto) {
         return new DailySettlementResult(
-                date,
-                entryCount != null ? entryCount : 0L,
-                salesAmount != null ? salesAmount.intValue() : 0,
-                commissionAmount != null ? commissionAmount.intValue() : 0,
-                settlementAmount != null ? settlementAmount.intValue() : 0);
+                dto.settlementDay(),
+                dto.entryCount(),
+                dto.totalSalesAmount(),
+                dto.totalCommissionAmount(),
+                dto.totalSettlementAmount());
     }
 }
