@@ -49,6 +49,11 @@ public class CancelReadManager {
     }
 
     @Transactional(readOnly = true)
+    public List<Cancel> findAllByOrderItemId(OrderItemId orderItemId) {
+        return queryPort.findAllByOrderItemId(orderItemId);
+    }
+
+    @Transactional(readOnly = true)
     public Map<CancelStatus, Long> countByStatus() {
         return queryPort.countByStatus();
     }

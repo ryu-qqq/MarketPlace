@@ -34,6 +34,8 @@ public class OrderItemCommandAdapter implements OrderItemCommandPort {
                             entity -> {
                                 entity.updateOrderItemStatus(item.status().name());
                                 entity.updateExternalOrderStatus(item.externalOrderStatus());
+                                entity.updateCancelledQty(item.cancelledQty());
+                                entity.updateReturnedQty(item.returnedQty());
                             },
                             () ->
                                     itemRepository.save(

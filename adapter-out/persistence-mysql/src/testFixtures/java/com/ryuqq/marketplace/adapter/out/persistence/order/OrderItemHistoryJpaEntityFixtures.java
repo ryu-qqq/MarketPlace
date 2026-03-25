@@ -14,7 +14,7 @@ public final class OrderItemHistoryJpaEntityFixtures {
     public static OrderItemHistoryJpaEntity creationHistory(String orderItemId) {
         Instant now = Instant.now();
         return OrderItemHistoryJpaEntity.create(
-                null, orderItemId, null, "READY", DEFAULT_CHANGED_BY, null, now, now, now);
+                null, orderItemId, null, "READY", DEFAULT_CHANGED_BY, null, 0, now, now, now);
     }
 
     /** 상태 전이 이력 Entity. */
@@ -22,7 +22,7 @@ public final class OrderItemHistoryJpaEntityFixtures {
             String orderItemId, String fromStatus, String toStatus) {
         Instant now = Instant.now();
         return OrderItemHistoryJpaEntity.create(
-                null, orderItemId, fromStatus, toStatus, DEFAULT_CHANGED_BY, null, now, now, now);
+                null, orderItemId, fromStatus, toStatus, DEFAULT_CHANGED_BY, null, 0, now, now, now);
     }
 
     /** 사유가 있는 상태 전이 이력 Entity. */
@@ -30,6 +30,6 @@ public final class OrderItemHistoryJpaEntityFixtures {
             String orderItemId, String fromStatus, String toStatus, String reason) {
         Instant now = Instant.now();
         return OrderItemHistoryJpaEntity.create(
-                null, orderItemId, fromStatus, toStatus, DEFAULT_CHANGED_BY, reason, now, now, now);
+                null, orderItemId, fromStatus, toStatus, DEFAULT_CHANGED_BY, reason, 0, now, now, now);
     }
 }

@@ -37,6 +37,9 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
     @Column(name = "changed_at", nullable = false)
     private Instant changedAt;
 
+    @Column(name = "quantity", nullable = false)
+    private int quantity;
+
     protected OrderItemHistoryJpaEntity() {
         super();
     }
@@ -48,6 +51,7 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
             String toStatus,
             String changedBy,
             String reason,
+            int quantity,
             Instant changedAt,
             Instant createdAt,
             Instant updatedAt) {
@@ -58,6 +62,7 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
         this.toStatus = toStatus;
         this.changedBy = changedBy;
         this.reason = reason;
+        this.quantity = quantity;
         this.changedAt = changedAt;
     }
 
@@ -68,6 +73,7 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
             String toStatus,
             String changedBy,
             String reason,
+            int quantity,
             Instant changedAt,
             Instant createdAt,
             Instant updatedAt) {
@@ -78,6 +84,7 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
                 toStatus,
                 changedBy,
                 reason,
+                quantity,
                 changedAt,
                 createdAt,
                 updatedAt);
@@ -109,5 +116,9 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
 
     public Instant getChangedAt() {
         return changedAt;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 }

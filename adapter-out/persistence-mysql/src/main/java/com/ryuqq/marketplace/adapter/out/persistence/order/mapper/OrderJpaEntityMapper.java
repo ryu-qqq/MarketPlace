@@ -123,6 +123,8 @@ public class OrderJpaEntityMapper {
                 item.receiverInfo().deliveryRequest(),
                 item.status().name(),
                 item.externalOrderStatus(),
+                item.cancelledQty(),
+                item.returnedQty(),
                 Instant.now(),
                 Instant.now());
     }
@@ -139,6 +141,7 @@ public class OrderJpaEntityMapper {
                 history.toStatus().name(),
                 history.changedBy(),
                 history.reason(),
+                history.quantity(),
                 history.changedAt(),
                 history.changedAt(),
                 history.changedAt());
@@ -257,8 +260,8 @@ public class OrderJpaEntityMapper {
                 resolveReceiverInfo(entity),
                 OrderItemStatus.valueOf(entity.getOrderItemStatus()),
                 entity.getExternalOrderStatus(),
-                0,
-                0,
+                entity.getCancelledQty(),
+                entity.getReturnedQty(),
                 histories);
     }
 
@@ -290,7 +293,7 @@ public class OrderJpaEntityMapper {
                 OrderItemStatus.valueOf(entity.getToStatus()),
                 entity.getChangedBy(),
                 entity.getReason(),
-                0,
+                entity.getQuantity(),
                 entity.getChangedAt());
     }
 }

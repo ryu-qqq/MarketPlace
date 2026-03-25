@@ -106,6 +106,12 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "external_order_status", length = 50)
     private String externalOrderStatus;
 
+    @Column(name = "cancelled_qty", nullable = false)
+    private int cancelledQty;
+
+    @Column(name = "returned_qty", nullable = false)
+    private int returnedQty;
+
     protected OrderItemJpaEntity() {
         super();
     }
@@ -143,6 +149,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String deliveryRequest,
             String orderItemStatus,
             String externalOrderStatus,
+            int cancelledQty,
+            int returnedQty,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
@@ -177,6 +185,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.deliveryRequest = deliveryRequest;
         this.orderItemStatus = orderItemStatus;
         this.externalOrderStatus = externalOrderStatus;
+        this.cancelledQty = cancelledQty;
+        this.returnedQty = returnedQty;
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -212,6 +222,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String deliveryRequest,
             String orderItemStatus,
             String externalOrderStatus,
+            int cancelledQty,
+            int returnedQty,
             Instant createdAt,
             Instant updatedAt) {
         return new OrderItemJpaEntity(
@@ -246,6 +258,8 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 deliveryRequest,
                 orderItemStatus,
                 externalOrderStatus,
+                cancelledQty,
+                returnedQty,
                 createdAt,
                 updatedAt);
     }
@@ -380,5 +394,21 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     public void updateExternalOrderStatus(String externalOrderStatus) {
         this.externalOrderStatus = externalOrderStatus;
+    }
+
+    public int getCancelledQty() {
+        return cancelledQty;
+    }
+
+    public int getReturnedQty() {
+        return returnedQty;
+    }
+
+    public void updateCancelledQty(int cancelledQty) {
+        this.cancelledQty = cancelledQty;
+    }
+
+    public void updateReturnedQty(int returnedQty) {
+        this.returnedQty = returnedQty;
     }
 }

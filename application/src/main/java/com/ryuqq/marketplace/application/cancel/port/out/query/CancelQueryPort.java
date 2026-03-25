@@ -16,6 +16,8 @@ public interface CancelQueryPort {
 
     Optional<Cancel> findByOrderItemId(OrderItemId orderItemId);
 
+    List<Cancel> findAllByOrderItemId(OrderItemId orderItemId);
+
     List<Cancel> findByOrderItemIds(List<OrderItemId> orderItemIds);
 
     List<Cancel> findByCriteria(CancelSearchCriteria criteria);

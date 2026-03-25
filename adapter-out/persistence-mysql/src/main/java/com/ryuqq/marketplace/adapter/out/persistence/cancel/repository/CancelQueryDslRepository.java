@@ -53,6 +53,13 @@ public class CancelQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
+    public List<CancelJpaEntity> findAllByOrderItemId(String orderItemId) {
+        return queryFactory
+                .selectFrom(cancel)
+                .where(conditionBuilder.orderItemIdEq(orderItemId))
+                .fetch();
+    }
+
     public List<CancelJpaEntity> findByOrderItemIds(List<String> orderItemIds) {
         return queryFactory
                 .selectFrom(cancel)

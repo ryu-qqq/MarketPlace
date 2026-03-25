@@ -67,6 +67,8 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_DELIVERY_REQUEST,
                 "READY",
                 null,
+                0,
+                0,
                 now,
                 now);
     }
@@ -112,6 +114,8 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_DELIVERY_REQUEST,
                 "CONFIRMED",
                 null,
+                0,
+                0,
                 now,
                 now);
     }
@@ -153,6 +157,8 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_DELIVERY_REQUEST,
                 "READY",
                 null,
+                0,
+                0,
                 now,
                 now);
     }
