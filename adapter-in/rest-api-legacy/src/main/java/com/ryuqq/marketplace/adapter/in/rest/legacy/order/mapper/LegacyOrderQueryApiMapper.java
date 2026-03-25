@@ -59,7 +59,7 @@ public class LegacyOrderQueryApiMapper {
      * 히스토리 없이 빈 목록으로 매핑.
      */
     public LegacyOrderResponse toOrderResponse(LegacyOrderDetailResult result) {
-        return toOrderResponse(result, List.of());
+        return toOrderResponse(result, null);
     }
 
     /**
@@ -178,7 +178,10 @@ public class LegacyOrderQueryApiMapper {
     }
 
     private List<OrderHistoryInfo> toOrderHistoryInfos(List<LegacyOrderHistoryResult> histories) {
-        if (histories == null || histories.isEmpty()) {
+        if (histories == null) {
+            return null;
+        }
+        if (histories.isEmpty()) {
             return List.of();
         }
         return histories.stream()
