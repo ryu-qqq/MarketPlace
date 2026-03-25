@@ -21,7 +21,9 @@ public class LegacySellerAuthCompositeQueryDslRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public LegacySellerAuthCompositeQueryDslRepository(JPAQueryFactory queryFactory) {
+    public LegacySellerAuthCompositeQueryDslRepository(
+            @org.springframework.beans.factory.annotation.Qualifier("legacyJpaQueryFactory")
+                    JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 

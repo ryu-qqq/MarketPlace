@@ -20,7 +20,9 @@ public class LegacyProductGroupDescriptionQueryDslRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public LegacyProductGroupDescriptionQueryDslRepository(JPAQueryFactory queryFactory) {
+    public LegacyProductGroupDescriptionQueryDslRepository(
+            @org.springframework.beans.factory.annotation.Qualifier("legacyJpaQueryFactory")
+                    JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 

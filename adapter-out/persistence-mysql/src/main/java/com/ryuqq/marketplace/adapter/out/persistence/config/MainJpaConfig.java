@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
+import java.util.List;
 import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,8 +75,17 @@ public class MainJpaConfig {
             EntityManagerFactoryBuilder builder,
             PersistenceManagedTypes persistenceManagedTypes,
             @Nullable Flyway mainFlyway) {
+        List<String> filtered =
+                persistenceManagedTypes.getManagedClassNames().stream()
+                        .filter(
+                                name ->
+                                        !name.startsWith(
+                                                "com.ryuqq.marketplace.adapter.out.persistence.legacy."))
+                        .toList();
+        PersistenceManagedTypes mainManagedTypes =
+                PersistenceManagedTypes.of(filtered, List.of());
         return builder.dataSource(dataSource)
-                .managedTypes(persistenceManagedTypes)
+                .managedTypes(mainManagedTypes)
                 .persistenceUnit("main")
                 .build();
     }
