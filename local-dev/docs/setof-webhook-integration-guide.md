@@ -623,3 +623,19 @@ curl -X POST http://localhost:8080/api/v1/market/internal/webhooks/orders/purcha
 - 모든 날짜/시간 필드는 **ISO 8601 UTC** 형식을 사용합니다.
 - 예: `2026-03-25T01:00:00Z`
 - Java 타입: `Instant`
+
+---
+
+## 8. E2E 테스트 결과 (2026-03-25)
+
+MarketPlace 로컬 서버(8080) + 테스트 데이터(external_order_item_mappings) 기반 실제 호출 검증.
+
+| # | 웹훅 | HTTP | 처리 결과 | 비고 |
+|---|---|---|---|---|
+| 1 | 주문 생성 (/created) | ✅ 200 | pending:1 | inbound 파이프라인 적재 |
+| 2 | 구매확정 (/purchase-confirmed) | ✅ 200 | 정상 처리 | CONFIRMED 상태에서 호출 |
+| 3 | 즉시 취소 (/cancelled) | ✅ 200 | cancelSynced:1 | READY 상태에서 호출 |
+| 4 | 반품 요청 (/return-requested) | ✅ 200 | refundSynced:1 | CONFIRMED → RETURN_REQUESTED |
+| 5 | 반품 철회 (/return-withdrawn) | ✅ 200 | skipped:1 | refund_claim 없으면 정상 스킵 |
+
+**주의**: 테스트 데이터로 검증 시 `external_order_item_mappings` 테이블에 매핑이 있어야 합니다. 매핑 없으면 모두 `skipped` 처리.
