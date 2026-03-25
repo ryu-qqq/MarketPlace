@@ -31,6 +31,7 @@ public record SchedulerProperties(Jobs jobs) {
             LegacyConversionSeeder legacyConversionSeeder,
             InboundOrderPolling inboundOrderPolling,
             InboundOrderRetry inboundOrderRetry,
+            SellicOrderIssuing sellicOrderIssuing,
             ShipmentOutbox shipmentOutbox,
             CancelOutbox cancelOutbox,
             RefundOutbox refundOutbox,
@@ -102,6 +103,9 @@ public record SchedulerProperties(Jobs jobs) {
             long salesChannelId, boolean enabled, String cron, String timezone, int batchSize) {}
 
     public record InboundOrderRetry(boolean enabled, String cron, String timezone, int batchSize) {}
+
+    public record SellicOrderIssuing(
+            boolean enabled, String cron, String timezone, int batchSize, long salesChannelId) {}
 
     public record ShipmentOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
 

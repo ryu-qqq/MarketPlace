@@ -61,6 +61,29 @@ public class LegacyOrderEntity extends LegacyBaseEntity {
 
     protected LegacyOrderEntity() {}
 
+    public static LegacyOrderEntity create(
+            long paymentId,
+            long productId,
+            long sellerId,
+            long userId,
+            long orderAmount,
+            String orderStatus,
+            int quantity,
+            String operator) {
+        LegacyOrderEntity entity = new LegacyOrderEntity();
+        entity.paymentId = paymentId;
+        entity.productId = productId;
+        entity.sellerId = sellerId;
+        entity.userId = userId;
+        entity.orderAmount = orderAmount;
+        entity.orderStatus = orderStatus;
+        entity.quantity = quantity;
+        entity.reviewYn = "N";
+        entity.deleteYn = "N";
+        entity.initAuditFields(operator);
+        return entity;
+    }
+
     public Long getId() {
         return id;
     }

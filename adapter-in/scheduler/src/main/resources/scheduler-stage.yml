@@ -190,6 +190,14 @@ scheduler:
       cron: "0 */1 * * * *"
       batch-size: 100
 
+    # 셀릭 주문 발행 (Stage: 비활성화 — 활성화 시 30초마다)
+    sellic-order-issuing:
+      enabled: false
+      cron: "*/30 * * * * *"
+      timezone: Asia/Seoul
+      batch-size: 300
+      sales-channel-id: 16
+
     cancel-outbox:
       process-pending:
         enabled: true

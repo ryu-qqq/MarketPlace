@@ -47,6 +47,24 @@ public class LegacyInterlockingOrderEntity {
 
     protected LegacyInterlockingOrderEntity() {}
 
+    public static LegacyInterlockingOrderEntity create(
+            long externalIdx,
+            String externalOrderId,
+            long interlockingSiteId,
+            String siteName,
+            long paymentId,
+            long orderId) {
+        LegacyInterlockingOrderEntity entity = new LegacyInterlockingOrderEntity();
+        entity.externalIdx = externalIdx;
+        entity.externalOrderId = externalOrderId;
+        entity.interlockingSiteId = interlockingSiteId;
+        entity.siteName = siteName;
+        entity.paymentId = paymentId;
+        entity.orderId = orderId;
+        entity.deleteYn = "N";
+        return entity;
+    }
+
     public Long getInterlockingOrderId() {
         return interlockingOrderId;
     }

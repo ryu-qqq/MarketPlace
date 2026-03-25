@@ -44,6 +44,18 @@ public class LegacyExternalOrderEntity {
 
     protected LegacyExternalOrderEntity() {}
 
+    public static LegacyExternalOrderEntity create(
+            long siteId, long paymentId, long orderId, long externalIdx, String externalOrderPkId) {
+        LegacyExternalOrderEntity entity = new LegacyExternalOrderEntity();
+        entity.siteId = siteId;
+        entity.paymentId = paymentId;
+        entity.orderId = orderId;
+        entity.externalIdx = externalIdx;
+        entity.externalOrderPkId = externalOrderPkId;
+        entity.deleteYn = "N";
+        return entity;
+    }
+
     public Long getExternalOrderId() {
         return externalOrderId;
     }

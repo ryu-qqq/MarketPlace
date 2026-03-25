@@ -32,6 +32,9 @@ public class LegacyShipmentEntity extends LegacyBaseEntity {
     @Column(name = "SHIPMENT_TYPE")
     private String shipmentType;
 
+    @Column(name = "PAYMENT_SNAPSHOT_SHIPPING_ADDRESS_ID")
+    private Long paymentSnapshotShippingAddressId;
+
     @Column(name = "SENDER_NAME")
     private String senderName;
 
@@ -57,6 +60,27 @@ public class LegacyShipmentEntity extends LegacyBaseEntity {
     private String deleteYn;
 
     protected LegacyShipmentEntity() {}
+
+    public static LegacyShipmentEntity create(
+            long orderId,
+            long paymentSnapshotShippingAddressId,
+            String senderName,
+            String senderEmail,
+            String senderPhoneNumber,
+            String deliveryStatus,
+            String operator) {
+        LegacyShipmentEntity entity = new LegacyShipmentEntity();
+        entity.orderId = orderId;
+        entity.paymentSnapshotShippingAddressId = paymentSnapshotShippingAddressId;
+        entity.senderName = senderName;
+        entity.senderEmail = senderEmail;
+        entity.senderPhoneNumber = senderPhoneNumber;
+        entity.deliveryStatus = deliveryStatus;
+        entity.companyCode = "REFER_DETAIL";
+        entity.deleteYn = "N";
+        entity.initAuditFields(operator);
+        return entity;
+    }
 
     public Long getId() {
         return id;

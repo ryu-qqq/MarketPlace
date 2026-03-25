@@ -56,6 +56,27 @@ public class LegacyPaymentSnapshotShippingAddressEntity {
 
     protected LegacyPaymentSnapshotShippingAddressEntity() {}
 
+    public static LegacyPaymentSnapshotShippingAddressEntity create(
+            long paymentId,
+            String receiverName,
+            String phoneNumber,
+            String addressLine1,
+            String zipCode,
+            String deliveryRequest) {
+        LegacyPaymentSnapshotShippingAddressEntity entity =
+                new LegacyPaymentSnapshotShippingAddressEntity();
+        entity.paymentId = paymentId;
+        entity.receiverName = receiverName;
+        entity.shippingAddressName = "집";
+        entity.addressLine1 = addressLine1;
+        entity.phoneNumber = phoneNumber;
+        entity.zipCode = zipCode;
+        entity.country = "KR";
+        entity.deliveryRequest = deliveryRequest;
+        entity.deleteYn = "N";
+        return entity;
+    }
+
     public Long getId() {
         return id;
     }

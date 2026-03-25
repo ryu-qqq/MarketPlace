@@ -215,6 +215,18 @@ scheduler:
       timezone: Asia/Seoul
       batch-size: 100
 
+    # 셀릭 주문 발행 스케줄러 (luxurydb 저장 + Outbox 생성)
+    # setof-commerce의 셀릭 배치를 대체
+    sellic-order-issuing:
+      enabled: false
+      # Cron: 10분마다 (환경별 오버라이드 가능)
+      cron: "0 */10 * * * *"
+      timezone: Asia/Seoul
+      # 배치 크기
+      batch-size: 500
+      # 셀릭 판매채널 ID
+      sales-channel-id: 16
+
     # InboundProduct PENDING_MAPPING 재처리 스케줄러
     inbound-product-retry:
       enabled: true
