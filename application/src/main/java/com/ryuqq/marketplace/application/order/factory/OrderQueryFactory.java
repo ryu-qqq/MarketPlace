@@ -11,7 +11,9 @@ import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchField;
 import com.ryuqq.marketplace.domain.order.query.OrderSortKey;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.stereotype.Component;
 
 /**
@@ -46,7 +48,10 @@ public class OrderQueryFactory {
                         pageRequest,
                         params.searchParams().includeDeleted());
 
-        List<OrderItemStatus> statuses = OrderItemStatus.fromStringList(params.statuses());
+        List<OrderItemStatus> statuses = new ArrayList<>();
+        List<String> crossDomainStatuses = new ArrayList<>();
+        classifyStatuses(params.statuses(), statuses, crossDomainStatuses);
+
         OrderSearchField searchField = OrderSearchField.fromString(params.searchField());
         OrderDateField dateField = OrderDateField.fromString(params.dateField());
         DateRange dateRange =
@@ -54,6 +59,38 @@ public class OrderQueryFactory {
                         params.searchParams().startDate(), params.searchParams().endDate());
 
         return OrderSearchCriteria.of(
-                statuses, searchField, params.searchWord(), dateRange, dateField, queryContext);
+                statuses,
+                crossDomainStatuses,
+                params.shopId(),
+                searchField,
+                params.searchWord(),
+                dateRange,
+                dateField,
+                queryContext);
+    }
+
+    /**
+     * 프론트 상태 문자열을 OrderItemStatus와 crossDomain 상태로 분류.
+     *
+     * <p>OrderItemStatus.valueOf()로 변환 가능하면 statuses에, 실패하면 crossDomainStatuses에 추가합니다.
+     */
+    private void classifyStatuses(
+            List<String> rawStatuses,
+            List<OrderItemStatus> statuses,
+            List<String> crossDomainStatuses) {
+        if (rawStatuses == null || rawStatuses.isEmpty()) {
+            return;
+        }
+        for (String raw : rawStatuses) {
+            if (raw == null || raw.isBlank()) {
+                continue;
+            }
+            String upper = raw.trim().toUpperCase(Locale.ROOT);
+            try {
+                statuses.add(OrderItemStatus.valueOf(upper));
+            } catch (IllegalArgumentException e) {
+                crossDomainStatuses.add(upper);
+            }
+        }
     }
 }

@@ -59,6 +59,7 @@ public class OrderQueryApiMapper {
                 request.searchField(),
                 request.searchWord(),
                 request.dateField(),
+                request.shopId(),
                 searchParams);
     }
 

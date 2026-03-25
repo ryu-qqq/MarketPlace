@@ -11,11 +11,12 @@ import java.util.List;
  * /orders?startDate=2026-03-02&endDate=2026-03-02&dateField=ORDERED&status=PREPARING&page=0&size=20}
  */
 public record SearchOrdersApiRequest(
-        @Parameter(description = "날짜 검색 대상 (ORDERED, SHIPPED, DELIVERED)", example = "ORDERED")
+        @Parameter(description = "날짜 검색 대상 (REQUESTED, SHIPPED, DELIVERED)", example = "REQUESTED")
                 String dateField,
         @Parameter(description = "시작일 (YYYY-MM-DD)", example = "2026-03-01") LocalDate startDate,
         @Parameter(description = "종료일 (YYYY-MM-DD)", example = "2026-03-31") LocalDate endDate,
-        @Parameter(description = "주문 상태 필터", example = "ORDERED") List<String> status,
+        @Parameter(description = "주문 상태 필터", example = "READY") List<String> status,
+        @Parameter(description = "쇼핑몰 ID 필터") Long shopId,
         @Parameter(description = "검색 필드 (ORDER_ID, ORDER_NUMBER, CUSTOMER_NAME, PRODUCT_NAME)")
                 String searchField,
         @Parameter(description = "검색어") String searchWord,

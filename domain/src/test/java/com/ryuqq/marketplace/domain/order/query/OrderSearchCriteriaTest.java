@@ -39,7 +39,7 @@ class OrderSearchCriteriaTest {
             // when
             OrderSearchCriteria criteria =
                     OrderSearchCriteria.of(
-                            statuses, searchField, searchWord, dateRange, dateField, queryContext);
+                            statuses, List.of(), null, searchField, searchWord, dateRange, dateField, queryContext);
 
             // then
             assertThat(criteria.statuses())
@@ -57,6 +57,8 @@ class OrderSearchCriteriaTest {
             // when
             OrderSearchCriteria criteria =
                     OrderSearchCriteria.of(
+                            null,
+                            null,
                             null,
                             null,
                             null,
@@ -104,6 +106,8 @@ class OrderSearchCriteriaTest {
                             null,
                             null,
                             null,
+                            null,
+                            null,
                             QueryContext.defaultOf(OrderSortKey.defaultKey()));
 
             // then
@@ -131,6 +135,8 @@ class OrderSearchCriteriaTest {
             // given
             OrderSearchCriteria criteria =
                     OrderSearchCriteria.of(
+                            null,
+                            null,
                             null,
                             OrderSearchField.ORDER_ID,
                             "ORD-2026",
@@ -160,6 +166,8 @@ class OrderSearchCriteriaTest {
                     OrderSearchCriteria.of(
                             null,
                             null,
+                            null,
+                            null,
                             "   ",
                             null,
                             null,
@@ -180,6 +188,8 @@ class OrderSearchCriteriaTest {
             // given
             OrderSearchCriteria criteria =
                     OrderSearchCriteria.of(
+                            null,
+                            null,
                             null,
                             OrderSearchField.ORDER_ID,
                             null,
@@ -216,6 +226,8 @@ class OrderSearchCriteriaTest {
                             null,
                             null,
                             null,
+                            null,
+                            null,
                             dateRange,
                             null,
                             QueryContext.defaultOf(OrderSortKey.defaultKey()));
@@ -247,7 +259,7 @@ class OrderSearchCriteriaTest {
                     QueryContext.of(
                             OrderSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(0, 20));
             OrderSearchCriteria criteria =
-                    OrderSearchCriteria.of(null, null, null, null, null, queryContext);
+                    OrderSearchCriteria.of(null, null, null, null, null, null, null, queryContext);
 
             // then
             assertThat(criteria.size()).isEqualTo(20);
@@ -261,7 +273,7 @@ class OrderSearchCriteriaTest {
                     QueryContext.of(
                             OrderSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(2, 10));
             OrderSearchCriteria criteria =
-                    OrderSearchCriteria.of(null, null, null, null, null, queryContext);
+                    OrderSearchCriteria.of(null, null, null, null, null, null, null, queryContext);
 
             // then
             assertThat(criteria.offset()).isEqualTo(20L);
@@ -275,7 +287,7 @@ class OrderSearchCriteriaTest {
                     QueryContext.of(
                             OrderSortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(3, 10));
             OrderSearchCriteria criteria =
-                    OrderSearchCriteria.of(null, null, null, null, null, queryContext);
+                    OrderSearchCriteria.of(null, null, null, null, null, null, null, queryContext);
 
             // then
             assertThat(criteria.page()).isEqualTo(3);
@@ -293,6 +305,8 @@ class OrderSearchCriteriaTest {
             OrderSearchCriteria criteria =
                     OrderSearchCriteria.of(
                             List.of(OrderItemStatus.READY),
+                            null,
+                            null,
                             null,
                             null,
                             null,
