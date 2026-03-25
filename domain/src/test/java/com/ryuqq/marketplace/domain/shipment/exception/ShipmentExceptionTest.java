@@ -143,6 +143,68 @@ class ShipmentExceptionTest {
     }
 
     @Nested
+    @DisplayName("ExternalMappingNotFoundException 테스트")
+    class ExternalMappingNotFoundExceptionTest {
+
+        @Test
+        @DisplayName("orderItemId를 포함한 메시지로 ExternalMappingNotFoundException을 생성한다")
+        void createWithOrderItemId() {
+            // given
+            String orderItemId = "01940001-0000-7000-8000-000000000001";
+
+            // when
+            ExternalMappingNotFoundException exception = new ExternalMappingNotFoundException(orderItemId);
+
+            // then
+            assertThat(exception.code()).isEqualTo("SHP-005");
+            assertThat(exception.httpStatus()).isEqualTo(404);
+            assertThat(exception.getMessage()).contains(orderItemId);
+        }
+
+        @Test
+        @DisplayName("ExternalMappingNotFoundException은 ShipmentException의 하위 타입이다")
+        void externalMappingNotFoundExceptionIsSubtypeOfShipmentException() {
+            // when
+            ExternalMappingNotFoundException exception =
+                    new ExternalMappingNotFoundException("01940001-0000-7000-8000-000000000001");
+
+            // then
+            assertThat(exception).isInstanceOf(ShipmentException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("SyncChannelNotSupportedException 테스트")
+    class SyncChannelNotSupportedExceptionTest {
+
+        @Test
+        @DisplayName("채널 코드를 포함한 메시지로 SyncChannelNotSupportedException을 생성한다")
+        void createWithChannelCode() {
+            // given
+            String channelCode = "UNKNOWN_CHANNEL";
+
+            // when
+            SyncChannelNotSupportedException exception = new SyncChannelNotSupportedException(channelCode);
+
+            // then
+            assertThat(exception.code()).isEqualTo("SHP-006");
+            assertThat(exception.httpStatus()).isEqualTo(400);
+            assertThat(exception.getMessage()).contains(channelCode);
+        }
+
+        @Test
+        @DisplayName("SyncChannelNotSupportedException은 ShipmentException의 하위 타입이다")
+        void syncChannelNotSupportedExceptionIsSubtypeOfShipmentException() {
+            // when
+            SyncChannelNotSupportedException exception =
+                    new SyncChannelNotSupportedException("COUPANG");
+
+            // then
+            assertThat(exception).isInstanceOf(ShipmentException.class);
+        }
+    }
+
+    @Nested
     @DisplayName("DomainException 공통 기능 테스트")
     class DomainExceptionCommonTest {
 

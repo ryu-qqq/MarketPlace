@@ -8,6 +8,8 @@ import com.ryuqq.marketplace.application.exchange.manager.ExchangeCommandManager
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeReadManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.application.settlement.entry.dto.command.CreateReversalEntryCommand;
+import com.ryuqq.marketplace.application.settlement.entry.port.in.command.CreateReversalEntryUseCase;
 import com.ryuqq.marketplace.domain.claim.vo.FeePayer;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
@@ -26,6 +28,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,6 +41,7 @@ import org.springframework.stereotype.Component;
 @SuppressWarnings("PMD.GodClass")
 public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(ExchangeClaimSyncHandler.class);
     private static final String SYNC_ACTOR = "system-claim-sync";
 
     private final ExchangeReadManager exchangeReadManager;
@@ -46,6 +51,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
     private final ClaimHistoryFactory historyFactory;
     private final ClaimHistoryCommandManager historyCommandManager;
     private final TimeProvider timeProvider;
+    private final CreateReversalEntryUseCase createReversalEntryUseCase;
 
     public ExchangeClaimSyncHandler(
             ExchangeReadManager exchangeReadManager,
@@ -54,7 +60,8 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             OrderItemCommandManager orderItemCommandManager,
             ClaimHistoryFactory historyFactory,
             ClaimHistoryCommandManager historyCommandManager,
-            TimeProvider timeProvider) {
+            TimeProvider timeProvider,
+            CreateReversalEntryUseCase createReversalEntryUseCase) {
         this.exchangeReadManager = exchangeReadManager;
         this.exchangeCommandManager = exchangeCommandManager;
         this.orderItemReadManager = orderItemReadManager;
@@ -62,6 +69,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         this.historyFactory = historyFactory;
         this.historyCommandManager = historyCommandManager;
         this.timeProvider = timeProvider;
+        this.createReversalEntryUseCase = createReversalEntryUseCase;
     }
 
     @Override
@@ -225,6 +233,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             exchangeCommandManager.persist(exchangeClaim);
             partialReturnOrderItem(orderItemId, exchangeClaim.exchangeQty(), "교환 완료 동기화", now);
             recordHistory(exchangeClaim.idValue(), fromStatus, "COMPLETED", exchangeClaim.exchangeQty());
+            createReversalEntry(orderItemId, sellerId, exchangeClaim.idValue());
             return 0L;
         }
 
@@ -261,6 +270,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         exchangeCommandManager.persist(exchangeClaim);
         partialReturnOrderItem(orderItemId, exchangeQty, "교환 완료 동기화", now);
         recordHistory(exchangeClaim.idValue(), null, "COMPLETED", exchangeQty);
+        createReversalEntry(orderItemId, sellerId, exchangeClaim.idValue());
         return 0L;
     }
 
@@ -292,6 +302,26 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         exchangeCommandManager.persist(exchangeClaim);
         recordHistory(exchangeClaim.idValue(), fromStatus, "REJECTED", exchangeClaim.exchangeQty());
         return 0L;
+    }
+
+    /** 정산 역분개 Entry를 생성한다. 실패해도 클레임 처리를 막지 않는다. */
+    private void createReversalEntry(
+            OrderItemId orderItemId, long sellerId, String exchangeClaimId) {
+        try {
+            createReversalEntryUseCase.execute(
+                    new CreateReversalEntryCommand(
+                            orderItemId.value(),
+                            sellerId,
+                            exchangeClaimId,
+                            "EXCHANGE",
+                            0,
+                            0));
+        } catch (Exception e) {
+            log.warn(
+                    "정산 역분개 Entry 생성 실패: exchangeClaimId={}, error={}",
+                    exchangeClaimId,
+                    e.getMessage());
+        }
     }
 
     /** 클레임 이력을 생성하고 저장한다. 수량 정보를 message에 포함. */
