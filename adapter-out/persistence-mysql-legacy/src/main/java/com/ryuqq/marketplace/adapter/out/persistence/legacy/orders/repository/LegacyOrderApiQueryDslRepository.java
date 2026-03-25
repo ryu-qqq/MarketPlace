@@ -106,6 +106,21 @@ public class LegacyOrderApiQueryDslRepository {
     public List<LegacyOrderCompositeQueryDto> fetchOrderList(LegacyOrderSearchParams params) {
         BooleanBuilder where = buildWhereCondition(params);
 
+        // 1단계: orderId만 중복 없이 조회 (날짜 필터 + 페이징)
+        List<Long> orderIds =
+                queryFactory
+                        .select(legacyOrderEntity.id)
+                        .from(legacyOrderEntity)
+                        .where(where)
+                        .orderBy(legacyOrderEntity.id.desc())
+                        .limit(params.size())
+                        .fetch();
+
+        if (orderIds.isEmpty()) {
+            return List.of();
+        }
+
+        // 2단계: orderId 목록으로 composite 데이터 조회 (이미지 첫 번째만)
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -158,10 +173,18 @@ public class LegacyOrderApiQueryDslRepository {
                                 legacyOrderEntity.paymentId))
                 .leftJoin(legacyShipmentEntity)
                 .on(legacyShipmentEntity.orderId.eq(legacyOrderEntity.id))
-                .where(where)
-                .orderBy(legacyOrderEntity.id.desc())
-                .limit(params.size())
-                .fetch();
+                .where(legacyOrderEntity.id.in(orderIds))
+                .orderBy(legacyOrderEntity.id.desc(), legacyOrderSnapshotProductGroupImageEntity.id.asc())
+                .fetch()
+                .stream()
+                .filter(new java.util.function.Predicate<LegacyOrderCompositeQueryDto>() {
+                    private final java.util.Set<Long> seen = new java.util.HashSet<>();
+                    @Override
+                    public boolean test(LegacyOrderCompositeQueryDto dto) {
+                        return seen.add(dto.legacyOrderId());
+                    }
+                })
+                .toList();
     }
 
     /** 검색 조건에 맞는 주문 건수 조회. */
