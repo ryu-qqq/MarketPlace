@@ -68,10 +68,12 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
 
     @Override
     public ClaimSyncAction resolve(ExternalClaimPayload claim, OrderItemId orderItemId) {
-        Optional<Cancel> existingCancel = cancelReadManager.findByOrderItemId(orderItemId);
+        List<Cancel> existingCancels = cancelReadManager.findAllByOrderItemId(orderItemId);
+        Optional<Cancel> latestCancel =
+                existingCancels.isEmpty() ? Optional.empty() : Optional.of(existingCancels.getLast());
         return switch (claim.claimType()) {
-            case "CANCEL" -> resolveCancel(claim, existingCancel);
-            case "ADMIN_CANCEL" -> resolveAdminCancel(claim, existingCancel);
+            case "CANCEL" -> resolveCancel(claim, latestCancel, existingCancels, orderItemId);
+            case "ADMIN_CANCEL" -> resolveAdminCancel(claim, latestCancel);
             default -> ClaimSyncAction.SKIPPED;
         };
     }
@@ -82,53 +84,70 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             ExternalClaimPayload claim,
             OrderItemId orderItemId,
             long sellerId) {
+        int cancelQty = resolveQty(claim.requestQuantity());
+        List<Cancel> allCancels = cancelReadManager.findAllByOrderItemId(orderItemId);
+        Optional<Cancel> latestCancel =
+                allCancels.isEmpty() ? Optional.empty() : Optional.of(allCancels.getLast());
         return switch (action) {
-            case CANCEL_CREATED -> createCancel(claim, orderItemId, sellerId);
-            case CANCEL_APPROVED ->
-                    approveCancel(cancelReadManager.findByOrderItemId(orderItemId).get());
-            case CANCEL_COMPLETED -> completeCancel(claim, orderItemId, sellerId);
-            case CANCEL_WITHDRAWN ->
-                    withdrawCancel(cancelReadManager.findByOrderItemId(orderItemId).get());
+            case CANCEL_CREATED -> createCancel(claim, orderItemId, sellerId, cancelQty);
+            case CANCEL_APPROVED -> approveCancel(latestCancel.get());
+            case CANCEL_COMPLETED -> completeCancel(claim, orderItemId, sellerId, cancelQty);
+            case CANCEL_WITHDRAWN -> withdrawCancel(latestCancel.get());
             default -> 0L;
         };
     }
 
     private ClaimSyncAction resolveCancel(
-            ExternalClaimPayload external, Optional<Cancel> existingCancel) {
+            ExternalClaimPayload external,
+            Optional<Cancel> latestCancel,
+            List<Cancel> allCancels,
+            OrderItemId orderItemId) {
         String claimStatus = external.claimStatus();
         return switch (claimStatus) {
-            case "CANCEL_REQUEST" ->
-                    existingCancel.isEmpty()
-                            ? ClaimSyncAction.CANCEL_CREATED
-                            : ClaimSyncAction.SKIPPED;
-            case "CANCELING" -> {
-                if (existingCancel.isEmpty()) {
+            case "CANCEL_REQUEST" -> {
+                if (hasRemainingCancelableQty(allCancels, orderItemId)) {
                     yield ClaimSyncAction.CANCEL_CREATED;
                 }
-                yield existingCancel.get().status() == CancelStatus.REQUESTED
+                yield ClaimSyncAction.SKIPPED;
+            }
+            case "CANCELING" -> {
+                if (latestCancel.isEmpty()) {
+                    yield ClaimSyncAction.CANCEL_CREATED;
+                }
+                yield latestCancel.get().status() == CancelStatus.REQUESTED
                         ? ClaimSyncAction.CANCEL_APPROVED
                         : ClaimSyncAction.SKIPPED;
             }
             case "CANCEL_DONE" -> {
-                if (existingCancel.isEmpty()) {
+                if (latestCancel.isEmpty()) {
                     yield ClaimSyncAction.CANCEL_COMPLETED;
                 }
-                CancelStatus currentStatus = existingCancel.get().status();
-                if (currentStatus == CancelStatus.APPROVED) {
+                CancelStatus currentStatus = latestCancel.get().status();
+                if (currentStatus == CancelStatus.APPROVED
+                        || currentStatus == CancelStatus.REQUESTED) {
                     yield ClaimSyncAction.CANCEL_COMPLETED;
                 }
                 yield ClaimSyncAction.SKIPPED;
             }
             case "CANCEL_REJECT" -> {
-                if (existingCancel.isEmpty()) {
+                if (latestCancel.isEmpty()) {
                     yield ClaimSyncAction.SKIPPED;
                 }
-                yield existingCancel.get().status() == CancelStatus.REQUESTED
+                yield latestCancel.get().status() == CancelStatus.REQUESTED
                         ? ClaimSyncAction.CANCEL_WITHDRAWN
                         : ClaimSyncAction.SKIPPED;
             }
             default -> ClaimSyncAction.SKIPPED;
         };
+    }
+
+    /** 해당 OrderItem에 취소 가능한 잔여 수량이 있는지 확인한다. */
+    private boolean hasRemainingCancelableQty(
+            List<Cancel> allCancels, OrderItemId orderItemId) {
+        return orderItemReadManager
+                .findById(orderItemId)
+                .map(item -> item.remainingCancelableQty() > 0)
+                .orElse(false);
     }
 
     private ClaimSyncAction resolveAdminCancel(
@@ -159,11 +178,11 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         };
     }
 
-    private long createCancel(ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId) {
+    private long createCancel(
+            ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId, int cancelQty) {
         Instant now = timeProvider.now();
         CancelId cancelId = CancelId.generate();
         CancelNumber cancelNumber = CancelNumber.generate();
-        int cancelQty = resolveQty(claim.requestQuantity());
         CancelReason reason = resolveDefaultCancelReason(claim);
 
         Cancel cancel;
@@ -178,7 +197,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
                             reason,
                             SYNC_ACTOR,
                             now);
-            cancelOrderItem(orderItemId, "관리자 취소 동기화", now);
+            partialCancelOrderItem(orderItemId, cancelQty, "관리자 취소 동기화", now);
         } else {
             cancel =
                     Cancel.forBuyerCancel(
@@ -200,30 +219,33 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         Instant now = timeProvider.now();
         cancel.approve(SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
-        cancelOrderItem(cancel.orderItemId(), "취소 승인 동기화", now);
+        partialCancelOrderItem(
+                cancel.orderItemId(), cancel.cancelQty(), "취소 승인 동기화", now);
         return 0L;
     }
 
     private long completeCancel(
-            ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId) {
+            ExternalClaimPayload claim, OrderItemId orderItemId, long sellerId, int cancelQty) {
         Instant now = timeProvider.now();
-        Money refundAmount = resolveRefundAmount(orderItemId);
+        Money refundAmount = resolveRefundAmount(orderItemId, cancelQty);
+        String refundMethod = resolveRefundMethod(orderItemId);
         CancelRefundInfo refundInfo =
-                CancelRefundInfo.of(refundAmount, "EXTERNAL_CHANNEL", "COMPLETED", now, null);
-        Optional<Cancel> existingCancel = cancelReadManager.findByOrderItemId(orderItemId);
+                CancelRefundInfo.of(refundAmount, refundMethod, "COMPLETED", now, null);
+        List<Cancel> allCancels = cancelReadManager.findAllByOrderItemId(orderItemId);
+        Optional<Cancel> latestCancel =
+                allCancels.isEmpty() ? Optional.empty() : Optional.of(allCancels.getLast());
 
-        if (existingCancel.isPresent()) {
-            Cancel cancel = existingCancel.get();
+        if (latestCancel.isPresent()) {
+            Cancel cancel = latestCancel.get();
             cancel.complete(refundInfo, SYNC_ACTOR, now);
             cancelCommandManager.persist(cancel);
-            cancelOrderItem(orderItemId, "취소 완료 동기화", now);
+            partialCancelOrderItem(orderItemId, cancel.cancelQty(), "취소 완료 동기화", now);
             return 0L;
         }
 
         // 중간상태 건너뜀: 생성 → 승인 → 완료 순차 처리
         CancelId cancelId = CancelId.generate();
         CancelNumber cancelNumber = CancelNumber.generate();
-        int cancelQty = resolveQty(claim.requestQuantity());
         CancelReason reason = resolveDefaultCancelReason(claim);
 
         Cancel cancel;
@@ -253,7 +275,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         }
         cancel.complete(refundInfo, SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
-        cancelOrderItem(orderItemId, "취소 완료 동기화", now);
+        partialCancelOrderItem(orderItemId, cancelQty, "취소 완료 동기화", now);
         return 0L;
     }
 
@@ -264,19 +286,24 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         return 0L;
     }
 
-    /** OrderItem을 CANCELLED로 전환하고, 연결된 Shipment가 PREPARING이면 함께 취소합니다. */
-    private void cancelOrderItem(OrderItemId orderItemId, String reason, Instant now) {
+    /**
+     * 부분취소 수량만큼 OrderItem의 cancelledQty를 증가시킨다.
+     * 전체 수량이 소진되면 CANCELLED 상태 전환 + Shipment 취소.
+     */
+    private void partialCancelOrderItem(
+            OrderItemId orderItemId, int cancelQty, String reason, Instant now) {
         orderItemReadManager
                 .findById(orderItemId)
                 .ifPresent(
                         item -> {
-                            if (item.status()
-                                    .canTransitionTo(
-                                            com.ryuqq.marketplace.domain.order.vo.OrderItemStatus
-                                                    .CANCELLED)) {
-                                item.cancel(SYNC_ACTOR, reason, now);
+                            if (item.remainingCancelableQty() > 0) {
+                                int effectiveQty =
+                                        Math.min(cancelQty, item.remainingCancelableQty());
+                                item.partialCancel(effectiveQty, SYNC_ACTOR, reason, now);
                                 orderItemCommandManager.persistAll(List.of(item));
-                                cancelAssociatedShipment(orderItemId, now);
+                                if (item.isFullyCancelled()) {
+                                    cancelAssociatedShipment(orderItemId, now);
+                                }
                             }
                         });
     }
@@ -293,11 +320,23 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
                         });
     }
 
-    private Money resolveRefundAmount(OrderItemId orderItemId) {
+    /** 단가 × cancelQty로 부분환불 금액을 계산한다. */
+    private Money resolveRefundAmount(OrderItemId orderItemId, int cancelQty) {
         return orderItemReadManager
                 .findById(orderItemId)
-                .map(item -> item.price().paymentAmount())
+                .map(
+                        item -> {
+                            int unitPrice =
+                                    item.price().paymentAmount().value() / item.quantity();
+                            return Money.of(unitPrice * cancelQty);
+                        })
                 .orElse(Money.zero());
+    }
+
+    /** 주문의 결제수단을 환불수단으로 사용한다. */
+    private String resolveRefundMethod(OrderItemId orderItemId) {
+        // TODO: Order.paymentInfo().paymentMethod() 조회 필요. 현재는 기본값 사용.
+        return "EXTERNAL_CHANNEL";
     }
 
     private int resolveQty(Integer requestQuantity) {

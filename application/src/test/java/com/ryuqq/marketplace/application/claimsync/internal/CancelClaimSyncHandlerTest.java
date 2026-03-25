@@ -65,12 +65,14 @@ class CancelClaimSyncHandlerTest {
     class ResolveCancelTest {
 
         @Test
-        @DisplayName("CANCEL_REQUEST 이고 기존 취소 없으면 CANCEL_CREATED를 반환한다")
+        @DisplayName("CANCEL_REQUEST 이고 잔여 취소 가능 수량이 있으면 CANCEL_CREATED를 반환한다")
         void resolve_CancelRequest_NoExisting_ReturnsCancelCreated() {
             // given
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REQUEST");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
-            given(cancelReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+            OrderItem orderItem = OrderFixtures.confirmedOrderItem();
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
+            given(orderItemReadManager.findById(orderItemId)).willReturn(Optional.of(orderItem));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -80,14 +82,15 @@ class CancelClaimSyncHandlerTest {
         }
 
         @Test
-        @DisplayName("CANCEL_REQUEST 이고 기존 취소가 있으면 SKIPPED를 반환한다")
+        @DisplayName("CANCEL_REQUEST 이고 잔여 취소 가능 수량이 없으면 SKIPPED를 반환한다")
         void resolve_CancelRequest_ExistingCancel_ReturnsSkipped() {
             // given
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REQUEST");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             Cancel existing = CancelFixtures.requestedCancel();
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(existing));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(existing));
+            given(orderItemReadManager.findById(orderItemId)).willReturn(Optional.empty());
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -102,7 +105,7 @@ class CancelClaimSyncHandlerTest {
             // given
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCELING");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
-            given(cancelReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -118,8 +121,8 @@ class CancelClaimSyncHandlerTest {
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCELING");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             Cancel existing = CancelFixtures.requestedCancel();
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(existing));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(existing));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -135,8 +138,8 @@ class CancelClaimSyncHandlerTest {
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCELING");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             Cancel existing = CancelFixtures.approvedCancel();
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(existing));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(existing));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -151,7 +154,7 @@ class CancelClaimSyncHandlerTest {
             // given
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_DONE");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
-            given(cancelReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -167,8 +170,8 @@ class CancelClaimSyncHandlerTest {
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_DONE");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             Cancel existing = CancelFixtures.approvedCancel();
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(existing));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(existing));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -184,8 +187,8 @@ class CancelClaimSyncHandlerTest {
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_DONE");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             Cancel existing = CancelFixtures.completedCancel();
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(existing));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(existing));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -200,7 +203,7 @@ class CancelClaimSyncHandlerTest {
             // given
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REJECT");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
-            given(cancelReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -216,8 +219,8 @@ class CancelClaimSyncHandlerTest {
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REJECT");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             Cancel existing = CancelFixtures.requestedCancel();
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(existing));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(existing));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -232,7 +235,7 @@ class CancelClaimSyncHandlerTest {
             // given
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("UNKNOWN_STATUS");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
-            given(cancelReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -252,7 +255,7 @@ class CancelClaimSyncHandlerTest {
             // given
             ExternalClaimPayload payload = ClaimSyncFixtures.adminCancelPayload("ADMIN_CANCELING");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
-            given(cancelReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -268,8 +271,8 @@ class CancelClaimSyncHandlerTest {
             ExternalClaimPayload payload = ClaimSyncFixtures.adminCancelPayload("ADMIN_CANCELING");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             Cancel existing = CancelFixtures.requestedCancel();
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(existing));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(existing));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -285,7 +288,7 @@ class CancelClaimSyncHandlerTest {
             ExternalClaimPayload payload =
                     ClaimSyncFixtures.adminCancelPayload("ADMIN_CANCEL_DONE");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
-            given(cancelReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -302,8 +305,8 @@ class CancelClaimSyncHandlerTest {
                     ClaimSyncFixtures.adminCancelPayload("ADMIN_CANCEL_DONE");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             Cancel existing = CancelFixtures.approvedCancel();
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(existing));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(existing));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -319,7 +322,7 @@ class CancelClaimSyncHandlerTest {
             ExternalClaimPayload payload =
                     ClaimSyncFixtures.adminCancelPayload("ADMIN_CANCEL_REJECT");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
-            given(cancelReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -336,8 +339,8 @@ class CancelClaimSyncHandlerTest {
                     ClaimSyncFixtures.adminCancelPayload("ADMIN_CANCEL_REJECT");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             Cancel existing = CancelFixtures.requestedCancel();
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(existing));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(existing));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, orderItemId);
@@ -361,6 +364,7 @@ class CancelClaimSyncHandlerTest {
             Instant now = Instant.now();
 
             given(timeProvider.now()).willReturn(now);
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
 
             // when
             long result =
@@ -382,6 +386,7 @@ class CancelClaimSyncHandlerTest {
             OrderItem orderItem = OrderFixtures.confirmedOrderItem();
 
             given(timeProvider.now()).willReturn(now);
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
             given(orderItemReadManager.findById(orderItemId)).willReturn(Optional.of(orderItem));
 
             // when
@@ -411,8 +416,8 @@ class CancelClaimSyncHandlerTest {
             OrderItem confirmedOrderItem = OrderFixtures.confirmedOrderItem();
 
             given(timeProvider.now()).willReturn(now);
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(requestedCancel));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(requestedCancel));
             given(orderItemReadManager.findById(orderItemId))
                     .willReturn(Optional.of(confirmedOrderItem));
 
@@ -443,8 +448,8 @@ class CancelClaimSyncHandlerTest {
             OrderItem confirmedOrderItem = OrderFixtures.confirmedOrderItem();
 
             given(timeProvider.now()).willReturn(now);
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(approvedCancel));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(approvedCancel));
             given(orderItemReadManager.findById(orderItemId))
                     .willReturn(Optional.of(confirmedOrderItem));
 
@@ -468,7 +473,7 @@ class CancelClaimSyncHandlerTest {
             OrderItem confirmedOrderItem = OrderFixtures.confirmedOrderItem();
 
             given(timeProvider.now()).willReturn(now);
-            given(cancelReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
             given(orderItemReadManager.findById(orderItemId))
                     .willReturn(Optional.of(confirmedOrderItem));
 
@@ -497,8 +502,8 @@ class CancelClaimSyncHandlerTest {
             Cancel requestedCancel = CancelFixtures.requestedCancel();
 
             given(timeProvider.now()).willReturn(now);
-            given(cancelReadManager.findByOrderItemId(orderItemId))
-                    .willReturn(Optional.of(requestedCancel));
+            given(cancelReadManager.findAllByOrderItemId(orderItemId))
+                    .willReturn(List.of(requestedCancel));
 
             // when
             long result =
@@ -523,6 +528,8 @@ class CancelClaimSyncHandlerTest {
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             long sellerId = 10L;
 
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
+
             // when
             long result = sut.execute(ClaimSyncAction.SKIPPED, payload, orderItemId, sellerId);
 
@@ -541,13 +548,14 @@ class CancelClaimSyncHandlerTest {
         @DisplayName("구매자 취소 생성 시 OrderItem 취소 전환을 시도하지 않는다")
         void cancelOrderItem_BuyerCancelCreated_DoesNotAttemptOrderItemTransition() {
             // given
-            // CANCEL(구매자 취소) 유형은 CANCEL_CREATED 액션 시 cancelOrderItem을 호출하지 않음
+            // CANCEL(구매자 취소) 유형은 CANCEL_CREATED 액션 시 partialCancelOrderItem을 호출하지 않음
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REQUEST");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             long sellerId = 10L;
             Instant now = Instant.now();
 
             given(timeProvider.now()).willReturn(now);
+            given(cancelReadManager.findAllByOrderItemId(orderItemId)).willReturn(List.of());
 
             // when
             sut.execute(ClaimSyncAction.CANCEL_CREATED, payload, orderItemId, sellerId);
