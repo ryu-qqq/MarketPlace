@@ -14,9 +14,8 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemAp
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
 import com.ryuqq.marketplace.application.order.manager.OrderCompositionReadManager;
+import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,10 +29,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ClaimOrderEnricher {
-
-    private static final DateTimeFormatter KST_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
-                    .withZone(ZoneId.of("Asia/Seoul"));
 
     private final OrderCompositionReadManager orderReadManager;
 
@@ -132,14 +127,13 @@ public class ClaimOrderEnricher {
     public ReceiverInfoV4 toReceiverInfoV4(String orderItemId, OrderContext ctx) {
         OrderItemResult item = ctx.getItem(orderItemId);
         if (item == null) {
-            return new ReceiverInfoV4("", "", "", "");
+            return new ReceiverInfoV4("", "", "", "", "");
         }
-        String addressLine =
-                nullToEmpty(item.receiverAddress()) + " " + nullToEmpty(item.receiverAddressDetail());
         return new ReceiverInfoV4(
                 nullToEmpty(item.receiverName()),
                 nullToEmpty(item.receiverPhone()),
-                addressLine.trim(),
+                nullToEmpty(item.receiverAddress()),
+                nullToEmpty(item.receiverAddressDetail()),
                 nullToEmpty(item.receiverZipcode()));
     }
 
@@ -203,6 +197,7 @@ public class ClaimOrderEnricher {
     }
 
     public String formatInstant(Instant instant) {
-        return instant != null ? KST_FORMATTER.format(instant) : "";
+        String formatted = DateTimeFormatUtils.formatDisplay(instant);
+        return formatted != null ? formatted : "";
     }
 }

@@ -145,10 +145,8 @@ class ShipmentQueryApiMapperTest {
             ShipmentListApiResponse response = mapper.toResponse(result);
 
             // then
-            assertThat(response.shipment().shippedAt()).contains("T");
-            assertThat(response.shipment().shippedAt()).contains("+09:00");
-            assertThat(response.shipment().createdAt()).contains("T");
-            assertThat(response.shipment().createdAt()).contains("+09:00");
+            assertThat(response.shipment().shippedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.shipment().createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test
@@ -261,10 +259,8 @@ class ShipmentQueryApiMapperTest {
             ShipmentDetailApiResponse response = mapper.toDetailResponse(result);
 
             // then
-            assertThat(response.shipment().orderConfirmedAt()).contains("T");
-            assertThat(response.shipment().orderConfirmedAt()).contains("+09:00");
-            assertThat(response.shipment().createdAt()).contains("T");
-            assertThat(response.shipment().createdAt()).contains("+09:00");
+            assertThat(response.shipment().orderConfirmedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.shipment().createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
     }
 

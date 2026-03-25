@@ -315,7 +315,7 @@ class BrandPresetQueryControllerRestDocsTest {
                 "테스트 브랜드 프리셋",
                 mappingBrand,
                 internalBrands,
-                "2025-02-10T10:30:00+09:00",
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00",
+                "2025-02-10 10:30:00");
     }
 }

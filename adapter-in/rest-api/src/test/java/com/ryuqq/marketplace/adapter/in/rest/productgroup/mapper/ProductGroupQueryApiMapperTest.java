@@ -140,8 +140,8 @@ class ProductGroupQueryApiMapperTest {
 
             // then
             ProductGroupListApiResponse first = response.content().get(0);
-            assertThat(first.createdAt()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
-            assertThat(first.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
+            assertThat(first.createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
+            assertThat(first.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
         }
 
         @Test
@@ -200,8 +200,8 @@ class ProductGroupQueryApiMapperTest {
             ProductGroupDetailApiResponse response = mapper.toDetailResponse(result);
 
             // then
-            assertThat(response.createdAt()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
-            assertThat(response.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
+            assertThat(response.createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
+            assertThat(response.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
         }
 
         @Test
@@ -321,7 +321,7 @@ class ProductGroupQueryApiMapperTest {
             // then
             assertThat(response.optionProductMatrix().products()).isNotEmpty();
             assertThat(response.optionProductMatrix().products().get(0).createdAt())
-                    .matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
         }
     }
 
@@ -456,11 +456,11 @@ class ProductGroupQueryApiMapperTest {
             // then
             ProductGroupExcelApiResponse excelResponse = response.content().get(0);
             assertThat(excelResponse.createdAt())
-                    .matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
             assertThat(excelResponse.updatedAt())
-                    .matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
             assertThat(excelResponse.products().get(0).createdAt())
-                    .matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
         }
 
         @Test

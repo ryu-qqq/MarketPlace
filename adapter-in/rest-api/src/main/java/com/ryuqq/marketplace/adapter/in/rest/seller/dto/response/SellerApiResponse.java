@@ -24,7 +24,7 @@ public record SellerApiResponse(
         @Schema(description = "로고 URL", example = "https://example.com/logo.png") String logoUrl,
         @Schema(description = "설명", example = "테스트 셀러 설명입니다.") String description,
         @Schema(description = "활성화 여부", example = "true") boolean active,
-        @Schema(description = "생성일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
+        @Schema(description = "생성일시 (KST)", example = "2025-01-23 10:30:00")
                 String createdAt,
-        @Schema(description = "수정일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
+        @Schema(description = "수정일시 (KST)", example = "2025-01-23 10:30:00")
                 String updatedAt) {}

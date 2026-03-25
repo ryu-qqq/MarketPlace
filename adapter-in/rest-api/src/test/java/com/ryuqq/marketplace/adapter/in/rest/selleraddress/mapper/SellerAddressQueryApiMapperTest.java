@@ -132,7 +132,7 @@ class SellerAddressQueryApiMapperTest {
 
             // then
             assertThat(response.createdAt()).contains("2025-01-23");
-            assertThat(response.createdAt()).contains("+09:00");
+            assertThat(response.createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
     }
 

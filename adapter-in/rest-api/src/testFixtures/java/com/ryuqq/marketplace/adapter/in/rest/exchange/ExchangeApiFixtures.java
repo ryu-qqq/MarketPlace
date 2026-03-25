@@ -66,7 +66,7 @@ public final class ExchangeApiFixtures {
     public static final String DEFAULT_REQUESTED_BY = "seller@test.com";
     public static final String DEFAULT_PROCESSED_BY = "admin@test.com";
     public static final Instant DEFAULT_INSTANT = Instant.parse("2026-01-01T00:00:00Z");
-    public static final String DEFAULT_FORMATTED_TIME = "2026-01-01T09:00:00+09:00";
+    public static final String DEFAULT_FORMATTED_TIME = "2026-01-01 09:00:00";
     public static final String DEFAULT_DELIVERY_COMPANY = "CJ대한통운";
     public static final String DEFAULT_TRACKING_NUMBER = "1234567890";
     public static final String DEFAULT_HISTORY_ID = "HIST-001";

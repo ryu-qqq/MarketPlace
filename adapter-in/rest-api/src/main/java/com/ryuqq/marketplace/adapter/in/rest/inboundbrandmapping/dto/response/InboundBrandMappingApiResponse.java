@@ -11,7 +11,7 @@ public record InboundBrandMappingApiResponse(
         @Schema(description = "외부 브랜드명", example = "나이키") String externalBrandName,
         @Schema(description = "내부 브랜드 ID", example = "1") Long internalBrandId,
         @Schema(description = "상태 (ACTIVE, INACTIVE)", example = "ACTIVE") String status,
-        @Schema(description = "생성일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
+        @Schema(description = "생성일시 (KST)", example = "2025-01-23 10:30:00")
                 String createdAt,
-        @Schema(description = "수정일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
+        @Schema(description = "수정일시 (KST)", example = "2025-01-23 10:30:00")
                 String updatedAt) {}

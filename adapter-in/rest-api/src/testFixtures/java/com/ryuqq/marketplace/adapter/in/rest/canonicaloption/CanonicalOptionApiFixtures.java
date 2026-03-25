@@ -30,7 +30,7 @@ public final class CanonicalOptionApiFixtures {
     public static final String DEFAULT_VALUE_NAME_KO = "라지";
     public static final String DEFAULT_VALUE_NAME_EN = "Large";
     public static final Instant DEFAULT_INSTANT = Instant.parse("2025-01-23T01:30:00Z");
-    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23T10:30:00+09:00";
+    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23 10:30:00";
 
     // ===== SearchCanonicalOptionGroupsApiRequest =====
 

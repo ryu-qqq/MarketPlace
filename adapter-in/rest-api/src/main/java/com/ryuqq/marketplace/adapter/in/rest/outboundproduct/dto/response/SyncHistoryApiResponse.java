@@ -12,8 +12,8 @@ public record SyncHistoryApiResponse(
         @Schema(description = "프리셋명", example = "식품 - 과자류 전송용") String presetName,
         @Schema(description = "상태", example = "SUCCESS") String status,
         @Schema(description = "상태 라벨", example = "성공") String statusLabel,
-        @Schema(description = "요청일시", example = "2025-12-16T14:30:00+09:00") String requestedAt,
-        @Schema(description = "완료일시", example = "2025-12-16T14:30:45+09:00") String completedAt,
+        @Schema(description = "요청일시", example = "2025-12-16 14:30:00") String requestedAt,
+        @Schema(description = "완료일시", example = "2025-12-16 14:30:45") String completedAt,
         @Schema(description = "외부 상품 ID", example = "NAVER-12345678") String externalProductId,
         @Schema(description = "에러 메시지") String errorMessage,
         @Schema(description = "재시도 횟수", example = "0") int retryCount) {}

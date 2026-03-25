@@ -422,8 +422,7 @@ class RefundApiMapperTest {
             RefundListApiResponse response = mapper.toListResponse(result);
 
             // then
-            assertThat(response.requestedAt()).contains("T");
-            assertThat(response.requestedAt()).contains("+09:00");
+            assertThat(response.requestedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test
@@ -594,9 +593,9 @@ class RefundApiMapperTest {
             RefundDetailApiResponse response = mapper.toDetailResponse(result);
 
             // then
-            assertThat(response.requestedAt()).contains("+09:00");
-            assertThat(response.createdAt()).contains("+09:00");
-            assertThat(response.updatedAt()).contains("+09:00");
+            assertThat(response.requestedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
     }
 

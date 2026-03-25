@@ -108,12 +108,6 @@ public class ShipmentQueryApiMapper {
         ShipmentListResult.ProductOrderInfo p = result.productOrder();
         ShipmentListResult.ReceiverInfo r = result.receiver();
 
-        String addressLine = (r != null)
-                ? ((r.receiverAddress() != null ? r.receiverAddress() : "")
-                        + " " + (r.receiverAddressDetail() != null ? r.receiverAddressDetail() : ""))
-                                .trim()
-                : "";
-
         return new ShipmentListApiResponseV4(
                 p != null ? nullToEmpty(p.orderItemId()) : "",
                 p != null ? nullToEmpty(p.orderItemNumber()) : "",
@@ -131,7 +125,8 @@ public class ShipmentQueryApiMapper {
                 new ShipmentListApiResponseV4.ReceiverInfoV4(
                         r != null ? nullToEmpty(r.receiverName()) : "",
                         r != null ? nullToEmpty(r.receiverPhone()) : "",
-                        addressLine,
+                        r != null ? nullToEmpty(r.receiverAddress()) : "",
+                        r != null ? nullToEmpty(r.receiverAddressDetail()) : "",
                         r != null ? nullToEmpty(r.receiverZipcode()) : ""),
                 new ShipmentListApiResponseV4.ExternalOrderInfoV4(
                         o != null ? nullToEmpty(o.shopCode()) : "",

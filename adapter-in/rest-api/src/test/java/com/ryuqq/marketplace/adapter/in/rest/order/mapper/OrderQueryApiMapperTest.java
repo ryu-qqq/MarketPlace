@@ -147,8 +147,7 @@ class OrderQueryApiMapperTest {
             OrderListApiResponse response = mapper.toListResponse(result);
 
             // then
-            assertThat(response.payment().paidAt()).contains("T");
-            assertThat(response.payment().paidAt()).contains("+09:00");
+            assertThat(response.payment().paidAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test

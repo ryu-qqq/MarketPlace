@@ -41,9 +41,9 @@ public record OrderDetailApiResponse(
             @Schema(description = "원 금액") int originalAmount,
             @Schema(description = "환불 금액") int refundAmount,
             @Schema(description = "환불 수단") String refundMethod,
-            @Schema(description = "환불일시 (ISO 8601)") String refundedAt,
-            @Schema(description = "취소 요청일시 (ISO 8601)") String requestedAt,
-            @Schema(description = "취소 완료일시 (ISO 8601)") String completedAt) {}
+            @Schema(description = "환불일시 (KST)") String refundedAt,
+            @Schema(description = "취소 요청일시 (KST)") String requestedAt,
+            @Schema(description = "취소 완료일시 (KST)") String completedAt) {}
 
     /** 클레임 상세. */
     @Schema(description = "클레임 상세 정보")
@@ -62,10 +62,10 @@ public record OrderDetailApiResponse(
             @Schema(description = "차감 사유") String deductionReason,
             @Schema(description = "환불 금액") int refundAmount,
             @Schema(description = "환불 수단") String refundMethod,
-            @Schema(description = "환불일시 (ISO 8601)") String refundedAt,
-            @Schema(description = "클레임 요청일시 (ISO 8601)") String requestedAt,
-            @Schema(description = "클레임 완료일시 (ISO 8601)") String completedAt,
-            @Schema(description = "클레임 거절일시 (ISO 8601)") String rejectedAt) {}
+            @Schema(description = "환불일시 (KST)") String refundedAt,
+            @Schema(description = "클레임 요청일시 (KST)") String requestedAt,
+            @Schema(description = "클레임 완료일시 (KST)") String completedAt,
+            @Schema(description = "클레임 거절일시 (KST)") String rejectedAt) {}
 
     /** 주문 타임라인 항목. */
     @Schema(description = "타임라인 항목")
@@ -75,5 +75,5 @@ public record OrderDetailApiResponse(
             @Schema(description = "변경된 상태") String toStatus,
             @Schema(description = "변경자") String changedBy,
             @Schema(description = "변경 사유") String reason,
-            @Schema(description = "변경일시 (ISO 8601)") String changedAt) {}
+            @Schema(description = "변경일시 (KST)") String changedAt) {}
 }

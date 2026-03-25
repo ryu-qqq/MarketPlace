@@ -41,9 +41,8 @@ import com.ryuqq.marketplace.application.exchange.dto.response.ExchangePageResul
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeSummaryResult;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
+import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -62,10 +61,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ExchangeApiMapper {
-
-    private static final DateTimeFormatter KST_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
-                    .withZone(ZoneId.of("Asia/Seoul"));
 
     // ==================== Command 변환 ====================
 
@@ -349,6 +344,6 @@ public class ExchangeApiMapper {
     }
 
     private String formatInstant(Instant instant) {
-        return instant != null ? KST_FORMATTER.format(instant) : null;
+        return DateTimeFormatUtils.formatDisplay(instant);
     }
 }

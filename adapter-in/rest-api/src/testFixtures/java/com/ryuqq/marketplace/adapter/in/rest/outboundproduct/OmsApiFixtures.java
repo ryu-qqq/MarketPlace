@@ -48,7 +48,7 @@ public final class OmsApiFixtures {
 
     // ===== 공통 상수 =====
     public static final Instant DEFAULT_INSTANT = Instant.parse("2026-01-15T01:30:00Z");
-    public static final String DEFAULT_FORMATTED_TIME = "2026-01-15T10:30:00+09:00";
+    public static final String DEFAULT_FORMATTED_TIME = "2026-01-15 10:30:00";
 
     // ===== SearchOmsProductsApiRequest =====
 

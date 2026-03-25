@@ -54,7 +54,7 @@ public final class CancelApiFixtures {
     public static final String DEFAULT_REQUESTED_BY = "seller01";
     public static final String DEFAULT_PROCESSED_BY = "admin01";
     public static final Instant DEFAULT_INSTANT = Instant.parse("2025-01-23T01:30:00Z");
-    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23T10:30:00+09:00";
+    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23 10:30:00";
 
     // ===== SellerCancelBatchApiRequest =====
 

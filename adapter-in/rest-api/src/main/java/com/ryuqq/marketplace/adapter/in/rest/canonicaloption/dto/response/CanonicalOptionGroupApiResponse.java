@@ -12,5 +12,5 @@ public record CanonicalOptionGroupApiResponse(
         @Schema(description = "영문명", example = "Color") String nameEn,
         @Schema(description = "활성 상태", example = "true") boolean active,
         @Schema(description = "옵션 값 목록") List<CanonicalOptionValueApiResponse> values,
-        @Schema(description = "생성일시 (ISO 8601)", example = "2026-01-15T09:30:00Z")
+        @Schema(description = "생성일시 (KST)", example = "2026-01-15T09:30:00Z")
                 String createdAt) {}

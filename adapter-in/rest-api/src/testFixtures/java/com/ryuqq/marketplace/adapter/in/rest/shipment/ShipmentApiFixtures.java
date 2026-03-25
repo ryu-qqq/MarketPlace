@@ -49,7 +49,7 @@ public final class ShipmentApiFixtures {
     public static final String DEFAULT_COURIER_NAME = "CJ대한통운";
     public static final String DEFAULT_SHIPMENT_METHOD_TYPE = "COURIER";
     public static final Instant DEFAULT_INSTANT = Instant.parse("2025-01-23T01:30:00Z");
-    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23T10:30:00+09:00";
+    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23 10:30:00";
 
     // ===== ConfirmShipmentBatchApiRequest =====
 

@@ -159,7 +159,7 @@ class SellerApplicationQueryApiMapperTest {
             // then
             assertThat(response.appliedAt()).isNotNull();
             assertThat(response.appliedAt()).contains("2025-01-23");
-            assertThat(response.appliedAt()).contains("+09:00");
+            assertThat(response.appliedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test

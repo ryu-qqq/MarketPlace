@@ -250,8 +250,7 @@ class OmsProductQueryApiMapperTest {
 
             // then
             OmsProductApiResponse first = response.content().get(0);
-            assertThat(first.createdAt()).contains("T");
-            assertThat(first.createdAt()).contains("+09:00");
+            assertThat(first.createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test
@@ -353,7 +352,7 @@ class OmsProductQueryApiMapperTest {
             assertThat(response.syncSummary().successCount()).isEqualTo(3L);
             assertThat(response.syncSummary().failCount()).isEqualTo(1L);
             assertThat(response.syncSummary().pendingCount()).isEqualTo(1L);
-            assertThat(response.syncSummary().lastSyncAt()).contains("+09:00");
+            assertThat(response.syncSummary().lastSyncAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test

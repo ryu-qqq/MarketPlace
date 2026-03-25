@@ -106,7 +106,7 @@ public final class SettlementApiFixtures {
                         DEFAULT_SETTLEMENT_AMOUNT,
                         0);
         HoldInfoApiResponse holdInfo =
-                new HoldInfoApiResponse(DEFAULT_HOLD_REASON, "2026-03-19T10:00:00+09:00");
+                new HoldInfoApiResponse(DEFAULT_HOLD_REASON, "2026-03-19 10:00:00");
         return new SettlementListItemApiResponse(
                 DEFAULT_SETTLEMENT_ID,
                 "HOLD",

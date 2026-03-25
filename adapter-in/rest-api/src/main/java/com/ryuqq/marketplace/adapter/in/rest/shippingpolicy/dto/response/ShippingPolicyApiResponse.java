@@ -31,8 +31,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @param leadTimeMinDays 최소 배송일
  * @param leadTimeMaxDays 최대 배송일
  * @param leadTimeCutoffTime 당일 출고 마감시간 (HH:mm)
- * @param createdAt 생성일시 (ISO 8601)
- * @param updatedAt 수정일시 (ISO 8601)
+ * @param createdAt 생성일시 (KST)
+ * @param updatedAt 수정일시 (KST)
  * @author ryu-qqq
  * @since 1.0.0
  */
@@ -57,7 +57,7 @@ public record ShippingPolicyApiResponse(
         @Schema(description = "최소 배송일", example = "1") int leadTimeMinDays,
         @Schema(description = "최대 배송일", example = "3") int leadTimeMaxDays,
         @Schema(description = "당일 출고 마감시간", example = "14:00") String leadTimeCutoffTime,
-        @Schema(description = "생성일시 (ISO 8601)", example = "2025-01-26T10:30:00+09:00")
+        @Schema(description = "생성일시 (KST)", example = "2025-01-26 10:30:00")
                 String createdAt,
-        @Schema(description = "수정일시 (ISO 8601)", example = "2025-01-26T10:30:00+09:00")
+        @Schema(description = "수정일시 (KST)", example = "2025-01-26 10:30:00")
                 String updatedAt) {}

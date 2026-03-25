@@ -101,8 +101,8 @@ public final class SalesChannelBrandApiFixtures {
                 DEFAULT_EXTERNAL_BRAND_CODE,
                 DEFAULT_EXTERNAL_BRAND_NAME,
                 DEFAULT_STATUS,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 
     public static SalesChannelBrandApiResponse apiResponse(
@@ -113,7 +113,7 @@ public final class SalesChannelBrandApiFixtures {
                 externalBrandCode,
                 externalBrandName,
                 DEFAULT_STATUS,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 }

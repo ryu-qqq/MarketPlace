@@ -151,8 +151,8 @@ public final class SalesChannelCategoryApiFixtures {
                 DEFAULT_SORT_ORDER,
                 DEFAULT_LEAF,
                 "ACTIVE",
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 
     public static SalesChannelCategoryApiResponse apiResponse(
@@ -168,7 +168,7 @@ public final class SalesChannelCategoryApiFixtures {
                 DEFAULT_SORT_ORDER,
                 DEFAULT_LEAF,
                 "ACTIVE",
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 }

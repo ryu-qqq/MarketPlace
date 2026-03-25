@@ -119,7 +119,8 @@ public record ClaimListItemApiResponseV4(
     public record ReceiverInfoV4(
             @Schema(description = "수령인명") String receiverName,
             @Schema(description = "수령인 연락처") String receiverPhoneNumber,
-            @Schema(description = "주소") String addressLine,
+            @Schema(description = "주소") String address,
+            @Schema(description = "상세 주소") String addressDetail,
             @Schema(description = "우편번호") String zipCode) {}
 
     @Schema(description = "외부몰 주문 정보 (V4)")

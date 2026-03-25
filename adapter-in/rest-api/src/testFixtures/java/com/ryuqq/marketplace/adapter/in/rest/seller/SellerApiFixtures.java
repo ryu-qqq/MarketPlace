@@ -294,8 +294,8 @@ public final class SellerApiFixtures {
                 DEFAULT_LOGO_URL,
                 DEFAULT_DESCRIPTION,
                 true,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 
     // ===== SellerDetailApiResponse =====
@@ -317,8 +317,8 @@ public final class SellerApiFixtures {
                 DEFAULT_LOGO_URL,
                 DEFAULT_DESCRIPTION,
                 true,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 
     public static SellerDetailApiResponse.BusinessInfo detailBusinessInfo(Long id) {
@@ -353,8 +353,8 @@ public final class SellerApiFixtures {
                 "2025-12-31",
                 "ACTIVE",
                 "특약사항입니다",
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 
     public static SellerDetailApiResponse.SettlementInfo detailSettlementInfo(Long id) {
@@ -367,9 +367,9 @@ public final class SellerApiFixtures {
                 "WEEKLY",
                 5,
                 true,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 
     // ===== SellerPublicProfileResult (Application) =====

@@ -294,7 +294,7 @@ public final class OrderApiFixtures {
                 DEFAULT_PAYMENT_METHOD,
                 DEFAULT_PAYMENT_AGENCY_ID,
                 DEFAULT_PAYMENT_AMOUNT,
-                "2026-01-01T09:00:00+09:00",
+                "2026-01-01 09:00:00",
                 null);
     }
 
@@ -308,12 +308,12 @@ public final class OrderApiFixtures {
                 DEFAULT_SHOP_CODE,
                 DEFAULT_SHOP_NAME,
                 "EXT-ORDER-001",
-                "2026-01-01T09:00:00+09:00",
+                "2026-01-01 09:00:00",
                 DEFAULT_BUYER_NAME,
                 DEFAULT_BUYER_EMAIL,
                 DEFAULT_BUYER_PHONE,
-                "2026-01-01T09:00:00+09:00",
-                "2026-01-01T09:00:00+09:00");
+                "2026-01-01 09:00:00",
+                "2026-01-01 09:00:00");
     }
 
     public static ProductOrderApiResponse productOrderApiResponse() {
@@ -367,7 +367,7 @@ public final class OrderApiFixtures {
                 DEFAULT_CANCEL_NUMBER,
                 "COMPLETED",
                 1,
-                "2026-01-01T09:00:00+09:00");
+                "2026-01-01 09:00:00");
     }
 
     public static LatestClaimApiResponse latestClaimApiResponse() {
@@ -377,7 +377,7 @@ public final class OrderApiFixtures {
                 "REFUND",
                 "IN_PROGRESS",
                 1,
-                "2026-01-01T09:00:00+09:00");
+                "2026-01-01 09:00:00");
     }
 
     public static OrderListApiResponse orderListApiResponse() {
@@ -411,7 +411,7 @@ public final class OrderApiFixtures {
                         DEFAULT_PAYMENT_AGENCY_ID,
                         DEFAULT_PAYMENT_STATUS,
                         DEFAULT_PAYMENT_METHOD,
-                        "2026-01-01T09:00:00+09:00",
+                        "2026-01-01 09:00:00",
                         null,
                         0L,
                         DEFAULT_SHOP_CODE,
@@ -446,7 +446,7 @@ public final class OrderApiFixtures {
                         DEFAULT_SKU_CODE,
                         List.of()),
                 new OrderListApiResponseV4.ExternalOrderInfoApiResponse(
-                        10L, DEFAULT_SHOP_CODE, "EXT-ORDER-001", "", "2026-01-01T09:00:00+09:00"),
+                        10L, DEFAULT_SHOP_CODE, "EXT-ORDER-001", "", "2026-01-01 09:00:00"),
                 new OrderListApiResponseV4.CancelSummaryV4ApiResponse(false, 0, 1, null),
                 new OrderListApiResponseV4.ClaimSummaryV4ApiResponse(false, 0, 0, 1, null));
     }
@@ -471,9 +471,9 @@ public final class OrderApiFixtures {
                 50000,
                 50000,
                 "CARD",
-                "2026-01-01T09:00:00+09:00",
-                "2026-01-01T09:00:00+09:00",
-                "2026-01-01T09:00:00+09:00");
+                "2026-01-01 09:00:00",
+                "2026-01-01 09:00:00",
+                "2026-01-01 09:00:00");
     }
 
     public static ClaimInfoApiResponse claimInfoApiResponse() {
@@ -493,14 +493,14 @@ public final class OrderApiFixtures {
                 50000,
                 "CARD",
                 null,
-                "2026-01-01T09:00:00+09:00",
+                "2026-01-01 09:00:00",
                 null,
                 null);
     }
 
     public static TimeLineApiResponse timeLineApiResponse() {
         return new TimeLineApiResponse(
-                5001L, "ORDERED", "PREPARING", "SYSTEM", "발주 확인", "2026-01-01T09:00:00+09:00");
+                5001L, "ORDERED", "PREPARING", "SYSTEM", "발주 확인", "2026-01-01 09:00:00");
     }
 
     public static OrderDetailApiResponse orderDetailApiResponse() {

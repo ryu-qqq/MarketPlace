@@ -168,7 +168,7 @@ public final class BrandPresetApiFixtures {
                 DEFAULT_PRESET_NAME,
                 "테스트 브랜드",
                 "TEST_BRAND_CODE",
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00");
     }
 
     public static BrandPresetApiResponse apiResponse(Long id, String presetName) {
@@ -182,7 +182,7 @@ public final class BrandPresetApiFixtures {
                 presetName,
                 "테스트 브랜드",
                 "TEST_BRAND_CODE",
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00");
     }
 
     // ===== BrandPresetDetailResult (Application) =====

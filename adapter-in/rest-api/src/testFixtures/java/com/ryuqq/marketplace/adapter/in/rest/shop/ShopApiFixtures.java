@@ -105,8 +105,8 @@ public final class ShopApiFixtures {
                 DEFAULT_SHOP_NAME,
                 DEFAULT_ACCOUNT_ID,
                 DEFAULT_STATUS,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 
     public static ShopApiResponse apiResponse(Long id, String shopName, String status) {
@@ -116,7 +116,7 @@ public final class ShopApiFixtures {
                 shopName,
                 DEFAULT_ACCOUNT_ID,
                 status,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 }

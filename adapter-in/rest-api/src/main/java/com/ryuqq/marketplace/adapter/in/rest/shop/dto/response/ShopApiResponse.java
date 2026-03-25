@@ -10,5 +10,5 @@ public record ShopApiResponse(
         @Schema(description = "외부몰명", example = "쿠팡") String shopName,
         @Schema(description = "계정 ID", example = "coupang_account_01") String accountId,
         @Schema(description = "상태 (ACTIVE, INACTIVE)", example = "ACTIVE") String status,
-        @Schema(description = "생성일시", example = "2025-01-23T10:30:00+09:00") String createdAt,
-        @Schema(description = "수정일시", example = "2025-01-23T10:30:00+09:00") String updatedAt) {}
+        @Schema(description = "생성일시", example = "2025-01-23 10:30:00") String createdAt,
+        @Schema(description = "수정일시", example = "2025-01-23 10:30:00") String updatedAt) {}

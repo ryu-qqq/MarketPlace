@@ -25,8 +25,8 @@ public record OmsProductDetailApiResponse(
             @Schema(description = "카테고리 전체명", example = "여성패션 > 아우터 > 패딩 > 롱패딩")
                     String categoryFullName,
             @Schema(description = "상품 상태") ProductStatusResponse productStatus,
-            @Schema(description = "등록일", example = "2025-12-15T10:30:00+09:00") String insertDate,
-            @Schema(description = "수정일", example = "2025-12-16T14:30:00+09:00") String updateDate,
+            @Schema(description = "등록일", example = "2025-12-15 10:30:00") String insertDate,
+            @Schema(description = "수정일", example = "2025-12-16 14:30:00") String updateDate,
             @Schema(description = "등록자") String insertOperator,
             @Schema(description = "수정자") String updateOperator) {}
 
@@ -72,6 +72,6 @@ public record OmsProductDetailApiResponse(
             @Schema(description = "성공 횟수", example = "3") long successCount,
             @Schema(description = "실패 횟수", example = "1") long failCount,
             @Schema(description = "대기 횟수", example = "1") long pendingCount,
-            @Schema(description = "마지막 연동일", example = "2025-12-16T14:30:00+09:00")
+            @Schema(description = "마지막 연동일", example = "2025-12-16 14:30:00")
                     String lastSyncAt) {}
 }
