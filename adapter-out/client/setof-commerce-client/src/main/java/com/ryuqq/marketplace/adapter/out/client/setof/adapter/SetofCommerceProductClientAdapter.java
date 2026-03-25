@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationResponse;
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Component;
 /**
  * 세토프 커머스 상품 등록/수정/삭제 클라이언트 어댑터.
  *
- * <p>ProductGroupSyncData → Setof 요청 DTO 변환 후 ApiClient를 통해 API 호출. HTTP 호출은 {@link
+ * <p>ProductGroupSyncData -> Setof 요청 DTO 변환 후 ApiClient를 통해 API 호출. HTTP 호출은 {@link
  * SetofCommerceApiClient}에 위임합니다.
  */
 @Component
@@ -36,14 +37,17 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
     private final SetofCommerceApiClient apiClient;
     private final SetofCommerceProductMapper mapper;
     private final SetofProductUpdateExecutorProvider updateExecutorProvider;
+    private final SetofCommerceProperties properties;
 
     public SetofCommerceProductClientAdapter(
             SetofCommerceApiClient apiClient,
             SetofCommerceProductMapper mapper,
-            SetofProductUpdateExecutorProvider updateExecutorProvider) {
+            SetofProductUpdateExecutorProvider updateExecutorProvider,
+            SetofCommerceProperties properties) {
         this.apiClient = apiClient;
         this.mapper = mapper;
         this.updateExecutorProvider = updateExecutorProvider;
+        this.properties = properties;
     }
 
     @Override
@@ -59,11 +63,10 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
             SellerSalesChannel channel,
             Shop shop) {
 
-        long externalSellerId = Long.parseLong(shop.accountId());
+        String shopSecret = resolveShopSecret(shop);
 
         SetofProductGroupRegistrationRequest request =
-                mapper.toRegistrationRequest(
-                        syncData, externalCategoryId, externalBrandId, externalSellerId);
+                mapper.toRegistrationRequest(syncData, externalCategoryId, externalBrandId);
 
         Long productGroupId = syncData.queryResult().id();
 
@@ -72,7 +75,8 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
                 productGroupId,
                 externalCategoryId);
 
-        SetofProductGroupRegistrationResponse response = apiClient.registerProduct(request);
+        SetofProductGroupRegistrationResponse response =
+                apiClient.registerProduct(shopSecret, request);
 
         if (response == null || response.productGroupId() == null) {
             throw new IllegalStateException(
@@ -129,9 +133,20 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
         log.info("세토프 커머스 상품 삭제(판매중지) 요청: externalProductId={}", externalProductId);
 
         SetofProductGroupUpdateRequest deleteRequest = mapper.toDeleteRequest();
-        apiClient.updateProduct(externalProductId, deleteRequest);
+        apiClient.updateProduct(properties.getServiceToken(), externalProductId, deleteRequest);
 
         log.info("세토프 커머스 상품 삭제(판매중지) 성공: externalProductId={}", externalProductId);
+    }
+
+    /**
+     * Shop의 apiSecret을 우선 사용하고, 없으면 properties.serviceToken을 fallback으로 사용합니다.
+     *
+     * @param shop Shop 정보 (nullable)
+     * @return 서비스 토큰
+     */
+    private String resolveShopSecret(Shop shop) {
+        String secret = shop != null ? shop.apiSecret() : null;
+        return secret != null && !secret.isBlank() ? secret : properties.getServiceToken();
     }
 
     /**
@@ -146,7 +161,8 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
     private SetofProductGroupDetailResponse fetchExistingProduct(String externalProductId) {
         try {
             log.info("세토프 커머스 기존 상품 조회: externalProductId={}", externalProductId);
-            SetofProductGroupDetailResponse response = apiClient.getProduct(externalProductId);
+            SetofProductGroupDetailResponse response =
+                    apiClient.getProduct(properties.getServiceToken(), externalProductId);
 
             log.info(
                     "세토프 커머스 기존 상품 조회 성공: externalProductId={}, productsCount={}",

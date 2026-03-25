@@ -22,4 +22,12 @@ public enum OrderDateField implements DateField {
     public static OrderDateField defaultField() {
         return ORDERED;
     }
+
+    public static OrderDateField fromString(String value) {
+        if (value == null || value.isBlank()) { return null; }
+        for (OrderDateField field : values()) {
+            if (field.name().equalsIgnoreCase(value)) { return field; }
+        }
+        return valueOf(value);
+    }
 }

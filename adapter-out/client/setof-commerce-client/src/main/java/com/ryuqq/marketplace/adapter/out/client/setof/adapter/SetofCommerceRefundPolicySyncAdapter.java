@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofRefundPolicySyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
@@ -26,14 +27,17 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
     private final SetofCommerceApiClient apiClient;
     private final RefundPolicyReadManager policyReadManager;
     private final SetofCommerceSellerSyncMapper mapper;
+    private final SetofCommerceProperties properties;
 
     public SetofCommerceRefundPolicySyncAdapter(
             SetofCommerceApiClient apiClient,
             RefundPolicyReadManager policyReadManager,
-            SetofCommerceSellerSyncMapper mapper) {
+            SetofCommerceSellerSyncMapper mapper,
+            SetofCommerceProperties properties) {
         this.apiClient = apiClient;
         this.policyReadManager = policyReadManager;
         this.mapper = mapper;
+        this.properties = properties;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
 
             log.info("세토프 커머스 환불정책 등록 요청: sellerId={}, policyId={}", sellerId, policyId);
 
-            apiClient.createRefundPolicy(sellerId, request);
+            apiClient.createRefundPolicy(properties.getServiceToken(), sellerId, request);
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -66,7 +70,8 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
 
             log.info("세토프 커머스 환불정책 수정 요청: sellerId={}, policyId={}", sellerId, policyId);
 
-            apiClient.updateRefundPolicy(sellerId, policyId, request);
+            apiClient.updateRefundPolicy(
+                    properties.getServiceToken(), sellerId, policyId, request);
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;

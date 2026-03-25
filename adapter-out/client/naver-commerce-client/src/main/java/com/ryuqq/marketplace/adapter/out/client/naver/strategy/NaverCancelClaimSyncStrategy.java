@@ -15,6 +15,7 @@ import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
 import com.ryuqq.marketplace.domain.cancel.outbox.vo.CancelOutboxType;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -51,7 +52,7 @@ public class NaverCancelClaimSyncStrategy implements CancelClaimSyncStrategy {
     }
 
     @Override
-    public OutboxSyncResult execute(CancelOutbox outbox) {
+    public OutboxSyncResult execute(CancelOutbox outbox, Shop shop) {
         String externalProductOrderId = resolveExternalProductOrderId(outbox.orderItemIdValue());
         CancelOutboxType type = outbox.outboxType();
 

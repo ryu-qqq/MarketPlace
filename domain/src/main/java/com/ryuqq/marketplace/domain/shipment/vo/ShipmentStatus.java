@@ -1,5 +1,8 @@
 package com.ryuqq.marketplace.domain.shipment.vo;
 
+import java.util.List;
+import java.util.Locale;
+
 /** 배송 상태. */
 public enum ShipmentStatus {
 
@@ -22,5 +25,10 @@ public enum ShipmentStatus {
     FAILED,
 
     /** 취소 */
-    CANCELLED
+    CANCELLED;
+
+    public static List<ShipmentStatus> fromStringList(List<String> values) {
+        if (values == null || values.isEmpty()) { return List.of(); }
+        return values.stream().map(s -> valueOf(s.toUpperCase(Locale.ROOT))).toList();
+    }
 }

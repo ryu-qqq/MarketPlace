@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.shipment.internal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentOutboxPublishClient;
@@ -28,16 +29,19 @@ public class ShipmentOutboxRelayProcessor {
     private final ShipmentOutboxReadManager outboxReadManager;
     private final ShipmentOutboxPublishClient publishClient;
     private final ObjectMapper objectMapper;
+    private final TimeProvider timeProvider;
 
     public ShipmentOutboxRelayProcessor(
             ShipmentOutboxCommandManager outboxCommandManager,
             ShipmentOutboxReadManager outboxReadManager,
             ShipmentOutboxPublishClient publishClient,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            TimeProvider timeProvider) {
         this.outboxCommandManager = outboxCommandManager;
         this.outboxReadManager = outboxReadManager;
         this.publishClient = publishClient;
         this.objectMapper = objectMapper;
+        this.timeProvider = timeProvider;
     }
 
     /**
@@ -49,7 +53,7 @@ public class ShipmentOutboxRelayProcessor {
      * @return 성공 여부
      */
     public boolean relay(ShipmentOutbox outbox) {
-        Instant now = Instant.now();
+        Instant now = timeProvider.now();
         try {
             outbox.startProcessing(now);
             outboxCommandManager.persist(outbox);
@@ -72,7 +76,7 @@ public class ShipmentOutboxRelayProcessor {
                     e);
             try {
                 ShipmentOutbox freshOutbox = outboxReadManager.getById(outbox.idValue());
-                freshOutbox.recordFailure(true, "Relay 실패: " + e.getMessage(), Instant.now());
+                freshOutbox.recordFailure(true, "Relay 실패: " + e.getMessage(), timeProvider.now());
                 outboxCommandManager.persist(freshOutbox);
             } catch (Exception reReadEx) {
                 log.warn(

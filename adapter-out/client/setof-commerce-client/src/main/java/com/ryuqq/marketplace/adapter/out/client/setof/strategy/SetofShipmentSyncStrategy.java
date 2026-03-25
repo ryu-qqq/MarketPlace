@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceCli
 import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceServerException;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentSyncStrategy;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
 import com.ryuqq.marketplace.domain.shipment.outbox.vo.ShipmentOutboxType;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public class SetofShipmentSyncStrategy implements ShipmentSyncStrategy {
     }
 
     @Override
-    public OutboxSyncResult execute(ShipmentOutbox outbox) {
+    public OutboxSyncResult execute(ShipmentOutbox outbox, Shop shop) {
         ShipmentOutboxType type = outbox.outboxType();
 
         try {

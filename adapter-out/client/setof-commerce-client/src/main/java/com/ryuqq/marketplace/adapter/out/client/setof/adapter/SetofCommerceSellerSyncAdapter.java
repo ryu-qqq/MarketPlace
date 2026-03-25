@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSyncApiResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
@@ -25,14 +26,17 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
     private final SetofCommerceApiClient apiClient;
     private final SellerReadManager sellerReadManager;
     private final SetofCommerceSellerSyncMapper mapper;
+    private final SetofCommerceProperties properties;
 
     public SetofCommerceSellerSyncAdapter(
             SetofCommerceApiClient apiClient,
             SellerReadManager sellerReadManager,
-            SetofCommerceSellerSyncMapper mapper) {
+            SetofCommerceSellerSyncMapper mapper,
+            SetofCommerceProperties properties) {
         this.apiClient = apiClient;
         this.sellerReadManager = sellerReadManager;
         this.mapper = mapper;
+        this.properties = properties;
     }
 
     @Override
@@ -43,7 +47,8 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
 
             log.info("세토프 커머스 셀러 등록 요청: sellerId={}", sellerId);
 
-            SetofSyncApiResponse response = apiClient.createSeller(request);
+            SetofSyncApiResponse response =
+                    apiClient.createSeller(properties.getServiceToken(), request);
             return toResult(response);
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -61,7 +66,7 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
 
             log.info("세토프 커머스 셀러 수정 요청: sellerId={}", sellerId);
 
-            apiClient.updateSeller(sellerId, request);
+            apiClient.updateSeller(properties.getServiceToken(), sellerId, request);
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;

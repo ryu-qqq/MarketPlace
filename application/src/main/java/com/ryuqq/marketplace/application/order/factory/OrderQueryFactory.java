@@ -12,7 +12,6 @@ import com.ryuqq.marketplace.domain.order.query.OrderSearchField;
 import com.ryuqq.marketplace.domain.order.query.OrderSortKey;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.List;
-import java.util.Locale;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,9 +35,9 @@ public class OrderQueryFactory {
      * @return OrderSearchCriteria
      */
     public OrderSearchCriteria createCriteria(OrderSearchParams params) {
-        OrderSortKey sortKey = resolveSortKey(params.sortKey());
-        SortDirection sortDirection = commonVoFactory.parseSortDirection(params.sortDirection());
-        PageRequest pageRequest = commonVoFactory.createPageRequest(params.page(), params.size());
+        OrderSortKey sortKey = OrderSortKey.fromString(params.searchParams().sortKey());
+        SortDirection sortDirection = commonVoFactory.parseSortDirection(params.searchParams().sortDirection());
+        PageRequest pageRequest = commonVoFactory.createPageRequest(params.searchParams().page(), params.searchParams().size());
 
         QueryContext<OrderSortKey> queryContext =
                 commonVoFactory.createQueryContext(
@@ -47,53 +46,14 @@ public class OrderQueryFactory {
                         pageRequest,
                         params.searchParams().includeDeleted());
 
-        List<OrderItemStatus> statuses = resolveStatuses(params.statuses());
+        List<OrderItemStatus> statuses = OrderItemStatus.fromStringList(params.statuses());
         OrderSearchField searchField = OrderSearchField.fromString(params.searchField());
-        OrderDateField dateField = resolveDateField(params.dateField());
+        OrderDateField dateField = OrderDateField.fromString(params.dateField());
         DateRange dateRange =
                 commonVoFactory.createDateRange(
                         params.searchParams().startDate(), params.searchParams().endDate());
 
         return OrderSearchCriteria.of(
                 statuses, searchField, params.searchWord(), dateRange, dateField, queryContext);
-    }
-
-    private OrderSortKey resolveSortKey(String sortKeyString) {
-        if (sortKeyString == null || sortKeyString.isBlank()) {
-            return OrderSortKey.defaultKey();
-        }
-
-        for (OrderSortKey key : OrderSortKey.values()) {
-            if (key.fieldName().equalsIgnoreCase(sortKeyString)
-                    || key.name().equalsIgnoreCase(sortKeyString)) {
-                return key;
-            }
-        }
-
-        return OrderSortKey.defaultKey();
-    }
-
-    private List<OrderItemStatus> resolveStatuses(List<String> statusStrings) {
-        if (statusStrings == null || statusStrings.isEmpty()) {
-            return List.of();
-        }
-
-        return statusStrings.stream()
-                .map(s -> OrderItemStatus.valueOf(s.toUpperCase(Locale.ROOT)))
-                .toList();
-    }
-
-    private OrderDateField resolveDateField(String dateFieldString) {
-        if (dateFieldString == null || dateFieldString.isBlank()) {
-            return null;
-        }
-
-        for (OrderDateField field : OrderDateField.values()) {
-            if (field.name().equalsIgnoreCase(dateFieldString)) {
-                return field;
-            }
-        }
-
-        return null;
     }
 }

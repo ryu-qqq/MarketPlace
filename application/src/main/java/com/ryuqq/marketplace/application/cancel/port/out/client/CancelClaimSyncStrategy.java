@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.cancel.port.out.client;
 
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 
 /**
  * 취소 클레임 동기화 전략 포트.
@@ -10,5 +11,5 @@ import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
  */
 public interface CancelClaimSyncStrategy {
 
-    OutboxSyncResult execute(CancelOutbox outbox);
+    OutboxSyncResult execute(CancelOutbox outbox, Shop shop);
 }

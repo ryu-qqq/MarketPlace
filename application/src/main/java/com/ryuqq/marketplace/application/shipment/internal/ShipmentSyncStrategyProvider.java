@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.application.shipment.internal;
 
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentSyncStrategy;
+import com.ryuqq.marketplace.domain.shipment.exception.SyncChannelNotSupportedException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -37,7 +38,7 @@ public class ShipmentSyncStrategyProvider {
     public ShipmentSyncStrategy getStrategy(String channelCode) {
         ShipmentSyncStrategy strategy = strategyMap.get(channelCode);
         if (strategy == null) {
-            throw new IllegalStateException("지원하지 않는 배송 동기화 채널: " + channelCode);
+            throw new SyncChannelNotSupportedException(channelCode);
         }
         return strategy;
     }

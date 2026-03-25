@@ -47,7 +47,7 @@ public class GetShipmentListService implements GetShipmentListUseCase {
         long totalElements = readManager.countFulfillment(criteria);
 
         if (orderItemIds.isEmpty()) {
-            return assembler.toPageResult(List.of(), params.page(), params.size(), totalElements);
+            return assembler.toPageResult(List.of(), params.searchParams().page(), params.searchParams().size(), totalElements);
         }
 
         Map<String, OrderItemResult> itemMap = orderReadManager.findOrderItemsByIds(orderItemIds);
@@ -78,6 +78,6 @@ public class GetShipmentListService implements GetShipmentListUseCase {
             results.add(assembler.toListResult(shipment, item, order, true));
         }
 
-        return assembler.toPageResult(results, params.page(), params.size(), totalElements);
+        return assembler.toPageResult(results, params.searchParams().page(), params.searchParams().size(), totalElements);
     }
 }

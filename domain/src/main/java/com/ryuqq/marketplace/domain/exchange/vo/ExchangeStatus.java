@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.domain.exchange.vo;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /** 교환 상태. 상태 전이 규칙을 포함합니다. */
@@ -55,5 +56,10 @@ public enum ExchangeStatus {
             case CANCELLED -> CANCELLABLE;
             default -> EnumSet.noneOf(ExchangeStatus.class);
         };
+    }
+
+    public static List<ExchangeStatus> fromStringList(List<String> values) {
+        if (values == null || values.isEmpty()) { return List.of(); }
+        return values.stream().map(ExchangeStatus::valueOf).toList();
     }
 }

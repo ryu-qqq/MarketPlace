@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupBasicInfoUpdateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +21,12 @@ public class SetofCommerceBasicInfoAdapter {
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceBasicInfoAdapter.class);
 
     private final SetofCommerceApiClient apiClient;
+    private final SetofCommerceProperties properties;
 
-    public SetofCommerceBasicInfoAdapter(SetofCommerceApiClient apiClient) {
+    public SetofCommerceBasicInfoAdapter(
+            SetofCommerceApiClient apiClient, SetofCommerceProperties properties) {
         this.apiClient = apiClient;
+        this.properties = properties;
     }
 
     /**
@@ -34,7 +38,7 @@ public class SetofCommerceBasicInfoAdapter {
     public void updateBasicInfo(
             String externalProductGroupId, SetofProductGroupBasicInfoUpdateRequest request) {
         log.info("세토프 커머스 상품 그룹 기본정보 수정: externalProductGroupId={}", externalProductGroupId);
-        apiClient.updateBasicInfo(externalProductGroupId, request);
+        apiClient.updateBasicInfo(properties.getServiceToken(), externalProductGroupId, request);
         log.info("세토프 커머스 상품 그룹 기본정보 수정 성공: externalProductGroupId={}", externalProductGroupId);
     }
 }

@@ -27,12 +27,12 @@ public class CancelQueryFactory {
     }
 
     public CancelSearchCriteria createCriteria(CancelSearchParams params) {
-        List<CancelStatus> statuses = parseStatuses(params.statuses());
-        List<CancelType> types = parseTypes(params.types());
-        CancelSearchField searchField = parseSearchField(params.searchField());
-        CancelDateField dateField = parseDateField(params.dateField());
-        CancelSortKey sortKey = parseSortKey(params.sortKey());
-        SortDirection sortDirection = parseSortDirection(params.sortDirection());
+        List<CancelStatus> statuses = CancelStatus.fromStringList(params.statuses());
+        List<CancelType> types = CancelType.fromStringList(params.types());
+        CancelSearchField searchField = CancelSearchField.fromString(params.searchField());
+        CancelDateField dateField = CancelDateField.fromString(params.dateField());
+        CancelSortKey sortKey = CancelSortKey.fromString(params.sortKey());
+        SortDirection sortDirection = commonVoFactory.parseSortDirection(params.sortDirection());
         DateRange dateRange = parseDateRange(params.startDate(), params.endDate());
         PageRequest pageRequest = commonVoFactory.createPageRequest(params.page(), params.size());
         QueryContext<CancelSortKey> queryContext =
@@ -46,48 +46,6 @@ public class CancelQueryFactory {
                 dateRange,
                 dateField,
                 queryContext);
-    }
-
-    private List<CancelStatus> parseStatuses(List<String> statuses) {
-        if (statuses == null || statuses.isEmpty()) {
-            return List.of();
-        }
-        return statuses.stream().map(CancelStatus::valueOf).toList();
-    }
-
-    private List<CancelType> parseTypes(List<String> types) {
-        if (types == null || types.isEmpty()) {
-            return List.of();
-        }
-        return types.stream().map(CancelType::valueOf).toList();
-    }
-
-    private CancelSearchField parseSearchField(String searchField) {
-        if (searchField == null || searchField.isBlank()) {
-            return null;
-        }
-        return CancelSearchField.valueOf(searchField);
-    }
-
-    private CancelDateField parseDateField(String dateField) {
-        if (dateField == null || dateField.isBlank()) {
-            return null;
-        }
-        return CancelDateField.valueOf(dateField);
-    }
-
-    private CancelSortKey parseSortKey(String sortKey) {
-        if (sortKey == null || sortKey.isBlank()) {
-            return CancelSortKey.CREATED_AT;
-        }
-        return CancelSortKey.valueOf(sortKey);
-    }
-
-    private SortDirection parseSortDirection(String direction) {
-        if (direction == null || direction.isBlank()) {
-            return SortDirection.DESC;
-        }
-        return SortDirection.valueOf(direction);
     }
 
     private DateRange parseDateRange(String startDate, String endDate) {

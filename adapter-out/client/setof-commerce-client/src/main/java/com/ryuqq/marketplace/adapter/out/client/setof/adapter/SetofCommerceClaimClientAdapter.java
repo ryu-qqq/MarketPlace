@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,44 +29,47 @@ public class SetofCommerceClaimClientAdapter {
             LoggerFactory.getLogger(SetofCommerceClaimClientAdapter.class);
 
     private final SetofCommerceApiClient apiClient;
+    private final SetofCommerceProperties properties;
 
-    public SetofCommerceClaimClientAdapter(SetofCommerceApiClient apiClient) {
+    public SetofCommerceClaimClientAdapter(
+            SetofCommerceApiClient apiClient, SetofCommerceProperties properties) {
         this.apiClient = apiClient;
+        this.properties = properties;
     }
 
     // ===== 주문 =====
 
     public void confirmOrder(String orderItemId) {
-        apiClient.confirmOrder(orderItemId);
+        apiClient.confirmOrder(properties.getServiceToken(), orderItemId);
         log.info("세토프 주문 확인 완료: orderItemId={}", orderItemId);
     }
 
     public void readyToShip(String orderItemId) {
-        apiClient.readyToShip(orderItemId);
+        apiClient.readyToShip(properties.getServiceToken(), orderItemId);
         log.info("세토프 배송 준비 완료: orderItemId={}", orderItemId);
     }
 
     // ===== 취소 =====
 
     public void approveCancel(String cancelId) {
-        apiClient.approveCancel(cancelId);
+        apiClient.approveCancel(properties.getServiceToken(), cancelId);
         log.info("세토프 취소 승인 완료: cancelId={}", cancelId);
     }
 
     public void rejectCancel(String cancelId, String rejectReason) {
-        apiClient.rejectCancel(cancelId, rejectReason);
+        apiClient.rejectCancel(properties.getServiceToken(), cancelId, rejectReason);
         log.info("세토프 취소 거부 완료: cancelId={}, reason={}", cancelId, rejectReason);
     }
 
     // ===== 반품 =====
 
     public void completeRefund(String refundId) {
-        apiClient.completeRefund(refundId);
+        apiClient.completeRefund(properties.getServiceToken(), refundId);
         log.info("세토프 반품 완료 처리: refundId={}", refundId);
     }
 
     public void rejectRefund(String refundId, String rejectReason) {
-        apiClient.rejectRefund(refundId, rejectReason);
+        apiClient.rejectRefund(properties.getServiceToken(), refundId, rejectReason);
         log.info("세토프 반품 거부 완료: refundId={}, reason={}", refundId, rejectReason);
     }
 }

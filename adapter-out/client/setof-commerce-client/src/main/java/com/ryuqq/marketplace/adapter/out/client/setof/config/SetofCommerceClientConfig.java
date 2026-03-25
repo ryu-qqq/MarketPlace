@@ -56,7 +56,6 @@ public class SetofCommerceClientConfig {
 
         return RestClient.builder()
                 .baseUrl(properties.getBaseUrl())
-                .defaultHeader("X-Service-Token", properties.getServiceToken())
                 .defaultHeader("X-Service-Name", properties.getServiceName())
                 .requestFactory(requestFactory)
                 .defaultStatusHandler(

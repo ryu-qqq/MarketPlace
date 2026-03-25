@@ -13,5 +13,13 @@ public enum ShipmentMethodType {
     VISIT,
 
     /** 지정 택배사 */
-    DESIGNATED_COURIER
+    DESIGNATED_COURIER;
+
+    public static ShipmentMethodType fromString(String value) {
+        if (value == null || value.isBlank()) { return COURIER; }
+        for (ShipmentMethodType type : values()) {
+            if (type.name().equalsIgnoreCase(value)) { return type; }
+        }
+        return COURIER;
+    }
 }

@@ -22,4 +22,12 @@ public enum OrderSortKey implements SortKey {
     public static OrderSortKey defaultKey() {
         return CREATED_AT;
     }
+
+    public static OrderSortKey fromString(String value) {
+        if (value == null || value.isBlank()) { return defaultKey(); }
+        for (OrderSortKey key : values()) {
+            if (key.fieldName().equalsIgnoreCase(value) || key.name().equalsIgnoreCase(value)) { return key; }
+        }
+        return valueOf(value);
+    }
 }

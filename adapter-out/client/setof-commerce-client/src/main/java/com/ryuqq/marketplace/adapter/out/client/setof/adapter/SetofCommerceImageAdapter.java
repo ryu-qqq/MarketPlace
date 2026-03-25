@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofImagesRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +20,12 @@ public class SetofCommerceImageAdapter {
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceImageAdapter.class);
 
     private final SetofCommerceApiClient apiClient;
+    private final SetofCommerceProperties properties;
 
-    public SetofCommerceImageAdapter(SetofCommerceApiClient apiClient) {
+    public SetofCommerceImageAdapter(
+            SetofCommerceApiClient apiClient, SetofCommerceProperties properties) {
         this.apiClient = apiClient;
+        this.properties = properties;
     }
 
     /**
@@ -34,7 +38,7 @@ public class SetofCommerceImageAdapter {
      */
     public void registerImages(Long productGroupId, SetofImagesRequest request) {
         log.info("세토프 커머스 이미지 등록: productGroupId={}", productGroupId);
-        apiClient.registerImages(productGroupId, request);
+        apiClient.registerImages(properties.getServiceToken(), productGroupId, request);
         log.info("세토프 커머스 이미지 등록 성공: productGroupId={}", productGroupId);
     }
 
@@ -48,7 +52,7 @@ public class SetofCommerceImageAdapter {
      */
     public void updateImages(Long productGroupId, SetofImagesRequest request) {
         log.info("세토프 커머스 이미지 수정: productGroupId={}", productGroupId);
-        apiClient.updateImages(productGroupId, request);
+        apiClient.updateImages(properties.getServiceToken(), productGroupId, request);
         log.info("세토프 커머스 이미지 수정 성공: productGroupId={}", productGroupId);
     }
 }

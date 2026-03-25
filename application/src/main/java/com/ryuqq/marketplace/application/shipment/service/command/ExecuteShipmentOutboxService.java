@@ -4,13 +4,17 @@ import com.ryuqq.marketplace.application.claimsync.manager.ExternalOrderItemMapp
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.shipment.dto.command.ExecuteShipmentOutboxCommand;
+import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentSyncStrategyProvider;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ExecuteShipmentOutboxUseCase;
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentSyncStrategy;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
+import com.ryuqq.marketplace.domain.shipment.exception.ExternalMappingNotFoundException;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,16 +40,22 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
     private final ShipmentOutboxCommandManager outboxCommandManager;
     private final ShipmentSyncStrategyProvider strategyProvider;
     private final ExternalOrderItemMappingReadManager mappingReadManager;
+    private final ShipmentCommandFactory commandFactory;
+    private final ShopReadManager shopReadManager;
 
     public ExecuteShipmentOutboxService(
             ShipmentOutboxReadManager outboxReadManager,
             ShipmentOutboxCommandManager outboxCommandManager,
             ShipmentSyncStrategyProvider strategyProvider,
-            ExternalOrderItemMappingReadManager mappingReadManager) {
+            ExternalOrderItemMappingReadManager mappingReadManager,
+            ShipmentCommandFactory commandFactory,
+            ShopReadManager shopReadManager) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
         this.strategyProvider = strategyProvider;
         this.mappingReadManager = mappingReadManager;
+        this.commandFactory = commandFactory;
+        this.shopReadManager = shopReadManager;
     }
 
     @Override
@@ -53,9 +63,11 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
         ShipmentOutbox outbox = outboxReadManager.getById(command.outboxId());
 
         try {
-            String channelCode = resolveChannelCode(outbox);
+            ExternalOrderItemMapping mapping = resolveMapping(outbox);
+            String channelCode = mapping.channelCode();
             ShipmentSyncStrategy strategy = strategyProvider.getStrategy(channelCode);
-            OutboxSyncResult result = strategy.execute(outbox);
+            Shop shop = resolveShop(mapping);
+            OutboxSyncResult result = strategy.execute(outbox, shop);
 
             if (result.isSuccess()) {
                 handleSuccess(outbox);
@@ -79,19 +91,28 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
         }
     }
 
-    private String resolveChannelCode(ShipmentOutbox outbox) {
+    private ExternalOrderItemMapping resolveMapping(ShipmentOutbox outbox) {
         ExternalOrderItemMapping mapping =
                 mappingReadManager.findByOrderItemId(outbox.orderItemIdValue());
         if (mapping == null) {
-            throw new IllegalStateException(
-                    "외부 주문 매핑을 찾을 수 없습니다: orderItemId=" + outbox.orderItemIdValue());
+            throw new ExternalMappingNotFoundException(outbox.orderItemIdValue());
         }
-        return mapping.channelCode();
+        return mapping;
+    }
+
+    private Shop resolveShop(ExternalOrderItemMapping mapping) {
+        java.util.List<Shop> shops =
+                shopReadManager.findActiveBySalesChannelId(mapping.salesChannelId());
+        if (shops.isEmpty()) {
+            return null;
+        }
+        return shops.get(0);
     }
 
     private void handleSuccess(ShipmentOutbox outbox) {
         ShipmentOutbox fresh = outboxReadManager.getById(outbox.idValue());
-        fresh.complete(Instant.now());
+        Instant now = commandFactory.createOutboxTransitionContext(outbox.idValue()).changedAt();
+        fresh.complete(now);
         outboxCommandManager.persist(fresh);
     }
 
@@ -102,7 +123,8 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
     private void handleDeferRetry(ShipmentOutbox outbox) {
         try {
             ShipmentOutbox fresh = outboxReadManager.getById(outbox.idValue());
-            fresh.recoverFromTimeout(Instant.now());
+            Instant now = commandFactory.createOutboxTransitionContext(outbox.idValue()).changedAt();
+            fresh.recoverFromTimeout(now);
             outboxCommandManager.persist(fresh);
         } catch (Exception e) {
             log.warn("배송 Outbox deferRetry 실패: outboxId={}", outbox.idValue());
@@ -112,7 +134,8 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
     private void persistFailureWithReRead(Long outboxId, boolean retryable, String errorMessage) {
         try {
             ShipmentOutbox fresh = outboxReadManager.getById(outboxId);
-            fresh.recordFailure(retryable, errorMessage, Instant.now());
+            Instant now = commandFactory.createOutboxTransitionContext(outboxId).changedAt();
+            fresh.recordFailure(retryable, errorMessage, now);
             outboxCommandManager.persist(fresh);
         } catch (Exception e) {
             log.warn(

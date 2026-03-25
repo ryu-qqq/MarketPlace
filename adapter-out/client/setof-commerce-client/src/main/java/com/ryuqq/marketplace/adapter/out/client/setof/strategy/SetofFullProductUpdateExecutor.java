@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.strategy;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
@@ -30,11 +31,15 @@ public class SetofFullProductUpdateExecutor implements SetofProductUpdateExecuto
 
     private final SetofCommerceApiClient apiClient;
     private final SetofCommerceProductMapper mapper;
+    private final SetofCommerceProperties properties;
 
     public SetofFullProductUpdateExecutor(
-            SetofCommerceApiClient apiClient, SetofCommerceProductMapper mapper) {
+            SetofCommerceApiClient apiClient,
+            SetofCommerceProductMapper mapper,
+            SetofCommerceProperties properties) {
         this.apiClient = apiClient;
         this.mapper = mapper;
+        this.properties = properties;
     }
 
     /** changedAreas가 비어있으면(전체 수정) 항상 지원합니다. Provider에서 폴백으로도 사용됩니다. */
@@ -62,7 +67,7 @@ public class SetofFullProductUpdateExecutor implements SetofProductUpdateExecuto
                 externalProductId,
                 syncData.queryResult().id());
 
-        apiClient.updateProduct(externalProductId, request);
+        apiClient.updateProduct(properties.getServiceToken(), externalProductId, request);
 
         log.info("세토프 전체 수정 성공: externalProductId={}", externalProductId);
     }

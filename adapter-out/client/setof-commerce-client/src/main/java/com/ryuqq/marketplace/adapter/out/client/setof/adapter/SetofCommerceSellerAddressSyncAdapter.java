@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerAddressSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
@@ -25,14 +26,17 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
     private final SetofCommerceApiClient apiClient;
     private final SellerAddressReadManager addressReadManager;
     private final SetofCommerceSellerSyncMapper mapper;
+    private final SetofCommerceProperties properties;
 
     public SetofCommerceSellerAddressSyncAdapter(
             SetofCommerceApiClient apiClient,
             SellerAddressReadManager addressReadManager,
-            SetofCommerceSellerSyncMapper mapper) {
+            SetofCommerceSellerSyncMapper mapper,
+            SetofCommerceProperties properties) {
         this.apiClient = apiClient;
         this.addressReadManager = addressReadManager;
         this.mapper = mapper;
+        this.properties = properties;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
 
             log.info("세토프 커머스 셀러주소 등록 요청: sellerId={}, addressId={}", sellerId, addressId);
 
-            apiClient.createSellerAddress(sellerId, request);
+            apiClient.createSellerAddress(properties.getServiceToken(), sellerId, request);
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -61,7 +65,8 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
 
             log.info("세토프 커머스 셀러주소 수정 요청: sellerId={}, addressId={}", sellerId, addressId);
 
-            apiClient.updateSellerAddress(sellerId, addressId, request);
+            apiClient.updateSellerAddress(
+                    properties.getServiceToken(), sellerId, addressId, request);
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -76,7 +81,7 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
         try {
             log.info("세토프 커머스 셀러주소 삭제 요청: sellerId={}, addressId={}", sellerId, addressId);
 
-            apiClient.deleteSellerAddress(sellerId, addressId);
+            apiClient.deleteSellerAddress(properties.getServiceToken(), sellerId, addressId);
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;

@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.domain.cancel.vo;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /** 취소 상태. 상태 전이 규칙을 포함합니다. */
@@ -44,5 +45,10 @@ public enum CancelStatus {
             case CANCELLED -> WITHDRAWABLE;
             default -> EnumSet.noneOf(CancelStatus.class);
         };
+    }
+
+    public static List<CancelStatus> fromStringList(List<String> values) {
+        if (values == null || values.isEmpty()) { return List.of(); }
+        return values.stream().map(CancelStatus::valueOf).toList();
     }
 }

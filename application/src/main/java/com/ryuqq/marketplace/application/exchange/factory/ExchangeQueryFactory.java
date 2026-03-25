@@ -26,11 +26,11 @@ public class ExchangeQueryFactory {
     }
 
     public ExchangeSearchCriteria createCriteria(ExchangeSearchParams params) {
-        List<ExchangeStatus> statuses = parseStatuses(params.statuses());
-        ExchangeSearchField searchField = parseSearchField(params.searchField());
-        ExchangeDateField dateField = parseDateField(params.dateField());
-        ExchangeSortKey sortKey = parseSortKey(params.sortKey());
-        SortDirection sortDirection = parseSortDirection(params.sortDirection());
+        List<ExchangeStatus> statuses = ExchangeStatus.fromStringList(params.statuses());
+        ExchangeSearchField searchField = ExchangeSearchField.fromString(params.searchField());
+        ExchangeDateField dateField = ExchangeDateField.fromString(params.dateField());
+        ExchangeSortKey sortKey = ExchangeSortKey.fromString(params.sortKey());
+        SortDirection sortDirection = commonVoFactory.parseSortDirection(params.sortDirection());
         DateRange dateRange = parseDateRange(params.startDate(), params.endDate());
         PageRequest pageRequest = commonVoFactory.createPageRequest(params.page(), params.size());
         QueryContext<ExchangeSortKey> queryContext =
@@ -38,41 +38,6 @@ public class ExchangeQueryFactory {
 
         return new ExchangeSearchCriteria(
                 statuses, searchField, params.searchWord(), dateRange, dateField, queryContext);
-    }
-
-    private List<ExchangeStatus> parseStatuses(List<String> statuses) {
-        if (statuses == null || statuses.isEmpty()) {
-            return List.of();
-        }
-        return statuses.stream().map(ExchangeStatus::valueOf).toList();
-    }
-
-    private ExchangeSearchField parseSearchField(String searchField) {
-        if (searchField == null || searchField.isBlank()) {
-            return null;
-        }
-        return ExchangeSearchField.valueOf(searchField);
-    }
-
-    private ExchangeDateField parseDateField(String dateField) {
-        if (dateField == null || dateField.isBlank()) {
-            return null;
-        }
-        return ExchangeDateField.valueOf(dateField);
-    }
-
-    private ExchangeSortKey parseSortKey(String sortKey) {
-        if (sortKey == null || sortKey.isBlank()) {
-            return ExchangeSortKey.CREATED_AT;
-        }
-        return ExchangeSortKey.valueOf(sortKey);
-    }
-
-    private SortDirection parseSortDirection(String direction) {
-        if (direction == null || direction.isBlank()) {
-            return SortDirection.DESC;
-        }
-        return SortDirection.valueOf(direction);
     }
 
     private DateRange parseDateRange(String startDate, String endDate) {

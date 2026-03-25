@@ -12,7 +12,6 @@ import com.ryuqq.marketplace.domain.shipment.query.ShipmentSearchField;
 import com.ryuqq.marketplace.domain.shipment.query.ShipmentSortKey;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.util.List;
-import java.util.Locale;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,9 +35,9 @@ public class ShipmentQueryFactory {
      * @return ShipmentSearchCriteria
      */
     public ShipmentSearchCriteria createCriteria(ShipmentSearchParams params) {
-        ShipmentSortKey sortKey = resolveSortKey(params.sortKey());
-        SortDirection sortDirection = commonVoFactory.parseSortDirection(params.sortDirection());
-        PageRequest pageRequest = commonVoFactory.createPageRequest(params.page(), params.size());
+        ShipmentSortKey sortKey = ShipmentSortKey.fromString(params.searchParams().sortKey());
+        SortDirection sortDirection = commonVoFactory.parseSortDirection(params.searchParams().sortDirection());
+        PageRequest pageRequest = commonVoFactory.createPageRequest(params.searchParams().page(), params.searchParams().size());
 
         QueryContext<ShipmentSortKey> queryContext =
                 commonVoFactory.createQueryContext(
@@ -47,9 +46,9 @@ public class ShipmentQueryFactory {
                         pageRequest,
                         params.searchParams().includeDeleted());
 
-        List<ShipmentStatus> statuses = resolveStatuses(params.statuses());
+        List<ShipmentStatus> statuses = ShipmentStatus.fromStringList(params.statuses());
         ShipmentSearchField searchField = ShipmentSearchField.fromString(params.searchField());
-        ShipmentDateField dateField = resolveDateField(params.dateField());
+        ShipmentDateField dateField = ShipmentDateField.fromString(params.dateField());
         DateRange dateRange =
                 commonVoFactory.createDateRange(
                         params.searchParams().startDate(), params.searchParams().endDate());
@@ -63,44 +62,5 @@ public class ShipmentQueryFactory {
                 dateRange,
                 dateField,
                 queryContext);
-    }
-
-    private ShipmentSortKey resolveSortKey(String sortKeyString) {
-        if (sortKeyString == null || sortKeyString.isBlank()) {
-            return ShipmentSortKey.defaultKey();
-        }
-
-        for (ShipmentSortKey key : ShipmentSortKey.values()) {
-            if (key.fieldName().equalsIgnoreCase(sortKeyString)
-                    || key.name().equalsIgnoreCase(sortKeyString)) {
-                return key;
-            }
-        }
-
-        return ShipmentSortKey.defaultKey();
-    }
-
-    private List<ShipmentStatus> resolveStatuses(List<String> statusStrings) {
-        if (statusStrings == null || statusStrings.isEmpty()) {
-            return List.of();
-        }
-
-        return statusStrings.stream()
-                .map(s -> ShipmentStatus.valueOf(s.toUpperCase(Locale.ROOT)))
-                .toList();
-    }
-
-    private ShipmentDateField resolveDateField(String dateFieldString) {
-        if (dateFieldString == null || dateFieldString.isBlank()) {
-            return null;
-        }
-
-        for (ShipmentDateField field : ShipmentDateField.values()) {
-            if (field.name().equalsIgnoreCase(dateFieldString)) {
-                return field;
-            }
-        }
-
-        return null;
     }
 }

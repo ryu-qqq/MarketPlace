@@ -2,10 +2,12 @@ package com.ryuqq.marketplace.application.shipment.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.application.shipment.dto.command.ProcessPendingShipmentOutboxCommand;
+import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentOutboxRelayProcessor;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ProcessPendingShipmentOutboxUseCase;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -17,18 +19,22 @@ public class ProcessPendingShipmentOutboxService implements ProcessPendingShipme
 
     private final ShipmentOutboxReadManager outboxReadManager;
     private final ShipmentOutboxRelayProcessor relayProcessor;
+    private final ShipmentCommandFactory commandFactory;
 
     public ProcessPendingShipmentOutboxService(
             ShipmentOutboxReadManager outboxReadManager,
-            ShipmentOutboxRelayProcessor relayProcessor) {
+            ShipmentOutboxRelayProcessor relayProcessor,
+            ShipmentCommandFactory commandFactory) {
         this.outboxReadManager = outboxReadManager;
         this.relayProcessor = relayProcessor;
+        this.commandFactory = commandFactory;
     }
 
     @Override
     public SchedulerBatchProcessingResult execute(ProcessPendingShipmentOutboxCommand command) {
+        Instant beforeTime = commandFactory.resolveBeforeTime(command);
         List<ShipmentOutbox> outboxes =
-                outboxReadManager.findPendingOutboxes(command.beforeTime(), command.batchSize());
+                outboxReadManager.findPendingOutboxes(beforeTime, command.batchSize());
 
         int total = outboxes.size();
         int successCount = 0;

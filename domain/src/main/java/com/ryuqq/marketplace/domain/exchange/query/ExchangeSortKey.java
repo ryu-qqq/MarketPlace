@@ -22,4 +22,9 @@ public enum ExchangeSortKey implements SortKey {
     public static ExchangeSortKey defaultKey() {
         return CREATED_AT;
     }
+
+    public static ExchangeSortKey fromString(String value) {
+        if (value == null || value.isBlank()) { return CREATED_AT; }
+        return valueOf(value);
+    }
 }

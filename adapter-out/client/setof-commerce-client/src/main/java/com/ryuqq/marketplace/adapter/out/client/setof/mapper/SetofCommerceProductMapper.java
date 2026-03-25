@@ -52,14 +52,12 @@ public class SetofCommerceProductMapper {
      * @param syncData 상품 그룹 동기화 데이터
      * @param externalCategoryId 세토프 카테고리 ID
      * @param externalBrandId 세토프 브랜드 ID (nullable)
-     * @param externalSellerId 세토프 셀러 ID (shop.accountId)
      * @return 세토프 상품 등록 요청 DTO
      */
     public SetofProductGroupRegistrationRequest toRegistrationRequest(
             ProductGroupSyncData syncData,
             Long externalCategoryId,
-            Long externalBrandId,
-            long externalSellerId) {
+            Long externalBrandId) {
 
         ProductGroupDetailCompositeQueryResult queryResult = syncData.queryResult();
         List<ProductResult> products = syncData.products();
@@ -69,7 +67,6 @@ public class SetofCommerceProductMapper {
 
         return new SetofProductGroupRegistrationRequest(
                 null,
-                externalSellerId,
                 externalBrandId,
                 externalCategoryId,
                 queryResult.shippingPolicy() != null

@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.shipment.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.application.shipment.dto.command.RecoverTimeoutShipmentOutboxCommand;
+import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.application.shipment.port.in.command.RecoverTimeoutShipmentOutboxUseCase;
@@ -11,7 +12,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /** 타임아웃된 배송 아웃박스 복구 서비스. */
 @Service
@@ -22,28 +22,31 @@ public class RecoverTimeoutShipmentOutboxService implements RecoverTimeoutShipme
 
     private final ShipmentOutboxReadManager outboxReadManager;
     private final ShipmentOutboxCommandManager outboxCommandManager;
+    private final ShipmentCommandFactory commandFactory;
 
     public RecoverTimeoutShipmentOutboxService(
             ShipmentOutboxReadManager outboxReadManager,
-            ShipmentOutboxCommandManager outboxCommandManager) {
+            ShipmentOutboxCommandManager outboxCommandManager,
+            ShipmentCommandFactory commandFactory) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
+        this.commandFactory = commandFactory;
     }
 
     @Override
-    @Transactional
     public SchedulerBatchProcessingResult execute(RecoverTimeoutShipmentOutboxCommand command) {
+        Instant timeoutThreshold = commandFactory.resolveTimeoutThreshold(command);
         List<ShipmentOutbox> outboxes =
                 outboxReadManager.findProcessingTimeoutOutboxes(
-                        command.timeoutThreshold(), command.batchSize());
+                        timeoutThreshold, command.batchSize());
 
         int total = outboxes.size();
         int successCount = 0;
         int failedCount = 0;
-        Instant now = Instant.now();
 
         for (ShipmentOutbox outbox : outboxes) {
             try {
+                Instant now = commandFactory.createOutboxTransitionContext(outbox.idValue()).changedAt();
                 outbox.recoverFromTimeout(now);
                 outboxCommandManager.persist(outbox);
                 successCount++;

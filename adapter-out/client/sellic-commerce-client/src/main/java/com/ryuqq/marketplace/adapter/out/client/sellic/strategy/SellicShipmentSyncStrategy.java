@@ -18,6 +18,7 @@ import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavail
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentSyncStrategy;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
 import com.ryuqq.marketplace.domain.shipment.outbox.vo.ShipmentOutboxType;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,7 @@ public class SellicShipmentSyncStrategy implements ShipmentSyncStrategy {
     }
 
     @Override
-    public OutboxSyncResult execute(ShipmentOutbox outbox) {
+    public OutboxSyncResult execute(ShipmentOutbox outbox, Shop shop) {
         ShipmentOutboxType type = outbox.outboxType();
 
         try {

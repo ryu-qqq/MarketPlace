@@ -5,9 +5,10 @@ import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.shipment.dto.command.ConfirmShipmentBatchCommand;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
-import com.ryuqq.marketplace.application.shipment.internal.ConfirmShipmentBundle;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistenceBundle;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ConfirmShipmentBatchUseCase;
+import com.ryuqq.marketplace.application.common.dto.command.BulkStatusChangeContext;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
@@ -42,7 +43,10 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
         List<OrderItemId> orderItemIds =
                 command.orderItemIds().stream().map(OrderItemId::of).toList();
         List<OrderItem> orderItems = orderItemReadManager.findAllByIds(orderItemIds);
-        Instant now = Instant.now();
+
+        com.ryuqq.marketplace.application.common.dto.command.BulkStatusChangeContext<OrderItemId> confirmContexts =
+                commandFactory.createConfirmContexts(command);
+        Instant changedAt = confirmContexts.changedAt();
 
         List<BatchItemResult<String>> results = new ArrayList<>();
         List<OrderItem> confirmable = new ArrayList<>();
@@ -63,14 +67,14 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
             }
 
             // 발주확인 처리: changedBy는 시스템 처리이므로 "system" 사용
-            item.confirm("system", now);
+            item.confirm("system", changedAt);
             confirmable.add(item);
             results.add(BatchItemResult.success(idStr));
         }
 
         if (!confirmable.isEmpty()) {
-            ConfirmShipmentBundle bundle = commandFactory.createConfirmBundle(confirmable);
-            persistFacade.persistConfirmBundle(bundle);
+            ShipmentPersistenceBundle bundle = commandFactory.createConfirmBundle(confirmable, changedAt);
+            persistFacade.persistAll(bundle);
         }
 
         return BatchProcessingResult.from(results);

@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofImageVariantSyncRequest;
 import com.ryuqq.marketplace.application.imagevariant.dto.response.ImageVariantResult;
 import com.ryuqq.marketplace.application.imagevariantsync.port.out.client.ImageVariantSyncClient;
@@ -23,9 +24,12 @@ public class SetofCommerceImageVariantSyncAdapter implements ImageVariantSyncCli
             LoggerFactory.getLogger(SetofCommerceImageVariantSyncAdapter.class);
 
     private final SetofCommerceApiClient apiClient;
+    private final SetofCommerceProperties properties;
 
-    public SetofCommerceImageVariantSyncAdapter(SetofCommerceApiClient apiClient) {
+    public SetofCommerceImageVariantSyncAdapter(
+            SetofCommerceApiClient apiClient, SetofCommerceProperties properties) {
         this.apiClient = apiClient;
+        this.properties = properties;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class SetofCommerceImageVariantSyncAdapter implements ImageVariantSyncCli
                 sourceType,
                 variants.size());
 
-        apiClient.syncImageVariants(request);
+        apiClient.syncImageVariants(properties.getServiceToken(), request);
 
         log.info("세토프 커머스 이미지 Variant 동기화 성공: sourceImageId={}", sourceImageId);
     }

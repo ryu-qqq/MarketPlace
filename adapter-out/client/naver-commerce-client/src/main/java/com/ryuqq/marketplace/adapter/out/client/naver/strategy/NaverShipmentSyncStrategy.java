@@ -15,6 +15,7 @@ import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavail
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentSyncStrategy;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
 import com.ryuqq.marketplace.domain.shipment.outbox.vo.ShipmentOutboxType;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -83,7 +84,7 @@ public class NaverShipmentSyncStrategy implements ShipmentSyncStrategy {
     }
 
     @Override
-    public OutboxSyncResult execute(ShipmentOutbox outbox) {
+    public OutboxSyncResult execute(ShipmentOutbox outbox, Shop shop) {
         String externalProductOrderId = resolveExternalProductOrderId(outbox.orderItemIdValue());
         ShipmentOutboxType type = outbox.outboxType();
 

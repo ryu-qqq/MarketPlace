@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory.ShipSingleContext;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentOutboxPayloadBuilder;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistenceBundle;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ShipSingleUseCase;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
@@ -51,6 +52,6 @@ public class ShipSingleService implements ShipSingleUseCase {
                         ShipmentOutboxPayloadBuilder.shipPayload(command),
                         context.changedAt());
 
-        persistFacade.persistWithOutbox(shipment, outbox);
+        persistFacade.persistAll(ShipmentPersistenceBundle.ofSingleWithOutbox(shipment, outbox));
     }
 }

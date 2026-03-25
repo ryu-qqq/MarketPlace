@@ -30,20 +30,4 @@ public record ShipmentSearchParams(
         sellerIds = sellerIds != null ? List.copyOf(sellerIds) : List.of();
         shopOrderNos = shopOrderNos != null ? List.copyOf(shopOrderNos) : List.of();
     }
-
-    public int page() {
-        return searchParams.page();
-    }
-
-    public int size() {
-        return searchParams.size();
-    }
-
-    public String sortKey() {
-        return searchParams.sortKey();
-    }
-
-    public String sortDirection() {
-        return searchParams.sortDirection();
-    }
 }

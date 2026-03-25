@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofDescriptionRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +21,12 @@ public class SetofCommerceDescriptionAdapter {
             LoggerFactory.getLogger(SetofCommerceDescriptionAdapter.class);
 
     private final SetofCommerceApiClient apiClient;
+    private final SetofCommerceProperties properties;
 
-    public SetofCommerceDescriptionAdapter(SetofCommerceApiClient apiClient) {
+    public SetofCommerceDescriptionAdapter(
+            SetofCommerceApiClient apiClient, SetofCommerceProperties properties) {
         this.apiClient = apiClient;
+        this.properties = properties;
     }
 
     /**
@@ -35,7 +39,7 @@ public class SetofCommerceDescriptionAdapter {
      */
     public void registerDescription(Long productGroupId, SetofDescriptionRequest request) {
         log.info("세토프 커머스 상세설명 등록: productGroupId={}", productGroupId);
-        apiClient.registerDescription(productGroupId, request);
+        apiClient.registerDescription(properties.getServiceToken(), productGroupId, request);
         log.info("세토프 커머스 상세설명 등록 성공: productGroupId={}", productGroupId);
     }
 
@@ -49,7 +53,7 @@ public class SetofCommerceDescriptionAdapter {
      */
     public void updateDescription(Long productGroupId, SetofDescriptionRequest request) {
         log.info("세토프 커머스 상세설명 수정: productGroupId={}", productGroupId);
-        apiClient.updateDescription(productGroupId, request);
+        apiClient.updateDescription(properties.getServiceToken(), productGroupId, request);
         log.info("세토프 커머스 상세설명 수정 성공: productGroupId={}", productGroupId);
     }
 }

@@ -73,9 +73,15 @@ public class ApproveCancelBatchService implements ApproveCancelBatchUseCase {
                         orderItemReadManager.findById(OrderItemId.of(cancel.orderItemIdValue()));
                 orderItem.ifPresent(
                         oi -> {
-                            oi.cancel(command.processedBy(), "취소 승인", bundle.changedAt());
+                            oi.partialCancel(
+                                    cancel.cancelQty(),
+                                    command.processedBy(),
+                                    "취소 승인",
+                                    bundle.changedAt());
                             cancelledItems.add(oi);
-                            cancelledOrderItemIds.add(cancel.orderItemId());
+                            if (oi.isFullyCancelled()) {
+                                cancelledOrderItemIds.add(cancel.orderItemId());
+                            }
                         });
             } catch (Exception e) {
                 log.warn("취소 승인 실패: cancelId={}, error={}", cancel.idValue(), e.getMessage());

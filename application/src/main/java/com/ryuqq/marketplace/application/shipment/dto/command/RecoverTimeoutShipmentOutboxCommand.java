@@ -1,7 +1,5 @@
 package com.ryuqq.marketplace.application.shipment.dto.command;
 
-import java.time.Instant;
-
 /**
  * 타임아웃 배송 아웃박스 복구 Command.
  *
@@ -12,9 +10,5 @@ public record RecoverTimeoutShipmentOutboxCommand(int batchSize, long timeoutSec
 
     public static RecoverTimeoutShipmentOutboxCommand of(int batchSize, long timeoutSeconds) {
         return new RecoverTimeoutShipmentOutboxCommand(batchSize, timeoutSeconds);
-    }
-
-    public Instant timeoutThreshold() {
-        return Instant.now().minusSeconds(timeoutSeconds);
     }
 }

@@ -75,7 +75,7 @@ public class CommonVoFactory {
      * @return SortDirection
      */
     public SortDirection parseSortDirection(String direction) {
-        return SortDirection.valueOf(direction);
+        return SortDirection.fromString(direction);
     }
 
     /**

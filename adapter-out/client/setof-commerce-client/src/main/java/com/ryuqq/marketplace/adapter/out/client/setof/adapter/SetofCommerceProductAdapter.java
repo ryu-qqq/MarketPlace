@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductPriceUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductStockUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductsUpdateRequest;
@@ -21,9 +22,12 @@ public class SetofCommerceProductAdapter {
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceProductAdapter.class);
 
     private final SetofCommerceApiClient apiClient;
+    private final SetofCommerceProperties properties;
 
-    public SetofCommerceProductAdapter(SetofCommerceApiClient apiClient) {
+    public SetofCommerceProductAdapter(
+            SetofCommerceApiClient apiClient, SetofCommerceProperties properties) {
         this.apiClient = apiClient;
+        this.properties = properties;
     }
 
     /**
@@ -36,7 +40,7 @@ public class SetofCommerceProductAdapter {
      */
     public void updatePrice(Long productId, SetofProductPriceUpdateRequest request) {
         log.info("세토프 커머스 상품 가격 수정: productId={}", productId);
-        apiClient.updatePrice(productId, request);
+        apiClient.updatePrice(properties.getServiceToken(), productId, request);
         log.info("세토프 커머스 상품 가격 수정 성공: productId={}", productId);
     }
 
@@ -50,7 +54,7 @@ public class SetofCommerceProductAdapter {
      */
     public void updateStock(Long productId, SetofProductStockUpdateRequest request) {
         log.info("세토프 커머스 상품 재고 수정: productId={}", productId);
-        apiClient.updateStock(productId, request);
+        apiClient.updateStock(properties.getServiceToken(), productId, request);
         log.info("세토프 커머스 상품 재고 수정 성공: productId={}", productId);
     }
 
@@ -64,7 +68,7 @@ public class SetofCommerceProductAdapter {
      */
     public void updateProducts(Long productGroupId, SetofProductsUpdateRequest request) {
         log.info("세토프 커머스 상품+옵션 일괄 수정: productGroupId={}", productGroupId);
-        apiClient.updateProducts(productGroupId, request);
+        apiClient.updateProducts(properties.getServiceToken(), productGroupId, request);
         log.info("세토프 커머스 상품+옵션 일괄 수정 성공: productGroupId={}", productGroupId);
     }
 }

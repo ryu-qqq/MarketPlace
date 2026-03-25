@@ -43,9 +43,9 @@ class ShipmentExceptionTest {
         }
 
         @Test
-        @DisplayName("모든 에러 코드가 4개이다")
+        @DisplayName("모든 에러 코드가 6개이다")
         void totalErrorCodeCount() {
-            assertThat(ShipmentErrorCode.values()).hasSize(4);
+            assertThat(ShipmentErrorCode.values()).hasSize(6);
         }
     }
 

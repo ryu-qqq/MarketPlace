@@ -67,9 +67,15 @@ public class SellerCancelBatchService implements SellerCancelBatchUseCase {
                         orderItemReadManager.findById(OrderItemId.of(item.orderItemId()));
                 orderItem.ifPresent(
                         oi -> {
-                            oi.cancel(command.requestedBy(), "판매자 취소", bundle.changedAt());
+                            oi.partialCancel(
+                                    item.cancelQty(),
+                                    command.requestedBy(),
+                                    "판매자 취소",
+                                    bundle.changedAt());
                             cancelledItems.add(oi);
-                            cancelledOrderItemIds.add(OrderItemId.of(item.orderItemId()));
+                            if (oi.isFullyCancelled()) {
+                                cancelledOrderItemIds.add(OrderItemId.of(item.orderItemId()));
+                            }
                         });
             } catch (Exception e) {
                 log.warn(

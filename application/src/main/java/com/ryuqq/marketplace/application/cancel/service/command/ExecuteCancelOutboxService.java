@@ -6,9 +6,14 @@ import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxCommandManag
 import com.ryuqq.marketplace.application.cancel.manager.CancelOutboxReadManager;
 import com.ryuqq.marketplace.application.cancel.port.in.command.ExecuteCancelOutboxUseCase;
 import com.ryuqq.marketplace.application.cancel.port.out.client.CancelClaimSyncStrategy;
+import com.ryuqq.marketplace.application.claimsync.manager.ExternalOrderItemMappingReadManager;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
+import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -32,16 +37,22 @@ public class ExecuteCancelOutboxService implements ExecuteCancelOutboxUseCase {
     private final CancelOutboxCommandManager outboxCommandManager;
     private final CancelClaimSyncStrategy claimSyncStrategy;
     private final CancelCommandFactory commandFactory;
+    private final ExternalOrderItemMappingReadManager mappingReadManager;
+    private final ShopReadManager shopReadManager;
 
     public ExecuteCancelOutboxService(
             CancelOutboxReadManager outboxReadManager,
             CancelOutboxCommandManager outboxCommandManager,
             CancelClaimSyncStrategy claimSyncStrategy,
-            CancelCommandFactory commandFactory) {
+            CancelCommandFactory commandFactory,
+            ExternalOrderItemMappingReadManager mappingReadManager,
+            ShopReadManager shopReadManager) {
         this.outboxReadManager = outboxReadManager;
         this.outboxCommandManager = outboxCommandManager;
         this.claimSyncStrategy = claimSyncStrategy;
         this.commandFactory = commandFactory;
+        this.mappingReadManager = mappingReadManager;
+        this.shopReadManager = shopReadManager;
     }
 
     @Override
@@ -49,7 +60,8 @@ public class ExecuteCancelOutboxService implements ExecuteCancelOutboxUseCase {
         CancelOutbox outbox = outboxReadManager.getById(command.outboxId());
 
         try {
-            OutboxSyncResult result = claimSyncStrategy.execute(outbox);
+            Shop shop = resolveShop(outbox.orderItemIdValue());
+            OutboxSyncResult result = claimSyncStrategy.execute(outbox, shop);
 
             if (result.isSuccess()) {
                 handleSuccess(outbox);
@@ -71,6 +83,20 @@ public class ExecuteCancelOutboxService implements ExecuteCancelOutboxUseCase {
                     e);
             persistFailureWithReRead(outbox.idValue(), true, "실행 중 예외: " + e.getMessage());
         }
+    }
+
+    private Shop resolveShop(String orderItemId) {
+        ExternalOrderItemMapping mapping = mappingReadManager.findByOrderItemId(orderItemId);
+        if (mapping == null) {
+            throw new IllegalStateException(
+                    "외부 주문 매핑을 찾을 수 없습니다: orderItemId=" + orderItemId);
+        }
+        List<Shop> shops = shopReadManager.findActiveBySalesChannelId(mapping.salesChannelId());
+        if (shops.isEmpty()) {
+            throw new IllegalStateException(
+                    "활성 Shop을 찾을 수 없습니다: salesChannelId=" + mapping.salesChannelId());
+        }
+        return shops.get(0);
     }
 
     private void handleSuccess(CancelOutbox outbox) {
