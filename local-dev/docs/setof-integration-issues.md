@@ -6,7 +6,7 @@
 
 ---
 
-## 전체 테스트 결과: 24건 중 18 성공 / 1 실패 / 5 SKIP
+## 전체 테스트 결과: 31건 중 25 성공 / 1 실패 / 5 SKIP
 
 | Phase | API | 결과 |
 |---|---|---|
@@ -29,6 +29,13 @@
 | 셀러주소 | POST /api/v2/admin/seller-addresses/sellers/{sellerId} | ✅ PASS (201) |
 | 셀러주소 | PUT /api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId} | ✅ PASS (204) |
 | 셀러주소 | DELETE /api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId} | ✅ PASS (204) |
+| 주문 | POST /api/v2/orders/{id}/confirm | ✅ PASS (200) |
+| 주문 | POST /api/v2/orders/{id}/ready-to-ship | ✅ PASS (200) |
+| 운송장 | POST /api/v2/shipments | ✅ PASS (200) |
+| 취소 | POST /api/v2/cancels/{id}/approve | ✅ PASS (200) |
+| 취소 | POST /api/v2/cancels/{id}/reject | ✅ PASS (200) |
+| 환불 | POST /api/v2/refunds/{id}/complete (COLLECTED→COMPLETED) | ✅ PASS (200) |
+| 환불 | POST /api/v2/refunds/{id}/reject | ✅ PASS (200) |
 | 개별상품 | PATCH /api/v2/admin/products/{id}/price | ⏭️ SKIP (상품 ID 조회 불가) |
 | 개별상품 | PATCH /api/v2/admin/products/{id}/stock | ⏭️ SKIP (상품 ID 조회 불가) |
 | 주문 | POST /api/v2/orders/{id}/confirm | ⏭️ SKIP (데이터 없음) |
@@ -239,6 +246,24 @@ SELECT * FROM seller_cs WHERE seller_id = 76;
 ### 수정 제안
 
 셀러 등록 서비스에서 `csContact`이 전달되면 `seller_cs` 테이블에도 INSERT 처리 필요. 또는 셀러 수정 시 `seller_cs`가 없으면 신규 생성(upsert)하도록 처리.
+
+---
+
+## 📋 NOTE-001: 환불 상태 전이 규칙 — MarketPlace 클라이언트 주의사항
+
+### 환불 상태 흐름
+
+```
+REQUESTED → COLLECTING → COLLECTED → COMPLETED
+                                   → REJECTED
+         → REJECTED
+         → CANCELLED
+```
+
+- `REQUESTED → COMPLETED` **직접 전이 불가**
+- `completeRefund` API는 **COLLECTED 상태에서만 호출 가능**
+- MarketPlace에서 환불 완료 처리 시 반드시 수거 완료(COLLECTED) 확인 후 호출해야 함
+- 주문/취소/환불 API 모두 `X-Seller-Token` 인증 필수 (세토프 업데이트로 추가됨)
 
 ---
 

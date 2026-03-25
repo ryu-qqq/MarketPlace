@@ -593,33 +593,77 @@ fi
 echo ""
 echo -e "${CYAN}=== Phase 7: 주문/클레임 ===${NC}"
 
-# setof DB에서 PURCHASE_CONFIRMED가 아닌 주문 아이템 조회
-ORDER_ITEM_ID=$(db_query "setof" "SELECT id FROM order_items WHERE status != 'PURCHASE_CONFIRMED' ORDER BY id DESC LIMIT 1" 2>/dev/null || echo "")
-
-if [ -n "$ORDER_ITEM_ID" ]; then
-    echo -e "  -> 주문 아이템 ID: ${ORDER_ITEM_ID}"
-
-    call_api "POST" "/api/v2/orders/${ORDER_ITEM_ID}/confirm" \
-        "" \
-        "주문 확인 (orderItemId=${ORDER_ITEM_ID})"
-
-    call_api "POST" "/api/v2/orders/${ORDER_ITEM_ID}/ready-to-ship" \
-        "" \
-        "발송 준비 (orderItemId=${ORDER_ITEM_ID})"
+# --- 주문 확인 (PENDING → CONFIRMED) ---
+PENDING_ITEM=$(db_query "setof" "SELECT id FROM order_items WHERE order_item_status = 'PENDING' LIMIT 1" 2>/dev/null || echo "")
+if [ -n "$PENDING_ITEM" ]; then
+    echo -e "  -> PENDING 주문 아이템 ID: ${PENDING_ITEM}"
+    call_api "POST" "/api/v2/orders/${PENDING_ITEM}/confirm" "" \
+        "주문 확인 PENDING→CONFIRMED (orderItemId=${PENDING_ITEM})"
 else
-    skip "적절한 상태의 주문 아이템 데이터가 없습니다"
-    skip "적절한 상태의 주문 아이템 데이터가 없습니다"
+    skip "PENDING 상태 주문 아이템 없음"
 fi
 
-# 취소 조회
-CANCEL_ID=$(db_query "setof" "SELECT id FROM cancels WHERE status = 'REQUESTED' LIMIT 1" 2>/dev/null || echo "")
+# --- 발송 준비 (CONFIRMED → SHIPPING_READY) ---
+CONFIRMED_ITEM=$(db_query "setof" "SELECT id FROM order_items WHERE order_item_status = 'CONFIRMED' LIMIT 1" 2>/dev/null || echo "")
+if [ -n "$CONFIRMED_ITEM" ]; then
+    echo -e "  -> CONFIRMED 주문 아이템 ID: ${CONFIRMED_ITEM}"
+    call_api "POST" "/api/v2/orders/${CONFIRMED_ITEM}/ready-to-ship" "" \
+        "발송 준비 CONFIRMED→SHIPPING_READY (orderItemId=${CONFIRMED_ITEM})"
+else
+    skip "CONFIRMED 상태 주문 아이템 없음"
+fi
+
+# --- 운송장 등록 (SHIPPING_READY → SHIPPED) ---
+READY_ITEM=$(db_query "setof" "SELECT id FROM order_items WHERE order_item_status = 'SHIPPING_READY' LIMIT 1" 2>/dev/null || echo "")
+if [ -n "$READY_ITEM" ]; then
+    echo -e "  -> SHIPPING_READY 주문 아이템 ID: ${READY_ITEM}"
+    call_api "POST" "/api/v2/shipments" \
+        "{\"orderItemId\":${READY_ITEM},\"shipmentCompanyCode\":\"CJ\",\"invoiceNo\":\"E2E$(date +%s)\",\"senderName\":\"E2E발송자\"}" \
+        "운송장 등록 (orderItemId=${READY_ITEM})"
+else
+    skip "SHIPPING_READY 상태 주문 아이템 없음"
+fi
+
+# --- 취소 승인 (REQUESTED → APPROVED) ---
+CANCEL_ID=$(db_query "setof" "SELECT id FROM cancel WHERE cancel_status = 'REQUESTED' LIMIT 1" 2>/dev/null || echo "")
 if [ -n "$CANCEL_ID" ]; then
-    echo -e "  -> 취소 ID: ${CANCEL_ID}"
-    call_api "POST" "/api/v2/cancels/${CANCEL_ID}/approve" \
-        "" \
+    echo -e "  -> 취소 ID (승인용): ${CANCEL_ID}"
+    call_api "POST" "/api/v2/cancels/${CANCEL_ID}/approve" "" \
         "취소 승인 (cancelId=${CANCEL_ID})"
 else
-    skip "취소 데이터가 없습니다"
+    skip "REQUESTED 상태 취소 데이터 없음"
+fi
+
+# --- 취소 거부 (REQUESTED → REJECTED) ---
+CANCEL_REJECT_ID=$(db_query "setof" "SELECT id FROM cancel WHERE cancel_status = 'REQUESTED' LIMIT 1" 2>/dev/null || echo "")
+if [ -n "$CANCEL_REJECT_ID" ]; then
+    echo -e "  -> 취소 ID (거부용): ${CANCEL_REJECT_ID}"
+    call_api "POST" "/api/v2/cancels/${CANCEL_REJECT_ID}/reject" \
+        '{"rejectReason":"E2E 테스트 거부"}' \
+        "취소 거부 (cancelId=${CANCEL_REJECT_ID})"
+else
+    skip "REQUESTED 상태 취소 데이터 없음 (거부용)"
+fi
+
+# --- 환불 완료 (COLLECTED → COMPLETED) ---
+REFUND_COMPLETE_ID=$(db_query "setof" "SELECT id FROM refund_claim WHERE refund_status = 'COLLECTED' LIMIT 1" 2>/dev/null || echo "")
+if [ -n "$REFUND_COMPLETE_ID" ]; then
+    echo -e "  -> 환불 ID (완료용): ${REFUND_COMPLETE_ID}"
+    call_api "POST" "/api/v2/refunds/${REFUND_COMPLETE_ID}/complete" "" \
+        "환불 완료 COLLECTED→COMPLETED (refundId=${REFUND_COMPLETE_ID})"
+else
+    skip "COLLECTED 상태 환불 데이터 없음 (REQUESTED→COMPLETED 직접 전이 불가)"
+fi
+
+# --- 환불 거부 (REQUESTED → REJECTED) ---
+REFUND_REJECT_ID=$(db_query "setof" "SELECT id FROM refund_claim WHERE refund_status = 'REQUESTED' LIMIT 1" 2>/dev/null || echo "")
+if [ -n "$REFUND_REJECT_ID" ]; then
+    echo -e "  -> 환불 ID (거부용): ${REFUND_REJECT_ID}"
+    call_api "POST" "/api/v2/refunds/${REFUND_REJECT_ID}/reject" \
+        '{"rejectReason":"E2E 환불 거부 테스트"}' \
+        "환불 거부 (refundId=${REFUND_REJECT_ID})"
+else
+    skip "REQUESTED 상태 환불 데이터 없음"
 fi
 
 # =============================================================================
