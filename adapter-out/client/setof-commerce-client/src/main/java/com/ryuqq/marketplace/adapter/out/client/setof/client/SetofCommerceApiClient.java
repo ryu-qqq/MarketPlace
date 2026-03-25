@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.client;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofDescriptionRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerTokenRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerTokenResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofImageVariantSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofImagesRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofNoticeRequest;
@@ -41,7 +43,7 @@ import org.springframework.web.client.RestClient;
 public class SetofCommerceApiClient {
 
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceApiClient.class);
-    private static final String SERVICE_TOKEN_HEADER = "X-Service-Token";
+    private static final String SELLER_TOKEN_HEADER = "X-Seller-Token";
 
     private final RestClient restClient;
     private final SetofCommerceApiExecutor executor;
@@ -50,6 +52,28 @@ public class SetofCommerceApiClient {
             RestClient setofCommerceRestClient, SetofCommerceApiExecutor executor) {
         this.restClient = setofCommerceRestClient;
         this.executor = executor;
+    }
+
+    // ===== 인증 =====
+
+    /**
+     * 셀러 토큰 발급.
+     *
+     * <p>POST /api/admin/v1/auth/seller-token
+     *
+     * <p>인증 헤더 없이 호출합니다.
+     */
+    public SetofSellerTokenResponse issueSellerToken(SetofSellerTokenRequest request) {
+        log.info("세토프 셀러 토큰 발급 요청");
+        return executor.execute(
+                () ->
+                        restClient
+                                .post()
+                                .uri("/api/admin/v1/auth/seller-token")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(request)
+                                .retrieve()
+                                .body(SetofSellerTokenResponse.class));
     }
 
     // ===== 상품 그룹 =====
@@ -67,7 +91,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/admin/product-groups")
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -89,7 +113,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/product-groups/{productGroupId}",
                                         externalProductId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -111,7 +135,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/product-groups/{productGroupId}",
                                         externalProductId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .retrieve()
                                 .body(SetofProductGroupDetailResponse.class));
     }
@@ -133,7 +157,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/product-groups/{productGroupId}/basic-info",
                                         externalProductGroupId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -153,7 +177,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .patch()
                                 .uri("/api/v2/admin/products/{productId}/price", productId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -173,7 +197,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .patch()
                                 .uri("/api/v2/admin/products/{productId}/stock", productId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -195,7 +219,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/products/product-groups/{productGroupId}",
                                         productGroupId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -219,7 +243,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/product-groups/{productGroupId}/images",
                                         productGroupId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -241,7 +265,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/product-groups/{productGroupId}/images",
                                         productGroupId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -265,7 +289,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/product-groups/{productGroupId}/description",
                                         productGroupId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -287,7 +311,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/product-groups/{productGroupId}/description",
                                         productGroupId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -311,7 +335,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/product-groups/{productGroupId}/notice",
                                         productGroupId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -333,7 +357,7 @@ public class SetofCommerceApiClient {
                                 .uri(
                                         "/api/v2/admin/product-groups/{productGroupId}/notice",
                                         productGroupId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -354,7 +378,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .put()
                                 .uri("/api/v2/admin/image-variants/sync")
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -375,7 +399,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/admin/sellers")
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -395,7 +419,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .put()
                                 .uri("/api/v2/admin/sellers/{sellerId}", sellerId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -417,7 +441,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/admin/seller-addresses/sellers/{sellerId}", sellerId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -443,7 +467,7 @@ public class SetofCommerceApiClient {
                                         "/api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId}",
                                         sellerId,
                                         addressId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -465,7 +489,7 @@ public class SetofCommerceApiClient {
                                         "/api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId}",
                                         sellerId,
                                         addressId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .retrieve()
                                 .toBodilessEntity());
     }
@@ -485,7 +509,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/admin/sellers/{sellerId}/refund-policies", sellerId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -511,7 +535,7 @@ public class SetofCommerceApiClient {
                                         "/api/v2/admin/sellers/{sellerId}/refund-policies/{policyId}",
                                         sellerId,
                                         policyId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -533,7 +557,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/admin/sellers/{sellerId}/shipping-policies", sellerId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -559,7 +583,7 @@ public class SetofCommerceApiClient {
                                         "/api/v2/admin/sellers/{sellerId}/shipping-policies/{policyId}",
                                         sellerId,
                                         policyId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(request)
                                 .retrieve()
@@ -580,7 +604,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/orders/{orderItemId}/confirm", orderItemId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .retrieve()
                                 .toBodilessEntity());
     }
@@ -597,7 +621,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/orders/{orderItemId}/ready-to-ship", orderItemId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .retrieve()
                                 .toBodilessEntity());
     }
@@ -616,7 +640,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/cancels/{cancelId}/approve", cancelId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .retrieve()
                                 .toBodilessEntity());
     }
@@ -633,7 +657,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/cancels/{cancelId}/reject", cancelId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .body(Map.of("rejectReason", rejectReason))
                                 .retrieve()
                                 .toBodilessEntity());
@@ -653,7 +677,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/refunds/{refundId}/complete", refundId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .retrieve()
                                 .toBodilessEntity());
     }
@@ -670,7 +694,7 @@ public class SetofCommerceApiClient {
                         restClient
                                 .post()
                                 .uri("/api/v2/refunds/{refundId}/reject", refundId)
-                                .header(SERVICE_TOKEN_HEADER, shopSecret)
+                                .header(SELLER_TOKEN_HEADER, shopSecret)
                                 .body(Map.of("rejectReason", rejectReason))
                                 .retrieve()
                                 .toBodilessEntity());

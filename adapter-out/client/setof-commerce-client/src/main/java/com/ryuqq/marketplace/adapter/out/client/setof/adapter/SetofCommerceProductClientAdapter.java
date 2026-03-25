@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
+import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofSellerTokenProvider;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationResponse;
@@ -38,16 +39,19 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
     private final SetofCommerceProductMapper mapper;
     private final SetofProductUpdateExecutorProvider updateExecutorProvider;
     private final SetofCommerceProperties properties;
+    private final SetofSellerTokenProvider tokenProvider;
 
     public SetofCommerceProductClientAdapter(
             SetofCommerceApiClient apiClient,
             SetofCommerceProductMapper mapper,
             SetofProductUpdateExecutorProvider updateExecutorProvider,
-            SetofCommerceProperties properties) {
+            SetofCommerceProperties properties,
+            SetofSellerTokenProvider tokenProvider) {
         this.apiClient = apiClient;
         this.mapper = mapper;
         this.updateExecutorProvider = updateExecutorProvider;
         this.properties = properties;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -63,7 +67,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
             SellerSalesChannel channel,
             Shop shop) {
 
-        String shopSecret = resolveShopSecret(shop);
+        String shopSecret = resolveSellerToken(shop);
 
         SetofProductGroupRegistrationRequest request =
                 mapper.toRegistrationRequest(syncData, externalCategoryId, externalBrandId);
@@ -139,14 +143,20 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
     }
 
     /**
-     * Shop의 apiSecret을 우선 사용하고, 없으면 properties.serviceToken을 fallback으로 사용합니다.
+     * Shop의 apiKey로 셀러 토큰을 발급받아 사용하고, 실패 시 properties.serviceToken을 fallback으로 사용합니다.
      *
      * @param shop Shop 정보 (nullable)
-     * @return 서비스 토큰
+     * @return 셀러 토큰 또는 서비스 토큰
      */
-    private String resolveShopSecret(Shop shop) {
-        String secret = shop != null ? shop.apiSecret() : null;
-        return secret != null && !secret.isBlank() ? secret : properties.getServiceToken();
+    private String resolveSellerToken(Shop shop) {
+        if (shop != null && shop.apiKey() != null && !shop.apiKey().isBlank()) {
+            try {
+                return tokenProvider.resolveToken(shop);
+            } catch (Exception e) {
+                log.warn("세토프 셀러 토큰 발급 실패, 서비스 토큰으로 폴백: shopId={}", shop.idValue());
+            }
+        }
+        return properties.getServiceToken();
     }
 
     /**
