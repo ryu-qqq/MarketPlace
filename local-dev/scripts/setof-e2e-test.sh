@@ -396,7 +396,7 @@ call_api "GET" "/api/v2/admin/product-groups/${PRODUCT_GROUP_ID}" \
 # 조회 응답에서 products[0].id 추출 (Phase 6에서 사용)
 FIRST_PRODUCT_ID=""
 if [[ "$LAST_HTTP_CODE" =~ ^2[0-9][0-9]$ ]]; then
-    FIRST_PRODUCT_ID=$(echo "$LAST_BODY" | jq -r '.data.products[0].id // empty' 2>/dev/null || echo "")
+    FIRST_PRODUCT_ID=$(echo "$LAST_BODY" | jq -r '.data.optionProductMatrix.products[0].id // empty' 2>/dev/null || echo "")
     if [ -n "$FIRST_PRODUCT_ID" ]; then
         echo -e "  -> 첫 번째 상품 ID (조회에서 추출): ${FIRST_PRODUCT_ID}"
     fi
@@ -555,12 +555,13 @@ call_api "PUT" "/api/v2/admin/product-groups/${PRODUCT_GROUP_ID}/notice" \
 echo ""
 echo -e "${CYAN}=== Phase 6: 개별 상품 수정 ===${NC}"
 
-# Phase 4 조회에서 추출 못했으면 DB에서 조회
-if [ -z "$FIRST_PRODUCT_ID" ]; then
-    FIRST_PRODUCT_ID=$(db_query "setof" "SELECT id FROM products WHERE product_group_id = ${PRODUCT_GROUP_ID} AND deleted = 0 LIMIT 1" 2>/dev/null || echo "")
-fi
-if [ -z "$FIRST_PRODUCT_ID" ]; then
-    FIRST_PRODUCT_ID=$(db_query "setof" "SELECT id FROM products WHERE deleted = 0 ORDER BY id DESC LIMIT 1" 2>/dev/null || echo "")
+# 전체수정 후 상품 ID가 바뀌므로 재조회해서 최신 ID 추출
+echo -e "  -> 전체수정 후 재조회로 최신 상품 ID 추출..."
+call_api "GET" "/api/v2/admin/product-groups/${PRODUCT_GROUP_ID}" "" \
+    "상품 재조회 (productGroupId=${PRODUCT_GROUP_ID})"
+FIRST_PRODUCT_ID=""
+if [[ "$LAST_HTTP_CODE" =~ ^2[0-9][0-9]$ ]]; then
+    FIRST_PRODUCT_ID=$(echo "$LAST_BODY" | jq -r '.data.optionProductMatrix.products[0].id // empty' 2>/dev/null || echo "")
 fi
 
 if [ -n "$FIRST_PRODUCT_ID" ]; then
@@ -704,16 +705,16 @@ echo -e "${CYAN}=== Phase 9: 셀러 등록/수정 ===${NC}"
 call_api "POST" "/api/v2/admin/sellers" \
     '{
         "sellerInfo": {
-            "sellerName": "E2E 테스트 셀러",
+            "sellerName": "E2E 테스트 셀러 '$(date +%s)'",
             "displayName": "E2E셀러",
             "logoUrl": "https://example.com/logo.png",
             "description": "E2E 테스트용 셀러입니다"
         },
         "businessInfo": {
-            "registrationNumber": "123-45-67890",
+            "registrationNumber": "'$(printf "%03d-%02d-%05d" $((RANDOM%999)) $((RANDOM%99)) $((RANDOM%99999)))'",
             "companyName": "E2E테스트주식회사",
             "representative": "홍길동",
-            "saleReportNumber": "2026-서울강남-01234",
+            "saleReportNumber": "2026-E2E-'$(date +%s)'",
             "businessAddress": {
                 "zipCode": "06234",
                 "line1": "서울시 강남구 테헤란로 1",
@@ -747,10 +748,10 @@ call_api "PUT" "/api/v2/admin/sellers/${CREATED_SELLER_ID}" \
             "mobile": "010-9876-5432"
         },
         "businessInfo": {
-            "registrationNumber": "123-45-67890",
+            "registrationNumber": "'$(printf "%03d-%02d-%05d" $((RANDOM%999)) $((RANDOM%99)) $((RANDOM%99999)))'",
             "companyName": "수정된주식회사",
             "representative": "김수정",
-            "saleReportNumber": "2026-서울강남-99999",
+            "saleReportNumber": "2026-수정-'$(date +%s)'",
             "businessAddress": {
                 "zipCode": "06235",
                 "line1": "서울시 강남구 역삼로 100",
