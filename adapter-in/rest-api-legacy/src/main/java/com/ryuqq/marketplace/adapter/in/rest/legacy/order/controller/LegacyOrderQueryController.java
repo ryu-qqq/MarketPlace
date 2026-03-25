@@ -7,7 +7,6 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyCustomPageable;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.request.LegacyOrderSearchRequest;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderListResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.mapper.LegacyOrderQueryApiMapper;
 import com.ryuqq.marketplace.application.legacy.order.dto.query.LegacyOrderSearchParams;
@@ -72,7 +71,7 @@ public class LegacyOrderQueryController {
     @Operation(summary = "주문 목록 조회", description = "커서 기반 페이징으로 주문 목록을 조회합니다.")
     @PreAuthorize("@legacyAccess.authenticated()")
     @GetMapping(ORDERS)
-    public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyOrderListResponse>>>
+    public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyOrderResponse>>>
             getOrders(@ModelAttribute LegacyOrderSearchRequest request) {
 
         Long effectiveSellerId = legacyAccessChecker.resolveSellerIdOrNull();
@@ -80,11 +79,11 @@ public class LegacyOrderQueryController {
 
         LegacyOrderPageResult pageResult = orderListQueryUseCase.execute(params);
 
-        List<LegacyOrderListResponse> responses =
+        List<LegacyOrderResponse> responses =
                 queryApiMapper.toOrderListResponses(pageResult.items());
 
         Pageable pageable = PageRequest.of(0, params.size());
-        LegacyCustomPageable<LegacyOrderListResponse> page =
+        LegacyCustomPageable<LegacyOrderResponse> page =
                 new LegacyCustomPageable<>(
                         responses, pageable, pageResult.totalElements(), pageResult.lastDomainId());
 

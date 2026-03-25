@@ -21,7 +21,6 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccess
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.LegacyOrderApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.LegacyOrderEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.request.LegacyUpdateOrderRequest;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderListResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyUpdateOrderResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.mapper.LegacyOrderCommandApiMapper;
@@ -127,7 +126,7 @@ class LegacyOrderControllerRestDocsTest {
         @DisplayName("주문 목록 페이징 조회 성공")
         void getOrders_Success() throws Exception {
             // given
-            List<LegacyOrderListResponse> content = LegacyOrderApiFixtures.orderListResponses(2);
+            List<LegacyOrderResponse> content = LegacyOrderApiFixtures.orderListResponses(2);
 
             // NOTE: 구현 완료 후 UseCase/Mapper MockitoBean 및 given() 설정 추가
 

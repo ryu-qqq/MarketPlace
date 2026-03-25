@@ -1,14 +1,20 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.order;
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.request.LegacyUpdateOrderRequest;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderHistoryResponse;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderListResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.LegacyOrderProductInfo;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.LegacyPaymentInfo;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.LegacyReceiverInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.BrandInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.BuyerInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.ClothesDetailInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.OrderHistoryInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.OrderProductInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.PaymentInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.PaymentShipmentInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.PriceInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.ProductGroupDetails;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.ProductStatusInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.ReceiverInfo;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyOrderResponse.SettlementInfo;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response.LegacyUpdateOrderResponse;
-import java.time.Instant;
 import java.util.List;
 
 /**
@@ -70,45 +76,50 @@ public final class LegacyOrderApiFixtures {
     // ===== Response Fixtures =====
 
     public static LegacyOrderResponse orderResponse() {
-        LegacyPaymentInfo payment = new LegacyPaymentInfo(DEFAULT_PAYMENT_ID, 50000L, 10L, 90L);
-        LegacyReceiverInfo receiverInfo =
-                new LegacyReceiverInfo("홍길동", "010-1234-5678", "서울시 강남구", "101호", "06000", "");
-        LegacyOrderProductInfo orderProduct =
-                new LegacyOrderProductInfo(
-                        DEFAULT_PRODUCT_GROUP_ID,
-                        DEFAULT_PRODUCT_ID,
-                        "테스트 상품",
-                        "테스트 브랜드",
-                        "",
-                        1,
-                        DEFAULT_ORDER_STATUS,
-                        60000L,
-                        50000L,
-                        "",
+        BuyerInfo buyerInfo = new BuyerInfo("", "", "");
+
+        PaymentInfo payment =
+                new PaymentInfo(
+                        DEFAULT_PAYMENT_ID, "", "", "", "2024-06-13 15:59:06", null,
+                        DEFAULT_USER_ID, "OUR_MALL", 50000L, 50000L, 0);
+
+        ReceiverInfo receiverInfo =
+                new ReceiverInfo("홍길동", "010-1234-5678", "서울시 강남구", "101호", "06000", "KR", "");
+
+        PaymentShipmentInfo paymentShipmentInfo =
+                new PaymentShipmentInfo("DELIVERY_PENDING", "REFER_DETAIL", "", null);
+
+        SettlementInfo settlementInfo =
+                new SettlementInfo(10.0, 5000.0, 45000, 45000, 90.0, null, null);
+
+        PriceInfo priceInfo = new PriceInfo(60000L, 50000L, 50000L);
+        ProductStatusInfo productStatus = new ProductStatusInfo("N", "Y");
+        ClothesDetailInfo clothesDetailInfo = new ClothesDetailInfo("NEW", "", null);
+        ProductGroupDetails productGroupDetails =
+                new ProductGroupDetails(
+                        "테스트 상품", "OPTION_ONE", "MENUAL", priceInfo,
+                        productStatus, clothesDetailInfo, 1L, 1390L, 5465L);
+
+        BrandInfo brand = new BrandInfo(5465L, "테스트 브랜드");
+
+        OrderProductInfo orderProduct =
+                new OrderProductInfo(
+                        DEFAULT_ORDER_ID, productGroupDetails, brand,
+                        DEFAULT_PRODUCT_GROUP_ID, DEFAULT_PRODUCT_ID,
+                        "", "", "", 1, DEFAULT_ORDER_STATUS, 60000L, 50000L, 0, "", "",
                         List.of());
 
+        List<OrderHistoryInfo> orderHistories = List.of();
+
         return new LegacyOrderResponse(
-                DEFAULT_ORDER_ID, "", payment, receiverInfo, orderProduct, Instant.now());
+                DEFAULT_ORDER_ID, buyerInfo, payment, receiverInfo,
+                paymentShipmentInfo, settlementInfo, orderProduct, orderHistories);
     }
 
-    public static LegacyOrderListResponse orderListResponse() {
-        return new LegacyOrderListResponse(orderResponse(), List.of());
-    }
-
-    public static List<LegacyOrderListResponse> orderListResponses(int count) {
+    public static List<LegacyOrderResponse> orderListResponses(int count) {
         return java.util.stream.IntStream.rangeClosed(1, count)
-                .mapToObj(i -> orderListResponse())
+                .mapToObj(i -> orderResponse())
                 .toList();
-    }
-
-    public static LegacyOrderHistoryResponse orderHistoryResponse() {
-        return new LegacyOrderHistoryResponse(
-                1L,
-                DEFAULT_ORDER_ID,
-                DEFAULT_ORDER_STATUS,
-                DEFAULT_CHANGE_REASON,
-                DEFAULT_CHANGE_DETAIL_REASON,
-                Instant.now());
     }
 
     public static LegacyUpdateOrderResponse updateOrderResponse() {
