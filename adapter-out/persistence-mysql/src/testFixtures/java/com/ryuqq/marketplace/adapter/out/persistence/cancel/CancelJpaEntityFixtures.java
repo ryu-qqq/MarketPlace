@@ -145,6 +145,35 @@ public final class CancelJpaEntityFixtures {
                 now);
     }
 
+    /** SELLER_CANCEL / APPROVED 상태 + cancelQty 지정 Entity 생성. 부분취소 테스트용. */
+    public static CancelJpaEntity approvedEntityWithQty(
+            String cancelId, String cancelNumber, String orderItemId, long sellerId, int cancelQty,
+            Integer refundAmount) {
+        Instant now = Instant.now();
+        return CancelJpaEntity.create(
+                cancelId,
+                cancelNumber,
+                orderItemId,
+                sellerId,
+                cancelQty,
+                DEFAULT_CANCEL_TYPE_SELLER,
+                DEFAULT_STATUS_APPROVED,
+                DEFAULT_REASON_TYPE,
+                DEFAULT_REASON_DETAIL,
+                refundAmount,
+                null,
+                null,
+                null,
+                null,
+                DEFAULT_REQUESTED_BY,
+                DEFAULT_PROCESSED_BY,
+                now.minusSeconds(3600),
+                now.minusSeconds(1800),
+                null,
+                now,
+                now);
+    }
+
     /** cancelNumber를 지정하는 REQUESTED Entity 생성 (unique 제약 회피용). */
     public static CancelJpaEntity requestedEntityWithNumber(
             String cancelId, String cancelNumber, String orderItemId, long sellerId) {

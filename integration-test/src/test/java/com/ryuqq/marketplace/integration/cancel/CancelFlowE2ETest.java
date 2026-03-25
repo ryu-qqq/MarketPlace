@@ -39,6 +39,7 @@ import org.springframework.http.HttpStatus;
  *   <li>FLOW-5: 배치 부분 실패 플로우
  *   <li>FLOW-6: ClaimHistory 메모 추가 플로우 (P1)
  *   <li>FLOW-7: 소유권 검증 플로우 (P1)
+ *   <li>FLOW-8: 부분취소 플로우 (qty=3 주문의 1차/2차 부분취소 → 전량 취소)
  * </ul>
  */
 @Tag("e2e")
@@ -397,6 +398,62 @@ class CancelFlowE2ETest extends E2ETestBase {
         }
     }
 
+    @Nested
+    @DisplayName("FLOW-8: 부분취소 플로우")
+    class PartialCancelFlowTest {
+
+        @Test
+        @Tag("P0")
+        @DisplayName("[FLOW-8] qty=3 주문의 1차 부분취소(2개) → 2차 잔여취소(1개) → 전량 취소 검증")
+        void partialCancel_ThenRemainingCancel_OrderItemCancelled_Flow() {
+            // Step 1. Order + OrderItem 시딩 (qty=3, unitPrice=10000, paymentAmount=30000)
+            String orderId = "order-flow8-001";
+            orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
+            OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 3);
+            String orderItemId = orderItemRepository.save(item).getId();
+
+            // Step 2. 1차 Cancel 시딩 (cancelQty=2, APPROVED 상태, refundAmount=20000)
+            cancelRepository.save(
+                    CancelJpaEntityFixtures.approvedEntityWithQty(
+                            "cancel-flow8-first", "CAN-FLOW8-001", orderItemId, 10L, 2, 20000));
+
+            // Step 3. OrderItem cancelledQty 직접 반영 (시딩이므로 CancelClaimSync 미경유)
+            var savedItem = orderItemRepository.findById(orderItemId).orElseThrow();
+            savedItem.updateCancelledQty(2);
+            // 아직 잔여 수량(1)이 남아 있으므로 READY 유지
+            orderItemRepository.save(savedItem);
+
+            // Step 3-1. DB 검증 — cancelledQty=2, status=READY (잔여 있음)
+            var itemAfterFirst = orderItemRepository.findById(orderItemId).orElseThrow();
+            assertThat(itemAfterFirst.getCancelledQty()).isEqualTo(2);
+            assertThat(itemAfterFirst.getOrderItemStatus()).isEqualTo("READY");
+
+            // Step 4. 2차 Cancel — 판매자 취소 API로 잔여 1개 취소 요청
+            given().spec(givenSuperAdmin())
+                    .body(Map.of("items", List.of(createSellerCancelItemWithQty(orderItemId, 1))))
+                    .when()
+                    .post(SELLER_CANCEL_BATCH)
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.successCount", equalTo(1));
+
+            // Step 5. 취소 목록 조회 — 해당 OrderItem에 Cancel 2건 존재
+            given().spec(givenSuperAdmin())
+                    .queryParam("page", 0)
+                    .queryParam("size", 10)
+                    .when()
+                    .get(CANCELS)
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("data.totalElements", equalTo(2));
+
+            // Step 6. DB 검증 — 전량 취소(qty=3, cancelledQty=3)이므로 OrderItem CANCELLED
+            var finalItem = orderItemRepository.findById(orderItemId).orElseThrow();
+            assertThat(finalItem.getOrderItemStatus()).isEqualTo("CANCELLED");
+            assertThat(cancelRepository.count()).isEqualTo(2);
+        }
+    }
+
     // ===== Helper 메서드 =====
 
     private Map<String, Object> createSellerCancelItem(String orderItemId) {
@@ -405,6 +462,18 @@ class CancelFlowE2ETest extends E2ETestBase {
                 orderItemId,
                 "cancelQty",
                 1,
+                "reasonType",
+                "OUT_OF_STOCK",
+                "reasonDetail",
+                "재고 소진");
+    }
+
+    private Map<String, Object> createSellerCancelItemWithQty(String orderItemId, int cancelQty) {
+        return Map.of(
+                "orderId",
+                orderItemId,
+                "cancelQty",
+                cancelQty,
                 "reasonType",
                 "OUT_OF_STOCK",
                 "reasonDetail",

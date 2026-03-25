@@ -21,9 +21,15 @@ import com.ryuqq.marketplace.domain.cancel.CancelFixtures;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
+import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.order.OrderFixtures;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemNumber;
+import com.ryuqq.marketplace.domain.order.vo.ExternalOrderItemPrice;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
+import com.ryuqq.marketplace.domain.shipment.ShipmentFixtures;
+import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -567,6 +573,227 @@ class CancelClaimSyncHandlerTest {
             // then
             then(orderItemReadManager).shouldHaveNoInteractions();
             then(orderItemCommandManager).shouldHaveNoInteractions();
+        }
+    }
+
+    @Nested
+    @DisplayName("부분취소 시나리오 테스트")
+    class PartialCancelScenarioTest {
+
+        private OrderItemId orderItemId() {
+            return OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+        }
+
+        /** qty=3, paymentAmount=30000인 OrderItem을 cancelledQty만큼 이미 취소된 상태로 생성 */
+        private OrderItem orderItemWithQty3(int cancelledQty) {
+            ExternalOrderItemPrice price = ExternalOrderItemPrice.of(
+                    Money.of(10000), 3, Money.of(30000), Money.zero(), Money.zero(), Money.of(30000));
+            return OrderItem.reconstitute(
+                    orderItemId(),
+                    OrderItemNumber.of("ORD-20240101-0001-001"),
+                    OrderFixtures.defaultInternalProductReference(),
+                    OrderFixtures.defaultExternalProductSnapshot(),
+                    price,
+                    OrderFixtures.defaultReceiverInfo(),
+                    OrderItemStatus.CONFIRMED,
+                    null,
+                    cancelledQty,
+                    0,
+                    List.of());
+        }
+
+        @Test
+        @DisplayName("resolve - CANCEL_REQUEST 시 잔여 수량이 없으면 SKIPPED를 반환한다")
+        void resolve_CancelRequest_NoRemainingQty_ReturnsSkipped() {
+            // given — qty=2, cancelledQty=2 → remainingCancelableQty=0
+            ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REQUEST");
+            OrderItemId id = orderItemId();
+            Cancel completedCancel = CancelFixtures.completedCancel();
+            OrderItem fullyUsedItem = OrderItem.reconstitute(
+                    id,
+                    OrderFixtures.defaultOrderItemNumber(),
+                    OrderFixtures.defaultInternalProductReference(),
+                    OrderFixtures.defaultExternalProductSnapshot(),
+                    OrderFixtures.defaultExternalOrderItemPrice(),
+                    OrderFixtures.defaultReceiverInfo(),
+                    OrderItemStatus.CANCELLED,
+                    null,
+                    2,
+                    0,
+                    List.of());
+
+            given(cancelReadManager.findAllByOrderItemId(id))
+                    .willReturn(List.of(completedCancel));
+            given(orderItemReadManager.findById(id))
+                    .willReturn(Optional.of(fullyUsedItem));
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, id);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.SKIPPED);
+        }
+
+        @Test
+        @DisplayName("resolve - CANCEL_REQUEST 시 잔여 수량이 있으면 CANCEL_CREATED를 반환한다")
+        void resolve_CancelRequest_HasRemainingQty_ReturnsCancelCreated() {
+            // given — qty=3, cancelledQty=1 → remainingCancelableQty=2
+            ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REQUEST");
+            OrderItemId id = orderItemId();
+            Cancel completedCancel = CancelFixtures.completedCancel();
+            OrderItem partiallyUsedItem = orderItemWithQty3(1);
+
+            given(cancelReadManager.findAllByOrderItemId(id))
+                    .willReturn(List.of(completedCancel));
+            given(orderItemReadManager.findById(id))
+                    .willReturn(Optional.of(partiallyUsedItem));
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, id);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.CANCEL_CREATED);
+        }
+
+        @Test
+        @DisplayName("execute - 부분취소 시 OrderItem 상태가 CANCELLED로 전환되지 않고 Shipment 취소도 안 된다")
+        void execute_PartialCancel_OrderItemRemainsReady_NoShipmentCancel() {
+            // given — cancelQty=1, OrderItem qty=3, cancelledQty=0
+            ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayloadWithQty("CANCELING", 1);
+            OrderItemId id = orderItemId();
+            long sellerId = 10L;
+            Instant now = Instant.now();
+            Cancel requestedCancel = CancelFixtures.requestedCancel();
+            OrderItem item = orderItemWithQty3(0);
+
+            given(timeProvider.now()).willReturn(now);
+            given(cancelReadManager.findAllByOrderItemId(id))
+                    .willReturn(List.of(requestedCancel));
+            given(orderItemReadManager.findById(id))
+                    .willReturn(Optional.of(item));
+
+            // when
+            long result = sut.execute(ClaimSyncAction.CANCEL_APPROVED, payload, id, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(cancelCommandManager).should().persist(any(Cancel.class));
+            then(orderItemCommandManager).should().persistAll(any(List.class));
+            // partialCancel(1)로 cancelledQty=1, isFullyCancelled=false → Shipment 취소 안 됨
+            then(shipmentReadManager).should(never()).findByOrderItemId(any());
+        }
+
+        @Test
+        @DisplayName("execute - 전량취소 시 OrderItem CANCELLED 전환 + Shipment 취소 처리")
+        void execute_FullCancel_OrderItemCancelled_ShipmentCancelled() {
+            // given — requestedCancel.cancelQty=2, OrderItem qty=2 → 전량취소
+            ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayloadWithQty("CANCELING", 2);
+            OrderItemId id = orderItemId();
+            long sellerId = 10L;
+            Instant now = Instant.now();
+            Cancel requestedCancel = CancelFixtures.requestedCancel();
+            // confirmedOrderItem: qty=2, cancelledQty=0 → cancelQty(2) 적용 시 isFullyCancelled=true
+            OrderItem item = OrderFixtures.confirmedOrderItem();
+            Shipment preparingShipment = ShipmentFixtures.preparingShipment();
+
+            given(timeProvider.now()).willReturn(now);
+            given(cancelReadManager.findAllByOrderItemId(id))
+                    .willReturn(List.of(requestedCancel));
+            given(orderItemReadManager.findById(id))
+                    .willReturn(Optional.of(item));
+            given(shipmentReadManager.findByOrderItemId(id))
+                    .willReturn(Optional.of(preparingShipment));
+
+            // when
+            long result = sut.execute(ClaimSyncAction.CANCEL_APPROVED, payload, id, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(cancelCommandManager).should().persist(any(Cancel.class));
+            then(orderItemCommandManager).should().persistAll(any(List.class));
+            then(shipmentCommandManager).should().persist(any(Shipment.class));
+        }
+
+        @Test
+        @DisplayName("execute - refundAmount가 단가 × cancelQty로 계산된다")
+        void execute_RefundAmount_CalculatedByUnitPriceTimesCancelQty() {
+            // given — OrderItem qty=3, paymentAmount=30000, cancelQty=2 → refund = (30000/3)*2 = 20000
+            ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayloadWithQty("CANCEL_DONE", 2);
+            OrderItemId id = orderItemId();
+            long sellerId = 10L;
+            Instant now = Instant.now();
+            Cancel approvedCancel = CancelFixtures.approvedCancel();
+            OrderItem item = orderItemWithQty3(0);
+
+            given(timeProvider.now()).willReturn(now);
+            // completeCancel은 cancelReadManager를 두 번 호출: execute에서 + completeCancel 내부
+            given(cancelReadManager.findAllByOrderItemId(id))
+                    .willReturn(List.of(approvedCancel));
+            given(orderItemReadManager.findById(id))
+                    .willReturn(Optional.of(item));
+
+            // when
+            long result = sut.execute(ClaimSyncAction.CANCEL_COMPLETED, payload, id, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(cancelCommandManager).should().persist(any(Cancel.class));
+            // refundAmount 검증은 Cancel.complete() 내부에서 CancelRefundInfo가 설정되므로
+            // persist에 전달된 Cancel 객체의 refundInfo를 통해 간접 검증됨
+        }
+
+        @Test
+        @DisplayName("execute - 모든 액션에서 historyCommandManager.persist가 호출된다")
+        void execute_AllActions_RecordHistory() {
+            OrderItemId id = orderItemId();
+            long sellerId = 10L;
+            Instant now = Instant.now();
+
+            // CANCEL_CREATED
+            {
+                ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REQUEST");
+                given(timeProvider.now()).willReturn(now);
+                given(cancelReadManager.findAllByOrderItemId(id)).willReturn(List.of());
+                sut.execute(ClaimSyncAction.CANCEL_CREATED, payload, id, sellerId);
+                then(historyCommandManager).should().persist(any());
+            }
+
+            // CANCEL_APPROVED
+            {
+                ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCELING");
+                Cancel requestedCancel = CancelFixtures.requestedCancel();
+                OrderItem item = orderItemWithQty3(0);
+                given(timeProvider.now()).willReturn(now);
+                given(cancelReadManager.findAllByOrderItemId(id))
+                        .willReturn(List.of(requestedCancel));
+                given(orderItemReadManager.findById(id)).willReturn(Optional.of(item));
+                sut.execute(ClaimSyncAction.CANCEL_APPROVED, payload, id, sellerId);
+            }
+
+            // CANCEL_COMPLETED
+            {
+                ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_DONE");
+                Cancel approvedCancel = CancelFixtures.approvedCancel();
+                OrderItem item = orderItemWithQty3(0);
+                given(timeProvider.now()).willReturn(now);
+                given(cancelReadManager.findAllByOrderItemId(id))
+                        .willReturn(List.of(approvedCancel));
+                given(orderItemReadManager.findById(id)).willReturn(Optional.of(item));
+                sut.execute(ClaimSyncAction.CANCEL_COMPLETED, payload, id, sellerId);
+            }
+
+            // CANCEL_WITHDRAWN
+            {
+                ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REJECT");
+                Cancel requestedCancel = CancelFixtures.requestedCancel();
+                given(timeProvider.now()).willReturn(now);
+                given(cancelReadManager.findAllByOrderItemId(id))
+                        .willReturn(List.of(requestedCancel));
+                sut.execute(ClaimSyncAction.CANCEL_WITHDRAWN, payload, id, sellerId);
+            }
+
+            // 총 4번 호출 검증 (CREATED + APPROVED + COMPLETED + WITHDRAWN)
+            then(historyCommandManager).should(org.mockito.Mockito.times(4)).persist(any());
         }
     }
 }

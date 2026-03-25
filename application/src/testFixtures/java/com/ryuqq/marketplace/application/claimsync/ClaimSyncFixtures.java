@@ -253,6 +253,30 @@ public final class ClaimSyncFixtures {
                 Instant.now());
     }
 
+    // ===== ExternalClaimPayload - CANCEL (수량 지정) =====
+
+    public static ExternalClaimPayload cancelPayloadWithQty(String claimStatus, int requestQuantity) {
+        return new ExternalClaimPayload(
+                DEFAULT_EXTERNAL_ORDER_ID,
+                DEFAULT_EXTERNAL_PRODUCT_ORDER_ID,
+                "CANCEL",
+                claimStatus,
+                "CLAIM-001",
+                claimStatus,
+                "CHANGE_OF_MIND",
+                null,
+                requestQuantity,
+                "BUYER",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                Instant.now(),
+                Instant.now());
+    }
+
     // ===== ExternalClaimPayload - 알 수 없는 유형 =====
 
     public static ExternalClaimPayload unknownClaimTypePayload() {
