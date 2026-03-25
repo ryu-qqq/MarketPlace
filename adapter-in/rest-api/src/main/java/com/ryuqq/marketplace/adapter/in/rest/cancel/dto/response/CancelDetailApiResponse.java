@@ -25,5 +25,5 @@ public record CancelDetailApiResponse(
         @Schema(description = "처리일시") String processedAt,
         @Schema(description = "생성일시") String createdAt,
         @Schema(description = "수정일시") String updatedAt,
-        @Schema(description = "클레임 이력 목록") List<ClaimHistoryApiResponse> claimHistories) {}
+        @Schema(description = "취소 이력 목록") List<ClaimHistoryApiResponse> cancelHistories) {}
 

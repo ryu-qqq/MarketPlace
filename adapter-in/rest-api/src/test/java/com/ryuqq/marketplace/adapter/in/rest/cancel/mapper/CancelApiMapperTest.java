@@ -396,10 +396,10 @@ class CancelApiMapperTest {
             CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.claimHistories()).hasSize(1);
-            assertThat(response.claimHistories().get(0).historyId()).isEqualTo("HIST-001");
-            assertThat(response.claimHistories().get(0).type()).isEqualTo("MEMO");
-            assertThat(response.claimHistories().get(0).actor().actorName()).isEqualTo("seller01");
+            assertThat(response.cancelHistories()).hasSize(1);
+            assertThat(response.cancelHistories().get(0).historyId()).isEqualTo("HIST-001");
+            assertThat(response.cancelHistories().get(0).type()).isEqualTo("MEMO");
+            assertThat(response.cancelHistories().get(0).actor().actorName()).isEqualTo("seller01");
         }
 
         @Test
@@ -414,7 +414,7 @@ class CancelApiMapperTest {
             CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.claimHistories()).isEmpty();
+            assertThat(response.cancelHistories()).isEmpty();
         }
 
         @Test

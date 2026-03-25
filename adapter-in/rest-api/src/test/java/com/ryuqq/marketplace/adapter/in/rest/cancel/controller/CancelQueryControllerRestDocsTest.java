@@ -342,7 +342,7 @@ class CancelQueryControllerRestDocsTest {
                             jsonPath("$.data.cancelInfo.status")
                                     .value(CancelApiFixtures.DEFAULT_CANCEL_STATUS))
                     .andExpect(jsonPath("$.data.cancelInfo.refundInfo").exists())
-                    .andExpect(jsonPath("$.data.claimHistories").isArray())
+                    .andExpect(jsonPath("$.data.cancelHistories").isArray())
                     .andDo(
                             document(
                                     "cancel/detail",
@@ -405,22 +405,22 @@ class CancelQueryControllerRestDocsTest {
                                             fieldWithPath("data.updatedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("수정일시 (ISO 8601 +09:00)"),
-                                            fieldWithPath("data.claimHistories")
+                                            fieldWithPath("data.cancelHistories")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("클레임 이력 목록"),
-                                            fieldWithPath("data.claimHistories[].historyId")
+                                            fieldWithPath("data.cancelHistories[].historyId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("이력 ID")
                                                     .optional(),
-                                            fieldWithPath("data.claimHistories[].type")
+                                            fieldWithPath("data.cancelHistories[].type")
                                                     .type(JsonFieldType.STRING)
                                                     .description("이력 유형")
                                                     .optional(),
-                                            fieldWithPath("data.claimHistories[].message")
+                                            fieldWithPath("data.cancelHistories[].message")
                                                     .type(JsonFieldType.STRING)
                                                     .description("이력 내용")
                                                     .optional(),
-                                            fieldWithPath("data.claimHistories[].actor")
+                                            fieldWithPath("data.cancelHistories[].actor")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("처리자 정보")
                                                     .optional(),
