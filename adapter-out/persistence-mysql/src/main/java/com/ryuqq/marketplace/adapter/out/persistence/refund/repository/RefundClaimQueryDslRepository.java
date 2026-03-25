@@ -47,6 +47,13 @@ public class RefundClaimQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
+    public List<RefundClaimJpaEntity> findAllByOrderItemId(String orderItemId) {
+        return queryFactory
+                .selectFrom(refundClaim)
+                .where(conditionBuilder.orderItemIdEq(orderItemId))
+                .fetch();
+    }
+
     public List<RefundClaimJpaEntity> findByOrderItemIds(List<String> orderItemIds) {
         return queryFactory
                 .selectFrom(refundClaim)

@@ -53,6 +53,16 @@ public class RefundQueryAdapter implements RefundQueryPort {
     }
 
     @Override
+    public List<RefundClaim> findAllByOrderItemId(String orderItemId) {
+        return repository.findAllByOrderItemId(orderItemId).stream()
+                .map(
+                        entity ->
+                                mapper.toDomain(
+                                        entity, resolveClaimShipment(entity.getClaimShipmentId())))
+                .toList();
+    }
+
+    @Override
     public List<RefundClaim> findByOrderItemIds(List<String> orderItemIds) {
         return repository.findByOrderItemIds(orderItemIds).stream()
                 .map(

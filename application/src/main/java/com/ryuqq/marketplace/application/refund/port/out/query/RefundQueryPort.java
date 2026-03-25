@@ -23,6 +23,8 @@ public interface RefundQueryPort {
 
     Map<RefundStatus, Long> countByStatus();
 
+    List<RefundClaim> findAllByOrderItemId(String orderItemId);
+
     /** refundClaimId 목록으로 일괄 조회. sellerId가 null이면 전체 조회 (슈퍼어드민). */
     List<RefundClaim> findByIdIn(List<String> refundClaimIds, Long sellerId);
 }

@@ -126,9 +126,6 @@ class RequestRefundBatchServiceTest {
             com.ryuqq.marketplace.domain.order.aggregate.OrderItem orderItem =
                     org.mockito.Mockito.mock(
                             com.ryuqq.marketplace.domain.order.aggregate.OrderItem.class);
-            com.ryuqq.marketplace.domain.order.vo.OrderItemStatus mockStatus =
-                    org.mockito.Mockito.mock(
-                            com.ryuqq.marketplace.domain.order.vo.OrderItemStatus.class);
 
             given(validator.hasActiveClaim(item.orderItemId())).willReturn(false);
             given(
@@ -137,12 +134,7 @@ class RequestRefundBatchServiceTest {
                     .willReturn(bundle);
             given(orderItemReadManager.findById(OrderItemId.of(item.orderItemId())))
                     .willReturn(Optional.of(orderItem));
-            given(orderItem.status()).willReturn(mockStatus);
-            given(
-                            mockStatus.canTransitionTo(
-                                    com.ryuqq.marketplace.domain.order.vo.OrderItemStatus
-                                            .RETURN_REQUESTED))
-                    .willReturn(true);
+            given(orderItem.remainingReturnableQty()).willReturn(item.refundQty());
             given(commandFactory.createRequestOrderItemContext(item.orderItemId()))
                     .willReturn(
                             new StatusChangeContext<>(

@@ -47,6 +47,13 @@ public class ExchangeClaimQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
+    public List<ExchangeClaimJpaEntity> findAllByOrderItemId(String orderItemId) {
+        return queryFactory
+                .selectFrom(exchangeClaim)
+                .where(conditionBuilder.orderItemIdEq(orderItemId))
+                .fetch();
+    }
+
     public List<ExchangeClaimJpaEntity> findByOrderItemIds(List<String> orderItemIds) {
         return queryFactory
                 .selectFrom(exchangeClaim)

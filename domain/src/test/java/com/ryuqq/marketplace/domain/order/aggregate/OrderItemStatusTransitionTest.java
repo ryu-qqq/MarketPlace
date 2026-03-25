@@ -220,6 +220,85 @@ class OrderItemStatusTransitionTest {
     }
 
     @Nested
+    @DisplayName("partialReturn() - 부분 반품")
+    class PartialReturnTest {
+
+        @Test
+        @DisplayName("qty=2 중 1건 부분반품 시 상태는 유지된다")
+        void partialReturn_KeepsCurrentStatus() {
+            OrderItem item = OrderFixtures.confirmedOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            item.partialReturn(1, "seller", "부분반품", now);
+
+            assertThat(item.status()).isEqualTo(OrderItemStatus.CONFIRMED);
+            assertThat(item.returnedQty()).isEqualTo(1);
+            assertThat(item.remainingReturnableQty()).isEqualTo(1);
+            assertThat(item.isFullyReturned()).isFalse();
+        }
+
+        @Test
+        @DisplayName("qty=2 전량 반품 시 RETURNED로 전환된다")
+        void partialReturn_AllQty_TransitionsToReturned() {
+            OrderItem item = OrderFixtures.confirmedOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            item.partialReturn(2, "seller", "전량반품", now);
+
+            assertThat(item.status()).isEqualTo(OrderItemStatus.RETURNED);
+            assertThat(item.returnedQty()).isEqualTo(2);
+            assertThat(item.isFullyReturned()).isTrue();
+        }
+
+        @Test
+        @DisplayName("2회에 걸친 부분반품으로 전량 소진 시 RETURNED 전환")
+        void partialReturn_TwoSteps_TransitionsToReturned() {
+            OrderItem item = OrderFixtures.confirmedOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            item.partialReturn(1, "seller", "1차 반품", now);
+            assertThat(item.status()).isEqualTo(OrderItemStatus.CONFIRMED);
+
+            item.partialReturn(1, "seller", "2차 반품", now);
+            assertThat(item.status()).isEqualTo(OrderItemStatus.RETURNED);
+            assertThat(item.returnedQty()).isEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("반품 가능 수량을 초과하면 예외가 발생한다")
+        void partialReturn_ExceedsRemaining_ThrowsException() {
+            OrderItem item = OrderFixtures.confirmedOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            assertThatThrownBy(() -> item.partialReturn(3, "seller", "초과", now))
+                    .isInstanceOf(OrderException.class);
+        }
+
+        @Test
+        @DisplayName("returnQty=0 이면 예외가 발생한다")
+        void partialReturn_ZeroQty_ThrowsException() {
+            OrderItem item = OrderFixtures.confirmedOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            assertThatThrownBy(() -> item.partialReturn(0, "seller", "0개", now))
+                    .isInstanceOf(OrderException.class);
+        }
+
+        @Test
+        @DisplayName("부분반품 이력에 수량이 기록된다")
+        void partialReturn_RecordsQuantityInHistory() {
+            OrderItem item = OrderFixtures.confirmedOrderItem();
+            Instant now = CommonVoFixtures.now();
+
+            item.partialReturn(1, "seller", "부분반품", now);
+
+            OrderItemHistory history = item.histories().get(0);
+            assertThat(history.quantity()).isEqualTo(1);
+            assertThat(history.reason()).isEqualTo("부분반품");
+        }
+    }
+
+    @Nested
     @DisplayName("requestReturn() - 반품 요청")
     class RequestReturnTest {
 

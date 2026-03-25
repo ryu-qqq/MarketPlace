@@ -6,6 +6,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
+import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
 import com.ryuqq.marketplace.application.claimsync.ClaimSyncFixtures;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
@@ -43,6 +45,8 @@ class ExchangeClaimSyncHandlerTest {
     @Mock private ExchangeCommandManager exchangeCommandManager;
     @Mock private OrderItemReadManager orderItemReadManager;
     @Mock private OrderItemCommandManager orderItemCommandManager;
+    @Mock private ClaimHistoryFactory historyFactory;
+    @Mock private ClaimHistoryCommandManager historyCommandManager;
     @Mock private TimeProvider timeProvider;
 
     @Nested

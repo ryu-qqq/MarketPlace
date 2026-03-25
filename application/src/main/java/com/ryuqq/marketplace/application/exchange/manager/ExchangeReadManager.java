@@ -34,6 +34,11 @@ public class ExchangeReadManager {
     }
 
     @Transactional(readOnly = true)
+    public List<ExchangeClaim> findAllByOrderItemId(OrderItemId orderItemId) {
+        return queryPort.findAllByOrderItemId(orderItemId);
+    }
+
+    @Transactional(readOnly = true)
     public List<ExchangeClaim> findByIdIn(List<String> exchangeClaimIds, Long sellerId) {
         return queryPort.findByIdIn(exchangeClaimIds, sellerId);
     }

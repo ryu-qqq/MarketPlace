@@ -192,6 +192,49 @@ public class OrderItem {
                 OrderItemHistory.of(this.id, from, OrderItemStatus.RETURNED, changedBy, null, now));
     }
 
+    /**
+     * 부분 반품. returnQty만큼 반품하고, 전체 수량 소진 시 RETURNED 상태로 전환한다.
+     *
+     * @param returnQty 이번에 반품할 수량
+     */
+    public void partialReturn(int returnQty, String changedBy, String reason, Instant now) {
+        if (returnQty <= 0) {
+            throw new OrderException(
+                    OrderErrorCode.INVALID_RETURN_QUANTITY,
+                    String.format("반품 수량은 1 이상이어야 합니다: %d", returnQty));
+        }
+        if (returnQty > remainingReturnableQty()) {
+            throw new OrderException(
+                    OrderErrorCode.INVALID_RETURN_QUANTITY,
+                    String.format(
+                            "주문상품 %s: 반품 가능 수량(%d)을 초과합니다. 요청=%d",
+                            id.value(), remainingReturnableQty(), returnQty));
+        }
+
+        OrderItemStatus from = this.status;
+        this.returnedQty += returnQty;
+
+        if (isFullyReturned()) {
+            if (from != OrderItemStatus.RETURNED) {
+                this.status = OrderItemStatus.RETURNED;
+            }
+        }
+
+        this.histories.add(
+                OrderItemHistory.of(
+                        this.id, from, this.status, changedBy, reason, returnQty, now));
+    }
+
+    /** 반품 가능한 잔여 수량. */
+    public int remainingReturnableQty() {
+        return quantity() - returnedQty;
+    }
+
+    /** 전체 수량이 반품되었는지 여부. */
+    public boolean isFullyReturned() {
+        return returnedQty >= quantity();
+    }
+
     public boolean isConfirmable() {
         return status.canTransitionTo(OrderItemStatus.CONFIRMED);
     }

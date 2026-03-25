@@ -66,8 +66,18 @@ public class CompleteExchangeBatchService implements CompleteExchangeBatchUseCas
                 Optional<OrderItem> orderItem = orderItemReadManager.findById(ctx.id());
                 orderItem.ifPresent(
                         oi -> {
-                            oi.completeReturn(command.processedBy(), ctx.changedAt());
-                            returnedItems.add(oi);
+                            if (oi.remainingReturnableQty() > 0) {
+                                int effectiveQty =
+                                        Math.min(
+                                                claim.exchangeQty(),
+                                                oi.remainingReturnableQty());
+                                oi.partialReturn(
+                                        effectiveQty,
+                                        command.processedBy(),
+                                        "교환 완료",
+                                        ctx.changedAt());
+                                returnedItems.add(oi);
+                            }
                         });
             } catch (Exception e) {
                 log.warn("교환 완료 실패: exchangeClaimId={}, error={}", claim.idValue(), e.getMessage());

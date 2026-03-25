@@ -24,6 +24,8 @@ public interface ExchangeQueryPort {
 
     Map<ExchangeStatus, Long> countByStatus();
 
+    List<ExchangeClaim> findAllByOrderItemId(OrderItemId orderItemId);
+
     /** exchangeClaimId 목록으로 일괄 조회. sellerId가 null이면 전체 조회 (슈퍼어드민). */
     List<ExchangeClaim> findByIdIn(List<String> exchangeClaimIds, Long sellerId);
 }

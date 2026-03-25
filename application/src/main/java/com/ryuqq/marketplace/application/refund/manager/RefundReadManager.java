@@ -48,6 +48,11 @@ public class RefundReadManager {
     }
 
     @Transactional(readOnly = true)
+    public List<RefundClaim> findAllByOrderItemId(String orderItemId) {
+        return queryPort.findAllByOrderItemId(orderItemId);
+    }
+
+    @Transactional(readOnly = true)
     public Map<RefundStatus, Long> countByStatus() {
         return queryPort.countByStatus();
     }
