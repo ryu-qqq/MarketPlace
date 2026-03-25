@@ -16,6 +16,7 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductStockUpdat
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductsUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofRefundPolicySyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerAddressSyncRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerCreateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofShippingPolicySyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSyncApiResponse;
@@ -392,7 +393,7 @@ public class SetofCommerceApiClient {
      *
      * <p>POST /api/v2/admin/sellers
      */
-    public SetofSyncApiResponse createSeller(String shopSecret, SetofSellerSyncRequest request) {
+    public SetofSyncApiResponse createSeller(String shopSecret, SetofSellerCreateRequest request) {
         log.info("세토프 커머스 셀러 등록 요청");
         return executor.execute(
                 () ->

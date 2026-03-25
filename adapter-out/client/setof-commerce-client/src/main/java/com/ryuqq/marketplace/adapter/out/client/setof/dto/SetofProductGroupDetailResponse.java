@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
@@ -10,12 +11,16 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record SetofProductGroupDetailResponse(
-        Long productGroupId, List<ProductResponse> products, List<ImageResponse> images) {
+        @JsonProperty("id") Long productGroupId,
+        List<ProductResponse> products,
+        List<ImageResponse> images) {
 
     /** 세토프 개별 상품 응답. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProductResponse(
-            Long productId, String skuCode, List<SelectedOptionResponse> selectedOptions) {}
+            @JsonProperty("id") Long productId,
+            String skuCode,
+            @JsonProperty("options") List<SelectedOptionResponse> selectedOptions) {}
 
     /** 세토프 상품 선택 옵션 응답. */
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,5 +29,8 @@ public record SetofProductGroupDetailResponse(
     /** 세토프 상품 이미지 응답. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ImageResponse(
-            Long imageId, String imageType, String imageUrl, Integer sortOrder) {}
+            @JsonProperty("id") Long imageId,
+            String imageType,
+            String imageUrl,
+            Integer sortOrder) {}
 }

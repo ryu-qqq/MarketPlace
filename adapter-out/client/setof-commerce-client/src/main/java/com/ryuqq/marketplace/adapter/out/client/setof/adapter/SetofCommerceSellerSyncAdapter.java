@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerCreateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSyncApiResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
@@ -44,7 +45,7 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
     public OutboundSellerSyncResult createSeller(Shop shop, Long sellerId) {
         try {
             Seller seller = sellerReadManager.getById(SellerId.of(sellerId));
-            SetofSellerSyncRequest request = mapper.toSellerRequest(seller);
+            SetofSellerCreateRequest request = mapper.toSellerCreateRequest(seller);
 
             log.info("세토프 커머스 셀러 등록 요청: sellerId={}", sellerId);
 

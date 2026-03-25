@@ -575,19 +575,16 @@ class SetofCommerceDtoContractTest {
         @Test
         @DisplayName("JSON 필드명이 서버 계약과 일치한다")
         void fieldNamesShouldMatchServerContract() {
+            var leadTime = new SetofShippingPolicySyncRequest.LeadTimeRequest(1, 3, null);
             var request =
                     new SetofShippingPolicySyncRequest(
-                            1L, 10L, "기본배송", true, true, "PAID", 3000, 50000, 3000, 5000, 3000,
-                            6000, 1, 3);
+                            "기본배송", true, "PAID", 3000, 50000, 3000, 5000, 3000, 6000, leadTime);
             JsonNode node = toJsonNode(request);
 
             assertThat(fieldNames(node))
                     .containsExactlyInAnyOrder(
-                            "id",
-                            "sellerId",
                             "policyName",
                             "defaultPolicy",
-                            "active",
                             "shippingFeeType",
                             "baseFee",
                             "freeThreshold",
@@ -595,8 +592,7 @@ class SetofCommerceDtoContractTest {
                             "islandExtraFee",
                             "returnFee",
                             "exchangeFee",
-                            "leadTimeMinDays",
-                            "leadTimeMaxDays");
+                            "leadTime");
         }
     }
 

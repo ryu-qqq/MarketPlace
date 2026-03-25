@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofRefundPolicySyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerAddressSyncRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerCreateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofShippingPolicySyncRequest;
 import com.ryuqq.marketplace.domain.refundpolicy.RefundPolicyFixtures;
@@ -44,6 +45,24 @@ class SetofCommerceSellerSyncMapperTest {
     }
 
     @Nested
+    @DisplayName("toSellerCreateRequest()")
+    class ToSellerCreateRequestTest {
+
+        @Test
+        @DisplayName("Seller를 SetofSellerCreateRequest 중첩 구조로 변환한다")
+        void convertsSellerToCreateRequest() {
+            Seller seller = SellerFixtures.activeSeller();
+
+            SetofSellerCreateRequest result = sut.toSellerCreateRequest(seller);
+
+            assertThat(result.sellerInfo()).isNotNull();
+            assertThat(result.sellerInfo().sellerName()).isEqualTo(seller.sellerNameValue());
+            assertThat(result.sellerInfo().displayName()).isEqualTo(seller.displayNameValue());
+            assertThat(result.businessInfo()).isNull();
+        }
+    }
+
+    @Nested
     @DisplayName("toShippingPolicyRequest()")
     class ToShippingPolicyRequestTest {
 
@@ -54,12 +73,12 @@ class SetofCommerceSellerSyncMapperTest {
 
             SetofShippingPolicySyncRequest result = sut.toShippingPolicyRequest(policy);
 
-            assertThat(result.id()).isEqualTo(policy.idValue());
-            assertThat(result.sellerId()).isEqualTo(policy.sellerIdValue());
             assertThat(result.policyName()).isEqualTo(policy.policyNameValue());
             assertThat(result.defaultPolicy()).isEqualTo(policy.isDefaultPolicy());
-            assertThat(result.active()).isEqualTo(policy.isActive());
             assertThat(result.shippingFeeType()).isEqualTo(policy.shippingFeeType().name());
+            assertThat(result.leadTime()).isNotNull();
+            assertThat(result.leadTime().minDays()).isEqualTo(policy.leadTimeMinDays());
+            assertThat(result.leadTime().maxDays()).isEqualTo(policy.leadTimeMaxDays());
         }
     }
 

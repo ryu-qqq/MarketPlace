@@ -6,10 +6,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,13 +34,15 @@ class SetofCommerceSellerSyncAdapterCircuitBreakerTest {
     @Mock private SetofCommerceApiClient apiClient;
     @Mock private SellerReadManager sellerReadManager;
     @Mock private SetofCommerceSellerSyncMapper mapper;
+    @Mock private SetofCommerceProperties properties;
     @Mock private Seller seller;
+    @Mock private Shop shop;
 
     private SetofCommerceSellerSyncAdapter sut;
 
     @BeforeEach
     void setUp() {
-        sut = new SetofCommerceSellerSyncAdapter(apiClient, sellerReadManager, mapper);
+        sut = new SetofCommerceSellerSyncAdapter(apiClient, sellerReadManager, mapper, properties);
     }
 
     @Nested
@@ -50,15 +54,15 @@ class SetofCommerceSellerSyncAdapterCircuitBreakerTest {
         void createSeller_WhenApiClientThrows_PropagatesException() {
             // given
             given(sellerReadManager.getById(any())).willReturn(seller);
-            given(mapper.toSellerRequest(any())).willReturn(null);
-            given(apiClient.createSeller(any()))
+            given(mapper.toSellerCreateRequest(any())).willReturn(null);
+            given(apiClient.createSeller(any(), any()))
                     .willThrow(
                             new ExternalServiceUnavailableException(
                                     "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)",
                                     new RuntimeException()));
 
             // when & then
-            assertThatThrownBy(() -> sut.createSeller(1L))
+            assertThatThrownBy(() -> sut.createSeller(shop, 1L))
                     .isInstanceOf(ExternalServiceUnavailableException.class)
                     .hasMessageContaining("Circuit Breaker OPEN");
         }
@@ -79,10 +83,10 @@ class SetofCommerceSellerSyncAdapterCircuitBreakerTest {
                                     "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)",
                                     new RuntimeException()))
                     .given(apiClient)
-                    .updateSeller(any(), any());
+                    .updateSeller(any(), any(), any());
 
             // when & then
-            assertThatThrownBy(() -> sut.updateSeller(1L))
+            assertThatThrownBy(() -> sut.updateSeller(shop, 1L))
                     .isInstanceOf(ExternalServiceUnavailableException.class)
                     .hasMessageContaining("Circuit Breaker OPEN");
         }
