@@ -652,6 +652,117 @@ call_api "PUT" "/api/v2/admin/image-variants/sync" \
     "이미지 변형 동기화"
 
 # =============================================================================
+# Phase 9: 셀러 등록/수정
+# =============================================================================
+echo ""
+echo -e "${CYAN}=== Phase 9: 셀러 등록/수정 ===${NC}"
+
+call_api "POST" "/api/v2/admin/sellers" \
+    '{
+        "sellerInfo": {
+            "sellerName": "E2E 테스트 셀러",
+            "displayName": "E2E셀러",
+            "logoUrl": "https://example.com/logo.png",
+            "description": "E2E 테스트용 셀러입니다"
+        },
+        "businessInfo": {
+            "registrationNumber": "123-45-67890",
+            "companyName": "E2E테스트주식회사",
+            "representative": "홍길동",
+            "saleReportNumber": "2026-서울강남-01234",
+            "businessAddress": {
+                "zipCode": "06234",
+                "line1": "서울시 강남구 테헤란로 1",
+                "line2": "10층"
+            },
+            "csContact": {
+                "phone": "02-1234-5678",
+                "email": "cs@e2etest.com",
+                "mobile": "010-1234-5678"
+            }
+        }
+    }' \
+    "셀러 등록" "201"
+
+CREATED_SELLER_ID=$(echo "$LAST_BODY" | jq -r '.data.sellerId // empty' 2>/dev/null || echo "")
+if [ -z "$CREATED_SELLER_ID" ] || [ "$CREATED_SELLER_ID" = "null" ]; then
+    echo -e "  -> 셀러 ID 추출 실패, DB에서 조회"
+    CREATED_SELLER_ID=$(db_query "setof" "SELECT id FROM sellers ORDER BY id DESC LIMIT 1" 2>/dev/null || echo "1")
+fi
+echo -e "  -> 셀러 ID: ${CREATED_SELLER_ID}"
+
+call_api "PUT" "/api/v2/admin/sellers/${CREATED_SELLER_ID}" \
+    '{
+        "sellerName": "E2E 수정된 셀러",
+        "displayName": "E2E수정",
+        "logoUrl": "https://example.com/logo-updated.png",
+        "description": "수정된 셀러 설명",
+        "csInfo": {
+            "phone": "02-9876-5432",
+            "email": "updated@e2etest.com",
+            "mobile": "010-9876-5432"
+        },
+        "businessInfo": {
+            "registrationNumber": "123-45-67890",
+            "companyName": "수정된주식회사",
+            "representative": "김수정",
+            "saleReportNumber": "2026-서울강남-99999",
+            "businessAddress": {
+                "zipCode": "06235",
+                "line1": "서울시 강남구 역삼로 100",
+                "line2": "20층"
+            }
+        }
+    }' \
+    "셀러 수정 (sellerId=${CREATED_SELLER_ID})" "204"
+
+# =============================================================================
+# Phase 10: 셀러 주소 CRUD
+# =============================================================================
+echo ""
+echo -e "${CYAN}=== Phase 10: 셀러 주소 CRUD ===${NC}"
+
+# JWT에서 sellerId=1 사용 (토큰 발급한 셀러)
+ADDR_SELLER_ID="1"
+
+call_api "POST" "/api/v2/admin/seller-addresses/sellers/${ADDR_SELLER_ID}" \
+    '{
+        "addressType": "SHIPPING",
+        "addressName": "E2E 배송 창고",
+        "zipCode": "12345",
+        "roadAddress": "경기도 성남시 분당구 판교로 1",
+        "detailAddress": "B동 1층",
+        "defaultAddress": false
+    }' \
+    "셀러 주소 등록 (sellerId=${ADDR_SELLER_ID})" "201"
+
+ADDR_ID=$(echo "$LAST_BODY" | jq -r '.data // empty' 2>/dev/null || echo "")
+if [ -z "$ADDR_ID" ] || [ "$ADDR_ID" = "null" ]; then
+    ADDR_ID=$(db_query "setof" "SELECT id FROM seller_addresses WHERE seller_id=${ADDR_SELLER_ID} ORDER BY id DESC LIMIT 1" 2>/dev/null || echo "")
+fi
+echo -e "  -> 주소 ID: ${ADDR_ID}"
+
+if [ -n "$ADDR_ID" ] && [ "$ADDR_ID" != "null" ]; then
+    call_api "PUT" "/api/v2/admin/seller-addresses/sellers/${ADDR_SELLER_ID}/${ADDR_ID}" \
+        '{
+            "addressType": "RETURN",
+            "addressName": "E2E 반품 창고 (수정)",
+            "zipCode": "54321",
+            "roadAddress": "경기도 성남시 분당구 판교로 999",
+            "detailAddress": "A동 2층",
+            "defaultAddress": true
+        }' \
+        "셀러 주소 수정 (addressId=${ADDR_ID})" "204"
+
+    call_api "DELETE" "/api/v2/admin/seller-addresses/sellers/${ADDR_SELLER_ID}/${ADDR_ID}" \
+        "" \
+        "셀러 주소 삭제 (addressId=${ADDR_ID})" "204"
+else
+    skip "주소 ID를 찾을 수 없어 수정/삭제 건너뜀"
+    skip "주소 ID를 찾을 수 없어 수정/삭제 건너뜀"
+fi
+
+# =============================================================================
 # 결과 요약
 # =============================================================================
 echo ""

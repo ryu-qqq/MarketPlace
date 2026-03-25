@@ -6,7 +6,7 @@
 
 ---
 
-## 전체 테스트 결과: 19건 중 13 성공 / 1 실패 / 5 SKIP
+## 전체 테스트 결과: 24건 중 18 성공 / 1 실패 / 5 SKIP
 
 | Phase | API | 결과 |
 |---|---|---|
@@ -19,11 +19,16 @@
 | 상품 | GET /api/v2/admin/product-groups/{id} | ✅ PASS (200) |
 | 상품 | PUT /api/v2/admin/product-groups/{id} | ✅ PASS (204) |
 | 상품 | PATCH /api/v2/admin/product-groups/{id}/basic-info | ✅ PASS (204) |
-| **상품** | **PATCH /api/v2/admin/products/product-groups/{id}** | **❌ FAIL (400)** |
+| 상품 | PATCH /api/v2/admin/products/product-groups/{id} | ✅ PASS (204) — BUG-001 수정 확인 |
 | 상품 | PUT /api/v2/admin/product-groups/{id}/images | ✅ PASS (204) |
 | 상품 | PUT /api/v2/admin/product-groups/{id}/description | ✅ PASS (204) |
 | 상품 | PUT /api/v2/admin/product-groups/{id}/notice | ✅ PASS (204) |
 | 이미지 | PUT /api/v2/admin/image-variants/sync | ✅ PASS (200) |
+| 셀러 | POST /api/v2/admin/sellers | ✅ PASS (201) |
+| **셀러** | **PUT /api/v2/admin/sellers/{id}** | **❌ FAIL (404) — BUG-002** |
+| 셀러주소 | POST /api/v2/admin/seller-addresses/sellers/{sellerId} | ✅ PASS (201) |
+| 셀러주소 | PUT /api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId} | ✅ PASS (204) |
+| 셀러주소 | DELETE /api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId} | ✅ PASS (204) |
 | 개별상품 | PATCH /api/v2/admin/products/{id}/price | ⏭️ SKIP (상품 ID 조회 불가) |
 | 개별상품 | PATCH /api/v2/admin/products/{id}/stock | ⏭️ SKIP (상품 ID 조회 불가) |
 | 주문 | POST /api/v2/orders/{id}/confirm | ⏭️ SKIP (데이터 없음) |
@@ -32,7 +37,7 @@
 
 ---
 
-## 🔴 BUG-001: 옵션/상품 부분 수정 시 DELETED 상품 상태 전이 에러
+## ✅ BUG-001: 옵션/상품 부분 수정 시 DELETED 상품 상태 전이 에러 — **수정 완료 (b8a8ba7a)**
 
 ### 재현 시나리오
 
@@ -141,21 +146,99 @@ products 테이블에서 productGroupId로 조회할 때 `WHERE deleted = false`
 
 ---
 
-## 🟡 INFO-001: 셀러 등록/수정 Admin API 미존재
+## ✅ INFO-001: 셀러 등록/수정 Admin API — **추가 완료 (d12c8d23)**
 
-- MarketPlace에서 `POST /api/v2/admin/sellers`, `PUT /api/v2/admin/sellers/{sellerId}` 호출 시 **405 Method Not Allowed**
-- 세토프 Admin 모듈에 `SellerCommandController`가 없고 `SellerQueryController`(조회)만 존재
-- MarketPlace 측에서 `@Deprecated` 처리 완료
-- **판단 필요**: 셀러 정보를 MarketPlace에서 세토프로 동기화해야 하면 API 추가 필요
+- POST /api/v2/admin/sellers: ✅ 201 성공
+- PUT /api/v2/admin/sellers/{sellerId}: ❌ 404 → **BUG-002 참조**
 
 ---
 
-## 🟡 INFO-002: 셀러 주소 Admin API 미존재
+## ✅ INFO-002: 셀러 주소 Admin API — **추가 완료 (d12c8d23)**
 
-- MarketPlace에서 `POST/PUT/DELETE /api/v2/admin/seller-addresses/sellers/{sellerId}` 호출 시 **404 Not Found**
-- 세토프 Admin 모듈에 `SellerAddressController` 자체가 없음
-- MarketPlace 측에서 `@Deprecated` 처리 완료
-- **판단 필요**: 셀러 주소를 세토프에 동기화할 필요가 있는지
+- POST /api/v2/admin/seller-addresses/sellers/{sellerId}: ✅ 201 성공
+- PUT /api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId}: ✅ 204 성공
+- DELETE /api/v2/admin/seller-addresses/sellers/{sellerId}/{addressId}: ✅ 204 성공
+
+---
+
+## 🔴 BUG-002: 셀러 등록 시 CS 정보(seller_cs) 미생성 → 수정 시 404
+
+### 재현 시나리오
+
+1. 셀러 등록 (POST /api/v2/admin/sellers) — `businessInfo.csContact` 포함하여 호출
+2. 셀러 수정 (PUT /api/v2/admin/sellers/{sellerId}) — `csInfo` 포함하여 호출 → **404**
+
+### 요청
+
+```
+PUT /api/v2/admin/sellers/76
+Content-Type: application/json
+```
+
+```json
+{
+    "sellerName": "E2E 수정된 셀러",
+    "displayName": "E2E수정",
+    "logoUrl": "https://example.com/logo-updated.png",
+    "description": "수정된 셀러 설명",
+    "csInfo": {
+        "phone": "02-9876-5432",
+        "email": "updated@e2etest.com",
+        "mobile": "010-9876-5432"
+    },
+    "businessInfo": {
+        "registrationNumber": "123-45-67890",
+        "companyName": "수정된주식회사",
+        "representative": "김수정",
+        "saleReportNumber": "2026-서울강남-99999",
+        "businessAddress": {
+            "zipCode": "06235",
+            "line1": "서울시 강남구 역삼로 100",
+            "line2": "20층"
+        }
+    }
+}
+```
+
+### 응답 (404)
+
+```json
+{
+    "type": "/errors/seller/sel-300",
+    "title": "Seller Error",
+    "status": 404,
+    "detail": "셀러 ID 76에 해당하는 CS 정보를 찾을 수 없습니다",
+    "instance": "/api/v2/admin/sellers/76",
+    "properties": {
+        "timestamp": "2026-03-25T07:29:02.704389430Z",
+        "code": "SEL-300"
+    }
+}
+```
+
+### DB 검증
+
+```sql
+-- sellers 테이블: 정상 등록됨
+SELECT * FROM sellers WHERE id = 76;
+-- ✅ 데이터 있음
+
+-- seller_business_infos 테이블: 정상 등록됨
+SELECT * FROM seller_business_infos WHERE seller_id = 76;
+-- ✅ 데이터 있음
+
+-- seller_cs 테이블: 데이터 없음!
+SELECT * FROM seller_cs WHERE seller_id = 76;
+-- ❌ 0건 — 등록 시 csContact을 보냈지만 seller_cs에 INSERT 안 됨
+```
+
+### 원인 분석
+
+셀러 등록 API(`RegisterSellerApiRequest`)에서 `businessInfo.csContact`으로 CS 정보를 전달하고 있으나, 세토프 서버의 셀러 등록 로직에서 `seller_cs` 테이블에 INSERT하는 부분이 빠져있음. `sellers`, `seller_business_infos`는 정상 생성되지만 `seller_cs`만 누락.
+
+### 수정 제안
+
+셀러 등록 서비스에서 `csContact`이 전달되면 `seller_cs` 테이블에도 INSERT 처리 필요. 또는 셀러 수정 시 `seller_cs`가 없으면 신규 생성(upsert)하도록 처리.
 
 ---
 
