@@ -29,19 +29,17 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyDetai
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyFetchQnaResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.mapper.LegacyQnaCommandApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.mapper.LegacyQnaQueryApiMapper;
+import com.ryuqq.marketplace.application.legacy.qna.dto.query.LegacyQnaSearchParams;
+import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaDetailResult;
+import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaPageResult;
+import com.ryuqq.marketplace.application.legacy.qna.port.in.LegacyQnaDetailQueryUseCase;
+import com.ryuqq.marketplace.application.legacy.qna.port.in.LegacyQnaListQueryUseCase;
 import com.ryuqq.marketplace.application.qna.dto.command.AnswerQnaCommand;
 import com.ryuqq.marketplace.application.qna.dto.command.UpdateQnaReplyCommand;
-import com.ryuqq.marketplace.application.qna.dto.query.QnaSearchCondition;
-import com.ryuqq.marketplace.application.qna.dto.result.QnaListResult;
 import com.ryuqq.marketplace.application.qna.dto.result.QnaReplyResult;
-import com.ryuqq.marketplace.application.qna.dto.result.QnaResult;
 import com.ryuqq.marketplace.application.qna.port.in.command.AnswerQnaUseCase;
 import com.ryuqq.marketplace.application.qna.port.in.command.UpdateQnaReplyUseCase;
-import com.ryuqq.marketplace.application.qna.port.in.query.GetQnaDetailUseCase;
-import com.ryuqq.marketplace.application.qna.port.in.query.GetQnaListUseCase;
 import com.ryuqq.marketplace.domain.qna.vo.QnaReplyType;
-import com.ryuqq.marketplace.domain.qna.vo.QnaStatus;
-import com.ryuqq.marketplace.domain.qna.vo.QnaType;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -72,8 +70,8 @@ class LegacyQnAControllerRestDocsTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
-    @MockitoBean private GetQnaDetailUseCase qnaDetailUseCase;
-    @MockitoBean private GetQnaListUseCase qnaListUseCase;
+    @MockitoBean private LegacyQnaDetailQueryUseCase legacyQnaDetailUseCase;
+    @MockitoBean private LegacyQnaListQueryUseCase legacyQnaListUseCase;
     @MockitoBean private AnswerQnaUseCase answerQnaUseCase;
     @MockitoBean private UpdateQnaReplyUseCase updateQnaReplyUseCase;
     @MockitoBean private LegacyQnaQueryApiMapper queryApiMapper;
@@ -89,25 +87,11 @@ class LegacyQnAControllerRestDocsTest {
         @DisplayName("QnA ID로 상세 조회 성공")
         void fetchQna_Success() throws Exception {
             // given
-            QnaResult result =
-                    new QnaResult(
-                            LegacyQnAApiFixtures.DEFAULT_QNA_ID,
-                            1L,
-                            100L,
-                            null,
-                            QnaType.PRODUCT,
-                            null,
-                            LegacyQnAApiFixtures.DEFAULT_TITLE,
-                            LegacyQnAApiFixtures.DEFAULT_CONTENT,
-                            "홍길동",
-                            QnaStatus.PENDING,
-                            List.of(),
-                            Instant.now(),
-                            Instant.now());
+            LegacyQnaDetailResult result = LegacyQnAApiFixtures.legacyQnaDetailResult();
             LegacyDetailQnaResponse response = LegacyQnAApiFixtures.detailQnaResponse();
 
-            given(qnaDetailUseCase.execute(anyLong())).willReturn(result);
-            given(queryApiMapper.toDetailResponse(any())).willReturn(response);
+            given(legacyQnaDetailUseCase.execute(anyLong())).willReturn(result);
+            given(queryApiMapper.toDetailResponse(any(LegacyQnaDetailResult.class))).willReturn(response);
 
             // when & then
             mockMvc.perform(
@@ -306,41 +290,18 @@ class LegacyQnAControllerRestDocsTest {
         @DisplayName("QnA 목록 페이징 조회 성공")
         void getQnas_Success() throws Exception {
             // given
-            QnaListResult listResult =
-                    new QnaListResult(
-                            List.of(
-                                    new QnaResult(
-                                            LegacyQnAApiFixtures.DEFAULT_QNA_ID,
-                                            1L,
-                                            100L,
-                                            null,
-                                            QnaType.PRODUCT,
-                                            null,
-                                            LegacyQnAApiFixtures.DEFAULT_TITLE,
-                                            LegacyQnAApiFixtures.DEFAULT_CONTENT,
-                                            "홍길동",
-                                            QnaStatus.PENDING,
-                                            List.of(),
-                                            Instant.now(),
-                                            Instant.now())),
-                            1L,
-                            0,
-                            20);
+            LegacyQnaPageResult pageResult = new LegacyQnaPageResult(
+                    List.of(LegacyQnAApiFixtures.legacyQnaDetailResult()),
+                    1L,
+                    LegacyQnAApiFixtures.DEFAULT_QNA_ID);
             List<LegacyFetchQnaResponse> responses =
                     List.of(LegacyQnAApiFixtures.fetchQnaResponse());
 
-            given(queryApiMapper.toSearchCondition(any(), anyInt()))
+            given(queryApiMapper.toSearchParams(any(), anyInt()))
                     .willReturn(
-                            new QnaSearchCondition(
-                                    1L,
-                                    QnaStatus.PENDING,
-                                    QnaType.PRODUCT,
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    20));
-            given(qnaListUseCase.execute(any(QnaSearchCondition.class))).willReturn(listResult);
+                            new LegacyQnaSearchParams(
+                                    null, "PRODUCT", null, null, null, 1L, null, null, null, 20));
+            given(legacyQnaListUseCase.execute(any(LegacyQnaSearchParams.class))).willReturn(pageResult);
             given(queryApiMapper.toFetchResponses(any())).willReturn(responses);
 
             // when & then

@@ -14,16 +14,16 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyDetai
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyFetchQnaResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.mapper.LegacyQnaCommandApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.mapper.LegacyQnaQueryApiMapper;
+import com.ryuqq.marketplace.application.legacy.qna.dto.query.LegacyQnaSearchParams;
+import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaDetailResult;
+import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaPageResult;
+import com.ryuqq.marketplace.application.legacy.qna.port.in.LegacyQnaDetailQueryUseCase;
+import com.ryuqq.marketplace.application.legacy.qna.port.in.LegacyQnaListQueryUseCase;
 import com.ryuqq.marketplace.application.qna.dto.command.AnswerQnaCommand;
 import com.ryuqq.marketplace.application.qna.dto.command.UpdateQnaReplyCommand;
-import com.ryuqq.marketplace.application.qna.dto.query.QnaSearchCondition;
-import com.ryuqq.marketplace.application.qna.dto.result.QnaListResult;
 import com.ryuqq.marketplace.application.qna.dto.result.QnaReplyResult;
-import com.ryuqq.marketplace.application.qna.dto.result.QnaResult;
 import com.ryuqq.marketplace.application.qna.port.in.command.AnswerQnaUseCase;
 import com.ryuqq.marketplace.application.qna.port.in.command.UpdateQnaReplyUseCase;
-import com.ryuqq.marketplace.application.qna.port.in.query.GetQnaDetailUseCase;
-import com.ryuqq.marketplace.application.qna.port.in.query.GetQnaListUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 세토프 어드민용 레거시 QnA(문의) API 호환 컨트롤러.
  *
- * <p>표준 UseCase를 호출하고, 매퍼에서 레거시 응답 포맷으로 변환합니다.
+ * <p>조회는 luxurydb(레거시 DB)를 직접 조회하고, 답변 등록/수정은 표준 UseCase를 호출합니다.
  */
 @Tag(
         name = "세토프 어드민용 레거시",
@@ -51,54 +51,53 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LegacyQnAController {
 
-    private final GetQnaDetailUseCase qnaDetailUseCase;
-    private final GetQnaListUseCase qnaListUseCase;
+    private final LegacyQnaDetailQueryUseCase legacyQnaDetailUseCase;
+    private final LegacyQnaListQueryUseCase legacyQnaListUseCase;
     private final AnswerQnaUseCase answerQnaUseCase;
     private final UpdateQnaReplyUseCase updateQnaReplyUseCase;
     private final LegacyQnaQueryApiMapper queryApiMapper;
     private final LegacyQnaCommandApiMapper commandApiMapper;
 
     public LegacyQnAController(
-            GetQnaDetailUseCase qnaDetailUseCase,
-            GetQnaListUseCase qnaListUseCase,
+            LegacyQnaDetailQueryUseCase legacyQnaDetailUseCase,
+            LegacyQnaListQueryUseCase legacyQnaListUseCase,
             AnswerQnaUseCase answerQnaUseCase,
             UpdateQnaReplyUseCase updateQnaReplyUseCase,
             LegacyQnaQueryApiMapper queryApiMapper,
             LegacyQnaCommandApiMapper commandApiMapper) {
-        this.qnaDetailUseCase = qnaDetailUseCase;
-        this.qnaListUseCase = qnaListUseCase;
+        this.legacyQnaDetailUseCase = legacyQnaDetailUseCase;
+        this.legacyQnaListUseCase = legacyQnaListUseCase;
         this.answerQnaUseCase = answerQnaUseCase;
         this.updateQnaReplyUseCase = updateQnaReplyUseCase;
         this.queryApiMapper = queryApiMapper;
         this.commandApiMapper = commandApiMapper;
     }
 
-    @Operation(summary = "QnA 단건 상세 조회", description = "QnA ID로 질문 + 답변 상세 정보를 조회합니다.")
+    @Operation(summary = "QnA 단건 상세 조회", description = "QnA ID로 질문 + 답변 상세 정보를 조회합니다. (luxurydb)")
     @GetMapping(QNA_ID)
     public ResponseEntity<LegacyApiResponse<LegacyDetailQnaResponse>> fetchQna(
             @PathVariable long qnaId) {
-        QnaResult result = qnaDetailUseCase.execute(qnaId);
+        LegacyQnaDetailResult result = legacyQnaDetailUseCase.execute(qnaId);
         LegacyDetailQnaResponse response = queryApiMapper.toDetailResponse(result);
         return ResponseEntity.ok(LegacyApiResponse.success(response));
     }
 
-    @Operation(summary = "QnA 목록 조회", description = "페이징 기반으로 문의(QnA) 목록을 조회합니다.")
+    @Operation(summary = "QnA 목록 조회", description = "페이징 기반으로 문의(QnA) 목록을 조회합니다. (luxurydb)")
     @GetMapping(QNAS)
     public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyFetchQnaResponse>>> getQnas(
             @Validated @ModelAttribute LegacyQnaSearchRequest request, Pageable pageable) {
-        QnaSearchCondition condition =
-                queryApiMapper.toSearchCondition(request, pageable.getPageSize());
-        QnaListResult listResult = qnaListUseCase.execute(condition);
+        LegacyQnaSearchParams params = queryApiMapper.toSearchParams(request, pageable.getPageSize());
+        LegacyQnaPageResult pageResult = legacyQnaListUseCase.execute(params);
 
         List<LegacyFetchQnaResponse> responses =
-                queryApiMapper.toFetchResponses(listResult.items());
+                queryApiMapper.toFetchResponses(pageResult.items());
 
         Long lastDomainId = responses.isEmpty() ? null : responses.getLast().qnaId();
 
         Pageable resolvedPageable = PageRequest.of(0, pageable.getPageSize());
         LegacyCustomPageable<LegacyFetchQnaResponse> page =
                 new LegacyCustomPageable<>(
-                        responses, resolvedPageable, listResult.totalCount(), lastDomainId);
+                        responses, resolvedPageable, pageResult.totalElements(), lastDomainId);
 
         return ResponseEntity.ok(LegacyApiResponse.success(page));
     }

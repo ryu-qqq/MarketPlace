@@ -13,6 +13,8 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyQnaCo
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyQnaImageResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyQnaTargetResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyUserInfoQnaResponse;
+import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaAnswerResult;
+import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaDetailResult;
 import com.ryuqq.marketplace.application.qna.dto.result.QnaReplyResult;
 import com.ryuqq.marketplace.application.qna.dto.result.QnaResult;
 import com.ryuqq.marketplace.domain.qna.vo.QnaReplyType;
@@ -122,6 +124,40 @@ public final class LegacyQnAApiFixtures {
                 "판매자A",
                 QnaReplyType.SELLER_ANSWER,
                 DEFAULT_CREATED_AT);
+    }
+
+    // ===== Legacy Application Result Fixtures =====
+
+    public static LegacyQnaDetailResult legacyQnaDetailResult() {
+        return new LegacyQnaDetailResult(
+                DEFAULT_QNA_ID,
+                DEFAULT_TITLE,
+                DEFAULT_CONTENT,
+                "N",
+                DEFAULT_QNA_STATUS,
+                DEFAULT_QNA_TYPE,
+                "GENERAL",
+                2L,
+                1L,
+                "MEMBERS",
+                DEFAULT_AUTHOR,
+                LocalDateTime.of(2025, 2, 10, 10, 30, 0),
+                LocalDateTime.of(2025, 2, 10, 11, 0, 0),
+                100L,
+                null,
+                List.of(
+                        new LegacyQnaAnswerResult(
+                                DEFAULT_QNA_ANSWER_ID,
+                                null,
+                                "SELLER",
+                                "",
+                                "답변 내용입니다.",
+                                "판매자A",
+                                "판매자A",
+                                LocalDateTime.of(2025, 2, 10, 10, 30, 0),
+                                LocalDateTime.of(2025, 2, 10, 10, 30, 0),
+                                List.of())),
+                List.of());
     }
 
     // ===== API Response Fixtures =====

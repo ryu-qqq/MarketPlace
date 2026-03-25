@@ -5,17 +5,13 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyAnswe
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyDetailQnaResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyFetchQnaResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyQnaContentsResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyQnaImageResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyQnaTargetResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.qna.dto.response.LegacyUserInfoQnaResponse;
-import com.ryuqq.marketplace.application.qna.dto.query.QnaSearchCondition;
-import com.ryuqq.marketplace.application.qna.dto.result.QnaReplyResult;
-import com.ryuqq.marketplace.application.qna.dto.result.QnaResult;
-import com.ryuqq.marketplace.domain.qna.vo.QnaReplyType;
-import com.ryuqq.marketplace.domain.qna.vo.QnaStatus;
-import com.ryuqq.marketplace.domain.qna.vo.QnaType;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import com.ryuqq.marketplace.application.legacy.qna.dto.query.LegacyQnaSearchParams;
+import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaAnswerResult;
+import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaDetailResult;
+import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaImageResult;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,124 +20,123 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 QnA 조회 API Mapper.
  *
- * <p>표준 QnaResult → 레거시 Response 변환. 부족한 필드는 하드코딩/빈값으로 채움.
+ * <p>레거시 LegacyQnaDetailResult → 레거시 Response 변환.
  */
 @Component
 public class LegacyQnaQueryApiMapper {
 
-    private static final String DEFAULT_PRIVATE_YN = "N";
-    private static final String DEFAULT_QNA_DETAIL_TYPE = "GENERAL";
-    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
-
-    public QnaSearchCondition toSearchCondition(LegacyQnaSearchRequest request, int size) {
-        QnaStatus status = parseStatus(request.qnaStatus());
-        QnaType qnaType = parseQnaType(request.qnaType());
-        Instant fromDate =
-                request.startDate() != null ? request.startDate().atZone(KST).toInstant() : null;
-        Instant toDate =
-                request.endDate() != null ? request.endDate().atZone(KST).toInstant() : null;
-
-        return new QnaSearchCondition(
-                request.sellerId(),
-                status,
-                qnaType,
-                request.searchKeyword(),
-                fromDate,
-                toDate,
+    /** LegacyQnaSearchRequest → LegacyQnaSearchParams 변환. */
+    public LegacyQnaSearchParams toSearchParams(LegacyQnaSearchRequest request, int size) {
+        return new LegacyQnaSearchParams(
+                request.qnaStatus(),
+                request.qnaType(),
+                request.qnaDetailType(),
+                request.privateYn(),
                 request.lastDomainId(),
+                request.sellerId(),
+                request.searchKeyword(),
+                request.startDate(),
+                request.endDate(),
                 size);
     }
 
-    public LegacyDetailQnaResponse toDetailResponse(QnaResult result) {
+    /** LegacyQnaDetailResult → LegacyDetailQnaResponse (상세 조회 응답). */
+    public LegacyDetailQnaResponse toDetailResponse(LegacyQnaDetailResult result) {
         LegacyFetchQnaResponse qna = toFetchResponse(result);
         Set<LegacyAnswerQnaResponse> answers =
-                result.replies().stream()
-                        .filter(r -> r.replyType() == QnaReplyType.SELLER_ANSWER)
-                        .map(this::toAnswerResponse)
-                        .collect(Collectors.toSet());
+                result.answers().stream().map(this::toAnswerResponse).collect(Collectors.toSet());
         return new LegacyDetailQnaResponse(qna, answers);
     }
 
-    public LegacyFetchQnaResponse toFetchResponse(QnaResult result) {
+    /** LegacyQnaDetailResult → LegacyFetchQnaResponse (목록 항목 응답). */
+    public LegacyFetchQnaResponse toFetchResponse(LegacyQnaDetailResult result) {
         LegacyQnaContentsResponse contents =
                 new LegacyQnaContentsResponse(
-                        nullToEmpty(result.questionTitle()), nullToEmpty(result.questionContent()));
+                        nullToEmpty(result.title()), nullToEmpty(result.content()));
 
         LegacyUserInfoQnaResponse userInfo =
                 new LegacyUserInfoQnaResponse(
-                        "", null, nullToEmpty(result.questionAuthor()), "", "", null);
+                        nullToEmpty(result.userType()),
+                        result.userId(),
+                        nullToEmpty(result.insertOperator()),
+                        "",
+                        "",
+                        null);
 
         LegacyQnaTargetResponse target;
         if (result.orderId() != null) {
             target =
                     LegacyQnaTargetResponse.order(
-                            result.productGroupId(), "", "", "", 0L, result.orderId(), "");
+                            result.productGroupId() != null ? result.productGroupId() : 0L,
+                            "",
+                            "",
+                            "",
+                            0L,
+                            result.orderId(),
+                            "");
         } else {
-            target = LegacyQnaTargetResponse.product(result.productGroupId(), "", "", "");
+            target =
+                    LegacyQnaTargetResponse.product(
+                            result.productGroupId() != null ? result.productGroupId() : 0L,
+                            "",
+                            "",
+                            "");
         }
+
+        List<LegacyQnaImageResponse> images =
+                result.images().stream().map(this::toImageResponse).toList();
 
         return new LegacyFetchQnaResponse(
                 result.qnaId(),
                 contents,
-                DEFAULT_PRIVATE_YN,
-                result.status() != null ? result.status().name() : "",
-                result.qnaType() != null ? result.qnaType().name() : "",
-                DEFAULT_QNA_DETAIL_TYPE,
+                nullToEmpty(result.privateYn()),
+                nullToEmpty(result.qnaStatus()),
+                nullToEmpty(result.qnaType()),
+                nullToEmpty(result.qnaDetailType()),
                 "",
                 userInfo,
                 target,
-                List.of(),
-                toLocalDateTime(result.createdAt()),
-                toLocalDateTime(result.updatedAt()));
+                images,
+                result.insertDate(),
+                result.updateDate());
     }
 
-    public List<LegacyFetchQnaResponse> toFetchResponses(List<QnaResult> results) {
+    /** LegacyQnaDetailResult 목록 → LegacyFetchQnaResponse 목록 변환. */
+    public List<LegacyFetchQnaResponse> toFetchResponses(List<LegacyQnaDetailResult> results) {
         return results.stream().map(this::toFetchResponse).toList();
     }
 
-    private LegacyAnswerQnaResponse toAnswerResponse(QnaReplyResult reply) {
+    private LegacyAnswerQnaResponse toAnswerResponse(LegacyQnaAnswerResult answer) {
         LegacyQnaContentsResponse contents =
-                new LegacyQnaContentsResponse("", nullToEmpty(reply.content()));
+                new LegacyQnaContentsResponse(
+                        nullToEmpty(answer.title()), nullToEmpty(answer.content()));
+
+        List<LegacyQnaImageResponse> images =
+                answer.images().stream().map(this::toImageResponse).toList();
 
         return new LegacyAnswerQnaResponse(
-                reply.replyId(),
-                reply.parentReplyId(),
-                "SELLER",
+                answer.qnaAnswerId(),
+                answer.qnaAnswerParentId(),
+                nullToEmpty(answer.qnaWriterType()),
                 contents,
-                List.of(),
-                nullToEmpty(reply.authorName()),
-                nullToEmpty(reply.authorName()),
-                toLocalDateTime(reply.createdAt()),
-                toLocalDateTime(reply.createdAt()));
+                images,
+                nullToEmpty(answer.insertOperator()),
+                nullToEmpty(answer.updateOperator()),
+                answer.insertDate(),
+                answer.updateDate());
     }
 
-    private LocalDateTime toLocalDateTime(Instant instant) {
-        return instant != null ? LocalDateTime.ofInstant(instant, KST) : null;
+    private LegacyQnaImageResponse toImageResponse(LegacyQnaImageResult image) {
+        return new LegacyQnaImageResponse(
+                nullToEmpty(image.qnaIssueType()),
+                image.qnaImageId(),
+                image.qnaId(),
+                image.qnaAnswerId(),
+                nullToEmpty(image.imageUrl()),
+                image.displayOrder());
     }
 
     private String nullToEmpty(String value) {
         return value != null ? value : "";
-    }
-
-    private QnaStatus parseStatus(String status) {
-        if (status == null || status.isBlank()) {
-            return null;
-        }
-        try {
-            return QnaStatus.valueOf(status);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    private QnaType parseQnaType(String qnaType) {
-        if (qnaType == null || qnaType.isBlank()) {
-            return null;
-        }
-        try {
-            return QnaType.valueOf(qnaType);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
     }
 }
