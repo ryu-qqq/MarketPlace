@@ -122,16 +122,21 @@ public class NaverCommerceApiClient {
                 () -> {
                     String token = tokenManager.getAccessToken();
                     try {
-                        restClient
-                                .put()
-                                .uri(
-                                        "/v2/products/origin-products/{originProductNo}",
-                                        originProductNo)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", "Bearer " + token)
-                                .body(request)
-                                .retrieve()
-                                .toBodilessEntity();
+                        org.springframework.http.ResponseEntity<String> response =
+                                restClient
+                                        .put()
+                                        .uri(
+                                                "/v2/products/origin-products/{originProductNo}",
+                                                originProductNo)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .header("Authorization", "Bearer " + token)
+                                        .body(request)
+                                        .retrieve()
+                                        .toEntity(String.class);
+                        log.info(
+                                "네이버 상품수정 응답: status={}, body={}",
+                                response.getStatusCode(),
+                                response.getBody());
                     } catch (ResourceAccessException e) {
                         throw NaverCommerceClientConfig.toNetworkException(e);
                     }
@@ -145,14 +150,19 @@ public class NaverCommerceApiClient {
                 () -> {
                     String token = tokenManager.getAccessToken();
                     try {
-                        restClient
-                                .delete()
-                                .uri(
-                                        "/v2/products/origin-products/{originProductNo}",
-                                        originProductNo)
-                                .header("Authorization", "Bearer " + token)
-                                .retrieve()
-                                .toBodilessEntity();
+                        org.springframework.http.ResponseEntity<String> response =
+                                restClient
+                                        .delete()
+                                        .uri(
+                                                "/v2/products/origin-products/{originProductNo}",
+                                                originProductNo)
+                                        .header("Authorization", "Bearer " + token)
+                                        .retrieve()
+                                        .toEntity(String.class);
+                        log.info(
+                                "네이버 상품삭제 응답: status={}, body={}",
+                                response.getStatusCode(),
+                                response.getBody());
                     } catch (ResourceAccessException e) {
                         throw NaverCommerceClientConfig.toNetworkException(e);
                     }
@@ -374,16 +384,21 @@ public class NaverCommerceApiClient {
     public void delayDispatch(String productOrderId, NaverOrderDelayRequest request) {
         String token = tokenManager.getAccessToken();
         try {
-            restClient
-                    .post()
-                    .uri(
-                            "/v1/pay-order/seller/product-orders/{productOrderId}/delay",
-                            productOrderId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .body(request)
-                    .retrieve()
-                    .toBodilessEntity();
+            org.springframework.http.ResponseEntity<String> response =
+                    restClient
+                            .post()
+                            .uri(
+                                    "/v1/pay-order/seller/product-orders/{productOrderId}/delay",
+                                    productOrderId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .body(request)
+                            .retrieve()
+                            .toEntity(String.class);
+            log.info(
+                    "네이버 발송지연 응답: status={}, body={}",
+                    response.getStatusCode(),
+                    response.getBody());
         } catch (ResourceAccessException e) {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
@@ -393,16 +408,21 @@ public class NaverCommerceApiClient {
     public void changeHopeDelivery(String productOrderId, NaverWishedDeliveryDateRequest request) {
         String token = tokenManager.getAccessToken();
         try {
-            restClient
-                    .post()
-                    .uri(
-                            "/v1/pay-order/seller/product-orders/{productOrderId}/hope-delivery/change",
-                            productOrderId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .body(request)
-                    .retrieve()
-                    .toBodilessEntity();
+            org.springframework.http.ResponseEntity<String> response =
+                    restClient
+                            .post()
+                            .uri(
+                                    "/v1/pay-order/seller/product-orders/{productOrderId}/hope-delivery/change",
+                                    productOrderId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .body(request)
+                            .retrieve()
+                            .toEntity(String.class);
+            log.info(
+                    "네이버 배송희망일 변경 응답: status={}, body={}",
+                    response.getStatusCode(),
+                    response.getBody());
         } catch (ResourceAccessException e) {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
@@ -508,14 +528,19 @@ public class NaverCommerceApiClient {
     public void holdbackReturn(String productOrderId) {
         String token = tokenManager.getAccessToken();
         try {
-            restClient
-                    .post()
-                    .uri(
-                            "/v1/pay-order/seller/product-orders/{productOrderId}/claim/return/holdback",
-                            productOrderId)
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve()
-                    .toBodilessEntity();
+            org.springframework.http.ResponseEntity<String> response =
+                    restClient
+                            .post()
+                            .uri(
+                                    "/v1/pay-order/seller/product-orders/{productOrderId}/claim/return/holdback",
+                                    productOrderId)
+                            .header("Authorization", "Bearer " + token)
+                            .retrieve()
+                            .toEntity(String.class);
+            log.info(
+                    "네이버 반품보류 응답: status={}, body={}",
+                    response.getStatusCode(),
+                    response.getBody());
         } catch (ResourceAccessException e) {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
@@ -525,14 +550,19 @@ public class NaverCommerceApiClient {
     public void releaseReturnHoldback(String productOrderId) {
         String token = tokenManager.getAccessToken();
         try {
-            restClient
-                    .post()
-                    .uri(
-                            "/v1/pay-order/seller/product-orders/{productOrderId}/claim/return/holdback/release",
-                            productOrderId)
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve()
-                    .toBodilessEntity();
+            org.springframework.http.ResponseEntity<String> response =
+                    restClient
+                            .post()
+                            .uri(
+                                    "/v1/pay-order/seller/product-orders/{productOrderId}/claim/return/holdback/release",
+                                    productOrderId)
+                            .header("Authorization", "Bearer " + token)
+                            .retrieve()
+                            .toEntity(String.class);
+            log.info(
+                    "네이버 반품보류 해제 응답: status={}, body={}",
+                    response.getStatusCode(),
+                    response.getBody());
         } catch (ResourceAccessException e) {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
@@ -601,14 +631,19 @@ public class NaverCommerceApiClient {
     public void holdbackExchange(String productOrderId) {
         String token = tokenManager.getAccessToken();
         try {
-            restClient
-                    .post()
-                    .uri(
-                            "/v1/pay-order/seller/product-orders/{productOrderId}/claim/exchange/holdback",
-                            productOrderId)
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve()
-                    .toBodilessEntity();
+            org.springframework.http.ResponseEntity<String> response =
+                    restClient
+                            .post()
+                            .uri(
+                                    "/v1/pay-order/seller/product-orders/{productOrderId}/claim/exchange/holdback",
+                                    productOrderId)
+                            .header("Authorization", "Bearer " + token)
+                            .retrieve()
+                            .toEntity(String.class);
+            log.info(
+                    "네이버 교환보류 응답: status={}, body={}",
+                    response.getStatusCode(),
+                    response.getBody());
         } catch (ResourceAccessException e) {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
@@ -618,14 +653,19 @@ public class NaverCommerceApiClient {
     public void releaseExchangeHoldback(String productOrderId) {
         String token = tokenManager.getAccessToken();
         try {
-            restClient
-                    .post()
-                    .uri(
-                            "/v1/pay-order/seller/product-orders/{productOrderId}/claim/exchange/holdback/release",
-                            productOrderId)
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve()
-                    .toBodilessEntity();
+            org.springframework.http.ResponseEntity<String> response =
+                    restClient
+                            .post()
+                            .uri(
+                                    "/v1/pay-order/seller/product-orders/{productOrderId}/claim/exchange/holdback/release",
+                                    productOrderId)
+                            .header("Authorization", "Bearer " + token)
+                            .retrieve()
+                            .toEntity(String.class);
+            log.info(
+                    "네이버 교환보류 해제 응답: status={}, body={}",
+                    response.getStatusCode(),
+                    response.getBody());
         } catch (ResourceAccessException e) {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
@@ -729,14 +769,19 @@ public class NaverCommerceApiClient {
     public void answerProductQna(long questionId, String commentContent) {
         String token = tokenManager.getAccessToken();
         try {
-            restClient
-                    .put()
-                    .uri("/v1/contents/qnas/{questionId}", questionId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .body(new NaverProductQnaAnswerRequest(commentContent))
-                    .retrieve()
-                    .toBodilessEntity();
+            org.springframework.http.ResponseEntity<String> response =
+                    restClient
+                            .put()
+                            .uri("/v1/contents/qnas/{questionId}", questionId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .body(new NaverProductQnaAnswerRequest(commentContent))
+                            .retrieve()
+                            .toEntity(String.class);
+            log.info(
+                    "네이버 상품문의 답변 응답: status={}, body={}",
+                    response.getStatusCode(),
+                    response.getBody());
         } catch (ResourceAccessException e) {
             throw NaverCommerceClientConfig.toNetworkException(e);
         }
