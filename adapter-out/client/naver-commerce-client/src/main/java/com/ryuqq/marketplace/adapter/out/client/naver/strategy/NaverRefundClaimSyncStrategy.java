@@ -14,6 +14,7 @@ import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavail
 import com.ryuqq.marketplace.application.refund.port.out.client.RefundClaimSyncStrategy;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
 import com.ryuqq.marketplace.domain.refund.outbox.vo.RefundOutboxType;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -48,7 +49,7 @@ public class NaverRefundClaimSyncStrategy implements RefundClaimSyncStrategy {
     }
 
     @Override
-    public OutboxSyncResult execute(RefundOutbox outbox) {
+    public OutboxSyncResult execute(RefundOutbox outbox, Shop shop) {
         String externalProductOrderId = resolveExternalProductOrderId(outbox.orderItemIdValue());
         RefundOutboxType type = outbox.outboxType();
 

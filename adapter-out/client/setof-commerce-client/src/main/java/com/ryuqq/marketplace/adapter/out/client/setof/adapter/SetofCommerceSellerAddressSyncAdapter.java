@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.application.outboundseller.port.out.client.Outbound
 import com.ryuqq.marketplace.application.selleraddress.manager.SellerAddressReadManager;
 import com.ryuqq.marketplace.domain.selleraddress.aggregate.SellerAddress;
 import com.ryuqq.marketplace.domain.selleraddress.id.SellerAddressId;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,7 +41,7 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
     }
 
     @Override
-    public OutboundSellerSyncResult createSellerAddress(Long sellerId, Long addressId) {
+    public OutboundSellerSyncResult createSellerAddress(Shop shop, Long sellerId, Long addressId) {
         try {
             SellerAddress address = addressReadManager.getById(SellerAddressId.of(addressId));
             SetofSellerAddressSyncRequest request = mapper.toSellerAddressRequest(address);
@@ -58,7 +59,7 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
     }
 
     @Override
-    public OutboundSellerSyncResult updateSellerAddress(Long sellerId, Long addressId) {
+    public OutboundSellerSyncResult updateSellerAddress(Shop shop, Long sellerId, Long addressId) {
         try {
             SellerAddress address = addressReadManager.getById(SellerAddressId.of(addressId));
             SetofSellerAddressSyncRequest request = mapper.toSellerAddressRequest(address);
@@ -77,7 +78,7 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
     }
 
     @Override
-    public OutboundSellerSyncResult deleteSellerAddress(Long sellerId, Long addressId) {
+    public OutboundSellerSyncResult deleteSellerAddress(Shop shop, Long sellerId, Long addressId) {
         try {
             log.info("세토프 커머스 셀러주소 삭제 요청: sellerId={}, addressId={}", sellerId, addressId);
 

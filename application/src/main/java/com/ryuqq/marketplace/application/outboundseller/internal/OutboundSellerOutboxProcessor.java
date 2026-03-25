@@ -7,9 +7,16 @@ import com.ryuqq.marketplace.application.outboundseller.port.out.client.Outbound
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundSellerAddressSyncClient;
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundSellerSyncClient;
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundShippingPolicySyncClient;
+import com.ryuqq.marketplace.application.sellersaleschannel.manager.SellerSalesChannelReadManager;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.outboundseller.aggregate.OutboundSellerOutbox;
+import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import com.ryuqq.marketplace.domain.shop.id.ShopId;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,6 +35,8 @@ public class OutboundSellerOutboxProcessor {
     private final OutboundShippingPolicySyncClient shippingPolicySyncClient;
     private final OutboundRefundPolicySyncClient refundPolicySyncClient;
     private final OutboundSellerAddressSyncClient sellerAddressSyncClient;
+    private final SellerSalesChannelReadManager salesChannelReadManager;
+    private final ShopReadManager shopReadManager;
     private final Clock clock;
 
     public OutboundSellerOutboxProcessor(
@@ -38,6 +47,8 @@ public class OutboundSellerOutboxProcessor {
             OutboundShippingPolicySyncClient shippingPolicySyncClient,
             OutboundRefundPolicySyncClient refundPolicySyncClient,
             OutboundSellerAddressSyncClient sellerAddressSyncClient,
+            SellerSalesChannelReadManager salesChannelReadManager,
+            ShopReadManager shopReadManager,
             Clock clock) {
         this.commandManager = commandManager;
         this.readManager = readManager;
@@ -46,6 +57,8 @@ public class OutboundSellerOutboxProcessor {
         this.shippingPolicySyncClient = shippingPolicySyncClient;
         this.refundPolicySyncClient = refundPolicySyncClient;
         this.sellerAddressSyncClient = sellerAddressSyncClient;
+        this.salesChannelReadManager = salesChannelReadManager;
+        this.shopReadManager = shopReadManager;
         this.clock = clock;
     }
 
@@ -76,63 +89,75 @@ public class OutboundSellerOutboxProcessor {
     }
 
     private OutboundSellerSyncResult dispatch(OutboundSellerOutbox outbox) {
+        Shop shop = resolveShop(outbox.sellerIdValue());
         return switch (outbox.entityType()) {
-            case SELLER -> dispatchSeller(outbox);
-            case SHIPPING_POLICY -> dispatchShippingPolicy(outbox);
-            case REFUND_POLICY -> dispatchRefundPolicy(outbox);
-            case SELLER_ADDRESS -> dispatchSellerAddress(outbox);
+            case SELLER -> dispatchSeller(shop, outbox);
+            case SHIPPING_POLICY -> dispatchShippingPolicy(shop, outbox);
+            case REFUND_POLICY -> dispatchRefundPolicy(shop, outbox);
+            case SELLER_ADDRESS -> dispatchSellerAddress(shop, outbox);
         };
     }
 
-    private OutboundSellerSyncResult dispatchSeller(OutboundSellerOutbox outbox) {
+    private Shop resolveShop(Long sellerId) {
+        List<SellerSalesChannel> channels =
+                salesChannelReadManager.findConnectedBySellerId(SellerId.of(sellerId));
+        if (channels.isEmpty()) {
+            throw new IllegalStateException(
+                    "셀러에 연결된 판매채널이 없습니다. sellerId=" + sellerId);
+        }
+        long shopId = channels.get(0).shopId();
+        return shopReadManager.getById(ShopId.of(shopId));
+    }
+
+    private OutboundSellerSyncResult dispatchSeller(Shop shop, OutboundSellerOutbox outbox) {
         return switch (outbox.operationType()) {
-            case CREATE -> sellerSyncClient.createSeller(outbox.sellerIdValue());
-            case UPDATE -> sellerSyncClient.updateSeller(outbox.sellerIdValue());
+            case CREATE -> sellerSyncClient.createSeller(shop, outbox.sellerIdValue());
+            case UPDATE -> sellerSyncClient.updateSeller(shop, outbox.sellerIdValue());
             case DELETE ->
                     OutboundSellerSyncResult.nonRetryableFailure(
                             "UNSUPPORTED", "셀러 삭제 동기화는 지원하지 않습니다");
         };
     }
 
-    private OutboundSellerSyncResult dispatchShippingPolicy(OutboundSellerOutbox outbox) {
+    private OutboundSellerSyncResult dispatchShippingPolicy(Shop shop, OutboundSellerOutbox outbox) {
         return switch (outbox.operationType()) {
             case CREATE ->
                     shippingPolicySyncClient.createShippingPolicy(
-                            outbox.sellerIdValue(), outbox.entityId());
+                            shop, outbox.sellerIdValue(), outbox.entityId());
             case UPDATE ->
                     shippingPolicySyncClient.updateShippingPolicy(
-                            outbox.sellerIdValue(), outbox.entityId());
+                            shop, outbox.sellerIdValue(), outbox.entityId());
             case DELETE ->
                     OutboundSellerSyncResult.nonRetryableFailure(
                             "UNSUPPORTED", "배송정책 삭제 동기화는 지원하지 않습니다");
         };
     }
 
-    private OutboundSellerSyncResult dispatchRefundPolicy(OutboundSellerOutbox outbox) {
+    private OutboundSellerSyncResult dispatchRefundPolicy(Shop shop, OutboundSellerOutbox outbox) {
         return switch (outbox.operationType()) {
             case CREATE ->
                     refundPolicySyncClient.createRefundPolicy(
-                            outbox.sellerIdValue(), outbox.entityId());
+                            shop, outbox.sellerIdValue(), outbox.entityId());
             case UPDATE ->
                     refundPolicySyncClient.updateRefundPolicy(
-                            outbox.sellerIdValue(), outbox.entityId());
+                            shop, outbox.sellerIdValue(), outbox.entityId());
             case DELETE ->
                     OutboundSellerSyncResult.nonRetryableFailure(
                             "UNSUPPORTED", "환불정책 삭제 동기화는 지원하지 않습니다");
         };
     }
 
-    private OutboundSellerSyncResult dispatchSellerAddress(OutboundSellerOutbox outbox) {
+    private OutboundSellerSyncResult dispatchSellerAddress(Shop shop, OutboundSellerOutbox outbox) {
         return switch (outbox.operationType()) {
             case CREATE ->
                     sellerAddressSyncClient.createSellerAddress(
-                            outbox.sellerIdValue(), outbox.entityId());
+                            shop, outbox.sellerIdValue(), outbox.entityId());
             case UPDATE ->
                     sellerAddressSyncClient.updateSellerAddress(
-                            outbox.sellerIdValue(), outbox.entityId());
+                            shop, outbox.sellerIdValue(), outbox.entityId());
             case DELETE ->
                     sellerAddressSyncClient.deleteSellerAddress(
-                            outbox.sellerIdValue(), outbox.entityId());
+                            shop, outbox.sellerIdValue(), outbox.entityId());
         };
     }
 

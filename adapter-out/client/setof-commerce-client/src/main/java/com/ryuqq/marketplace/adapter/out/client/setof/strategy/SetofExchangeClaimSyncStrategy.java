@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.exchange.port.out.client.ExchangeClaimSyncStrategy;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
 import com.ryuqq.marketplace.domain.exchange.outbox.vo.ExchangeOutboxType;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,7 +26,7 @@ public class SetofExchangeClaimSyncStrategy implements ExchangeClaimSyncStrategy
     private static final Logger log = LoggerFactory.getLogger(SetofExchangeClaimSyncStrategy.class);
 
     @Override
-    public OutboxSyncResult execute(ExchangeOutbox outbox) {
+    public OutboxSyncResult execute(ExchangeOutbox outbox, Shop shop) {
         ExchangeOutboxType type = outbox.outboxType();
 
         log.info(

@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.shippingpolicy.manager.ShippingPolicyRe
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import com.ryuqq.marketplace.domain.shippingpolicy.aggregate.ShippingPolicy;
 import com.ryuqq.marketplace.domain.shippingpolicy.id.ShippingPolicyId;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,7 +42,7 @@ public class SetofCommerceShippingPolicySyncAdapter implements OutboundShippingP
     }
 
     @Override
-    public OutboundSellerSyncResult createShippingPolicy(Long sellerId, Long policyId) {
+    public OutboundSellerSyncResult createShippingPolicy(Shop shop, Long sellerId, Long policyId) {
         try {
             ShippingPolicy policy =
                     policyReadManager.getBySellerIdAndId(
@@ -61,7 +62,7 @@ public class SetofCommerceShippingPolicySyncAdapter implements OutboundShippingP
     }
 
     @Override
-    public OutboundSellerSyncResult updateShippingPolicy(Long sellerId, Long policyId) {
+    public OutboundSellerSyncResult updateShippingPolicy(Shop shop, Long sellerId, Long policyId) {
         try {
             ShippingPolicy policy =
                     policyReadManager.getBySellerIdAndId(

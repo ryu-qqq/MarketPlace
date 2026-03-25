@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.refundpolicy.manager.RefundPolicyReadMa
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
 import com.ryuqq.marketplace.domain.refundpolicy.id.RefundPolicyId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,7 +42,7 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
     }
 
     @Override
-    public OutboundSellerSyncResult createRefundPolicy(Long sellerId, Long policyId) {
+    public OutboundSellerSyncResult createRefundPolicy(Shop shop, Long sellerId, Long policyId) {
         try {
             RefundPolicy policy =
                     policyReadManager.getBySellerIdAndId(
@@ -61,7 +62,7 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
     }
 
     @Override
-    public OutboundSellerSyncResult updateRefundPolicy(Long sellerId, Long policyId) {
+    public OutboundSellerSyncResult updateRefundPolicy(Shop shop, Long sellerId, Long policyId) {
         try {
             RefundPolicy policy =
                     policyReadManager.getBySellerIdAndId(

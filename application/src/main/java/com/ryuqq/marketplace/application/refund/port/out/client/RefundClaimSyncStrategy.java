@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.refund.port.out.client;
 
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 
 /**
  * 환불 클레임 동기화 전략 포트.
@@ -10,5 +11,5 @@ import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
  */
 public interface RefundClaimSyncStrategy {
 
-    OutboxSyncResult execute(RefundOutbox outbox);
+    OutboxSyncResult execute(RefundOutbox outbox, Shop shop);
 }

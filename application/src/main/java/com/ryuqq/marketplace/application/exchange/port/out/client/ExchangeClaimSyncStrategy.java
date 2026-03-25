@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.exchange.port.out.client;
 
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 
 /**
  * 교환 클레임 동기화 전략 포트.
@@ -10,5 +11,5 @@ import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
  */
 public interface ExchangeClaimSyncStrategy {
 
-    OutboxSyncResult execute(ExchangeOutbox outbox);
+    OutboxSyncResult execute(ExchangeOutbox outbox, Shop shop);
 }

@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.application.outboundseller.port.out.client.Outbound
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,7 +41,7 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
     }
 
     @Override
-    public OutboundSellerSyncResult createSeller(Long sellerId) {
+    public OutboundSellerSyncResult createSeller(Shop shop, Long sellerId) {
         try {
             Seller seller = sellerReadManager.getById(SellerId.of(sellerId));
             SetofSellerSyncRequest request = mapper.toSellerRequest(seller);
@@ -59,7 +60,7 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
     }
 
     @Override
-    public OutboundSellerSyncResult updateSeller(Long sellerId) {
+    public OutboundSellerSyncResult updateSeller(Shop shop, Long sellerId) {
         try {
             Seller seller = sellerReadManager.getById(SellerId.of(sellerId));
             SetofSellerSyncRequest request = mapper.toSellerRequest(seller);

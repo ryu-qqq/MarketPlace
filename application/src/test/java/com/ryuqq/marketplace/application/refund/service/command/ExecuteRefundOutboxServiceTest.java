@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.when;
 
+import com.ryuqq.marketplace.application.claimsync.manager.ExternalOrderItemMappingReadManager;
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
@@ -14,8 +15,12 @@ import com.ryuqq.marketplace.application.refund.factory.RefundCommandFactory;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundOutboxReadManager;
 import com.ryuqq.marketplace.application.refund.port.out.client.RefundClaimSyncStrategy;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
+import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
 import com.ryuqq.marketplace.domain.refund.outbox.aggregate.RefundOutbox;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -37,6 +42,8 @@ class ExecuteRefundOutboxServiceTest {
     @Mock private RefundOutboxCommandManager outboxCommandManager;
     @Mock private RefundClaimSyncStrategy claimSyncStrategy;
     @Mock private RefundCommandFactory commandFactory;
+    @Mock private ExternalOrderItemMappingReadManager mappingReadManager;
+    @Mock private ShopReadManager shopReadManager;
 
     @Nested
     @DisplayName("execute() - 환불 Outbox 실행")
@@ -51,11 +58,17 @@ class ExecuteRefundOutboxServiceTest {
                     RefundCommandFixtures.executeRefundOutboxCommand(outboxId, "REQUEST");
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
+            ExternalOrderItemMapping mapping = Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = Mockito.mock(Shop.class);
             Instant now = Instant.now();
 
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(outbox.idValue()).willReturn(outboxId);
-            given(claimSyncStrategy.execute(outbox)).willReturn(OutboxSyncResult.success());
+            given(outbox.orderItemIdValue()).willReturn("OI-1");
+            given(mappingReadManager.findByOrderItemId("OI-1")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            given(claimSyncStrategy.execute(outbox, shop)).willReturn(OutboxSyncResult.success());
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now));
 
@@ -77,11 +90,17 @@ class ExecuteRefundOutboxServiceTest {
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
             OutboxSyncResult failureResult = OutboxSyncResult.failure(true, "외부 API 오류");
+            ExternalOrderItemMapping mapping = Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = Mockito.mock(Shop.class);
             Instant now = Instant.now();
 
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(outbox.idValue()).willReturn(outboxId);
-            given(claimSyncStrategy.execute(outbox)).willReturn(failureResult);
+            given(outbox.orderItemIdValue()).willReturn("OI-2");
+            given(mappingReadManager.findByOrderItemId("OI-2")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            given(claimSyncStrategy.execute(outbox, shop)).willReturn(failureResult);
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now));
 
@@ -104,11 +123,17 @@ class ExecuteRefundOutboxServiceTest {
                     RefundCommandFixtures.executeRefundOutboxCommand(outboxId, "REQUEST");
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
+            ExternalOrderItemMapping mapping = Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = Mockito.mock(Shop.class);
             Instant now = Instant.now();
 
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(outbox.idValue()).willReturn(outboxId);
-            given(claimSyncStrategy.execute(outbox))
+            given(outbox.orderItemIdValue()).willReturn("OI-3");
+            given(mappingReadManager.findByOrderItemId("OI-3")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            given(claimSyncStrategy.execute(outbox, shop))
                     .willThrow(new ExternalServiceUnavailableException("서비스 일시 장애"));
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now));
@@ -130,11 +155,17 @@ class ExecuteRefundOutboxServiceTest {
                     RefundCommandFixtures.executeRefundOutboxCommand(outboxId, "REQUEST");
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
+            ExternalOrderItemMapping mapping = Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = Mockito.mock(Shop.class);
             Instant now = Instant.now();
 
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(outbox.idValue()).willReturn(outboxId);
-            willThrow(new RuntimeException("예기치 않은 오류")).given(claimSyncStrategy).execute(outbox);
+            given(outbox.orderItemIdValue()).willReturn("OI-4");
+            given(mappingReadManager.findByOrderItemId("OI-4")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            willThrow(new RuntimeException("예기치 않은 오류")).given(claimSyncStrategy).execute(outbox, shop);
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now));
 

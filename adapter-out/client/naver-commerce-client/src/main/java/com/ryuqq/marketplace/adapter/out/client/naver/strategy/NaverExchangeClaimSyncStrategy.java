@@ -16,6 +16,7 @@ import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavail
 import com.ryuqq.marketplace.application.exchange.port.out.client.ExchangeClaimSyncStrategy;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
 import com.ryuqq.marketplace.domain.exchange.outbox.vo.ExchangeOutboxType;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -52,7 +53,7 @@ public class NaverExchangeClaimSyncStrategy implements ExchangeClaimSyncStrategy
     }
 
     @Override
-    public OutboxSyncResult execute(ExchangeOutbox outbox) {
+    public OutboxSyncResult execute(ExchangeOutbox outbox, Shop shop) {
         String externalProductOrderId = resolveExternalProductOrderId(outbox.orderItemIdValue());
         ExchangeOutboxType type = outbox.outboxType();
 

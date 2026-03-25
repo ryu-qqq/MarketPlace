@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.when;
 
+import com.ryuqq.marketplace.application.claimsync.manager.ExternalOrderItemMappingReadManager;
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
@@ -14,8 +15,12 @@ import com.ryuqq.marketplace.application.exchange.factory.ExchangeCommandFactory
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxCommandManager;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeOutboxReadManager;
 import com.ryuqq.marketplace.application.exchange.port.out.client.ExchangeClaimSyncStrategy;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.exchange.outbox.aggregate.ExchangeOutbox;
+import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -37,6 +42,8 @@ class ExecuteExchangeOutboxServiceTest {
     @Mock private ExchangeOutboxCommandManager outboxCommandManager;
     @Mock private ExchangeClaimSyncStrategy claimSyncStrategy;
     @Mock private ExchangeCommandFactory commandFactory;
+    @Mock private ExternalOrderItemMappingReadManager mappingReadManager;
+    @Mock private ShopReadManager shopReadManager;
 
     @Nested
     @DisplayName("execute() - 교환 Outbox 실행")
@@ -52,10 +59,16 @@ class ExecuteExchangeOutboxServiceTest {
                     ExchangeCommandFixtures.executeExchangeOutboxCommand(outboxId, "COLLECT");
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             ExchangeOutbox freshOutbox = Mockito.mock(ExchangeOutbox.class);
+            ExternalOrderItemMapping mapping = Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = Mockito.mock(Shop.class);
 
             given(outbox.idValue()).willReturn(outboxId);
+            given(outbox.orderItemIdValue()).willReturn("OI-1");
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
-            given(claimSyncStrategy.execute(outbox)).willReturn(OutboxSyncResult.success());
+            given(mappingReadManager.findByOrderItemId("OI-1")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            given(claimSyncStrategy.execute(outbox, shop)).willReturn(OutboxSyncResult.success());
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now));
 
@@ -78,10 +91,16 @@ class ExecuteExchangeOutboxServiceTest {
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             ExchangeOutbox freshOutbox = Mockito.mock(ExchangeOutbox.class);
             OutboxSyncResult failureResult = OutboxSyncResult.failure(true, "외부 API 오류");
+            ExternalOrderItemMapping mapping = Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = Mockito.mock(Shop.class);
 
             given(outbox.idValue()).willReturn(outboxId);
+            given(outbox.orderItemIdValue()).willReturn("OI-2");
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
-            given(claimSyncStrategy.execute(outbox)).willReturn(failureResult);
+            given(mappingReadManager.findByOrderItemId("OI-2")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            given(claimSyncStrategy.execute(outbox, shop)).willReturn(failureResult);
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now));
 
@@ -105,10 +124,16 @@ class ExecuteExchangeOutboxServiceTest {
                     ExchangeCommandFixtures.executeExchangeOutboxCommand(outboxId, "COLLECT");
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             ExchangeOutbox freshOutbox = Mockito.mock(ExchangeOutbox.class);
+            ExternalOrderItemMapping mapping = Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = Mockito.mock(Shop.class);
 
             given(outbox.idValue()).willReturn(outboxId);
+            given(outbox.orderItemIdValue()).willReturn("OI-3");
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
-            given(claimSyncStrategy.execute(outbox))
+            given(mappingReadManager.findByOrderItemId("OI-3")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            given(claimSyncStrategy.execute(outbox, shop))
                     .willThrow(new ExternalServiceUnavailableException("서비스 일시 장애"));
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now));
@@ -131,10 +156,16 @@ class ExecuteExchangeOutboxServiceTest {
                     ExchangeCommandFixtures.executeExchangeOutboxCommand(outboxId, "COLLECT");
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             ExchangeOutbox freshOutbox = Mockito.mock(ExchangeOutbox.class);
+            ExternalOrderItemMapping mapping = Mockito.mock(ExternalOrderItemMapping.class);
+            Shop shop = Mockito.mock(Shop.class);
 
             given(outbox.idValue()).willReturn(outboxId);
+            given(outbox.orderItemIdValue()).willReturn("OI-4");
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
-            willThrow(new RuntimeException("예기치 않은 오류")).given(claimSyncStrategy).execute(outbox);
+            given(mappingReadManager.findByOrderItemId("OI-4")).willReturn(mapping);
+            given(mapping.salesChannelId()).willReturn(100L);
+            given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
+            willThrow(new RuntimeException("예기치 않은 오류")).given(claimSyncStrategy).execute(outbox, shop);
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now));
 
