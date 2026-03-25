@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
@@ -40,6 +41,7 @@ class SetofFullProductUpdateExecutorTest {
 
     @Mock private SetofCommerceApiClient apiClient;
     @Mock private SetofCommerceProductMapper mapper;
+    @Mock private SetofCommerceProperties properties;
 
     @Nested
     @DisplayName("supports()")
@@ -76,6 +78,7 @@ class SetofFullProductUpdateExecutorTest {
             Long externalCategoryId = 500L;
             Long externalBrandId = 600L;
             String externalProductId = "12345";
+            String serviceToken = "test-service-token";
 
             var updateRequest =
                     new SetofProductGroupUpdateRequest(
@@ -88,6 +91,7 @@ class SetofFullProductUpdateExecutorTest {
                                     eq(externalBrandId),
                                     eq(null)))
                     .willReturn(updateRequest);
+            given(properties.getServiceToken()).willReturn(serviceToken);
 
             // when
             sut.execute(
@@ -106,7 +110,7 @@ class SetofFullProductUpdateExecutorTest {
                             eq(externalCategoryId),
                             eq(externalBrandId),
                             eq(null));
-            verify(apiClient).updateProduct(eq(externalProductId), eq(updateRequest));
+            verify(apiClient).updateProduct(eq(serviceToken), eq(externalProductId), eq(updateRequest));
         }
     }
 

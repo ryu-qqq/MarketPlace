@@ -177,7 +177,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
                         now);
 
         exchangeCommandManager.persist(exchangeClaim);
-        partialReturnOrderItem(orderItemId, exchangeQty, "교환 요청 동기화", now);
+        requestReturnOrderItem(orderItemId, "교환 요청 동기화", now);
         recordHistory(exchangeClaim.idValue(), null, "REQUESTED", exchangeQty);
         return 0L;
     }
@@ -300,6 +300,22 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         historyCommandManager.persist(
                 historyFactory.createStatusChangeBySystemWithQty(
                         ClaimType.EXCHANGE, claimId, from, toStatus, qty));
+    }
+
+    /** 교환 요청: OrderItem을 RETURN_REQUESTED 상태로 변경 (수량 누적 없음). */
+    private void requestReturnOrderItem(OrderItemId orderItemId, String reason, Instant now) {
+        orderItemReadManager
+                .findById(orderItemId)
+                .ifPresent(
+                        item -> {
+                            if (item.status()
+                                    .canTransitionTo(
+                                            com.ryuqq.marketplace.domain.order.vo.OrderItemStatus
+                                                    .RETURN_REQUESTED)) {
+                                item.requestReturn(SYNC_ACTOR, reason, now);
+                                orderItemCommandManager.persistAll(List.of(item));
+                            }
+                        });
     }
 
     /**

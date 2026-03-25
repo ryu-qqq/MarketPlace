@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willAnswer;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupBasicInfoUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductPriceUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductStockUpdateRequest;
@@ -31,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class SetofCommerceInternalAdapterCircuitBreakerTest {
 
     @Mock private SetofCommerceApiClient apiClient;
+    @Mock private SetofCommerceProperties properties;
 
     private ExternalServiceUnavailableException unavailableException;
 
@@ -48,13 +50,14 @@ class SetofCommerceInternalAdapterCircuitBreakerTest {
         @Test
         @DisplayName("ApiClient가 ExternalServiceUnavailableException을 던지면 그대로 전파된다")
         void updateBasicInfo_WhenApiClientThrows_PropagatesException() {
-            SetofCommerceBasicInfoAdapter adapter = new SetofCommerceBasicInfoAdapter(apiClient);
+            SetofCommerceBasicInfoAdapter adapter =
+                    new SetofCommerceBasicInfoAdapter(apiClient, properties);
             willAnswer(
                             invocation -> {
                                 throw unavailableException;
                             })
                     .given(apiClient)
-                    .updateBasicInfo(any(), any());
+                    .updateBasicInfo(any(), any(), any());
 
             assertThatThrownBy(
                             () ->
@@ -75,7 +78,7 @@ class SetofCommerceInternalAdapterCircuitBreakerTest {
 
         @BeforeEach
         void setUp() {
-            adapter = new SetofCommerceProductAdapter(apiClient);
+            adapter = new SetofCommerceProductAdapter(apiClient, properties);
         }
 
         @Test
@@ -86,7 +89,7 @@ class SetofCommerceInternalAdapterCircuitBreakerTest {
                                 throw unavailableException;
                             })
                     .given(apiClient)
-                    .updatePrice(any(), any());
+                    .updatePrice(any(), any(), any());
 
             assertThatThrownBy(
                             () ->
@@ -104,7 +107,7 @@ class SetofCommerceInternalAdapterCircuitBreakerTest {
                                 throw unavailableException;
                             })
                     .given(apiClient)
-                    .updateStock(any(), any());
+                    .updateStock(any(), any(), any());
 
             assertThatThrownBy(
                             () -> adapter.updateStock(1L, new SetofProductStockUpdateRequest(100)))
@@ -120,7 +123,7 @@ class SetofCommerceInternalAdapterCircuitBreakerTest {
                                 throw unavailableException;
                             })
                     .given(apiClient)
-                    .updateProducts(any(), any());
+                    .updateProducts(any(), any(), any());
 
             assertThatThrownBy(
                             () ->

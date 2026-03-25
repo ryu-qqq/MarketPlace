@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentSyncStrategy;
+import com.ryuqq.marketplace.domain.shipment.exception.SyncChannelNotSupportedException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -65,7 +66,7 @@ class ShipmentSyncStrategyProviderTest {
 
             // when & then
             assertThatThrownBy(() -> sut.getStrategy("UNKNOWN"))
-                    .isInstanceOf(IllegalStateException.class)
+                    .isInstanceOf(SyncChannelNotSupportedException.class)
                     .hasMessageContaining("UNKNOWN");
         }
 
@@ -77,7 +78,7 @@ class ShipmentSyncStrategyProviderTest {
 
             // when & then
             assertThatThrownBy(() -> sut.getStrategy("NAVER"))
-                    .isInstanceOf(IllegalStateException.class)
+                    .isInstanceOf(SyncChannelNotSupportedException.class)
                     .hasMessageContaining("NAVER");
         }
     }

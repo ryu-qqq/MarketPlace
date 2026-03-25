@@ -75,7 +75,6 @@ class SetofCommerceProductIntegrationTest {
         SetofProductGroupRegistrationRequest request =
                 new SetofProductGroupRegistrationRequest(
                         null,
-                        TEST_SELLER_ID,
                         TEST_BRAND_ID,
                         TEST_CATEGORY_ID,
                         null,

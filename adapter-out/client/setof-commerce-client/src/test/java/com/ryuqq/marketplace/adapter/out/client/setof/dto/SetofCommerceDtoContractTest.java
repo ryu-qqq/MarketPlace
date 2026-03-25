@@ -292,7 +292,6 @@ class SetofCommerceDtoContractTest {
             var request =
                     new SetofProductGroupRegistrationRequest(
                             null,
-                            10L,
                             null,
                             200L,
                             null,
@@ -320,7 +319,6 @@ class SetofCommerceDtoContractTest {
             assertThat(node.has("notice")).isFalse();
 
             // non-null 필드는 포함
-            assertThat(node.has("sellerId")).isTrue();
             assertThat(node.has("categoryId")).isTrue();
             assertThat(node.has("productGroupName")).isTrue();
             assertThat(node.has("regularPrice")).isTrue();

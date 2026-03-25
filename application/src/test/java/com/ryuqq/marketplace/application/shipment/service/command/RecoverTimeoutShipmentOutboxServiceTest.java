@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.application.shipment.dto.command.RecoverTimeoutShipmentOutboxCommand;
+import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.domain.shipment.outbox.ShipmentOutboxFixtures;
@@ -30,10 +32,14 @@ class RecoverTimeoutShipmentOutboxServiceTest {
 
     @Mock private ShipmentOutboxReadManager outboxReadManager;
     @Mock private ShipmentOutboxCommandManager outboxCommandManager;
+    @Mock private ShipmentCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - 타임아웃 배송 아웃박스 복구")
     class ExecuteTest {
+
+        private static final Instant NOW = Instant.parse("2026-02-18T10:00:00Z");
+        private static final Long OUTBOX_ID = 1L;
 
         @Test
         @DisplayName("타임아웃된 Outbox를 PENDING으로 복구하고 성공 결과를 반환한다")
@@ -43,6 +49,9 @@ class RecoverTimeoutShipmentOutboxServiceTest {
                     RecoverTimeoutShipmentOutboxCommand.of(50, 300L);
 
             ShipmentOutbox outbox = ShipmentOutboxFixtures.processingShipmentOutbox();
+            given(commandFactory.resolveTimeoutThreshold(command)).willReturn(NOW);
+            given(commandFactory.createOutboxTransitionContext(outbox.idValue()))
+                    .willReturn(new StatusChangeContext<>(outbox.idValue(), NOW));
             given(
                             outboxReadManager.findProcessingTimeoutOutboxes(
                                     org.mockito.ArgumentMatchers.any(Instant.class),
@@ -66,6 +75,7 @@ class RecoverTimeoutShipmentOutboxServiceTest {
             RecoverTimeoutShipmentOutboxCommand command =
                     RecoverTimeoutShipmentOutboxCommand.of(50, 300L);
 
+            given(commandFactory.resolveTimeoutThreshold(command)).willReturn(NOW);
             given(
                             outboxReadManager.findProcessingTimeoutOutboxes(
                                     org.mockito.ArgumentMatchers.any(Instant.class),
@@ -90,6 +100,9 @@ class RecoverTimeoutShipmentOutboxServiceTest {
                     RecoverTimeoutShipmentOutboxCommand.of(50, 300L);
 
             ShipmentOutbox outbox = ShipmentOutboxFixtures.processingShipmentOutbox();
+            given(commandFactory.resolveTimeoutThreshold(command)).willReturn(NOW);
+            given(commandFactory.createOutboxTransitionContext(outbox.idValue()))
+                    .willReturn(new StatusChangeContext<>(outbox.idValue(), NOW));
             given(
                             outboxReadManager.findProcessingTimeoutOutboxes(
                                     org.mockito.ArgumentMatchers.any(Instant.class),

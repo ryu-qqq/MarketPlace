@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.willThrow;
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
+import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofSellerTokenProvider;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
@@ -35,6 +36,7 @@ class SetofCommerceSellerSyncAdapterCircuitBreakerTest {
     @Mock private SellerReadManager sellerReadManager;
     @Mock private SetofCommerceSellerSyncMapper mapper;
     @Mock private SetofCommerceProperties properties;
+    @Mock private SetofSellerTokenProvider tokenProvider;
     @Mock private Seller seller;
     @Mock private Shop shop;
 
@@ -42,7 +44,7 @@ class SetofCommerceSellerSyncAdapterCircuitBreakerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SetofCommerceSellerSyncAdapter(apiClient, sellerReadManager, mapper, properties);
+        sut = new SetofCommerceSellerSyncAdapter(apiClient, sellerReadManager, mapper, properties, tokenProvider);
     }
 
     @Nested

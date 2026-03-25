@@ -68,19 +68,15 @@ public class RequestRefundBatchService implements RequestRefundBatchUseCase {
                         orderItemReadManager.findById(OrderItemId.of(item.orderItemId()));
                 orderItem.ifPresent(
                         oi -> {
-                            if (oi.remainingReturnableQty() > 0) {
+                            if (oi.status()
+                                    .canTransitionTo(
+                                            com.ryuqq.marketplace.domain.order.vo.OrderItemStatus
+                                                    .RETURN_REQUESTED)) {
                                 StatusChangeContext<OrderItemId> ctx =
                                         commandFactory.createRequestOrderItemContext(
                                                 item.orderItemId());
-                                int effectiveQty =
-                                        Math.min(
-                                                item.refundQty(),
-                                                oi.remainingReturnableQty());
-                                oi.partialReturn(
-                                        effectiveQty,
-                                        command.requestedBy(),
-                                        "환불 요청",
-                                        ctx.changedAt());
+                                oi.requestReturn(
+                                        command.requestedBy(), "환불 요청", ctx.changedAt());
                                 returnRequestedItems.add(oi);
                             }
                         });

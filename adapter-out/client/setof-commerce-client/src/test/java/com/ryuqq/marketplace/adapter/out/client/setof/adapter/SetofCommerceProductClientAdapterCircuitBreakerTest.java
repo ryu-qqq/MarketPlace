@@ -7,9 +7,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
 import com.ryuqq.marketplace.adapter.out.client.setof.strategy.SetofProductUpdateExecutorProvider;
 import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofCommerceApiExecutor;
+import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofSellerTokenProvider;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.domain.sellersaleschannel.SellerSalesChannelFixtures;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -32,6 +34,8 @@ class SetofCommerceProductClientAdapterCircuitBreakerTest {
     @Mock private SetofCommerceApiClient apiClient;
     @Mock private SetofCommerceProductMapper mapper;
     @Mock private SetofProductUpdateExecutorProvider updateExecutorProvider;
+    @Mock private SetofCommerceProperties properties;
+    @Mock private SetofSellerTokenProvider tokenProvider;
 
     private CircuitBreaker circuitBreaker;
     private SetofCommerceApiExecutor executor;
@@ -52,7 +56,9 @@ class SetofCommerceProductClientAdapterCircuitBreakerTest {
         executor = new SetofCommerceApiExecutor(circuitBreaker);
 
         // SetofCommerceApiClient를 Executor 기반 실행으로 래핑
-        sut = new SetofCommerceProductClientAdapter(apiClient, mapper, updateExecutorProvider);
+        sut =
+                new SetofCommerceProductClientAdapter(
+                        apiClient, mapper, updateExecutorProvider, properties, tokenProvider);
     }
 
     @Nested
@@ -69,7 +75,7 @@ class SetofCommerceProductClientAdapterCircuitBreakerTest {
                                     "세토프 커머스 서비스 일시 중단 (Circuit Breaker OPEN)",
                                     new RuntimeException()))
                     .given(apiClient)
-                    .updateProduct(any(), any());
+                    .updateProduct(any(), any(), any());
 
             // when & then
             assertThatThrownBy(

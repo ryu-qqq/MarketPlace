@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.claimsync.ClaimSyncFixtures;
 import com.ryuqq.marketplace.application.claimsync.manager.ExternalOrderItemMappingReadManager;
+import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.result.OutboxSyncResult;
 import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.shipment.dto.command.ExecuteShipmentOutboxCommand;
@@ -20,6 +21,7 @@ import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapp
 import com.ryuqq.marketplace.domain.shipment.outbox.ShipmentOutboxFixtures;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -47,9 +49,15 @@ class ExecuteShipmentOutboxServiceTest {
     private static final Long OUTBOX_ID = 1L;
     private static final String ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
     private static final String CHANNEL_CODE = "NAVER";
+    private static final Instant NOW = Instant.parse("2026-02-18T10:00:00Z");
 
     private ExecuteShipmentOutboxCommand defaultCommand() {
         return ExecuteShipmentOutboxCommand.of(OUTBOX_ID, ORDER_ITEM_ID, "SHIP");
+    }
+
+    private void stubOutboxTransitionContext() {
+        given(commandFactory.createOutboxTransitionContext(OUTBOX_ID))
+                .willReturn(new StatusChangeContext<>(OUTBOX_ID, NOW));
     }
 
     @Nested
@@ -66,6 +74,7 @@ class ExecuteShipmentOutboxServiceTest {
             ExternalOrderItemMapping mapping = ClaimSyncFixtures.defaultMapping();
             ShipmentSyncStrategy strategy = org.mockito.Mockito.mock(ShipmentSyncStrategy.class);
 
+            stubOutboxTransitionContext();
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
@@ -89,6 +98,7 @@ class ExecuteShipmentOutboxServiceTest {
             ExternalOrderItemMapping mapping = ClaimSyncFixtures.defaultMapping();
             ShipmentSyncStrategy strategy = org.mockito.Mockito.mock(ShipmentSyncStrategy.class);
 
+            stubOutboxTransitionContext();
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
@@ -113,6 +123,7 @@ class ExecuteShipmentOutboxServiceTest {
             ExternalOrderItemMapping mapping = ClaimSyncFixtures.defaultMapping();
             ShipmentSyncStrategy strategy = org.mockito.Mockito.mock(ShipmentSyncStrategy.class);
 
+            stubOutboxTransitionContext();
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
@@ -137,6 +148,7 @@ class ExecuteShipmentOutboxServiceTest {
             ExternalOrderItemMapping mapping = ClaimSyncFixtures.defaultMapping();
             ShipmentSyncStrategy strategy = org.mockito.Mockito.mock(ShipmentSyncStrategy.class);
 
+            stubOutboxTransitionContext();
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
@@ -159,6 +171,7 @@ class ExecuteShipmentOutboxServiceTest {
             ShipmentOutbox outbox = ShipmentOutboxFixtures.processingShipmentOutbox();
             ShipmentOutbox freshOutbox = ShipmentOutboxFixtures.processingShipmentOutbox();
 
+            stubOutboxTransitionContext();
             given(outboxReadManager.getById(OUTBOX_ID)).willReturn(outbox).willReturn(freshOutbox);
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(null);
 

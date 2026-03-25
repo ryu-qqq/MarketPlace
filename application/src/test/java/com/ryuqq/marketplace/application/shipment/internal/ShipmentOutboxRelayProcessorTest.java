@@ -7,11 +7,13 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.application.shipment.port.out.client.ShipmentOutboxPublishClient;
 import com.ryuqq.marketplace.domain.shipment.outbox.ShipmentOutboxFixtures;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
+import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -33,6 +35,7 @@ class ShipmentOutboxRelayProcessorTest {
     @Mock private ShipmentOutboxReadManager outboxReadManager;
     @Mock private ShipmentOutboxPublishClient publishClient;
     @Spy private ObjectMapper objectMapper;
+    @Mock private TimeProvider timeProvider;
 
     @Nested
     @DisplayName("relay() - 배송 Outbox SQS 발행")
@@ -43,6 +46,7 @@ class ShipmentOutboxRelayProcessorTest {
         void relay_PublishSuccess_PersistsAndReturnsTrue() {
             // given
             ShipmentOutbox outbox = ShipmentOutboxFixtures.pendingShipmentOutbox();
+            given(timeProvider.now()).willReturn(Instant.parse("2026-02-18T10:00:00Z"));
             given(publishClient.publish(anyString())).willReturn("msg-id-001");
 
             // when
@@ -61,6 +65,7 @@ class ShipmentOutboxRelayProcessorTest {
             ShipmentOutbox outbox = ShipmentOutboxFixtures.pendingShipmentOutbox();
             ShipmentOutbox freshOutbox = ShipmentOutboxFixtures.processingShipmentOutbox();
 
+            given(timeProvider.now()).willReturn(Instant.parse("2026-02-18T10:00:00Z"));
             given(outboxReadManager.getById(outbox.idValue())).willReturn(freshOutbox);
             willThrow(new RuntimeException("SQS 연결 실패")).given(publishClient).publish(anyString());
 
@@ -78,6 +83,7 @@ class ShipmentOutboxRelayProcessorTest {
             // given
             ShipmentOutbox outbox = ShipmentOutboxFixtures.pendingShipmentOutbox();
 
+            given(timeProvider.now()).willReturn(Instant.parse("2026-02-18T10:00:00Z"));
             willThrow(new RuntimeException("SQS 연결 실패")).given(publishClient).publish(anyString());
             given(outboxReadManager.getById(outbox.idValue()))
                     .willThrow(new RuntimeException("DB 연결 실패"));

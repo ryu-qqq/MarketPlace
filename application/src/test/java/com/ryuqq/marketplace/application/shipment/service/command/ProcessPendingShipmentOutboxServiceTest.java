@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.common.dto.result.SchedulerBatchProcessingResult;
 import com.ryuqq.marketplace.application.shipment.dto.command.ProcessPendingShipmentOutboxCommand;
+import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentOutboxRelayProcessor;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentOutboxReadManager;
 import com.ryuqq.marketplace.domain.shipment.outbox.ShipmentOutboxFixtures;
@@ -32,6 +33,7 @@ class ProcessPendingShipmentOutboxServiceTest {
 
     @Mock private ShipmentOutboxReadManager outboxReadManager;
     @Mock private ShipmentOutboxRelayProcessor relayProcessor;
+    @Mock private ShipmentCommandFactory commandFactory;
 
     @Nested
     @DisplayName("execute() - PENDING 배송 아웃박스 SQS 발행")
@@ -44,9 +46,11 @@ class ProcessPendingShipmentOutboxServiceTest {
             ProcessPendingShipmentOutboxCommand command =
                     ProcessPendingShipmentOutboxCommand.of(100, 5);
 
+            Instant beforeTime = Instant.parse("2026-02-18T10:00:00Z");
             ShipmentOutbox outbox1 = ShipmentOutboxFixtures.pendingShipmentOutbox();
             ShipmentOutbox outbox2 = ShipmentOutboxFixtures.pendingShipmentOutbox();
 
+            given(commandFactory.resolveBeforeTime(command)).willReturn(beforeTime);
             given(outboxReadManager.findPendingOutboxes(any(Instant.class), eq(100)))
                     .willReturn(List.of(outbox1, outbox2));
             given(relayProcessor.relay(outbox1)).willReturn(true);
@@ -68,9 +72,11 @@ class ProcessPendingShipmentOutboxServiceTest {
             ProcessPendingShipmentOutboxCommand command =
                     ProcessPendingShipmentOutboxCommand.of(100, 5);
 
+            Instant beforeTime = Instant.parse("2026-02-18T10:00:00Z");
             ShipmentOutbox outbox1 = ShipmentOutboxFixtures.pendingShipmentOutbox();
             ShipmentOutbox outbox2 = ShipmentOutboxFixtures.pendingShipmentOutbox();
 
+            given(commandFactory.resolveBeforeTime(command)).willReturn(beforeTime);
             given(outboxReadManager.findPendingOutboxes(any(Instant.class), eq(100)))
                     .willReturn(List.of(outbox1, outbox2));
             given(relayProcessor.relay(outbox1)).willReturn(true);
@@ -92,6 +98,8 @@ class ProcessPendingShipmentOutboxServiceTest {
             ProcessPendingShipmentOutboxCommand command =
                     ProcessPendingShipmentOutboxCommand.of(100, 5);
 
+            Instant beforeTime = Instant.parse("2026-02-18T10:00:00Z");
+            given(commandFactory.resolveBeforeTime(command)).willReturn(beforeTime);
             given(outboxReadManager.findPendingOutboxes(any(Instant.class), eq(100)))
                     .willReturn(List.of());
 
@@ -112,8 +120,10 @@ class ProcessPendingShipmentOutboxServiceTest {
             ProcessPendingShipmentOutboxCommand command =
                     ProcessPendingShipmentOutboxCommand.of(100, 5);
 
+            Instant beforeTime = Instant.parse("2026-02-18T10:00:00Z");
             ShipmentOutbox outbox = ShipmentOutboxFixtures.pendingShipmentOutbox();
 
+            given(commandFactory.resolveBeforeTime(command)).willReturn(beforeTime);
             given(outboxReadManager.findPendingOutboxes(any(Instant.class), eq(100)))
                     .willReturn(List.of(outbox));
             given(relayProcessor.relay(outbox)).willReturn(false);

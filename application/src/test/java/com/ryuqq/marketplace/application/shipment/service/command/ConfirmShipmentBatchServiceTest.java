@@ -95,8 +95,14 @@ class ConfirmShipmentBatchServiceTest {
             ConfirmShipmentBatchCommand command =
                     new ConfirmShipmentBatchCommand(List.of(ORDER_ITEM_ID_1), null);
 
+            Instant changedAt = Instant.parse("2026-02-18T10:00:00Z");
+            BulkStatusChangeContext<OrderItemId> confirmContexts =
+                    new BulkStatusChangeContext<>(
+                            List.of(OrderItemId.of(ORDER_ITEM_ID_1)), changedAt);
+
             given(orderItemReadManager.findAllByIds(List.of(OrderItemId.of(ORDER_ITEM_ID_1))))
                     .willReturn(List.of(item1));
+            given(commandFactory.createConfirmContexts(command)).willReturn(confirmContexts);
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);
@@ -118,8 +124,14 @@ class ConfirmShipmentBatchServiceTest {
             ConfirmShipmentBatchCommand command =
                     new ConfirmShipmentBatchCommand(List.of(ORDER_ITEM_ID_1), 999L);
 
+            Instant changedAt = Instant.parse("2026-02-18T10:00:00Z");
+            BulkStatusChangeContext<OrderItemId> confirmContexts =
+                    new BulkStatusChangeContext<>(
+                            List.of(OrderItemId.of(ORDER_ITEM_ID_1)), changedAt);
+
             given(orderItemReadManager.findAllByIds(List.of(OrderItemId.of(ORDER_ITEM_ID_1))))
                     .willReturn(List.of(item1));
+            given(commandFactory.createConfirmContexts(command)).willReturn(confirmContexts);
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);
@@ -167,7 +179,12 @@ class ConfirmShipmentBatchServiceTest {
             // given
             ConfirmShipmentBatchCommand command = new ConfirmShipmentBatchCommand(List.of(), null);
 
+            Instant changedAt = Instant.parse("2026-02-18T10:00:00Z");
+            BulkStatusChangeContext<OrderItemId> confirmContexts =
+                    new BulkStatusChangeContext<>(List.of(), changedAt);
+
             given(orderItemReadManager.findAllByIds(List.<OrderItemId>of())).willReturn(List.of());
+            given(commandFactory.createConfirmContexts(command)).willReturn(confirmContexts);
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);
