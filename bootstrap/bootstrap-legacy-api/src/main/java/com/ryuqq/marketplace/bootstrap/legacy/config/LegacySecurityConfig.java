@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.bootstrap.legacy.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyJwtAuthenticationFilter;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacySellerAuthCompositeReadManager;
 import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenCacheReadManager;
 import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenManager;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,8 +25,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Legacy API 전용 Spring Security 설정.
  *
- * <p>레거시 HS256 JWT 인증만 처리합니다. Gateway 인증 필터는 포함하지 않습니다. JWT 서명 검증 통과 시 claims를 신뢰하여 DB 조회 없이 인증을
- * 처리합니다.
+ * <p>레거시 HS256 JWT 인증만 처리합니다. Gateway 인증 필터는 포함하지 않습니다. JWT 서명 검증 통과 시 claims를 신뢰하여 인증을
+ * 처리합니다. 레거시 토큰에 sellerId가 없는 경우 DB 조회로 해소합니다.
  */
 @Configuration
 @EnableWebSecurity
@@ -35,8 +36,12 @@ public class LegacySecurityConfig {
     @Bean
     public LegacyJwtAuthenticationFilter legacyJwtAuthenticationFilter(
             LegacyTokenManager legacyTokenManager,
-            LegacyTokenCacheReadManager legacyTokenCacheReadManager) {
-        return new LegacyJwtAuthenticationFilter(legacyTokenManager, legacyTokenCacheReadManager);
+            LegacyTokenCacheReadManager legacyTokenCacheReadManager,
+            LegacySellerAuthCompositeReadManager legacySellerAuthCompositeReadManager) {
+        return new LegacyJwtAuthenticationFilter(
+                legacyTokenManager,
+                legacyTokenCacheReadManager,
+                legacySellerAuthCompositeReadManager);
     }
 
     @Bean

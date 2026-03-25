@@ -5,6 +5,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import com.ryuqq.marketplace.application.legacy.auth.dto.result.LegacySellerAuthResult;
+import com.ryuqq.marketplace.application.legacy.auth.manager.LegacySellerAuthCompositeReadManager;
 import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenCacheReadManager;
 import com.ryuqq.marketplace.application.legacy.auth.manager.LegacyTokenManager;
 import jakarta.servlet.FilterChain;
@@ -29,6 +31,7 @@ class LegacyJwtAuthenticationFilterTest {
 
     @Mock private LegacyTokenManager tokenManager;
     @Mock private LegacyTokenCacheReadManager tokenCacheReadManager;
+    @Mock private LegacySellerAuthCompositeReadManager sellerAuthReadManager;
     @Mock private FilterChain filterChain;
 
     private LegacyJwtAuthenticationFilter filter;
@@ -45,7 +48,9 @@ class LegacyJwtAuthenticationFilterTest {
 
     @BeforeEach
     void setUp() {
-        filter = new LegacyJwtAuthenticationFilter(tokenManager, tokenCacheReadManager);
+        filter =
+                new LegacyJwtAuthenticationFilter(
+                        tokenManager, tokenCacheReadManager, sellerAuthReadManager);
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
     }
@@ -83,12 +88,12 @@ class LegacyJwtAuthenticationFilterTest {
     }
 
     @Nested
-    @DisplayName("doFilterInternal - 유효한 토큰")
-    class ValidTokenTest {
+    @DisplayName("doFilterInternal - 유효한 토큰 (sellerId 포함)")
+    class ValidTokenWithSellerIdTest {
 
         @Test
-        @DisplayName("Bearer 토큰이 유효하면 SecurityContext와 LegacyAuthContext에 인증 정보 세팅")
-        void validBearerToken_SetsAuthentication() throws Exception {
+        @DisplayName("Bearer 토큰에 sellerId가 있으면 DB 조회 없이 인증 세팅")
+        void validBearerToken_WithSellerId_SetsAuthentication() throws Exception {
             request.setRequestURI("/api/v1/legacy/product/group");
             request.addHeader("Authorization", "Bearer " + VALID_TOKEN);
 
@@ -103,6 +108,8 @@ class LegacyJwtAuthenticationFilterTest {
             assertThat(SecurityContextHolder.getContext().getAuthentication().getName())
                     .isEqualTo(EMAIL);
             verify(filterChain).doFilter(request, response);
+            verify(sellerAuthReadManager, never())
+                    .getByEmail(org.mockito.ArgumentMatchers.any());
         }
 
         @Test
@@ -123,6 +130,60 @@ class LegacyJwtAuthenticationFilterTest {
     }
 
     @Nested
+    @DisplayName("doFilterInternal - 레거시 토큰 (sellerId 없음 → DB 조회)")
+    class LegacyTokenWithoutSellerIdTest {
+
+        @Test
+        @DisplayName("sellerId가 0이면 이메일로 DB 조회하여 sellerId 해소")
+        void legacyToken_NoSellerId_LooksUpFromDb() throws Exception {
+            request.setRequestURI("/api/v1/legacy/product/group");
+            request.addHeader("Authorization", "Bearer " + VALID_TOKEN);
+
+            given(tokenManager.isValid(VALID_TOKEN)).willReturn(true);
+            given(tokenManager.extractSubject(VALID_TOKEN)).willReturn(EMAIL);
+            given(tokenManager.extractSellerId(VALID_TOKEN)).willReturn(0L);
+            given(tokenManager.extractRole(VALID_TOKEN)).willReturn(ROLE_TYPE);
+            given(sellerAuthReadManager.getByEmail(EMAIL))
+                    .willReturn(
+                            new LegacySellerAuthResult(
+                                    42L, EMAIL, "hash", "SELLER", "APPROVED"));
+
+            filter.doFilterInternal(request, response, filterChain);
+
+            assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
+            verify(sellerAuthReadManager).getByEmail(EMAIL);
+        }
+
+        @Test
+        @DisplayName("sellerId=0이고 role도 null이면 둘 다 DB에서 조회")
+        void legacyToken_NoSellerIdNoRole_LooksUpBothFromDb() throws Exception {
+            request.setRequestURI("/api/v1/legacy/product/group");
+            request.addHeader("Authorization", "Bearer " + VALID_TOKEN);
+
+            given(tokenManager.isValid(VALID_TOKEN)).willReturn(true);
+            given(tokenManager.extractSubject(VALID_TOKEN)).willReturn(EMAIL);
+            given(tokenManager.extractSellerId(VALID_TOKEN)).willReturn(0L);
+            given(tokenManager.extractRole(VALID_TOKEN)).willReturn(null);
+            given(sellerAuthReadManager.getByEmail(EMAIL))
+                    .willReturn(
+                            new LegacySellerAuthResult(
+                                    42L, EMAIL, "hash", "MASTER", "APPROVED"));
+
+            filter.doFilterInternal(request, response, filterChain);
+
+            assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
+            assertThat(
+                            SecurityContextHolder.getContext()
+                                    .getAuthentication()
+                                    .getAuthorities()
+                                    .iterator()
+                                    .next()
+                                    .getAuthority())
+                    .isEqualTo("MASTER");
+        }
+    }
+
+    @Nested
     @DisplayName("doFilterInternal - 만료된 토큰 + 리프레시")
     class ExpiredTokenWithRefreshTest {
 
@@ -137,7 +198,8 @@ class LegacyJwtAuthenticationFilterTest {
             given(tokenManager.extractSubject(EXPIRED_TOKEN)).willReturn(EMAIL);
             given(tokenManager.extractSellerId(EXPIRED_TOKEN)).willReturn(SELLER_ID);
             given(tokenManager.extractRole(EXPIRED_TOKEN)).willReturn(ROLE_TYPE);
-            given(tokenCacheReadManager.findByEmail(EMAIL)).willReturn(Optional.of(REFRESH_TOKEN));
+            given(tokenCacheReadManager.findByEmail(EMAIL))
+                    .willReturn(Optional.of(REFRESH_TOKEN));
             given(tokenManager.isValid(REFRESH_TOKEN)).willReturn(true);
 
             filter.doFilterInternal(request, response, filterChain);
@@ -171,7 +233,8 @@ class LegacyJwtAuthenticationFilterTest {
             given(tokenManager.isValid(EXPIRED_TOKEN)).willReturn(false);
             given(tokenManager.isExpired(EXPIRED_TOKEN)).willReturn(true);
             given(tokenManager.extractSubject(EXPIRED_TOKEN)).willReturn(EMAIL);
-            given(tokenCacheReadManager.findByEmail(EMAIL)).willReturn(Optional.of(REFRESH_TOKEN));
+            given(tokenCacheReadManager.findByEmail(EMAIL))
+                    .willReturn(Optional.of(REFRESH_TOKEN));
             given(tokenManager.isValid(REFRESH_TOKEN)).willReturn(false);
 
             filter.doFilterInternal(request, response, filterChain);

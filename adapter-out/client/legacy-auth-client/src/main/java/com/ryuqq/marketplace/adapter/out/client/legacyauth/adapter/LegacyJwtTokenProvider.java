@@ -22,20 +22,20 @@ import org.springframework.stereotype.Component;
  * <p>레거시 토큰 claims 구조:
  * <pre>
  * {
- *   "iss": "setofAdmin",
- *   "id": 78,           // sellerId
  *   "sub": "email",
- *   "aud": "SELLER",    // roleType
+ *   "role": "SELLER",   // roleType
  *   "iat": ...,
  *   "exp": ...
  * }
  * </pre>
+ *
+ * <p>과도기 동안 기존 MarketPlace 형식(iss, id, aud) 토큰도 파싱 가능합니다.
  */
 @Component
 @EnableConfigurationProperties(LegacyJwtProperties.class)
 public class LegacyJwtTokenProvider implements LegacyTokenClient {
 
-    private static final String ISSUER = "setofAdmin";
+    private static final String ROLE_CLAIM = "role";
     private static final String SELLER_ID_CLAIM = "id";
 
     private final LegacyJwtProperties properties;
@@ -46,7 +46,7 @@ public class LegacyJwtTokenProvider implements LegacyTokenClient {
     }
 
     @PostConstruct
-    void init() {
+    public void init() {
         this.key = Keys.hmacShaKeyFor(properties.getSecret().getBytes());
     }
 
@@ -105,6 +105,10 @@ public class LegacyJwtTokenProvider implements LegacyTokenClient {
     @Override
     public String extractRole(String token) {
         Claims claims = parseClaimsAllowExpired(token);
+        String role = claims.get(ROLE_CLAIM, String.class);
+        if (role != null) {
+            return role;
+        }
         return claims.getAudience();
     }
 
@@ -112,10 +116,8 @@ public class LegacyJwtTokenProvider implements LegacyTokenClient {
             String email, long sellerId, String roleType, Date now, long expireTimeMs) {
         Date expiry = new Date(now.getTime() + expireTimeMs);
         return Jwts.builder()
-                .setIssuer(ISSUER)
-                .claim(SELLER_ID_CLAIM, sellerId)
                 .setSubject(email)
-                .setAudience(roleType)
+                .claim(ROLE_CLAIM, roleType)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
