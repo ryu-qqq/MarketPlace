@@ -26,14 +26,15 @@ import org.springframework.stereotype.Component;
 public class LegacyQnaQueryApiMapper {
 
     /** LegacyQnaSearchRequest → LegacyQnaSearchParams 변환. */
-    public LegacyQnaSearchParams toSearchParams(LegacyQnaSearchRequest request, int size) {
+    public LegacyQnaSearchParams toSearchParams(
+            LegacyQnaSearchRequest request, int size, Long effectiveSellerId) {
         return new LegacyQnaSearchParams(
                 request.qnaStatus(),
                 request.qnaType(),
                 request.qnaDetailType(),
                 request.privateYn(),
                 request.lastDomainId(),
-                request.sellerId(),
+                effectiveSellerId != null ? effectiveSellerId : request.sellerId(),
                 request.searchKeyword(),
                 request.startDate(),
                 request.endDate(),

@@ -57,6 +57,7 @@ public class LegacyQnAController {
     private final UpdateQnaReplyUseCase updateQnaReplyUseCase;
     private final LegacyQnaQueryApiMapper queryApiMapper;
     private final LegacyQnaCommandApiMapper commandApiMapper;
+    private final com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker legacyAccessChecker;
 
     public LegacyQnAController(
             LegacyQnaDetailQueryUseCase legacyQnaDetailUseCase,
@@ -64,13 +65,15 @@ public class LegacyQnAController {
             AnswerQnaUseCase answerQnaUseCase,
             UpdateQnaReplyUseCase updateQnaReplyUseCase,
             LegacyQnaQueryApiMapper queryApiMapper,
-            LegacyQnaCommandApiMapper commandApiMapper) {
+            LegacyQnaCommandApiMapper commandApiMapper,
+            com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker legacyAccessChecker) {
         this.legacyQnaDetailUseCase = legacyQnaDetailUseCase;
         this.legacyQnaListUseCase = legacyQnaListUseCase;
         this.answerQnaUseCase = answerQnaUseCase;
         this.updateQnaReplyUseCase = updateQnaReplyUseCase;
         this.queryApiMapper = queryApiMapper;
         this.commandApiMapper = commandApiMapper;
+        this.legacyAccessChecker = legacyAccessChecker;
     }
 
     @Operation(summary = "QnA 단건 상세 조회", description = "QnA ID로 질문 + 답변 상세 정보를 조회합니다. (luxurydb)")
@@ -86,7 +89,8 @@ public class LegacyQnAController {
     @GetMapping(QNAS)
     public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyFetchQnaResponse>>> getQnas(
             @Validated @ModelAttribute LegacyQnaSearchRequest request, Pageable pageable) {
-        LegacyQnaSearchParams params = queryApiMapper.toSearchParams(request, pageable.getPageSize());
+        Long effectiveSellerId = legacyAccessChecker.resolveSellerIdOrNull();
+        LegacyQnaSearchParams params = queryApiMapper.toSearchParams(request, pageable.getPageSize(), effectiveSellerId);
         LegacyQnaPageResult pageResult = legacyQnaListUseCase.execute(params);
 
         List<LegacyFetchQnaResponse> responses =
