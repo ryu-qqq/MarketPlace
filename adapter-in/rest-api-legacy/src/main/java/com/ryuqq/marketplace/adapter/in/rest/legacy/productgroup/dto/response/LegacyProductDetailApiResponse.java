@@ -46,7 +46,26 @@ public record LegacyProductDetailApiResponse(
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime insertDate,
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime updateDate,
             String insertOperator,
-            String updateOperator) {}
+            String updateOperator,
+            LegacyCrawlProductInfoResponse crawlProductInfo,
+            long crawlProductSku,
+            List<Object> externalProductInfos,
+            String externalProductUuId) {}
+
+    /** 세토프 CrawlProductInfo 호환 응답 (기본값). */
+    public record LegacyCrawlProductInfoResponse(
+            String siteName,
+            long crawlProductSku,
+            String baseLinkUrl,
+            String status,
+            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime insertDate,
+            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime updateDate) {
+
+        public static LegacyCrawlProductInfoResponse defaultValue() {
+            LocalDateTime now = LocalDateTime.now();
+            return new LegacyCrawlProductInfoResponse("", 0, "", "PENDING", now, now);
+        }
+    }
 
     // ===== Embedded Value Objects =====
 

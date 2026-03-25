@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.request.Leg
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyBrandResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyClothesDetailResponse;
+import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyCrawlProductInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyDeliveryNoticeResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyPriceResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.dto.response.LegacyProductDetailApiResponse.LegacyProductGroupInfoResponse;
@@ -160,7 +161,11 @@ public class LegacyProductGroupQueryApiMapper {
                 result.createdAt(),
                 result.updatedAt(),
                 result.insertOperator(),
-                result.updateOperator());
+                result.updateOperator(),
+                LegacyCrawlProductInfoResponse.defaultValue(),
+                0L,
+                java.util.List.of(),
+                "");
     }
 
     private LegacyPriceResponse toPriceResponse(LegacyProductGroupDetailResult result) {
