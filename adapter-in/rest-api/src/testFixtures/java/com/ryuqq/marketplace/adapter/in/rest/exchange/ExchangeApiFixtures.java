@@ -184,6 +184,7 @@ public final class ExchangeApiFixtures {
                 DEFAULT_EXCHANGE_STATUS,
                 DEFAULT_REASON_TYPE,
                 DEFAULT_REASON_DETAIL,
+                DEFAULT_ORIGINAL_SKU_CODE,
                 DEFAULT_TARGET_SKU_CODE,
                 DEFAULT_TARGET_QUANTITY,
                 DEFAULT_LINKED_ORDER_ID,
@@ -206,6 +207,31 @@ public final class ExchangeApiFixtures {
     public static ExchangePageResult emptyPageResult() {
         PageMeta pageMeta = PageMeta.of(0, 20, 0);
         return new ExchangePageResult(List.of(), pageMeta);
+    }
+
+    public static ExchangeListResult listResultWithNullSkuCodes() {
+        return new ExchangeListResult(
+                DEFAULT_EXCHANGE_CLAIM_ID,
+                DEFAULT_CLAIM_NUMBER,
+                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_EXCHANGE_QTY,
+                DEFAULT_EXCHANGE_STATUS,
+                DEFAULT_REASON_TYPE,
+                DEFAULT_REASON_DETAIL,
+                null,
+                null,
+                DEFAULT_TARGET_QUANTITY,
+                DEFAULT_LINKED_ORDER_ID,
+                DEFAULT_REQUESTED_BY,
+                DEFAULT_PROCESSED_BY,
+                DEFAULT_INSTANT,
+                DEFAULT_INSTANT,
+                null);
+    }
+
+    public static ExchangePageResult pageResultWithNullSkuCodes() {
+        PageMeta pageMeta = PageMeta.of(0, 20, 1);
+        return new ExchangePageResult(List.of(listResultWithNullSkuCodes()), pageMeta);
     }
 
     public static ClaimHistoryResult historyResult() {

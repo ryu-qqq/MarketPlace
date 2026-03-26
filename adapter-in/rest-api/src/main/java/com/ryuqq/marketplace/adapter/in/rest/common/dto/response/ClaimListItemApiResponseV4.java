@@ -74,7 +74,40 @@ public record ClaimListItemApiResponseV4(
             @Schema(description = "보류 사유") String holdReason,
             @Schema(description = "보류 여부") boolean isHold,
             @Schema(description = "요청 일시") String requestedAt,
-            @Schema(description = "생성 일시") String createdAt) {}
+            @Schema(description = "생성 일시") String createdAt,
+            @Schema(description = "교환 옵션 정보 (교환 전용, 반품/취소 시 null)") ExchangeOptionV4 exchangeOption,
+            @Schema(description = "금액 조정 정보 (교환 전용, 반품/취소 시 null)") AmountAdjustmentV4 amountAdjustment) {}
+
+    @Schema(description = "금액 조정 정보 (V4)")
+    public record AmountAdjustmentV4(
+            @Schema(description = "원래 상품 금액") int originalPrice,
+            @Schema(description = "교환 후 상품 금액") int targetPrice,
+            @Schema(description = "금액 차이 (targetPrice - originalPrice)") int priceDifference,
+            @Schema(description = "추가 결제 필요 여부") boolean additionalPaymentRequired,
+            @Schema(description = "부분 환불 필요 여부") boolean partialRefundRequired,
+            @Schema(description = "수거 배송비") int collectShippingFee,
+            @Schema(description = "재배송비") int reshipShippingFee,
+            @Schema(description = "총 배송비") int totalShippingFee,
+            @Schema(description = "배송비 부담 주체 (BUYER, SELLER)") String shippingFeePayer) {}
+
+    @Schema(description = "교환 옵션 정보 (V4)")
+    public record ExchangeOptionV4(
+            @Schema(description = "교환 전 옵션") OptionInfoV4 originalOption,
+            @Schema(description = "교환 후 옵션") OptionInfoV4 targetOption) {}
+
+    @Schema(description = "옵션 정보 (V4)")
+    public record OptionInfoV4(
+            @Schema(description = "옵션명") String optionName,
+            @Schema(description = "옵션 값 목록") List<OptionValueV4> optionValues) {
+        public OptionInfoV4 {
+            optionValues = optionValues != null ? List.copyOf(optionValues) : List.of();
+        }
+    }
+
+    @Schema(description = "옵션 값 (V4)")
+    public record OptionValueV4(
+            @Schema(description = "옵션 항목명") String name,
+            @Schema(description = "옵션 항목 값") String value) {}
 
     @Schema(description = "클레임 사유 (V4)")
     public record ReasonV4(

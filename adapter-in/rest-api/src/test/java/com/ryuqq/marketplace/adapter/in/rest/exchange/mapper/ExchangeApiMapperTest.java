@@ -1,8 +1,17 @@
 package com.ryuqq.marketplace.adapter.in.rest.exchange.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.ExchangeApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ApproveExchangeBatchApiRequest;
@@ -613,6 +622,116 @@ class ExchangeApiMapperTest {
             assertThat(response.processedAt())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_FORMATTED_TIME);
             assertThat(response.createdAt()).isEqualTo(ExchangeApiFixtures.DEFAULT_FORMATTED_TIME);
+        }
+    }
+
+    @Nested
+    @DisplayName("toPageResponseV4() - 교환 목록 V4 응답 변환 (exchangeOption 포함)")
+    class ToPageResponseV4Test {
+
+        @Test
+        @DisplayName("교환 목록 V4 변환 시 ClaimInfoV4에 exchangeOption이 항상 포함된다")
+        void toPageResponseV4_ExchangeListResult_ClaimInfoV4ContainsExchangeOption() {
+            // given
+            ClaimOrderEnricher enricher = mock(ClaimOrderEnricher.class);
+            ClaimOrderEnricher.OrderContext ctx = mock(ClaimOrderEnricher.OrderContext.class);
+            given(enricher.loadOrderContext(any())).willReturn(ctx);
+            given(enricher.toOrderProductV4(any(), any()))
+                    .willReturn(
+                            new ClaimListItemApiResponseV4.OrderProductV4(
+                                    "", "", "", new ClaimListItemApiResponseV4.PriceV4(0, 0, 0, 0, 0, 0),
+                                    new ClaimListItemApiResponseV4.BrandV4(0L, ""), 0L, 0L, "", "", "", 0,
+                                    "", 0, 0, 0, "", "", List.of()));
+            given(enricher.toClaimInfoV4(anyString(), anyString(), anyString(), anyInt(),
+                    anyString(), anyString(), isNull(), isNull(), anyString(), anyString(),
+                    anyBoolean(), any(), any(),
+                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class),
+                    any(ClaimListItemApiResponseV4.AmountAdjustmentV4.class)))
+                    .willAnswer(invocation -> {
+                        ClaimListItemApiResponseV4.ExchangeOptionV4 exchangeOption =
+                                invocation.getArgument(13);
+                        ClaimListItemApiResponseV4.AmountAdjustmentV4 amountAdjustment =
+                                invocation.getArgument(14);
+                        return new ClaimListItemApiResponseV4.ClaimInfoV4(
+                                "", "", "", 1, "", null, null, "", false, "", "", exchangeOption,
+                                amountAdjustment);
+                    });
+            given(enricher.toBuyerInfoV4(any(), any()))
+                    .willReturn(new ClaimListItemApiResponseV4.BuyerInfoV4("", ""));
+            given(enricher.toPaymentV4(any(), any()))
+                    .willReturn(new ClaimListItemApiResponseV4.PaymentV4("", "", 0, ""));
+            given(enricher.toReceiverInfoV4(any(), any()))
+                    .willReturn(new ClaimListItemApiResponseV4.ReceiverInfoV4("", "", "", "", ""));
+            given(enricher.toExternalOrderInfoV4(any(), any()))
+                    .willReturn(new ClaimListItemApiResponseV4.ExternalOrderInfoV4("", ""));
+
+            // when
+            PageApiResponse<ClaimListItemApiResponseV4> response =
+                    mapper.toPageResponseV4(ExchangeApiFixtures.pageResult(1, 0, 20), enricher);
+
+            // then
+            assertThat(response.content()).hasSize(1);
+            ClaimListItemApiResponseV4.ClaimInfoV4 claimInfo =
+                    response.content().get(0).claimInfo();
+            assertThat(claimInfo.exchangeOption()).isNotNull();
+            assertThat(claimInfo.exchangeOption().originalOption()).isNotNull();
+            assertThat(claimInfo.exchangeOption().targetOption()).isNotNull();
+            assertThat(claimInfo.exchangeOption().originalOption().optionValues()).isNotEmpty();
+            assertThat(claimInfo.exchangeOption().originalOption().optionValues().get(0).value())
+                    .isEqualTo(ExchangeApiFixtures.DEFAULT_ORIGINAL_SKU_CODE);
+            assertThat(claimInfo.exchangeOption().targetOption().optionValues().get(0).value())
+                    .isEqualTo(ExchangeApiFixtures.DEFAULT_TARGET_SKU_CODE);
+            assertThat(claimInfo.amountAdjustment()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("originalSkuCode와 targetSkuCode가 null이면 exchangeOption은 빈 문자열로 내려온다")
+        void toPageResponseV4_NullSkuCodes_ExchangeOptionContainsEmptyStrings() {
+            // given
+            ClaimOrderEnricher enricher = mock(ClaimOrderEnricher.class);
+            ClaimOrderEnricher.OrderContext ctx = mock(ClaimOrderEnricher.OrderContext.class);
+            given(enricher.loadOrderContext(any())).willReturn(ctx);
+            given(enricher.toOrderProductV4(any(), any()))
+                    .willReturn(
+                            new ClaimListItemApiResponseV4.OrderProductV4(
+                                    "", "", "", new ClaimListItemApiResponseV4.PriceV4(0, 0, 0, 0, 0, 0),
+                                    new ClaimListItemApiResponseV4.BrandV4(0L, ""), 0L, 0L, "", "", "", 0,
+                                    "", 0, 0, 0, "", "", List.of()));
+            given(enricher.toClaimInfoV4(anyString(), anyString(), anyString(), anyInt(),
+                    anyString(), anyString(), isNull(), isNull(), anyString(), anyString(),
+                    anyBoolean(), any(), any(),
+                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class),
+                    any(ClaimListItemApiResponseV4.AmountAdjustmentV4.class)))
+                    .willAnswer(invocation -> {
+                        ClaimListItemApiResponseV4.ExchangeOptionV4 exchangeOption =
+                                invocation.getArgument(13);
+                        ClaimListItemApiResponseV4.AmountAdjustmentV4 amountAdjustment =
+                                invocation.getArgument(14);
+                        return new ClaimListItemApiResponseV4.ClaimInfoV4(
+                                "", "", "", 1, "", null, null, "", false, "", "", exchangeOption,
+                                amountAdjustment);
+                    });
+            given(enricher.toBuyerInfoV4(any(), any()))
+                    .willReturn(new ClaimListItemApiResponseV4.BuyerInfoV4("", ""));
+            given(enricher.toPaymentV4(any(), any()))
+                    .willReturn(new ClaimListItemApiResponseV4.PaymentV4("", "", 0, ""));
+            given(enricher.toReceiverInfoV4(any(), any()))
+                    .willReturn(new ClaimListItemApiResponseV4.ReceiverInfoV4("", "", "", "", ""));
+            given(enricher.toExternalOrderInfoV4(any(), any()))
+                    .willReturn(new ClaimListItemApiResponseV4.ExternalOrderInfoV4("", ""));
+
+            // when
+            PageApiResponse<ClaimListItemApiResponseV4> response =
+                    mapper.toPageResponseV4(ExchangeApiFixtures.pageResultWithNullSkuCodes(), enricher);
+
+            // then
+            ClaimListItemApiResponseV4.ClaimInfoV4 claimInfo =
+                    response.content().get(0).claimInfo();
+            assertThat(claimInfo.exchangeOption()).isNotNull();
+            assertThat(claimInfo.exchangeOption().originalOption().optionValues().get(0).value())
+                    .isEmpty();
+            assertThat(claimInfo.exchangeOption().targetOption().optionValues().get(0).value())
+                    .isEmpty();
         }
     }
 

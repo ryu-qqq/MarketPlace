@@ -162,7 +162,9 @@ public class ClaimOrderEnricher {
             String holdReason,
             boolean isHold,
             Instant requestedAt,
-            Instant createdAt) {
+            Instant createdAt,
+            ClaimListItemApiResponseV4.ExchangeOptionV4 exchangeOption,
+            ClaimListItemApiResponseV4.AmountAdjustmentV4 amountAdjustment) {
         return new ClaimListItemApiResponseV4.ClaimInfoV4(
                 nullToEmpty(claimId),
                 nullToEmpty(claimNumber),
@@ -184,7 +186,9 @@ public class ClaimOrderEnricher {
                 nullToEmpty(holdReason),
                 isHold,
                 formatInstant(requestedAt),
-                formatInstant(requestedAt));
+                formatInstant(requestedAt),
+                exchangeOption,
+                amountAdjustment);
     }
 
     // ==================== 유틸 ====================

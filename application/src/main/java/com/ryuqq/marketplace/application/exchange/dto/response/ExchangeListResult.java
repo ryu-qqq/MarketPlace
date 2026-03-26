@@ -11,6 +11,7 @@ public record ExchangeListResult(
         String exchangeStatus,
         String reasonType,
         String reasonDetail,
+        String originalSkuCode,
         String targetSkuCode,
         Integer targetQuantity,
         String linkedOrderId,
