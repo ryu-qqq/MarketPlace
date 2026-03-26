@@ -147,9 +147,9 @@ if [ -n "$API_CREDS" ]; then
     API_SECRET=$(echo "$API_CREDS" | cut -f2)
     echo -e "${GREEN}OK${NC}"
 else
-    echo -e "${YELLOW}DB 조회 실패, 하드코딩 값 사용${NC}"
-    API_KEY="REDACTED_API_KEY"
-    API_SECRET="UNKNOWN"
+    echo -e "${YELLOW}DB 조회 실패, 환경변수에서 조회${NC}"
+    API_KEY="${E2E_API_KEY:?E2E_API_KEY 환경변수 필요}"
+    API_SECRET="${E2E_API_SECRET:?E2E_API_SECRET 환경변수 필요}"
 fi
 
 # 2. 세토프 DB에서 카테고리 ID 조회
