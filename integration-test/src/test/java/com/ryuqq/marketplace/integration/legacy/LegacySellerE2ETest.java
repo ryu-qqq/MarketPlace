@@ -49,7 +49,7 @@ class LegacySellerE2ETest extends LegacyE2ETestBase {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data.sellerId", equalTo((int) STUB_SELLER_ID))
-                    .body("data.sellerName", notNullValue())
+                    .body("data.email", notNullValue())
                     .body("response.status", equalTo(200))
                     .body("response.message", equalTo("success"));
         }
