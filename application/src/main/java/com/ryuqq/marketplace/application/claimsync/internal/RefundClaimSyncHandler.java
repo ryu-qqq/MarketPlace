@@ -6,15 +6,14 @@ import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPay
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.application.refund.internal.RefundSettlementProcessor;
 import com.ryuqq.marketplace.application.refund.manager.RefundCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundReadManager;
-import com.ryuqq.marketplace.application.refund.internal.RefundSettlementProcessor;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
-import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimId;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimNumber;
@@ -275,10 +274,7 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
                         });
     }
 
-    /**
-     * 부분반품 수량만큼 OrderItem의 returnedQty를 증가시킨다.
-     * 전체 수량이 소진되면 RETURNED 상태 전환.
-     */
+    /** 부분반품 수량만큼 OrderItem의 returnedQty를 증가시킨다. 전체 수량이 소진되면 RETURNED 상태 전환. */
     private void partialReturnOrderItem(
             OrderItemId orderItemId, int returnQty, String reason, Instant now) {
         orderItemReadManager
@@ -300,8 +296,7 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
                 .findById(orderItemId)
                 .map(
                         item -> {
-                            int unitPrice =
-                                    item.price().paymentAmount().value() / item.quantity();
+                            int unitPrice = item.price().paymentAmount().value() / item.quantity();
                             return Money.of(unitPrice * refundQty);
                         })
                 .orElse(Money.zero());

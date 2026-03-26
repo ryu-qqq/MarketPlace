@@ -31,8 +31,7 @@ class SellicOrderPollingExternalTest {
             System.getenv().getOrDefault("SELLIC_BASE_URL", "http://api.sellic.co.kr");
     private static final String CUSTOMER_ID =
             System.getenv().getOrDefault("SELLIC_CUSTOMER_ID", "");
-    private static final String API_KEY =
-            System.getenv().getOrDefault("SELLIC_API_KEY", "");
+    private static final String API_KEY = System.getenv().getOrDefault("SELLIC_API_KEY", "");
 
     private final ObjectMapper objectMapper =
             new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);

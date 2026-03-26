@@ -24,8 +24,7 @@ public record ShipBatchApiRequest(
                             requiredMode = Schema.RequiredMode.REQUIRED)
                     @NotBlank
                     String orderNumber,
-            @Schema(description = "배송 방법", requiredMode = Schema.RequiredMode.REQUIRED)
-                    @Valid
+            @Schema(description = "배송 방법", requiredMode = Schema.RequiredMode.REQUIRED) @Valid
                     ShipMethodRequest method,
             @Schema(
                             description = "송장번호",

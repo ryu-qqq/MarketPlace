@@ -167,7 +167,7 @@ public class OrderCompositeMapper {
                 new OrderItemResult(
                         dto.orderItemId() != null ? dto.orderItemId() : "",
                         dto.orderItemNumber() != null ? dto.orderItemNumber() : "",
-                                dto.orderId(),
+                        dto.orderId(),
                         dto.productGroupId() != null ? dto.productGroupId() : 0L,
                         dto.productId() != null ? dto.productId() : 0L,
                         dto.skuCode(),

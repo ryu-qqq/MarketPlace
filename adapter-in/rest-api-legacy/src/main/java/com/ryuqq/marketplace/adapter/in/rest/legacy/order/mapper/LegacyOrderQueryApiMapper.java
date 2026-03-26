@@ -28,8 +28,7 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 조회 API Mapper.
  *
- * <p>Request→SearchParams, DetailResult→OrderResponse 변환.
- * 세토프 레거시 어드민과 동일한 flat 구조로 매핑.
+ * <p>Request→SearchParams, DetailResult→OrderResponse 변환. 세토프 레거시 어드민과 동일한 flat 구조로 매핑.
  */
 @Component
 public class LegacyOrderQueryApiMapper {
@@ -54,17 +53,12 @@ public class LegacyOrderQueryApiMapper {
                 request.resolvedSize());
     }
 
-    /**
-     * 단건 조회용 — 주문 상세 결과를 세토프 flat 구조 응답으로 변환.
-     * 히스토리 없이 빈 목록으로 매핑.
-     */
+    /** 단건 조회용 — 주문 상세 결과를 세토프 flat 구조 응답으로 변환. 히스토리 없이 빈 목록으로 매핑. */
     public LegacyOrderResponse toOrderResponse(LegacyOrderDetailResult result) {
         return toOrderResponse(result, null);
     }
 
-    /**
-     * 목록 조회용 — 주문 상세 + 히스토리 결과를 세토프 flat 구조 응답으로 변환.
-     */
+    /** 목록 조회용 — 주문 상세 + 히스토리 결과를 세토프 flat 구조 응답으로 변환. */
     public LegacyOrderResponse toOrderResponse(
             LegacyOrderDetailResult result, List<LegacyOrderHistoryResult> histories) {
 
@@ -172,9 +166,7 @@ public class LegacyOrderQueryApiMapper {
 
     public List<LegacyOrderResponse> toOrderListResponses(
             List<LegacyOrderDetailWithHistoryResult> items) {
-        return items.stream()
-                .map(item -> toOrderResponse(item.order(), item.histories()))
-                .toList();
+        return items.stream().map(item -> toOrderResponse(item.order(), item.histories())).toList();
     }
 
     private List<OrderHistoryInfo> toOrderHistoryInfos(List<LegacyOrderHistoryResult> histories) {
@@ -202,9 +194,7 @@ public class LegacyOrderQueryApiMapper {
         if (optionValues == null || optionValues.isEmpty()) {
             return List.of();
         }
-        return optionValues.stream()
-                .map(value -> new OptionInfo(0, 0, "", value))
-                .toList();
+        return optionValues.stream().map(value -> new OptionInfo(0, 0, "", value)).toList();
     }
 
     private String formatDate(Instant instant) {

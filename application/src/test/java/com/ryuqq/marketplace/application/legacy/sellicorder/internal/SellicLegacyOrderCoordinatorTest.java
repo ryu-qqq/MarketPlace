@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.application.legacy.sellicorder.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
@@ -100,8 +99,9 @@ class SellicLegacyOrderCoordinatorTest {
             OutboundProduct outboundProduct = OutboundProductFixtures.registeredProduct();
 
             given(queryPort.existsByExternalIdx(SELLIC_SITE_ID, 100L)).willReturn(false);
-            given(outboundProductReadManager.findByExternalProductIdsAndSalesChannelId(
-                            Set.of("OWN-001"), SALES_CHANNEL_ID))
+            given(
+                            outboundProductReadManager.findByExternalProductIdsAndSalesChannelId(
+                                    Set.of("OWN-001"), SALES_CHANNEL_ID))
                     .willReturn(List.of(outboundProduct));
             given(persistencePort.persist(any(IssueSellicLegacyOrderCommand.class)))
                     .willReturn(1000L);
@@ -143,8 +143,9 @@ class SellicLegacyOrderCoordinatorTest {
             ExternalOrderPayload payload = createOrderPayload("ORD-003", List.of(item));
 
             given(queryPort.existsByExternalIdx(SELLIC_SITE_ID, 300L)).willReturn(false);
-            given(outboundProductReadManager.findByExternalProductIdsAndSalesChannelId(
-                            Set.of("OWN-UNKNOWN"), SALES_CHANNEL_ID))
+            given(
+                            outboundProductReadManager.findByExternalProductIdsAndSalesChannelId(
+                                    Set.of("OWN-UNKNOWN"), SALES_CHANNEL_ID))
                     .willReturn(List.of());
 
             // when
@@ -187,8 +188,9 @@ class SellicLegacyOrderCoordinatorTest {
             given(queryPort.existsByExternalIdx(SELLIC_SITE_ID, 500L)).willReturn(false);
             // 아이템별 중복 체크
             given(queryPort.existsByExternalIdx(SELLIC_SITE_ID, 501L)).willReturn(false);
-            given(outboundProductReadManager.findByExternalProductIdsAndSalesChannelId(
-                            Set.of("OWN-005"), SALES_CHANNEL_ID))
+            given(
+                            outboundProductReadManager.findByExternalProductIdsAndSalesChannelId(
+                                    Set.of("OWN-005"), SALES_CHANNEL_ID))
                     .willReturn(List.of(outboundProduct));
             given(persistencePort.persist(any(IssueSellicLegacyOrderCommand.class)))
                     .willReturn(1001L);
@@ -198,7 +200,9 @@ class SellicLegacyOrderCoordinatorTest {
 
             // then
             assertThat(result).isTrue();
-            then(persistencePort).should(times(2)).persist(any(IssueSellicLegacyOrderCommand.class));
+            then(persistencePort)
+                    .should(times(2))
+                    .persist(any(IssueSellicLegacyOrderCommand.class));
             then(outboxCommandManager).should().persist(any(LegacyOrderConversionOutbox.class));
         }
     }

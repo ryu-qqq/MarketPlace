@@ -36,8 +36,11 @@ public class ShipmentQueryFactory {
      */
     public ShipmentSearchCriteria createCriteria(ShipmentSearchParams params) {
         ShipmentSortKey sortKey = ShipmentSortKey.fromString(params.searchParams().sortKey());
-        SortDirection sortDirection = commonVoFactory.parseSortDirection(params.searchParams().sortDirection());
-        PageRequest pageRequest = commonVoFactory.createPageRequest(params.searchParams().page(), params.searchParams().size());
+        SortDirection sortDirection =
+                commonVoFactory.parseSortDirection(params.searchParams().sortDirection());
+        PageRequest pageRequest =
+                commonVoFactory.createPageRequest(
+                        params.searchParams().page(), params.searchParams().size());
 
         QueryContext<ShipmentSortKey> queryContext =
                 commonVoFactory.createQueryContext(

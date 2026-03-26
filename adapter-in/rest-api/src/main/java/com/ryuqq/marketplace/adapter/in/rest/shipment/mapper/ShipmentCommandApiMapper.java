@@ -25,8 +25,7 @@ public class ShipmentCommandApiMapper {
     }
 
     public ShipBatchCommand toShipBatchCommand(ShipBatchApiRequest request) {
-        List<ShipBatchItem> items =
-                request.requests().stream().map(this::toShipBatchItem).toList();
+        List<ShipBatchItem> items = request.requests().stream().map(this::toShipBatchItem).toList();
         return new ShipBatchCommand(items);
     }
 

@@ -72,6 +72,5 @@ public record OmsProductDetailApiResponse(
             @Schema(description = "성공 횟수", example = "3") long successCount,
             @Schema(description = "실패 횟수", example = "1") long failCount,
             @Schema(description = "대기 횟수", example = "1") long pendingCount,
-            @Schema(description = "마지막 연동일", example = "2025-12-16 14:30:00")
-                    String lastSyncAt) {}
+            @Schema(description = "마지막 연동일", example = "2025-12-16 14:30:00") String lastSyncAt) {}
 }

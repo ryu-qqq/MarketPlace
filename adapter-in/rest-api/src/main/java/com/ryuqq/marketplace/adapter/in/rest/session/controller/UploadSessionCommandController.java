@@ -140,7 +140,8 @@ public class UploadSessionCommandController {
     public ResponseEntity<ApiResponse<LegacyImagePresignedApiResponse>> legacyGetPresignedUrl(
             @Valid @RequestBody LegacyImagePresignedApiRequest request) {
 
-        PresignedUrlResponse result = generateUploadUrlUseCase.execute(legacyMapper.toCommand(request));
+        PresignedUrlResponse result =
+                generateUploadUrlUseCase.execute(legacyMapper.toCommand(request));
         return ResponseEntity.ok(ApiResponse.of(legacyMapper.toResponse(result)));
     }
 }

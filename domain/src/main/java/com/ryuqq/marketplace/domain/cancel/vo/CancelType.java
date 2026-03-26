@@ -8,7 +8,9 @@ public enum CancelType {
     SELLER_CANCEL;
 
     public static List<CancelType> fromStringList(List<String> values) {
-        if (values == null || values.isEmpty()) { return List.of(); }
+        if (values == null || values.isEmpty()) {
+            return List.of();
+        }
         return values.stream().map(CancelType::valueOf).toList();
     }
 }

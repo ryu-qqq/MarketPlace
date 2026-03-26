@@ -4,16 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderItemJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRepository;
-import com.ryuqq.marketplace.adapter.out.persistence.refund.RefundClaimJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.refund.repository.RefundClaimJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.refundoutbox.repository.RefundOutboxJpaRepository;
-import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
 import com.ryuqq.marketplace.integration.container.ContainerE2ETestBase;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +31,13 @@ import org.springframework.http.HttpStatus;
  * <p>MySQL 실제 컨테이너 기반으로 환불 명령 API를 검증합니다.
  *
  * <p>테스트 대상:
+ *
  * <ul>
- *   <li>C1~C3: POST /refunds/request/batch - 환불 요청 일괄</li>
- *   <li>C4~C5: POST /refunds/approve/batch - 환불 승인 일괄</li>
- *   <li>C6~C7: POST /refunds/reject/batch - 환불 거절 일괄</li>
- *   <li>C8~C9: PATCH /refunds/hold/batch - 환불 보류/해제 일괄</li>
- *   <li>C10~C11: POST /refunds/{refundClaimId}/histories - 수기 메모 등록</li>
+ *   <li>C1~C3: POST /refunds/request/batch - 환불 요청 일괄
+ *   <li>C4~C5: POST /refunds/approve/batch - 환불 승인 일괄
+ *   <li>C6~C7: POST /refunds/reject/batch - 환불 거절 일괄
+ *   <li>C8~C9: PATCH /refunds/hold/batch - 환불 보류/해제 일괄
+ *   <li>C10~C11: POST /refunds/{refundClaimId}/histories - 수기 메모 등록
  * </ul>
  */
 @Tag("e2e")
@@ -98,12 +98,19 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
 
             // when
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "단순 변심"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "CHANGE_OF_MIND",
+                                                    "reasonDetail",
+                                                    "단순 변심"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -131,12 +138,15 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
         @DisplayName("[C3] 권한 없는 사용자가 환불 요청 시 403")
         void requestBatch_noPermission_forbidden() {
             givenAuthenticatedUser()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", "some-id",
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "변심"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId", "some-id",
+                                                    "refundQty", 1,
+                                                    "reasonType", "CHANGE_OF_MIND",
+                                                    "reasonDetail", "변심"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -162,12 +172,19 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
 
             // 환불 요청
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "변심"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "CHANGE_OF_MIND",
+                                                    "reasonDetail",
+                                                    "변심"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -215,12 +232,19 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderItemId = orderItemRepository.save(item).getId();
 
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "변심"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "CHANGE_OF_MIND",
+                                                    "reasonDetail",
+                                                    "변심"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -268,12 +292,19 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderItemId = orderItemRepository.save(item).getId();
 
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "변심"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "CHANGE_OF_MIND",
+                                                    "reasonDetail",
+                                                    "변심"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -283,10 +314,14 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
 
             // when: 보류
             givenSuperAdmin()
-                    .body(Map.of(
-                            "refundClaimIds", List.of(refundClaimId),
-                            "isHold", true,
-                            "memo", "검수 진행 중"))
+                    .body(
+                            Map.of(
+                                    "refundClaimIds",
+                                    List.of(refundClaimId),
+                                    "isHold",
+                                    true,
+                                    "memo",
+                                    "검수 진행 중"))
                     .when()
                     .patch(HOLD_BATCH)
                     .then()
@@ -305,12 +340,19 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderItemId = orderItemRepository.save(item).getId();
 
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "변심"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "CHANGE_OF_MIND",
+                                                    "reasonDetail",
+                                                    "변심"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -320,10 +362,14 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
 
             // 보류 설정
             givenSuperAdmin()
-                    .body(Map.of(
-                            "refundClaimIds", List.of(refundClaimId),
-                            "isHold", true,
-                            "memo", "검수 진행 중"))
+                    .body(
+                            Map.of(
+                                    "refundClaimIds",
+                                    List.of(refundClaimId),
+                                    "isHold",
+                                    true,
+                                    "memo",
+                                    "검수 진행 중"))
                     .when()
                     .patch(HOLD_BATCH)
                     .then()
@@ -331,10 +377,14 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
 
             // when: 보류 해제
             givenSuperAdmin()
-                    .body(Map.of(
-                            "refundClaimIds", List.of(refundClaimId),
-                            "isHold", false,
-                            "memo", "검수 완료"))
+                    .body(
+                            Map.of(
+                                    "refundClaimIds",
+                                    List.of(refundClaimId),
+                                    "isHold",
+                                    false,
+                                    "memo",
+                                    "검수 완료"))
                     .when()
                     .patch(HOLD_BATCH)
                     .then()
@@ -360,12 +410,19 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderItemId = orderItemRepository.save(item).getId();
 
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "변심"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "CHANGE_OF_MIND",
+                                                    "reasonDetail",
+                                                    "변심"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()

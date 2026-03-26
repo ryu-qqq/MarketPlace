@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderItemJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
@@ -13,7 +14,6 @@ import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJ
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.refund.repository.RefundClaimJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.refundoutbox.repository.RefundOutboxJpaRepository;
-import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
 import com.ryuqq.marketplace.integration.container.ContainerE2ETestBase;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +30,12 @@ import org.springframework.http.HttpStatus;
  * Refund Flow Testcontainers E2E 테스트.
  *
  * <p>환불 전체 플로우를 검증합니다:
+ *
  * <ul>
- *   <li>F1: 요청 -> 승인 -> 목록 조회 -> 상세 조회</li>
- *   <li>F2: 요청 -> 거절 -> 상태 확인</li>
- *   <li>F3: 요청 -> 보류 -> 보류 해제 -> 승인</li>
- *   <li>F4: 부분환불 + 추가환불 전체 플로우</li>
+ *   <li>F1: 요청 -> 승인 -> 목록 조회 -> 상세 조회
+ *   <li>F2: 요청 -> 거절 -> 상태 확인
+ *   <li>F3: 요청 -> 보류 -> 보류 해제 -> 승인
+ *   <li>F4: 부분환불 + 추가환불 전체 플로우
  * </ul>
  */
 @Tag("e2e")
@@ -95,12 +96,19 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
 
             // step 1: 환불 요청
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "단순 변심"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "CHANGE_OF_MIND",
+                                                    "reasonDetail",
+                                                    "단순 변심"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -154,12 +162,19 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
 
             // step 1: 환불 요청
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "DEFECTIVE",
-                                    "reasonDetail", "상품 불량"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "DEFECTIVE",
+                                                    "reasonDetail",
+                                                    "상품 불량"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -198,12 +213,19 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
 
             // step 1: 환불 요청
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "변심"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "CHANGE_OF_MIND",
+                                                    "reasonDetail",
+                                                    "변심"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -213,10 +235,14 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
 
             // step 2: 보류
             givenSuperAdmin()
-                    .body(Map.of(
-                            "refundClaimIds", List.of(refundClaimId),
-                            "isHold", true,
-                            "memo", "상품 상태 확인 필요"))
+                    .body(
+                            Map.of(
+                                    "refundClaimIds",
+                                    List.of(refundClaimId),
+                                    "isHold",
+                                    true,
+                                    "memo",
+                                    "상품 상태 확인 필요"))
                     .when()
                     .patch(HOLD_BATCH)
                     .then()
@@ -225,10 +251,14 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
 
             // step 3: 보류 해제
             givenSuperAdmin()
-                    .body(Map.of(
-                            "refundClaimIds", List.of(refundClaimId),
-                            "isHold", false,
-                            "memo", "확인 완료"))
+                    .body(
+                            Map.of(
+                                    "refundClaimIds",
+                                    List.of(refundClaimId),
+                                    "isHold",
+                                    false,
+                                    "memo",
+                                    "확인 완료"))
                     .when()
                     .patch(HOLD_BATCH)
                     .then()
@@ -262,12 +292,19 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
 
             // step 1: 환불 요청
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(Map.of(
-                                    "orderId", orderItemId,
-                                    "refundQty", 1,
-                                    "reasonType", "CHANGE_OF_MIND",
-                                    "reasonDetail", "부분 환불"))))
+                    .body(
+                            Map.of(
+                                    "items",
+                                    List.of(
+                                            Map.of(
+                                                    "orderId",
+                                                    orderItemId,
+                                                    "refundQty",
+                                                    1,
+                                                    "reasonType",
+                                                    "CHANGE_OF_MIND",
+                                                    "reasonDetail",
+                                                    "부분 환불"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()

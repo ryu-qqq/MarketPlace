@@ -23,8 +23,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * <p>/api/v1/legacy/** 경로에만 적용. HS256 JWT 서명을 검증하고 claims에서 인증 정보를 추출하여 {@link
  * LegacyAuthContextHolder}와 {@link SecurityContextHolder}에 세팅합니다.
  *
- * <p>레거시 토큰에 sellerId(id claim)가 없는 경우 DB 조회로 해소합니다. AccessToken 만료 시 Redis의 RefreshToken으로 자동
- * 인증 (레거시 호환).
+ * <p>레거시 토큰에 sellerId(id claim)가 없는 경우 DB 조회로 해소합니다. AccessToken 만료 시 Redis의 RefreshToken으로 자동 인증
+ * (레거시 호환).
  */
 public class LegacyJwtAuthenticationFilter extends OncePerRequestFilter {
 

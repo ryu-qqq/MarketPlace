@@ -123,10 +123,11 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
     private void handleDeferRetry(ShipmentOutbox outbox) {
         try {
             ShipmentOutbox fresh = outboxReadManager.getById(outbox.idValue());
-            Instant now = commandFactory.createOutboxTransitionContext(outbox.idValue()).changedAt();
+            Instant now =
+                    commandFactory.createOutboxTransitionContext(outbox.idValue()).changedAt();
             fresh.recoverFromTimeout(now);
             outboxCommandManager.persist(fresh);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("배송 Outbox deferRetry 실패: outboxId={}", outbox.idValue());
         }
     }

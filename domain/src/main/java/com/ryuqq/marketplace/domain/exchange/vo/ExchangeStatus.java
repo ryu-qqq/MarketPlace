@@ -59,7 +59,9 @@ public enum ExchangeStatus {
     }
 
     public static List<ExchangeStatus> fromStringList(List<String> values) {
-        if (values == null || values.isEmpty()) { return List.of(); }
+        if (values == null || values.isEmpty()) {
+            return List.of();
+        }
         return values.stream().map(ExchangeStatus::valueOf).toList();
     }
 }

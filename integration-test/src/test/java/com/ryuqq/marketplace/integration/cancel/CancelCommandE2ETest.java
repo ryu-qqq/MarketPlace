@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import com.ryuqq.marketplace.adapter.out.persistence.cancel.CancelJpaEntityFixtures;
-import com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.ShipmentJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.cancel.repository.CancelJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.canceloutbox.repository.CancelOutboxJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
@@ -15,11 +14,12 @@ import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEn
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.ShipmentJpaEntity;
 import com.ryuqq.marketplace.integration.E2ETestBase;
 import java.time.Instant;
-import java.util.UUID;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,7 +58,10 @@ class CancelCommandE2ETest extends E2ETestBase {
     @Autowired private OrderItemHistoryJpaRepository orderItemHistoryRepository;
     @Autowired private OrderItemJpaRepository orderItemRepository;
     @Autowired private OrderJpaRepository orderRepository;
-    @Autowired private com.ryuqq.marketplace.adapter.out.persistence.shipment.repository.ShipmentJpaRepository shipmentRepository;
+
+    @Autowired
+    private com.ryuqq.marketplace.adapter.out.persistence.shipment.repository.ShipmentJpaRepository
+            shipmentRepository;
 
     @BeforeEach
     void setUp() {
@@ -306,9 +309,20 @@ class CancelCommandE2ETest extends E2ETestBase {
             Instant now = Instant.now();
             shipmentRepository.save(
                     ShipmentJpaEntity.create(
-                            UUID.randomUUID().toString(), "SHP-REJ-001", orderItemId,
-                            "SHIPPED", "COURIER", "CJ", "CJ대한통운", "1234567890",
-                            now, now, null, now, now, null));
+                            UUID.randomUUID().toString(),
+                            "SHP-REJ-001",
+                            orderItemId,
+                            "SHIPPED",
+                            "COURIER",
+                            "CJ",
+                            "CJ대한통운",
+                            "1234567890",
+                            now,
+                            now,
+                            null,
+                            now,
+                            now,
+                            null));
 
             given().spec(givenSuperAdmin())
                     .body(Map.of("cancelIds", List.of("cancel-reject-001")))
@@ -350,9 +364,20 @@ class CancelCommandE2ETest extends E2ETestBase {
             Instant now = Instant.now();
             shipmentRepository.save(
                     ShipmentJpaEntity.create(
-                            UUID.randomUUID().toString(), "SHP-APP-001", orderItemId,
-                            "SHIPPED", "COURIER", "CJ", "CJ대한통운", "9999999999",
-                            now, now, null, now, now, null));
+                            UUID.randomUUID().toString(),
+                            "SHP-APP-001",
+                            orderItemId,
+                            "SHIPPED",
+                            "COURIER",
+                            "CJ",
+                            "CJ대한통운",
+                            "9999999999",
+                            now,
+                            now,
+                            null,
+                            now,
+                            now,
+                            null));
 
             given().spec(givenSuperAdmin())
                     .body(Map.of("cancelIds", List.of("cancel-approved-001")))

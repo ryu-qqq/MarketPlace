@@ -14,8 +14,7 @@ public class SellicLegacyOrderQueryAdapter implements SellicLegacyOrderQueryPort
 
     private final LegacyExternalOrderJpaRepository externalOrderRepository;
 
-    public SellicLegacyOrderQueryAdapter(
-            LegacyExternalOrderJpaRepository externalOrderRepository) {
+    public SellicLegacyOrderQueryAdapter(LegacyExternalOrderJpaRepository externalOrderRepository) {
         this.externalOrderRepository = externalOrderRepository;
     }
 

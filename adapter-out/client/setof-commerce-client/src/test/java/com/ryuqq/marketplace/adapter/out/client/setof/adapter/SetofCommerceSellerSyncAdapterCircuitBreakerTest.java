@@ -44,7 +44,9 @@ class SetofCommerceSellerSyncAdapterCircuitBreakerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SetofCommerceSellerSyncAdapter(apiClient, sellerReadManager, mapper, properties, tokenProvider);
+        sut =
+                new SetofCommerceSellerSyncAdapter(
+                        apiClient, sellerReadManager, mapper, properties, tokenProvider);
     }
 
     @Nested

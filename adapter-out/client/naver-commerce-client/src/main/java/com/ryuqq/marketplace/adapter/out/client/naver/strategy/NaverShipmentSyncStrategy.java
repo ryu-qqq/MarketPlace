@@ -149,7 +149,11 @@ public class NaverShipmentSyncStrategy implements ShipmentSyncStrategy {
 
             String naverCourierCode = toNaverCourierCode(courierCode);
             return new DispatchProductOrder(
-                    externalProductOrderId, "DELIVERY", naverCourierCode, trackingNumber, dispatchDate);
+                    externalProductOrderId,
+                    "DELIVERY",
+                    naverCourierCode,
+                    trackingNumber,
+                    dispatchDate);
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new IllegalStateException("배송 Outbox 페이로드 파싱 실패: " + payload, e);
         }

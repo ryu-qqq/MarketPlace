@@ -20,7 +20,6 @@ import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.refund.RefundAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.refund.RefundApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.refund.mapper.RefundApiMapper;
 import com.ryuqq.marketplace.application.refund.port.in.query.GetRefundDetailUseCase;
@@ -277,7 +276,8 @@ class RefundQueryControllerRestDocsTest {
         @DisplayName("환불 목록 조회 - 결과 없음")
         void getList_Empty() throws Exception {
             // given
-            PageApiResponse<?> emptyPageResponse = PageApiResponse.of(java.util.List.of(), 0, 20, 0);
+            PageApiResponse<?> emptyPageResponse =
+                    PageApiResponse.of(java.util.List.of(), 0, 20, 0);
 
             given(getRefundListUseCase.execute(any()))
                     .willReturn(RefundApiFixtures.emptyPageResult());

@@ -26,7 +26,8 @@ class LegacyImagePresignedApiMapperTest {
     }
 
     @Nested
-    @DisplayName("toCommand(LegacyImagePresignedApiRequest) - 레거시 요청을 PresignedUploadUrlRequest로 변환")
+    @DisplayName(
+            "toCommand(LegacyImagePresignedApiRequest) - 레거시 요청을 PresignedUploadUrlRequest로 변환")
     class ToCommandTest {
 
         @Test
@@ -215,7 +216,9 @@ class LegacyImagePresignedApiMapperTest {
     }
 
     @Nested
-    @DisplayName("toResponse(PresignedUrlResponse) - PresignedUrlResponse를 LegacyImagePresignedApiResponse로 변환")
+    @DisplayName(
+            "toResponse(PresignedUrlResponse) - PresignedUrlResponse를"
+                    + " LegacyImagePresignedApiResponse로 변환")
     class ToResponseTest {
 
         @Test
@@ -229,7 +232,8 @@ class LegacyImagePresignedApiMapperTest {
 
             // then
             assertThat(result.sessionId()).isEqualTo(UploadSessionApiFixtures.DEFAULT_SESSION_ID);
-            assertThat(result.preSignedUrl()).isEqualTo(UploadSessionApiFixtures.DEFAULT_PRESIGNED_URL);
+            assertThat(result.preSignedUrl())
+                    .isEqualTo(UploadSessionApiFixtures.DEFAULT_PRESIGNED_URL);
             assertThat(result.objectKey()).isEqualTo(UploadSessionApiFixtures.DEFAULT_FILE_KEY);
         }
 
@@ -256,7 +260,8 @@ class LegacyImagePresignedApiMapperTest {
             LegacyImagePresignedApiResponse result = mapper.toResponse(useCaseResponse);
 
             // then
-            assertThat(result.preSignedUrl()).isEqualTo(UploadSessionApiFixtures.DEFAULT_PRESIGNED_URL);
+            assertThat(result.preSignedUrl())
+                    .isEqualTo(UploadSessionApiFixtures.DEFAULT_PRESIGNED_URL);
         }
 
         @Test

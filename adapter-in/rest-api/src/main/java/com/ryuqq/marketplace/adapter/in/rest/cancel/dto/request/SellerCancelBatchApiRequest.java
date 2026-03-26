@@ -15,9 +15,7 @@ public record SellerCancelBatchApiRequest(
                 @NotEmpty
                 @Valid
                 List<SellerCancelItemApiRequest> items,
-        @Schema(description = "취소 사유", requiredMode = Schema.RequiredMode.REQUIRED)
-                @NotNull
-                @Valid
+        @Schema(description = "취소 사유", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid
                 CancelReasonApiRequest reason,
         @Schema(description = "메모") String memo) {
 

@@ -16,7 +16,6 @@ import com.ryuqq.marketplace.application.cancel.dto.response.CancelSummaryResult
 import com.ryuqq.marketplace.application.cancel.port.in.query.GetCancelDetailUseCase;
 import com.ryuqq.marketplace.application.cancel.port.in.query.GetCancelListUseCase;
 import com.ryuqq.marketplace.application.cancel.port.in.query.GetCancelSummaryUseCase;
-import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -79,8 +78,7 @@ public class CancelQueryController {
             @PathVariable String cancelId) {
         CancelDetailResult result = getCancelDetailUseCase.execute(cancelId);
         String itemId = result.orderItemId();
-        ClaimOrderEnricher.OrderContext ctx =
-                enricher.loadOrderContext(List.of(itemId));
+        ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(List.of(itemId));
         return ResponseEntity.ok(
                 ApiResponse.of(
                         mapper.toDetailResponse(

@@ -91,7 +91,9 @@ class ShipmentCommandE2ETest extends E2ETestBase {
      * @param orderId 주문 ID
      * @return 저장된 orderItemId (UUIDv7 String)
      */
-    /** @return [0]=orderItemId, [1]=orderItemNumber */
+    /**
+     * @return [0]=orderItemId, [1]=orderItemNumber
+     */
     private String[] seedOrderItem(String orderId) {
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
         OrderItemJpaEntity savedItem =
@@ -278,7 +280,9 @@ class ShipmentCommandE2ETest extends E2ETestBase {
                     .body(
                             Map.of(
                                     "requests",
-                                    List.of(createShipItem(itemNumber, "1234567890", "CJ", "CJ대한통운"))))
+                                    List.of(
+                                            createShipItem(
+                                                    itemNumber, "1234567890", "CJ", "CJ대한통운"))))
                     .when()
                     .post(SHIP_BATCH_URL)
                     .then()
@@ -340,7 +344,12 @@ class ShipmentCommandE2ETest extends E2ETestBase {
                                             Map.of(
                                                     "orderNumber", "ORD-20260101-0001-001",
                                                     "trackingNumber", "",
-                                                    "method", Map.of("type", "COURIER", "courierCode", "CJ")))))
+                                                    "method",
+                                                            Map.of(
+                                                                    "type",
+                                                                    "COURIER",
+                                                                    "courierCode",
+                                                                    "CJ")))))
                     .when()
                     .post(SHIP_BATCH_URL)
                     .then()
@@ -360,7 +369,12 @@ class ShipmentCommandE2ETest extends E2ETestBase {
                                             Map.of(
                                                     "orderNumber", "ORD-20260101-0001-001",
                                                     "trackingNumber", "1234567890",
-                                                    "method", Map.of("type", "COURIER", "courierCode", "")))))
+                                                    "method",
+                                                            Map.of(
+                                                                    "type",
+                                                                    "COURIER",
+                                                                    "courierCode",
+                                                                    "")))))
                     .when()
                     .post(SHIP_BATCH_URL)
                     .then()

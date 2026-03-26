@@ -237,8 +237,10 @@ class SellerQueryApiMapperTest {
             SellerDetailApiResponse response = mapper.toDetailResponse(result);
 
             // then
-            assertThat(response.seller().createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
-            assertThat(response.seller().updatedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.seller().createdAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.seller().updatedAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
     }
 

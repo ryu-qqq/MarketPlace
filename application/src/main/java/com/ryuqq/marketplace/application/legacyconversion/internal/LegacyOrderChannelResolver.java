@@ -58,8 +58,8 @@ public class LegacyOrderChannelResolver {
      *   <li>외부몰: EXTERNAL_ORDER_PK_ID에서 상품주문번호 추출
      * </ul>
      *
-     * <p>네이버 주문의 경우 EXTERNAL_ORDER_PK_ID가 "{주문번호}_{상품주문번호}" 형태로 저장됩니다.
-     * 네이버 API 호출 시 상품주문번호(뒤)가 핵심 식별자이므로 언더스코어 뒤의 값만 추출합니다.
+     * <p>네이버 주문의 경우 EXTERNAL_ORDER_PK_ID가 "{주문번호}_{상품주문번호}" 형태로 저장됩니다. 네이버 API 호출 시 상품주문번호(뒤)가 핵심
+     * 식별자이므로 언더스코어 뒤의 값만 추출합니다.
      *
      * @param externalOrderPkId external_order.EXTERNAL_ORDER_PK_ID (nullable)
      * @param legacyOrderId 레거시 주문 ID

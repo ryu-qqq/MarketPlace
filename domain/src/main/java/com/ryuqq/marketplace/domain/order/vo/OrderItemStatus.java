@@ -33,7 +33,9 @@ public enum OrderItemStatus {
     }
 
     public static List<OrderItemStatus> fromStringList(List<String> values) {
-        if (values == null || values.isEmpty()) { return List.of(); }
+        if (values == null || values.isEmpty()) {
+            return List.of();
+        }
         return values.stream().map(s -> valueOf(s.toUpperCase(Locale.ROOT))).toList();
     }
 }

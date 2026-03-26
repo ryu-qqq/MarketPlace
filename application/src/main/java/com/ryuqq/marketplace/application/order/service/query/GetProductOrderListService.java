@@ -33,6 +33,7 @@ public class GetProductOrderListService implements GetProductOrderListUseCase {
     public ProductOrderPageResult execute(OrderSearchParams params) {
         OrderSearchCriteria criteria = queryFactory.createCriteria(params);
         ProductOrderListBundle bundle = readFacade.getProductOrderListBundle(criteria);
-        return assembler.toProductOrderPageResult(bundle, params.searchParams().page(), params.searchParams().size());
+        return assembler.toProductOrderPageResult(
+                bundle, params.searchParams().page(), params.searchParams().size());
     }
 }

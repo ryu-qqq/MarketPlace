@@ -7,8 +7,8 @@ import java.util.List;
 /**
  * 세토프 상품 그룹 조회 응답 DTO.
  *
- * <p>GET /api/v2/admin/product-groups/{productGroupId} 응답을 매핑합니다.
- * V2 응답 구조: { "data": { "id": ..., "products": [...], "optionProductMatrix": { "products": [...] }, "images": [...] } }
+ * <p>GET /api/v2/admin/product-groups/{productGroupId} 응답을 매핑합니다. V2 응답 구조: { "data": { "id": ...,
+ * "products": [...], "optionProductMatrix": { "products": [...] }, "images": [...] } }
  *
  * <p>products 편의 접근자는 data.optionProductMatrix.products -> data.products 순서로 폴백합니다.
  */

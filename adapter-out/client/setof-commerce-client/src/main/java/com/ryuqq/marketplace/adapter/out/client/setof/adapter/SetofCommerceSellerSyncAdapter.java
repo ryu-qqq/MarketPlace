@@ -56,8 +56,7 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
             log.info("세토프 커머스 셀러 등록 요청: sellerId={}", sellerId);
 
             SetofSyncApiResponse response =
-                    executeWithTokenRefresh(
-                            shop, token -> apiClient.createSeller(token, request));
+                    executeWithTokenRefresh(shop, token -> apiClient.createSeller(token, request));
             return toResult(response);
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -75,10 +74,12 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
 
             log.info("세토프 커머스 셀러 수정 요청: sellerId={}", sellerId);
 
-            executeWithTokenRefresh(shop, token -> {
-                apiClient.updateSeller(token, sellerId, request);
-                return null;
-            });
+            executeWithTokenRefresh(
+                    shop,
+                    token -> {
+                        apiClient.updateSeller(token, sellerId, request);
+                        return null;
+                    });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;

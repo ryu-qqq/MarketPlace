@@ -1,8 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.client;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofDescriptionRequest;
-import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerTokenRequest;
-import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerTokenResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofImageVariantSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofImagesRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofNoticeRequest;
@@ -18,6 +16,8 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofRefundPolicySyncR
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerAddressSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerCreateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerSyncRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerTokenRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerTokenResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofShippingPolicySyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSyncApiResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofCommerceApiExecutor;
@@ -126,8 +126,7 @@ public class SetofCommerceApiClient {
      *
      * <p>GET /api/v2/admin/product-groups/{productGroupId}
      */
-    public SetofProductGroupDetailResponse getProduct(
-            String shopSecret, String externalProductId) {
+    public SetofProductGroupDetailResponse getProduct(String shopSecret, String externalProductId) {
         log.info("세토프 커머스 상품 그룹 조회 요청: externalProductId={}", externalProductId);
         return executor.execute(
                 () ->
@@ -234,8 +233,7 @@ public class SetofCommerceApiClient {
      *
      * <p>POST /api/v2/admin/product-groups/{productGroupId}/images
      */
-    public void registerImages(
-            String shopSecret, Long productGroupId, SetofImagesRequest request) {
+    public void registerImages(String shopSecret, Long productGroupId, SetofImagesRequest request) {
         log.info("세토프 커머스 이미지 등록 요청: productGroupId={}", productGroupId);
         executor.execute(
                 () ->
@@ -256,8 +254,7 @@ public class SetofCommerceApiClient {
      *
      * <p>PUT /api/v2/admin/product-groups/{productGroupId}/images
      */
-    public void updateImages(
-            String shopSecret, Long productGroupId, SetofImagesRequest request) {
+    public void updateImages(String shopSecret, Long productGroupId, SetofImagesRequest request) {
         log.info("세토프 커머스 이미지 수정 요청: productGroupId={}", productGroupId);
         executor.execute(
                 () ->
@@ -326,8 +323,7 @@ public class SetofCommerceApiClient {
      *
      * <p>POST /api/v2/admin/product-groups/{productGroupId}/notice
      */
-    public void registerNotice(
-            String shopSecret, Long productGroupId, SetofNoticeRequest request) {
+    public void registerNotice(String shopSecret, Long productGroupId, SetofNoticeRequest request) {
         log.info("세토프 커머스 고시정보 등록 요청: productGroupId={}", productGroupId);
         executor.execute(
                 () ->
@@ -348,8 +344,7 @@ public class SetofCommerceApiClient {
      *
      * <p>PUT /api/v2/admin/product-groups/{productGroupId}/notice
      */
-    public void updateNotice(
-            String shopSecret, Long productGroupId, SetofNoticeRequest request) {
+    public void updateNotice(String shopSecret, Long productGroupId, SetofNoticeRequest request) {
         log.info("세토프 커머스 고시정보 수정 요청: productGroupId={}", productGroupId);
         executor.execute(
                 () ->
@@ -418,8 +413,7 @@ public class SetofCommerceApiClient {
      * @deprecated 세토프 Admin API에 셀러 Command 엔드포인트가 없음. 데드 코드.
      */
     @Deprecated
-    public void updateSeller(
-            String shopSecret, Long sellerId, SetofSellerSyncRequest request) {
+    public void updateSeller(String shopSecret, Long sellerId, SetofSellerSyncRequest request) {
         log.info("세토프 커머스 셀러 수정 요청: sellerId={}", sellerId);
         executor.execute(
                 () ->
@@ -517,8 +511,7 @@ public class SetofCommerceApiClient {
      *
      * <p>POST /api/v2/refund-policies
      */
-    public void createRefundPolicy(
-            String shopSecret, SetofRefundPolicySyncRequest request) {
+    public void createRefundPolicy(String shopSecret, SetofRefundPolicySyncRequest request) {
         log.info("세토프 커머스 환불정책 등록 요청");
         executor.execute(
                 () ->
@@ -538,9 +531,7 @@ public class SetofCommerceApiClient {
      * <p>PUT /api/v2/refund-policies/{policyId}
      */
     public void updateRefundPolicy(
-            String shopSecret,
-            Long policyId,
-            SetofRefundPolicySyncRequest request) {
+            String shopSecret, Long policyId, SetofRefundPolicySyncRequest request) {
         log.info("세토프 커머스 환불정책 수정 요청: policyId={}", policyId);
         executor.execute(
                 () ->
@@ -561,8 +552,7 @@ public class SetofCommerceApiClient {
      *
      * <p>POST /api/v2/shipping-policies
      */
-    public void createShippingPolicy(
-            String shopSecret, SetofShippingPolicySyncRequest request) {
+    public void createShippingPolicy(String shopSecret, SetofShippingPolicySyncRequest request) {
         log.info("세토프 커머스 배송정책 등록 요청");
         executor.execute(
                 () ->
@@ -582,9 +572,7 @@ public class SetofCommerceApiClient {
      * <p>PUT /api/v2/shipping-policies/{policyId}
      */
     public void updateShippingPolicy(
-            String shopSecret,
-            Long policyId,
-            SetofShippingPolicySyncRequest request) {
+            String shopSecret, Long policyId, SetofShippingPolicySyncRequest request) {
         log.info("세토프 커머스 배송정책 수정 요청: policyId={}", policyId);
         executor.execute(
                 () ->

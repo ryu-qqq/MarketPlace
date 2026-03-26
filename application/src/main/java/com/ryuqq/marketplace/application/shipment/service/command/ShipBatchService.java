@@ -55,8 +55,7 @@ public class ShipBatchService implements ShipBatchUseCase {
     }
 
     private ShipBatchItem resolveOrderItemId(ShipBatchItem item) {
-        OrderItem orderItem =
-                orderItemReadManager.getByOrderItemNumber(item.orderItemNumber());
+        OrderItem orderItem = orderItemReadManager.getByOrderItemNumber(item.orderItemNumber());
         return new ShipBatchItem(
                 orderItem.id().value(),
                 item.orderItemNumber(),

@@ -13,7 +13,6 @@ import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderJpaEntity
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.PaymentJpaRepository;
-import com.ryuqq.marketplace.adapter.out.persistence.shipment.ShipmentJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.ShipmentJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.repository.ShipmentJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.shipmentoutbox.repository.ShipmentOutboxJpaRepository;
@@ -34,10 +33,11 @@ import org.springframework.http.HttpStatus;
  * <p>MySQL 실제 컨테이너 기반으로 배송 조회 API를 검증합니다.
  *
  * <p>테스트 대상:
+ *
  * <ul>
- *   <li>Q1~Q4: GET /shipments/summary - 배송 상태별 요약 조회</li>
- *   <li>Q5~Q10: GET /shipments - 배송 목록 조회 (V4)</li>
- *   <li>Q11~Q15: GET /shipments/{shipmentId} - 배송 상세 조회</li>
+ *   <li>Q1~Q4: GET /shipments/summary - 배송 상태별 요약 조회
+ *   <li>Q5~Q10: GET /shipments - 배송 목록 조회 (V4)
+ *   <li>Q11~Q15: GET /shipments/{shipmentId} - 배송 상세 조회
  * </ul>
  */
 @Tag("e2e")
@@ -408,7 +408,8 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
 
             Instant now = Instant.now();
             ShipmentJpaEntity shipment =
-                    shipmentRepository.save(createShipmentEntity(shipmentId, orderItemId, "SHIPPED", now));
+                    shipmentRepository.save(
+                            createShipmentEntity(shipmentId, orderItemId, "SHIPPED", now));
 
             given().spec(givenSuperAdmin())
                     .when()
@@ -447,13 +448,14 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
             ShipmentJpaEntity shipment = createShipmentWithOrder("SHIPPED");
 
             // 목록 조회에서 shipmentNumber 확인
-            String shipmentNumber = given().spec(givenSuperAdmin())
-                    .queryParam("page", 0)
-                    .queryParam("size", 20)
-                    .when()
-                    .get(SHIPMENTS)
-                    .jsonPath()
-                    .getString("data.content[0].shipmentNumber");
+            String shipmentNumber =
+                    given().spec(givenSuperAdmin())
+                            .queryParam("page", 0)
+                            .queryParam("size", 20)
+                            .when()
+                            .get(SHIPMENTS)
+                            .jsonPath()
+                            .getString("data.content[0].shipmentNumber");
 
             // 상세 조회에서 동일한 shipmentNumber 확인
             given().spec(givenSuperAdmin())

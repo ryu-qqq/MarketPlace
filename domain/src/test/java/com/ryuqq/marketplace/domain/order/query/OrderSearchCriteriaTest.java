@@ -39,7 +39,14 @@ class OrderSearchCriteriaTest {
             // when
             OrderSearchCriteria criteria =
                     OrderSearchCriteria.of(
-                            statuses, List.of(), null, searchField, searchWord, dateRange, dateField, queryContext);
+                            statuses,
+                            List.of(),
+                            null,
+                            searchField,
+                            searchWord,
+                            dateRange,
+                            dateField,
+                            queryContext);
 
             // then
             assertThat(criteria.statuses())

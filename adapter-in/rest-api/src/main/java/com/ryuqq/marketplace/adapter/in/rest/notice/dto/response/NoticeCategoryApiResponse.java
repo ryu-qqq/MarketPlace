@@ -13,5 +13,4 @@ public record NoticeCategoryApiResponse(
         @Schema(description = "대상 카테고리 그룹", example = "CLOTHING") String targetCategoryGroup,
         @Schema(description = "활성 상태", example = "true") boolean active,
         @Schema(description = "고시정보 필드 목록") List<NoticeFieldApiResponse> fields,
-        @Schema(description = "생성일시 (KST)", example = "2026-01-15T10:30:00Z")
-                String createdAt) {}
+        @Schema(description = "생성일시 (KST)", example = "2026-01-15T10:30:00Z") String createdAt) {}

@@ -121,7 +121,12 @@ class ExternalOrderItemPriceTest {
             // when
             ExternalOrderItemPrice price =
                     ExternalOrderItemPrice.of(
-                            Money.of(10000), 1, Money.of(10000), null, Money.zero(), Money.of(10000));
+                            Money.of(10000),
+                            1,
+                            Money.of(10000),
+                            null,
+                            Money.zero(),
+                            Money.of(10000));
 
             // then
             assertThat(price.discountAmount()).isEqualTo(Money.zero());

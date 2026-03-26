@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 /**
  * 네이버 커머스 구매확정 폴링 클라이언트 어댑터.
  *
- * <p>last-changed-statuses API에서 PURCHASE_DECIDED 이벤트를 필터링하여 구매확정된 상품주문번호 목록을 반환합니다.
- * claimType이 null인 건만 대상으로 합니다.
+ * <p>last-changed-statuses API에서 PURCHASE_DECIDED 이벤트를 필터링하여 구매확정된 상품주문번호 목록을 반환합니다. claimType이
+ * null인 건만 대상으로 합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")

@@ -174,16 +174,20 @@ public class LegacyOrderApiQueryDslRepository {
                 .leftJoin(legacyShipmentEntity)
                 .on(legacyShipmentEntity.orderId.eq(legacyOrderEntity.id))
                 .where(legacyOrderEntity.id.in(orderIds))
-                .orderBy(legacyOrderEntity.id.desc(), legacyOrderSnapshotProductGroupImageEntity.id.asc())
+                .orderBy(
+                        legacyOrderEntity.id.desc(),
+                        legacyOrderSnapshotProductGroupImageEntity.id.asc())
                 .fetch()
                 .stream()
-                .filter(new java.util.function.Predicate<LegacyOrderCompositeQueryDto>() {
-                    private final java.util.Set<Long> seen = new java.util.HashSet<>();
-                    @Override
-                    public boolean test(LegacyOrderCompositeQueryDto dto) {
-                        return seen.add(dto.legacyOrderId());
-                    }
-                })
+                .filter(
+                        new java.util.function.Predicate<LegacyOrderCompositeQueryDto>() {
+                            private final java.util.Set<Long> seen = new java.util.HashSet<>();
+
+                            @Override
+                            public boolean test(LegacyOrderCompositeQueryDto dto) {
+                                return seen.add(dto.legacyOrderId());
+                            }
+                        })
                 .toList();
     }
 
@@ -242,8 +246,7 @@ public class LegacyOrderApiQueryDslRepository {
         }
 
         // 세토프 레거시 호환: ORDER_FAILED, ORDER_PROCESSING 자동 제외
-        where.and(
-                legacyOrderEntity.orderStatus.notIn("ORDER_FAILED", "ORDER_PROCESSING"));
+        where.and(legacyOrderEntity.orderStatus.notIn("ORDER_FAILED", "ORDER_PROCESSING"));
 
         if (params.orderStatusList() != null && !params.orderStatusList().isEmpty()) {
             where.and(legacyOrderEntity.orderStatus.in(params.orderStatusList()));

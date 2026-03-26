@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.out.persistence.settlement.SettlementEntryJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.settlement.entity.SettlementEntryJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.settlement.mapper.SettlementEntryJpaEntityMapper;
 import com.ryuqq.marketplace.domain.settlement.entry.SettlementEntryFixtures;
 import com.ryuqq.marketplace.domain.settlement.entry.aggregate.SettlementEntry;
 import com.ryuqq.marketplace.domain.settlement.entry.vo.EntryStatus;

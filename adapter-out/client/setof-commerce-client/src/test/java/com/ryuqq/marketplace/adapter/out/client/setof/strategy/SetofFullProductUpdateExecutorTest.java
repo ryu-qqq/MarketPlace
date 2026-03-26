@@ -110,7 +110,8 @@ class SetofFullProductUpdateExecutorTest {
                             eq(externalCategoryId),
                             eq(externalBrandId),
                             eq(null));
-            verify(apiClient).updateProduct(eq(serviceToken), eq(externalProductId), eq(updateRequest));
+            verify(apiClient)
+                    .updateProduct(eq(serviceToken), eq(externalProductId), eq(updateRequest));
         }
     }
 

@@ -1,8 +1,5 @@
 package com.ryuqq.marketplace.application.cancel.service.command;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -55,7 +52,8 @@ class ExecuteCancelOutboxServiceTest {
             ExecuteCancelOutboxCommand command = CancelCommandFixtures.executeCancelOutboxCommand();
             CancelOutbox outbox = org.mockito.Mockito.mock(CancelOutbox.class);
             CancelOutbox freshOutbox = org.mockito.Mockito.mock(CancelOutbox.class);
-            ExternalOrderItemMapping mapping = org.mockito.Mockito.mock(ExternalOrderItemMapping.class);
+            ExternalOrderItemMapping mapping =
+                    org.mockito.Mockito.mock(ExternalOrderItemMapping.class);
             Shop shop = org.mockito.Mockito.mock(Shop.class);
             OutboxSyncResult successResult = OutboxSyncResult.success();
             Instant now = Instant.now();
@@ -83,7 +81,8 @@ class ExecuteCancelOutboxServiceTest {
             ExecuteCancelOutboxCommand command = CancelCommandFixtures.executeCancelOutboxCommand();
             CancelOutbox outbox = org.mockito.Mockito.mock(CancelOutbox.class);
             CancelOutbox freshOutbox = org.mockito.Mockito.mock(CancelOutbox.class);
-            ExternalOrderItemMapping mapping = org.mockito.Mockito.mock(ExternalOrderItemMapping.class);
+            ExternalOrderItemMapping mapping =
+                    org.mockito.Mockito.mock(ExternalOrderItemMapping.class);
             Shop shop = org.mockito.Mockito.mock(Shop.class);
             OutboxSyncResult failResult = OutboxSyncResult.failure(false, "외부 API 오류");
             Instant now = Instant.now();
@@ -117,7 +116,8 @@ class ExecuteCancelOutboxServiceTest {
             ExecuteCancelOutboxCommand command = CancelCommandFixtures.executeCancelOutboxCommand();
             CancelOutbox outbox = org.mockito.Mockito.mock(CancelOutbox.class);
             CancelOutbox freshOutbox = org.mockito.Mockito.mock(CancelOutbox.class);
-            ExternalOrderItemMapping mapping = org.mockito.Mockito.mock(ExternalOrderItemMapping.class);
+            ExternalOrderItemMapping mapping =
+                    org.mockito.Mockito.mock(ExternalOrderItemMapping.class);
             Shop shop = org.mockito.Mockito.mock(Shop.class);
             Instant now = Instant.now();
 

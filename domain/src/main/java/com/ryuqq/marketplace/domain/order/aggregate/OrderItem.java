@@ -113,10 +113,7 @@ public class OrderItem {
                         this.id, from, OrderItemStatus.CONFIRMED, changedBy, null, now));
     }
 
-    /**
-     * 전체 취소. 잔여 수량 전부를 취소 처리한다.
-     * 기존 호출부 호환용. 내부적으로 partialCancel(remainingCancelableQty)을 호출한다.
-     */
+    /** 전체 취소. 잔여 수량 전부를 취소 처리한다. 기존 호출부 호환용. 내부적으로 partialCancel(remainingCancelableQty)을 호출한다. */
     public void cancel(String changedBy, String reason, Instant now) {
         int remaining = remainingCancelableQty();
         if (remaining <= 0) {
@@ -155,14 +152,7 @@ public class OrderItem {
         }
 
         this.histories.add(
-                OrderItemHistory.of(
-                        this.id,
-                        from,
-                        this.status,
-                        changedBy,
-                        reason,
-                        cancelQty,
-                        now));
+                OrderItemHistory.of(this.id, from, this.status, changedBy, reason, cancelQty, now));
     }
 
     /** 취소 가능한 잔여 수량. */
@@ -221,8 +211,7 @@ public class OrderItem {
         }
 
         this.histories.add(
-                OrderItemHistory.of(
-                        this.id, from, this.status, changedBy, reason, returnQty, now));
+                OrderItemHistory.of(this.id, from, this.status, changedBy, reason, returnQty, now));
     }
 
     /** 반품 가능한 잔여 수량. */

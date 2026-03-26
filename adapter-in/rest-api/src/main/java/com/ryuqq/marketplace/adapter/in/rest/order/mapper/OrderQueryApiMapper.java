@@ -492,8 +492,7 @@ public class OrderQueryApiMapper {
     }
 
     private OrderListApiResponseV4.ExternalOrderInfoApiResponse toExternalOrderInfoV4(
-            ProductOrderListResult.OrderInfo order,
-            ProductOrderListResult.DeliveryInfo delivery) {
+            ProductOrderListResult.OrderInfo order, ProductOrderListResult.DeliveryInfo delivery) {
         if (order == null
                 || (order.externalOrderNo() == null || order.externalOrderNo().isBlank())) {
             return null;

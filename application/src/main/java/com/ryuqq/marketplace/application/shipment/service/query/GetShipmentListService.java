@@ -47,14 +47,17 @@ public class GetShipmentListService implements GetShipmentListUseCase {
         long totalElements = readManager.countFulfillment(criteria);
 
         if (orderItemIds.isEmpty()) {
-            return assembler.toPageResult(List.of(), params.searchParams().page(), params.searchParams().size(), totalElements);
+            return assembler.toPageResult(
+                    List.of(),
+                    params.searchParams().page(),
+                    params.searchParams().size(),
+                    totalElements);
         }
 
         Map<String, OrderItemResult> itemMap = orderReadManager.findOrderItemsByIds(orderItemIds);
 
         // OrderItem별 Shipment 조회 (없으면 null)
-        List<OrderItemId> itemIdList =
-                orderItemIds.stream().map(OrderItemId::of).toList();
+        List<OrderItemId> itemIdList = orderItemIds.stream().map(OrderItemId::of).toList();
         Map<String, Shipment> shipmentMap = new java.util.HashMap<>();
         for (Shipment s : readManager.findByOrderItemIds(itemIdList)) {
             shipmentMap.put(s.orderItemIdValue(), s);
@@ -78,6 +81,7 @@ public class GetShipmentListService implements GetShipmentListUseCase {
             results.add(assembler.toListResult(shipment, item, order, true));
         }
 
-        return assembler.toPageResult(results, params.searchParams().page(), params.searchParams().size(), totalElements);
+        return assembler.toPageResult(
+                results, params.searchParams().page(), params.searchParams().size(), totalElements);
     }
 }

@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.claimsync.internal;
 
+import com.ryuqq.marketplace.application.cancel.internal.CancelSettlementProcessor;
 import com.ryuqq.marketplace.application.cancel.manager.CancelCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelReadManager;
 import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
@@ -8,7 +9,6 @@ import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPay
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
-import com.ryuqq.marketplace.application.cancel.internal.CancelSettlementProcessor;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
@@ -18,10 +18,10 @@ import com.ryuqq.marketplace.domain.cancel.vo.CancelReason;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReasonType;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelRefundInfo;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
+import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.common.vo.Money;
-import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.time.Instant;
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
  * <p>CANCEL, ADMIN_CANCEL 유형의 클레임에 대해 액션 결정과 실행을 캡슐화합니다.
  */
 @Component
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessiveImports"})
 public class CancelClaimSyncHandler implements ClaimSyncHandler {
 
     private static final Logger log = LoggerFactory.getLogger(CancelClaimSyncHandler.class);
@@ -86,7 +86,9 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     public ClaimSyncAction resolve(ExternalClaimPayload claim, OrderItemId orderItemId) {
         List<Cancel> existingCancels = cancelReadManager.findAllByOrderItemId(orderItemId);
         Optional<Cancel> latestCancel =
-                existingCancels.isEmpty() ? Optional.empty() : Optional.of(existingCancels.getLast());
+                existingCancels.isEmpty()
+                        ? Optional.empty()
+                        : Optional.of(existingCancels.getLast());
         return switch (claim.claimType()) {
             case "CANCEL" -> resolveCancel(claim, latestCancel, existingCancels, orderItemId);
             case "ADMIN_CANCEL" -> resolveAdminCancel(claim, latestCancel);
@@ -158,8 +160,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     }
 
     /** 해당 OrderItem에 취소 가능한 잔여 수량이 있는지 확인한다. */
-    private boolean hasRemainingCancelableQty(
-            List<Cancel> allCancels, OrderItemId orderItemId) {
+    private boolean hasRemainingCancelableQty(List<Cancel> allCancels, OrderItemId orderItemId) {
         return orderItemReadManager
                 .findById(orderItemId)
                 .map(item -> item.remainingCancelableQty() > 0)
@@ -237,8 +238,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         String fromStatus = cancel.status().name();
         cancel.approve(SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
-        partialCancelOrderItem(
-                cancel.orderItemId(), cancel.cancelQty(), "취소 승인 동기화", now);
+        partialCancelOrderItem(cancel.orderItemId(), cancel.cancelQty(), "취소 승인 동기화", now);
         recordHistory(cancel.idValue(), fromStatus, "APPROVED", cancel.cancelQty());
         return 0L;
     }
@@ -327,10 +327,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
                         ClaimType.CANCEL, cancelId, from, toStatus, qty));
     }
 
-    /**
-     * 부분취소 수량만큼 OrderItem의 cancelledQty를 증가시킨다.
-     * 전체 수량이 소진되면 CANCELLED 상태 전환 + Shipment 취소.
-     */
+    /** 부분취소 수량만큼 OrderItem의 cancelledQty를 증가시킨다. 전체 수량이 소진되면 CANCELLED 상태 전환 + Shipment 취소. */
     private void partialCancelOrderItem(
             OrderItemId orderItemId, int cancelQty, String reason, Instant now) {
         orderItemReadManager
@@ -367,8 +364,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
                 .findById(orderItemId)
                 .map(
                         item -> {
-                            int unitPrice =
-                                    item.price().paymentAmount().value() / item.quantity();
+                            int unitPrice = item.price().paymentAmount().value() / item.quantity();
                             return Money.of(unitPrice * cancelQty);
                         })
                 .orElse(Money.zero());
@@ -399,14 +395,14 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             return CancelReasonType.OTHER;
         }
         return switch (rawReason) {
-            // 내부 코드
+                // 내부 코드
             case "CHANGE_OF_MIND" -> CancelReasonType.CHANGE_OF_MIND;
             case "WRONG_ORDER" -> CancelReasonType.WRONG_ORDER;
             case "FOUND_CHEAPER" -> CancelReasonType.FOUND_CHEAPER;
             case "OUT_OF_STOCK" -> CancelReasonType.OUT_OF_STOCK;
             case "PRODUCT_DISCONTINUED" -> CancelReasonType.PRODUCT_DISCONTINUED;
             case "DELIVERY_TOO_SLOW" -> CancelReasonType.DELIVERY_TOO_SLOW;
-            // 네이버 커머스 코드
+                // 네이버 커머스 코드
             case "INTENT_CHANGED" -> CancelReasonType.CHANGE_OF_MIND;
             case "COLOR_AND_SIZE" -> CancelReasonType.WRONG_ORDER;
             case "PRODUCT_UNSATISFIED" -> CancelReasonType.OTHER;

@@ -88,8 +88,7 @@ public class IssueSellicOrderService implements IssueSellicOrderUseCase {
 
             for (ExternalOrderPayload payload : payloads) {
                 try {
-                    boolean issued =
-                            coordinator.issueIfNotDuplicate(payload, salesChannelId, now);
+                    boolean issued = coordinator.issueIfNotDuplicate(payload, salesChannelId, now);
                     if (issued) {
                         totalIssued++;
                     } else {

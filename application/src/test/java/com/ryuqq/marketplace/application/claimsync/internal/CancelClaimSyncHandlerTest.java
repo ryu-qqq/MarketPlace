@@ -6,16 +6,16 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import com.ryuqq.marketplace.application.cancel.internal.CancelSettlementProcessor;
 import com.ryuqq.marketplace.application.cancel.manager.CancelCommandManager;
 import com.ryuqq.marketplace.application.cancel.manager.CancelReadManager;
+import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
+import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
 import com.ryuqq.marketplace.application.claimsync.ClaimSyncFixtures;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
-import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
-import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
-import com.ryuqq.marketplace.application.cancel.internal.CancelSettlementProcessor;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentCommandManager;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.cancel.CancelFixtures;
@@ -588,8 +588,14 @@ class CancelClaimSyncHandlerTest {
 
         /** qty=3, paymentAmount=30000인 OrderItem을 cancelledQty만큼 이미 취소된 상태로 생성 */
         private OrderItem orderItemWithQty3(int cancelledQty) {
-            ExternalOrderItemPrice price = ExternalOrderItemPrice.of(
-                    Money.of(10000), 3, Money.of(30000), Money.zero(), Money.zero(), Money.of(30000));
+            ExternalOrderItemPrice price =
+                    ExternalOrderItemPrice.of(
+                            Money.of(10000),
+                            3,
+                            Money.of(30000),
+                            Money.zero(),
+                            Money.zero(),
+                            Money.of(30000));
             return OrderItem.reconstitute(
                     orderItemId(),
                     OrderItemNumber.of("ORD-20240101-0001-001"),
@@ -611,23 +617,22 @@ class CancelClaimSyncHandlerTest {
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayload("CANCEL_REQUEST");
             OrderItemId id = orderItemId();
             Cancel completedCancel = CancelFixtures.completedCancel();
-            OrderItem fullyUsedItem = OrderItem.reconstitute(
-                    id,
-                    OrderFixtures.defaultOrderItemNumber(),
-                    OrderFixtures.defaultInternalProductReference(),
-                    OrderFixtures.defaultExternalProductSnapshot(),
-                    OrderFixtures.defaultExternalOrderItemPrice(),
-                    OrderFixtures.defaultReceiverInfo(),
-                    OrderItemStatus.CANCELLED,
-                    null,
-                    2,
-                    0,
-                    List.of());
+            OrderItem fullyUsedItem =
+                    OrderItem.reconstitute(
+                            id,
+                            OrderFixtures.defaultOrderItemNumber(),
+                            OrderFixtures.defaultInternalProductReference(),
+                            OrderFixtures.defaultExternalProductSnapshot(),
+                            OrderFixtures.defaultExternalOrderItemPrice(),
+                            OrderFixtures.defaultReceiverInfo(),
+                            OrderItemStatus.CANCELLED,
+                            null,
+                            2,
+                            0,
+                            List.of());
 
-            given(cancelReadManager.findAllByOrderItemId(id))
-                    .willReturn(List.of(completedCancel));
-            given(orderItemReadManager.findById(id))
-                    .willReturn(Optional.of(fullyUsedItem));
+            given(cancelReadManager.findAllByOrderItemId(id)).willReturn(List.of(completedCancel));
+            given(orderItemReadManager.findById(id)).willReturn(Optional.of(fullyUsedItem));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, id);
@@ -645,10 +650,8 @@ class CancelClaimSyncHandlerTest {
             Cancel completedCancel = CancelFixtures.completedCancel();
             OrderItem partiallyUsedItem = orderItemWithQty3(1);
 
-            given(cancelReadManager.findAllByOrderItemId(id))
-                    .willReturn(List.of(completedCancel));
-            given(orderItemReadManager.findById(id))
-                    .willReturn(Optional.of(partiallyUsedItem));
+            given(cancelReadManager.findAllByOrderItemId(id)).willReturn(List.of(completedCancel));
+            given(orderItemReadManager.findById(id)).willReturn(Optional.of(partiallyUsedItem));
 
             // when
             ClaimSyncAction action = sut.resolve(payload, id);
@@ -669,10 +672,8 @@ class CancelClaimSyncHandlerTest {
             OrderItem item = orderItemWithQty3(0);
 
             given(timeProvider.now()).willReturn(now);
-            given(cancelReadManager.findAllByOrderItemId(id))
-                    .willReturn(List.of(requestedCancel));
-            given(orderItemReadManager.findById(id))
-                    .willReturn(Optional.of(item));
+            given(cancelReadManager.findAllByOrderItemId(id)).willReturn(List.of(requestedCancel));
+            given(orderItemReadManager.findById(id)).willReturn(Optional.of(item));
 
             // when
             long result = sut.execute(ClaimSyncAction.CANCEL_APPROVED, payload, id, sellerId);
@@ -699,10 +700,8 @@ class CancelClaimSyncHandlerTest {
             Shipment preparingShipment = ShipmentFixtures.preparingShipment();
 
             given(timeProvider.now()).willReturn(now);
-            given(cancelReadManager.findAllByOrderItemId(id))
-                    .willReturn(List.of(requestedCancel));
-            given(orderItemReadManager.findById(id))
-                    .willReturn(Optional.of(item));
+            given(cancelReadManager.findAllByOrderItemId(id)).willReturn(List.of(requestedCancel));
+            given(orderItemReadManager.findById(id)).willReturn(Optional.of(item));
             given(shipmentReadManager.findByOrderItemId(id))
                     .willReturn(Optional.of(preparingShipment));
 
@@ -719,7 +718,8 @@ class CancelClaimSyncHandlerTest {
         @Test
         @DisplayName("execute - refundAmount가 단가 × cancelQty로 계산된다")
         void execute_RefundAmount_CalculatedByUnitPriceTimesCancelQty() {
-            // given — OrderItem qty=3, paymentAmount=30000, cancelQty=2 → refund = (30000/3)*2 = 20000
+            // given — OrderItem qty=3, paymentAmount=30000, cancelQty=2 → refund = (30000/3)*2 =
+            // 20000
             ExternalClaimPayload payload = ClaimSyncFixtures.cancelPayloadWithQty("CANCEL_DONE", 2);
             OrderItemId id = orderItemId();
             long sellerId = 10L;
@@ -729,10 +729,8 @@ class CancelClaimSyncHandlerTest {
 
             given(timeProvider.now()).willReturn(now);
             // completeCancel은 cancelReadManager를 두 번 호출: execute에서 + completeCancel 내부
-            given(cancelReadManager.findAllByOrderItemId(id))
-                    .willReturn(List.of(approvedCancel));
-            given(orderItemReadManager.findById(id))
-                    .willReturn(Optional.of(item));
+            given(cancelReadManager.findAllByOrderItemId(id)).willReturn(List.of(approvedCancel));
+            given(orderItemReadManager.findById(id)).willReturn(Optional.of(item));
 
             // when
             long result = sut.execute(ClaimSyncAction.CANCEL_COMPLETED, payload, id, sellerId);

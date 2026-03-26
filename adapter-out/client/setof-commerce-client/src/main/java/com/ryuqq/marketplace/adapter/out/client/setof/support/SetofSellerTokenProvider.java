@@ -14,9 +14,8 @@ import org.springframework.stereotype.Component;
 /**
  * 세토프 셀러 토큰 발급 및 캐싱 Provider.
  *
- * <p>Shop의 apiKey + apiSecret으로 세토프 토큰 발급 API를 호출하고,
- * 발급받은 accessToken을 shopId 기반으로 인메모리 캐싱합니다.
- * 토큰 만료 시 자동 재발급합니다.
+ * <p>Shop의 apiKey + apiSecret으로 세토프 토큰 발급 API를 호출하고, 발급받은 accessToken을 shopId 기반으로 인메모리 캐싱합니다. 토큰
+ * 만료 시 자동 재발급합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
@@ -31,9 +30,7 @@ public class SetofSellerTokenProvider {
         this.apiClient = apiClient;
     }
 
-    /**
-     * Shop의 셀러 토큰을 반환합니다. 캐시에 있으면 캐시 반환, 없으면 발급.
-     */
+    /** Shop의 셀러 토큰을 반환합니다. 캐시에 있으면 캐시 반환, 없으면 발급. */
     public String resolveToken(Shop shop) {
         Long shopId = shop.idValue();
         String cached = tokenCache.get(shopId);
@@ -43,18 +40,14 @@ public class SetofSellerTokenProvider {
         return issueAndCache(shop);
     }
 
-    /**
-     * 토큰 발급 실패 시 (401 등) 캐시를 무효화하고 재발급합니다.
-     */
+    /** 토큰 발급 실패 시 (401 등) 캐시를 무효화하고 재발급합니다. */
     public String refreshToken(Shop shop) {
         Long shopId = shop.idValue();
         tokenCache.remove(shopId);
         return issueAndCache(shop);
     }
 
-    /**
-     * 특정 Shop의 캐시된 토큰을 제거합니다.
-     */
+    /** 특정 Shop의 캐시된 토큰을 제거합니다. */
     public void evict(Long shopId) {
         tokenCache.remove(shopId);
     }

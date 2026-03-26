@@ -30,5 +30,4 @@ public record CategoryApiResponse(
                 String categoryGroup,
         @Schema(description = "표시용 이름 경로", example = "패션의류 > 남성의류 > 티셔츠") String displayPath,
         @Schema(description = "생성일시 (KST)", example = "2026-01-15T09:30:00Z") String createdAt,
-        @Schema(description = "수정일시 (KST)", example = "2026-02-10T14:20:00Z")
-                String updatedAt) {}
+        @Schema(description = "수정일시 (KST)", example = "2026-02-10T14:20:00Z") String updatedAt) {}

@@ -105,18 +105,22 @@ class IssueSellicOrderServiceTest {
             given(orderClientManager.supports("SELLIC")).willReturn(true);
 
             SalesChannelOrderClient mockClient = givenMockClient("SELLIC");
-            given(mockClient.fetchNewOrders(
-                            eq(SALES_CHANNEL_ID),
-                            eq(10L),
-                            any(ShopCredentials.class),
-                            any(Instant.class),
-                            any(Instant.class)))
+            given(
+                            mockClient.fetchNewOrders(
+                                    eq(SALES_CHANNEL_ID),
+                                    eq(10L),
+                                    any(ShopCredentials.class),
+                                    any(Instant.class),
+                                    any(Instant.class)))
                     .willReturn(List.of(order1, order2));
 
             given(shopReadManager.findActiveBySalesChannelId(SALES_CHANNEL_ID))
                     .willReturn(List.of(shop));
-            given(coordinator.issueIfNotDuplicate(
-                            any(ExternalOrderPayload.class), eq(SALES_CHANNEL_ID), any(Instant.class)))
+            given(
+                            coordinator.issueIfNotDuplicate(
+                                    any(ExternalOrderPayload.class),
+                                    eq(SALES_CHANNEL_ID),
+                                    any(Instant.class)))
                     .willReturn(true);
 
             // when
@@ -149,9 +153,7 @@ class IssueSellicOrderServiceTest {
             sut.execute(SALES_CHANNEL_ID, BATCH_SIZE);
 
             // then
-            then(coordinator)
-                    .should(never())
-                    .issueIfNotDuplicate(any(), anyLong(), any());
+            then(coordinator).should(never()).issueIfNotDuplicate(any(), anyLong(), any());
         }
 
         @Test
@@ -169,9 +171,7 @@ class IssueSellicOrderServiceTest {
             sut.execute(SALES_CHANNEL_ID, BATCH_SIZE);
 
             // then
-            then(coordinator)
-                    .should(never())
-                    .issueIfNotDuplicate(any(), anyLong(), any());
+            then(coordinator).should(never()).issueIfNotDuplicate(any(), anyLong(), any());
             then(shopReadManager).should(never()).findActiveBySalesChannelId(anyLong());
         }
 

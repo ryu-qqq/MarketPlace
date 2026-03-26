@@ -75,8 +75,7 @@ public class RequestRefundBatchService implements RequestRefundBatchUseCase {
                                 StatusChangeContext<OrderItemId> ctx =
                                         commandFactory.createRequestOrderItemContext(
                                                 item.orderItemId());
-                                oi.requestReturn(
-                                        command.requestedBy(), "환불 요청", ctx.changedAt());
+                                oi.requestReturn(command.requestedBy(), "환불 요청", ctx.changedAt());
                                 returnRequestedItems.add(oi);
                             }
                         });

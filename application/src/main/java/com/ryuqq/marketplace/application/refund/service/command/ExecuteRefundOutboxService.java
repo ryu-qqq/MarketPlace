@@ -89,8 +89,7 @@ public class ExecuteRefundOutboxService implements ExecuteRefundOutboxUseCase {
     private Shop resolveShop(String orderItemId) {
         ExternalOrderItemMapping mapping = mappingReadManager.findByOrderItemId(orderItemId);
         if (mapping == null) {
-            throw new IllegalStateException(
-                    "외부 주문 매핑을 찾을 수 없습니다: orderItemId=" + orderItemId);
+            throw new IllegalStateException("외부 주문 매핑을 찾을 수 없습니다: orderItemId=" + orderItemId);
         }
         List<Shop> shops = shopReadManager.findActiveBySalesChannelId(mapping.salesChannelId());
         if (shops.isEmpty()) {

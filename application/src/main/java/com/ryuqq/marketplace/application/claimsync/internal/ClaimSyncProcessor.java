@@ -111,16 +111,20 @@ public class ClaimSyncProcessor {
         if (claim.productOrderStatus() == null || claim.productOrderStatus().isBlank()) {
             return;
         }
-        orderItemReadManager.findById(orderItemId).ifPresent(item -> {
-            item.updateExternalOrderStatus(claim.productOrderStatus());
-            orderItemCommandManager.persistAll(List.of(item));
-        });
+        orderItemReadManager
+                .findById(orderItemId)
+                .ifPresent(
+                        item -> {
+                            item.updateExternalOrderStatus(claim.productOrderStatus());
+                            orderItemCommandManager.persistAll(List.of(item));
+                        });
     }
 
     private long resolveSellerId(OrderItemId orderItemId) {
         Optional<OrderItem> orderItem = orderItemReadManager.findById(orderItemId);
         if (orderItem.isEmpty()) {
-            throw new IllegalStateException("sellerId 조회 실패: OrderItem 없음. orderItemId=" + orderItemId.value());
+            throw new IllegalStateException(
+                    "sellerId 조회 실패: OrderItem 없음. orderItemId=" + orderItemId.value());
         }
         Long sellerId = orderItem.get().internalProduct().sellerId();
         if (sellerId == null) {

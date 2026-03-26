@@ -108,8 +108,7 @@ class LegacyJwtAuthenticationFilterTest {
             assertThat(SecurityContextHolder.getContext().getAuthentication().getName())
                     .isEqualTo(EMAIL);
             verify(filterChain).doFilter(request, response);
-            verify(sellerAuthReadManager, never())
-                    .getByEmail(org.mockito.ArgumentMatchers.any());
+            verify(sellerAuthReadManager, never()).getByEmail(org.mockito.ArgumentMatchers.any());
         }
 
         @Test
@@ -145,8 +144,7 @@ class LegacyJwtAuthenticationFilterTest {
             given(tokenManager.extractRole(VALID_TOKEN)).willReturn(ROLE_TYPE);
             given(sellerAuthReadManager.getByEmail(EMAIL))
                     .willReturn(
-                            new LegacySellerAuthResult(
-                                    42L, EMAIL, "hash", "SELLER", "APPROVED"));
+                            new LegacySellerAuthResult(42L, EMAIL, "hash", "SELLER", "APPROVED"));
 
             filter.doFilterInternal(request, response, filterChain);
 
@@ -166,8 +164,7 @@ class LegacyJwtAuthenticationFilterTest {
             given(tokenManager.extractRole(VALID_TOKEN)).willReturn(null);
             given(sellerAuthReadManager.getByEmail(EMAIL))
                     .willReturn(
-                            new LegacySellerAuthResult(
-                                    42L, EMAIL, "hash", "MASTER", "APPROVED"));
+                            new LegacySellerAuthResult(42L, EMAIL, "hash", "MASTER", "APPROVED"));
 
             filter.doFilterInternal(request, response, filterChain);
 
@@ -198,8 +195,7 @@ class LegacyJwtAuthenticationFilterTest {
             given(tokenManager.extractSubject(EXPIRED_TOKEN)).willReturn(EMAIL);
             given(tokenManager.extractSellerId(EXPIRED_TOKEN)).willReturn(SELLER_ID);
             given(tokenManager.extractRole(EXPIRED_TOKEN)).willReturn(ROLE_TYPE);
-            given(tokenCacheReadManager.findByEmail(EMAIL))
-                    .willReturn(Optional.of(REFRESH_TOKEN));
+            given(tokenCacheReadManager.findByEmail(EMAIL)).willReturn(Optional.of(REFRESH_TOKEN));
             given(tokenManager.isValid(REFRESH_TOKEN)).willReturn(true);
 
             filter.doFilterInternal(request, response, filterChain);
@@ -233,8 +229,7 @@ class LegacyJwtAuthenticationFilterTest {
             given(tokenManager.isValid(EXPIRED_TOKEN)).willReturn(false);
             given(tokenManager.isExpired(EXPIRED_TOKEN)).willReturn(true);
             given(tokenManager.extractSubject(EXPIRED_TOKEN)).willReturn(EMAIL);
-            given(tokenCacheReadManager.findByEmail(EMAIL))
-                    .willReturn(Optional.of(REFRESH_TOKEN));
+            given(tokenCacheReadManager.findByEmail(EMAIL)).willReturn(Optional.of(REFRESH_TOKEN));
             given(tokenManager.isValid(REFRESH_TOKEN)).willReturn(false);
 
             filter.doFilterInternal(request, response, filterChain);

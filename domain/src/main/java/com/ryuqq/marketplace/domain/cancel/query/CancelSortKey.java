@@ -24,7 +24,9 @@ public enum CancelSortKey implements SortKey {
     }
 
     public static CancelSortKey fromString(String value) {
-        if (value == null || value.isBlank()) { return CREATED_AT; }
+        if (value == null || value.isBlank()) {
+            return CREATED_AT;
+        }
         return valueOf(value);
     }
 }

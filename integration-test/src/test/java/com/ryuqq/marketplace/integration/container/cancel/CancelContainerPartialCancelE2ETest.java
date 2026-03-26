@@ -98,8 +98,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
 
             // when: 2건 판매자 취소
             given().spec(givenSuperAdmin())
-                    .body(
-                            createSellerCancelRequest(orderItemId, 2))
+                    .body(createSellerCancelRequest(orderItemId, 2))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -133,8 +132,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
 
             // when: 2차 잔여 1건 취소
             given().spec(givenSuperAdmin())
-                    .body(
-                            createSellerCancelRequest(orderItemId, 1))
+                    .body(createSellerCancelRequest(orderItemId, 1))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -160,8 +158,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
 
             // 전량 취소
             given().spec(givenSuperAdmin())
-                    .body(
-                            createSellerCancelRequest(orderItemId, 2))
+                    .body(createSellerCancelRequest(orderItemId, 2))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -171,8 +168,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             // when: 추가 1건 취소 시도
             var response =
                     given().spec(givenSuperAdmin())
-                            .body(
-                                    createSellerCancelRequest(orderItemId, 1))
+                            .body(createSellerCancelRequest(orderItemId, 1))
                             .when()
                             .post(SELLER_CANCEL_BATCH)
                             .then()
@@ -200,8 +196,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             String orderItemId = orderItemRepository.save(item).getId();
 
             given().spec(givenSuperAdmin())
-                    .body(
-                            createSellerCancelRequest(orderItemId, 2))
+                    .body(createSellerCancelRequest(orderItemId, 2))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()
@@ -230,8 +225,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             String orderItemId = orderItemRepository.save(item).getId();
 
             given().spec(givenSuperAdmin())
-                    .body(
-                            createSellerCancelRequest(orderItemId, 2))
+                    .body(createSellerCancelRequest(orderItemId, 2))
                     .when()
                     .post(SELLER_CANCEL_BATCH)
                     .then()

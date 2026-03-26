@@ -16,8 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * 셀릭 주문 luxurydb 저장 Testcontainers E2E 테스트.
  *
- * <p>실제 MySQL 컨테이너에 셀릭 주문을 INSERT하고, 9개 테이블에 정상 저장되는지 검증합니다. 중복 체크 로직도 실제 DB
- * 조회로 검증합니다.
+ * <p>실제 MySQL 컨테이너에 셀릭 주문을 INSERT하고, 9개 테이블에 정상 저장되는지 검증합니다. 중복 체크 로직도 실제 DB 조회로 검증합니다.
  */
 @Tag("sellic-order")
 @DisplayName("셀릭 주문 luxurydb 저장 E2E 테스트 (Testcontainers)")
@@ -50,7 +49,8 @@ class SellicOrderIssuingContainerE2ETest extends ContainerLegacyE2ETestBase {
         void persist_ThenExistsByExternalIdx_ReturnsTrue() {
             // given
             long externalIdx = 88888L;
-            IssueSellicLegacyOrderCommand command = createTestCommand(externalIdx, "TEST_ORDER_002");
+            IssueSellicLegacyOrderCommand command =
+                    createTestCommand(externalIdx, "TEST_ORDER_002");
 
             // when
             persistencePort.persist(command);
@@ -96,21 +96,26 @@ class SellicOrderIssuingContainerE2ETest extends ContainerLegacyE2ETestBase {
 
         var payment =
                 new IssueSellicLegacyOrderCommand.Payment(
-                        1L, 50000L, "PAYMENT_COMPLETED", "SEWON", now, "홍길동", "", "01012345678",
-                        "SEWON_2_" + externalOrderPkId, "PC");
+                        1L,
+                        50000L,
+                        "PAYMENT_COMPLETED",
+                        "SEWON",
+                        now,
+                        "홍길동",
+                        "",
+                        "01012345678",
+                        "SEWON_2_" + externalOrderPkId,
+                        "PC");
 
         var order =
-                new IssueSellicLegacyOrderCommand.Order(
-                        1L, 8L, 1L, 50000L, "PAYMENT_COMPLETED", 1);
+                new IssueSellicLegacyOrderCommand.Order(1L, 8L, 1L, 50000L, "PAYMENT_COMPLETED", 1);
 
-        var shipment =
-                new IssueSellicLegacyOrderCommand.Shipment("", "", "", "DELIVERY_PENDING");
+        var shipment = new IssueSellicLegacyOrderCommand.Shipment("", "", "", "DELIVERY_PENDING");
 
         var settlement = new IssueSellicLegacyOrderCommand.Settlement(0L);
 
         var externalOrder =
-                new IssueSellicLegacyOrderCommand.ExternalOrder(
-                        2L, externalIdx, externalOrderPkId);
+                new IssueSellicLegacyOrderCommand.ExternalOrder(2L, externalIdx, externalOrderPkId);
 
         var interlockingOrder =
                 new IssueSellicLegacyOrderCommand.InterlockingOrder(
@@ -121,7 +126,12 @@ class SellicOrderIssuingContainerE2ETest extends ContainerLegacyE2ETestBase {
                         "김수령", "01098765432", "서울시 강남구 테헤란로 123", "06234", "부재 시 문 앞");
 
         return new IssueSellicLegacyOrderCommand(
-                payment, order, shipment, settlement, externalOrder, interlockingOrder,
+                payment,
+                order,
+                shipment,
+                settlement,
+                externalOrder,
+                interlockingOrder,
                 shippingAddress);
     }
 }

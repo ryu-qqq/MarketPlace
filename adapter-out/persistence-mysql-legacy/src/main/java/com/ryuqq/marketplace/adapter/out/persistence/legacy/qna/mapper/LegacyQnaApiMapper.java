@@ -9,9 +9,7 @@ import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaImageRes
 import java.util.List;
 import org.springframework.stereotype.Component;
 
-/**
- * 레거시 QnA Persistence → Application DTO 변환 매퍼.
- */
+/** 레거시 QnA Persistence → Application DTO 변환 매퍼. */
 @Component
 public class LegacyQnaApiMapper {
 
@@ -32,7 +30,8 @@ public class LegacyQnaApiMapper {
                                 })
                         .toList();
 
-        List<LegacyQnaImageResult> imageResults = qnaImages.stream().map(this::toImageResult).toList();
+        List<LegacyQnaImageResult> imageResults =
+                qnaImages.stream().map(this::toImageResult).toList();
 
         return new LegacyQnaDetailResult(
                 dto.qnaId(),

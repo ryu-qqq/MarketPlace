@@ -352,7 +352,8 @@ class OmsProductQueryApiMapperTest {
             assertThat(response.syncSummary().successCount()).isEqualTo(3L);
             assertThat(response.syncSummary().failCount()).isEqualTo(1L);
             assertThat(response.syncSummary().pendingCount()).isEqualTo(1L);
-            assertThat(response.syncSummary().lastSyncAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.syncSummary().lastSyncAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test

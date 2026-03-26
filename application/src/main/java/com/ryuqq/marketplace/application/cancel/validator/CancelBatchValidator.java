@@ -51,8 +51,7 @@ public class CancelBatchValidator {
     /**
      * 취소 거부(reject) 전용 검증. 소유권 검증 + 운송장 등록 여부 확인.
      *
-     * <p>네이버 정책: 운송장이 등록된(SHIPPED 이상) 상태여야 취소 거부가 가능합니다. 운송장 미등록 시 먼저 운송장을 등록한 후
-     * 거부해야 합니다.
+     * <p>네이버 정책: 운송장이 등록된(SHIPPED 이상) 상태여야 취소 거부가 가능합니다. 운송장 미등록 시 먼저 운송장을 등록한 후 거부해야 합니다.
      *
      * @param cancelIds 요청한 취소 ID 목록
      * @param sellerId 요청 셀러 ID (null이면 슈퍼어드민)
@@ -65,9 +64,11 @@ public class CancelBatchValidator {
             boolean hasShipped =
                     shipmentReadManager
                             .findByOrderItemId(cancel.orderItemId())
-                            .filter(s -> s.status() == ShipmentStatus.SHIPPED
-                                    || s.status() == ShipmentStatus.IN_TRANSIT
-                                    || s.status() == ShipmentStatus.DELIVERED)
+                            .filter(
+                                    s ->
+                                            s.status() == ShipmentStatus.SHIPPED
+                                                    || s.status() == ShipmentStatus.IN_TRANSIT
+                                                    || s.status() == ShipmentStatus.DELIVERED)
                             .isPresent();
 
             if (!hasShipped) {

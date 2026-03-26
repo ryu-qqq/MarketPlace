@@ -102,8 +102,7 @@ public class OutboundSellerOutboxProcessor {
         List<SellerSalesChannel> channels =
                 salesChannelReadManager.findConnectedBySellerId(SellerId.of(sellerId));
         if (channels.isEmpty()) {
-            throw new IllegalStateException(
-                    "셀러에 연결된 판매채널이 없습니다. sellerId=" + sellerId);
+            throw new IllegalStateException("셀러에 연결된 판매채널이 없습니다. sellerId=" + sellerId);
         }
         long shopId = channels.get(0).shopId();
         return shopReadManager.getById(ShopId.of(shopId));
@@ -119,7 +118,8 @@ public class OutboundSellerOutboxProcessor {
         };
     }
 
-    private OutboundSellerSyncResult dispatchShippingPolicy(Shop shop, OutboundSellerOutbox outbox) {
+    private OutboundSellerSyncResult dispatchShippingPolicy(
+            Shop shop, OutboundSellerOutbox outbox) {
         return switch (outbox.operationType()) {
             case CREATE ->
                     shippingPolicySyncClient.createShippingPolicy(

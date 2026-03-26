@@ -105,10 +105,7 @@ public class SellicLegacyOrderCoordinator {
             long orderId = persistencePort.persist(command);
             lastOrderId = orderId;
 
-            log.debug(
-                    "셀릭 주문 luxurydb 저장: externalIdx={}, orderId={}",
-                    itemExternalIdx,
-                    orderId);
+            log.debug("셀릭 주문 luxurydb 저장: externalIdx={}, orderId={}", itemExternalIdx, orderId);
         }
 
         // Outbox 생성 (마지막 주문 기준)
@@ -156,8 +153,7 @@ public class SellicLegacyOrderCoordinator {
                         ORDER_STATUS,
                         item.quantity());
 
-        var shipment =
-                new IssueSellicLegacyOrderCommand.Shipment("", "", "", DELIVERY_STATUS);
+        var shipment = new IssueSellicLegacyOrderCommand.Shipment("", "", "", DELIVERY_STATUS);
 
         var settlement = new IssueSellicLegacyOrderCommand.Settlement(0L);
 
@@ -178,7 +174,12 @@ public class SellicLegacyOrderCoordinator {
                         item.deliveryRequest() != null ? item.deliveryRequest() : "");
 
         return new IssueSellicLegacyOrderCommand(
-                payment, order, shipment, settlement, externalOrder, interlockingOrder,
+                payment,
+                order,
+                shipment,
+                settlement,
+                externalOrder,
+                interlockingOrder,
                 shippingAddress);
     }
 }

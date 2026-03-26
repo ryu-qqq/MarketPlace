@@ -208,8 +208,10 @@ public class OrderCompositeQueryDslRepository {
 
     /** 상품주문 단건 클레임 목록 조회 (refund_claims + exchange_claims UNION). */
     public List<OrderClaimProjectionDto> findClaimsByOrderItemId(String orderItemId) {
-        List<OrderClaimProjectionDto> refunds = findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.eq(orderItemId));
-        List<OrderClaimProjectionDto> exchanges = findExchangeClaimsByCondition(exchangeClaimJpaEntity.orderItemId.eq(orderItemId));
+        List<OrderClaimProjectionDto> refunds =
+                findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.eq(orderItemId));
+        List<OrderClaimProjectionDto> exchanges =
+                findExchangeClaimsByCondition(exchangeClaimJpaEntity.orderItemId.eq(orderItemId));
         return mergeAndSortClaims(refunds, exchanges);
     }
 
@@ -220,12 +222,15 @@ public class OrderCompositeQueryDslRepository {
 
     /** 주문상품 ID 목록 기반 클레임 일괄 조회 (refund_claims + exchange_claims UNION). */
     public List<OrderClaimProjectionDto> findClaimsByOrderItemIds(List<String> orderItemIds) {
-        List<OrderClaimProjectionDto> refunds = findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.in(orderItemIds));
-        List<OrderClaimProjectionDto> exchanges = findExchangeClaimsByCondition(exchangeClaimJpaEntity.orderItemId.in(orderItemIds));
+        List<OrderClaimProjectionDto> refunds =
+                findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.in(orderItemIds));
+        List<OrderClaimProjectionDto> exchanges =
+                findExchangeClaimsByCondition(exchangeClaimJpaEntity.orderItemId.in(orderItemIds));
         return mergeAndSortClaims(refunds, exchanges);
     }
 
-    private List<OrderCancelProjectionDto> findCancelsByCondition(com.querydsl.core.types.Predicate condition) {
+    private List<OrderCancelProjectionDto> findCancelsByCondition(
+            com.querydsl.core.types.Predicate condition) {
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -248,7 +253,8 @@ public class OrderCompositeQueryDslRepository {
                 .fetch();
     }
 
-    private List<OrderClaimProjectionDto> findRefundClaimsByCondition(com.querydsl.core.types.Predicate condition) {
+    private List<OrderClaimProjectionDto> findRefundClaimsByCondition(
+            com.querydsl.core.types.Predicate condition) {
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -261,7 +267,8 @@ public class OrderCompositeQueryDslRepository {
                                 refundClaimJpaEntity.refundQty,
                                 refundClaimJpaEntity.reasonType,
                                 refundClaimJpaEntity.reasonDetail,
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(String.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        String.class),
                                 refundClaimJpaEntity.originalAmount,
                                 refundClaimJpaEntity.deductionAmount,
                                 refundClaimJpaEntity.deductionReason,
@@ -270,14 +277,16 @@ public class OrderCompositeQueryDslRepository {
                                 refundClaimJpaEntity.refundedAt,
                                 refundClaimJpaEntity.requestedAt,
                                 refundClaimJpaEntity.completedAt,
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(Instant.class)))
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        Instant.class)))
                 .from(refundClaimJpaEntity)
                 .where(condition)
                 .orderBy(refundClaimJpaEntity.requestedAt.desc())
                 .fetch();
     }
 
-    private List<OrderClaimProjectionDto> findExchangeClaimsByCondition(com.querydsl.core.types.Predicate condition) {
+    private List<OrderClaimProjectionDto> findExchangeClaimsByCondition(
+            com.querydsl.core.types.Predicate condition) {
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -290,16 +299,24 @@ public class OrderCompositeQueryDslRepository {
                                 exchangeClaimJpaEntity.exchangeQty,
                                 exchangeClaimJpaEntity.reasonType,
                                 exchangeClaimJpaEntity.reasonDetail,
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(String.class),
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(Integer.class),
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(Integer.class),
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(String.class),
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(Integer.class),
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(String.class),
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(Instant.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        String.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        Integer.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        Integer.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        String.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        Integer.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        String.class),
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        Instant.class),
                                 exchangeClaimJpaEntity.requestedAt,
                                 exchangeClaimJpaEntity.completedAt,
-                                com.querydsl.core.types.dsl.Expressions.nullExpression(Instant.class)))
+                                com.querydsl.core.types.dsl.Expressions.nullExpression(
+                                        Instant.class)))
                 .from(exchangeClaimJpaEntity)
                 .where(condition)
                 .orderBy(exchangeClaimJpaEntity.requestedAt.desc())
@@ -308,12 +325,14 @@ public class OrderCompositeQueryDslRepository {
 
     private List<OrderClaimProjectionDto> mergeAndSortClaims(
             List<OrderClaimProjectionDto> refunds, List<OrderClaimProjectionDto> exchanges) {
-        List<OrderClaimProjectionDto> merged = new java.util.ArrayList<>(refunds.size() + exchanges.size());
+        List<OrderClaimProjectionDto> merged =
+                new java.util.ArrayList<>(refunds.size() + exchanges.size());
         merged.addAll(refunds);
         merged.addAll(exchanges);
-        merged.sort(java.util.Comparator.comparing(
-                OrderClaimProjectionDto::requestedAt,
-                java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())));
+        merged.sort(
+                java.util.Comparator.comparing(
+                        OrderClaimProjectionDto::requestedAt,
+                        java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())));
         return merged;
     }
 
@@ -618,14 +637,15 @@ public class OrderCompositeQueryDslRepository {
 
     /** 주문 클레임 목록 조회 (orderId 기반 — order_items 서브쿼리). */
     public List<OrderClaimProjectionDto> findOrderClaims(String orderId) {
-        com.querydsl.core.types.dsl.StringPath subQuery =
-                orderItemJpaEntity.id;
+        com.querydsl.core.types.dsl.StringPath subQuery = orderItemJpaEntity.id;
         var itemIds =
                 JPAExpressions.select(subQuery)
                         .from(orderItemJpaEntity)
                         .where(orderItemJpaEntity.orderId.eq(orderId));
-        List<OrderClaimProjectionDto> refunds = findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.in(itemIds));
-        List<OrderClaimProjectionDto> exchanges = findExchangeClaimsByCondition(exchangeClaimJpaEntity.orderItemId.in(itemIds));
+        List<OrderClaimProjectionDto> refunds =
+                findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.in(itemIds));
+        List<OrderClaimProjectionDto> exchanges =
+                findExchangeClaimsByCondition(exchangeClaimJpaEntity.orderItemId.in(itemIds));
         return mergeAndSortClaims(refunds, exchanges);
     }
 }

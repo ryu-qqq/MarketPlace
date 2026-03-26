@@ -20,7 +20,6 @@ import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.ExchangeAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.ExchangeApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.mapper.ExchangeApiMapper;
 import com.ryuqq.marketplace.application.exchange.port.in.query.GetExchangeDetailUseCase;
@@ -286,7 +285,8 @@ class ExchangeQueryControllerRestDocsTest {
         @DisplayName("교환 목록 조회 - 결과 없음")
         void getList_Empty() throws Exception {
             // given
-            PageApiResponse<?> emptyPageResponse = PageApiResponse.of(java.util.List.of(), 0, 20, 0);
+            PageApiResponse<?> emptyPageResponse =
+                    PageApiResponse.of(java.util.List.of(), 0, 20, 0);
 
             given(getExchangeListUseCase.execute(any()))
                     .willReturn(ExchangeApiFixtures.emptyPageResult());

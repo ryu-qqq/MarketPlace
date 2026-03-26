@@ -34,7 +34,5 @@ public record CommonCodeApiResponse(
         @Schema(description = "표시명", example = "신용카드") String displayName,
         @Schema(description = "표시 순서", example = "1") int displayOrder,
         @Schema(description = "활성화 여부", example = "true") boolean active,
-        @Schema(description = "생성일시 (KST)", example = "2025-01-23 10:30:00")
-                String createdAt,
-        @Schema(description = "수정일시 (KST)", example = "2025-01-23 10:30:00")
-                String updatedAt) {}
+        @Schema(description = "생성일시 (KST)", example = "2025-01-23 10:30:00") String createdAt,
+        @Schema(description = "수정일시 (KST)", example = "2025-01-23 10:30:00") String updatedAt) {}

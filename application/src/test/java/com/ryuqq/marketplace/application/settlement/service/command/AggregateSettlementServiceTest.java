@@ -162,13 +162,16 @@ class AggregateSettlementServiceTest {
                     .willReturn(List.of(sellerId1, sellerId2));
 
             // 각 셀러에 대해 findBySellerIdAndPeriod → empty, findBySellerIdAndStatus → empty 로 조기 종료
-            given(settlementReadManager.findBySellerIdAndPeriod(
-                            ArgumentMatchers.anyLong(),
-                            ArgumentMatchers.any(),
-                            ArgumentMatchers.any()))
+            given(
+                            settlementReadManager.findBySellerIdAndPeriod(
+                                    ArgumentMatchers.anyLong(),
+                                    ArgumentMatchers.any(),
+                                    ArgumentMatchers.any()))
                     .willReturn(Optional.empty());
-            given(entryReadManager.findBySellerIdAndStatus(
-                            ArgumentMatchers.anyLong(), ArgumentMatchers.eq(EntryStatus.CONFIRMED)))
+            given(
+                            entryReadManager.findBySellerIdAndStatus(
+                                    ArgumentMatchers.anyLong(),
+                                    ArgumentMatchers.eq(EntryStatus.CONFIRMED)))
                     .willReturn(List.of());
 
             // when
@@ -194,20 +197,21 @@ class AggregateSettlementServiceTest {
                     .willReturn(List.of(failSellerId, successSellerId));
 
             // 첫 번째 셀러: findBySellerIdAndPeriod에서 예외
-            given(settlementReadManager.findBySellerIdAndPeriod(
-                            ArgumentMatchers.eq(failSellerId),
-                            ArgumentMatchers.any(),
-                            ArgumentMatchers.any()))
+            given(
+                            settlementReadManager.findBySellerIdAndPeriod(
+                                    ArgumentMatchers.eq(failSellerId),
+                                    ArgumentMatchers.any(),
+                                    ArgumentMatchers.any()))
                     .willThrow(new RuntimeException("DB 오류"));
 
             // 두 번째 셀러: 정상 (조기 종료 — entry 없음)
-            given(settlementReadManager.findBySellerIdAndPeriod(
-                            ArgumentMatchers.eq(successSellerId),
-                            ArgumentMatchers.any(),
-                            ArgumentMatchers.any()))
+            given(
+                            settlementReadManager.findBySellerIdAndPeriod(
+                                    ArgumentMatchers.eq(successSellerId),
+                                    ArgumentMatchers.any(),
+                                    ArgumentMatchers.any()))
                     .willReturn(Optional.empty());
-            given(entryReadManager.findBySellerIdAndStatus(
-                            successSellerId, EntryStatus.CONFIRMED))
+            given(entryReadManager.findBySellerIdAndStatus(successSellerId, EntryStatus.CONFIRMED))
                     .willReturn(List.of());
 
             // when

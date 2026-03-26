@@ -8,7 +8,6 @@ import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistenceBundle;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ConfirmShipmentBatchUseCase;
-import com.ryuqq.marketplace.application.common.dto.command.BulkStatusChangeContext;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
@@ -44,8 +43,8 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
                 command.orderItemIds().stream().map(OrderItemId::of).toList();
         List<OrderItem> orderItems = orderItemReadManager.findAllByIds(orderItemIds);
 
-        com.ryuqq.marketplace.application.common.dto.command.BulkStatusChangeContext<OrderItemId> confirmContexts =
-                commandFactory.createConfirmContexts(command);
+        com.ryuqq.marketplace.application.common.dto.command.BulkStatusChangeContext<OrderItemId>
+                confirmContexts = commandFactory.createConfirmContexts(command);
         Instant changedAt = confirmContexts.changedAt();
 
         List<BatchItemResult<String>> results = new ArrayList<>();
@@ -73,7 +72,8 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
         }
 
         if (!confirmable.isEmpty()) {
-            ShipmentPersistenceBundle bundle = commandFactory.createConfirmBundle(confirmable, changedAt);
+            ShipmentPersistenceBundle bundle =
+                    commandFactory.createConfirmBundle(confirmable, changedAt);
             persistFacade.persistAll(bundle);
         }
 

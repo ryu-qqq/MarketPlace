@@ -161,5 +161,4 @@ class ShipmentCommandFactoryTest {
             assertThat(result.changedAt()).isEqualTo(now);
         }
     }
-
 }

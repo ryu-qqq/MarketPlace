@@ -218,8 +218,7 @@ class LegacyJwtTokenProviderTest {
             // given
             Key otherKey =
                     Keys.hmacShaKeyFor(
-                            "other-secret-key-must-be-at-least-256-bits-long-for-hs256"
-                                    .getBytes());
+                            "other-secret-key-must-be-at-least-256-bits-long-for-hs256".getBytes());
             String otherToken =
                     Jwts.builder()
                             .setSubject("hacker@evil.com")

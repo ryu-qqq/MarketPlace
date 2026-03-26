@@ -78,7 +78,10 @@ class LegacyQnAControllerRestDocsTest {
     @MockitoBean private LegacyQnaCommandApiMapper commandApiMapper;
     @MockitoBean private MarketAccessChecker accessChecker;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
-    @MockitoBean private com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker legacyAccessChecker;
+
+    @MockitoBean
+    private com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker
+            legacyAccessChecker;
 
     @Nested
     @DisplayName("QnA 단건 상세 조회 API")
@@ -92,7 +95,8 @@ class LegacyQnAControllerRestDocsTest {
             LegacyDetailQnaResponse response = LegacyQnAApiFixtures.detailQnaResponse();
 
             given(legacyQnaDetailUseCase.execute(anyLong())).willReturn(result);
-            given(queryApiMapper.toDetailResponse(any(LegacyQnaDetailResult.class))).willReturn(response);
+            given(queryApiMapper.toDetailResponse(any(LegacyQnaDetailResult.class)))
+                    .willReturn(response);
 
             // when & then
             mockMvc.perform(
@@ -291,10 +295,11 @@ class LegacyQnAControllerRestDocsTest {
         @DisplayName("QnA 목록 페이징 조회 성공")
         void getQnas_Success() throws Exception {
             // given
-            LegacyQnaPageResult pageResult = new LegacyQnaPageResult(
-                    List.of(LegacyQnAApiFixtures.legacyQnaDetailResult()),
-                    1L,
-                    LegacyQnAApiFixtures.DEFAULT_QNA_ID);
+            LegacyQnaPageResult pageResult =
+                    new LegacyQnaPageResult(
+                            List.of(LegacyQnAApiFixtures.legacyQnaDetailResult()),
+                            1L,
+                            LegacyQnAApiFixtures.DEFAULT_QNA_ID);
             List<LegacyFetchQnaResponse> responses =
                     List.of(LegacyQnAApiFixtures.fetchQnaResponse());
 
@@ -302,7 +307,8 @@ class LegacyQnAControllerRestDocsTest {
                     .willReturn(
                             new LegacyQnaSearchParams(
                                     null, "PRODUCT", null, null, null, 1L, null, null, null, 20));
-            given(legacyQnaListUseCase.execute(any(LegacyQnaSearchParams.class))).willReturn(pageResult);
+            given(legacyQnaListUseCase.execute(any(LegacyQnaSearchParams.class)))
+                    .willReturn(pageResult);
             given(queryApiMapper.toFetchResponses(any())).willReturn(responses);
 
             // when & then
@@ -520,7 +526,8 @@ class LegacyQnAControllerRestDocsTest {
                     .willReturn(
                             new LegacyQnaSearchParams(
                                     null, "PRODUCT", null, null, null, 1L, null, null, null, 20));
-            given(legacyQnaListUseCase.execute(any(LegacyQnaSearchParams.class))).willReturn(emptyResult);
+            given(legacyQnaListUseCase.execute(any(LegacyQnaSearchParams.class)))
+                    .willReturn(emptyResult);
             given(queryApiMapper.toFetchResponses(any())).willReturn(List.of());
 
             // when & then

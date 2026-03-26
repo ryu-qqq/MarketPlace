@@ -131,5 +131,4 @@ public record SchedulerProperties(Jobs jobs) {
 
     public record ImageVariantSyncProcessPending(
             boolean enabled, String cron, String timezone, int batchSize) {}
-
 }

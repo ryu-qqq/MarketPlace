@@ -1,8 +1,5 @@
 package com.ryuqq.marketplace.adapter.in.rest.cancel.mapper;
 
-import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.CancelListItemApiResponseV4;
-import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
-import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.ApproveCancelBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.CancelSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.request.RejectCancelBatchApiRequest;
@@ -14,7 +11,11 @@ import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelListApiRe
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.CancelListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
+import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse.BatchResultItemApiResponse;
 import com.ryuqq.marketplace.application.cancel.dto.command.ApproveCancelBatchCommand;
@@ -31,7 +32,6 @@ import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryR
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReasonType;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
-import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -67,9 +67,7 @@ public class CancelApiMapper {
     }
 
     private SellerCancelItem toSellerCancelItem(
-            SellerCancelItemApiRequest item,
-            CancelReasonType reasonType,
-            String reasonDetail) {
+            SellerCancelItemApiRequest item, CancelReasonType reasonType, String reasonDetail) {
         return new SellerCancelItem(
                 item.orderId(), // V4 간극: orderId = 내부 orderItemId
                 item.cancelQty(),
@@ -133,7 +131,8 @@ public class CancelApiMapper {
     private CancelListItemApiResponseV4 toListResponseV4(
             CancelListResult r, ClaimOrderEnricher enricher, ClaimOrderEnricher.OrderContext ctx) {
         String itemId = r.orderItemId();
-        ClaimListItemApiResponseV4.OrderProductV4 orderProduct = enricher.toOrderProductV4(itemId, ctx);
+        ClaimListItemApiResponseV4.OrderProductV4 orderProduct =
+                enricher.toOrderProductV4(itemId, ctx);
         return new CancelListItemApiResponseV4(
                 orderProduct.orderId(),
                 orderProduct.orderNumber(),
@@ -147,7 +146,8 @@ public class CancelApiMapper {
                         enricher.nullToEmpty(r.reasonDetail()),
                         new ClaimListItemApiResponseV4.RefundInfoV4(
                                 r.refundAmount() != null ? r.refundAmount() : 0,
-                                0, "",
+                                0,
+                                "",
                                 r.refundAmount() != null ? r.refundAmount() : 0,
                                 enricher.nullToEmpty(r.refundMethod()),
                                 enricher.formatInstant(r.completedAt())),
@@ -206,7 +206,8 @@ public class CancelApiMapper {
             refundInfo =
                     new ClaimListItemApiResponseV4.RefundInfoV4(
                             result.refundInfo().refundAmount(),
-                            0, "",
+                            0,
+                            "",
                             result.refundInfo().refundAmount(),
                             nullToEmpty(result.refundInfo().refundMethod()),
                             formatInstant(result.refundInfo().refundedAt()));

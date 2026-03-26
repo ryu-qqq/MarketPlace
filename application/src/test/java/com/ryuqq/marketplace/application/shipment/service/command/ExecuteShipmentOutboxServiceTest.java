@@ -20,7 +20,6 @@ import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.ordermapping.aggregate.ExternalOrderItemMapping;
 import com.ryuqq.marketplace.domain.shipment.outbox.ShipmentOutboxFixtures;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
-import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -79,7 +78,8 @@ class ExecuteShipmentOutboxServiceTest {
             given(mappingReadManager.findByOrderItemId(ORDER_ITEM_ID)).willReturn(mapping);
             given(strategyProvider.getStrategy(CHANNEL_CODE)).willReturn(strategy);
             given(shopReadManager.findActiveBySalesChannelId(anyLong())).willReturn(List.of());
-            given(strategy.execute(any(ShipmentOutbox.class), any())).willReturn(OutboxSyncResult.success());
+            given(strategy.execute(any(ShipmentOutbox.class), any()))
+                    .willReturn(OutboxSyncResult.success());
 
             // when
             sut.execute(command);

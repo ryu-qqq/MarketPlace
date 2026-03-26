@@ -49,7 +49,5 @@ public record RefundPolicyApiResponse(
         @Schema(description = "검수 기간 (일)", example = "3") int inspectionPeriodDays,
         @Schema(description = "추가 안내 문구", example = "교환/반품 시 상품 택이 제거되지 않은 상태여야 합니다.")
                 String additionalInfo,
-        @Schema(description = "생성일시 (KST)", example = "2025-01-26 10:30:00")
-                String createdAt,
-        @Schema(description = "수정일시 (KST)", example = "2025-01-26 10:30:00")
-                String updatedAt) {}
+        @Schema(description = "생성일시 (KST)", example = "2025-01-26 10:30:00") String createdAt,
+        @Schema(description = "수정일시 (KST)", example = "2025-01-26 10:30:00") String updatedAt) {}

@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 /**
  * 세토프 커머스 클레임(취소/반품) + 주문 상태 변경 Adapter.
  *
- * <p>세토프 자사몰 Admin API v2를 호출합니다. HTTP 호출은 {@link SetofCommerceApiClient}에 위임합니다.
- * 401 응답 시 토큰을 재발급하고 재시도합니다.
+ * <p>세토프 자사몰 Admin API v2를 호출합니다. HTTP 호출은 {@link SetofCommerceApiClient}에 위임합니다. 401 응답 시 토큰을
+ * 재발급하고 재시도합니다.
  *
  * <ul>
  *   <li>POST /api/v2/orders/{orderItemId}/confirm — 주문 확인
@@ -49,62 +49,72 @@ public class SetofCommerceClaimClientAdapter {
     // ===== 주문 =====
 
     public void confirmOrder(Shop shop, String orderItemId) {
-        executeWithTokenRefresh(shop, token -> {
-            apiClient.confirmOrder(token, orderItemId);
-            return null;
-        });
+        executeWithTokenRefresh(
+                shop,
+                token -> {
+                    apiClient.confirmOrder(token, orderItemId);
+                    return null;
+                });
         log.info("세토프 주문 확인 완료: orderItemId={}", orderItemId);
     }
 
     public void readyToShip(Shop shop, String orderItemId) {
-        executeWithTokenRefresh(shop, token -> {
-            apiClient.readyToShip(token, orderItemId);
-            return null;
-        });
+        executeWithTokenRefresh(
+                shop,
+                token -> {
+                    apiClient.readyToShip(token, orderItemId);
+                    return null;
+                });
         log.info("세토프 배송 준비 완료: orderItemId={}", orderItemId);
     }
 
     // ===== 취소 =====
 
     public void approveCancel(Shop shop, String cancelId) {
-        executeWithTokenRefresh(shop, token -> {
-            apiClient.approveCancel(token, cancelId);
-            return null;
-        });
+        executeWithTokenRefresh(
+                shop,
+                token -> {
+                    apiClient.approveCancel(token, cancelId);
+                    return null;
+                });
         log.info("세토프 취소 승인 완료: cancelId={}", cancelId);
     }
 
     public void rejectCancel(Shop shop, String cancelId, String rejectReason) {
-        executeWithTokenRefresh(shop, token -> {
-            apiClient.rejectCancel(token, cancelId, rejectReason);
-            return null;
-        });
+        executeWithTokenRefresh(
+                shop,
+                token -> {
+                    apiClient.rejectCancel(token, cancelId, rejectReason);
+                    return null;
+                });
         log.info("세토프 취소 거부 완료: cancelId={}, reason={}", cancelId, rejectReason);
     }
 
     // ===== 반품 =====
 
     public void completeRefund(Shop shop, String refundId) {
-        executeWithTokenRefresh(shop, token -> {
-            apiClient.completeRefund(token, refundId);
-            return null;
-        });
+        executeWithTokenRefresh(
+                shop,
+                token -> {
+                    apiClient.completeRefund(token, refundId);
+                    return null;
+                });
         log.info("세토프 반품 완료 처리: refundId={}", refundId);
     }
 
     public void rejectRefund(Shop shop, String refundId, String rejectReason) {
-        executeWithTokenRefresh(shop, token -> {
-            apiClient.rejectRefund(token, refundId, rejectReason);
-            return null;
-        });
+        executeWithTokenRefresh(
+                shop,
+                token -> {
+                    apiClient.rejectRefund(token, refundId, rejectReason);
+                    return null;
+                });
         log.info("세토프 반품 거부 완료: refundId={}, reason={}", refundId, rejectReason);
     }
 
     // ===== 토큰 처리 =====
 
-    /**
-     * 토큰 인증 실패(401) 시 자동으로 토큰을 재발급하고 재시도합니다.
-     */
+    /** 토큰 인증 실패(401) 시 자동으로 토큰을 재발급하고 재시도합니다. */
     private <T> T executeWithTokenRefresh(Shop shop, Function<String, T> apiCall) {
         String token = resolveSellerToken(shop);
         try {

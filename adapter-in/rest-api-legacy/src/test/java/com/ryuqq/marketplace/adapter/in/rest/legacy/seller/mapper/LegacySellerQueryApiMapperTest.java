@@ -37,9 +37,9 @@ class LegacySellerQueryApiMapperTest {
 
             // then
             assertThat(response.sellerId()).isEqualTo(LegacySellerApiFixtures.DEFAULT_SELLER_ID);
-            assertThat(response.email())
-                    .isEqualTo(LegacySellerApiFixtures.DEFAULT_EMAIL);
-            assertThat(response.approvalStatus()).isEqualTo(LegacySellerApiFixtures.DEFAULT_APPROVAL_STATUS);
+            assertThat(response.email()).isEqualTo(LegacySellerApiFixtures.DEFAULT_EMAIL);
+            assertThat(response.approvalStatus())
+                    .isEqualTo(LegacySellerApiFixtures.DEFAULT_APPROVAL_STATUS);
         }
 
         @Test

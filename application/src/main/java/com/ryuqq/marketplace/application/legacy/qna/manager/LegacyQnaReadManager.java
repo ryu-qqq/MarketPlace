@@ -25,8 +25,7 @@ public class LegacyQnaReadManager {
     public LegacyQnaDetailResult fetchQnaDetail(long qnaId) {
         return queryPort
                 .fetchQnaDetail(qnaId)
-                .orElseThrow(
-                        () -> new IllegalStateException("레거시 QnA를 찾을 수 없습니다. qnaId=" + qnaId));
+                .orElseThrow(() -> new IllegalStateException("레거시 QnA를 찾을 수 없습니다. qnaId=" + qnaId));
     }
 
     public List<LegacyQnaDetailResult> fetchQnaList(LegacyQnaSearchParams params) {

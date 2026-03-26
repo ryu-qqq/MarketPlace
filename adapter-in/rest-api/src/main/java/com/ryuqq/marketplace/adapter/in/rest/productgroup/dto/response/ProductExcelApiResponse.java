@@ -24,5 +24,4 @@ public record ProductExcelApiResponse(
         @Schema(description = "정렬 순서", example = "1") int sortOrder,
         @Schema(description = "옵션 매핑 목록") List<ProductOptionMappingApiResponse> optionMappings,
         @Schema(description = "생성일시 (KST)", example = "2026-01-15T10:30:00Z") String createdAt,
-        @Schema(description = "수정일시 (KST)", example = "2026-01-20T14:00:00Z")
-                String updatedAt) {}
+        @Schema(description = "수정일시 (KST)", example = "2026-01-20T14:00:00Z") String updatedAt) {}

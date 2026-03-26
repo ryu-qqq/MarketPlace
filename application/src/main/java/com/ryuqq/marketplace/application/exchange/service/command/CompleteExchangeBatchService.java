@@ -68,9 +68,7 @@ public class CompleteExchangeBatchService implements CompleteExchangeBatchUseCas
                         oi -> {
                             if (oi.remainingReturnableQty() > 0) {
                                 int effectiveQty =
-                                        Math.min(
-                                                claim.exchangeQty(),
-                                                oi.remainingReturnableQty());
+                                        Math.min(claim.exchangeQty(), oi.remainingReturnableQty());
                                 oi.partialReturn(
                                         effectiveQty,
                                         command.processedBy(),

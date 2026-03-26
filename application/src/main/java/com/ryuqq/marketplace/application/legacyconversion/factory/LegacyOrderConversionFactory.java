@@ -57,14 +57,12 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 → 내부 도메인 객체 변환 Factory.
  *
- * <p>순수 변환 로직만 담당합니다. DB 조회/저장 없음. LegacyOrderCompositeResult + 채널/상태/내부ID 정보를 받아 도메인
- * 객체를 조립합니다.
+ * <p>순수 변환 로직만 담당합니다. DB 조회/저장 없음. LegacyOrderCompositeResult + 채널/상태/내부ID 정보를 받아 도메인 객체를 조립합니다.
  *
- * <p>shipment 테이블의 운송장/택배사 정보와 orders_history 테이블의 타임스탬프/사유를 활용하여 실제 레거시 데이터를 최대한
- * 보존합니다.
+ * <p>shipment 테이블의 운송장/택배사 정보와 orders_history 테이블의 타임스탬프/사유를 활용하여 실제 레거시 데이터를 최대한 보존합니다.
  */
 @Component
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.GodClass"})
 public class LegacyOrderConversionFactory {
 
     private static final String LEGACY_ACTOR = "LEGACY_MIGRATION";
@@ -234,7 +232,12 @@ public class LegacyOrderConversionFactory {
         Money totalAmount = unitPrice.multiply(composite.quantity());
         ExternalOrderItemPrice price =
                 ExternalOrderItemPrice.of(
-                        unitPrice, composite.quantity(), totalAmount, Money.zero(), Money.zero(), totalAmount);
+                        unitPrice,
+                        composite.quantity(),
+                        totalAmount,
+                        Money.zero(),
+                        Money.zero(),
+                        totalAmount);
 
         ReceiverInfo receiverInfo = buildReceiverInfo(composite);
         OrderItemStatus itemStatus = resolveOrderItemStatus(statusResolution);
@@ -299,9 +302,23 @@ public class LegacyOrderConversionFactory {
         ShipmentMethod shipmentMethod = resolveShipmentMethod(composite.companyCode());
 
         // orders_history에서 실제 타임스탬프 추출
-        Instant orderConfirmedAt = resolveHistoryTimestamp(composite, "DELIVERY_PENDING", now, targetStatus, ShipmentStatus.PREPARING);
-        Instant shippedAt = resolveHistoryTimestamp(composite, "DELIVERY_PROCESSING", now, targetStatus, ShipmentStatus.SHIPPED);
-        Instant deliveredAt = resolveHistoryTimestamp(composite, "DELIVERY_COMPLETED", now, targetStatus, ShipmentStatus.DELIVERED);
+        Instant orderConfirmedAt =
+                resolveHistoryTimestamp(
+                        composite, "DELIVERY_PENDING", now, targetStatus, ShipmentStatus.PREPARING);
+        Instant shippedAt =
+                resolveHistoryTimestamp(
+                        composite,
+                        "DELIVERY_PROCESSING",
+                        now,
+                        targetStatus,
+                        ShipmentStatus.SHIPPED);
+        Instant deliveredAt =
+                resolveHistoryTimestamp(
+                        composite,
+                        "DELIVERY_COMPLETED",
+                        now,
+                        targetStatus,
+                        ShipmentStatus.DELIVERED);
 
         // shipment.INSERT_DATE를 orderConfirmedAt fallback으로 사용
         if (orderConfirmedAt == null
@@ -325,8 +342,7 @@ public class LegacyOrderConversionFactory {
     }
 
     /**
-     * orders_history에서 특정 상태 전환 시각을 추출합니다.
-     * 해당 상태 이력이 없고, 현재 상태가 해당 단계 이상이면 now를 fallback으로 사용합니다.
+     * orders_history에서 특정 상태 전환 시각을 추출합니다. 해당 상태 이력이 없고, 현재 상태가 해당 단계 이상이면 now를 fallback으로 사용합니다.
      */
     private Instant resolveHistoryTimestamp(
             LegacyOrderCompositeResult composite,
@@ -373,7 +389,8 @@ public class LegacyOrderConversionFactory {
         CancelStatus cancelStatus = statusResolution.cancelStatus();
 
         // orders_history에서 취소 사유 + 시각 추출
-        Optional<LegacyOrderHistoryEntry> cancelHistory = findClaimHistory(composite, CANCEL_STATUSES);
+        Optional<LegacyOrderHistoryEntry> cancelHistory =
+                findClaimHistory(composite, CANCEL_STATUSES);
 
         CancelReason reason = resolveCancelReason(cancelHistory);
         CancelType cancelType = resolveCancelType(cancelHistory);
@@ -466,7 +483,8 @@ public class LegacyOrderConversionFactory {
         RefundStatus refundStatus = statusResolution.refundStatus();
 
         // orders_history에서 반품 사유 + 시각 추출
-        Optional<LegacyOrderHistoryEntry> refundHistory = findClaimHistory(composite, REFUND_STATUSES);
+        Optional<LegacyOrderHistoryEntry> refundHistory =
+                findClaimHistory(composite, REFUND_STATUSES);
 
         RefundReason reason = resolveRefundReason(refundHistory);
 
@@ -532,10 +550,7 @@ public class LegacyOrderConversionFactory {
 
     // === 이력 조회 헬퍼 ===
 
-    /**
-     * orders_history에서 해당 claim 유형의 첫 번째(가장 오래된) 이력을 찾습니다.
-     * 사유가 있는 이력을 우선합니다.
-     */
+    /** orders_history에서 해당 claim 유형의 첫 번째(가장 오래된) 이력을 찾습니다. 사유가 있는 이력을 우선합니다. */
     private Optional<LegacyOrderHistoryEntry> findClaimHistory(
             LegacyOrderCompositeResult composite, Set<String> statusSet) {
         List<LegacyOrderHistoryEntry> matching =
@@ -604,9 +619,7 @@ public class LegacyOrderConversionFactory {
         Address address =
                 Address.of(
                         composite.receiverZipCode() != null ? composite.receiverZipCode() : "00000",
-                        composite.receiverAddress() != null
-                                ? composite.receiverAddress()
-                                : "주소 없음",
+                        composite.receiverAddress() != null ? composite.receiverAddress() : "주소 없음",
                         composite.receiverAddressDetail());
         return ReceiverInfo.of(
                 name,

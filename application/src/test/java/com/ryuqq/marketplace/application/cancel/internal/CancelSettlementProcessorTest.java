@@ -43,8 +43,7 @@ class CancelSettlementProcessorTest {
             int refundAmount = 50000;
             SettlementEntry entry = SettlementEntryFixtures.cancelReversalEntry();
 
-            given(factory.createReversalEntry(
-                            argThat(cmd -> "CANCEL".equals(cmd.claimType()))))
+            given(factory.createReversalEntry(argThat(cmd -> "CANCEL".equals(cmd.claimType()))))
                     .willReturn(entry);
 
             // when

@@ -32,9 +32,7 @@ public class NaverCommerceOrderMapper {
             List<NaverProductOrderDetail> details) {
         // 배송지 미입력 주문 제외 (선물하기 수락 대기 등)
         List<NaverProductOrderDetail> filtered =
-                details.stream()
-                        .filter(d -> d.productOrder().shippingAddress() != null)
-                        .toList();
+                details.stream().filter(d -> d.productOrder().shippingAddress() != null).toList();
 
         return filtered.stream()
                 .collect(Collectors.groupingBy(d -> d.order().orderId()))
@@ -80,9 +78,7 @@ public class NaverCommerceOrderMapper {
                 po.quantity(),
                 po.totalProductAmount(),
                 po.productDiscountAmount(),
-                po.sellerBurdenDiscountAmount() != null
-                        ? po.sellerBurdenDiscountAmount()
-                        : 0,
+                po.sellerBurdenDiscountAmount() != null ? po.sellerBurdenDiscountAmount() : 0,
                 po.totalPaymentAmount(),
                 addr != null ? addr.name() : null,
                 addr != null ? addr.tel1() : null,

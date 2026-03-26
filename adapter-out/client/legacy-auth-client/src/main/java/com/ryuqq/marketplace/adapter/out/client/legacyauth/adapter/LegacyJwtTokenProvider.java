@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
  * <p>setof-commerce 레거시 어드민과 동일한 HS256 서명 + 동일한 secret + 동일한 claims 구조로 토큰을 발급/검증합니다.
  *
  * <p>레거시 토큰 claims 구조:
+ *
  * <pre>
  * {
  *   "sub": "email",

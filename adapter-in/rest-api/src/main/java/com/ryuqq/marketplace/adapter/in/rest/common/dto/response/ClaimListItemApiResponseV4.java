@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * 클레임(반품/취소/교환) 리스트 공통 응답 (V4 스펙).
  *
- * <p>프론트엔드 OMS 테이블 컬럼 구조에 맞춘 중첩 응답.
- * OrderListApiResponseV4의 중첩 타입을 재사용하지 않고 독립적으로 정의하여 클레임 도메인과 결합도를 낮춘다.
+ * <p>프론트엔드 OMS 테이블 컬럼 구조에 맞춘 중첩 응답. OrderListApiResponseV4의 중첩 타입을 재사용하지 않고 독립적으로 정의하여 클레임 도메인과
+ * 결합도를 낮춘다.
  */
 @Schema(description = "클레임 리스트 항목 (V4)")
 public record ClaimListItemApiResponseV4(
@@ -37,7 +37,11 @@ public record ClaimListItemApiResponseV4(
             @Schema(description = "예상 환불 마일리지") int totalExpectedRefundMileageAmount,
             @Schema(description = "옵션 문자열") String option,
             @Schema(description = "SKU 번호") String skuNumber,
-            @Schema(description = "옵션 상세 목록") List<OptionV4> options) {}
+            @Schema(description = "옵션 상세 목록") List<OptionV4> options) {
+        public OrderProductV4 {
+            options = options != null ? List.copyOf(options) : List.of();
+        }
+    }
 
     @Schema(description = "가격 정보 (V4)")
     public record PriceV4(

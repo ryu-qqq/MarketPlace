@@ -57,9 +57,7 @@ public class LegacyQnaQueryDslRepository {
                         .on(legacyQnaProductEntity.qnaId.eq(legacyQnaEntity.id))
                         .leftJoin(legacyQnaOrderEntity)
                         .on(legacyQnaOrderEntity.qnaId.eq(legacyQnaEntity.id))
-                        .where(
-                                legacyQnaEntity.id.eq(qnaId),
-                                legacyQnaEntity.deleteYn.eq("N"))
+                        .where(legacyQnaEntity.id.eq(qnaId), legacyQnaEntity.deleteYn.eq("N"))
                         .fetchOne();
 
         return Optional.ofNullable(result);
@@ -113,8 +111,10 @@ public class LegacyQnaQueryDslRepository {
     }
 
     /** QnA ID 목록에 해당하는 답변 조회. */
-    public List<com.ryuqq.marketplace.adapter.out.persistence.legacy.qna.entity.LegacyQnaAnswerEntity> fetchAnswersByQnaId(
-            long qnaId) {
+    public List<
+                    com.ryuqq.marketplace.adapter.out.persistence.legacy.qna.entity
+                            .LegacyQnaAnswerEntity>
+            fetchAnswersByQnaId(long qnaId) {
         return queryFactory
                 .selectFrom(legacyQnaAnswerEntity)
                 .where(
@@ -125,20 +125,22 @@ public class LegacyQnaQueryDslRepository {
     }
 
     /** QnA ID에 해당하는 이미지 조회 (질문 이미지). */
-    public List<com.ryuqq.marketplace.adapter.out.persistence.legacy.qna.entity.LegacyQnaImageEntity> fetchImagesByQnaId(
-            long qnaId) {
+    public List<
+                    com.ryuqq.marketplace.adapter.out.persistence.legacy.qna.entity
+                            .LegacyQnaImageEntity>
+            fetchImagesByQnaId(long qnaId) {
         return queryFactory
                 .selectFrom(legacyQnaImageEntity)
-                .where(
-                        legacyQnaImageEntity.qnaId.eq(qnaId),
-                        legacyQnaImageEntity.deleteYn.eq("N"))
+                .where(legacyQnaImageEntity.qnaId.eq(qnaId), legacyQnaImageEntity.deleteYn.eq("N"))
                 .orderBy(legacyQnaImageEntity.displayOrder.asc())
                 .fetch();
     }
 
     /** 답변 ID에 해당하는 이미지 조회 (답변 이미지). */
-    public List<com.ryuqq.marketplace.adapter.out.persistence.legacy.qna.entity.LegacyQnaImageEntity> fetchImagesByAnswerId(
-            long answerId) {
+    public List<
+                    com.ryuqq.marketplace.adapter.out.persistence.legacy.qna.entity
+                            .LegacyQnaImageEntity>
+            fetchImagesByAnswerId(long answerId) {
         return queryFactory
                 .selectFrom(legacyQnaImageEntity)
                 .where(

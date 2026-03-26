@@ -71,8 +71,8 @@ public class LegacyOrderQueryController {
     @Operation(summary = "주문 목록 조회", description = "커서 기반 페이징으로 주문 목록을 조회합니다.")
     @PreAuthorize("@legacyAccess.authenticated()")
     @GetMapping(ORDERS)
-    public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyOrderResponse>>>
-            getOrders(@ModelAttribute LegacyOrderSearchRequest request) {
+    public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyOrderResponse>>> getOrders(
+            @ModelAttribute LegacyOrderSearchRequest request) {
 
         Long effectiveSellerId = legacyAccessChecker.resolveSellerIdOrNull();
         LegacyOrderSearchParams params = queryApiMapper.toSearchParams(request, effectiveSellerId);

@@ -18,7 +18,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
-
 /**
  * 배송 일괄 처리 프로세서.
  *
@@ -74,7 +73,8 @@ public class ShipmentBatchProcessor {
             results.add(BatchItemResult.success(idStr));
         }
 
-        persistFacade.persistAll(ShipmentPersistenceBundle.ofShipmentsAndOutboxes(succeeded, outboxes));
+        persistFacade.persistAll(
+                ShipmentPersistenceBundle.ofShipmentsAndOutboxes(succeeded, outboxes));
         return BatchProcessingResult.from(results);
     }
 
@@ -121,7 +121,8 @@ public class ShipmentBatchProcessor {
             results.add(BatchItemResult.success(idStr));
         }
 
-        persistFacade.persistAll(ShipmentPersistenceBundle.ofShipmentsAndOutboxes(succeeded, outboxes));
+        persistFacade.persistAll(
+                ShipmentPersistenceBundle.ofShipmentsAndOutboxes(succeeded, outboxes));
         return BatchProcessingResult.from(results);
     }
 

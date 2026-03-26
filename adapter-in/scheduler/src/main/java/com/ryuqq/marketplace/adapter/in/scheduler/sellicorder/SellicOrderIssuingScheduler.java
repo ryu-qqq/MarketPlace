@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 /**
  * 셀릭 주문 발행 스케줄러.
  *
- * <p>셀릭 API에서 주문을 폴링하여 luxurydb에 레거시 형식으로 저장하고, LegacyOrderConversionOutbox를 생성합니다.
- * setof-commerce의 셀릭 배치를 대체합니다.
+ * <p>셀릭 API에서 주문을 폴링하여 luxurydb에 레거시 형식으로 저장하고, LegacyOrderConversionOutbox를 생성합니다. setof-commerce의
+ * 셀릭 배치를 대체합니다.
  */
 @Component
 @ConditionalOnProperty(

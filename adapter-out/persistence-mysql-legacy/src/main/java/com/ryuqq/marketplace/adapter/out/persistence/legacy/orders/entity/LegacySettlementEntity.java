@@ -48,7 +48,8 @@ public class LegacySettlementEntity extends LegacyBaseEntity {
 
     protected LegacySettlementEntity() {}
 
-    public static LegacySettlementEntity create(long orderId, long sellerCommissionRate, String operator) {
+    public static LegacySettlementEntity create(
+            long orderId, long sellerCommissionRate, String operator) {
         LegacySettlementEntity entity = new LegacySettlementEntity();
         entity.orderId = orderId;
         entity.sellerCommissionRate = sellerCommissionRate;

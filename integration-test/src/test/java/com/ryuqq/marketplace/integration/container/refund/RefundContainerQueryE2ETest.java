@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
+import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderItemJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
@@ -14,7 +15,6 @@ import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRe
 import com.ryuqq.marketplace.adapter.out.persistence.refund.RefundClaimJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.refund.repository.RefundClaimJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.refundoutbox.repository.RefundOutboxJpaRepository;
-import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
 import com.ryuqq.marketplace.integration.container.ContainerE2ETestBase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,10 +31,11 @@ import org.springframework.http.HttpStatus;
  * <p>MySQL 실제 컨테이너 기반으로 환불 조회 API를 검증합니다.
  *
  * <p>테스트 대상:
+ *
  * <ul>
- *   <li>Q1~Q3: GET /refunds/summary - 환불 상태별 요약 조회</li>
- *   <li>Q4~Q8: GET /refunds - 환불 목록 조회</li>
- *   <li>Q9~Q11: GET /refunds/{refundClaimId} - 환불 상세 조회</li>
+ *   <li>Q1~Q3: GET /refunds/summary - 환불 상태별 요약 조회
+ *   <li>Q4~Q8: GET /refunds - 환불 목록 조회
+ *   <li>Q9~Q11: GET /refunds/{refundClaimId} - 환불 상세 조회
  * </ul>
  */
 @Tag("e2e")

@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.exchange.repository.ExchangeClaimJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.exchangeoutbox.repository.ExchangeOutboxJpaRepository;
-import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderItemJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
@@ -33,15 +33,16 @@ import org.springframework.http.HttpStatus;
  * <p>MySQL 실제 컨테이너 기반으로 교환 명령 API를 검증합니다.
  *
  * <p>테스트 대상:
+ *
  * <ul>
- *   <li>C1~C3: POST /exchanges/request/batch - 교환 요청 일괄</li>
- *   <li>C4~C5: POST /exchanges/approve/batch - 교환 승인 일괄</li>
- *   <li>C6: POST /exchanges/collect/batch - 교환 수거 완료 일괄</li>
- *   <li>C7: POST /exchanges/prepare/batch - 교환 준비 완료 일괄</li>
- *   <li>C8~C9: POST /exchanges/reject/batch - 교환 거절 일괄</li>
- *   <li>C10~C11: PATCH /exchanges/hold/batch - 교환 보류/해제 일괄</li>
- *   <li>C12: POST /exchanges/convert-to-refund/batch - 교환 건 환불 전환</li>
- *   <li>C13~C14: POST /exchanges/{exchangeClaimId}/histories - 수기 메모 등록</li>
+ *   <li>C1~C3: POST /exchanges/request/batch - 교환 요청 일괄
+ *   <li>C4~C5: POST /exchanges/approve/batch - 교환 승인 일괄
+ *   <li>C6: POST /exchanges/collect/batch - 교환 수거 완료 일괄
+ *   <li>C7: POST /exchanges/prepare/batch - 교환 준비 완료 일괄
+ *   <li>C8~C9: POST /exchanges/reject/batch - 교환 거절 일괄
+ *   <li>C10~C11: PATCH /exchanges/hold/batch - 교환 보류/해제 일괄
+ *   <li>C12: POST /exchanges/convert-to-refund/batch - 교환 건 환불 전환
+ *   <li>C13~C14: POST /exchanges/{exchangeClaimId}/histories - 수기 메모 등록
  * </ul>
  */
 @Tag("e2e")
@@ -112,8 +113,7 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
 
             // when
             givenSuperAdmin()
-                    .body(Map.of(
-                            "items", List.of(createExchangeRequestItem(orderItemId))))
+                    .body(Map.of("items", List.of(createExchangeRequestItem(orderItemId))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -141,8 +141,7 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
         @DisplayName("[C3] 권한 없는 사용자가 교환 요청 시 403")
         void requestBatch_noPermission_forbidden() {
             givenAuthenticatedUser()
-                    .body(Map.of(
-                            "items", List.of(createExchangeRequestItem("dummy-id"))))
+                    .body(Map.of("items", List.of(createExchangeRequestItem("dummy-id"))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -306,10 +305,14 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
 
             // when
             givenSuperAdmin()
-                    .body(Map.of(
-                            "exchangeClaimIds", List.of(exchangeClaimId),
-                            "isHold", true,
-                            "memo", "검수 대기"))
+                    .body(
+                            Map.of(
+                                    "exchangeClaimIds",
+                                    List.of(exchangeClaimId),
+                                    "isHold",
+                                    true,
+                                    "memo",
+                                    "검수 대기"))
                     .when()
                     .patch(HOLD_BATCH)
                     .then()
@@ -325,10 +328,14 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
             String exchangeClaimId = seedExchangeRequest("order-exchange-unhold-001");
 
             givenSuperAdmin()
-                    .body(Map.of(
-                            "exchangeClaimIds", List.of(exchangeClaimId),
-                            "isHold", true,
-                            "memo", "검수 대기"))
+                    .body(
+                            Map.of(
+                                    "exchangeClaimIds",
+                                    List.of(exchangeClaimId),
+                                    "isHold",
+                                    true,
+                                    "memo",
+                                    "검수 대기"))
                     .when()
                     .patch(HOLD_BATCH)
                     .then()
@@ -336,10 +343,14 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
 
             // when
             givenSuperAdmin()
-                    .body(Map.of(
-                            "exchangeClaimIds", List.of(exchangeClaimId),
-                            "isHold", false,
-                            "memo", "검수 완료"))
+                    .body(
+                            Map.of(
+                                    "exchangeClaimIds",
+                                    List.of(exchangeClaimId),
+                                    "isHold",
+                                    false,
+                                    "memo",
+                                    "검수 완료"))
                     .when()
                     .patch(HOLD_BATCH)
                     .then()
@@ -417,8 +428,7 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
         String orderItemId = orderItemRepository.save(item).getId();
 
         givenSuperAdmin()
-                .body(Map.of(
-                        "items", List.of(createExchangeRequestItem(orderItemId))))
+                .body(Map.of("items", List.of(createExchangeRequestItem(orderItemId))))
                 .when()
                 .post(REQUEST_BATCH)
                 .then()

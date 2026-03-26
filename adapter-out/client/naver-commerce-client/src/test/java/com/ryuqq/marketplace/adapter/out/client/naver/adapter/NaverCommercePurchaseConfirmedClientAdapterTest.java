@@ -58,31 +58,73 @@ class NaverCommercePurchaseConfirmedClientAdapterTest {
         @DisplayName("PURCHASE_DECIDED + claimType=null인 이벤트만 필터링하여 반환한다")
         void fetch_PurchaseDecidedOnly_FiltersCorrectly() {
             // given
-            NaverLastChangedStatus purchaseDecided1 = new NaverLastChangedStatus(
-                    "ORD-001", "PO-001", "PURCHASE_DECIDED",
-                    null, null, "PURCHASE_DECIDED", null, null, null, null);
-            NaverLastChangedStatus purchaseDecided2 = new NaverLastChangedStatus(
-                    "ORD-002", "PO-002", "PURCHASE_DECIDED",
-                    null, null, "PURCHASE_DECIDED", null, null, null, null);
-            NaverLastChangedStatus claimEvent = new NaverLastChangedStatus(
-                    "ORD-003", "PO-003", "CLAIM_REQUESTED",
-                    null, null, "CLAIM_REQUESTED", "CANCEL", "CANCEL_REQUEST", null, null);
-            NaverLastChangedStatus purchaseWithClaim = new NaverLastChangedStatus(
-                    "ORD-004", "PO-004", "PURCHASE_DECIDED",
-                    null, null, "PURCHASE_DECIDED", "RETURN", null, null, null);
+            NaverLastChangedStatus purchaseDecided1 =
+                    new NaverLastChangedStatus(
+                            "ORD-001",
+                            "PO-001",
+                            "PURCHASE_DECIDED",
+                            null,
+                            null,
+                            "PURCHASE_DECIDED",
+                            null,
+                            null,
+                            null,
+                            null);
+            NaverLastChangedStatus purchaseDecided2 =
+                    new NaverLastChangedStatus(
+                            "ORD-002",
+                            "PO-002",
+                            "PURCHASE_DECIDED",
+                            null,
+                            null,
+                            "PURCHASE_DECIDED",
+                            null,
+                            null,
+                            null,
+                            null);
+            NaverLastChangedStatus claimEvent =
+                    new NaverLastChangedStatus(
+                            "ORD-003",
+                            "PO-003",
+                            "CLAIM_REQUESTED",
+                            null,
+                            null,
+                            "CLAIM_REQUESTED",
+                            "CANCEL",
+                            "CANCEL_REQUEST",
+                            null,
+                            null);
+            NaverLastChangedStatus purchaseWithClaim =
+                    new NaverLastChangedStatus(
+                            "ORD-004",
+                            "PO-004",
+                            "PURCHASE_DECIDED",
+                            null,
+                            null,
+                            "PURCHASE_DECIDED",
+                            "RETURN",
+                            null,
+                            null,
+                            null);
 
-            NaverLastChangedStatusesResponse response = new NaverLastChangedStatusesResponse(
-                    new NaverLastChangedStatusesResponse.Data(
-                            List.of(purchaseDecided1, purchaseDecided2, claimEvent, purchaseWithClaim),
-                            4,
-                            null));
+            NaverLastChangedStatusesResponse response =
+                    new NaverLastChangedStatusesResponse(
+                            new NaverLastChangedStatusesResponse.Data(
+                                    List.of(
+                                            purchaseDecided1,
+                                            purchaseDecided2,
+                                            claimEvent,
+                                            purchaseWithClaim),
+                                    4,
+                                    null));
 
             given(orderClientAdapter.getLastChangedStatusesAll(FROM_TIME, TO_TIME, null))
                     .willReturn(response);
 
             // when
-            List<String> result = sut.fetchPurchaseConfirmedProductOrderIds(
-                    SALES_CHANNEL_ID, SHOP_ID, CREDENTIALS, FROM_TIME, TO_TIME);
+            List<String> result =
+                    sut.fetchPurchaseConfirmedProductOrderIds(
+                            SALES_CHANNEL_ID, SHOP_ID, CREDENTIALS, FROM_TIME, TO_TIME);
 
             // then
             assertThat(result).containsExactly("PO-001", "PO-002");
@@ -92,20 +134,31 @@ class NaverCommercePurchaseConfirmedClientAdapterTest {
         @DisplayName("클레임 이벤트(CLAIM_REQUESTED)는 필터링되어 제외된다")
         void fetch_ClaimEvents_FilteredOut() {
             // given
-            NaverLastChangedStatus claimEvent = new NaverLastChangedStatus(
-                    "ORD-001", "PO-001", "CLAIM_REQUESTED",
-                    null, null, "CLAIM_REQUESTED", "CANCEL", "CANCEL_REQUEST", null, null);
+            NaverLastChangedStatus claimEvent =
+                    new NaverLastChangedStatus(
+                            "ORD-001",
+                            "PO-001",
+                            "CLAIM_REQUESTED",
+                            null,
+                            null,
+                            "CLAIM_REQUESTED",
+                            "CANCEL",
+                            "CANCEL_REQUEST",
+                            null,
+                            null);
 
-            NaverLastChangedStatusesResponse response = new NaverLastChangedStatusesResponse(
-                    new NaverLastChangedStatusesResponse.Data(
-                            List.of(claimEvent), 1, null));
+            NaverLastChangedStatusesResponse response =
+                    new NaverLastChangedStatusesResponse(
+                            new NaverLastChangedStatusesResponse.Data(
+                                    List.of(claimEvent), 1, null));
 
             given(orderClientAdapter.getLastChangedStatusesAll(FROM_TIME, TO_TIME, null))
                     .willReturn(response);
 
             // when
-            List<String> result = sut.fetchPurchaseConfirmedProductOrderIds(
-                    SALES_CHANNEL_ID, SHOP_ID, CREDENTIALS, FROM_TIME, TO_TIME);
+            List<String> result =
+                    sut.fetchPurchaseConfirmedProductOrderIds(
+                            SALES_CHANNEL_ID, SHOP_ID, CREDENTIALS, FROM_TIME, TO_TIME);
 
             // then
             assertThat(result).isEmpty();
@@ -115,15 +168,17 @@ class NaverCommercePurchaseConfirmedClientAdapterTest {
         @DisplayName("빈 응답이면 빈 목록을 반환한다")
         void fetch_EmptyResponse_ReturnsEmptyList() {
             // given
-            NaverLastChangedStatusesResponse response = new NaverLastChangedStatusesResponse(
-                    new NaverLastChangedStatusesResponse.Data(List.of(), 0, null));
+            NaverLastChangedStatusesResponse response =
+                    new NaverLastChangedStatusesResponse(
+                            new NaverLastChangedStatusesResponse.Data(List.of(), 0, null));
 
             given(orderClientAdapter.getLastChangedStatusesAll(FROM_TIME, TO_TIME, null))
                     .willReturn(response);
 
             // when
-            List<String> result = sut.fetchPurchaseConfirmedProductOrderIds(
-                    SALES_CHANNEL_ID, SHOP_ID, CREDENTIALS, FROM_TIME, TO_TIME);
+            List<String> result =
+                    sut.fetchPurchaseConfirmedProductOrderIds(
+                            SALES_CHANNEL_ID, SHOP_ID, CREDENTIALS, FROM_TIME, TO_TIME);
 
             // then
             assertThat(result).isEmpty();
@@ -137,8 +192,9 @@ class NaverCommercePurchaseConfirmedClientAdapterTest {
                     .willReturn(null);
 
             // when
-            List<String> result = sut.fetchPurchaseConfirmedProductOrderIds(
-                    SALES_CHANNEL_ID, SHOP_ID, CREDENTIALS, FROM_TIME, TO_TIME);
+            List<String> result =
+                    sut.fetchPurchaseConfirmedProductOrderIds(
+                            SALES_CHANNEL_ID, SHOP_ID, CREDENTIALS, FROM_TIME, TO_TIME);
 
             // then
             assertThat(result).isEmpty();

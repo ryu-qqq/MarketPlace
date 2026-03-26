@@ -165,7 +165,9 @@ class ExecuteExchangeOutboxServiceTest {
             given(mappingReadManager.findByOrderItemId("OI-4")).willReturn(mapping);
             given(mapping.salesChannelId()).willReturn(100L);
             given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
-            willThrow(new RuntimeException("예기치 않은 오류")).given(claimSyncStrategy).execute(outbox, shop);
+            willThrow(new RuntimeException("예기치 않은 오류"))
+                    .given(claimSyncStrategy)
+                    .execute(outbox, shop);
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now));
 

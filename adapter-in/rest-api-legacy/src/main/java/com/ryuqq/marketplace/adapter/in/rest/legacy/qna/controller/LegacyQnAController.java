@@ -57,7 +57,8 @@ public class LegacyQnAController {
     private final UpdateQnaReplyUseCase updateQnaReplyUseCase;
     private final LegacyQnaQueryApiMapper queryApiMapper;
     private final LegacyQnaCommandApiMapper commandApiMapper;
-    private final com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker legacyAccessChecker;
+    private final com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker
+            legacyAccessChecker;
 
     public LegacyQnAController(
             LegacyQnaDetailQueryUseCase legacyQnaDetailUseCase,
@@ -66,7 +67,8 @@ public class LegacyQnAController {
             UpdateQnaReplyUseCase updateQnaReplyUseCase,
             LegacyQnaQueryApiMapper queryApiMapper,
             LegacyQnaCommandApiMapper commandApiMapper,
-            com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker legacyAccessChecker) {
+            com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAccessChecker
+                    legacyAccessChecker) {
         this.legacyQnaDetailUseCase = legacyQnaDetailUseCase;
         this.legacyQnaListUseCase = legacyQnaListUseCase;
         this.answerQnaUseCase = answerQnaUseCase;
@@ -90,7 +92,8 @@ public class LegacyQnAController {
     public ResponseEntity<LegacyApiResponse<LegacyCustomPageable<LegacyFetchQnaResponse>>> getQnas(
             @Validated @ModelAttribute LegacyQnaSearchRequest request, Pageable pageable) {
         Long effectiveSellerId = legacyAccessChecker.resolveSellerIdOrNull();
-        LegacyQnaSearchParams params = queryApiMapper.toSearchParams(request, pageable.getPageSize(), effectiveSellerId);
+        LegacyQnaSearchParams params =
+                queryApiMapper.toSearchParams(request, pageable.getPageSize(), effectiveSellerId);
         LegacyQnaPageResult pageResult = legacyQnaListUseCase.execute(params);
 
         List<LegacyFetchQnaResponse> responses =

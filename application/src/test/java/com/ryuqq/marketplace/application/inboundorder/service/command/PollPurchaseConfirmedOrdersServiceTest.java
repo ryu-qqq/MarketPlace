@@ -103,8 +103,7 @@ class PollPurchaseConfirmedOrdersServiceTest {
             SalesChannel salesChannel =
                     SalesChannelFixtures.activeSalesChannel(DEFAULT_SALES_CHANNEL_ID, "NAVER");
             Shop shop = ShopFixtures.activeShopWithCredentials(100L);
-            List<String> productOrderIds =
-                    List.of("PO-001", "PO-002", "PO-003");
+            List<String> productOrderIds = List.of("PO-001", "PO-002", "PO-003");
 
             given(timeProvider.now()).willReturn(NOW);
             given(salesChannelReadManager.getById(SalesChannelId.of(DEFAULT_SALES_CHANNEL_ID)))
@@ -113,12 +112,12 @@ class PollPurchaseConfirmedOrdersServiceTest {
             given(shopReadManager.findActiveBySalesChannelId(DEFAULT_SALES_CHANNEL_ID))
                     .willReturn(List.of(shop));
             given(
-                    purchaseConfirmedClient.fetchPurchaseConfirmedProductOrderIds(
-                            eq(DEFAULT_SALES_CHANNEL_ID),
-                            eq(shop.idValue()),
-                            any(ShopCredentials.class),
-                            any(Instant.class),
-                            eq(NOW)))
+                            purchaseConfirmedClient.fetchPurchaseConfirmedProductOrderIds(
+                                    eq(DEFAULT_SALES_CHANNEL_ID),
+                                    eq(shop.idValue()),
+                                    any(ShopCredentials.class),
+                                    any(Instant.class),
+                                    eq(NOW)))
                     .willReturn(productOrderIds);
 
             // when
@@ -145,12 +144,12 @@ class PollPurchaseConfirmedOrdersServiceTest {
             given(shopReadManager.findActiveBySalesChannelId(DEFAULT_SALES_CHANNEL_ID))
                     .willReturn(List.of(shop));
             given(
-                    purchaseConfirmedClient.fetchPurchaseConfirmedProductOrderIds(
-                            eq(DEFAULT_SALES_CHANNEL_ID),
-                            eq(shop.idValue()),
-                            any(ShopCredentials.class),
-                            any(Instant.class),
-                            eq(NOW)))
+                            purchaseConfirmedClient.fetchPurchaseConfirmedProductOrderIds(
+                                    eq(DEFAULT_SALES_CHANNEL_ID),
+                                    eq(shop.idValue()),
+                                    any(ShopCredentials.class),
+                                    any(Instant.class),
+                                    eq(NOW)))
                     .willReturn(List.of());
 
             // when

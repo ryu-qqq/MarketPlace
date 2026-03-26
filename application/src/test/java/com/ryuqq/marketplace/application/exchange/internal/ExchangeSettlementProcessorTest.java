@@ -42,8 +42,7 @@ class ExchangeSettlementProcessorTest {
             String exchangeClaimId = "exchange-001";
             SettlementEntry entry = SettlementEntryFixtures.cancelReversalEntry();
 
-            given(factory.createReversalEntry(
-                            argThat(cmd -> "EXCHANGE".equals(cmd.claimType()))))
+            given(factory.createReversalEntry(argThat(cmd -> "EXCHANGE".equals(cmd.claimType()))))
                     .willReturn(entry);
 
             // when

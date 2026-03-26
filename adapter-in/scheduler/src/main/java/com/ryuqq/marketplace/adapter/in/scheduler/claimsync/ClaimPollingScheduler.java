@@ -56,18 +56,14 @@ public class ClaimPollingScheduler implements SchedulingConfigurer {
             Runnable task = createPollingTask(entry);
             registrar.addTriggerTask(task, trigger);
 
-            log.info(
-                    "클레임 폴링 등록: salesChannelId={}, cron={}",
-                    entry.salesChannelId(),
-                    entry.cron());
+            log.info("클레임 폴링 등록: salesChannelId={}, cron={}", entry.salesChannelId(), entry.cron());
         }
     }
 
     private Runnable createPollingTask(InboundOrderPollingEntry entry) {
         return () -> {
             try {
-                ClaimSyncResult result =
-                        pollExternalClaimsUseCase.execute(entry.salesChannelId());
+                ClaimSyncResult result = pollExternalClaimsUseCase.execute(entry.salesChannelId());
                 if (result.totalProcessed() > 0) {
                     log.info(
                             "클레임 폴링 완료: salesChannelId={}, total={}, cancel={}, refund={},"

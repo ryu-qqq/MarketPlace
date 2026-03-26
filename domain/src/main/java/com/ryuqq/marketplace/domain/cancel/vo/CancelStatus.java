@@ -48,7 +48,9 @@ public enum CancelStatus {
     }
 
     public static List<CancelStatus> fromStringList(List<String> values) {
-        if (values == null || values.isEmpty()) { return List.of(); }
+        if (values == null || values.isEmpty()) {
+            return List.of();
+        }
         return values.stream().map(CancelStatus::valueOf).toList();
     }
 }

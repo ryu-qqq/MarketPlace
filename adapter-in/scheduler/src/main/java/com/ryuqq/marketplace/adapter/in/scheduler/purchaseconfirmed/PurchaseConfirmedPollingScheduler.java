@@ -57,9 +57,7 @@ public class PurchaseConfirmedPollingScheduler implements SchedulingConfigurer {
             registrar.addTriggerTask(task, trigger);
 
             log.info(
-                    "구매확정 폴링 등록: salesChannelId={}, cron={}",
-                    entry.salesChannelId(),
-                    entry.cron());
+                    "구매확정 폴링 등록: salesChannelId={}, cron={}", entry.salesChannelId(), entry.cron());
         }
     }
 

@@ -2,14 +2,14 @@ package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
-import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceUnauthorizedException;
-import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofSellerTokenProvider;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationResponse;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceUnauthorizedException;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
 import com.ryuqq.marketplace.adapter.out.client.setof.strategy.SetofProductUpdateExecutorProvider;
+import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofSellerTokenProvider;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
@@ -80,8 +80,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
                 externalCategoryId);
 
         SetofProductGroupRegistrationResponse response =
-                executeWithTokenRefresh(
-                        shop, token -> apiClient.registerProduct(token, request));
+                executeWithTokenRefresh(shop, token -> apiClient.registerProduct(token, request));
 
         if (response == null || response.productGroupId() == null) {
             throw new IllegalStateException(
@@ -178,9 +177,7 @@ public class SetofCommerceProductClientAdapter implements SalesChannelProductCli
         }
     }
 
-    /**
-     * 토큰을 재발급합니다. Shop이 없거나 apiKey가 없으면 서비스 토큰을 반환합니다.
-     */
+    /** 토큰을 재발급합니다. Shop이 없거나 apiKey가 없으면 서비스 토큰을 반환합니다. */
     private String refreshSellerToken(Shop shop) {
         if (shop != null && shop.apiKey() != null && !shop.apiKey().isBlank()) {
             try {

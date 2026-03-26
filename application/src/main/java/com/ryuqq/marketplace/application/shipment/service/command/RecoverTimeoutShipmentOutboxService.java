@@ -46,7 +46,8 @@ public class RecoverTimeoutShipmentOutboxService implements RecoverTimeoutShipme
 
         for (ShipmentOutbox outbox : outboxes) {
             try {
-                Instant now = commandFactory.createOutboxTransitionContext(outbox.idValue()).changedAt();
+                Instant now =
+                        commandFactory.createOutboxTransitionContext(outbox.idValue()).changedAt();
                 outbox.recoverFromTimeout(now);
                 outboxCommandManager.persist(outbox);
                 successCount++;

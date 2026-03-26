@@ -57,10 +57,12 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
 
             log.info("세토프 커머스 환불정책 등록 요청: sellerId={}, policyId={}", sellerId, policyId);
 
-            executeWithTokenRefresh(shop, token -> {
-                apiClient.createRefundPolicy(token, request);
-                return null;
-            });
+            executeWithTokenRefresh(
+                    shop,
+                    token -> {
+                        apiClient.createRefundPolicy(token, request);
+                        return null;
+                    });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -80,10 +82,12 @@ public class SetofCommerceRefundPolicySyncAdapter implements OutboundRefundPolic
 
             log.info("세토프 커머스 환불정책 수정 요청: sellerId={}, policyId={}", sellerId, policyId);
 
-            executeWithTokenRefresh(shop, token -> {
-                apiClient.updateRefundPolicy(token, policyId, request);
-                return null;
-            });
+            executeWithTokenRefresh(
+                    shop,
+                    token -> {
+                        apiClient.updateRefundPolicy(token, policyId, request);
+                        return null;
+                    });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;

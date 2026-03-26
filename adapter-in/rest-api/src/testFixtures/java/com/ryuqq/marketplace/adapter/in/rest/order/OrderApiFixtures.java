@@ -85,7 +85,8 @@ public final class OrderApiFixtures {
     // ===== SearchOrdersApiRequest =====
 
     public static SearchOrdersApiRequest searchRequest() {
-        return new SearchOrdersApiRequest(null, null, null, null, null, null, null, null, null, 0, 20);
+        return new SearchOrdersApiRequest(
+                null, null, null, null, null, null, null, null, null, 0, 20);
     }
 
     public static SearchOrdersApiRequest searchRequest(
@@ -364,11 +365,7 @@ public final class OrderApiFixtures {
 
     public static LatestCancelApiResponse latestCancelApiResponse() {
         return new LatestCancelApiResponse(
-                DEFAULT_CANCEL_ID,
-                DEFAULT_CANCEL_NUMBER,
-                "COMPLETED",
-                1,
-                "2026-01-01 09:00:00");
+                DEFAULT_CANCEL_ID, DEFAULT_CANCEL_NUMBER, "COMPLETED", 1, "2026-01-01 09:00:00");
     }
 
     public static LatestClaimApiResponse latestClaimApiResponse() {

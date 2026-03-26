@@ -62,7 +62,10 @@ class CancelFlowE2ETest extends E2ETestBase {
     @Autowired private OrderItemHistoryJpaRepository orderItemHistoryRepository;
     @Autowired private OrderItemJpaRepository orderItemRepository;
     @Autowired private OrderJpaRepository orderRepository;
-    @Autowired private com.ryuqq.marketplace.adapter.out.persistence.shipment.repository.ShipmentJpaRepository shipmentRepository;
+
+    @Autowired
+    private com.ryuqq.marketplace.adapter.out.persistence.shipment.repository.ShipmentJpaRepository
+            shipmentRepository;
 
     @BeforeEach
     void setUp() {
@@ -267,10 +270,22 @@ class CancelFlowE2ETest extends E2ETestBase {
             // Step 2-1. Shipment SHIPPED 생성 (네이버 정책: 운송장 등록 후에만 거부 가능)
             java.time.Instant now = java.time.Instant.now();
             shipmentRepository.save(
-                    com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.ShipmentJpaEntity.create(
-                            java.util.UUID.randomUUID().toString(), "SHP-FLOW4-001", orderItemId,
-                            "SHIPPED", "COURIER", "CJ", "CJ대한통운", "1234567890",
-                            now, now, null, now, now, null));
+                    com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.ShipmentJpaEntity
+                            .create(
+                                    java.util.UUID.randomUUID().toString(),
+                                    "SHP-FLOW4-001",
+                                    orderItemId,
+                                    "SHIPPED",
+                                    "COURIER",
+                                    "CJ",
+                                    "CJ대한통운",
+                                    "1234567890",
+                                    now,
+                                    now,
+                                    null,
+                                    now,
+                                    now,
+                                    null));
 
             // Step 3. 취소 거절
             given().spec(givenSuperAdmin())
@@ -464,7 +479,8 @@ class CancelFlowE2ETest extends E2ETestBase {
                 Map.of("reasonType", "OUT_OF_STOCK", "reasonDetail", "재고 소진"));
     }
 
-    private Map<String, Object> createSellerCancelRequestWithQty(String orderItemId, int cancelQty) {
+    private Map<String, Object> createSellerCancelRequestWithQty(
+            String orderItemId, int cancelQty) {
         return Map.of(
                 "items",
                 List.of(Map.of("orderId", orderItemId, "cancelQty", cancelQty)),

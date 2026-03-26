@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.seller.controller;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -75,8 +74,7 @@ class LegacySellerControllerRestDocsTest {
             LegacySellerAuthResult result = LegacySellerApiFixtures.legacySellerAuthResult();
             LegacySellerResponse response = LegacySellerApiFixtures.sellerResponse();
 
-            given(sellerAuthReadManager.getByEmail(eq("seller@test.com")))
-                    .willReturn(result);
+            given(sellerAuthReadManager.getByEmail(eq("seller@test.com"))).willReturn(result);
             given(legacySellerQueryApiMapper.toSellerResponse(result)).willReturn(response);
 
             // when & then
@@ -86,10 +84,10 @@ class LegacySellerControllerRestDocsTest {
                             jsonPath("$.data.sellerId")
                                     .value(LegacySellerApiFixtures.DEFAULT_SELLER_ID))
                     .andExpect(
-                            jsonPath("$.data.email")
-                                    .value(LegacySellerApiFixtures.DEFAULT_EMAIL))
+                            jsonPath("$.data.email").value(LegacySellerApiFixtures.DEFAULT_EMAIL))
                     .andExpect(
-                            jsonPath("$.data.roleType").value(LegacySellerApiFixtures.DEFAULT_ROLE_TYPE))
+                            jsonPath("$.data.roleType")
+                                    .value(LegacySellerApiFixtures.DEFAULT_ROLE_TYPE))
                     .andExpect(jsonPath("$.response.status").value(200))
                     .andExpect(jsonPath("$.response.message").value("success"))
                     .andDo(

@@ -82,8 +82,7 @@ public class MainJpaConfig {
                                         !name.startsWith(
                                                 "com.ryuqq.marketplace.adapter.out.persistence.legacy."))
                         .toList();
-        PersistenceManagedTypes mainManagedTypes =
-                PersistenceManagedTypes.of(filtered, List.of());
+        PersistenceManagedTypes mainManagedTypes = PersistenceManagedTypes.of(filtered, List.of());
         return builder.dataSource(dataSource)
                 .managedTypes(mainManagedTypes)
                 .persistenceUnit("main")

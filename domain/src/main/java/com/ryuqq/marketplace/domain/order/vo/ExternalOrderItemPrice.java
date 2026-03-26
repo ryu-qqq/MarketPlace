@@ -44,6 +44,11 @@ public record ExternalOrderItemPrice(
             Money sellerBurdenDiscountAmount,
             Money paymentAmount) {
         return new ExternalOrderItemPrice(
-                unitPrice, quantity, totalAmount, discountAmount, sellerBurdenDiscountAmount, paymentAmount);
+                unitPrice,
+                quantity,
+                totalAmount,
+                discountAmount,
+                sellerBurdenDiscountAmount,
+                paymentAmount);
     }
 }

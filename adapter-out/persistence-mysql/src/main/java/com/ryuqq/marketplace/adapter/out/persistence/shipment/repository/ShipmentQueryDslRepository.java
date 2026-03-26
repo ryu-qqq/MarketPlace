@@ -119,8 +119,7 @@ public class ShipmentQueryDslRepository {
     /**
      * OrderItem 기준 주문 이행 목록 조회.
      *
-     * <p>order_items LEFT JOIN shipments — shipment 미생성 주문도 포함. READY 필터 시 shipment 없는
-     * 주문도 포함합니다.
+     * <p>order_items LEFT JOIN shipments — shipment 미생성 주문도 포함. READY 필터 시 shipment 없는 주문도 포함합니다.
      *
      * @return orderItemId 목록 (페이징 적용)
      */
@@ -129,9 +128,7 @@ public class ShipmentQueryDslRepository {
                 .select(orderItemJpaEntity.id)
                 .from(orderItemJpaEntity)
                 .leftJoin(shipment)
-                .on(
-                        shipment.orderItemId.eq(orderItemJpaEntity.id),
-                        shipment.deletedAt.isNull())
+                .on(shipment.orderItemId.eq(orderItemJpaEntity.id), shipment.deletedAt.isNull())
                 .join(orderJpaEntity)
                 .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
                 .where(

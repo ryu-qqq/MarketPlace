@@ -78,7 +78,9 @@ class ShipmentFlowE2ETest extends E2ETestBase {
      *
      * @return 저장된 OrderItem의 ID (UUIDv7 String)
      */
-    /** @return [0]=orderItemId, [1]=orderItemNumber */
+    /**
+     * @return [0]=orderItemId, [1]=orderItemNumber
+     */
     private String[] seedOrderItem(String orderId) {
         OrderJpaEntity order = OrderJpaEntityFixtures.orderedEntity(orderId);
         orderRepository.save(order);

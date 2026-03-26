@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 /**
  * 외부몰 구매확정 폴링 서비스.
  *
- * <p>활성 Shop 목록을 순회하며 구매확정된 상품주문을 조회하고, ReceivePurchaseConfirmedWebhookUseCase를 통해 내부 상태를
- * 갱신합니다.
+ * <p>활성 Shop 목록을 순회하며 구매확정된 상품주문을 조회하고, ReceivePurchaseConfirmedWebhookUseCase를 통해 내부 상태를 갱신합니다.
  */
 @Service
 @ConditionalOnBean(SalesChannelPurchaseConfirmedClient.class)
@@ -75,11 +74,7 @@ public class PollPurchaseConfirmedOrdersService implements PollPurchaseConfirmed
 
             List<String> productOrderIds =
                     purchaseConfirmedClient.fetchPurchaseConfirmedProductOrderIds(
-                            salesChannelId,
-                            shop.idValue(),
-                            shop.toCredentials(),
-                            fromTime,
-                            now);
+                            salesChannelId, shop.idValue(), shop.toCredentials(), fromTime, now);
 
             if (productOrderIds.isEmpty()) {
                 continue;

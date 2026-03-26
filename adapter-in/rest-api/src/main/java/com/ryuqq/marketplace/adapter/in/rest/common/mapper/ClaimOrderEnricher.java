@@ -8,24 +8,22 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemAp
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.OrderProductV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.PaymentV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.PriceV4;
-
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.ReceiverInfoV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.RefundInfoV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
 import com.ryuqq.marketplace.application.order.manager.OrderCompositionReadManager;
-import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 /**
  * 클레임(반품/취소/교환) 리스트를 V4 프론트 스펙에 맞추기 위한 주문 데이터 보강기.
  *
- * <p>클레임 결과에서 orderItemId 목록을 추출하여 주문 상품/주문 기본 정보를 배치 조회하고,
- * V4 중첩 구조의 공통 필드(orderProduct, buyerInfo, payment, receiverInfo, externalOrderInfo)를 생성한다.
+ * <p>클레임 결과에서 orderItemId 목록을 추출하여 주문 상품/주문 기본 정보를 배치 조회하고, V4 중첩 구조의 공통 필드(orderProduct,
+ * buyerInfo, payment, receiverInfo, externalOrderInfo)를 생성한다.
  */
 @Component
 public class ClaimOrderEnricher {
@@ -86,7 +84,12 @@ public class ClaimOrderEnricher {
                 nullToEmpty(item.orderItemId()),
                 nullToEmpty(item.orderItemNumber()),
                 nullToEmpty(item.productGroupName()),
-                new PriceV4(unitPrice, unitPrice, unitPrice, item.discountAmount(), discountRate,
+                new PriceV4(
+                        unitPrice,
+                        unitPrice,
+                        unitPrice,
+                        item.discountAmount(),
+                        discountRate,
                         discountRate),
                 new BrandV4(0L, nullToEmpty(item.brandName())),
                 item.productGroupId(),
@@ -188,8 +191,24 @@ public class ClaimOrderEnricher {
 
     private OrderProductV4 emptyOrderProduct() {
         return new OrderProductV4(
-                "", "", "", new PriceV4(0, 0, 0, 0, 0, 0), new BrandV4(0L, ""), 0L, 0L, "", "", "",
-                0, "", 0, 0, 0, "", "", List.of());
+                "",
+                "",
+                "",
+                new PriceV4(0, 0, 0, 0, 0, 0),
+                new BrandV4(0L, ""),
+                0L,
+                0L,
+                "",
+                "",
+                "",
+                0,
+                "",
+                0,
+                0,
+                0,
+                "",
+                "",
+                List.of());
     }
 
     public String nullToEmpty(String value) {

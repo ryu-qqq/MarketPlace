@@ -16,12 +16,12 @@ import com.ryuqq.marketplace.domain.order.query.OrderDateField;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchField;
 import com.ryuqq.marketplace.domain.order.query.OrderSortKey;
-import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
 /** Order Composite QueryDSL 조건 빌더. */
+@SuppressWarnings("PMD.GodClass")
 @Component
 public class OrderCompositeConditionBuilder {
 
@@ -109,8 +109,8 @@ public class OrderCompositeConditionBuilder {
     /**
      * OrderItemStatus 필터와 CrossDomain 상태 필터를 OR로 조합.
      *
-     * <p>OrderItemStatus에 해당하는 값은 order_items.order_item_status로 필터링하고, CrossDomain
-     * 상태(SHIPPED, DELIVERED, CLAIM_IN_PROGRESS, REFUNDED, EXCHANGED)는 서브쿼리로 필터링합니다.
+     * <p>OrderItemStatus에 해당하는 값은 order_items.order_item_status로 필터링하고, CrossDomain 상태(SHIPPED,
+     * DELIVERED, CLAIM_IN_PROGRESS, REFUNDED, EXCHANGED)는 서브쿼리로 필터링합니다.
      */
     public BooleanExpression statusFilter(OrderSearchCriteria criteria) {
         BooleanExpression orderItemCondition = null;
@@ -157,8 +157,7 @@ public class OrderCompositeConditionBuilder {
                                             .where(cancelJpaEntity.cancelStatus.eq("REQUESTED")))
                             .or(
                                     orderItemJpaEntity.id.in(
-                                            JPAExpressions.select(
-                                                            refundClaimJpaEntity.orderItemId)
+                                            JPAExpressions.select(refundClaimJpaEntity.orderItemId)
                                                     .from(refundClaimJpaEntity)
                                                     .where(
                                                             refundClaimJpaEntity.refundStatus.in(
@@ -169,11 +168,12 @@ public class OrderCompositeConditionBuilder {
                                                             exchangeClaimJpaEntity.orderItemId)
                                                     .from(exchangeClaimJpaEntity)
                                                     .where(
-                                                            exchangeClaimJpaEntity.exchangeStatus.in(
-                                                                    "REQUESTED",
-                                                                    "COLLECTING",
-                                                                    "COLLECTED",
-                                                                    "RESHIPPING"))));
+                                                            exchangeClaimJpaEntity.exchangeStatus
+                                                                    .in(
+                                                                            "REQUESTED",
+                                                                            "COLLECTING",
+                                                                            "COLLECTED",
+                                                                            "RESHIPPING"))));
             case "REFUNDED" ->
                     orderItemJpaEntity
                             .id
@@ -183,8 +183,7 @@ public class OrderCompositeConditionBuilder {
                                             .where(cancelJpaEntity.cancelStatus.eq("COMPLETED")))
                             .or(
                                     orderItemJpaEntity.id.in(
-                                            JPAExpressions.select(
-                                                            refundClaimJpaEntity.orderItemId)
+                                            JPAExpressions.select(refundClaimJpaEntity.orderItemId)
                                                     .from(refundClaimJpaEntity)
                                                     .where(
                                                             refundClaimJpaEntity.refundStatus.eq(

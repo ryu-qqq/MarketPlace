@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * 주문 도메인 정산 Entry 생성 프로세서.
  *
- * <p>구매확정 시 판매 Entry를 생성합니다. UseCase를 거치지 않고
- * Factory + PersistenceFacade를 직접 사용합니다.
+ * <p>구매확정 시 판매 Entry를 생성합니다. UseCase를 거치지 않고 Factory + PersistenceFacade를 직접 사용합니다.
  */
 @Component
 public class OrderSettlementProcessor {
@@ -37,8 +36,7 @@ public class OrderSettlementProcessor {
             SettlementEntry entry = factory.createSalesEntry(command);
             persistenceFacade.persist(entry);
         } catch (Exception e) {
-            log.warn(
-                    "정산 Entry 생성 실패: orderItemId={}, error={}", orderItemId, e.getMessage());
+            log.warn("정산 Entry 생성 실패: orderItemId={}, error={}", orderItemId, e.getMessage());
         }
     }
 }

@@ -14,5 +14,4 @@ public record BrandApiResponse(
         @Schema(description = "로고 URL", example = "https://cdn.example.com/logo.png")
                 String logoUrl,
         @Schema(description = "생성일시 (KST)", example = "2026-01-15T09:30:00Z") String createdAt,
-        @Schema(description = "수정일시 (KST)", example = "2026-02-10T14:20:00Z")
-                String updatedAt) {}
+        @Schema(description = "수정일시 (KST)", example = "2026-02-10T14:20:00Z") String updatedAt) {}

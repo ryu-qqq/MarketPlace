@@ -135,8 +135,7 @@ class RequestRefundBatchServiceTest {
             given(orderItemReadManager.findById(OrderItemId.of(item.orderItemId())))
                     .willReturn(Optional.of(orderItem));
             given(orderItem.status())
-                    .willReturn(
-                            com.ryuqq.marketplace.domain.order.vo.OrderItemStatus.CONFIRMED);
+                    .willReturn(com.ryuqq.marketplace.domain.order.vo.OrderItemStatus.CONFIRMED);
             given(commandFactory.createRequestOrderItemContext(item.orderItemId()))
                     .willReturn(
                             new StatusChangeContext<>(

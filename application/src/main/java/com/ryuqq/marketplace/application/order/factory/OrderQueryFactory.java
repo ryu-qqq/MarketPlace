@@ -38,8 +38,11 @@ public class OrderQueryFactory {
      */
     public OrderSearchCriteria createCriteria(OrderSearchParams params) {
         OrderSortKey sortKey = OrderSortKey.fromString(params.searchParams().sortKey());
-        SortDirection sortDirection = commonVoFactory.parseSortDirection(params.searchParams().sortDirection());
-        PageRequest pageRequest = commonVoFactory.createPageRequest(params.searchParams().page(), params.searchParams().size());
+        SortDirection sortDirection =
+                commonVoFactory.parseSortDirection(params.searchParams().sortDirection());
+        PageRequest pageRequest =
+                commonVoFactory.createPageRequest(
+                        params.searchParams().page(), params.searchParams().size());
 
         QueryContext<OrderSortKey> queryContext =
                 commonVoFactory.createQueryContext(

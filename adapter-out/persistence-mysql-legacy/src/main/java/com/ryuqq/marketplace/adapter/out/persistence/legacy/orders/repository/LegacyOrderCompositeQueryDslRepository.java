@@ -24,8 +24,8 @@ import org.springframework.stereotype.Repository;
  * 레거시 주문 복합 조회 QueryDSL Repository.
  *
  * <p>orders + order_snapshot_product_group + external_order + interlocking_order +
- * payment_snapshot_shipping_address + shipment 조인으로 flat DTO를 조회합니다.
- * order_snapshot_option_detail과 orders_history는 별도 메서드로 조회합니다.
+ * payment_snapshot_shipping_address + shipment 조인으로 flat DTO를 조회합니다. order_snapshot_option_detail과
+ * orders_history는 별도 메서드로 조회합니다.
  *
  * <p>레거시 구조: 1 order = 1 product (orders.PRODUCT_ID). 스냅샷도 order_id 단위.
  *

@@ -55,9 +55,7 @@ public class SetofCommerceProductMapper {
      * @return 세토프 상품 등록 요청 DTO
      */
     public SetofProductGroupRegistrationRequest toRegistrationRequest(
-            ProductGroupSyncData syncData,
-            Long externalCategoryId,
-            Long externalBrandId) {
+            ProductGroupSyncData syncData, Long externalCategoryId, Long externalBrandId) {
 
         ProductGroupDetailCompositeQueryResult queryResult = syncData.queryResult();
         List<ProductResult> products = syncData.products();

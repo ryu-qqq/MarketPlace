@@ -62,7 +62,9 @@ class ConfirmShipmentBatchServiceTest {
             Instant changedAt = Instant.parse("2026-02-18T10:00:00Z");
             BulkStatusChangeContext<OrderItemId> confirmContexts =
                     new BulkStatusChangeContext<>(
-                            List.of(OrderItemId.of(ORDER_ITEM_ID_1), OrderItemId.of(ORDER_ITEM_ID_2)),
+                            List.of(
+                                    OrderItemId.of(ORDER_ITEM_ID_1),
+                                    OrderItemId.of(ORDER_ITEM_ID_2)),
                             changedAt);
 
             given(
@@ -74,7 +76,8 @@ class ConfirmShipmentBatchServiceTest {
             given(commandFactory.createConfirmContexts(command)).willReturn(confirmContexts);
             given(commandFactory.createConfirmBundle(anyList(), eq(changedAt)))
                     .willReturn(
-                            ShipmentPersistenceBundle.of(List.of(), List.of(), List.of(item1, item2)));
+                            ShipmentPersistenceBundle.of(
+                                    List.of(), List.of(), List.of(item1, item2)));
 
             // when
             BatchProcessingResult<String> result = sut.execute(command);

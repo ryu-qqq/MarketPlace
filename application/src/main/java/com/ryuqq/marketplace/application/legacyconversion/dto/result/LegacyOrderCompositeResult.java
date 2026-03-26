@@ -7,7 +7,8 @@ import java.util.List;
  * 레거시 주문 복합 조회 결과 DTO.
  *
  * <p>orders + order_snapshot_product_group + external_order + interlocking_order +
- * payment_snapshot_shipping_address + shipment + order_snapshot_option_detail + orders_history 조합 결과.
+ * payment_snapshot_shipping_address + shipment + order_snapshot_option_detail + orders_history 조합
+ * 결과.
  *
  * @param legacyOrderId 레거시 주문 ID
  * @param legacyPaymentId 레거시 결제 ID

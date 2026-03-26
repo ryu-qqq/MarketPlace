@@ -10,7 +10,6 @@ import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +21,8 @@ import org.springframework.stereotype.Component;
 /**
  * InboundOrder 상품 매핑 해석기.
  *
- * <p>OutboundProduct 역조회를 통해 외부 상품 ID → 내부 상품 매핑을 bulk로 수행합니다.
- * externalOptionId(=skuCode)를 이용하여 개별 Product(SKU)까지 매핑합니다.
+ * <p>OutboundProduct 역조회를 통해 외부 상품 ID → 내부 상품 매핑을 bulk로 수행합니다. externalOptionId(=skuCode)를 이용하여 개별
+ * Product(SKU)까지 매핑합니다.
  */
 @Component
 public class InboundOrderMappingResolver {
@@ -120,8 +119,7 @@ public class InboundOrderMappingResolver {
                     resolveProductId(
                             item.externalOptionId(), item.externalOptionName(), productGroup);
 
-            item.applyMapping(
-                    productGroupId, productId, sellerId, brandId, null, productGroupName);
+            item.applyMapping(productGroupId, productId, sellerId, brandId, null, productGroupName);
 
             if (resolvedSellerId == null && sellerId != null) {
                 resolvedSellerId = sellerId;
@@ -136,9 +134,8 @@ public class InboundOrderMappingResolver {
     /**
      * productId를 결정합니다.
      *
-     * <p>1순위: optionManageCode(=productId)를 Long.parseLong으로 역매핑.
-     * 2순위: product가 1개뿐이면 해당 product 사용.
-     * 3순위: 옵션명 텍스트로 product 역매핑 (SINGLE/COMBINATION).
+     * <p>1순위: optionManageCode(=productId)를 Long.parseLong으로 역매핑. 2순위: product가 1개뿐이면 해당 product
+     * 사용. 3순위: 옵션명 텍스트로 product 역매핑 (SINGLE/COMBINATION).
      */
     private Long resolveProductId(
             String optionManageCode, String externalOptionName, ProductGroup productGroup) {
@@ -172,15 +169,13 @@ public class InboundOrderMappingResolver {
     /**
      * 옵션명 텍스트로 productId를 역매핑합니다.
      *
-     * <p>네이버 productOption 형태: "그룹명: 값" 또는 "그룹명1: 값1, 그룹명2: 값2".
-     * ProductGroup의 sellerOptionValues에서 옵션값 이름이 포함된 product를 찾습니다.
+     * <p>네이버 productOption 형태: "그룹명: 값" 또는 "그룹명1: 값1, 그룹명2: 값2". ProductGroup의 sellerOptionValues에서
+     * 옵션값 이름이 포함된 product를 찾습니다.
      */
-    private Long resolveProductIdByOptionName(String externalOptionName, ProductGroup productGroup) {
+    private Long resolveProductIdByOptionName(
+            String externalOptionName, ProductGroup productGroup) {
         // 옵션값 이름 추출: "DEFAULT_ONE: 모눈" → "모눈"
         String optionValueName = extractOptionValueName(externalOptionName);
-        if (optionValueName == null) {
-            return null;
-        }
 
         // ProductGroup의 sellerOptionValues에서 일치하는 값의 ID 찾기
         Long matchedOptionValueId = null;
@@ -191,7 +186,9 @@ public class InboundOrderMappingResolver {
                     break;
                 }
             }
-            if (matchedOptionValueId != null) break;
+            if (matchedOptionValueId != null) {
+                break;
+            }
         }
 
         if (matchedOptionValueId == null) {
@@ -199,8 +196,7 @@ public class InboundOrderMappingResolver {
         }
 
         // 해당 optionValueId를 가진 product 찾기
-        List<Product> products =
-                productQueryPort.findByProductGroupId(productGroup.id());
+        List<Product> products = productQueryPort.findByProductGroupId(productGroup.id());
         Long targetValueId = matchedOptionValueId;
         return products.stream()
                 .filter(

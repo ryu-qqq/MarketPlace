@@ -50,11 +50,7 @@ public class ClaimHistoryFactory {
 
     /** 시스템에 의한 상태 변경 이력 생성 (수량 정보 포함). */
     public ClaimHistory createStatusChangeBySystemWithQty(
-            ClaimType claimType,
-            String claimId,
-            String fromStatus,
-            String toStatus,
-            int quantity) {
+            ClaimType claimType, String claimId, String fromStatus, String toStatus, int quantity) {
         return ClaimHistory.forStatusChangeWithQty(
                 ClaimHistoryId.generate(),
                 claimType,

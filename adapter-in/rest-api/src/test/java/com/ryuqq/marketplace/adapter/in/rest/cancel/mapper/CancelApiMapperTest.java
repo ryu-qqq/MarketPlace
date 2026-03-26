@@ -429,14 +429,18 @@ class CancelApiMapperTest {
                     CancelApiFixtures.detailResult(CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            CancelDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response).isNotNull();
-            assertThat(response.cancelInfo().cancelId()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_ID);
-            assertThat(response.cancelInfo().cancelNumber()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_NUMBER);
+            assertThat(response.cancelInfo().cancelId())
+                    .isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_ID);
+            assertThat(response.cancelInfo().cancelNumber())
+                    .isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_NUMBER);
             assertThat(response.orderId()).isEqualTo(CancelApiFixtures.DEFAULT_ORDER_ITEM_ID);
-            assertThat(response.cancelInfo().type()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_TYPE);
+            assertThat(response.cancelInfo().type())
+                    .isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_TYPE);
         }
 
         @Test
@@ -447,7 +451,8 @@ class CancelApiMapperTest {
                     CancelApiFixtures.detailResult(CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            CancelDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.cancelInfo().refundInfo()).isNotNull();
@@ -464,7 +469,8 @@ class CancelApiMapperTest {
                             CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            CancelDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.cancelInfo().refundInfo()).isNull();
@@ -478,7 +484,8 @@ class CancelApiMapperTest {
                     CancelApiFixtures.detailResult(CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            CancelDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.cancelHistories()).hasSize(1);
@@ -496,7 +503,8 @@ class CancelApiMapperTest {
                             CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            CancelDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.cancelHistories()).isEmpty();
@@ -510,10 +518,12 @@ class CancelApiMapperTest {
                     CancelApiFixtures.detailResult(CancelApiFixtures.DEFAULT_CANCEL_ID);
 
             // when
-            CancelDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            CancelDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.cancelInfo().refundInfo().refundedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.cancelInfo().refundInfo().refundedAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
     }
 

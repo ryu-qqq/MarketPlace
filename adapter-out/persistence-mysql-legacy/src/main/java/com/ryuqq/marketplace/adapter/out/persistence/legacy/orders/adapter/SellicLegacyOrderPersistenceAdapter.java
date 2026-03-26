@@ -161,9 +161,7 @@ public class SellicLegacyOrderPersistenceAdapter implements SellicLegacyOrderPer
     }
 
     private void saveShipment(
-            long orderId,
-            long shippingAddressId,
-            IssueSellicLegacyOrderCommand.Shipment cmd) {
+            long orderId, long shippingAddressId, IssueSellicLegacyOrderCommand.Shipment cmd) {
         LegacyShipmentEntity entity =
                 LegacyShipmentEntity.create(
                         orderId,
@@ -178,8 +176,7 @@ public class SellicLegacyOrderPersistenceAdapter implements SellicLegacyOrderPer
 
     private void saveSettlement(long orderId, IssueSellicLegacyOrderCommand.Settlement cmd) {
         LegacySettlementEntity entity =
-                LegacySettlementEntity.create(
-                        orderId, cmd.sellerCommissionRate(), SYSTEM_OPERATOR);
+                LegacySettlementEntity.create(orderId, cmd.sellerCommissionRate(), SYSTEM_OPERATOR);
         settlementRepository.save(entity);
     }
 
@@ -187,7 +184,11 @@ public class SellicLegacyOrderPersistenceAdapter implements SellicLegacyOrderPer
             long paymentId, long orderId, IssueSellicLegacyOrderCommand.ExternalOrder cmd) {
         LegacyExternalOrderEntity entity =
                 LegacyExternalOrderEntity.create(
-                        cmd.siteId(), paymentId, orderId, cmd.externalIdx(), cmd.externalOrderPkId());
+                        cmd.siteId(),
+                        paymentId,
+                        orderId,
+                        cmd.externalIdx(),
+                        cmd.externalOrderPkId());
         externalOrderRepository.save(entity);
     }
 

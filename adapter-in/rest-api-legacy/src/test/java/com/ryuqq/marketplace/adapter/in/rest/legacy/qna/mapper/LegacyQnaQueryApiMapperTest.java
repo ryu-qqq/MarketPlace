@@ -198,9 +198,22 @@ class LegacyQnaQueryApiMapperTest {
             LegacyQnaDetailResult result =
                     new LegacyQnaDetailResult(
                             LegacyQnAApiFixtures.DEFAULT_QNA_ID,
-                            null, null, "N", "PENDING", "PRODUCT", "GENERAL",
-                            2L, 1L, "MEMBERS", null, null, null, 100L, null,
-                            List.of(), List.of());
+                            null,
+                            null,
+                            "N",
+                            "PENDING",
+                            "PRODUCT",
+                            "GENERAL",
+                            2L,
+                            1L,
+                            "MEMBERS",
+                            null,
+                            null,
+                            null,
+                            100L,
+                            null,
+                            List.of(),
+                            List.of());
 
             // when
             LegacyDetailQnaResponse response = mapper.toDetailResponse(result);
@@ -282,9 +295,20 @@ class LegacyQnaQueryApiMapperTest {
                             LegacyQnAApiFixtures.DEFAULT_QNA_ID,
                             LegacyQnAApiFixtures.DEFAULT_TITLE,
                             LegacyQnAApiFixtures.DEFAULT_CONTENT,
-                            "N", "PENDING", "PRODUCT", "GENERAL",
-                            2L, 1L, "MEMBERS", null, null, null, 100L, null,
-                            List.of(), List.of());
+                            "N",
+                            "PENDING",
+                            "PRODUCT",
+                            "GENERAL",
+                            2L,
+                            1L,
+                            "MEMBERS",
+                            null,
+                            null,
+                            null,
+                            100L,
+                            null,
+                            List.of(),
+                            List.of());
 
             // when
             LegacyFetchQnaResponse response = mapper.toFetchResponse(result);

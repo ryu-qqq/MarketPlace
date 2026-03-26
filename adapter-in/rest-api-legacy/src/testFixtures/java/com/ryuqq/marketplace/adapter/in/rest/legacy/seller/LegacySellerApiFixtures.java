@@ -32,13 +32,19 @@ public final class LegacySellerApiFixtures {
 
     public static LegacySellerAuthResult legacySellerAuthResult() {
         return new LegacySellerAuthResult(
-                DEFAULT_SELLER_ID, DEFAULT_EMAIL, DEFAULT_PASSWORD_HASH,
-                DEFAULT_ROLE_TYPE, DEFAULT_APPROVAL_STATUS);
+                DEFAULT_SELLER_ID,
+                DEFAULT_EMAIL,
+                DEFAULT_PASSWORD_HASH,
+                DEFAULT_ROLE_TYPE,
+                DEFAULT_APPROVAL_STATUS);
     }
 
     public static LegacySellerAuthResult legacySellerAuthResult(
-            long sellerId, String email, String passwordHash,
-            String roleType, String approvalStatus) {
+            long sellerId,
+            String email,
+            String passwordHash,
+            String roleType,
+            String approvalStatus) {
         return new LegacySellerAuthResult(sellerId, email, passwordHash, roleType, approvalStatus);
     }
 
@@ -96,19 +102,29 @@ public final class LegacySellerApiFixtures {
 
     public static LegacySellerResponse sellerResponse() {
         return new LegacySellerResponse(
-                DEFAULT_SELLER_ID, DEFAULT_EMAIL, DEFAULT_PASSWORD_HASH,
-                DEFAULT_ROLE_TYPE, DEFAULT_APPROVAL_STATUS);
+                DEFAULT_SELLER_ID,
+                DEFAULT_EMAIL,
+                DEFAULT_PASSWORD_HASH,
+                DEFAULT_ROLE_TYPE,
+                DEFAULT_APPROVAL_STATUS);
     }
 
     public static LegacySellerResponse sellerResponse(
             long sellerId, String sellerName, String bizNo) {
-        return new LegacySellerResponse(sellerId, DEFAULT_EMAIL, DEFAULT_PASSWORD_HASH,
-                DEFAULT_ROLE_TYPE, DEFAULT_APPROVAL_STATUS);
+        return new LegacySellerResponse(
+                sellerId,
+                DEFAULT_EMAIL,
+                DEFAULT_PASSWORD_HASH,
+                DEFAULT_ROLE_TYPE,
+                DEFAULT_APPROVAL_STATUS);
     }
 
     public static LegacySellerResponse sellerResponse(
-            long sellerId, String email, String passwordHash,
-            String roleType, String approvalStatus) {
+            long sellerId,
+            String email,
+            String passwordHash,
+            String roleType,
+            String approvalStatus) {
         return new LegacySellerResponse(sellerId, email, passwordHash, roleType, approvalStatus);
     }
 }

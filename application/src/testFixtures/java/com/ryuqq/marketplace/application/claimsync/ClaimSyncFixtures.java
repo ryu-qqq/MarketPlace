@@ -255,7 +255,8 @@ public final class ClaimSyncFixtures {
 
     // ===== ExternalClaimPayload - CANCEL (수량 지정) =====
 
-    public static ExternalClaimPayload cancelPayloadWithQty(String claimStatus, int requestQuantity) {
+    public static ExternalClaimPayload cancelPayloadWithQty(
+            String claimStatus, int requestQuantity) {
         return new ExternalClaimPayload(
                 DEFAULT_EXTERNAL_ORDER_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ORDER_ID,

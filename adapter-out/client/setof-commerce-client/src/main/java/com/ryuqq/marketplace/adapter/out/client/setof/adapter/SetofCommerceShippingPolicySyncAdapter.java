@@ -57,10 +57,12 @@ public class SetofCommerceShippingPolicySyncAdapter implements OutboundShippingP
 
             log.info("세토프 커머스 배송정책 등록 요청: sellerId={}, policyId={}", sellerId, policyId);
 
-            executeWithTokenRefresh(shop, token -> {
-                apiClient.createShippingPolicy(token, request);
-                return null;
-            });
+            executeWithTokenRefresh(
+                    shop,
+                    token -> {
+                        apiClient.createShippingPolicy(token, request);
+                        return null;
+                    });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -80,10 +82,12 @@ public class SetofCommerceShippingPolicySyncAdapter implements OutboundShippingP
 
             log.info("세토프 커머스 배송정책 수정 요청: sellerId={}, policyId={}", sellerId, policyId);
 
-            executeWithTokenRefresh(shop, token -> {
-                apiClient.updateShippingPolicy(token, policyId, request);
-                return null;
-            });
+            executeWithTokenRefresh(
+                    shop,
+                    token -> {
+                        apiClient.updateShippingPolicy(token, policyId, request);
+                        return null;
+                    });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;

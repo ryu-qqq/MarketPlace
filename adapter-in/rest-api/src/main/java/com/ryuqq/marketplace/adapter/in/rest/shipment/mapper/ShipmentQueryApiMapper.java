@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.shipment.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipmentSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.PaymentInfoResponse;
@@ -10,7 +11,6 @@ import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListA
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ProductOrderInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ReceiverInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ShipmentInfoResponse;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentSummaryApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
@@ -138,8 +138,7 @@ public class ShipmentQueryApiMapper {
             ShipmentListResult.ProductOrderInfo p) {
         if (p == null) {
             return new OrderListApiResponseV4.OrderProductApiResponse(
-                    "", "", null, null, 0, 0, "", "", "", 0, "", 0, 0, 0, "", "",
-                    List.of());
+                    "", "", null, null, 0, 0, "", "", "", 0, "", 0, 0, 0, "", "", List.of());
         }
         return new OrderListApiResponseV4.OrderProductApiResponse(
                 nullToEmpty(p.orderItemId()),

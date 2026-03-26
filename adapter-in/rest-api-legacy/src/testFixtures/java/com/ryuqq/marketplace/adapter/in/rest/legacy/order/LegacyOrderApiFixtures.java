@@ -80,8 +80,17 @@ public final class LegacyOrderApiFixtures {
 
         PaymentInfo payment =
                 new PaymentInfo(
-                        DEFAULT_PAYMENT_ID, "", "", "", "2024-06-13 15:59:06", null,
-                        DEFAULT_USER_ID, "OUR_MALL", 50000L, 50000L, 0);
+                        DEFAULT_PAYMENT_ID,
+                        "",
+                        "",
+                        "",
+                        "2024-06-13 15:59:06",
+                        null,
+                        DEFAULT_USER_ID,
+                        "OUR_MALL",
+                        50000L,
+                        50000L,
+                        0);
 
         ReceiverInfo receiverInfo =
                 new ReceiverInfo("홍길동", "010-1234-5678", "서울시 강남구", "101호", "06000", "KR", "");
@@ -97,23 +106,48 @@ public final class LegacyOrderApiFixtures {
         ClothesDetailInfo clothesDetailInfo = new ClothesDetailInfo("NEW", "", null);
         ProductGroupDetails productGroupDetails =
                 new ProductGroupDetails(
-                        "테스트 상품", "OPTION_ONE", "MENUAL", priceInfo,
-                        productStatus, clothesDetailInfo, 1L, 1390L, 5465L);
+                        "테스트 상품",
+                        "OPTION_ONE",
+                        "MENUAL",
+                        priceInfo,
+                        productStatus,
+                        clothesDetailInfo,
+                        1L,
+                        1390L,
+                        5465L);
 
         BrandInfo brand = new BrandInfo(5465L, "테스트 브랜드");
 
         OrderProductInfo orderProduct =
                 new OrderProductInfo(
-                        DEFAULT_ORDER_ID, productGroupDetails, brand,
-                        DEFAULT_PRODUCT_GROUP_ID, DEFAULT_PRODUCT_ID,
-                        "", "", "", 1, DEFAULT_ORDER_STATUS, 60000L, 50000L, 0, "", "",
+                        DEFAULT_ORDER_ID,
+                        productGroupDetails,
+                        brand,
+                        DEFAULT_PRODUCT_GROUP_ID,
+                        DEFAULT_PRODUCT_ID,
+                        "",
+                        "",
+                        "",
+                        1,
+                        DEFAULT_ORDER_STATUS,
+                        60000L,
+                        50000L,
+                        0,
+                        "",
+                        "",
                         List.of());
 
         List<OrderHistoryInfo> orderHistories = List.of();
 
         return new LegacyOrderResponse(
-                DEFAULT_ORDER_ID, buyerInfo, payment, receiverInfo,
-                paymentShipmentInfo, settlementInfo, orderProduct, orderHistories);
+                DEFAULT_ORDER_ID,
+                buyerInfo,
+                payment,
+                receiverInfo,
+                paymentShipmentInfo,
+                settlementInfo,
+                orderProduct,
+                orderHistories);
     }
 
     public static List<LegacyOrderResponse> orderListResponses(int count) {

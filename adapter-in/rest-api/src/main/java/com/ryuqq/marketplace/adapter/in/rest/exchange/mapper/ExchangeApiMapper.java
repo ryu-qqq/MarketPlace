@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryM
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
+import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ApproveExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CollectExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CompleteExchangeBatchApiRequest;
@@ -41,7 +42,6 @@ import com.ryuqq.marketplace.application.exchange.dto.response.ExchangePageResul
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeSummaryResult;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
-import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -174,7 +174,9 @@ public class ExchangeApiMapper {
     }
 
     private ClaimListItemApiResponseV4 toListResponseV4(
-            ExchangeListResult r, ClaimOrderEnricher enricher, ClaimOrderEnricher.OrderContext ctx) {
+            ExchangeListResult r,
+            ClaimOrderEnricher enricher,
+            ClaimOrderEnricher.OrderContext ctx) {
         String itemId = r.orderItemId();
         return new ClaimListItemApiResponseV4(
                 enricher.toOrderProductV4(itemId, ctx),

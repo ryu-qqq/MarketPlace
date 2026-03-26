@@ -147,7 +147,11 @@ public final class CancelJpaEntityFixtures {
 
     /** SELLER_CANCEL / APPROVED 상태 + cancelQty 지정 Entity 생성. 부분취소 테스트용. */
     public static CancelJpaEntity approvedEntityWithQty(
-            String cancelId, String cancelNumber, String orderItemId, long sellerId, int cancelQty,
+            String cancelId,
+            String cancelNumber,
+            String orderItemId,
+            long sellerId,
+            int cancelQty,
             Integer refundAmount) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(

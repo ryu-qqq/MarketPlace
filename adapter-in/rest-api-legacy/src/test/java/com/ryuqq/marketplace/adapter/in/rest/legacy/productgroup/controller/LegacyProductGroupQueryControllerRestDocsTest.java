@@ -51,7 +51,10 @@ class LegacyProductGroupQueryControllerRestDocsTest {
     @Autowired private ObjectMapper objectMapper;
 
     @MockitoBean private LegacyProductQueryUseCase legacyProductQueryUseCase;
-    @MockitoBean private LegacySearchProductGroupByOffsetUseCase legacySearchProductGroupByOffsetUseCase;
+
+    @MockitoBean
+    private LegacySearchProductGroupByOffsetUseCase legacySearchProductGroupByOffsetUseCase;
+
     @MockitoBean private LegacyProductGroupQueryApiMapper legacyProductGroupQueryApiMapper;
     @MockitoBean private MarketAccessChecker accessChecker;
     @MockitoBean private LegacyAccessChecker legacyAccessChecker;

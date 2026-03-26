@@ -54,10 +54,12 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
 
             log.info("세토프 커머스 셀러주소 등록 요청: sellerId={}, addressId={}", sellerId, addressId);
 
-            executeWithTokenRefresh(shop, token -> {
-                apiClient.createSellerAddress(token, sellerId, request);
-                return null;
-            });
+            executeWithTokenRefresh(
+                    shop,
+                    token -> {
+                        apiClient.createSellerAddress(token, sellerId, request);
+                        return null;
+                    });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -75,10 +77,12 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
 
             log.info("세토프 커머스 셀러주소 수정 요청: sellerId={}, addressId={}", sellerId, addressId);
 
-            executeWithTokenRefresh(shop, token -> {
-                apiClient.updateSellerAddress(token, sellerId, addressId, request);
-                return null;
-            });
+            executeWithTokenRefresh(
+                    shop,
+                    token -> {
+                        apiClient.updateSellerAddress(token, sellerId, addressId, request);
+                        return null;
+                    });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;
@@ -93,10 +97,12 @@ public class SetofCommerceSellerAddressSyncAdapter implements OutboundSellerAddr
         try {
             log.info("세토프 커머스 셀러주소 삭제 요청: sellerId={}, addressId={}", sellerId, addressId);
 
-            executeWithTokenRefresh(shop, token -> {
-                apiClient.deleteSellerAddress(token, sellerId, addressId);
-                return null;
-            });
+            executeWithTokenRefresh(
+                    shop,
+                    token -> {
+                        apiClient.deleteSellerAddress(token, sellerId, addressId);
+                        return null;
+                    });
             return OutboundSellerSyncResult.ofSuccess();
         } catch (ExternalServiceUnavailableException e) {
             throw e;

@@ -153,7 +153,8 @@ class ShipmentExceptionTest {
             String orderItemId = "01940001-0000-7000-8000-000000000001";
 
             // when
-            ExternalMappingNotFoundException exception = new ExternalMappingNotFoundException(orderItemId);
+            ExternalMappingNotFoundException exception =
+                    new ExternalMappingNotFoundException(orderItemId);
 
             // then
             assertThat(exception.code()).isEqualTo("SHP-005");
@@ -184,7 +185,8 @@ class ShipmentExceptionTest {
             String channelCode = "UNKNOWN_CHANNEL";
 
             // when
-            SyncChannelNotSupportedException exception = new SyncChannelNotSupportedException(channelCode);
+            SyncChannelNotSupportedException exception =
+                    new SyncChannelNotSupportedException(channelCode);
 
             // then
             assertThat(exception.code()).isEqualTo("SHP-006");

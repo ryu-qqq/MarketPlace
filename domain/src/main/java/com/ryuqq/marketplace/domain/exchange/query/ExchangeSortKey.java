@@ -24,7 +24,9 @@ public enum ExchangeSortKey implements SortKey {
     }
 
     public static ExchangeSortKey fromString(String value) {
-        if (value == null || value.isBlank()) { return CREATED_AT; }
+        if (value == null || value.isBlank()) {
+            return CREATED_AT;
+        }
         return valueOf(value);
     }
 }

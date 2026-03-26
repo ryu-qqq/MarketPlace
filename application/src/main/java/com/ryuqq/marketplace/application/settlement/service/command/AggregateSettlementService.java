@@ -71,7 +71,11 @@ public class AggregateSettlementService implements AggregateSettlementUseCase {
 
         List<Long> sellerIds =
                 entryReadManager.findDistinctSellerIdsByStatus(EntryStatus.CONFIRMED);
-        log.info("[Settlement-Aggregate] 대상 셀러 수: {}, 기간: {} ~ {}", sellerIds.size(), periodStart, periodEnd);
+        log.info(
+                "[Settlement-Aggregate] 대상 셀러 수: {}, 기간: {} ~ {}",
+                sellerIds.size(),
+                periodStart,
+                periodEnd);
 
         for (Long sellerId : sellerIds) {
             try {

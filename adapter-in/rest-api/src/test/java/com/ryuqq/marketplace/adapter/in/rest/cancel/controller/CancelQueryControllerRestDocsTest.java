@@ -297,7 +297,8 @@ class CancelQueryControllerRestDocsTest {
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getCancelListUseCase.execute(any())).willReturn(emptyResult);
-            given(mapper.toPageResponseV4(any(), any())).willReturn((PageApiResponse) emptyResponse);
+            given(mapper.toPageResponseV4(any(), any()))
+                    .willReturn((PageApiResponse) emptyResponse);
 
             // when & then
             mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL))
@@ -320,7 +321,9 @@ class CancelQueryControllerRestDocsTest {
                     CancelApiFixtures.detailApiResponse(DEFAULT_CANCEL_ID);
 
             given(getCancelDetailUseCase.execute(DEFAULT_CANCEL_ID)).willReturn(detailResult);
-            given(mapper.toDetailResponse(any(CancelDetailResult.class), any(), any(), any(), any()))
+            given(
+                            mapper.toDetailResponse(
+                                    any(CancelDetailResult.class), any(), any(), any(), any()))
                     .willReturn(detailResponse);
 
             // when & then
@@ -442,7 +445,9 @@ class CancelQueryControllerRestDocsTest {
                     CancelApiFixtures.detailApiResponseWithoutRefund(DEFAULT_CANCEL_ID);
 
             given(getCancelDetailUseCase.execute(anyString())).willReturn(detailResult);
-            given(mapper.toDetailResponse(any(CancelDetailResult.class), any(), any(), any(), any()))
+            given(
+                            mapper.toDetailResponse(
+                                    any(CancelDetailResult.class), any(), any(), any(), any()))
                     .willReturn(detailResponse);
 
             // when & then

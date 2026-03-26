@@ -16,9 +16,13 @@ public enum ShipmentMethodType {
     DESIGNATED_COURIER;
 
     public static ShipmentMethodType fromString(String value) {
-        if (value == null || value.isBlank()) { return COURIER; }
+        if (value == null || value.isBlank()) {
+            return COURIER;
+        }
         for (ShipmentMethodType type : values()) {
-            if (type.name().equalsIgnoreCase(value)) { return type; }
+            if (type.name().equalsIgnoreCase(value)) {
+                return type;
+            }
         }
         return COURIER;
     }

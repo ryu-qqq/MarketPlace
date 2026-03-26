@@ -4,11 +4,11 @@ import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactor
 import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
+import com.ryuqq.marketplace.application.exchange.internal.ExchangeSettlementProcessor;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeCommandManager;
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeReadManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
-import com.ryuqq.marketplace.application.exchange.internal.ExchangeSettlementProcessor;
 import com.ryuqq.marketplace.domain.claim.vo.FeePayer;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
  * <p>EXCHANGE 유형의 클레임에 대해 액션 결정과 실행을 캡슐화합니다.
  */
 @Component
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessiveImports"})
 public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ExchangeClaimSyncHandler.class);
@@ -194,7 +194,8 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         String fromStatus = exchangeClaim.status().name();
         exchangeClaim.startCollecting(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
-        recordHistory(exchangeClaim.idValue(), fromStatus, "COLLECTING", exchangeClaim.exchangeQty());
+        recordHistory(
+                exchangeClaim.idValue(), fromStatus, "COLLECTING", exchangeClaim.exchangeQty());
         return 0L;
     }
 
@@ -203,7 +204,8 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         String fromStatus = exchangeClaim.status().name();
         exchangeClaim.completeCollection(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
-        recordHistory(exchangeClaim.idValue(), fromStatus, "COLLECTED", exchangeClaim.exchangeQty());
+        recordHistory(
+                exchangeClaim.idValue(), fromStatus, "COLLECTED", exchangeClaim.exchangeQty());
         return 0L;
     }
 
@@ -231,7 +233,8 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             fastForwardToComplete(exchangeClaim, now);
             exchangeCommandManager.persist(exchangeClaim);
             partialReturnOrderItem(orderItemId, exchangeClaim.exchangeQty(), "교환 완료 동기화", now);
-            recordHistory(exchangeClaim.idValue(), fromStatus, "COMPLETED", exchangeClaim.exchangeQty());
+            recordHistory(
+                    exchangeClaim.idValue(), fromStatus, "COMPLETED", exchangeClaim.exchangeQty());
             createReversalEntry(orderItemId, sellerId, exchangeClaim.idValue());
             return 0L;
         }
@@ -334,10 +337,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
                         });
     }
 
-    /**
-     * 부분반품 수량만큼 OrderItem의 returnedQty를 증가시킨다.
-     * 전체 수량이 소진되면 RETURNED 상태 전환.
-     */
+    /** 부분반품 수량만큼 OrderItem의 returnedQty를 증가시킨다. 전체 수량이 소진되면 RETURNED 상태 전환. */
     private void partialReturnOrderItem(
             OrderItemId orderItemId, int returnQty, String reason, Instant now) {
         orderItemReadManager

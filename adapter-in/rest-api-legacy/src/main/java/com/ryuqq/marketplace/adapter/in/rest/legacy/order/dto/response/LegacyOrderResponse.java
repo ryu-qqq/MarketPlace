@@ -3,8 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response;
 import java.util.List;
 
 /**
- * 세토프 OrderResponse 호환 응답 DTO.
- * 세토프 레거시 어드민과 동일한 flat 구조.
+ * 세토프 OrderResponse 호환 응답 DTO. 세토프 레거시 어드민과 동일한 flat 구조.
  *
  * @param orderId 주문 ID
  * @param buyerInfo 구매자 정보
@@ -25,10 +24,7 @@ public record LegacyOrderResponse(
         OrderProductInfo orderProduct,
         List<OrderHistoryInfo> orderHistories) {
 
-    public record BuyerInfo(
-            String buyerName,
-            String buyerEmail,
-            String buyerPhoneNumber) {}
+    public record BuyerInfo(String buyerName, String buyerEmail, String buyerPhoneNumber) {}
 
     public record PaymentInfo(
             long paymentId,
@@ -96,29 +92,16 @@ public record LegacyOrderResponse(
             long categoryId,
             long brandId) {}
 
-    public record PriceInfo(
-            long regularPrice,
-            long currentPrice,
-            long salePrice) {}
+    public record PriceInfo(long regularPrice, long currentPrice, long salePrice) {}
 
-    public record ProductStatusInfo(
-            String soldOutYn,
-            String displayYn) {}
+    public record ProductStatusInfo(String soldOutYn, String displayYn) {}
 
-    public record ClothesDetailInfo(
-            String productCondition,
-            String origin,
-            String styleCode) {}
+    public record ClothesDetailInfo(String productCondition, String origin, String styleCode) {}
 
-    public record BrandInfo(
-            long brandId,
-            String brandName) {}
+    public record BrandInfo(long brandId, String brandName) {}
 
     public record OptionInfo(
-            long optionGroupId,
-            long optionDetailId,
-            String optionName,
-            String optionValue) {}
+            long optionGroupId, long optionDetailId, String optionName, String optionValue) {}
 
     public record OrderHistoryInfo(
             long orderId,
