@@ -317,7 +317,7 @@ class ExchangeQueryControllerRestDocsTest {
 
             given(getExchangeDetailUseCase.execute(exchangeClaimId))
                     .willReturn(ExchangeApiFixtures.detailResult());
-            given(mapper.toDetailResponse(any())).willReturn(detailResponse);
+            given(mapper.toDetailResponse(any(), any(), any(), any(), any())).willReturn(detailResponse);
 
             // when & then
             mockMvc.perform(

@@ -308,7 +308,7 @@ class RefundQueryControllerRestDocsTest {
 
             given(getRefundDetailUseCase.execute(DEFAULT_REFUND_CLAIM_ID))
                     .willReturn(RefundApiFixtures.detailResult(DEFAULT_REFUND_CLAIM_ID));
-            given(mapper.toDetailResponse(any())).willReturn(detailResponse);
+            given(mapper.toDetailResponse(any(), any(), any(), any(), any())).willReturn(detailResponse);
 
             // when & then
             mockMvc.perform(
@@ -464,29 +464,37 @@ class RefundQueryControllerRestDocsTest {
             RefundDetailApiResponse.HoldInfoApiResponse holdInfo =
                     new RefundDetailApiResponse.HoldInfoApiResponse(
                             "추가 확인 필요", RefundApiFixtures.DEFAULT_FORMATTED_TIME);
-            RefundDetailApiResponse holdDetailResponse =
-                    new RefundDetailApiResponse(
+            RefundDetailApiResponse.RefundClaimInfoApiResponse holdClaimInfo =
+                    new RefundDetailApiResponse.RefundClaimInfoApiResponse(
                             holdRefundClaimId,
                             RefundApiFixtures.DEFAULT_CLAIM_NUMBER,
-                            RefundApiFixtures.DEFAULT_ORDER_ITEM_ID,
                             1,
                             "HOLD",
                             RefundApiFixtures.DEFAULT_REASON_TYPE,
                             RefundApiFixtures.DEFAULT_REASON_DETAIL,
                             null,
                             holdInfo,
+                            null,
+                            RefundApiFixtures.DEFAULT_FORMATTED_TIME,
+                            null);
+            RefundDetailApiResponse holdDetailResponse =
+                    new RefundDetailApiResponse(
+                            RefundApiFixtures.DEFAULT_ORDER_ITEM_ID,
+                            null,
+                            holdClaimInfo,
+                            null,
+                            null,
+                            null,
                             RefundApiFixtures.DEFAULT_REQUESTED_BY,
                             RefundApiFixtures.DEFAULT_PROCESSED_BY,
                             RefundApiFixtures.DEFAULT_FORMATTED_TIME,
-                            RefundApiFixtures.DEFAULT_FORMATTED_TIME,
-                            null,
                             RefundApiFixtures.DEFAULT_FORMATTED_TIME,
                             RefundApiFixtures.DEFAULT_FORMATTED_TIME,
                             java.util.List.of());
 
             given(getRefundDetailUseCase.execute(holdRefundClaimId))
                     .willReturn(RefundApiFixtures.detailResultWithHold(holdRefundClaimId));
-            given(mapper.toDetailResponse(any())).willReturn(holdDetailResponse);
+            given(mapper.toDetailResponse(any(), any(), any(), any(), any())).willReturn(holdDetailResponse);
 
             // when & then
             mockMvc.perform(
