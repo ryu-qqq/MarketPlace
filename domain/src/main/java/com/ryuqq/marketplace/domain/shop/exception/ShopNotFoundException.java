@@ -16,4 +16,8 @@ public class ShopNotFoundException extends ShopException {
     public ShopNotFoundException(Long shopId) {
         super(ERROR_CODE, String.format("ID가 %d인 외부몰을 찾을 수 없습니다", shopId));
     }
+
+    public ShopNotFoundException(String detail) {
+        super(ERROR_CODE, "외부몰을 찾을 수 없습니다: " + detail);
+    }
 }

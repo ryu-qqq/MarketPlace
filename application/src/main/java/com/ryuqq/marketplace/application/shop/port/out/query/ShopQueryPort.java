@@ -16,6 +16,8 @@ public interface ShopQueryPort {
 
     long countByCriteria(ShopSearchCriteria criteria);
 
+    Optional<Shop> findBySalesChannelIdAndAccountId(long salesChannelId, String accountId);
+
     boolean existsBySalesChannelIdAndAccountId(Long salesChannelId, String accountId);
 
     boolean existsBySalesChannelIdAndAccountIdExcluding(

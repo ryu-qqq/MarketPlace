@@ -44,6 +44,13 @@ public class ShopQueryAdapter implements ShopQueryPort {
     }
 
     @Override
+    public Optional<Shop> findBySalesChannelIdAndAccountId(long salesChannelId, String accountId) {
+        return repository
+                .findBySalesChannelIdAndAccountId(salesChannelId, accountId)
+                .map(mapper::toDomain);
+    }
+
+    @Override
     public boolean existsBySalesChannelIdAndAccountId(Long salesChannelId, String accountId) {
         return repository.existsBySalesChannelIdAndAccountId(salesChannelId, accountId);
     }
@@ -61,4 +68,5 @@ public class ShopQueryAdapter implements ShopQueryPort {
                 .map(mapper::toDomain)
                 .toList();
     }
+
 }

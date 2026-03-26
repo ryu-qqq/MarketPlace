@@ -40,6 +40,19 @@ public class ShopReadManager {
     }
 
     @Transactional(readOnly = true)
+    public Shop getBySalesChannelIdAndAccountId(long salesChannelId, String accountId) {
+        return queryPort
+                .findBySalesChannelIdAndAccountId(salesChannelId, accountId)
+                .orElseThrow(
+                        () ->
+                                new ShopNotFoundException(
+                                        "salesChannelId="
+                                                + salesChannelId
+                                                + ", accountId="
+                                                + accountId));
+    }
+
+    @Transactional(readOnly = true)
     public boolean existsBySalesChannelIdAndAccountId(Long salesChannelId, String accountId) {
         return queryPort.existsBySalesChannelIdAndAccountId(salesChannelId, accountId);
     }

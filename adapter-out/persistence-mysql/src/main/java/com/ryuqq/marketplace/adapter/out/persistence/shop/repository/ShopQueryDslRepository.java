@@ -74,6 +74,19 @@ public class ShopQueryDslRepository {
         return count != null ? count : 0L;
     }
 
+    public Optional<ShopJpaEntity> findBySalesChannelIdAndAccountId(
+            long salesChannelId, String accountId) {
+        ShopJpaEntity entity =
+                queryFactory
+                        .selectFrom(shop)
+                        .where(
+                                conditionBuilder.salesChannelIdEq(salesChannelId),
+                                conditionBuilder.accountIdEq(accountId),
+                                conditionBuilder.notDeleted())
+                        .fetchFirst();
+        return Optional.ofNullable(entity);
+    }
+
     public boolean existsBySalesChannelIdAndAccountId(Long salesChannelId, String accountId) {
         Integer count =
                 queryFactory
