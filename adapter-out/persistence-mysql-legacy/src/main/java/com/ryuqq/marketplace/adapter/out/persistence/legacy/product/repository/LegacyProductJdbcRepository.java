@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.repository;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,8 @@ public class LegacyProductJdbcRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public LegacyProductJdbcRepository(NamedParameterJdbcTemplate jdbcTemplate) {
+    public LegacyProductJdbcRepository(
+            @Qualifier("legacyNamedParameterJdbcTemplate") NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

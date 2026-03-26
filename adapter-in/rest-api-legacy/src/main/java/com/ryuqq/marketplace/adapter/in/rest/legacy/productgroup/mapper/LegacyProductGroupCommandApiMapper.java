@@ -331,9 +331,9 @@ public class LegacyProductGroupCommandApiMapper {
     public ResolveLegacyProductContextCommand toResolveContextCommand(
             long productGroupId, LegacyUpdateProductGroupRequest request) {
         return new ResolveLegacyProductContextCommand(
-                0L,
-                0L,
-                0L,
+                request.productGroupDetails().sellerId(),
+                request.productGroupDetails().brandId(),
+                request.productGroupDetails().categoryId(),
                 request.deliveryNotice() != null
                         ? new LegacyDeliveryData(
                                 request.deliveryNotice().deliveryArea(),
