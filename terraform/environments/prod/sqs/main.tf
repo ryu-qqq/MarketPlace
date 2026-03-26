@@ -30,6 +30,14 @@ locals {
   # OutboundSync queue
   outbound_sync_queue_name = "${var.environment}-${var.project_name}-outbound-sync"
 
+  # Claim Outbox queues
+  claim_outbox_queue_names = {
+    cancel   = "${var.environment}-${var.project_name}-cancel-outbox"
+    refund   = "${var.environment}-${var.project_name}-refund-outbox"
+    exchange = "${var.environment}-${var.project_name}-exchange-outbox"
+    qna      = "${var.environment}-${var.project_name}-qna-outbox"
+  }
+
   # Intelligence Pipeline queues
   intelligence_queue_names = {
     orchestration        = "${var.environment}-${var.project_name}-intelligence-orchestration"
@@ -390,6 +398,86 @@ resource "aws_sqs_queue" "intelligence_aggregation" {
 }
 
 # ========================================
+# Claim Outbox: Cancel
+# ========================================
+resource "aws_sqs_queue" "cancel_outbox_dlq" {
+  name                      = "${local.claim_outbox_queue_names.cancel}-dlq"
+  message_retention_seconds = 1209600
+  kms_master_key_id         = aws_kms_key.sqs.arn
+  tags = merge(local.common_tags, { Name = "${local.claim_outbox_queue_names.cancel}-dlq", Purpose = "DLQ for cancel outbox" })
+}
+
+resource "aws_sqs_queue" "cancel_outbox" {
+  name                       = local.claim_outbox_queue_names.cancel
+  visibility_timeout_seconds = 300
+  message_retention_seconds  = 345600
+  receive_wait_time_seconds  = 20
+  kms_master_key_id          = aws_kms_key.sqs.arn
+  redrive_policy = jsonencode({ deadLetterTargetArn = aws_sqs_queue.cancel_outbox_dlq.arn, maxReceiveCount = 3 })
+  tags = merge(local.common_tags, { Name = local.claim_outbox_queue_names.cancel, Purpose = "Cancel claim outbox relay" })
+}
+
+# ========================================
+# Claim Outbox: Refund
+# ========================================
+resource "aws_sqs_queue" "refund_outbox_dlq" {
+  name                      = "${local.claim_outbox_queue_names.refund}-dlq"
+  message_retention_seconds = 1209600
+  kms_master_key_id         = aws_kms_key.sqs.arn
+  tags = merge(local.common_tags, { Name = "${local.claim_outbox_queue_names.refund}-dlq", Purpose = "DLQ for refund outbox" })
+}
+
+resource "aws_sqs_queue" "refund_outbox" {
+  name                       = local.claim_outbox_queue_names.refund
+  visibility_timeout_seconds = 300
+  message_retention_seconds  = 345600
+  receive_wait_time_seconds  = 20
+  kms_master_key_id          = aws_kms_key.sqs.arn
+  redrive_policy = jsonencode({ deadLetterTargetArn = aws_sqs_queue.refund_outbox_dlq.arn, maxReceiveCount = 3 })
+  tags = merge(local.common_tags, { Name = local.claim_outbox_queue_names.refund, Purpose = "Refund claim outbox relay" })
+}
+
+# ========================================
+# Claim Outbox: Exchange
+# ========================================
+resource "aws_sqs_queue" "exchange_outbox_dlq" {
+  name                      = "${local.claim_outbox_queue_names.exchange}-dlq"
+  message_retention_seconds = 1209600
+  kms_master_key_id         = aws_kms_key.sqs.arn
+  tags = merge(local.common_tags, { Name = "${local.claim_outbox_queue_names.exchange}-dlq", Purpose = "DLQ for exchange outbox" })
+}
+
+resource "aws_sqs_queue" "exchange_outbox" {
+  name                       = local.claim_outbox_queue_names.exchange
+  visibility_timeout_seconds = 300
+  message_retention_seconds  = 345600
+  receive_wait_time_seconds  = 20
+  kms_master_key_id          = aws_kms_key.sqs.arn
+  redrive_policy = jsonencode({ deadLetterTargetArn = aws_sqs_queue.exchange_outbox_dlq.arn, maxReceiveCount = 3 })
+  tags = merge(local.common_tags, { Name = local.claim_outbox_queue_names.exchange, Purpose = "Exchange claim outbox relay" })
+}
+
+# ========================================
+# Claim Outbox: QnA
+# ========================================
+resource "aws_sqs_queue" "qna_outbox_dlq" {
+  name                      = "${local.claim_outbox_queue_names.qna}-dlq"
+  message_retention_seconds = 1209600
+  kms_master_key_id         = aws_kms_key.sqs.arn
+  tags = merge(local.common_tags, { Name = "${local.claim_outbox_queue_names.qna}-dlq", Purpose = "DLQ for QnA outbox" })
+}
+
+resource "aws_sqs_queue" "qna_outbox" {
+  name                       = local.claim_outbox_queue_names.qna
+  visibility_timeout_seconds = 300
+  message_retention_seconds  = 345600
+  receive_wait_time_seconds  = 20
+  kms_master_key_id          = aws_kms_key.sqs.arn
+  redrive_policy = jsonencode({ deadLetterTargetArn = aws_sqs_queue.qna_outbox_dlq.arn, maxReceiveCount = 3 })
+  tags = merge(local.common_tags, { Name = local.claim_outbox_queue_names.qna, Purpose = "QnA outbox relay" })
+}
+
+# ========================================
 # IAM Policy: SQS Access for ECS Tasks
 # ========================================
 resource "aws_iam_policy" "sqs_access" {
@@ -429,7 +517,16 @@ resource "aws_iam_policy" "sqs_access" {
           aws_sqs_queue.intelligence_notice_analysis.arn,
           aws_sqs_queue.intelligence_notice_analysis_dlq.arn,
           aws_sqs_queue.intelligence_aggregation.arn,
-          aws_sqs_queue.intelligence_aggregation_dlq.arn
+          aws_sqs_queue.intelligence_aggregation_dlq.arn,
+          # Claim outbox queues
+          aws_sqs_queue.cancel_outbox.arn,
+          aws_sqs_queue.cancel_outbox_dlq.arn,
+          aws_sqs_queue.refund_outbox.arn,
+          aws_sqs_queue.refund_outbox_dlq.arn,
+          aws_sqs_queue.exchange_outbox.arn,
+          aws_sqs_queue.exchange_outbox_dlq.arn,
+          aws_sqs_queue.qna_outbox.arn,
+          aws_sqs_queue.qna_outbox_dlq.arn
         ]
       },
       {
@@ -582,6 +679,35 @@ resource "aws_ssm_parameter" "intelligence_aggregation_queue_url" {
   name  = "/${var.project_name}/sqs/intelligence-aggregation-queue-url"
   type  = "String"
   value = aws_sqs_queue.intelligence_aggregation.url
+  tags  = local.common_tags
+}
+
+# Claim Outbox Queues
+resource "aws_ssm_parameter" "cancel_outbox_queue_url" {
+  name  = "/${var.project_name}/sqs/cancel-outbox-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.cancel_outbox.url
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "refund_outbox_queue_url" {
+  name  = "/${var.project_name}/sqs/refund-outbox-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.refund_outbox.url
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "exchange_outbox_queue_url" {
+  name  = "/${var.project_name}/sqs/exchange-outbox-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.exchange_outbox.url
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "qna_outbox_queue_url" {
+  name  = "/${var.project_name}/sqs/qna-outbox-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.qna_outbox.url
   tags  = local.common_tags
 }
 
@@ -754,4 +880,25 @@ output "intelligence_notice_analysis_queue_url" {
 output "intelligence_aggregation_queue_url" {
   description = "Intelligence aggregation queue URL"
   value       = aws_sqs_queue.intelligence_aggregation.url
+}
+
+# Claim Outbox Outputs
+output "cancel_outbox_queue_url" {
+  description = "Cancel outbox queue URL"
+  value       = aws_sqs_queue.cancel_outbox.url
+}
+
+output "refund_outbox_queue_url" {
+  description = "Refund outbox queue URL"
+  value       = aws_sqs_queue.refund_outbox.url
+}
+
+output "exchange_outbox_queue_url" {
+  description = "Exchange outbox queue URL"
+  value       = aws_sqs_queue.exchange_outbox.url
+}
+
+output "qna_outbox_queue_url" {
+  description = "QnA outbox queue URL"
+  value       = aws_sqs_queue.qna_outbox.url
 }
