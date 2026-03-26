@@ -77,14 +77,13 @@ public record ShipmentListResult(
      * 상품주문 정보.
      *
      * @param orderItemId 주문 상품 ID
+     * @param orderItemNumber 주문 상품 번호
      * @param productGroupId 내부 상품그룹 ID
      * @param productId 내부 상품 ID
-     * @param sellerId 셀러 ID
-     * @param brandId 브랜드 ID
      * @param skuCode SKU 코드
      * @param productGroupName 상품그룹명
-     * @param brandName 브랜드명
-     * @param sellerName 셀러명
+     * @param brandName 브랜드명 (스냅샷)
+     * @param sellerName 셀러명 (스냅샷)
      * @param mainImageUrl 대표 이미지 URL
      * @param externalProductId 외부 상품 ID
      * @param externalOptionId 외부 옵션 ID
@@ -98,11 +97,10 @@ public record ShipmentListResult(
      * @param paymentAmount 실결제 금액
      */
     public record ProductOrderInfo(
-            long orderItemId,
+            String orderItemId,
+            String orderItemNumber,
             long productGroupId,
             long productId,
-            long sellerId,
-            long brandId,
             String skuCode,
             String productGroupName,
             String brandName,

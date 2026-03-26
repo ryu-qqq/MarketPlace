@@ -2,8 +2,8 @@ package com.ryuqq.marketplace.adapter.out.persistence.composite.seller.mapper;
 
 import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.dto.SellerAdminCompositeDto;
 import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.dto.SellerCompositeDto;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerAdminCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
 import java.time.LocalTime;
 import org.springframework.stereotype.Component;
 

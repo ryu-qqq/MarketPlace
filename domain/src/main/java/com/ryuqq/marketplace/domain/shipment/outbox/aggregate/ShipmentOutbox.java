@@ -232,7 +232,7 @@ public class ShipmentOutbox {
         return orderItemId;
     }
 
-    public Long orderItemIdValue() {
+    public String orderItemIdValue() {
         return orderItemId.value();
     }
 

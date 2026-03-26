@@ -45,11 +45,18 @@ public class ManualSyncReadFacade {
 
     /** Command로부터 수동 전송에 필요한 모든 조회 데이터를 수집. */
     public ManualSyncContext resolve(ManualSyncProductsCommand command) {
-        // 1. Shop ID → salesChannelId 일괄 변환
+        // 1. Shop ID → salesChannelId 일괄 변환 + salesChannelId → shopId 매핑
         List<ShopId> shopIds = command.shopIds().stream().map(ShopId::of).toList();
         List<Shop> shops = shopReadManager.findByIds(shopIds);
         Set<Long> salesChannelIds =
                 shops.stream().map(Shop::salesChannelId).collect(Collectors.toSet());
+        Map<Long, Long> shopIdBySalesChannelId =
+                shops.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        Shop::salesChannelId,
+                                        shop -> shop.id().value(),
+                                        (a, b) -> a));
 
         // 2. ProductGroup 일괄 조회
         List<ProductGroupId> pgIds =
@@ -80,6 +87,7 @@ public class ManualSyncReadFacade {
 
         return new ManualSyncContext(
                 salesChannelIds,
+                shopIdBySalesChannelId,
                 productGroups,
                 connectedChannelIdsBySellerId,
                 existingProductKeys,

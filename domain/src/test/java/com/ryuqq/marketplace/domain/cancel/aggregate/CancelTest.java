@@ -17,6 +17,7 @@ import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelType;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.common.event.DomainEvent;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -60,7 +61,7 @@ class CancelTest {
 
             CancelCreatedEvent event = (CancelCreatedEvent) events.get(0);
             assertThat(event.cancelId()).isEqualTo(cancel.id());
-            assertThat(event.orderId()).isEqualTo(cancel.orderId());
+            assertThat(event.orderItemId()).isEqualTo(cancel.orderItemId());
             assertThat(event.cancelType()).isEqualTo(CancelType.BUYER_CANCEL);
         }
 
@@ -77,8 +78,9 @@ class CancelTest {
                     Cancel.forBuyerCancel(
                             id,
                             number,
-                            "ORD-20240101-0001",
-                            CancelFixtures.defaultCancelItems(),
+                            OrderItemId.of("01940001-0000-7000-8000-000000000001"),
+                            10L,
+                            2,
                             CancelFixtures.defaultCancelReason(),
                             "buyer@marketplace.com",
                             now);
@@ -86,41 +88,45 @@ class CancelTest {
             // then
             assertThat(cancel.id()).isEqualTo(id);
             assertThat(cancel.cancelNumber()).isEqualTo(number);
-            assertThat(cancel.orderId()).isEqualTo("ORD-20240101-0001");
+            assertThat(cancel.orderItemId())
+                    .isEqualTo(OrderItemId.of("01940001-0000-7000-8000-000000000001"));
+            assertThat(cancel.cancelQty()).isEqualTo(2);
             assertThat(cancel.requestedBy()).isEqualTo("buyer@marketplace.com");
             assertThat(cancel.requestedAt()).isEqualTo(now);
             assertThat(cancel.createdAt()).isEqualTo(now);
         }
 
         @Test
-        @DisplayName("취소 항목이 비어있으면 예외가 발생한다")
-        void createBuyerCancelWithEmptyItems_ThrowsException() {
+        @DisplayName("취소 수량이 0이면 예외가 발생한다")
+        void createBuyerCancelWithZeroQty_ThrowsException() {
             // when & then
             assertThatThrownBy(
                             () ->
                                     Cancel.forBuyerCancel(
                                             CancelFixtures.defaultCancelId(),
                                             CancelFixtures.defaultCancelNumber(),
-                                            "ORD-20240101-0001",
-                                            List.of(),
+                                            OrderItemId.of("01940001-0000-7000-8000-000000000001"),
+                                            10L,
+                                            0,
                                             CancelFixtures.defaultCancelReason(),
                                             "buyer@marketplace.com",
                                             CommonVoFixtures.now()))
                     .isInstanceOf(CancelException.class)
-                    .hasMessageContaining("최소 1개");
+                    .hasMessageContaining("1 이상");
         }
 
         @Test
-        @DisplayName("취소 항목이 null이면 예외가 발생한다")
-        void createBuyerCancelWithNullItems_ThrowsException() {
+        @DisplayName("취소 수량이 음수이면 예외가 발생한다")
+        void createBuyerCancelWithNegativeQty_ThrowsException() {
             // when & then
             assertThatThrownBy(
                             () ->
                                     Cancel.forBuyerCancel(
                                             CancelFixtures.defaultCancelId(),
                                             CancelFixtures.defaultCancelNumber(),
-                                            "ORD-20240101-0001",
-                                            null,
+                                            OrderItemId.of("01940001-0000-7000-8000-000000000001"),
+                                            10L,
+                                            -1,
                                             CancelFixtures.defaultCancelReason(),
                                             "buyer@marketplace.com",
                                             CommonVoFixtures.now()))
@@ -177,8 +183,9 @@ class CancelTest {
                     Cancel.forSellerCancel(
                             CancelFixtures.defaultCancelId(),
                             CancelFixtures.defaultCancelNumber(),
-                            "ORD-20240101-0001",
-                            CancelFixtures.defaultCancelItems(),
+                            OrderItemId.of("01940001-0000-7000-8000-000000000001"),
+                            10L,
+                            2,
                             CancelFixtures.cancelReason(CancelReasonType.OUT_OF_STOCK),
                             seller,
                             now);
@@ -230,7 +237,7 @@ class CancelTest {
 
             CancelApprovedEvent approvedEvent = (CancelApprovedEvent) events.get(0);
             assertThat(approvedEvent.cancelId()).isEqualTo(cancel.id());
-            assertThat(approvedEvent.orderId()).isEqualTo(cancel.orderId());
+            assertThat(approvedEvent.orderItemId()).isEqualTo(cancel.orderItemId());
 
             CancelStatusChangedEvent statusEvent = (CancelStatusChangedEvent) events.get(1);
             assertThat(statusEvent.fromStatus()).isEqualTo(CancelStatus.REQUESTED);
@@ -529,32 +536,15 @@ class CancelTest {
         }
 
         @Test
-        @DisplayName("취소 항목이 함께 재구성된다")
-        void reconstituteWithCancelItems() {
+        @DisplayName("orderItemId와 cancelQty가 올바르게 재구성된다")
+        void reconstituteWithOrderItemIdAndCancelQty() {
             // when
             Cancel cancel = CancelFixtures.requestedCancel();
 
             // then
-            assertThat(cancel.cancelItems()).hasSize(1);
-        }
-    }
-
-    @Nested
-    @DisplayName("cancelItems() - 취소 항목 불변성")
-    class CancelItemsTest {
-
-        @Test
-        @DisplayName("cancelItems()는 불변 리스트를 반환한다")
-        void cancelItemsReturnsUnmodifiableList() {
-            // given
-            Cancel cancel = CancelFixtures.requestedCancel();
-
-            // when
-            List<CancelItem> items = cancel.cancelItems();
-
-            // then
-            assertThatThrownBy(() -> items.add(CancelFixtures.defaultCancelItem()))
-                    .isInstanceOf(UnsupportedOperationException.class);
+            assertThat(cancel.orderItemId())
+                    .isEqualTo(OrderItemId.of("01940001-0000-7000-8000-000000000001"));
+            assertThat(cancel.cancelQty()).isEqualTo(2);
         }
     }
 }

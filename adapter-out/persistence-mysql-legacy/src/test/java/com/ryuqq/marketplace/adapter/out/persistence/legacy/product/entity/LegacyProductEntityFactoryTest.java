@@ -2,6 +2,12 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.LegacyProductDeliveryEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.LegacyProductGroupEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyDescriptionImageEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyProductGroupDetailDescriptionEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.entity.LegacyProductNoticeEntity;
 import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -104,13 +110,14 @@ class LegacyProductEntityFactoryTest {
         @DisplayName("ID 없이 상품 엔티티를 생성합니다")
         void create_WithoutId_CreatesEntity() {
             // when
-            LegacyProductEntity entity = LegacyProductEntity.create(10L, "N", "Y");
+            LegacyProductEntity entity = LegacyProductEntity.create(10L, "N", "Y", 0);
 
             // then
             assertThat(entity.getId()).isNull();
             assertThat(entity.getProductGroupId()).isEqualTo(10L);
             assertThat(entity.getSoldOutYn()).isEqualTo("N");
             assertThat(entity.getDisplayYn()).isEqualTo("Y");
+            assertThat(entity.getStockQuantity()).isEqualTo(0);
             assertThat(entity.getDeleteYn()).isEqualTo("N");
         }
 
@@ -118,13 +125,14 @@ class LegacyProductEntityFactoryTest {
         @DisplayName("ID를 포함하여 상품 엔티티를 생성합니다")
         void create_WithId_CreatesEntityWithId() {
             // when
-            LegacyProductEntity entity = LegacyProductEntity.create(1L, 10L, "Y", "N", "Y");
+            LegacyProductEntity entity = LegacyProductEntity.create(1L, 10L, "Y", "N", 5, "Y");
 
             // then
             assertThat(entity.getId()).isEqualTo(1L);
             assertThat(entity.getProductGroupId()).isEqualTo(10L);
             assertThat(entity.getSoldOutYn()).isEqualTo("Y");
             assertThat(entity.getDisplayYn()).isEqualTo("N");
+            assertThat(entity.getStockQuantity()).isEqualTo(5);
             assertThat(entity.getDeleteYn()).isEqualTo("Y");
         }
     }

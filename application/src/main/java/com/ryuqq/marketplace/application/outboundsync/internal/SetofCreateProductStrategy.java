@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecuti
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
  * <p>ProductGroupReadFacade로 상품 데이터 조회 → 매핑 역조회 → SalesChannelProductClient로 API 호출.
  */
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 public class SetofCreateProductStrategy implements OutboundSyncExecutionStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(SetofCreateProductStrategy.class);
@@ -58,13 +59,16 @@ public class SetofCreateProductStrategy implements OutboundSyncExecutionStrategy
                             bundle.queryResult().categoryId(),
                             bundle.queryResult().brandId());
 
+            ProductGroupSyncData syncData = ProductGroupSyncData.from(bundle);
+
             String externalProductId =
                     productClientManager.registerProduct(
                             SETOF_CHANNEL_CODE,
-                            bundle,
-                            mapping.categoryId(),
-                            mapping.brandId(),
-                            context.sellerSalesChannel());
+                            syncData,
+                            Long.parseLong(mapping.externalCategoryCode()),
+                            Long.parseLong(mapping.externalBrandCode()),
+                            context.sellerSalesChannel(),
+                            context.shop());
 
             log.info(
                     "세토프 상품 등록 성공: productGroupId={}, externalProductId={}",

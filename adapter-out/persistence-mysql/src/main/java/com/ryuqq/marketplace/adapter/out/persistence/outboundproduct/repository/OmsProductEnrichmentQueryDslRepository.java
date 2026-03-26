@@ -43,7 +43,7 @@ public class OmsProductEnrichmentQueryDslRepository {
      * 상품그룹별 대표(THUMBNAIL) 이미지 URL 조회.
      *
      * @param pgIds 상품그룹 ID 목록
-     * @return productGroupId → 대표 이미지 DTO
+     * @return productGroupId -> 대표 이미지 DTO
      */
     public Map<Long, OmsProductMainImageDto> fetchMainImages(List<Long> pgIds) {
         List<OmsProductMainImageDto> results =
@@ -72,7 +72,7 @@ public class OmsProductEnrichmentQueryDslRepository {
      * 상품그룹별 최저가격/총재고 조회.
      *
      * @param pgIds 상품그룹 ID 목록
-     * @return productGroupId → 가격/재고 DTO
+     * @return productGroupId -> 가격/재고 DTO
      */
     public Map<Long, OmsProductPriceStockDto> fetchPriceStock(List<Long> pgIds) {
         List<OmsProductPriceStockDto> results =
@@ -95,14 +95,14 @@ public class OmsProductEnrichmentQueryDslRepository {
     }
 
     /**
-     * 상품그룹별 최신 연동상태 조회.
+     * (상품그룹 + 샵)별 최신 연동상태 조회.
      *
-     * <p>서브쿼리로 productGroupId별 max(processedAt)을 구한 뒤, 해당 행의 status를 정확히 매칭한다.
+     * <p>서브쿼리로 (productGroupId, shopId)별 max(processedAt)을 구한 뒤, 해당 행의 status를 매칭한다.
      *
      * @param pgIds 상품그룹 ID 목록
-     * @return productGroupId → 연동상태 DTO
+     * @return compositeKey(productGroupId_shopId) -> 연동상태 DTO
      */
-    public Map<Long, OmsProductSyncInfoDto> fetchLatestSyncInfo(List<Long> pgIds) {
+    public Map<String, OmsProductSyncInfoDto> fetchLatestSyncInfo(List<Long> pgIds) {
         QOutboundSyncOutboxJpaEntity sub = new QOutboundSyncOutboxJpaEntity("sub");
 
         List<OmsProductSyncInfoDto> results =
@@ -111,6 +111,7 @@ public class OmsProductEnrichmentQueryDslRepository {
                                 Projections.constructor(
                                         OmsProductSyncInfoDto.class,
                                         outboundSyncOutboxJpaEntity.productGroupId,
+                                        outboundSyncOutboxJpaEntity.shopId,
                                         outboundSyncOutboxJpaEntity.status.stringValue(),
                                         outboundSyncOutboxJpaEntity.processedAt))
                         .from(outboundSyncOutboxJpaEntity)
@@ -122,13 +123,16 @@ public class OmsProductEnrichmentQueryDslRepository {
                                                 .where(
                                                         sub.productGroupId.eq(
                                                                 outboundSyncOutboxJpaEntity
-                                                                        .productGroupId))))
+                                                                        .productGroupId),
+                                                        sub.shopId.eq(
+                                                                outboundSyncOutboxJpaEntity
+                                                                        .shopId))))
                         .fetch();
 
         return results.stream()
                 .collect(
                         Collectors.toMap(
-                                OmsProductSyncInfoDto::productGroupId,
+                                OmsProductSyncInfoDto::compositeKey,
                                 Function.identity(),
                                 (first, second) -> first));
     }

@@ -127,6 +127,7 @@ class OmsSyncHistoryCompositionQueryDslRepositoryTest {
                 null,
                 productGroupId,
                 salesChannelId,
+                1L,
                 sellerId,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 status,
@@ -148,6 +149,7 @@ class OmsSyncHistoryCompositionQueryDslRepositoryTest {
                 null,
                 productGroupId,
                 salesChannelId,
+                1L,
                 sellerId,
                 OutboundSyncOutboxJpaEntity.SyncType.CREATE,
                 OutboundSyncOutboxJpaEntity.Status.FAILED,
@@ -166,21 +168,28 @@ class OmsSyncHistoryCompositionQueryDslRepositoryTest {
             Long productGroupId, Long salesChannelId, String externalProductId) {
         Instant now = Instant.now();
         return OutboundProductJpaEntity.create(
-                null, productGroupId, salesChannelId, externalProductId, "REGISTERED", now, now);
+                null,
+                productGroupId,
+                salesChannelId,
+                1L,
+                externalProductId,
+                "REGISTERED",
+                now,
+                now);
     }
 
     private SyncHistorySearchCriteria defaultCriteria(Long productGroupId) {
         QueryContext<SyncHistorySortKey> queryContext =
                 QueryContext.of(
                         SyncHistorySortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(0, 20));
-        return new SyncHistorySearchCriteria(productGroupId, null, queryContext);
+        return new SyncHistorySearchCriteria(productGroupId, null, null, queryContext);
     }
 
     private SyncHistorySearchCriteria criteriaWithStatus(Long productGroupId, SyncStatus status) {
         QueryContext<SyncHistorySortKey> queryContext =
                 QueryContext.of(
                         SyncHistorySortKey.CREATED_AT, SortDirection.DESC, PageRequest.of(0, 20));
-        return new SyncHistorySearchCriteria(productGroupId, status, queryContext);
+        return new SyncHistorySearchCriteria(productGroupId, null, status, queryContext);
     }
 
     // ========================================================================
@@ -424,7 +433,7 @@ class OmsSyncHistoryCompositionQueryDslRepositoryTest {
                             SortDirection.DESC,
                             PageRequest.of(0, 2));
             SyncHistorySearchCriteria criteria =
-                    new SyncHistorySearchCriteria(PRODUCT_GROUP_ID, null, pageContext);
+                    new SyncHistorySearchCriteria(PRODUCT_GROUP_ID, null, null, pageContext);
 
             // when
             List<SyncHistoryCompositeDto> result = repository.findByCriteria(criteria);

@@ -19,6 +19,12 @@ package com.ryuqq.marketplace.adapter.out.client.naver.dto.order;
  * @param holdbackReason 보류 유형
  * @param holdbackDetailedReason 보류 상세 사유
  * @param holdbackStatus 보류 상태 (HOLDBACK/RELEASED)
+ * @param collectDeliveryCompany 수거 택배사 코드 (RETURN/EXCHANGE)
+ * @param collectTrackingNumber 수거 운송장번호 (RETURN/EXCHANGE)
+ * @param collectStatus 수거 상태 (RETURN/EXCHANGE)
+ * @param reDeliveryCompany 재배송 택배사 코드 (EXCHANGE)
+ * @param reDeliveryTrackingNumber 재배송 운송장번호 (EXCHANGE)
+ * @param reDeliveryStatus 재배송 상태 (EXCHANGE)
  */
 public record NaverClaimInfo(
         String claimType,
@@ -34,4 +40,10 @@ public record NaverClaimInfo(
         String refundStandbyStatus,
         String holdbackReason,
         String holdbackDetailedReason,
-        String holdbackStatus) {}
+        String holdbackStatus,
+        String collectDeliveryCompany,
+        String collectTrackingNumber,
+        String collectStatus,
+        String reDeliveryCompany,
+        String reDeliveryTrackingNumber,
+        String reDeliveryStatus) {}

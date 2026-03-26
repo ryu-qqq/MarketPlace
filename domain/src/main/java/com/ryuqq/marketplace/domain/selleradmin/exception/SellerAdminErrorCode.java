@@ -11,7 +11,9 @@ public enum SellerAdminErrorCode implements ErrorCode {
     SELLER_ADMIN_ALREADY_PROCESSED("SELADM-003", 400, "이미 처리된 신청입니다"),
     SELLER_ADMIN_PENDING_EXISTS("SELADM-004", 409, "이미 대기 중인 신청이 존재합니다"),
     REJECTION_REASON_REQUIRED("SELADM-005", 400, "거절 사유는 필수입니다"),
-    PASSWORD_RESET_NOT_ALLOWED("SELADM-006", 400, "비밀번호 초기화를 할 수 없는 상태입니다");
+    PASSWORD_RESET_NOT_ALLOWED("SELADM-006", 400, "비밀번호 초기화를 할 수 없는 상태입니다"),
+    SELLER_ADMIN_NOT_APPROVED("SELADM-007", 403, "승인되지 않은 셀러 관리자입니다"),
+    SELLER_ADMIN_INVALID_PASSWORD("SELADM-008", 401, "비밀번호가 일치하지 않습니다");
 
     private final String code;
     private final int httpStatus;

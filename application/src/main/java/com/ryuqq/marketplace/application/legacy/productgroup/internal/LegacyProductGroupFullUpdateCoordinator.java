@@ -1,85 +1,148 @@
 package com.ryuqq.marketplace.application.legacy.productgroup.internal;
 
-import com.ryuqq.marketplace.application.legacy.description.internal.LegacyDescriptionCommandCoordinator;
-import com.ryuqq.marketplace.application.legacy.image.internal.LegacyImageCommandCoordinator;
-import com.ryuqq.marketplace.application.legacy.notice.internal.LegacyNoticeCommandCoordinator;
-import com.ryuqq.marketplace.application.legacy.product.internal.LegacyDeliveryCommandCoordinator;
-import com.ryuqq.marketplace.application.legacy.product.internal.LegacyOptionUpdateCoordinator;
-import com.ryuqq.marketplace.application.legacy.productgroup.dto.bundle.LegacyProductGroupUpdateBundle;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
+import com.ryuqq.marketplace.application.legacy.product.internal.LegacyProductCommandCoordinator;
+import com.ryuqq.marketplace.application.legacy.product.internal.LegacySellerOptionCommandCoordinator;
+import com.ryuqq.marketplace.application.legacy.productgroupdescription.internal.LegacyDescriptionCommandCoordinator;
+import com.ryuqq.marketplace.application.legacy.productgroupimage.internal.LegacyImageCommandCoordinator;
+import com.ryuqq.marketplace.application.legacy.productnotice.manager.LegacyProductNoticeCommandManager;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
+import com.ryuqq.marketplace.application.product.dto.command.ProductDiffUpdateEntry;
+import com.ryuqq.marketplace.application.product.dto.command.RegisterProductsCommand;
+import com.ryuqq.marketplace.application.productgroup.dto.bundle.ProductGroupUpdateBundle;
+import com.ryuqq.marketplace.application.productnotice.dto.command.RegisterProductNoticeCommand;
+import com.ryuqq.marketplace.application.selleroption.dto.command.RegisterSellerOptionGroupsCommand;
+import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOptionGroupsCommand;
+import com.ryuqq.marketplace.domain.productgroup.id.SellerOptionValueId;
 import java.time.Instant;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 레거시 상품그룹 전체 수정 Coordinator.
  *
- * <p>Bundle에 포함된 per-package Command/VO를 사용하여 각 도메인을 독립적으로 수정합니다. null인 필드는 변경 대상이 아니므로 건너뜁니다.
- *
- * <p>변환 로직은 {@link
- * com.ryuqq.marketplace.application.legacy.productgroup.factory.LegacyProductGroupBundleFactory}가
- * 담당합니다.
+ * <p>표준 ProductGroupUpdateBundle을 받아 soft delete + 재등록 패턴으로 처리합니다. Update 타입을 Register 타입으로 변환하여 하위
+ * Coordinator에 위임합니다.
  */
 @Component
 public class LegacyProductGroupFullUpdateCoordinator {
 
     private final LegacyProductGroupCommandCoordinator productGroupCommandCoordinator;
-    private final LegacyNoticeCommandCoordinator noticeCommandCoordinator;
-    private final LegacyDeliveryCommandCoordinator deliveryCommandCoordinator;
+    private final LegacyProductNoticeCommandManager noticeCommandManager;
     private final LegacyDescriptionCommandCoordinator descriptionCommandCoordinator;
     private final LegacyImageCommandCoordinator imageCommandCoordinator;
-    private final LegacyOptionUpdateCoordinator optionUpdateCoordinator;
+    private final LegacySellerOptionCommandCoordinator sellerOptionCommandCoordinator;
+    private final LegacyProductCommandCoordinator productCommandCoordinator;
+    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
 
     public LegacyProductGroupFullUpdateCoordinator(
             LegacyProductGroupCommandCoordinator productGroupCommandCoordinator,
-            LegacyNoticeCommandCoordinator noticeCommandCoordinator,
-            LegacyDeliveryCommandCoordinator deliveryCommandCoordinator,
+            LegacyProductNoticeCommandManager noticeCommandManager,
             LegacyDescriptionCommandCoordinator descriptionCommandCoordinator,
             LegacyImageCommandCoordinator imageCommandCoordinator,
-            LegacyOptionUpdateCoordinator optionUpdateCoordinator) {
+            LegacySellerOptionCommandCoordinator sellerOptionCommandCoordinator,
+            LegacyProductCommandCoordinator productCommandCoordinator,
+            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
         this.productGroupCommandCoordinator = productGroupCommandCoordinator;
-        this.noticeCommandCoordinator = noticeCommandCoordinator;
-        this.deliveryCommandCoordinator = deliveryCommandCoordinator;
+        this.noticeCommandManager = noticeCommandManager;
         this.descriptionCommandCoordinator = descriptionCommandCoordinator;
         this.imageCommandCoordinator = imageCommandCoordinator;
-        this.optionUpdateCoordinator = optionUpdateCoordinator;
+        this.sellerOptionCommandCoordinator = sellerOptionCommandCoordinator;
+        this.productCommandCoordinator = productCommandCoordinator;
+        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
     }
 
-    /**
-     * 번들 기반 전체 수정을 조율합니다.
-     *
-     * <p>null이 아닌 필드만 per-package Coordinator에 위임합니다.
-     *
-     * @param bundle 수정 번들 (Factory가 생성)
-     */
     @Transactional
-    public void execute(LegacyProductGroupUpdateBundle bundle) {
-        LegacyProductGroupId groupId = bundle.groupId();
-        Instant changedAt = bundle.changedAt();
+    public void update(ProductGroupUpdateBundle bundle) {
+        long productGroupId = bundle.basicInfoUpdateData().productGroupId().value();
 
-        if (bundle.basicInfoUpdateData() != null) {
-            productGroupCommandCoordinator.updateBasicInfo(
-                    groupId, bundle.basicInfoUpdateData(), changedAt);
-        }
+        // 1. ProductGroup 기본정보
+        long regularPrice =
+                bundle.productEntries().isEmpty()
+                        ? 0L
+                        : bundle.productEntries().getFirst().regularPrice();
+        long currentPrice =
+                bundle.productEntries().isEmpty()
+                        ? 0L
+                        : bundle.productEntries().getFirst().currentPrice();
 
-        if (bundle.notice() != null) {
-            noticeCommandCoordinator.update(groupId, bundle.notice(), changedAt);
-        }
+        productGroupCommandCoordinator.update(
+                bundle.basicInfoUpdateData(), regularPrice, currentPrice);
 
-        if (bundle.delivery() != null) {
-            deliveryCommandCoordinator.update(groupId, bundle.delivery(), changedAt);
-        }
+        // 2. Notice
+        noticeCommandManager.register(
+                new RegisterProductNoticeCommand(
+                        productGroupId,
+                        bundle.noticeCommand().noticeCategoryId(),
+                        bundle.noticeCommand().entries().stream()
+                                .map(
+                                        e ->
+                                                new RegisterProductNoticeCommand.NoticeEntryCommand(
+                                                        e.noticeFieldId(), e.fieldValue()))
+                                .toList()));
 
-        if (bundle.descriptionCommand() != null) {
-            descriptionCommandCoordinator.update(bundle.descriptionCommand());
-        }
+        // 3. Description
+        descriptionCommandCoordinator.update(bundle.descriptionCommand());
 
-        if (bundle.imageCommand() != null) {
-            imageCommandCoordinator.update(bundle.imageCommand());
-        }
+        // 4. Image
+        imageCommandCoordinator.update(bundle.imageCommand());
 
-        if (bundle.productCommand() != null) {
-            optionUpdateCoordinator.execute(bundle.productCommand());
-        }
+        // 5. OptionGroups → Update → Register 변환 후 등록
+        RegisterSellerOptionGroupsCommand registerOptionCmd =
+                toRegisterOptionCommand(productGroupId, bundle.optionGroupCommand());
+        List<SellerOptionValueId> allOptionValueIds =
+                sellerOptionCommandCoordinator.register(registerOptionCmd);
+
+        // 6. Products → DiffEntry → ProductData 변환 후 soft delete + 재등록
+        List<RegisterProductsCommand.ProductData> productDataList =
+                toProductDataList(bundle.productEntries());
+        productCommandCoordinator.update(
+                productGroupId,
+                productDataList,
+                registerOptionCmd.optionGroups(),
+                allOptionValueIds,
+                Instant.now());
+
+        // 7. ConversionOutbox
+        conversionOutboxCommandManager.createIfNoPending(productGroupId, Instant.now());
+    }
+
+    private RegisterSellerOptionGroupsCommand toRegisterOptionCommand(
+            long productGroupId, UpdateSellerOptionGroupsCommand updateCmd) {
+        List<RegisterSellerOptionGroupsCommand.OptionGroupCommand> groups =
+                updateCmd.optionGroups().stream()
+                        .map(
+                                g ->
+                                        new RegisterSellerOptionGroupsCommand.OptionGroupCommand(
+                                                g.optionGroupName(),
+                                                g.canonicalOptionGroupId(),
+                                                g.inputType(),
+                                                g.optionValues().stream()
+                                                        .map(
+                                                                v ->
+                                                                        new RegisterSellerOptionGroupsCommand
+                                                                                .OptionValueCommand(
+                                                                                v.optionValueName(),
+                                                                                v
+                                                                                        .canonicalOptionValueId(),
+                                                                                v.sortOrder()))
+                                                        .toList()))
+                        .toList();
+        return new RegisterSellerOptionGroupsCommand(productGroupId, "COMBINATION", groups);
+    }
+
+    private List<RegisterProductsCommand.ProductData> toProductDataList(
+            List<ProductDiffUpdateEntry> entries) {
+        return entries.stream()
+                .map(
+                        e ->
+                                new RegisterProductsCommand.ProductData(
+                                        e.skuCode(),
+                                        e.regularPrice(),
+                                        e.currentPrice(),
+                                        e.stockQuantity(),
+                                        e.sortOrder(),
+                                        e.selectedOptions()))
+                .toList();
     }
 }

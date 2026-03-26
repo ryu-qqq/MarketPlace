@@ -13,4 +13,13 @@ public interface CategoryMappingQueryPort {
      * @return 판매채널 카테고리 ID (매핑 없으면 empty)
      */
     Optional<Long> findSalesChannelCategoryId(Long salesChannelId, Long internalCategoryId);
+
+    /**
+     * 내부 카테고리 ID → 외부 카테고리 코드 역조회.
+     *
+     * @param salesChannelId 판매채널 ID
+     * @param internalCategoryId 내부 카테고리 ID
+     * @return 외부 카테고리 코드 (매핑 없으면 empty)
+     */
+    Optional<String> findExternalCategoryCode(Long salesChannelId, Long internalCategoryId);
 }

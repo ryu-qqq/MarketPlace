@@ -5,14 +5,23 @@ import com.ryuqq.marketplace.domain.common.vo.SearchField;
 /** 배송 검색 필드. */
 public enum ShipmentSearchField implements SearchField {
 
-    /** 상품주문 ID */
-    ORDER_ITEM_ID("orderItemId"),
+    /** 주문 ID (프론트: ORDER_ID, 내부: orderItemId) */
+    ORDER_ID("orderItemId"),
 
     /** 송장번호 */
     TRACKING_NUMBER("trackingNumber"),
 
     /** 고객명 */
-    CUSTOMER_NAME("customerName");
+    CUSTOMER_NAME("customerName"),
+
+    /** 고객 전화번호 */
+    CUSTOMER_PHONE("customerPhone"),
+
+    /** 상품명 */
+    PRODUCT_NAME("productName"),
+
+    /** 외부몰 주문번호 */
+    SHOP_ORDER_NO("shopOrderNo");
 
     private final String fieldName;
 

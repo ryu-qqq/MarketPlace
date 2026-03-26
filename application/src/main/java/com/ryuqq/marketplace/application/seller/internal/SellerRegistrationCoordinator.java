@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.application.seller.internal;
 
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerRegistrationBundle;
 import com.ryuqq.marketplace.application.seller.validator.SellerBusinessInfoValidator;
 import com.ryuqq.marketplace.application.seller.validator.SellerValidator;
 import org.springframework.stereotype.Component;

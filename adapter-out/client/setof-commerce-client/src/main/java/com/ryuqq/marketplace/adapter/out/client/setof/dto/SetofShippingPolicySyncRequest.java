@@ -1,11 +1,8 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.dto;
 
 public record SetofShippingPolicySyncRequest(
-        Long id,
-        Long sellerId,
         String policyName,
         boolean defaultPolicy,
-        boolean active,
         String shippingFeeType,
         Integer baseFee,
         Integer freeThreshold,
@@ -13,5 +10,8 @@ public record SetofShippingPolicySyncRequest(
         Integer islandExtraFee,
         Integer returnFee,
         Integer exchangeFee,
-        int leadTimeMinDays,
-        int leadTimeMaxDays) {}
+        LeadTimeRequest leadTime) {
+
+    /** 리드타임 중첩 객체 — 세토프 API 스펙 대응. */
+    public record LeadTimeRequest(int minDays, int maxDays, String cutoffTime) {}
+}

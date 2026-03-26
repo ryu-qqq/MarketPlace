@@ -8,7 +8,6 @@ import java.util.List;
  *
  * @param orderId 주문 ID
  * @param orderNumber 주문번호
- * @param status 주문 상태
  * @param salesChannelId 판매채널 ID
  * @param shopId 샵 ID
  * @param shopCode 샵 코드
@@ -18,7 +17,6 @@ import java.util.List;
  * @param buyerInfo 구매자 정보
  * @param payment 결제 정보
  * @param items 주문 상품 목록
- * @param histories 변경 이력 목록
  * @param cancels 취소 목록
  * @param claims 클레임 목록
  * @param createdAt 생성일시
@@ -27,7 +25,6 @@ import java.util.List;
 public record OrderDetailResult(
         String orderId,
         String orderNumber,
-        String status,
         long salesChannelId,
         long shopId,
         String shopCode,
@@ -37,7 +34,6 @@ public record OrderDetailResult(
         BuyerInfoResult buyerInfo,
         PaymentResult payment,
         List<OrderItemResult> items,
-        List<OrderHistoryResult> histories,
         List<OrderCancelResult> cancels,
         List<OrderClaimResult> claims,
         Instant createdAt,

@@ -3,26 +3,18 @@ package com.ryuqq.marketplace.application.legacy.shared.factory;
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
 import com.ryuqq.marketplace.application.common.dto.command.UpdateContext;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
-import com.ryuqq.marketplace.application.legacy.description.dto.command.LegacyUpdateDescriptionCommand;
-import com.ryuqq.marketplace.application.legacy.image.dto.command.LegacyUpdateImagesCommand;
-import com.ryuqq.marketplace.application.legacy.notice.dto.command.LegacyUpdateNoticeCommand;
 import com.ryuqq.marketplace.application.legacy.product.dto.command.LegacyUpdatePriceCommand;
-import com.ryuqq.marketplace.application.legacy.product.dto.command.LegacyUpdateProductsCommand;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyMarkOutOfStockCommand;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyUpdateDisplayStatusCommand;
-import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyUpdateProductGroupCommand;
-import com.ryuqq.marketplace.application.legacy.shared.dto.bundle.LegacyProductRegistrationBundle.ImageEntry;
-import com.ryuqq.marketplace.domain.legacy.optiondetail.id.LegacyOptionDetailId;
-import com.ryuqq.marketplace.domain.legacy.optiongroup.id.LegacyOptionGroupId;
-import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
-import com.ryuqq.marketplace.domain.legacy.product.id.LegacyProductId;
-import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductOption;
-import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyDescriptionImage;
+import com.ryuqq.marketplace.application.legacy.productgroupdescription.dto.command.LegacyUpdateDescriptionCommand;
+import com.ryuqq.marketplace.application.legacy.productgroupimage.dto.command.LegacyUpdateImagesCommand;
+import com.ryuqq.marketplace.application.legacy.productnotice.dto.command.LegacyUpdateNoticeCommand;
+import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyDescriptionImage;
+import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyProductDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
 import com.ryuqq.marketplace.domain.legacy.productimage.vo.ProductGroupImageType;
+import com.ryuqq.marketplace.domain.legacy.productnotice.aggregate.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionHtml;
 import java.time.Instant;
 import java.util.List;
@@ -124,109 +116,8 @@ public class LegacyProductGroupCommandFactory {
                 .toList();
     }
 
-    /** 전체 수정 Command의 이미지를 도메인 객체 목록으로 변환. */
-    public List<LegacyProductImage> createImagesFromFullUpdate(
-            LegacyProductGroupId groupId,
-            List<LegacyUpdateProductGroupCommand.ImageCommand> commands) {
-        List<LegacyUpdateImagesCommand.ImageEntry> entries =
-                commands.stream()
-                        .map(
-                                cmd ->
-                                        new LegacyUpdateImagesCommand.ImageEntry(
-                                                cmd.imageType(), cmd.imageUrl(), cmd.originUrl()))
-                        .toList();
-        return createImagesForUpdate(groupId, entries);
-    }
-
-    /** 이미지 등록용 도메인 객체 목록 생성. */
-    public List<LegacyProductImage> createImagesForRegistration(
-            LegacyProductGroupId groupId, List<ImageEntry> entries) {
-        return IntStream.range(0, entries.size())
-                .mapToObj(
-                        i -> {
-                            ImageEntry entry = entries.get(i);
-                            return LegacyProductImage.forNew(
-                                    groupId,
-                                    ProductGroupImageType.valueOf(entry.imageType()),
-                                    entry.imageUrl(),
-                                    entry.originUrl(),
-                                    i + 1);
-                        })
-                .toList();
-    }
-
     /** APP-TIM-001: 현재 시각 제공 (TimeProvider 위임). */
     public Instant now() {
         return timeProvider.now();
-    }
-
-    /** 전체 수정 Command의 옵션을 도메인 객체 목록으로 변환. */
-    public List<LegacyProduct> createProductsFromFullUpdate(
-            LegacyProductGroupId groupId,
-            List<LegacyUpdateProductGroupCommand.OptionCommand> commands) {
-        List<LegacyUpdateProductsCommand.SkuEntry> skuEntries =
-                commands.stream()
-                        .map(
-                                cmd ->
-                                        new LegacyUpdateProductsCommand.SkuEntry(
-                                                cmd.productId(),
-                                                cmd.quantity(),
-                                                cmd.additionalPrice(),
-                                                cmd.optionDetails().stream()
-                                                        .map(
-                                                                d ->
-                                                                        new LegacyUpdateProductsCommand
-                                                                                .OptionEntry(
-                                                                                d.optionGroupId(),
-                                                                                d.optionDetailId(),
-                                                                                d.optionName(),
-                                                                                d.optionValue()))
-                                                        .toList()))
-                        .toList();
-        return createProductsForOptionUpdate(groupId, skuEntries);
-    }
-
-    /**
-     * 옵션 수정용 상품 도메인 객체 목록 생성.
-     *
-     * <p>SkuEntry에 productId가 있으면 기존 상품 수정, 없으면 신규 상품으로 처리합니다.
-     */
-    public List<LegacyProduct> createProductsForOptionUpdate(
-            LegacyProductGroupId groupId, List<LegacyUpdateProductsCommand.SkuEntry> skuEntries) {
-        return skuEntries.stream()
-                .map(
-                        sku -> {
-                            List<LegacyProductOption> options =
-                                    sku.options().stream()
-                                            .map(
-                                                    opt ->
-                                                            LegacyProductOption.forNew(
-                                                                    sku.productId() != null
-                                                                            ? LegacyProductId.of(
-                                                                                    sku.productId())
-                                                                            : LegacyProductId
-                                                                                    .forNew(),
-                                                                    LegacyOptionGroupId.of(
-                                                                            opt.optionGroupId()),
-                                                                    LegacyOptionDetailId.of(
-                                                                            opt.optionDetailId()),
-                                                                    sku.additionalPrice()))
-                                            .toList();
-
-                            if (sku.productId() != null) {
-                                return LegacyProduct.reconstitute(
-                                        sku.productId(),
-                                        groupId.value(),
-                                        "N",
-                                        "Y",
-                                        sku.stockQuantity(),
-                                        options,
-                                        com.ryuqq.marketplace.domain.common.vo.DeletionStatus
-                                                .active());
-                            }
-                            return LegacyProduct.forNew(
-                                    groupId, "N", "Y", sku.stockQuantity(), options);
-                        })
-                .toList();
     }
 }

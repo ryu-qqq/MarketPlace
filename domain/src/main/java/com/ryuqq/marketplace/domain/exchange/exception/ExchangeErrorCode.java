@@ -10,9 +10,13 @@ public enum ExchangeErrorCode implements ErrorCode {
     SAME_OPTION_SELECTED("EXC-004", 400, "동일한 옵션으로 교환할 수 없습니다"),
     OPTION_NOT_AVAILABLE("EXC-005", 400, "선택한 옵션은 이용할 수 없습니다"),
     LINKED_ORDER_REQUIRED("EXC-006", 400, "연결 주문이 필요합니다"),
-    EMPTY_EXCHANGE_ITEMS("EXC-007", 400, "교환 대상 상품은 최소 1개 이상이어야 합니다"),
+    INVALID_EXCHANGE_QTY("EXC-007", 400, "교환 수량이 유효하지 않습니다"),
     TARGET_UPDATE_NOT_ALLOWED("EXC-008", 400, "현재 상태에서는 교환 대상을 변경할 수 없습니다"),
-    REASON_UPDATE_NOT_ALLOWED("EXC-009", 400, "현재 상태에서는 사유를 변경할 수 없습니다");
+    REASON_UPDATE_NOT_ALLOWED("EXC-009", 400, "현재 상태에서는 사유를 변경할 수 없습니다"),
+    EXCHANGE_OWNERSHIP_MISMATCH("EXC-010", 403, "요청한 교환 건의 소유권이 일치하지 않습니다"),
+    ALREADY_HOLD("EXC-011", 400, "이미 보류 중인 교환 건입니다"),
+    HOLD_REASON_REQUIRED("EXC-012", 400, "보류 사유는 필수입니다"),
+    NOT_HOLD_STATUS("EXC-013", 400, "보류 상태가 아닌 교환 건입니다");
 
     private final String code;
     private final int httpStatus;

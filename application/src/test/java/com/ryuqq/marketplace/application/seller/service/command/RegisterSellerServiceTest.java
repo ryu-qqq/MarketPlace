@@ -5,9 +5,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.seller.SellerCommandFixtures;
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerRegistrationBundle;
 import com.ryuqq.marketplace.application.seller.dto.command.RegisterSellerCommand;
 import com.ryuqq.marketplace.application.seller.factory.SellerCommandFactory;
+import com.ryuqq.marketplace.application.seller.internal.SellerRegistrationBundle;
 import com.ryuqq.marketplace.application.seller.internal.SellerRegistrationCoordinator;
 import com.ryuqq.marketplace.domain.seller.SellerFixtures;
 import org.junit.jupiter.api.DisplayName;

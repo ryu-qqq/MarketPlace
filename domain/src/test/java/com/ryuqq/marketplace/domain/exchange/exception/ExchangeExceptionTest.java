@@ -97,9 +97,9 @@ class ExchangeExceptionTest {
         }
 
         @Test
-        @DisplayName("EMPTY_EXCHANGE_ITEMS는 400 상태 코드를 가진다")
-        void emptyExchangeItemsHas400Status() {
-            ExchangeErrorCode code = ExchangeErrorCode.EMPTY_EXCHANGE_ITEMS;
+        @DisplayName("INVALID_EXCHANGE_QTY는 400 상태 코드를 가진다")
+        void invalidExchangeQtyHas400Status() {
+            ExchangeErrorCode code = ExchangeErrorCode.INVALID_EXCHANGE_QTY;
             assertThat(code.getCode()).isEqualTo("EXC-007");
             assertThat(code.getHttpStatus()).isEqualTo(400);
         }
@@ -118,6 +118,14 @@ class ExchangeExceptionTest {
             ExchangeErrorCode code = ExchangeErrorCode.REASON_UPDATE_NOT_ALLOWED;
             assertThat(code.getCode()).isEqualTo("EXC-009");
             assertThat(code.getHttpStatus()).isEqualTo(400);
+        }
+
+        @Test
+        @DisplayName("EXCHANGE_OWNERSHIP_MISMATCH는 403 상태 코드를 가진다")
+        void exchangeOwnershipMismatchHas403Status() {
+            ExchangeErrorCode code = ExchangeErrorCode.EXCHANGE_OWNERSHIP_MISMATCH;
+            assertThat(code.getCode()).isEqualTo("EXC-010");
+            assertThat(code.getHttpStatus()).isEqualTo(403);
         }
 
         @Test

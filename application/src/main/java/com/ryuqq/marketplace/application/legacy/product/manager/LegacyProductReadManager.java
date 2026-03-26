@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.legacy.product.manager;
 
 import com.ryuqq.marketplace.application.legacy.product.port.out.query.LegacyProductQueryPort;
-import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProducts;
-import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
+import com.ryuqq.marketplace.domain.product.aggregate.Product;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +17,7 @@ public class LegacyProductReadManager {
     }
 
     @Transactional(readOnly = true)
-    public LegacyProducts getByProductGroupId(LegacyProductGroupId productGroupId) {
-        return new LegacyProducts(queryPort.findByProductGroupId(productGroupId));
+    public List<Product> findByProductGroupId(long productGroupId) {
+        return queryPort.findByProductGroupId(productGroupId);
     }
 }

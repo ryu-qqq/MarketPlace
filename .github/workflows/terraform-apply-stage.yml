@@ -25,6 +25,10 @@ on:
         description: 'Worker Docker image tag (e.g., worker-stage-1-abc1234)'
         required: false
         type: string
+      legacy-api-image-tag:
+        description: 'Legacy API Docker image tag (e.g., legacy-api-stage-1-abc1234)'
+        required: false
+        type: string
     secrets:
       AWS_ROLE_ARN:
         required: true
@@ -61,6 +65,9 @@ jobs:
           - name: ecs-worker
             dir: terraform/environments/stage/ecs-worker
             order: 5
+          - name: ecs-legacy-api
+            dir: terraform/environments/stage/ecs-legacy-api
+            order: 6
 
     steps:
       - name: Checkout code
@@ -103,6 +110,11 @@ jobs:
           if [ "${{ matrix.module.name }}" == "ecs-worker" ] && [ -n "${{ inputs.worker-image-tag }}" ]; then
             echo "Using Worker image tag: ${{ inputs.worker-image-tag }}"
             EXTRA_VARS="-var=image_tag=${{ inputs.worker-image-tag }}"
+          fi
+
+          if [ "${{ matrix.module.name }}" == "ecs-legacy-api" ] && [ -n "${{ inputs.legacy-api-image-tag }}" ]; then
+            echo "Using Legacy API image tag: ${{ inputs.legacy-api-image-tag }}"
+            EXTRA_VARS="-var=image_tag=${{ inputs.legacy-api-image-tag }}"
           fi
 
           echo "Generating terraform plan..."
@@ -149,5 +161,8 @@ jobs:
           echo "- ECS Web API (stage)" >> $GITHUB_STEP_SUMMARY
           echo "- ECS Scheduler (stage)" >> $GITHUB_STEP_SUMMARY
           echo "- ECS Worker (stage)" >> $GITHUB_STEP_SUMMARY
+          echo "- ECS Legacy API (stage)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Service Discovery**: marketplace-api-stage.connectly.local" >> $GITHUB_STEP_SUMMARY
+          echo "**Service Discovery**:" >> $GITHUB_STEP_SUMMARY
+          echo "- marketplace-api-stage.connectly.local" >> $GITHUB_STEP_SUMMARY
+          echo "- marketplace-legacy-api-stage.connectly.local" >> $GITHUB_STEP_SUMMARY

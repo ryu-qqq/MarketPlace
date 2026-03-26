@@ -22,6 +22,9 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "inbound_order_id", nullable = false)
     private long inboundOrderId;
 
+    @Column(name = "external_product_order_id", length = 100)
+    private String externalProductOrderId;
+
     @Column(name = "external_product_id", nullable = false, length = 100)
     private String externalProductId;
 
@@ -48,6 +51,9 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
 
     @Column(name = "discount_amount", nullable = false)
     private int discountAmount;
+
+    @Column(name = "seller_burden_discount_amount", nullable = false)
+    private int sellerBurdenDiscountAmount;
 
     @Column(name = "payment_amount", nullable = false)
     private int paymentAmount;
@@ -99,6 +105,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
     private InboundOrderItemJpaEntity(
             Long id,
             long inboundOrderId,
+            String externalProductOrderId,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -108,6 +115,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -127,6 +135,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
         super(createdAt, updatedAt);
         this.id = id;
         this.inboundOrderId = inboundOrderId;
+        this.externalProductOrderId = externalProductOrderId;
         this.externalProductId = externalProductId;
         this.externalOptionId = externalOptionId;
         this.externalProductName = externalProductName;
@@ -136,6 +145,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
         this.quantity = quantity;
         this.totalAmount = totalAmount;
         this.discountAmount = discountAmount;
+        this.sellerBurdenDiscountAmount = sellerBurdenDiscountAmount;
         this.paymentAmount = paymentAmount;
         this.receiverName = receiverName;
         this.receiverPhone = receiverPhone;
@@ -156,6 +166,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
     public static InboundOrderItemJpaEntity create(
             Long id,
             long inboundOrderId,
+            String externalProductOrderId,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -165,6 +176,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -184,6 +196,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
         return new InboundOrderItemJpaEntity(
                 id,
                 inboundOrderId,
+                externalProductOrderId,
                 externalProductId,
                 externalOptionId,
                 externalProductName,
@@ -193,6 +206,7 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
                 quantity,
                 totalAmount,
                 discountAmount,
+                sellerBurdenDiscountAmount,
                 paymentAmount,
                 receiverName,
                 receiverPhone,
@@ -217,6 +231,10 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
 
     public long getInboundOrderId() {
         return inboundOrderId;
+    }
+
+    public String getExternalProductOrderId() {
+        return externalProductOrderId;
     }
 
     public String getExternalProductId() {
@@ -253,6 +271,10 @@ public class InboundOrderItemJpaEntity extends BaseAuditEntity {
 
     public int getDiscountAmount() {
         return discountAmount;
+    }
+
+    public int getSellerBurdenDiscountAmount() {
+        return sellerBurdenDiscountAmount;
     }
 
     public int getPaymentAmount() {

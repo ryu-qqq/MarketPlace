@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.productgroup.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
+import com.ryuqq.marketplace.adapter.in.rest.imagevariant.dto.response.ImageVariantApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.query.SearchProductGroupsApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.DescriptionImageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.productgroup.dto.response.OptionGroupSummaryApiResponse;
@@ -298,12 +299,16 @@ public class ProductGroupQueryApiMapper {
     }
 
     private ProductGroupImageApiResponse toImageResponse(ProductGroupImageResult result) {
+        List<ImageVariantApiResponse> variants =
+                result.variants().stream().map(ImageVariantApiResponse::from).toList();
+
         return new ProductGroupImageApiResponse(
                 result.id(),
                 result.originUrl(),
                 result.uploadedUrl(),
                 result.imageType(),
-                result.sortOrder());
+                result.sortOrder(),
+                variants);
     }
 
     private ProductOptionMatrixApiResponse toOptionMatrixResponse(

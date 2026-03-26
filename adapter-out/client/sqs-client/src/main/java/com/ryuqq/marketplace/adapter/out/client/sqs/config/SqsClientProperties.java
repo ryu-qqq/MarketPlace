@@ -50,6 +50,17 @@ public class SqsClientProperties {
         // OutboundSync queue
         private String outboundSync;
 
+        // Claim outbox queues
+        private String cancelOutbox;
+        private String refundOutbox;
+        private String exchangeOutbox;
+
+        // Shipment outbox queue
+        private String shipmentOutbox;
+
+        // QnA outbox queue
+        private String qnaOutbox;
+
         public String getIntelligenceOrchestration() {
             return intelligenceOrchestration;
         }
@@ -96,6 +107,46 @@ public class SqsClientProperties {
 
         public void setOutboundSync(String outboundSync) {
             this.outboundSync = outboundSync;
+        }
+
+        public String getCancelOutbox() {
+            return cancelOutbox;
+        }
+
+        public void setCancelOutbox(String cancelOutbox) {
+            this.cancelOutbox = cancelOutbox;
+        }
+
+        public String getRefundOutbox() {
+            return refundOutbox;
+        }
+
+        public void setRefundOutbox(String refundOutbox) {
+            this.refundOutbox = refundOutbox;
+        }
+
+        public String getExchangeOutbox() {
+            return exchangeOutbox;
+        }
+
+        public void setExchangeOutbox(String exchangeOutbox) {
+            this.exchangeOutbox = exchangeOutbox;
+        }
+
+        public String getShipmentOutbox() {
+            return shipmentOutbox;
+        }
+
+        public void setShipmentOutbox(String shipmentOutbox) {
+            this.shipmentOutbox = shipmentOutbox;
+        }
+
+        public String getQnaOutbox() {
+            return qnaOutbox;
+        }
+
+        public void setQnaOutbox(String qnaOutbox) {
+            this.qnaOutbox = qnaOutbox;
         }
     }
 }

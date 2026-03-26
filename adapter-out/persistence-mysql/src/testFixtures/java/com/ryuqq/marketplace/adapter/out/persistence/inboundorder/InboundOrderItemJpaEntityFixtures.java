@@ -15,6 +15,7 @@ public final class InboundOrderItemJpaEntityFixtures {
 
     private static final AtomicLong SEQUENCE = new AtomicLong(1);
 
+    public static final String DEFAULT_EXTERNAL_PRODUCT_ORDER_ID = "EXT-PO-001";
     public static final String DEFAULT_EXTERNAL_PRODUCT_ID = "EXT-PROD-001";
     public static final String DEFAULT_EXTERNAL_OPTION_ID = "EXT-OPT-001";
     public static final String DEFAULT_EXTERNAL_PRODUCT_NAME = "테스트 상품";
@@ -39,6 +40,7 @@ public final class InboundOrderItemJpaEntityFixtures {
         return InboundOrderItemJpaEntity.create(
                 null,
                 inboundOrderId,
+                "EXT-PO-" + seq,
                 "EXT-PROD-" + seq,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 DEFAULT_EXTERNAL_PRODUCT_NAME,
@@ -48,6 +50,7 @@ public final class InboundOrderItemJpaEntityFixtures {
                 DEFAULT_QUANTITY,
                 DEFAULT_TOTAL_AMOUNT,
                 DEFAULT_DISCOUNT_AMOUNT,
+                0,
                 DEFAULT_PAYMENT_AMOUNT,
                 DEFAULT_RECEIVER_NAME,
                 DEFAULT_RECEIVER_PHONE,
@@ -73,6 +76,7 @@ public final class InboundOrderItemJpaEntityFixtures {
         return InboundOrderItemJpaEntity.create(
                 null,
                 inboundOrderId,
+                "EXT-PO-" + seq,
                 "EXT-PROD-" + seq,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 DEFAULT_EXTERNAL_PRODUCT_NAME,
@@ -82,6 +86,7 @@ public final class InboundOrderItemJpaEntityFixtures {
                 DEFAULT_QUANTITY,
                 DEFAULT_TOTAL_AMOUNT,
                 DEFAULT_DISCOUNT_AMOUNT,
+                0,
                 DEFAULT_PAYMENT_AMOUNT,
                 DEFAULT_RECEIVER_NAME,
                 DEFAULT_RECEIVER_PHONE,
@@ -106,6 +111,7 @@ public final class InboundOrderItemJpaEntityFixtures {
         return InboundOrderItemJpaEntity.create(
                 1L,
                 inboundOrderId,
+                DEFAULT_EXTERNAL_PRODUCT_ORDER_ID,
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 DEFAULT_EXTERNAL_PRODUCT_NAME,
@@ -115,6 +121,7 @@ public final class InboundOrderItemJpaEntityFixtures {
                 DEFAULT_QUANTITY,
                 DEFAULT_TOTAL_AMOUNT,
                 DEFAULT_DISCOUNT_AMOUNT,
+                0,
                 DEFAULT_PAYMENT_AMOUNT,
                 DEFAULT_RECEIVER_NAME,
                 DEFAULT_RECEIVER_PHONE,

@@ -1,41 +1,42 @@
 package com.ryuqq.marketplace.application.order.service.command;
 
 import com.ryuqq.marketplace.application.common.dto.command.StatusChangeContext;
-import com.ryuqq.marketplace.application.order.dto.command.CompleteRefundCommand;
+import com.ryuqq.marketplace.application.order.dto.command.OrderItemStatusCommand;
 import com.ryuqq.marketplace.application.order.factory.OrderCommandFactory;
-import com.ryuqq.marketplace.application.order.manager.OrderCommandManager;
-import com.ryuqq.marketplace.application.order.manager.OrderReadManager;
+import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
+import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.order.port.in.command.CompleteRefundUseCase;
-import com.ryuqq.marketplace.domain.order.aggregate.Order;
-import com.ryuqq.marketplace.domain.order.id.OrderId;
+import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 /**
- * 환불 완료 Service.
+ * 환불 완료 처리 Service.
  *
- * <p>APP-TIM-001: TimeProvider 직접 사용 금지 - Factory에서 처리.
+ * <p>대상 주문상품을 조회하여 반품 완료(RETURNED) 상태로 전환합니다.
  */
 @Service
 public class CompleteRefundService implements CompleteRefundUseCase {
 
-    private final OrderReadManager readManager;
-    private final OrderCommandManager commandManager;
-    private final OrderCommandFactory commandFactory;
+    private final OrderCommandFactory factory;
+    private final OrderItemReadManager readManager;
+    private final OrderItemCommandManager commandManager;
 
     public CompleteRefundService(
-            OrderReadManager readManager,
-            OrderCommandManager commandManager,
-            OrderCommandFactory commandFactory) {
+            OrderCommandFactory factory,
+            OrderItemReadManager readManager,
+            OrderItemCommandManager commandManager) {
+        this.factory = factory;
         this.readManager = readManager;
         this.commandManager = commandManager;
-        this.commandFactory = commandFactory;
     }
 
     @Override
-    public void execute(CompleteRefundCommand command) {
-        StatusChangeContext<OrderId> ctx = commandFactory.createStatusContext(command.orderId());
-        Order order = readManager.getById(ctx.id());
-        order.completeRefund(command.changedBy(), ctx.changedAt());
-        commandManager.persist(order);
+    public void execute(OrderItemStatusCommand command) {
+        StatusChangeContext<List<OrderItemId>> ctx = factory.createStatusChangeContext(command);
+        List<OrderItem> orderItems = readManager.findAllByIds(ctx.id());
+        orderItems.forEach(item -> item.completeReturn(command.changedBy(), ctx.changedAt()));
+        commandManager.persistAll(orderItems);
     }
 }

@@ -17,6 +17,7 @@ public class NaverCommerceProperties {
     private String baseUrl = "https://api.commerce.naver.com/external";
     private String clientId;
     private String clientSecret;
+    private boolean enabled = false;
     private Timeout timeout = new Timeout();
 
     public String getBaseUrl() {
@@ -41,6 +42,14 @@ public class NaverCommerceProperties {
 
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Timeout getTimeout() {

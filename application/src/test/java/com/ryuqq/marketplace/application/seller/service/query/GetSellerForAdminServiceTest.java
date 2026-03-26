@@ -5,10 +5,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.ryuqq.marketplace.application.seller.assembler.SellerCompositeAssembler;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerAdminCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerFullCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerPolicyCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerFullCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPolicyCompositeResult;
 import com.ryuqq.marketplace.application.seller.manager.SellerCompositionReadManager;
 import java.math.BigDecimal;
 import java.time.Instant;

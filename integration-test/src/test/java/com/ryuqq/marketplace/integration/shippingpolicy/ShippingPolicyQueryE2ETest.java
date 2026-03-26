@@ -298,7 +298,9 @@ class ShippingPolicyQueryE2ETest extends E2ETestBase {
                     .get(BASE_URL, DEFAULT_SELLER_ID)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.content[0].createdAt", matchesRegex("\\d{4}-\\d{2}-\\d{2}T.*"));
+                    .body(
+                            "data.content[0].createdAt",
+                            matchesRegex("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"));
         }
     }
 }

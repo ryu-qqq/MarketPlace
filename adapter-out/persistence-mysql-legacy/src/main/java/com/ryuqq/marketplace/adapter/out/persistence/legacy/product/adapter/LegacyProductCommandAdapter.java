@@ -1,40 +1,45 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.adapter;
 
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper.LegacyProductCommandEntityMapper;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.repository.LegacyProductJdbcRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.repository.LegacyProductJpaRepository;
 import com.ryuqq.marketplace.application.legacy.product.port.out.command.LegacyProductCommandPort;
-import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
-import java.util.List;
+import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import org.springframework.stereotype.Component;
 
 /**
- * 세토프 DB product INSERT/UPDATE Adapter.
+ * 세토프 DB product Command Adapter.
  *
- * <p>PER-ADP-001: CommandAdapter는 JpaRepository만 사용.
+ * <p>표준 Product 도메인 → LegacyProductEntity (stock_quantity 포함) 변환 후 저장.
  */
 @Component
 public class LegacyProductCommandAdapter implements LegacyProductCommandPort {
 
-    private final LegacyProductJpaRepository repository;
-    private final LegacyProductCommandEntityMapper mapper;
+    private final LegacyProductJpaRepository productRepository;
+    private final LegacyProductJdbcRepository jdbcRepository;
 
     public LegacyProductCommandAdapter(
-            LegacyProductJpaRepository repository, LegacyProductCommandEntityMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
+            LegacyProductJpaRepository productRepository,
+            LegacyProductJdbcRepository jdbcRepository) {
+        this.productRepository = productRepository;
+        this.jdbcRepository = jdbcRepository;
     }
 
     @Override
-    public Long persist(LegacyProduct product) {
-        LegacyProductEntity entity = mapper.toEntity(product);
-        LegacyProductEntity saved = repository.save(entity);
-        return saved.getId();
+    public Long persist(Product product) {
+        LegacyProductEntity entity =
+                LegacyProductEntity.create(
+                        product.productGroupIdValue(), "N", "Y", product.stockQuantity());
+        return productRepository.save(entity).getId();
     }
 
     @Override
-    public void persistAll(List<LegacyProduct> products) {
-        List<LegacyProductEntity> entities = products.stream().map(mapper::toEntity).toList();
-        repository.saveAll(entities);
+    public void softDeleteByProductGroupId(long productGroupId) {
+        jdbcRepository.softDeleteByProductGroupId(productGroupId);
+    }
+
+    @Override
+    public void updateStock(long productId, int stockQuantity) {
+        jdbcRepository.updateStock(productId, stockQuantity);
     }
 }

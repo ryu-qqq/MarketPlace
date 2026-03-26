@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.order;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 /** OrderItemJpaEntity 테스트 Fixtures. */
@@ -12,8 +13,6 @@ public final class OrderItemJpaEntityFixtures {
 
     public static final long DEFAULT_PRODUCT_GROUP_ID = 1000L;
     public static final long DEFAULT_PRODUCT_ID = 2000L;
-    public static final long DEFAULT_SELLER_ID = 10L;
-    public static final long DEFAULT_BRAND_ID = 50L;
     public static final String DEFAULT_SKU_CODE = "SKU-001";
     public static final String DEFAULT_EXTERNAL_PRODUCT_ID = "EXT-PROD-001";
     public static final String DEFAULT_EXTERNAL_OPTION_ID = "EXT-OPT-001";
@@ -35,13 +34,15 @@ public final class OrderItemJpaEntityFixtures {
     /** 기본 주문 상품 Entity 생성. */
     public static OrderItemJpaEntity defaultItem(String orderId) {
         Instant now = Instant.now();
+        String itemId = UUID.randomUUID().toString();
         return OrderItemJpaEntity.create(
-                null,
+                itemId,
+                "ORD-20240101-" + itemId.substring(0, 4) + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
+                1L,
+                5L,
                 DEFAULT_PRODUCT_ID,
-                DEFAULT_SELLER_ID,
-                DEFAULT_BRAND_ID,
                 DEFAULT_SKU_CODE,
                 null,
                 null,
@@ -56,6 +57,7 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_QUANTITY,
                 DEFAULT_TOTAL_AMOUNT,
                 DEFAULT_DISCOUNT_AMOUNT,
+                0,
                 DEFAULT_PAYMENT_AMOUNT,
                 DEFAULT_RECEIVER_NAME,
                 DEFAULT_RECEIVER_PHONE,
@@ -65,15 +67,8 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_DELIVERY_REQUEST,
                 "READY",
                 null,
-                null,
-                null,
                 0,
                 0,
-                0,
-                0,
-                0,
-                null,
-                null,
                 now,
                 now);
     }
@@ -83,17 +78,61 @@ public final class OrderItemJpaEntityFixtures {
         return IntStream.range(0, count).mapToObj(i -> defaultItem(orderId)).toList();
     }
 
+    /** CONFIRMED 상태의 주문 상품 Entity 생성. 교환/환불 테스트용. */
+    public static OrderItemJpaEntity confirmedItem(String orderId) {
+        Instant now = Instant.now();
+        String itemId = UUID.randomUUID().toString();
+        return OrderItemJpaEntity.create(
+                itemId,
+                "ORD-20240101-" + itemId.substring(0, 4) + "-001",
+                orderId,
+                DEFAULT_PRODUCT_GROUP_ID,
+                1L,
+                5L,
+                DEFAULT_PRODUCT_ID,
+                DEFAULT_SKU_CODE,
+                null,
+                null,
+                null,
+                null,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
+                DEFAULT_EXTERNAL_OPTION_ID,
+                DEFAULT_EXTERNAL_PRODUCT_NAME,
+                DEFAULT_EXTERNAL_OPTION_NAME,
+                DEFAULT_EXTERNAL_IMAGE_URL,
+                DEFAULT_UNIT_PRICE,
+                DEFAULT_QUANTITY,
+                DEFAULT_TOTAL_AMOUNT,
+                DEFAULT_DISCOUNT_AMOUNT,
+                0,
+                DEFAULT_PAYMENT_AMOUNT,
+                DEFAULT_RECEIVER_NAME,
+                DEFAULT_RECEIVER_PHONE,
+                DEFAULT_RECEIVER_ZIPCODE,
+                DEFAULT_RECEIVER_ADDRESS,
+                DEFAULT_RECEIVER_ADDRESS_DETAIL,
+                DEFAULT_DELIVERY_REQUEST,
+                "CONFIRMED",
+                null,
+                0,
+                0,
+                now,
+                now);
+    }
+
     /** 가격을 지정한 주문 상품 Entity 생성. */
     public static OrderItemJpaEntity itemWithPrice(String orderId, int unitPrice, int quantity) {
         Instant now = Instant.now();
         int totalAmount = unitPrice * quantity;
+        String itemId = UUID.randomUUID().toString();
         return OrderItemJpaEntity.create(
-                null,
+                itemId,
+                "ORD-20240101-" + itemId.substring(0, 4) + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
+                1L,
+                5L,
                 DEFAULT_PRODUCT_ID,
-                DEFAULT_SELLER_ID,
-                DEFAULT_BRAND_ID,
                 DEFAULT_SKU_CODE,
                 null,
                 null,
@@ -108,6 +147,7 @@ public final class OrderItemJpaEntityFixtures {
                 quantity,
                 totalAmount,
                 DEFAULT_DISCOUNT_AMOUNT,
+                0,
                 totalAmount,
                 DEFAULT_RECEIVER_NAME,
                 DEFAULT_RECEIVER_PHONE,
@@ -117,15 +157,8 @@ public final class OrderItemJpaEntityFixtures {
                 DEFAULT_DELIVERY_REQUEST,
                 "READY",
                 null,
-                null,
-                null,
                 0,
                 0,
-                0,
-                0,
-                0,
-                null,
-                null,
                 now,
                 now);
     }

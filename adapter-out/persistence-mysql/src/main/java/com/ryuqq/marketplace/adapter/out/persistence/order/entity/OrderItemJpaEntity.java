@@ -3,8 +3,6 @@ package com.ryuqq.marketplace.adapter.out.persistence.order.entity;
 import com.ryuqq.marketplace.adapter.out.persistence.common.entity.BaseAuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
@@ -15,9 +13,11 @@ import java.time.Instant;
 public class OrderItemJpaEntity extends BaseAuditEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "id", length = 36, nullable = false)
+    private String id;
+
+    @Column(name = "order_item_number", nullable = false, length = 50)
+    private String orderItemNumber;
 
     @Column(name = "order_id", nullable = false, length = 36)
     private String orderId;
@@ -25,14 +25,14 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "product_group_id", nullable = false)
     private long productGroupId;
 
-    @Column(name = "product_id", nullable = false)
-    private long productId;
+    @Column(name = "seller_id")
+    private Long sellerId;
 
-    @Column(name = "seller_id", nullable = false)
-    private long sellerId;
+    @Column(name = "brand_id")
+    private Long brandId;
 
-    @Column(name = "brand_id", nullable = false)
-    private long brandId;
+    @Column(name = "product_id")
+    private Long productId;
 
     @Column(name = "sku_code", length = 50)
     private String skuCode;
@@ -76,6 +76,9 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "discount_amount", nullable = false)
     private int discountAmount;
 
+    @Column(name = "seller_burden_discount_amount", nullable = false)
+    private int sellerBurdenDiscountAmount;
+
     @Column(name = "payment_amount", nullable = false)
     private int paymentAmount;
 
@@ -97,38 +100,17 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "delivery_request", length = 500)
     private String deliveryRequest;
 
-    @Column(name = "delivery_status", nullable = false, length = 20)
-    private String deliveryStatus;
+    @Column(name = "order_item_status", nullable = false, length = 20)
+    private String orderItemStatus;
 
-    @Column(name = "shipment_company_code", length = 50)
-    private String shipmentCompanyCode;
+    @Column(name = "external_order_status", length = 50)
+    private String externalOrderStatus;
 
-    @Column(name = "invoice", length = 100)
-    private String invoice;
+    @Column(name = "cancelled_qty", nullable = false)
+    private int cancelledQty;
 
-    @Column(name = "shipment_completed_date")
-    private Instant shipmentCompletedDate;
-
-    @Column(name = "commission_rate", nullable = false)
-    private int commissionRate;
-
-    @Column(name = "fee", nullable = false)
-    private int fee;
-
-    @Column(name = "expectation_settlement_amount", nullable = false)
-    private int expectationSettlementAmount;
-
-    @Column(name = "settlement_amount", nullable = false)
-    private int settlementAmount;
-
-    @Column(name = "share_ratio", nullable = false)
-    private int shareRatio;
-
-    @Column(name = "expected_settlement_day")
-    private Instant expectedSettlementDay;
-
-    @Column(name = "settlement_day")
-    private Instant settlementDay;
+    @Column(name = "returned_qty", nullable = false)
+    private int returnedQty;
 
     protected OrderItemJpaEntity() {
         super();
@@ -136,12 +118,13 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private OrderItemJpaEntity(
-            Long id,
+            String id,
+            String orderItemNumber,
             String orderId,
             long productGroupId,
-            long productId,
-            long sellerId,
-            long brandId,
+            Long sellerId,
+            Long brandId,
+            Long productId,
             String skuCode,
             String productGroupName,
             String brandName,
@@ -156,6 +139,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -163,26 +147,20 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String receiverAddress,
             String receiverAddressDetail,
             String deliveryRequest,
-            String deliveryStatus,
-            String shipmentCompanyCode,
-            String invoice,
-            Instant shipmentCompletedDate,
-            int commissionRate,
-            int fee,
-            int expectationSettlementAmount,
-            int settlementAmount,
-            int shareRatio,
-            Instant expectedSettlementDay,
-            Instant settlementDay,
+            String orderItemStatus,
+            String externalOrderStatus,
+            int cancelledQty,
+            int returnedQty,
             Instant createdAt,
             Instant updatedAt) {
         super(createdAt, updatedAt);
         this.id = id;
+        this.orderItemNumber = orderItemNumber;
         this.orderId = orderId;
         this.productGroupId = productGroupId;
-        this.productId = productId;
         this.sellerId = sellerId;
         this.brandId = brandId;
+        this.productId = productId;
         this.skuCode = skuCode;
         this.productGroupName = productGroupName;
         this.brandName = brandName;
@@ -197,6 +175,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.quantity = quantity;
         this.totalAmount = totalAmount;
         this.discountAmount = discountAmount;
+        this.sellerBurdenDiscountAmount = sellerBurdenDiscountAmount;
         this.paymentAmount = paymentAmount;
         this.receiverName = receiverName;
         this.receiverPhone = receiverPhone;
@@ -204,27 +183,21 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         this.receiverAddress = receiverAddress;
         this.receiverAddressDetail = receiverAddressDetail;
         this.deliveryRequest = deliveryRequest;
-        this.deliveryStatus = deliveryStatus;
-        this.shipmentCompanyCode = shipmentCompanyCode;
-        this.invoice = invoice;
-        this.shipmentCompletedDate = shipmentCompletedDate;
-        this.commissionRate = commissionRate;
-        this.fee = fee;
-        this.expectationSettlementAmount = expectationSettlementAmount;
-        this.settlementAmount = settlementAmount;
-        this.shareRatio = shareRatio;
-        this.expectedSettlementDay = expectedSettlementDay;
-        this.settlementDay = settlementDay;
+        this.orderItemStatus = orderItemStatus;
+        this.externalOrderStatus = externalOrderStatus;
+        this.cancelledQty = cancelledQty;
+        this.returnedQty = returnedQty;
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static OrderItemJpaEntity create(
-            Long id,
+            String id,
+            String orderItemNumber,
             String orderId,
             long productGroupId,
-            long productId,
-            long sellerId,
-            long brandId,
+            Long sellerId,
+            Long brandId,
+            Long productId,
             String skuCode,
             String productGroupName,
             String brandName,
@@ -239,6 +212,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -246,26 +220,20 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
             String receiverAddress,
             String receiverAddressDetail,
             String deliveryRequest,
-            String deliveryStatus,
-            String shipmentCompanyCode,
-            String invoice,
-            Instant shipmentCompletedDate,
-            int commissionRate,
-            int fee,
-            int expectationSettlementAmount,
-            int settlementAmount,
-            int shareRatio,
-            Instant expectedSettlementDay,
-            Instant settlementDay,
+            String orderItemStatus,
+            String externalOrderStatus,
+            int cancelledQty,
+            int returnedQty,
             Instant createdAt,
             Instant updatedAt) {
         return new OrderItemJpaEntity(
                 id,
+                orderItemNumber,
                 orderId,
                 productGroupId,
-                productId,
                 sellerId,
                 brandId,
+                productId,
                 skuCode,
                 productGroupName,
                 brandName,
@@ -280,6 +248,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 quantity,
                 totalAmount,
                 discountAmount,
+                sellerBurdenDiscountAmount,
                 paymentAmount,
                 receiverName,
                 receiverPhone,
@@ -287,23 +256,20 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 receiverAddress,
                 receiverAddressDetail,
                 deliveryRequest,
-                deliveryStatus,
-                shipmentCompanyCode,
-                invoice,
-                shipmentCompletedDate,
-                commissionRate,
-                fee,
-                expectationSettlementAmount,
-                settlementAmount,
-                shareRatio,
-                expectedSettlementDay,
-                settlementDay,
+                orderItemStatus,
+                externalOrderStatus,
+                cancelledQty,
+                returnedQty,
                 createdAt,
                 updatedAt);
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
+    }
+
+    public String getOrderItemNumber() {
+        return orderItemNumber;
     }
 
     public String getOrderId() {
@@ -314,20 +280,36 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         return productGroupId;
     }
 
-    public long getProductId() {
-        return productId;
-    }
-
-    public long getSellerId() {
+    public Long getSellerId() {
         return sellerId;
     }
 
-    public long getBrandId() {
+    public Long getBrandId() {
         return brandId;
+    }
+
+    public Long getProductId() {
+        return productId;
     }
 
     public String getSkuCode() {
         return skuCode;
+    }
+
+    public String getProductGroupName() {
+        return productGroupName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public String getMainImageUrl() {
+        return mainImageUrl;
     }
 
     public String getExternalProductId() {
@@ -366,6 +348,10 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         return discountAmount;
     }
 
+    public int getSellerBurdenDiscountAmount() {
+        return sellerBurdenDiscountAmount;
+    }
+
     public int getPaymentAmount() {
         return paymentAmount;
     }
@@ -394,67 +380,35 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
         return deliveryRequest;
     }
 
-    public String getProductGroupName() {
-        return productGroupName;
+    public String getOrderItemStatus() {
+        return orderItemStatus;
     }
 
-    public String getBrandName() {
-        return brandName;
+    public String getExternalOrderStatus() {
+        return externalOrderStatus;
     }
 
-    public String getSellerName() {
-        return sellerName;
+    public void updateOrderItemStatus(String orderItemStatus) {
+        this.orderItemStatus = orderItemStatus;
     }
 
-    public String getMainImageUrl() {
-        return mainImageUrl;
+    public void updateExternalOrderStatus(String externalOrderStatus) {
+        this.externalOrderStatus = externalOrderStatus;
     }
 
-    public String getDeliveryStatus() {
-        return deliveryStatus;
+    public int getCancelledQty() {
+        return cancelledQty;
     }
 
-    public String getShipmentCompanyCode() {
-        return shipmentCompanyCode;
+    public int getReturnedQty() {
+        return returnedQty;
     }
 
-    public String getInvoice() {
-        return invoice;
+    public void updateCancelledQty(int cancelledQty) {
+        this.cancelledQty = cancelledQty;
     }
 
-    public Instant getShipmentCompletedDate() {
-        return shipmentCompletedDate;
-    }
-
-    public int getCommissionRate() {
-        return commissionRate;
-    }
-
-    public int getFee() {
-        return fee;
-    }
-
-    public int getExpectationSettlementAmount() {
-        return expectationSettlementAmount;
-    }
-
-    public int getSettlementAmount() {
-        return settlementAmount;
-    }
-
-    public int getShareRatio() {
-        return shareRatio;
-    }
-
-    public Instant getExpectedSettlementDay() {
-        return expectedSettlementDay;
-    }
-
-    public Instant getSettlementDay() {
-        return settlementDay;
-    }
-
-    public void updateDeliveryStatus(String deliveryStatus) {
-        this.deliveryStatus = deliveryStatus;
+    public void updateReturnedQty(int returnedQty) {
+        this.returnedQty = returnedQty;
     }
 }

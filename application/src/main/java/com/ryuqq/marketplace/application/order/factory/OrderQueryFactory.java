@@ -10,7 +10,8 @@ import com.ryuqq.marketplace.domain.order.query.OrderDateField;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchField;
 import com.ryuqq.marketplace.domain.order.query.OrderSortKey;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.stereotype.Component;
@@ -36,9 +37,12 @@ public class OrderQueryFactory {
      * @return OrderSearchCriteria
      */
     public OrderSearchCriteria createCriteria(OrderSearchParams params) {
-        OrderSortKey sortKey = resolveSortKey(params.sortKey());
-        SortDirection sortDirection = commonVoFactory.parseSortDirection(params.sortDirection());
-        PageRequest pageRequest = commonVoFactory.createPageRequest(params.page(), params.size());
+        OrderSortKey sortKey = OrderSortKey.fromString(params.searchParams().sortKey());
+        SortDirection sortDirection =
+                commonVoFactory.parseSortDirection(params.searchParams().sortDirection());
+        PageRequest pageRequest =
+                commonVoFactory.createPageRequest(
+                        params.searchParams().page(), params.searchParams().size());
 
         QueryContext<OrderSortKey> queryContext =
                 commonVoFactory.createQueryContext(
@@ -47,53 +51,49 @@ public class OrderQueryFactory {
                         pageRequest,
                         params.searchParams().includeDeleted());
 
-        List<OrderStatus> statuses = resolveStatuses(params.statuses());
+        List<OrderItemStatus> statuses = new ArrayList<>();
+        List<String> crossDomainStatuses = new ArrayList<>();
+        classifyStatuses(params.statuses(), statuses, crossDomainStatuses);
+
         OrderSearchField searchField = OrderSearchField.fromString(params.searchField());
-        OrderDateField dateField = resolveDateField(params.dateField());
+        OrderDateField dateField = OrderDateField.fromString(params.dateField());
         DateRange dateRange =
                 commonVoFactory.createDateRange(
                         params.searchParams().startDate(), params.searchParams().endDate());
 
         return OrderSearchCriteria.of(
-                statuses, searchField, params.searchWord(), dateRange, dateField, queryContext);
+                statuses,
+                crossDomainStatuses,
+                params.shopId(),
+                searchField,
+                params.searchWord(),
+                dateRange,
+                dateField,
+                queryContext);
     }
 
-    private OrderSortKey resolveSortKey(String sortKeyString) {
-        if (sortKeyString == null || sortKeyString.isBlank()) {
-            return OrderSortKey.defaultKey();
+    /**
+     * 프론트 상태 문자열을 OrderItemStatus와 crossDomain 상태로 분류.
+     *
+     * <p>OrderItemStatus.valueOf()로 변환 가능하면 statuses에, 실패하면 crossDomainStatuses에 추가합니다.
+     */
+    private void classifyStatuses(
+            List<String> rawStatuses,
+            List<OrderItemStatus> statuses,
+            List<String> crossDomainStatuses) {
+        if (rawStatuses == null || rawStatuses.isEmpty()) {
+            return;
         }
-
-        for (OrderSortKey key : OrderSortKey.values()) {
-            if (key.fieldName().equalsIgnoreCase(sortKeyString)
-                    || key.name().equalsIgnoreCase(sortKeyString)) {
-                return key;
+        for (String raw : rawStatuses) {
+            if (raw == null || raw.isBlank()) {
+                continue;
+            }
+            String upper = raw.trim().toUpperCase(Locale.ROOT);
+            try {
+                statuses.add(OrderItemStatus.valueOf(upper));
+            } catch (IllegalArgumentException e) {
+                crossDomainStatuses.add(upper);
             }
         }
-
-        return OrderSortKey.defaultKey();
-    }
-
-    private List<OrderStatus> resolveStatuses(List<String> statusStrings) {
-        if (statusStrings == null || statusStrings.isEmpty()) {
-            return List.of();
-        }
-
-        return statusStrings.stream()
-                .map(s -> OrderStatus.valueOf(s.toUpperCase(Locale.ROOT)))
-                .toList();
-    }
-
-    private OrderDateField resolveDateField(String dateFieldString) {
-        if (dateFieldString == null || dateFieldString.isBlank()) {
-            return null;
-        }
-
-        for (OrderDateField field : OrderDateField.values()) {
-            if (field.name().equalsIgnoreCase(dateFieldString)) {
-                return field;
-            }
-        }
-
-        return null;
     }
 }

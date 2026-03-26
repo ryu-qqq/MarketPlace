@@ -164,10 +164,8 @@ class SalesChannelCategoryQueryApiMapperTest {
             SalesChannelCategoryApiResponse response = mapper.toResponse(result);
 
             // then
-            assertThat(response.createdAt()).contains("T");
-            assertThat(response.createdAt()).contains("+09:00");
-            assertThat(response.updatedAt()).contains("T");
-            assertThat(response.updatedAt()).contains("+09:00");
+            assertThat(response.createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
     }
 

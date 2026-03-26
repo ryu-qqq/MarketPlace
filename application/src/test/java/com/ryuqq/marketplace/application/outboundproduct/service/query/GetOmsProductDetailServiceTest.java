@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadF
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncStatusSummary;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -114,6 +115,13 @@ class GetOmsProductDetailServiceTest {
 
     private ProductGroupDetailBundle createDetailBundle() {
         return new ProductGroupDetailBundle(
-                null, null, List.of(), Optional.empty(), Optional.empty());
+                null,
+                null,
+                List.of(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 }

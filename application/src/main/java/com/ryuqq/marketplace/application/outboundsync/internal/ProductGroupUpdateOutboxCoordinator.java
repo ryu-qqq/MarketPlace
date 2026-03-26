@@ -11,7 +11,6 @@ import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,6 +68,22 @@ public class ProductGroupUpdateOutboxCoordinator {
      */
     public void createUpdateOutboxesIfNeeded(
             ProductGroupId productGroupId, Set<ChangedArea> changedAreas) {
+        ProductGroup productGroup = productGroupReadManager.getById(productGroupId);
+        createUpdateOutboxesIfNeeded(productGroup, changedAreas);
+    }
+
+    /**
+     * 이미 조회된 ProductGroup 객체와 변경 영역 정보를 사용하여 UPDATE outbox를 생성합니다.
+     *
+     * <p>상태 변경 후 재조회 시 soft delete 필터에 의해 조회 불가능한 경우를 방지합니다.
+     *
+     * @param productGroup 변경된 상품그룹
+     * @param changedAreas 변경된 영역 집합 (비어있으면 전체 수정으로 간주)
+     */
+    public void createUpdateOutboxesIfNeeded(
+            ProductGroup productGroup, Set<ChangedArea> changedAreas) {
+        ProductGroupId productGroupId = productGroup.id();
+
         List<OutboundProduct> registeredProducts =
                 outboundProductReadManager.findRegisteredByProductGroupId(productGroupId.value());
 
@@ -85,23 +100,20 @@ public class ProductGroupUpdateOutboxCoordinator {
                         .map(OutboundSyncOutbox::salesChannelIdValue)
                         .collect(Collectors.toSet());
 
-        List<SalesChannelId> channelsNeedingOutbox =
+        List<OutboundProduct> productsNeedingOutbox =
                 registeredProducts.stream()
                         .filter(p -> !channelsWithActiveOutbox.contains(p.salesChannelIdValue()))
-                        .map(OutboundProduct::salesChannelId)
                         .toList();
 
-        if (channelsNeedingOutbox.isEmpty()) {
+        if (productsNeedingOutbox.isEmpty()) {
             return;
         }
-
-        ProductGroup productGroup = productGroupReadManager.getById(productGroupId);
 
         List<OutboundSyncOutbox> outboxes =
                 outboundSyncCommandFactory.createOutboxesForSync(
                         productGroupId,
                         productGroup.sellerId(),
-                        channelsNeedingOutbox,
+                        productsNeedingOutbox,
                         SyncType.UPDATE,
                         changedAreas);
 
@@ -110,7 +122,7 @@ public class ProductGroupUpdateOutboxCoordinator {
         log.info(
                 "UPDATE Outbox 생성: productGroupId={}, count={}, skipped={}, changedAreas={}",
                 productGroupId.value(),
-                channelsNeedingOutbox.size(),
+                productsNeedingOutbox.size(),
                 channelsWithActiveOutbox.size(),
                 changedAreas);
     }

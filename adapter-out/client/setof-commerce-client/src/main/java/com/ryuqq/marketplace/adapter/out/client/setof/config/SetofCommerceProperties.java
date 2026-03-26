@@ -14,6 +14,7 @@ public class SetofCommerceProperties {
     private String baseUrl;
     private String serviceName;
     private String serviceToken;
+    private boolean enabled = false;
     private Timeout timeout = new Timeout();
 
     public String getBaseUrl() {
@@ -38,6 +39,14 @@ public class SetofCommerceProperties {
 
     public void setServiceToken(String serviceToken) {
         this.serviceToken = serviceToken;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Timeout getTimeout() {

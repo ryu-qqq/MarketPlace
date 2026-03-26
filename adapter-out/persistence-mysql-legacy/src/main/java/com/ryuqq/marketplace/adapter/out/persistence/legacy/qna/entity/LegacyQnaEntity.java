@@ -100,4 +100,8 @@ public class LegacyQnaEntity extends LegacyBaseEntity {
     public String getDeleteYn() {
         return deleteYn;
     }
+
+    public void updateQnaStatus(String qnaStatus) {
+        this.qnaStatus = qnaStatus;
+    }
 }

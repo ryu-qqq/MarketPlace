@@ -14,6 +14,7 @@ import com.ryuqq.marketplace.domain.product.vo.ProductUpdateData;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productintelligence.aggregate.IntelligenceOutbox;
 import java.time.Instant;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,9 +67,10 @@ public class FullProductGroupUpdateCoordinator {
      * <p>AI 재검수는 AI가 실제 분석하는 필드(상품명, 옵션, 상세설명, 고시정보)가 변경된 경우에만 트리거됩니다.
      *
      * @param bundle 수정 번들 (ProductGroupUpdateData + per-package Update Commands)
+     * @return 신규 추가된 Product ID 목록 (없으면 빈 리스트)
      */
     @Transactional
-    public void update(ProductGroupUpdateBundle bundle) {
+    public List<Long> update(ProductGroupUpdateBundle bundle) {
         // 1. ProductGroup 기본 정보 (검증 + 조회 + update + persist) → Coordinator
         boolean nameChanged = productGroupCommandCoordinator.update(bundle.basicInfoUpdateData());
 
@@ -97,7 +99,7 @@ public class FullProductGroupUpdateCoordinator {
                         bundle.optionGroupCommand().optionGroups(),
                         optionResult.resolvedActiveValueIds(),
                         optionResult.occurredAt());
-        productCommandCoordinator.update(pgId, updateData);
+        List<Long> addedProductIds = productCommandCoordinator.update(pgId, updateData);
 
         // 7. AI 분석 대상 필드가 변경된 경우에만 Intelligence Outbox 생성
         boolean needsReinspection =
@@ -110,5 +112,7 @@ public class FullProductGroupUpdateCoordinator {
 
         // 8. 외부 채널 UPDATE Outbox 생성
         updateOutboxCoordinator.createUpdateOutboxesIfNeeded(pgId);
+
+        return addedProductIds;
     }
 }

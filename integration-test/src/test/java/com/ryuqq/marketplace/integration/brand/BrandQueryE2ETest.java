@@ -481,16 +481,12 @@ class BrandQueryE2ETest extends E2ETestBase {
             assertThat(response.jsonPath().getString("data.content[0].createdAt")).isNotNull();
             assertThat(response.jsonPath().getString("data.content[0].updatedAt")).isNotNull();
 
-            // Step 5: 날짜 포맷 검증 (ISO-8601, UTC 'Z' 또는 오프셋 '+09:00' 모두 허용)
+            // Step 5: 날짜 포맷 검증 (yyyy-MM-dd HH:mm:ss)
             String createdAt = response.jsonPath().getString("data.content[0].createdAt");
-            assertThat(createdAt)
-                    .matches(
-                            "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})");
+            assertThat(createdAt).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
 
             String updatedAt = response.jsonPath().getString("data.content[0].updatedAt");
-            assertThat(updatedAt)
-                    .matches(
-                            "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})");
+            assertThat(updatedAt).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
 
             // Step 6: DB 일관성 검증
             Long responseId = response.jsonPath().getLong("data.content[0].id");

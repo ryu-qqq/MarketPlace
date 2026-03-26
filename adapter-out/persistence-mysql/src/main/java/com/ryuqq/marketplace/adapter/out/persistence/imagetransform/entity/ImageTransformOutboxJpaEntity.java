@@ -38,7 +38,7 @@ public class ImageTransformOutboxJpaEntity {
     @Column(name = "source_type", nullable = false, length = 30)
     private ImageSourceType sourceType;
 
-    @Column(name = "uploaded_url", nullable = false, length = 500)
+    @Column(name = "uploaded_url", nullable = false, length = 1000)
     private String uploadedUrl;
 
     @Enumerated(EnumType.STRING)

@@ -5,7 +5,6 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrdersApiRequ
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.CancelInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.ClaimInfoApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.SettlementApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.TimeLineApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.CancelSummaryApiResponse;
@@ -17,11 +16,10 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResp
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.PaymentInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ProductOrderApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ReceiverApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderSummaryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;
-import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.CancelSummary;
@@ -52,7 +50,7 @@ public final class OrderApiFixtures {
     private OrderApiFixtures() {}
 
     // ===== 상수 =====
-    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
     public static final String DEFAULT_ORDER_ID = "01900000-0000-7000-0000-000000000001";
     public static final String DEFAULT_ORDER_NUMBER = "ORD-20260101-0001";
     public static final String DEFAULT_ORDER_STATUS = "PREPARING";
@@ -87,7 +85,8 @@ public final class OrderApiFixtures {
     // ===== SearchOrdersApiRequest =====
 
     public static SearchOrdersApiRequest searchRequest() {
-        return new SearchOrdersApiRequest(null, null, null, null, null, null, null, null, 0, 20);
+        return new SearchOrdersApiRequest(
+                null, null, null, null, null, null, null, null, null, 0, 20);
     }
 
     public static SearchOrdersApiRequest searchRequest(
@@ -97,6 +96,7 @@ public final class OrderApiFixtures {
                 null,
                 null,
                 List.of(status),
+                null,
                 searchField,
                 searchWord,
                 "CREATED_AT",
@@ -112,7 +112,6 @@ public final class OrderApiFixtures {
         return new OrderInfo(
                 DEFAULT_ORDER_ID,
                 DEFAULT_ORDER_NUMBER,
-                DEFAULT_ORDER_STATUS,
                 1L,
                 10L,
                 DEFAULT_SHOP_CODE,
@@ -129,10 +128,9 @@ public final class OrderApiFixtures {
     public static ProductOrderInfo productOrderInfo() {
         return new ProductOrderInfo(
                 DEFAULT_ORDER_ITEM_ID,
+                "ORD-20250115-0001-001",
                 100L,
                 200L,
-                1L,
-                50L,
                 DEFAULT_SKU_CODE,
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_BRAND_NAME,
@@ -174,7 +172,7 @@ public final class OrderApiFixtures {
     }
 
     public static DeliveryInfo deliveryInfo() {
-        return new DeliveryInfo(DEFAULT_DELIVERY_STATUS, null, null, null);
+        return new DeliveryInfo(DEFAULT_DELIVERY_STATUS, null);
     }
 
     public static CancelSummary cancelSummaryNone() {
@@ -231,7 +229,7 @@ public final class OrderApiFixtures {
     public static OrderCancelResult cancelResult() {
         Instant now = Instant.parse("2026-01-01T00:00:00Z");
         return new OrderCancelResult(
-                3001L,
+                "3001",
                 DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_CANCEL_NUMBER,
                 "COMPLETED",
@@ -249,7 +247,7 @@ public final class OrderApiFixtures {
     public static OrderClaimResult claimResult() {
         Instant now = Instant.parse("2026-01-01T00:00:00Z");
         return new OrderClaimResult(
-                4001L,
+                "4001",
                 DEFAULT_ORDER_ITEM_ID,
                 DEFAULT_CLAIM_NUMBER,
                 "REFUND",
@@ -274,11 +272,6 @@ public final class OrderApiFixtures {
         return new OrderHistoryResult(5001L, "ORDERED", "PREPARING", "SYSTEM", "발주 확인", now);
     }
 
-    public static ProductOrderDetailResult.SettlementInfo settlementInfo() {
-        Instant now = Instant.parse("2026-01-01T00:00:00Z");
-        return new ProductOrderDetailResult.SettlementInfo(10, 5000, 45000, 0, 100, now, null);
-    }
-
     public static ProductOrderDetailResult productOrderDetailResult() {
         return new ProductOrderDetailResult(
                 orderInfo(),
@@ -288,16 +281,9 @@ public final class OrderApiFixtures {
                 deliveryInfo(),
                 cancelSummaryNone(),
                 claimSummaryNone(),
-                settlementInfo(),
                 List.of(cancelResult()),
                 List.of(claimResult()),
                 List.of(historyResult()));
-    }
-
-    // ===== Application Result Fixtures (OrderSummaryResult) =====
-
-    public static OrderSummaryResult orderSummaryResult() {
-        return new OrderSummaryResult(10, 5, 30, 15, 8, 3, 2, 4, 1);
     }
 
     // ===== API Response Fixtures =====
@@ -310,7 +296,7 @@ public final class OrderApiFixtures {
                 DEFAULT_PAYMENT_METHOD,
                 DEFAULT_PAYMENT_AGENCY_ID,
                 DEFAULT_PAYMENT_AMOUNT,
-                "2026-01-01T09:00:00+09:00",
+                "2026-01-01 09:00:00",
                 null);
     }
 
@@ -324,21 +310,20 @@ public final class OrderApiFixtures {
                 DEFAULT_SHOP_CODE,
                 DEFAULT_SHOP_NAME,
                 "EXT-ORDER-001",
-                "2026-01-01T09:00:00+09:00",
+                "2026-01-01 09:00:00",
                 DEFAULT_BUYER_NAME,
                 DEFAULT_BUYER_EMAIL,
                 DEFAULT_BUYER_PHONE,
-                "2026-01-01T09:00:00+09:00",
-                "2026-01-01T09:00:00+09:00");
+                "2026-01-01 09:00:00",
+                "2026-01-01 09:00:00");
     }
 
     public static ProductOrderApiResponse productOrderApiResponse() {
         return new ProductOrderApiResponse(
                 DEFAULT_ORDER_ITEM_ID,
+                "ORD-20260101-0001-001",
                 100L,
                 200L,
-                1L,
-                50L,
                 DEFAULT_SKU_CODE,
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_BRAND_NAME,
@@ -367,7 +352,7 @@ public final class OrderApiFixtures {
     }
 
     public static DeliveryApiResponse deliveryApiResponse() {
-        return new DeliveryApiResponse(DEFAULT_DELIVERY_STATUS, null, null, null);
+        return new DeliveryApiResponse(DEFAULT_DELIVERY_STATUS);
     }
 
     public static CancelSummaryApiResponse cancelSummaryApiResponse() {
@@ -380,11 +365,7 @@ public final class OrderApiFixtures {
 
     public static LatestCancelApiResponse latestCancelApiResponse() {
         return new LatestCancelApiResponse(
-                DEFAULT_CANCEL_ID,
-                DEFAULT_CANCEL_NUMBER,
-                "COMPLETED",
-                1,
-                "2026-01-01T09:00:00+09:00");
+                DEFAULT_CANCEL_ID, DEFAULT_CANCEL_NUMBER, "COMPLETED", 1, "2026-01-01 09:00:00");
     }
 
     public static LatestClaimApiResponse latestClaimApiResponse() {
@@ -394,7 +375,7 @@ public final class OrderApiFixtures {
                 "REFUND",
                 "IN_PROGRESS",
                 1,
-                "2026-01-01T09:00:00+09:00");
+                "2026-01-01 09:00:00");
     }
 
     public static OrderListApiResponse orderListApiResponse() {
@@ -416,9 +397,64 @@ public final class OrderApiFixtures {
         return PageApiResponse.of(orderListApiResponses(count), 0, 20, count);
     }
 
-    public static SettlementApiResponse settlementApiResponse() {
-        return new SettlementApiResponse(
-                10.0, 5000, 45000, 0, 100.0, "2026-01-31T09:00:00+09:00", null);
+    public static OrderListApiResponseV4 orderListApiResponseV4() {
+        return new OrderListApiResponseV4(
+                DEFAULT_ORDER_ITEM_ID,
+                "ORD-20260101-0001-001",
+                new OrderListApiResponseV4.BuyerInfoApiResponse(
+                        DEFAULT_BUYER_NAME, DEFAULT_BUYER_EMAIL, DEFAULT_BUYER_PHONE),
+                new OrderListApiResponseV4.PaymentDetailApiResponse(
+                        DEFAULT_PAYMENT_ID,
+                        DEFAULT_PAYMENT_NUMBER,
+                        DEFAULT_PAYMENT_AGENCY_ID,
+                        DEFAULT_PAYMENT_STATUS,
+                        DEFAULT_PAYMENT_METHOD,
+                        "2026-01-01 09:00:00",
+                        null,
+                        0L,
+                        DEFAULT_SHOP_CODE,
+                        DEFAULT_PAYMENT_AMOUNT,
+                        DEFAULT_PAYMENT_AMOUNT,
+                        0),
+                new OrderListApiResponseV4.ReceiverInfoApiResponse(
+                        DEFAULT_RECEIVER_NAME,
+                        DEFAULT_RECEIVER_PHONE,
+                        DEFAULT_RECEIVER_ADDRESS,
+                        DEFAULT_RECEIVER_ADDRESS_DETAIL,
+                        DEFAULT_RECEIVER_ZIPCODE,
+                        DEFAULT_DELIVERY_REQUEST),
+                new OrderListApiResponseV4.PaymentShipmentInfoApiResponse(
+                        DEFAULT_DELIVERY_STATUS, null, null, null),
+                new OrderListApiResponseV4.OrderProductApiResponse(
+                        DEFAULT_ORDER_ID,
+                        DEFAULT_PRODUCT_GROUP_NAME,
+                        new OrderListApiResponseV4.PriceApiResponse(50000, 50000, 50000, 0, 0, 0),
+                        new OrderListApiResponseV4.BrandApiResponse(50L, DEFAULT_BRAND_NAME),
+                        100L,
+                        200L,
+                        DEFAULT_SELLER_NAME,
+                        DEFAULT_MAIN_IMAGE_URL,
+                        "",
+                        1,
+                        "",
+                        50000,
+                        50000,
+                        0,
+                        "",
+                        DEFAULT_SKU_CODE,
+                        List.of()),
+                new OrderListApiResponseV4.ExternalOrderInfoApiResponse(
+                        10L, DEFAULT_SHOP_CODE, "EXT-ORDER-001", "", "2026-01-01 09:00:00"),
+                new OrderListApiResponseV4.CancelSummaryV4ApiResponse(false, 0, 1, null),
+                new OrderListApiResponseV4.ClaimSummaryV4ApiResponse(false, 0, 0, 1, null));
+    }
+
+    public static List<OrderListApiResponseV4> orderListApiResponsesV4(int count) {
+        return IntStream.rangeClosed(1, count).mapToObj(i -> orderListApiResponseV4()).toList();
+    }
+
+    public static PageApiResponse<OrderListApiResponseV4> pageApiResponseV4(int count) {
+        return PageApiResponse.of(orderListApiResponsesV4(count), 0, 20, count);
     }
 
     public static CancelInfoApiResponse cancelInfoApiResponse() {
@@ -433,9 +469,9 @@ public final class OrderApiFixtures {
                 50000,
                 50000,
                 "CARD",
-                "2026-01-01T09:00:00+09:00",
-                "2026-01-01T09:00:00+09:00",
-                "2026-01-01T09:00:00+09:00");
+                "2026-01-01 09:00:00",
+                "2026-01-01 09:00:00",
+                "2026-01-01 09:00:00");
     }
 
     public static ClaimInfoApiResponse claimInfoApiResponse() {
@@ -455,14 +491,14 @@ public final class OrderApiFixtures {
                 50000,
                 "CARD",
                 null,
-                "2026-01-01T09:00:00+09:00",
+                "2026-01-01 09:00:00",
                 null,
                 null);
     }
 
     public static TimeLineApiResponse timeLineApiResponse() {
         return new TimeLineApiResponse(
-                5001L, "ORDERED", "PREPARING", "SYSTEM", "발주 확인", "2026-01-01T09:00:00+09:00");
+                5001L, "ORDERED", "PREPARING", "SYSTEM", "발주 확인", "2026-01-01 09:00:00");
     }
 
     public static OrderDetailApiResponse orderDetailApiResponse() {
@@ -474,13 +510,8 @@ public final class OrderApiFixtures {
                 deliveryApiResponse(),
                 cancelSummaryApiResponse(),
                 claimSummaryApiResponse(),
-                settlementApiResponse(),
                 List.of(cancelInfoApiResponse()),
                 List.of(claimInfoApiResponse()),
                 List.of(timeLineApiResponse()));
-    }
-
-    public static OrderSummaryApiResponse orderSummaryApiResponse() {
-        return new OrderSummaryApiResponse(10, 5, 30, 15, 8, 3, 2, 4, 1);
     }
 }

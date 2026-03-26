@@ -72,7 +72,8 @@ public class OmsProductQueryApiMapper {
                         request.page() != null ? request.page() : 0,
                         request.size() != null ? request.size() : 10);
 
-        return new SyncHistorySearchParams(productGroupId, request.status(), commonParams);
+        return new SyncHistorySearchParams(
+                productGroupId, request.shopId(), request.status(), commonParams);
     }
 
     public PageApiResponse<OmsProductApiResponse> toProductPageResponse(
@@ -208,7 +209,9 @@ public class OmsProductQueryApiMapper {
                 DateTimeFormatUtils.formatIso8601(r.createdAt()),
                 r.syncStatus(),
                 r.syncStatusLabel(),
-                DateTimeFormatUtils.formatIso8601(r.lastSyncAt()));
+                DateTimeFormatUtils.formatIso8601(r.lastSyncAt()),
+                r.shopId(),
+                r.shopName());
     }
 
     private SyncHistoryApiResponse toSyncHistoryResponse(SyncHistoryListResult r) {

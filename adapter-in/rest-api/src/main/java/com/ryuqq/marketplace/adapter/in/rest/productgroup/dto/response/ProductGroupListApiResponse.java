@@ -42,6 +42,5 @@ public record ProductGroupListApiResponse(
         @Schema(description = "최고가", example = "129000") int maxPrice,
         @Schema(description = "최대 할인율", example = "15") int maxDiscountRate,
         @Schema(description = "옵션 그룹 요약") List<OptionGroupSummaryApiResponse> optionGroups,
-        @Schema(description = "생성일시 (ISO 8601)", example = "2026-01-15T10:30:00Z") String createdAt,
-        @Schema(description = "수정일시 (ISO 8601)", example = "2026-01-20T14:00:00Z")
-                String updatedAt) {}
+        @Schema(description = "생성일시 (KST)", example = "2026-01-15T10:30:00Z") String createdAt,
+        @Schema(description = "수정일시 (KST)", example = "2026-01-20T14:00:00Z") String updatedAt) {}

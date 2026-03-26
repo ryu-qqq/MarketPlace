@@ -79,6 +79,7 @@ class OmsSyncHistoryCompositionReadManagerTest {
             SyncHistorySearchCriteria criteria =
                     new SyncHistorySearchCriteria(
                             100L,
+                            null,
                             com.ryuqq.marketplace.domain.outboundsync.vo.SyncStatus.FAILED,
                             QueryContext.defaultOf(SyncHistorySortKey.defaultKey()));
             List<SyncHistoryListResult> expected =
@@ -170,6 +171,9 @@ class OmsSyncHistoryCompositionReadManagerTest {
 
     private SyncHistorySearchCriteria createDefaultCriteria(long productGroupId) {
         return new SyncHistorySearchCriteria(
-                productGroupId, null, QueryContext.defaultOf(SyncHistorySortKey.defaultKey()));
+                productGroupId,
+                null,
+                null,
+                QueryContext.defaultOf(SyncHistorySortKey.defaultKey()));
     }
 }

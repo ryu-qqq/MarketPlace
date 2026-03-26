@@ -6,6 +6,7 @@ import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecuti
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
 import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
@@ -18,10 +19,11 @@ import org.springframework.stereotype.Component;
 /**
  * 세토프 커머스 상품 수정(UPDATE) 전략.
  *
- * <p>OutboundProduct에서 externalProductId 조회 → 최신 상품 데이터 조회 → 매핑 역조회 → PUT API 호출.
+ * <p>OutboundProduct에서 externalProductId 조회 → 최신 상품 데이터 조회 → PUT API 호출. 기존 세토프 상품의 옵션명 기반
+ * productId 매칭은 어댑터 레이어에서 처리합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 public class SetofUpdateProductStrategy implements OutboundSyncExecutionStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(SetofUpdateProductStrategy.class);
@@ -71,11 +73,13 @@ public class SetofUpdateProductStrategy implements OutboundSyncExecutionStrategy
                             bundle.queryResult().categoryId(),
                             bundle.queryResult().brandId());
 
+            ProductGroupSyncData syncData = ProductGroupSyncData.from(bundle);
+
             productClientManager.updateProduct(
                     SETOF_CHANNEL_CODE,
-                    bundle,
-                    mapping.categoryId(),
-                    mapping.brandId(),
+                    syncData,
+                    Long.parseLong(mapping.externalCategoryCode()),
+                    Long.parseLong(mapping.externalBrandCode()),
                     outboundProduct.externalProductId(),
                     context.sellerSalesChannel(),
                     context.changedAreas());

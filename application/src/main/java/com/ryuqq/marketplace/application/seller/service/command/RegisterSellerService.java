@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.seller.service.command;
 
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerRegistrationBundle;
 import com.ryuqq.marketplace.application.seller.dto.command.RegisterSellerCommand;
 import com.ryuqq.marketplace.application.seller.factory.SellerCommandFactory;
+import com.ryuqq.marketplace.application.seller.internal.SellerRegistrationBundle;
 import com.ryuqq.marketplace.application.seller.internal.SellerRegistrationCoordinator;
 import com.ryuqq.marketplace.application.seller.port.in.command.RegisterSellerUseCase;
 import org.springframework.stereotype.Service;

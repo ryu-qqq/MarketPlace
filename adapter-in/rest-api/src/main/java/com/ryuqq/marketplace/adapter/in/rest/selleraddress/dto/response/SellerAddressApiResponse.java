@@ -11,10 +11,8 @@ public record SellerAddressApiResponse(
         @Schema(description = "주소명", example = "본사 창고") String addressName,
         @Schema(description = "주소 정보") AddressResponse address,
         @Schema(description = "기본 주소 여부", example = "true") boolean defaultAddress,
-        @Schema(description = "생성일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                String createdAt,
-        @Schema(description = "수정일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                String updatedAt) {
+        @Schema(description = "생성일시 (KST)", example = "2025-01-23 10:30:00") String createdAt,
+        @Schema(description = "수정일시 (KST)", example = "2025-01-23 10:30:00") String updatedAt) {
 
     /** 주소 응답. */
     @Schema(description = "주소 정보")

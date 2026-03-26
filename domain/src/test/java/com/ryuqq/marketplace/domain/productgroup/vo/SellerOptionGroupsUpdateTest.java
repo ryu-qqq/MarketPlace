@@ -591,6 +591,73 @@ class SellerOptionGroupsUpdateTest {
     }
 
     @Nested
+    @DisplayName("유지된 그룹의 inputType이 변경되는 경우")
+    class InputTypeChangeTest {
+
+        @Test
+        @DisplayName("PREDEFINED에서 FREE_INPUT으로 inputType이 변경된다")
+        void retainedGroup_inputTypeChangesFromPredefinedToFreeInput() {
+            // given
+            SellerOptionValue val1 = existingValue(101L, 10L, "검정", 0);
+            SellerOptionGroup colorGroup = existingGroup(10L, "색상", 0, List.of(val1));
+            assertThat(colorGroup.inputType()).isEqualTo(OptionInputType.PREDEFINED);
+
+            List<SellerOptionGroupUpdateData.GroupEntry> entries =
+                    List.of(
+                            new SellerOptionGroupUpdateData.GroupEntry(
+                                    10L,
+                                    "색상",
+                                    null,
+                                    OptionInputType.FREE_INPUT,
+                                    0,
+                                    List.of(retainedValueEntry(101L, "검정", 0))));
+
+            // when
+            SellerOptionGroupDiff diff = executeUpdate(List.of(colorGroup), entries);
+
+            // then
+            assertThat(diff.retainedGroups()).hasSize(1);
+            SellerOptionGroup retained = diff.retainedGroups().get(0).group();
+            assertThat(retained.inputType()).isEqualTo(OptionInputType.FREE_INPUT);
+        }
+
+        @Test
+        @DisplayName("FREE_INPUT에서 PREDEFINED로 inputType이 변경된다")
+        void retainedGroup_inputTypeChangesFromFreeInputToPredefined() {
+            // given
+            SellerOptionValue val1 = existingValue(101L, 10L, "각인입력", 0);
+            SellerOptionGroup freeInputGroup =
+                    SellerOptionGroup.reconstitute(
+                            SellerOptionGroupId.of(10L),
+                            PRODUCT_GROUP_ID,
+                            OptionGroupName.of("각인"),
+                            null,
+                            OptionInputType.FREE_INPUT,
+                            0,
+                            List.of(val1),
+                            com.ryuqq.marketplace.domain.common.vo.DeletionStatus.active());
+            assertThat(freeInputGroup.inputType()).isEqualTo(OptionInputType.FREE_INPUT);
+
+            List<SellerOptionGroupUpdateData.GroupEntry> entries =
+                    List.of(
+                            new SellerOptionGroupUpdateData.GroupEntry(
+                                    10L,
+                                    "각인",
+                                    null,
+                                    OptionInputType.PREDEFINED,
+                                    0,
+                                    List.of(retainedValueEntry(101L, "각인입력", 0))));
+
+            // when
+            SellerOptionGroupDiff diff = executeUpdate(List.of(freeInputGroup), entries);
+
+            // then
+            SellerOptionGroup retained = diff.retainedGroups().get(0).group();
+            assertThat(retained.inputType()).isEqualTo(OptionInputType.PREDEFINED);
+        }
+    }
+
+    @Nested
     @DisplayName("경계 조건 테스트")
     class EdgeCaseTest {
 

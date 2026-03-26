@@ -1,0 +1,23 @@
+CREATE TABLE settlement_entries (
+    id                   VARCHAR(36)  NOT NULL COMMENT '정산 원장 ID (UUIDv7)',
+    seller_id            BIGINT       NOT NULL,
+    entry_type           VARCHAR(20)  NOT NULL COMMENT 'SALES|CANCEL|REFUND|EXCHANGE_OUT|EXCHANGE_IN|ADJUSTMENT',
+    entry_status         VARCHAR(20)  NOT NULL DEFAULT 'PENDING',
+    sales_amount         INT          NOT NULL DEFAULT 0,
+    commission_rate      INT          NOT NULL DEFAULT 0 COMMENT 'basis point (1% = 100)',
+    commission_amount    INT          NOT NULL DEFAULT 0,
+    settlement_amount    INT          NOT NULL DEFAULT 0,
+    order_item_id        VARCHAR(36)  NOT NULL,
+    claim_id             VARCHAR(36)  NULL,
+    claim_type           VARCHAR(20)  NULL,
+    reversal_of_entry_id VARCHAR(36)  NULL,
+    settlement_id        VARCHAR(36)  NULL,
+    eligible_at          TIMESTAMP    NULL     COMMENT '확정 가능 시점',
+    created_at           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    INDEX idx_entry_seller_status (seller_id, entry_status),
+    INDEX idx_entry_order_item (order_item_id),
+    INDEX idx_entry_settlement (settlement_id),
+    INDEX idx_entry_eligible (entry_status, eligible_at)
+);

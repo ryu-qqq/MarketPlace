@@ -67,6 +67,10 @@ data "aws_ssm_parameter" "legacy_db_password" {
   name = "/${var.project_name}/stage/legacy-db-password"
 }
 
+data "aws_ssm_parameter" "sellic_api_key" {
+  name = "/${var.project_name}/sellic/api-key"
+}
+
 # VPC data source for internal communication
 data "aws_vpc" "main" {
   id = local.vpc_id
@@ -458,7 +462,10 @@ module "ecs_service" {
     # Sentry
     { name = "SENTRY_DSN", value = local.sentry_dsn },
     # Setof Commerce
-    { name = "SETOF_COMMERCE_BASE_URL", value = "http://setof-commerce-web-api-admin-stage.connectly.local:8080" },
+    { name = "SETOF_COMMERCE_BASE_URL", value = "http://setof-commerce-web-api-admin-stage.connectly.local:8081" },
+    # Sellic Commerce
+    { name = "SELLIC_COMMERCE_BASE_URL", value = "http://api.sellic.co.kr" },
+    { name = "SELLIC_COMMERCE_CUSTOMER_ID", value = "1012" },
     # Legacy DB (same host, different schema)
     { name = "LEGACY_DB_NAME", value = "luxurydb" },
     { name = "LEGACY_DB_USERNAME", value = "admin" }
@@ -470,11 +477,12 @@ module "ecs_service" {
     { name = "SECURITY_SERVICE_TOKEN_SECRET", valueFrom = data.aws_ssm_parameter.service_token_secret.arn },
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
-    { name = "SETOF_COMMERCE_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
+    { name = "SETOF_COMMERCE_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
     { name = "AWS_ACCESS_KEY_ID", valueFrom = data.aws_ssm_parameter.ses_access_key_id.arn },
     { name = "AWS_SECRET_ACCESS_KEY", valueFrom = data.aws_ssm_parameter.ses_secret_access_key.arn },
     { name = "NAVER_COMMERCE_CLIENT_SECRET", valueFrom = data.aws_ssm_parameter.naver_commerce_client_secret.arn },
-    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
+    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn },
+    { name = "SELLIC_COMMERCE_API_KEY", valueFrom = data.aws_ssm_parameter.sellic_api_key.arn }
   ]
 
   # Health Check

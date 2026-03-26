@@ -104,9 +104,10 @@ public class ProductCommandCoordinator {
      *
      * @param pgId 상품 그룹 ID
      * @param updateData resolve 완료된 수정 데이터
+     * @return 신규 추가된 Product ID 목록 (없으면 빈 리스트)
      */
     @Transactional
-    public void update(ProductGroupId pgId, ProductUpdateData updateData) {
+    public List<Long> update(ProductGroupId pgId, ProductUpdateData updateData) {
         Products existing =
                 Products.reconstitute(pgId, productReadManager.findByProductGroupId(pgId));
         ProductDiff diff = existing.update(updateData);
@@ -114,6 +115,6 @@ public class ProductCommandCoordinator {
         for (Product removed : diff.removed()) {
             optionMappingCommandManager.persistAll(removed.optionMappings());
         }
-        register(diff.added());
+        return register(diff.added());
     }
 }

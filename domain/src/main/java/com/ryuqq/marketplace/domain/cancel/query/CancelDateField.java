@@ -21,4 +21,11 @@ public enum CancelDateField implements DateField {
     public static CancelDateField defaultField() {
         return REQUESTED;
     }
+
+    public static CancelDateField fromString(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return valueOf(value);
+    }
 }

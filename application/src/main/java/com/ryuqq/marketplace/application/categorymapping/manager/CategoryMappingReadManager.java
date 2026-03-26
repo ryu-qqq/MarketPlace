@@ -32,4 +32,22 @@ public class CategoryMappingReadManager {
                                 new CategoryMappingNotFoundException(
                                         salesChannelId, internalCategoryId));
     }
+
+    /**
+     * 외부 카테고리 코드 필수 조회.
+     *
+     * @param salesChannelId 판매채널 ID
+     * @param internalCategoryId 내부 카테고리 ID
+     * @return 외부 카테고리 코드
+     * @throws CategoryMappingNotFoundException 매핑 미존재
+     */
+    @Transactional(readOnly = true)
+    public String getExternalCategoryCode(Long salesChannelId, Long internalCategoryId) {
+        return queryPort
+                .findExternalCategoryCode(salesChannelId, internalCategoryId)
+                .orElseThrow(
+                        () ->
+                                new CategoryMappingNotFoundException(
+                                        salesChannelId, internalCategoryId));
+    }
 }

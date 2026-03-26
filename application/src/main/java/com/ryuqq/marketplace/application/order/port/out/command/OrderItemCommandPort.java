@@ -6,5 +6,5 @@ import java.util.List;
 /** 주문상품 Command Port. */
 public interface OrderItemCommandPort {
 
-    void updateStatusAll(List<OrderItem> orderItems);
+    void persistAll(List<OrderItem> orderItems);
 }

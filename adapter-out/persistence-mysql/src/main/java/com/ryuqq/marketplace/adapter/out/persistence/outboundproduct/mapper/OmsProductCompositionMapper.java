@@ -25,17 +25,17 @@ public class OmsProductCompositionMapper {
     /**
      * composite + enrichment 데이터를 OmsProductListResult 목록으로 변환.
      *
-     * @param composites base composite 목록
+     * @param composites base composite 목록 (outbound_product 기준, shop 정보 포함)
      * @param imageMap 상품그룹별 대표 이미지 URL
      * @param priceStockMap 상품그룹별 가격/재고
-     * @param syncInfoMap 상품그룹별 연동상태
+     * @param syncInfoMap (productGroupId_shopId) 기준 연동상태
      * @return OmsProductListResult 목록
      */
     public List<OmsProductListResult> toResults(
             List<OmsProductListCompositeDto> composites,
             Map<Long, OmsProductMainImageDto> imageMap,
             Map<Long, OmsProductPriceStockDto> priceStockMap,
-            Map<Long, OmsProductSyncInfoDto> syncInfoMap) {
+            Map<String, OmsProductSyncInfoDto> syncInfoMap) {
 
         return composites.stream()
                 .map(
@@ -45,7 +45,10 @@ public class OmsProductCompositionMapper {
                             OmsProductPriceStockDto ps =
                                     priceStockMap.getOrDefault(
                                             c.productGroupId(), EMPTY_PRICE_STOCK);
-                            OmsProductSyncInfoDto si = syncInfoMap.get(c.productGroupId());
+
+                            String syncKey =
+                                    OmsProductSyncInfoDto.key(c.productGroupId(), c.shopId());
+                            OmsProductSyncInfoDto si = syncInfoMap.get(syncKey);
 
                             String statusLabel = resolveStatusLabel(c.status());
 
@@ -63,9 +66,12 @@ public class OmsProductCompositionMapper {
                                 lastSyncAt = null;
                             }
 
+                            String productCode =
+                                    c.externalProductId() != null ? c.externalProductId() : "";
+
                             return new OmsProductListResult(
                                     c.productGroupId(),
-                                    "PG-" + c.productGroupId(),
+                                    productCode,
                                     c.productGroupName(),
                                     imageUrl,
                                     ps.price(),
@@ -76,7 +82,9 @@ public class OmsProductCompositionMapper {
                                     c.createdAt(),
                                     syncStatus,
                                     syncStatusLabel,
-                                    lastSyncAt);
+                                    lastSyncAt,
+                                    c.shopId(),
+                                    c.shopName());
                         })
                 .toList();
     }

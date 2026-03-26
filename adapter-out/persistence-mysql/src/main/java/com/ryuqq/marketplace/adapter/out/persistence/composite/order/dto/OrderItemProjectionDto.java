@@ -1,15 +1,13 @@
 package com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto;
 
-import java.time.Instant;
-
 /** 주문 상품 프로젝션 (order_items 전체 필드). */
 public record OrderItemProjectionDto(
-        Long orderItemId,
+        String orderItemId,
         String orderId,
         long productGroupId,
+        Long sellerId,
+        Long brandId,
         long productId,
-        long sellerId,
-        long brandId,
         String skuCode,
         String productGroupName,
         String brandName,
@@ -31,14 +29,5 @@ public record OrderItemProjectionDto(
         String receiverAddress,
         String receiverAddressDetail,
         String deliveryRequest,
-        String deliveryStatus,
-        String shipmentCompanyCode,
-        String invoice,
-        Instant shipmentCompletedDate,
-        int commissionRate,
-        int fee,
-        int expectationSettlementAmount,
-        int settlementAmount,
-        int shareRatio,
-        Instant expectedSettlementDay,
-        Instant settlementDay) {}
+        String orderItemStatus,
+        String externalOrderStatus) {}

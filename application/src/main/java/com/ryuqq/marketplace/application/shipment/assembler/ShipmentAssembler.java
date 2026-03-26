@@ -6,7 +6,6 @@ import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult.PaymentInfo;
-import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentDetailResult.SettlementInfo;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.OrderInfo;
 import com.ryuqq.marketplace.application.shipment.dto.response.ShipmentListResult.ProductOrderInfo;
@@ -48,6 +47,18 @@ public class ShipmentAssembler {
                 toReceiverInfo(item));
     }
 
+    /** Shipment nullable — 아직 배송 생성 전인 주문. */
+    public ShipmentListResult toListResult(
+            Shipment shipment, OrderItemResult item, OrderListResult order, boolean nullable) {
+        ShipmentInfo shipInfo = shipment != null ? toShipmentInfo(shipment) : emptyShipmentInfo();
+        return new ShipmentListResult(
+                shipInfo, toOrderInfo(order), toProductOrderInfo(item), toReceiverInfo(item));
+    }
+
+    private ShipmentInfo emptyShipmentInfo() {
+        return new ShipmentInfo(null, null, "READY", null, null, null, null, null, null, null);
+    }
+
     /**
      * Shipment + ProductOrderDetailData → ShipmentDetailResult 변환.
      *
@@ -62,8 +73,7 @@ public class ShipmentAssembler {
                 toOrderInfo(detailData.order()),
                 toProductOrderInfo(detailData.item()),
                 toReceiverInfo(detailData.item()),
-                toPaymentInfo(detailData.payment()),
-                toSettlementInfo(detailData.item()));
+                toPaymentInfo(detailData.payment()));
     }
 
     /**
@@ -117,7 +127,7 @@ public class ShipmentAssembler {
         return new OrderInfo(
                 order.orderId(),
                 order.orderNumber(),
-                order.status(),
+                null,
                 order.salesChannelId(),
                 order.shopId(),
                 order.shopCode(),
@@ -134,10 +144,9 @@ public class ShipmentAssembler {
     private ProductOrderInfo toProductOrderInfo(OrderItemResult item) {
         return new ProductOrderInfo(
                 item.orderItemId(),
+                item.orderItemNumber(),
                 item.productGroupId(),
                 item.productId(),
-                item.sellerId(),
-                item.brandId(),
                 item.skuCode(),
                 item.productGroupName(),
                 item.brandName(),
@@ -178,16 +187,5 @@ public class ShipmentAssembler {
                 payment.paymentAmount(),
                 payment.paidAt(),
                 payment.canceledAt());
-    }
-
-    private SettlementInfo toSettlementInfo(OrderItemResult item) {
-        return new SettlementInfo(
-                item.commissionRate(),
-                item.fee(),
-                item.expectationSettlementAmount(),
-                item.settlementAmount(),
-                item.shareRatio(),
-                item.expectedSettlementDay(),
-                item.settlementDay());
     }
 }

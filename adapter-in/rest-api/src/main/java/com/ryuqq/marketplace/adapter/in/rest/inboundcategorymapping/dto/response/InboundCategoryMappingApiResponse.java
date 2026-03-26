@@ -11,7 +11,5 @@ public record InboundCategoryMappingApiResponse(
         @Schema(description = "외부 카테고리명", example = "남성의류") String externalCategoryName,
         @Schema(description = "내부 카테고리 ID", example = "1") Long internalCategoryId,
         @Schema(description = "상태 (ACTIVE, INACTIVE)", example = "ACTIVE") String status,
-        @Schema(description = "생성일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                String createdAt,
-        @Schema(description = "수정일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                String updatedAt) {}
+        @Schema(description = "생성일시 (KST)", example = "2025-01-23 10:30:00") String createdAt,
+        @Schema(description = "수정일시 (KST)", example = "2025-01-23 10:30:00") String updatedAt) {}

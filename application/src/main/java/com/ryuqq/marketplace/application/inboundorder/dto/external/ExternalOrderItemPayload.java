@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.inboundorder.dto.external;
 /**
  * 외부몰 주문 아이템 데이터.
  *
+ * @param externalProductOrderId 외부 상품주문 ID (예: 네이버 productOrderId)
  * @param externalProductId 외부 상품 ID
  * @param externalOptionId 외부 옵션 ID
  * @param externalProductName 외부 상품명
@@ -12,6 +13,7 @@ package com.ryuqq.marketplace.application.inboundorder.dto.external;
  * @param quantity 수량
  * @param totalAmount 합계 금액
  * @param discountAmount 할인 금액
+ * @param sellerBurdenDiscountAmount 판매자 부담 할인액
  * @param paymentAmount 실결제 금액
  * @param receiverName 수령인명
  * @param receiverPhone 수령인 전화번호
@@ -19,12 +21,14 @@ package com.ryuqq.marketplace.application.inboundorder.dto.external;
  * @param receiverAddress 주소
  * @param receiverAddressDetail 상세주소
  * @param deliveryRequest 배송 요청사항
+ * @param externalOrderStatus 외부몰 주문 상태 (예: PAYED, DELIVERING)
  */
 @SuppressWarnings("PMD.MethodNamingConventions")
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
         value = "NM_CONFUSING",
         justification = "receiverZipCode follows domain convention")
 public record ExternalOrderItemPayload(
+        String externalProductOrderId,
         String externalProductId,
         String externalOptionId,
         String externalProductName,
@@ -34,10 +38,12 @@ public record ExternalOrderItemPayload(
         int quantity,
         int totalAmount,
         int discountAmount,
+        int sellerBurdenDiscountAmount,
         int paymentAmount,
         String receiverName,
         String receiverPhone,
         String receiverZipCode,
         String receiverAddress,
         String receiverAddressDetail,
-        String deliveryRequest) {}
+        String deliveryRequest,
+        String externalOrderStatus) {}

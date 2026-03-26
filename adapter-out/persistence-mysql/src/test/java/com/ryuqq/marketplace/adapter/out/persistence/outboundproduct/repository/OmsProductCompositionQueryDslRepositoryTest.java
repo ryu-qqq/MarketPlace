@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.condition.O
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.entity.OutboundProductJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.productgroup.entity.ProductGroupJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.seller.entity.SellerJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.shop.entity.ShopJpaEntity;
 import com.ryuqq.marketplace.domain.common.vo.PageRequest;
 import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import com.ryuqq.marketplace.domain.common.vo.SortDirection;
@@ -55,6 +56,7 @@ class OmsProductCompositionQueryDslRepositoryTest {
     private SellerJpaEntity seller;
     private SellerJpaEntity seller2;
     private BrandJpaEntity brand;
+    private ShopJpaEntity shop;
     private ProductGroupJpaEntity activeProductGroup;
     private ProductGroupJpaEntity inactiveProductGroup;
     private ProductGroupJpaEntity deletedProductGroup;
@@ -71,6 +73,9 @@ class OmsProductCompositionQueryDslRepositoryTest {
         seller = persist(createSeller(null, "테스트셀러", now));
         seller2 = persist(createSeller(null, "다른셀러", now));
         brand = persist(createBrand(null, "테스트브랜드", now));
+
+        // outbound_products와 JOIN되는 Shop 엔티티 생성
+        shop = persist(createShop(now));
 
         activeProductGroup =
                 persist(
@@ -90,9 +95,9 @@ class OmsProductCompositionQueryDslRepositoryTest {
                                 null, seller.getId(), brand.getId(), "아웃바운드없음", "ACTIVE", now));
 
         // activeProductGroup, inactiveProductGroup, deletedProductGroup에는 OutboundProduct 생성
-        persist(createOutboundProduct(null, activeProductGroup.getId(), 1L, now));
-        persist(createOutboundProduct(null, inactiveProductGroup.getId(), 1L, now));
-        persist(createOutboundProduct(null, deletedProductGroup.getId(), 1L, now));
+        persist(createOutboundProduct(null, activeProductGroup.getId(), 1L, shop.getId(), now));
+        persist(createOutboundProduct(null, inactiveProductGroup.getId(), 1L, shop.getId(), now));
+        persist(createOutboundProduct(null, deletedProductGroup.getId(), 1L, shop.getId(), now));
         // noOutboundProductGroup은 OutboundProduct 없음
     }
 
@@ -120,9 +125,26 @@ class OmsProductCompositionQueryDslRepositoryTest {
     }
 
     private OutboundProductJpaEntity createOutboundProduct(
-            Long id, Long productGroupId, Long salesChannelId, Instant now) {
+            Long id, Long productGroupId, Long salesChannelId, Long shopId, Instant now) {
         return OutboundProductJpaEntity.create(
-                id, productGroupId, salesChannelId, null, "PENDING_REGISTRATION", now, now);
+                id, productGroupId, salesChannelId, shopId, null, "PENDING_REGISTRATION", now, now);
+    }
+
+    private ShopJpaEntity createShop(Instant now) {
+        return ShopJpaEntity.create(
+                null,
+                1L,
+                "테스트샵",
+                "test-account",
+                "ACTIVE",
+                "TEST",
+                null,
+                null,
+                null,
+                null,
+                now,
+                now,
+                null);
     }
 
     private QueryContext<OmsProductSortKey> defaultQueryContext() {
@@ -204,7 +226,9 @@ class OmsProductCompositionQueryDslRepositoryTest {
                     persist(
                             createProductGroup(
                                     null, seller2.getId(), brand.getId(), "셀러2상품", "ACTIVE", now));
-            persist(createOutboundProduct(null, seller2ProductGroup.getId(), 1L, now));
+            persist(
+                    createOutboundProduct(
+                            null, seller2ProductGroup.getId(), 1L, shop.getId(), now));
 
             OmsProductSearchCriteria criteria =
                     new OmsProductSearchCriteria(

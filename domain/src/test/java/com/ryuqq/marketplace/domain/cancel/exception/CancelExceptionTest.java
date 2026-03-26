@@ -68,15 +68,6 @@ class CancelExceptionTest {
             assertThat(code.getHttpStatus()).isEqualTo(400);
             assertThat(code.getMessage()).contains("취소할 수 없는");
         }
-
-        @Test
-        @DisplayName("EMPTY_CANCEL_ITEMS 에러 코드가 올바르다")
-        void emptyCancelItems() {
-            CancelErrorCode code = CancelErrorCode.EMPTY_CANCEL_ITEMS;
-            assertThat(code.getCode()).isEqualTo("CAN-007");
-            assertThat(code.getHttpStatus()).isEqualTo(400);
-            assertThat(code.getMessage()).contains("최소 1개");
-        }
     }
 
     @Nested

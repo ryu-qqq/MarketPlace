@@ -1,0 +1,17 @@
+# ============================================================
+# Sellic Commerce API 설정
+# ============================================================
+# 환경변수로 제어:
+#   - SELLIC_COMMERCE_BASE_URL: 셀릭 커머스 API 베이스 URL (필수)
+#   - SELLIC_COMMERCE_CUSTOMER_ID: 셀릭 고객사 ID (필수)
+#   - SELLIC_COMMERCE_API_KEY: 셀릭 API Key (필수)
+# ============================================================
+
+sellic-commerce:
+  enabled: false
+  base-url: ${SELLIC_COMMERCE_BASE_URL:http://api.sellic.co.kr}
+  customer-id: ${SELLIC_COMMERCE_CUSTOMER_ID:}
+  api-key: ${SELLIC_COMMERCE_API_KEY:}
+  timeout:
+    connect: 5s
+    read: 30s

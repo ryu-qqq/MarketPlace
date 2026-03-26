@@ -5,6 +5,9 @@ import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
 import com.ryuqq.marketplace.application.order.dto.command.CreateOrderCommand;
 import com.ryuqq.marketplace.application.order.dto.command.CreateOrderItemCommand;
+import com.ryuqq.marketplace.application.order.dto.command.OrderItemCancelCommand;
+import com.ryuqq.marketplace.application.order.dto.command.OrderItemStatusCommand;
+import com.ryuqq.marketplace.application.order.dto.command.StartClaimCommand;
 import com.ryuqq.marketplace.domain.common.vo.Address;
 import com.ryuqq.marketplace.domain.common.vo.Email;
 import com.ryuqq.marketplace.domain.common.vo.Money;
@@ -12,6 +15,8 @@ import com.ryuqq.marketplace.domain.common.vo.PhoneNumber;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemNumber;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
 import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
@@ -55,10 +60,15 @@ public class OrderCommandFactory {
         OrderId orderId = OrderId.of(idGeneratorPort.generate());
         OrderNumber orderNumber = OrderNumber.generate();
 
+        Email buyerEmail =
+                command.buyerEmail() != null && !command.buyerEmail().isBlank()
+                        ? Email.of(command.buyerEmail())
+                        : null;
+
         BuyerInfo buyerInfo =
                 BuyerInfo.of(
                         BuyerName.of(command.buyerName()),
-                        Email.of(command.buyerEmail()),
+                        buyerEmail,
                         PhoneNumber.of(command.buyerPhone()));
 
         PaymentNumber paymentNumber = PaymentNumber.generate();
@@ -78,55 +88,41 @@ public class OrderCommandFactory {
                         command.externalOrderNo(),
                         command.externalOrderedAt());
 
-        List<OrderItem> items = command.items().stream().map(this::createOrderItem).toList();
+        List<OrderItem> items = new java.util.ArrayList<>();
+        for (int i = 0; i < command.items().size(); i++) {
+            items.add(createOrderItem(command.items().get(i), orderNumber, i + 1));
+        }
 
         return Order.forNew(
-                orderId,
-                orderNumber,
-                buyerInfo,
-                paymentInfo,
-                externalOrderRef,
-                items,
-                command.changedBy(),
-                now);
+                orderId, orderNumber, buyerInfo, paymentInfo, externalOrderRef, items, now);
     }
 
-    /**
-     * 단순 상태 전이 컨텍스트 생성.
-     *
-     * @param orderId 주문 ID 문자열
-     * @return StatusChangeContext
-     */
-    public StatusChangeContext<OrderId> createStatusContext(String orderId) {
-        return new StatusChangeContext<>(OrderId.of(orderId), timeProvider.now());
+    /** 취소 Command → StatusChangeContext 생성. */
+    public StatusChangeContext<List<OrderItemId>> createCancelContext(
+            OrderItemCancelCommand command) {
+        return new StatusChangeContext<>(
+                toOrderItemIds(command.orderItemIds()), timeProvider.now());
     }
 
-    /**
-     * 사유 포함 상태 전이 컨텍스트 생성.
-     *
-     * @param orderId 주문 ID 문자열
-     * @param reason 변경 사유
-     * @param changedBy 변경자
-     * @return OrderStatusChangeWithReasonContext
-     */
-    public OrderStatusChangeWithReasonContext createStatusContextWithReason(
-            String orderId, String reason, String changedBy) {
-        return new OrderStatusChangeWithReasonContext(
-                OrderId.of(orderId), reason, changedBy, timeProvider.now());
+    /** 상태 변경 Command → StatusChangeContext 생성. (확정/발주/출고/배송완료/교환완료/환불완료) */
+    public StatusChangeContext<List<OrderItemId>> createStatusChangeContext(
+            OrderItemStatusCommand command) {
+        return new StatusChangeContext<>(
+                toOrderItemIds(command.orderItemIds()), timeProvider.now());
     }
 
-    /**
-     * 사유 포함 상태 변경 컨텍스트.
-     *
-     * @param orderId 주문 ID
-     * @param reason 변경 사유
-     * @param changedBy 변경자
-     * @param changedAt 변경 시간
-     */
-    public record OrderStatusChangeWithReasonContext(
-            OrderId orderId, String reason, String changedBy, Instant changedAt) {}
+    /** 클레임 시작 Command → StatusChangeContext 생성. */
+    public StatusChangeContext<List<OrderItemId>> createClaimContext(StartClaimCommand command) {
+        return new StatusChangeContext<>(
+                toOrderItemIds(command.orderItemIds()), timeProvider.now());
+    }
 
-    private OrderItem createOrderItem(CreateOrderItemCommand cmd) {
+    private List<OrderItemId> toOrderItemIds(List<String> ids) {
+        return ids.stream().map(OrderItemId::of).toList();
+    }
+
+    private OrderItem createOrderItem(
+            CreateOrderItemCommand cmd, OrderNumber orderNumber, int sequence) {
         InternalProductReference internalProduct =
                 InternalProductReference.of(
                         cmd.productGroupId(),
@@ -153,6 +149,7 @@ public class OrderCommandFactory {
                         cmd.quantity(),
                         Money.of(cmd.totalAmount()),
                         Money.of(cmd.discountAmount()),
+                        Money.of(cmd.sellerBurdenDiscountAmount()),
                         Money.of(cmd.paymentAmount()));
 
         ReceiverInfo receiverInfo =
@@ -165,6 +162,13 @@ public class OrderCommandFactory {
                                 cmd.receiverAddressDetail()),
                         cmd.deliveryRequest());
 
-        return OrderItem.forNew(internalProduct, externalProduct, price, receiverInfo);
+        return OrderItem.forNew(
+                OrderItemId.forNew(idGeneratorPort.generate()),
+                OrderItemNumber.generate(orderNumber, sequence),
+                internalProduct,
+                externalProduct,
+                price,
+                receiverInfo,
+                null);
     }
 }

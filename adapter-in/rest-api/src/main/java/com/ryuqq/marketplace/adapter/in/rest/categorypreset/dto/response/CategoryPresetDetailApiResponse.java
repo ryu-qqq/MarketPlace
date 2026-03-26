@@ -15,8 +15,8 @@ public record CategoryPresetDetailApiResponse(
         @Schema(description = "프리셋 이름", example = "식품 - 과자류 전송용") String presetName,
         @Schema(description = "매핑된 판매채널 카테고리") MappingCategoryResponse mappingCategory,
         @Schema(description = "매핑된 내부 카테고리 목록") List<InternalCategoryResponse> internalCategories,
-        @Schema(description = "등록일", example = "2025-12-15T10:30:00+09:00") String createdAt,
-        @Schema(description = "수정일", example = "2025-12-20T14:00:00+09:00") String updatedAt) {
+        @Schema(description = "등록일", example = "2025-12-15 10:30:00") String createdAt,
+        @Schema(description = "수정일", example = "2025-12-20 14:00:00") String updatedAt) {
 
     @Schema(description = "매핑된 판매채널 카테고리 정보")
     public record MappingCategoryResponse(

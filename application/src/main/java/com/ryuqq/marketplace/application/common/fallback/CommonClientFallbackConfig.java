@@ -6,22 +6,22 @@ import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadRes
 import com.ryuqq.marketplace.application.common.dto.response.ExternalDownloadStatusResponse;
 import com.ryuqq.marketplace.application.common.dto.response.PresignedUrlResponse;
 import com.ryuqq.marketplace.application.common.port.out.client.FileStorageClient;
+import com.ryuqq.marketplace.application.imagevariantsync.port.out.client.ImageVariantSyncClient;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundorder.port.out.client.SalesChannelOrderClient;
 import com.ryuqq.marketplace.application.order.port.out.query.OrderQueryPort;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Configuration;
  * 존재하면 이 폴백은 무시됩니다.
  */
 @Configuration
+@SuppressWarnings("PMD.ExcessiveImports")
 public class CommonClientFallbackConfig {
 
     @Bean
@@ -111,6 +112,14 @@ public class CommonClientFallbackConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    ImageVariantSyncClient noOpImageVariantSyncClient() {
+        return (sourceImageId, sourceType, variants) -> {
+            // no-op: ImageVariantSyncClient not available
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     OrderQueryPort noOpOrderQueryPort() {
         return new OrderQueryPort() {
             @Override
@@ -137,11 +146,6 @@ public class CommonClientFallbackConfig {
             public long countByCriteria(OrderSearchCriteria criteria) {
                 return 0;
             }
-
-            @Override
-            public Map<OrderStatus, Long> countByStatus() {
-                return Map.of();
-            }
         };
     }
 
@@ -150,8 +154,8 @@ public class CommonClientFallbackConfig {
     SalesChannelOrderClient noOpSalesChannelOrderClient() {
         return new SalesChannelOrderClient() {
             @Override
-            public boolean supports(String channelCode) {
-                return false;
+            public String channelCode() {
+                return "NOOP";
             }
 
             @Override
@@ -177,16 +181,17 @@ public class CommonClientFallbackConfig {
 
             @Override
             public String registerProduct(
-                    ProductGroupDetailBundle bundle,
+                    ProductGroupSyncData syncData,
                     Long externalCategoryId,
                     Long externalBrandId,
-                    SellerSalesChannel channel) {
+                    SellerSalesChannel channel,
+                    Shop shop) {
                 throw new UnsupportedOperationException("SalesChannelProductClient not available");
             }
 
             @Override
             public void updateProduct(
-                    ProductGroupDetailBundle bundle,
+                    ProductGroupSyncData syncData,
                     Long externalCategoryId,
                     Long externalBrandId,
                     String externalProductId,
@@ -199,6 +204,15 @@ public class CommonClientFallbackConfig {
             public void deleteProduct(String externalProductId, SellerSalesChannel channel) {
                 throw new UnsupportedOperationException("SalesChannelProductClient not available");
             }
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    com.ryuqq.marketplace.application.legacy.order.port.out.command.LegacyShipmentCommandPort
+            noOpLegacyShipmentCommandPort() {
+        return (orderId, invoiceNo, courierCode, shipmentType) -> {
+            throw new UnsupportedOperationException("LegacyShipmentCommandPort not available");
         };
     }
 }

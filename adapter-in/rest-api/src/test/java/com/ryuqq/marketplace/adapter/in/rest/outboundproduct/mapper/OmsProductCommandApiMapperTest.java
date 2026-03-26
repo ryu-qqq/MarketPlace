@@ -80,23 +80,21 @@ class OmsProductCommandApiMapperTest {
         @DisplayName("SyncProductsApiRequest를 ManualSyncProductsCommand로 변환한다")
         void toCommand_MapsFieldsCorrectly() {
             // given
-            SyncProductsApiRequest request =
-                    new SyncProductsApiRequest(List.of(1L, 2L, 3L), List.of(10L, 20L));
+            SyncProductsApiRequest request = new SyncProductsApiRequest(List.of(1L, 2L, 3L), 10L);
 
             // when
             ManualSyncProductsCommand command = mapper.toCommand(request);
 
             // then
             assertThat(command.productGroupIds()).containsExactly(1L, 2L, 3L);
-            assertThat(command.shopIds()).containsExactly(10L, 20L);
+            assertThat(command.shopIds()).containsExactly(10L);
         }
 
         @Test
         @DisplayName("단일 항목 리스트도 정상적으로 변환한다")
         void toCommand_SingleItem_MapsCorrectly() {
             // given
-            SyncProductsApiRequest request =
-                    new SyncProductsApiRequest(List.of(100L), List.of(50L));
+            SyncProductsApiRequest request = new SyncProductsApiRequest(List.of(100L), 50L);
 
             // when
             ManualSyncProductsCommand command = mapper.toCommand(request);

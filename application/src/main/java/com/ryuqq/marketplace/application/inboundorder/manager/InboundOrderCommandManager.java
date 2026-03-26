@@ -18,11 +18,11 @@ public class InboundOrderCommandManager {
 
     @Transactional
     public void persist(InboundOrder inboundOrder) {
-        commandPort.save(inboundOrder);
+        commandPort.persist(inboundOrder);
     }
 
     @Transactional
     public void persistAll(List<InboundOrder> inboundOrders) {
-        commandPort.saveAll(inboundOrders);
+        commandPort.persistAll(inboundOrders);
     }
 }

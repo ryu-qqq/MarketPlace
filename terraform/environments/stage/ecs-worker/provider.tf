@@ -167,6 +167,35 @@ data "aws_ssm_parameter" "sqs_intelligence_aggregation_queue_url" {
 }
 
 # ========================================
+# QnA Outbox SQS Queue Reference
+# ========================================
+data "aws_ssm_parameter" "sqs_qna_outbox_queue_url" {
+  name = "/${var.project_name}/sqs/qna-outbox-queue-url"
+}
+
+# ========================================
+# Shipment Outbox SQS Queue Reference
+# ========================================
+data "aws_ssm_parameter" "sqs_shipment_outbox_queue_url" {
+  name = "/${var.project_name}/sqs/shipment-outbox-queue-url"
+}
+
+# ========================================
+# Claim Outbox SQS Queue References
+# ========================================
+data "aws_ssm_parameter" "sqs_cancel_outbox_queue_url" {
+  name = "/${var.project_name}/sqs/cancel-outbox-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_refund_outbox_queue_url" {
+  name = "/${var.project_name}/sqs/refund-outbox-queue-url"
+}
+
+data "aws_ssm_parameter" "sqs_exchange_outbox_queue_url" {
+  name = "/${var.project_name}/sqs/exchange-outbox-queue-url"
+}
+
+# ========================================
 # AuthHub Configuration
 # ========================================
 data "aws_ssm_parameter" "authhub_service_token" {
@@ -195,10 +224,25 @@ data "aws_ssm_parameter" "fileflow_service_token" {
 }
 
 # ========================================
+# Naver Commerce Configuration
+# ========================================
+data "aws_ssm_parameter" "naver_commerce_client_id" {
+  name = "/naver-commerce/stage/client-id"
+}
+
+data "aws_ssm_parameter" "naver_commerce_client_secret" {
+  name = "/naver-commerce/stage/client-secret"
+}
+
+# ========================================
 # Legacy DB Configuration
 # ========================================
 data "aws_ssm_parameter" "legacy_db_password" {
   name = "/${var.project_name}/stage/legacy-db-password"
+}
+
+data "aws_ssm_parameter" "sellic_api_key" {
+  name = "/${var.project_name}/sellic/api-key"
 }
 
 # ========================================
@@ -238,4 +282,9 @@ locals {
   sqs_intelligence_option_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_option_analysis_queue_url.value
   sqs_intelligence_notice_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_notice_analysis_queue_url.value
   sqs_intelligence_aggregation_queue_url            = data.aws_ssm_parameter.sqs_intelligence_aggregation_queue_url.value
+  sqs_qna_outbox_queue_url                          = data.aws_ssm_parameter.sqs_qna_outbox_queue_url.value
+  sqs_shipment_outbox_queue_url                     = data.aws_ssm_parameter.sqs_shipment_outbox_queue_url.value
+  sqs_cancel_outbox_queue_url                       = data.aws_ssm_parameter.sqs_cancel_outbox_queue_url.value
+  sqs_refund_outbox_queue_url                       = data.aws_ssm_parameter.sqs_refund_outbox_queue_url.value
+  sqs_exchange_outbox_queue_url                     = data.aws_ssm_parameter.sqs_exchange_outbox_queue_url.value
 }

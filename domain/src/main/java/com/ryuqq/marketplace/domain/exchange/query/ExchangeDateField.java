@@ -21,4 +21,11 @@ public enum ExchangeDateField implements DateField {
     public static ExchangeDateField defaultField() {
         return REQUESTED;
     }
+
+    public static ExchangeDateField fromString(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return valueOf(value);
+    }
 }

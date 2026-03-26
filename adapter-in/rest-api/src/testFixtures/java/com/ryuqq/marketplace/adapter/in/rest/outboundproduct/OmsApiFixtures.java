@@ -48,7 +48,7 @@ public final class OmsApiFixtures {
 
     // ===== 공통 상수 =====
     public static final Instant DEFAULT_INSTANT = Instant.parse("2026-01-15T01:30:00Z");
-    public static final String DEFAULT_FORMATTED_TIME = "2026-01-15T10:30:00+09:00";
+    public static final String DEFAULT_FORMATTED_TIME = "2026-01-15 10:30:00";
 
     // ===== SearchOmsProductsApiRequest =====
 
@@ -103,12 +103,17 @@ public final class OmsApiFixtures {
     // ===== SearchSyncHistoryApiRequest =====
 
     public static SearchSyncHistoryApiRequest searchSyncHistoryRequest() {
-        return new SearchSyncHistoryApiRequest(null, 0, 10);
+        return new SearchSyncHistoryApiRequest(null, null, 0, 10);
     }
 
     public static SearchSyncHistoryApiRequest searchSyncHistoryRequest(
             String status, int page, int size) {
-        return new SearchSyncHistoryApiRequest(status, page, size);
+        return new SearchSyncHistoryApiRequest(null, status, page, size);
+    }
+
+    public static SearchSyncHistoryApiRequest searchSyncHistoryRequest(
+            Long shopId, String status, int page, int size) {
+        return new SearchSyncHistoryApiRequest(shopId, status, page, size);
     }
 
     // ===== SearchOmsPartnersApiRequest =====
@@ -148,7 +153,9 @@ public final class OmsApiFixtures {
                 DEFAULT_INSTANT,
                 "SUCCESS",
                 "연동완료",
-                DEFAULT_INSTANT);
+                DEFAULT_INSTANT,
+                1L,
+                "스마트스토어");
     }
 
     public static List<OmsProductListResult> productListResults(int count) {
@@ -230,7 +237,8 @@ public final class OmsApiFixtures {
                 "https://example.com/origin.jpg",
                 "https://example.com/uploaded.jpg",
                 "MAIN",
-                1);
+                1,
+                java.util.List.of());
     }
 
     public static SyncSummaryResult syncSummaryResult() {
@@ -338,7 +346,9 @@ public final class OmsApiFixtures {
                 DEFAULT_FORMATTED_TIME,
                 "SUCCESS",
                 "연동완료",
-                DEFAULT_FORMATTED_TIME);
+                DEFAULT_FORMATTED_TIME,
+                1L,
+                "스마트스토어");
     }
 
     public static List<OmsProductApiResponse> productApiResponses(int count) {

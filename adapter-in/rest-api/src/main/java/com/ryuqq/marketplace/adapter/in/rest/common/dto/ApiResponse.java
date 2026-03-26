@@ -13,7 +13,7 @@ import org.slf4j.MDC;
 @Schema(description = "표준 API 성공 응답")
 public record ApiResponse<T>(
         @Schema(description = "응답 데이터", nullable = true) T data,
-        @Schema(description = "응답 시간 (ISO 8601 형식)", example = "2025-01-23T10:30:00+09:00")
+        @Schema(description = "응답 시간 (ISO 8601 형식)", example = "2025-01-23 10:30:00")
                 String timestamp,
         @Schema(description = "요청 ID", example = "550e8400-e29b-41d4-a716-446655440000")
                 String requestId) {

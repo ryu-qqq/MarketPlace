@@ -18,4 +18,6 @@ public interface ProductQueryPort {
     List<Product> findByIdIn(List<ProductId> ids);
 
     List<Product> findByProductGroupIdIn(List<ProductGroupId> productGroupIds);
+
+    Optional<Product> findByProductGroupIdAndSkuCode(ProductGroupId productGroupId, String skuCode);
 }

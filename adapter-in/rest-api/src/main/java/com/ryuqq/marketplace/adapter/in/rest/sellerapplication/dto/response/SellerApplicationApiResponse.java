@@ -28,10 +28,8 @@ public record SellerApplicationApiResponse(
         @Schema(description = "동의 정보") AgreementInfo agreement,
         @Schema(description = "신청 상태 (PENDING, APPROVED, REJECTED)", example = "PENDING")
                 String status,
-        @Schema(description = "신청 일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                String appliedAt,
-        @Schema(description = "처리 일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                String processedAt,
+        @Schema(description = "신청 일시 (KST)", example = "2025-01-23 10:30:00") String appliedAt,
+        @Schema(description = "처리 일시 (KST)", example = "2025-01-23 10:30:00") String processedAt,
         @Schema(description = "처리자", example = "admin@example.com") String processedBy,
         @Schema(description = "거절 사유", example = "서류 미비") String rejectionReason,
         @Schema(description = "승인된 셀러 ID", example = "100") Long approvedSellerId) {
@@ -73,8 +71,7 @@ public record SellerApplicationApiResponse(
 
     @Schema(description = "동의 정보")
     public record AgreementInfo(
-            @Schema(description = "동의 일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                    String agreedAt,
+            @Schema(description = "동의 일시 (KST)", example = "2025-01-23 10:30:00") String agreedAt,
             @Schema(description = "이용약관 동의", example = "true") boolean termsAgreed,
             @Schema(description = "개인정보 처리방침 동의", example = "true") boolean privacyAgreed) {}
 }

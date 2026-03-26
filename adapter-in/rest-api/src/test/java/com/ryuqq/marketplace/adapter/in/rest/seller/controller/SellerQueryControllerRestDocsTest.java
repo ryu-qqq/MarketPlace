@@ -21,7 +21,7 @@ import com.ryuqq.marketplace.adapter.in.rest.seller.SellerApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.seller.dto.response.SellerDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.seller.mapper.SellerQueryApiMapper;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerFullCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerFullCompositeResult;
 import com.ryuqq.marketplace.application.seller.dto.response.SellerPageResult;
 import com.ryuqq.marketplace.application.seller.port.in.query.GetSellerForAdminUseCase;
 import com.ryuqq.marketplace.application.seller.port.in.query.SearchSellerByOffsetUseCase;

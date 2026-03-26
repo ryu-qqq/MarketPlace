@@ -19,4 +19,9 @@ public class CategoryMappingQueryAdapter implements CategoryMappingQueryPort {
     public Optional<Long> findSalesChannelCategoryId(Long salesChannelId, Long internalCategoryId) {
         return queryDslRepository.findSalesChannelCategoryId(salesChannelId, internalCategoryId);
     }
+
+    @Override
+    public Optional<String> findExternalCategoryCode(Long salesChannelId, Long internalCategoryId) {
+        return queryDslRepository.findExternalCategoryCode(salesChannelId, internalCategoryId);
+    }
 }

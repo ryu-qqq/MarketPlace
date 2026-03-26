@@ -56,10 +56,10 @@ class ShipmentQueryApiMapperTest {
             assertThat(result.statuses()).containsExactly("READY", "PREPARING");
             assertThat(result.searchField()).isEqualTo("shipmentNumber");
             assertThat(result.searchWord()).isEqualTo("SN-001");
-            assertThat(result.page()).isZero();
-            assertThat(result.size()).isEqualTo(20);
-            assertThat(result.sortKey()).isEqualTo("createdAt");
-            assertThat(result.sortDirection()).isEqualTo("DESC");
+            assertThat(result.searchParams().page()).isZero();
+            assertThat(result.searchParams().size()).isEqualTo(20);
+            assertThat(result.searchParams().sortKey()).isEqualTo("createdAt");
+            assertThat(result.searchParams().sortDirection()).isEqualTo("DESC");
         }
 
         @Test
@@ -72,8 +72,8 @@ class ShipmentQueryApiMapperTest {
             ShipmentSearchParams result = mapper.toSearchParams(request);
 
             // then
-            assertThat(result.page()).isZero();
-            assertThat(result.size()).isEqualTo(20);
+            assertThat(result.searchParams().page()).isZero();
+            assertThat(result.searchParams().size()).isEqualTo(20);
         }
 
         @Test
@@ -145,10 +145,10 @@ class ShipmentQueryApiMapperTest {
             ShipmentListApiResponse response = mapper.toResponse(result);
 
             // then
-            assertThat(response.shipment().shippedAt()).contains("T");
-            assertThat(response.shipment().shippedAt()).contains("+09:00");
-            assertThat(response.shipment().createdAt()).contains("T");
-            assertThat(response.shipment().createdAt()).contains("+09:00");
+            assertThat(response.shipment().shippedAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.shipment().createdAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test
@@ -238,22 +238,6 @@ class ShipmentQueryApiMapperTest {
         }
 
         @Test
-        @DisplayName("정산 정보가 올바르게 변환된다")
-        void toDetailResponse_WithSettlement_ReturnsSettlementResponse() {
-            // given
-            ShipmentDetailResult result = ShipmentApiFixtures.detailResult("SHIP-001");
-
-            // when
-            ShipmentDetailApiResponse response = mapper.toDetailResponse(result);
-
-            // then
-            assertThat(response.settlement()).isNotNull();
-            assertThat(response.settlement().commissionRate()).isEqualTo(10);
-            assertThat(response.settlement().fee()).isEqualTo(1000);
-            assertThat(response.settlement().expectationSettlementAmount()).isEqualTo(9000);
-        }
-
-        @Test
         @DisplayName("결제 정보가 null이면 payment 필드도 null을 반환한다")
         void toDetailResponse_NullPayment_ReturnsNullPayment() {
             // given
@@ -277,10 +261,10 @@ class ShipmentQueryApiMapperTest {
             ShipmentDetailApiResponse response = mapper.toDetailResponse(result);
 
             // then
-            assertThat(response.shipment().orderConfirmedAt()).contains("T");
-            assertThat(response.shipment().orderConfirmedAt()).contains("+09:00");
-            assertThat(response.shipment().createdAt()).contains("T");
-            assertThat(response.shipment().createdAt()).contains("+09:00");
+            assertThat(response.shipment().orderConfirmedAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.shipment().createdAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
     }
 

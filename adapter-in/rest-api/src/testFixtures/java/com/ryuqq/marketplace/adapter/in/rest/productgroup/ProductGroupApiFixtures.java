@@ -364,8 +364,8 @@ public final class ProductGroupApiFixtures {
                 50000,
                 30,
                 optionGroups,
-                "2025-02-10T10:30:00+09:00",
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00",
+                "2025-02-10 10:30:00");
     }
 
     // ===== ProductGroupDetailCompositeResult (Application) =====
@@ -380,13 +380,15 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1),
+                                1,
+                                List.of()),
                         new ProductGroupImageResult(
                                 2L,
                                 "https://origin.example.com/img2.jpg",
                                 "https://cdn.example.com/img2.jpg",
                                 "DETAIL",
-                                2));
+                                2,
+                                List.of()));
 
         ProductOptionMatrixResult matrix = createProductOptionMatrixResult();
         ShippingPolicyResult shippingPolicy = createShippingPolicyResult();
@@ -427,7 +429,8 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1));
+                                1,
+                                List.of()));
 
         ProductOptionMatrixResult matrix = createProductOptionMatrixResult();
 
@@ -464,13 +467,15 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1),
+                                1,
+                                List.of()),
                         new ProductGroupImageApiResponse(
                                 2L,
                                 "https://origin.example.com/img2.jpg",
                                 "https://cdn.example.com/img2.jpg",
                                 "DETAIL",
-                                2));
+                                2,
+                                List.of()));
 
         ProductOptionMatrixApiResponse matrix = createProductOptionMatrixApiResponse();
         ShippingPolicyApiResponse shippingPolicy = createShippingPolicyApiResponse();
@@ -491,8 +496,8 @@ public final class ProductGroupApiFixtures {
                 DEFAULT_PRODUCT_GROUP_NAME,
                 DEFAULT_OPTION_TYPE,
                 DEFAULT_STATUS,
-                "2025-02-10T10:30:00+09:00",
-                "2025-02-10T10:30:00+09:00",
+                "2025-02-10 10:30:00",
+                "2025-02-10 10:30:00",
                 images,
                 matrix,
                 shippingPolicy,
@@ -513,13 +518,15 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1),
+                                1,
+                                List.of()),
                         new ProductGroupImageResult(
                                 2L,
                                 "https://origin.example.com/img2.jpg",
                                 "https://cdn.example.com/img2.jpg",
                                 "DETAIL",
-                                2));
+                                2,
+                                List.of()));
 
         List<ProductResult> products =
                 List.of(createProductResult(1L, id), createProductResult(2L, id));
@@ -556,13 +563,15 @@ public final class ProductGroupApiFixtures {
                                 "https://origin.example.com/img1.jpg",
                                 "https://cdn.example.com/img1.jpg",
                                 "THUMBNAIL",
-                                1),
+                                1,
+                                List.of()),
                         new ProductGroupImageApiResponse(
                                 2L,
                                 "https://origin.example.com/img2.jpg",
                                 "https://cdn.example.com/img2.jpg",
                                 "DETAIL",
-                                2));
+                                2,
+                                List.of()));
 
         List<ProductExcelApiResponse> products =
                 List.of(
@@ -593,8 +602,8 @@ public final class ProductGroupApiFixtures {
                 50000,
                 30,
                 optionGroups,
-                "2025-02-10T10:30:00+09:00",
-                "2025-02-10T10:30:00+09:00",
+                "2025-02-10 10:30:00",
+                "2025-02-10 10:30:00",
                 images,
                 products,
                 "https://cdn.example.com/description/",
@@ -646,8 +655,8 @@ public final class ProductGroupApiFixtures {
                 "ACTIVE",
                 productId.intValue(),
                 mappings,
-                "2025-02-10T10:30:00+09:00",
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00",
+                "2025-02-10 10:30:00");
     }
 
     private static ProductOptionMatrixResult createProductOptionMatrixResult() {
@@ -775,8 +784,8 @@ public final class ProductGroupApiFixtures {
                         "ACTIVE",
                         1,
                         productOptions,
-                        "2025-02-10T10:30:00+09:00",
-                        "2025-02-10T10:30:00+09:00");
+                        "2025-02-10 10:30:00",
+                        "2025-02-10 10:30:00");
 
         return new ProductOptionMatrixApiResponse(List.of(optionGroup), List.of(product));
     }
@@ -799,8 +808,8 @@ public final class ProductGroupApiFixtures {
                 2,
                 3,
                 "15:00",
-                "2025-02-10T10:30:00+09:00",
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00",
+                "2025-02-10 10:30:00");
     }
 
     private static RefundPolicyApiResponse createRefundPolicyApiResponse() {
@@ -822,8 +831,8 @@ public final class ProductGroupApiFixtures {
                 true,
                 3,
                 "추가 정보 없음",
-                "2025-02-10T10:30:00+09:00",
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00",
+                "2025-02-10 10:30:00");
     }
 
     private static ProductGroupDescriptionApiResponse createProductGroupDescriptionApiResponse() {
@@ -846,6 +855,6 @@ public final class ProductGroupApiFixtures {
                         new ProductNoticeEntryApiResponse(2L, 2L, "한국"));
 
         return new ProductNoticeApiResponse(
-                1L, 1L, entries, "2025-02-10T10:30:00+09:00", "2025-02-10T10:30:00+09:00");
+                1L, 1L, entries, "2025-02-10 10:30:00", "2025-02-10 10:30:00");
     }
 }

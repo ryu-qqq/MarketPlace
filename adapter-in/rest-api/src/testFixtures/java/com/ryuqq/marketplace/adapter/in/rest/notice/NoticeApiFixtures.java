@@ -124,7 +124,7 @@ public final class NoticeApiFixtures {
                 DEFAULT_TARGET_CATEGORY_GROUP,
                 true,
                 List.of(),
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00");
     }
 
     public static NoticeCategoryApiResponse apiResponse(Long id, String code) {
@@ -136,7 +136,7 @@ public final class NoticeApiFixtures {
                 "CLOTHING",
                 true,
                 List.of(),
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00");
     }
 
     public static NoticeCategoryApiResponse apiResponseWithFields(Long id) {
@@ -152,7 +152,7 @@ public final class NoticeApiFixtures {
                 DEFAULT_TARGET_CATEGORY_GROUP,
                 true,
                 fields,
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00");
     }
 
     // ===== NoticeFieldApiResponse =====

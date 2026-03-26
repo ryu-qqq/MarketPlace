@@ -5,7 +5,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerUpdateBundle;
 import com.ryuqq.marketplace.application.seller.validator.SellerBusinessInfoValidator;
 import com.ryuqq.marketplace.application.seller.validator.SellerContractValidator;
 import com.ryuqq.marketplace.application.seller.validator.SellerCsValidator;

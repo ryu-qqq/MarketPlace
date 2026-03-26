@@ -10,6 +10,7 @@ naver-commerce:
   base-url: https://api.commerce.naver.com/external
   client-id: ${NAVER_COMMERCE_CLIENT_ID:}
   client-secret: ${NAVER_COMMERCE_CLIENT_SECRET:}
+  enabled: false
   timeout:
     connect: 5s
     read: 30s

@@ -156,6 +156,7 @@ class OutboundProductJpaEntityMapperTest {
                             1L,
                             OutboundProductJpaEntityFixtures.DEFAULT_PRODUCT_GROUP_ID,
                             OutboundProductJpaEntityFixtures.DEFAULT_SALES_CHANNEL_ID,
+                            1L,
                             null,
                             OutboundProductJpaEntityFixtures.STATUS_FAILED,
                             java.time.Instant.now(),

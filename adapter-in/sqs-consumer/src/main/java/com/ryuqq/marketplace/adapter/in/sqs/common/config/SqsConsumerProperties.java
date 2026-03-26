@@ -18,6 +18,11 @@ public class SqsConsumerProperties {
     private QueueConsumer intelligenceNoticeAnalysis = new QueueConsumer();
     private QueueConsumer intelligenceAggregation = new QueueConsumer();
 
+    // Claim outbox consumers
+    private QueueConsumer cancelOutbox = new QueueConsumer();
+    private QueueConsumer refundOutbox = new QueueConsumer();
+    private QueueConsumer exchangeOutbox = new QueueConsumer();
+
     public QueueConsumer getIntelligenceOrchestration() {
         return intelligenceOrchestration;
     }
@@ -56,6 +61,30 @@ public class SqsConsumerProperties {
 
     public void setIntelligenceAggregation(QueueConsumer intelligenceAggregation) {
         this.intelligenceAggregation = intelligenceAggregation;
+    }
+
+    public QueueConsumer getCancelOutbox() {
+        return cancelOutbox;
+    }
+
+    public void setCancelOutbox(QueueConsumer cancelOutbox) {
+        this.cancelOutbox = cancelOutbox;
+    }
+
+    public QueueConsumer getRefundOutbox() {
+        return refundOutbox;
+    }
+
+    public void setRefundOutbox(QueueConsumer refundOutbox) {
+        this.refundOutbox = refundOutbox;
+    }
+
+    public QueueConsumer getExchangeOutbox() {
+        return exchangeOutbox;
+    }
+
+    public void setExchangeOutbox(QueueConsumer exchangeOutbox) {
+        this.exchangeOutbox = exchangeOutbox;
     }
 
     public static class QueueConsumer {

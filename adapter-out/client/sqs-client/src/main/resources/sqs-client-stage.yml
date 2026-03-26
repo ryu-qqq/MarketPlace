@@ -10,3 +10,8 @@ sqs:
     intelligence-option-analysis: ${SQS_INTELLIGENCE_OPTION_ANALYSIS_URL}
     intelligence-notice-analysis: ${SQS_INTELLIGENCE_NOTICE_ANALYSIS_URL}
     intelligence-aggregation: ${SQS_INTELLIGENCE_AGGREGATION_URL}
+    cancel-outbox: ${SQS_CANCEL_OUTBOX_URL:}
+    refund-outbox: ${SQS_REFUND_OUTBOX_URL:}
+    exchange-outbox: ${SQS_EXCHANGE_OUTBOX_URL:}
+    qna-outbox: ${SQS_QNA_OUTBOX_URL:}
+    shipment-outbox: ${SQS_SHIPMENT_OUTBOX_URL:}

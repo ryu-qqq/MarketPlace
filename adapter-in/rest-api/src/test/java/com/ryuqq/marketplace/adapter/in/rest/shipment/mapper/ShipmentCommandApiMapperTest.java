@@ -43,7 +43,11 @@ class ShipmentCommandApiMapperTest {
             ConfirmShipmentBatchCommand command = mapper.toConfirmBatchCommand(request, 1L);
 
             // then
-            assertThat(command.orderItemIds()).containsExactly(1001L, 1002L, 1003L);
+            assertThat(command.orderItemIds())
+                    .containsExactly(
+                            "01940001-0000-7000-8000-000000000001",
+                            "01940001-0000-7000-8000-000000000002",
+                            "01940001-0000-7000-8000-000000000003");
         }
 
         @Test
@@ -51,14 +55,16 @@ class ShipmentCommandApiMapperTest {
         void toConfirmBatchCommand_SingleId_ReturnsCommand() {
             // given
             ConfirmShipmentBatchApiRequest request =
-                    ShipmentApiFixtures.confirmBatchRequest(List.of(1001L));
+                    ShipmentApiFixtures.confirmBatchRequest(
+                            List.of("01940001-0000-7000-8000-000000000001"));
 
             // when
             ConfirmShipmentBatchCommand command = mapper.toConfirmBatchCommand(request, 1L);
 
             // then
             assertThat(command.orderItemIds()).hasSize(1);
-            assertThat(command.orderItemIds()).containsExactly(1001L);
+            assertThat(command.orderItemIds())
+                    .containsExactly("01940001-0000-7000-8000-000000000001");
         }
     }
 
@@ -90,11 +96,10 @@ class ShipmentCommandApiMapperTest {
 
             // then
             ShipBatchCommand.ShipBatchItem firstItem = command.items().get(0);
-            assertThat(firstItem.orderItemId()).isEqualTo(1001L);
+            assertThat(firstItem.orderItemNumber()).isEqualTo("ORD-20260324-0001");
             assertThat(firstItem.trackingNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_TRACKING_NUMBER);
             assertThat(firstItem.courierCode()).isEqualTo(ShipmentApiFixtures.DEFAULT_COURIER_CODE);
-            assertThat(firstItem.courierName()).isEqualTo(ShipmentApiFixtures.DEFAULT_COURIER_NAME);
             assertThat(firstItem.shipmentMethodType())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_SHIPMENT_METHOD_TYPE);
         }
@@ -110,7 +115,7 @@ class ShipmentCommandApiMapperTest {
 
             // then
             ShipBatchCommand.ShipBatchItem secondItem = command.items().get(1);
-            assertThat(secondItem.orderItemId()).isEqualTo(1002L);
+            assertThat(secondItem.orderItemNumber()).isEqualTo("ORD-20260324-0002");
         }
     }
 
@@ -122,7 +127,7 @@ class ShipmentCommandApiMapperTest {
         @DisplayName("orderId와 ShipSingleApiRequest를 ShipSingleCommand로 변환한다")
         void toShipSingleCommand_ConvertsRequest_ReturnsCommand() {
             // given
-            long orderItemId = ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID;
             ShipSingleApiRequest request = ShipmentApiFixtures.shipSingleRequest();
 
             // when
@@ -139,17 +144,17 @@ class ShipmentCommandApiMapperTest {
         }
 
         @Test
-        @DisplayName("경로변수 orderId가 Command에 올바르게 매핑된다")
-        void toShipSingleCommand_OrderIdFromPath_MappedCorrectly() {
+        @DisplayName("경로변수 orderItemId가 Command에 올바르게 매핑된다")
+        void toShipSingleCommand_OrderItemIdFromPath_MappedCorrectly() {
             // given
-            long orderItemId = 9999L;
+            String orderItemId = "01940001-0000-7000-8000-000000000099";
             ShipSingleApiRequest request = ShipmentApiFixtures.shipSingleRequest();
 
             // when
             ShipSingleCommand command = mapper.toShipSingleCommand(orderItemId, request);
 
             // then
-            assertThat(command.orderItemId()).isEqualTo(9999L);
+            assertThat(command.orderItemId()).isEqualTo("01940001-0000-7000-8000-000000000099");
         }
     }
 

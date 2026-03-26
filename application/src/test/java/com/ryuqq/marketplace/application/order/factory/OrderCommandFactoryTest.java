@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.order.factory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
 import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
@@ -50,7 +51,7 @@ class OrderCommandFactoryTest {
             assertThat(result).isNotNull();
             assertThat(result.orderNumber()).isNotNull();
             then(timeProvider).should().now();
-            then(idGeneratorPort).should().generate();
+            then(idGeneratorPort).should(times(2)).generate();
         }
 
         @Test
@@ -168,54 +169,6 @@ class OrderCommandFactoryTest {
 
             // then
             assertThat(result.paymentInfo().paymentNumber().value()).matches("PAY-\\d{8}-\\d{4}");
-        }
-    }
-
-    @Nested
-    @DisplayName("createStatusContext() - 상태 전이 컨텍스트 생성")
-    class CreateStatusContextTest {
-
-        @Test
-        @DisplayName("orderId 문자열로 StatusChangeContext를 생성한다")
-        void createStatusContext_ValidOrderId_ReturnsContext() {
-            // given
-            String orderId = "01900000-0000-7000-8000-000000000001";
-            Instant now = CommonVoFixtures.now();
-            given(timeProvider.now()).willReturn(now);
-
-            // when
-            var result = sut.createStatusContext(orderId);
-
-            // then
-            assertThat(result).isNotNull();
-            assertThat(result.id().value()).isEqualTo(orderId);
-            assertThat(result.changedAt()).isEqualTo(now);
-        }
-    }
-
-    @Nested
-    @DisplayName("createStatusContextWithReason() - 사유 포함 상태 전이 컨텍스트 생성")
-    class CreateStatusContextWithReasonTest {
-
-        @Test
-        @DisplayName("orderId, 사유, 변경자로 OrderStatusChangeWithReasonContext를 생성한다")
-        void createStatusContextWithReason_ValidParams_ReturnsContext() {
-            // given
-            String orderId = "01900000-0000-7000-8000-000000000001";
-            String reason = "재고 부족";
-            String changedBy = "admin";
-            Instant now = CommonVoFixtures.now();
-            given(timeProvider.now()).willReturn(now);
-
-            // when
-            var result = sut.createStatusContextWithReason(orderId, reason, changedBy);
-
-            // then
-            assertThat(result).isNotNull();
-            assertThat(result.orderId().value()).isEqualTo(orderId);
-            assertThat(result.reason()).isEqualTo(reason);
-            assertThat(result.changedBy()).isEqualTo(changedBy);
-            assertThat(result.changedAt()).isEqualTo(now);
         }
     }
 }

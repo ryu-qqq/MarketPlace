@@ -3,11 +3,10 @@ package com.ryuqq.marketplace.application.order.assembler;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.application.order.OrderQueryFixtures;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailBundle;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderListBundle;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
+import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
@@ -15,6 +14,9 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResu
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ClaimSummary;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.PaymentInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderDetailBundle;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderListBundle;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,7 +96,9 @@ class OrderAssemblerTest {
         @DisplayName("주문 정보가 없는 아이템의 PaymentInfo는 빈 상태로 조립된다")
         void toProductOrderPageResult_MissingOrder_PaymentInfoIsEmpty() {
             // given
-            OrderItemResult item = OrderQueryFixtures.orderItemResult(1L, "UNKNOWN-ORDER-ID");
+            OrderItemResult item =
+                    OrderQueryFixtures.orderItemResult(
+                            "01940001-0000-7000-8000-000000000001", "UNKNOWN-ORDER-ID");
             ProductOrderListBundle bundle =
                     new ProductOrderListBundle(List.of(item), Map.of(), Map.of(), Map.of(), 1L);
 
@@ -277,7 +281,9 @@ class OrderAssemblerTest {
         @DisplayName("활성 취소(REQUESTED)가 있으면 hasActiveCancel이 true이다")
         void toProductOrderDetailResult_ActiveCancel_HasActiveCancelIsTrue() {
             // given
-            OrderCancelResult requestedCancel = OrderQueryFixtures.requestedCancelResult(1L);
+            OrderCancelResult requestedCancel =
+                    OrderQueryFixtures.requestedCancelResult(
+                            "01940001-0000-7000-8000-000000000001");
             ProductOrderDetailBundle bundle =
                     new ProductOrderDetailBundle(
                             OrderQueryFixtures.orderItemResult(),
@@ -321,7 +327,8 @@ class OrderAssemblerTest {
         @DisplayName("활성 클레임(REQUESTED)이 있으면 hasActiveClaim이 true이다")
         void toProductOrderDetailResult_ActiveClaim_HasActiveClaimIsTrue() {
             // given
-            OrderClaimResult requestedClaim = OrderQueryFixtures.requestedClaimResult(1L);
+            OrderClaimResult requestedClaim =
+                    OrderQueryFixtures.requestedClaimResult("01940001-0000-7000-8000-000000000001");
             ProductOrderDetailBundle bundle =
                     new ProductOrderDetailBundle(
                             OrderQueryFixtures.orderItemResult(),
@@ -343,7 +350,8 @@ class OrderAssemblerTest {
         @DisplayName("완료된 클레임이 있으면 totalClaimedQty에 반영된다")
         void toProductOrderDetailResult_CompletedClaim_TotalClaimedQtyIsReflected() {
             // given
-            OrderClaimResult completedClaim = OrderQueryFixtures.completedClaimResult(1L);
+            OrderClaimResult completedClaim =
+                    OrderQueryFixtures.completedClaimResult("01940001-0000-7000-8000-000000000001");
             ProductOrderDetailBundle bundle =
                     new ProductOrderDetailBundle(
                             OrderQueryFixtures.orderItemResult(),
@@ -360,6 +368,67 @@ class OrderAssemblerTest {
             assertThat(result.claim().totalClaimedQty()).isEqualTo(1);
             assertThat(result.claim().latest()).isNotNull();
             assertThat(result.claim().latest().status()).isEqualTo("COMPLETED");
+        }
+    }
+
+    // ==================== toSummaryResult 조립 ====================
+
+    @Nested
+    @DisplayName("toSummaryResult() - 주문상품 상태별 요약 조립")
+    class ToSummaryResultTest {
+
+        @Test
+        @DisplayName("상태별 카운트 맵을 OrderSummaryResult로 변환한다")
+        void toSummaryResult_ValidStatusCounts_ReturnsSummaryResult() {
+            // given
+            Map<OrderItemStatus, Long> statusCounts = OrderQueryFixtures.orderItemStatusCounts();
+
+            // when
+            OrderSummaryResult result = sut.toSummaryResult(statusCounts);
+
+            // then
+            assertThat(result.ready()).isEqualTo(10L);
+            assertThat(result.confirmed()).isEqualTo(5L);
+            assertThat(result.cancelled()).isEqualTo(2L);
+            assertThat(result.returnRequested()).isEqualTo(1L);
+            assertThat(result.returned()).isZero();
+        }
+
+        @Test
+        @DisplayName("빈 카운트 맵이면 모든 값이 0인 요약을 반환한다")
+        void toSummaryResult_EmptyMap_ReturnsZeroSummary() {
+            // given
+            Map<OrderItemStatus, Long> emptyCounts = Map.of();
+
+            // when
+            OrderSummaryResult result = sut.toSummaryResult(emptyCounts);
+
+            // then
+            assertThat(result.ready()).isZero();
+            assertThat(result.confirmed()).isZero();
+            assertThat(result.cancelled()).isZero();
+            assertThat(result.returnRequested()).isZero();
+            assertThat(result.returned()).isZero();
+        }
+
+        @Test
+        @DisplayName("일부 상태만 있는 카운트 맵이면 없는 상태는 0으로 처리된다")
+        void toSummaryResult_PartialStatusCounts_MissingStatusIsZero() {
+            // given
+            Map<OrderItemStatus, Long> partialCounts =
+                    Map.of(
+                            OrderItemStatus.READY, 3L,
+                            OrderItemStatus.CONFIRMED, 1L);
+
+            // when
+            OrderSummaryResult result = sut.toSummaryResult(partialCounts);
+
+            // then
+            assertThat(result.ready()).isEqualTo(3L);
+            assertThat(result.confirmed()).isEqualTo(1L);
+            assertThat(result.cancelled()).isZero();
+            assertThat(result.returnRequested()).isZero();
+            assertThat(result.returned()).isZero();
         }
     }
 }

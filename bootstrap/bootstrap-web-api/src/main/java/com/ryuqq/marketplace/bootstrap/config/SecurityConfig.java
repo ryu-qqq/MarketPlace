@@ -32,26 +32,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *   <li>CORS/CSRF 처리도 Gateway 레벨에서 수행
  * </ul>
  *
- * <p>GatewayAuthenticationFilter (AuthHub SDK 제공):
- *
- * <ul>
- *   <li>X-User-Id, X-User-Roles, X-User-Permissions 등 헤더 파싱
- *   <li>UserContext를 ThreadLocal에 저장
- * </ul>
- *
- * <p>GatewaySecurityBridgeFilter:
- *
- * <ul>
- *   <li>UserContextHolder → SecurityContextHolder 브릿지
- *   <li>Spring Security URL 기반 접근 제어와 AuthHub SDK 메서드 기반 접근 제어 연동
- * </ul>
- *
- * <p>ServiceTokenAuthenticationFilter:
- *
- * <ul>
- *   <li>{@code /api/v1/market/internal/**} 경로에 대해 X-Service-Token 헤더 검증
- *   <li>내부 서비스 간 통신 (CrawlingHub 등) 전용 인증
- * </ul>
+ * <p>Legacy API는 별도 서버(bootstrap-legacy-api)로 분리되었습니다.
  *
  * @author ryu-qqq
  * @since 1.0.0
@@ -130,6 +111,10 @@ public class SecurityConfig {
                                         .requestMatchers("/api/v1/market/public/**")
                                         .permitAll()
 
+                                        // 내부 웹훅 (VPC 내부 통신, 인증 불필요)
+                                        .requestMatchers("/api/v1/market/internal/webhooks/**")
+                                        .permitAll()
+
                                         // 셀러 입점 신청 / 관리자 가입 신청 (인증 없이 누구나 가능)
                                         .requestMatchers(
                                                 HttpMethod.POST,
@@ -165,15 +150,16 @@ public class SecurityConfig {
                                         .anyRequest()
                                         .authenticated())
 
-                // ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal 경로
-                // 전용)
+                // 1. ServiceTokenAuthenticationFilter: X-Service-Token → SecurityContext (internal
+                // 경로 전용)
                 .addFilterBefore(
                         serviceTokenAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
-                // GatewayAuthenticationFilter: X-User-* 헤더 → UserContext (ThreadLocal)
+                // 2. GatewayAuthenticationFilter: X-User-* 헤더 → UserContext (ThreadLocal)
                 .addFilterBefore(
                         gatewayAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                // GatewaySecurityBridgeFilter: UserContext → SecurityContext (Spring Security)
+                // 3. GatewaySecurityBridgeFilter: UserContext → SecurityContext
+                // (이미 SecurityContext가 있으면 스킵)
                 .addFilterAfter(gatewaySecurityBridgeFilter, GatewayAuthenticationFilter.class);
 
         return http.build();

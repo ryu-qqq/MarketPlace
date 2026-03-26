@@ -24,7 +24,22 @@ import org.springframework.scheduling.annotation.EnableScheduling;
             "com.ryuqq.marketplace.adapter.in.scheduler",
             "com.ryuqq.marketplace.application",
             "com.ryuqq.marketplace.adapter.out"
-        })
+        },
+        excludeName = {"com.ryuqq.marketplace.application.legacy.auth"})
+@ComponentScan(
+        basePackages = {
+            "com.ryuqq.marketplace.bootstrap.scheduler",
+            "com.ryuqq.marketplace.adapter.in.scheduler",
+            "com.ryuqq.marketplace.application",
+            "com.ryuqq.marketplace.adapter.out"
+        },
+        excludeFilters =
+                @ComponentScan.Filter(
+                        type = FilterType.REGEX,
+                        pattern = {
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacy\\.auth\\..*",
+                            "com\\.ryuqq\\.marketplace\\.application\\.legacyauth\\..*"
+                        }))
 @EnableJpaRepositories(
         basePackages = "com.ryuqq.marketplace.adapter.out.persistence",
         excludeFilters =

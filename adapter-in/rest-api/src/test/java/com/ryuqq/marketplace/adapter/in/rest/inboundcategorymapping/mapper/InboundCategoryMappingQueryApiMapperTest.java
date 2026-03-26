@@ -141,8 +141,8 @@ class InboundCategoryMappingQueryApiMapperTest {
             InboundCategoryMappingApiResponse response = mapper.toResponse(result);
 
             // then
-            assertThat(response.createdAt()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
-            assertThat(response.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*");
+            assertThat(response.createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
+            assertThat(response.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.*");
         }
     }
 

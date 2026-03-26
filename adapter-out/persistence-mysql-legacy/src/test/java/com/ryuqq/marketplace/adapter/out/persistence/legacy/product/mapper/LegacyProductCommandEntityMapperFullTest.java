@@ -2,27 +2,26 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyDescriptionImageEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductDeliveryEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductGroupDetailDescriptionEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductGroupImageEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductNoticeEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductOptionEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductStockEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productdelivery.entity.LegacyProductDeliveryEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyDescriptionImageEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupdescription.entity.LegacyProductGroupDetailDescriptionEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroupimage.entity.LegacyProductGroupImageEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productnotice.entity.LegacyProductNoticeEntity;
 import com.ryuqq.marketplace.domain.common.vo.DeletionStatus;
 import com.ryuqq.marketplace.domain.legacy.optiondetail.id.LegacyOptionDetailId;
 import com.ryuqq.marketplace.domain.legacy.optiongroup.id.LegacyOptionGroupId;
 import com.ryuqq.marketplace.domain.legacy.product.aggregate.LegacyProduct;
 import com.ryuqq.marketplace.domain.legacy.product.id.LegacyProductId;
 import com.ryuqq.marketplace.domain.legacy.product.vo.LegacyProductOption;
-import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyDescriptionImage;
+import com.ryuqq.marketplace.domain.legacy.productdelivery.aggregate.LegacyProductDelivery;
+import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyDescriptionImage;
+import com.ryuqq.marketplace.domain.legacy.productdescription.aggregate.LegacyProductGroupDescription;
+import com.ryuqq.marketplace.domain.legacy.productdescription.vo.LegacyProductDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroup;
-import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroupDescription;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDelivery;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDescription;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ManagementType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.Origin;
@@ -31,6 +30,7 @@ import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ReturnMethod;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ShipmentCompanyCode;
 import com.ryuqq.marketplace.domain.legacy.productimage.aggregate.LegacyProductImage;
 import com.ryuqq.marketplace.domain.legacy.productimage.vo.ProductGroupImageType;
+import com.ryuqq.marketplace.domain.legacy.productnotice.aggregate.LegacyProductNotice;
 import com.ryuqq.marketplace.domain.productgroup.vo.DescriptionPublishStatus;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -176,7 +176,7 @@ class LegacyProductCommandEntityMapperFullTest {
         @DisplayName("LegacyProductEntity로 LegacyProduct 도메인을 복원합니다")
         void toProductDomain_WithValidEntity_ReturnsValidDomain() {
             // given
-            LegacyProductEntity entity = LegacyProductEntity.create(10L, 1L, "N", "Y", "N");
+            LegacyProductEntity entity = LegacyProductEntity.create(10L, 1L, "N", "Y", 5, "N");
             int stockQuantity = 5;
             List<LegacyProductOption> options = List.of();
 
@@ -540,10 +540,10 @@ class LegacyProductCommandEntityMapperFullTest {
         @DisplayName("LegacyProductGroupEntity로 LegacyProductGroup 도메인을 복원합니다")
         void toDomain_WithValidEntity_ReturnsValidDomain() {
             // given
-            com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity
+            com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity
                             .LegacyProductGroupEntity
                     entity =
-                            com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity
+                            com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity
                                     .LegacyProductGroupEntity.create(
                                     1L,
                                     "테스트 상품",

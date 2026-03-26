@@ -18,6 +18,22 @@ public enum RefundStatus {
     private static final Set<RefundStatus> REJECTABLE =
             EnumSet.of(REQUESTED, COLLECTING, COLLECTED);
     private static final Set<RefundStatus> CANCELLABLE = EnumSet.of(REQUESTED, COLLECTING);
+    private static final Set<RefundStatus> ACTIVE = EnumSet.of(REQUESTED, COLLECTING, COLLECTED);
+
+    /** 진행 중인 상태인지 확인. COMPLETED/REJECTED/CANCELLED는 종료 상태. */
+    public boolean isActive() {
+        return ACTIVE.contains(this);
+    }
+
+    /** 정상 완료 상태인지 확인. */
+    public boolean isCompleted() {
+        return this == COMPLETED;
+    }
+
+    /** 종료 상태인지 확인. */
+    public boolean isTerminal() {
+        return !isActive();
+    }
 
     public boolean canTransitionTo(RefundStatus target) {
         return getAllowedFrom(target).contains(this);

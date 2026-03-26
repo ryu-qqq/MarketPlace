@@ -135,7 +135,8 @@ class ShipmentQueryControllerRestDocsTest {
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getShipmentListUseCase.execute(any())).willReturn(pageResult);
-            given(mapper.toPageResponse(any(ShipmentPageResult.class))).willReturn(pageResponse);
+            given(mapper.toPageResponseV4(any(ShipmentPageResult.class)))
+                    .willReturn((PageApiResponse) pageResponse);
 
             // when & then
             mockMvc.perform(
@@ -275,7 +276,7 @@ class ShipmentQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("상품주문 정보"),
                                             fieldWithPath("data.content[].productOrder.orderItemId")
-                                                    .type(JsonFieldType.NUMBER)
+                                                    .type(JsonFieldType.STRING)
                                                     .description("주문상품 ID"),
                                             fieldWithPath(
                                                             "data.content[].productOrder.productGroupId")
@@ -284,12 +285,6 @@ class ShipmentQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].productOrder.productId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("상품 ID"),
-                                            fieldWithPath("data.content[].productOrder.sellerId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("셀러 ID"),
-                                            fieldWithPath("data.content[].productOrder.brandId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("브랜드 ID"),
                                             fieldWithPath("data.content[].productOrder.skuCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("SKU 코드"),
@@ -402,7 +397,8 @@ class ShipmentQueryControllerRestDocsTest {
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getShipmentListUseCase.execute(any())).willReturn(pageResult);
-            given(mapper.toPageResponse(any(ShipmentPageResult.class))).willReturn(pageResponse);
+            given(mapper.toPageResponseV4(any(ShipmentPageResult.class)))
+                    .willReturn((PageApiResponse) pageResponse);
 
             // when & then
             mockMvc.perform(
@@ -424,7 +420,8 @@ class ShipmentQueryControllerRestDocsTest {
 
             given(mapper.toSearchParams(any())).willReturn(null);
             given(getShipmentListUseCase.execute(any())).willReturn(emptyResult);
-            given(mapper.toPageResponse(any(ShipmentPageResult.class))).willReturn(emptyResponse);
+            given(mapper.toPageResponseV4(any(ShipmentPageResult.class)))
+                    .willReturn((PageApiResponse) emptyResponse);
 
             // when & then
             mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL))
@@ -466,7 +463,6 @@ class ShipmentQueryControllerRestDocsTest {
                             jsonPath("$.data.shipment.status")
                                     .value(ShipmentApiFixtures.DEFAULT_STATUS))
                     .andExpect(jsonPath("$.data.payment").exists())
-                    .andExpect(jsonPath("$.data.settlement").exists())
                     .andDo(
                             document(
                                     "shipment/detail",
@@ -558,7 +554,7 @@ class ShipmentQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("상품주문 정보"),
                                             fieldWithPath("data.productOrder.orderItemId")
-                                                    .type(JsonFieldType.NUMBER)
+                                                    .type(JsonFieldType.STRING)
                                                     .description("주문상품 ID"),
                                             fieldWithPath("data.productOrder.productGroupId")
                                                     .type(JsonFieldType.NUMBER)
@@ -566,12 +562,6 @@ class ShipmentQueryControllerRestDocsTest {
                                             fieldWithPath("data.productOrder.productId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("상품 ID"),
-                                            fieldWithPath("data.productOrder.sellerId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("셀러 ID"),
-                                            fieldWithPath("data.productOrder.brandId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("브랜드 ID"),
                                             fieldWithPath("data.productOrder.skuCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("SKU 코드"),
@@ -665,33 +655,6 @@ class ShipmentQueryControllerRestDocsTest {
                                             fieldWithPath("data.payment.canceledAt")
                                                     .type(JsonFieldType.NULL)
                                                     .description("결제취소일시")
-                                                    .optional(),
-                                            fieldWithPath("data.settlement")
-                                                    .type(JsonFieldType.OBJECT)
-                                                    .description("정산 정보"),
-                                            fieldWithPath("data.settlement.commissionRate")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("수수료율"),
-                                            fieldWithPath("data.settlement.fee")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("수수료"),
-                                            fieldWithPath(
-                                                            "data.settlement.expectationSettlementAmount")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("예상 정산금액"),
-                                            fieldWithPath("data.settlement.settlementAmount")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("정산금액"),
-                                            fieldWithPath("data.settlement.shareRatio")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("배분비율"),
-                                            fieldWithPath("data.settlement.expectedSettlementDay")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description("예상 정산일")
-                                                    .optional(),
-                                            fieldWithPath("data.settlement.settlementDay")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description("정산일")
                                                     .optional(),
                                             fieldWithPath("timestamp")
                                                     .type(JsonFieldType.STRING)

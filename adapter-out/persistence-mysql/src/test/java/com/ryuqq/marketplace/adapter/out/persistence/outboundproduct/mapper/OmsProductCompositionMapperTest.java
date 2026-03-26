@@ -46,17 +46,18 @@ class OmsProductCompositionMapperTest {
         void toResults_WithAllEnrichmentData_ReturnsCompleteResults() {
             // given
             Long pgId = 100L;
+            Long shopId = 1L;
             List<OmsProductListCompositeDto> composites =
                     List.of(OmsProductCompositeDtoFixtures.activeCompositeDto(pgId));
             Map<Long, OmsProductMainImageDto> imageMap =
                     Map.of(pgId, new OmsProductMainImageDto(pgId, "https://example.com/img.jpg"));
             Map<Long, OmsProductPriceStockDto> priceStockMap =
                     Map.of(pgId, new OmsProductPriceStockDto(pgId, 50000, 100));
-            Map<Long, OmsProductSyncInfoDto> syncInfoMap =
+            Map<String, OmsProductSyncInfoDto> syncInfoMap =
                     Map.of(
-                            pgId,
+                            OmsProductSyncInfoDto.key(pgId, shopId),
                             new OmsProductSyncInfoDto(
-                                    pgId, "COMPLETED", Instant.now().minusSeconds(3600)));
+                                    pgId, shopId, "COMPLETED", Instant.now().minusSeconds(3600)));
 
             // when
             List<OmsProductListResult> results =
@@ -66,13 +67,15 @@ class OmsProductCompositionMapperTest {
             assertThat(results).hasSize(1);
             OmsProductListResult result = results.get(0);
             assertThat(result.id()).isEqualTo(pgId);
-            assertThat(result.productCode()).isEqualTo("PG-" + pgId);
+            assertThat(result.productCode()).isEqualTo("EXT-12345");
             assertThat(result.imageUrl()).isEqualTo("https://example.com/img.jpg");
             assertThat(result.price()).isEqualTo(50000);
             assertThat(result.stock()).isEqualTo(100);
             assertThat(result.syncStatus()).isEqualTo("SUCCESS");
             assertThat(result.syncStatusLabel()).isEqualTo("연동완료");
             assertThat(result.lastSyncAt()).isNotNull();
+            assertThat(result.shopId()).isEqualTo(1L);
+            assertThat(result.shopName()).isEqualTo("스마트스토어");
         }
 
         @Test
@@ -85,7 +88,7 @@ class OmsProductCompositionMapperTest {
             Map<Long, OmsProductMainImageDto> imageMap = Map.of();
             Map<Long, OmsProductPriceStockDto> priceStockMap =
                     Map.of(pgId, new OmsProductPriceStockDto(pgId, 50000, 100));
-            Map<Long, OmsProductSyncInfoDto> syncInfoMap = Map.of();
+            Map<String, OmsProductSyncInfoDto> syncInfoMap = Map.of();
 
             // when
             List<OmsProductListResult> results =
@@ -105,7 +108,7 @@ class OmsProductCompositionMapperTest {
                     List.of(OmsProductCompositeDtoFixtures.activeCompositeDto(pgId));
             Map<Long, OmsProductMainImageDto> imageMap = Map.of();
             Map<Long, OmsProductPriceStockDto> priceStockMap = Map.of();
-            Map<Long, OmsProductSyncInfoDto> syncInfoMap = Map.of();
+            Map<String, OmsProductSyncInfoDto> syncInfoMap = Map.of();
 
             // when
             List<OmsProductListResult> results =
@@ -126,7 +129,7 @@ class OmsProductCompositionMapperTest {
                     List.of(OmsProductCompositeDtoFixtures.activeCompositeDto(pgId));
             Map<Long, OmsProductMainImageDto> imageMap = Map.of();
             Map<Long, OmsProductPriceStockDto> priceStockMap = Map.of();
-            Map<Long, OmsProductSyncInfoDto> syncInfoMap = Map.of();
+            Map<String, OmsProductSyncInfoDto> syncInfoMap = Map.of();
 
             // when
             List<OmsProductListResult> results =
@@ -137,6 +140,37 @@ class OmsProductCompositionMapperTest {
             assertThat(results.get(0).syncStatus()).isEqualTo("NONE");
             assertThat(results.get(0).syncStatusLabel()).isEqualTo("미연동");
             assertThat(results.get(0).lastSyncAt()).isNull();
+        }
+
+        @Test
+        @DisplayName("externalProductId가 null이면 productCode는 빈 문자열을 반환합니다")
+        void toResults_WithNullExternalProductId_ReturnsEmptyProductCode() {
+            // given
+            Long pgId = 100L;
+            Instant now = Instant.now();
+            List<OmsProductListCompositeDto> composites =
+                    List.of(
+                            new OmsProductListCompositeDto(
+                                    pgId,
+                                    "테스트 상품",
+                                    "ACTIVE",
+                                    1L,
+                                    "테스트 셀러",
+                                    10L,
+                                    "테스트 브랜드",
+                                    1L,
+                                    "스마트스토어",
+                                    null,
+                                    now.minusSeconds(86400),
+                                    now));
+
+            // when
+            List<OmsProductListResult> results =
+                    mapper.toResults(composites, Map.of(), Map.of(), Map.of());
+
+            // then
+            assertThat(results).hasSize(1);
+            assertThat(results.get(0).productCode()).isEmpty();
         }
 
         @Test
@@ -168,7 +202,7 @@ class OmsProductCompositionMapperTest {
                     Map.of(
                             pgId1, new OmsProductPriceStockDto(pgId1, 10000, 50),
                             pgId2, new OmsProductPriceStockDto(pgId2, 20000, 200));
-            Map<Long, OmsProductSyncInfoDto> syncInfoMap = Map.of();
+            Map<String, OmsProductSyncInfoDto> syncInfoMap = Map.of();
 
             // when
             List<OmsProductListResult> results =
@@ -196,30 +230,21 @@ class OmsProductCompositionMapperTest {
         @Test
         @DisplayName("ACTIVE 상태의 라벨을 반환합니다")
         void resolveStatusLabel_WithActive_ReturnsLabel() {
-            // when
             String label = mapper.resolveStatusLabel("ACTIVE");
-
-            // then
             assertThat(label).isNotBlank();
         }
 
         @Test
         @DisplayName("null 상태 입력 시 빈 문자열을 반환합니다")
         void resolveStatusLabel_WithNull_ReturnsEmptyString() {
-            // when
             String label = mapper.resolveStatusLabel(null);
-
-            // then
             assertThat(label).isEmpty();
         }
 
         @Test
         @DisplayName("알 수 없는 상태 입력 시 원본 값을 반환합니다")
         void resolveStatusLabel_WithUnknownStatus_ReturnsRawStatus() {
-            // when
             String label = mapper.resolveStatusLabel("UNKNOWN_STATUS");
-
-            // then
             assertThat(label).isEqualTo("UNKNOWN_STATUS");
         }
     }
@@ -235,51 +260,31 @@ class OmsProductCompositionMapperTest {
         @Test
         @DisplayName("COMPLETED는 SUCCESS로 매핑됩니다")
         void mapSyncStatus_WithCompleted_ReturnsSuccess() {
-            // when
-            String result = mapper.mapSyncStatus("COMPLETED");
-
-            // then
-            assertThat(result).isEqualTo("SUCCESS");
+            assertThat(mapper.mapSyncStatus("COMPLETED")).isEqualTo("SUCCESS");
         }
 
         @Test
         @DisplayName("FAILED는 FAILED로 매핑됩니다")
         void mapSyncStatus_WithFailed_ReturnsFailed() {
-            // when
-            String result = mapper.mapSyncStatus("FAILED");
-
-            // then
-            assertThat(result).isEqualTo("FAILED");
+            assertThat(mapper.mapSyncStatus("FAILED")).isEqualTo("FAILED");
         }
 
         @Test
         @DisplayName("PENDING은 PENDING으로 매핑됩니다")
         void mapSyncStatus_WithPending_ReturnsPending() {
-            // when
-            String result = mapper.mapSyncStatus("PENDING");
-
-            // then
-            assertThat(result).isEqualTo("PENDING");
+            assertThat(mapper.mapSyncStatus("PENDING")).isEqualTo("PENDING");
         }
 
         @Test
         @DisplayName("PROCESSING은 PENDING으로 매핑됩니다")
         void mapSyncStatus_WithProcessing_ReturnsPending() {
-            // when
-            String result = mapper.mapSyncStatus("PROCESSING");
-
-            // then
-            assertThat(result).isEqualTo("PENDING");
+            assertThat(mapper.mapSyncStatus("PROCESSING")).isEqualTo("PENDING");
         }
 
         @Test
         @DisplayName("알 수 없는 상태는 NONE으로 매핑됩니다")
         void mapSyncStatus_WithUnknownStatus_ReturnsNone() {
-            // when
-            String result = mapper.mapSyncStatus("UNKNOWN");
-
-            // then
-            assertThat(result).isEqualTo("NONE");
+            assertThat(mapper.mapSyncStatus("UNKNOWN")).isEqualTo("NONE");
         }
     }
 
@@ -294,51 +299,31 @@ class OmsProductCompositionMapperTest {
         @Test
         @DisplayName("SUCCESS는 연동완료를 반환합니다")
         void resolveSyncStatusLabel_WithSuccess_ReturnsCompletedLabel() {
-            // when
-            String label = mapper.resolveSyncStatusLabel("SUCCESS");
-
-            // then
-            assertThat(label).isEqualTo("연동완료");
+            assertThat(mapper.resolveSyncStatusLabel("SUCCESS")).isEqualTo("연동완료");
         }
 
         @Test
         @DisplayName("FAILED는 연동실패를 반환합니다")
         void resolveSyncStatusLabel_WithFailed_ReturnsFailedLabel() {
-            // when
-            String label = mapper.resolveSyncStatusLabel("FAILED");
-
-            // then
-            assertThat(label).isEqualTo("연동실패");
+            assertThat(mapper.resolveSyncStatusLabel("FAILED")).isEqualTo("연동실패");
         }
 
         @Test
         @DisplayName("PENDING은 연동대기를 반환합니다")
         void resolveSyncStatusLabel_WithPending_ReturnsPendingLabel() {
-            // when
-            String label = mapper.resolveSyncStatusLabel("PENDING");
-
-            // then
-            assertThat(label).isEqualTo("연동대기");
+            assertThat(mapper.resolveSyncStatusLabel("PENDING")).isEqualTo("연동대기");
         }
 
         @Test
         @DisplayName("NONE은 미연동을 반환합니다")
         void resolveSyncStatusLabel_WithNone_ReturnsNotSyncedLabel() {
-            // when
-            String label = mapper.resolveSyncStatusLabel("NONE");
-
-            // then
-            assertThat(label).isEqualTo("미연동");
+            assertThat(mapper.resolveSyncStatusLabel("NONE")).isEqualTo("미연동");
         }
 
         @Test
         @DisplayName("알 수 없는 상태는 미연동을 반환합니다")
         void resolveSyncStatusLabel_WithUnknownStatus_ReturnsNotSyncedLabel() {
-            // when
-            String label = mapper.resolveSyncStatusLabel("UNKNOWN");
-
-            // then
-            assertThat(label).isEqualTo("미연동");
+            assertThat(mapper.resolveSyncStatusLabel("UNKNOWN")).isEqualTo("미연동");
         }
     }
 }

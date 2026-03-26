@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.domain.cancel.id;
 
-/** 취소 ID Value Object. 외부에서 UUIDv7을 주입받습니다. */
+import java.util.UUID;
+
+/** 취소 ID Value Object. UUIDv7 기반 자동 생성 지원. */
 public record CancelId(String value) {
 
     public static CancelId of(String value) {
@@ -12,5 +14,9 @@ public record CancelId(String value) {
 
     public static CancelId forNew(String value) {
         return of(value);
+    }
+
+    public static CancelId generate() {
+        return new CancelId(UUID.randomUUID().toString());
     }
 }

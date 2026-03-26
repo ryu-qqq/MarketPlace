@@ -1,14 +1,17 @@
 package com.ryuqq.marketplace.application.order;
 
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailBundle;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderListBundle;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
+import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.PaymentResult;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderDetailBundle;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderListBundle;
+import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
 import java.time.Instant;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +70,6 @@ public final class OrderQueryFixtures {
         return new OrderListResult(
                 orderId,
                 DEFAULT_ORDER_NUMBER,
-                "ORDERED",
                 1L,
                 10L,
                 "NAVER",
@@ -91,17 +93,16 @@ public final class OrderQueryFixtures {
     // ===== OrderItemResult Fixtures =====
 
     public static OrderItemResult orderItemResult() {
-        return orderItemResult(1L, DEFAULT_ORDER_ID);
+        return orderItemResult("01940001-0000-7000-8000-000000000001", DEFAULT_ORDER_ID);
     }
 
-    public static OrderItemResult orderItemResult(long orderItemId, String orderId) {
+    public static OrderItemResult orderItemResult(String orderItemId, String orderId) {
         return new OrderItemResult(
                 orderItemId,
+                "ORD-20250115-0001-001",
                 orderId,
                 100L,
                 200L,
-                1L,
-                5L,
                 "SKU-TEST-0001",
                 "테스트 상품그룹",
                 "테스트 브랜드",
@@ -124,23 +125,14 @@ public final class OrderQueryFixtures {
                 "101호",
                 "부재시 문앞에 놓아주세요",
                 "PENDING",
-                null,
-                null,
-                null,
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
                 null);
     }
 
     // ===== OrderCancelResult Fixtures =====
 
-    public static OrderCancelResult completedCancelResult(long orderItemId) {
+    public static OrderCancelResult completedCancelResult(String orderItemId) {
         return new OrderCancelResult(
-                1L,
+                "1",
                 orderItemId,
                 "CANCEL-20260218-0001",
                 "COMPLETED",
@@ -155,9 +147,9 @@ public final class OrderQueryFixtures {
                 Instant.parse("2026-02-19T11:00:00Z"));
     }
 
-    public static OrderCancelResult requestedCancelResult(long orderItemId) {
+    public static OrderCancelResult requestedCancelResult(String orderItemId) {
         return new OrderCancelResult(
-                2L,
+                "2",
                 orderItemId,
                 "CANCEL-20260218-0002",
                 "REQUESTED",
@@ -174,9 +166,9 @@ public final class OrderQueryFixtures {
 
     // ===== OrderClaimResult Fixtures =====
 
-    public static OrderClaimResult completedClaimResult(long orderItemId) {
+    public static OrderClaimResult completedClaimResult(String orderItemId) {
         return new OrderClaimResult(
-                1L,
+                "1",
                 orderItemId,
                 "CLAIM-20260218-0001",
                 "REFUND",
@@ -196,9 +188,9 @@ public final class OrderQueryFixtures {
                 null);
     }
 
-    public static OrderClaimResult requestedClaimResult(long orderItemId) {
+    public static OrderClaimResult requestedClaimResult(String orderItemId) {
         return new OrderClaimResult(
-                2L,
+                "2",
                 orderItemId,
                 "CLAIM-20260218-0002",
                 "REFUND",
@@ -264,8 +256,8 @@ public final class OrderQueryFixtures {
                 orderItemResult(),
                 orderListResult(),
                 paymentResult(),
-                List.of(completedCancelResult(1L)),
-                List.of(completedClaimResult(1L)),
+                List.of(completedCancelResult("01940001-0000-7000-8000-000000000001")),
+                List.of(completedClaimResult("01940001-0000-7000-8000-000000000001")),
                 List.of(orderHistoryResult()));
     }
 
@@ -274,5 +266,21 @@ public final class OrderQueryFixtures {
     public static OrderHistoryResult orderHistoryResult() {
         return new OrderHistoryResult(
                 1L, null, "ORDERED", "system", null, Instant.parse("2026-02-18T10:06:00Z"));
+    }
+
+    // ===== OrderSummaryResult Fixtures =====
+
+    public static Map<OrderItemStatus, Long> orderItemStatusCounts() {
+        Map<OrderItemStatus, Long> counts = new EnumMap<>(OrderItemStatus.class);
+        counts.put(OrderItemStatus.READY, 10L);
+        counts.put(OrderItemStatus.CONFIRMED, 5L);
+        counts.put(OrderItemStatus.CANCELLED, 2L);
+        counts.put(OrderItemStatus.RETURN_REQUESTED, 1L);
+        counts.put(OrderItemStatus.RETURNED, 0L);
+        return counts;
+    }
+
+    public static OrderSummaryResult orderSummaryResult() {
+        return new OrderSummaryResult(10L, 5L, 2L, 1L, 0L);
     }
 }

@@ -28,8 +28,8 @@ public record ProductGroupDetailApiResponse(
                 String optionType,
         @Schema(description = "상태 (DRAFT, ACTIVE, INACTIVE, SOLD_OUT, DELETED)", example = "ACTIVE")
                 String status,
-        @Schema(description = "생성일시 (ISO 8601)", example = "2026-01-15T10:30:00Z") String createdAt,
-        @Schema(description = "수정일시 (ISO 8601)", example = "2026-01-20T14:00:00Z") String updatedAt,
+        @Schema(description = "생성일시 (KST)", example = "2026-01-15T10:30:00Z") String createdAt,
+        @Schema(description = "수정일시 (KST)", example = "2026-01-20T14:00:00Z") String updatedAt,
         @Schema(description = "상품 그룹 이미지 목록") List<ProductGroupImageApiResponse> images,
         @Schema(description = "옵션-상품 매트릭스") ProductOptionMatrixApiResponse optionProductMatrix,
         @Schema(description = "배송 정책", nullable = true) ShippingPolicyApiResponse shippingPolicy,

@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.application.shipment.dto.command.ShipSingleCommand;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory.ShipSingleContext;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistenceBundle;
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.ShipmentFixtures;
@@ -52,7 +53,7 @@ class ShipSingleServiceTest {
             ShipmentShipData shipData = ShipmentShipData.of("1234567890", method);
 
             ShipSingleCommand command = ShipmentCommandFixtures.shipSingleCommand();
-            OrderItemId orderItemId = OrderItemId.of(1001L);
+            OrderItemId orderItemId = OrderItemId.of("01940001-0000-7000-8000-000000000001");
             ShipSingleContext context = new ShipSingleContext(orderItemId, shipData, now);
 
             given(commandFactory.createShipSingleContext(command)).willReturn(context);
@@ -66,7 +67,7 @@ class ShipSingleServiceTest {
             // then
             then(commandFactory).should().createShipSingleContext(command);
             then(readManager).should().getByOrderItemId(orderItemId);
-            then(persistFacade).should().persistWithOutbox(any(Shipment.class), any());
+            then(persistFacade).should().persistAll(any(ShipmentPersistenceBundle.class));
         }
 
         @Test
@@ -78,7 +79,7 @@ class ShipSingleServiceTest {
             ShipmentShipData shipData = ShipmentShipData.of("1234567890", method);
 
             ShipSingleCommand command = ShipmentCommandFixtures.shipSingleCommand();
-            OrderItemId orderItemId = OrderItemId.of(1001L);
+            OrderItemId orderItemId = OrderItemId.of("01940001-0000-7000-8000-000000000001");
             ShipSingleContext context = new ShipSingleContext(orderItemId, shipData, now);
 
             given(commandFactory.createShipSingleContext(command)).willReturn(context);

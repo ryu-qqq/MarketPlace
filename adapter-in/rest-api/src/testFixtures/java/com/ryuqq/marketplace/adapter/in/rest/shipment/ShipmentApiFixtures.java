@@ -4,13 +4,13 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ConfirmShipmentBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipBatchApiRequest.ShipBatchItemApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipBatchApiRequest.ShipMethodRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipSingleApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipmentSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse.BatchResultItemApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.PaymentInfoResponse;
-import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.SettlementInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.OrderInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ProductOrderInfoResponse;
@@ -40,7 +40,7 @@ public final class ShipmentApiFixtures {
     // ===== 상수 =====
     public static final String DEFAULT_SHIPMENT_ID = "SHIP-001";
     public static final String DEFAULT_SHIPMENT_NUMBER = "SN-20250101-001";
-    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
     public static final String DEFAULT_ORDER_ID = "ORD-001";
     public static final String DEFAULT_ORDER_NUMBER = "ON-20250101-001";
     public static final String DEFAULT_STATUS = "READY";
@@ -49,15 +49,19 @@ public final class ShipmentApiFixtures {
     public static final String DEFAULT_COURIER_NAME = "CJ대한통운";
     public static final String DEFAULT_SHIPMENT_METHOD_TYPE = "COURIER";
     public static final Instant DEFAULT_INSTANT = Instant.parse("2025-01-23T01:30:00Z");
-    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23T10:30:00+09:00";
+    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23 10:30:00";
 
     // ===== ConfirmShipmentBatchApiRequest =====
 
     public static ConfirmShipmentBatchApiRequest confirmBatchRequest() {
-        return new ConfirmShipmentBatchApiRequest(List.of(1001L, 1002L, 1003L));
+        return new ConfirmShipmentBatchApiRequest(
+                List.of(
+                        "01940001-0000-7000-8000-000000000001",
+                        "01940001-0000-7000-8000-000000000002",
+                        "01940001-0000-7000-8000-000000000003"));
     }
 
-    public static ConfirmShipmentBatchApiRequest confirmBatchRequest(List<Long> orderItemIds) {
+    public static ConfirmShipmentBatchApiRequest confirmBatchRequest(List<String> orderItemIds) {
         return new ConfirmShipmentBatchApiRequest(orderItemIds);
     }
 
@@ -65,17 +69,17 @@ public final class ShipmentApiFixtures {
 
     public static ShipBatchApiRequest shipBatchRequest() {
         List<ShipBatchItemApiRequest> items =
-                List.of(shipBatchItemRequest(1001L), shipBatchItemRequest(1002L));
-        return new ShipBatchApiRequest(items);
+                List.of(
+                        shipBatchItemRequest("ORD-20260324-0001"),
+                        shipBatchItemRequest("ORD-20260324-0002"));
+        return new ShipBatchApiRequest(items, null);
     }
 
-    public static ShipBatchItemApiRequest shipBatchItemRequest(Long orderItemId) {
+    public static ShipBatchItemApiRequest shipBatchItemRequest(String orderNumber) {
         return new ShipBatchItemApiRequest(
-                orderItemId,
-                DEFAULT_TRACKING_NUMBER,
-                DEFAULT_COURIER_CODE,
-                DEFAULT_COURIER_NAME,
-                DEFAULT_SHIPMENT_METHOD_TYPE);
+                orderNumber,
+                new ShipMethodRequest(DEFAULT_SHIPMENT_METHOD_TYPE, DEFAULT_COURIER_CODE),
+                DEFAULT_TRACKING_NUMBER);
     }
 
     // ===== ShipSingleApiRequest =====
@@ -161,10 +165,9 @@ public final class ShipmentApiFixtures {
                         DEFAULT_INSTANT),
                 new ShipmentListResult.ProductOrderInfo(
                         DEFAULT_ORDER_ITEM_ID,
+                        "ORD-20250101-001-001",
                         100L,
                         200L,
-                        1L,
-                        1L,
                         "SKU-001",
                         "테스트상품",
                         "테스트브랜드",
@@ -231,10 +234,9 @@ public final class ShipmentApiFixtures {
                         DEFAULT_INSTANT),
                 new ShipmentListResult.ProductOrderInfo(
                         DEFAULT_ORDER_ITEM_ID,
+                        "ORD-20250101-001-001",
                         100L,
                         200L,
-                        1L,
-                        1L,
                         "SKU-001",
                         "테스트상품",
                         "테스트브랜드",
@@ -260,8 +262,7 @@ public final class ShipmentApiFixtures {
                         "PG-001",
                         10000,
                         DEFAULT_INSTANT,
-                        null),
-                new ShipmentDetailResult.SettlementInfo(10, 1000, 9000, 0, 100, null, null));
+                        null));
     }
 
     public static ShipmentDetailResult detailResultWithoutPayment(String shipmentId) {
@@ -294,10 +295,9 @@ public final class ShipmentApiFixtures {
                         DEFAULT_INSTANT),
                 new ShipmentListResult.ProductOrderInfo(
                         DEFAULT_ORDER_ITEM_ID,
+                        "ORD-20250101-001-001",
                         100L,
                         200L,
-                        1L,
-                        1L,
                         "SKU-001",
                         "테스트상품",
                         "테스트브랜드",
@@ -315,8 +315,7 @@ public final class ShipmentApiFixtures {
                         10000),
                 new ShipmentListResult.ReceiverInfo(
                         "김수령", "010-9876-5432", "12345", "서울시 강남구", "101동 202호", "문 앞에 놓아주세요"),
-                null,
-                new ShipmentDetailResult.SettlementInfo(0, 0, 0, 0, 0, null, null));
+                null);
     }
 
     // ===== BatchProcessingResult (Application) =====
@@ -375,8 +374,6 @@ public final class ShipmentApiFixtures {
                         DEFAULT_ORDER_ITEM_ID,
                         100L,
                         200L,
-                        1L,
-                        1L,
                         "SKU-001",
                         "테스트상품",
                         "테스트브랜드",
@@ -440,8 +437,6 @@ public final class ShipmentApiFixtures {
                         DEFAULT_ORDER_ITEM_ID,
                         100L,
                         200L,
-                        1L,
-                        1L,
                         "SKU-001",
                         "테스트상품",
                         "테스트브랜드",
@@ -467,8 +462,7 @@ public final class ShipmentApiFixtures {
                         "PG-001",
                         10000,
                         DEFAULT_FORMATTED_TIME,
-                        null),
-                new SettlementInfoResponse(10, 1000, 9000, 0, 100, null, null));
+                        null));
     }
 
     // ===== BatchResultApiResponse =====

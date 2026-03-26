@@ -13,8 +13,7 @@ public record ShipmentDetailApiResponse(
         @Schema(description = "주문 정보") OrderInfoResponse order,
         @Schema(description = "상품주문 정보") ProductOrderInfoResponse productOrder,
         @Schema(description = "수령인 정보") ReceiverInfoResponse receiver,
-        @Schema(description = "결제 정보") PaymentInfoResponse payment,
-        @Schema(description = "정산 정보") SettlementInfoResponse settlement) {
+        @Schema(description = "결제 정보") PaymentInfoResponse payment) {
 
     /** 결제 정보 응답. */
     @Schema(description = "결제 정보")
@@ -27,15 +26,4 @@ public record ShipmentDetailApiResponse(
             @Schema(description = "결제 금액") int paymentAmount,
             @Schema(description = "결제일시") String paidAt,
             @Schema(description = "결제취소일시") String canceledAt) {}
-
-    /** 정산 정보 응답. */
-    @Schema(description = "정산 정보")
-    public record SettlementInfoResponse(
-            @Schema(description = "수수료율") int commissionRate,
-            @Schema(description = "수수료") int fee,
-            @Schema(description = "예상 정산금액") int expectationSettlementAmount,
-            @Schema(description = "정산금액") int settlementAmount,
-            @Schema(description = "배분비율") int shareRatio,
-            @Schema(description = "예상 정산일") String expectedSettlementDay,
-            @Schema(description = "정산일") String settlementDay) {}
 }

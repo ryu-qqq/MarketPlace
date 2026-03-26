@@ -132,10 +132,9 @@ class ExchangeStatusTest {
         }
 
         @Test
-        @DisplayName("COLLECTING에서 REJECTED로 전이할 수 없다")
-        void collectingCannotTransitionToRejected() {
-            assertThat(ExchangeStatus.COLLECTING.canTransitionTo(ExchangeStatus.REJECTED))
-                    .isFalse();
+        @DisplayName("COLLECTING에서 REJECTED로 전이할 수 있다")
+        void collectingCanTransitionToRejected() {
+            assertThat(ExchangeStatus.COLLECTING.canTransitionTo(ExchangeStatus.REJECTED)).isTrue();
         }
 
         @Test

@@ -186,6 +186,7 @@ public record SellerOptionGroups(List<SellerOptionGroup> groups) {
                 matchedGroupIds.add(entry.sellerOptionGroupId());
 
                 existing.updateName(OptionGroupName.of(entry.optionGroupName()));
+                existing.updateInputType(entry.inputType());
                 existing.updateSortOrder(entry.sortOrder());
                 if (entry.canonicalOptionGroupId() != null) {
                     existing.mapToCanonical(

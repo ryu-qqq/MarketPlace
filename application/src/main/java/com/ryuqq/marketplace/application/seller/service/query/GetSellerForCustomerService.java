@@ -1,6 +1,6 @@
 package com.ryuqq.marketplace.application.seller.service.query;
 
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
 import com.ryuqq.marketplace.application.seller.manager.SellerCompositionReadManager;
 import com.ryuqq.marketplace.application.seller.port.in.query.GetSellerForCustomerUseCase;
 import org.springframework.stereotype.Service;

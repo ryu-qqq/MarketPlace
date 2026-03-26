@@ -5,12 +5,13 @@ public record ExchangeSummaryApiResponse(
         long requested,
         long collecting,
         long collected,
+        long preparing,
         long shipping,
         long completed,
         long rejected,
         long cancelled) {
 
     public static ExchangeSummaryApiResponse empty() {
-        return new ExchangeSummaryApiResponse(0, 0, 0, 0, 0, 0, 0);
+        return new ExchangeSummaryApiResponse(0, 0, 0, 0, 0, 0, 0, 0);
     }
 }

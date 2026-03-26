@@ -39,9 +39,6 @@ dependencies {
     // Spring Data (for Pageable)
     implementation libs.spring.data.commons
 
-    // Spring Transaction (for LegacyProductCommandFacade @Transactional)
-    implementation libs.spring.tx
-
     // Spring Security (Optional)
     implementation libs.spring.boot.starter.security
 
@@ -61,6 +58,7 @@ dependencies {
     testImplementation libs.spring.restdocs.mockmvc
     testImplementation libs.archunit.junit5
     testImplementation testFixtures(project(":domain"))
+    testImplementation testFixtures(project(":application"))
 
     // ========================================
     // Test Fixtures Dependencies

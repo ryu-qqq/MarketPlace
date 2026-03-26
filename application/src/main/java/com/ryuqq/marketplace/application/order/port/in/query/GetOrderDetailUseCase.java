@@ -5,5 +5,5 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailRe
 /** 상품주문 상세 조회 UseCase (V5). */
 public interface GetOrderDetailUseCase {
 
-    ProductOrderDetailResult execute(long orderItemId);
+    ProductOrderDetailResult execute(String orderItemId);
 }

@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.strategy;
 
-import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupDetailResponse;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.sellersaleschannel.aggregate.SellerSalesChannel;
 import java.util.Set;
@@ -23,18 +24,20 @@ public interface SetofProductUpdateExecutor {
     /**
      * 상품 수정을 실행합니다.
      *
-     * @param bundle 상품 그룹 상세 번들
+     * @param syncData 상품 그룹 동기화 데이터
      * @param externalCategoryId 외부 카테고리 ID
      * @param externalBrandId 외부 브랜드 ID
      * @param externalProductId 외부 상품 ID
      * @param channel 셀러 판매채널
      * @param changedAreas 변경된 영역 집합
+     * @param existingProduct 기존 세토프 상품 조회 결과 (nullable, 조회 실패 시 null)
      */
     void execute(
-            ProductGroupDetailBundle bundle,
+            ProductGroupSyncData syncData,
             Long externalCategoryId,
             Long externalBrandId,
             String externalProductId,
             SellerSalesChannel channel,
-            Set<ChangedArea> changedAreas);
+            Set<ChangedArea> changedAreas,
+            SetofProductGroupDetailResponse existingProduct);
 }

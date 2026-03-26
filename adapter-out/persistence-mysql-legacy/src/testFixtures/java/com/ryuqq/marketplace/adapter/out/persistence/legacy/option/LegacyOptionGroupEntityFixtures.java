@@ -11,24 +11,19 @@ public final class LegacyOptionGroupEntityFixtures {
 
     private LegacyOptionGroupEntityFixtures() {}
 
-    // ===== 기본 상수 =====
+    public static final long DEFAULT_PRODUCT_GROUP_ID = 1L;
     public static final String DEFAULT_OPTION_NAME = "COLOR";
     public static final String OPTION_NAME_SIZE = "SIZE";
 
-    // ===== Entity Fixtures =====
-
-    /** 기본 옵션 그룹 Entity 생성. */
     public static LegacyOptionGroupEntity defaultEntity() {
-        return LegacyOptionGroupEntity.create(DEFAULT_OPTION_NAME);
+        return LegacyOptionGroupEntity.create(DEFAULT_PRODUCT_GROUP_ID, DEFAULT_OPTION_NAME);
     }
 
-    /** 옵션 이름을 지정한 Entity 생성. */
     public static LegacyOptionGroupEntity entityWithName(String optionName) {
-        return LegacyOptionGroupEntity.create(optionName);
+        return LegacyOptionGroupEntity.create(DEFAULT_PRODUCT_GROUP_ID, optionName);
     }
 
-    /** 사이즈 옵션 그룹 Entity 생성. */
     public static LegacyOptionGroupEntity sizeEntity() {
-        return LegacyOptionGroupEntity.create(OPTION_NAME_SIZE);
+        return LegacyOptionGroupEntity.create(DEFAULT_PRODUCT_GROUP_ID, OPTION_NAME_SIZE);
     }
 }

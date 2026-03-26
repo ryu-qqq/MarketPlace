@@ -72,6 +72,19 @@ public class ProductQueryDslRepository {
                 .fetch();
     }
 
+    public Optional<ProductJpaEntity> findByProductGroupIdAndSkuCode(
+            Long productGroupId, String skuCode) {
+        ProductJpaEntity entity =
+                queryFactory
+                        .selectFrom(product)
+                        .where(
+                                conditionBuilder.productGroupIdEq(productGroupId),
+                                product.skuCode.eq(skuCode),
+                                conditionBuilder.statusNotDeleted())
+                        .fetchFirst();
+        return Optional.ofNullable(entity);
+    }
+
     public List<ProductOptionMappingJpaEntity> findOptionMappingsByProductId(Long productId) {
         return queryFactory
                 .selectFrom(optionMapping)

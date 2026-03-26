@@ -10,7 +10,6 @@ import com.ryuqq.marketplace.domain.outboundsync.aggregate.OutboundSyncOutbox;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
-import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,6 +54,20 @@ public class ProductGroupDeactivationOutboxCoordinator {
      * @param productGroupId 비활성화/삭제된 상품그룹 ID
      */
     public void createDeleteOutboxesIfNeeded(ProductGroupId productGroupId) {
+        ProductGroup productGroup = productGroupReadManager.getById(productGroupId);
+        createDeleteOutboxesIfNeeded(productGroup);
+    }
+
+    /**
+     * 이미 조회된 ProductGroup 객체를 사용하여 DELETE outbox를 생성합니다.
+     *
+     * <p>상태 변경 후 재조회 시 soft delete 필터에 의해 조회 불가능한 경우를 방지합니다.
+     *
+     * @param productGroup 비활성화/삭제된 상품그룹
+     */
+    public void createDeleteOutboxesIfNeeded(ProductGroup productGroup) {
+        ProductGroupId productGroupId = productGroup.id();
+
         List<OutboundProduct> registeredProducts =
                 outboundProductReadManager.findRegisteredByProductGroupId(productGroupId.value());
 
@@ -71,23 +84,20 @@ public class ProductGroupDeactivationOutboxCoordinator {
                         .map(OutboundSyncOutbox::salesChannelIdValue)
                         .collect(Collectors.toSet());
 
-        List<SalesChannelId> channelsNeedingOutbox =
+        List<OutboundProduct> productsNeedingOutbox =
                 registeredProducts.stream()
                         .filter(p -> !channelsWithActiveOutbox.contains(p.salesChannelIdValue()))
-                        .map(OutboundProduct::salesChannelId)
                         .toList();
 
-        if (channelsNeedingOutbox.isEmpty()) {
+        if (productsNeedingOutbox.isEmpty()) {
             return;
         }
-
-        ProductGroup productGroup = productGroupReadManager.getById(productGroupId);
 
         List<OutboundSyncOutbox> outboxes =
                 outboundSyncCommandFactory.createOutboxesForSync(
                         productGroupId,
                         productGroup.sellerId(),
-                        channelsNeedingOutbox,
+                        productsNeedingOutbox,
                         SyncType.DELETE);
 
         outboxCommandManager.persistAll(outboxes);
@@ -95,7 +105,7 @@ public class ProductGroupDeactivationOutboxCoordinator {
         log.info(
                 "DELETE Outbox 생성: productGroupId={}, count={}, skipped={}",
                 productGroupId.value(),
-                channelsNeedingOutbox.size(),
+                productsNeedingOutbox.size(),
                 channelsWithActiveOutbox.size());
     }
 }

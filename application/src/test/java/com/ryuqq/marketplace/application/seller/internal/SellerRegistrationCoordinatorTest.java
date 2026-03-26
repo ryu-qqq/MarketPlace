@@ -7,7 +7,6 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
 
-import com.ryuqq.marketplace.application.seller.dto.bundle.SellerRegistrationBundle;
 import com.ryuqq.marketplace.application.seller.validator.SellerBusinessInfoValidator;
 import com.ryuqq.marketplace.application.seller.validator.SellerValidator;
 import com.ryuqq.marketplace.domain.seller.SellerFixtures;

@@ -44,6 +44,7 @@ bin/
 .claude/settings.local.json
 .claude/hooks/logs/
 .claude/commands/db.md
+.claude/skills/oms-test/
 .serena/
 
 # Claude Code documentation and specs (auto-generated)
@@ -64,6 +65,7 @@ langfuse/tests/__pycache__/
 .env
 local-dev/.env.aws
 local-dev/.env.aws.stage
+local-dev/.env.naver
 
 # Terraform
 .terraform/
@@ -78,6 +80,19 @@ tfplan
 local-dev/data/legacy-seed/
 docs/seller/seed_data.sql
 
+# Naver commerce client test config (contains credential placeholders)
+adapter-out/client/naver-commerce-client/src/test/resources/application-naver-test.yml
+
 # Naver API reference docs (external)
 docs/reference/NAVER_*
 docs/reference/naver_*
+
+# Auto-generated guides (AI/documentation artifacts)
+docs/guide/
+
+# Node modules
+node_modules/
+naver_api_docs/node_modules/
+
+# Playwright MCP logs
+.playwright-mcp/

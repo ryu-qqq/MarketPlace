@@ -9,8 +9,12 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupBasic
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductGroupUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductsUpdateRequest;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
+import com.ryuqq.marketplace.application.productgroupimage.dto.response.ProductGroupImageResult;
+import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import com.ryuqq.marketplace.application.refundpolicy.dto.response.RefundPolicyResult;
 import com.ryuqq.marketplace.application.shippingpolicy.dto.response.ShippingPolicyResult;
 import com.ryuqq.marketplace.domain.product.ProductFixtures;
@@ -18,7 +22,6 @@ import com.ryuqq.marketplace.domain.product.aggregate.Product;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroupDescription;
-import com.ryuqq.marketplace.domain.productgroupimage.aggregate.ProductGroupImage;
 import com.ryuqq.marketplace.domain.productnotice.ProductNoticeFixtures;
 import com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice;
 import java.time.Instant;
@@ -36,7 +39,7 @@ class SetofCommerceProductMapperTest {
 
     private final SetofCommerceProductMapper sut = new SetofCommerceProductMapper();
 
-    // ── 헬퍼 메서드 ──
+    // -- 헬퍼 메서드 --
 
     private ProductGroupDetailCompositeQueryResult createQueryResult(
             ShippingPolicyResult shippingPolicy, RefundPolicyResult refundPolicy) {
@@ -59,23 +62,37 @@ class SetofCommerceProductMapperTest {
                 refundPolicy);
     }
 
-    private ProductGroupDetailBundle createBundle(
+    private ProductGroupSyncData createSyncData(
             ProductGroup group,
             List<Product> products,
             Optional<ProductGroupDescription> description,
             Optional<ProductNotice> notice) {
-        return new ProductGroupDetailBundle(
-                createQueryResult(null, null), group, products, description, notice);
+        ProductGroupDetailBundle bundle =
+                new ProductGroupDetailBundle(
+                        createQueryResult(null, null),
+                        group,
+                        products,
+                        description,
+                        notice,
+                        Optional.empty(),
+                        Optional.empty(),
+                        Map.of());
+        return ProductGroupSyncData.from(bundle);
     }
 
-    private ProductGroupDetailBundle createBundleWithPolicies(
+    private ProductGroupSyncData createSyncDataWithPolicies(
             ShippingPolicyResult shippingPolicy, RefundPolicyResult refundPolicy) {
-        return new ProductGroupDetailBundle(
-                createQueryResult(shippingPolicy, refundPolicy),
-                ProductGroupFixtures.activeProductGroup(),
-                List.of(ProductFixtures.activeProduct()),
-                Optional.empty(),
-                Optional.empty());
+        ProductGroupDetailBundle bundle =
+                new ProductGroupDetailBundle(
+                        createQueryResult(shippingPolicy, refundPolicy),
+                        ProductGroupFixtures.activeProductGroup(),
+                        List.of(ProductFixtures.activeProduct()),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Map.of());
+        return ProductGroupSyncData.from(bundle);
     }
 
     @Nested
@@ -126,7 +143,8 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("notice가 있으면 entries를 변환한다")
         void validNoticeReturnsEntries() {
-            ProductNotice notice = ProductNoticeFixtures.newProductNotice();
+            ProductNoticeResult notice =
+                    ProductNoticeResult.from(ProductNoticeFixtures.newProductNotice());
 
             SetofNoticeRequest result = sut.toNoticeRequest(notice, null);
 
@@ -139,7 +157,8 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("fieldNameMap이 있으면 fieldName을 매핑한다")
         void fieldNameMapApplied() {
-            ProductNotice notice = ProductNoticeFixtures.newProductNotice();
+            ProductNoticeResult notice =
+                    ProductNoticeResult.from(ProductNoticeFixtures.newProductNotice());
             Map<Long, String> fieldNameMap = Map.of(100L, "제조국", 101L, "제조사");
 
             SetofNoticeRequest result = sut.toNoticeRequest(notice, fieldNameMap);
@@ -163,14 +182,14 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("description이 없으면 null 반환")
         void emptyDescriptionReturnsNull() {
-            var bundle =
-                    createBundle(
+            var syncData =
+                    createSyncData(
                             ProductGroupFixtures.activeProductGroup(),
                             List.of(ProductFixtures.activeProduct()),
                             Optional.empty(),
                             Optional.empty());
 
-            SetofDescriptionRequest result = sut.toDescriptionRequest(bundle);
+            SetofDescriptionRequest result = sut.toDescriptionRequest(syncData);
 
             assertThat(result).isNull();
         }
@@ -179,14 +198,14 @@ class SetofCommerceProductMapperTest {
         @DisplayName("description이 있으면 content를 변환한다")
         void validDescriptionReturnsContent() {
             var description = ProductGroupFixtures.defaultProductGroupDescription();
-            var bundle =
-                    createBundle(
+            var syncData =
+                    createSyncData(
                             ProductGroupFixtures.activeProductGroup(),
                             List.of(ProductFixtures.activeProduct()),
                             Optional.of(description),
                             Optional.empty());
 
-            SetofDescriptionRequest result = sut.toDescriptionRequest(bundle);
+            SetofDescriptionRequest result = sut.toDescriptionRequest(syncData);
 
             assertThat(result).isNotNull();
             assertThat(result.content()).isEqualTo(description.contentValue());
@@ -200,10 +219,10 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("이미지 목록을 변환한다")
         void convertsImages() {
-            List<ProductGroupImage> images =
+            List<ProductGroupImageResult> images =
                     List.of(
-                            ProductGroupFixtures.thumbnailImage(),
-                            ProductGroupFixtures.detailImage(1));
+                            ProductGroupImageResult.from(ProductGroupFixtures.thumbnailImage()),
+                            ProductGroupImageResult.from(ProductGroupFixtures.detailImage(1)));
 
             SetofImagesRequest result = sut.toImagesRequest(images);
 
@@ -216,7 +235,8 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("업로드된 이미지는 업로드 URL을 사용한다")
         void usesUploadedUrlWhenAvailable() {
-            ProductGroupImage uploadedImage = ProductGroupFixtures.uploadedImage();
+            ProductGroupImageResult uploadedImage =
+                    ProductGroupImageResult.from(ProductGroupFixtures.uploadedImage());
 
             SetofImagesRequest result = sut.toImagesRequest(List.of(uploadedImage));
 
@@ -226,11 +246,12 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("업로드 안 된 이미지는 원본 URL을 사용한다")
         void usesOriginUrlWhenNotUploaded() {
-            ProductGroupImage image = ProductGroupFixtures.thumbnailImage();
+            var domainImage = ProductGroupFixtures.thumbnailImage();
+            ProductGroupImageResult image = ProductGroupImageResult.from(domainImage);
 
             SetofImagesRequest result = sut.toImagesRequest(List.of(image));
 
-            assertThat(result.images().get(0).imageUrl()).isEqualTo(image.originUrlValue());
+            assertThat(result.images().get(0).imageUrl()).isEqualTo(domainImage.originUrlValue());
         }
 
         @Test
@@ -249,15 +270,15 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("기본 정보 수정 요청을 생성한다")
         void createsBasicInfoRequest() {
-            var bundle =
-                    createBundle(
+            var syncData =
+                    createSyncData(
                             ProductGroupFixtures.activeProductGroup(),
                             List.of(ProductFixtures.activeProduct()),
                             Optional.empty(),
                             Optional.empty());
 
             SetofProductGroupBasicInfoUpdateRequest result =
-                    sut.toBasicInfoUpdateRequest(bundle, 500L, 600L);
+                    sut.toBasicInfoUpdateRequest(syncData, 500L, 600L);
 
             assertThat(result.productGroupName()).isEqualTo("테스트 상품 그룹");
             assertThat(result.brandId()).isEqualTo(600L);
@@ -287,10 +308,10 @@ class SetofCommerceProductMapperTest {
                             null,
                             Instant.now(),
                             Instant.now());
-            var bundle = createBundleWithPolicies(shippingPolicy, null);
+            var syncData = createSyncDataWithPolicies(shippingPolicy, null);
 
             SetofProductGroupBasicInfoUpdateRequest result =
-                    sut.toBasicInfoUpdateRequest(bundle, 500L, 600L);
+                    sut.toBasicInfoUpdateRequest(syncData, 500L, 600L);
 
             assertThat(result.shippingPolicyId()).isEqualTo(10L);
             assertThat(result.refundPolicyId()).isNull();
@@ -315,10 +336,10 @@ class SetofCommerceProductMapperTest {
                             "환불 규정 상세",
                             Instant.now(),
                             Instant.now());
-            var bundle = createBundleWithPolicies(null, refundPolicy);
+            var syncData = createSyncDataWithPolicies(null, refundPolicy);
 
             SetofProductGroupBasicInfoUpdateRequest result =
-                    sut.toBasicInfoUpdateRequest(bundle, 500L, 600L);
+                    sut.toBasicInfoUpdateRequest(syncData, 500L, 600L);
 
             assertThat(result.shippingPolicyId()).isNull();
             assertThat(result.refundPolicyId()).isEqualTo(20L);
@@ -332,9 +353,10 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("옵션 없는 상품 목록을 변환한다")
         void convertsProductsWithoutOptions() {
-            var products = List.of(ProductFixtures.activeProduct());
+            var products = List.of(ProductResult.from(ProductFixtures.activeProduct()));
 
-            SetofProductsUpdateRequest result = sut.toProductsUpdateRequest(products, List.of());
+            SetofProductsUpdateRequest result =
+                    sut.toProductsUpdateRequest(products, List.of(), null);
 
             assertThat(result.products()).hasSize(1);
             assertThat(result.optionGroups()).isEmpty();
@@ -348,10 +370,15 @@ class SetofCommerceProductMapperTest {
         @DisplayName("옵션이 있는 상품 그룹을 변환한다")
         void convertsProductsWithOptions() {
             var group = ProductGroupFixtures.newProductGroupWithSingleOption();
-            var products = List.of(ProductFixtures.activeProduct());
+            var syncData =
+                    createSyncData(
+                            group,
+                            List.of(ProductFixtures.activeProduct()),
+                            Optional.empty(),
+                            Optional.empty());
 
             SetofProductsUpdateRequest result =
-                    sut.toProductsUpdateRequest(products, group.sellerOptionGroups());
+                    sut.toProductsUpdateRequest(syncData.products(), syncData.optionGroups(), null);
 
             assertThat(result.optionGroups()).hasSize(1);
             assertThat(result.optionGroups().get(0).optionGroupName()).isEqualTo("색상");
@@ -365,15 +392,15 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("등록 요청을 생성한다")
         void createsRegistrationRequest() {
-            var bundle =
-                    createBundle(
+            var syncData =
+                    createSyncData(
                             ProductGroupFixtures.activeProductGroup(),
                             List.of(ProductFixtures.activeProduct()),
                             Optional.empty(),
                             Optional.empty());
 
             SetofProductGroupRegistrationRequest result =
-                    sut.toRegistrationRequest(bundle, 500L, 600L);
+                    sut.toRegistrationRequest(syncData, 500L, 600L);
 
             assertThat(result).isNotNull();
             assertThat(result.productGroupName()).isEqualTo("테스트 상품 그룹");
@@ -389,15 +416,15 @@ class SetofCommerceProductMapperTest {
             var product1 = ProductFixtures.activeProduct(1L);
             var product2 =
                     ProductFixtures.soldOutProduct(); // regularPrice=100000, currentPrice=80000
-            var bundle =
-                    createBundle(
+            var syncData =
+                    createSyncData(
                             ProductGroupFixtures.activeProductGroup(),
                             List.of(product1, product2),
                             Optional.empty(),
                             Optional.empty());
 
             SetofProductGroupRegistrationRequest result =
-                    sut.toRegistrationRequest(bundle, 500L, 600L);
+                    sut.toRegistrationRequest(syncData, 500L, 600L);
 
             // 두 상품 모두 같은 가격이므로 그대로
             assertThat(result.regularPrice()).isEqualTo(ProductFixtures.DEFAULT_REGULAR_PRICE);
@@ -408,15 +435,15 @@ class SetofCommerceProductMapperTest {
         @DisplayName("description이 있으면 포함된다")
         void withDescription() {
             var desc = ProductGroupFixtures.defaultProductGroupDescription();
-            var bundle =
-                    createBundle(
+            var syncData =
+                    createSyncData(
                             ProductGroupFixtures.activeProductGroup(),
                             List.of(ProductFixtures.activeProduct()),
                             Optional.of(desc),
                             Optional.empty());
 
             SetofProductGroupRegistrationRequest result =
-                    sut.toRegistrationRequest(bundle, 500L, 600L);
+                    sut.toRegistrationRequest(syncData, 500L, 600L);
 
             assertThat(result.description()).isNotNull();
             assertThat(result.description().content()).isEqualTo(desc.contentValue());
@@ -426,15 +453,15 @@ class SetofCommerceProductMapperTest {
         @DisplayName("notice가 있으면 포함된다")
         void withNotice() {
             var notice = ProductNoticeFixtures.newProductNotice();
-            var bundle =
-                    createBundle(
+            var syncData =
+                    createSyncData(
                             ProductGroupFixtures.activeProductGroup(),
                             List.of(ProductFixtures.activeProduct()),
                             Optional.empty(),
                             Optional.of(notice));
 
             SetofProductGroupRegistrationRequest result =
-                    sut.toRegistrationRequest(bundle, 500L, 600L);
+                    sut.toRegistrationRequest(syncData, 500L, 600L);
 
             assertThat(result.notice()).isNotNull();
             assertThat(result.notice().entries()).hasSize(3);
@@ -448,14 +475,14 @@ class SetofCommerceProductMapperTest {
         @Test
         @DisplayName("수정 요청을 생성한다")
         void createsUpdateRequest() {
-            var bundle =
-                    createBundle(
+            var syncData =
+                    createSyncData(
                             ProductGroupFixtures.activeProductGroup(),
                             List.of(ProductFixtures.activeProduct()),
                             Optional.empty(),
                             Optional.empty());
 
-            SetofProductGroupUpdateRequest result = sut.toUpdateRequest(bundle, 500L, 600L);
+            SetofProductGroupUpdateRequest result = sut.toUpdateRequest(syncData, 500L, 600L, null);
 
             assertThat(result).isNotNull();
             assertThat(result.productGroupName()).isEqualTo("테스트 상품 그룹");
@@ -469,14 +496,14 @@ class SetofCommerceProductMapperTest {
         @DisplayName("이미지, 옵션, 상품이 모두 포함된다")
         void includesAllFields() {
             var group = ProductGroupFixtures.newProductGroupWithSingleOption();
-            var bundle =
-                    createBundle(
+            var syncData =
+                    createSyncData(
                             group,
                             List.of(ProductFixtures.activeProduct()),
                             Optional.of(ProductGroupFixtures.defaultProductGroupDescription()),
                             Optional.of(ProductNoticeFixtures.newProductNotice()));
 
-            SetofProductGroupUpdateRequest result = sut.toUpdateRequest(bundle, 500L, 600L);
+            SetofProductGroupUpdateRequest result = sut.toUpdateRequest(syncData, 500L, 600L, null);
 
             assertThat(result.images()).isNotEmpty();
             assertThat(result.optionGroups()).hasSize(1);

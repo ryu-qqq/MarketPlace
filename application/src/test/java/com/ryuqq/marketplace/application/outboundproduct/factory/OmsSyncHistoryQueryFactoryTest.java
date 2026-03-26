@@ -114,7 +114,7 @@ class OmsSyncHistoryQueryFactoryTest {
             // given
             long productGroupId = 100L;
             SyncHistorySearchParams params =
-                    OmsProductQueryFixtures.syncHistorySearchParams(productGroupId, null);
+                    OmsProductQueryFixtures.syncHistorySearchParams(productGroupId, (String) null);
 
             // when
             SyncHistorySearchCriteria result = sut.createCriteria(params);

@@ -11,6 +11,7 @@ setof-commerce:
   base-url: ${SETOF_COMMERCE_BASE_URL:}
   service-name: ${SETOF_COMMERCE_SERVICE_NAME:SVC_MARKETPLACE}
   service-token: ${SETOF_COMMERCE_SERVICE_TOKEN:}
+  enabled: false
   timeout:
     connect: 5s
     read: 30s

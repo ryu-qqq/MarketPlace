@@ -7,6 +7,7 @@ import com.ryuqq.marketplace.domain.inboundorder.aggregate.InboundOrderItem;
 import com.ryuqq.marketplace.domain.inboundorder.id.InboundOrderId;
 import com.ryuqq.marketplace.domain.inboundorder.id.InboundOrderItemId;
 import com.ryuqq.marketplace.domain.inboundorder.vo.InboundOrderStatus;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,7 @@ public class InboundOrderJpaEntityMapper {
         return InboundOrderItemJpaEntity.create(
                 item.idValue(),
                 inboundOrderId,
+                item.externalProductOrderId(),
                 item.externalProductId(),
                 item.externalOptionId(),
                 item.externalProductName(),
@@ -48,6 +50,7 @@ public class InboundOrderJpaEntityMapper {
                 item.quantity(),
                 item.totalAmount(),
                 item.discountAmount(),
+                item.sellerBurdenDiscountAmount(),
                 item.paymentAmount(),
                 item.receiverName(),
                 item.receiverPhone(),
@@ -62,8 +65,8 @@ public class InboundOrderJpaEntityMapper {
                 item.resolvedSkuCode(),
                 item.resolvedProductGroupName(),
                 item.isMapped(),
-                null,
-                null);
+                Instant.now(),
+                Instant.now());
     }
 
     public List<InboundOrderItemJpaEntity> toItemEntities(
@@ -99,6 +102,7 @@ public class InboundOrderJpaEntityMapper {
     private InboundOrderItem toItemDomain(InboundOrderItemJpaEntity entity) {
         return InboundOrderItem.reconstitute(
                 InboundOrderItemId.of(entity.getId()),
+                entity.getExternalProductOrderId(),
                 entity.getExternalProductId(),
                 entity.getExternalOptionId(),
                 entity.getExternalProductName(),
@@ -108,6 +112,7 @@ public class InboundOrderJpaEntityMapper {
                 entity.getQuantity(),
                 entity.getTotalAmount(),
                 entity.getDiscountAmount(),
+                entity.getSellerBurdenDiscountAmount(),
                 entity.getPaymentAmount(),
                 entity.getReceiverName(),
                 entity.getReceiverPhone(),

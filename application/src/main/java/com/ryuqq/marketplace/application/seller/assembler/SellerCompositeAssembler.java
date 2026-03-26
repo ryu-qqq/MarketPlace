@@ -1,9 +1,9 @@
 package com.ryuqq.marketplace.application.seller.assembler;
 
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerAdminCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerFullCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerPolicyCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerFullCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPolicyCompositeResult;
 import org.springframework.stereotype.Component;
 
 /**

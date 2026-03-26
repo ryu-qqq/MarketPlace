@@ -193,6 +193,6 @@ class SalesChannelQueryControllerRestDocsTest {
     private SalesChannelApiResponse salesChannelApiResponse(
             Long id, String channelName, String status) {
         return new SalesChannelApiResponse(
-                id, channelName, status, "2025-01-23T10:30:00+09:00", "2025-01-23T10:30:00+09:00");
+                id, channelName, status, "2025-01-23 10:30:00", "2025-01-23 10:30:00");
     }
 }

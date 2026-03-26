@@ -21,6 +21,7 @@ package com.ryuqq.marketplace.application.order.dto.command;
  * @param quantity 수량
  * @param totalAmount 합계 금액
  * @param discountAmount 할인 금액
+ * @param sellerBurdenDiscountAmount 판매자 부담 할인액
  * @param paymentAmount 실결제 금액
  * @param receiverName 수령인명
  * @param receiverPhone 수령인 전화번호
@@ -48,6 +49,7 @@ public record CreateOrderItemCommand(
         int quantity,
         int totalAmount,
         int discountAmount,
+        int sellerBurdenDiscountAmount,
         int paymentAmount,
         String receiverName,
         String receiverPhone,

@@ -30,7 +30,9 @@ spring:
       - classpath:fileflow.yml
       - optional:classpath:fileflow-${spring.profiles.active:local}.yml
       - classpath:authhub.yml
-      - classpath:setof-commerce.yml
+      - optional:classpath:naver-commerce.yml
+      - optional:classpath:setof-commerce.yml
+      - optional:classpath:sellic-commerce.yml
       - classpath:spring-ai-client.yml
       - optional:classpath:spring-ai-client-${spring.profiles.active:local}.yml
 

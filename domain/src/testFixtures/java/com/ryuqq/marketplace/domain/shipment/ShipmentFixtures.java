@@ -21,7 +21,7 @@ public final class ShipmentFixtures {
     // ===== 기본 상수 =====
     private static final String DEFAULT_SHIPMENT_ID = "01944b2a-1234-7fff-8888-abcdef012345";
     private static final String DEFAULT_SHIPMENT_NUMBER = "SHP-20260218-0001";
-    private static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    private static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
     private static final String DEFAULT_TRACKING_NUMBER = "1234567890";
 
     // ===== ID Fixtures =====
@@ -40,7 +40,7 @@ public final class ShipmentFixtures {
         return OrderItemId.of(DEFAULT_ORDER_ITEM_ID);
     }
 
-    public static OrderItemId orderItemId(long value) {
+    public static OrderItemId orderItemId(String value) {
         return OrderItemId.of(value);
     }
 

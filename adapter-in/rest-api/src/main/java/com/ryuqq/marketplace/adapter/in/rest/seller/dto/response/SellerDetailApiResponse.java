@@ -37,9 +37,8 @@ public record SellerDetailApiResponse(
                     String logoUrl,
             @Schema(description = "설명", example = "테스트 셀러 설명입니다.") String description,
             @Schema(description = "활성화 여부", example = "true") boolean active,
-            @Schema(description = "생성일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                    String createdAt,
-            @Schema(description = "수정일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
+            @Schema(description = "생성일시 (KST)", example = "2025-01-23 10:30:00") String createdAt,
+            @Schema(description = "수정일시 (KST)", example = "2025-01-23 10:30:00")
                     String updatedAt) {}
 
     @Schema(description = "사업자 정보")
@@ -74,9 +73,8 @@ public record SellerDetailApiResponse(
             @Schema(description = "계약 종료일", example = "2025-12-31") String contractEndDate,
             @Schema(description = "계약 상태", example = "ACTIVE") String status,
             @Schema(description = "특별 조건", example = "신규 셀러 수수료 할인") String specialTerms,
-            @Schema(description = "생성일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                    String createdAt,
-            @Schema(description = "수정일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
+            @Schema(description = "생성일시 (KST)", example = "2025-01-23 10:30:00") String createdAt,
+            @Schema(description = "수정일시 (KST)", example = "2025-01-23 10:30:00")
                     String updatedAt) {}
 
     @Schema(description = "정산 정보")
@@ -89,10 +87,8 @@ public record SellerDetailApiResponse(
             @Schema(description = "정산 주기", example = "MONTHLY") String settlementCycle,
             @Schema(description = "정산일", example = "15") Integer settlementDay,
             @Schema(description = "인증 여부", example = "true") boolean verified,
-            @Schema(description = "인증일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                    String verifiedAt,
-            @Schema(description = "생성일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
-                    String createdAt,
-            @Schema(description = "수정일시 (ISO 8601)", example = "2025-01-23T10:30:00+09:00")
+            @Schema(description = "인증일시 (KST)", example = "2025-01-23 10:30:00") String verifiedAt,
+            @Schema(description = "생성일시 (KST)", example = "2025-01-23 10:30:00") String createdAt,
+            @Schema(description = "수정일시 (KST)", example = "2025-01-23 10:30:00")
                     String updatedAt) {}
 }

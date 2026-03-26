@@ -1,10 +1,12 @@
 package com.ryuqq.marketplace.domain.cancel;
 
 import com.ryuqq.marketplace.domain.cancel.aggregate.Cancel;
-import com.ryuqq.marketplace.domain.cancel.aggregate.CancelItem;
 import com.ryuqq.marketplace.domain.cancel.id.CancelId;
-import com.ryuqq.marketplace.domain.cancel.id.CancelItemId;
 import com.ryuqq.marketplace.domain.cancel.id.CancelNumber;
+import com.ryuqq.marketplace.domain.cancel.outbox.aggregate.CancelOutbox;
+import com.ryuqq.marketplace.domain.cancel.outbox.id.CancelOutboxId;
+import com.ryuqq.marketplace.domain.cancel.outbox.vo.CancelOutboxStatus;
+import com.ryuqq.marketplace.domain.cancel.outbox.vo.CancelOutboxType;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReason;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelReasonType;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelRefundInfo;
@@ -12,8 +14,8 @@ import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelType;
 import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.common.vo.Money;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
-import java.util.List;
 
 /**
  * Cancel 도메인 테스트 Fixtures.
@@ -29,11 +31,11 @@ public final class CancelFixtures {
 
     // ===== 기본 상수 =====
     private static final String DEFAULT_CANCEL_ID = "01900000-0000-7000-8000-000000000001";
-    private static final String DEFAULT_ORDER_ID = "ORD-20240101-0001";
+    private static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    private static final long DEFAULT_SELLER_ID = 10L;
+    private static final int DEFAULT_CANCEL_QTY = 2;
     private static final String DEFAULT_REQUESTED_BY = "buyer@marketplace.com";
     private static final String DEFAULT_PROCESSED_BY = "admin@marketplace.com";
-    private static final long DEFAULT_ORDER_ITEM_ID = 1001L;
-    private static final int DEFAULT_CANCEL_QTY = 2;
 
     // ===== ID Fixtures =====
 
@@ -73,33 +75,15 @@ public final class CancelFixtures {
                 refundAmount, "CARD", "REFUNDED", CommonVoFixtures.now(), "PG-REFUND-001");
     }
 
-    // ===== CancelItem Fixtures =====
-
-    public static CancelItem defaultCancelItem() {
-        return CancelItem.forNew(DEFAULT_ORDER_ITEM_ID, DEFAULT_CANCEL_QTY);
-    }
-
-    public static CancelItem cancelItem(long orderItemId, int cancelQty) {
-        return CancelItem.forNew(orderItemId, cancelQty);
-    }
-
-    public static CancelItem reconstitutedCancelItem() {
-        return CancelItem.reconstitute(
-                CancelItemId.of(1L), DEFAULT_ORDER_ITEM_ID, DEFAULT_CANCEL_QTY);
-    }
-
-    public static List<CancelItem> defaultCancelItems() {
-        return List.of(defaultCancelItem());
-    }
-
     // ===== Cancel Aggregate Fixtures (forNew) =====
 
     public static Cancel newBuyerCancel() {
         return Cancel.forBuyerCancel(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
-                defaultCancelItems(),
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 defaultCancelReason(),
                 DEFAULT_REQUESTED_BY,
                 CommonVoFixtures.now());
@@ -109,8 +93,9 @@ public final class CancelFixtures {
         return Cancel.forSellerCancel(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
-                defaultCancelItems(),
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 cancelReason(CancelReasonType.OUT_OF_STOCK),
                 DEFAULT_REQUESTED_BY,
                 CommonVoFixtures.now());
@@ -123,7 +108,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.REQUESTED,
                 defaultCancelReason(),
@@ -134,8 +121,7 @@ public final class CancelFixtures {
                 null,
                 null,
                 requestedAt,
-                requestedAt,
-                defaultCancelItems());
+                requestedAt);
     }
 
     public static Cancel approvedCancel() {
@@ -144,7 +130,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.APPROVED,
                 defaultCancelReason(),
@@ -155,8 +143,7 @@ public final class CancelFixtures {
                 processedAt,
                 null,
                 requestedAt,
-                processedAt,
-                defaultCancelItems());
+                processedAt);
     }
 
     public static Cancel completedCancel() {
@@ -165,7 +152,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.COMPLETED,
                 defaultCancelReason(),
@@ -176,8 +165,7 @@ public final class CancelFixtures {
                 processedAt,
                 processedAt,
                 requestedAt,
-                processedAt,
-                defaultCancelItems());
+                processedAt);
     }
 
     public static Cancel rejectedCancel() {
@@ -186,7 +174,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.REJECTED,
                 defaultCancelReason(),
@@ -197,8 +187,7 @@ public final class CancelFixtures {
                 processedAt,
                 null,
                 requestedAt,
-                processedAt,
-                defaultCancelItems());
+                processedAt);
     }
 
     public static Cancel cancelledCancel() {
@@ -207,7 +196,9 @@ public final class CancelFixtures {
         return Cancel.reconstitute(
                 defaultCancelId(),
                 defaultCancelNumber(),
-                DEFAULT_ORDER_ID,
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                DEFAULT_SELLER_ID,
+                DEFAULT_CANCEL_QTY,
                 CancelType.BUYER_CANCEL,
                 CancelStatus.CANCELLED,
                 defaultCancelReason(),
@@ -218,7 +209,85 @@ public final class CancelFixtures {
                 null,
                 null,
                 requestedAt,
-                cancelledAt,
-                defaultCancelItems());
+                cancelledAt);
+    }
+
+    // ===== CancelOutbox ID Fixtures =====
+
+    public static CancelOutboxId defaultCancelOutboxId() {
+        return CancelOutboxId.of(1L);
+    }
+
+    public static CancelOutboxId newCancelOutboxId() {
+        return CancelOutboxId.forNew();
+    }
+
+    // ===== CancelOutbox Aggregate Fixtures =====
+
+    public static CancelOutbox newCancelOutbox() {
+        return CancelOutbox.forNew(
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                CancelOutboxType.APPROVE,
+                "{\"status\":\"APPROVED\"}",
+                CommonVoFixtures.now());
+    }
+
+    public static CancelOutbox newCancelOutbox(CancelOutboxType outboxType) {
+        return CancelOutbox.forNew(
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                outboxType,
+                "{\"status\":\"APPROVED\"}",
+                CommonVoFixtures.now());
+    }
+
+    public static CancelOutbox pendingCancelOutbox() {
+        Instant now = CommonVoFixtures.now();
+        return CancelOutbox.reconstitute(
+                defaultCancelOutboxId(),
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                CancelOutboxType.APPROVE,
+                CancelOutboxStatus.PENDING,
+                "{\"status\":\"APPROVED\"}",
+                0,
+                3,
+                now,
+                now,
+                null,
+                null,
+                0L,
+                "COBO:" + DEFAULT_ORDER_ITEM_ID + ":APPROVE:" + now.toEpochMilli());
+    }
+
+    public static CancelOutbox processingCancelOutbox() {
+        Instant now = CommonVoFixtures.now();
+        CancelOutbox outbox = pendingCancelOutbox();
+        outbox.startProcessing(now);
+        return outbox;
+    }
+
+    public static CancelOutbox completedCancelOutbox() {
+        Instant now = CommonVoFixtures.now();
+        CancelOutbox outbox = processingCancelOutbox();
+        outbox.complete(now);
+        return outbox;
+    }
+
+    public static CancelOutbox failedCancelOutbox() {
+        Instant now = CommonVoFixtures.now();
+        Instant createdAt = CommonVoFixtures.yesterday();
+        return CancelOutbox.reconstitute(
+                defaultCancelOutboxId(),
+                OrderItemId.of(DEFAULT_ORDER_ITEM_ID),
+                CancelOutboxType.APPROVE,
+                CancelOutboxStatus.FAILED,
+                "{\"status\":\"APPROVED\"}",
+                3,
+                3,
+                createdAt,
+                now,
+                now,
+                "외부 API 오류",
+                1L,
+                "COBO:" + DEFAULT_ORDER_ITEM_ID + ":APPROVE:" + createdAt.toEpochMilli());
     }
 }

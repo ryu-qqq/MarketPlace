@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.setof.strategy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -19,6 +20,8 @@ import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofProductsUpdateReq
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceProductMapper;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
+import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
+import com.ryuqq.marketplace.application.productnotice.dto.response.ProductNoticeResult;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.product.ProductFixtures;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
@@ -27,6 +30,7 @@ import com.ryuqq.marketplace.domain.sellersaleschannel.SellerSalesChannelFixture
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -94,18 +98,22 @@ class SetofPartialProductUpdateExecutorTest {
         @Test
         @DisplayName("BASIC_INFO 변경 시 basicInfoAdapter만 호출한다")
         void basicInfoOnly() {
-            var bundle = createBundle();
+            var syncData = createSyncData();
             var request =
                     new SetofProductGroupBasicInfoUpdateRequest("테스트", 600L, 500L, null, null);
-            given(mapper.toBasicInfoUpdateRequest(bundle, 500L, 600L)).willReturn(request);
+            given(
+                            mapper.toBasicInfoUpdateRequest(
+                                    any(ProductGroupSyncData.class), eq(500L), eq(600L)))
+                    .willReturn(request);
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.BASIC_INFO));
+                    EnumSet.of(ChangedArea.BASIC_INFO),
+                    null);
 
             verify(basicInfoAdapter).updateBasicInfo("12345", request);
             verify(productAdapter, never()).updateProducts(any(), any());
@@ -117,20 +125,18 @@ class SetofPartialProductUpdateExecutorTest {
         @Test
         @DisplayName("PRICE 변경 시 productAdapter를 호출한다")
         void priceChangedCallsProductAdapter() {
-            var bundle = createBundle();
+            var syncData = createSyncData();
             var request = new SetofProductsUpdateRequest(List.of(), List.of());
-            given(
-                            mapper.toProductsUpdateRequest(
-                                    bundle.products(), bundle.group().sellerOptionGroups()))
-                    .willReturn(request);
+            given(mapper.toProductsUpdateRequest(any(), any(), eq(null))).willReturn(request);
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.PRICE));
+                    EnumSet.of(ChangedArea.PRICE),
+                    null);
 
             verify(productAdapter).updateProducts(12345L, request);
         }
@@ -138,20 +144,18 @@ class SetofPartialProductUpdateExecutorTest {
         @Test
         @DisplayName("STOCK 변경 시 productAdapter를 호출한다")
         void stockChangedCallsProductAdapter() {
-            var bundle = createBundle();
+            var syncData = createSyncData();
             var request = new SetofProductsUpdateRequest(List.of(), List.of());
-            given(
-                            mapper.toProductsUpdateRequest(
-                                    bundle.products(), bundle.group().sellerOptionGroups()))
-                    .willReturn(request);
+            given(mapper.toProductsUpdateRequest(any(), any(), eq(null))).willReturn(request);
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.STOCK));
+                    EnumSet.of(ChangedArea.STOCK),
+                    null);
 
             verify(productAdapter).updateProducts(12345L, request);
         }
@@ -159,20 +163,18 @@ class SetofPartialProductUpdateExecutorTest {
         @Test
         @DisplayName("OPTION 변경 시 productAdapter를 호출한다")
         void optionChangedCallsProductAdapter() {
-            var bundle = createBundle();
+            var syncData = createSyncData();
             var request = new SetofProductsUpdateRequest(List.of(), List.of());
-            given(
-                            mapper.toProductsUpdateRequest(
-                                    bundle.products(), bundle.group().sellerOptionGroups()))
-                    .willReturn(request);
+            given(mapper.toProductsUpdateRequest(any(), any(), eq(null))).willReturn(request);
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.OPTION));
+                    EnumSet.of(ChangedArea.OPTION),
+                    null);
 
             verify(productAdapter).updateProducts(12345L, request);
         }
@@ -180,17 +182,18 @@ class SetofPartialProductUpdateExecutorTest {
         @Test
         @DisplayName("IMAGE 변경 시 imageAdapter를 호출한다")
         void imageChangedCallsImageAdapter() {
-            var bundle = createBundle();
+            var syncData = createSyncData();
             var request = new SetofImagesRequest(List.of());
-            given(mapper.toImagesRequest(bundle.group().images())).willReturn(request);
+            given(mapper.toImagesRequest(any())).willReturn(request);
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.IMAGE));
+                    EnumSet.of(ChangedArea.IMAGE),
+                    null);
 
             verify(imageAdapter).updateImages(12345L, request);
         }
@@ -198,17 +201,18 @@ class SetofPartialProductUpdateExecutorTest {
         @Test
         @DisplayName("DESCRIPTION 변경 시 descriptionAdapter를 호출한다")
         void descriptionChangedCallsDescriptionAdapter() {
-            var bundle = createBundleWithDescription();
+            var syncData = createSyncDataWithDescription();
             var request = new SetofDescriptionRequest("<p>상세설명</p>", null);
-            given(mapper.toDescriptionRequest(bundle)).willReturn(request);
+            given(mapper.toDescriptionRequest(any(ProductGroupSyncData.class))).willReturn(request);
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.DESCRIPTION));
+                    EnumSet.of(ChangedArea.DESCRIPTION),
+                    null);
 
             verify(descriptionAdapter).updateDescription(12345L, request);
         }
@@ -216,16 +220,17 @@ class SetofPartialProductUpdateExecutorTest {
         @Test
         @DisplayName("DESCRIPTION 변경이지만 description이 null이면 호출하지 않는다")
         void descriptionNullSkipsAdapter() {
-            var bundle = createBundle();
-            given(mapper.toDescriptionRequest(bundle)).willReturn(null);
+            var syncData = createSyncData();
+            given(mapper.toDescriptionRequest(any(ProductGroupSyncData.class))).willReturn(null);
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.DESCRIPTION));
+                    EnumSet.of(ChangedArea.DESCRIPTION),
+                    null);
 
             verify(descriptionAdapter, never()).updateDescription(any(), any());
         }
@@ -234,17 +239,20 @@ class SetofPartialProductUpdateExecutorTest {
         @DisplayName("NOTICE 변경 시 noticeAdapter를 호출한다")
         void noticeChangedCallsNoticeAdapter() {
             var notice = ProductNoticeFixtures.newProductNotice();
-            var bundle = createBundleWithNotice(notice);
+            var syncData = createSyncDataWithNotice(notice);
+            var noticeResult = ProductNoticeResult.from(notice);
             var request = new SetofNoticeRequest(List.of());
-            given(mapper.toNoticeRequest(notice, null)).willReturn(request);
+            given(mapper.toNoticeRequest(any(ProductNoticeResult.class), eq(null)))
+                    .willReturn(request);
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.NOTICE));
+                    EnumSet.of(ChangedArea.NOTICE),
+                    null);
 
             verify(noticeAdapter).updateNotice(12345L, request);
         }
@@ -252,15 +260,16 @@ class SetofPartialProductUpdateExecutorTest {
         @Test
         @DisplayName("NOTICE 변경이지만 notice가 없으면 호출하지 않는다")
         void noticeEmptySkipsAdapter() {
-            var bundle = createBundle();
+            var syncData = createSyncData();
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.NOTICE));
+                    EnumSet.of(ChangedArea.NOTICE),
+                    null);
 
             verify(noticeAdapter, never()).updateNotice(any(), any());
         }
@@ -268,26 +277,28 @@ class SetofPartialProductUpdateExecutorTest {
         @Test
         @DisplayName("여러 영역 변경 시 해당하는 adapter를 모두 호출한다")
         void multipleAreasCallMultipleAdapters() {
-            var bundle = createBundle();
+            var syncData = createSyncData();
             var basicInfoRequest =
                     new SetofProductGroupBasicInfoUpdateRequest("테스트", 600L, 500L, null, null);
             var productsRequest = new SetofProductsUpdateRequest(List.of(), List.of());
             var imagesRequest = new SetofImagesRequest(List.of());
 
-            given(mapper.toBasicInfoUpdateRequest(bundle, 500L, 600L)).willReturn(basicInfoRequest);
             given(
-                            mapper.toProductsUpdateRequest(
-                                    bundle.products(), bundle.group().sellerOptionGroups()))
+                            mapper.toBasicInfoUpdateRequest(
+                                    any(ProductGroupSyncData.class), eq(500L), eq(600L)))
+                    .willReturn(basicInfoRequest);
+            given(mapper.toProductsUpdateRequest(any(), any(), eq(null)))
                     .willReturn(productsRequest);
-            given(mapper.toImagesRequest(bundle.group().images())).willReturn(imagesRequest);
+            given(mapper.toImagesRequest(any())).willReturn(imagesRequest);
 
             sut.execute(
-                    bundle,
+                    syncData,
                     500L,
                     600L,
                     "12345",
                     SellerSalesChannelFixtures.connectedSellerSalesChannel(),
-                    EnumSet.of(ChangedArea.BASIC_INFO, ChangedArea.PRICE, ChangedArea.IMAGE));
+                    EnumSet.of(ChangedArea.BASIC_INFO, ChangedArea.PRICE, ChangedArea.IMAGE),
+                    null);
 
             verify(basicInfoAdapter).updateBasicInfo("12345", basicInfoRequest);
             verify(productAdapter).updateProducts(12345L, productsRequest);
@@ -295,85 +306,76 @@ class SetofPartialProductUpdateExecutorTest {
         }
     }
 
+    private ProductGroupSyncData createSyncData() {
+        return ProductGroupSyncData.from(createBundle());
+    }
+
+    private ProductGroupSyncData createSyncDataWithDescription() {
+        return ProductGroupSyncData.from(createBundleWithDescription());
+    }
+
+    private ProductGroupSyncData createSyncDataWithNotice(
+            com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice notice) {
+        return ProductGroupSyncData.from(createBundleWithNotice(notice));
+    }
+
     private ProductGroupDetailBundle createBundle() {
-        var queryResult =
-                new ProductGroupDetailCompositeQueryResult(
-                        1L,
-                        1L,
-                        "테스트셀러",
-                        100L,
-                        "테스트브랜드",
-                        200L,
-                        "테스트카테고리",
-                        "상의 > 긴팔",
-                        "1/200",
-                        "테스트 상품 그룹",
-                        "NONE",
-                        "ACTIVE",
-                        Instant.now(),
-                        Instant.now(),
-                        null,
-                        null);
+        var queryResult = createQueryResult();
         return new ProductGroupDetailBundle(
                 queryResult,
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
                 Optional.empty(),
-                Optional.empty());
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 
     private ProductGroupDetailBundle createBundleWithDescription() {
-        var queryResult =
-                new ProductGroupDetailCompositeQueryResult(
-                        1L,
-                        1L,
-                        "테스트셀러",
-                        100L,
-                        "테스트브랜드",
-                        200L,
-                        "테스트카테고리",
-                        "상의 > 긴팔",
-                        "1/200",
-                        "테스트 상품 그룹",
-                        "NONE",
-                        "ACTIVE",
-                        Instant.now(),
-                        Instant.now(),
-                        null,
-                        null);
+        var queryResult = createQueryResult();
         return new ProductGroupDetailBundle(
                 queryResult,
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
                 Optional.of(ProductGroupFixtures.defaultProductGroupDescription()),
-                Optional.empty());
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 
     private ProductGroupDetailBundle createBundleWithNotice(
             com.ryuqq.marketplace.domain.productnotice.aggregate.ProductNotice notice) {
-        var queryResult =
-                new ProductGroupDetailCompositeQueryResult(
-                        1L,
-                        1L,
-                        "테스트셀러",
-                        100L,
-                        "테스트브랜드",
-                        200L,
-                        "테스트카테고리",
-                        "상의 > 긴팔",
-                        "1/200",
-                        "테스트 상품 그룹",
-                        "NONE",
-                        "ACTIVE",
-                        Instant.now(),
-                        Instant.now(),
-                        null,
-                        null);
+        var queryResult = createQueryResult();
         return new ProductGroupDetailBundle(
                 queryResult,
                 ProductGroupFixtures.activeProductGroup(),
                 List.of(ProductFixtures.activeProduct()),
                 Optional.empty(),
-                Optional.of(notice));
+                Optional.of(notice),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
+    }
+
+    private ProductGroupDetailCompositeQueryResult createQueryResult() {
+        return new ProductGroupDetailCompositeQueryResult(
+                1L,
+                1L,
+                "테스트셀러",
+                100L,
+                "테스트브랜드",
+                200L,
+                "테스트카테고리",
+                "상의 > 긴팔",
+                "1/200",
+                "테스트 상품 그룹",
+                "NONE",
+                "ACTIVE",
+                Instant.now(),
+                Instant.now(),
+                null,
+                null);
     }
 }

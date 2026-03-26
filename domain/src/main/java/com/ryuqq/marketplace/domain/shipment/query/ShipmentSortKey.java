@@ -29,4 +29,16 @@ public enum ShipmentSortKey implements SortKey {
     public static ShipmentSortKey defaultKey() {
         return CREATED_AT;
     }
+
+    public static ShipmentSortKey fromString(String value) {
+        if (value == null || value.isBlank()) {
+            return defaultKey();
+        }
+        for (ShipmentSortKey key : values()) {
+            if (key.fieldName().equalsIgnoreCase(value) || key.name().equalsIgnoreCase(value)) {
+                return key;
+            }
+        }
+        return valueOf(value);
+    }
 }

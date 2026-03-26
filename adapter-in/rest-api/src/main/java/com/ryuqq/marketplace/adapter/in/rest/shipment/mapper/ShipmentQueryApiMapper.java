@@ -2,15 +2,16 @@ package com.ryuqq.marketplace.adapter.in.rest.shipment.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.request.ShipmentSearchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.PaymentInfoResponse;
-import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentDetailApiResponse.SettlementInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.OrderInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ProductOrderInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ReceiverInfoResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponse.ShipmentInfoResponse;
+import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.ShipmentSummaryApiResponse;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.shipment.dto.query.ShipmentSearchParams;
@@ -66,8 +67,7 @@ public class ShipmentQueryApiMapper {
                 toOrderInfoResponse(result.order()),
                 toProductOrderInfoResponse(result.productOrder()),
                 toReceiverInfoResponse(result.receiver()),
-                toPaymentInfoResponse(result.payment()),
-                toSettlementInfoResponse(result.settlement()));
+                toPaymentInfoResponse(result.payment()));
     }
 
     public ShipmentSummaryApiResponse toSummaryResponse(ShipmentSummaryResult result) {
@@ -89,6 +89,80 @@ public class ShipmentQueryApiMapper {
                 pageResult.pageMeta().page(),
                 pageResult.pageMeta().size(),
                 pageResult.pageMeta().totalElements());
+    }
+
+    public PageApiResponse<ShipmentListApiResponseV4> toPageResponseV4(
+            ShipmentPageResult pageResult) {
+        List<ShipmentListApiResponseV4> responses =
+                pageResult.results().stream().map(this::toResponseV4).toList();
+        return PageApiResponse.of(
+                responses,
+                pageResult.pageMeta().page(),
+                pageResult.pageMeta().size(),
+                pageResult.pageMeta().totalElements());
+    }
+
+    private ShipmentListApiResponseV4 toResponseV4(ShipmentListResult result) {
+        ShipmentListResult.ShipmentInfo s = result.shipment();
+        ShipmentListResult.OrderInfo o = result.order();
+        ShipmentListResult.ProductOrderInfo p = result.productOrder();
+        ShipmentListResult.ReceiverInfo r = result.receiver();
+
+        return new ShipmentListApiResponseV4(
+                p != null ? nullToEmpty(p.orderItemId()) : "",
+                p != null ? nullToEmpty(p.orderItemNumber()) : "",
+                s != null ? nullToEmpty(s.shipmentNumber()) : "",
+                s != null ? nullToEmpty(s.status()) : "",
+                s != null ? nullToEmpty(s.trackingNumber()) : "",
+                s != null ? nullToEmpty(s.courierCode()) : "",
+                s != null ? DateTimeFormatUtils.formatIso8601(s.orderConfirmedAt()) : "",
+                s != null ? DateTimeFormatUtils.formatIso8601(s.shippedAt()) : "",
+                s != null ? DateTimeFormatUtils.formatIso8601(s.deliveredAt()) : "",
+                s != null ? DateTimeFormatUtils.formatIso8601(s.createdAt()) : "",
+                new ShipmentListApiResponseV4.ShipmentMethodV4(
+                        "COURIER", s != null ? nullToEmpty(s.courierName()) : ""),
+                toOrderProductApiResponse(p),
+                new ShipmentListApiResponseV4.ReceiverInfoV4(
+                        r != null ? nullToEmpty(r.receiverName()) : "",
+                        r != null ? nullToEmpty(r.receiverPhone()) : "",
+                        r != null ? nullToEmpty(r.receiverAddress()) : "",
+                        r != null ? nullToEmpty(r.receiverAddressDetail()) : "",
+                        r != null ? nullToEmpty(r.receiverZipcode()) : ""),
+                new ShipmentListApiResponseV4.ExternalOrderInfoV4(
+                        o != null ? nullToEmpty(o.shopCode()) : "",
+                        o != null ? nullToEmpty(o.externalOrderNo()) : ""),
+                new ShipmentListApiResponseV4.CancelInfoV4(""));
+    }
+
+    private OrderListApiResponseV4.OrderProductApiResponse toOrderProductApiResponse(
+            ShipmentListResult.ProductOrderInfo p) {
+        if (p == null) {
+            return new OrderListApiResponseV4.OrderProductApiResponse(
+                    "", "", null, null, 0, 0, "", "", "", 0, "", 0, 0, 0, "", "", List.of());
+        }
+        return new OrderListApiResponseV4.OrderProductApiResponse(
+                nullToEmpty(p.orderItemId()),
+                nullToEmpty(p.productGroupName()),
+                new OrderListApiResponseV4.PriceApiResponse(
+                        p.unitPrice(), p.unitPrice(), p.unitPrice(), p.discountAmount(), 0, 0),
+                new OrderListApiResponseV4.BrandApiResponse(0, nullToEmpty(p.brandName())),
+                p.productGroupId(),
+                p.productId(),
+                nullToEmpty(p.sellerName()),
+                nullToEmpty(p.mainImageUrl()),
+                "",
+                p.quantity(),
+                "",
+                p.unitPrice(),
+                p.paymentAmount(),
+                0,
+                nullToEmpty(p.externalOptionName()),
+                nullToEmpty(p.skuCode()),
+                List.of());
+    }
+
+    private String nullToEmpty(String value) {
+        return value != null ? value : "";
     }
 
     private ShipmentInfoResponse toShipmentInfoResponse(ShipmentListResult.ShipmentInfo info) {
@@ -129,8 +203,6 @@ public class ShipmentQueryApiMapper {
                 info.orderItemId(),
                 info.productGroupId(),
                 info.productId(),
-                info.sellerId(),
-                info.brandId(),
                 info.skuCode(),
                 info.productGroupName(),
                 info.brandName(),
@@ -171,20 +243,5 @@ public class ShipmentQueryApiMapper {
                 info.paymentAmount(),
                 DateTimeFormatUtils.formatIso8601(info.paidAt()),
                 DateTimeFormatUtils.formatIso8601(info.canceledAt()));
-    }
-
-    private SettlementInfoResponse toSettlementInfoResponse(
-            ShipmentDetailResult.SettlementInfo info) {
-        if (info == null) {
-            return null;
-        }
-        return new SettlementInfoResponse(
-                info.commissionRate(),
-                info.fee(),
-                info.expectationSettlementAmount(),
-                info.settlementAmount(),
-                info.shareRatio(),
-                DateTimeFormatUtils.formatIso8601(info.expectedSettlementDay()),
-                DateTimeFormatUtils.formatIso8601(info.settlementDay()));
     }
 }

@@ -7,7 +7,6 @@ import java.time.Instant;
  *
  * @param orderId 주문 ID
  * @param orderNumber 주문번호
- * @param status 주문 상태
  * @param salesChannelId 판매채널 ID
  * @param shopId 샵 ID
  * @param shopCode 샵 코드
@@ -30,7 +29,6 @@ import java.time.Instant;
 public record OrderListResult(
         String orderId,
         String orderNumber,
-        String status,
         long salesChannelId,
         long shopId,
         String shopCode,

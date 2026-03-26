@@ -41,8 +41,14 @@ public class OutboundMappingResolver {
         Long categoryId =
                 categoryMappingReadManager.getSalesChannelCategoryId(
                         salesChannelId, internalCategoryId);
+        String externalCategoryCode =
+                categoryMappingReadManager.getExternalCategoryCode(
+                        salesChannelId, internalCategoryId);
         Long brandId =
                 brandMappingReadManager.getSalesChannelBrandId(salesChannelId, internalBrandId);
-        return new SalesChannelMappingResult(categoryId, brandId);
+        String externalBrandCode =
+                brandMappingReadManager.getExternalBrandCode(salesChannelId, internalBrandId);
+        return new SalesChannelMappingResult(
+                categoryId, brandId, externalCategoryCode, externalBrandCode);
     }
 }

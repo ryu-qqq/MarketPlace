@@ -19,4 +19,9 @@ public class BrandMappingQueryAdapter implements BrandMappingQueryPort {
     public Optional<Long> findSalesChannelBrandId(Long salesChannelId, Long internalBrandId) {
         return queryDslRepository.findSalesChannelBrandId(salesChannelId, internalBrandId);
     }
+
+    @Override
+    public Optional<String> findExternalBrandCode(Long salesChannelId, Long internalBrandId) {
+        return queryDslRepository.findExternalBrandCode(salesChannelId, internalBrandId);
+    }
 }

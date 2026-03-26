@@ -1,6 +1,10 @@
 package com.ryuqq.marketplace.adapter.out.persistence.shipment.condition;
 
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderItemJpaEntity.orderItemJpaEntity;
+import static com.ryuqq.marketplace.adapter.out.persistence.order.entity.QOrderJpaEntity.orderJpaEntity;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.ryuqq.marketplace.adapter.out.persistence.shipment.entity.QShipmentJpaEntity;
 import com.ryuqq.marketplace.domain.shipment.query.ShipmentDateField;
 import com.ryuqq.marketplace.domain.shipment.query.ShipmentSearchCriteria;
@@ -18,11 +22,11 @@ public class ShipmentConditionBuilder {
         return id != null ? shipment.id.eq(id) : null;
     }
 
-    public BooleanExpression orderItemIdEq(Long orderItemId) {
+    public BooleanExpression orderItemIdEq(String orderItemId) {
         return orderItemId != null ? shipment.orderItemId.eq(orderItemId) : null;
     }
 
-    public BooleanExpression orderItemIdIn(List<Long> orderItemIds) {
+    public BooleanExpression orderItemIdIn(List<String> orderItemIds) {
         return orderItemIds != null && !orderItemIds.isEmpty()
                 ? shipment.orderItemId.in(orderItemIds)
                 : null;
@@ -45,16 +49,40 @@ public class ShipmentConditionBuilder {
             return shipment.trackingNumber.like(word).or(shipment.shipmentNumber.like(word));
         }
         return switch (criteria.searchField()) {
-            case ORDER_ITEM_ID -> {
-                try {
-                    Long orderItemId = Long.parseLong(criteria.searchWord().trim());
-                    yield shipment.orderItemId.eq(orderItemId);
-                } catch (NumberFormatException e) {
-                    yield null;
-                }
+            case ORDER_ID -> {
+                String orderItemId =
+                        criteria.searchWord() != null ? criteria.searchWord().trim() : null;
+                yield orderItemId != null && !orderItemId.isBlank()
+                        ? shipment.orderItemId.eq(orderItemId)
+                        : null;
             }
             case TRACKING_NUMBER -> shipment.trackingNumber.like(word);
-            case CUSTOMER_NAME -> shipment.shipmentNumber.like(word);
+            case CUSTOMER_NAME ->
+                    shipment.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.buyerName.like(word)));
+            case CUSTOMER_PHONE ->
+                    shipment.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.buyerPhone.like(word)));
+            case PRODUCT_NAME ->
+                    shipment.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .where(orderItemJpaEntity.externalProductName.like(word)));
+            case SHOP_ORDER_NO ->
+                    shipment.orderItemId.in(
+                            JPAExpressions.select(orderItemJpaEntity.id)
+                                    .from(orderItemJpaEntity)
+                                    .join(orderJpaEntity)
+                                    .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                                    .where(orderJpaEntity.externalOrderNo.like(word)));
         };
     }
 
@@ -92,21 +120,22 @@ public class ShipmentConditionBuilder {
         if (!criteria.hasSellerFilter()) {
             return null;
         }
-        // TODO: Order JPA 엔티티 생성 후 서브쿼리 구현
-        return null;
+        return shipment.orderItemId.in(
+                JPAExpressions.select(orderItemJpaEntity.id)
+                        .from(orderItemJpaEntity)
+                        .where(orderItemJpaEntity.sellerId.in(criteria.sellerIds())));
     }
 
-    /**
-     * 외부 주문번호 필터 조건.
-     *
-     * <p>Order Adapter-Out 구현 후 orders 테이블 JOIN으로 활성화 예정.
-     */
     public BooleanExpression shopOrderNosIn(ShipmentSearchCriteria criteria) {
         if (!criteria.hasShopOrderNoFilter()) {
             return null;
         }
-        // TODO: Order JPA 엔티티 생성 후 서브쿼리 구현
-        return null;
+        return shipment.orderItemId.in(
+                JPAExpressions.select(orderItemJpaEntity.id)
+                        .from(orderItemJpaEntity)
+                        .join(orderJpaEntity)
+                        .on(orderItemJpaEntity.orderId.eq(orderJpaEntity.id))
+                        .where(orderJpaEntity.externalOrderNo.in(criteria.shopOrderNos())));
     }
 
     public BooleanExpression notDeleted() {

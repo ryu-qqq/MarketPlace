@@ -10,6 +10,14 @@ sqs:
     outbound-sync:
       enabled: false
 
+    # Claim Outbox 컨슈머 설정
+    cancel-outbox:
+      enabled: false
+    refund-outbox:
+      enabled: false
+    exchange-outbox:
+      enabled: false
+
 # ============================================================
 # Spring Cloud AWS SQS 설정
 # ============================================================

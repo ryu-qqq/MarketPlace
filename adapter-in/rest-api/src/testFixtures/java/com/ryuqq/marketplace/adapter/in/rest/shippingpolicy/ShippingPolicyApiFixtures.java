@@ -195,8 +195,8 @@ public final class ShippingPolicyApiFixtures {
                 1,
                 3,
                 "14:00",
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 
     public static ShippingPolicyApiResponse apiResponse(Long id, String policyName) {
@@ -217,7 +217,7 @@ public final class ShippingPolicyApiFixtures {
                 1,
                 3,
                 "14:00",
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 }

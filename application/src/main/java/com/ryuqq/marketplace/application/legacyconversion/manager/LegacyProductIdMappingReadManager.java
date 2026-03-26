@@ -38,6 +38,16 @@ public class LegacyProductIdMappingReadManager {
     }
 
     /**
+     * 내부 상품그룹 ID로 해당 그룹의 모든 SKU 매핑 조회.
+     *
+     * @param internalProductGroupId 내부 상품그룹 ID
+     * @return SKU 매핑 목록
+     */
+    public List<LegacyProductIdMapping> findByInternalProductGroupId(long internalProductGroupId) {
+        return queryPort.findByInternalProductGroupId(internalProductGroupId);
+    }
+
+    /**
      * 레거시 상품그룹 ID로 해당 그룹의 모든 SKU 매핑 조회.
      *
      * @param legacyProductGroupId 레거시 상품그룹 ID

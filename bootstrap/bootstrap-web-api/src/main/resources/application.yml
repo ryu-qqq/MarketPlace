@@ -64,13 +64,12 @@ spring:
     import:
       - classpath:rest-api.yml
       - classpath:persistence.yml
-      - optional:classpath:persistence-legacy.yml
-      - optional:classpath:persistence-legacy-${spring.profiles.active:local}.yml
       - classpath:redis.yml
       - classpath:authhub.yml
       - classpath:fileflow.yml
       - classpath:naver-commerce.yml
       - classpath:setof-commerce.yml
+      - optional:classpath:sellic-commerce.yml
 
   # ===============================================
   # MessageSource (i18n)

@@ -22,4 +22,11 @@ public enum CancelSortKey implements SortKey {
     public static CancelSortKey defaultKey() {
         return CREATED_AT;
     }
+
+    public static CancelSortKey fromString(String value) {
+        if (value == null || value.isBlank()) {
+            return CREATED_AT;
+        }
+        return valueOf(value);
+    }
 }

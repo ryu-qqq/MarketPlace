@@ -5,9 +5,7 @@ import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,10 +44,5 @@ public class OrderReadManager {
     @Transactional(readOnly = true)
     public long countByCriteria(OrderSearchCriteria criteria) {
         return queryPort.countByCriteria(criteria);
-    }
-
-    @Transactional(readOnly = true)
-    public Map<OrderStatus, Long> countByStatus() {
-        return queryPort.countByStatus();
     }
 }

@@ -49,6 +49,10 @@ data "aws_ssm_parameter" "legacy_db_password" {
   name = "/${var.project_name}/stage/legacy-db-password"
 }
 
+data "aws_ssm_parameter" "sellic_api_key" {
+  name = "/${var.project_name}/sellic/api-key"
+}
+
 # VPC data source for internal communication
 data "aws_vpc" "main" {
   id = local.vpc_id
@@ -220,7 +224,8 @@ module "scheduler_task_execution_role" {
             Resource = [
               "arn:aws:ssm:${var.aws_region}:*:parameter/shared/*",
               "arn:aws:ssm:${var.aws_region}:*:parameter/${var.project_name}/*",
-              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*"
+              "arn:aws:ssm:${var.aws_region}:*:parameter/authhub/*",
+              "arn:aws:ssm:${var.aws_region}:*:parameter/naver-commerce/*"
             ]
           },
           {
@@ -452,12 +457,27 @@ module "ecs_service" {
     { name = "AUTHHUB_BASE_URL", value = "http://authhub-web-api-stage.connectly.local:8080" },
     # FileFlow
     { name = "FILEFLOW_BASE_URL", value = "http://fileflow-web-api-stage.connectly.local:8080" },
+    # Setof Commerce
+    { name = "SETOF_COMMERCE_BASE_URL", value = "http://setof-commerce-web-api-admin-stage.connectly.local:8081" },
+    # Sellic Commerce
+    { name = "SELLIC_COMMERCE_BASE_URL", value = "http://api.sellic.co.kr" },
+    { name = "SELLIC_COMMERCE_CUSTOMER_ID", value = "1012" },
+    # Naver Commerce
+    { name = "NAVER_COMMERCE_CLIENT_ID", value = data.aws_ssm_parameter.naver_commerce_client_id.value },
     # Intelligence SQS Queue URLs
     { name = "SQS_INTELLIGENCE_ORCHESTRATION_URL", value = local.sqs_intelligence_orchestration_queue_url },
     { name = "SQS_INTELLIGENCE_DESCRIPTION_ANALYSIS_URL", value = local.sqs_intelligence_description_analysis_queue_url },
     { name = "SQS_INTELLIGENCE_OPTION_ANALYSIS_URL", value = local.sqs_intelligence_option_analysis_queue_url },
     { name = "SQS_INTELLIGENCE_NOTICE_ANALYSIS_URL", value = local.sqs_intelligence_notice_analysis_queue_url },
     { name = "SQS_INTELLIGENCE_AGGREGATION_URL", value = local.sqs_intelligence_aggregation_queue_url },
+    # Shipment Outbox SQS
+    { name = "SQS_SHIPMENT_OUTBOX_URL", value = local.sqs_shipment_outbox_queue_url },
+    # Claim Outbox SQS
+    { name = "SQS_CANCEL_OUTBOX_URL", value = local.sqs_cancel_outbox_queue_url },
+    { name = "SQS_REFUND_OUTBOX_URL", value = local.sqs_refund_outbox_queue_url },
+    { name = "SQS_EXCHANGE_OUTBOX_URL", value = local.sqs_exchange_outbox_queue_url },
+    # QnA Outbox SQS
+    { name = "SQS_QNA_OUTBOX_URL", value = local.sqs_qna_outbox_queue_url },
     # Sentry
     { name = "SENTRY_DSN", value = local.sentry_dsn },
     # Legacy DB (same host, different schema)
@@ -470,9 +490,12 @@ module "ecs_service" {
     { name = "DB_PASSWORD", valueFrom = "${data.aws_secretsmanager_secret.rds.arn}:password::" },
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
+    { name = "SETOF_COMMERCE_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
+    { name = "NAVER_COMMERCE_CLIENT_SECRET", valueFrom = data.aws_ssm_parameter.naver_commerce_client_secret.arn },
     { name = "OPENAI_API_KEY", valueFrom = data.aws_ssm_parameter.openai_api_key.arn },
     { name = "ANTHROPIC_API_KEY", valueFrom = data.aws_ssm_parameter.anthropic_api_key.arn },
-    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn }
+    { name = "LEGACY_DB_PASSWORD", valueFrom = data.aws_ssm_parameter.legacy_db_password.arn },
+    { name = "SELLIC_COMMERCE_API_KEY", valueFrom = data.aws_ssm_parameter.sellic_api_key.arn }
   ]
 
   # Health Check

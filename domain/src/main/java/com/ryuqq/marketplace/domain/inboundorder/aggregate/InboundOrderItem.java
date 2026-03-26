@@ -7,6 +7,7 @@ public class InboundOrderItem {
 
     private final InboundOrderItemId id;
 
+    private final String externalProductOrderId;
     private final String externalProductId;
     private final String externalOptionId;
     private final String externalProductName;
@@ -17,6 +18,7 @@ public class InboundOrderItem {
     private final int quantity;
     private final int totalAmount;
     private final int discountAmount;
+    private final int sellerBurdenDiscountAmount;
     private final int paymentAmount;
 
     private final String receiverName;
@@ -37,6 +39,7 @@ public class InboundOrderItem {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private InboundOrderItem(
             InboundOrderItemId id,
+            String externalProductOrderId,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -46,6 +49,7 @@ public class InboundOrderItem {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -61,6 +65,7 @@ public class InboundOrderItem {
             String resolvedProductGroupName,
             boolean mapped) {
         this.id = id;
+        this.externalProductOrderId = externalProductOrderId;
         this.externalProductId = externalProductId;
         this.externalOptionId = externalOptionId;
         this.externalProductName = externalProductName;
@@ -70,6 +75,7 @@ public class InboundOrderItem {
         this.quantity = quantity;
         this.totalAmount = totalAmount;
         this.discountAmount = discountAmount;
+        this.sellerBurdenDiscountAmount = sellerBurdenDiscountAmount;
         this.paymentAmount = paymentAmount;
         this.receiverName = receiverName;
         this.receiverPhone = receiverPhone;
@@ -88,6 +94,7 @@ public class InboundOrderItem {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static InboundOrderItem forNew(
+            String externalProductOrderId,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -97,6 +104,7 @@ public class InboundOrderItem {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -106,6 +114,7 @@ public class InboundOrderItem {
             String deliveryRequest) {
         return new InboundOrderItem(
                 InboundOrderItemId.forNew(),
+                externalProductOrderId,
                 externalProductId,
                 externalOptionId,
                 externalProductName,
@@ -115,6 +124,7 @@ public class InboundOrderItem {
                 quantity,
                 totalAmount,
                 discountAmount,
+                sellerBurdenDiscountAmount,
                 paymentAmount,
                 receiverName,
                 receiverPhone,
@@ -134,6 +144,7 @@ public class InboundOrderItem {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static InboundOrderItem reconstitute(
             InboundOrderItemId id,
+            String externalProductOrderId,
             String externalProductId,
             String externalOptionId,
             String externalProductName,
@@ -143,6 +154,7 @@ public class InboundOrderItem {
             int quantity,
             int totalAmount,
             int discountAmount,
+            int sellerBurdenDiscountAmount,
             int paymentAmount,
             String receiverName,
             String receiverPhone,
@@ -159,6 +171,7 @@ public class InboundOrderItem {
             boolean mapped) {
         return new InboundOrderItem(
                 id,
+                externalProductOrderId,
                 externalProductId,
                 externalOptionId,
                 externalProductName,
@@ -168,6 +181,7 @@ public class InboundOrderItem {
                 quantity,
                 totalAmount,
                 discountAmount,
+                sellerBurdenDiscountAmount,
                 paymentAmount,
                 receiverName,
                 receiverPhone,
@@ -197,7 +211,7 @@ public class InboundOrderItem {
         this.resolvedBrandId = brandId;
         this.resolvedSkuCode = skuCode;
         this.resolvedProductGroupName = productGroupName;
-        this.mapped = true;
+        this.mapped = productGroupId != null && productId != null;
     }
 
     public boolean isMapped() {
@@ -210,6 +224,10 @@ public class InboundOrderItem {
 
     public InboundOrderItemId id() {
         return id;
+    }
+
+    public String externalProductOrderId() {
+        return externalProductOrderId;
     }
 
     public String externalProductId() {
@@ -246,6 +264,10 @@ public class InboundOrderItem {
 
     public int discountAmount() {
         return discountAmount;
+    }
+
+    public int sellerBurdenDiscountAmount() {
+        return sellerBurdenDiscountAmount;
     }
 
     public int paymentAmount() {

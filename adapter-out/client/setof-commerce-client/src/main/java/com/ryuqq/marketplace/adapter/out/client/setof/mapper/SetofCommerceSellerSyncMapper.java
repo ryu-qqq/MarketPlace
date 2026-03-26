@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.client.setof.mapper;
 
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofRefundPolicySyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerAddressSyncRequest;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerCreateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofShippingPolicySyncRequest;
 import com.ryuqq.marketplace.domain.refundpolicy.aggregate.RefundPolicy;
@@ -23,13 +24,22 @@ public class SetofCommerceSellerSyncMapper {
                 seller.isActive());
     }
 
+    /** 세토프 셀러 등록 API(POST)용 중첩 구조 요청 변환. */
+    public SetofSellerCreateRequest toSellerCreateRequest(Seller seller) {
+        return SetofSellerCreateRequest.ofSellerInfo(
+                seller.sellerNameValue(),
+                seller.displayNameValue(),
+                seller.logoUrlValue(),
+                seller.descriptionValue());
+    }
+
     public SetofShippingPolicySyncRequest toShippingPolicyRequest(ShippingPolicy policy) {
+        SetofShippingPolicySyncRequest.LeadTimeRequest leadTime =
+                new SetofShippingPolicySyncRequest.LeadTimeRequest(
+                        policy.leadTimeMinDays(), policy.leadTimeMaxDays(), null);
         return new SetofShippingPolicySyncRequest(
-                policy.idValue(),
-                policy.sellerIdValue(),
                 policy.policyNameValue(),
                 policy.isDefaultPolicy(),
-                policy.isActive(),
                 policy.shippingFeeType().name(),
                 policy.baseFeeValue(),
                 policy.freeThresholdValue(),
@@ -37,8 +47,7 @@ public class SetofCommerceSellerSyncMapper {
                 policy.islandExtraFeeValue(),
                 policy.returnFeeValue(),
                 policy.exchangeFeeValue(),
-                policy.leadTimeMinDays(),
-                policy.leadTimeMaxDays());
+                leadTime);
     }
 
     public SetofRefundPolicySyncRequest toRefundPolicyRequest(RefundPolicy policy) {

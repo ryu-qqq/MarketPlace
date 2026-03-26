@@ -1,6 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.order.adapter;
 
-import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderHistoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemHistoryJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.PaymentJpaEntity;
@@ -10,9 +10,7 @@ import com.ryuqq.marketplace.application.order.port.out.query.OrderQueryPort;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.query.OrderSearchCriteria;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -66,16 +64,14 @@ public class OrderQueryAdapter implements OrderQueryPort {
                 "countByCriteria는 OrderCompositionQueryPort를 사용하세요.");
     }
 
-    @Override
-    public Map<OrderStatus, Long> countByStatus() {
-        return queryDslRepository.countByStatus();
-    }
-
     private Order toDomainWithRelations(OrderJpaEntity orderEntity) {
         String orderId = orderEntity.getId();
         PaymentJpaEntity payment = queryDslRepository.findPaymentByOrderId(orderId).orElse(null);
         List<OrderItemJpaEntity> items = queryDslRepository.findItemsByOrderId(orderId);
-        List<OrderHistoryJpaEntity> histories = queryDslRepository.findHistoriesByOrderId(orderId);
+        // OrderItemHistory를 기준으로 조회 (OrderHistory 대체)
+        List<OrderItemHistoryJpaEntity> histories =
+                queryDslRepository.findItemHistoriesByOrderItemIds(
+                        items.stream().map(OrderItemJpaEntity::getId).toList());
         return mapper.toDomain(orderEntity, payment, items, histories);
     }
 }

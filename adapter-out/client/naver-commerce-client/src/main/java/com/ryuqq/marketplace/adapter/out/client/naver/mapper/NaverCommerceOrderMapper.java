@@ -8,6 +8,7 @@ import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrder
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,11 @@ public class NaverCommerceOrderMapper {
      */
     public List<ExternalOrderPayload> toExternalOrderPayloads(
             List<NaverProductOrderDetail> details) {
-        return details.stream()
+        // 배송지 미입력 주문 제외 (선물하기 수락 대기 등)
+        List<NaverProductOrderDetail> filtered =
+                details.stream().filter(d -> d.productOrder().shippingAddress() != null).toList();
+
+        return filtered.stream()
                 .collect(Collectors.groupingBy(d -> d.order().orderId()))
                 .entrySet()
                 .stream()
@@ -52,7 +57,7 @@ public class NaverCommerceOrderMapper {
                 order.ordererName(),
                 null,
                 order.ordererTel(),
-                order.paymentMeans(),
+                normalizePaymentMethod(order.paymentMeans()),
                 totalPayment,
                 parseInstant(order.paymentDate()),
                 items);
@@ -63,8 +68,9 @@ public class NaverCommerceOrderMapper {
         NaverShippingAddress addr = po.shippingAddress();
 
         return new ExternalOrderItemPayload(
-                po.productId(),
-                po.optionCode(),
+                po.productOrderId(),
+                po.originalProductId() != null ? po.originalProductId() : po.productId(),
+                po.optionManageCode(),
                 po.productName(),
                 po.productOption(),
                 null,
@@ -72,13 +78,34 @@ public class NaverCommerceOrderMapper {
                 po.quantity(),
                 po.totalProductAmount(),
                 po.productDiscountAmount(),
+                po.sellerBurdenDiscountAmount() != null ? po.sellerBurdenDiscountAmount() : 0,
                 po.totalPaymentAmount(),
                 addr != null ? addr.name() : null,
                 addr != null ? addr.tel1() : null,
                 addr != null ? addr.zipCode() : null,
                 addr != null ? addr.baseAddress() : null,
                 addr != null ? addr.detailedAddress() : null,
-                po.shippingMemo());
+                po.shippingMemo(),
+                po.productOrderStatus());
+    }
+
+    private static final Map<String, String> PAYMENT_METHOD_MAP =
+            Map.ofEntries(
+                    Map.entry("신용카드", "CARD"),
+                    Map.entry("신용카드 간편결제", "CARD_EASY"),
+                    Map.entry("계좌이체", "BANK_TRANSFER"),
+                    Map.entry("계좌 간편결제", "BANK_EASY"),
+                    Map.entry("무통장입금", "VIRTUAL_ACCOUNT"),
+                    Map.entry("포인트/머니결제", "POINT"),
+                    Map.entry("네이버페이", "NAVER_PAY"),
+                    Map.entry("후불결제", "DEFERRED"),
+                    Map.entry("휴대폰결제", "PHONE"));
+
+    private String normalizePaymentMethod(String paymentMeans) {
+        if (paymentMeans == null || paymentMeans.isBlank()) {
+            return "CARD";
+        }
+        return PAYMENT_METHOD_MAP.getOrDefault(paymentMeans, paymentMeans);
     }
 
     private Instant parseInstant(String dateStr) {

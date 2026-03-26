@@ -96,6 +96,20 @@ public class ProductQueryAdapter implements ProductQueryPort {
         return toDomainWithMappings(entities);
     }
 
+    @Override
+    public Optional<Product> findByProductGroupIdAndSkuCode(
+            ProductGroupId productGroupId, String skuCode) {
+        return queryDslRepository
+                .findByProductGroupIdAndSkuCode(productGroupId.value(), skuCode)
+                .map(
+                        entity -> {
+                            List<ProductOptionMappingJpaEntity> mappings =
+                                    queryDslRepository.findOptionMappingsByProductId(
+                                            entity.getId());
+                            return mapper.toDomain(entity, mappings);
+                        });
+    }
+
     private List<Product> toDomainWithMappings(List<ProductJpaEntity> entities) {
         List<Long> productIds = entities.stream().map(ProductJpaEntity::getId).toList();
 

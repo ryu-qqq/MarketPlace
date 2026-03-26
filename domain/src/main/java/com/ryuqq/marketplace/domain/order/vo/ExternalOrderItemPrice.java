@@ -12,6 +12,7 @@ public record ExternalOrderItemPrice(
         int quantity,
         Money totalAmount,
         Money discountAmount,
+        Money sellerBurdenDiscountAmount,
         Money paymentAmount) {
 
     public ExternalOrderItemPrice {
@@ -30,6 +31,9 @@ public record ExternalOrderItemPrice(
         if (discountAmount == null) {
             discountAmount = Money.zero();
         }
+        if (sellerBurdenDiscountAmount == null) {
+            sellerBurdenDiscountAmount = Money.zero();
+        }
     }
 
     public static ExternalOrderItemPrice of(
@@ -37,8 +41,14 @@ public record ExternalOrderItemPrice(
             int quantity,
             Money totalAmount,
             Money discountAmount,
+            Money sellerBurdenDiscountAmount,
             Money paymentAmount) {
         return new ExternalOrderItemPrice(
-                unitPrice, quantity, totalAmount, discountAmount, paymentAmount);
+                unitPrice,
+                quantity,
+                totalAmount,
+                discountAmount,
+                sellerBurdenDiscountAmount,
+                paymentAmount);
     }
 }

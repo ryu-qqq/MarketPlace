@@ -28,25 +28,24 @@ public record OrderListApiResponse(
             @Schema(description = "샵 코드") String shopCode,
             @Schema(description = "샵 이름") String shopName,
             @Schema(description = "외부몰 주문번호") String externalOrderNo,
-            @Schema(description = "외부몰 주문일시 (ISO 8601)") String externalOrderedAt,
+            @Schema(description = "외부몰 주문일시 (KST)") String externalOrderedAt,
             @Schema(description = "구매자명") String buyerName,
             @Schema(description = "구매자 이메일") String buyerEmail,
             @Schema(description = "구매자 연락처") String buyerPhone,
-            @Schema(description = "주문 생성일시 (ISO 8601)") String createdAt,
-            @Schema(description = "주문 수정일시 (ISO 8601)") String updatedAt) {}
+            @Schema(description = "주문 생성일시 (KST)") String createdAt,
+            @Schema(description = "주문 수정일시 (KST)") String updatedAt) {}
 
     /** 상품주문 정보. */
     @Schema(description = "상품주문 정보")
     public record ProductOrderApiResponse(
-            @Schema(description = "상품주문 ID") long orderItemId,
+            @Schema(description = "상품주문 ID (UUIDv7)") String orderItemId,
+            @Schema(description = "상품주문 번호 (ORD-YYYYMMDD-XXXX-NNN)") String orderItemNumber,
             @Schema(description = "상품그룹 ID") long productGroupId,
             @Schema(description = "상품 ID (SKU)") long productId,
-            @Schema(description = "판매자 ID") long sellerId,
-            @Schema(description = "브랜드 ID") long brandId,
             @Schema(description = "SKU 코드") String skuCode,
             @Schema(description = "상품명") String productGroupName,
-            @Schema(description = "브랜드명") String brandName,
-            @Schema(description = "판매자명") String sellerName,
+            @Schema(description = "브랜드명 (스냅샷)") String brandName,
+            @Schema(description = "판매자명 (스냅샷)") String sellerName,
             @Schema(description = "대표 이미지 URL") String mainImageUrl,
             @Schema(description = "외부 상품 ID") String externalProductId,
             @Schema(description = "외부 옵션 ID") String externalOptionId,
@@ -68,8 +67,8 @@ public record OrderListApiResponse(
             @Schema(description = "결제 수단") String paymentMethod,
             @Schema(description = "PG사 거래 ID") String paymentAgencyId,
             @Schema(description = "결제 금액 (원)") int paymentAmount,
-            @Schema(description = "결제일시 (ISO 8601)") String paidAt,
-            @Schema(description = "취소일시 (ISO 8601)") String canceledAt) {}
+            @Schema(description = "결제일시 (KST)") String paidAt,
+            @Schema(description = "취소일시 (KST)") String canceledAt) {}
 
     /** 수령인/배송지 정보. */
     @Schema(description = "수령인/배송지 정보")
@@ -83,11 +82,7 @@ public record OrderListApiResponse(
 
     /** 배송 상태. */
     @Schema(description = "배송 상태")
-    public record DeliveryApiResponse(
-            @Schema(description = "배송 상태") String deliveryStatus,
-            @Schema(description = "택배사 코드") String shipmentCompanyCode,
-            @Schema(description = "송장번호") String invoice,
-            @Schema(description = "출고완료일시 (ISO 8601)") String shipmentCompletedDate) {}
+    public record DeliveryApiResponse(@Schema(description = "주문 상품 상태") String orderItemStatus) {}
 
     /** 취소 요약 (배송 전 취소). */
     @Schema(description = "취소 요약")
@@ -103,7 +98,7 @@ public record OrderListApiResponse(
                 @Schema(description = "취소 번호") String cancelNumber,
                 @Schema(description = "취소 상태") String status,
                 @Schema(description = "취소 수량") int qty,
-                @Schema(description = "취소 신청일시 (ISO 8601)") String requestedAt) {}
+                @Schema(description = "취소 신청일시 (KST)") String requestedAt) {}
     }
 
     /** 클레임 요약 (환불/교환, 배송 후). */
@@ -122,6 +117,6 @@ public record OrderListApiResponse(
                 @Schema(description = "클레임 유형 (REFUND, EXCHANGE)") String type,
                 @Schema(description = "클레임 상태") String status,
                 @Schema(description = "클레임 수량") int qty,
-                @Schema(description = "클레임 신청일시 (ISO 8601)") String requestedAt) {}
+                @Schema(description = "클레임 신청일시 (KST)") String requestedAt) {}
     }
 }

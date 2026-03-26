@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.productgroup.assembler;
 
+import com.ryuqq.marketplace.application.imagevariant.dto.response.ImageVariantResult;
 import com.ryuqq.marketplace.application.product.dto.response.ProductDetailResult;
 import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.dto.response.ResolvedProductOptionResult;
@@ -93,8 +94,20 @@ public class ProductGroupAssembler {
         ProductGroupDetailCompositeQueryResult queryResult = bundle.queryResult();
         ProductGroup group = bundle.group();
 
+        Map<Long, List<ImageVariantResult>> variantMap = bundle.variantsByImageId();
         List<ProductGroupImageResult> images =
-                group.images().stream().map(ProductGroupImageResult::from).toList();
+                group.images().stream()
+                        .map(ProductGroupImageResult::from)
+                        .map(
+                                img -> {
+                                    Long imageId = img.id();
+                                    if (imageId == null) {
+                                        return img;
+                                    }
+                                    return img.withVariants(
+                                            variantMap.getOrDefault(imageId, List.of()));
+                                })
+                        .toList();
 
         ProductOptionMatrixResult optionProductMatrix =
                 buildOptionProductMatrix(group, bundle.products());

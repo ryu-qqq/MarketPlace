@@ -1,15 +1,13 @@
 package com.ryuqq.marketplace.adapter.out.client.naver.adapter;
 
-import com.ryuqq.marketplace.adapter.out.client.naver.auth.NaverCommerceTokenManager;
+import com.ryuqq.marketplace.adapter.out.client.naver.client.NaverCommerceApiClient;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverLastChangedStatus;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverLastChangedStatusesResponse;
-import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverOrderConfirmRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverOrderDelayRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverOrderDispatchRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderDetail;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderDetailResponse;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderIdsResponse;
-import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderQueryRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverWishedDeliveryDateRequest;
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceOrderMapper;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
@@ -19,24 +17,21 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 
 /**
  * 네이버 커머스 주문 조회 및 발주/발송 클라이언트 어댑터.
  *
- * <p>SalesChannelOrderClient를 구현하여 네이버 커머스 주문 API 8개 엔드포인트를 제공합니다. fetchNewOrders는 2-phase
+ * <p>SalesChannelOrderClient를 구현하여 네이버 커머스 주문 API 엔드포인트를 제공합니다. fetchNewOrders는 2-phase
  * 폴링(last-changed-statuses → product-orders/query)으로 동작합니다.
  */
 @Component
 @ConditionalOnProperty(prefix = "naver-commerce", name = "client-id")
+@SuppressWarnings("PMD.ExcessiveImports")
 public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient {
 
     private static final Logger log =
@@ -45,22 +40,18 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
     private static final int MAX_BATCH_SIZE = 300;
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
 
-    private final RestClient restClient;
-    private final NaverCommerceTokenManager tokenManager;
+    private final NaverCommerceApiClient apiClient;
     private final NaverCommerceOrderMapper mapper;
 
     public NaverCommerceOrderClientAdapter(
-            RestClient naverCommerceRestClient,
-            NaverCommerceTokenManager tokenManager,
-            NaverCommerceOrderMapper mapper) {
-        this.restClient = naverCommerceRestClient;
-        this.tokenManager = tokenManager;
+            NaverCommerceApiClient apiClient, NaverCommerceOrderMapper mapper) {
+        this.apiClient = apiClient;
         this.mapper = mapper;
     }
 
     @Override
-    public boolean supports(String channelCode) {
-        return "NAVER".equals(channelCode);
+    public String channelCode() {
+        return "NAVER";
     }
 
     @Override
@@ -103,147 +94,63 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
 
     /** 주문번호로 상품주문번호 목록을 조회합니다. */
     public NaverProductOrderIdsResponse getProductOrderIds(String orderId) {
-        String token = tokenManager.getAccessToken();
-        return restClient
-                .get()
-                .uri("/v1/pay-order/seller/orders/{orderId}/product-order-ids", orderId)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(NaverProductOrderIdsResponse.class);
+        return apiClient.getProductOrderIds(orderId);
     }
 
     /** 조건형 상품주문 상세를 조회합니다. */
     public NaverProductOrderDetailResponse getProductOrdersConditional(
             String productOrderStatus, Instant from, Instant to) {
-        String token = tokenManager.getAccessToken();
-        NaverProductOrderDetailResponse response =
-                restClient
-                        .get()
-                        .uri(
-                                "/v1/pay-order/seller/product-orders"
-                                        + "?productOrderStatus={status}"
-                                        + "&lastChangedFrom={from}&lastChangedTo={to}",
-                                productOrderStatus,
-                                formatForNaver(from),
-                                formatForNaver(to))
-                        .header("Authorization", "Bearer " + token)
-                        .retrieve()
-                        .body(NaverProductOrderDetailResponse.class);
-
-        return response != null ? response : new NaverProductOrderDetailResponse(List.of());
+        return apiClient.getProductOrdersConditional(
+                productOrderStatus, formatForNaver(from), formatForNaver(to));
     }
 
     /** 변경 상품주문 내역을 조회합니다 (폴링용). */
     public NaverLastChangedStatusesResponse getLastChangedStatuses(
             Instant fromTime, Instant toTime, String moreSequence) {
-        String token = tokenManager.getAccessToken();
+        return apiClient.getLastChangedStatuses(
+                LAST_CHANGED_TYPE_PAYED,
+                formatForNaver(fromTime),
+                formatForNaver(toTime),
+                MAX_BATCH_SIZE,
+                moreSequence);
+    }
 
-        Map<String, Object> params = new LinkedHashMap<>();
-        params.put("type", LAST_CHANGED_TYPE_PAYED);
-        params.put("from", formatForNaver(fromTime));
-        params.put("to", formatForNaver(toTime));
-        params.put("limit", MAX_BATCH_SIZE);
-
-        String uri =
-                "/v1/pay-order/seller/product-orders/last-changed-statuses"
-                        + "?lastChangedType={type}"
-                        + "&lastChangedFrom={from}&lastChangedTo={to}"
-                        + "&limitCount={limit}";
-
-        if (moreSequence != null) {
-            uri += "&moreSequence={seq}";
-            params.put("seq", moreSequence);
-        }
-
-        return restClient
-                .get()
-                .uri(uri, params)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(NaverLastChangedStatusesResponse.class);
+    /**
+     * 클레임 변경 상품주문 내역을 조회합니다 (lastChangedType 없이 전체 조회).
+     *
+     * <p>lastChangedType 파라미터를 생략하여 전체 변경 유형을 조회합니다. 클레임 어댑터에서 필터링에 사용합니다.
+     */
+    public NaverLastChangedStatusesResponse getLastChangedStatusesAll(
+            Instant fromTime, Instant toTime, String moreSequence) {
+        return apiClient.getLastChangedStatusesAll(
+                formatForNaver(fromTime), formatForNaver(toTime), MAX_BATCH_SIZE, moreSequence);
     }
 
     /** 상품주문 상세를 일괄 조회합니다. */
     public NaverProductOrderDetailResponse queryProductOrders(List<String> productOrderIds) {
-        String token = tokenManager.getAccessToken();
-        NaverProductOrderQueryRequest request = new NaverProductOrderQueryRequest(productOrderIds);
-
-        NaverProductOrderDetailResponse response =
-                restClient
-                        .post()
-                        .uri("/v1/pay-order/seller/product-orders/query")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
-                        .body(request)
-                        .retrieve()
-                        .body(NaverProductOrderDetailResponse.class);
-
-        return response != null ? response : new NaverProductOrderDetailResponse(List.of());
+        return apiClient.queryProductOrders(productOrderIds);
     }
 
     // === 발주/발송 ===
 
     /** 발주를 확인합니다 (최대 30건). */
     public void confirmOrders(List<String> productOrderIds) {
-        String token = tokenManager.getAccessToken();
-        NaverOrderConfirmRequest request = new NaverOrderConfirmRequest(productOrderIds);
-
-        restClient
-                .post()
-                .uri("/v1/pay-order/seller/product-orders/confirm")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
-
-        log.info("네이버 발주 확인 완료: {}건", productOrderIds.size());
+        apiClient.confirmOrders(productOrderIds);
     }
 
     /** 발송을 처리합니다 (최대 30건). */
     public void dispatchOrders(NaverOrderDispatchRequest request) {
-        String token = tokenManager.getAccessToken();
-
-        restClient
-                .post()
-                .uri("/v1/pay-order/seller/product-orders/dispatch")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
-
-        log.info("네이버 발송 처리 완료");
+        apiClient.dispatchOrders(request);
     }
 
     /** 발송 지연을 처리합니다. */
     public void delayDispatch(String productOrderId, NaverOrderDelayRequest request) {
-        String token = tokenManager.getAccessToken();
-
-        restClient
-                .post()
-                .uri("/v1/pay-order/seller/product-orders/{productOrderId}/delay", productOrderId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
+        apiClient.delayDispatch(productOrderId, request);
     }
 
     /** 배송 희망일을 변경합니다. */
     public void changeHopeDelivery(String productOrderId, NaverWishedDeliveryDateRequest request) {
-        String token = tokenManager.getAccessToken();
-
-        restClient
-                .post()
-                .uri(
-                        "/v1/pay-order/seller/product-orders/{productOrderId}/hope-delivery/change",
-                        productOrderId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
+        apiClient.changeHopeDelivery(productOrderId, request);
     }
 
     // === Private Helpers ===
@@ -272,6 +179,7 @@ public class NaverCommerceOrderClientAdapter implements SalesChannelOrderClient 
     }
 
     private String formatForNaver(Instant instant) {
-        return instant.atZone(KST).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        return instant.atZone(KST)
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
     }
 }

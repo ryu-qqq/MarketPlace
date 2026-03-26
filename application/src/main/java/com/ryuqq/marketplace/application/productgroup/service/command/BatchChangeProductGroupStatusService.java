@@ -1,47 +1,37 @@
 package com.ryuqq.marketplace.application.productgroup.service.command;
 
-import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupActivationOutboxCoordinator;
-import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupDeactivationOutboxCoordinator;
-import com.ryuqq.marketplace.application.outboundsync.internal.ProductGroupUpdateOutboxCoordinator;
 import com.ryuqq.marketplace.application.productgroup.dto.command.BatchChangeProductGroupStatusCommand;
+import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupStatusChangeOutboxCoordinator;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupCommandManager;
 import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
 import com.ryuqq.marketplace.application.productgroup.port.in.command.BatchChangeProductGroupStatusUseCase;
-import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupStatus;
 import java.time.Instant;
 import java.util.List;
-import java.util.Set;
 import org.springframework.stereotype.Service;
 
 /**
  * BatchChangeProductGroupStatusService - 상품 그룹 배치 상태 변경 Service.
  *
- * <p>sellerId 조건으로 조회하여 소유권을 검증하고, 일괄 상태 변경을 수행합니다. ACTIVE로 변경 시
- * OutboundSyncOutbox/OutboundProduct도 생성합니다.
+ * <p>sellerId 조건으로 조회하여 소유권을 검증하고, 일괄 상태 변경을 수행합니다. 상태 변경 후 외부 연동 Outbox 처리는
+ * ProductGroupStatusChangeOutboxCoordinator에 위임합니다.
  */
 @Service
 public class BatchChangeProductGroupStatusService implements BatchChangeProductGroupStatusUseCase {
 
     private final ProductGroupReadManager readManager;
     private final ProductGroupCommandManager commandManager;
-    private final ProductGroupActivationOutboxCoordinator activationOutboxCoordinator;
-    private final ProductGroupDeactivationOutboxCoordinator deactivationOutboxCoordinator;
-    private final ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator;
+    private final ProductGroupStatusChangeOutboxCoordinator statusChangeOutboxCoordinator;
 
     public BatchChangeProductGroupStatusService(
             ProductGroupReadManager readManager,
             ProductGroupCommandManager commandManager,
-            ProductGroupActivationOutboxCoordinator activationOutboxCoordinator,
-            ProductGroupDeactivationOutboxCoordinator deactivationOutboxCoordinator,
-            ProductGroupUpdateOutboxCoordinator updateOutboxCoordinator) {
+            ProductGroupStatusChangeOutboxCoordinator statusChangeOutboxCoordinator) {
         this.readManager = readManager;
         this.commandManager = commandManager;
-        this.activationOutboxCoordinator = activationOutboxCoordinator;
-        this.deactivationOutboxCoordinator = deactivationOutboxCoordinator;
-        this.updateOutboxCoordinator = updateOutboxCoordinator;
+        this.statusChangeOutboxCoordinator = statusChangeOutboxCoordinator;
     }
 
     @Override
@@ -60,15 +50,8 @@ public class BatchChangeProductGroupStatusService implements BatchChangeProductG
         for (ProductGroup productGroup : productGroups) {
             productGroup.changeStatus(targetStatus, changedAt);
             commandManager.persist(productGroup);
-
-            if (targetStatus.isActive()) {
-                activationOutboxCoordinator.createOutboxAndProducts(productGroup);
-            } else if (targetStatus.requiresExternalDeregistration()) {
-                deactivationOutboxCoordinator.createDeleteOutboxesIfNeeded(productGroup.id());
-            } else if (targetStatus.isSoldout()) {
-                updateOutboxCoordinator.createUpdateOutboxesIfNeeded(
-                        productGroup.id(), Set.of(ChangedArea.STATUS));
-            }
         }
+
+        statusChangeOutboxCoordinator.processOutboxes(productGroups, targetStatus);
     }
 }

@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.seller.manager;
 
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerAdminCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerPolicyCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPolicyCompositeResult;
 import com.ryuqq.marketplace.application.seller.port.out.query.SellerCompositionQueryPort;
 import com.ryuqq.marketplace.domain.seller.exception.SellerNotFoundException;
 import org.springframework.stereotype.Component;

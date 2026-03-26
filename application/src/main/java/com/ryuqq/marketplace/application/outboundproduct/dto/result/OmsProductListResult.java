@@ -18,6 +18,8 @@ import java.time.Instant;
  * @param syncStatus 연동 상태 (SUCCESS/FAILED/PENDING/NONE)
  * @param syncStatusLabel 연동 상태 라벨
  * @param lastSyncAt 마지막 연동일
+ * @param shopId 샵 ID
+ * @param shopName 샵 이름
  */
 public record OmsProductListResult(
         long id,
@@ -32,4 +34,6 @@ public record OmsProductListResult(
         Instant createdAt,
         String syncStatus,
         String syncStatusLabel,
-        Instant lastSyncAt) {}
+        Instant lastSyncAt,
+        Long shopId,
+        String shopName) {}

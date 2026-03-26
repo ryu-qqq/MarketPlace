@@ -6,10 +6,10 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.OrderApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrdersApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderSummaryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.application.order.dto.query.OrderSearchParams;
-import com.ryuqq.marketplace.application.order.dto.response.OrderSummaryResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
@@ -147,8 +147,8 @@ class OrderQueryApiMapperTest {
             OrderListApiResponse response = mapper.toListResponse(result);
 
             // then
-            assertThat(response.payment().paidAt()).contains("T");
-            assertThat(response.payment().paidAt()).contains("+09:00");
+            assertThat(response.payment().paidAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test
@@ -177,7 +177,6 @@ class OrderQueryApiMapperTest {
             assertThat(response.order().orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ID);
             assertThat(response.order().orderNumber())
                     .isEqualTo(OrderApiFixtures.DEFAULT_ORDER_NUMBER);
-            assertThat(response.order().status()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_STATUS);
             assertThat(response.order().buyerName()).isEqualTo(OrderApiFixtures.DEFAULT_BUYER_NAME);
         }
 
@@ -218,7 +217,6 @@ class OrderQueryApiMapperTest {
             assertThat(response.order()).isNotNull();
             assertThat(response.productOrder()).isNotNull();
             assertThat(response.payment()).isNotNull();
-            assertThat(response.settlement()).isNotNull();
         }
 
         @Test
@@ -316,17 +314,23 @@ class OrderQueryApiMapperTest {
         }
 
         @Test
-        @DisplayName("정산 정보가 올바르게 매핑된다")
-        void toDetailResponse_SettlementMapped() {
+        @DisplayName("ProductOrderDetailResult를 OrderDetailApiResponseV4로 변환한다")
+        void toDetailResponseV4_ConvertsResult_ReturnsV4ApiResponse() {
             // given
             ProductOrderDetailResult result = OrderApiFixtures.productOrderDetailResult();
 
             // when
-            OrderDetailApiResponse response = mapper.toDetailResponse(result);
+            OrderDetailApiResponseV4 response = mapper.toDetailResponseV4(result);
 
             // then
-            assertThat(response.settlement().fee()).isEqualTo(5000);
-            assertThat(response.settlement().expectationSettlementAmount()).isEqualTo(45000);
+            assertThat(response).isNotNull();
+            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.buyerInfo()).isNotNull();
+            assertThat(response.histories()).isNotEmpty();
+            assertThat(response.cancelIds()).isNotEmpty();
+            assertThat(response.cancels()).isNotEmpty();
+            assertThat(response.claimIds()).isNotEmpty();
+            assertThat(response.claims()).isNotEmpty();
         }
     }
 
@@ -401,28 +405,66 @@ class OrderQueryApiMapperTest {
     }
 
     @Nested
-    @DisplayName("toSummaryResponse() - 요약 응답 변환")
-    class ToSummaryResponseTest {
+    @DisplayName("toListResponseV4() - V4 호환 목록 변환 (legacyOrderId, settlementInfo 제외, 기본값 0/\"\")")
+    class ToListResponseV4Test {
 
         @Test
-        @DisplayName("OrderSummaryResult를 OrderSummaryApiResponse로 변환한다")
-        void toSummaryResponse_ConvertsSummaryResult_ReturnsApiResponse() {
+        @DisplayName("ProductOrderListResult를 OrderListApiResponseV4로 변환한다")
+        void toListResponseV4_ConvertsResult_ReturnsV4ApiResponse() {
             // given
-            OrderSummaryResult result = OrderApiFixtures.orderSummaryResult();
+            ProductOrderListResult result = OrderApiFixtures.productOrderListResult();
 
             // when
-            OrderSummaryApiResponse response = mapper.toSummaryResponse(result);
+            OrderListApiResponseV4 response = mapper.toListResponseV4(result);
 
             // then
-            assertThat(response.ordered()).isEqualTo(10);
-            assertThat(response.preparing()).isEqualTo(5);
-            assertThat(response.shipped()).isEqualTo(30);
-            assertThat(response.delivered()).isEqualTo(15);
-            assertThat(response.confirmed()).isEqualTo(8);
-            assertThat(response.cancelled()).isEqualTo(3);
-            assertThat(response.claimInProgress()).isEqualTo(2);
-            assertThat(response.refunded()).isEqualTo(4);
-            assertThat(response.exchanged()).isEqualTo(1);
+            assertThat(response).isNotNull();
+            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.orderNumber()).isEqualTo("ORD-20250115-0001-001");
+            assertThat(response.buyerInfo()).isNotNull();
+            assertThat(response.buyerInfo().buyerName())
+                    .isEqualTo(OrderApiFixtures.DEFAULT_BUYER_NAME);
+            assertThat(response.payment()).isNotNull();
+            assertThat(response.receiverInfo()).isNotNull();
+            assertThat(response.paymentShipmentInfo()).isNotNull();
+            assertThat(response.orderProduct()).isNotNull();
+            assertThat(response.externalOrderInfo()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("미존재 필드는 0 또는 빈 문자열로 채운다")
+        void toListResponseV4_MissingFields_FilledWithDefaults() {
+            // given
+            ProductOrderListResult result = OrderApiFixtures.productOrderListResult();
+
+            // when
+            OrderListApiResponseV4 response = mapper.toListResponseV4(result);
+
+            // then
+            assertThat(response.payment().paymentId())
+                    .isEqualTo(OrderApiFixtures.DEFAULT_PAYMENT_ID);
+            assertThat(response.payment().paymentNumber())
+                    .isEqualTo(OrderApiFixtures.DEFAULT_PAYMENT_NUMBER);
+            assertThat(response.payment().userId()).isZero();
+            assertThat(response.payment().billAmount())
+                    .isEqualTo(response.payment().paymentAmount());
+            assertThat(response.payment().usedMileageAmount()).isZero();
+            assertThat(response.orderProduct().totalExpectedRefundMileageAmount()).isZero();
+            assertThat(response.orderProduct().deliveryArea()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("toPageResponseV4로 페이지 결과를 변환한다")
+        void toPageResponseV4_ConvertsPageResult_ReturnsV4PageResponse() {
+            // given
+            ProductOrderPageResult pageResult = OrderApiFixtures.productOrderPageResult(2, 0, 20);
+
+            // when
+            PageApiResponse<OrderListApiResponseV4> response = mapper.toPageResponseV4(pageResult);
+
+            // then
+            assertThat(response.content()).hasSize(2);
+            assertThat(response.totalElements()).isEqualTo(2);
         }
     }
 }

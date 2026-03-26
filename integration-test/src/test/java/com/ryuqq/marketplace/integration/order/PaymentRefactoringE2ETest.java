@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderItemJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.PaymentJpaEntity;
-import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderHistoryJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.PaymentJpaRepository;
@@ -64,7 +64,7 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
 
     @Autowired private OrderJpaRepository orderRepository;
     @Autowired private OrderItemJpaRepository orderItemRepository;
-    @Autowired private OrderHistoryJpaRepository orderHistoryRepository;
+    @Autowired private OrderItemHistoryJpaRepository orderHistoryRepository;
     @Autowired private PaymentJpaRepository paymentRepository;
 
     @BeforeEach
@@ -92,9 +92,9 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
      * @param orderId 주문 ID (UUIDv7 문자열)
      * @param paymentId 결제 ID (UUIDv7 문자열)
      * @param paymentNumber 결제 번호 (PAY-YYYYMMDD-XXXX 형식)
-     * @return 저장된 OrderItemId
+     * @return 저장된 OrderItemId (UUIDv7 String)
      */
-    private Long saveOrderWithPayment(String orderId, String paymentId, String paymentNumber) {
+    private String saveOrderWithPayment(String orderId, String paymentId, String paymentNumber) {
         Instant now = Instant.now();
 
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
@@ -357,7 +357,7 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
             // given
             String orderId = "01944b2a-1234-7fff-8888-abcdef012331";
             String paymentId = "01944b2a-bbbb-7fff-9999-000000000031";
-            Long orderItemId = saveOrderWithPayment(orderId, paymentId, "PAY-20260310-0031");
+            String orderItemId = saveOrderWithPayment(orderId, paymentId, "PAY-20260310-0031");
 
             // when & then
             given().spec(givenWithPermission("order:read"))
@@ -377,7 +377,7 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
             String orderId = "01944b2a-1234-7fff-8888-abcdef012332";
             String paymentId = "01944b2a-bbbb-7fff-9999-000000000032";
             String paymentNumber = "PAY-20260310-0032";
-            Long orderItemId = saveOrderWithPayment(orderId, paymentId, paymentNumber);
+            String orderItemId = saveOrderWithPayment(orderId, paymentId, paymentNumber);
 
             // when & then
             given().spec(givenWithPermission("order:read"))
@@ -396,7 +396,7 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
             // given
             String orderId = "01944b2a-1234-7fff-8888-abcdef012333";
             String paymentId = "01944b2a-bbbb-7fff-9999-000000000033";
-            Long orderItemId = saveOrderWithPayment(orderId, paymentId, "PAY-20260310-0033");
+            String orderItemId = saveOrderWithPayment(orderId, paymentId, "PAY-20260310-0033");
 
             // when & then
             given().spec(givenWithPermission("order:read"))
@@ -415,7 +415,7 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
             String orderId = "01944b2a-1234-7fff-8888-abcdef012334";
             String paymentId = "01944b2a-bbbb-7fff-9999-000000000034";
             String paymentNumber = "PAY-20260310-0034";
-            Long orderItemId = saveOrderWithPayment(orderId, paymentId, paymentNumber);
+            String orderItemId = saveOrderWithPayment(orderId, paymentId, paymentNumber);
 
             // when & then
             given().spec(givenWithPermission("order:read"))
@@ -445,7 +445,7 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
             // given
             String orderId = "01944b2a-1234-7fff-8888-abcdef012341";
             String paymentId = "01944b2a-bbbb-7fff-9999-000000000041";
-            Long orderItemId = saveOrderWithPayment(orderId, paymentId, "PAY-20260310-0041");
+            String orderItemId = saveOrderWithPayment(orderId, paymentId, "PAY-20260310-0041");
 
             // when & then
             given().spec(givenAuthenticatedUser())
@@ -485,7 +485,7 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
             String orderId = "01944b2a-1234-7fff-8888-abcdef012351";
             String paymentId = "01944b2a-bbbb-7fff-9999-000000000051";
             String paymentNumber = "PAY-20260310-0051";
-            Long orderItemId = saveOrderWithPayment(orderId, paymentId, paymentNumber);
+            String orderItemId = saveOrderWithPayment(orderId, paymentId, paymentNumber);
 
             // Step 2: DB 저장 상태 검증 - UUIDv7 id, paymentNumber 저장 확인
             Optional<PaymentJpaEntity> savedPayment = paymentRepository.findById(paymentId);
@@ -522,7 +522,7 @@ class PaymentRefactoringE2ETest extends E2ETestBase {
             String orderId = "01944b2a-1234-7fff-8888-abcdef012352";
             String paymentId = "01944b2a-bbbb-7fff-9999-000000000052";
             String paymentNumber = "PAY-20260310-0052";
-            Long orderItemId = saveOrderWithPayment(orderId, paymentId, paymentNumber);
+            String orderItemId = saveOrderWithPayment(orderId, paymentId, paymentNumber);
 
             // Step 2: SUPER_ADMIN으로 목록 조회
             given().spec(givenSuperAdmin())

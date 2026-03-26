@@ -28,6 +28,10 @@ public class OutboundSyncOutboxConditionBuilder {
                 : null;
     }
 
+    public BooleanExpression shopIdEq(Long shopId) {
+        return shopId != null ? outboundSyncOutboxJpaEntity.shopId.eq(shopId) : null;
+    }
+
     public BooleanExpression sellerIdEq(Long sellerId) {
         return sellerId != null ? outboundSyncOutboxJpaEntity.sellerId.eq(sellerId) : null;
     }
@@ -64,6 +68,13 @@ public class OutboundSyncOutboxConditionBuilder {
         return outboundSyncOutboxJpaEntity.status.in(
                 OutboundSyncOutboxJpaEntity.Status.PENDING,
                 OutboundSyncOutboxJpaEntity.Status.PROCESSING);
+    }
+
+    public BooleanExpression statusPendingOrProcessingOrFailed() {
+        return outboundSyncOutboxJpaEntity.status.in(
+                OutboundSyncOutboxJpaEntity.Status.PENDING,
+                OutboundSyncOutboxJpaEntity.Status.PROCESSING,
+                OutboundSyncOutboxJpaEntity.Status.FAILED);
     }
 
     public BooleanExpression statusEq(String status) {

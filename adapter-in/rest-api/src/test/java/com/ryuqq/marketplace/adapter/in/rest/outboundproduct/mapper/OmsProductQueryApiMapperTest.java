@@ -164,7 +164,8 @@ class OmsProductQueryApiMapperTest {
         void toSyncHistoryParams_NullPageSize_UsesDefaults() {
             // given
             long productGroupId = 100L;
-            SearchSyncHistoryApiRequest request = new SearchSyncHistoryApiRequest(null, null, null);
+            SearchSyncHistoryApiRequest request =
+                    new SearchSyncHistoryApiRequest(null, null, null, null);
 
             // when
             SyncHistorySearchParams params = mapper.toSyncHistoryParams(productGroupId, request);
@@ -233,6 +234,8 @@ class OmsProductQueryApiMapperTest {
             assertThat(first.partnerName()).isEqualTo("나이키코리아");
             assertThat(first.syncStatus()).isEqualTo("SUCCESS");
             assertThat(first.syncStatusLabel()).isEqualTo("연동완료");
+            assertThat(first.shopId()).isEqualTo(1L);
+            assertThat(first.shopName()).isEqualTo("스마트스토어");
         }
 
         @Test
@@ -247,8 +250,7 @@ class OmsProductQueryApiMapperTest {
 
             // then
             OmsProductApiResponse first = response.content().get(0);
-            assertThat(first.createdAt()).contains("T");
-            assertThat(first.createdAt()).contains("+09:00");
+            assertThat(first.createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test
@@ -350,7 +352,8 @@ class OmsProductQueryApiMapperTest {
             assertThat(response.syncSummary().successCount()).isEqualTo(3L);
             assertThat(response.syncSummary().failCount()).isEqualTo(1L);
             assertThat(response.syncSummary().pendingCount()).isEqualTo(1L);
-            assertThat(response.syncSummary().lastSyncAt()).contains("+09:00");
+            assertThat(response.syncSummary().lastSyncAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
         }
 
         @Test

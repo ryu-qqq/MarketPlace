@@ -41,6 +41,9 @@ class RefundClaimTest {
             assertThat(claim).isNotNull();
             assertThat(claim.id()).isEqualTo(RefundFixtures.defaultRefundClaimId());
             assertThat(claim.claimNumber()).isEqualTo(RefundFixtures.defaultRefundClaimNumber());
+            assertThat(claim.orderItemId()).isEqualTo(RefundFixtures.defaultOrderItemId());
+            assertThat(claim.sellerId()).isEqualTo(10L);
+            assertThat(claim.refundQty()).isEqualTo(1);
             assertThat(claim.status()).isEqualTo(RefundStatus.REQUESTED);
             assertThat(claim.reason()).isEqualTo(RefundFixtures.defaultRefundReason());
             assertThat(claim.refundInfo()).isNull();
@@ -73,54 +76,43 @@ class RefundClaimTest {
 
             RefundClaimCreatedEvent event = (RefundClaimCreatedEvent) events.get(0);
             assertThat(event.refundClaimId()).isEqualTo(claim.id());
-            assertThat(event.orderId()).isEqualTo(claim.orderId());
+            assertThat(event.orderItemId()).isEqualTo(claim.orderItemId());
         }
 
         @Test
-        @DisplayName("환불 아이템이 null이면 예외가 발생한다")
-        void createWithNullItems_ThrowsException() {
+        @DisplayName("환불 수량이 0이면 예외가 발생한다")
+        void createWithZeroQty_ThrowsException() {
             // when & then
             assertThatThrownBy(
                             () ->
                                     RefundClaim.forNew(
                                             RefundFixtures.defaultRefundClaimId(),
                                             RefundFixtures.defaultRefundClaimNumber(),
-                                            "ORDER-0001",
-                                            null,
+                                            RefundFixtures.defaultOrderItemId(),
+                                            10L,
+                                            0,
                                             RefundFixtures.defaultRefundReason(),
-                                            RefundFixtures.defaultCollectShipment(),
                                             "customer@marketplace.com",
                                             CommonVoFixtures.now()))
                     .isInstanceOf(RefundException.class);
         }
 
         @Test
-        @DisplayName("환불 아이템이 빈 리스트이면 예외가 발생한다")
-        void createWithEmptyItems_ThrowsException() {
+        @DisplayName("환불 수량이 음수이면 예외가 발생한다")
+        void createWithNegativeQty_ThrowsException() {
             // when & then
             assertThatThrownBy(
                             () ->
                                     RefundClaim.forNew(
                                             RefundFixtures.defaultRefundClaimId(),
                                             RefundFixtures.defaultRefundClaimNumber(),
-                                            "ORDER-0001",
-                                            List.of(),
+                                            RefundFixtures.defaultOrderItemId(),
+                                            10L,
+                                            -1,
                                             RefundFixtures.defaultRefundReason(),
-                                            RefundFixtures.defaultCollectShipment(),
                                             "customer@marketplace.com",
                                             CommonVoFixtures.now()))
                     .isInstanceOf(RefundException.class);
-        }
-
-        @Test
-        @DisplayName("환불 아이템이 정상적으로 설정된다")
-        void refundItemsAreSet() {
-            // when
-            RefundClaim claim = RefundFixtures.newRefundClaim();
-
-            // then
-            assertThat(claim.refundItems()).isNotEmpty();
-            assertThat(claim.refundItems()).hasSize(1);
         }
     }
 
@@ -573,25 +565,33 @@ class RefundClaimTest {
         }
 
         @Test
-        @DisplayName("보류 사유가 null이면 예외가 발생한다")
-        void holdWithNullReason_ThrowsException() {
+        @DisplayName("보류 사유가 null이면 기본 사유로 보류 처리된다")
+        void holdWithNullReason_UsesDefaultReason() {
             // given
             RefundClaim claim = RefundFixtures.requestedRefundClaim();
+            Instant now = CommonVoFixtures.now();
 
-            // when & then
-            assertThatThrownBy(() -> claim.hold(null, CommonVoFixtures.now()))
-                    .isInstanceOf(RefundException.class);
+            // when
+            claim.hold(null, now);
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+            assertThat(claim.holdInfo().holdReason()).isEqualTo("보류 처리");
         }
 
         @Test
-        @DisplayName("보류 사유가 빈 문자열이면 예외가 발생한다")
-        void holdWithBlankReason_ThrowsException() {
+        @DisplayName("보류 사유가 빈 문자열이면 기본 사유로 보류 처리된다")
+        void holdWithBlankReason_UsesDefaultReason() {
             // given
             RefundClaim claim = RefundFixtures.requestedRefundClaim();
+            Instant now = CommonVoFixtures.now();
 
-            // when & then
-            assertThatThrownBy(() -> claim.hold("   ", CommonVoFixtures.now()))
-                    .isInstanceOf(RefundException.class);
+            // when
+            claim.hold("   ", now);
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+            assertThat(claim.holdInfo().holdReason()).isEqualTo("보류 처리");
         }
 
         @Test
@@ -817,17 +817,34 @@ class RefundClaimTest {
         }
 
         @Test
-        @DisplayName("refundItems()는 불변 리스트를 반환한다")
-        void refundItemsReturnsUnmodifiableList() {
+        @DisplayName("orderItemIdValue()는 주문상품 ID의 문자열 값을 반환한다")
+        void orderItemIdValueReturnsStringValue() {
             // given
             RefundClaim claim = RefundFixtures.requestedRefundClaim();
 
-            // when
-            List<RefundItem> items = claim.refundItems();
+            // then
+            assertThat(claim.orderItemIdValue())
+                    .isEqualTo(RefundFixtures.defaultOrderItemId().value());
+        }
+
+        @Test
+        @DisplayName("sellerId()는 판매자 ID를 반환한다")
+        void sellerIdReturnsValue() {
+            // given
+            RefundClaim claim = RefundFixtures.requestedRefundClaim();
 
             // then
-            assertThatThrownBy(() -> items.add(RefundFixtures.defaultRefundItem()))
-                    .isInstanceOf(UnsupportedOperationException.class);
+            assertThat(claim.sellerId()).isEqualTo(10L);
+        }
+
+        @Test
+        @DisplayName("refundQty()는 환불 수량을 반환한다")
+        void refundQtyReturnsValue() {
+            // given
+            RefundClaim claim = RefundFixtures.requestedRefundClaim();
+
+            // then
+            assertThat(claim.refundQty()).isEqualTo(1);
         }
 
         @Test
@@ -839,6 +856,7 @@ class RefundClaimTest {
             // then
             assertThat(claim.refundInfo()).isNull();
             assertThat(claim.holdInfo()).isNull();
+            assertThat(claim.collectShipment()).isNull();
             assertThat(claim.processedBy()).isNull();
             assertThat(claim.processedAt()).isNull();
             assertThat(claim.completedAt()).isNull();

@@ -28,7 +28,7 @@ public final class SalesChannelApiFixtures {
     public static final String DEFAULT_CHANNEL_NAME = "쿠팡";
     public static final String DEFAULT_STATUS = "ACTIVE";
     public static final Instant DEFAULT_INSTANT = Instant.parse("2025-01-23T01:30:00Z");
-    public static final String DEFAULT_ISO_DATE = "2025-01-23T10:30:00+09:00";
+    public static final String DEFAULT_ISO_DATE = "2025-01-23 10:30:00";
 
     // ===== RegisterSalesChannelApiRequest =====
 

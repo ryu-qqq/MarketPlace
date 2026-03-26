@@ -4,11 +4,13 @@ import com.ryuqq.marketplace.application.common.dto.result.BatchItemResult;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.shipment.dto.command.ConfirmShipmentBatchCommand;
-import com.ryuqq.marketplace.application.shipment.dto.command.ConfirmShipmentBundle;
 import com.ryuqq.marketplace.application.shipment.factory.ShipmentCommandFactory;
 import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistFacade;
+import com.ryuqq.marketplace.application.shipment.internal.ShipmentPersistenceBundle;
 import com.ryuqq.marketplace.application.shipment.port.in.command.ConfirmShipmentBatchUseCase;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -37,13 +39,19 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
 
     @Override
     public BatchProcessingResult<String> execute(ConfirmShipmentBatchCommand command) {
-        List<OrderItem> orderItems = orderItemReadManager.findAllByIds(command.orderItemIds());
+        List<OrderItemId> orderItemIds =
+                command.orderItemIds().stream().map(OrderItemId::of).toList();
+        List<OrderItem> orderItems = orderItemReadManager.findAllByIds(orderItemIds);
+
+        com.ryuqq.marketplace.application.common.dto.command.BulkStatusChangeContext<OrderItemId>
+                confirmContexts = commandFactory.createConfirmContexts(command);
+        Instant changedAt = confirmContexts.changedAt();
 
         List<BatchItemResult<String>> results = new ArrayList<>();
         List<OrderItem> confirmable = new ArrayList<>();
 
         for (OrderItem item : orderItems) {
-            String idStr = String.valueOf(item.idValue());
+            String idStr = item.idValue();
 
             if (!validateOwnership(item, command.sellerId())) {
                 results.add(BatchItemResult.failure(idStr, "FORBIDDEN", "해당 주문상품에 대한 권한이 없습니다"));
@@ -57,14 +65,16 @@ public class ConfirmShipmentBatchService implements ConfirmShipmentBatchUseCase 
                 continue;
             }
 
-            item.confirm();
+            // 발주확인 처리: changedBy는 시스템 처리이므로 "system" 사용
+            item.confirm("system", changedAt);
             confirmable.add(item);
             results.add(BatchItemResult.success(idStr));
         }
 
         if (!confirmable.isEmpty()) {
-            ConfirmShipmentBundle bundle = commandFactory.createConfirmBundle(confirmable);
-            persistFacade.persistConfirmBundle(bundle);
+            ShipmentPersistenceBundle bundle =
+                    commandFactory.createConfirmBundle(confirmable, changedAt);
+            persistFacade.persistAll(bundle);
         }
 
         return BatchProcessingResult.from(results);

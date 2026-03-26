@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.legacy.product.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductGroupEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.LegacyProductGroupEntity;
 import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroup;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ManagementType;
 import com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType;
@@ -56,9 +56,6 @@ class LegacyProductCommandEntityMapperTest {
                 ProductCondition.NEW,
                 Origin.KR,
                 "STYLE001",
-                null,
-                null,
-                null,
                 null,
                 null);
     }
@@ -115,9 +112,6 @@ class LegacyProductCommandEntityMapperTest {
                             "Y",
                             ProductCondition.NEW,
                             Origin.KR,
-                            null,
-                            null,
-                            null,
                             null);
 
             // when
@@ -146,10 +140,7 @@ class LegacyProductCommandEntityMapperTest {
                             "Y",
                             ProductCondition.NEW,
                             Origin.KR,
-                            "STYLE001",
-                            null,
-                            null,
-                            null);
+                            "STYLE001");
 
             // when
             LegacyProductGroupEntity entity = mapper.toEntity(domain);

@@ -1,6 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.order.mapper;
 
-import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderHistoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemHistoryJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.PaymentJpaEntity;
@@ -9,11 +9,11 @@ import com.ryuqq.marketplace.domain.common.vo.Email;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.common.vo.PhoneNumber;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
-import com.ryuqq.marketplace.domain.order.aggregate.OrderHistory;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
-import com.ryuqq.marketplace.domain.order.id.OrderHistoryId;
+import com.ryuqq.marketplace.domain.order.aggregate.OrderItemHistory;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemNumber;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
 import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
@@ -23,11 +23,13 @@ import com.ryuqq.marketplace.domain.order.vo.ExternalOrderReference;
 import com.ryuqq.marketplace.domain.order.vo.ExternalProductSnapshot;
 import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.order.vo.PaymentInfo;
 import com.ryuqq.marketplace.domain.order.vo.PaymentStatus;
 import com.ryuqq.marketplace.domain.order.vo.ReceiverInfo;
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 /** Order JPA Entity Mapper. */
@@ -37,10 +39,11 @@ public class OrderJpaEntityMapper {
     public OrderJpaEntity toOrderEntity(Order order) {
         BuyerInfo buyer = order.buyerInfo();
         ExternalOrderReference ext = order.externalOrderReference();
+        // DB의 orders.status 컬럼은 하위 호환 유지를 위해 고정값("ACTIVE") 저장
         return OrderJpaEntity.create(
                 order.idValue(),
                 order.orderNumberValue(),
-                order.status().name(),
+                "ACTIVE",
                 buyer.buyerName().value(),
                 buyer.email() != null ? buyer.email().value() : null,
                 buyer.phoneNumber() != null ? buyer.phoneNumber().value() : null,
@@ -82,11 +85,12 @@ public class OrderJpaEntityMapper {
     public OrderItemJpaEntity toOrderItemEntity(OrderItem item, String orderId) {
         return OrderItemJpaEntity.create(
                 item.idValue(),
+                item.orderItemNumberValue(),
                 orderId,
                 item.internalProduct().productGroupId(),
-                item.internalProduct().productId(),
                 item.internalProduct().sellerId(),
                 item.internalProduct().brandId(),
+                item.internalProduct().productId(),
                 item.internalProduct().skuCode(),
                 item.internalProduct().productGroupName(),
                 item.internalProduct().brandName(),
@@ -101,6 +105,7 @@ public class OrderJpaEntityMapper {
                 item.price().quantity(),
                 item.price().totalAmount().value(),
                 item.price().discountAmount().value(),
+                item.price().sellerBurdenDiscountAmount().value(),
                 item.price().paymentAmount().value(),
                 item.receiverInfo().receiverName(),
                 item.receiverInfo().receiverPhone() != null
@@ -117,58 +122,75 @@ public class OrderJpaEntityMapper {
                         : null,
                 item.receiverInfo().deliveryRequest(),
                 item.status().name(),
-                null,
-                null,
-                null,
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
-                null,
-                null,
-                null);
+                item.externalOrderStatus(),
+                item.cancelledQty(),
+                item.returnedQty(),
+                Instant.now(),
+                Instant.now());
     }
 
     public List<OrderItemJpaEntity> toOrderItemEntities(List<OrderItem> items, String orderId) {
         return items.stream().map(item -> toOrderItemEntity(item, orderId)).toList();
     }
 
-    public OrderHistoryJpaEntity toOrderHistoryEntity(OrderHistory history) {
-        return OrderHistoryJpaEntity.create(
-                history.idValue(),
-                history.orderId().value(),
+    public OrderItemHistoryJpaEntity toOrderItemHistoryEntity(OrderItemHistory history) {
+        return OrderItemHistoryJpaEntity.create(
+                history.id(),
+                history.orderItemIdValue(),
                 history.fromStatus() != null ? history.fromStatus().name() : null,
                 history.toStatus().name(),
                 history.changedBy(),
                 history.reason(),
+                history.quantity(),
                 history.changedAt(),
-                null,
-                null);
+                history.changedAt(),
+                history.changedAt());
     }
 
-    public List<OrderHistoryJpaEntity> toOrderHistoryEntities(List<OrderHistory> histories) {
-        return histories.stream().map(this::toOrderHistoryEntity).toList();
+    public List<OrderItemHistoryJpaEntity> toOrderItemHistoryEntities(
+            List<OrderItemHistory> histories) {
+        return histories.stream().map(this::toOrderItemHistoryEntity).toList();
     }
 
-    /** Entity → Domain 변환 (Query Phase에서 활용 예정). */
+    /** Order 내 모든 OrderItem의 histories를 합산하여 엔티티 목록으로 변환합니다. */
+    public List<OrderItemHistoryJpaEntity> collectAllItemHistoryEntities(Order order) {
+        return order.items().stream()
+                .flatMap(item -> item.histories().stream())
+                .map(this::toOrderItemHistoryEntity)
+                .toList();
+    }
+
+    /** Entity → Domain 변환 (Query Phase에서 활용). */
     public Order toDomain(
             OrderJpaEntity entity,
             PaymentJpaEntity paymentEntity,
             List<OrderItemJpaEntity> itemEntities,
-            List<OrderHistoryJpaEntity> historyEntities) {
+            List<OrderItemHistoryJpaEntity> historyEntities) {
+        // orderItemId 기준으로 histories 그룹핑
+        Map<String, List<OrderItemHistoryJpaEntity>> historiesByItemId =
+                historyEntities.stream()
+                        .collect(Collectors.groupingBy(OrderItemHistoryJpaEntity::getOrderItemId));
+
+        List<OrderItem> items =
+                itemEntities.stream()
+                        .map(
+                                itemEntity -> {
+                                    List<OrderItemHistoryJpaEntity> itemHistories =
+                                            historiesByItemId.getOrDefault(
+                                                    itemEntity.getId(), List.of());
+                                    return toOrderItem(itemEntity, itemHistories);
+                                })
+                        .toList();
+
         return Order.reconstitute(
                 OrderId.of(entity.getId()),
                 OrderNumber.of(entity.getOrderNumber()),
-                OrderStatus.valueOf(entity.getStatus()),
                 resolveBuyerInfo(entity),
                 resolvePaymentInfo(paymentEntity),
                 resolveExternalOrderReference(entity),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
-                itemEntities.stream().map(this::toOrderItem).toList(),
-                historyEntities.stream().map(this::toOrderHistory).toList());
+                items);
     }
 
     private BuyerInfo resolveBuyerInfo(OrderJpaEntity entity) {
@@ -202,8 +224,16 @@ public class OrderJpaEntityMapper {
     }
 
     public OrderItem toOrderItem(OrderItemJpaEntity entity) {
+        return toOrderItem(entity, List.of());
+    }
+
+    public OrderItem toOrderItem(
+            OrderItemJpaEntity entity, List<OrderItemHistoryJpaEntity> historyEntities) {
+        List<OrderItemHistory> histories =
+                historyEntities.stream().map(this::toOrderItemHistory).toList();
         return OrderItem.reconstitute(
                 OrderItemId.of(entity.getId()),
+                OrderItemNumber.of(entity.getOrderItemNumber()),
                 InternalProductReference.of(
                         entity.getProductGroupId(),
                         entity.getProductId(),
@@ -225,10 +255,14 @@ public class OrderJpaEntityMapper {
                         entity.getQuantity(),
                         Money.of(entity.getTotalAmount()),
                         Money.of(entity.getDiscountAmount()),
+                        Money.of(entity.getSellerBurdenDiscountAmount()),
                         Money.of(entity.getPaymentAmount())),
                 resolveReceiverInfo(entity),
-                OrderItemStatus.valueOf(entity.getDeliveryStatus()),
-                null);
+                OrderItemStatus.valueOf(entity.getOrderItemStatus()),
+                entity.getExternalOrderStatus(),
+                entity.getCancelledQty(),
+                entity.getReturnedQty(),
+                histories);
     }
 
     private ReceiverInfo resolveReceiverInfo(OrderItemJpaEntity entity) {
@@ -249,14 +283,17 @@ public class OrderJpaEntityMapper {
                 entity.getDeliveryRequest());
     }
 
-    private OrderHistory toOrderHistory(OrderHistoryJpaEntity entity) {
-        return OrderHistory.reconstitute(
-                OrderHistoryId.of(entity.getId()),
-                OrderId.of(entity.getOrderId()),
-                entity.getFromStatus() != null ? OrderStatus.valueOf(entity.getFromStatus()) : null,
-                OrderStatus.valueOf(entity.getToStatus()),
+    private OrderItemHistory toOrderItemHistory(OrderItemHistoryJpaEntity entity) {
+        return OrderItemHistory.reconstitute(
+                entity.getId(),
+                OrderItemId.of(entity.getOrderItemId()),
+                entity.getFromStatus() != null
+                        ? OrderItemStatus.valueOf(entity.getFromStatus())
+                        : null,
+                OrderItemStatus.valueOf(entity.getToStatus()),
                 entity.getChangedBy(),
                 entity.getReason(),
+                entity.getQuantity(),
                 entity.getChangedAt());
     }
 }

@@ -1,19 +1,25 @@
 package com.ryuqq.marketplace.adapter.out.client.setof.adapter;
 
+import com.ryuqq.marketplace.adapter.out.client.setof.client.SetofCommerceApiClient;
+import com.ryuqq.marketplace.adapter.out.client.setof.config.SetofCommerceProperties;
+import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerCreateRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSellerSyncRequest;
 import com.ryuqq.marketplace.adapter.out.client.setof.dto.SetofSyncApiResponse;
+import com.ryuqq.marketplace.adapter.out.client.setof.exception.SetofCommerceUnauthorizedException;
 import com.ryuqq.marketplace.adapter.out.client.setof.mapper.SetofCommerceSellerSyncMapper;
+import com.ryuqq.marketplace.adapter.out.client.setof.support.SetofSellerTokenProvider;
+import com.ryuqq.marketplace.application.common.exception.ExternalServiceUnavailableException;
 import com.ryuqq.marketplace.application.outboundseller.dto.response.OutboundSellerSyncResult;
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundSellerSyncClient;
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
 import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 @Component
@@ -22,37 +28,38 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
 
     private static final Logger log = LoggerFactory.getLogger(SetofCommerceSellerSyncAdapter.class);
 
-    private final RestClient restClient;
+    private final SetofCommerceApiClient apiClient;
     private final SellerReadManager sellerReadManager;
     private final SetofCommerceSellerSyncMapper mapper;
+    private final SetofCommerceProperties properties;
+    private final SetofSellerTokenProvider tokenProvider;
 
     public SetofCommerceSellerSyncAdapter(
-            RestClient setofCommerceRestClient,
+            SetofCommerceApiClient apiClient,
             SellerReadManager sellerReadManager,
-            SetofCommerceSellerSyncMapper mapper) {
-        this.restClient = setofCommerceRestClient;
+            SetofCommerceSellerSyncMapper mapper,
+            SetofCommerceProperties properties,
+            SetofSellerTokenProvider tokenProvider) {
+        this.apiClient = apiClient;
         this.sellerReadManager = sellerReadManager;
         this.mapper = mapper;
+        this.properties = properties;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
-    public OutboundSellerSyncResult createSeller(Long sellerId) {
+    public OutboundSellerSyncResult createSeller(Shop shop, Long sellerId) {
         try {
             Seller seller = sellerReadManager.getById(SellerId.of(sellerId));
-            SetofSellerSyncRequest request = mapper.toSellerRequest(seller);
+            SetofSellerCreateRequest request = mapper.toSellerCreateRequest(seller);
 
             log.info("세토프 커머스 셀러 등록 요청: sellerId={}", sellerId);
 
             SetofSyncApiResponse response =
-                    restClient
-                            .post()
-                            .uri("/api/v2/admin/sellers")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body(request)
-                            .retrieve()
-                            .body(SetofSyncApiResponse.class);
-
+                    executeWithTokenRefresh(shop, token -> apiClient.createSeller(token, request));
             return toResult(response);
+        } catch (ExternalServiceUnavailableException e) {
+            throw e;
         } catch (RestClientException e) {
             log.error("세토프 커머스 셀러 등록 실패: sellerId={}", sellerId, e);
             return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
@@ -60,26 +67,61 @@ public class SetofCommerceSellerSyncAdapter implements OutboundSellerSyncClient 
     }
 
     @Override
-    public OutboundSellerSyncResult updateSeller(Long sellerId) {
+    public OutboundSellerSyncResult updateSeller(Shop shop, Long sellerId) {
         try {
             Seller seller = sellerReadManager.getById(SellerId.of(sellerId));
             SetofSellerSyncRequest request = mapper.toSellerRequest(seller);
 
             log.info("세토프 커머스 셀러 수정 요청: sellerId={}", sellerId);
 
-            restClient
-                    .put()
-                    .uri("/api/v2/admin/sellers/{sellerId}", sellerId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(request)
-                    .retrieve()
-                    .toBodilessEntity();
-
+            executeWithTokenRefresh(
+                    shop,
+                    token -> {
+                        apiClient.updateSeller(token, sellerId, request);
+                        return null;
+                    });
             return OutboundSellerSyncResult.ofSuccess();
+        } catch (ExternalServiceUnavailableException e) {
+            throw e;
         } catch (RestClientException e) {
             log.error("세토프 커머스 셀러 수정 실패: sellerId={}", sellerId, e);
             return OutboundSellerSyncResult.retryableFailure("REST_ERROR", e.getMessage());
         }
+    }
+
+    // ===== 토큰 처리 =====
+
+    private <T> T executeWithTokenRefresh(Shop shop, Function<String, T> apiCall) {
+        String token = resolveSellerToken(shop);
+        try {
+            return apiCall.apply(token);
+        } catch (SetofCommerceUnauthorizedException e) {
+            log.warn("세토프 토큰 만료, 재발급 시도: shopId={}", shop != null ? shop.idValue() : "null");
+            String refreshedToken = refreshSellerToken(shop);
+            return apiCall.apply(refreshedToken);
+        }
+    }
+
+    private String resolveSellerToken(Shop shop) {
+        if (shop != null && shop.apiKey() != null && !shop.apiKey().isBlank()) {
+            try {
+                return tokenProvider.resolveToken(shop);
+            } catch (Exception e) {
+                log.warn("세토프 셀러 토큰 발급 실패, 서비스 토큰으로 폴백: shopId={}", shop.idValue());
+            }
+        }
+        return properties.getServiceToken();
+    }
+
+    private String refreshSellerToken(Shop shop) {
+        if (shop != null && shop.apiKey() != null && !shop.apiKey().isBlank()) {
+            try {
+                return tokenProvider.refreshToken(shop);
+            } catch (Exception e) {
+                log.warn("세토프 셀러 토큰 재발급 실패, 서비스 토큰으로 폴백: shopId={}", shop.idValue());
+            }
+        }
+        return properties.getServiceToken();
     }
 
     private OutboundSellerSyncResult toResult(SetofSyncApiResponse response) {

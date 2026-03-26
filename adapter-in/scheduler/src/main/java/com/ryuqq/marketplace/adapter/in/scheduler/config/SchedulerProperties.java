@@ -22,6 +22,7 @@ public record SchedulerProperties(Jobs jobs) {
             SellerAdminEmailOutbox sellerAdminEmailOutbox,
             ImageUploadOutbox imageUploadOutbox,
             ImageTransformOutbox imageTransformOutbox,
+            ImageVariantSyncOutbox imageVariantSyncOutbox,
             DescriptionPublish descriptionPublish,
             IntelligencePipeline intelligencePipeline,
             InboundProductRetry inboundProductRetry,
@@ -30,7 +31,15 @@ public record SchedulerProperties(Jobs jobs) {
             LegacyConversionSeeder legacyConversionSeeder,
             InboundOrderPolling inboundOrderPolling,
             InboundOrderRetry inboundOrderRetry,
-            ShipmentOutbox shipmentOutbox) {}
+            SellicOrderIssuing sellicOrderIssuing,
+            ShipmentOutbox shipmentOutbox,
+            CancelOutbox cancelOutbox,
+            RefundOutbox refundOutbox,
+            ExchangeOutbox exchangeOutbox,
+            QnaOutbox qnaOutbox,
+            InboundQnaPolling inboundQnaPolling,
+            InboundQnaRetry inboundQnaRetry,
+            InboundOrderPolling purchaseConfirmedPolling) {}
 
     public record OutboundSyncOutbox(
             ProcessPending processPending, RecoverTimeout recoverTimeout) {}
@@ -96,5 +105,30 @@ public record SchedulerProperties(Jobs jobs) {
 
     public record InboundOrderRetry(boolean enabled, String cron, String timezone, int batchSize) {}
 
+    public record SellicOrderIssuing(
+            boolean enabled, String cron, String timezone, int batchSize, long salesChannelId) {}
+
     public record ShipmentOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record CancelOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record RefundOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record ExchangeOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record QnaOutbox(ProcessPending processPending, RecoverTimeout recoverTimeout) {}
+
+    public record InboundQnaPolling(
+            boolean enabled,
+            String cron,
+            String timezone,
+            int batchSize,
+            List<Long> salesChannelIds) {}
+
+    public record InboundQnaRetry(boolean enabled, String cron, String timezone, int batchSize) {}
+
+    public record ImageVariantSyncOutbox(ImageVariantSyncProcessPending processPending) {}
+
+    public record ImageVariantSyncProcessPending(
+            boolean enabled, String cron, String timezone, int batchSize) {}
 }

@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
  * legacy_product_id_mappings → internal_product_group_id 경로로 매핑합니다.
  */
 @Component
+@ConditionalOnBean(LegacyProductIdMappingReadManager.class)
 public class ExternalProductInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(ExternalProductInitializer.class);
@@ -51,7 +53,7 @@ public class ExternalProductInitializer {
      * @return 초기화 결과
      */
     public InitResult initialize(
-            SalesChannelProductSearchClient searchClient, long salesChannelId) {
+            SalesChannelProductSearchClient searchClient, long salesChannelId, long shopId) {
         log.info(
                 "외부 상품 초기화 시작: channel={}, salesChannelId={}",
                 searchClient.channelCode(),
@@ -133,6 +135,7 @@ public class ExternalProductInitializer {
                     OutboundProduct.forNewWithExternalId(
                             ProductGroupId.of(internalGroupId),
                             SalesChannelId.of(salesChannelId),
+                            shopId,
                             entry.externalProductId(),
                             now));
         }

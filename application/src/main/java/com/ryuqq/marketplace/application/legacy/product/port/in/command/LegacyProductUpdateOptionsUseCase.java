@@ -1,10 +1,9 @@
 package com.ryuqq.marketplace.application.legacy.product.port.in.command;
 
-import com.ryuqq.marketplace.application.legacy.product.dto.command.LegacyUpdateProductsCommand;
-import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
+import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 
-/** 레거시 상품 옵션/상품 수정 UseCase. */
+/** 레거시 상품 옵션/SKU 전체 교체 UseCase. */
 public interface LegacyProductUpdateOptionsUseCase {
 
-    LegacyProductGroupDetailResult execute(LegacyUpdateProductsCommand command);
+    void execute(UpdateProductsCommand command);
 }

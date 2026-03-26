@@ -10,8 +10,8 @@ import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.dto.Seller
 import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.mapper.SellerCompositeMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.repository.SellerCompositeQueryDslRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.repository.SellerPolicyCompositeQueryDslRepository;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerPolicyCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPolicyCompositeResult;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -44,6 +44,8 @@ import java.time.ZoneId;
  */
 public record DateRange(LocalDate startDate, LocalDate endDate) {
 
+    private static final ZoneId SERVICE_ZONE = ZoneId.of("Asia/Seoul");
+
     /** Compact Constructor - 유효성 검증 */
     public DateRange {
         if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
@@ -131,9 +133,7 @@ public record DateRange(LocalDate startDate, LocalDate endDate) {
      * @return 시작 일시 (null이면 null 반환)
      */
     public Instant startInstant() {
-        return startDate != null
-                ? startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
-                : null;
+        return startDate != null ? startDate.atStartOfDay(SERVICE_ZONE).toInstant() : null;
     }
 
     /**
@@ -151,7 +151,7 @@ public record DateRange(LocalDate startDate, LocalDate endDate) {
         }
         // LocalDateTime을 거치지 않고 직접 Instant로 변환
         // endDate의 다음날 00:00:00에서 1나노초 빼서 23:59:59.999999999 표현
-        return endDate.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().minusNanos(1);
+        return endDate.plusDays(1).atStartOfDay(SERVICE_ZONE).toInstant().minusNanos(1);
     }
 
     /**

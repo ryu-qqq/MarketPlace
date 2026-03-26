@@ -21,12 +21,15 @@ public final class OmsProductCompositeDtoFixtures {
     public static final Long DEFAULT_PRODUCT_GROUP_ID = 100L;
     public static final Long DEFAULT_SELLER_ID = 1L;
     public static final Long DEFAULT_BRAND_ID = 10L;
+    public static final Long DEFAULT_SHOP_ID = 1L;
     public static final String DEFAULT_PRODUCT_GROUP_NAME = "테스트 상품";
     public static final String DEFAULT_STATUS_ACTIVE = "ACTIVE";
     public static final String DEFAULT_STATUS_INACTIVE = "INACTIVE";
     public static final String DEFAULT_STATUS_DELETED = "DELETED";
     public static final String DEFAULT_SELLER_NAME = "테스트 셀러";
     public static final String DEFAULT_BRAND_NAME = "테스트 브랜드";
+    public static final String DEFAULT_SHOP_NAME = "스마트스토어";
+    public static final String DEFAULT_EXTERNAL_PRODUCT_ID = "EXT-12345";
     public static final String DEFAULT_IMAGE_URL = "https://example.com/image.jpg";
     public static final int DEFAULT_PRICE = 50000;
     public static final int DEFAULT_STOCK = 100;
@@ -54,6 +57,28 @@ public final class OmsProductCompositeDtoFixtures {
                 DEFAULT_SELLER_NAME,
                 DEFAULT_BRAND_ID,
                 DEFAULT_BRAND_NAME,
+                DEFAULT_SHOP_ID,
+                DEFAULT_SHOP_NAME,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
+                now.minusSeconds(86400),
+                now);
+    }
+
+    /** 지정 productGroupId와 shopId의 ACTIVE 상태 OmsProductListCompositeDto. */
+    public static OmsProductListCompositeDto activeCompositeDto(
+            Long productGroupId, Long shopId, String shopName) {
+        Instant now = Instant.now();
+        return new OmsProductListCompositeDto(
+                productGroupId,
+                DEFAULT_PRODUCT_GROUP_NAME,
+                DEFAULT_STATUS_ACTIVE,
+                DEFAULT_SELLER_ID,
+                DEFAULT_SELLER_NAME,
+                DEFAULT_BRAND_ID,
+                DEFAULT_BRAND_NAME,
+                shopId,
+                shopName,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
                 now.minusSeconds(86400),
                 now);
     }
@@ -69,6 +94,9 @@ public final class OmsProductCompositeDtoFixtures {
                 DEFAULT_SELLER_NAME,
                 DEFAULT_BRAND_ID,
                 DEFAULT_BRAND_NAME,
+                DEFAULT_SHOP_ID,
+                DEFAULT_SHOP_NAME,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
                 now.minusSeconds(172800),
                 now.minusSeconds(86400));
     }
@@ -85,6 +113,9 @@ public final class OmsProductCompositeDtoFixtures {
                 sellerName,
                 DEFAULT_BRAND_ID,
                 DEFAULT_BRAND_NAME,
+                DEFAULT_SHOP_ID,
+                DEFAULT_SHOP_NAME,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
                 now.minusSeconds(3600),
                 now);
     }
@@ -110,7 +141,7 @@ public final class OmsProductCompositeDtoFixtures {
         return new OmsProductMainImageDto(productGroupId, DEFAULT_IMAGE_URL);
     }
 
-    /** productGroupId → OmsProductMainImageDto 맵 생성. */
+    /** productGroupId -> OmsProductMainImageDto 맵 생성. */
     public static Map<Long, OmsProductMainImageDto> mainImageMap(List<Long> productGroupIds) {
         return productGroupIds.stream()
                 .collect(
@@ -140,7 +171,7 @@ public final class OmsProductCompositeDtoFixtures {
         return new OmsProductPriceStockDto(productGroupId, DEFAULT_PRICE, 0);
     }
 
-    /** productGroupId → OmsProductPriceStockDto 맵 생성. */
+    /** productGroupId -> OmsProductPriceStockDto 맵 생성. */
     public static Map<Long, OmsProductPriceStockDto> priceStockMap(List<Long> productGroupIds) {
         return productGroupIds.stream()
                 .collect(
@@ -157,42 +188,55 @@ public final class OmsProductCompositeDtoFixtures {
 
     /** COMPLETED 상태의 연동정보 DTO. */
     public static OmsProductSyncInfoDto completedSyncInfoDto() {
-        return completedSyncInfoDto(DEFAULT_PRODUCT_GROUP_ID);
+        return completedSyncInfoDto(DEFAULT_PRODUCT_GROUP_ID, DEFAULT_SHOP_ID);
     }
 
     /** 지정 productGroupId의 COMPLETED 상태 연동정보 DTO. */
     public static OmsProductSyncInfoDto completedSyncInfoDto(Long productGroupId) {
+        return completedSyncInfoDto(productGroupId, DEFAULT_SHOP_ID);
+    }
+
+    /** 지정 (productGroupId, shopId)의 COMPLETED 상태 연동정보 DTO. */
+    public static OmsProductSyncInfoDto completedSyncInfoDto(Long productGroupId, Long shopId) {
         return new OmsProductSyncInfoDto(
-                productGroupId, DEFAULT_SYNC_STATUS_COMPLETED, Instant.now().minusSeconds(3600));
+                productGroupId,
+                shopId,
+                DEFAULT_SYNC_STATUS_COMPLETED,
+                Instant.now().minusSeconds(3600));
     }
 
     /** FAILED 상태의 연동정보 DTO. */
     public static OmsProductSyncInfoDto failedSyncInfoDto(Long productGroupId) {
         return new OmsProductSyncInfoDto(
-                productGroupId, DEFAULT_SYNC_STATUS_FAILED, Instant.now().minusSeconds(7200));
+                productGroupId,
+                DEFAULT_SHOP_ID,
+                DEFAULT_SYNC_STATUS_FAILED,
+                Instant.now().minusSeconds(7200));
     }
 
     /** PENDING 상태의 연동정보 DTO. */
     public static OmsProductSyncInfoDto pendingSyncInfoDto(Long productGroupId) {
-        return new OmsProductSyncInfoDto(productGroupId, DEFAULT_SYNC_STATUS_PENDING, null);
+        return new OmsProductSyncInfoDto(
+                productGroupId, DEFAULT_SHOP_ID, DEFAULT_SYNC_STATUS_PENDING, null);
     }
 
-    /** productGroupId → OmsProductSyncInfoDto 맵 생성 (COMPLETED 상태). */
-    public static Map<Long, OmsProductSyncInfoDto> completedSyncInfoMap(
+    /** compositeKey -> OmsProductSyncInfoDto 맵 생성 (COMPLETED 상태). */
+    public static Map<String, OmsProductSyncInfoDto> completedSyncInfoMap(
             List<Long> productGroupIds) {
         return productGroupIds.stream()
                 .collect(
                         java.util.stream.Collectors.toMap(
-                                id -> id,
+                                id -> OmsProductSyncInfoDto.key(id, DEFAULT_SHOP_ID),
                                 id ->
                                         new OmsProductSyncInfoDto(
                                                 id,
+                                                DEFAULT_SHOP_ID,
                                                 DEFAULT_SYNC_STATUS_COMPLETED,
                                                 Instant.now().minusSeconds(3600))));
     }
 
     /** 비어있는 연동정보 맵 (미연동 상태 시뮬레이션). */
-    public static Map<Long, OmsProductSyncInfoDto> emptySyncInfoMap() {
+    public static Map<String, OmsProductSyncInfoDto> emptySyncInfoMap() {
         return Map.of();
     }
 }

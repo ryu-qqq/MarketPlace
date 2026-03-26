@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
+import java.util.List;
 import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,16 +52,19 @@ public class MainJpaConfig {
             havingValue = "true",
             matchIfMissing = true)
     public Flyway mainFlyway(@Qualifier("dataSource") DataSource dataSource) {
-        return Flyway.configure()
-                .dataSource(dataSource)
-                .locations("classpath:db/migration")
-                .table("flyway_schema_history")
-                .baselineOnMigrate(true)
-                .baselineVersion("87")
-                .validateOnMigrate(true)
-                .outOfOrder(false)
-                .cleanDisabled(true)
-                .load();
+        Flyway flyway =
+                Flyway.configure()
+                        .dataSource(dataSource)
+                        .locations("classpath:db/migration")
+                        .table("flyway_schema_history")
+                        .baselineOnMigrate(true)
+                        .baselineVersion("87")
+                        .validateOnMigrate(true)
+                        .outOfOrder(false)
+                        .cleanDisabled(true)
+                        .load();
+        flyway.repair();
+        return flyway;
     }
 
     @Bean
@@ -71,8 +75,16 @@ public class MainJpaConfig {
             EntityManagerFactoryBuilder builder,
             PersistenceManagedTypes persistenceManagedTypes,
             @Nullable Flyway mainFlyway) {
+        List<String> filtered =
+                persistenceManagedTypes.getManagedClassNames().stream()
+                        .filter(
+                                name ->
+                                        !name.startsWith(
+                                                "com.ryuqq.marketplace.adapter.out.persistence.legacy."))
+                        .toList();
+        PersistenceManagedTypes mainManagedTypes = PersistenceManagedTypes.of(filtered, List.of());
         return builder.dataSource(dataSource)
-                .managedTypes(persistenceManagedTypes)
+                .managedTypes(mainManagedTypes)
                 .persistenceUnit("main")
                 .build();
     }

@@ -1,6 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.persistence.legacy.product;
 
-import com.ryuqq.marketplace.adapter.out.persistence.legacy.product.entity.LegacyProductGroupEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.legacy.productgroup.entity.LegacyProductGroupEntity;
 
 /**
  * LegacyProductGroupEntity 테스트 Fixtures.

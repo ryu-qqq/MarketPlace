@@ -4,7 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 
-import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.OutboundProductJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.entity.OutboundProductJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundproduct.repository.OutboundProductJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.OutboundSyncOutboxJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.outboundsync.repository.OutboundSyncOutboxJpaRepository;
@@ -14,9 +14,13 @@ import com.ryuqq.marketplace.adapter.out.persistence.productgroup.repository.Pro
 import com.ryuqq.marketplace.adapter.out.persistence.seller.SellerJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.seller.repository.SellerJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.sellersaleschannel.repository.SellerSalesChannelJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.shop.ShopJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.shop.entity.ShopJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.shop.repository.ShopJpaRepository;
 import com.ryuqq.marketplace.integration.E2ETestBase;
+import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,6 +58,8 @@ class OmsProductQueryE2ETest extends E2ETestBase {
     @Autowired private ShopJpaRepository shopRepository;
     @Autowired private SellerSalesChannelJpaRepository sellerSalesChannelRepository;
 
+    private ShopJpaEntity testShop;
+
     @BeforeEach
     void setUp() {
         syncOutboxRepository.deleteAll();
@@ -62,6 +68,9 @@ class OmsProductQueryE2ETest extends E2ETestBase {
         sellerSalesChannelRepository.deleteAll();
         shopRepository.deleteAll();
         sellerRepository.deleteAll();
+
+        // outbound_products INNER JOIN shops 를 위한 Shop 엔티티 생성
+        testShop = shopRepository.save(ShopJpaEntityFixtures.newEntity());
     }
 
     @AfterEach
@@ -91,7 +100,7 @@ class OmsProductQueryE2ETest extends E2ETestBase {
                 productGroupRepository.save(
                         ProductGroupJpaEntityFixtures.activeEntityWithSeller(null, sellerId));
         outboundProductRepository.save(
-                OutboundProductJpaEntityFixtures.pendingEntityWith(pg.getId(), salesChannelId));
+                createOutboundProduct(pg.getId(), salesChannelId, "PENDING_REGISTRATION"));
         return pg;
     }
 
@@ -105,9 +114,26 @@ class OmsProductQueryE2ETest extends E2ETestBase {
         var pg =
                 productGroupRepository.save(
                         ProductGroupJpaEntityFixtures.activeEntityWithSeller(null, seller.getId()));
-        outboundProductRepository.save(
-                OutboundProductJpaEntityFixtures.registeredEntityWith(pg.getId(), 10L));
+        outboundProductRepository.save(createOutboundProduct(pg.getId(), 10L, "REGISTERED"));
         return pg;
+    }
+
+    private static final AtomicLong EXT_PROD_SEQ = new AtomicLong(1);
+
+    private OutboundProductJpaEntity createOutboundProduct(
+            Long productGroupId, Long salesChannelId, String status) {
+        Instant now = Instant.now();
+        String externalId =
+                "REGISTERED".equals(status) ? "EXT-PROD-" + EXT_PROD_SEQ.getAndIncrement() : null;
+        return OutboundProductJpaEntity.create(
+                null,
+                productGroupId,
+                salesChannelId,
+                testShop.getId(),
+                externalId,
+                status,
+                now,
+                now);
     }
 
     // ========================================================================
@@ -184,7 +210,7 @@ class OmsProductQueryE2ETest extends E2ETestBase {
             var deletedPg =
                     productGroupRepository.save(ProductGroupJpaEntityFixtures.deletedEntity());
             outboundProductRepository.save(
-                    OutboundProductJpaEntityFixtures.pendingEntityWith(deletedPg.getId(), 10L));
+                    createOutboundProduct(deletedPg.getId(), 10L, "PENDING_REGISTRATION"));
 
             // when & then
             given().spec(givenAuthenticatedUser())
@@ -227,7 +253,7 @@ class OmsProductQueryE2ETest extends E2ETestBase {
                             ProductGroupJpaEntityFixtures.activeEntityWithSeller(
                                     null, seller.getId()));
             outboundProductRepository.save(
-                    OutboundProductJpaEntityFixtures.registeredEntityWith(targetPg.getId(), 10L));
+                    createOutboundProduct(targetPg.getId(), 10L, "REGISTERED"));
             // 다른 상품
             saveFullOmsProduct();
 
@@ -343,8 +369,7 @@ class OmsProductQueryE2ETest extends E2ETestBase {
                     productGroupRepository.save(
                             ProductGroupJpaEntityFixtures.activeEntityWithSeller(
                                     null, seller.getId()));
-            outboundProductRepository.save(
-                    OutboundProductJpaEntityFixtures.registeredEntityWith(pg.getId(), 10L));
+            outboundProductRepository.save(createOutboundProduct(pg.getId(), 10L, "REGISTERED"));
             syncOutboxRepository.saveAll(
                     List.of(
                             OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(
@@ -387,8 +412,7 @@ class OmsProductQueryE2ETest extends E2ETestBase {
                     productGroupRepository.save(
                             ProductGroupJpaEntityFixtures.activeEntityWithSeller(
                                     null, seller.getId()));
-            outboundProductRepository.save(
-                    OutboundProductJpaEntityFixtures.registeredEntityWith(pg.getId(), 10L));
+            outboundProductRepository.save(createOutboundProduct(pg.getId(), 10L, "REGISTERED"));
             // PENDING 2건, COMPLETED 1건
             syncOutboxRepository.saveAll(
                     List.of(
@@ -417,8 +441,7 @@ class OmsProductQueryE2ETest extends E2ETestBase {
                     productGroupRepository.save(
                             ProductGroupJpaEntityFixtures.activeEntityWithSeller(
                                     null, seller.getId()));
-            outboundProductRepository.save(
-                    OutboundProductJpaEntityFixtures.registeredEntityWith(pg.getId(), 10L));
+            outboundProductRepository.save(createOutboundProduct(pg.getId(), 10L, "REGISTERED"));
             for (int i = 0; i < 5; i++) {
                 syncOutboxRepository.save(
                         OutboundSyncOutboxJpaEntityFixtures.newPendingEntityWith(
@@ -468,8 +491,7 @@ class OmsProductQueryE2ETest extends E2ETestBase {
                     productGroupRepository.save(
                             ProductGroupJpaEntityFixtures.activeEntityWithSeller(
                                     null, seller.getId()));
-            outboundProductRepository.save(
-                    OutboundProductJpaEntityFixtures.registeredEntityWith(pg.getId(), 10L));
+            outboundProductRepository.save(createOutboundProduct(pg.getId(), 10L, "REGISTERED"));
             syncOutboxRepository.save(OutboundSyncOutboxJpaEntityFixtures.newCompletedEntity());
 
             // Step 2: 목록 조회

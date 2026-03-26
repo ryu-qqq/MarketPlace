@@ -18,10 +18,10 @@ import com.ryuqq.marketplace.domain.exchange.event.ExchangeRejectedEvent;
 import com.ryuqq.marketplace.domain.exchange.event.ExchangeShippingEvent;
 import com.ryuqq.marketplace.domain.exchange.exception.ExchangeErrorCode;
 import com.ryuqq.marketplace.domain.exchange.exception.ExchangeException;
+import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
-import com.ryuqq.marketplace.domain.exchange.vo.ExchangeTarget;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -46,21 +46,14 @@ class ExchangeClaimTest {
             // then
             assertThat(claim).isNotNull();
             assertThat(claim.id()).isEqualTo(ExchangeFixtures.defaultExchangeClaimId());
+            assertThat(claim.orderItemId()).isEqualTo(ExchangeFixtures.defaultOrderItemId());
+            assertThat(claim.sellerId()).isEqualTo(100L);
+            assertThat(claim.exchangeQty()).isEqualTo(1);
             assertThat(claim.status()).isEqualTo(ExchangeStatus.REQUESTED);
             assertThat(claim.processedBy()).isNull();
             assertThat(claim.processedAt()).isNull();
             assertThat(claim.completedAt()).isNull();
             assertThat(claim.linkedOrderId()).isNull();
-        }
-
-        @Test
-        @DisplayName("신규 생성 시 교환 아이템 목록이 올바르게 설정된다")
-        void newExchangeClaimHasItems() {
-            // when
-            ExchangeClaim claim = ExchangeFixtures.newExchangeClaim();
-
-            // then
-            assertThat(claim.exchangeItems()).hasSize(1);
         }
 
         @Test
@@ -76,21 +69,23 @@ class ExchangeClaimTest {
 
             ExchangeClaimCreatedEvent event = (ExchangeClaimCreatedEvent) events.get(0);
             assertThat(event.exchangeClaimId()).isEqualTo(claim.id());
+            assertThat(event.orderItemId()).isEqualTo(claim.orderItemId());
         }
 
         @Test
-        @DisplayName("교환 아이템 목록이 비어 있으면 예외가 발생한다")
-        void createWithEmptyItems_ThrowsException() {
+        @DisplayName("교환 수량이 0이면 예외가 발생한다")
+        void createWithZeroQty_ThrowsException() {
             // when & then
             assertThatThrownBy(
                             () ->
                                     ExchangeClaim.forNew(
                                             ExchangeFixtures.defaultExchangeClaimId(),
                                             ExchangeFixtures.defaultExchangeClaimNumber(),
-                                            "ORDER-001",
-                                            List.of(),
+                                            ExchangeFixtures.defaultOrderItemId(),
+                                            100L,
+                                            0,
                                             ExchangeFixtures.defaultExchangeReason(),
-                                            ExchangeFixtures.defaultExchangeTarget(),
+                                            ExchangeFixtures.defaultExchangeOption(),
                                             ExchangeFixtures.defaultAmountAdjustment(),
                                             ExchangeFixtures.defaultCollectShipment(),
                                             "buyer@example.com",
@@ -99,18 +94,19 @@ class ExchangeClaimTest {
         }
 
         @Test
-        @DisplayName("교환 아이템 목록이 null이면 예외가 발생한다")
-        void createWithNullItems_ThrowsException() {
+        @DisplayName("교환 수량이 음수이면 예외가 발생한다")
+        void createWithNegativeQty_ThrowsException() {
             // when & then
             assertThatThrownBy(
                             () ->
                                     ExchangeClaim.forNew(
                                             ExchangeFixtures.defaultExchangeClaimId(),
                                             ExchangeFixtures.defaultExchangeClaimNumber(),
-                                            "ORDER-001",
-                                            null,
+                                            ExchangeFixtures.defaultOrderItemId(),
+                                            100L,
+                                            -1,
                                             ExchangeFixtures.defaultExchangeReason(),
-                                            ExchangeFixtures.defaultExchangeTarget(),
+                                            ExchangeFixtures.defaultExchangeOption(),
                                             ExchangeFixtures.defaultAmountAdjustment(),
                                             ExchangeFixtures.defaultCollectShipment(),
                                             "buyer@example.com",
@@ -484,14 +480,15 @@ class ExchangeClaimTest {
         }
 
         @Test
-        @DisplayName("COLLECTING 상태에서 거절하면 예외가 발생한다")
-        void rejectFromCollecting_ThrowsException() {
+        @DisplayName("COLLECTING 상태에서도 교환을 거절할 수 있다")
+        void rejectFromCollecting() {
             // given
             ExchangeClaim claim = ExchangeFixtures.collectingExchangeClaim();
 
-            // when & then
-            assertThatThrownBy(() -> claim.reject("admin@marketplace.com", CommonVoFixtures.now()))
-                    .isInstanceOf(ExchangeException.class);
+            // when
+            assertThatCode(() -> claim.reject("admin@marketplace.com", CommonVoFixtures.now()))
+                    .doesNotThrowAnyException();
+            assertThat(claim.status()).isEqualTo(ExchangeStatus.REJECTED);
         }
 
         @Test
@@ -579,37 +576,38 @@ class ExchangeClaimTest {
     }
 
     @Nested
-    @DisplayName("updateTarget() - 교환 대상 변경")
-    class UpdateTargetTest {
+    @DisplayName("updateOption() - 교환 옵션 변경")
+    class UpdateOptionTest {
 
         @Test
-        @DisplayName("REQUESTED 상태에서 교환 대상을 변경한다")
-        void updateTargetFromRequested() {
+        @DisplayName("REQUESTED 상태에서 교환 옵션을 변경한다")
+        void updateOptionFromRequested() {
             // given
             ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
-            ExchangeTarget newTarget =
-                    ExchangeFixtures.exchangeTarget(1001L, 2002L, "SKU-BLUE-M", 2);
+            ExchangeOption newOption =
+                    ExchangeFixtures.exchangeOption(
+                            1000L, "SKU-RED-M", 1001L, 2002L, "SKU-BLUE-M", 2);
             Instant now = CommonVoFixtures.now();
 
             // when
-            claim.updateTarget(newTarget, ExchangeFixtures.zeroAmountAdjustment(), now);
+            claim.updateOption(newOption, ExchangeFixtures.zeroAmountAdjustment(), now);
 
             // then
-            assertThat(claim.exchangeTarget()).isEqualTo(newTarget);
+            assertThat(claim.exchangeOption()).isEqualTo(newOption);
             assertThat(claim.updatedAt()).isEqualTo(now);
         }
 
         @Test
-        @DisplayName("REQUESTED가 아닌 상태에서 교환 대상 변경하면 예외가 발생한다")
-        void updateTargetFromNonRequested_ThrowsException() {
+        @DisplayName("REQUESTED가 아닌 상태에서 교환 옵션 변경하면 예외가 발생한다")
+        void updateOptionFromNonRequested_ThrowsException() {
             // given
             ExchangeClaim claim = ExchangeFixtures.collectingExchangeClaim();
 
             // when & then
             assertThatThrownBy(
                             () ->
-                                    claim.updateTarget(
-                                            ExchangeFixtures.defaultExchangeTarget(),
+                                    claim.updateOption(
+                                            ExchangeFixtures.defaultExchangeOption(),
                                             ExchangeFixtures.defaultAmountAdjustment(),
                                             CommonVoFixtures.now()))
                     .isInstanceOf(ExchangeException.class)
@@ -618,16 +616,16 @@ class ExchangeClaimTest {
         }
 
         @Test
-        @DisplayName("COMPLETED 상태에서 교환 대상 변경하면 예외가 발생한다")
-        void updateTargetFromCompleted_ThrowsException() {
+        @DisplayName("COMPLETED 상태에서 교환 옵션 변경하면 예외가 발생한다")
+        void updateOptionFromCompleted_ThrowsException() {
             // given
             ExchangeClaim claim = ExchangeFixtures.completedExchangeClaim();
 
             // when & then
             assertThatThrownBy(
                             () ->
-                                    claim.updateTarget(
-                                            ExchangeFixtures.defaultExchangeTarget(),
+                                    claim.updateOption(
+                                            ExchangeFixtures.defaultExchangeOption(),
                                             ExchangeFixtures.defaultAmountAdjustment(),
                                             CommonVoFixtures.now()))
                     .isInstanceOf(ExchangeException.class);
@@ -690,6 +688,102 @@ class ExchangeClaimTest {
     }
 
     @Nested
+    @DisplayName("hold() - 교환 보류")
+    class HoldTest {
+
+        @Test
+        @DisplayName("보류 사유와 함께 교환을 보류 처리한다")
+        void holdWithReason() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+            Instant now = CommonVoFixtures.now();
+
+            // when
+            claim.hold("재고 부족으로 보류", now);
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+            assertThat(claim.holdInfo()).isNotNull();
+            assertThat(claim.updatedAt()).isEqualTo(now);
+        }
+
+        @Test
+        @DisplayName("보류 사유가 null이면 기본 사유로 처리된다")
+        void holdWithNullReasonUsesDefault() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+
+            // when
+            claim.hold(null, CommonVoFixtures.now());
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+            assertThat(claim.holdInfo()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("보류 사유가 빈 문자열이면 기본 사유로 처리된다")
+        void holdWithBlankReasonUsesDefault() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+
+            // when
+            claim.hold("   ", CommonVoFixtures.now());
+
+            // then
+            assertThat(claim.isHold()).isTrue();
+        }
+
+        @Test
+        @DisplayName("이미 보류 중인 교환에 hold를 호출하면 예외가 발생한다")
+        void holdAlreadyHeld_ThrowsException() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+            claim.hold("첫 번째 보류", CommonVoFixtures.now());
+
+            // when & then
+            assertThatThrownBy(() -> claim.hold("두 번째 보류", CommonVoFixtures.now()))
+                    .isInstanceOf(ExchangeException.class)
+                    .extracting(e -> ((ExchangeException) e).getErrorCode())
+                    .isEqualTo(ExchangeErrorCode.ALREADY_HOLD);
+        }
+    }
+
+    @Nested
+    @DisplayName("releaseHold() - 보류 해제")
+    class ReleaseHoldTest {
+
+        @Test
+        @DisplayName("보류 중인 교환의 보류를 해제한다")
+        void releaseHoldFromHeld() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+            claim.hold("보류 사유", CommonVoFixtures.now());
+            assertThat(claim.isHold()).isTrue();
+
+            // when
+            claim.releaseHold(CommonVoFixtures.now());
+
+            // then
+            assertThat(claim.isHold()).isFalse();
+            assertThat(claim.holdInfo()).isNull();
+        }
+
+        @Test
+        @DisplayName("보류 상태가 아닌 교환에 releaseHold를 호출하면 예외가 발생한다")
+        void releaseHoldOnNotHeld_ThrowsException() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+
+            // when & then
+            assertThatThrownBy(() -> claim.releaseHold(CommonVoFixtures.now()))
+                    .isInstanceOf(ExchangeException.class)
+                    .extracting(e -> ((ExchangeException) e).getErrorCode())
+                    .isEqualTo(ExchangeErrorCode.NOT_HOLD_STATUS);
+        }
+    }
+
+    @Nested
     @DisplayName("pollEvents() - 도메인 이벤트 수집")
     class PollEventsTest {
 
@@ -734,25 +828,6 @@ class ExchangeClaimTest {
             // then
             List<DomainEvent> events = claim.pollEvents();
             assertThat(events).hasSize(2);
-        }
-    }
-
-    @Nested
-    @DisplayName("exchangeItems() - 교환 아이템 목록 조회")
-    class ExchangeItemsTest {
-
-        @Test
-        @DisplayName("교환 아이템 목록은 불변 리스트이다")
-        void exchangeItemsReturnsUnmodifiableList() {
-            // given
-            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
-
-            // when
-            List<ExchangeItem> items = claim.exchangeItems();
-
-            // then
-            assertThatThrownBy(() -> items.add(ExchangeFixtures.defaultExchangeItem()))
-                    .isInstanceOf(UnsupportedOperationException.class);
         }
     }
 }

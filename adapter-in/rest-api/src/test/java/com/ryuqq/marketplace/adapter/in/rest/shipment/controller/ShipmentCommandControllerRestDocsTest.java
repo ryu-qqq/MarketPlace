@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.shipment.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -52,7 +51,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class ShipmentCommandControllerRestDocsTest {
 
     private static final String SHIPMENTS_URL = ShipmentEndpoints.SHIPMENTS;
-    private static final long DEFAULT_ORDER_ITEM_ID = ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID;
+    private static final String DEFAULT_ORDER_ITEM_ID = ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID;
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
@@ -104,9 +103,9 @@ class ShipmentCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(
-                                            fieldWithPath("orderItemIds")
+                                            fieldWithPath("orderIds")
                                                     .type(JsonFieldType.ARRAY)
-                                                    .description("발주확인 대상 주문상품 ID 목록")),
+                                                    .description("발주확인 대상 주문 ID 목록")),
                                     responseFields(
                                             fieldWithPath("data.totalCount")
                                                     .type(JsonFieldType.NUMBER)
@@ -202,24 +201,28 @@ class ShipmentCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(
-                                            fieldWithPath("items")
+                                            fieldWithPath("requests")
                                                     .type(JsonFieldType.ARRAY)
                                                     .description("송장등록 대상 목록"),
-                                            fieldWithPath("items[].orderItemId")
-                                                    .type(JsonFieldType.NUMBER)
-                                                    .description("주문상품 ID"),
-                                            fieldWithPath("items[].trackingNumber")
+                                            fieldWithPath("requests[].orderNumber")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("송장번호"),
-                                            fieldWithPath("items[].courierCode")
+                                                    .description("주문번호"),
+                                            fieldWithPath("requests[].method")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("배송 방법"),
+                                            fieldWithPath("requests[].method.type")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("배송 유형"),
+                                            fieldWithPath("requests[].method.courierCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("택배사 코드"),
-                                            fieldWithPath("items[].courierName")
+                                            fieldWithPath("requests[].trackingNumber")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("택배사명"),
-                                            fieldWithPath("items[].shipmentMethodType")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("배송 방법 유형")),
+                                                    .description("송장번호"),
+                                            fieldWithPath("memo")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description("메모")
+                                                    .optional()),
                                     responseFields(
                                             fieldWithPath("data.totalCount")
                                                     .type(JsonFieldType.NUMBER)
@@ -266,7 +269,7 @@ class ShipmentCommandControllerRestDocsTest {
             // given
             ShipSingleApiRequest request = ShipmentApiFixtures.shipSingleRequest();
 
-            given(mapper.toShipSingleCommand(anyLong(), any(ShipSingleApiRequest.class)))
+            given(mapper.toShipSingleCommand(any(String.class), any(ShipSingleApiRequest.class)))
                     .willReturn(null);
             doNothing().when(shipSingleUseCase).execute(any());
 
@@ -284,8 +287,7 @@ class ShipmentCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("orderItemId")
-                                                    .description("주문상품 ID")),
+                                            parameterWithName("orderId").description("주문 ID")),
                                     requestFields(
                                             fieldWithPath("trackingNumber")
                                                     .type(JsonFieldType.STRING)

@@ -1,12 +1,11 @@
 package com.ryuqq.marketplace.application.legacy.product.internal;
 
 import com.ryuqq.marketplace.application.legacy.product.manager.LegacyProductDeliveryCommandManager;
-import com.ryuqq.marketplace.application.legacy.productgroup.manager.LegacyProductGroupCommandManager;
-import com.ryuqq.marketplace.application.legacy.productgroup.manager.LegacyProductGroupReadManager;
-import com.ryuqq.marketplace.domain.legacy.productgroup.aggregate.LegacyProductGroup;
+import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyRegisterProductGroupCommand;
+import com.ryuqq.marketplace.domain.legacy.productdelivery.aggregate.LegacyProductDelivery;
 import com.ryuqq.marketplace.domain.legacy.productgroup.id.LegacyProductGroupId;
-import com.ryuqq.marketplace.domain.legacy.productgroup.vo.LegacyProductDelivery;
-import java.time.Instant;
+import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ReturnMethod;
+import com.ryuqq.marketplace.domain.legacy.productgroup.vo.ShipmentCompanyCode;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,30 +16,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class LegacyDeliveryCommandCoordinator {
 
-    private final LegacyProductGroupReadManager readManager;
-    private final LegacyProductGroupCommandManager commandManager;
     private final LegacyProductDeliveryCommandManager deliveryCommandManager;
 
     public LegacyDeliveryCommandCoordinator(
-            LegacyProductGroupReadManager readManager,
-            LegacyProductGroupCommandManager commandManager,
             LegacyProductDeliveryCommandManager deliveryCommandManager) {
-        this.readManager = readManager;
-        this.commandManager = commandManager;
         this.deliveryCommandManager = deliveryCommandManager;
     }
 
-    /** 배송정보 등록 (상품그룹 등록 시 사용). */
-    public void register(LegacyProductGroupId groupId, LegacyProductDelivery delivery) {
+    /** 배송정보 등록 (상품그룹 등록 시 사용). DeliveryCommand → 레거시 도메인 변환 후 저장. */
+    public void register(
+            long productGroupId, LegacyRegisterProductGroupCommand.DeliveryCommand command) {
+        LegacyProductGroupId groupId = LegacyProductGroupId.of(productGroupId);
+        LegacyProductDelivery delivery =
+                new LegacyProductDelivery(
+                        command.deliveryArea(),
+                        command.deliveryFee(),
+                        command.deliveryPeriodAverage(),
+                        ReturnMethod.valueOf(command.returnMethodDomestic()),
+                        ShipmentCompanyCode.valueOf(command.returnCourierDomestic()),
+                        command.returnChargeDomestic(),
+                        command.returnExchangeAreaDomestic());
         deliveryCommandManager.persist(groupId, delivery);
     }
 
     /** 배송정보 수정. */
-    public void update(
-            LegacyProductGroupId groupId, LegacyProductDelivery delivery, Instant changedAt) {
-        LegacyProductGroup productGroup = readManager.getById(groupId);
-        productGroup.updateDelivery(delivery, changedAt);
-        deliveryCommandManager.persist(groupId, productGroup.delivery());
-        commandManager.persist(productGroup);
+    public void update(LegacyProductGroupId groupId, LegacyProductDelivery delivery) {
+        deliveryCommandManager.persist(groupId, delivery);
     }
 }

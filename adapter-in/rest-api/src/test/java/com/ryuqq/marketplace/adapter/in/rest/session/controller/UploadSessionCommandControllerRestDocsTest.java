@@ -56,6 +56,11 @@ class UploadSessionCommandControllerRestDocsTest {
     @MockitoBean private GenerateUploadUrlUseCase generateUploadUrlUseCase;
     @MockitoBean private CompleteUploadSessionUseCase completeUploadSessionUseCase;
     @MockitoBean private UploadSessionCommandApiMapper mapper;
+
+    @MockitoBean
+    private com.ryuqq.marketplace.adapter.in.rest.session.mapper.LegacyImagePresignedApiMapper
+            legacyMapper;
+
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
     @Nested

@@ -12,6 +12,7 @@ import java.util.List;
  * @param searchField 검색 필드 (null이면 전체 필드)
  * @param searchWord 검색어
  * @param dateField 날짜 검색 대상 필드
+ * @param shopId 쇼핑몰 ID 필터
  * @param searchParams 공통 검색 파라미터 (정렬, 페이징 등)
  */
 public record OrderSearchParams(
@@ -19,25 +20,10 @@ public record OrderSearchParams(
         String searchField,
         String searchWord,
         String dateField,
+        Long shopId,
         CommonSearchParams searchParams) {
 
     public OrderSearchParams {
         statuses = statuses != null ? List.copyOf(statuses) : List.of();
-    }
-
-    public int page() {
-        return searchParams.page();
-    }
-
-    public int size() {
-        return searchParams.size();
-    }
-
-    public String sortKey() {
-        return searchParams.sortKey();
-    }
-
-    public String sortDirection() {
-        return searchParams.sortDirection();
     }
 }

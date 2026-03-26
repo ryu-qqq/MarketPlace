@@ -6,11 +6,10 @@ import com.ryuqq.marketplace.domain.common.vo.Email;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.common.vo.PhoneNumber;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
-import com.ryuqq.marketplace.domain.order.aggregate.OrderHistory;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
-import com.ryuqq.marketplace.domain.order.id.OrderHistoryId;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.order.id.OrderItemNumber;
 import com.ryuqq.marketplace.domain.order.id.OrderNumber;
 import com.ryuqq.marketplace.domain.order.id.PaymentNumber;
 import com.ryuqq.marketplace.domain.order.vo.BuyerInfo;
@@ -20,7 +19,6 @@ import com.ryuqq.marketplace.domain.order.vo.ExternalOrderReference;
 import com.ryuqq.marketplace.domain.order.vo.ExternalProductSnapshot;
 import com.ryuqq.marketplace.domain.order.vo.InternalProductReference;
 import com.ryuqq.marketplace.domain.order.vo.OrderItemStatus;
-import com.ryuqq.marketplace.domain.order.vo.OrderStatus;
 import com.ryuqq.marketplace.domain.order.vo.PaymentInfo;
 import com.ryuqq.marketplace.domain.order.vo.ReceiverInfo;
 import java.time.Instant;
@@ -41,7 +39,6 @@ public final class OrderFixtures {
     // ===== 기본 상수 =====
     private static final String DEFAULT_ORDER_ID = "01900000-0000-7000-8000-000000000001";
     private static final String DEFAULT_ORDER_NUMBER = "ORD-20260218-0001";
-    private static final String DEFAULT_CHANGED_BY = "system";
     private static final long DEFAULT_SALES_CHANNEL_ID = 1L;
     private static final long DEFAULT_SHOP_ID = 10L;
     private static final String DEFAULT_EXTERNAL_ORDER_NO = "EXT-ORDER-20260218-001";
@@ -66,11 +63,7 @@ public final class OrderFixtures {
     }
 
     public static OrderItemId defaultOrderItemId() {
-        return OrderItemId.of(1L);
-    }
-
-    public static OrderHistoryId defaultOrderHistoryId() {
-        return OrderHistoryId.of(1L);
+        return OrderItemId.of("01940001-0000-7000-8000-000000000001");
     }
 
     // ===== VO Fixtures =====
@@ -139,62 +132,73 @@ public final class OrderFixtures {
         Money discountAmount = Money.of(0);
         Money paymentAmount = Money.of(20000);
         return ExternalOrderItemPrice.of(
-                unitPrice, quantity, totalAmount, discountAmount, paymentAmount);
+                unitPrice, quantity, totalAmount, discountAmount, Money.zero(), paymentAmount);
     }
 
     // ===== OrderItem Fixtures =====
 
+    public static OrderItemNumber defaultOrderItemNumber() {
+        return OrderItemNumber.of("ORD-20240101-0001-001");
+    }
+
     public static OrderItem defaultOrderItem() {
         return OrderItem.forNew(
+                defaultOrderItemId(),
+                defaultOrderItemNumber(),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
-                defaultReceiverInfo());
+                defaultReceiverInfo(),
+                null);
     }
 
     public static OrderItem reconstitutedOrderItem() {
         return OrderItem.reconstitute(
                 defaultOrderItemId(),
+                defaultOrderItemNumber(),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
                 defaultReceiverInfo(),
                 OrderItemStatus.READY,
-                null);
+                null,
+                0,
+                0,
+                List.of());
     }
 
     public static OrderItem confirmedOrderItem() {
         return OrderItem.reconstitute(
                 defaultOrderItemId(),
+                defaultOrderItemNumber(),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
                 defaultReceiverInfo(),
                 OrderItemStatus.CONFIRMED,
-                null);
+                null,
+                0,
+                0,
+                List.of());
     }
 
     public static OrderItem reconstitutedOrderItem(long id, OrderItemStatus status) {
+        int cancelledQty =
+                status == OrderItemStatus.CANCELLED
+                        ? defaultExternalOrderItemPrice().quantity()
+                        : 0;
         return OrderItem.reconstitute(
-                OrderItemId.of(id),
+                OrderItemId.of("01940001-0000-7000-8000-000000000" + String.format("%03d", id)),
+                OrderItemNumber.of("ORD-20240101-0001-" + String.format("%03d", id)),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),
                 defaultExternalOrderItemPrice(),
                 defaultReceiverInfo(),
                 status,
-                null);
-    }
-
-    // ===== OrderHistory Fixtures =====
-
-    public static OrderHistory defaultOrderHistory(OrderId orderId) {
-        return OrderHistory.of(
-                orderId,
                 null,
-                OrderStatus.ORDERED,
-                DEFAULT_CHANGED_BY,
-                null,
-                CommonVoFixtures.now());
+                cancelledQty,
+                0,
+                List.of());
     }
 
     // ===== Order Aggregate Fixtures =====
@@ -207,134 +211,19 @@ public final class OrderFixtures {
                 defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 List.of(defaultOrderItem()),
-                DEFAULT_CHANGED_BY,
                 CommonVoFixtures.now());
     }
 
-    public static Order orderedOrder() {
+    public static Order reconstitutedOrder() {
         return Order.reconstitute(
                 defaultOrderId(),
                 defaultOrderNumber(),
-                OrderStatus.ORDERED,
                 defaultBuyerInfo(),
                 defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 CommonVoFixtures.yesterday(),
                 CommonVoFixtures.now(),
-                List.of(reconstitutedOrderItem()),
-                List.of(defaultOrderHistory(defaultOrderId())));
-    }
-
-    public static Order preparingOrder() {
-        return Order.reconstitute(
-                defaultOrderId(),
-                defaultOrderNumber(),
-                OrderStatus.PREPARING,
-                defaultBuyerInfo(),
-                defaultPaymentInfo(),
-                defaultExternalOrderReference(),
-                CommonVoFixtures.yesterday(),
-                CommonVoFixtures.now(),
-                List.of(reconstitutedOrderItem()),
-                List.of());
-    }
-
-    public static Order shippedOrder() {
-        return Order.reconstitute(
-                defaultOrderId(),
-                defaultOrderNumber(),
-                OrderStatus.SHIPPED,
-                defaultBuyerInfo(),
-                defaultPaymentInfo(),
-                defaultExternalOrderReference(),
-                CommonVoFixtures.yesterday(),
-                CommonVoFixtures.now(),
-                List.of(reconstitutedOrderItem()),
-                List.of());
-    }
-
-    public static Order deliveredOrder() {
-        return Order.reconstitute(
-                defaultOrderId(),
-                defaultOrderNumber(),
-                OrderStatus.DELIVERED,
-                defaultBuyerInfo(),
-                defaultPaymentInfo(),
-                defaultExternalOrderReference(),
-                CommonVoFixtures.yesterday(),
-                CommonVoFixtures.now(),
-                List.of(reconstitutedOrderItem()),
-                List.of());
-    }
-
-    public static Order confirmedOrder() {
-        return Order.reconstitute(
-                defaultOrderId(),
-                defaultOrderNumber(),
-                OrderStatus.CONFIRMED,
-                defaultBuyerInfo(),
-                defaultPaymentInfo(),
-                defaultExternalOrderReference(),
-                CommonVoFixtures.yesterday(),
-                CommonVoFixtures.now(),
-                List.of(reconstitutedOrderItem()),
-                List.of());
-    }
-
-    public static Order cancelledOrder() {
-        return Order.reconstitute(
-                defaultOrderId(),
-                defaultOrderNumber(),
-                OrderStatus.CANCELLED,
-                defaultBuyerInfo(),
-                defaultPaymentInfo(),
-                defaultExternalOrderReference(),
-                CommonVoFixtures.yesterday(),
-                CommonVoFixtures.now(),
-                List.of(reconstitutedOrderItem()),
-                List.of());
-    }
-
-    public static Order claimInProgressOrder() {
-        return Order.reconstitute(
-                defaultOrderId(),
-                defaultOrderNumber(),
-                OrderStatus.CLAIM_IN_PROGRESS,
-                defaultBuyerInfo(),
-                defaultPaymentInfo(),
-                defaultExternalOrderReference(),
-                CommonVoFixtures.yesterday(),
-                CommonVoFixtures.now(),
-                List.of(reconstitutedOrderItem()),
-                List.of());
-    }
-
-    public static Order refundedOrder() {
-        return Order.reconstitute(
-                defaultOrderId(),
-                defaultOrderNumber(),
-                OrderStatus.REFUNDED,
-                defaultBuyerInfo(),
-                defaultPaymentInfo(),
-                defaultExternalOrderReference(),
-                CommonVoFixtures.yesterday(),
-                CommonVoFixtures.now(),
-                List.of(reconstitutedOrderItem()),
-                List.of());
-    }
-
-    public static Order exchangedOrder() {
-        return Order.reconstitute(
-                defaultOrderId(),
-                defaultOrderNumber(),
-                OrderStatus.EXCHANGED,
-                defaultBuyerInfo(),
-                defaultPaymentInfo(),
-                defaultExternalOrderReference(),
-                CommonVoFixtures.yesterday(),
-                CommonVoFixtures.now(),
-                List.of(reconstitutedOrderItem()),
-                List.of());
+                List.of(reconstitutedOrderItem()));
     }
 
     // ===== 특정 시간 지정 Fixtures =====
@@ -347,7 +236,6 @@ public final class OrderFixtures {
                 defaultPaymentInfo(),
                 defaultExternalOrderReference(),
                 List.of(defaultOrderItem()),
-                DEFAULT_CHANGED_BY,
                 now);
     }
 }

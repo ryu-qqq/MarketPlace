@@ -21,15 +21,15 @@ public class ShipmentCommandApiMapper {
 
     public ConfirmShipmentBatchCommand toConfirmBatchCommand(
             ConfirmShipmentBatchApiRequest request, Long sellerId) {
-        return new ConfirmShipmentBatchCommand(request.orderItemIds(), sellerId);
+        return new ConfirmShipmentBatchCommand(request.orderIds(), sellerId);
     }
 
     public ShipBatchCommand toShipBatchCommand(ShipBatchApiRequest request) {
-        List<ShipBatchItem> items = request.items().stream().map(this::toShipBatchItem).toList();
+        List<ShipBatchItem> items = request.requests().stream().map(this::toShipBatchItem).toList();
         return new ShipBatchCommand(items);
     }
 
-    public ShipSingleCommand toShipSingleCommand(long orderItemId, ShipSingleApiRequest request) {
+    public ShipSingleCommand toShipSingleCommand(String orderItemId, ShipSingleApiRequest request) {
         return new ShipSingleCommand(
                 orderItemId,
                 request.trackingNumber(),
@@ -47,11 +47,11 @@ public class ShipmentCommandApiMapper {
 
     private ShipBatchItem toShipBatchItem(ShipBatchItemApiRequest request) {
         return new ShipBatchItem(
-                request.orderItemId(),
+                null, // orderItemId는 Service에서 orderItemNumber로 조회 후 세팅
+                request.orderNumber(),
                 request.trackingNumber(),
-                request.courierCode(),
-                request.courierName(),
-                request.shipmentMethodType());
+                request.method().courierCode(),
+                request.method().type());
     }
 
     private BatchResultItemApiResponse toBatchResultItem(BatchItemResult<String> item) {

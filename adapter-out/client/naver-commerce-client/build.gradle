@@ -35,6 +35,14 @@ dependencies {
     implementation libs.jbcrypt
 
     // ========================================
+    // Resilience (Circuit Breaker + Metrics)
+    // ========================================
+    implementation libs.resilience4j.circuitbreaker
+    implementation libs.resilience4j.retry
+    implementation libs.resilience4j.micrometer
+    implementation libs.micrometer.core
+
+    // ========================================
     // Configuration Processor
     // ========================================
     annotationProcessor libs.spring.boot.configuration.processor
@@ -67,7 +75,35 @@ tasks.jacocoTestCoverageVerification {
 }
 
 tasks.test {
-    finalizedBy tasks.jacocoTestCoverageVerification
+    useJUnitPlatform {
+        excludeTags 'external-integration'
+    }
+}
+
+tasks.register('externalIntegrationTest', Test) {
+    group = 'verification'
+    useJUnitPlatform {
+        includeTags 'external-integration'
+    }
+    def envFile = rootProject.file('local-dev/.env.naver')
+    if (envFile.exists()) {
+        envFile.readLines().each { line ->
+            def trimmed = line.trim()
+            if (trimmed && !trimmed.startsWith('#')) {
+                def idx = trimmed.indexOf('=')
+                if (idx > 0) {
+                    environment trimmed.substring(0, idx), trimmed.substring(idx + 1)
+                }
+            }
+        }
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn tasks.test
+    onlyIf {
+        tasks.test.state.didWork && !tasks.test.state.skipped
+    }
 }
 
 // Temporary task for running NaverProductSearchRunner

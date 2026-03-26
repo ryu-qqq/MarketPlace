@@ -1,20 +1,17 @@
 package com.ryuqq.marketplace.application.order.dto.response;
 
-import java.time.Instant;
-
 /**
  * 주문 상품 조회 결과.
  *
  * @param orderItemId 주문 상품 ID
+ * @param orderItemNumber 주문 상품 번호
  * @param orderId 주문 ID
  * @param productGroupId 내부 상품그룹 ID
  * @param productId 내부 상품 ID
- * @param sellerId 셀러 ID
- * @param brandId 브랜드 ID
  * @param skuCode SKU 코드
  * @param productGroupName 상품그룹명
- * @param brandName 브랜드명
- * @param sellerName 셀러명
+ * @param brandName 브랜드명 (스냅샷)
+ * @param sellerName 셀러명 (스냅샷)
  * @param mainImageUrl 대표 이미지 URL
  * @param externalProductId 외부 상품 ID
  * @param externalOptionId 외부 옵션 ID
@@ -32,25 +29,15 @@ import java.time.Instant;
  * @param receiverAddress 수령인 주소
  * @param receiverAddressDetail 수령인 상세주소
  * @param deliveryRequest 배송 요청사항
- * @param deliveryStatus 배송 상태
- * @param shipmentCompanyCode 택배사 코드
- * @param invoice 송장번호
- * @param shipmentCompletedDate 배송 완료일
- * @param commissionRate 수수료율
- * @param fee 수수료
- * @param expectationSettlementAmount 예상 정산금액
- * @param settlementAmount 정산금액
- * @param shareRatio 배분비율
- * @param expectedSettlementDay 예상 정산일
- * @param settlementDay 정산일
+ * @param orderItemStatus 주문 상품 상태
+ * @param externalOrderStatus 외부몰 주문 상태
  */
 public record OrderItemResult(
-        long orderItemId,
+        String orderItemId,
+        String orderItemNumber,
         String orderId,
         long productGroupId,
         long productId,
-        long sellerId,
-        long brandId,
         String skuCode,
         String productGroupName,
         String brandName,
@@ -72,14 +59,5 @@ public record OrderItemResult(
         String receiverAddress,
         String receiverAddressDetail,
         String deliveryRequest,
-        String deliveryStatus,
-        String shipmentCompanyCode,
-        String invoice,
-        Instant shipmentCompletedDate,
-        int commissionRate,
-        int fee,
-        int expectationSettlementAmount,
-        int settlementAmount,
-        int shareRatio,
-        Instant expectedSettlementDay,
-        Instant settlementDay) {}
+        String orderItemStatus,
+        String externalOrderStatus) {}

@@ -3,7 +3,7 @@
 # ===============================================
 # AWS SSM Session Manager Port Forwarding Script
 # ===============================================
-# Stage RDS에 안전하게 접근하기 위한 포트 포워딩 스크립트
+# Stage RDS + ElastiCache에 안전하게 접근하기 위한 포트 포워딩 스크립트
 # ===============================================
 
 set -e
@@ -101,6 +101,22 @@ else
     echo -e "${GREEN}✅ Stage RDS 엔드포인트: ${RDS_ENDPOINT}${NC}"
 fi
 
+# Stage ElastiCache 엔드포인트 찾기
+echo "Stage ElastiCache 엔드포인트 검색 중..."
+REDIS_ENDPOINT=$(aws elasticache describe-cache-clusters \
+    --region $AWS_REGION \
+    --cache-cluster-id stage-shared-redis \
+    --show-cache-node-info \
+    --query 'CacheClusters[0].CacheNodes[0].Endpoint.Address' \
+    --output text 2>/dev/null || echo "")
+
+if [ -z "$REDIS_ENDPOINT" ] || [ "$REDIS_ENDPOINT" == "None" ]; then
+    echo -e "${YELLOW}⚠️  ElastiCache(stage-shared-redis)를 찾을 수 없습니다. Redis 포트 포워딩을 건너뜁니다.${NC}"
+    REDIS_ENDPOINT=""
+else
+    echo -e "${GREEN}✅ Stage Redis 엔드포인트: ${REDIS_ENDPOINT}${NC}"
+fi
+
 echo ""
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}포트 포워딩 시작 (STAGE)${NC}"
@@ -108,7 +124,7 @@ echo -e "${BLUE}========================================${NC}"
 echo ""
 
 # PID 파일 디렉토리
-PID_DIR="/tmp/fileflow-port-forward-stage"
+PID_DIR="/tmp/marketplace-port-forward-stage"
 mkdir -p $PID_DIR
 
 # 기존 포트 포워딩 종료 함수
@@ -119,6 +135,11 @@ cleanup() {
     if [ -f "$PID_DIR/rds.pid" ]; then
         kill $(cat $PID_DIR/rds.pid) 2>/dev/null || true
         rm -f $PID_DIR/rds.pid
+    fi
+
+    if [ -f "$PID_DIR/redis.pid" ]; then
+        kill $(cat $PID_DIR/redis.pid) 2>/dev/null || true
+        rm -f $PID_DIR/redis.pid
     fi
 
     echo -e "${GREEN}✅ 포트 포워딩 종료 완료${NC}"
@@ -141,11 +162,22 @@ if [ -n "$RDS_ENDPOINT" ]; then
     RDS_PID=$!
     echo $RDS_PID > $PID_DIR/rds.pid
     echo -e "${GREEN}✅ Stage RDS 포트 포워딩 시작 (PID: ${RDS_PID})${NC}"
-    echo ""
-    echo -e "${BLUE}   ┌─────────────────────────────────────────────────────────────┐${NC}"
-    echo -e "${BLUE}   │  Stage RDS 접속 명령어:                                      │${NC}"
-    echo -e "${BLUE}   │  mysql -h 127.0.0.1 -P 13308 -u admin -p                    │${NC}"
-    echo -e "${BLUE}   └─────────────────────────────────────────────────────────────┘${NC}"
+fi
+
+# Stage Redis 포트 포워딩 (16381 포트 사용 - Prod는 16380)
+if [ -n "$REDIS_ENDPOINT" ]; then
+    echo "Stage Redis 포트 포워딩 시작 (localhost:16381 -> ${REDIS_ENDPOINT}:6379)..."
+    aws ssm start-session \
+        --region $AWS_REGION \
+        --target $BASTION_INSTANCE_ID \
+        --document-name AWS-StartPortForwardingSessionToRemoteHost \
+        --parameters "{\"host\":[\"${REDIS_ENDPOINT}\"],\"portNumber\":[\"6379\"],\"localPortNumber\":[\"16381\"]}" \
+        > /dev/null 2>&1 &
+
+    REDIS_PID=$!
+    echo $REDIS_PID > $PID_DIR/redis.pid
+    echo -e "${GREEN}✅ Stage Redis 포트 포워딩 시작 (PID: ${REDIS_PID})${NC}"
+    echo "   로컬 접속: redis-cli -h 127.0.0.1 -p 16381"
 fi
 
 echo ""
@@ -154,8 +186,10 @@ echo -e "${BLUE}포트 포워딩 활성화 완료 (STAGE)${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
 echo -e "${YELLOW}📌 포트 정보:${NC}"
-echo -e "   - Stage RDS: localhost:13308"
-echo -e "   - Prod RDS:  localhost:13307 (aws-port-forward.sh 사용)"
+echo -e "   - Stage RDS:   localhost:13308  (mysql -h 127.0.0.1 -P 13308 -u admin -p)"
+echo -e "   - Stage Redis: localhost:16381  (redis-cli -h 127.0.0.1 -p 16381)"
+echo -e "   - Prod RDS:    localhost:13307  (aws-port-forward.sh 사용)"
+echo -e "   - Prod Redis:  localhost:16380  (aws-port-forward.sh 사용)"
 echo ""
 echo "종료하려면 Ctrl+C를 누르세요."
 echo ""

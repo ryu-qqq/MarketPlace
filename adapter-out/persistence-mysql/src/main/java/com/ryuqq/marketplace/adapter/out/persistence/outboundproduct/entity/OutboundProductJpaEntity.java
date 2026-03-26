@@ -23,6 +23,9 @@ public class OutboundProductJpaEntity extends BaseAuditEntity {
     @Column(name = "sales_channel_id", nullable = false)
     private Long salesChannelId;
 
+    @Column(name = "shop_id", nullable = false)
+    private Long shopId;
+
     @Column(name = "external_product_id", length = 255)
     private String externalProductId;
 
@@ -37,6 +40,7 @@ public class OutboundProductJpaEntity extends BaseAuditEntity {
             Long id,
             Long productGroupId,
             Long salesChannelId,
+            Long shopId,
             String externalProductId,
             String status,
             Instant createdAt,
@@ -45,6 +49,7 @@ public class OutboundProductJpaEntity extends BaseAuditEntity {
         this.id = id;
         this.productGroupId = productGroupId;
         this.salesChannelId = salesChannelId;
+        this.shopId = shopId;
         this.externalProductId = externalProductId;
         this.status = status;
     }
@@ -53,6 +58,7 @@ public class OutboundProductJpaEntity extends BaseAuditEntity {
             Long id,
             Long productGroupId,
             Long salesChannelId,
+            Long shopId,
             String externalProductId,
             String status,
             Instant createdAt,
@@ -61,6 +67,7 @@ public class OutboundProductJpaEntity extends BaseAuditEntity {
                 id,
                 productGroupId,
                 salesChannelId,
+                shopId,
                 externalProductId,
                 status,
                 createdAt,
@@ -77,6 +84,10 @@ public class OutboundProductJpaEntity extends BaseAuditEntity {
 
     public Long getSalesChannelId() {
         return salesChannelId;
+    }
+
+    public Long getShopId() {
+        return shopId;
     }
 
     public String getExternalProductId() {

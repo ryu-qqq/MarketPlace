@@ -27,7 +27,6 @@ public class OrderCompositeMapper {
         return new OrderListResult(
                 dto.orderId(),
                 dto.orderNumber(),
-                dto.status(),
                 dto.salesChannelId(),
                 dto.shopId(),
                 dto.shopCode(),
@@ -53,7 +52,6 @@ public class OrderCompositeMapper {
         return new OrderDetailResult(
                 order.orderId(),
                 order.orderNumber(),
-                order.status(),
                 order.salesChannelId(),
                 order.shopId(),
                 order.shopCode(),
@@ -64,7 +62,6 @@ public class OrderCompositeMapper {
                         order.buyerName(), order.buyerEmail(), order.buyerPhone()),
                 toPaymentResult(composite),
                 composite.items().stream().map(this::toItemResult).toList(),
-                composite.histories().stream().map(this::toHistoryResult).toList(),
                 composite.cancels().stream().map(this::toCancelResult).toList(),
                 composite.claims().stream().map(this::toClaimResult).toList(),
                 order.createdAt(),
@@ -104,12 +101,11 @@ public class OrderCompositeMapper {
 
     public OrderItemResult toItemResult(OrderItemProjectionDto dto) {
         return new OrderItemResult(
-                dto.orderItemId() != null ? dto.orderItemId() : 0L,
+                dto.orderItemId() != null ? dto.orderItemId() : "",
+                "",
                 dto.orderId(),
                 dto.productGroupId(),
                 dto.productId(),
-                dto.sellerId(),
-                dto.brandId(),
                 dto.skuCode(),
                 dto.productGroupName(),
                 dto.brandName(),
@@ -131,17 +127,8 @@ public class OrderCompositeMapper {
                 dto.receiverAddress(),
                 dto.receiverAddressDetail(),
                 dto.deliveryRequest(),
-                dto.deliveryStatus(),
-                dto.shipmentCompanyCode(),
-                dto.invoice(),
-                dto.shipmentCompletedDate(),
-                dto.commissionRate(),
-                dto.fee(),
-                dto.expectationSettlementAmount(),
-                dto.settlementAmount(),
-                dto.shareRatio(),
-                dto.expectedSettlementDay(),
-                dto.settlementDay());
+                dto.orderItemStatus(),
+                dto.externalOrderStatus());
     }
 
     public OrderHistoryResult toHistoryResult(OrderHistoryProjectionDto dto) {
@@ -156,15 +143,15 @@ public class OrderCompositeMapper {
 
     public OrderCancelResult toCancelResult(OrderCancelProjectionDto dto) {
         return new OrderCancelResult(
-                dto.cancelId() != null ? dto.cancelId() : 0L,
+                dto.cancelId() != null ? dto.cancelId() : "",
                 dto.orderItemId(),
                 dto.cancelNumber(),
                 dto.cancelStatus(),
                 dto.quantity(),
                 dto.reasonType(),
                 dto.reasonDetail(),
-                dto.originalAmount(),
-                dto.refundAmount(),
+                0,
+                dto.refundAmount() != null ? dto.refundAmount() : 0,
                 dto.refundMethod(),
                 dto.refundedAt(),
                 dto.requestedAt(),
@@ -178,12 +165,11 @@ public class OrderCompositeMapper {
     public ProductOrderDetailData toDetailData(ProductOrderDetailProjectionDto dto) {
         OrderItemResult item =
                 new OrderItemResult(
-                        dto.orderItemId() != null ? dto.orderItemId() : 0L,
+                        dto.orderItemId() != null ? dto.orderItemId() : "",
+                        dto.orderItemNumber() != null ? dto.orderItemNumber() : "",
                         dto.orderId(),
-                        dto.productGroupId(),
-                        dto.productId(),
-                        dto.sellerId(),
-                        dto.brandId(),
+                        dto.productGroupId() != null ? dto.productGroupId() : 0L,
+                        dto.productId() != null ? dto.productId() : 0L,
                         dto.skuCode(),
                         dto.productGroupName(),
                         dto.brandName(),
@@ -205,23 +191,13 @@ public class OrderCompositeMapper {
                         dto.receiverAddress(),
                         dto.receiverAddressDetail(),
                         dto.deliveryRequest(),
-                        dto.deliveryStatus(),
-                        dto.shipmentCompanyCode(),
-                        dto.invoice(),
-                        dto.shipmentCompletedDate(),
-                        dto.commissionRate(),
-                        dto.fee(),
-                        dto.expectationSettlementAmount(),
-                        dto.settlementAmount(),
-                        dto.shareRatio(),
-                        dto.expectedSettlementDay(),
-                        dto.settlementDay());
+                        dto.orderItemStatus(),
+                        dto.externalOrderStatus());
 
         OrderListResult order =
                 new OrderListResult(
                         dto.orderId(),
                         dto.orderNumber(),
-                        dto.status(),
                         dto.salesChannelId(),
                         dto.shopId(),
                         dto.shopCode(),
@@ -257,15 +233,14 @@ public class OrderCompositeMapper {
         return new ProductOrderDetailData(item, order, payment);
     }
 
-    /** ProductOrderListProjectionDto → OrderItemResult (리스트 조회용, 정산 필드 미포함). */
+    /** ProductOrderListProjectionDto → OrderItemResult (리스트 조회용). */
     public OrderItemResult toItemResultFromProjection(ProductOrderListProjectionDto dto) {
         return new OrderItemResult(
-                dto.orderItemId() != null ? dto.orderItemId() : 0L,
+                dto.orderItemId() != null ? dto.orderItemId() : "",
+                dto.orderItemNumber() != null ? dto.orderItemNumber() : "",
                 dto.orderId(),
-                dto.productGroupId(),
-                dto.productId(),
-                dto.sellerId(),
-                dto.brandId(),
+                dto.productGroupId() != null ? dto.productGroupId() : 0L,
+                dto.productId() != null ? dto.productId() : 0L,
                 dto.skuCode(),
                 dto.productGroupName(),
                 dto.brandName(),
@@ -287,22 +262,13 @@ public class OrderCompositeMapper {
                 dto.receiverAddress(),
                 dto.receiverAddressDetail(),
                 dto.deliveryRequest(),
-                dto.deliveryStatus(),
-                dto.shipmentCompanyCode(),
-                dto.invoice(),
-                dto.shipmentCompletedDate(),
-                0,
-                0,
-                0,
-                0,
-                0,
-                null,
-                null);
+                dto.orderItemStatus(),
+                dto.externalOrderStatus());
     }
 
     public OrderClaimResult toClaimResult(OrderClaimProjectionDto dto) {
         return new OrderClaimResult(
-                dto.claimId() != null ? dto.claimId() : 0L,
+                dto.claimId() != null ? dto.claimId() : "",
                 dto.orderItemId(),
                 dto.claimNumber(),
                 dto.claimType(),
@@ -311,10 +277,10 @@ public class OrderCompositeMapper {
                 dto.reasonType(),
                 dto.reasonDetail(),
                 dto.collectMethod(),
-                dto.originalAmount(),
-                dto.deductionAmount(),
+                dto.originalAmount() != null ? dto.originalAmount() : 0,
+                dto.deductionAmount() != null ? dto.deductionAmount() : 0,
                 dto.deductionReason(),
-                dto.refundAmount(),
+                dto.refundAmount() != null ? dto.refundAmount() : 0,
                 dto.refundMethod(),
                 dto.refundedAt(),
                 dto.requestedAt(),

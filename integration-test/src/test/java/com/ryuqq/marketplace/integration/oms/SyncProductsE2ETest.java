@@ -115,7 +115,7 @@ class SyncProductsE2ETest extends E2ETestBase {
         void syncProducts_noExistingProduct_createsOutboxAndReturns200() {
             // given: 기본 세팅 (OutboundProduct 없음)
             Map<String, Object> body =
-                    Map.of("productIds", List.of(productGroupId), "shopId", List.of(shopId));
+                    Map.of("productIds", List.of(productGroupId), "shopId", shopId);
 
             // when & then
             given().spec(givenAuthenticatedUser())
@@ -136,7 +136,7 @@ class SyncProductsE2ETest extends E2ETestBase {
         void syncProducts_noExistingProduct_createsProductAndOutboxInDb() {
             // given
             Map<String, Object> body =
-                    Map.of("productIds", List.of(productGroupId), "shopId", List.of(shopId));
+                    Map.of("productIds", List.of(productGroupId), "shopId", shopId);
 
             // when
             given().spec(givenAuthenticatedUser())
@@ -184,7 +184,7 @@ class SyncProductsE2ETest extends E2ETestBase {
                             productGroupId, salesChannelId));
 
             Map<String, Object> body =
-                    Map.of("productIds", List.of(productGroupId), "shopId", List.of(shopId));
+                    Map.of("productIds", List.of(productGroupId), "shopId", shopId);
 
             // when & then
             given().spec(givenAuthenticatedUser())
@@ -210,7 +210,7 @@ class SyncProductsE2ETest extends E2ETestBase {
             long productCountBefore = outboundProductRepository.count();
 
             Map<String, Object> body =
-                    Map.of("productIds", List.of(productGroupId), "shopId", List.of(shopId));
+                    Map.of("productIds", List.of(productGroupId), "shopId", shopId);
 
             // when
             given().spec(givenAuthenticatedUser())
@@ -254,7 +254,7 @@ class SyncProductsE2ETest extends E2ETestBase {
                             productGroupId, salesChannelId));
 
             Map<String, Object> body =
-                    Map.of("productIds", List.of(productGroupId), "shopId", List.of(shopId));
+                    Map.of("productIds", List.of(productGroupId), "shopId", shopId);
 
             // when & then
             given().spec(givenAuthenticatedUser())
@@ -297,7 +297,7 @@ class SyncProductsE2ETest extends E2ETestBase {
                             ProductGroupJpaEntityFixtures.DEFAULT_SELLER_ID));
 
             Map<String, Object> body =
-                    Map.of("productIds", List.of(productGroupId), "shopId", List.of(shopId));
+                    Map.of("productIds", List.of(productGroupId), "shopId", shopId);
 
             // when & then
             given().spec(givenAuthenticatedUser())
@@ -330,7 +330,7 @@ class SyncProductsE2ETest extends E2ETestBase {
         @DisplayName("[C5-A01] 비인증 요청 시 401 반환")
         void syncProducts_unauthenticated_returns401() {
             Map<String, Object> body =
-                    Map.of("productIds", List.of(productGroupId), "shopId", List.of(shopId));
+                    Map.of("productIds", List.of(productGroupId), "shopId", shopId);
 
             given().spec(givenUnauthenticated())
                     .body(body)
@@ -353,7 +353,7 @@ class SyncProductsE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[C6-V01] productIds가 빈 리스트이면 400 반환")
         void syncProducts_emptyProductIds_returns400() {
-            Map<String, Object> body = Map.of("productIds", List.of(), "shopId", List.of(shopId));
+            Map<String, Object> body = Map.of("productIds", List.of(), "shopId", shopId);
 
             given().spec(givenAuthenticatedUser())
                     .body(body)
@@ -365,10 +365,11 @@ class SyncProductsE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[C6-V02] shopId가 빈 리스트이면 400 반환")
-        void syncProducts_emptyShopId_returns400() {
-            Map<String, Object> body =
-                    Map.of("productIds", List.of(productGroupId), "shopId", List.of());
+        @DisplayName("[C6-V02] shopId가 null이면 400 반환")
+        void syncProducts_nullShopId_returns400() {
+            Map<String, Object> body = new java.util.HashMap<>();
+            body.put("productIds", List.of(productGroupId));
+            body.put("shopId", null);
 
             given().spec(givenAuthenticatedUser())
                     .body(body)
@@ -413,7 +414,7 @@ class SyncProductsE2ETest extends E2ETestBase {
                             "productIds",
                             List.of(productGroupId, pg2.getId(), pg3.getId()),
                             "shopId",
-                            List.of(shopId));
+                            shopId);
 
             given().spec(givenAuthenticatedUser())
                     .body(body)

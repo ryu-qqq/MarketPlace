@@ -31,6 +31,7 @@ public class OutboundSyncOutbox {
     private final OutboundSyncOutboxId id;
     private final ProductGroupId productGroupId;
     private final SalesChannelId salesChannelId;
+    private final long shopId;
     private final SellerId sellerId;
     private final SyncType syncType;
     private SyncStatus status;
@@ -48,6 +49,7 @@ public class OutboundSyncOutbox {
             OutboundSyncOutboxId id,
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             SellerId sellerId,
             SyncType syncType,
             SyncStatus status,
@@ -63,6 +65,7 @@ public class OutboundSyncOutbox {
         this.id = id;
         this.productGroupId = productGroupId;
         this.salesChannelId = salesChannelId;
+        this.shopId = shopId;
         this.sellerId = sellerId;
         this.syncType = syncType;
         this.status = status;
@@ -91,6 +94,7 @@ public class OutboundSyncOutbox {
     public static OutboundSyncOutbox forNew(
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             SellerId sellerId,
             SyncType syncType,
             String payload,
@@ -102,6 +106,7 @@ public class OutboundSyncOutbox {
                 OutboundSyncOutboxId.forNew(),
                 productGroupId,
                 salesChannelId,
+                shopId,
                 sellerId,
                 syncType,
                 SyncStatus.PENDING,
@@ -140,6 +145,7 @@ public class OutboundSyncOutbox {
             OutboundSyncOutboxId id,
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             SellerId sellerId,
             SyncType syncType,
             SyncStatus status,
@@ -156,6 +162,7 @@ public class OutboundSyncOutbox {
                 id,
                 productGroupId,
                 salesChannelId,
+                shopId,
                 sellerId,
                 syncType,
                 status,
@@ -286,6 +293,23 @@ public class OutboundSyncOutbox {
     }
 
     /**
+     * 외부 서비스 일시 장애 시 retry 횟수를 소진하지 않고 PENDING으로 복귀.
+     *
+     * <p>Circuit Breaker OPEN 등 외부 서비스가 일시적으로 불가능할 때 사용합니다. retryCount를 증가시키지 않으므로 서비스 복구 후 정상
+     * 재처리됩니다.
+     *
+     * @param now 현재 시각
+     */
+    public void deferRetry(Instant now) {
+        if (!status.isProcessing()) {
+            throw new IllegalStateException("deferRetry는 PROCESSING 상태에서만 가능합니다. 현재 상태: " + status);
+        }
+        this.status = SyncStatus.PENDING;
+        this.updatedAt = now;
+        this.errorMessage = "외부 서비스 일시 장애로 인한 지연 재시도";
+    }
+
+    /**
      * PROCESSING 상태에서 타임아웃으로 복구.
      *
      * @param now 현재 시각
@@ -332,6 +356,10 @@ public class OutboundSyncOutbox {
 
     public Long salesChannelIdValue() {
         return salesChannelId.value();
+    }
+
+    public long shopId() {
+        return shopId;
     }
 
     public SellerId sellerId() {

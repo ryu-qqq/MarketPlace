@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
         prefix = "scheduler.jobs.intelligence-pipeline.process-pending",
         name = "enabled",
         havingValue = "true",
-        matchIfMissing = true)
+        matchIfMissing = false)
 public class IntelligencePipelineScheduler {
 
     private final ProcessPendingIntelligenceUseCase processPendingUseCase;

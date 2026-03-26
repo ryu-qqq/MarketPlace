@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class LegacyOptionCommandEntityMapper {
 
     public LegacyOptionGroupEntity toEntity(LegacyOptionGroup data) {
-        return LegacyOptionGroupEntity.create(data.optionName().name());
+        return LegacyOptionGroupEntity.create(0L, data.optionName().name());
     }
 
     public LegacyOptionDetailEntity toEntity(LegacyOptionDetail data) {

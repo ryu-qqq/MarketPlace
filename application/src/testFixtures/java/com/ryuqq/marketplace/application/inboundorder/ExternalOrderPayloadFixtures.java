@@ -21,6 +21,7 @@ public final class ExternalOrderPayloadFixtures {
     /** 기본 ExternalOrderItemPayload 생성. */
     public static ExternalOrderItemPayload defaultItemPayload() {
         return new ExternalOrderItemPayload(
+                "EXT-PO-001",
                 DEFAULT_EXTERNAL_PRODUCT_ID,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 "테스트 상품",
@@ -30,18 +31,21 @@ public final class ExternalOrderPayloadFixtures {
                 2,
                 50000,
                 0,
+                0,
                 50000,
                 "김수령",
                 "010-9876-5432",
                 "06234",
                 "서울시 강남구 테헤란로 123",
                 "456호",
-                "부재 시 문 앞에 놓아주세요");
+                "부재 시 문 앞에 놓아주세요",
+                "PAYED");
     }
 
     /** 외부 상품 ID를 지정한 아이템 페이로드. */
     public static ExternalOrderItemPayload itemPayload(String externalProductId) {
         return new ExternalOrderItemPayload(
+                "EXT-PO-" + externalProductId,
                 externalProductId,
                 DEFAULT_EXTERNAL_OPTION_ID,
                 "테스트 상품",
@@ -51,12 +55,14 @@ public final class ExternalOrderPayloadFixtures {
                 1,
                 25000,
                 0,
+                0,
                 25000,
                 "김수령",
                 "010-9876-5432",
                 "06234",
                 "서울시 강남구 테헤란로 123",
                 "456호",
+                null,
                 null);
     }
 

@@ -6,9 +6,9 @@ import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.dto.Shippi
 import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.mapper.SellerCompositeMapper;
 import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.repository.SellerCompositeQueryDslRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.composite.seller.repository.SellerPolicyCompositeQueryDslRepository;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerAdminCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerPolicyCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerAdminCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerPolicyCompositeResult;
 import com.ryuqq.marketplace.application.seller.port.out.query.SellerCompositionQueryPort;
 import java.util.Optional;
 import org.springframework.stereotype.Component;

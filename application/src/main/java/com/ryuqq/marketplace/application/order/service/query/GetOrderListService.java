@@ -31,7 +31,9 @@ public class GetOrderListService implements GetOrderListUseCase {
         List<OrderListResult> orders = compositionReadManager.searchOrders(criteria);
         long totalElements = compositionReadManager.countOrders(criteria);
 
-        PageMeta pageMeta = PageMeta.of(params.page(), params.size(), totalElements);
+        PageMeta pageMeta =
+                PageMeta.of(
+                        params.searchParams().page(), params.searchParams().size(), totalElements);
         return new OrderPageResult(orders, pageMeta);
     }
 }

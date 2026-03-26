@@ -78,8 +78,8 @@ public class ShipmentCommandController {
     @RequirePermission(value = "shipment:write", description = "단건 송장등록")
     @PostMapping(ShipmentEndpoints.SHIP_SINGLE)
     public ResponseEntity<ApiResponse<Void>> shipSingle(
-            @PathVariable Long orderItemId, @RequestBody @Valid ShipSingleApiRequest request) {
-        shipSingleUseCase.execute(mapper.toShipSingleCommand(orderItemId, request));
+            @PathVariable String orderId, @RequestBody @Valid ShipSingleApiRequest request) {
+        shipSingleUseCase.execute(mapper.toShipSingleCommand(orderId, request));
         return ResponseEntity.ok(ApiResponse.of());
     }
 }

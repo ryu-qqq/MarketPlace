@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.domain.order.vo;
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /** 주문 상품 처리 상태. */
@@ -28,5 +30,12 @@ public enum OrderItemStatus {
             case RETURNED -> RETURNABLE;
             default -> EnumSet.noneOf(OrderItemStatus.class);
         };
+    }
+
+    public static List<OrderItemStatus> fromStringList(List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return List.of();
+        }
+        return values.stream().map(s -> valueOf(s.toUpperCase(Locale.ROOT))).toList();
     }
 }

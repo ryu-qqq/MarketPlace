@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.application.outboundseller.port.out.client.Outbound
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundSellerAddressSyncClient;
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundSellerSyncClient;
 import com.ryuqq.marketplace.application.outboundseller.port.out.client.OutboundShippingPolicySyncClient;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,13 +23,13 @@ public class OutboundSellerClientFallbackConfig {
     OutboundSellerSyncClient noOpOutboundSellerSyncClient() {
         return new OutboundSellerSyncClient() {
             @Override
-            public OutboundSellerSyncResult createSeller(Long sellerId) {
+            public OutboundSellerSyncResult createSeller(Shop shop, Long sellerId) {
                 return OutboundSellerSyncResult.nonRetryableFailure(
                         "NO_CLIENT", "외부 셀러 동기화 클라이언트가 설정되지 않았습니다");
             }
 
             @Override
-            public OutboundSellerSyncResult updateSeller(Long sellerId) {
+            public OutboundSellerSyncResult updateSeller(Shop shop, Long sellerId) {
                 return OutboundSellerSyncResult.nonRetryableFailure(
                         "NO_CLIENT", "외부 셀러 동기화 클라이언트가 설정되지 않았습니다");
             }
@@ -40,13 +41,15 @@ public class OutboundSellerClientFallbackConfig {
     OutboundShippingPolicySyncClient noOpOutboundShippingPolicySyncClient() {
         return new OutboundShippingPolicySyncClient() {
             @Override
-            public OutboundSellerSyncResult createShippingPolicy(Long sellerId, Long policyId) {
+            public OutboundSellerSyncResult createShippingPolicy(
+                    Shop shop, Long sellerId, Long policyId) {
                 return OutboundSellerSyncResult.nonRetryableFailure(
                         "NO_CLIENT", "외부 셀러 동기화 클라이언트가 설정되지 않았습니다");
             }
 
             @Override
-            public OutboundSellerSyncResult updateShippingPolicy(Long sellerId, Long policyId) {
+            public OutboundSellerSyncResult updateShippingPolicy(
+                    Shop shop, Long sellerId, Long policyId) {
                 return OutboundSellerSyncResult.nonRetryableFailure(
                         "NO_CLIENT", "외부 셀러 동기화 클라이언트가 설정되지 않았습니다");
             }
@@ -58,13 +61,15 @@ public class OutboundSellerClientFallbackConfig {
     OutboundRefundPolicySyncClient noOpOutboundRefundPolicySyncClient() {
         return new OutboundRefundPolicySyncClient() {
             @Override
-            public OutboundSellerSyncResult createRefundPolicy(Long sellerId, Long policyId) {
+            public OutboundSellerSyncResult createRefundPolicy(
+                    Shop shop, Long sellerId, Long policyId) {
                 return OutboundSellerSyncResult.nonRetryableFailure(
                         "NO_CLIENT", "외부 셀러 동기화 클라이언트가 설정되지 않았습니다");
             }
 
             @Override
-            public OutboundSellerSyncResult updateRefundPolicy(Long sellerId, Long policyId) {
+            public OutboundSellerSyncResult updateRefundPolicy(
+                    Shop shop, Long sellerId, Long policyId) {
                 return OutboundSellerSyncResult.nonRetryableFailure(
                         "NO_CLIENT", "외부 셀러 동기화 클라이언트가 설정되지 않았습니다");
             }
@@ -76,19 +81,22 @@ public class OutboundSellerClientFallbackConfig {
     OutboundSellerAddressSyncClient noOpOutboundSellerAddressSyncClient() {
         return new OutboundSellerAddressSyncClient() {
             @Override
-            public OutboundSellerSyncResult createSellerAddress(Long sellerId, Long addressId) {
+            public OutboundSellerSyncResult createSellerAddress(
+                    Shop shop, Long sellerId, Long addressId) {
                 return OutboundSellerSyncResult.nonRetryableFailure(
                         "NO_CLIENT", "외부 셀러 동기화 클라이언트가 설정되지 않았습니다");
             }
 
             @Override
-            public OutboundSellerSyncResult updateSellerAddress(Long sellerId, Long addressId) {
+            public OutboundSellerSyncResult updateSellerAddress(
+                    Shop shop, Long sellerId, Long addressId) {
                 return OutboundSellerSyncResult.nonRetryableFailure(
                         "NO_CLIENT", "외부 셀러 동기화 클라이언트가 설정되지 않았습니다");
             }
 
             @Override
-            public OutboundSellerSyncResult deleteSellerAddress(Long sellerId, Long addressId) {
+            public OutboundSellerSyncResult deleteSellerAddress(
+                    Shop shop, Long sellerId, Long addressId) {
                 return OutboundSellerSyncResult.nonRetryableFailure(
                         "NO_CLIENT", "외부 셀러 동기화 클라이언트가 설정되지 않았습니다");
             }

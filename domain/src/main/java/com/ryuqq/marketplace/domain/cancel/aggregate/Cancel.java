@@ -15,17 +15,20 @@ import com.ryuqq.marketplace.domain.cancel.vo.CancelRefundInfo;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelType;
 import com.ryuqq.marketplace.domain.common.event.DomainEvent;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** 취소 Aggregate Root. */
+/** 취소 Aggregate Root. Cancel 1건 = OrderItem 1건의 1회 취소 요청. */
 public class Cancel {
 
     private final CancelId id;
     private final CancelNumber cancelNumber;
-    private final String orderId;
+    private final OrderItemId orderItemId;
+    private final long sellerId;
+    private final int cancelQty;
     private final CancelType type;
     private CancelStatus status;
     private final CancelReason reason;
@@ -38,13 +41,14 @@ public class Cancel {
     private final Instant createdAt;
     private Instant updatedAt;
 
-    private final List<CancelItem> cancelItems = new ArrayList<>();
     private final List<DomainEvent> events = new ArrayList<>();
 
     private Cancel(
             CancelId id,
             CancelNumber cancelNumber,
-            String orderId,
+            OrderItemId orderItemId,
+            long sellerId,
+            int cancelQty,
             CancelType type,
             CancelStatus status,
             CancelReason reason,
@@ -58,7 +62,9 @@ public class Cancel {
             Instant updatedAt) {
         this.id = id;
         this.cancelNumber = cancelNumber;
-        this.orderId = orderId;
+        this.orderItemId = orderItemId;
+        this.sellerId = sellerId;
+        this.cancelQty = cancelQty;
         this.type = type;
         this.status = status;
         this.reason = reason;
@@ -75,17 +81,20 @@ public class Cancel {
     public static Cancel forBuyerCancel(
             CancelId id,
             CancelNumber cancelNumber,
-            String orderId,
-            List<CancelItem> cancelItems,
+            OrderItemId orderItemId,
+            long sellerId,
+            int cancelQty,
             CancelReason reason,
             String requestedBy,
             Instant now) {
-        validateCancelItems(cancelItems);
+        validateCancelQty(cancelQty);
         Cancel cancel =
                 new Cancel(
                         id,
                         cancelNumber,
-                        orderId,
+                        orderItemId,
+                        sellerId,
+                        cancelQty,
                         CancelType.BUYER_CANCEL,
                         CancelStatus.REQUESTED,
                         reason,
@@ -97,25 +106,27 @@ public class Cancel {
                         null,
                         now,
                         now);
-        cancel.cancelItems.addAll(cancelItems);
-        cancel.registerEvent(new CancelCreatedEvent(id, orderId, CancelType.BUYER_CANCEL, now));
+        cancel.registerEvent(new CancelCreatedEvent(id, orderItemId, CancelType.BUYER_CANCEL, now));
         return cancel;
     }
 
     public static Cancel forSellerCancel(
             CancelId id,
             CancelNumber cancelNumber,
-            String orderId,
-            List<CancelItem> cancelItems,
+            OrderItemId orderItemId,
+            long sellerId,
+            int cancelQty,
             CancelReason reason,
             String requestedBy,
             Instant now) {
-        validateCancelItems(cancelItems);
+        validateCancelQty(cancelQty);
         Cancel cancel =
                 new Cancel(
                         id,
                         cancelNumber,
-                        orderId,
+                        orderItemId,
+                        sellerId,
+                        cancelQty,
                         CancelType.SELLER_CANCEL,
                         CancelStatus.APPROVED,
                         reason,
@@ -127,18 +138,20 @@ public class Cancel {
                         null,
                         now,
                         now);
-        cancel.cancelItems.addAll(cancelItems);
-        cancel.registerEvent(new CancelCreatedEvent(id, orderId, CancelType.SELLER_CANCEL, now));
+        cancel.registerEvent(
+                new CancelCreatedEvent(id, orderItemId, CancelType.SELLER_CANCEL, now));
         cancel.registerEvent(
                 new CancelStatusChangedEvent(
-                        id, orderId, CancelStatus.REQUESTED, CancelStatus.APPROVED, now));
+                        id, orderItemId, CancelStatus.REQUESTED, CancelStatus.APPROVED, now));
         return cancel;
     }
 
     public static Cancel reconstitute(
             CancelId id,
             CancelNumber cancelNumber,
-            String orderId,
+            OrderItemId orderItemId,
+            long sellerId,
+            int cancelQty,
             CancelType type,
             CancelStatus status,
             CancelReason reason,
@@ -149,28 +162,24 @@ public class Cancel {
             Instant processedAt,
             Instant completedAt,
             Instant createdAt,
-            Instant updatedAt,
-            List<CancelItem> cancelItems) {
-        Cancel cancel =
-                new Cancel(
-                        id,
-                        cancelNumber,
-                        orderId,
-                        type,
-                        status,
-                        reason,
-                        refundInfo,
-                        requestedBy,
-                        processedBy,
-                        requestedAt,
-                        processedAt,
-                        completedAt,
-                        createdAt,
-                        updatedAt);
-        if (cancelItems != null) {
-            cancel.cancelItems.addAll(cancelItems);
-        }
-        return cancel;
+            Instant updatedAt) {
+        return new Cancel(
+                id,
+                cancelNumber,
+                orderItemId,
+                sellerId,
+                cancelQty,
+                type,
+                status,
+                reason,
+                refundInfo,
+                requestedBy,
+                processedBy,
+                requestedAt,
+                processedAt,
+                completedAt,
+                createdAt,
+                updatedAt);
     }
 
     public void approve(String processedBy, Instant now) {
@@ -180,8 +189,9 @@ public class Cancel {
         this.processedBy = processedBy;
         this.processedAt = now;
         this.updatedAt = now;
-        registerEvent(new CancelApprovedEvent(id, orderId, now));
-        registerEvent(new CancelStatusChangedEvent(id, orderId, from, CancelStatus.APPROVED, now));
+        registerEvent(new CancelApprovedEvent(id, orderItemId, now));
+        registerEvent(
+                new CancelStatusChangedEvent(id, orderItemId, from, CancelStatus.APPROVED, now));
     }
 
     public void reject(String processedBy, Instant now) {
@@ -191,8 +201,9 @@ public class Cancel {
         this.processedBy = processedBy;
         this.processedAt = now;
         this.updatedAt = now;
-        registerEvent(new CancelRejectedEvent(id, orderId, now));
-        registerEvent(new CancelStatusChangedEvent(id, orderId, from, CancelStatus.REJECTED, now));
+        registerEvent(new CancelRejectedEvent(id, orderItemId, now));
+        registerEvent(
+                new CancelStatusChangedEvent(id, orderItemId, from, CancelStatus.REJECTED, now));
     }
 
     public void complete(CancelRefundInfo refundInfo, String processedBy, Instant now) {
@@ -203,8 +214,9 @@ public class Cancel {
         this.processedBy = processedBy;
         this.completedAt = now;
         this.updatedAt = now;
-        registerEvent(new CancelCompletedEvent(id, orderId, now));
-        registerEvent(new CancelStatusChangedEvent(id, orderId, from, CancelStatus.COMPLETED, now));
+        registerEvent(new CancelCompletedEvent(id, orderItemId, now));
+        registerEvent(
+                new CancelStatusChangedEvent(id, orderItemId, from, CancelStatus.COMPLETED, now));
     }
 
     public void withdraw(Instant now) {
@@ -212,8 +224,9 @@ public class Cancel {
         validateTransition(CancelStatus.CANCELLED);
         this.status = CancelStatus.CANCELLED;
         this.updatedAt = now;
-        registerEvent(new CancelWithdrawnEvent(id, orderId, now));
-        registerEvent(new CancelStatusChangedEvent(id, orderId, from, CancelStatus.CANCELLED, now));
+        registerEvent(new CancelWithdrawnEvent(id, orderItemId, now));
+        registerEvent(
+                new CancelStatusChangedEvent(id, orderItemId, from, CancelStatus.CANCELLED, now));
     }
 
     private void validateTransition(CancelStatus target) {
@@ -224,10 +237,9 @@ public class Cancel {
         }
     }
 
-    private static void validateCancelItems(List<CancelItem> cancelItems) {
-        if (cancelItems == null || cancelItems.isEmpty()) {
-            throw new CancelException(
-                    CancelErrorCode.EMPTY_CANCEL_ITEMS, "취소 대상 상품은 최소 1개 이상이어야 합니다");
+    private static void validateCancelQty(int cancelQty) {
+        if (cancelQty <= 0) {
+            throw new CancelException(CancelErrorCode.INVALID_CANCEL_QTY, "취소 수량은 1 이상이어야 합니다");
         }
     }
 
@@ -257,8 +269,20 @@ public class Cancel {
         return cancelNumber.value();
     }
 
-    public String orderId() {
-        return orderId;
+    public OrderItemId orderItemId() {
+        return orderItemId;
+    }
+
+    public String orderItemIdValue() {
+        return orderItemId.value();
+    }
+
+    public long sellerId() {
+        return sellerId;
+    }
+
+    public int cancelQty() {
+        return cancelQty;
     }
 
     public CancelType type() {
@@ -303,9 +327,5 @@ public class Cancel {
 
     public Instant updatedAt() {
         return updatedAt;
-    }
-
-    public List<CancelItem> cancelItems() {
-        return Collections.unmodifiableList(cancelItems);
     }
 }

@@ -25,8 +25,8 @@ import java.time.Instant;
  * @param rejectedAt 거절일시
  */
 public record OrderClaimResult(
-        long claimId,
-        long orderItemId,
+        String claimId,
+        String orderItemId,
         String claimNumber,
         String claimType,
         String claimStatus,

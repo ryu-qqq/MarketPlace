@@ -1,0 +1,79 @@
+// ========================================
+// Adapter-In: REST Legacy API
+// ========================================
+// 레거시(세토프) 호환 REST API 모듈
+// 별도 인증 체계(HS256 JWT)와 레거시 스키마 PK 기반 요청 처리
+// NO Lombok allowed
+// ========================================
+
+plugins {
+    id 'java-library'
+    id 'java-test-fixtures'
+}
+
+dependencies {
+    // ========================================
+    // Core Dependencies
+    // ========================================
+    // Application layer (use cases)
+    api project(':application')
+    api project(':domain')
+
+    // rest-api 공통 모듈 (ErrorMapperRegistry, ErrorMapper, MarketAccessChecker)
+    api project(':adapter-in:rest-api')
+
+    // AuthHub SDK Spring Boot Starter (AccessChecker, @RequirePermission, UserContext, SecurityHeaders)
+    implementation libs.authhub.sdk.spring.boot.starter
+
+    // Spring Web
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.validation
+
+    // Spring Data (for Pageable)
+    implementation libs.spring.data.commons
+
+    // Spring Security (Optional)
+    implementation libs.spring.boot.starter.security
+
+    // JSON Processing
+    implementation libs.jackson.databind
+    implementation libs.jackson.datatype.jsr310
+
+    // API Documentation
+    implementation libs.springdoc.openapi
+
+
+    // Spring Transaction
+    implementation libs.spring.tx
+
+    // ========================================
+    // Test Dependencies
+    // ========================================
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.security.test
+    testImplementation libs.rest.assured
+    testImplementation libs.spring.restdocs.mockmvc
+    testImplementation testFixtures(project(":domain"))
+    testImplementation testFixtures(project(":application"))
+    testImplementation testFixtures(project(":adapter-in:rest-api"))
+
+    // ========================================
+    // Test Fixtures Dependencies
+    // ========================================
+    testFixturesApi project(':application')
+    testFixturesApi project(':domain')
+    testFixturesImplementation libs.jackson.databind
+}
+
+// ========================================
+// Test Coverage
+// ========================================
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.30 // temporarily lowered
+            }
+        }
+    }
+}

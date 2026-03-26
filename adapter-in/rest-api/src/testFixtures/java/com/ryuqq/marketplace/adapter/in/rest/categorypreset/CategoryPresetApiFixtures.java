@@ -166,7 +166,7 @@ public final class CategoryPresetApiFixtures {
                 DEFAULT_PRESET_NAME,
                 "식품 > 과자 > 스낵 > 젤리",
                 DEFAULT_CATEGORY_CODE,
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00");
     }
 
     public static CategoryPresetApiResponse apiResponse(Long id, String presetName) {
@@ -180,7 +180,7 @@ public final class CategoryPresetApiFixtures {
                 presetName,
                 "식품 > 과자 > 스낵 > 젤리",
                 DEFAULT_CATEGORY_CODE,
-                "2025-02-10T10:30:00+09:00");
+                "2025-02-10 10:30:00");
     }
 
     // ===== CategoryPresetDetailResult (Application) =====

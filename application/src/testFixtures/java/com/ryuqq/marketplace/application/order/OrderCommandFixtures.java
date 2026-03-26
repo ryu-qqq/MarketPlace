@@ -2,6 +2,9 @@ package com.ryuqq.marketplace.application.order;
 
 import com.ryuqq.marketplace.application.order.dto.command.CreateOrderCommand;
 import com.ryuqq.marketplace.application.order.dto.command.CreateOrderItemCommand;
+import com.ryuqq.marketplace.application.order.dto.command.OrderItemCancelCommand;
+import com.ryuqq.marketplace.application.order.dto.command.OrderItemStatusCommand;
+import com.ryuqq.marketplace.application.order.dto.command.StartClaimCommand;
 import java.time.Instant;
 import java.util.List;
 
@@ -96,6 +99,7 @@ public final class OrderCommandFixtures {
                 2,
                 20000,
                 0,
+                0,
                 20000,
                 "김수령",
                 "010-9876-5432",
@@ -104,6 +108,44 @@ public final class OrderCommandFixtures {
                 "101호",
                 "부재시 문앞에 놓아주세요");
     }
+
+    // ===== OrderItemStatusCommand Fixtures =====
+
+    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+
+    public static OrderItemStatusCommand orderItemStatusCommand() {
+        return new OrderItemStatusCommand(List.of(DEFAULT_ORDER_ITEM_ID), "system");
+    }
+
+    public static OrderItemStatusCommand orderItemStatusCommand(String... orderItemIds) {
+        return new OrderItemStatusCommand(List.of(orderItemIds), "system");
+    }
+
+    // ===== OrderItemCancelCommand Fixtures =====
+
+    public static OrderItemCancelCommand orderItemCancelCommand() {
+        return new OrderItemCancelCommand(List.of(DEFAULT_ORDER_ITEM_ID), "단순 변심", "system");
+    }
+
+    public static OrderItemCancelCommand orderItemCancelCommand(String reason) {
+        return new OrderItemCancelCommand(List.of(DEFAULT_ORDER_ITEM_ID), reason, "system");
+    }
+
+    public static OrderItemCancelCommand orderItemCancelCommand(String... orderItemIds) {
+        return new OrderItemCancelCommand(List.of(orderItemIds), "단순 변심", "system");
+    }
+
+    // ===== StartClaimCommand Fixtures =====
+
+    public static StartClaimCommand startClaimCommand() {
+        return new StartClaimCommand(List.of(DEFAULT_ORDER_ITEM_ID), "상품 불량", "system");
+    }
+
+    public static StartClaimCommand startClaimCommand(String reason) {
+        return new StartClaimCommand(List.of(DEFAULT_ORDER_ITEM_ID), reason, "system");
+    }
+
+    // ===== CreateOrderItemCommand Fixtures =====
 
     public static CreateOrderItemCommand createOrderItemCommandWithoutMappings() {
         return new CreateOrderItemCommand(
@@ -124,6 +166,7 @@ public final class OrderCommandFixtures {
                 15000,
                 1,
                 15000,
+                0,
                 0,
                 15000,
                 "이수령",

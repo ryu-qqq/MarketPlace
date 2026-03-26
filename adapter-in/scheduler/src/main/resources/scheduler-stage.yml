@@ -73,6 +73,11 @@ scheduler:
         batch-size: 30
         timeout-seconds: 60
 
+    image-variant-sync-outbox:
+      process-pending:
+        cron: "*/5 * * * * *"
+        batch-size: 30
+
     intelligence-pipeline:
       process-pending:
         enabled: false
@@ -107,26 +112,31 @@ scheduler:
         batch-size: 50
         timeout-seconds: 180
 
-    legacy-conversion-seeder:
-      enabled: true
+    legacy-order-conversion:
+      # 로컬 검증: 네이버 폴링 먼저 확인 후 활성화
+      enabled: false
       cron: "*/5 * * * * *"
-      batch-size: 50
-      max-total: 200
 
-    # LegacyConversion 변환 스케줄러 (코드 기본값 오버라이드)
-    legacy-conversion:
-      cron: "*/5 * * * * *"
-      timezone: "Asia/Seoul"
-
-    legacy-conversion-timeout:
+    legacy-order-conversion-timeout:
       cron: "0 */1 * * * *"
-      timezone: "Asia/Seoul"
+
+    legacy-order-conversion-seeder:
+      # Stage: 임시 비활성화
+      enabled: false
+      cron: "0 */1 * * * *"
+      batch-size: 200
+      max-total: 0
 
     inbound-order-polling:
       entries:
-        - sales-channel-id: 1
+        - sales-channel-id: 2
           enabled: true
-          cron: "*/5 * * * * *"
+          cron: "*/30 * * * * *"
+          timezone: Asia/Seoul
+          batch-size: 300
+        - sales-channel-id: 16
+          enabled: false
+          cron: "0 0 10,13,15,17,19 * * *"
           timezone: Asia/Seoul
           batch-size: 300
 
@@ -178,4 +188,78 @@ scheduler:
 
     inbound-order-retry:
       cron: "0 */1 * * * *"
+      batch-size: 100
+
+    # 셀릭 주문 발행 (Stage: 비활성화 — 활성화 시 30초마다)
+    sellic-order-issuing:
+      enabled: false
+      cron: "*/30 * * * * *"
+      timezone: Asia/Seoul
+      batch-size: 300
+      sales-channel-id: 16
+
+    cancel-outbox:
+      process-pending:
+        enabled: true
+        cron: "*/5 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 50
+        delay-seconds: 5
+
+      recover-timeout:
+        enabled: true
+        cron: "*/30 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 20
+        timeout-seconds: 60
+
+    refund-outbox:
+      process-pending:
+        enabled: true
+        cron: "*/5 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 50
+        delay-seconds: 5
+
+      recover-timeout:
+        enabled: true
+        cron: "*/30 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 20
+        timeout-seconds: 60
+
+    exchange-outbox:
+      process-pending:
+        enabled: true
+        cron: "*/5 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 50
+        delay-seconds: 5
+
+      recover-timeout:
+        enabled: true
+        cron: "*/30 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 20
+        timeout-seconds: 60
+
+    qna-outbox:
+      process-pending:
+        enabled: true
+        cron: "*/5 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 50
+        delay-seconds: 5
+
+      recover-timeout:
+        enabled: true
+        cron: "*/30 * * * * *"
+        timezone: "Asia/Seoul"
+        batch-size: 20
+        timeout-seconds: 60
+
+    inbound-qna-polling:
+      enabled: true
+      cron: "*/30 * * * * *"
+      timezone: "Asia/Seoul"
       batch-size: 100

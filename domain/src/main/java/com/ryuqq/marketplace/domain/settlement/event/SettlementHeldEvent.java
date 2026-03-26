@@ -6,9 +6,5 @@ import java.time.Instant;
 
 /** 정산 보류 이벤트. */
 public record SettlementHeldEvent(
-        SettlementId settlementId,
-        String orderId,
-        long sellerId,
-        String holdReason,
-        Instant occurredAt)
+        SettlementId settlementId, long sellerId, String holdReason, Instant occurredAt)
         implements DomainEvent {}

@@ -8,16 +8,16 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
-import com.ryuqq.marketplace.adapter.out.persistence.order.OrderHistoryJpaEntityFixtures;
+import com.ryuqq.marketplace.adapter.out.persistence.order.OrderItemHistoryJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderItemJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.OrderJpaEntityFixtures;
 import com.ryuqq.marketplace.adapter.out.persistence.order.PaymentJpaEntityFixtures;
-import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderHistoryJpaEntity;
+import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemHistoryJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.PaymentJpaEntity;
 import com.ryuqq.marketplace.adapter.out.persistence.order.mapper.OrderJpaEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderHistoryJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.PaymentJpaRepository;
@@ -38,7 +38,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * OrderCommandAdapter 단위 테스트.
  *
  * <p>Payment 리팩토링 이후 IdGeneratorPort로 UUIDv7을 생성하여 toPaymentEntity(Order, String paymentId)에 전달하는
- * 흐름을 검증합니다.
+ * 흐름을 검증합니다. OrderItemHistory 기반으로 전환된 이력 저장 흐름도 검증합니다.
  *
  * @author ryu-qqq
  * @since 1.1.0
@@ -52,7 +52,7 @@ class OrderCommandAdapterTest {
 
     @Mock private OrderItemJpaRepository itemRepository;
 
-    @Mock private OrderHistoryJpaRepository historyRepository;
+    @Mock private OrderItemHistoryJpaRepository itemHistoryRepository;
 
     @Mock private PaymentJpaRepository paymentRepository;
 
@@ -81,16 +81,16 @@ class OrderCommandAdapterTest {
             PaymentJpaEntity paymentEntity =
                     PaymentJpaEntityFixtures.completedEntity(generatedPaymentId, order.idValue());
             OrderItemJpaEntity itemEntity = OrderItemJpaEntityFixtures.defaultItem(order.idValue());
-            OrderHistoryJpaEntity historyEntity =
-                    OrderHistoryJpaEntityFixtures.creationHistory(order.idValue());
+            OrderItemHistoryJpaEntity historyEntity =
+                    OrderItemHistoryJpaEntityFixtures.creationHistory(
+                            order.items().get(0).idValue());
 
             given(idGeneratorPort.generate()).willReturn(generatedPaymentId);
             given(mapper.toOrderEntity(order)).willReturn(orderEntity);
             given(mapper.toPaymentEntity(order, generatedPaymentId)).willReturn(paymentEntity);
             given(mapper.toOrderItemEntities(order.items(), order.idValue()))
                     .willReturn(List.of(itemEntity));
-            given(mapper.toOrderHistoryEntities(order.histories()))
-                    .willReturn(List.of(historyEntity));
+            given(mapper.collectAllItemHistoryEntities(order)).willReturn(List.of(historyEntity));
 
             // when
             commandAdapter.persist(order);
@@ -102,8 +102,8 @@ class OrderCommandAdapterTest {
 
         @Test
         @DisplayName(
-                "OrderJpaRepository, PaymentJpaRepository, ItemRepository, HistoryRepository가 각각"
-                        + " 호출됩니다")
+                "OrderJpaRepository, PaymentJpaRepository, ItemRepository, ItemHistoryRepository가"
+                        + " 각각 호출됩니다")
         void persist_CallsAllRepositories() {
             // given
             Order order = OrderFixtures.newOrder();
@@ -113,16 +113,16 @@ class OrderCommandAdapterTest {
             PaymentJpaEntity paymentEntity =
                     PaymentJpaEntityFixtures.completedEntity(generatedPaymentId, order.idValue());
             OrderItemJpaEntity itemEntity = OrderItemJpaEntityFixtures.defaultItem(order.idValue());
-            OrderHistoryJpaEntity historyEntity =
-                    OrderHistoryJpaEntityFixtures.creationHistory(order.idValue());
+            OrderItemHistoryJpaEntity historyEntity =
+                    OrderItemHistoryJpaEntityFixtures.creationHistory(
+                            order.items().get(0).idValue());
 
             given(idGeneratorPort.generate()).willReturn(generatedPaymentId);
             given(mapper.toOrderEntity(order)).willReturn(orderEntity);
             given(mapper.toPaymentEntity(order, generatedPaymentId)).willReturn(paymentEntity);
             given(mapper.toOrderItemEntities(order.items(), order.idValue()))
                     .willReturn(List.of(itemEntity));
-            given(mapper.toOrderHistoryEntities(order.histories()))
-                    .willReturn(List.of(historyEntity));
+            given(mapper.collectAllItemHistoryEntities(order)).willReturn(List.of(historyEntity));
 
             // when
             commandAdapter.persist(order);
@@ -131,7 +131,7 @@ class OrderCommandAdapterTest {
             then(orderRepository).should().save(orderEntity);
             then(paymentRepository).should().save(paymentEntity);
             then(itemRepository).should().saveAll(List.of(itemEntity));
-            then(historyRepository).should().saveAll(List.of(historyEntity));
+            then(itemHistoryRepository).should().saveAll(List.of(historyEntity));
         }
 
         @Test
@@ -150,7 +150,7 @@ class OrderCommandAdapterTest {
             given(mapper.toPaymentEntity(eq(order), eq(specificPaymentId)))
                     .willReturn(paymentEntity);
             given(mapper.toOrderItemEntities(anyList(), anyString())).willReturn(List.of());
-            given(mapper.toOrderHistoryEntities(anyList())).willReturn(List.of());
+            given(mapper.collectAllItemHistoryEntities(order)).willReturn(List.of());
 
             // when
             commandAdapter.persist(order);
@@ -173,7 +173,7 @@ class OrderCommandAdapterTest {
                     .willReturn(
                             PaymentJpaEntityFixtures.completedEntity(generatedId, order.idValue()));
             given(mapper.toOrderItemEntities(anyList(), anyString())).willReturn(List.of());
-            given(mapper.toOrderHistoryEntities(anyList())).willReturn(List.of());
+            given(mapper.collectAllItemHistoryEntities(order)).willReturn(List.of());
 
             // when
             commandAdapter.persist(order);
@@ -196,7 +196,7 @@ class OrderCommandAdapterTest {
         void persistAll_WithMultipleOrders_CallsIdGeneratorForEach() {
             // given
             Order order1 = OrderFixtures.newOrder();
-            Order order2 = OrderFixtures.orderedOrder();
+            Order order2 = OrderFixtures.reconstitutedOrder();
             List<Order> orders = List.of(order1, order2);
 
             String paymentId1 = "01944b2a-bbbb-7fff-8888-000000000010";
@@ -215,7 +215,7 @@ class OrderCommandAdapterTest {
                                             inv.getArgument(1),
                                             ((Order) inv.getArgument(0)).idValue()));
             given(mapper.toOrderItemEntities(anyList(), anyString())).willReturn(List.of());
-            given(mapper.toOrderHistoryEntities(anyList())).willReturn(List.of());
+            given(mapper.collectAllItemHistoryEntities(any(Order.class))).willReturn(List.of());
 
             // when
             commandAdapter.persistAll(orders);
@@ -234,7 +234,7 @@ class OrderCommandAdapterTest {
             then(orderRepository).shouldHaveNoInteractions();
             then(paymentRepository).shouldHaveNoInteractions();
             then(itemRepository).shouldHaveNoInteractions();
-            then(historyRepository).shouldHaveNoInteractions();
+            then(itemHistoryRepository).shouldHaveNoInteractions();
             then(idGeneratorPort).shouldHaveNoInteractions();
         }
     }

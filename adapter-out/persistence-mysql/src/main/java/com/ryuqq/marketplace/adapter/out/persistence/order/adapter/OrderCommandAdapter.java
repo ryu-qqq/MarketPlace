@@ -1,7 +1,7 @@
 package com.ryuqq.marketplace.adapter.out.persistence.order.adapter;
 
 import com.ryuqq.marketplace.adapter.out.persistence.order.mapper.OrderJpaEntityMapper;
-import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderHistoryJpaRepository;
+import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemHistoryJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderItemJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.OrderJpaRepository;
 import com.ryuqq.marketplace.adapter.out.persistence.order.repository.PaymentJpaRepository;
@@ -17,7 +17,7 @@ public class OrderCommandAdapter implements OrderCommandPort {
 
     private final OrderJpaRepository orderRepository;
     private final OrderItemJpaRepository itemRepository;
-    private final OrderHistoryJpaRepository historyRepository;
+    private final OrderItemHistoryJpaRepository itemHistoryRepository;
     private final PaymentJpaRepository paymentRepository;
     private final OrderJpaEntityMapper mapper;
     private final IdGeneratorPort idGeneratorPort;
@@ -25,13 +25,13 @@ public class OrderCommandAdapter implements OrderCommandPort {
     public OrderCommandAdapter(
             OrderJpaRepository orderRepository,
             OrderItemJpaRepository itemRepository,
-            OrderHistoryJpaRepository historyRepository,
+            OrderItemHistoryJpaRepository itemHistoryRepository,
             PaymentJpaRepository paymentRepository,
             OrderJpaEntityMapper mapper,
             IdGeneratorPort idGeneratorPort) {
         this.orderRepository = orderRepository;
         this.itemRepository = itemRepository;
-        this.historyRepository = historyRepository;
+        this.itemHistoryRepository = itemHistoryRepository;
         this.paymentRepository = paymentRepository;
         this.mapper = mapper;
         this.idGeneratorPort = idGeneratorPort;
@@ -42,7 +42,8 @@ public class OrderCommandAdapter implements OrderCommandPort {
         orderRepository.save(mapper.toOrderEntity(order));
         paymentRepository.save(mapper.toPaymentEntity(order, idGeneratorPort.generate()));
         itemRepository.saveAll(mapper.toOrderItemEntities(order.items(), order.idValue()));
-        historyRepository.saveAll(mapper.toOrderHistoryEntities(order.histories()));
+        // Order 내 모든 OrderItem의 histories를 저장
+        itemHistoryRepository.saveAll(mapper.collectAllItemHistoryEntities(order));
     }
 
     @Override

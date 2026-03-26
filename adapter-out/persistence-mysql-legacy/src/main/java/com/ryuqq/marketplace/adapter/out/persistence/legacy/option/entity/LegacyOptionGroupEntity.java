@@ -11,10 +11,7 @@ import jakarta.persistence.Table;
 /**
  * LegacyOptionGroupEntity - 레거시 옵션 그룹 엔티티.
  *
- * <p>레거시 DB의 option_group 테이블 매핑.
- *
- * @author ryu-qqq
- * @since 1.0.0
+ * <p>레거시 DB의 option_group 테이블 매핑. product_group_id 포함.
  */
 @Entity
 @Table(name = "option_group")
@@ -25,6 +22,9 @@ public class LegacyOptionGroupEntity extends LegacyBaseEntity {
     @Column(name = "option_group_id")
     private Long id;
 
+    @Column(name = "PRODUCT_GROUP_ID")
+    private Long productGroupId;
+
     @Column(name = "OPTION_NAME")
     private String optionName;
 
@@ -33,17 +33,29 @@ public class LegacyOptionGroupEntity extends LegacyBaseEntity {
 
     protected LegacyOptionGroupEntity() {}
 
-    private LegacyOptionGroupEntity(String optionName) {
+    private LegacyOptionGroupEntity(
+            Long id, Long productGroupId, String optionName, String deleteYn) {
+        this.id = id;
+        this.productGroupId = productGroupId;
         this.optionName = optionName;
-        this.deleteYn = "N";
+        this.deleteYn = deleteYn;
     }
 
-    public static LegacyOptionGroupEntity create(String optionName) {
-        return new LegacyOptionGroupEntity(optionName);
+    public static LegacyOptionGroupEntity create(long productGroupId, String optionName) {
+        return new LegacyOptionGroupEntity(null, productGroupId, optionName, "N");
+    }
+
+    public static LegacyOptionGroupEntity create(
+            Long id, long productGroupId, String optionName, String deleteYn) {
+        return new LegacyOptionGroupEntity(id, productGroupId, optionName, deleteYn);
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Long getProductGroupId() {
+        return productGroupId;
     }
 
     public String getOptionName() {

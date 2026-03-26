@@ -1,7 +1,5 @@
 package com.ryuqq.marketplace.application.shipment.dto.command;
 
-import java.time.Instant;
-
 /**
  * 대기 중인 배송 아웃박스 처리 Command.
  *
@@ -12,9 +10,5 @@ public record ProcessPendingShipmentOutboxCommand(int batchSize, int delaySecond
 
     public static ProcessPendingShipmentOutboxCommand of(int batchSize, int delaySeconds) {
         return new ProcessPendingShipmentOutboxCommand(batchSize, delaySeconds);
-    }
-
-    public Instant beforeTime() {
-        return Instant.now().minusSeconds(delaySeconds);
     }
 }

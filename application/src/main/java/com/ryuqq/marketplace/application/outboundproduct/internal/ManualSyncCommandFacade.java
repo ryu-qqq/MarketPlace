@@ -31,13 +31,20 @@ public class ManualSyncCommandFacade {
     public void createProductAndOutbox(
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             SellerId sellerId,
             Instant now) {
         outboundProductCommandManager.persist(
-                OutboundProduct.forNew(productGroupId, salesChannelId, now));
+                OutboundProduct.forNew(productGroupId, salesChannelId, shopId, now));
         outboxCommandManager.persist(
                 OutboundSyncOutbox.forNew(
-                        productGroupId, salesChannelId, sellerId, SyncType.CREATE, "{}", now));
+                        productGroupId,
+                        salesChannelId,
+                        shopId,
+                        sellerId,
+                        SyncType.CREATE,
+                        "{}",
+                        now));
     }
 
     /** UPDATE: OutboundSyncOutbox만 생성. */
@@ -45,10 +52,17 @@ public class ManualSyncCommandFacade {
     public void createUpdateOutbox(
             ProductGroupId productGroupId,
             SalesChannelId salesChannelId,
+            long shopId,
             SellerId sellerId,
             Instant now) {
         outboxCommandManager.persist(
                 OutboundSyncOutbox.forNew(
-                        productGroupId, salesChannelId, sellerId, SyncType.UPDATE, "{}", now));
+                        productGroupId,
+                        salesChannelId,
+                        shopId,
+                        sellerId,
+                        SyncType.UPDATE,
+                        "{}",
+                        now));
     }
 }

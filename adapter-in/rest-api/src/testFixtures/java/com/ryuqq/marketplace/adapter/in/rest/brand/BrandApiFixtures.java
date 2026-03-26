@@ -27,7 +27,7 @@ public final class BrandApiFixtures {
     public static final String DEFAULT_STATUS = "ACTIVE";
     public static final String DEFAULT_LOGO_URL = "https://example.com/brand-logo.png";
     public static final Instant DEFAULT_INSTANT = Instant.parse("2025-01-23T01:30:00Z");
-    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23T10:30:00+09:00";
+    public static final String DEFAULT_FORMATTED_TIME = "2025-01-23 10:30:00";
 
     // ===== SearchBrandsApiRequest =====
 

@@ -126,8 +126,8 @@ public final class CommonCodeTypeApiFixtures {
                 DEFAULT_DESCRIPTION,
                 DEFAULT_DISPLAY_ORDER,
                 true,
-                "2025-01-23T10:30:00+09:00",
-                "2025-01-23T10:30:00+09:00");
+                "2025-01-23 10:30:00",
+                "2025-01-23 10:30:00");
     }
 
     public static List<CommonCodeTypeApiResponse> apiResponses(int count) {

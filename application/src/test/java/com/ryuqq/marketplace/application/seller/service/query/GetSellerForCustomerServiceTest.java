@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.ryuqq.marketplace.application.seller.dto.composite.SellerCompositeResult;
+import com.ryuqq.marketplace.application.seller.dto.response.SellerCompositeResult;
 import com.ryuqq.marketplace.application.seller.manager.SellerCompositionReadManager;
 import com.ryuqq.marketplace.domain.seller.exception.SellerNotFoundException;
 import java.time.Instant;

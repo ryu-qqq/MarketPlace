@@ -1,9 +1,9 @@
 package com.ryuqq.marketplace.application.order.service.query;
 
 import com.ryuqq.marketplace.application.order.assembler.OrderAssembler;
-import com.ryuqq.marketplace.application.order.dto.composite.ProductOrderDetailBundle;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.internal.OrderReadFacade;
+import com.ryuqq.marketplace.application.order.internal.ProductOrderDetailBundle;
 import com.ryuqq.marketplace.application.order.port.in.query.GetOrderDetailUseCase;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class GetOrderDetailService implements GetOrderDetailUseCase {
     }
 
     @Override
-    public ProductOrderDetailResult execute(long orderItemId) {
+    public ProductOrderDetailResult execute(String orderItemId) {
         ProductOrderDetailBundle bundle = readFacade.getProductOrderDetailBundle(orderItemId);
         return assembler.toProductOrderDetailResult(bundle);
     }

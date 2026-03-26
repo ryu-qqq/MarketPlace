@@ -12,6 +12,12 @@ spring:
   application:
     name: marketplace-scheduler
 
+  # 스케줄러 스레드 풀 (기본 1 → 4로 증설)
+  task:
+    scheduling:
+      pool:
+        size: 4
+
   # ========================================
   # Config Import (Adapter Layer Settings)
   # ========================================
@@ -33,6 +39,9 @@ spring:
       - optional:classpath:ses-${spring.profiles.active:local}.yml
       - classpath:sqs-client.yml
       - optional:classpath:sqs-client-${spring.profiles.active:local}.yml
+      - optional:classpath:naver-commerce.yml
+      - optional:classpath:setof-commerce.yml
+      - optional:classpath:sellic-commerce.yml
       - classpath:spring-ai-client.yml
       - optional:classpath:spring-ai-client-${spring.profiles.active:local}.yml
 

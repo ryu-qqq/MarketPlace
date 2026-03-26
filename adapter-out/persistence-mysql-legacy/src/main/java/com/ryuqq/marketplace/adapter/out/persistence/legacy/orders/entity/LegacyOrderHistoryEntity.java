@@ -42,6 +42,18 @@ public class LegacyOrderHistoryEntity extends LegacyBaseEntity {
 
     protected LegacyOrderHistoryEntity() {}
 
+    public static LegacyOrderHistoryEntity create(
+            long orderId, String orderStatus, String changeReason, String changeDetailReason) {
+        LegacyOrderHistoryEntity entity = new LegacyOrderHistoryEntity();
+        entity.orderId = orderId;
+        entity.orderStatus = orderStatus;
+        entity.changeReason = changeReason;
+        entity.changeDetailReason = changeDetailReason;
+        entity.deleteYn = "N";
+        entity.initAuditFields("SYSTEM");
+        return entity;
+    }
+
     public Long getId() {
         return id;
     }

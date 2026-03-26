@@ -37,4 +37,12 @@ public class ImageVariantQueryAdapter implements ImageVariantQueryPort {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<ImageVariant> findBySourceImageIds(
+            List<Long> sourceImageIds, ImageSourceType sourceType) {
+        return queryDslRepository.findBySourceImageIds(sourceImageIds, sourceType).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }

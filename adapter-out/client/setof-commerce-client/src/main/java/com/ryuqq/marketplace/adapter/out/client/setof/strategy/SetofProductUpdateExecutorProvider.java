@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  * </ul>
  */
 @Component
-@ConditionalOnProperty(prefix = "setof-commerce", name = "service-token")
+@ConditionalOnProperty(prefix = "setof-commerce", name = "base-url")
 public class SetofProductUpdateExecutorProvider {
 
     private static final Logger log =

@@ -48,7 +48,7 @@ public final class SellerApplicationApiFixtures {
     public static final int DEFAULT_SETTLEMENT_DAY = 15;
     public static final String DEFAULT_REJECTION_REASON = "서류 미비";
     public static final Instant DEFAULT_INSTANT = Instant.parse("2025-01-23T01:30:00Z");
-    public static final String DEFAULT_ISO_DATE = "2025-01-23T10:30:00+09:00";
+    public static final String DEFAULT_ISO_DATE = "2025-01-23 10:30:00";
 
     // ===== ApplySellerApplicationApiRequest =====
 

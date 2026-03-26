@@ -22,7 +22,6 @@ public record ProductOrderListResult(
      *
      * @param orderId 주문 ID
      * @param orderNumber 주문번호
-     * @param status 주문 상태
      * @param salesChannelId 판매채널 ID
      * @param shopId 샵 ID
      * @param shopCode 샵 코드
@@ -38,7 +37,6 @@ public record ProductOrderListResult(
     public record OrderInfo(
             String orderId,
             String orderNumber,
-            String status,
             long salesChannelId,
             long shopId,
             String shopCode,
@@ -57,12 +55,10 @@ public record ProductOrderListResult(
      * @param orderItemId 주문 상품 ID
      * @param productGroupId 내부 상품그룹 ID
      * @param productId 내부 상품 ID
-     * @param sellerId 셀러 ID
-     * @param brandId 브랜드 ID
      * @param skuCode SKU 코드
      * @param productGroupName 상품그룹명
-     * @param brandName 브랜드명
-     * @param sellerName 셀러명
+     * @param brandName 브랜드명 (스냅샷)
+     * @param sellerName 셀러명 (스냅샷)
      * @param mainImageUrl 대표 이미지 URL
      * @param externalProductId 외부 상품 ID
      * @param externalOptionId 외부 옵션 ID
@@ -76,11 +72,10 @@ public record ProductOrderListResult(
      * @param paymentAmount 실결제 금액
      */
     public record ProductOrderInfo(
-            long orderItemId,
+            String orderItemId,
+            String orderItemNumber,
             long productGroupId,
             long productId,
-            long sellerId,
-            long brandId,
             String skuCode,
             String productGroupName,
             String brandName,
@@ -140,16 +135,10 @@ public record ProductOrderListResult(
     /**
      * 배송 정보.
      *
-     * @param deliveryStatus 배송 상태
-     * @param shipmentCompanyCode 택배사 코드
-     * @param invoice 송장번호
-     * @param shipmentCompletedDate 배송 완료일
+     * @param orderItemStatus 주문 상품 상태
+     * @param externalOrderStatus 외부몰 주문 상태
      */
-    public record DeliveryInfo(
-            String deliveryStatus,
-            String shipmentCompanyCode,
-            String invoice,
-            Instant shipmentCompletedDate) {}
+    public record DeliveryInfo(String orderItemStatus, String externalOrderStatus) {}
 
     /**
      * 취소 요약 정보.

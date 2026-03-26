@@ -30,7 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * OmsProductCompositionQueryAdapterTest - OMS 상품 Composition 조회 어댑터 단위 테스트.
  *
- * <p>2-pass 전략: 1) base composite 조회 → 2) enrichment 조회 + 매핑 로직 검증.
+ * <p>2-pass 전략: 1) outbound_products 기준 base composite 조회 → 2) enrichment 조회 + 매핑 로직 검증.
  */
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
@@ -64,13 +64,13 @@ class OmsProductCompositionQueryAdapterTest {
                     OmsProductCompositeDtoFixtures.mainImageMap(List.of(100L));
             Map<Long, OmsProductPriceStockDto> priceStockMap =
                     OmsProductCompositeDtoFixtures.priceStockMap(List.of(100L));
-            Map<Long, OmsProductSyncInfoDto> syncInfoMap =
+            Map<String, OmsProductSyncInfoDto> syncInfoMap =
                     OmsProductCompositeDtoFixtures.completedSyncInfoMap(List.of(100L));
             List<OmsProductListResult> expected =
                     List.of(
                             new OmsProductListResult(
                                     100L,
-                                    "PG-100",
+                                    "EXT-12345",
                                     "테스트 상품",
                                     "https://example.com/image.jpg",
                                     50000,
@@ -81,7 +81,9 @@ class OmsProductCompositionQueryAdapterTest {
                                     java.time.Instant.now(),
                                     "SUCCESS",
                                     "연동완료",
-                                    java.time.Instant.now()));
+                                    java.time.Instant.now(),
+                                    1L,
+                                    "스마트스토어"));
 
             given(compositionRepository.findByCriteria(criteria)).willReturn(composites);
             given(enrichmentRepository.fetchMainImages(anyList())).willReturn(imageMap);

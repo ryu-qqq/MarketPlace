@@ -11,16 +11,15 @@ import com.ryuqq.marketplace.domain.common.CommonVoFixtures;
 import com.ryuqq.marketplace.domain.common.vo.Address;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
-import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeItem;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimId;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimNumber;
-import com.ryuqq.marketplace.domain.exchange.id.ExchangeItemId;
 import com.ryuqq.marketplace.domain.exchange.vo.AmountAdjustment;
+import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
-import com.ryuqq.marketplace.domain.exchange.vo.ExchangeTarget;
-import java.util.List;
+import com.ryuqq.marketplace.domain.order.id.OrderItemId;
+import com.ryuqq.marketplace.domain.refund.vo.HoldInfo;
 
 /**
  * ExchangeClaim 도메인 테스트 Fixtures.
@@ -36,7 +35,9 @@ public final class ExchangeFixtures {
 
     // ===== 기본 상수 =====
     private static final String DEFAULT_CLAIM_ID = "01900000-0000-7000-0000-000000000001";
-    private static final String DEFAULT_ORDER_ID = "ORDER-20260101-0001";
+    private static final String DEFAULT_ORDER_ITEM_ID = "01900000-0000-7000-0000-000000000010";
+    private static final long DEFAULT_SELLER_ID = 100L;
+    private static final int DEFAULT_EXCHANGE_QTY = 1;
     private static final String DEFAULT_REQUESTED_BY = "buyer@example.com";
     private static final String DEFAULT_PROCESSED_BY = "admin@marketplace.com";
     private static final String DEFAULT_LINKED_ORDER_ID = "ORDER-20260101-9999";
@@ -56,8 +57,8 @@ public final class ExchangeFixtures {
         return ExchangeClaimNumber.of("EXC-20260218-0001");
     }
 
-    public static ExchangeItemId defaultExchangeItemId() {
-        return ExchangeItemId.of(1L);
+    public static OrderItemId defaultOrderItemId() {
+        return OrderItemId.of(DEFAULT_ORDER_ITEM_ID);
     }
 
     // ===== VO Fixtures =====
@@ -70,13 +71,24 @@ public final class ExchangeFixtures {
         return new ExchangeReason(type, detail);
     }
 
-    public static ExchangeTarget defaultExchangeTarget() {
-        return new ExchangeTarget(1001L, 2001L, "SKU-RED-XL", 1);
+    public static ExchangeOption defaultExchangeOption() {
+        return new ExchangeOption(1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1);
     }
 
-    public static ExchangeTarget exchangeTarget(
-            long productGroupId, long productId, String skuCode, int quantity) {
-        return new ExchangeTarget(productGroupId, productId, skuCode, quantity);
+    public static ExchangeOption exchangeOption(
+            long originalProductId,
+            String originalSkuCode,
+            long targetProductGroupId,
+            long targetProductId,
+            String targetSkuCode,
+            int quantity) {
+        return new ExchangeOption(
+                originalProductId,
+                originalSkuCode,
+                targetProductGroupId,
+                targetProductId,
+                targetSkuCode,
+                quantity);
     }
 
     public static AmountAdjustment defaultAmountAdjustment() {
@@ -102,30 +114,17 @@ public final class ExchangeFixtures {
         return ClaimShipment.forNew(shipmentId, method, feeInfo, sender, receiver);
     }
 
-    // ===== ExchangeItem Fixtures =====
-
-    public static ExchangeItem defaultExchangeItem() {
-        return ExchangeItem.forNew(10001L, 1);
-    }
-
-    public static ExchangeItem exchangeItem(long orderItemId, int qty) {
-        return ExchangeItem.forNew(orderItemId, qty);
-    }
-
-    public static ExchangeItem reconstitutedExchangeItem() {
-        return ExchangeItem.reconstitute(defaultExchangeItemId(), 10001L, 1);
-    }
-
     // ===== ExchangeClaim Fixtures - forNew =====
 
     public static ExchangeClaim newExchangeClaim() {
         return ExchangeClaim.forNew(
                 defaultExchangeClaimId(),
                 defaultExchangeClaimNumber(),
-                DEFAULT_ORDER_ID,
-                List.of(defaultExchangeItem()),
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_EXCHANGE_QTY,
                 defaultExchangeReason(),
-                defaultExchangeTarget(),
+                defaultExchangeOption(),
                 defaultAmountAdjustment(),
                 defaultCollectShipment(),
                 DEFAULT_REQUESTED_BY,
@@ -166,16 +165,43 @@ public final class ExchangeFixtures {
         return reconstitute(ExchangeStatus.CANCELLED);
     }
 
+    public static ExchangeClaim holdExchangeClaim() {
+        HoldInfo holdInfo = HoldInfo.of("추가 확인이 필요합니다", CommonVoFixtures.yesterday());
+        return ExchangeClaim.reconstitute(
+                defaultExchangeClaimId(),
+                defaultExchangeClaimNumber(),
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_EXCHANGE_QTY,
+                ExchangeStatus.REQUESTED,
+                defaultExchangeReason(),
+                defaultExchangeOption(),
+                defaultAmountAdjustment(),
+                defaultCollectShipment(),
+                holdInfo,
+                null,
+                DEFAULT_REQUESTED_BY,
+                DEFAULT_PROCESSED_BY,
+                CommonVoFixtures.yesterday(),
+                CommonVoFixtures.yesterday(),
+                null,
+                CommonVoFixtures.yesterday(),
+                CommonVoFixtures.now());
+    }
+
     private static ExchangeClaim reconstitute(ExchangeStatus status) {
         return ExchangeClaim.reconstitute(
                 defaultExchangeClaimId(),
                 defaultExchangeClaimNumber(),
-                DEFAULT_ORDER_ID,
+                defaultOrderItemId(),
+                DEFAULT_SELLER_ID,
+                DEFAULT_EXCHANGE_QTY,
                 status,
                 defaultExchangeReason(),
-                defaultExchangeTarget(),
+                defaultExchangeOption(),
                 defaultAmountAdjustment(),
                 defaultCollectShipment(),
+                null,
                 status == ExchangeStatus.SHIPPING || status == ExchangeStatus.COMPLETED
                         ? DEFAULT_LINKED_ORDER_ID
                         : null,
@@ -185,7 +211,6 @@ public final class ExchangeFixtures {
                 status != ExchangeStatus.REQUESTED ? CommonVoFixtures.yesterday() : null,
                 status == ExchangeStatus.COMPLETED ? CommonVoFixtures.now() : null,
                 CommonVoFixtures.yesterday(),
-                CommonVoFixtures.now(),
-                List.of(reconstitutedExchangeItem()));
+                CommonVoFixtures.now());
     }
 }

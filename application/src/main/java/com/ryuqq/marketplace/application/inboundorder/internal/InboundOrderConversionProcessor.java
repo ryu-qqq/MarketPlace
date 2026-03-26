@@ -1,10 +1,8 @@
 package com.ryuqq.marketplace.application.inboundorder.internal;
 
 import com.ryuqq.marketplace.application.inboundorder.factory.InboundOrderConversionFactory;
-import com.ryuqq.marketplace.application.inboundorder.manager.InboundOrderCommandManager;
 import com.ryuqq.marketplace.application.order.dto.command.CreateOrderCommand;
 import com.ryuqq.marketplace.application.order.factory.OrderCommandFactory;
-import com.ryuqq.marketplace.application.order.manager.OrderCommandManager;
 import com.ryuqq.marketplace.domain.inboundorder.aggregate.InboundOrder;
 import com.ryuqq.marketplace.domain.inboundorder.vo.InboundOrders;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
@@ -23,18 +21,15 @@ public class InboundOrderConversionProcessor {
 
     private final InboundOrderConversionFactory conversionFactory;
     private final OrderCommandFactory orderCommandFactory;
-    private final OrderCommandManager orderCommandManager;
-    private final InboundOrderCommandManager inboundOrderCommandManager;
+    private final InboundOrderPersistenceFacade persistenceFacade;
 
     public InboundOrderConversionProcessor(
             InboundOrderConversionFactory conversionFactory,
             OrderCommandFactory orderCommandFactory,
-            OrderCommandManager orderCommandManager,
-            InboundOrderCommandManager inboundOrderCommandManager) {
+            InboundOrderPersistenceFacade persistenceFacade) {
         this.conversionFactory = conversionFactory;
         this.orderCommandFactory = orderCommandFactory;
-        this.orderCommandManager = orderCommandManager;
-        this.inboundOrderCommandManager = inboundOrderCommandManager;
+        this.persistenceFacade = persistenceFacade;
     }
 
     /**
@@ -51,8 +46,8 @@ public class InboundOrderConversionProcessor {
             try {
                 CreateOrderCommand command = conversionFactory.toCreateOrderCommand(inbound);
                 Order order = orderCommandFactory.createOrder(command);
-                orderCommandManager.persist(order);
                 inbound.markConverted(order.idValue(), now);
+                persistenceFacade.persistOrderAndInbound(order, inbound, now);
                 created++;
             } catch (Exception e) {
                 log.warn("InboundOrder 변환 실패: externalOrderNo={}", inbound.externalOrderNo(), e);
@@ -63,7 +58,10 @@ public class InboundOrderConversionProcessor {
 
         int pending = orders.pendingMapping().size();
 
-        inboundOrderCommandManager.persistAll(orders.all());
+        List<InboundOrder> remaining = orders.notConverted();
+        if (!remaining.isEmpty()) {
+            persistenceFacade.persistRemainingInboundOrders(remaining);
+        }
 
         return new ConversionResult(created, failed, pending);
     }
