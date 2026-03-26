@@ -318,19 +318,19 @@ class RefundQueryControllerRestDocsTest {
                                     DEFAULT_REFUND_CLAIM_ID))
                     .andExpect(status().isOk())
                     .andExpect(
-                            jsonPath("$.data.refundClaimInfo.refundClaimId")
+                            jsonPath("$.data.claimInfo.refundClaimId")
                                     .value(DEFAULT_REFUND_CLAIM_ID))
                     .andExpect(
-                            jsonPath("$.data.refundClaimInfo.claimNumber")
+                            jsonPath("$.data.claimInfo.claimNumber")
                                     .value(RefundApiFixtures.DEFAULT_CLAIM_NUMBER))
                     .andExpect(
                             jsonPath("$.data.orderId")
                                     .value(RefundApiFixtures.DEFAULT_ORDER_ITEM_ID))
                     .andExpect(
-                            jsonPath("$.data.refundClaimInfo.refundStatus")
+                            jsonPath("$.data.claimInfo.status")
                                     .value(RefundApiFixtures.DEFAULT_REFUND_STATUS))
-                    .andExpect(jsonPath("$.data.refundClaimInfo.refundInfo").exists())
-                    .andExpect(jsonPath("$.data.refundClaimInfo.collectShipment").exists())
+                    .andExpect(jsonPath("$.data.claimInfo.refundInfo").exists())
+                    .andExpect(jsonPath("$.data.claimInfo.collectShipment").exists())
                     .andExpect(jsonPath("$.data.claimHistories").isArray())
                     .andDo(
                             document(
@@ -346,92 +346,92 @@ class RefundQueryControllerRestDocsTest {
                                                     .description(
                                                             "주문 ID (프론트: orderId = 내부"
                                                                     + " orderItemId)"),
-                                            fieldWithPath("data.orderProduct")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description("주문 상품 정보")
+                                            fieldWithPath("data.orderProducts")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("주문 상품 정보 목록")
                                                     .optional(),
-                                            fieldWithPath("data.refundClaimInfo")
+                                            fieldWithPath("data.claimInfo")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("환불 클레임 정보"),
-                                            fieldWithPath("data.refundClaimInfo.refundClaimId")
+                                            fieldWithPath("data.claimInfo.refundClaimId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 클레임 ID (UUIDv7)"),
-                                            fieldWithPath("data.refundClaimInfo.claimNumber")
+                                            fieldWithPath("data.claimInfo.claimNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 클레임 번호"),
-                                            fieldWithPath("data.refundClaimInfo.refundQty")
+                                            fieldWithPath("data.claimInfo.refundQty")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("환불 수량"),
-                                            fieldWithPath("data.refundClaimInfo.refundStatus")
+                                            fieldWithPath("data.claimInfo.status")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 상태"),
-                                            fieldWithPath("data.refundClaimInfo.reasonType")
+                                            fieldWithPath("data.claimInfo.reasonType")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 사유 유형"),
-                                            fieldWithPath("data.refundClaimInfo.reasonDetail")
+                                            fieldWithPath("data.claimInfo.reasonDetail")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 상세 사유"),
-                                            fieldWithPath("data.refundClaimInfo.refundInfo")
+                                            fieldWithPath("data.claimInfo.refundInfo")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("환불 금액 정보 (없을 경우 null)")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.refundClaimInfo.refundInfo.originalAmount")
+                                                            "data.claimInfo.refundInfo.originalAmount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("원래 금액")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.refundClaimInfo.refundInfo.finalAmount")
+                                                            "data.claimInfo.refundInfo.finalAmount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("최종 환불 금액")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.refundClaimInfo.refundInfo.deductionAmount")
+                                                            "data.claimInfo.refundInfo.deductionAmount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("차감 금액")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.refundClaimInfo.refundInfo.deductionReason")
+                                                            "data.claimInfo.refundInfo.deductionReason")
                                                     .type(JsonFieldType.STRING)
                                                     .description("차감 사유")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.refundClaimInfo.refundInfo.refundMethod")
+                                                            "data.claimInfo.refundInfo.refundMethod")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 방식")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.refundClaimInfo.refundInfo.refundedAt")
+                                                            "data.claimInfo.refundInfo.refundedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 완료일시 (ISO 8601, KST)")
                                                     .optional(),
-                                            fieldWithPath("data.refundClaimInfo.holdInfo")
+                                            fieldWithPath("data.claimInfo.holdInfo")
                                                     .type(JsonFieldType.NULL)
                                                     .description("보류 정보 (없을 경우 null)")
                                                     .optional(),
-                                            fieldWithPath("data.refundClaimInfo.collectShipment")
+                                            fieldWithPath("data.claimInfo.collectShipment")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("수거 배송 정보 (없을 경우 null)")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.refundClaimInfo.collectShipment.collectDeliveryCompany")
+                                                            "data.claimInfo.collectShipment.collectDeliveryCompany")
                                                     .type(JsonFieldType.STRING)
                                                     .description("수거 택배사명")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.refundClaimInfo.collectShipment.collectTrackingNumber")
+                                                            "data.claimInfo.collectShipment.collectTrackingNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("수거 송장번호")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.refundClaimInfo.collectShipment.collectStatus")
+                                                            "data.claimInfo.collectShipment.collectStatus")
                                                     .type(JsonFieldType.STRING)
                                                     .description("수거 상태")
                                                     .optional(),
-                                            fieldWithPath("data.refundClaimInfo.requestedAt")
+                                            fieldWithPath("data.claimInfo.requestedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("요청일시 (ISO 8601, KST)"),
-                                            fieldWithPath("data.refundClaimInfo.completedAt")
+                                            fieldWithPath("data.claimInfo.completedAt")
                                                     .type(JsonFieldType.NULL)
                                                     .description(
                                                             "완료일시 (ISO 8601, KST) - 미완료 시 null")
@@ -528,7 +528,7 @@ class RefundQueryControllerRestDocsTest {
             RefundDetailApiResponse holdDetailResponse =
                     new RefundDetailApiResponse(
                             RefundApiFixtures.DEFAULT_ORDER_ITEM_ID,
-                            null,
+                            java.util.List.of(),
                             holdClaimInfo,
                             null,
                             null,
@@ -551,12 +551,12 @@ class RefundQueryControllerRestDocsTest {
                                     REFUNDS_URL + RefundAdminEndpoints.REFUND_CLAIM_ID,
                                     holdRefundClaimId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.refundClaimInfo.refundStatus").value("HOLD"))
-                    .andExpect(jsonPath("$.data.refundClaimInfo.holdInfo").exists())
+                    .andExpect(jsonPath("$.data.claimInfo.status").value("HOLD"))
+                    .andExpect(jsonPath("$.data.claimInfo.holdInfo").exists())
                     .andExpect(
-                            jsonPath("$.data.refundClaimInfo.holdInfo.holdReason")
+                            jsonPath("$.data.claimInfo.holdInfo.holdReason")
                                     .value("추가 확인 필요"))
-                    .andExpect(jsonPath("$.data.refundClaimInfo.refundInfo").doesNotExist());
+                    .andExpect(jsonPath("$.data.claimInfo.refundInfo").doesNotExist());
         }
     }
 }

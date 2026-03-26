@@ -344,7 +344,7 @@ public final class RefundApiFixtures {
     // ===== RefundDetailApiResponse =====
 
     public static RefundDetailApiResponse detailApiResponse(String refundClaimId) {
-        RefundClaimInfoApiResponse refundClaimInfo =
+        RefundClaimInfoApiResponse claimInfo =
                 new RefundClaimInfoApiResponse(
                         refundClaimId,
                         DEFAULT_CLAIM_NUMBER,
@@ -360,8 +360,8 @@ public final class RefundApiFixtures {
                         null);
         return new RefundDetailApiResponse(
                 DEFAULT_ORDER_ITEM_ID,
-                null,
-                refundClaimInfo,
+                List.of(),
+                claimInfo,
                 null,
                 null,
                 null,

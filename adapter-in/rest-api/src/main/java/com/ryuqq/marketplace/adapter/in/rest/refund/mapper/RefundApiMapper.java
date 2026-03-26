@@ -237,7 +237,7 @@ public class RefundApiMapper {
                             nullToEmpty(result.collectShipment().collectStatus()));
         }
 
-        RefundDetailApiResponse.RefundClaimInfoApiResponse refundClaimInfo =
+        RefundDetailApiResponse.RefundClaimInfoApiResponse claimInfo =
                 new RefundDetailApiResponse.RefundClaimInfoApiResponse(
                         nullToEmpty(result.refundClaimId()),
                         nullToEmpty(result.claimNumber()),
@@ -251,10 +251,13 @@ public class RefundApiMapper {
                         formatInstant(result.requestedAt()),
                         formatInstant(result.completedAt()));
 
+        List<ClaimListItemApiResponseV4.OrderProductV4> orderProducts =
+                orderProduct != null ? List.of(orderProduct) : List.of();
+
         return new RefundDetailApiResponse(
                 nullToEmpty(result.orderItemId()), // V4 간극
-                orderProduct,
-                refundClaimInfo,
+                orderProducts,
+                claimInfo,
                 buyerInfo,
                 payment,
                 receiverInfo,

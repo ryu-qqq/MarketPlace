@@ -175,7 +175,7 @@ class RefundFlowE2ETest extends E2ETestBase {
                     .get(REFUND_DETAIL, refundClaimId)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.refundClaimInfo.refundStatus", equalTo("COLLECTING"));
+                    .body("data.claimInfo.status", equalTo("COLLECTING"));
         }
     }
 
@@ -224,7 +224,7 @@ class RefundFlowE2ETest extends E2ETestBase {
                     .get(REFUND_DETAIL, refundClaimId)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.refundClaimInfo.refundStatus", equalTo("REJECTED"));
+                    .body("data.claimInfo.status", equalTo("REJECTED"));
         }
     }
 

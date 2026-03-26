@@ -14,8 +14,8 @@ import java.util.List;
 @Schema(description = "환불 상세")
 public record RefundDetailApiResponse(
         @Schema(description = "주문 ID (프론트: orderId = 내부 orderItemId)") String orderId,
-        @Schema(description = "주문 상품 정보") ClaimListItemApiResponseV4.OrderProductV4 orderProduct,
-        @Schema(description = "환불 클레임 정보") RefundClaimInfoApiResponse refundClaimInfo,
+        @Schema(description = "주문 상품 정보 목록") List<ClaimListItemApiResponseV4.OrderProductV4> orderProducts,
+        @Schema(description = "환불 클레임 정보") RefundClaimInfoApiResponse claimInfo,
         @Schema(description = "구매자 정보") ClaimListItemApiResponseV4.BuyerInfoV4 buyerInfo,
         @Schema(description = "결제 정보") ClaimListItemApiResponseV4.PaymentV4 payment,
         @Schema(description = "수령인 정보") ClaimListItemApiResponseV4.ReceiverInfoV4 receiverInfo,
@@ -31,7 +31,7 @@ public record RefundDetailApiResponse(
             @Schema(description = "환불 클레임 ID (UUIDv7)") String refundClaimId,
             @Schema(description = "환불 클레임 번호") String claimNumber,
             @Schema(description = "환불 수량") int refundQty,
-            @Schema(description = "환불 상태") String refundStatus,
+            @Schema(description = "환불 상태") String status,
             @Schema(description = "환불 사유 유형") String reasonType,
             @Schema(description = "환불 상세 사유") String reasonDetail,
             @Schema(description = "환불 정보") ClaimListItemApiResponseV4.RefundInfoV4 refundInfo,

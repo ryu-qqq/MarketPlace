@@ -342,7 +342,7 @@ public final class ExchangeApiFixtures {
     }
 
     public static ExchangeDetailApiResponse detailApiResponse() {
-        ExchangeClaimInfoApiResponse claimInfo =
+        ExchangeClaimInfoApiResponse exchangeClaimInfo =
                 new ExchangeClaimInfoApiResponse(
                         DEFAULT_EXCHANGE_CLAIM_ID,
                         DEFAULT_CLAIM_NUMBER,
@@ -367,8 +367,8 @@ public final class ExchangeApiFixtures {
                         null);
         return new ExchangeDetailApiResponse(
                 DEFAULT_ORDER_ITEM_ID,
-                null,
-                claimInfo,
+                java.util.List.of(),
+                exchangeClaimInfo,
                 null,
                 null,
                 null,

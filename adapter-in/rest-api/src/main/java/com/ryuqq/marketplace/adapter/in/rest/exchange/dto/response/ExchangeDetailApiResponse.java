@@ -14,8 +14,8 @@ import java.util.List;
 @Schema(description = "교환 상세")
 public record ExchangeDetailApiResponse(
         @Schema(description = "주문 ID (프론트: orderId = 내부 orderItemId)") String orderId,
-        @Schema(description = "주문 상품 정보") ClaimListItemApiResponseV4.OrderProductV4 orderProduct,
-        @Schema(description = "교환 클레임 정보") ExchangeClaimInfoApiResponse exchangeClaimInfo,
+        @Schema(description = "주문 상품 정보 목록") List<ClaimListItemApiResponseV4.OrderProductV4> orderProducts,
+        @Schema(description = "교환 클레임 정보") ExchangeClaimInfoApiResponse claimInfo,
         @Schema(description = "구매자 정보") ClaimListItemApiResponseV4.BuyerInfoV4 buyerInfo,
         @Schema(description = "결제 정보") ClaimListItemApiResponseV4.PaymentV4 payment,
         @Schema(description = "수령인 정보") ClaimListItemApiResponseV4.ReceiverInfoV4 receiverInfo,
@@ -32,7 +32,7 @@ public record ExchangeDetailApiResponse(
             @Schema(description = "교환 클레임 번호") String claimNumber,
             @Schema(description = "판매자 ID") long sellerId,
             @Schema(description = "교환 수량") int exchangeQty,
-            @Schema(description = "교환 상태") String exchangeStatus,
+            @Schema(description = "교환 상태") String status,
             @Schema(description = "교환 사유 유형") String reasonType,
             @Schema(description = "교환 상세 사유") String reasonDetail,
             @Schema(description = "교환 옵션 정보") ExchangeOptionApiResponse exchangeOption,

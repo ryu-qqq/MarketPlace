@@ -287,7 +287,7 @@ public class ExchangeApiMapper {
                             nullToEmpty(result.collectShipment().collectStatus()));
         }
 
-        ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse exchangeClaimInfo =
+        ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse claimInfo =
                 new ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse(
                         nullToEmpty(result.exchangeClaimId()),
                         nullToEmpty(result.claimNumber()),
@@ -303,10 +303,13 @@ public class ExchangeApiMapper {
                         formatInstant(result.requestedAt()),
                         formatInstant(result.completedAt()));
 
+        List<ClaimListItemApiResponseV4.OrderProductV4> orderProducts =
+                orderProduct != null ? List.of(orderProduct) : List.of();
+
         return new ExchangeDetailApiResponse(
                 nullToEmpty(result.orderItemId()), // V4 간극
-                orderProduct,
-                exchangeClaimInfo,
+                orderProducts,
+                claimInfo,
                 buyerInfo,
                 payment,
                 receiverInfo,
