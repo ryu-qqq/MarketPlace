@@ -41,4 +41,7 @@ public final class InternalWebhookEndpoints {
 
     /** QnA 수신 */
     public static final String QNA_RECEIVED = QNA_BASE + "/received";
+
+    /** QnA 수정 */
+    public static final String QNA_UPDATED = QNA_BASE + "/updated";
 }

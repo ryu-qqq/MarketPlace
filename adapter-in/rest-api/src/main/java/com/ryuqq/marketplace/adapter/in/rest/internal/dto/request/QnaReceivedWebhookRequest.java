@@ -23,6 +23,7 @@ public record QnaReceivedWebhookRequest(
      * QnA 아이템 요청.
      *
      * @param externalQnaId 외부 QnA ID (세토프 QnA PK)
+     * @param parentExternalQnaId 부모 QnA ID (대댓글일 때, nullable → 최상위 질문)
      * @param qnaType 문의 유형 (PRODUCT, SHIPPING, ORDER, EXCHANGE, REFUND, RESTOCK, PRICE, ETC)
      * @param questionTitle 문의 제목
      * @param questionContent 문의 내용
@@ -34,6 +35,7 @@ public record QnaReceivedWebhookRequest(
      */
     public record QnaItemRequest(
             @NotNull Long externalQnaId,
+            Long parentExternalQnaId,
             @NotBlank String qnaType,
             String questionTitle,
             @NotBlank String questionContent,

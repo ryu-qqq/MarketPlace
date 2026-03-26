@@ -9,6 +9,8 @@ import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnRequeste
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdrawnWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdrawnWebhookRequest.ReturnWithdrawnItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaReceivedWebhookRequest;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaUpdatedWebhookRequest;
+import com.ryuqq.marketplace.application.inboundqna.dto.external.QnaUpdatePayload;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderItemPayload;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
@@ -177,11 +179,27 @@ public class InternalWebhookApiMapper {
             QnaReceivedWebhookRequest.QnaItemRequest item) {
         return new ExternalQnaPayload(
                 String.valueOf(item.externalQnaId()),
+                item.parentExternalQnaId() != null
+                        ? String.valueOf(item.parentExternalQnaId())
+                        : null,
                 item.qnaType(),
+                item.questionTitle(),
                 item.questionContent(),
                 item.questionAuthor(),
                 item.externalProductId() != null ? String.valueOf(item.externalProductId()) : null,
                 item.externalOrderId() != null ? String.valueOf(item.externalOrderId()) : null,
                 null);
+    }
+
+    /** QnA 수정 요청 → QnaUpdatePayload 목록 변환. */
+    public List<QnaUpdatePayload> toQnaUpdatePayloads(QnaUpdatedWebhookRequest request) {
+        return request.qnas().stream()
+                .map(
+                        item ->
+                                new QnaUpdatePayload(
+                                        String.valueOf(item.externalQnaId()),
+                                        item.questionTitle(),
+                                        item.questionContent()))
+                .toList();
     }
 }

@@ -37,6 +37,20 @@ public class QnaReadManager {
     }
 
     @Transactional(readOnly = true)
+    public Qna getBySalesChannelIdAndExternalQnaId(long salesChannelId, String externalQnaId) {
+        return queryPort
+                .findBySalesChannelIdAndExternalQnaId(salesChannelId, externalQnaId)
+                .orElseThrow(
+                        () ->
+                                new QnaException(
+                                        QnaErrorCode.QNA_NOT_FOUND,
+                                        "Qna not found: salesChannelId="
+                                                + salesChannelId
+                                                + ", externalQnaId="
+                                                + externalQnaId));
+    }
+
+    @Transactional(readOnly = true)
     public List<Qna> search(QnaSearchCondition condition) {
         return queryPort.search(condition);
     }

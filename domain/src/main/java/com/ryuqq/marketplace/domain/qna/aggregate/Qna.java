@@ -26,8 +26,8 @@ public class Qna {
     private final Long orderId;
     private final QnaType qnaType;
     private final QnaSource source;
-    private final String questionTitle;
-    private final String questionContent;
+    private String questionTitle;
+    private String questionContent;
     private final String questionAuthor;
 
     private QnaStatus status;
@@ -183,6 +183,21 @@ public class Qna {
         this.updatedAt = now;
 
         return reply;
+    }
+
+    /**
+     * 질문 내용을 수정합니다.
+     *
+     * <p>외부몰에서 고객이 질문 내용을 수정한 경우 호출합니다.
+     */
+    public void updateQuestion(String newTitle, String newContent, Instant now) {
+        if (newTitle != null && !newTitle.isBlank()) {
+            this.questionTitle = newTitle;
+        }
+        if (newContent != null && !newContent.isBlank()) {
+            this.questionContent = newContent;
+        }
+        this.updatedAt = now;
     }
 
     /**

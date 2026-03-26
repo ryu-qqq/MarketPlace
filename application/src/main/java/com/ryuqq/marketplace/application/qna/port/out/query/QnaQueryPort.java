@@ -11,6 +11,8 @@ public interface QnaQueryPort {
     Optional<Qna> findById(long id);
     List<Qna> findBySellerId(long sellerId, QnaStatus status, int offset, int limit);
     long countBySellerId(long sellerId, QnaStatus status);
+    Optional<Qna> findBySalesChannelIdAndExternalQnaId(long salesChannelId, String externalQnaId);
+
     List<Qna> search(QnaSearchCondition condition);
     long countByCondition(QnaSearchCondition condition);
 }

@@ -42,6 +42,19 @@ public class QnaQueryAdapter implements QnaQueryPort {
     }
 
     @Override
+    public Optional<Qna> findBySalesChannelIdAndExternalQnaId(
+            long salesChannelId, String externalQnaId) {
+        return queryDslRepository
+                .findBySalesChannelIdAndExternalQnaId(salesChannelId, externalQnaId)
+                .map(
+                        entity -> {
+                            List<QnaReplyJpaEntity> replies =
+                                    replyRepository.findByQnaId(entity.getId());
+                            return mapper.toDomain(entity, replies);
+                        });
+    }
+
+    @Override
     public List<Qna> findBySellerId(long sellerId, QnaStatus status, int offset, int limit) {
         QnaJpaEntity.Status entityStatus = status != null
                 ? QnaJpaEntity.Status.valueOf(status.name()) : null;
