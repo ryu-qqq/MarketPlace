@@ -404,6 +404,8 @@ module "ecs_service" {
     { name = "SQS_INTELLIGENCE_AGGREGATION_URL", value = local.sqs_intelligence_aggregation_queue_url },
     # Sentry
     { name = "SENTRY_DSN", value = local.sentry_dsn },
+    # Setof Commerce
+    { name = "SETOF_COMMERCE_BASE_URL", value = "http://setof-commerce-web-api-admin-prod.connectly.local:8081" },
     # Naver Commerce
     { name = "NAVER_COMMERCE_CLIENT_ID", value = data.aws_ssm_parameter.naver_commerce_client_id.value },
     # Legacy DB
@@ -419,6 +421,8 @@ module "ecs_service" {
     { name = "AUTHHUB_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.authhub_service_token.arn },
     # FileFlow Service Token
     { name = "FILEFLOW_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
+    # Setof Commerce Service Token
+    { name = "SETOF_COMMERCE_SERVICE_TOKEN", valueFrom = data.aws_ssm_parameter.fileflow_service_token.arn },
     # Naver Commerce
     { name = "NAVER_COMMERCE_CLIENT_SECRET", valueFrom = data.aws_ssm_parameter.naver_commerce_client_secret.arn },
     # Legacy DB Password
