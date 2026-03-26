@@ -16,7 +16,7 @@ MYSQL="/opt/homebrew/opt/mysql-client/bin/mysql"
 DB_HOST="127.0.0.1"
 DB_PORT="13308"
 DB_USER="admin"
-DB_PASS='REDACTED_DB_PASSWORD'
+DB_PASS="${STAGE_DB_PASSWORD:?STAGE_DB_PASSWORD 환경변수 필요}"
 
 # 색상 코드
 GREEN='\033[0;32m'

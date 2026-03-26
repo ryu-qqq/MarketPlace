@@ -27,9 +27,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("셀릭 실제 주문 조회 → Mapper 변환 검증")
 class SellicOrderPollingExternalTest {
 
-    private static final String BASE_URL = "http://api.sellic.co.kr";
-    private static final String CUSTOMER_ID = "1012";
-    private static final String API_KEY = "REDACTED_API_KEY";
+    private static final String BASE_URL =
+            System.getenv().getOrDefault("SELLIC_BASE_URL", "http://api.sellic.co.kr");
+    private static final String CUSTOMER_ID =
+            System.getenv().getOrDefault("SELLIC_CUSTOMER_ID", "");
+    private static final String API_KEY =
+            System.getenv().getOrDefault("SELLIC_API_KEY", "");
 
     private final ObjectMapper objectMapper =
             new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
