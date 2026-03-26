@@ -7,16 +7,24 @@ import com.ryuqq.marketplace.application.inboundqna.manager.InboundQnaReadManage
 import com.ryuqq.marketplace.application.inboundqna.port.in.command.PollExternalQnasUseCase;
 import com.ryuqq.marketplace.application.inboundqna.port.out.client.SalesChannelQnaClient;
 import com.ryuqq.marketplace.application.saleschannel.manager.SalesChannelReadManager;
+import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
 import com.ryuqq.marketplace.domain.inboundqna.aggregate.InboundQna;
 import com.ryuqq.marketplace.domain.qna.vo.QnaType;
 import com.ryuqq.marketplace.domain.saleschannel.aggregate.SalesChannel;
 import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
+import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
 import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * 외부몰 QnA 폴링 서비스 — Shop 기반.
+ *
+ * <p>주문 폴링(PollExternalOrdersService)과 동일한 패턴으로, SalesChannel의 활성 Shop을 순회하며 각 Shop의 credentials로
+ * 외부 QnA를 수집합니다.
+ */
 @Service
 public class PollExternalQnasService implements PollExternalQnasUseCase {
 
@@ -24,6 +32,7 @@ public class PollExternalQnasService implements PollExternalQnasUseCase {
     private static final long DEFAULT_LOOKBACK_SECONDS = 86400; // 1일
 
     private final SalesChannelReadManager salesChannelReadManager;
+    private final ShopReadManager shopReadManager;
     private final List<SalesChannelQnaClient> qnaClients;
     private final InboundQnaReadManager readManager;
     private final InboundQnaCommandManager commandManager;
@@ -31,11 +40,13 @@ public class PollExternalQnasService implements PollExternalQnasUseCase {
 
     public PollExternalQnasService(
             SalesChannelReadManager salesChannelReadManager,
+            ShopReadManager shopReadManager,
             List<SalesChannelQnaClient> qnaClients,
             InboundQnaReadManager readManager,
             InboundQnaCommandManager commandManager,
             InboundQnaConversionProcessor conversionProcessor) {
         this.salesChannelReadManager = salesChannelReadManager;
+        this.shopReadManager = shopReadManager;
         this.qnaClients = qnaClients;
         this.readManager = readManager;
         this.commandManager = commandManager;
@@ -47,29 +58,71 @@ public class PollExternalQnasService implements PollExternalQnasUseCase {
         Instant now = Instant.now();
         Instant from = now.minusSeconds(DEFAULT_LOOKBACK_SECONDS);
 
-        // SalesChannel 조회 → channelName으로 클라이언트 라우팅
         SalesChannel salesChannel =
                 salesChannelReadManager.getById(SalesChannelId.of(salesChannelId));
         String channelCode = salesChannel.channelName();
 
         SalesChannelQnaClient client =
                 qnaClients.stream()
-                        .filter(c -> c.supports(channelCode))
+                        .filter(c -> c.channelCode().equalsIgnoreCase(channelCode))
                         .findFirst()
                         .orElse(null);
 
         if (client == null) {
-            log.debug("QnA 폴링 지원하지 않는 채널: salesChannelId={}, channelCode={}", salesChannelId, channelCode);
+            log.debug(
+                    "QnA 폴링 지원하지 않는 채널: salesChannelId={}, channelCode={}",
+                    salesChannelId,
+                    channelCode);
             return 0;
         }
 
-        List<ExternalQnaPayload> payloads =
-                client.fetchNewQnas(salesChannelId, from, now, batchSize);
-        if (payloads.isEmpty()) {
+        List<Shop> shops = shopReadManager.findActiveBySalesChannelId(salesChannelId);
+        if (shops.isEmpty()) {
+            log.info("활성 Shop 없음: salesChannelId={}", salesChannelId);
             return 0;
         }
 
-        // 중복 제거
+        int totalReceived = 0;
+        for (Shop shop : shops) {
+            try {
+                List<ExternalQnaPayload> payloads =
+                        client.fetchNewQnas(
+                                salesChannelId,
+                                shop.idValue(),
+                                shop.toCredentials(),
+                                from,
+                                now,
+                                batchSize);
+
+                if (payloads.isEmpty()) {
+                    continue;
+                }
+
+                int received = processPayloads(payloads, salesChannelId, now);
+                totalReceived += received;
+
+                if (received > 0) {
+                    log.info(
+                            "InboundQna 수신: channelCode={}, shopId={}, 신규 {}건",
+                            channelCode,
+                            shop.idValue(),
+                            received);
+                }
+            } catch (Exception e) {
+                log.error(
+                        "InboundQna 폴링 실패: salesChannelId={}, shopId={}",
+                        salesChannelId,
+                        shop.idValue(),
+                        e);
+            }
+        }
+
+        return totalReceived;
+    }
+
+    private int processPayloads(
+            List<ExternalQnaPayload> payloads, long salesChannelId, Instant now) {
+
         List<ExternalQnaPayload> newPayloads =
                 payloads.stream()
                         .filter(
@@ -97,9 +150,7 @@ public class PollExternalQnasService implements PollExternalQnasUseCase {
                         .toList();
 
         commandManager.persistAll(newQnas);
-        log.info("InboundQna 수신 완료: salesChannelId={}, 신규 {}건", salesChannelId, newQnas.size());
 
-        // 수신 직후 즉시 변환 시도 (개별 실패가 전체를 중단하지 않음)
         for (int i = 0; i < newQnas.size(); i++) {
             ExternalQnaPayload payload = newPayloads.get(i);
             InboundQna inboundQna = newQnas.get(i);
