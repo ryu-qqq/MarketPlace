@@ -243,8 +243,14 @@ public class ExchangeApiMapper {
                 formatInstant(result.completedAt()));
     }
 
-    public ExchangeDetailApiResponse toDetailResponse(ExchangeDetailResult result) {
-        ExchangeDetailApiResponse.ExchangeOptionApiResponse exchangeOption = null;
+    public ExchangeDetailApiResponse toDetailResponse(
+            ExchangeDetailResult result,
+            ClaimListItemApiResponseV4.OrderProductV4 orderProduct,
+            ClaimListItemApiResponseV4.BuyerInfoV4 buyerInfo,
+            ClaimListItemApiResponseV4.PaymentV4 payment,
+            ClaimListItemApiResponseV4.ReceiverInfoV4 receiverInfo) {
+        ExchangeDetailApiResponse.ExchangeOptionApiResponse exchangeOption =
+                new ExchangeDetailApiResponse.ExchangeOptionApiResponse(0, "", 0, 0, "", 0);
         if (result.exchangeOption() != null) {
             exchangeOption =
                     new ExchangeDetailApiResponse.ExchangeOptionApiResponse(
@@ -256,7 +262,9 @@ public class ExchangeApiMapper {
                             result.exchangeOption().quantity());
         }
 
-        ExchangeDetailApiResponse.AmountAdjustmentApiResponse amountAdjustment = null;
+        ExchangeDetailApiResponse.AmountAdjustmentApiResponse amountAdjustment =
+                new ExchangeDetailApiResponse.AmountAdjustmentApiResponse(
+                        0, 0, 0, false, false, 0, 0, 0, "");
         if (result.amountAdjustment() != null) {
             amountAdjustment =
                     new ExchangeDetailApiResponse.AmountAdjustmentApiResponse(
@@ -271,23 +279,42 @@ public class ExchangeApiMapper {
                             nullToEmpty(result.amountAdjustment().shippingFeePayer()));
         }
 
+        ExchangeDetailApiResponse.CollectShipmentApiResponse collectShipment =
+                new ExchangeDetailApiResponse.CollectShipmentApiResponse("", "", "");
+        if (result.collectShipment() != null) {
+            collectShipment =
+                    new ExchangeDetailApiResponse.CollectShipmentApiResponse(
+                            nullToEmpty(result.collectShipment().collectDeliveryCompany()),
+                            nullToEmpty(result.collectShipment().collectTrackingNumber()),
+                            nullToEmpty(result.collectShipment().collectStatus()));
+        }
+
+        ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse exchangeClaimInfo =
+                new ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse(
+                        nullToEmpty(result.exchangeClaimId()),
+                        nullToEmpty(result.claimNumber()),
+                        result.sellerId(),
+                        result.exchangeQty(),
+                        nullToEmpty(result.exchangeStatus()),
+                        nullToEmpty(result.reasonType()),
+                        nullToEmpty(result.reasonDetail()),
+                        exchangeOption,
+                        amountAdjustment,
+                        collectShipment,
+                        nullToEmpty(result.linkedOrderId()),
+                        formatInstant(result.requestedAt()),
+                        formatInstant(result.completedAt()));
+
         return new ExchangeDetailApiResponse(
-                nullToEmpty(result.exchangeClaimId()),
-                nullToEmpty(result.claimNumber()),
                 nullToEmpty(result.orderItemId()), // V4 간극
-                result.sellerId(),
-                result.exchangeQty(),
-                nullToEmpty(result.exchangeStatus()),
-                nullToEmpty(result.reasonType()),
-                nullToEmpty(result.reasonDetail()),
-                exchangeOption,
-                amountAdjustment,
-                nullToEmpty(result.linkedOrderId()),
+                orderProduct,
+                exchangeClaimInfo,
+                buyerInfo,
+                payment,
+                receiverInfo,
                 nullToEmpty(result.requestedBy()),
                 nullToEmpty(result.processedBy()),
-                formatInstant(result.requestedAt()),
                 formatInstant(result.processedAt()),
-                formatInstant(result.completedAt()),
                 formatInstant(result.createdAt()),
                 formatInstant(result.updatedAt()),
                 toHistoryResponses(result.histories()));
@@ -328,12 +355,14 @@ public class ExchangeApiMapper {
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(
             String exchangeClaimId,
+            String orderItemId,
             AddClaimHistoryMemoApiRequest request,
             long sellerId,
             String actorName) {
         return new AddClaimHistoryMemoCommand(
                 ClaimType.EXCHANGE,
                 exchangeClaimId,
+                orderItemId,
                 request.message(),
                 String.valueOf(sellerId),
                 actorName);
