@@ -80,6 +80,12 @@ class InboundProductStatusTest {
         void convertedCannotApplyMapping() {
             assertThat(InboundProductStatus.CONVERTED.canApplyMapping()).isFalse();
         }
+
+        @Test
+        @DisplayName("LEGACY_IMPORTED 상태는 매핑 적용 가능하다 (크롤러 재수신 시)")
+        void legacyImportedCanApplyMapping() {
+            assertThat(InboundProductStatus.LEGACY_IMPORTED.canApplyMapping()).isTrue();
+        }
     }
 
     @Nested

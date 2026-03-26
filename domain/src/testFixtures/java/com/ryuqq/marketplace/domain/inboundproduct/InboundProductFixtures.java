@@ -172,6 +172,48 @@ public final class InboundProductFixtures {
                 CommonVoFixtures.yesterday());
     }
 
+    /** LEGACY_IMPORTED 상태 InboundProduct (브랜드/카테고리 매핑 있음, productGroupId 없음). */
+    public static InboundProduct legacyImportedProduct() {
+        return InboundProduct.reconstitute(
+                InboundProductId.of(5L),
+                DEFAULT_INBOUND_SOURCE_ID,
+                ExternalProductCode.of(DEFAULT_EXTERNAL_PRODUCT_CODE),
+                DEFAULT_EXTERNAL_BRAND_CODE,
+                DEFAULT_EXTERNAL_CATEGORY_CODE,
+                DEFAULT_INTERNAL_BRAND_ID,
+                DEFAULT_INTERNAL_CATEGORY_ID,
+                null,
+                DEFAULT_SELLER_ID,
+                InboundProductStatus.LEGACY_IMPORTED,
+                DEFAULT_RAW_PAYLOAD,
+                null,
+                null,
+                null,
+                CommonVoFixtures.yesterday(),
+                CommonVoFixtures.yesterday());
+    }
+
+    /** LEGACY_IMPORTED 상태 InboundProduct (매핑 없음). */
+    public static InboundProduct legacyImportedProductWithoutMapping() {
+        return InboundProduct.reconstitute(
+                InboundProductId.of(6L),
+                DEFAULT_INBOUND_SOURCE_ID,
+                ExternalProductCode.of(DEFAULT_EXTERNAL_PRODUCT_CODE),
+                DEFAULT_EXTERNAL_BRAND_CODE,
+                DEFAULT_EXTERNAL_CATEGORY_CODE,
+                null,
+                null,
+                null,
+                DEFAULT_SELLER_ID,
+                InboundProductStatus.LEGACY_IMPORTED,
+                DEFAULT_RAW_PAYLOAD,
+                null,
+                null,
+                null,
+                CommonVoFixtures.yesterday(),
+                CommonVoFixtures.yesterday());
+    }
+
     /** PENDING_MAPPING 상태 InboundProduct (매핑 실패). */
     public static InboundProduct pendingMappingProduct() {
         return InboundProduct.reconstitute(
