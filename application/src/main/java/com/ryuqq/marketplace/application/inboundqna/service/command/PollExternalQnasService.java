@@ -6,8 +6,11 @@ import com.ryuqq.marketplace.application.inboundqna.manager.InboundQnaCommandMan
 import com.ryuqq.marketplace.application.inboundqna.manager.InboundQnaReadManager;
 import com.ryuqq.marketplace.application.inboundqna.port.in.command.PollExternalQnasUseCase;
 import com.ryuqq.marketplace.application.inboundqna.port.out.client.SalesChannelQnaClient;
+import com.ryuqq.marketplace.application.saleschannel.manager.SalesChannelReadManager;
 import com.ryuqq.marketplace.domain.inboundqna.aggregate.InboundQna;
 import com.ryuqq.marketplace.domain.qna.vo.QnaType;
+import com.ryuqq.marketplace.domain.saleschannel.aggregate.SalesChannel;
+import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
@@ -20,16 +23,19 @@ public class PollExternalQnasService implements PollExternalQnasUseCase {
     private static final Logger log = LoggerFactory.getLogger(PollExternalQnasService.class);
     private static final long DEFAULT_LOOKBACK_SECONDS = 86400; // 1일
 
+    private final SalesChannelReadManager salesChannelReadManager;
     private final List<SalesChannelQnaClient> qnaClients;
     private final InboundQnaReadManager readManager;
     private final InboundQnaCommandManager commandManager;
     private final InboundQnaConversionProcessor conversionProcessor;
 
     public PollExternalQnasService(
+            SalesChannelReadManager salesChannelReadManager,
             List<SalesChannelQnaClient> qnaClients,
             InboundQnaReadManager readManager,
             InboundQnaCommandManager commandManager,
             InboundQnaConversionProcessor conversionProcessor) {
+        this.salesChannelReadManager = salesChannelReadManager;
         this.qnaClients = qnaClients;
         this.readManager = readManager;
         this.commandManager = commandManager;
@@ -41,15 +47,19 @@ public class PollExternalQnasService implements PollExternalQnasUseCase {
         Instant now = Instant.now();
         Instant from = now.minusSeconds(DEFAULT_LOOKBACK_SECONDS);
 
-        // 지원하는 클라이언트 찾기 (현재는 채널코드 기반 라우팅 간소화)
+        // SalesChannel 조회 → channelName으로 클라이언트 라우팅
+        SalesChannel salesChannel =
+                salesChannelReadManager.getById(SalesChannelId.of(salesChannelId));
+        String channelCode = salesChannel.channelName();
+
         SalesChannelQnaClient client =
                 qnaClients.stream()
-                        .filter(c -> c.supports(String.valueOf(salesChannelId)))
+                        .filter(c -> c.supports(channelCode))
                         .findFirst()
                         .orElse(null);
 
         if (client == null) {
-            log.debug("QnA 폴링 지원하지 않는 채널: salesChannelId={}", salesChannelId);
+            log.debug("QnA 폴링 지원하지 않는 채널: salesChannelId={}, channelCode={}", salesChannelId, channelCode);
             return 0;
         }
 
