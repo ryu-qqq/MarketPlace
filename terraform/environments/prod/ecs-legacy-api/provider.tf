@@ -99,11 +99,11 @@ data "aws_ssm_parameter" "private_subnets" {
 # RDS Configuration
 # ========================================
 data "aws_ssm_parameter" "rds_proxy_endpoint" {
-  name = "/shared/rds/prod-proxy-endpoint"
+  name = "/shared/rds/proxy-endpoint"
 }
 
 data "aws_secretsmanager_secret" "rds" {
-  name = "setof-commerce/rds/prod-credentials"
+  name = "marketplace/rds/credentials"
 }
 
 data "aws_secretsmanager_secret_version" "rds" {
@@ -125,7 +125,7 @@ data "aws_ssm_parameter" "amp_remote_write_url" {
 # AuthHub Configuration
 # ========================================
 data "aws_ssm_parameter" "authhub_service_token" {
-  name = "/authhub/prod/security/service-token-secret"
+  name = "/authhub/security/service-token-secret"
 }
 
 # ========================================
