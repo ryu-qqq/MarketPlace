@@ -88,9 +88,9 @@ public class SettlementEntryQueryAdapter implements SettlementEntryQueryPort {
     private DailySettlementResult toDailyResult(DailySettlementProjectionDto dto) {
         return new DailySettlementResult(
                 dto.settlementDay(),
-                dto.entryCount(),
-                dto.totalSalesAmount(),
-                dto.totalCommissionAmount(),
-                dto.totalSettlementAmount());
+                dto.entryCount() != null ? dto.entryCount() : 0L,
+                dto.totalSalesAmount() != null ? dto.totalSalesAmount() : 0,
+                dto.totalCommissionAmount() != null ? dto.totalCommissionAmount() : 0,
+                dto.totalSettlementAmount() != null ? dto.totalSettlementAmount() : 0);
     }
 }

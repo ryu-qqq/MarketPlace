@@ -96,7 +96,9 @@ public class SettlementEntryQueryDslRepository {
             LocalDate startDate, LocalDate endDate, List<Long> sellerIds) {
         DateTemplate<LocalDate> dateExpr =
                 Expressions.dateTemplate(
-                        LocalDate.class, "DATE(DATE_ADD({0}, INTERVAL 9 HOUR))", entry.eligibleAt);
+                        LocalDate.class,
+                        "CAST(TIMESTAMPADD(HOUR, 9, {0}) AS DATE)",
+                        entry.eligibleAt);
 
         return queryFactory
                 .select(
