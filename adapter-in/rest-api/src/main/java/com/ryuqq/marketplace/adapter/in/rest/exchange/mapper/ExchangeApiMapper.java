@@ -249,8 +249,7 @@ public class ExchangeApiMapper {
             ClaimListItemApiResponseV4.BuyerInfoV4 buyerInfo,
             ClaimListItemApiResponseV4.PaymentV4 payment,
             ClaimListItemApiResponseV4.ReceiverInfoV4 receiverInfo) {
-        ExchangeDetailApiResponse.ExchangeOptionApiResponse exchangeOption =
-                new ExchangeDetailApiResponse.ExchangeOptionApiResponse(0, "", 0, 0, "", 0);
+        ExchangeDetailApiResponse.ExchangeOptionApiResponse exchangeOption = null;
         if (result.exchangeOption() != null) {
             exchangeOption =
                     new ExchangeDetailApiResponse.ExchangeOptionApiResponse(
@@ -262,9 +261,7 @@ public class ExchangeApiMapper {
                             result.exchangeOption().quantity());
         }
 
-        ExchangeDetailApiResponse.AmountAdjustmentApiResponse amountAdjustment =
-                new ExchangeDetailApiResponse.AmountAdjustmentApiResponse(
-                        0, 0, 0, false, false, 0, 0, 0, "");
+        ExchangeDetailApiResponse.AmountAdjustmentApiResponse amountAdjustment = null;
         if (result.amountAdjustment() != null) {
             amountAdjustment =
                     new ExchangeDetailApiResponse.AmountAdjustmentApiResponse(

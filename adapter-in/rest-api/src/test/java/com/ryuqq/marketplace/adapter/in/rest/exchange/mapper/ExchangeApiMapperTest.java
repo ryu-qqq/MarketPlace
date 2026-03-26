@@ -339,6 +339,7 @@ class ExchangeApiMapperTest {
             AddClaimHistoryMemoCommand command =
                     mapper.toAddMemoCommand(
                             exchangeClaimId,
+                            "order-item-001",
                             ExchangeApiFixtures.addMemoRequest(),
                             sellerId,
                             actorName);
@@ -522,8 +523,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.exchangeClaimInfo().exchangeOption().originalProductId()).isZero();
-            assertThat(response.exchangeClaimInfo().amountAdjustment().originalPrice()).isZero();
+            assertThat(response.exchangeClaimInfo().exchangeOption()).isNull();
+            assertThat(response.exchangeClaimInfo().amountAdjustment()).isNull();
         }
 
         @Test

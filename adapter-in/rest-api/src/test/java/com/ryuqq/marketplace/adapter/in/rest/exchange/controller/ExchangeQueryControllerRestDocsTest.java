@@ -325,18 +325,21 @@ class ExchangeQueryControllerRestDocsTest {
                                     EXCHANGES_URL + ExchangeAdminEndpoints.EXCHANGE_CLAIM_ID,
                                     exchangeClaimId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.exchangeClaimId").value(exchangeClaimId))
                     .andExpect(
-                            jsonPath("$.data.claimNumber")
+                            jsonPath("$.data.exchangeClaimInfo.exchangeClaimId")
+                                    .value(exchangeClaimId))
+                    .andExpect(
+                            jsonPath("$.data.exchangeClaimInfo.claimNumber")
                                     .value(ExchangeApiFixtures.DEFAULT_CLAIM_NUMBER))
                     .andExpect(
                             jsonPath("$.data.orderId")
                                     .value(ExchangeApiFixtures.DEFAULT_ORDER_ITEM_ID))
                     .andExpect(
-                            jsonPath("$.data.exchangeStatus")
+                            jsonPath("$.data.exchangeClaimInfo.exchangeStatus")
                                     .value(ExchangeApiFixtures.DEFAULT_EXCHANGE_STATUS))
-                    .andExpect(jsonPath("$.data.exchangeOption").exists())
-                    .andExpect(jsonPath("$.data.amountAdjustment").exists())
+                    .andExpect(jsonPath("$.data.exchangeClaimInfo.exchangeOption").exists())
+                    .andExpect(jsonPath("$.data.exchangeClaimInfo.amountAdjustment").exists())
+                    .andExpect(jsonPath("$.data.exchangeClaimInfo.collectShipment").exists())
                     .andExpect(jsonPath("$.data.claimHistories").isArray())
                     .andDo(
                             document(
@@ -347,124 +350,173 @@ class ExchangeQueryControllerRestDocsTest {
                                             parameterWithName("exchangeClaimId")
                                                     .description("교환 클레임 ID (UUIDv7)")),
                                     responseFields(
-                                            fieldWithPath("data.exchangeClaimId")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("교환 클레임 ID (UUIDv7)"),
-                                            fieldWithPath("data.claimNumber")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("교환 클레임 번호"),
                                             fieldWithPath("data.orderId")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
                                                             "주문 ID (프론트: orderId = 내부"
                                                                     + " orderItemId)"),
-                                            fieldWithPath("data.sellerId")
+                                            fieldWithPath("data.orderProduct")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description("주문 상품 정보")
+                                                    .optional(),
+                                            fieldWithPath("data.exchangeClaimInfo")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("교환 클레임 정보"),
+                                            fieldWithPath("data.exchangeClaimInfo.exchangeClaimId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("교환 클레임 ID (UUIDv7)"),
+                                            fieldWithPath("data.exchangeClaimInfo.claimNumber")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("교환 클레임 번호"),
+                                            fieldWithPath("data.exchangeClaimInfo.sellerId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("판매자 ID"),
-                                            fieldWithPath("data.exchangeQty")
+                                            fieldWithPath("data.exchangeClaimInfo.exchangeQty")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("교환 수량"),
-                                            fieldWithPath("data.exchangeStatus")
+                                            fieldWithPath("data.exchangeClaimInfo.exchangeStatus")
                                                     .type(JsonFieldType.STRING)
                                                     .description("교환 상태"),
-                                            fieldWithPath("data.reasonType")
+                                            fieldWithPath("data.exchangeClaimInfo.reasonType")
                                                     .type(JsonFieldType.STRING)
                                                     .description("교환 사유 유형"),
-                                            fieldWithPath("data.reasonDetail")
+                                            fieldWithPath("data.exchangeClaimInfo.reasonDetail")
                                                     .type(JsonFieldType.STRING)
                                                     .description("교환 상세 사유"),
-                                            fieldWithPath("data.exchangeOption")
+                                            fieldWithPath("data.exchangeClaimInfo.exchangeOption")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("교환 옵션 정보 (없을 경우 null)")
                                                     .optional(),
-                                            fieldWithPath("data.exchangeOption.originalProductId")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.exchangeOption.originalProductId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("원 상품 ID")
                                                     .optional(),
-                                            fieldWithPath("data.exchangeOption.originalSkuCode")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.exchangeOption.originalSkuCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("원 SKU 코드")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.exchangeOption.targetProductGroupId")
+                                                            "data.exchangeClaimInfo.exchangeOption.targetProductGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("교환 대상 상품 그룹 ID")
                                                     .optional(),
-                                            fieldWithPath("data.exchangeOption.targetProductId")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.exchangeOption.targetProductId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("교환 대상 상품 ID")
                                                     .optional(),
-                                            fieldWithPath("data.exchangeOption.targetSkuCode")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.exchangeOption.targetSkuCode")
                                                     .type(JsonFieldType.STRING)
                                                     .description("교환 대상 SKU 코드")
                                                     .optional(),
-                                            fieldWithPath("data.exchangeOption.quantity")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.exchangeOption.quantity")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("교환 대상 수량")
                                                     .optional(),
-                                            fieldWithPath("data.amountAdjustment")
+                                            fieldWithPath("data.exchangeClaimInfo.amountAdjustment")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("금액 조정 정보 (없을 경우 null)")
                                                     .optional(),
-                                            fieldWithPath("data.amountAdjustment.originalPrice")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.amountAdjustment.originalPrice")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("원 가격")
                                                     .optional(),
-                                            fieldWithPath("data.amountAdjustment.targetPrice")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.amountAdjustment.targetPrice")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("교환 대상 가격")
                                                     .optional(),
-                                            fieldWithPath("data.amountAdjustment.priceDifference")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.amountAdjustment.priceDifference")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("가격 차액")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.amountAdjustment.additionalPaymentRequired")
+                                                            "data.exchangeClaimInfo.amountAdjustment.additionalPaymentRequired")
                                                     .type(JsonFieldType.BOOLEAN)
                                                     .description("추가 결제 필요 여부")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.amountAdjustment.partialRefundRequired")
+                                                            "data.exchangeClaimInfo.amountAdjustment.partialRefundRequired")
                                                     .type(JsonFieldType.BOOLEAN)
                                                     .description("부분 환불 필요 여부")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.amountAdjustment.collectShippingFee")
+                                                            "data.exchangeClaimInfo.amountAdjustment.collectShippingFee")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("수거 배송비")
                                                     .optional(),
-                                            fieldWithPath("data.amountAdjustment.reshipShippingFee")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.amountAdjustment.reshipShippingFee")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("재발송 배송비")
                                                     .optional(),
-                                            fieldWithPath("data.amountAdjustment.totalShippingFee")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.amountAdjustment.totalShippingFee")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("총 배송비")
                                                     .optional(),
-                                            fieldWithPath("data.amountAdjustment.shippingFeePayer")
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.amountAdjustment.shippingFeePayer")
                                                     .type(JsonFieldType.STRING)
                                                     .description("배송비 부담자")
                                                     .optional(),
-                                            fieldWithPath("data.linkedOrderId")
+                                            fieldWithPath("data.exchangeClaimInfo.collectShipment")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("수거 배송 정보 (없을 경우 null)")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.collectShipment.collectDeliveryCompany")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수거 택배사명")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.collectShipment.collectTrackingNumber")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수거 송장번호")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.exchangeClaimInfo.collectShipment.collectStatus")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("수거 상태")
+                                                    .optional(),
+                                            fieldWithPath("data.exchangeClaimInfo.linkedOrderId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("연결 주문 ID"),
+                                            fieldWithPath("data.exchangeClaimInfo.requestedAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청일시 (ISO 8601, KST)"),
+                                            fieldWithPath("data.exchangeClaimInfo.completedAt")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description(
+                                                            "완료일시 (ISO 8601, KST) - 미완료 시 null")
+                                                    .optional(),
+                                            fieldWithPath("data.buyerInfo")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description("구매자 정보")
+                                                    .optional(),
+                                            fieldWithPath("data.payment")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description("결제 정보")
+                                                    .optional(),
+                                            fieldWithPath("data.receiverInfo")
+                                                    .type(JsonFieldType.NULL)
+                                                    .description("수령인 정보")
+                                                    .optional(),
                                             fieldWithPath("data.requestedBy")
                                                     .type(JsonFieldType.STRING)
                                                     .description("요청자"),
                                             fieldWithPath("data.processedBy")
                                                     .type(JsonFieldType.STRING)
                                                     .description("처리자"),
-                                            fieldWithPath("data.requestedAt")
-                                                    .type(JsonFieldType.STRING)
-                                                    .description("요청일시 (ISO 8601, KST)"),
                                             fieldWithPath("data.processedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("처리일시 (ISO 8601, KST)"),
-                                            fieldWithPath("data.completedAt")
-                                                    .type(JsonFieldType.NULL)
-                                                    .description(
-                                                            "완료일시 (ISO 8601, KST) - 미완료 시 null")
-                                                    .optional(),
                                             fieldWithPath("data.createdAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("생성일시 (ISO 8601, KST)"),

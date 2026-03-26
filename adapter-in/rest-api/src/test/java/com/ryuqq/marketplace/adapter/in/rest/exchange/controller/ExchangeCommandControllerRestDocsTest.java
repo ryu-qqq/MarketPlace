@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.exchange.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -77,6 +78,7 @@ class ExchangeCommandControllerRestDocsTest {
     @MockitoBean private ConvertToRefundBatchUseCase convertToRefundBatchUseCase;
     @MockitoBean private HoldExchangeBatchUseCase holdExchangeBatchUseCase;
     @MockitoBean private AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase;
+    @MockitoBean private com.ryuqq.marketplace.application.exchange.port.in.query.GetExchangeDetailUseCase getExchangeDetailUseCase;
     @MockitoBean private ExchangeApiMapper mapper;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
@@ -881,9 +883,12 @@ class ExchangeCommandControllerRestDocsTest {
                     request = ExchangeApiFixtures.addMemoRequest();
             String historyId = ExchangeApiFixtures.DEFAULT_HISTORY_ID;
 
-            given(accessChecker.resolveCurrentSellerId())
+            given(getExchangeDetailUseCase.execute(exchangeClaimId))
+                    .willReturn(ExchangeApiFixtures.detailResult());
+            given(accessChecker.resolveSellerIdOrNull())
                     .willReturn(ExchangeApiFixtures.DEFAULT_SELLER_ID);
-            given(mapper.toAddMemoCommand(any(), any(), any(long.class), any())).willReturn(null);
+            given(mapper.toAddMemoCommand(any(), any(), any(), anyLong(), any()))
+                    .willReturn(null);
             given(addClaimHistoryMemoUseCase.execute(any())).willReturn(historyId);
 
             // when & then
