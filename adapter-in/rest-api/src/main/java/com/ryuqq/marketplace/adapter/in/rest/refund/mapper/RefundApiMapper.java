@@ -152,6 +152,7 @@ public class RefundApiMapper {
                         false,
                         r.requestedAt(),
                         r.requestedAt(),
+                        null,
                         null),
                 enricher.toBuyerInfoV4(itemId, ctx),
                 enricher.toPaymentV4(itemId, ctx),

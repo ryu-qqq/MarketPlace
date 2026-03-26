@@ -645,12 +645,16 @@ class ExchangeApiMapperTest {
             given(enricher.toClaimInfoV4(anyString(), anyString(), anyString(), anyInt(),
                     anyString(), anyString(), isNull(), isNull(), anyString(), anyString(),
                     anyBoolean(), any(), any(),
-                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class)))
+                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class),
+                    any(ClaimListItemApiResponseV4.AmountAdjustmentV4.class)))
                     .willAnswer(invocation -> {
                         ClaimListItemApiResponseV4.ExchangeOptionV4 exchangeOption =
                                 invocation.getArgument(13);
+                        ClaimListItemApiResponseV4.AmountAdjustmentV4 amountAdjustment =
+                                invocation.getArgument(14);
                         return new ClaimListItemApiResponseV4.ClaimInfoV4(
-                                "", "", "", 1, "", null, null, "", false, "", "", exchangeOption);
+                                "", "", "", 1, "", null, null, "", false, "", "", exchangeOption,
+                                amountAdjustment);
                     });
             given(enricher.toBuyerInfoV4(any(), any()))
                     .willReturn(new ClaimListItemApiResponseV4.BuyerInfoV4("", ""));
@@ -677,6 +681,7 @@ class ExchangeApiMapperTest {
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_ORIGINAL_SKU_CODE);
             assertThat(claimInfo.exchangeOption().targetOption().optionValues().get(0).value())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_TARGET_SKU_CODE);
+            assertThat(claimInfo.amountAdjustment()).isNotNull();
         }
 
         @Test
@@ -695,12 +700,16 @@ class ExchangeApiMapperTest {
             given(enricher.toClaimInfoV4(anyString(), anyString(), anyString(), anyInt(),
                     anyString(), anyString(), isNull(), isNull(), anyString(), anyString(),
                     anyBoolean(), any(), any(),
-                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class)))
+                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class),
+                    any(ClaimListItemApiResponseV4.AmountAdjustmentV4.class)))
                     .willAnswer(invocation -> {
                         ClaimListItemApiResponseV4.ExchangeOptionV4 exchangeOption =
                                 invocation.getArgument(13);
+                        ClaimListItemApiResponseV4.AmountAdjustmentV4 amountAdjustment =
+                                invocation.getArgument(14);
                         return new ClaimListItemApiResponseV4.ClaimInfoV4(
-                                "", "", "", 1, "", null, null, "", false, "", "", exchangeOption);
+                                "", "", "", 1, "", null, null, "", false, "", "", exchangeOption,
+                                amountAdjustment);
                     });
             given(enricher.toBuyerInfoV4(any(), any()))
                     .willReturn(new ClaimListItemApiResponseV4.BuyerInfoV4("", ""));
