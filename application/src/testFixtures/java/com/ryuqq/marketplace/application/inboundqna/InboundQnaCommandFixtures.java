@@ -19,6 +19,7 @@ public final class InboundQnaCommandFixtures {
     public static final String DEFAULT_QUESTION_CONTENT = "이 상품 사이즈가 어떻게 되나요?";
     public static final String DEFAULT_QUESTION_AUTHOR = "구매자A";
     public static final String DEFAULT_QNA_TYPE = "PRODUCT";
+    public static final String DEFAULT_QUESTION_TITLE = "기본 문의 제목";
     public static final String DEFAULT_RAW_PAYLOAD = "{\"externalQnaId\":\"EXT-QNA-001\"}";
 
     // ===== ExternalQnaPayload =====
@@ -26,7 +27,9 @@ public final class InboundQnaCommandFixtures {
     public static ExternalQnaPayload externalQnaPayload() {
         return new ExternalQnaPayload(
                 DEFAULT_EXTERNAL_QNA_ID,
+                null,
                 DEFAULT_QNA_TYPE,
+                DEFAULT_QUESTION_TITLE,
                 DEFAULT_QUESTION_CONTENT,
                 DEFAULT_QUESTION_AUTHOR,
                 null,
@@ -37,7 +40,23 @@ public final class InboundQnaCommandFixtures {
     public static ExternalQnaPayload externalQnaPayload(String externalQnaId) {
         return new ExternalQnaPayload(
                 externalQnaId,
+                null,
                 DEFAULT_QNA_TYPE,
+                DEFAULT_QUESTION_TITLE,
+                DEFAULT_QUESTION_CONTENT,
+                DEFAULT_QUESTION_AUTHOR,
+                null,
+                null,
+                "{\"externalQnaId\":\"" + externalQnaId + "\"}");
+    }
+
+    public static ExternalQnaPayload externalQnaPayloadWithParent(
+            String externalQnaId, String parentExternalQnaId) {
+        return new ExternalQnaPayload(
+                externalQnaId,
+                parentExternalQnaId,
+                DEFAULT_QNA_TYPE,
+                DEFAULT_QUESTION_TITLE,
                 DEFAULT_QUESTION_CONTENT,
                 DEFAULT_QUESTION_AUTHOR,
                 null,
@@ -49,7 +68,9 @@ public final class InboundQnaCommandFixtures {
             String externalQnaId, String externalProductId) {
         return new ExternalQnaPayload(
                 externalQnaId,
+                null,
                 DEFAULT_QNA_TYPE,
+                DEFAULT_QUESTION_TITLE,
                 DEFAULT_QUESTION_CONTENT,
                 DEFAULT_QUESTION_AUTHOR,
                 externalProductId,
@@ -61,7 +82,9 @@ public final class InboundQnaCommandFixtures {
             String externalQnaId, String externalOrderId) {
         return new ExternalQnaPayload(
                 externalQnaId,
+                null,
                 DEFAULT_QNA_TYPE,
+                DEFAULT_QUESTION_TITLE,
                 DEFAULT_QUESTION_CONTENT,
                 DEFAULT_QUESTION_AUTHOR,
                 null,
@@ -72,7 +95,9 @@ public final class InboundQnaCommandFixtures {
     public static ExternalQnaPayload externalQnaPayloadWithUnknownType(String externalQnaId) {
         return new ExternalQnaPayload(
                 externalQnaId,
+                null,
                 "UNKNOWN_TYPE",
+                DEFAULT_QUESTION_TITLE,
                 DEFAULT_QUESTION_CONTENT,
                 DEFAULT_QUESTION_AUTHOR,
                 null,

@@ -6,14 +6,20 @@ import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCreatedWe
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCreatedWebhookRequest.OrderCreatedItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.PurchaseConfirmedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.PurchaseConfirmedWebhookRequest.PurchaseConfirmedItemRequest;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaReceivedWebhookRequest;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaReceivedWebhookRequest.QnaItemRequest;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaUpdatedWebhookRequest;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaUpdatedWebhookRequest.QnaUpdateItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnRequestedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnRequestedWebhookRequest.ReturnRequestedItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdrawnWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdrawnWebhookRequest.ReturnWithdrawnItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.response.ClaimSyncWebhookResponse;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.response.OrderCreatedWebhookResponse;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.response.QnaWebhookResponse;
 import com.ryuqq.marketplace.application.claimsync.dto.result.ClaimSyncResult;
 import com.ryuqq.marketplace.application.inboundorder.dto.result.InboundOrderPollingResult;
+import com.ryuqq.marketplace.application.inboundqna.dto.result.QnaWebhookResult;
 import java.time.Instant;
 import java.util.List;
 
@@ -176,5 +182,75 @@ public final class InternalWebhookApiFixtures {
 
     public static ClaimSyncWebhookResponse returnSyncWebhookResponse() {
         return new ClaimSyncWebhookResponse(1, 0, 1, 0, 0, 0);
+    }
+
+    // ===== QnA 웹훅 상수 =====
+
+    public static final long DEFAULT_EXTERNAL_QNA_ID = 12345L;
+    public static final String DEFAULT_QNA_TYPE = "PRODUCT";
+    public static final long DEFAULT_SELLER_ID = 23L;
+    public static final String DEFAULT_QUESTION_TITLE = "상품 문의 제목";
+    public static final String DEFAULT_QUESTION_CONTENT = "이 상품 사이즈가 어떻게 되나요?";
+    public static final String DEFAULT_QUESTION_AUTHOR = "구매자A";
+    public static final long DEFAULT_EXTERNAL_QNA_PRODUCT_ID = 100L;
+    public static final long DEFAULT_EXTERNAL_QNA_ORDER_ID = 200L;
+    public static final Instant DEFAULT_QUESTIONED_AT = Instant.parse("2026-03-21T02:00:00Z");
+
+    // ===== QnaReceivedWebhookRequest =====
+
+    public static QnaReceivedWebhookRequest qnaReceivedWebhookRequest() {
+        return new QnaReceivedWebhookRequest(
+                DEFAULT_SALES_CHANNEL_ID,
+                List.of(
+                        new QnaItemRequest(
+                                DEFAULT_EXTERNAL_QNA_ID,
+                                null,
+                                DEFAULT_QNA_TYPE,
+                                DEFAULT_QUESTION_TITLE,
+                                DEFAULT_QUESTION_CONTENT,
+                                DEFAULT_QUESTION_AUTHOR,
+                                DEFAULT_SELLER_ID,
+                                DEFAULT_EXTERNAL_QNA_PRODUCT_ID,
+                                null,
+                                DEFAULT_QUESTIONED_AT)));
+    }
+
+    public static QnaReceivedWebhookRequest qnaReceivedWebhookRequestWithFollowUp() {
+        return new QnaReceivedWebhookRequest(
+                DEFAULT_SALES_CHANNEL_ID,
+                List.of(
+                        new QnaItemRequest(
+                                99999L,
+                                DEFAULT_EXTERNAL_QNA_ID,
+                                DEFAULT_QNA_TYPE,
+                                DEFAULT_QUESTION_TITLE,
+                                DEFAULT_QUESTION_CONTENT,
+                                DEFAULT_QUESTION_AUTHOR,
+                                DEFAULT_SELLER_ID,
+                                DEFAULT_EXTERNAL_QNA_PRODUCT_ID,
+                                null,
+                                DEFAULT_QUESTIONED_AT)));
+    }
+
+    // ===== QnaUpdatedWebhookRequest =====
+
+    public static QnaUpdatedWebhookRequest qnaUpdatedWebhookRequest() {
+        return new QnaUpdatedWebhookRequest(
+                DEFAULT_SALES_CHANNEL_ID,
+                List.of(
+                        new QnaUpdateItemRequest(
+                                DEFAULT_EXTERNAL_QNA_ID, "수정된 제목", "수정된 내용")));
+    }
+
+    // ===== QnaWebhookResult (Application) =====
+
+    public static QnaWebhookResult qnaWebhookResult() {
+        return QnaWebhookResult.of(1, 1, 0, 0);
+    }
+
+    // ===== QnaWebhookResponse =====
+
+    public static QnaWebhookResponse qnaWebhookResponse() {
+        return new QnaWebhookResponse(1, 1, 0, 0);
     }
 }
