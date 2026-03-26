@@ -402,6 +402,11 @@ module "ecs_service" {
     { name = "SQS_INTELLIGENCE_OPTION_ANALYSIS_URL", value = local.sqs_intelligence_option_analysis_queue_url },
     { name = "SQS_INTELLIGENCE_NOTICE_ANALYSIS_URL", value = local.sqs_intelligence_notice_analysis_queue_url },
     { name = "SQS_INTELLIGENCE_AGGREGATION_URL", value = local.sqs_intelligence_aggregation_queue_url },
+    # Claim Outbox SQS Queue URLs
+    { name = "SQS_CANCEL_OUTBOX_URL", value = local.sqs_cancel_outbox_queue_url },
+    { name = "SQS_REFUND_OUTBOX_URL", value = local.sqs_refund_outbox_queue_url },
+    { name = "SQS_EXCHANGE_OUTBOX_URL", value = local.sqs_exchange_outbox_queue_url },
+    { name = "SQS_QNA_OUTBOX_URL", value = local.sqs_qna_outbox_queue_url },
     # Sentry
     { name = "SENTRY_DSN", value = local.sentry_dsn },
     # Setof Commerce
