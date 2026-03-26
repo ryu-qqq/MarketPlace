@@ -128,71 +128,71 @@ data "aws_ssm_parameter" "sentry_dsn" {
 # SQS Queue References (from SQS module)
 # ========================================
 data "aws_ssm_parameter" "sqs_scoring_queue_url" {
-  name = "/${var.project_name}/sqs/inspection-scoring-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/inspection-scoring-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_enhancement_queue_url" {
-  name = "/${var.project_name}/sqs/inspection-enhancement-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/inspection-enhancement-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_verification_queue_url" {
-  name = "/${var.project_name}/sqs/inspection-verification-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/inspection-verification-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_access_policy_arn" {
-  name = "/${var.project_name}/sqs/access-policy-arn"
+  name = "/${var.project_name}/${var.environment}/sqs/access-policy-arn"
 }
 
 # ========================================
 # Intelligence SQS Queue References (from SQS module)
 # ========================================
 data "aws_ssm_parameter" "sqs_intelligence_orchestration_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-orchestration-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-orchestration-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_intelligence_description_analysis_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-description-analysis-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-description-analysis-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_intelligence_option_analysis_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-option-analysis-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-option-analysis-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_intelligence_notice_analysis_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-notice-analysis-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-notice-analysis-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_intelligence_aggregation_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-aggregation-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-aggregation-queue-url"
 }
 
 # ========================================
 # QnA Outbox SQS Queue Reference
 # ========================================
 data "aws_ssm_parameter" "sqs_qna_outbox_queue_url" {
-  name = "/${var.project_name}/sqs/qna-outbox-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/qna-outbox-queue-url"
 }
 
 # ========================================
 # Shipment Outbox SQS Queue Reference
 # ========================================
 data "aws_ssm_parameter" "sqs_shipment_outbox_queue_url" {
-  name = "/${var.project_name}/sqs/shipment-outbox-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/shipment-outbox-queue-url"
 }
 
 # ========================================
 # Claim Outbox SQS Queue References
 # ========================================
 data "aws_ssm_parameter" "sqs_cancel_outbox_queue_url" {
-  name = "/${var.project_name}/sqs/cancel-outbox-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/cancel-outbox-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_refund_outbox_queue_url" {
-  name = "/${var.project_name}/sqs/refund-outbox-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/refund-outbox-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_exchange_outbox_queue_url" {
-  name = "/${var.project_name}/sqs/exchange-outbox-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/exchange-outbox-queue-url"
 }
 
 # ========================================

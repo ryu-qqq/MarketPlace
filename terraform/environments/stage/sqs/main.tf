@@ -651,21 +651,21 @@ resource "aws_iam_policy" "sqs_access" {
 
 # Scoring Queue
 resource "aws_ssm_parameter" "inspection_scoring_queue_url" {
-  name  = "/${var.project_name}/sqs/inspection-scoring-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/inspection-scoring-queue-url"
   type  = "String"
   value = aws_sqs_queue.inspection_scoring.url
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "inspection_scoring_queue_arn" {
-  name  = "/${var.project_name}/sqs/inspection-scoring-queue-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/inspection-scoring-queue-arn"
   type  = "String"
   value = aws_sqs_queue.inspection_scoring.arn
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "inspection_scoring_dlq_url" {
-  name  = "/${var.project_name}/sqs/inspection-scoring-dlq-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/inspection-scoring-dlq-url"
   type  = "String"
   value = aws_sqs_queue.inspection_scoring_dlq.url
   tags  = local.common_tags
@@ -673,21 +673,21 @@ resource "aws_ssm_parameter" "inspection_scoring_dlq_url" {
 
 # Enhancement Queue
 resource "aws_ssm_parameter" "inspection_enhancement_queue_url" {
-  name  = "/${var.project_name}/sqs/inspection-enhancement-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/inspection-enhancement-queue-url"
   type  = "String"
   value = aws_sqs_queue.inspection_enhancement.url
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "inspection_enhancement_queue_arn" {
-  name  = "/${var.project_name}/sqs/inspection-enhancement-queue-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/inspection-enhancement-queue-arn"
   type  = "String"
   value = aws_sqs_queue.inspection_enhancement.arn
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "inspection_enhancement_dlq_url" {
-  name  = "/${var.project_name}/sqs/inspection-enhancement-dlq-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/inspection-enhancement-dlq-url"
   type  = "String"
   value = aws_sqs_queue.inspection_enhancement_dlq.url
   tags  = local.common_tags
@@ -695,21 +695,21 @@ resource "aws_ssm_parameter" "inspection_enhancement_dlq_url" {
 
 # Verification Queue
 resource "aws_ssm_parameter" "inspection_verification_queue_url" {
-  name  = "/${var.project_name}/sqs/inspection-verification-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/inspection-verification-queue-url"
   type  = "String"
   value = aws_sqs_queue.inspection_verification.url
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "inspection_verification_queue_arn" {
-  name  = "/${var.project_name}/sqs/inspection-verification-queue-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/inspection-verification-queue-arn"
   type  = "String"
   value = aws_sqs_queue.inspection_verification.arn
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "inspection_verification_dlq_url" {
-  name  = "/${var.project_name}/sqs/inspection-verification-dlq-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/inspection-verification-dlq-url"
   type  = "String"
   value = aws_sqs_queue.inspection_verification_dlq.url
   tags  = local.common_tags
@@ -717,7 +717,7 @@ resource "aws_ssm_parameter" "inspection_verification_dlq_url" {
 
 # SQS Access Policy ARN
 resource "aws_ssm_parameter" "sqs_access_policy_arn" {
-  name  = "/${var.project_name}/sqs/access-policy-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/access-policy-arn"
   type  = "String"
   value = aws_iam_policy.sqs_access.arn
   tags  = local.common_tags
@@ -725,21 +725,21 @@ resource "aws_ssm_parameter" "sqs_access_policy_arn" {
 
 # OutboundSync Queue
 resource "aws_ssm_parameter" "outbound_sync_queue_url" {
-  name  = "/${var.project_name}/sqs/outbound-sync-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/outbound-sync-queue-url"
   type  = "String"
   value = aws_sqs_queue.outbound_sync.url
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "outbound_sync_queue_arn" {
-  name  = "/${var.project_name}/sqs/outbound-sync-queue-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/outbound-sync-queue-arn"
   type  = "String"
   value = aws_sqs_queue.outbound_sync.arn
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "outbound_sync_dlq_url" {
-  name  = "/${var.project_name}/sqs/outbound-sync-dlq-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/outbound-sync-dlq-url"
   type  = "String"
   value = aws_sqs_queue.outbound_sync_dlq.url
   tags  = local.common_tags
@@ -747,21 +747,21 @@ resource "aws_ssm_parameter" "outbound_sync_dlq_url" {
 
 # Shipment Outbox Queue
 resource "aws_ssm_parameter" "shipment_outbox_queue_url" {
-  name  = "/${var.project_name}/sqs/shipment-outbox-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/shipment-outbox-queue-url"
   type  = "String"
   value = aws_sqs_queue.shipment_outbox.url
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "shipment_outbox_queue_arn" {
-  name  = "/${var.project_name}/sqs/shipment-outbox-queue-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/shipment-outbox-queue-arn"
   type  = "String"
   value = aws_sqs_queue.shipment_outbox.arn
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "shipment_outbox_dlq_url" {
-  name  = "/${var.project_name}/sqs/shipment-outbox-dlq-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/shipment-outbox-dlq-url"
   type  = "String"
   value = aws_sqs_queue.shipment_outbox_dlq.url
   tags  = local.common_tags
@@ -769,21 +769,21 @@ resource "aws_ssm_parameter" "shipment_outbox_dlq_url" {
 
 # QnA Outbox Queue
 resource "aws_ssm_parameter" "qna_outbox_queue_url" {
-  name  = "/${var.project_name}/sqs/qna-outbox-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/qna-outbox-queue-url"
   type  = "String"
   value = aws_sqs_queue.qna_outbox.url
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "qna_outbox_queue_arn" {
-  name  = "/${var.project_name}/sqs/qna-outbox-queue-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/qna-outbox-queue-arn"
   type  = "String"
   value = aws_sqs_queue.qna_outbox.arn
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "qna_outbox_dlq_url" {
-  name  = "/${var.project_name}/sqs/qna-outbox-dlq-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/qna-outbox-dlq-url"
   type  = "String"
   value = aws_sqs_queue.qna_outbox_dlq.url
   tags  = local.common_tags
@@ -791,14 +791,14 @@ resource "aws_ssm_parameter" "qna_outbox_dlq_url" {
 
 # Cancel Outbox Queue
 resource "aws_ssm_parameter" "cancel_outbox_queue_url" {
-  name  = "/${var.project_name}/sqs/cancel-outbox-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/cancel-outbox-queue-url"
   type  = "String"
   value = aws_sqs_queue.cancel_outbox.url
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "cancel_outbox_queue_arn" {
-  name  = "/${var.project_name}/sqs/cancel-outbox-queue-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/cancel-outbox-queue-arn"
   type  = "String"
   value = aws_sqs_queue.cancel_outbox.arn
   tags  = local.common_tags
@@ -806,14 +806,14 @@ resource "aws_ssm_parameter" "cancel_outbox_queue_arn" {
 
 # Refund Outbox Queue
 resource "aws_ssm_parameter" "refund_outbox_queue_url" {
-  name  = "/${var.project_name}/sqs/refund-outbox-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/refund-outbox-queue-url"
   type  = "String"
   value = aws_sqs_queue.refund_outbox.url
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "refund_outbox_queue_arn" {
-  name  = "/${var.project_name}/sqs/refund-outbox-queue-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/refund-outbox-queue-arn"
   type  = "String"
   value = aws_sqs_queue.refund_outbox.arn
   tags  = local.common_tags
@@ -821,14 +821,14 @@ resource "aws_ssm_parameter" "refund_outbox_queue_arn" {
 
 # Exchange Outbox Queue
 resource "aws_ssm_parameter" "exchange_outbox_queue_url" {
-  name  = "/${var.project_name}/sqs/exchange-outbox-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/exchange-outbox-queue-url"
   type  = "String"
   value = aws_sqs_queue.exchange_outbox.url
   tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "exchange_outbox_queue_arn" {
-  name  = "/${var.project_name}/sqs/exchange-outbox-queue-arn"
+  name  = "/${var.project_name}/${var.environment}/sqs/exchange-outbox-queue-arn"
   type  = "String"
   value = aws_sqs_queue.exchange_outbox.arn
   tags  = local.common_tags
@@ -840,7 +840,7 @@ resource "aws_ssm_parameter" "exchange_outbox_queue_arn" {
 
 # Orchestration Queue
 resource "aws_ssm_parameter" "intelligence_orchestration_queue_url" {
-  name  = "/${var.project_name}/sqs/intelligence-orchestration-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/intelligence-orchestration-queue-url"
   type  = "String"
   value = aws_sqs_queue.intelligence_orchestration.url
   tags  = local.common_tags
@@ -848,7 +848,7 @@ resource "aws_ssm_parameter" "intelligence_orchestration_queue_url" {
 
 # Description Analysis Queue
 resource "aws_ssm_parameter" "intelligence_description_analysis_queue_url" {
-  name  = "/${var.project_name}/sqs/intelligence-description-analysis-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/intelligence-description-analysis-queue-url"
   type  = "String"
   value = aws_sqs_queue.intelligence_description_analysis.url
   tags  = local.common_tags
@@ -856,7 +856,7 @@ resource "aws_ssm_parameter" "intelligence_description_analysis_queue_url" {
 
 # Option Analysis Queue
 resource "aws_ssm_parameter" "intelligence_option_analysis_queue_url" {
-  name  = "/${var.project_name}/sqs/intelligence-option-analysis-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/intelligence-option-analysis-queue-url"
   type  = "String"
   value = aws_sqs_queue.intelligence_option_analysis.url
   tags  = local.common_tags
@@ -864,7 +864,7 @@ resource "aws_ssm_parameter" "intelligence_option_analysis_queue_url" {
 
 # Notice Analysis Queue
 resource "aws_ssm_parameter" "intelligence_notice_analysis_queue_url" {
-  name  = "/${var.project_name}/sqs/intelligence-notice-analysis-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/intelligence-notice-analysis-queue-url"
   type  = "String"
   value = aws_sqs_queue.intelligence_notice_analysis.url
   tags  = local.common_tags
@@ -872,7 +872,7 @@ resource "aws_ssm_parameter" "intelligence_notice_analysis_queue_url" {
 
 # Aggregation Queue
 resource "aws_ssm_parameter" "intelligence_aggregation_queue_url" {
-  name  = "/${var.project_name}/sqs/intelligence-aggregation-queue-url"
+  name  = "/${var.project_name}/${var.environment}/sqs/intelligence-aggregation-queue-url"
   type  = "String"
   value = aws_sqs_queue.intelligence_aggregation.url
   tags  = local.common_tags
