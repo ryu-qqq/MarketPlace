@@ -22,6 +22,8 @@ import java.time.Instant;
  * @param reDeliveryCompany 재배송 택배사 (교환)
  * @param reDeliveryTrackingNumber 재배송 송장번호 (교환)
  * @param reDeliveryStatus 재배송 상태 (교환)
+ * @param holdbackStatus 보류 상태 (HOLDBACK/RELEASED). null 허용.
+ * @param holdbackReason 보류 유형. null 허용.
  * @param claimRequestDate 클레임 요청일시
  * @param lastChangedDate 마지막 변경일시
  */
@@ -43,5 +45,7 @@ public record ExternalClaimPayload(
         String reDeliveryCompany,
         String reDeliveryTrackingNumber,
         String reDeliveryStatus,
+        String holdbackStatus,
+        String holdbackReason,
         Instant claimRequestDate,
         Instant lastChangedDate) {}

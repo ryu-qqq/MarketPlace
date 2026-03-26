@@ -23,6 +23,8 @@ import com.ryuqq.marketplace.domain.refund.id.RefundClaimNumber;
 import com.ryuqq.marketplace.domain.refund.vo.RefundInfo;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReason;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReasonType;
+import com.ryuqq.marketplace.domain.refund.exception.RefundErrorCode;
+import com.ryuqq.marketplace.domain.refund.exception.RefundException;
 import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
 import java.time.Instant;
 import java.util.List;
@@ -104,12 +106,29 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
             case REFUND_COMPLETED -> completeRefund(claim, orderItemId, sellerId);
             case REFUND_REJECTED ->
                     rejectRefund(refundReadManager.findByOrderItemId(orderItemId.value()).get());
+            case REFUND_HELD ->
+                    holdRefund(
+                            refundReadManager.findByOrderItemId(orderItemId.value()).get(),
+                            claim.holdbackReason());
+            case REFUND_HOLD_RELEASED ->
+                    releaseHoldRefund(
+                            refundReadManager.findByOrderItemId(orderItemId.value()).get());
             default -> 0L;
         };
     }
 
     private ClaimSyncAction resolveRefund(
             ExternalClaimPayload external, Optional<RefundClaim> existingRefund) {
+        String holdbackStatus = external.holdbackStatus();
+        if (holdbackStatus != null && existingRefund.isPresent()) {
+            if ("HOLDBACK".equals(holdbackStatus)) {
+                return ClaimSyncAction.REFUND_HELD;
+            }
+            if ("RELEASED".equals(holdbackStatus)) {
+                return ClaimSyncAction.REFUND_HOLD_RELEASED;
+            }
+        }
+
         String claimStatus = external.claimStatus();
         return switch (claimStatus) {
             case "RETURN_REQUEST" ->
@@ -277,6 +296,30 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         refundClaim.reject(SYNC_ACTOR, now);
         refundCommandManager.persist(refundClaim);
         recordHistory(refundClaim.idValue(), refundClaim.orderItemIdValue(), fromStatus, "REJECTED", refundClaim.refundQty());
+        return 0L;
+    }
+
+    private long holdRefund(RefundClaim refundClaim, String holdbackReason) {
+        Instant now = timeProvider.now();
+        try {
+            refundClaim.hold(holdbackReason, now);
+            refundCommandManager.persist(refundClaim);
+            recordHistory(refundClaim.idValue(), refundClaim.orderItemIdValue(), refundClaim.status().name(), "HELD", refundClaim.refundQty());
+        } catch (RefundException e) {
+            if (e.getErrorCode() == RefundErrorCode.ALREADY_HOLD) {
+                log.debug("환불 클레임이 이미 보류 상태입니다. refundClaimId={}", refundClaim.idValue());
+                return 0L;
+            }
+            throw e;
+        }
+        return 0L;
+    }
+
+    private long releaseHoldRefund(RefundClaim refundClaim) {
+        Instant now = timeProvider.now();
+        refundClaim.releaseHold(now);
+        refundCommandManager.persist(refundClaim);
+        recordHistory(refundClaim.idValue(), refundClaim.orderItemIdValue(), "HELD", "HOLD_RELEASED", refundClaim.refundQty());
         return 0L;
     }
 

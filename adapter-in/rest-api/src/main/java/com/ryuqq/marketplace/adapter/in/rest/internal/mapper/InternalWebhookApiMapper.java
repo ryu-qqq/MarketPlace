@@ -116,6 +116,8 @@ public class InternalWebhookApiMapper {
                 null,
                 null,
                 null,
+                null,
+                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -140,6 +142,8 @@ public class InternalWebhookApiMapper {
                 null,
                 null,
                 null,
+                null,
+                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -158,6 +162,8 @@ public class InternalWebhookApiMapper {
                 null,
                 null,
                 "BUYER",
+                null,
+                null,
                 null,
                 null,
                 null,

@@ -558,6 +558,167 @@ class ExchangeClaimSyncHandlerTest {
     }
 
     @Nested
+    @DisplayName("resolve() - holdbackStatus 기반 HELD/HOLD_RELEASED 액션 결정")
+    class ResolveHoldbackTest {
+
+        @Test
+        @DisplayName("holdbackStatus가 HOLDBACK이고 기존 교환이 있으면 EXCHANGE_HELD를 반환한다")
+        void resolve_HoldbackStatus_ExistingExchange_ReturnsExchangeHeld() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.exchangeHoldbackPayload(
+                            "EXCHANGE_REQUEST", "HOLDBACK", "추가 확인 필요");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            ExchangeClaim existing = ExchangeFixtures.requestedExchangeClaim();
+            given(exchangeReadManager.findByOrderItemId(orderItemId))
+                    .willReturn(Optional.of(existing));
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, orderItemId);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.EXCHANGE_HELD);
+        }
+
+        @Test
+        @DisplayName("holdbackStatus가 HOLDBACK이고 기존 교환이 없으면 claimStatus로 분기한다")
+        void resolve_HoldbackStatus_NoExisting_FallsBackToClaimStatus() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.exchangeHoldbackPayload(
+                            "EXCHANGE_REQUEST", "HOLDBACK", "추가 확인 필요");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            given(exchangeReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, orderItemId);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.EXCHANGE_CREATED);
+        }
+
+        @Test
+        @DisplayName("holdbackStatus가 RELEASED이고 기존 교환이 있으면 EXCHANGE_HOLD_RELEASED를 반환한다")
+        void resolve_ReleasedStatus_ExistingExchange_ReturnsExchangeHoldReleased() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.exchangeHoldbackPayload(
+                            "EXCHANGE_REQUEST", "RELEASED", null);
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            ExchangeClaim existing = ExchangeFixtures.holdExchangeClaim();
+            given(exchangeReadManager.findByOrderItemId(orderItemId))
+                    .willReturn(Optional.of(existing));
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, orderItemId);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.EXCHANGE_HOLD_RELEASED);
+        }
+
+        @Test
+        @DisplayName("holdbackStatus가 null이면 claimStatus로 분기한다")
+        void resolve_NullHoldbackStatus_FallsBackToClaimStatus() {
+            // given
+            ExternalClaimPayload payload = ClaimSyncFixtures.exchangePayload("EXCHANGE_REQUEST");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            given(exchangeReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, orderItemId);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.EXCHANGE_CREATED);
+        }
+    }
+
+    @Nested
+    @DisplayName("execute() - EXCHANGE_HELD 액션 실행")
+    class ExecuteExchangeHeldTest {
+
+        @Test
+        @DisplayName("EXCHANGE_HELD 실행 시 교환을 보류 처리하고 0을 반환한다")
+        void execute_ExchangeHeld_HoldsExchange() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.exchangeHoldbackPayload(
+                            "EXCHANGE_REQUEST", "HOLDBACK", "추가 확인 필요");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            long sellerId = 100L;
+            Instant now = Instant.now();
+            ExchangeClaim requestedExchange = ExchangeFixtures.requestedExchangeClaim();
+
+            given(timeProvider.now()).willReturn(now);
+            given(exchangeReadManager.findByOrderItemId(orderItemId))
+                    .willReturn(Optional.of(requestedExchange));
+
+            // when
+            long result =
+                    sut.execute(ClaimSyncAction.EXCHANGE_HELD, payload, orderItemId, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(exchangeCommandManager).should().persist(any(ExchangeClaim.class));
+        }
+
+        @Test
+        @DisplayName("이미 보류 상태인 교환에 EXCHANGE_HELD 실행 시 SKIPPED 처리하고 예외를 던지지 않는다")
+        void execute_ExchangeHeld_AlreadyHeld_ReturnsZeroWithoutException() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.exchangeHoldbackPayload(
+                            "EXCHANGE_REQUEST", "HOLDBACK", "추가 확인 필요");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            long sellerId = 100L;
+            Instant now = Instant.now();
+            ExchangeClaim holdExchange = ExchangeFixtures.holdExchangeClaim();
+
+            given(timeProvider.now()).willReturn(now);
+            given(exchangeReadManager.findByOrderItemId(orderItemId))
+                    .willReturn(Optional.of(holdExchange));
+
+            // when
+            long result =
+                    sut.execute(ClaimSyncAction.EXCHANGE_HELD, payload, orderItemId, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(exchangeCommandManager).should(never()).persist(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("execute() - EXCHANGE_HOLD_RELEASED 액션 실행")
+    class ExecuteExchangeHoldReleasedTest {
+
+        @Test
+        @DisplayName("EXCHANGE_HOLD_RELEASED 실행 시 보류를 해제하고 0을 반환한다")
+        void execute_ExchangeHoldReleased_ReleasesHold() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.exchangeHoldbackPayload(
+                            "EXCHANGE_REQUEST", "RELEASED", null);
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            long sellerId = 100L;
+            Instant now = Instant.now();
+            ExchangeClaim holdExchange = ExchangeFixtures.holdExchangeClaim();
+
+            given(timeProvider.now()).willReturn(now);
+            given(exchangeReadManager.findByOrderItemId(orderItemId))
+                    .willReturn(Optional.of(holdExchange));
+
+            // when
+            long result =
+                    sut.execute(
+                            ClaimSyncAction.EXCHANGE_HOLD_RELEASED, payload, orderItemId, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(exchangeCommandManager).should().persist(any(ExchangeClaim.class));
+        }
+    }
+
+    @Nested
     @DisplayName("교환 사유 파싱 테스트")
     class ReasonParsingTest {
 

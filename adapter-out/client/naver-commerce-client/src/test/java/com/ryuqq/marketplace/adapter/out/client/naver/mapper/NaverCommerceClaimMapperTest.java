@@ -153,6 +153,8 @@ class NaverCommerceClaimMapperTest {
             assertThat(payload.collectDeliveryCompany()).isEqualTo("CJGLS");
             assertThat(payload.collectTrackingNumber()).isEqualTo("1234567890");
             assertThat(payload.collectStatus()).isEqualTo("COLLECTING");
+            assertThat(payload.holdbackStatus()).isNull();
+            assertThat(payload.holdbackReason()).isNull();
             assertThat(payload.claimRequestDate()).isNotNull();
             assertThat(payload.lastChangedDate()).isNotNull();
         }

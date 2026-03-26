@@ -46,6 +46,8 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
+                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -63,6 +65,8 @@ public final class ClaimSyncFixtures {
                 null,
                 1,
                 "BUYER",
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -92,6 +96,8 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
+                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -110,6 +116,8 @@ public final class ClaimSyncFixtures {
                 null,
                 1,
                 "BUYER",
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -141,6 +149,8 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
+                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -164,6 +174,8 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
+                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -181,6 +193,8 @@ public final class ClaimSyncFixtures {
                 null,
                 1,
                 "BUYER",
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -212,6 +226,8 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
+                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -235,6 +251,8 @@ public final class ClaimSyncFixtures {
                 "한진택배",
                 "1111111111",
                 "SHIPPING",
+                null,
+                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -259,6 +277,60 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
+                null,
+                Instant.now(),
+                Instant.now());
+    }
+
+    public static ExternalClaimPayload exchangeHoldbackPayload(
+            String claimStatus, String holdbackStatus, String holdbackReason) {
+        return new ExternalClaimPayload(
+                DEFAULT_EXTERNAL_ORDER_ID,
+                DEFAULT_EXTERNAL_PRODUCT_ORDER_ID,
+                "EXCHANGE",
+                claimStatus,
+                "CLAIM-004",
+                claimStatus,
+                "SIZE_CHANGE",
+                "사이즈가 맞지 않아 교환 요청합니다",
+                null,
+                1,
+                "BUYER",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                holdbackStatus,
+                holdbackReason,
+                Instant.now(),
+                Instant.now());
+    }
+
+    public static ExternalClaimPayload returnHoldbackPayload(
+            String claimStatus, String holdbackStatus, String holdbackReason) {
+        return new ExternalClaimPayload(
+                DEFAULT_EXTERNAL_ORDER_ID,
+                DEFAULT_EXTERNAL_PRODUCT_ORDER_ID,
+                "RETURN",
+                claimStatus,
+                "CLAIM-003",
+                claimStatus,
+                "CHANGE_OF_MIND",
+                null,
+                null,
+                1,
+                "BUYER",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                holdbackStatus,
+                holdbackReason,
                 Instant.now(),
                 Instant.now());
     }
@@ -285,6 +357,8 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
+                null,
                 Instant.now(),
                 Instant.now());
     }
@@ -304,6 +378,8 @@ public final class ClaimSyncFixtures {
                 null,
                 1,
                 "BUYER",
+                null,
+                null,
                 null,
                 null,
                 null,

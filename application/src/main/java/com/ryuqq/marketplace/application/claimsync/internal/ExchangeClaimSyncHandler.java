@@ -24,6 +24,8 @@ import com.ryuqq.marketplace.domain.exchange.vo.AmountAdjustment;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
+import com.ryuqq.marketplace.domain.exchange.exception.ExchangeErrorCode;
+import com.ryuqq.marketplace.domain.exchange.exception.ExchangeException;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
@@ -106,12 +108,28 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             case EXCHANGE_COMPLETED -> completeExchange(claim, orderItemId, sellerId);
             case EXCHANGE_REJECTED ->
                     rejectExchange(exchangeReadManager.findByOrderItemId(orderItemId).get());
+            case EXCHANGE_HELD ->
+                    holdExchange(
+                            exchangeReadManager.findByOrderItemId(orderItemId).get(),
+                            claim.holdbackReason());
+            case EXCHANGE_HOLD_RELEASED ->
+                    releaseHoldExchange(exchangeReadManager.findByOrderItemId(orderItemId).get());
             default -> 0L;
         };
     }
 
     private ClaimSyncAction resolveExchange(
             ExternalClaimPayload external, Optional<ExchangeClaim> existing) {
+        String holdbackStatus = external.holdbackStatus();
+        if (holdbackStatus != null && existing.isPresent()) {
+            if ("HOLDBACK".equals(holdbackStatus)) {
+                return ClaimSyncAction.EXCHANGE_HELD;
+            }
+            if ("RELEASED".equals(holdbackStatus)) {
+                return ClaimSyncAction.EXCHANGE_HOLD_RELEASED;
+            }
+        }
+
         String claimStatus = external.claimStatus();
         return switch (claimStatus) {
             case "EXCHANGE_REQUEST" ->
@@ -340,6 +358,30 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         exchangeClaim.reject(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
         recordHistory(exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), fromStatus, "REJECTED", exchangeClaim.exchangeQty());
+        return 0L;
+    }
+
+    private long holdExchange(ExchangeClaim exchangeClaim, String holdbackReason) {
+        Instant now = timeProvider.now();
+        try {
+            exchangeClaim.hold(holdbackReason, now);
+            exchangeCommandManager.persist(exchangeClaim);
+            recordHistory(exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), exchangeClaim.status().name(), "HELD", exchangeClaim.exchangeQty());
+        } catch (ExchangeException e) {
+            if (e.getErrorCode() == ExchangeErrorCode.ALREADY_HOLD) {
+                log.debug("교환 클레임이 이미 보류 상태입니다. exchangeClaimId={}", exchangeClaim.idValue());
+                return 0L;
+            }
+            throw e;
+        }
+        return 0L;
+    }
+
+    private long releaseHoldExchange(ExchangeClaim exchangeClaim) {
+        Instant now = timeProvider.now();
+        exchangeClaim.releaseHold(now);
+        exchangeCommandManager.persist(exchangeClaim);
+        recordHistory(exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), "HELD", "HOLD_RELEASED", exchangeClaim.exchangeQty());
         return 0L;
     }
 

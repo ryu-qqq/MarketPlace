@@ -481,6 +481,167 @@ class RefundClaimSyncHandlerTest {
     }
 
     @Nested
+    @DisplayName("resolve() - holdbackStatus 기반 HELD/HOLD_RELEASED 액션 결정")
+    class ResolveHoldbackTest {
+
+        @Test
+        @DisplayName("holdbackStatus가 HOLDBACK이고 기존 환불이 있으면 REFUND_HELD를 반환한다")
+        void resolve_HoldbackStatus_ExistingRefund_ReturnsRefundHeld() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.returnHoldbackPayload(
+                            "RETURN_REQUEST", "HOLDBACK", "추가 확인 필요");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            RefundClaim existing = RefundFixtures.requestedRefundClaim();
+            given(refundReadManager.findByOrderItemId(orderItemId.value()))
+                    .willReturn(Optional.of(existing));
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, orderItemId);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.REFUND_HELD);
+        }
+
+        @Test
+        @DisplayName("holdbackStatus가 HOLDBACK이고 기존 환불이 없으면 claimStatus로 분기한다")
+        void resolve_HoldbackStatus_NoExisting_FallsBackToClaimStatus() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.returnHoldbackPayload(
+                            "RETURN_REQUEST", "HOLDBACK", "추가 확인 필요");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            given(refundReadManager.findByOrderItemId(orderItemId.value()))
+                    .willReturn(Optional.empty());
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, orderItemId);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.REFUND_CREATED);
+        }
+
+        @Test
+        @DisplayName("holdbackStatus가 RELEASED이고 기존 환불이 있으면 REFUND_HOLD_RELEASED를 반환한다")
+        void resolve_ReleasedStatus_ExistingRefund_ReturnsRefundHoldReleased() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.returnHoldbackPayload("RETURN_REQUEST", "RELEASED", null);
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            RefundClaim existing = RefundFixtures.holdRefundClaim();
+            given(refundReadManager.findByOrderItemId(orderItemId.value()))
+                    .willReturn(Optional.of(existing));
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, orderItemId);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.REFUND_HOLD_RELEASED);
+        }
+
+        @Test
+        @DisplayName("holdbackStatus가 null이면 claimStatus로 분기한다")
+        void resolve_NullHoldbackStatus_FallsBackToClaimStatus() {
+            // given
+            ExternalClaimPayload payload = ClaimSyncFixtures.returnPayload("RETURN_REQUEST");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            given(refundReadManager.findByOrderItemId(orderItemId.value()))
+                    .willReturn(Optional.empty());
+
+            // when
+            ClaimSyncAction action = sut.resolve(payload, orderItemId);
+
+            // then
+            assertThat(action).isEqualTo(ClaimSyncAction.REFUND_CREATED);
+        }
+    }
+
+    @Nested
+    @DisplayName("execute() - REFUND_HELD 액션 실행")
+    class ExecuteRefundHeldTest {
+
+        @Test
+        @DisplayName("REFUND_HELD 실행 시 환불을 보류 처리하고 0을 반환한다")
+        void execute_RefundHeld_HoldsRefund() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.returnHoldbackPayload(
+                            "RETURN_REQUEST", "HOLDBACK", "추가 확인 필요");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            long sellerId = 10L;
+            Instant now = Instant.now();
+            RefundClaim requestedRefund = RefundFixtures.requestedRefundClaim();
+
+            given(timeProvider.now()).willReturn(now);
+            given(refundReadManager.findByOrderItemId(orderItemId.value()))
+                    .willReturn(Optional.of(requestedRefund));
+
+            // when
+            long result =
+                    sut.execute(ClaimSyncAction.REFUND_HELD, payload, orderItemId, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(refundCommandManager).should().persist(any(RefundClaim.class));
+        }
+
+        @Test
+        @DisplayName("이미 보류 상태인 환불에 REFUND_HELD 실행 시 SKIPPED 처리하고 예외를 던지지 않는다")
+        void execute_RefundHeld_AlreadyHeld_ReturnsZeroWithoutException() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.returnHoldbackPayload(
+                            "RETURN_REQUEST", "HOLDBACK", "추가 확인 필요");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            long sellerId = 10L;
+            Instant now = Instant.now();
+            RefundClaim holdRefund = RefundFixtures.holdRefundClaim();
+
+            given(timeProvider.now()).willReturn(now);
+            given(refundReadManager.findByOrderItemId(orderItemId.value()))
+                    .willReturn(Optional.of(holdRefund));
+
+            // when
+            long result =
+                    sut.execute(ClaimSyncAction.REFUND_HELD, payload, orderItemId, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(refundCommandManager).should(never()).persist(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("execute() - REFUND_HOLD_RELEASED 액션 실행")
+    class ExecuteRefundHoldReleasedTest {
+
+        @Test
+        @DisplayName("REFUND_HOLD_RELEASED 실행 시 보류를 해제하고 0을 반환한다")
+        void execute_RefundHoldReleased_ReleasesHold() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.returnHoldbackPayload("RETURN_REQUEST", "RELEASED", null);
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            long sellerId = 10L;
+            Instant now = Instant.now();
+            RefundClaim holdRefund = RefundFixtures.holdRefundClaim();
+
+            given(timeProvider.now()).willReturn(now);
+            given(refundReadManager.findByOrderItemId(orderItemId.value()))
+                    .willReturn(Optional.of(holdRefund));
+
+            // when
+            long result =
+                    sut.execute(
+                            ClaimSyncAction.REFUND_HOLD_RELEASED, payload, orderItemId, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(refundCommandManager).should().persist(any(RefundClaim.class));
+        }
+    }
+
+    @Nested
     @DisplayName("환불 사유 파싱 테스트")
     class ReasonParsingTest {
 

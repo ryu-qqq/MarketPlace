@@ -123,6 +123,10 @@ class QnaQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].productGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("상품그룹 ID"),
+                                            fieldWithPath("data.content[].orderId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("주문 ID (주문 문의일 때, nullable)")
+                                                    .optional(),
                                             fieldWithPath("data.content[].qnaType")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
@@ -133,6 +137,9 @@ class QnaQueryControllerRestDocsTest {
                                             fieldWithPath("data.content[].externalQnaId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("외부 QnA ID"),
+                                            fieldWithPath("data.content[].questionTitle")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("질문 제목"),
                                             fieldWithPath("data.content[].questionContent")
                                                     .type(JsonFieldType.STRING)
                                                     .description("질문 내용"),
@@ -264,6 +271,10 @@ class QnaQueryControllerRestDocsTest {
                                             fieldWithPath("data.productGroupId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("상품그룹 ID"),
+                                            fieldWithPath("data.orderId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("주문 ID (주문 문의일 때, nullable)")
+                                                    .optional(),
                                             fieldWithPath("data.qnaType")
                                                     .type(JsonFieldType.STRING)
                                                     .description(
@@ -274,6 +285,9 @@ class QnaQueryControllerRestDocsTest {
                                             fieldWithPath("data.externalQnaId")
                                                     .type(JsonFieldType.STRING)
                                                     .description("외부 QnA ID"),
+                                            fieldWithPath("data.questionTitle")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("질문 제목"),
                                             fieldWithPath("data.questionContent")
                                                     .type(JsonFieldType.STRING)
                                                     .description("질문 내용"),

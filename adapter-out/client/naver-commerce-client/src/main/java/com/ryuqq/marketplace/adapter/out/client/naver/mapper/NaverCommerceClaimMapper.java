@@ -67,6 +67,8 @@ public class NaverCommerceClaimMapper {
         String reDeliveryCompany = claim != null ? claim.reDeliveryCompany() : null;
         String reDeliveryTrackingNumber = claim != null ? claim.reDeliveryTrackingNumber() : null;
         String reDeliveryStatus = claim != null ? claim.reDeliveryStatus() : null;
+        String holdbackStatus = claim != null ? claim.holdbackStatus() : null;
+        String holdbackReason = claim != null ? claim.holdbackReason() : null;
         Instant claimRequestDate = claim != null ? parseInstant(claim.claimRequestDate()) : null;
 
         return new ExternalClaimPayload(
@@ -87,6 +89,8 @@ public class NaverCommerceClaimMapper {
                 reDeliveryCompany,
                 reDeliveryTrackingNumber,
                 reDeliveryStatus,
+                holdbackStatus,
+                holdbackReason,
                 claimRequestDate,
                 parseInstant(change.lastChangedDate()));
     }
