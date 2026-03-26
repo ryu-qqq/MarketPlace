@@ -504,15 +504,14 @@ class RefundCommandE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P1")
-        @DisplayName("[CMD-22] ClaimHistory 메모 추가 - 존재하지 않는 refundClaimId로도 이력이 생성된다")
-        void addMemo_NonExistentRefundClaimId_CreatesHistory() {
+        @DisplayName("[CMD-22] ClaimHistory 메모 추가 - 존재하지 않는 refundClaimId → 404")
+        void addMemo_NonExistentRefundClaimId_Returns404() {
             given().spec(givenSuperAdmin())
                     .body(Map.of("message", "메모"))
                     .when()
                     .post(REFUND_HISTORY, "01900000-0000-7000-0000-000000000999")
                     .then()
-                    .statusCode(HttpStatus.CREATED.value())
-                    .body("data.historyId", notNullValue());
+                    .statusCode(HttpStatus.NOT_FOUND.value());
         }
     }
 }

@@ -20,7 +20,11 @@ class ClaimTypeTest {
         void allValuesExist() {
             // then
             assertThat(ClaimType.values())
-                    .containsExactly(ClaimType.CANCEL, ClaimType.REFUND, ClaimType.EXCHANGE);
+                    .containsExactly(
+                            ClaimType.ORDER,
+                            ClaimType.CANCEL,
+                            ClaimType.REFUND,
+                            ClaimType.EXCHANGE);
         }
 
         @Test

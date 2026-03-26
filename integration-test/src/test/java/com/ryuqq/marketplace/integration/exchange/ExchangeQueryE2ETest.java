@@ -223,7 +223,7 @@ class ExchangeQueryE2ETest extends E2ETestBase {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data", notNullValue())
-                    .body("data.exchangeStatus", equalTo("REQUESTED"));
+                    .body("data.exchangeClaimInfo.exchangeStatus", equalTo("REQUESTED"));
         }
 
         @Test

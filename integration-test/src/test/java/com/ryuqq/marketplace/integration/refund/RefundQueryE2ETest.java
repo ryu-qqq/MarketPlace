@@ -245,7 +245,7 @@ class RefundQueryE2ETest extends E2ETestBase {
                     .get(REFUND_DETAIL, refundClaimId)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.refundClaimId", equalTo(refundClaimId));
+                    .body("data.refundClaimInfo.refundClaimId", equalTo(refundClaimId));
         }
 
         @Test
@@ -271,7 +271,7 @@ class RefundQueryE2ETest extends E2ETestBase {
                     .get(REFUND_DETAIL, refundClaimId)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.refundStatus", equalTo("COMPLETED"));
+                    .body("data.refundClaimInfo.refundStatus", equalTo("COMPLETED"));
         }
 
         @Test

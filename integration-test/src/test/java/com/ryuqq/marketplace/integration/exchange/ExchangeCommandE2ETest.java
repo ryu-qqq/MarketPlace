@@ -839,8 +839,8 @@ class ExchangeCommandE2ETest extends E2ETestBase {
 
         @Test
         @Tag("P0")
-        @DisplayName("[C10-2] 존재하지 않는 교환 건에 메모 추가해도 이력이 생성된다")
-        void addMemo_nonExistentExchange_createsHistory() {
+        @DisplayName("[C10-2] 존재하지 않는 교환 건에 메모 추가 시 404가 반환된다")
+        void addMemo_nonExistentExchange_returns404() {
             // when & then
             Map<String, Object> requestBody = Map.of("message", "존재하지 않는 교환 건 메모");
 
@@ -849,8 +849,7 @@ class ExchangeCommandE2ETest extends E2ETestBase {
                     .when()
                     .post(BASE_URL + "/{exchangeClaimId}/histories", "non-existent-id")
                     .then()
-                    .statusCode(HttpStatus.CREATED.value())
-                    .body("data.historyId", notNullValue());
+                    .statusCode(HttpStatus.NOT_FOUND.value());
         }
     }
 }
