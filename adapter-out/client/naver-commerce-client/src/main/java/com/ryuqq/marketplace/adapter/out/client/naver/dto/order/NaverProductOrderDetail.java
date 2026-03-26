@@ -10,12 +10,18 @@ import java.util.List;
  * @param order 주문 레벨 정보
  * @param productOrder 상품주문 레벨 정보
  * @param delivery 배송 정보
+ * @param exchange 교환 클레임 정보 (claimType=EXCHANGE 시 최상위 exchange 객체)
+ * @param returnInfo 반품 클레임 정보 (claimType=RETURN 시 최상위 return 객체)
  */
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
         value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"},
         justification = "Record DTO – immutable by convention")
 public record NaverProductOrderDetail(
-        NaverProductOrderOrder order, ProductOrderInfo productOrder, NaverDeliveryInfo delivery) {
+        NaverProductOrderOrder order,
+        ProductOrderInfo productOrder,
+        NaverDeliveryInfo delivery,
+        NaverExchangeClaimInfo exchange,
+        NaverReturnClaimInfo returnInfo) {
 
     /**
      * 상품주문 레벨 정보.
