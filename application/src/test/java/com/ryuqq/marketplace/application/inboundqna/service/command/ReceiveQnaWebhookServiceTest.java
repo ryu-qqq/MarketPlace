@@ -66,7 +66,9 @@ class ReceiveQnaWebhookServiceTest {
                             null,
                             "{\"externalQnaId\":\"EXT-QNA-001\"}");
 
-            given(readManager.existsBySalesChannelIdAndExternalQnaId(SALES_CHANNEL_ID, "EXT-QNA-001"))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalQnaId(
+                                    SALES_CHANNEL_ID, "EXT-QNA-001"))
                     .willReturn(false);
 
             // when
@@ -79,7 +81,9 @@ class ReceiveQnaWebhookServiceTest {
             assertThat(result.failed()).isZero();
 
             then(commandManager).should().persist(any(InboundQna.class));
-            then(conversionProcessor).should().convert(any(InboundQna.class), eq("EXT-PROD-001"), eq(null));
+            then(conversionProcessor)
+                    .should()
+                    .convert(any(InboundQna.class), eq("EXT-PROD-001"), eq(null));
         }
 
         @Test
@@ -98,7 +102,9 @@ class ReceiveQnaWebhookServiceTest {
                             null,
                             "{\"externalQnaId\":\"EXT-QNA-DUP-001\"}");
 
-            given(readManager.existsBySalesChannelIdAndExternalQnaId(SALES_CHANNEL_ID, "EXT-QNA-DUP-001"))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalQnaId(
+                                    SALES_CHANNEL_ID, "EXT-QNA-DUP-001"))
                     .willReturn(true);
 
             // when
@@ -130,7 +136,9 @@ class ReceiveQnaWebhookServiceTest {
                             null,
                             "{\"externalQnaId\":\"EXT-QNA-REPLY-001\"}");
 
-            given(readManager.existsBySalesChannelIdAndExternalQnaId(SALES_CHANNEL_ID, "EXT-QNA-REPLY-001"))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalQnaId(
+                                    SALES_CHANNEL_ID, "EXT-QNA-REPLY-001"))
                     .willReturn(false);
 
             Qna parentQna =
@@ -145,7 +153,9 @@ class ReceiveQnaWebhookServiceTest {
                             "구매자C",
                             Instant.now());
 
-            given(qnaReadManager.getBySalesChannelIdAndExternalQnaId(SALES_CHANNEL_ID, "EXT-QNA-PARENT-001"))
+            given(
+                            qnaReadManager.getBySalesChannelIdAndExternalQnaId(
+                                    SALES_CHANNEL_ID, "EXT-QNA-PARENT-001"))
                     .willReturn(parentQna);
 
             // when
@@ -178,7 +188,9 @@ class ReceiveQnaWebhookServiceTest {
                             null,
                             "{\"externalQnaId\":\"EXT-QNA-FAIL-001\"}");
 
-            given(readManager.existsBySalesChannelIdAndExternalQnaId(SALES_CHANNEL_ID, "EXT-QNA-FAIL-001"))
+            given(
+                            readManager.existsBySalesChannelIdAndExternalQnaId(
+                                    SALES_CHANNEL_ID, "EXT-QNA-FAIL-001"))
                     .willReturn(false);
             willThrow(new RuntimeException("저장 실패"))
                     .given(commandManager)

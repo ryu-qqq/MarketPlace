@@ -11,7 +11,6 @@ import com.ryuqq.marketplace.application.inboundqna.manager.InboundQnaReadManage
 import com.ryuqq.marketplace.application.inboundqna.port.out.client.SalesChannelQnaClient;
 import com.ryuqq.marketplace.application.saleschannel.manager.SalesChannelReadManager;
 import com.ryuqq.marketplace.application.shop.manager.ShopReadManager;
-import com.ryuqq.marketplace.domain.inboundqna.aggregate.InboundQna;
 import com.ryuqq.marketplace.domain.saleschannel.aggregate.SalesChannel;
 import com.ryuqq.marketplace.domain.saleschannel.id.SalesChannelId;
 import com.ryuqq.marketplace.domain.shop.aggregate.Shop;
@@ -87,8 +86,7 @@ class PollExternalQnasServiceTest {
                     .willReturn(salesChannel);
             given(salesChannel.channelName()).willReturn("NAVER");
             given(qnaClient.channelCode()).willReturn("NAVER");
-            given(shopReadManager.findActiveBySalesChannelId(salesChannelId))
-                    .willReturn(List.of());
+            given(shopReadManager.findActiveBySalesChannelId(salesChannelId)).willReturn(List.of());
 
             // when
             int result = sut.execute(salesChannelId, 10);
@@ -181,9 +179,7 @@ class PollExternalQnasServiceTest {
                                     Mockito.any(Instant.class),
                                     Mockito.eq(batchSize)))
                     .willReturn(List.of(duplicatePayload));
-            given(
-                            readManager.existsBySalesChannelIdAndExternalQnaId(
-                                    salesChannelId, "EXT-QNA-001"))
+            given(readManager.existsBySalesChannelIdAndExternalQnaId(salesChannelId, "EXT-QNA-001"))
                     .willReturn(true);
 
             // when

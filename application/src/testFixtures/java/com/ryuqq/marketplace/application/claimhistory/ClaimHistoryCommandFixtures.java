@@ -37,7 +37,12 @@ public final class ClaimHistoryCommandFixtures {
 
     public static AddClaimHistoryMemoCommand addMemoCommand(ClaimType claimType, String claimId) {
         return new AddClaimHistoryMemoCommand(
-                claimType, claimId, DEFAULT_ORDER_ITEM_ID, DEFAULT_MESSAGE, DEFAULT_ACTOR_ID, DEFAULT_ACTOR_NAME);
+                claimType,
+                claimId,
+                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_MESSAGE,
+                DEFAULT_ACTOR_ID,
+                DEFAULT_ACTOR_NAME);
     }
 
     public static AddClaimHistoryMemoCommand addMemoCommand(String message) {
@@ -51,11 +56,18 @@ public final class ClaimHistoryCommandFixtures {
     }
 
     public static AddClaimHistoryMemoCommand addMemoCommand(
-            ClaimType claimType, String claimId, String orderItemId, String message, String actorId, String actorName) {
-        return new AddClaimHistoryMemoCommand(claimType, claimId, orderItemId, message, actorId, actorName);
+            ClaimType claimType,
+            String claimId,
+            String orderItemId,
+            String message,
+            String actorId,
+            String actorName) {
+        return new AddClaimHistoryMemoCommand(
+                claimType, claimId, orderItemId, message, actorId, actorName);
     }
 
-    public static AddClaimHistoryMemoCommand addOrderMemoCommand(String orderItemId, String message) {
+    public static AddClaimHistoryMemoCommand addOrderMemoCommand(
+            String orderItemId, String message) {
         return new AddClaimHistoryMemoCommand(
                 ClaimType.ORDER, null, orderItemId, message, DEFAULT_ACTOR_ID, DEFAULT_ACTOR_NAME);
     }

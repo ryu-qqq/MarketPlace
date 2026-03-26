@@ -18,13 +18,13 @@ import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
+import com.ryuqq.marketplace.domain.refund.exception.RefundErrorCode;
+import com.ryuqq.marketplace.domain.refund.exception.RefundException;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimId;
 import com.ryuqq.marketplace.domain.refund.id.RefundClaimNumber;
 import com.ryuqq.marketplace.domain.refund.vo.RefundInfo;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReason;
 import com.ryuqq.marketplace.domain.refund.vo.RefundReasonType;
-import com.ryuqq.marketplace.domain.refund.exception.RefundErrorCode;
-import com.ryuqq.marketplace.domain.refund.exception.RefundException;
 import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
 import java.time.Instant;
 import java.util.List;
@@ -40,7 +40,7 @@ import org.springframework.stereotype.Component;
  * <p>RETURN 유형의 클레임에 대해 액션 결정과 실행을 캡슐화합니다.
  */
 @Component
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessiveImports"})
 public class RefundClaimSyncHandler implements ClaimSyncHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RefundClaimSyncHandler.class);
@@ -201,7 +201,12 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         attachCollectShipmentIfPresent(refundClaim, claim, now);
         refundClaim.startCollecting(SYNC_ACTOR, now);
         refundCommandManager.persist(refundClaim);
-        recordHistory(refundClaim.idValue(), refundClaim.orderItemIdValue(), fromStatus, "COLLECTING", refundClaim.refundQty());
+        recordHistory(
+                refundClaim.idValue(),
+                refundClaim.orderItemIdValue(),
+                fromStatus,
+                "COLLECTING",
+                refundClaim.refundQty());
         return 0L;
     }
 
@@ -239,7 +244,12 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         String fromStatus = refundClaim.status().name();
         refundClaim.completeCollection(SYNC_ACTOR, now);
         refundCommandManager.persist(refundClaim);
-        recordHistory(refundClaim.idValue(), refundClaim.orderItemIdValue(), fromStatus, "COLLECTED", refundClaim.refundQty());
+        recordHistory(
+                refundClaim.idValue(),
+                refundClaim.orderItemIdValue(),
+                fromStatus,
+                "COLLECTED",
+                refundClaim.refundQty());
         return 0L;
     }
 
@@ -257,7 +267,12 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
             refundClaim.complete(refundInfo, SYNC_ACTOR, now);
             refundCommandManager.persist(refundClaim);
             partialReturnOrderItem(orderItemId, refundClaim.refundQty(), "환불 완료 동기화", now);
-            recordHistory(refundClaim.idValue(), orderItemId.value(), fromStatus, "COMPLETED", refundClaim.refundQty());
+            recordHistory(
+                    refundClaim.idValue(),
+                    orderItemId.value(),
+                    fromStatus,
+                    "COMPLETED",
+                    refundClaim.refundQty());
             createReversalEntry(orderItemId, sellerId, refundClaim.idValue(), refundAmount);
             return 0L;
         }
@@ -295,7 +310,12 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         String fromStatus = refundClaim.status().name();
         refundClaim.reject(SYNC_ACTOR, now);
         refundCommandManager.persist(refundClaim);
-        recordHistory(refundClaim.idValue(), refundClaim.orderItemIdValue(), fromStatus, "REJECTED", refundClaim.refundQty());
+        recordHistory(
+                refundClaim.idValue(),
+                refundClaim.orderItemIdValue(),
+                fromStatus,
+                "REJECTED",
+                refundClaim.refundQty());
         return 0L;
     }
 
@@ -304,7 +324,12 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         try {
             refundClaim.hold(holdbackReason, now);
             refundCommandManager.persist(refundClaim);
-            recordHistory(refundClaim.idValue(), refundClaim.orderItemIdValue(), refundClaim.status().name(), "HELD", refundClaim.refundQty());
+            recordHistory(
+                    refundClaim.idValue(),
+                    refundClaim.orderItemIdValue(),
+                    refundClaim.status().name(),
+                    "HELD",
+                    refundClaim.refundQty());
         } catch (RefundException e) {
             if (e.getErrorCode() == RefundErrorCode.ALREADY_HOLD) {
                 log.debug("환불 클레임이 이미 보류 상태입니다. refundClaimId={}", refundClaim.idValue());
@@ -319,7 +344,12 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
         Instant now = timeProvider.now();
         refundClaim.releaseHold(now);
         refundCommandManager.persist(refundClaim);
-        recordHistory(refundClaim.idValue(), refundClaim.orderItemIdValue(), "HELD", "HOLD_RELEASED", refundClaim.refundQty());
+        recordHistory(
+                refundClaim.idValue(),
+                refundClaim.orderItemIdValue(),
+                "HELD",
+                "HOLD_RELEASED",
+                refundClaim.refundQty());
         return 0L;
     }
 

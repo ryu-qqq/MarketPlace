@@ -17,13 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.refund.RefundAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.refund.RefundApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.HoldRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RejectRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RequestRefundBatchApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.refund.mapper.RefundApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.application.claimhistory.port.in.command.AddClaimHistoryMemoUseCase;
@@ -65,7 +65,11 @@ class RefundCommandControllerRestDocsTest {
     @MockitoBean private RejectRefundBatchUseCase rejectRefundBatchUseCase;
     @MockitoBean private HoldRefundBatchUseCase holdRefundBatchUseCase;
     @MockitoBean private AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase;
-    @MockitoBean private com.ryuqq.marketplace.application.refund.port.in.query.GetRefundDetailUseCase getRefundDetailUseCase;
+
+    @MockitoBean
+    private com.ryuqq.marketplace.application.refund.port.in.query.GetRefundDetailUseCase
+            getRefundDetailUseCase;
+
     @MockitoBean private RefundApiMapper mapper;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
@@ -490,9 +494,9 @@ class RefundCommandControllerRestDocsTest {
 
             given(getRefundDetailUseCase.execute(DEFAULT_REFUND_CLAIM_ID))
                     .willReturn(RefundApiFixtures.detailResult(DEFAULT_REFUND_CLAIM_ID));
-            given(accessChecker.resolveActorInfo()).willReturn(new MarketAccessChecker.ActorInfo(1L, "admin-001"));
-            given(mapper.toAddMemoCommand(any(), any(), any(), any()))
-                    .willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(1L, "admin-001"));
+            given(mapper.toAddMemoCommand(any(), any(), any(), any())).willReturn(null);
             given(addClaimHistoryMemoUseCase.execute(any())).willReturn(historyId);
 
             // when & then

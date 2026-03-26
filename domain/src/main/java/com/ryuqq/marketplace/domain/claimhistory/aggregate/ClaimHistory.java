@@ -53,7 +53,15 @@ public class ClaimHistory {
         String title = resolveStatusChangeTitle(toStatus);
         String message = fromStatus + " → " + toStatus;
         return new ClaimHistory(
-                id, claimType, claimId, orderItemId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
+                id,
+                claimType,
+                claimId,
+                orderItemId,
+                ClaimHistoryType.STATUS_CHANGE,
+                title,
+                message,
+                actor,
+                now);
     }
 
     /** 상태 변경 이력 생성 (수량 정보 포함). */
@@ -70,7 +78,15 @@ public class ClaimHistory {
         String title = resolveStatusChangeTitle(toStatus);
         String message = fromStatus + " → " + toStatus + " (" + quantity + "건)";
         return new ClaimHistory(
-                id, claimType, claimId, orderItemId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
+                id,
+                claimType,
+                claimId,
+                orderItemId,
+                ClaimHistoryType.STATUS_CHANGE,
+                title,
+                message,
+                actor,
+                now);
     }
 
     /** 수기 메모 이력 생성. */
@@ -83,7 +99,15 @@ public class ClaimHistory {
             Actor actor,
             Instant now) {
         return new ClaimHistory(
-                id, claimType, claimId, orderItemId, ClaimHistoryType.MANUAL, "CS 메모", message, actor, now);
+                id,
+                claimType,
+                claimId,
+                orderItemId,
+                ClaimHistoryType.MANUAL,
+                "CS 메모",
+                message,
+                actor,
+                now);
     }
 
     /** DB에서 복원. */

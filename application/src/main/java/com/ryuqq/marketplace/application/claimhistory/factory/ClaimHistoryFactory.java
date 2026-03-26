@@ -39,7 +39,11 @@ public class ClaimHistoryFactory {
 
     /** 시스템에 의한 상태 변경 이력 생성. */
     public ClaimHistory createStatusChangeBySystem(
-            ClaimType claimType, String claimId, String orderItemId, String fromStatus, String toStatus) {
+            ClaimType claimType,
+            String claimId,
+            String orderItemId,
+            String fromStatus,
+            String toStatus) {
         return ClaimHistory.forStatusChange(
                 ClaimHistoryId.generate(),
                 claimType,

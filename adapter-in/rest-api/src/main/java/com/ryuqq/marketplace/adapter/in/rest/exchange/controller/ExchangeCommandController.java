@@ -103,7 +103,8 @@ public class ExchangeCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 requestExchangeBatchUseCase.execute(
-                        mapper.toRequestExchangeBatchCommand(request, actor.username(), actor.actorId()));
+                        mapper.toRequestExchangeBatchCommand(
+                                request, actor.username(), actor.actorId()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -116,7 +117,8 @@ public class ExchangeCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 approveExchangeBatchUseCase.execute(
-                        mapper.toApproveExchangeBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toApproveExchangeBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -129,7 +131,8 @@ public class ExchangeCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 collectExchangeBatchUseCase.execute(
-                        mapper.toCollectExchangeBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toCollectExchangeBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -142,7 +145,8 @@ public class ExchangeCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 prepareExchangeBatchUseCase.execute(
-                        mapper.toPrepareExchangeBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toPrepareExchangeBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -155,7 +159,8 @@ public class ExchangeCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 rejectExchangeBatchUseCase.execute(
-                        mapper.toRejectExchangeBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toRejectExchangeBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -181,7 +186,8 @@ public class ExchangeCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 completeExchangeBatchUseCase.execute(
-                        mapper.toCompleteCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toCompleteCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -194,7 +200,8 @@ public class ExchangeCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 convertToRefundBatchUseCase.execute(
-                        mapper.toConvertToRefundCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toConvertToRefundCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -222,7 +229,8 @@ public class ExchangeCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         String historyId =
                 addClaimHistoryMemoUseCase.execute(
-                        mapper.toAddMemoCommand(exchangeClaimId, detail.orderItemId(), request, actor));
+                        mapper.toAddMemoCommand(
+                                exchangeClaimId, detail.orderItemId(), request, actor));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(new ClaimHistoryMemoApiResponse(historyId)));
     }

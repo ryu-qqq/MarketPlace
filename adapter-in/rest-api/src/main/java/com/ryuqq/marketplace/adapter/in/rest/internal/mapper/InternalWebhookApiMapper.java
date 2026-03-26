@@ -4,17 +4,17 @@ import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCancelled
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCancelledWebhookRequest.CancelledItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCreatedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCreatedWebhookRequest.OrderCreatedItemRequest;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaReceivedWebhookRequest;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaUpdatedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnRequestedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnRequestedWebhookRequest.ReturnRequestedItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdrawnWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdrawnWebhookRequest.ReturnWithdrawnItemRequest;
-import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaReceivedWebhookRequest;
-import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaUpdatedWebhookRequest;
-import com.ryuqq.marketplace.application.inboundqna.dto.external.QnaUpdatePayload;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderItemPayload;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundqna.dto.external.ExternalQnaPayload;
+import com.ryuqq.marketplace.application.inboundqna.dto.external.QnaUpdatePayload;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -181,8 +181,7 @@ public class InternalWebhookApiMapper {
         return request.qnas().stream().map(this::toExternalQnaPayload).toList();
     }
 
-    private ExternalQnaPayload toExternalQnaPayload(
-            QnaReceivedWebhookRequest.QnaItemRequest item) {
+    private ExternalQnaPayload toExternalQnaPayload(QnaReceivedWebhookRequest.QnaItemRequest item) {
         return new ExternalQnaPayload(
                 String.valueOf(item.externalQnaId()),
                 item.parentExternalQnaId() != null

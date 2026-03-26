@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.application.inboundqna.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -42,8 +41,7 @@ class UpdateQnaWebhookServiceTest {
         @DisplayName("정상 수정 시 Qna.updateQuestion() 호출 후 persist()를 수행한다")
         void execute_ValidUpdate_UpdatesAndPersists() {
             // given
-            QnaUpdatePayload payload =
-                    new QnaUpdatePayload("EXT-QNA-001", "수정된 제목", "수정된 내용");
+            QnaUpdatePayload payload = new QnaUpdatePayload("EXT-QNA-001", "수정된 제목", "수정된 내용");
 
             Qna qna =
                     Qna.forNew(
@@ -57,7 +55,9 @@ class UpdateQnaWebhookServiceTest {
                             "구매자A",
                             Instant.now());
 
-            given(qnaReadManager.getBySalesChannelIdAndExternalQnaId(SALES_CHANNEL_ID, "EXT-QNA-001"))
+            given(
+                            qnaReadManager.getBySalesChannelIdAndExternalQnaId(
+                                    SALES_CHANNEL_ID, "EXT-QNA-001"))
                     .willReturn(qna);
 
             // when
@@ -77,8 +77,9 @@ class UpdateQnaWebhookServiceTest {
             QnaUpdatePayload payload =
                     new QnaUpdatePayload("EXT-QNA-NOT-FOUND", "수정된 제목", "수정된 내용");
 
-            given(qnaReadManager.getBySalesChannelIdAndExternalQnaId(
-                            SALES_CHANNEL_ID, "EXT-QNA-NOT-FOUND"))
+            given(
+                            qnaReadManager.getBySalesChannelIdAndExternalQnaId(
+                                    SALES_CHANNEL_ID, "EXT-QNA-NOT-FOUND"))
                     .willThrow(new RuntimeException("QnA를 찾을 수 없습니다"));
 
             // when
@@ -93,10 +94,8 @@ class UpdateQnaWebhookServiceTest {
         @DisplayName("여러 건 수정 시 각각 처리하여 성공 건수를 반환한다")
         void execute_MultiplePayloads_ProcessesEach() {
             // given
-            QnaUpdatePayload payload1 =
-                    new QnaUpdatePayload("EXT-QNA-001", "수정 제목 1", "수정 내용 1");
-            QnaUpdatePayload payload2 =
-                    new QnaUpdatePayload("EXT-QNA-002", "수정 제목 2", "수정 내용 2");
+            QnaUpdatePayload payload1 = new QnaUpdatePayload("EXT-QNA-001", "수정 제목 1", "수정 내용 1");
+            QnaUpdatePayload payload2 = new QnaUpdatePayload("EXT-QNA-002", "수정 제목 2", "수정 내용 2");
 
             Qna qna1 =
                     Qna.forNew(
@@ -122,9 +121,13 @@ class UpdateQnaWebhookServiceTest {
                             "구매자B",
                             Instant.now());
 
-            given(qnaReadManager.getBySalesChannelIdAndExternalQnaId(SALES_CHANNEL_ID, "EXT-QNA-001"))
+            given(
+                            qnaReadManager.getBySalesChannelIdAndExternalQnaId(
+                                    SALES_CHANNEL_ID, "EXT-QNA-001"))
                     .willReturn(qna1);
-            given(qnaReadManager.getBySalesChannelIdAndExternalQnaId(SALES_CHANNEL_ID, "EXT-QNA-002"))
+            given(
+                            qnaReadManager.getBySalesChannelIdAndExternalQnaId(
+                                    SALES_CHANNEL_ID, "EXT-QNA-002"))
                     .willReturn(qna2);
 
             // when

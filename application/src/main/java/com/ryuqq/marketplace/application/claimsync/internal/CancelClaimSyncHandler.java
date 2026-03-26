@@ -239,7 +239,12 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         cancel.approve(SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
         partialCancelOrderItem(cancel.orderItemId(), cancel.cancelQty(), "취소 승인 동기화", now);
-        recordHistory(cancel.idValue(), cancel.orderItemIdValue(), fromStatus, "APPROVED", cancel.cancelQty());
+        recordHistory(
+                cancel.idValue(),
+                cancel.orderItemIdValue(),
+                fromStatus,
+                "APPROVED",
+                cancel.cancelQty());
         return 0L;
     }
 
@@ -260,7 +265,12 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             cancel.complete(refundInfo, SYNC_ACTOR, now);
             cancelCommandManager.persist(cancel);
             partialCancelOrderItem(orderItemId, cancel.cancelQty(), "취소 완료 동기화", now);
-            recordHistory(cancel.idValue(), orderItemId.value(), fromStatus, "COMPLETED", cancel.cancelQty());
+            recordHistory(
+                    cancel.idValue(),
+                    orderItemId.value(),
+                    fromStatus,
+                    "COMPLETED",
+                    cancel.cancelQty());
             createReversalEntry(orderItemId, sellerId, cancel.idValue(), refundAmount);
             return 0L;
         }
@@ -308,7 +318,12 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         String fromStatus = cancel.status().name();
         cancel.withdraw(now);
         cancelCommandManager.persist(cancel);
-        recordHistory(cancel.idValue(), cancel.orderItemIdValue(), fromStatus, "WITHDRAWN", cancel.cancelQty());
+        recordHistory(
+                cancel.idValue(),
+                cancel.orderItemIdValue(),
+                fromStatus,
+                "WITHDRAWN",
+                cancel.cancelQty());
         return 0L;
     }
 

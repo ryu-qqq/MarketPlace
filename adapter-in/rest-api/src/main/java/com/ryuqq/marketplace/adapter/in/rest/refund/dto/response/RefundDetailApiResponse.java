@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * 환불 상세 응답.
  *
- * <p>V4 간극: orderId = 내부 orderItemId. legacyOrderId 제외. 취소 상세와 동일하게 orderProduct, buyerInfo, payment,
- * receiverInfo를 포함한다.
+ * <p>V4 간극: orderId = 내부 orderItemId. legacyOrderId 제외. 취소 상세와 동일하게 orderProduct, buyerInfo,
+ * payment, receiverInfo를 포함한다.
  */
 @Schema(description = "환불 상세")
 public record RefundDetailApiResponse(

@@ -71,7 +71,8 @@ public class CancelCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 sellerCancelBatchUseCase.execute(
-                        mapper.toSellerCancelBatchCommand(request, actor.username(), actor.actorId()));
+                        mapper.toSellerCancelBatchCommand(
+                                request, actor.username(), actor.actorId()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -84,7 +85,8 @@ public class CancelCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 approveCancelBatchUseCase.execute(
-                        mapper.toApproveCancelBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toApproveCancelBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -97,7 +99,8 @@ public class CancelCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 rejectCancelBatchUseCase.execute(
-                        mapper.toRejectCancelBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toRejectCancelBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 

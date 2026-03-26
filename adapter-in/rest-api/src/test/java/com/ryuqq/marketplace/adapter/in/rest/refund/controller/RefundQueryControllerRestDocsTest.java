@@ -308,7 +308,8 @@ class RefundQueryControllerRestDocsTest {
 
             given(getRefundDetailUseCase.execute(DEFAULT_REFUND_CLAIM_ID))
                     .willReturn(RefundApiFixtures.detailResult(DEFAULT_REFUND_CLAIM_ID));
-            given(mapper.toDetailResponse(any(), any(), any(), any(), any())).willReturn(detailResponse);
+            given(mapper.toDetailResponse(any(), any(), any(), any(), any()))
+                    .willReturn(detailResponse);
 
             // when & then
             mockMvc.perform(
@@ -541,7 +542,8 @@ class RefundQueryControllerRestDocsTest {
 
             given(getRefundDetailUseCase.execute(holdRefundClaimId))
                     .willReturn(RefundApiFixtures.detailResultWithHold(holdRefundClaimId));
-            given(mapper.toDetailResponse(any(), any(), any(), any(), any())).willReturn(holdDetailResponse);
+            given(mapper.toDetailResponse(any(), any(), any(), any(), any()))
+                    .willReturn(holdDetailResponse);
 
             // when & then
             mockMvc.perform(

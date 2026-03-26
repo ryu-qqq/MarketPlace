@@ -36,7 +36,5 @@ public record RefundDetailResult(
     public record HoldInfoResult(String holdReason, Instant holdAt) {}
 
     public record CollectShipmentResult(
-            String collectDeliveryCompany,
-            String collectTrackingNumber,
-            String collectStatus) {}
+            String collectDeliveryCompany, String collectTrackingNumber, String collectStatus) {}
 }

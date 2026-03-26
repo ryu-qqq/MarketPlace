@@ -346,7 +346,8 @@ class RefundClaimSyncHandlerTest {
         @DisplayName("REFUND_COLLECTING 실행 시 수거 배송 정보가 없으면 ClaimShipment를 생성하지 않는다")
         void execute_RefundCollecting_WithoutShipmentInfo_DoesNotCreateClaimShipment() {
             // given
-            ExternalClaimPayload payload = ClaimSyncFixtures.returnPayloadWithReason("CHANGE_OF_MIND");
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.returnPayloadWithReason("CHANGE_OF_MIND");
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             long sellerId = 10L;
             Instant now = Instant.now();
@@ -577,8 +578,7 @@ class RefundClaimSyncHandlerTest {
                     .willReturn(Optional.of(requestedRefund));
 
             // when
-            long result =
-                    sut.execute(ClaimSyncAction.REFUND_HELD, payload, orderItemId, sellerId);
+            long result = sut.execute(ClaimSyncAction.REFUND_HELD, payload, orderItemId, sellerId);
 
             // then
             assertThat(result).isZero();
@@ -602,8 +602,7 @@ class RefundClaimSyncHandlerTest {
                     .willReturn(Optional.of(holdRefund));
 
             // when
-            long result =
-                    sut.execute(ClaimSyncAction.REFUND_HELD, payload, orderItemId, sellerId);
+            long result = sut.execute(ClaimSyncAction.REFUND_HELD, payload, orderItemId, sellerId);
 
             // then
             assertThat(result).isZero();

@@ -114,11 +114,7 @@ public class ReceiveQnaWebhookService implements ReceiveQnaWebhookUseCase {
                 qnaReadManager.getBySalesChannelIdAndExternalQnaId(
                         salesChannelId, payload.parentExternalQnaId());
 
-        parentQna.addFollowUp(
-                payload.questionContent(),
-                payload.questionAuthor(),
-                null,
-                now);
+        parentQna.addFollowUp(payload.questionContent(), payload.questionAuthor(), null, now);
 
         qnaCommandManager.persist(parentQna);
 

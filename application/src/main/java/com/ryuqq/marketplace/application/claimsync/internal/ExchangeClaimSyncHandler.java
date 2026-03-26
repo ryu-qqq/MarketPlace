@@ -18,14 +18,14 @@ import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
+import com.ryuqq.marketplace.domain.exchange.exception.ExchangeErrorCode;
+import com.ryuqq.marketplace.domain.exchange.exception.ExchangeException;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimId;
 import com.ryuqq.marketplace.domain.exchange.id.ExchangeClaimNumber;
 import com.ryuqq.marketplace.domain.exchange.vo.AmountAdjustment;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeOption;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReason;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeReasonType;
-import com.ryuqq.marketplace.domain.exchange.exception.ExchangeErrorCode;
-import com.ryuqq.marketplace.domain.exchange.exception.ExchangeException;
 import com.ryuqq.marketplace.domain.exchange.vo.ExchangeStatus;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import java.time.Instant;
@@ -221,7 +221,11 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         exchangeClaim.startCollecting(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
         recordHistory(
-                exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), fromStatus, "COLLECTING", exchangeClaim.exchangeQty());
+                exchangeClaim.idValue(),
+                exchangeClaim.orderItemIdValue(),
+                fromStatus,
+                "COLLECTING",
+                exchangeClaim.exchangeQty());
         return 0L;
     }
 
@@ -260,7 +264,11 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         exchangeClaim.completeCollection(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
         recordHistory(
-                exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), fromStatus, "COLLECTED", exchangeClaim.exchangeQty());
+                exchangeClaim.idValue(),
+                exchangeClaim.orderItemIdValue(),
+                fromStatus,
+                "COLLECTED",
+                exchangeClaim.exchangeQty());
         return 0L;
     }
 
@@ -273,7 +281,12 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         String linkedOrderId = "SYNC-" + UUID.randomUUID();
         exchangeClaim.startShipping(linkedOrderId, SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
-        recordHistory(exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), fromStatus, "SHIPPING", exchangeClaim.exchangeQty());
+        recordHistory(
+                exchangeClaim.idValue(),
+                exchangeClaim.orderItemIdValue(),
+                fromStatus,
+                "SHIPPING",
+                exchangeClaim.exchangeQty());
         return 0L;
     }
 
@@ -289,7 +302,11 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             exchangeCommandManager.persist(exchangeClaim);
             partialReturnOrderItem(orderItemId, exchangeClaim.exchangeQty(), "교환 완료 동기화", now);
             recordHistory(
-                    exchangeClaim.idValue(), orderItemId.value(), fromStatus, "COMPLETED", exchangeClaim.exchangeQty());
+                    exchangeClaim.idValue(),
+                    orderItemId.value(),
+                    fromStatus,
+                    "COMPLETED",
+                    exchangeClaim.exchangeQty());
             createReversalEntry(orderItemId, sellerId, exchangeClaim.idValue());
             return 0L;
         }
@@ -357,7 +374,12 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         String fromStatus = exchangeClaim.status().name();
         exchangeClaim.reject(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
-        recordHistory(exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), fromStatus, "REJECTED", exchangeClaim.exchangeQty());
+        recordHistory(
+                exchangeClaim.idValue(),
+                exchangeClaim.orderItemIdValue(),
+                fromStatus,
+                "REJECTED",
+                exchangeClaim.exchangeQty());
         return 0L;
     }
 
@@ -366,7 +388,12 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         try {
             exchangeClaim.hold(holdbackReason, now);
             exchangeCommandManager.persist(exchangeClaim);
-            recordHistory(exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), exchangeClaim.status().name(), "HELD", exchangeClaim.exchangeQty());
+            recordHistory(
+                    exchangeClaim.idValue(),
+                    exchangeClaim.orderItemIdValue(),
+                    exchangeClaim.status().name(),
+                    "HELD",
+                    exchangeClaim.exchangeQty());
         } catch (ExchangeException e) {
             if (e.getErrorCode() == ExchangeErrorCode.ALREADY_HOLD) {
                 log.debug("교환 클레임이 이미 보류 상태입니다. exchangeClaimId={}", exchangeClaim.idValue());
@@ -381,7 +408,12 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         Instant now = timeProvider.now();
         exchangeClaim.releaseHold(now);
         exchangeCommandManager.persist(exchangeClaim);
-        recordHistory(exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), "HELD", "HOLD_RELEASED", exchangeClaim.exchangeQty());
+        recordHistory(
+                exchangeClaim.idValue(),
+                exchangeClaim.orderItemIdValue(),
+                "HELD",
+                "HOLD_RELEASED",
+                exchangeClaim.exchangeQty());
         return 0L;
     }
 

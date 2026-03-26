@@ -16,7 +16,8 @@ public class LegacyProductJdbcRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public LegacyProductJdbcRepository(
-            @Qualifier("legacyNamedParameterJdbcTemplate") NamedParameterJdbcTemplate jdbcTemplate) {
+            @Qualifier("legacyNamedParameterJdbcTemplate")
+                    NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

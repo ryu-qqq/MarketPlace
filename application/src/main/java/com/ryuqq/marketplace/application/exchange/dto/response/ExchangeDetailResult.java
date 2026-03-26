@@ -47,7 +47,5 @@ public record ExchangeDetailResult(
             String shippingFeePayer) {}
 
     public record CollectShipmentResult(
-            String collectDeliveryCompany,
-            String collectTrackingNumber,
-            String collectStatus) {}
+            String collectDeliveryCompany, String collectTrackingNumber, String collectStatus) {}
 }

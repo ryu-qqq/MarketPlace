@@ -37,7 +37,14 @@ class ClaimHistoryTest {
             // when
             ClaimHistory history =
                     ClaimHistory.forStatusChange(
-                            id, claimType, claimId, "order-item-001", fromStatus, toStatus, actor, now);
+                            id,
+                            claimType,
+                            claimId,
+                            "order-item-001",
+                            fromStatus,
+                            toStatus,
+                            actor,
+                            now);
 
             // then
             assertThat(history.id()).isEqualTo(id);
@@ -252,7 +259,8 @@ class ClaimHistoryTest {
 
             // when
             ClaimHistory history =
-                    ClaimHistory.forManual(id, claimType, claimId, "order-item-001", message, actor, now);
+                    ClaimHistory.forManual(
+                            id, claimType, claimId, "order-item-001", message, actor, now);
 
             // then
             assertThat(history.id()).isEqualTo(id);
@@ -297,7 +305,15 @@ class ClaimHistoryTest {
             // when
             ClaimHistory history =
                     ClaimHistory.reconstitute(
-                            id, claimType, claimId, "order-item-001", historyType, title, message, actor, createdAt);
+                            id,
+                            claimType,
+                            claimId,
+                            "order-item-001",
+                            historyType,
+                            title,
+                            message,
+                            actor,
+                            createdAt);
 
             // then
             assertThat(history.id()).isEqualTo(id);

@@ -602,8 +602,7 @@ class ExchangeClaimSyncHandlerTest {
         void resolve_ReleasedStatus_ExistingExchange_ReturnsExchangeHoldReleased() {
             // given
             ExternalClaimPayload payload =
-                    ClaimSyncFixtures.exchangeHoldbackPayload(
-                            "EXCHANGE_REQUEST", "RELEASED", null);
+                    ClaimSyncFixtures.exchangeHoldbackPayload("EXCHANGE_REQUEST", "RELEASED", null);
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             ExchangeClaim existing = ExchangeFixtures.holdExchangeClaim();
             given(exchangeReadManager.findByOrderItemId(orderItemId))
@@ -696,8 +695,7 @@ class ExchangeClaimSyncHandlerTest {
         void execute_ExchangeHoldReleased_ReleasesHold() {
             // given
             ExternalClaimPayload payload =
-                    ClaimSyncFixtures.exchangeHoldbackPayload(
-                            "EXCHANGE_REQUEST", "RELEASED", null);
+                    ClaimSyncFixtures.exchangeHoldbackPayload("EXCHANGE_REQUEST", "RELEASED", null);
             OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
             long sellerId = 100L;
             Instant now = Instant.now();

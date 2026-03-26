@@ -68,5 +68,4 @@ public class ShopQueryAdapter implements ShopQueryPort {
                 .map(mapper::toDomain)
                 .toList();
     }
-
 }

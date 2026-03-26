@@ -8,14 +8,12 @@ import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCreatedWe
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaReceivedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaReceivedWebhookRequest.QnaItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaUpdatedWebhookRequest;
-import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaUpdatedWebhookRequest.QnaUpdateItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnRequestedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdrawnWebhookRequest;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
 import com.ryuqq.marketplace.application.inboundqna.dto.external.ExternalQnaPayload;
 import com.ryuqq.marketplace.application.inboundqna.dto.external.QnaUpdatePayload;
-import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -303,8 +301,10 @@ class InternalWebhookApiMapperTest {
                                             InternalWebhookApiFixtures.DEFAULT_QUESTION_CONTENT,
                                             InternalWebhookApiFixtures.DEFAULT_QUESTION_AUTHOR,
                                             InternalWebhookApiFixtures.DEFAULT_SELLER_ID,
-                                            InternalWebhookApiFixtures.DEFAULT_EXTERNAL_QNA_PRODUCT_ID,
-                                            InternalWebhookApiFixtures.DEFAULT_EXTERNAL_QNA_ORDER_ID,
+                                            InternalWebhookApiFixtures
+                                                    .DEFAULT_EXTERNAL_QNA_PRODUCT_ID,
+                                            InternalWebhookApiFixtures
+                                                    .DEFAULT_EXTERNAL_QNA_ORDER_ID,
                                             InternalWebhookApiFixtures.DEFAULT_QUESTIONED_AT)));
 
             // when

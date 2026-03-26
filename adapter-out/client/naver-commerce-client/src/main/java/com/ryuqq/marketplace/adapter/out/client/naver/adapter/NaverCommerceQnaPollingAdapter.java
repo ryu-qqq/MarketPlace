@@ -70,11 +70,7 @@ public class NaverCommerceQnaPollingAdapter implements SalesChannelQnaClient {
                         .forEach(results::add);
             }
         } catch (Exception e) {
-            log.warn(
-                    "네이버 고객 문의 폴링 실패: salesChannelId={}, shopId={}",
-                    salesChannelId,
-                    shopId,
-                    e);
+            log.warn("네이버 고객 문의 폴링 실패: salesChannelId={}, shopId={}", salesChannelId, shopId, e);
         }
 
         // 2. 상품 문의 폴링
@@ -92,11 +88,7 @@ public class NaverCommerceQnaPollingAdapter implements SalesChannelQnaClient {
                         .forEach(results::add);
             }
         } catch (Exception e) {
-            log.warn(
-                    "네이버 상품 문의 폴링 실패: salesChannelId={}, shopId={}",
-                    salesChannelId,
-                    shopId,
-                    e);
+            log.warn("네이버 상품 문의 폴링 실패: salesChannelId={}, shopId={}", salesChannelId, shopId, e);
         }
 
         log.info(

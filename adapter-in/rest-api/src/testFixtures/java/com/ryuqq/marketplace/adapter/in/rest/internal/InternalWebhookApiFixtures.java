@@ -237,9 +237,7 @@ public final class InternalWebhookApiFixtures {
     public static QnaUpdatedWebhookRequest qnaUpdatedWebhookRequest() {
         return new QnaUpdatedWebhookRequest(
                 DEFAULT_SALES_CHANNEL_ID,
-                List.of(
-                        new QnaUpdateItemRequest(
-                                DEFAULT_EXTERNAL_QNA_ID, "수정된 제목", "수정된 내용")));
+                List.of(new QnaUpdateItemRequest(DEFAULT_EXTERNAL_QNA_ID, "수정된 제목", "수정된 내용")));
     }
 
     // ===== QnaWebhookResult (Application) =====

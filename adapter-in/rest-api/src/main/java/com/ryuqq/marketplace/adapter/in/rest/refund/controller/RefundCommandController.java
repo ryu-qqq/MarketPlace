@@ -77,7 +77,8 @@ public class RefundCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 requestRefundBatchUseCase.execute(
-                        mapper.toRequestRefundBatchCommand(request, actor.username(), actor.actorId()));
+                        mapper.toRequestRefundBatchCommand(
+                                request, actor.username(), actor.actorId()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -90,7 +91,8 @@ public class RefundCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 approveRefundBatchUseCase.execute(
-                        mapper.toApproveRefundBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toApproveRefundBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -103,7 +105,8 @@ public class RefundCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 rejectRefundBatchUseCase.execute(
-                        mapper.toRejectRefundBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
+                        mapper.toRejectRefundBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -131,7 +134,8 @@ public class RefundCommandController {
         ActorInfo actor = accessChecker.resolveActorInfo();
         String historyId =
                 addClaimHistoryMemoUseCase.execute(
-                        mapper.toAddMemoCommand(refundClaimId, detail.orderItemId(), request, actor));
+                        mapper.toAddMemoCommand(
+                                refundClaimId, detail.orderItemId(), request, actor));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(new ClaimHistoryMemoApiResponse(historyId)));
     }

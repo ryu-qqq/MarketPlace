@@ -413,9 +413,9 @@ class CancelCommandControllerRestDocsTest {
             CancelDetailResult detailResult = CancelApiFixtures.detailResult(DEFAULT_CANCEL_ID);
 
             given(getCancelDetailUseCase.execute(DEFAULT_CANCEL_ID)).willReturn(detailResult);
-            given(accessChecker.resolveActorInfo()).willReturn(new MarketAccessChecker.ActorInfo(100L, "admin-001"));
-            given(mapper.toAddMemoCommand(any(), any(), any(), any()))
-                    .willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(100L, "admin-001"));
+            given(mapper.toAddMemoCommand(any(), any(), any(), any())).willReturn(null);
             given(addClaimHistoryMemoUseCase.execute(any())).willReturn("HIST-001");
 
             // when & then

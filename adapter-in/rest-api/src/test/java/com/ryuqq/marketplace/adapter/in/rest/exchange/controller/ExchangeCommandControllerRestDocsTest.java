@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.ExchangeAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.ExchangeApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ApproveExchangeBatchApiRequest;
@@ -27,7 +28,6 @@ import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.PrepareExchang
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.RejectExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.RequestExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ShipExchangeBatchApiRequest;
-import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.mapper.ExchangeApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.application.claimhistory.port.in.command.AddClaimHistoryMemoUseCase;
@@ -78,7 +78,11 @@ class ExchangeCommandControllerRestDocsTest {
     @MockitoBean private ConvertToRefundBatchUseCase convertToRefundBatchUseCase;
     @MockitoBean private HoldExchangeBatchUseCase holdExchangeBatchUseCase;
     @MockitoBean private AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase;
-    @MockitoBean private com.ryuqq.marketplace.application.exchange.port.in.query.GetExchangeDetailUseCase getExchangeDetailUseCase;
+
+    @MockitoBean
+    private com.ryuqq.marketplace.application.exchange.port.in.query.GetExchangeDetailUseCase
+            getExchangeDetailUseCase;
+
     @MockitoBean private ExchangeApiMapper mapper;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
@@ -102,7 +106,9 @@ class ExchangeCommandControllerRestDocsTest {
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
             given(accessChecker.resolveActorInfo())
-                    .willReturn(new MarketAccessChecker.ActorInfo(ExchangeApiFixtures.DEFAULT_SELLER_ID, "admin@test.com"));
+                    .willReturn(
+                            new MarketAccessChecker.ActorInfo(
+                                    ExchangeApiFixtures.DEFAULT_SELLER_ID, "admin@test.com"));
             given(mapper.toRequestExchangeBatchCommand(any(), any(), any(long.class)))
                     .willReturn(null);
             given(requestExchangeBatchUseCase.execute(any())).willReturn(batchResult);
@@ -209,7 +215,9 @@ class ExchangeCommandControllerRestDocsTest {
             BatchResultApiResponse response = ExchangeApiFixtures.batchResultApiResponse();
 
             given(accessChecker.resolveActorInfo())
-                    .willReturn(new MarketAccessChecker.ActorInfo(ExchangeApiFixtures.DEFAULT_SELLER_ID, "admin@test.com"));
+                    .willReturn(
+                            new MarketAccessChecker.ActorInfo(
+                                    ExchangeApiFixtures.DEFAULT_SELLER_ID, "admin@test.com"));
             given(mapper.toRequestExchangeBatchCommand(any(), any(), any(long.class)))
                     .willReturn(null);
             given(requestExchangeBatchUseCase.execute(any())).willReturn(batchResult);
@@ -895,9 +903,10 @@ class ExchangeCommandControllerRestDocsTest {
             given(getExchangeDetailUseCase.execute(exchangeClaimId))
                     .willReturn(ExchangeApiFixtures.detailResult());
             given(accessChecker.resolveActorInfo())
-                    .willReturn(new MarketAccessChecker.ActorInfo(ExchangeApiFixtures.DEFAULT_SELLER_ID, "admin-001"));
-            given(mapper.toAddMemoCommand(any(), any(), any(), any()))
-                    .willReturn(null);
+                    .willReturn(
+                            new MarketAccessChecker.ActorInfo(
+                                    ExchangeApiFixtures.DEFAULT_SELLER_ID, "admin-001"));
+            given(mapper.toAddMemoCommand(any(), any(), any(), any())).willReturn(null);
             given(addClaimHistoryMemoUseCase.execute(any())).willReturn(historyId);
 
             // when & then

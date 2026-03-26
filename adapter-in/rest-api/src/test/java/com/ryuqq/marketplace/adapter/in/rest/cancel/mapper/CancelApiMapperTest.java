@@ -13,8 +13,8 @@ import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelDetailApi
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.application.cancel.dto.command.ApproveCancelBatchCommand;
 import com.ryuqq.marketplace.application.cancel.dto.command.RejectCancelBatchCommand;
@@ -289,7 +289,11 @@ class CancelApiMapperTest {
 
             // when
             AddClaimHistoryMemoCommand command =
-                    mapper.toAddMemoCommand(cancelId, "order-item-001", request, new MarketAccessChecker.ActorInfo(actorId, actorName));
+                    mapper.toAddMemoCommand(
+                            cancelId,
+                            "order-item-001",
+                            request,
+                            new MarketAccessChecker.ActorInfo(actorId, actorName));
 
             // then
             assertThat(command.claimId()).isEqualTo(cancelId);

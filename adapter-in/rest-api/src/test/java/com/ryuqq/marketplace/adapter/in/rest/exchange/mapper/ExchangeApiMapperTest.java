@@ -476,7 +476,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.exchangeClaimInfo().exchangeClaimId())
@@ -501,7 +502,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.exchangeClaimInfo().exchangeOption()).isNotNull();
@@ -520,7 +522,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResultWithoutOption();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.exchangeClaimInfo().exchangeOption()).isNull();
@@ -534,7 +537,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.claimHistories()).hasSize(1);
@@ -551,7 +555,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResultWithoutOption();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.claimHistories()).isEmpty();
@@ -564,7 +569,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.exchangeClaimInfo().collectShipment()).isNotNull();
@@ -583,7 +589,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResultWithoutOption();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.exchangeClaimInfo().collectShipment().collectDeliveryCompany())
@@ -597,7 +604,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result, null, null, null, null);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.exchangeClaimInfo().requestedAt())
