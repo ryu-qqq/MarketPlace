@@ -10,12 +10,13 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryMemoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker.ActorInfo;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
+import com.ryuqq.marketplace.application.cancel.dto.response.CancelDetailResult;
 import com.ryuqq.marketplace.application.cancel.port.in.command.ApproveCancelBatchUseCase;
 import com.ryuqq.marketplace.application.cancel.port.in.command.RejectCancelBatchUseCase;
 import com.ryuqq.marketplace.application.cancel.port.in.command.SellerCancelBatchUseCase;
 import com.ryuqq.marketplace.application.cancel.port.in.query.GetCancelDetailUseCase;
-import com.ryuqq.marketplace.application.claimhistory.dto.command.AddClaimHistoryMemoCommand;
 import com.ryuqq.marketplace.application.claimhistory.port.in.command.AddClaimHistoryMemoUseCase;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,8 +25,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,12 +68,11 @@ public class CancelCommandController {
     @PostMapping(CancelAdminEndpoints.SELLER_CANCEL_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> sellerCancelBatch(
             @RequestBody @Valid SellerCancelBatchApiRequest request) {
-        Long sellerIdOrNull = accessChecker.resolveSellerIdOrNull();
-        long sellerId = sellerIdOrNull != null ? sellerIdOrNull : 0L;
-        String requestedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 sellerCancelBatchUseCase.execute(
-                        mapper.toSellerCancelBatchCommand(request, requestedBy, sellerId));
+                        mapper.toSellerCancelBatchCommand(
+                                request, actor.username(), actor.actorId()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -84,11 +82,11 @@ public class CancelCommandController {
     @PostMapping(CancelAdminEndpoints.APPROVE_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> approveBatch(
             @RequestBody @Valid ApproveCancelBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 approveCancelBatchUseCase.execute(
-                        mapper.toApproveCancelBatchCommand(request, processedBy, sellerId));
+                        mapper.toApproveCancelBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -98,11 +96,11 @@ public class CancelCommandController {
     @PostMapping(CancelAdminEndpoints.REJECT_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> rejectBatch(
             @RequestBody @Valid RejectCancelBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 rejectCancelBatchUseCase.execute(
-                        mapper.toRejectCancelBatchCommand(request, processedBy, sellerId));
+                        mapper.toRejectCancelBatchCommand(
+                                request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -113,19 +111,12 @@ public class CancelCommandController {
     public ResponseEntity<ApiResponse<ClaimHistoryMemoApiResponse>> addMemo(
             @PathVariable String cancelId,
             @RequestBody @Valid AddClaimHistoryMemoApiRequest request) {
-        getCancelDetailUseCase.execute(cancelId);
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String actorName = resolveCurrentUsername();
-        long actorId = sellerId != null ? sellerId : 0L;
-        AddClaimHistoryMemoCommand command =
-                mapper.toAddMemoCommand(cancelId, request, actorId, actorName);
-        String historyId = addClaimHistoryMemoUseCase.execute(command);
+        CancelDetailResult detail = getCancelDetailUseCase.execute(cancelId);
+        ActorInfo actor = accessChecker.resolveActorInfo();
+        String historyId =
+                addClaimHistoryMemoUseCase.execute(
+                        mapper.toAddMemoCommand(cancelId, detail.orderItemId(), request, actor));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(new ClaimHistoryMemoApiResponse(historyId)));
-    }
-
-    private String resolveCurrentUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null ? authentication.getName() : "SYSTEM";
     }
 }

@@ -132,6 +132,7 @@ public final class ExchangeQueryFixtures {
                         1000L, "SKU-RED-M", 1001L, 2001L, "SKU-RED-XL", 1),
                 null,
                 null,
+                null,
                 "buyer@example.com",
                 null,
                 Instant.now(),

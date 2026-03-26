@@ -29,6 +29,18 @@ public class QnaQueryDslRepository {
         return Optional.ofNullable(result);
     }
 
+    public Optional<QnaJpaEntity> findBySalesChannelIdAndExternalQnaId(
+            long salesChannelId, String externalQnaId) {
+        QnaJpaEntity result =
+                queryFactory
+                        .selectFrom(Q)
+                        .where(
+                                Q.salesChannelId.eq(salesChannelId),
+                                Q.externalQnaId.eq(externalQnaId))
+                        .fetchFirst();
+        return Optional.ofNullable(result);
+    }
+
     public List<QnaJpaEntity> findBySellerIdAndStatus(
             long sellerId, QnaJpaEntity.Status status, int offset, int limit) {
         var query = queryFactory

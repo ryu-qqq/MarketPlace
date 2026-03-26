@@ -3,9 +3,11 @@ package com.ryuqq.marketplace.adapter.out.client.naver.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverClaimInfo;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverExchangeClaimInfo;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverLastChangedStatus;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderDetail;
 import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverProductOrderOrder;
+import com.ryuqq.marketplace.adapter.out.client.naver.dto.order.NaverReturnClaimInfo;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +40,14 @@ class NaverCommerceClaimMapperTest {
 
     private NaverProductOrderDetail createDetail(
             String productOrderId, NaverClaimInfo currentClaim) {
+        return createDetail(productOrderId, currentClaim, null, null);
+    }
+
+    private NaverProductOrderDetail createDetail(
+            String productOrderId,
+            NaverClaimInfo currentClaim,
+            NaverExchangeClaimInfo exchange,
+            NaverReturnClaimInfo returnInfo) {
         var order =
                 new NaverProductOrderOrder(
                         "ORD001", null, null, null, null, null, null, null, null, null, null, null,
@@ -98,7 +108,7 @@ class NaverCommerceClaimMapperTest {
                         null, // 52 freeGift
                         currentClaim, // 53 currentClaim
                         null); // 54 completedClaims
-        return new NaverProductOrderDetail(order, po, null);
+        return new NaverProductOrderDetail(order, po, null, exchange, returnInfo);
     }
 
     private NaverClaimInfo createClaimInfo() {
@@ -147,11 +157,14 @@ class NaverCommerceClaimMapperTest {
             assertThat(payload.claimId()).isEqualTo("CLM001");
             assertThat(payload.claimReason()).isEqualTo("단순변심");
             assertThat(payload.claimDetailedReason()).isEqualTo("사이즈가 안 맞아요");
+            assertThat(payload.externalReasonCode()).isEqualTo("단순변심");
             assertThat(payload.requestQuantity()).isEqualTo(1);
             assertThat(payload.requestChannel()).isEqualTo("BUYER");
             assertThat(payload.collectDeliveryCompany()).isEqualTo("CJGLS");
             assertThat(payload.collectTrackingNumber()).isEqualTo("1234567890");
             assertThat(payload.collectStatus()).isEqualTo("COLLECTING");
+            assertThat(payload.holdbackStatus()).isNull();
+            assertThat(payload.holdbackReason()).isNull();
             assertThat(payload.claimRequestDate()).isNotNull();
             assertThat(payload.lastChangedDate()).isNotNull();
         }
@@ -191,6 +204,84 @@ class NaverCommerceClaimMapperTest {
             assertThat(result).hasSize(1);
             assertThat(result.get(0).claimId()).isEqualTo("CLM001");
             assertThat(result.get(0).claimReason()).isNull();
+            assertThat(result.get(0).externalReasonCode()).isNull();
+        }
+
+        @Test
+        @DisplayName("RETURN claimType이면 return 객체에서 사유/수거 정보를 우선 사용한다")
+        void usesReturnObjectForReturnClaimType() {
+            var change = createChange("ORD001", "PO001", "RETURN", "RETURN_REQUEST");
+            var returnInfo =
+                    new NaverReturnClaimInfo(
+                            "INTENT_CHANGED",
+                            "단순 변심입니다",
+                            "HOLDBACK",
+                            "SELLER_REASON",
+                            2,
+                            "BUYER",
+                            "CJGLS",
+                            "9876543210",
+                            "COLLECTED");
+            var detail = createDetail("PO001", null, null, returnInfo);
+
+            List<ExternalClaimPayload> result =
+                    sut.toExternalClaimPayloads(List.of(change), List.of(detail));
+
+            assertThat(result).hasSize(1);
+            var payload = result.get(0);
+            assertThat(payload.externalReasonCode()).isEqualTo("INTENT_CHANGED");
+            assertThat(payload.claimDetailedReason()).isEqualTo("단순 변심입니다");
+            assertThat(payload.holdbackStatus()).isEqualTo("HOLDBACK");
+            assertThat(payload.holdbackReason()).isEqualTo("SELLER_REASON");
+            assertThat(payload.requestQuantity()).isEqualTo(2);
+            assertThat(payload.requestChannel()).isEqualTo("BUYER");
+            assertThat(payload.collectDeliveryCompany()).isEqualTo("CJGLS");
+            assertThat(payload.collectTrackingNumber()).isEqualTo("9876543210");
+            assertThat(payload.collectStatus()).isEqualTo("COLLECTED");
+        }
+
+        @Test
+        @DisplayName("EXCHANGE claimType이면 exchange 객체에서 사유/보류 정보를 우선 사용한다")
+        void usesExchangeObjectForExchangeClaimType() {
+            var change = createChange("ORD001", "PO001", "EXCHANGE", "EXCHANGE_REQUEST");
+            var exchangeInfo =
+                    new NaverExchangeClaimInfo(
+                            "BROKEN",
+                            "제품이 파손되어 왔습니다",
+                            "HOLDBACK",
+                            "INSPECT_REQUIRED",
+                            1,
+                            "BUYER",
+                            3000);
+            var detail = createDetail("PO001", null, exchangeInfo, null);
+
+            List<ExternalClaimPayload> result =
+                    sut.toExternalClaimPayloads(List.of(change), List.of(detail));
+
+            assertThat(result).hasSize(1);
+            var payload = result.get(0);
+            assertThat(payload.externalReasonCode()).isEqualTo("BROKEN");
+            assertThat(payload.claimDetailedReason()).isEqualTo("제품이 파손되어 왔습니다");
+            assertThat(payload.holdbackStatus()).isEqualTo("HOLDBACK");
+            assertThat(payload.holdbackReason()).isEqualTo("INSPECT_REQUIRED");
+            assertThat(payload.requestQuantity()).isEqualTo(1);
+            assertThat(payload.requestChannel()).isEqualTo("BUYER");
+        }
+
+        @Test
+        @DisplayName("RETURN claimType이지만 return 객체가 null이면 currentClaim에서 fallback한다")
+        void fallsBackToCurrentClaimWhenReturnInfoIsNull() {
+            var change = createChange("ORD001", "PO001", "RETURN", "RETURN_REQUEST");
+            var detail = createDetail("PO001", createClaimInfo());
+
+            List<ExternalClaimPayload> result =
+                    sut.toExternalClaimPayloads(List.of(change), List.of(detail));
+
+            assertThat(result).hasSize(1);
+            var payload = result.get(0);
+            assertThat(payload.externalReasonCode()).isEqualTo("단순변심");
+            assertThat(payload.claimDetailedReason()).isEqualTo("사이즈가 안 맞아요");
+            assertThat(payload.collectDeliveryCompany()).isEqualTo("CJGLS");
         }
     }
 }

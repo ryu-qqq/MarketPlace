@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.out.client.naver.dto.qna.NaverProductQnaPag
 import com.ryuqq.marketplace.adapter.out.client.naver.mapper.NaverCommerceQnaMapper;
 import com.ryuqq.marketplace.application.inboundqna.dto.external.ExternalQnaPayload;
 import com.ryuqq.marketplace.application.inboundqna.port.out.client.SalesChannelQnaClient;
+import com.ryuqq.marketplace.domain.shop.vo.ShopCredentials;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
 /**
  * 네이버 커머스 QnA 폴링 어댑터.
  *
- * <p>고객 문의 + 상품 문의를 모두 폴링하여 ExternalQnaPayload로 변환합니다.
+ * <p>고객 문의 + 상품 문의를 모두 폴링하여 ExternalQnaPayload로 변환합니다. 주문 폴링과 동일하게 Shop 단위로 호출됩니다.
  */
 @Component
 @ConditionalOnBean(NaverCommerceQnaClientAdapter.class)
@@ -39,13 +40,18 @@ public class NaverCommerceQnaPollingAdapter implements SalesChannelQnaClient {
     }
 
     @Override
-    public boolean supports(String channelCode) {
-        return NAVER_CHANNEL_CODE.equalsIgnoreCase(channelCode);
+    public String channelCode() {
+        return NAVER_CHANNEL_CODE;
     }
 
     @Override
     public List<ExternalQnaPayload> fetchNewQnas(
-            long salesChannelId, Instant from, Instant to, int batchSize) {
+            long salesChannelId,
+            long shopId,
+            ShopCredentials credentials,
+            Instant from,
+            Instant to,
+            int batchSize) {
         List<ExternalQnaPayload> results = new ArrayList<>();
 
         // 1. 고객 문의 (1:1 문의) 폴링
@@ -64,7 +70,7 @@ public class NaverCommerceQnaPollingAdapter implements SalesChannelQnaClient {
                         .forEach(results::add);
             }
         } catch (Exception e) {
-            log.warn("네이버 고객 문의 폴링 실패: salesChannelId={}", salesChannelId, e);
+            log.warn("네이버 고객 문의 폴링 실패: salesChannelId={}, shopId={}", salesChannelId, shopId, e);
         }
 
         // 2. 상품 문의 폴링
@@ -82,10 +88,14 @@ public class NaverCommerceQnaPollingAdapter implements SalesChannelQnaClient {
                         .forEach(results::add);
             }
         } catch (Exception e) {
-            log.warn("네이버 상품 문의 폴링 실패: salesChannelId={}", salesChannelId, e);
+            log.warn("네이버 상품 문의 폴링 실패: salesChannelId={}, shopId={}", salesChannelId, shopId, e);
         }
 
-        log.info("네이버 QnA 폴링 완료: salesChannelId={}, 수집 {}건", salesChannelId, results.size());
+        log.info(
+                "네이버 QnA 폴링 완료: salesChannelId={}, shopId={}, 수집 {}건",
+                salesChannelId,
+                shopId,
+                results.size());
         return results;
     }
 }

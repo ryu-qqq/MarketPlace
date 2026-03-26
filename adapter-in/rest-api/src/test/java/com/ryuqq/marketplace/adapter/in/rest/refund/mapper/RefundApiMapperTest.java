@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.refund.RefundApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.HoldRefundBatchApiRequest;
@@ -217,7 +218,11 @@ class RefundApiMapperTest {
 
             // when
             AddClaimHistoryMemoCommand command =
-                    mapper.toAddMemoCommand(refundClaimId, request, sellerId, actorName);
+                    mapper.toAddMemoCommand(
+                            refundClaimId,
+                            "order-item-001",
+                            request,
+                            new MarketAccessChecker.ActorInfo(sellerId, actorName));
 
             // then
             assertThat(command.claimId()).isEqualTo(refundClaimId);
@@ -235,7 +240,10 @@ class RefundApiMapperTest {
             // when
             AddClaimHistoryMemoCommand command =
                     mapper.toAddMemoCommand(
-                            RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID, request, 1L, "seller01");
+                            RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID,
+                            "order-item-001",
+                            request,
+                            new MarketAccessChecker.ActorInfo(1L, "seller01"));
 
             // then
             assertThat(command.claimType().name()).isEqualTo("REFUND");
@@ -505,15 +513,18 @@ class RefundApiMapperTest {
                     RefundApiFixtures.detailResult(RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
 
             // when
-            RefundDetailApiResponse response = mapper.toDetailResponse(result);
+            RefundDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.refundClaimId())
+            assertThat(response.claimInfo().refundClaimId())
                     .isEqualTo(RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
-            assertThat(response.claimNumber()).isEqualTo(RefundApiFixtures.DEFAULT_CLAIM_NUMBER);
+            assertThat(response.claimInfo().claimNumber())
+                    .isEqualTo(RefundApiFixtures.DEFAULT_CLAIM_NUMBER);
             assertThat(response.orderId()).isEqualTo(RefundApiFixtures.DEFAULT_ORDER_ITEM_ID);
-            assertThat(response.refundQty()).isEqualTo(1);
-            assertThat(response.refundStatus()).isEqualTo(RefundApiFixtures.DEFAULT_REFUND_STATUS);
+            assertThat(response.claimInfo().refundQty()).isEqualTo(1);
+            assertThat(response.claimInfo().status())
+                    .isEqualTo(RefundApiFixtures.DEFAULT_REFUND_STATUS);
         }
 
         @Test
@@ -524,29 +535,32 @@ class RefundApiMapperTest {
                     RefundApiFixtures.detailResult(RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
 
             // when
-            RefundDetailApiResponse response = mapper.toDetailResponse(result);
+            RefundDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.refundInfo()).isNotNull();
-            assertThat(response.refundInfo().originalAmount()).isEqualTo(15000);
-            assertThat(response.refundInfo().finalAmount()).isEqualTo(15000);
-            assertThat(response.refundInfo().deductionAmount()).isZero();
-            assertThat(response.refundInfo().refundMethod()).isEqualTo("CARD");
+            assertThat(response.claimInfo().refundInfo()).isNotNull();
+            assertThat(response.claimInfo().refundInfo().originalAmount()).isEqualTo(15000);
+            assertThat(response.claimInfo().refundInfo().finalAmount()).isEqualTo(15000);
+            assertThat(response.claimInfo().refundInfo().deductionAmount()).isZero();
+            assertThat(response.claimInfo().refundInfo().refundMethod()).isEqualTo("CARD");
         }
 
         @Test
-        @DisplayName("환불 정보가 null이면 refundInfo도 null을 반환한다")
-        void toDetailResponse_NullRefundInfo_ReturnsNullRefundInfo() {
+        @DisplayName("환불 정보가 없어도 refundInfo 기본값으로 변환된다")
+        void toDetailResponse_NullRefundInfo_ReturnsDefaultRefundInfo() {
             // given
             RefundDetailResult result =
                     RefundApiFixtures.detailResultWithoutRefundInfo(
                             RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
 
             // when
-            RefundDetailApiResponse response = mapper.toDetailResponse(result);
+            RefundDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.refundInfo()).isNull();
+            assertThat(response.claimInfo().refundInfo().originalAmount()).isZero();
+            assertThat(response.claimInfo().refundInfo().finalAmount()).isZero();
         }
 
         @Test
@@ -558,12 +572,13 @@ class RefundApiMapperTest {
                             RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
 
             // when
-            RefundDetailApiResponse response = mapper.toDetailResponse(result);
+            RefundDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.holdInfo()).isNotNull();
-            assertThat(response.holdInfo().holdReason()).isEqualTo("추가 확인 필요");
-            assertThat(response.holdInfo().holdAt()).isNotNull();
+            assertThat(response.claimInfo().holdInfo()).isNotNull();
+            assertThat(response.claimInfo().holdInfo().holdReason()).isEqualTo("추가 확인 필요");
+            assertThat(response.claimInfo().holdInfo().holdAt()).isNotNull();
         }
 
         @Test
@@ -574,7 +589,8 @@ class RefundApiMapperTest {
                     RefundApiFixtures.detailResult(RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
 
             // when
-            RefundDetailApiResponse response = mapper.toDetailResponse(result);
+            RefundDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.claimHistories()).hasSize(1);
@@ -590,12 +606,52 @@ class RefundApiMapperTest {
                     RefundApiFixtures.detailResult(RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
 
             // when
-            RefundDetailApiResponse response = mapper.toDetailResponse(result);
+            RefundDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.requestedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            assertThat(response.claimInfo().requestedAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
             assertThat(response.createdAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
             assertThat(response.updatedAt()).matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+        }
+
+        @Test
+        @DisplayName("collectShipment가 있으면 CollectShipmentApiResponse가 포함된다")
+        void toDetailResponse_WithCollectShipment_ReturnsCollectShipmentResponse() {
+            // given
+            RefundDetailResult result =
+                    RefundApiFixtures.detailResult(RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
+
+            // when
+            RefundDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
+
+            // then
+            assertThat(response.claimInfo().collectShipment()).isNotNull();
+            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany())
+                    .isEqualTo("CJ대한통운");
+            assertThat(response.claimInfo().collectShipment().collectTrackingNumber())
+                    .isEqualTo("1234567890");
+            assertThat(response.claimInfo().collectShipment().collectStatus())
+                    .isEqualTo("IN_TRANSIT");
+        }
+
+        @Test
+        @DisplayName("collectShipment가 null이면 refundClaimInfo에 null collectShipment가 포함된다")
+        void toDetailResponse_NullCollectShipment_ReturnsNullCollectShipment() {
+            // given
+            RefundDetailResult result =
+                    RefundApiFixtures.detailResultWithoutRefundInfo(
+                            RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
+
+            // when
+            RefundDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
+
+            // then
+            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany())
+                    .isEmpty();
         }
     }
 

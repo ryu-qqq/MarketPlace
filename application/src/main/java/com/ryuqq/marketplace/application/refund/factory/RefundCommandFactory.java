@@ -62,6 +62,7 @@ public class RefundCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.REFUND,
                         claimId.value(),
+                        orderItemId.value(),
                         null,
                         "REQUESTED",
                         requestedBy,
@@ -84,6 +85,7 @@ public class RefundCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.REFUND,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         "REQUESTED",
                         "COLLECTING",
                         processedBy,
@@ -105,6 +107,7 @@ public class RefundCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.REFUND,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         "COLLECTING",
                         "COLLECTED",
                         processedBy,
@@ -126,6 +129,7 @@ public class RefundCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.REFUND,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         claim.status().name(),
                         "HOLD",
                         processedBy,
@@ -147,6 +151,7 @@ public class RefundCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.REFUND,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         "HOLD",
                         claim.status().name(),
                         processedBy,
@@ -168,6 +173,7 @@ public class RefundCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.REFUND,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         "REQUESTED",
                         "REJECTED",
                         processedBy,

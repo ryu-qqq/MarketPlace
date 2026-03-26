@@ -46,16 +46,16 @@ public class ClaimShipmentJpaEntityMapper {
                 feeInfo.amount().value(),
                 feeInfo.payer().name(),
                 feeInfo.includeInPackage(),
-                sender.name(),
-                sender.phone(),
-                sender.address().line1(),
-                sender.address().line2(),
-                sender.address().zipcode(),
-                receiver.name(),
-                receiver.phone(),
-                receiver.address().line1(),
-                receiver.address().line2(),
-                receiver.address().zipcode(),
+                sender != null ? sender.name() : null,
+                sender != null ? sender.phone() : null,
+                sender != null ? sender.address().line1() : null,
+                sender != null ? sender.address().line2() : null,
+                sender != null ? sender.address().zipcode() : null,
+                receiver != null ? receiver.name() : null,
+                receiver != null ? receiver.phone() : null,
+                receiver != null ? receiver.address().line1() : null,
+                receiver != null ? receiver.address().line2() : null,
+                receiver != null ? receiver.address().zipcode() : null,
                 domain.shippedAt(),
                 domain.receivedAt(),
                 now,
@@ -72,14 +72,14 @@ public class ClaimShipmentJpaEntityMapper {
         ClaimShipmentMethod method = resolveMethod(entity);
         ShippingFeeInfo feeInfo = resolveFeeInfo(entity);
         ContactInfo sender =
-                resolveContactInfo(
+                resolveContactInfoNullable(
                         entity.getSenderName(),
                         entity.getSenderPhone(),
                         entity.getSenderZipcode(),
                         entity.getSenderAddress(),
                         entity.getSenderAddressDetail());
         ContactInfo receiver =
-                resolveContactInfo(
+                resolveContactInfoNullable(
                         entity.getReceiverName(),
                         entity.getReceiverPhone(),
                         entity.getReceiverZipcode(),
@@ -117,8 +117,11 @@ public class ClaimShipmentJpaEntityMapper {
                 entity.isFeeIncludeInPackage());
     }
 
-    private ContactInfo resolveContactInfo(
+    private ContactInfo resolveContactInfoNullable(
             String name, String phone, String zipcode, String address, String addressDetail) {
+        if (name == null && phone == null) {
+            return null;
+        }
         Address addr = Address.of(zipcode, address, addressDetail);
         return ContactInfo.of(name, phone, addr);
     }

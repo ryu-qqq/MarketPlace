@@ -35,4 +35,12 @@ public class ClaimHistoryQueryDslRepository {
                 .orderBy(claimHistory.createdAt.asc())
                 .fetch();
     }
+
+    public List<ClaimHistoryJpaEntity> findByOrderItemId(String orderItemId) {
+        return queryFactory
+                .selectFrom(claimHistory)
+                .where(claimHistory.orderItemId.eq(orderItemId))
+                .orderBy(claimHistory.createdAt.asc())
+                .fetch();
+    }
 }

@@ -4,6 +4,8 @@ import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCancelled
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCancelledWebhookRequest.CancelledItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCreatedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.OrderCreatedWebhookRequest.OrderCreatedItemRequest;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaReceivedWebhookRequest;
+import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.QnaUpdatedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnRequestedWebhookRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnRequestedWebhookRequest.ReturnRequestedItemRequest;
 import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdrawnWebhookRequest;
@@ -11,6 +13,8 @@ import com.ryuqq.marketplace.adapter.in.rest.internal.dto.request.ReturnWithdraw
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderItemPayload;
 import com.ryuqq.marketplace.application.inboundorder.dto.external.ExternalOrderPayload;
+import com.ryuqq.marketplace.application.inboundqna.dto.external.ExternalQnaPayload;
+import com.ryuqq.marketplace.application.inboundqna.dto.external.QnaUpdatePayload;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -103,8 +107,11 @@ public class InternalWebhookApiMapper {
                 null,
                 item.cancelReason(),
                 item.cancelDetailedReason(),
+                null,
                 item.cancelQuantity(),
                 "BUYER",
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -126,10 +133,13 @@ public class InternalWebhookApiMapper {
                 null,
                 item.returnReason(),
                 item.returnDetailedReason(),
+                null,
                 item.returnQuantity(),
                 "BUYER",
                 item.collectDeliveryCompany(),
                 item.collectTrackingNumber(),
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -150,7 +160,10 @@ public class InternalWebhookApiMapper {
                 null,
                 null,
                 null,
+                null,
                 "BUYER",
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -159,5 +172,39 @@ public class InternalWebhookApiMapper {
                 null,
                 Instant.now(),
                 Instant.now());
+    }
+
+    // ===== QnA 웹훅 변환 =====
+
+    /** QnA 수신 요청 → ExternalQnaPayload 목록 변환. */
+    public List<ExternalQnaPayload> toExternalQnaPayloads(QnaReceivedWebhookRequest request) {
+        return request.qnas().stream().map(this::toExternalQnaPayload).toList();
+    }
+
+    private ExternalQnaPayload toExternalQnaPayload(QnaReceivedWebhookRequest.QnaItemRequest item) {
+        return new ExternalQnaPayload(
+                String.valueOf(item.externalQnaId()),
+                item.parentExternalQnaId() != null
+                        ? String.valueOf(item.parentExternalQnaId())
+                        : null,
+                item.qnaType(),
+                item.questionTitle(),
+                item.questionContent(),
+                item.questionAuthor(),
+                item.externalProductId() != null ? String.valueOf(item.externalProductId()) : null,
+                item.externalOrderId() != null ? String.valueOf(item.externalOrderId()) : null,
+                null);
+    }
+
+    /** QnA 수정 요청 → QnaUpdatePayload 목록 변환. */
+    public List<QnaUpdatePayload> toQnaUpdatePayloads(QnaUpdatedWebhookRequest request) {
+        return request.qnas().stream()
+                .map(
+                        item ->
+                                new QnaUpdatePayload(
+                                        String.valueOf(item.externalQnaId()),
+                                        item.questionTitle(),
+                                        item.questionContent()))
+                .toList();
     }
 }

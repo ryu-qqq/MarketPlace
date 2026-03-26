@@ -35,4 +35,13 @@ public final class InternalWebhookEndpoints {
 
     /** 구매 확정 (배송 완료 후 자동/수동) */
     public static final String PURCHASE_CONFIRMED = BASE + "/purchase-confirmed";
+
+    /** QnA 기본 경로 */
+    public static final String QNA_BASE = "/api/v1/market/internal/webhooks/qnas";
+
+    /** QnA 수신 */
+    public static final String QNA_RECEIVED = QNA_BASE + "/received";
+
+    /** QnA 수정 */
+    public static final String QNA_UPDATED = QNA_BASE + "/updated";
 }

@@ -11,6 +11,7 @@ package com.ryuqq.marketplace.domain.inboundproduct.vo;
  * PENDING_MAPPING → MAPPED           (매핑 등록 후 재수신)
  * MAPPED → CONVERTED                 (동기 변환 완료)
  * CONVERTED → CONVERTED              (재수신 시 갱신)
+ * LEGACY_IMPORTED → MAPPED           (크롤러 재수신 시 매핑 적용)
  * LEGACY_IMPORTED → CONVERTED        (배치 전환 완료)
  * </pre>
  *
@@ -64,7 +65,7 @@ public enum InboundProductStatus {
     }
 
     public boolean canApplyMapping() {
-        return this == RECEIVED || this == PENDING_MAPPING;
+        return this == RECEIVED || this == PENDING_MAPPING || this == LEGACY_IMPORTED;
     }
 
     public boolean canMarkPendingConversion() {

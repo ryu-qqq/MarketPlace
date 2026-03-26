@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryM
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.HoldRefundBatchApiRequest;
@@ -87,15 +88,16 @@ public class RefundApiMapper {
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(
             String refundClaimId,
+            String orderItemId,
             AddClaimHistoryMemoApiRequest request,
-            long sellerId,
-            String actorName) {
+            MarketAccessChecker.ActorInfo actor) {
         return new AddClaimHistoryMemoCommand(
                 ClaimType.REFUND,
                 refundClaimId,
+                orderItemId,
                 request.message(),
-                String.valueOf(sellerId),
-                actorName);
+                String.valueOf(actor.actorId()),
+                actor.username());
     }
 
     // ==================== Query 변환 ====================
@@ -197,20 +199,27 @@ public class RefundApiMapper {
                 formatInstant(result.completedAt()));
     }
 
-    public RefundDetailApiResponse toDetailResponse(RefundDetailResult result) {
-        RefundDetailApiResponse.RefundInfoApiResponse refundInfo = null;
+    public RefundDetailApiResponse toDetailResponse(
+            RefundDetailResult result,
+            ClaimListItemApiResponseV4.OrderProductV4 orderProduct,
+            ClaimListItemApiResponseV4.BuyerInfoV4 buyerInfo,
+            ClaimListItemApiResponseV4.PaymentV4 payment,
+            ClaimListItemApiResponseV4.ReceiverInfoV4 receiverInfo) {
+        ClaimListItemApiResponseV4.RefundInfoV4 refundInfo =
+                new ClaimListItemApiResponseV4.RefundInfoV4(0, 0, "", 0, "", "");
         if (result.refundInfo() != null) {
             refundInfo =
-                    new RefundDetailApiResponse.RefundInfoApiResponse(
+                    new ClaimListItemApiResponseV4.RefundInfoV4(
                             result.refundInfo().originalAmount(),
-                            result.refundInfo().finalAmount(),
                             result.refundInfo().deductionAmount(),
                             nullToEmpty(result.refundInfo().deductionReason()),
+                            result.refundInfo().finalAmount(),
                             nullToEmpty(result.refundInfo().refundMethod()),
                             formatInstant(result.refundInfo().refundedAt()));
         }
 
-        RefundDetailApiResponse.HoldInfoApiResponse holdInfo = null;
+        RefundDetailApiResponse.HoldInfoApiResponse holdInfo =
+                new RefundDetailApiResponse.HoldInfoApiResponse("", "");
         if (result.holdInfo() != null) {
             holdInfo =
                     new RefundDetailApiResponse.HoldInfoApiResponse(
@@ -218,21 +227,43 @@ public class RefundApiMapper {
                             formatInstant(result.holdInfo().holdAt()));
         }
 
+        RefundDetailApiResponse.CollectShipmentApiResponse collectShipment =
+                new RefundDetailApiResponse.CollectShipmentApiResponse("", "", "");
+        if (result.collectShipment() != null) {
+            collectShipment =
+                    new RefundDetailApiResponse.CollectShipmentApiResponse(
+                            nullToEmpty(result.collectShipment().collectDeliveryCompany()),
+                            nullToEmpty(result.collectShipment().collectTrackingNumber()),
+                            nullToEmpty(result.collectShipment().collectStatus()));
+        }
+
+        RefundDetailApiResponse.RefundClaimInfoApiResponse claimInfo =
+                new RefundDetailApiResponse.RefundClaimInfoApiResponse(
+                        nullToEmpty(result.refundClaimId()),
+                        nullToEmpty(result.claimNumber()),
+                        result.refundQty(),
+                        nullToEmpty(result.refundStatus()),
+                        nullToEmpty(result.reasonType()),
+                        nullToEmpty(result.reasonDetail()),
+                        refundInfo,
+                        holdInfo,
+                        collectShipment,
+                        formatInstant(result.requestedAt()),
+                        formatInstant(result.completedAt()));
+
+        List<ClaimListItemApiResponseV4.OrderProductV4> orderProducts =
+                orderProduct != null ? List.of(orderProduct) : List.of();
+
         return new RefundDetailApiResponse(
-                nullToEmpty(result.refundClaimId()),
-                nullToEmpty(result.claimNumber()),
                 nullToEmpty(result.orderItemId()), // V4 간극
-                result.refundQty(),
-                nullToEmpty(result.refundStatus()),
-                nullToEmpty(result.reasonType()),
-                nullToEmpty(result.reasonDetail()),
-                refundInfo,
-                holdInfo,
+                orderProducts,
+                claimInfo,
+                buyerInfo,
+                payment,
+                receiverInfo,
                 nullToEmpty(result.requestedBy()),
                 nullToEmpty(result.processedBy()),
-                formatInstant(result.requestedAt()),
                 formatInstant(result.processedAt()),
-                formatInstant(result.completedAt()),
                 formatInstant(result.createdAt()),
                 formatInstant(result.updatedAt()),
                 toHistoryResponses(result.histories()));

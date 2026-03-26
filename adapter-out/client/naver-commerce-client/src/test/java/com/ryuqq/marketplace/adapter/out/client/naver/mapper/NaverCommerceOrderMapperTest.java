@@ -110,6 +110,8 @@ class NaverCommerceOrderMapperTest {
         return new NaverProductOrderDetail(
                 createOrder(orderId),
                 createProductOrderInfo(productOrderId, unitPrice, quantity),
+                null,
+                null,
                 null);
     }
 
@@ -203,7 +205,7 @@ class NaverCommerceOrderMapperTest {
                             null, // 52 freeGift
                             null, // 53 currentClaim
                             null); // 54 completedClaims
-            var detail = new NaverProductOrderDetail(createOrder("ORD001"), po, null);
+            var detail = new NaverProductOrderDetail(createOrder("ORD001"), po, null, null, null);
 
             List<ExternalOrderPayload> result = sut.toExternalOrderPayloads(List.of(detail));
 

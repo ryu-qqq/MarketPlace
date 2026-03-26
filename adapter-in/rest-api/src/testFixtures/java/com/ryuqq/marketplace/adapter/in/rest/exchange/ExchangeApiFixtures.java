@@ -17,6 +17,8 @@ import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ShipExchangeBa
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ShipExchangeBatchApiRequest.ShipItemApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeDetailApiResponse.AmountAdjustmentApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeDetailApiResponse.CollectShipmentApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeDetailApiResponse.ExchangeOptionApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.response.ExchangeSummaryApiResponse;
@@ -237,6 +239,8 @@ public final class ExchangeApiFixtures {
                         DEFAULT_TARGET_QUANTITY),
                 new AmountAdjustmentResult(
                         30000, 35000, 5000, true, false, 3000, 3000, 6000, "SELLER"),
+                new ExchangeDetailResult.CollectShipmentResult(
+                        DEFAULT_DELIVERY_COMPANY, DEFAULT_TRACKING_NUMBER, "IN_TRANSIT"),
                 DEFAULT_LINKED_ORDER_ID,
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
@@ -258,6 +262,7 @@ public final class ExchangeApiFixtures {
                 DEFAULT_EXCHANGE_STATUS,
                 DEFAULT_REASON_TYPE,
                 DEFAULT_REASON_DETAIL,
+                null,
                 null,
                 null,
                 "",
@@ -337,30 +342,39 @@ public final class ExchangeApiFixtures {
     }
 
     public static ExchangeDetailApiResponse detailApiResponse() {
+        ExchangeClaimInfoApiResponse exchangeClaimInfo =
+                new ExchangeClaimInfoApiResponse(
+                        DEFAULT_EXCHANGE_CLAIM_ID,
+                        DEFAULT_CLAIM_NUMBER,
+                        DEFAULT_SELLER_ID,
+                        DEFAULT_EXCHANGE_QTY,
+                        DEFAULT_EXCHANGE_STATUS,
+                        DEFAULT_REASON_TYPE,
+                        DEFAULT_REASON_DETAIL,
+                        new ExchangeOptionApiResponse(
+                                DEFAULT_ORIGINAL_PRODUCT_ID,
+                                DEFAULT_ORIGINAL_SKU_CODE,
+                                DEFAULT_TARGET_PRODUCT_GROUP_ID,
+                                DEFAULT_TARGET_PRODUCT_ID,
+                                DEFAULT_TARGET_SKU_CODE,
+                                DEFAULT_TARGET_QUANTITY),
+                        new AmountAdjustmentApiResponse(
+                                30000, 35000, 5000, true, false, 3000, 3000, 6000, "SELLER"),
+                        new CollectShipmentApiResponse(
+                                DEFAULT_DELIVERY_COMPANY, DEFAULT_TRACKING_NUMBER, "IN_TRANSIT"),
+                        DEFAULT_LINKED_ORDER_ID,
+                        DEFAULT_FORMATTED_TIME,
+                        null);
         return new ExchangeDetailApiResponse(
-                DEFAULT_EXCHANGE_CLAIM_ID,
-                DEFAULT_CLAIM_NUMBER,
                 DEFAULT_ORDER_ITEM_ID,
-                DEFAULT_SELLER_ID,
-                DEFAULT_EXCHANGE_QTY,
-                DEFAULT_EXCHANGE_STATUS,
-                DEFAULT_REASON_TYPE,
-                DEFAULT_REASON_DETAIL,
-                new ExchangeOptionApiResponse(
-                        DEFAULT_ORIGINAL_PRODUCT_ID,
-                        DEFAULT_ORIGINAL_SKU_CODE,
-                        DEFAULT_TARGET_PRODUCT_GROUP_ID,
-                        DEFAULT_TARGET_PRODUCT_ID,
-                        DEFAULT_TARGET_SKU_CODE,
-                        DEFAULT_TARGET_QUANTITY),
-                new AmountAdjustmentApiResponse(
-                        30000, 35000, 5000, true, false, 3000, 3000, 6000, "SELLER"),
-                DEFAULT_LINKED_ORDER_ID,
+                java.util.List.of(),
+                exchangeClaimInfo,
+                null,
+                null,
+                null,
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
                 DEFAULT_FORMATTED_TIME,
-                DEFAULT_FORMATTED_TIME,
-                null,
                 DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME,
                 List.of(historyApiResponse()));

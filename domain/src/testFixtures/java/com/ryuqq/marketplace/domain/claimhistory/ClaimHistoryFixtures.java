@@ -20,6 +20,8 @@ public final class ClaimHistoryFixtures {
 
     private ClaimHistoryFixtures() {}
 
+    public static final String DEFAULT_ORDER_ITEM_ID = "order-item-001";
+
     // ===== ClaimHistoryId Fixtures =====
 
     public static ClaimHistoryId defaultClaimHistoryId() {
@@ -59,6 +61,7 @@ public final class ClaimHistoryFixtures {
                 defaultClaimHistoryId(),
                 ClaimType.CANCEL,
                 "cancel-claim-001",
+                DEFAULT_ORDER_ITEM_ID,
                 "REQUESTED",
                 "APPROVED",
                 systemActor(),
@@ -70,6 +73,7 @@ public final class ClaimHistoryFixtures {
                 defaultClaimHistoryId(),
                 ClaimType.REFUND,
                 "refund-claim-001",
+                DEFAULT_ORDER_ITEM_ID,
                 "CS 담당자 확인 완료",
                 adminActor(),
                 CommonVoFixtures.now());
@@ -80,6 +84,7 @@ public final class ClaimHistoryFixtures {
                 defaultClaimHistoryId(),
                 ClaimType.CANCEL,
                 "cancel-claim-001",
+                DEFAULT_ORDER_ITEM_ID,
                 "REQUESTED",
                 "APPROVED",
                 systemActor(),
@@ -91,6 +96,7 @@ public final class ClaimHistoryFixtures {
                 claimHistoryId("01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f71"),
                 ClaimType.REFUND,
                 "refund-claim-001",
+                DEFAULT_ORDER_ITEM_ID,
                 "APPROVED",
                 "COMPLETED",
                 systemActor(),
@@ -102,9 +108,21 @@ public final class ClaimHistoryFixtures {
                 claimHistoryId("01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f72"),
                 ClaimType.EXCHANGE,
                 "exchange-claim-001",
+                DEFAULT_ORDER_ITEM_ID,
                 "COLLECTING",
                 "COLLECTED",
                 systemActor(),
+                CommonVoFixtures.now());
+    }
+
+    public static ClaimHistory orderManualClaimHistory() {
+        return ClaimHistory.forManual(
+                generatedClaimHistoryId(),
+                ClaimType.ORDER,
+                null,
+                DEFAULT_ORDER_ITEM_ID,
+                "일반 주문 메모",
+                adminActor(),
                 CommonVoFixtures.now());
     }
 
@@ -114,6 +132,7 @@ public final class ClaimHistoryFixtures {
                 defaultClaimHistoryId(),
                 ClaimType.CANCEL,
                 "cancel-claim-001",
+                DEFAULT_ORDER_ITEM_ID,
                 ClaimHistoryType.STATUS_CHANGE,
                 "승인",
                 "REQUESTED → APPROVED",
@@ -127,6 +146,7 @@ public final class ClaimHistoryFixtures {
                 claimHistoryId("01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f73"),
                 ClaimType.REFUND,
                 "refund-claim-001",
+                DEFAULT_ORDER_ITEM_ID,
                 ClaimHistoryType.MANUAL,
                 "CS 메모",
                 "고객 요청으로 환불 처리",

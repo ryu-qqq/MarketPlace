@@ -38,7 +38,7 @@ public class ExchangeClaim {
     private ExchangeReason reason;
     private ExchangeOption exchangeOption;
     private AmountAdjustment amountAdjustment;
-    private final ClaimShipment collectShipment;
+    private ClaimShipment collectShipment;
     private HoldInfo holdInfo;
     private String linkedOrderId;
     private final String requestedBy;
@@ -284,6 +284,17 @@ public class ExchangeClaim {
         }
         this.holdInfo = null;
         this.updatedAt = now;
+    }
+
+    /**
+     * 수거 배송 정보를 연결합니다.
+     *
+     * <p>외부 채널 동기화 시 수거 배송 정보가 생성된 후 클레임에 연결할 때 사용합니다.
+     *
+     * @param claimShipment 연결할 ClaimShipment
+     */
+    public void attachCollectShipment(ClaimShipment claimShipment) {
+        this.collectShipment = claimShipment;
     }
 
     public void updateReason(ExchangeReason reason, Instant now) {

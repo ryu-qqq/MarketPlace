@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.exchange.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.ExchangeApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ApproveExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CollectExchangeBatchApiRequest;
@@ -339,9 +340,9 @@ class ExchangeApiMapperTest {
             AddClaimHistoryMemoCommand command =
                     mapper.toAddMemoCommand(
                             exchangeClaimId,
+                            "order-item-001",
                             ExchangeApiFixtures.addMemoRequest(),
-                            sellerId,
-                            actorName);
+                            new MarketAccessChecker.ActorInfo(sellerId, actorName));
 
             // then
             assertThat(command.claimId()).isEqualTo(exchangeClaimId);
@@ -475,18 +476,23 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.exchangeClaimId())
+            assertThat(response.claimInfo().exchangeClaimId())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID);
-            assertThat(response.claimNumber()).isEqualTo(ExchangeApiFixtures.DEFAULT_CLAIM_NUMBER);
+            assertThat(response.claimInfo().claimNumber())
+                    .isEqualTo(ExchangeApiFixtures.DEFAULT_CLAIM_NUMBER);
             assertThat(response.orderId()).isEqualTo(ExchangeApiFixtures.DEFAULT_ORDER_ITEM_ID);
-            assertThat(response.sellerId()).isEqualTo(ExchangeApiFixtures.DEFAULT_SELLER_ID);
-            assertThat(response.exchangeQty()).isEqualTo(ExchangeApiFixtures.DEFAULT_EXCHANGE_QTY);
-            assertThat(response.exchangeStatus())
+            assertThat(response.claimInfo().sellerId())
+                    .isEqualTo(ExchangeApiFixtures.DEFAULT_SELLER_ID);
+            assertThat(response.claimInfo().exchangeQty())
+                    .isEqualTo(ExchangeApiFixtures.DEFAULT_EXCHANGE_QTY);
+            assertThat(response.claimInfo().status())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_EXCHANGE_STATUS);
-            assertThat(response.reasonType()).isEqualTo(ExchangeApiFixtures.DEFAULT_REASON_TYPE);
+            assertThat(response.claimInfo().reasonType())
+                    .isEqualTo(ExchangeApiFixtures.DEFAULT_REASON_TYPE);
         }
 
         @Test
@@ -496,15 +502,16 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.exchangeOption()).isNotNull();
-            assertThat(response.exchangeOption().originalProductId())
+            assertThat(response.claimInfo().exchangeOption()).isNotNull();
+            assertThat(response.claimInfo().exchangeOption().originalProductId())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_ORIGINAL_PRODUCT_ID);
-            assertThat(response.exchangeOption().targetProductId())
+            assertThat(response.claimInfo().exchangeOption().targetProductId())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_TARGET_PRODUCT_ID);
-            assertThat(response.exchangeOption().targetSkuCode())
+            assertThat(response.claimInfo().exchangeOption().targetSkuCode())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_TARGET_SKU_CODE);
         }
 
@@ -515,11 +522,12 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResultWithoutOption();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.exchangeOption()).isNull();
-            assertThat(response.amountAdjustment()).isNull();
+            assertThat(response.claimInfo().exchangeOption()).isNull();
+            assertThat(response.claimInfo().amountAdjustment()).isNull();
         }
 
         @Test
@@ -529,7 +537,8 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.claimHistories()).hasSize(1);
@@ -546,10 +555,46 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResultWithoutOption();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
             assertThat(response.claimHistories()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("collectShipment가 있으면 CollectShipmentApiResponse가 포함된다")
+        void toDetailResponse_WithCollectShipment_ReturnsCollectShipmentResponse() {
+            // given
+            ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
+
+            // when
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
+
+            // then
+            assertThat(response.claimInfo().collectShipment()).isNotNull();
+            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany())
+                    .isEqualTo(ExchangeApiFixtures.DEFAULT_DELIVERY_COMPANY);
+            assertThat(response.claimInfo().collectShipment().collectTrackingNumber())
+                    .isEqualTo(ExchangeApiFixtures.DEFAULT_TRACKING_NUMBER);
+            assertThat(response.claimInfo().collectShipment().collectStatus())
+                    .isEqualTo("IN_TRANSIT");
+        }
+
+        @Test
+        @DisplayName("collectShipment가 null이면 claimInfo에 null collectShipment가 포함된다")
+        void toDetailResponse_NullCollectShipment_ReturnsNullCollectShipment() {
+            // given
+            ExchangeDetailResult result = ExchangeApiFixtures.detailResultWithoutOption();
+
+            // when
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
+
+            // then
+            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany())
+                    .isEmpty();
         }
 
         @Test
@@ -559,10 +604,11 @@ class ExchangeApiMapperTest {
             ExchangeDetailResult result = ExchangeApiFixtures.detailResult();
 
             // when
-            ExchangeDetailApiResponse response = mapper.toDetailResponse(result);
+            ExchangeDetailApiResponse response =
+                    mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.requestedAt())
+            assertThat(response.claimInfo().requestedAt())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_FORMATTED_TIME);
             assertThat(response.processedAt())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_FORMATTED_TIME);

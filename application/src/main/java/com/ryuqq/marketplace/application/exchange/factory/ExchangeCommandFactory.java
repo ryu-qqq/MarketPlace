@@ -67,6 +67,7 @@ public class ExchangeCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.EXCHANGE,
                         claimId.value(),
+                        orderItemId.value(),
                         null,
                         "REQUESTED",
                         requestedBy,
@@ -92,6 +93,7 @@ public class ExchangeCommandFactory {
         return historyFactory.createStatusChange(
                 ClaimType.EXCHANGE,
                 claim.idValue(),
+                claim.orderItemIdValue(),
                 "REQUESTED",
                 "COLLECTING",
                 processedBy,
@@ -107,6 +109,7 @@ public class ExchangeCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.EXCHANGE,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         "COLLECTING",
                         "COLLECTED",
                         processedBy,
@@ -121,6 +124,7 @@ public class ExchangeCommandFactory {
         return historyFactory.createStatusChange(
                 ClaimType.EXCHANGE,
                 claim.idValue(),
+                claim.orderItemIdValue(),
                 "COLLECTED",
                 "PREPARING",
                 processedBy,
@@ -141,6 +145,7 @@ public class ExchangeCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.EXCHANGE,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         "PREPARING",
                         "SHIPPING",
                         processedBy,
@@ -155,6 +160,7 @@ public class ExchangeCommandFactory {
         return historyFactory.createStatusChange(
                 ClaimType.EXCHANGE,
                 claim.idValue(),
+                claim.orderItemIdValue(),
                 "SHIPPING",
                 "COMPLETED",
                 processedBy,
@@ -171,6 +177,7 @@ public class ExchangeCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.EXCHANGE,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         fromStatus,
                         "REJECTED",
                         processedBy,
@@ -194,6 +201,7 @@ public class ExchangeCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.EXCHANGE,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         fromStatus,
                         "HOLD",
                         processedBy,
@@ -215,6 +223,7 @@ public class ExchangeCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.EXCHANGE,
                         claim.idValue(),
+                        claim.orderItemIdValue(),
                         "HOLD",
                         claim.status().name(),
                         processedBy,
@@ -230,6 +239,7 @@ public class ExchangeCommandFactory {
         return historyFactory.createStatusChange(
                 ClaimType.EXCHANGE,
                 claim.idValue(),
+                claim.orderItemIdValue(),
                 fromStatus,
                 "CANCELLED",
                 processedBy,

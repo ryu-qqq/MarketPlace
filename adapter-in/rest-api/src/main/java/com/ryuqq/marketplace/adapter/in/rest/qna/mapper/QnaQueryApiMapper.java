@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.qna.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
 import com.ryuqq.marketplace.adapter.in.rest.qna.dto.response.QnaApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.qna.dto.response.QnaReplyApiResponse;
 import com.ryuqq.marketplace.application.qna.dto.result.QnaListResult;
@@ -14,29 +15,29 @@ import org.springframework.stereotype.Component;
 public class QnaQueryApiMapper {
 
     public QnaApiResponse toResponse(QnaResult result) {
-        List<QnaReplyApiResponse> replies = result.replies().stream()
-                .map(this::toReplyResponse)
-                .toList();
+        List<QnaReplyApiResponse> replies =
+                result.replies().stream().map(this::toReplyResponse).toList();
 
         return new QnaApiResponse(
                 result.qnaId(),
                 result.sellerId(),
                 result.productGroupId(),
+                result.orderId(),
                 result.qnaType().name(),
                 result.source().salesChannelId(),
                 result.source().externalQnaId(),
-                result.questionContent(),
-                result.questionAuthor(),
+                nullToEmpty(result.questionTitle()),
+                nullToEmpty(result.questionContent()),
+                nullToEmpty(result.questionAuthor()),
                 result.status().name(),
                 replies,
-                result.createdAt().toString(),
-                result.updatedAt().toString());
+                DateTimeFormatUtils.formatDisplay(result.createdAt()),
+                DateTimeFormatUtils.formatDisplay(result.updatedAt()));
     }
 
     public PageApiResponse<QnaApiResponse> toPageResponse(QnaListResult listResult) {
-        List<QnaApiResponse> responses = listResult.items().stream()
-                .map(this::toResponse)
-                .toList();
+        List<QnaApiResponse> responses =
+                listResult.items().stream().map(this::toResponse).toList();
 
         int page = listResult.limit() > 0 ? listResult.offset() / listResult.limit() : 0;
         return PageApiResponse.of(responses, page, listResult.limit(), listResult.totalCount());
@@ -46,9 +47,13 @@ public class QnaQueryApiMapper {
         return new QnaReplyApiResponse(
                 result.replyId(),
                 result.parentReplyId(),
-                result.content(),
-                result.authorName(),
+                nullToEmpty(result.content()),
+                nullToEmpty(result.authorName()),
                 result.replyType().name(),
-                result.createdAt().toString());
+                DateTimeFormatUtils.formatDisplay(result.createdAt()));
+    }
+
+    private String nullToEmpty(String value) {
+        return value != null ? value : "";
     }
 }

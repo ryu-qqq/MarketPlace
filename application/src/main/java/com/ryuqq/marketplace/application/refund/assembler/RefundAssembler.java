@@ -2,9 +2,11 @@ package com.ryuqq.marketplace.application.refund.assembler;
 
 import com.ryuqq.marketplace.application.claimhistory.assembler.ClaimHistoryAssembler;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundDetailResult;
+import com.ryuqq.marketplace.application.refund.dto.response.RefundDetailResult.CollectShipmentResult;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundListResult;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundPageResult;
 import com.ryuqq.marketplace.application.refund.dto.response.RefundSummaryResult;
+import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.common.vo.PageMeta;
 import com.ryuqq.marketplace.domain.refund.aggregate.RefundClaim;
@@ -66,6 +68,18 @@ public class RefundAssembler {
                     new RefundDetailResult.HoldInfoResult(hold.holdReason(), hold.holdAt());
         }
 
+        ClaimShipment collectShipment = claim.collectShipment();
+        CollectShipmentResult collectShipmentResult = null;
+        if (collectShipment != null) {
+            collectShipmentResult =
+                    new CollectShipmentResult(
+                            collectShipment.method() != null
+                                    ? collectShipment.method().courierName()
+                                    : null,
+                            collectShipment.trackingNumber(),
+                            collectShipment.status().name());
+        }
+
         return new RefundDetailResult(
                 claim.idValue(),
                 claim.claimNumberValue(),
@@ -76,6 +90,7 @@ public class RefundAssembler {
                 claim.reason().reasonDetail(),
                 refundInfoResult,
                 holdInfoResult,
+                collectShipmentResult,
                 claim.requestedBy(),
                 claim.processedBy(),
                 claim.requestedAt(),

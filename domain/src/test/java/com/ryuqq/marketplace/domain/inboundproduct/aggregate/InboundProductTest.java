@@ -178,6 +178,20 @@ class InboundProductTest {
         }
 
         @Test
+        @DisplayName("LEGACY_IMPORTED 상태에서 매핑을 적용하면 MAPPED로 전이한다")
+        void applyMappingFromLegacyImported() {
+            InboundProduct product = InboundProductFixtures.legacyImportedProductWithoutMapping();
+            Instant now = CommonVoFixtures.now();
+
+            product.applyMapping(100L, 200L, now);
+
+            assertThat(product.status()).isEqualTo(InboundProductStatus.MAPPED);
+            assertThat(product.internalBrandId()).isEqualTo(100L);
+            assertThat(product.internalCategoryId()).isEqualTo(200L);
+            assertThat(product.isMapped()).isTrue();
+        }
+
+        @Test
         @DisplayName("MAPPED 상태에서 매핑을 재적용하면 예외가 발생한다")
         void applyMappingFromMapped_ThrowsException() {
             InboundProduct product = InboundProductFixtures.mappedProduct();

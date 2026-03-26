@@ -88,6 +88,7 @@ public final class RefundQueryFixtures {
                 "단순 변심입니다.",
                 null,
                 null,
+                null,
                 "customer@marketplace.com",
                 null,
                 Instant.now(),

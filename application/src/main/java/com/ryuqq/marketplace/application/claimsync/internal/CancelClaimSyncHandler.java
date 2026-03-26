@@ -229,7 +229,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         }
 
         cancelCommandManager.persist(cancel);
-        recordHistory(cancel.idValue(), null, "REQUESTED", cancelQty);
+        recordHistory(cancel.idValue(), orderItemId.value(), null, "REQUESTED", cancelQty);
         return 0L;
     }
 
@@ -239,7 +239,12 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         cancel.approve(SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
         partialCancelOrderItem(cancel.orderItemId(), cancel.cancelQty(), "취소 승인 동기화", now);
-        recordHistory(cancel.idValue(), fromStatus, "APPROVED", cancel.cancelQty());
+        recordHistory(
+                cancel.idValue(),
+                cancel.orderItemIdValue(),
+                fromStatus,
+                "APPROVED",
+                cancel.cancelQty());
         return 0L;
     }
 
@@ -260,7 +265,12 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             cancel.complete(refundInfo, SYNC_ACTOR, now);
             cancelCommandManager.persist(cancel);
             partialCancelOrderItem(orderItemId, cancel.cancelQty(), "취소 완료 동기화", now);
-            recordHistory(cancel.idValue(), fromStatus, "COMPLETED", cancel.cancelQty());
+            recordHistory(
+                    cancel.idValue(),
+                    orderItemId.value(),
+                    fromStatus,
+                    "COMPLETED",
+                    cancel.cancelQty());
             createReversalEntry(orderItemId, sellerId, cancel.idValue(), refundAmount);
             return 0L;
         }
@@ -298,7 +308,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         cancel.complete(refundInfo, SYNC_ACTOR, now);
         cancelCommandManager.persist(cancel);
         partialCancelOrderItem(orderItemId, cancelQty, "취소 완료 동기화", now);
-        recordHistory(cancel.idValue(), null, "COMPLETED", cancelQty);
+        recordHistory(cancel.idValue(), orderItemId.value(), null, "COMPLETED", cancelQty);
         createReversalEntry(orderItemId, sellerId, cancel.idValue(), refundAmount);
         return 0L;
     }
@@ -308,7 +318,12 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
         String fromStatus = cancel.status().name();
         cancel.withdraw(now);
         cancelCommandManager.persist(cancel);
-        recordHistory(cancel.idValue(), fromStatus, "WITHDRAWN", cancel.cancelQty());
+        recordHistory(
+                cancel.idValue(),
+                cancel.orderItemIdValue(),
+                fromStatus,
+                "WITHDRAWN",
+                cancel.cancelQty());
         return 0L;
     }
 
@@ -320,11 +335,12 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     }
 
     /** 클레임 이력을 생성하고 저장한다. 수량 정보를 message에 포함. */
-    private void recordHistory(String cancelId, String fromStatus, String toStatus, int qty) {
+    private void recordHistory(
+            String cancelId, String orderItemId, String fromStatus, String toStatus, int qty) {
         String from = fromStatus != null ? fromStatus : "NEW";
         historyCommandManager.persist(
                 historyFactory.createStatusChangeBySystemWithQty(
-                        ClaimType.CANCEL, cancelId, from, toStatus, qty));
+                        ClaimType.CANCEL, cancelId, orderItemId, from, toStatus, qty));
     }
 
     /** 부분취소 수량만큼 OrderItem의 cancelledQty를 증가시킨다. 전체 수량이 소진되면 CANCELLED 상태 전환 + Shipment 취소. */
@@ -381,11 +397,15 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
     }
 
     private CancelReason resolveDefaultCancelReason(ExternalClaimPayload claim) {
-        String rawReason = claim.claimReason();
-        CancelReasonType reasonType = parseCancelReasonType(rawReason);
+        // externalReasonCode 우선, 없으면 claimReason으로 매핑 시도
+        String codeForMapping =
+                (claim.externalReasonCode() != null && !claim.externalReasonCode().isBlank())
+                        ? claim.externalReasonCode()
+                        : claim.claimReason();
+        CancelReasonType reasonType = parseCancelReasonType(codeForMapping);
         String detail = claim.claimDetailedReason();
         if (detail == null || detail.isBlank()) {
-            detail = rawReason;
+            detail = claim.claimReason();
         }
         return new CancelReason(reasonType, detail);
     }
@@ -402,13 +422,18 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
             case "OUT_OF_STOCK" -> CancelReasonType.OUT_OF_STOCK;
             case "PRODUCT_DISCONTINUED" -> CancelReasonType.PRODUCT_DISCONTINUED;
             case "DELIVERY_TOO_SLOW" -> CancelReasonType.DELIVERY_TOO_SLOW;
-                // 네이버 커머스 코드
+                // 네이버 커머스 취소 사유 코드
             case "INTENT_CHANGED" -> CancelReasonType.CHANGE_OF_MIND;
             case "COLOR_AND_SIZE" -> CancelReasonType.WRONG_ORDER;
+            case "WRONG_OPTION" -> CancelReasonType.WRONG_ORDER;
             case "PRODUCT_UNSATISFIED" -> CancelReasonType.OTHER;
             case "DELAYED_DELIVERY" -> CancelReasonType.DELIVERY_TOO_SLOW;
             case "SOLD_OUT" -> CancelReasonType.OUT_OF_STOCK;
             case "INCORRECT_INFO" -> CancelReasonType.OTHER;
+            case "PRODUCT_STOP" -> CancelReasonType.PRODUCT_DISCONTINUED;
+            case "PRICE_CHANGE" -> CancelReasonType.PRICE_ERROR;
+            case "SHIPPING_AREA_PROBLEM" -> CancelReasonType.SHIPPING_UNAVAILABLE;
+            case "PRODUCT_ISSUE" -> CancelReasonType.PRODUCT_ISSUE;
             default -> CancelReasonType.OTHER;
         };
     }

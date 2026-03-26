@@ -38,4 +38,11 @@ public class ClaimHistoryQueryAdapter implements ClaimHistoryQueryPort {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<ClaimHistory> findByOrderItemId(String orderItemId) {
+        return claimHistoryRepository.findByOrderItemId(orderItemId).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }

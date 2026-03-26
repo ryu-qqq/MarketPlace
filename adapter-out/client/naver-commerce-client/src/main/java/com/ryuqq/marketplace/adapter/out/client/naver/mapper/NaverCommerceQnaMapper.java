@@ -23,7 +23,9 @@ public class NaverCommerceQnaMapper {
         String qnaType = CATEGORY_TO_QNA_TYPE.getOrDefault(inquiry.category(), "ETC");
         return new ExternalQnaPayload(
                 "INQUIRY-" + inquiry.inquiryNo(),
+                null,
                 qnaType,
+                null,
                 inquiry.inquiryContent(),
                 inquiry.customerName(),
                 inquiry.productNo(),
@@ -43,7 +45,9 @@ public class NaverCommerceQnaMapper {
     public ExternalQnaPayload toExternalPayload(NaverProductQna qna) {
         return new ExternalQnaPayload(
                 "PRODUCT-QNA-" + qna.questionId(),
+                null,
                 "PRODUCT",
+                null,
                 qna.question(),
                 qna.maskedWriterId(),
                 qna.productId() != null ? String.valueOf(qna.productId()) : null,

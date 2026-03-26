@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.domain.claim.id.ClaimShipmentId;
 import com.ryuqq.marketplace.domain.claim.vo.ClaimShipmentMethod;
 import com.ryuqq.marketplace.domain.claim.vo.ClaimShipmentStatus;
 import com.ryuqq.marketplace.domain.claim.vo.ContactInfo;
+import com.ryuqq.marketplace.domain.claim.vo.ShipmentMethodType;
 import com.ryuqq.marketplace.domain.claim.vo.ShippingFeeInfo;
 import java.time.Instant;
 
@@ -57,6 +58,40 @@ public class ClaimShipment {
                 receiver,
                 null,
                 null);
+    }
+
+    /**
+     * 외부 채널 동기화 전용 팩토리 메서드.
+     *
+     * <p>수거 배송사 코드와 송장번호만 있는 경우 사용합니다. sender/receiver 정보는 null로 허용합니다.
+     *
+     * @param id ClaimShipmentId
+     * @param courierCode 택배사 코드
+     * @param courierName 택배사 명
+     * @param trackingNumber 송장번호
+     * @param now 현재 시간
+     * @return ClaimShipment (수거중 상태)
+     */
+    public static ClaimShipment forSync(
+            ClaimShipmentId id,
+            String courierCode,
+            String courierName,
+            String trackingNumber,
+            Instant now) {
+        ClaimShipmentMethod method =
+                ClaimShipmentMethod.of(ShipmentMethodType.COURIER, courierCode, courierName);
+        ClaimShipment shipment =
+                new ClaimShipment(
+                        id,
+                        ClaimShipmentStatus.IN_TRANSIT,
+                        method,
+                        trackingNumber,
+                        ShippingFeeInfo.free(),
+                        null,
+                        null,
+                        now,
+                        null);
+        return shipment;
     }
 
     public static ClaimShipment reconstitute(

@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse.ActorApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.HoldRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RefundSearchApiRequest;
@@ -11,7 +12,8 @@ import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RejectRefundBatc
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RequestRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RequestRefundBatchApiRequest.RefundRequestItemApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundDetailApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundDetailApiResponse.RefundInfoApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundDetailApiResponse.CollectShipmentApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundDetailApiResponse.RefundClaimInfoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.response.RefundSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
@@ -224,6 +226,7 @@ public final class RefundApiFixtures {
                 DEFAULT_REASON_DETAIL,
                 new RefundInfoResult(15000, 15000, 0, null, "CARD", DEFAULT_INSTANT),
                 null,
+                new RefundDetailResult.CollectShipmentResult("CJ대한통운", "1234567890", "IN_TRANSIT"),
                 DEFAULT_REQUESTED_BY,
                 null,
                 DEFAULT_INSTANT,
@@ -245,6 +248,7 @@ public final class RefundApiFixtures {
                 DEFAULT_REASON_DETAIL,
                 null,
                 new HoldInfoResult("추가 확인 필요", DEFAULT_INSTANT),
+                null,
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
                 DEFAULT_INSTANT,
@@ -264,6 +268,7 @@ public final class RefundApiFixtures {
                 DEFAULT_REFUND_STATUS,
                 DEFAULT_REASON_TYPE,
                 DEFAULT_REASON_DETAIL,
+                null,
                 null,
                 null,
                 DEFAULT_REQUESTED_BY,
@@ -339,20 +344,29 @@ public final class RefundApiFixtures {
     // ===== RefundDetailApiResponse =====
 
     public static RefundDetailApiResponse detailApiResponse(String refundClaimId) {
+        RefundClaimInfoApiResponse claimInfo =
+                new RefundClaimInfoApiResponse(
+                        refundClaimId,
+                        DEFAULT_CLAIM_NUMBER,
+                        1,
+                        DEFAULT_REFUND_STATUS,
+                        DEFAULT_REASON_TYPE,
+                        DEFAULT_REASON_DETAIL,
+                        new ClaimListItemApiResponseV4.RefundInfoV4(
+                                15000, 0, "", 15000, "CARD", DEFAULT_FORMATTED_TIME),
+                        null,
+                        new CollectShipmentApiResponse("CJ대한통운", "1234567890", "IN_TRANSIT"),
+                        DEFAULT_FORMATTED_TIME,
+                        null);
         return new RefundDetailApiResponse(
-                refundClaimId,
-                DEFAULT_CLAIM_NUMBER,
                 DEFAULT_ORDER_ITEM_ID,
-                1,
-                DEFAULT_REFUND_STATUS,
-                DEFAULT_REASON_TYPE,
-                DEFAULT_REASON_DETAIL,
-                new RefundInfoApiResponse(15000, 15000, 0, "", "CARD", DEFAULT_FORMATTED_TIME),
+                List.of(),
+                claimInfo,
+                null,
+                null,
                 null,
                 DEFAULT_REQUESTED_BY,
                 "",
-                DEFAULT_FORMATTED_TIME,
-                null,
                 null,
                 DEFAULT_FORMATTED_TIME,
                 DEFAULT_FORMATTED_TIME,

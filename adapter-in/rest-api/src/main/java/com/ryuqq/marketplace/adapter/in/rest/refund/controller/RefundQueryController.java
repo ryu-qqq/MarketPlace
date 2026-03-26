@@ -18,6 +18,7 @@ import com.ryuqq.marketplace.application.refund.port.in.query.GetRefundListUseCa
 import com.ryuqq.marketplace.application.refund.port.in.query.GetRefundSummaryUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +77,15 @@ public class RefundQueryController {
     public ResponseEntity<ApiResponse<RefundDetailApiResponse>> getDetail(
             @PathVariable String refundClaimId) {
         RefundDetailResult result = getRefundDetailUseCase.execute(refundClaimId);
-        return ResponseEntity.ok(ApiResponse.of(mapper.toDetailResponse(result)));
+        String itemId = result.orderItemId();
+        ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(List.of(itemId));
+        return ResponseEntity.ok(
+                ApiResponse.of(
+                        mapper.toDetailResponse(
+                                result,
+                                enricher.toOrderProductV4(itemId, ctx),
+                                enricher.toBuyerInfoV4(itemId, ctx),
+                                enricher.toPaymentV4(itemId, ctx),
+                                enricher.toReceiverInfoV4(itemId, ctx))));
     }
 }

@@ -191,7 +191,7 @@ class ExchangeFlowE2ETest extends E2ETestBase {
                 .statusCode(HttpStatus.OK.value())
                 .extract()
                 .jsonPath()
-                .getString("data.exchangeStatus");
+                .getString("data.claimInfo.status");
     }
 
     // ===== 전체 플로우 시나리오 =====
@@ -252,8 +252,8 @@ class ExchangeFlowE2ETest extends E2ETestBase {
                     .get(BASE_URL + "/{exchangeClaimId}", exchangeClaimId)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.exchangeStatus", equalTo("COMPLETED"))
-                    .body("data.linkedOrderId", not(emptyOrNullString()));
+                    .body("data.claimInfo.status", equalTo("COMPLETED"))
+                    .body("data.claimInfo.linkedOrderId", not(emptyOrNullString()));
         }
 
         @Test
@@ -278,7 +278,7 @@ class ExchangeFlowE2ETest extends E2ETestBase {
                     .get(BASE_URL + "/{exchangeClaimId}", exchangeClaimId)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.exchangeStatus", equalTo("REJECTED"));
+                    .body("data.claimInfo.status", equalTo("REJECTED"));
         }
 
         @Test
@@ -310,7 +310,7 @@ class ExchangeFlowE2ETest extends E2ETestBase {
                     .get(BASE_URL + "/{exchangeClaimId}", exchangeClaimId)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.exchangeStatus", equalTo("CANCELLED"));
+                    .body("data.claimInfo.status", equalTo("CANCELLED"));
 
             // Step 5: 환불 건 신규 생성 확인
             assertThat(refundClaimRepository.findAll()).isNotEmpty();
