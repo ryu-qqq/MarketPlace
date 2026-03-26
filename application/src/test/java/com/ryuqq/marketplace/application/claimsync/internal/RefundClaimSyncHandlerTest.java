@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import com.ryuqq.marketplace.application.claim.manager.ClaimShipmentCommandManager;
 import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
 import com.ryuqq.marketplace.application.claimsync.ClaimSyncFixtures;
@@ -16,6 +17,7 @@ import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.application.refund.internal.RefundSettlementProcessor;
 import com.ryuqq.marketplace.application.refund.manager.RefundCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundReadManager;
+import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.order.OrderFixtures;
@@ -48,6 +50,7 @@ class RefundClaimSyncHandlerTest {
     @Mock private OrderItemCommandManager orderItemCommandManager;
     @Mock private ClaimHistoryFactory historyFactory;
     @Mock private ClaimHistoryCommandManager historyCommandManager;
+    @Mock private ClaimShipmentCommandManager claimShipmentCommandManager;
     @Mock private TimeProvider timeProvider;
     @Mock private RefundSettlementProcessor refundSettlementProcessor;
 
@@ -336,6 +339,31 @@ class RefundClaimSyncHandlerTest {
             // then
             assertThat(result).isZero();
             then(refundCommandManager).should().persist(any(RefundClaim.class));
+            then(claimShipmentCommandManager).should().persist(any(ClaimShipment.class));
+        }
+
+        @Test
+        @DisplayName("REFUND_COLLECTING 실행 시 수거 배송 정보가 없으면 ClaimShipment를 생성하지 않는다")
+        void execute_RefundCollecting_WithoutShipmentInfo_DoesNotCreateClaimShipment() {
+            // given
+            ExternalClaimPayload payload = ClaimSyncFixtures.returnPayloadWithReason("CHANGE_OF_MIND");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            long sellerId = 10L;
+            Instant now = Instant.now();
+            RefundClaim requestedRefund = RefundFixtures.requestedRefundClaim();
+
+            given(timeProvider.now()).willReturn(now);
+            given(refundReadManager.findByOrderItemId(orderItemId.value()))
+                    .willReturn(Optional.of(requestedRefund));
+
+            // when
+            long result =
+                    sut.execute(ClaimSyncAction.REFUND_COLLECTING, payload, orderItemId, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(refundCommandManager).should().persist(any(RefundClaim.class));
+            then(claimShipmentCommandManager).should(never()).persist(any());
         }
     }
 

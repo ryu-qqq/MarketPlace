@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.claimsync.internal;
 
+import com.ryuqq.marketplace.application.claim.manager.ClaimShipmentCommandManager;
 import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
 import com.ryuqq.marketplace.application.claimsync.dto.external.ExternalClaimPayload;
@@ -9,6 +10,8 @@ import com.ryuqq.marketplace.application.exchange.manager.ExchangeCommandManager
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeReadManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
+import com.ryuqq.marketplace.domain.claim.id.ClaimShipmentId;
 import com.ryuqq.marketplace.domain.claim.vo.FeePayer;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
@@ -49,6 +52,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
     private final OrderItemCommandManager orderItemCommandManager;
     private final ClaimHistoryFactory historyFactory;
     private final ClaimHistoryCommandManager historyCommandManager;
+    private final ClaimShipmentCommandManager claimShipmentCommandManager;
     private final TimeProvider timeProvider;
     private final ExchangeSettlementProcessor exchangeSettlementProcessor;
 
@@ -59,6 +63,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             OrderItemCommandManager orderItemCommandManager,
             ClaimHistoryFactory historyFactory,
             ClaimHistoryCommandManager historyCommandManager,
+            ClaimShipmentCommandManager claimShipmentCommandManager,
             TimeProvider timeProvider,
             ExchangeSettlementProcessor exchangeSettlementProcessor) {
         this.exchangeReadManager = exchangeReadManager;
@@ -67,6 +72,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         this.orderItemCommandManager = orderItemCommandManager;
         this.historyFactory = historyFactory;
         this.historyCommandManager = historyCommandManager;
+        this.claimShipmentCommandManager = claimShipmentCommandManager;
         this.timeProvider = timeProvider;
         this.exchangeSettlementProcessor = exchangeSettlementProcessor;
     }
@@ -91,7 +97,8 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         return switch (action) {
             case EXCHANGE_CREATED -> createExchange(claim, orderItemId, sellerId);
             case EXCHANGE_COLLECTING ->
-                    startCollecting(exchangeReadManager.findByOrderItemId(orderItemId).get());
+                    startCollecting(
+                            exchangeReadManager.findByOrderItemId(orderItemId).get(), claim);
             case EXCHANGE_COLLECTED ->
                     completeCollection(exchangeReadManager.findByOrderItemId(orderItemId).get());
             case EXCHANGE_SHIPPING ->
@@ -185,18 +192,48 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
 
         exchangeCommandManager.persist(exchangeClaim);
         requestReturnOrderItem(orderItemId, "교환 요청 동기화", now);
-        recordHistory(exchangeClaim.idValue(), null, "REQUESTED", exchangeQty);
+        recordHistory(exchangeClaim.idValue(), orderItemId.value(), null, "REQUESTED", exchangeQty);
         return 0L;
     }
 
-    private long startCollecting(ExchangeClaim exchangeClaim) {
+    private long startCollecting(ExchangeClaim exchangeClaim, ExternalClaimPayload claim) {
         Instant now = timeProvider.now();
         String fromStatus = exchangeClaim.status().name();
+        attachCollectShipmentIfPresent(exchangeClaim, claim, now);
         exchangeClaim.startCollecting(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
         recordHistory(
-                exchangeClaim.idValue(), fromStatus, "COLLECTING", exchangeClaim.exchangeQty());
+                exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), fromStatus, "COLLECTING", exchangeClaim.exchangeQty());
         return 0L;
+    }
+
+    /**
+     * 외부 클레임 페이로드에 수거 배송 정보가 있으면 ClaimShipment를 생성하여 교환 클레임에 연결합니다.
+     *
+     * <p>택배사 코드 또는 송장번호가 없으면 연결을 생략합니다.
+     */
+    private void attachCollectShipmentIfPresent(
+            ExchangeClaim exchangeClaim, ExternalClaimPayload claim, Instant now) {
+        if (!hasCollectShipmentInfo(claim)) {
+            return;
+        }
+        ClaimShipmentId shipmentId = ClaimShipmentId.forNew(UUID.randomUUID().toString());
+        ClaimShipment claimShipment =
+                ClaimShipment.forSync(
+                        shipmentId,
+                        claim.collectDeliveryCompany(),
+                        claim.collectDeliveryCompany(),
+                        claim.collectTrackingNumber(),
+                        now);
+        claimShipmentCommandManager.persist(claimShipment);
+        exchangeClaim.attachCollectShipment(claimShipment);
+    }
+
+    private boolean hasCollectShipmentInfo(ExternalClaimPayload claim) {
+        return claim.collectDeliveryCompany() != null
+                && !claim.collectDeliveryCompany().isBlank()
+                && claim.collectTrackingNumber() != null
+                && !claim.collectTrackingNumber().isBlank();
     }
 
     private long completeCollection(ExchangeClaim exchangeClaim) {
@@ -205,7 +242,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         exchangeClaim.completeCollection(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
         recordHistory(
-                exchangeClaim.idValue(), fromStatus, "COLLECTED", exchangeClaim.exchangeQty());
+                exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), fromStatus, "COLLECTED", exchangeClaim.exchangeQty());
         return 0L;
     }
 
@@ -218,7 +255,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         String linkedOrderId = "SYNC-" + UUID.randomUUID();
         exchangeClaim.startShipping(linkedOrderId, SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
-        recordHistory(exchangeClaim.idValue(), fromStatus, "SHIPPING", exchangeClaim.exchangeQty());
+        recordHistory(exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), fromStatus, "SHIPPING", exchangeClaim.exchangeQty());
         return 0L;
     }
 
@@ -234,7 +271,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             exchangeCommandManager.persist(exchangeClaim);
             partialReturnOrderItem(orderItemId, exchangeClaim.exchangeQty(), "교환 완료 동기화", now);
             recordHistory(
-                    exchangeClaim.idValue(), fromStatus, "COMPLETED", exchangeClaim.exchangeQty());
+                    exchangeClaim.idValue(), orderItemId.value(), fromStatus, "COMPLETED", exchangeClaim.exchangeQty());
             createReversalEntry(orderItemId, sellerId, exchangeClaim.idValue());
             return 0L;
         }
@@ -271,7 +308,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         exchangeClaim.complete(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
         partialReturnOrderItem(orderItemId, exchangeQty, "교환 완료 동기화", now);
-        recordHistory(exchangeClaim.idValue(), null, "COMPLETED", exchangeQty);
+        recordHistory(exchangeClaim.idValue(), orderItemId.value(), null, "COMPLETED", exchangeQty);
         createReversalEntry(orderItemId, sellerId, exchangeClaim.idValue());
         return 0L;
     }
@@ -302,7 +339,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         String fromStatus = exchangeClaim.status().name();
         exchangeClaim.reject(SYNC_ACTOR, now);
         exchangeCommandManager.persist(exchangeClaim);
-        recordHistory(exchangeClaim.idValue(), fromStatus, "REJECTED", exchangeClaim.exchangeQty());
+        recordHistory(exchangeClaim.idValue(), exchangeClaim.orderItemIdValue(), fromStatus, "REJECTED", exchangeClaim.exchangeQty());
         return 0L;
     }
 
@@ -314,11 +351,12 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
     }
 
     /** 클레임 이력을 생성하고 저장한다. 수량 정보를 message에 포함. */
-    private void recordHistory(String claimId, String fromStatus, String toStatus, int qty) {
+    private void recordHistory(
+            String claimId, String orderItemId, String fromStatus, String toStatus, int qty) {
         String from = fromStatus != null ? fromStatus : "NEW";
         historyCommandManager.persist(
                 historyFactory.createStatusChangeBySystemWithQty(
-                        ClaimType.EXCHANGE, claimId, from, toStatus, qty));
+                        ClaimType.EXCHANGE, claimId, orderItemId, from, toStatus, qty));
     }
 
     /** 교환 요청: OrderItem을 RETURN_REQUESTED 상태로 변경 (수량 누적 없음). */
@@ -358,8 +396,12 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
     }
 
     private ExchangeReason resolveDefaultExchangeReason(ExternalClaimPayload claim) {
-        String rawReason = claim.claimReason();
-        ExchangeReasonType reasonType = parseExchangeReasonType(rawReason);
+        // externalReasonCode 우선, 없으면 claimReason으로 매핑 시도
+        String codeForMapping =
+                (claim.externalReasonCode() != null && !claim.externalReasonCode().isBlank())
+                        ? claim.externalReasonCode()
+                        : claim.claimReason();
+        ExchangeReasonType reasonType = parseExchangeReasonType(codeForMapping);
         String detail =
                 (claim.claimDetailedReason() != null && !claim.claimDetailedReason().isBlank())
                         ? claim.claimDetailedReason()
@@ -372,11 +414,17 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
             return ExchangeReasonType.OTHER;
         }
         return switch (rawReason) {
+                // 내부 코드
             case "SIZE_CHANGE" -> ExchangeReasonType.SIZE_CHANGE;
             case "COLOR_CHANGE" -> ExchangeReasonType.COLOR_CHANGE;
             case "OPTION_CHANGE" -> ExchangeReasonType.OPTION_CHANGE;
             case "WRONG_OPTION_SENT" -> ExchangeReasonType.WRONG_OPTION_SENT;
             case "DEFECTIVE" -> ExchangeReasonType.DEFECTIVE;
+                // 네이버 커머스 교환 사유 코드
+            case "COLOR_AND_SIZE" -> ExchangeReasonType.OPTION_CHANGE;
+            case "BROKEN" -> ExchangeReasonType.DEFECTIVE;
+            case "WRONG_DELIVERY" -> ExchangeReasonType.WRONG_OPTION_SENT;
+            case "INTENT_CHANGED" -> ExchangeReasonType.OTHER;
             default -> ExchangeReasonType.OTHER;
         };
     }

@@ -11,6 +11,7 @@ import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelListApiRe
 import com.ryuqq.marketplace.adapter.in.rest.cancel.dto.response.CancelSummaryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.CancelListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
@@ -87,11 +88,16 @@ public class CancelApiMapper {
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(
             String cancelId,
+            String orderItemId,
             AddClaimHistoryMemoApiRequest request,
-            long sellerId,
-            String actorName) {
+            MarketAccessChecker.ActorInfo actor) {
         return new AddClaimHistoryMemoCommand(
-                ClaimType.CANCEL, cancelId, request.message(), String.valueOf(sellerId), actorName);
+                ClaimType.CANCEL,
+                cancelId,
+                orderItemId,
+                request.message(),
+                String.valueOf(actor.actorId()),
+                actor.username());
     }
 
     // ==================== Query 변환 ====================

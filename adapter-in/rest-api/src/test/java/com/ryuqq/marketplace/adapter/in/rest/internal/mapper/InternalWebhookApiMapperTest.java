@@ -103,6 +103,7 @@ class InternalWebhookApiMapperTest {
             assertThat(result.get(0).claimStatus()).isEqualTo("CANCEL_REQUEST");
             assertThat(result.get(0).claimReason()).isEqualTo("고객 변심");
             assertThat(result.get(0).claimDetailedReason()).isEqualTo("다른 상품으로 구매 예정");
+            assertThat(result.get(0).externalReasonCode()).isNull();
             assertThat(result.get(0).requestQuantity()).isEqualTo(1);
             assertThat(result.get(0).requestChannel()).isEqualTo("BUYER");
         }

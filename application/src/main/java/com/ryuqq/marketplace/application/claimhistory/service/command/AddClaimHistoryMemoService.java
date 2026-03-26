@@ -26,6 +26,7 @@ public class AddClaimHistoryMemoService implements AddClaimHistoryMemoUseCase {
                 historyFactory.createManualMemo(
                         command.claimType(),
                         command.claimId(),
+                        command.orderItemId(),
                         command.message(),
                         command.actorId(),
                         command.actorName());

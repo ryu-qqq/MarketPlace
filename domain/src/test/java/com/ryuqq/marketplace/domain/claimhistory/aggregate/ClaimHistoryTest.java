@@ -37,7 +37,7 @@ class ClaimHistoryTest {
             // when
             ClaimHistory history =
                     ClaimHistory.forStatusChange(
-                            id, claimType, claimId, fromStatus, toStatus, actor, now);
+                            id, claimType, claimId, "order-item-001", fromStatus, toStatus, actor, now);
 
             // then
             assertThat(history.id()).isEqualTo(id);
@@ -58,6 +58,7 @@ class ClaimHistoryTest {
                             ClaimHistoryFixtures.defaultClaimHistoryId(),
                             ClaimType.REFUND,
                             "refund-001",
+                            "order-item-001",
                             "REQUESTED",
                             "APPROVED",
                             ClaimHistoryFixtures.systemActor(),
@@ -76,6 +77,7 @@ class ClaimHistoryTest {
                             ClaimHistoryFixtures.defaultClaimHistoryId(),
                             ClaimType.EXCHANGE,
                             "exchange-001",
+                            "order-item-001",
                             "NONE",
                             "REQUESTED",
                             ClaimHistoryFixtures.customerActor(),
@@ -94,6 +96,7 @@ class ClaimHistoryTest {
                             ClaimHistoryFixtures.defaultClaimHistoryId(),
                             ClaimType.EXCHANGE,
                             "exchange-001",
+                            "order-item-001",
                             "APPROVED",
                             "COLLECTING",
                             ClaimHistoryFixtures.systemActor(),
@@ -112,6 +115,7 @@ class ClaimHistoryTest {
                             ClaimHistoryFixtures.defaultClaimHistoryId(),
                             ClaimType.CANCEL,
                             "cancel-001",
+                            "order-item-001",
                             "APPROVED",
                             "COMPLETED",
                             ClaimHistoryFixtures.systemActor(),
@@ -130,6 +134,7 @@ class ClaimHistoryTest {
                             ClaimHistoryFixtures.defaultClaimHistoryId(),
                             ClaimType.REFUND,
                             "refund-001",
+                            "order-item-001",
                             "REQUESTED",
                             "REJECTED",
                             ClaimHistoryFixtures.adminActor(),
@@ -148,6 +153,7 @@ class ClaimHistoryTest {
                             ClaimHistoryFixtures.defaultClaimHistoryId(),
                             ClaimType.CANCEL,
                             "cancel-001",
+                            "order-item-001",
                             "REQUESTED",
                             "CANCELLED",
                             ClaimHistoryFixtures.customerActor(),
@@ -166,6 +172,7 @@ class ClaimHistoryTest {
                             ClaimHistoryFixtures.defaultClaimHistoryId(),
                             ClaimType.CANCEL,
                             "cancel-001",
+                            "order-item-001",
                             "UNKNOWN_FROM",
                             "UNKNOWN_TO",
                             ClaimHistoryFixtures.systemActor(),
@@ -184,6 +191,7 @@ class ClaimHistoryTest {
                             ClaimHistoryFixtures.defaultClaimHistoryId(),
                             ClaimType.EXCHANGE,
                             "exchange-001",
+                            "order-item-001",
                             "PREPARING",
                             "SHIPPING",
                             ClaimHistoryFixtures.systemActor(),
@@ -244,7 +252,7 @@ class ClaimHistoryTest {
 
             // when
             ClaimHistory history =
-                    ClaimHistory.forManual(id, claimType, claimId, message, actor, now);
+                    ClaimHistory.forManual(id, claimType, claimId, "order-item-001", message, actor, now);
 
             // then
             assertThat(history.id()).isEqualTo(id);
@@ -289,12 +297,13 @@ class ClaimHistoryTest {
             // when
             ClaimHistory history =
                     ClaimHistory.reconstitute(
-                            id, claimType, claimId, historyType, title, message, actor, createdAt);
+                            id, claimType, claimId, "order-item-001", historyType, title, message, actor, createdAt);
 
             // then
             assertThat(history.id()).isEqualTo(id);
             assertThat(history.claimType()).isEqualTo(ClaimType.CANCEL);
             assertThat(history.claimId()).isEqualTo(claimId);
+            assertThat(history.orderItemId()).isEqualTo("order-item-001");
             assertThat(history.historyType()).isEqualTo(ClaimHistoryType.STATUS_CHANGE);
             assertThat(history.title()).isEqualTo(title);
             assertThat(history.message()).isEqualTo(message);

@@ -157,6 +157,22 @@ class RefundAssemblerTest {
             // then
             assertThat(result.histories()).isEmpty();
         }
+
+        @Test
+        @DisplayName("수거 배송 정보가 없는 경우 collectShipment는 null이다")
+        void toDetailResult_ClaimWithoutCollectShipment_CollectShipmentIsNull() {
+            // given
+            RefundClaim claim = RefundFixtures.requestedRefundClaim();
+            List<ClaimHistory> histories = List.of();
+
+            given(historyAssembler.toResults(histories)).willReturn(List.of());
+
+            // when
+            RefundDetailResult result = sut.toDetailResult(claim, histories);
+
+            // then
+            assertThat(result.collectShipment()).isNull();
+        }
     }
 
     @Nested

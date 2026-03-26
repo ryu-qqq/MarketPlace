@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,6 +44,29 @@ public class MarketAccessChecker extends BaseAccessChecker {
             ResolveSellerIdBySellerAdminIdUseCase resolveSellerIdBySellerAdminIdUseCase) {
         this.resolveSellerIdUseCase = resolveSellerIdUseCase;
         this.resolveSellerIdBySellerAdminIdUseCase = resolveSellerIdBySellerAdminIdUseCase;
+    }
+
+    /**
+     * 현재 인증된 사용자의 액터 정보를 반환합니다.
+     *
+     * <p>셀러 ID, 사용자 이름을 한 번에 조회합니다. SUPER_ADMIN은 sellerIdOrNull이 null, actorId가 0입니다.
+     *
+     * @return 현재 사용자의 액터 정보
+     */
+    public ActorInfo resolveActorInfo() {
+        Long sellerIdOrNull = resolveSellerIdOrNull();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication != null ? authentication.getName() : "SYSTEM";
+        return new ActorInfo(sellerIdOrNull, username);
+    }
+
+    /** 현재 인증된 사용자의 액터 정보. */
+    public record ActorInfo(Long sellerIdOrNull, String username) {
+
+        /** sellerId를 primitive로 변환. SUPER_ADMIN(null)이면 0L. */
+        public long actorId() {
+            return sellerIdOrNull != null ? sellerIdOrNull : 0L;
+        }
     }
 
     /**

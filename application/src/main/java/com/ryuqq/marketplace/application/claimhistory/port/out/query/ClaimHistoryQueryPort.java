@@ -10,4 +10,6 @@ public interface ClaimHistoryQueryPort {
     List<ClaimHistory> findByClaimTypeAndClaimId(ClaimType claimType, String claimId);
 
     List<ClaimHistory> findByClaimTypeAndClaimIds(ClaimType claimType, List<String> claimIds);
+
+    List<ClaimHistory> findByOrderItemId(String orderItemId);
 }

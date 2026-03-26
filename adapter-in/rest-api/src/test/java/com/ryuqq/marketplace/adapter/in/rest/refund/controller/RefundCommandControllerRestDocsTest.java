@@ -23,6 +23,7 @@ import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBat
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.HoldRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RejectRefundBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.RequestRefundBatchApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.refund.mapper.RefundApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.application.claimhistory.port.in.command.AddClaimHistoryMemoUseCase;
@@ -64,6 +65,7 @@ class RefundCommandControllerRestDocsTest {
     @MockitoBean private RejectRefundBatchUseCase rejectRefundBatchUseCase;
     @MockitoBean private HoldRefundBatchUseCase holdRefundBatchUseCase;
     @MockitoBean private AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase;
+    @MockitoBean private com.ryuqq.marketplace.application.refund.port.in.query.GetRefundDetailUseCase getRefundDetailUseCase;
     @MockitoBean private RefundApiMapper mapper;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
@@ -90,7 +92,8 @@ class RefundCommandControllerRestDocsTest {
                                     "01940001-0000-7000-8000-000000000001",
                                     "01940001-0000-7000-8000-000000000002"));
 
-            given(accessChecker.resolveCurrentSellerId()).willReturn(1L);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(1L, "seller@test.com"));
             given(mapper.toRequestRefundBatchCommand(any(), any(), any(long.class)))
                     .willReturn(null);
             given(requestRefundBatchUseCase.execute(any())).willReturn(batchResult);
@@ -174,7 +177,8 @@ class RefundCommandControllerRestDocsTest {
             BatchProcessingResult<String> batchResult = RefundApiFixtures.batchMixedResult();
             BatchResultApiResponse response = RefundApiFixtures.batchResultApiResponse();
 
-            given(accessChecker.resolveCurrentSellerId()).willReturn(1L);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(1L, "seller@test.com"));
             given(mapper.toRequestRefundBatchCommand(any(), any(), any(long.class)))
                     .willReturn(null);
             given(requestRefundBatchUseCase.execute(any())).willReturn(batchResult);
@@ -213,7 +217,8 @@ class RefundCommandControllerRestDocsTest {
                                     "01940001-0000-7000-8000-000000000001",
                                     "01940001-0000-7000-8000-000000000002"));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toApproveRefundBatchCommand(any(), any(), any())).willReturn(null);
             given(approveRefundBatchUseCase.execute(any())).willReturn(batchResult);
             given(mapper.toBatchResultResponse(any())).willReturn(response);
@@ -293,7 +298,8 @@ class RefundCommandControllerRestDocsTest {
                                     "01940001-0000-7000-8000-000000000001",
                                     "01940001-0000-7000-8000-000000000002"));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toRejectRefundBatchCommand(any(), any(), any())).willReturn(null);
             given(rejectRefundBatchUseCase.execute(any())).willReturn(batchResult);
             given(mapper.toBatchResultResponse(any())).willReturn(response);
@@ -373,7 +379,8 @@ class RefundCommandControllerRestDocsTest {
                                     "01940001-0000-7000-8000-000000000001",
                                     "01940001-0000-7000-8000-000000000002"));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toHoldCommand(any(), any(), any())).willReturn(null);
             given(holdRefundBatchUseCase.execute(any())).willReturn(batchResult);
             given(mapper.toBatchResultResponse(any())).willReturn(response);
@@ -451,7 +458,8 @@ class RefundCommandControllerRestDocsTest {
                     RefundApiFixtures.batchAllSuccessApiResponse(
                             List.of("01940001-0000-7000-8000-000000000001"));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toHoldCommand(any(), any(), any())).willReturn(null);
             given(holdRefundBatchUseCase.execute(any())).willReturn(batchResult);
             given(mapper.toBatchResultResponse(any())).willReturn(response);
@@ -480,8 +488,11 @@ class RefundCommandControllerRestDocsTest {
             AddClaimHistoryMemoApiRequest request = RefundApiFixtures.addMemoRequest();
             String historyId = "HIST-001";
 
-            given(accessChecker.resolveCurrentSellerId()).willReturn(1L);
-            given(mapper.toAddMemoCommand(any(), any(), any(long.class), any())).willReturn(null);
+            given(getRefundDetailUseCase.execute(DEFAULT_REFUND_CLAIM_ID))
+                    .willReturn(RefundApiFixtures.detailResult(DEFAULT_REFUND_CLAIM_ID));
+            given(accessChecker.resolveActorInfo()).willReturn(new MarketAccessChecker.ActorInfo(1L, "admin-001"));
+            given(mapper.toAddMemoCommand(any(), any(), any(), any()))
+                    .willReturn(null);
             given(addClaimHistoryMemoUseCase.execute(any())).willReturn(historyId);
 
             // when & then

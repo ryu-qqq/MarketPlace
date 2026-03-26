@@ -21,6 +21,7 @@ public class ClaimHistoryFactory {
     public ClaimHistory createStatusChange(
             ClaimType claimType,
             String claimId,
+            String orderItemId,
             String fromStatus,
             String toStatus,
             String actorId,
@@ -29,6 +30,7 @@ public class ClaimHistoryFactory {
                 ClaimHistoryId.generate(),
                 claimType,
                 claimId,
+                orderItemId,
                 fromStatus,
                 toStatus,
                 Actor.admin(actorId, actorName),
@@ -37,11 +39,12 @@ public class ClaimHistoryFactory {
 
     /** 시스템에 의한 상태 변경 이력 생성. */
     public ClaimHistory createStatusChangeBySystem(
-            ClaimType claimType, String claimId, String fromStatus, String toStatus) {
+            ClaimType claimType, String claimId, String orderItemId, String fromStatus, String toStatus) {
         return ClaimHistory.forStatusChange(
                 ClaimHistoryId.generate(),
                 claimType,
                 claimId,
+                orderItemId,
                 fromStatus,
                 toStatus,
                 Actor.system(),
@@ -50,11 +53,17 @@ public class ClaimHistoryFactory {
 
     /** 시스템에 의한 상태 변경 이력 생성 (수량 정보 포함). */
     public ClaimHistory createStatusChangeBySystemWithQty(
-            ClaimType claimType, String claimId, String fromStatus, String toStatus, int quantity) {
+            ClaimType claimType,
+            String claimId,
+            String orderItemId,
+            String fromStatus,
+            String toStatus,
+            int quantity) {
         return ClaimHistory.forStatusChangeWithQty(
                 ClaimHistoryId.generate(),
                 claimType,
                 claimId,
+                orderItemId,
                 fromStatus,
                 toStatus,
                 quantity,
@@ -64,11 +73,17 @@ public class ClaimHistoryFactory {
 
     /** 수기 메모 이력 생성. */
     public ClaimHistory createManualMemo(
-            ClaimType claimType, String claimId, String message, String actorId, String actorName) {
+            ClaimType claimType,
+            String claimId,
+            String orderItemId,
+            String message,
+            String actorId,
+            String actorName) {
         return ClaimHistory.forManual(
                 ClaimHistoryId.generate(),
                 claimType,
                 claimId,
+                orderItemId,
                 message,
                 Actor.admin(actorId, actorName),
                 timeProvider.now());

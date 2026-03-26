@@ -78,6 +78,7 @@ public class NaverCommerceClaimMapper {
                 po.productOrderStatus(),
                 claimRequestReason,
                 claimRequestDetailContent,
+                claimRequestReason,
                 requestQuantity,
                 requestChannel,
                 collectDeliveryCompany,

@@ -61,6 +61,7 @@ public class CancelCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.CANCEL,
                         cancelId.value(),
+                        orderItemId.value(),
                         null,
                         "REQUESTED",
                         requestedBy,
@@ -82,6 +83,7 @@ public class CancelCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.CANCEL,
                         cancel.idValue(),
+                        cancel.orderItemIdValue(),
                         "REQUESTED",
                         "APPROVED",
                         processedBy,
@@ -102,6 +104,7 @@ public class CancelCommandFactory {
                 historyFactory.createStatusChange(
                         ClaimType.CANCEL,
                         cancel.idValue(),
+                        cancel.orderItemIdValue(),
                         "REQUESTED",
                         "REJECTED",
                         processedBy,

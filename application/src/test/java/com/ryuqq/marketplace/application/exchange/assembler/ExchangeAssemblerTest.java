@@ -120,6 +120,24 @@ class ExchangeAssemblerTest {
             assertThat(result.exchangeOption().targetSkuCode())
                     .isEqualTo(claim.exchangeOption().targetSkuCode());
         }
+
+        @Test
+        @DisplayName("수거 배송 정보(collectShipment)가 있으면 CollectShipmentResult가 포함된다")
+        void toDetailResult_ClaimWithCollectShipment_IncludesCollectShipmentResult() {
+            // given
+            ExchangeClaim claim = ExchangeFixtures.requestedExchangeClaim();
+            List<ClaimHistory> histories = List.of();
+
+            given(historyAssembler.toResults(histories)).willReturn(List.of());
+
+            // when
+            ExchangeDetailResult result = sut.toDetailResult(claim, histories);
+
+            // then
+            assertThat(result.collectShipment()).isNotNull();
+            assertThat(result.collectShipment().collectStatus()).isEqualTo("PENDING");
+            assertThat(result.collectShipment().collectDeliveryCompany()).isEqualTo("CJ대한통운");
+        }
     }
 
     @Nested

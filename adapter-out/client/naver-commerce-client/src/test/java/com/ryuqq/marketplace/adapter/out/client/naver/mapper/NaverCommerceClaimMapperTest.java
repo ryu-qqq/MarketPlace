@@ -147,6 +147,7 @@ class NaverCommerceClaimMapperTest {
             assertThat(payload.claimId()).isEqualTo("CLM001");
             assertThat(payload.claimReason()).isEqualTo("단순변심");
             assertThat(payload.claimDetailedReason()).isEqualTo("사이즈가 안 맞아요");
+            assertThat(payload.externalReasonCode()).isEqualTo("단순변심");
             assertThat(payload.requestQuantity()).isEqualTo(1);
             assertThat(payload.requestChannel()).isEqualTo("BUYER");
             assertThat(payload.collectDeliveryCompany()).isEqualTo("CJGLS");
@@ -191,6 +192,7 @@ class NaverCommerceClaimMapperTest {
             assertThat(result).hasSize(1);
             assertThat(result.get(0).claimId()).isEqualTo("CLM001");
             assertThat(result.get(0).claimReason()).isNull();
+            assertThat(result.get(0).externalReasonCode()).isNull();
         }
     }
 }

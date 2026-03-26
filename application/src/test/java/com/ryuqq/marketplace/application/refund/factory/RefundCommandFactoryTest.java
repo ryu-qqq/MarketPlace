@@ -55,6 +55,7 @@ class RefundCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     eq(ClaimType.REFUND),
                                     any(),
+                                    any(),
                                     eq(null),
                                     eq("REQUESTED"),
                                     eq(requestedBy),
@@ -91,6 +92,7 @@ class RefundCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     eq(ClaimType.REFUND),
                                     eq(claim.idValue()),
+                                    eq(claim.orderItemIdValue()),
                                     eq("REQUESTED"),
                                     eq("COLLECTING"),
                                     eq(processedBy),
@@ -126,6 +128,7 @@ class RefundCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     eq(ClaimType.REFUND),
                                     eq(claim.idValue()),
+                                    eq(claim.orderItemIdValue()),
                                     eq("REQUESTED"),
                                     eq("REJECTED"),
                                     eq(processedBy),
@@ -161,6 +164,7 @@ class RefundCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     eq(ClaimType.REFUND),
                                     eq(claim.idValue()),
+                                    eq(claim.orderItemIdValue()),
                                     eq("COLLECTING"),
                                     eq("COLLECTED"),
                                     eq(processedBy),

@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.exchange.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -28,6 +27,7 @@ import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.PrepareExchang
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.RejectExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.RequestExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ShipExchangeBatchApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.mapper.ExchangeApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
 import com.ryuqq.marketplace.application.claimhistory.port.in.command.AddClaimHistoryMemoUseCase;
@@ -101,8 +101,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveCurrentSellerId())
-                    .willReturn(ExchangeApiFixtures.DEFAULT_SELLER_ID);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(ExchangeApiFixtures.DEFAULT_SELLER_ID, "admin@test.com"));
             given(mapper.toRequestExchangeBatchCommand(any(), any(), any(long.class)))
                     .willReturn(null);
             given(requestExchangeBatchUseCase.execute(any())).willReturn(batchResult);
@@ -208,8 +208,8 @@ class ExchangeCommandControllerRestDocsTest {
             BatchProcessingResult<String> batchResult = ExchangeApiFixtures.batchMixedResult();
             BatchResultApiResponse response = ExchangeApiFixtures.batchResultApiResponse();
 
-            given(accessChecker.resolveCurrentSellerId())
-                    .willReturn(ExchangeApiFixtures.DEFAULT_SELLER_ID);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(ExchangeApiFixtures.DEFAULT_SELLER_ID, "admin@test.com"));
             given(mapper.toRequestExchangeBatchCommand(any(), any(), any(long.class)))
                     .willReturn(null);
             given(requestExchangeBatchUseCase.execute(any())).willReturn(batchResult);
@@ -244,7 +244,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toApproveExchangeBatchCommand(any(), any(), any())).willReturn(null);
             given(approveExchangeBatchUseCase.execute(any())).willReturn(batchResult);
             given(mapper.toBatchResultResponse(any())).willReturn(response);
@@ -319,7 +320,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toCollectExchangeBatchCommand(any(), any(), any())).willReturn(null);
             given(collectExchangeBatchUseCase.execute(any())).willReturn(batchResult);
             given(mapper.toBatchResultResponse(any())).willReturn(response);
@@ -390,7 +392,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toPrepareExchangeBatchCommand(any(), any(), any())).willReturn(null);
             given(prepareExchangeBatchUseCase.execute(any()))
                     .willReturn(
@@ -464,7 +467,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toRejectExchangeBatchCommand(any(), any(), any())).willReturn(null);
             given(rejectExchangeBatchUseCase.execute(any()))
                     .willReturn(
@@ -538,7 +542,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toShipCommand(any(), any(), any())).willReturn(null);
             given(shipExchangeBatchUseCase.execute(any()))
                     .willReturn(
@@ -624,7 +629,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toCompleteCommand(any(), any(), any())).willReturn(null);
             given(completeExchangeBatchUseCase.execute(any()))
                     .willReturn(
@@ -699,7 +705,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toConvertToRefundCommand(any(), any(), any())).willReturn(null);
             given(convertToRefundBatchUseCase.execute(any()))
                     .willReturn(
@@ -775,7 +782,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toHoldCommand(any(), any(), any())).willReturn(null);
             given(holdExchangeBatchUseCase.execute(any()))
                     .willReturn(
@@ -851,7 +859,8 @@ class ExchangeCommandControllerRestDocsTest {
                     ExchangeApiFixtures.batchAllSuccessApiResponse(
                             List.of(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toHoldCommand(any(), any(), any())).willReturn(null);
             given(holdExchangeBatchUseCase.execute(any()))
                     .willReturn(
@@ -885,9 +894,9 @@ class ExchangeCommandControllerRestDocsTest {
 
             given(getExchangeDetailUseCase.execute(exchangeClaimId))
                     .willReturn(ExchangeApiFixtures.detailResult());
-            given(accessChecker.resolveSellerIdOrNull())
-                    .willReturn(ExchangeApiFixtures.DEFAULT_SELLER_ID);
-            given(mapper.toAddMemoCommand(any(), any(), any(), anyLong(), any()))
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(ExchangeApiFixtures.DEFAULT_SELLER_ID, "admin-001"));
+            given(mapper.toAddMemoCommand(any(), any(), any(), any()))
                     .willReturn(null);
             given(addClaimHistoryMemoUseCase.execute(any())).willReturn(historyId);
 

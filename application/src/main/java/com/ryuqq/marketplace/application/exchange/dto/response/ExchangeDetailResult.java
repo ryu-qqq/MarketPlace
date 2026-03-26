@@ -16,6 +16,7 @@ public record ExchangeDetailResult(
         String reasonDetail,
         ExchangeOptionResult exchangeOption,
         AmountAdjustmentResult amountAdjustment,
+        CollectShipmentResult collectShipment,
         String linkedOrderId,
         String requestedBy,
         String processedBy,
@@ -44,4 +45,9 @@ public record ExchangeDetailResult(
             int reshipShippingFee,
             int totalShippingFee,
             String shippingFeePayer) {}
+
+    public record CollectShipmentResult(
+            String collectDeliveryCompany,
+            String collectTrackingNumber,
+            String collectStatus) {}
 }

@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.exchange.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.ExchangeApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ApproveExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CollectExchangeBatchApiRequest;
@@ -341,8 +342,7 @@ class ExchangeApiMapperTest {
                             exchangeClaimId,
                             "order-item-001",
                             ExchangeApiFixtures.addMemoRequest(),
-                            sellerId,
-                            actorName);
+                            new MarketAccessChecker.ActorInfo(sellerId, actorName));
 
             // then
             assertThat(command.claimId()).isEqualTo(exchangeClaimId);

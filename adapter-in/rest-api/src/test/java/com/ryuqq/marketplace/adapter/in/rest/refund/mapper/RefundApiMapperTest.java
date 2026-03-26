@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.adapter.in.rest.refund.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.refund.RefundApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.refund.dto.request.ApproveRefundBatchApiRequest;
@@ -217,7 +218,7 @@ class RefundApiMapperTest {
 
             // when
             AddClaimHistoryMemoCommand command =
-                    mapper.toAddMemoCommand(refundClaimId, request, sellerId, actorName);
+                    mapper.toAddMemoCommand(refundClaimId, "order-item-001", request, new MarketAccessChecker.ActorInfo(sellerId, actorName));
 
             // then
             assertThat(command.claimId()).isEqualTo(refundClaimId);
@@ -235,7 +236,7 @@ class RefundApiMapperTest {
             // when
             AddClaimHistoryMemoCommand command =
                     mapper.toAddMemoCommand(
-                            RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID, request, 1L, "seller01");
+                            RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID, "order-item-001", request, new MarketAccessChecker.ActorInfo(1L, "seller01"));
 
             // then
             assertThat(command.claimType().name()).isEqualTo("REFUND");

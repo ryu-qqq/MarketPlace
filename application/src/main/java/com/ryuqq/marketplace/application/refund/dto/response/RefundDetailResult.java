@@ -15,6 +15,7 @@ public record RefundDetailResult(
         String reasonDetail,
         RefundInfoResult refundInfo,
         HoldInfoResult holdInfo,
+        CollectShipmentResult collectShipment,
         String requestedBy,
         String processedBy,
         Instant requestedAt,
@@ -33,4 +34,9 @@ public record RefundDetailResult(
             Instant refundedAt) {}
 
     public record HoldInfoResult(String holdReason, Instant holdAt) {}
+
+    public record CollectShipmentResult(
+            String collectDeliveryCompany,
+            String collectTrackingNumber,
+            String collectStatus) {}
 }

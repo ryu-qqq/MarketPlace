@@ -45,6 +45,7 @@ class AddClaimHistoryMemoServiceTest {
                             historyFactory.createManualMemo(
                                     command.claimType(),
                                     command.claimId(),
+                                    command.orderItemId(),
                                     command.message(),
                                     command.actorId(),
                                     command.actorName()))
@@ -61,6 +62,7 @@ class AddClaimHistoryMemoServiceTest {
                     .createManualMemo(
                             command.claimType(),
                             command.claimId(),
+                            command.orderItemId(),
                             command.message(),
                             command.actorId(),
                             command.actorName());
@@ -81,6 +83,7 @@ class AddClaimHistoryMemoServiceTest {
                             historyFactory.createManualMemo(
                                     command.claimType(),
                                     command.claimId(),
+                                    command.orderItemId(),
                                     command.message(),
                                     command.actorId(),
                                     command.actorName()))
@@ -109,6 +112,7 @@ class AddClaimHistoryMemoServiceTest {
                             historyFactory.createManualMemo(
                                     command.claimType(),
                                     command.claimId(),
+                                    command.orderItemId(),
                                     command.message(),
                                     command.actorId(),
                                     command.actorName()))

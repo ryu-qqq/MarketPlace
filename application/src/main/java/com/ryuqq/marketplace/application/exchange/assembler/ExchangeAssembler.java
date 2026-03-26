@@ -3,10 +3,12 @@ package com.ryuqq.marketplace.application.exchange.assembler;
 import com.ryuqq.marketplace.application.claimhistory.assembler.ClaimHistoryAssembler;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailResult.AmountAdjustmentResult;
+import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailResult.CollectShipmentResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailResult.ExchangeOptionResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeListResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangePageResult;
 import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeSummaryResult;
+import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
 import com.ryuqq.marketplace.domain.common.vo.PageMeta;
 import com.ryuqq.marketplace.domain.exchange.aggregate.ExchangeClaim;
@@ -77,6 +79,18 @@ public class ExchangeAssembler {
                             adjustment.shippingFeePayer().name());
         }
 
+        ClaimShipment collectShipment = claim.collectShipment();
+        CollectShipmentResult collectShipmentResult = null;
+        if (collectShipment != null) {
+            collectShipmentResult =
+                    new CollectShipmentResult(
+                            collectShipment.method() != null
+                                    ? collectShipment.method().courierName()
+                                    : null,
+                            collectShipment.trackingNumber(),
+                            collectShipment.status().name());
+        }
+
         return new ExchangeDetailResult(
                 claim.idValue(),
                 claim.claimNumberValue(),
@@ -88,6 +102,7 @@ public class ExchangeAssembler {
                 claim.reason().reasonDetail(),
                 exchangeOptionResult,
                 amountAdjustmentResult,
+                collectShipmentResult,
                 claim.linkedOrderId(),
                 claim.requestedBy(),
                 claim.processedBy(),

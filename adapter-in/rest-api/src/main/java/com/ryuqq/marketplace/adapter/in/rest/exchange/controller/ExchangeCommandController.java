@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryMemoApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker.ActorInfo;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.ExchangeAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ApproveExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.CollectExchangeBatchApiRequest;
@@ -17,9 +18,9 @@ import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.RequestExchang
 import com.ryuqq.marketplace.adapter.in.rest.exchange.dto.request.ShipExchangeBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.exchange.mapper.ExchangeApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.shipment.dto.response.BatchResultApiResponse;
-import com.ryuqq.marketplace.application.claimhistory.dto.command.AddClaimHistoryMemoCommand;
 import com.ryuqq.marketplace.application.claimhistory.port.in.command.AddClaimHistoryMemoUseCase;
 import com.ryuqq.marketplace.application.common.dto.result.BatchProcessingResult;
+import com.ryuqq.marketplace.application.exchange.dto.response.ExchangeDetailResult;
 import com.ryuqq.marketplace.application.exchange.port.in.command.ApproveExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.port.in.command.CollectExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.port.in.command.CompleteExchangeBatchUseCase;
@@ -29,14 +30,13 @@ import com.ryuqq.marketplace.application.exchange.port.in.command.PrepareExchang
 import com.ryuqq.marketplace.application.exchange.port.in.command.RejectExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.port.in.command.RequestExchangeBatchUseCase;
 import com.ryuqq.marketplace.application.exchange.port.in.command.ShipExchangeBatchUseCase;
+import com.ryuqq.marketplace.application.exchange.port.in.query.GetExchangeDetailUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,6 +61,7 @@ public class ExchangeCommandController {
     private final ConvertToRefundBatchUseCase convertToRefundBatchUseCase;
     private final HoldExchangeBatchUseCase holdExchangeBatchUseCase;
     private final AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase;
+    private final GetExchangeDetailUseCase getExchangeDetailUseCase;
     private final ExchangeApiMapper mapper;
     private final MarketAccessChecker accessChecker;
 
@@ -75,6 +76,7 @@ public class ExchangeCommandController {
             ConvertToRefundBatchUseCase convertToRefundBatchUseCase,
             HoldExchangeBatchUseCase holdExchangeBatchUseCase,
             AddClaimHistoryMemoUseCase addClaimHistoryMemoUseCase,
+            GetExchangeDetailUseCase getExchangeDetailUseCase,
             ExchangeApiMapper mapper,
             MarketAccessChecker accessChecker) {
         this.requestExchangeBatchUseCase = requestExchangeBatchUseCase;
@@ -87,6 +89,7 @@ public class ExchangeCommandController {
         this.convertToRefundBatchUseCase = convertToRefundBatchUseCase;
         this.holdExchangeBatchUseCase = holdExchangeBatchUseCase;
         this.addClaimHistoryMemoUseCase = addClaimHistoryMemoUseCase;
+        this.getExchangeDetailUseCase = getExchangeDetailUseCase;
         this.mapper = mapper;
         this.accessChecker = accessChecker;
     }
@@ -97,12 +100,10 @@ public class ExchangeCommandController {
     @PostMapping(ExchangeAdminEndpoints.REQUEST_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> requestBatch(
             @RequestBody @Valid RequestExchangeBatchApiRequest request) {
-        Long sellerIdOrNull = accessChecker.resolveSellerIdOrNull();
-        long sellerId = sellerIdOrNull != null ? sellerIdOrNull : 0L;
-        String requestedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 requestExchangeBatchUseCase.execute(
-                        mapper.toRequestExchangeBatchCommand(request, requestedBy, sellerId));
+                        mapper.toRequestExchangeBatchCommand(request, actor.username(), actor.actorId()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -112,11 +113,10 @@ public class ExchangeCommandController {
     @PostMapping(ExchangeAdminEndpoints.APPROVE_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> approveBatch(
             @RequestBody @Valid ApproveExchangeBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 approveExchangeBatchUseCase.execute(
-                        mapper.toApproveExchangeBatchCommand(request, processedBy, sellerId));
+                        mapper.toApproveExchangeBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -126,11 +126,10 @@ public class ExchangeCommandController {
     @PostMapping(ExchangeAdminEndpoints.COLLECT_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> collectBatch(
             @RequestBody @Valid CollectExchangeBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 collectExchangeBatchUseCase.execute(
-                        mapper.toCollectExchangeBatchCommand(request, processedBy, sellerId));
+                        mapper.toCollectExchangeBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -140,11 +139,10 @@ public class ExchangeCommandController {
     @PostMapping(ExchangeAdminEndpoints.PREPARE_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> prepareBatch(
             @RequestBody @Valid PrepareExchangeBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 prepareExchangeBatchUseCase.execute(
-                        mapper.toPrepareExchangeBatchCommand(request, processedBy, sellerId));
+                        mapper.toPrepareExchangeBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -154,11 +152,10 @@ public class ExchangeCommandController {
     @PostMapping(ExchangeAdminEndpoints.REJECT_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> rejectBatch(
             @RequestBody @Valid RejectExchangeBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 rejectExchangeBatchUseCase.execute(
-                        mapper.toRejectExchangeBatchCommand(request, processedBy, sellerId));
+                        mapper.toRejectExchangeBatchCommand(request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -168,11 +165,10 @@ public class ExchangeCommandController {
     @PostMapping(ExchangeAdminEndpoints.SHIP_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> shipBatch(
             @RequestBody @Valid ShipExchangeBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 shipExchangeBatchUseCase.execute(
-                        mapper.toShipCommand(request, processedBy, sellerId));
+                        mapper.toShipCommand(request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -182,11 +178,10 @@ public class ExchangeCommandController {
     @PostMapping(ExchangeAdminEndpoints.COMPLETE_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> completeBatch(
             @RequestBody @Valid CompleteExchangeBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 completeExchangeBatchUseCase.execute(
-                        mapper.toCompleteCommand(request, processedBy, sellerId));
+                        mapper.toCompleteCommand(request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -196,11 +191,10 @@ public class ExchangeCommandController {
     @PostMapping(ExchangeAdminEndpoints.CONVERT_TO_REFUND_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> convertToRefundBatch(
             @RequestBody @Valid ConvertToRefundBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 convertToRefundBatchUseCase.execute(
-                        mapper.toConvertToRefundCommand(request, processedBy, sellerId));
+                        mapper.toConvertToRefundCommand(request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -210,11 +204,10 @@ public class ExchangeCommandController {
     @PatchMapping(ExchangeAdminEndpoints.HOLD_BATCH)
     public ResponseEntity<ApiResponse<BatchResultApiResponse>> holdBatch(
             @RequestBody @Valid HoldExchangeBatchApiRequest request) {
-        Long sellerId = accessChecker.resolveSellerIdOrNull();
-        String processedBy = resolveCurrentUsername();
+        ActorInfo actor = accessChecker.resolveActorInfo();
         BatchProcessingResult<String> result =
                 holdExchangeBatchUseCase.execute(
-                        mapper.toHoldCommand(request, processedBy, sellerId));
+                        mapper.toHoldCommand(request, actor.username(), actor.sellerIdOrNull()));
         return ResponseEntity.ok(ApiResponse.of(mapper.toBatchResultResponse(result)));
     }
 
@@ -225,18 +218,12 @@ public class ExchangeCommandController {
     public ResponseEntity<ApiResponse<ClaimHistoryMemoApiResponse>> addMemo(
             @PathVariable String exchangeClaimId,
             @RequestBody @Valid AddClaimHistoryMemoApiRequest request) {
-        Long sellerIdOrNull = accessChecker.resolveSellerIdOrNull();
-        long sellerId = sellerIdOrNull != null ? sellerIdOrNull : 0L;
-        String actorName = resolveCurrentUsername();
-        AddClaimHistoryMemoCommand command =
-                mapper.toAddMemoCommand(exchangeClaimId, request, sellerId, actorName);
-        String historyId = addClaimHistoryMemoUseCase.execute(command);
+        ExchangeDetailResult detail = getExchangeDetailUseCase.execute(exchangeClaimId);
+        ActorInfo actor = accessChecker.resolveActorInfo();
+        String historyId =
+                addClaimHistoryMemoUseCase.execute(
+                        mapper.toAddMemoCommand(exchangeClaimId, detail.orderItemId(), request, actor));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(new ClaimHistoryMemoApiResponse(historyId)));
-    }
-
-    private String resolveCurrentUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null ? authentication.getName() : "SYSTEM";
     }
 }

@@ -9,7 +9,7 @@ import java.time.Instant;
 /**
  * 클레임 이력 JPA 엔티티.
  *
- * <p>claim_histories 테이블과 매핑됩니다. Cancel/Refund/Exchange 3개 클레임 타입의 상태 변경 및 수기 메모 이력을 기록합니다.
+ * <p>claim_histories 테이블과 매핑됩니다. ORDER/Cancel/Refund/Exchange 4개 타입의 상태 변경 및 수기 메모 이력을 기록합니다.
  */
 @Entity
 @Table(name = "claim_histories")
@@ -22,8 +22,11 @@ public class ClaimHistoryJpaEntity {
     @Column(name = "claim_type", nullable = false, length = 20)
     private String claimType;
 
-    @Column(name = "claim_id", nullable = false, length = 36)
+    @Column(name = "claim_id", length = 36)
     private String claimId;
+
+    @Column(name = "order_item_id", length = 36)
+    private String orderItemId;
 
     @Column(name = "history_type", nullable = false, length = 20)
     private String historyType;
@@ -53,6 +56,7 @@ public class ClaimHistoryJpaEntity {
             String id,
             String claimType,
             String claimId,
+            String orderItemId,
             String historyType,
             String title,
             String message,
@@ -63,6 +67,7 @@ public class ClaimHistoryJpaEntity {
         this.id = id;
         this.claimType = claimType;
         this.claimId = claimId;
+        this.orderItemId = orderItemId;
         this.historyType = historyType;
         this.title = title;
         this.message = message;
@@ -76,6 +81,7 @@ public class ClaimHistoryJpaEntity {
             String id,
             String claimType,
             String claimId,
+            String orderItemId,
             String historyType,
             String title,
             String message,
@@ -87,6 +93,7 @@ public class ClaimHistoryJpaEntity {
                 id,
                 claimType,
                 claimId,
+                orderItemId,
                 historyType,
                 title,
                 message,
@@ -106,6 +113,10 @@ public class ClaimHistoryJpaEntity {
 
     public String getClaimId() {
         return claimId;
+    }
+
+    public String getOrderItemId() {
+        return orderItemId;
     }
 
     public String getHistoryType() {

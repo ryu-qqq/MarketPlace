@@ -91,7 +91,8 @@ class CancelCommandControllerRestDocsTest {
                                     "01940001-0000-7000-8000-000000000001",
                                     "01940001-0000-7000-8000-000000000002"));
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(100L);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(100L, "seller@test.com"));
             given(mapper.toSellerCancelBatchCommand(any(), anyString(), anyLong()))
                     .willReturn(null);
             given(sellerCancelBatchUseCase.execute(any())).willReturn(batchResult);
@@ -201,7 +202,8 @@ class CancelCommandControllerRestDocsTest {
             BatchProcessingResult<String> batchResult = CancelApiFixtures.batchMixedResult();
             BatchResultApiResponse response = CancelApiFixtures.batchResultApiResponse();
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toSellerCancelBatchCommand(any(), anyString(), anyLong()))
                     .willReturn(null);
             given(sellerCancelBatchUseCase.execute(any())).willReturn(batchResult);
@@ -234,7 +236,8 @@ class CancelCommandControllerRestDocsTest {
             BatchResultApiResponse response =
                     CancelApiFixtures.batchAllSuccessApiResponse(request.cancelIds());
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toApproveCancelBatchCommand(any(), anyString(), any())).willReturn(null);
             given(approveCancelBatchUseCase.execute(any())).willReturn(batchResult);
             given(mapper.toBatchResultResponse(any())).willReturn(response);
@@ -323,7 +326,8 @@ class CancelCommandControllerRestDocsTest {
             BatchResultApiResponse response =
                     CancelApiFixtures.batchAllSuccessApiResponse(request.cancelIds());
 
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(null);
+            given(accessChecker.resolveActorInfo())
+                    .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
             given(mapper.toRejectCancelBatchCommand(any(), anyString(), any())).willReturn(null);
             given(rejectCancelBatchUseCase.execute(any())).willReturn(batchResult);
             given(mapper.toBatchResultResponse(any())).willReturn(response);
@@ -409,8 +413,8 @@ class CancelCommandControllerRestDocsTest {
             CancelDetailResult detailResult = CancelApiFixtures.detailResult(DEFAULT_CANCEL_ID);
 
             given(getCancelDetailUseCase.execute(DEFAULT_CANCEL_ID)).willReturn(detailResult);
-            given(accessChecker.resolveSellerIdOrNull()).willReturn(100L);
-            given(mapper.toAddMemoCommand(anyString(), any(), anyLong(), anyString()))
+            given(accessChecker.resolveActorInfo()).willReturn(new MarketAccessChecker.ActorInfo(100L, "admin-001"));
+            given(mapper.toAddMemoCommand(any(), any(), any(), any()))
                     .willReturn(null);
             given(addClaimHistoryMemoUseCase.execute(any())).willReturn("HIST-001");
 

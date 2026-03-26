@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import com.ryuqq.marketplace.application.claim.manager.ClaimShipmentCommandManager;
 import com.ryuqq.marketplace.application.claimhistory.factory.ClaimHistoryFactory;
 import com.ryuqq.marketplace.application.claimhistory.manager.ClaimHistoryCommandManager;
 import com.ryuqq.marketplace.application.claimsync.ClaimSyncFixtures;
@@ -16,6 +17,7 @@ import com.ryuqq.marketplace.application.exchange.manager.ExchangeCommandManager
 import com.ryuqq.marketplace.application.exchange.manager.ExchangeReadManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemCommandManager;
 import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
+import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
 import com.ryuqq.marketplace.domain.exchange.ExchangeFixtures;
@@ -48,6 +50,7 @@ class ExchangeClaimSyncHandlerTest {
     @Mock private OrderItemCommandManager orderItemCommandManager;
     @Mock private ClaimHistoryFactory historyFactory;
     @Mock private ClaimHistoryCommandManager historyCommandManager;
+    @Mock private ClaimShipmentCommandManager claimShipmentCommandManager;
     @Mock private TimeProvider timeProvider;
     @Mock private ExchangeSettlementProcessor exchangeSettlementProcessor;
 
@@ -383,6 +386,33 @@ class ExchangeClaimSyncHandlerTest {
             // then
             assertThat(result).isZero();
             then(exchangeCommandManager).should().persist(any(ExchangeClaim.class));
+            then(claimShipmentCommandManager).should().persist(any(ClaimShipment.class));
+        }
+
+        @Test
+        @DisplayName("EXCHANGE_COLLECTING 실행 시 수거 배송 정보가 없으면 ClaimShipment를 생성하지 않는다")
+        void execute_ExchangeCollecting_WithoutShipmentInfo_DoesNotCreateClaimShipment() {
+            // given
+            ExternalClaimPayload payload =
+                    ClaimSyncFixtures.exchangePayloadWithReason("SIZE_CHANGE", "사이즈 교환");
+            OrderItemId orderItemId = OrderItemId.of(ClaimSyncFixtures.DEFAULT_ORDER_ITEM_ID);
+            long sellerId = 100L;
+            Instant now = Instant.now();
+            ExchangeClaim requestedExchange = ExchangeFixtures.requestedExchangeClaim();
+
+            given(timeProvider.now()).willReturn(now);
+            given(exchangeReadManager.findByOrderItemId(orderItemId))
+                    .willReturn(Optional.of(requestedExchange));
+
+            // when
+            long result =
+                    sut.execute(
+                            ClaimSyncAction.EXCHANGE_COLLECTING, payload, orderItemId, sellerId);
+
+            // then
+            assertThat(result).isZero();
+            then(exchangeCommandManager).should().persist(any(ExchangeClaim.class));
+            then(claimShipmentCommandManager).should(never()).persist(any());
         }
     }
 

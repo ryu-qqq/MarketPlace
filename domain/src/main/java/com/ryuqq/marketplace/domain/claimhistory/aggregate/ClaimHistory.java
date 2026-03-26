@@ -6,12 +6,13 @@ import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimHistoryType;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import java.time.Instant;
 
-/** 클레임 이력 Aggregate Root. Cancel/Refund/Exchange 3개 클레임 타입이 공통으로 사용합니다. */
+/** 클레임 이력 Aggregate Root. ORDER/Cancel/Refund/Exchange 4개 타입이 공통으로 사용합니다. */
 public class ClaimHistory {
 
     private final ClaimHistoryId id;
     private final ClaimType claimType;
     private final String claimId;
+    private final String orderItemId;
     private final ClaimHistoryType historyType;
     private final String title;
     private final String message;
@@ -22,6 +23,7 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
+            String orderItemId,
             ClaimHistoryType historyType,
             String title,
             String message,
@@ -30,6 +32,7 @@ public class ClaimHistory {
         this.id = id;
         this.claimType = claimType;
         this.claimId = claimId;
+        this.orderItemId = orderItemId;
         this.historyType = historyType;
         this.title = title;
         this.message = message;
@@ -42,6 +45,7 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
+            String orderItemId,
             String fromStatus,
             String toStatus,
             Actor actor,
@@ -49,7 +53,7 @@ public class ClaimHistory {
         String title = resolveStatusChangeTitle(toStatus);
         String message = fromStatus + " → " + toStatus;
         return new ClaimHistory(
-                id, claimType, claimId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
+                id, claimType, claimId, orderItemId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
     }
 
     /** 상태 변경 이력 생성 (수량 정보 포함). */
@@ -57,6 +61,7 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
+            String orderItemId,
             String fromStatus,
             String toStatus,
             int quantity,
@@ -65,7 +70,7 @@ public class ClaimHistory {
         String title = resolveStatusChangeTitle(toStatus);
         String message = fromStatus + " → " + toStatus + " (" + quantity + "건)";
         return new ClaimHistory(
-                id, claimType, claimId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
+                id, claimType, claimId, orderItemId, ClaimHistoryType.STATUS_CHANGE, title, message, actor, now);
     }
 
     /** 수기 메모 이력 생성. */
@@ -73,11 +78,12 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
+            String orderItemId,
             String message,
             Actor actor,
             Instant now) {
         return new ClaimHistory(
-                id, claimType, claimId, ClaimHistoryType.MANUAL, "CS 메모", message, actor, now);
+                id, claimType, claimId, orderItemId, ClaimHistoryType.MANUAL, "CS 메모", message, actor, now);
     }
 
     /** DB에서 복원. */
@@ -85,13 +91,14 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
+            String orderItemId,
             ClaimHistoryType historyType,
             String title,
             String message,
             Actor actor,
             Instant createdAt) {
         return new ClaimHistory(
-                id, claimType, claimId, historyType, title, message, actor, createdAt);
+                id, claimType, claimId, orderItemId, historyType, title, message, actor, createdAt);
     }
 
     private static String resolveStatusChangeTitle(String toStatus) {
@@ -123,6 +130,10 @@ public class ClaimHistory {
 
     public String claimId() {
         return claimId;
+    }
+
+    public String orderItemId() {
+        return orderItemId;
     }
 
     public ClaimHistoryType historyType() {

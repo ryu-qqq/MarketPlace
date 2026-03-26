@@ -26,4 +26,9 @@ public class ClaimHistoryReadManager {
     public List<ClaimHistory> findByClaimIds(ClaimType claimType, List<String> claimIds) {
         return queryPort.findByClaimTypeAndClaimIds(claimType, claimIds);
     }
+
+    @Transactional(readOnly = true)
+    public List<ClaimHistory> findByOrderItemId(String orderItemId) {
+        return queryPort.findByOrderItemId(orderItemId);
+    }
 }

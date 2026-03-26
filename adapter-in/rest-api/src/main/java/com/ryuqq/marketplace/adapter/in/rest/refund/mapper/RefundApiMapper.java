@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.adapter.in.rest.refund.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
@@ -89,15 +90,14 @@ public class RefundApiMapper {
             String refundClaimId,
             String orderItemId,
             AddClaimHistoryMemoApiRequest request,
-            long sellerId,
-            String actorName) {
+            MarketAccessChecker.ActorInfo actor) {
         return new AddClaimHistoryMemoCommand(
                 ClaimType.REFUND,
                 refundClaimId,
                 orderItemId,
                 request.message(),
-                String.valueOf(sellerId),
-                actorName);
+                String.valueOf(actor.actorId()),
+                actor.username());
     }
 
     // ==================== Query 변환 ====================

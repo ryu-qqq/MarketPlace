@@ -55,6 +55,7 @@ class CancelCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     eq(ClaimType.CANCEL),
                                     any(),
+                                    any(),
                                     eq(null),
                                     eq("REQUESTED"),
                                     eq(requestedBy),
@@ -91,6 +92,7 @@ class CancelCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     eq(ClaimType.CANCEL),
                                     eq(cancel.idValue()),
+                                    eq(cancel.orderItemIdValue()),
                                     eq("REQUESTED"),
                                     eq("APPROVED"),
                                     eq(processedBy),
@@ -125,6 +127,7 @@ class CancelCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     eq(ClaimType.CANCEL),
                                     eq(cancel.idValue()),
+                                    eq(cancel.orderItemIdValue()),
                                     eq("REQUESTED"),
                                     eq("REJECTED"),
                                     eq(processedBy),
