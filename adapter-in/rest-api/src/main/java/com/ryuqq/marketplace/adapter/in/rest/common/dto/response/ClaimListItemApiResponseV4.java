@@ -74,7 +74,27 @@ public record ClaimListItemApiResponseV4(
             @Schema(description = "보류 사유") String holdReason,
             @Schema(description = "보류 여부") boolean isHold,
             @Schema(description = "요청 일시") String requestedAt,
-            @Schema(description = "생성 일시") String createdAt) {}
+            @Schema(description = "생성 일시") String createdAt,
+            @Schema(description = "교환 옵션 정보 (교환 전용, 반품/취소 시 null)") ExchangeOptionV4 exchangeOption) {}
+
+    @Schema(description = "교환 옵션 정보 (V4)")
+    public record ExchangeOptionV4(
+            @Schema(description = "교환 전 옵션") OptionInfoV4 originalOption,
+            @Schema(description = "교환 후 옵션") OptionInfoV4 targetOption) {}
+
+    @Schema(description = "옵션 정보 (V4)")
+    public record OptionInfoV4(
+            @Schema(description = "옵션명") String optionName,
+            @Schema(description = "옵션 값 목록") List<OptionValueV4> optionValues) {
+        public OptionInfoV4 {
+            optionValues = optionValues != null ? List.copyOf(optionValues) : List.of();
+        }
+    }
+
+    @Schema(description = "옵션 값 (V4)")
+    public record OptionValueV4(
+            @Schema(description = "옵션 항목명") String name,
+            @Schema(description = "옵션 항목 값") String value) {}
 
     @Schema(description = "클레임 사유 (V4)")
     public record ReasonV4(

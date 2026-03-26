@@ -39,6 +39,7 @@ public class ExchangeAssembler {
                 claim.status().name(),
                 claim.reason().reasonType().name(),
                 claim.reason().reasonDetail(),
+                option != null ? option.originalSkuCode() : null,
                 option != null ? option.targetSkuCode() : null,
                 option != null ? option.quantity() : null,
                 claim.linkedOrderId(),

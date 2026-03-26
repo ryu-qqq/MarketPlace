@@ -4,6 +4,9 @@ import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.ExchangeOptionV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.OptionInfoV4;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimListItemApiResponseV4.OptionValueV4;
 import com.ryuqq.marketplace.adapter.in.rest.common.mapper.ClaimOrderEnricher;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
@@ -194,11 +197,22 @@ public class ExchangeApiMapper {
                         "",
                         false,
                         r.requestedAt(),
-                        r.requestedAt()),
+                        r.requestedAt(),
+                        toExchangeOptionV4(r)),
                 enricher.toBuyerInfoV4(itemId, ctx),
                 enricher.toPaymentV4(itemId, ctx),
                 enricher.toReceiverInfoV4(itemId, ctx),
                 enricher.toExternalOrderInfoV4(itemId, ctx));
+    }
+
+    private ExchangeOptionV4 toExchangeOptionV4(ExchangeListResult r) {
+        String originalSkuCode = nullToEmpty(r.originalSkuCode());
+        String targetSkuCode = nullToEmpty(r.targetSkuCode());
+        OptionInfoV4 originalOption =
+                new OptionInfoV4("", List.of(new OptionValueV4("SKU", originalSkuCode)));
+        OptionInfoV4 targetOption =
+                new OptionInfoV4("", List.of(new OptionValueV4("SKU", targetSkuCode)));
+        return new ExchangeOptionV4(originalOption, targetOption);
     }
 
     // ==================== Response 변환 ====================
