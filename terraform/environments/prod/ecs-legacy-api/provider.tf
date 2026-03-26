@@ -129,13 +129,6 @@ data "aws_ssm_parameter" "authhub_service_token" {
 }
 
 # ========================================
-# FileFlow Configuration
-# ========================================
-data "aws_ssm_parameter" "fileflow_service_token" {
-  name = "/shared/security/service-token-secret"
-}
-
-# ========================================
 # Sentry Configuration
 # ========================================
 data "aws_ssm_parameter" "sentry_dsn" {
