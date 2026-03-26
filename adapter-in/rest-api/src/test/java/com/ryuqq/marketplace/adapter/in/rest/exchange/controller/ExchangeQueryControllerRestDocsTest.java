@@ -326,9 +326,7 @@ class ExchangeQueryControllerRestDocsTest {
                                     EXCHANGES_URL + ExchangeAdminEndpoints.EXCHANGE_CLAIM_ID,
                                     exchangeClaimId))
                     .andExpect(status().isOk())
-                    .andExpect(
-                            jsonPath("$.data.claimInfo.exchangeClaimId")
-                                    .value(exchangeClaimId))
+                    .andExpect(jsonPath("$.data.claimInfo.exchangeClaimId").value(exchangeClaimId))
                     .andExpect(
                             jsonPath("$.data.claimInfo.claimNumber")
                                     .value(ExchangeApiFixtures.DEFAULT_CLAIM_NUMBER))
@@ -413,8 +411,7 @@ class ExchangeQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("교환 대상 SKU 코드")
                                                     .optional(),
-                                            fieldWithPath(
-                                                            "data.claimInfo.exchangeOption.quantity")
+                                            fieldWithPath("data.claimInfo.exchangeOption.quantity")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("교환 대상 수량")
                                                     .optional(),

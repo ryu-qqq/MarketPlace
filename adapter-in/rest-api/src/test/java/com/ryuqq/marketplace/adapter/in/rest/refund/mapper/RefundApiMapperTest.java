@@ -650,8 +650,7 @@ class RefundApiMapperTest {
                     mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany())
-                    .isEmpty();
+            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany()).isEmpty();
         }
     }
 

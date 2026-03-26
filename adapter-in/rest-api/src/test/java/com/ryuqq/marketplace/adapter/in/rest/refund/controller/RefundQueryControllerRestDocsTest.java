@@ -380,8 +380,7 @@ class RefundQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("원래 금액")
                                                     .optional(),
-                                            fieldWithPath(
-                                                            "data.claimInfo.refundInfo.finalAmount")
+                                            fieldWithPath("data.claimInfo.refundInfo.finalAmount")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("최종 환불 금액")
                                                     .optional(),
@@ -395,13 +394,11 @@ class RefundQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.STRING)
                                                     .description("차감 사유")
                                                     .optional(),
-                                            fieldWithPath(
-                                                            "data.claimInfo.refundInfo.refundMethod")
+                                            fieldWithPath("data.claimInfo.refundInfo.refundMethod")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 방식")
                                                     .optional(),
-                                            fieldWithPath(
-                                                            "data.claimInfo.refundInfo.refundedAt")
+                                            fieldWithPath("data.claimInfo.refundInfo.refundedAt")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 완료일시 (ISO 8601, KST)")
                                                     .optional(),
@@ -553,9 +550,7 @@ class RefundQueryControllerRestDocsTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.claimInfo.status").value("HOLD"))
                     .andExpect(jsonPath("$.data.claimInfo.holdInfo").exists())
-                    .andExpect(
-                            jsonPath("$.data.claimInfo.holdInfo.holdReason")
-                                    .value("추가 확인 필요"))
+                    .andExpect(jsonPath("$.data.claimInfo.holdInfo.holdReason").value("추가 확인 필요"))
                     .andExpect(jsonPath("$.data.claimInfo.refundInfo").doesNotExist());
         }
     }

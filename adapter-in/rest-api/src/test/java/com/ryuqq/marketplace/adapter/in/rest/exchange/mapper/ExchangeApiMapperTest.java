@@ -602,8 +602,7 @@ class ExchangeApiMapperTest {
                     mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany())
-                    .isEmpty();
+            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany()).isEmpty();
         }
 
         @Test
@@ -639,23 +638,62 @@ class ExchangeApiMapperTest {
             given(enricher.toOrderProductV4(any(), any()))
                     .willReturn(
                             new ClaimListItemApiResponseV4.OrderProductV4(
-                                    "", "", "", new ClaimListItemApiResponseV4.PriceV4(0, 0, 0, 0, 0, 0),
-                                    new ClaimListItemApiResponseV4.BrandV4(0L, ""), 0L, 0L, "", "", "", 0,
-                                    "", 0, 0, 0, "", "", List.of()));
-            given(enricher.toClaimInfoV4(anyString(), anyString(), anyString(), anyInt(),
-                    anyString(), anyString(), isNull(), isNull(), anyString(), anyString(),
-                    anyBoolean(), any(), any(),
-                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class),
-                    any(ClaimListItemApiResponseV4.AmountAdjustmentV4.class)))
-                    .willAnswer(invocation -> {
-                        ClaimListItemApiResponseV4.ExchangeOptionV4 exchangeOption =
-                                invocation.getArgument(13);
-                        ClaimListItemApiResponseV4.AmountAdjustmentV4 amountAdjustment =
-                                invocation.getArgument(14);
-                        return new ClaimListItemApiResponseV4.ClaimInfoV4(
-                                "", "", "", 1, "", null, null, "", false, "", "", exchangeOption,
-                                amountAdjustment);
-                    });
+                                    "",
+                                    "",
+                                    "",
+                                    new ClaimListItemApiResponseV4.PriceV4(0, 0, 0, 0, 0, 0),
+                                    new ClaimListItemApiResponseV4.BrandV4(0L, ""),
+                                    0L,
+                                    0L,
+                                    "",
+                                    "",
+                                    "",
+                                    0,
+                                    "",
+                                    0,
+                                    0,
+                                    0,
+                                    "",
+                                    "",
+                                    List.of()));
+            given(
+                            enricher.toClaimInfoV4(
+                                    anyString(),
+                                    anyString(),
+                                    anyString(),
+                                    anyInt(),
+                                    anyString(),
+                                    anyString(),
+                                    isNull(),
+                                    isNull(),
+                                    anyString(),
+                                    anyString(),
+                                    anyBoolean(),
+                                    any(),
+                                    any(),
+                                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class),
+                                    any(ClaimListItemApiResponseV4.AmountAdjustmentV4.class)))
+                    .willAnswer(
+                            invocation -> {
+                                ClaimListItemApiResponseV4.ExchangeOptionV4 exchangeOption =
+                                        invocation.getArgument(13);
+                                ClaimListItemApiResponseV4.AmountAdjustmentV4 amountAdjustment =
+                                        invocation.getArgument(14);
+                                return new ClaimListItemApiResponseV4.ClaimInfoV4(
+                                        "",
+                                        "",
+                                        "",
+                                        1,
+                                        "",
+                                        null,
+                                        null,
+                                        "",
+                                        false,
+                                        "",
+                                        "",
+                                        exchangeOption,
+                                        amountAdjustment);
+                            });
             given(enricher.toBuyerInfoV4(any(), any()))
                     .willReturn(new ClaimListItemApiResponseV4.BuyerInfoV4("", ""));
             given(enricher.toPaymentV4(any(), any()))
@@ -694,23 +732,62 @@ class ExchangeApiMapperTest {
             given(enricher.toOrderProductV4(any(), any()))
                     .willReturn(
                             new ClaimListItemApiResponseV4.OrderProductV4(
-                                    "", "", "", new ClaimListItemApiResponseV4.PriceV4(0, 0, 0, 0, 0, 0),
-                                    new ClaimListItemApiResponseV4.BrandV4(0L, ""), 0L, 0L, "", "", "", 0,
-                                    "", 0, 0, 0, "", "", List.of()));
-            given(enricher.toClaimInfoV4(anyString(), anyString(), anyString(), anyInt(),
-                    anyString(), anyString(), isNull(), isNull(), anyString(), anyString(),
-                    anyBoolean(), any(), any(),
-                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class),
-                    any(ClaimListItemApiResponseV4.AmountAdjustmentV4.class)))
-                    .willAnswer(invocation -> {
-                        ClaimListItemApiResponseV4.ExchangeOptionV4 exchangeOption =
-                                invocation.getArgument(13);
-                        ClaimListItemApiResponseV4.AmountAdjustmentV4 amountAdjustment =
-                                invocation.getArgument(14);
-                        return new ClaimListItemApiResponseV4.ClaimInfoV4(
-                                "", "", "", 1, "", null, null, "", false, "", "", exchangeOption,
-                                amountAdjustment);
-                    });
+                                    "",
+                                    "",
+                                    "",
+                                    new ClaimListItemApiResponseV4.PriceV4(0, 0, 0, 0, 0, 0),
+                                    new ClaimListItemApiResponseV4.BrandV4(0L, ""),
+                                    0L,
+                                    0L,
+                                    "",
+                                    "",
+                                    "",
+                                    0,
+                                    "",
+                                    0,
+                                    0,
+                                    0,
+                                    "",
+                                    "",
+                                    List.of()));
+            given(
+                            enricher.toClaimInfoV4(
+                                    anyString(),
+                                    anyString(),
+                                    anyString(),
+                                    anyInt(),
+                                    anyString(),
+                                    anyString(),
+                                    isNull(),
+                                    isNull(),
+                                    anyString(),
+                                    anyString(),
+                                    anyBoolean(),
+                                    any(),
+                                    any(),
+                                    any(ClaimListItemApiResponseV4.ExchangeOptionV4.class),
+                                    any(ClaimListItemApiResponseV4.AmountAdjustmentV4.class)))
+                    .willAnswer(
+                            invocation -> {
+                                ClaimListItemApiResponseV4.ExchangeOptionV4 exchangeOption =
+                                        invocation.getArgument(13);
+                                ClaimListItemApiResponseV4.AmountAdjustmentV4 amountAdjustment =
+                                        invocation.getArgument(14);
+                                return new ClaimListItemApiResponseV4.ClaimInfoV4(
+                                        "",
+                                        "",
+                                        "",
+                                        1,
+                                        "",
+                                        null,
+                                        null,
+                                        "",
+                                        false,
+                                        "",
+                                        "",
+                                        exchangeOption,
+                                        amountAdjustment);
+                            });
             given(enricher.toBuyerInfoV4(any(), any()))
                     .willReturn(new ClaimListItemApiResponseV4.BuyerInfoV4("", ""));
             given(enricher.toPaymentV4(any(), any()))
@@ -722,7 +799,8 @@ class ExchangeApiMapperTest {
 
             // when
             PageApiResponse<ClaimListItemApiResponseV4> response =
-                    mapper.toPageResponseV4(ExchangeApiFixtures.pageResultWithNullSkuCodes(), enricher);
+                    mapper.toPageResponseV4(
+                            ExchangeApiFixtures.pageResultWithNullSkuCodes(), enricher);
 
             // then
             ClaimListItemApiResponseV4.ClaimInfoV4 claimInfo =
