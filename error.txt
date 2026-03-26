@@ -1,65 +1,29 @@
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.987Z ERROR 1 --- [marketplace-legacy-api] [ main] o.s.b.d.LoggingFailureAnalysisReporter :
-legacy-api
-2026년 3월 22일, 21:41
-***************************
-legacy-api
-2026년 3월 22일, 21:41
-APPLICATION FAILED TO START
-legacy-api
-2026년 3월 22일, 21:41
-***************************
-legacy-api
-2026년 3월 22일, 21:41
-Description:
-legacy-api
-2026년 3월 22일, 21:41
-Parameter 0 of constructor in com.ryuqq.marketplace.application.legacy.order.manager.LegacyShipmentCommandManager required a bean of type 'com.ryuqq.marketplace.application.legacy.order.port.out.command.LegacyShipmentCommandPort' that could not be found.
-legacy-api
-2026년 3월 22일, 21:41
-Action:
-legacy-api
-2026년 3월 22일, 21:41
-Consider defining a bean of type 'com.ryuqq.marketplace.application.legacy.order.port.out.command.LegacyShipmentCommandPort' in your configuration.
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.780Z INFO 1 --- [marketplace-legacy-api] [ main] .s.b.a.l.ConditionEvaluationReportLogger :
-legacy-api
-2026년 3월 22일, 21:41
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.586Z INFO 1 --- [marketplace-legacy-api] [ main] o.apache.catalina.core.StandardService : Stopping service [Tomcat]
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.580Z INFO 1 --- [marketplace-legacy-api] [ main] com.zaxxer.hikari.HikariDataSource : HikariPool-Legacy-Stage - Shutdown completed.
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.578Z INFO 1 --- [marketplace-legacy-api] [ main] com.zaxxer.hikari.HikariDataSource : HikariPool-Stage - Shutdown completed.
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.578Z INFO 1 --- [marketplace-legacy-api] [ main] com.zaxxer.hikari.HikariDataSource : HikariPool-Legacy-Stage - Shutdown initiated...
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.569Z INFO 1 --- [marketplace-legacy-api] [ main] com.zaxxer.hikari.HikariDataSource : HikariPool-Stage - Shutdown initiated...
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.568Z INFO 1 --- [marketplace-legacy-api] [ main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'legacy'
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.467Z INFO 1 --- [marketplace-legacy-api] [ main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'main'
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:52.272Z WARN 1 --- [marketplace-legacy-api] [ main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'legacyOrderUpdateStrategyProvider' defined in URL [jar:nested:/app/app.jar/!BOOT-INF/lib/application-1.0.0-SNAPSHOT.jar!/com/ryuqq/marketplace/application/legacy/order/internal/LegacyOrderUpdateStrategyProvider.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'legacyRejectCancelStrategy' defined in URL [jar:nested:/app/app.jar/!BOOT-INF/lib/application-1.0.0-SNAPSHOT.jar!/com/ryuqq/marketplace/application/legacy/order/internal/LegacyRejectCancelStrategy.class]: Unsatisfied dependency expressed through constructor parameter 1: Error creating bean with name 'legacyShipmentCommandManager' defined in URL [jar:nested:/app/app.jar/!BOOT-INF/lib/application-1.0.0-SNAPSHOT.jar!/com/ryuqq/marketplace/application/legacy/order/manager/LegacyShipmentCommandManager.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.ryuqq.marketplace.application.legacy.order.port.out.command.LegacyShipmentCommandPort' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:24.868Z INFO 1 --- [marketplace-legacy-api] [ main] o.s.d.j.r.query.QueryEnhancerFactory : Hibernate is in classpath; If applicable, HQL parser will be used.
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:20.168Z INFO 1 --- [marketplace-legacy-api] [ main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'main'
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:19.682Z INFO 1 --- [marketplace-legacy-api] [ main] o.h.e.t.j.p.i.JtaPlatformInitiator : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-legacy-api
-2026년 3월 22일, 21:41
-2026-03-22T12:41:11.383Z INFO 1 --- [marketplace-legacy-api] [ main] org.hibernate.orm.connections.pooling : HHH10001005: Database info:
+ OMS 전송까지 확인됩니다! 결과를 정리하면:                                                                         
+                                                                                                                    
+  상품 동기화 현황                                                                                                  
+   
+  ┌────────┬──────┬───────────────────────────┐                                                                     
+  │  상태  │ 건수 │           설명            │                                           
+  ├────────┼──────┼───────────────────────────┤                                                                     
+  │ SENT   │    8 │ OMS 전송 성공 (신규 상품) │                                                                     
+  ├────────┼──────┼───────────────────────────┤                                                                     
+  │ FAILED │   34 │ OMS 전송 실패             │                                                                     
+  └────────┴──────┴───────────────────────────┘                                                                     
+                                                                                                                    
+  FAILED 원인 분석                                                                                                  
+                                                                                          
+  전부 동일한 에러입니다:                                                                                           
+   
+  status=409, code=STATE_CONFLICT                                                                                   
+  "매핑 적용은 RECEIVED 또는 PENDING_MAPPING 상태에서만 가능합니다. 현재 상태: LEGACY_IMPORTED"
+                                                                                                                    
+  이미 레거시 시스템에서 등록된 상품들이라 충돌이 발생합니다. OMS에 LEGACY_IMPORTED 상태로 존재하는 상품에 대해     
+  크롤러가 CREATE를 시도하니 409가 뜨는 거예요.                                                                     
+                                                                                                                    
+  즉:                                                                                                               
+  - 신규 상품 8건 → SENT 성공 (OMS에 없던 상품)
+  - 기존 상품 34건 → FAILED (이미 LEGACY_IMPORTED 상태로 OMS에 존재)                                                
+                                                                                          
+  조치 필요 사항                                                                                                    
+                                                                                          
+  이 FAILED 건들은 크롤러 쪽에서 CREATE 대신 UPDATE 또는 상태에 따라 분기 처리가 필요해 보입

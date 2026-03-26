@@ -208,6 +208,13 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
                         SYNC_ACTOR,
                         now);
 
+        // 생성 시 HOLDBACK 상태면 즉시 hold 처리
+        if ("HOLDBACK".equals(claim.holdbackStatus())) {
+            String holdReason =
+                    claim.holdbackReason() != null ? claim.holdbackReason() : "외부 채널 보류";
+            exchangeClaim.hold(holdReason, now);
+        }
+
         exchangeCommandManager.persist(exchangeClaim);
         requestReturnOrderItem(orderItemId, "교환 요청 동기화", now);
         recordHistory(exchangeClaim.idValue(), orderItemId.value(), null, "REQUESTED", exchangeQty);

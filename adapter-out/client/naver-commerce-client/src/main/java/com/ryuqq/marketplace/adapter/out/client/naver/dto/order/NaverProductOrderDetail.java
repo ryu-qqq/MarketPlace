@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.out.client.naver.dto.order;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public record NaverProductOrderDetail(
         ProductOrderInfo productOrder,
         NaverDeliveryInfo delivery,
         NaverExchangeClaimInfo exchange,
-        NaverReturnClaimInfo returnInfo) {
+        @JsonProperty("return") NaverReturnClaimInfo returnInfo) {
 
     /**
      * 상품주문 레벨 정보.
