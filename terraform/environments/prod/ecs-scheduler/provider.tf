@@ -155,30 +155,30 @@ data "aws_ssm_parameter" "sentry_dsn" {
 # OutboundSync SQS Queue Reference
 # ========================================
 data "aws_ssm_parameter" "sqs_outbound_sync_queue_url" {
-  name = "/${var.project_name}/sqs/outbound-sync-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/outbound-sync-queue-url"
 }
 
 # ========================================
 # Intelligence Pipeline SQS Queue References
 # ========================================
 data "aws_ssm_parameter" "sqs_intelligence_orchestration_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-orchestration-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-orchestration-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_intelligence_description_analysis_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-description-analysis-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-description-analysis-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_intelligence_option_analysis_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-option-analysis-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-option-analysis-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_intelligence_notice_analysis_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-notice-analysis-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-notice-analysis-queue-url"
 }
 
 data "aws_ssm_parameter" "sqs_intelligence_aggregation_queue_url" {
-  name = "/${var.project_name}/sqs/intelligence-aggregation-queue-url"
+  name = "/${var.project_name}/${var.environment}/sqs/intelligence-aggregation-queue-url"
 }
 
 # ========================================

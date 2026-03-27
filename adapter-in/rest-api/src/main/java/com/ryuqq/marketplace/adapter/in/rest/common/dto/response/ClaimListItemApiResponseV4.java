@@ -76,7 +76,8 @@ public record ClaimListItemApiResponseV4(
             @Schema(description = "요청 일시") String requestedAt,
             @Schema(description = "생성 일시") String createdAt,
             @Schema(description = "교환 옵션 정보 (교환 전용, 반품/취소 시 null)") ExchangeOptionV4 exchangeOption,
-            @Schema(description = "금액 조정 정보 (교환 전용, 반품/취소 시 null)") AmountAdjustmentV4 amountAdjustment) {}
+            @Schema(description = "금액 조정 정보 (교환 전용, 반품/취소 시 null)")
+                    AmountAdjustmentV4 amountAdjustment) {}
 
     @Schema(description = "금액 조정 정보 (V4)")
     public record AmountAdjustmentV4(
